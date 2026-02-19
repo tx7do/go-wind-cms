@@ -21,15 +21,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TenantService_List_FullMethodName              = "/identity.service.v1.TenantService/List"
-	TenantService_Count_FullMethodName             = "/identity.service.v1.TenantService/Count"
-	TenantService_Get_FullMethodName               = "/identity.service.v1.TenantService/Get"
-	TenantService_BatchCreate_FullMethodName       = "/identity.service.v1.TenantService/BatchCreate"
-	TenantService_Create_FullMethodName            = "/identity.service.v1.TenantService/Create"
-	TenantService_Update_FullMethodName            = "/identity.service.v1.TenantService/Update"
-	TenantService_Delete_FullMethodName            = "/identity.service.v1.TenantService/Delete"
-	TenantService_TenantExists_FullMethodName      = "/identity.service.v1.TenantService/TenantExists"
-	TenantService_AssignTenantAdmin_FullMethodName = "/identity.service.v1.TenantService/AssignTenantAdmin"
+	TenantService_List_FullMethodName                      = "/identity.service.v1.TenantService/List"
+	TenantService_Count_FullMethodName                     = "/identity.service.v1.TenantService/Count"
+	TenantService_Get_FullMethodName                       = "/identity.service.v1.TenantService/Get"
+	TenantService_BatchCreate_FullMethodName               = "/identity.service.v1.TenantService/BatchCreate"
+	TenantService_Create_FullMethodName                    = "/identity.service.v1.TenantService/Create"
+	TenantService_Update_FullMethodName                    = "/identity.service.v1.TenantService/Update"
+	TenantService_Delete_FullMethodName                    = "/identity.service.v1.TenantService/Delete"
+	TenantService_TenantExists_FullMethodName              = "/identity.service.v1.TenantService/TenantExists"
+	TenantService_AssignTenantAdmin_FullMethodName         = "/identity.service.v1.TenantService/AssignTenantAdmin"
+	TenantService_CreateTenantWithAdminUser_FullMethodName = "/identity.service.v1.TenantService/CreateTenantWithAdminUser"
 )
 
 // TenantServiceClient is the client API for TenantService service.
@@ -56,6 +57,8 @@ type TenantServiceClient interface {
 	TenantExists(ctx context.Context, in *TenantExistsRequest, opts ...grpc.CallOption) (*TenantExistsResponse, error)
 	// 分配租户管理员
 	AssignTenantAdmin(ctx context.Context, in *AssignTenantAdminRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 创建租户及管理员用户
+	CreateTenantWithAdminUser(ctx context.Context, in *CreateTenantWithAdminUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type tenantServiceClient struct {
@@ -156,6 +159,16 @@ func (c *tenantServiceClient) AssignTenantAdmin(ctx context.Context, in *AssignT
 	return out, nil
 }
 
+func (c *tenantServiceClient) CreateTenantWithAdminUser(ctx context.Context, in *CreateTenantWithAdminUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TenantService_CreateTenantWithAdminUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TenantServiceServer is the server API for TenantService service.
 // All implementations must embed UnimplementedTenantServiceServer
 // for forward compatibility.
@@ -180,6 +193,8 @@ type TenantServiceServer interface {
 	TenantExists(context.Context, *TenantExistsRequest) (*TenantExistsResponse, error)
 	// 分配租户管理员
 	AssignTenantAdmin(context.Context, *AssignTenantAdminRequest) (*emptypb.Empty, error)
+	// 创建租户及管理员用户
+	CreateTenantWithAdminUser(context.Context, *CreateTenantWithAdminUserRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedTenantServiceServer()
 }
 
@@ -216,6 +231,9 @@ func (UnimplementedTenantServiceServer) TenantExists(context.Context, *TenantExi
 }
 func (UnimplementedTenantServiceServer) AssignTenantAdmin(context.Context, *AssignTenantAdminRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method AssignTenantAdmin not implemented")
+}
+func (UnimplementedTenantServiceServer) CreateTenantWithAdminUser(context.Context, *CreateTenantWithAdminUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTenantWithAdminUser not implemented")
 }
 func (UnimplementedTenantServiceServer) mustEmbedUnimplementedTenantServiceServer() {}
 func (UnimplementedTenantServiceServer) testEmbeddedByValue()                       {}
@@ -400,6 +418,24 @@ func _TenantService_AssignTenantAdmin_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TenantService_CreateTenantWithAdminUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTenantWithAdminUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantServiceServer).CreateTenantWithAdminUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TenantService_CreateTenantWithAdminUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantServiceServer).CreateTenantWithAdminUser(ctx, req.(*CreateTenantWithAdminUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TenantService_ServiceDesc is the grpc.ServiceDesc for TenantService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -442,6 +478,10 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssignTenantAdmin",
 			Handler:    _TenantService_AssignTenantAdmin_Handler,
+		},
+		{
+			MethodName: "CreateTenantWithAdminUser",
+			Handler:    _TenantService_CreateTenantWithAdminUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

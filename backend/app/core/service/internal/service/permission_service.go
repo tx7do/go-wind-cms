@@ -22,7 +22,6 @@ import (
 
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
-	"go-wind-cms/pkg/middleware/auth"
 	"go-wind-cms/pkg/utils/converter"
 )
 
@@ -134,29 +133,7 @@ func (s *PermissionService) enrichRelations(ctx context.Context, permissions []*
 }
 
 func (s *PermissionService) List(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.ListPermissionResponse, error) {
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	var limitPermissionIDs []uint32
-	if operator.GetTenantId() > 0 {
-		limitPermissionIDs, err = s.roleRepo.ListPermissionIDsByRoleCodes(ctx, operator.GetRoles())
-		if err != nil {
-			return nil, err
-		}
-
-		// 没有任何 permission 可访问，直接返回空列表
-		if len(limitPermissionIDs) == 0 {
-			return &permissionV1.ListPermissionResponse{
-				Items: []*permissionV1.Permission{},
-				Total: 0,
-			}, nil
-		}
-	}
-
-	resp, err := s.permissionRepo.List(ctx, req, limitPermissionIDs)
+	resp, err := s.permissionRepo.List(ctx, req, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -171,33 +148,9 @@ func (s *PermissionService) Count(ctx context.Context, req *paginationV1.PagingR
 }
 
 func (s *PermissionService) Get(ctx context.Context, req *permissionV1.GetPermissionRequest) (*permissionV1.Permission, error) {
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	resp, err := s.permissionRepo.Get(ctx, req)
 	if err != nil {
 		return nil, err
-	}
-
-	if operator.GetTenantId() > 0 {
-		permissionIDs, err := s.roleRepo.ListPermissionIDsByRoleCodes(ctx, operator.GetRoles())
-		if err != nil {
-			return nil, err
-		}
-
-		found := false
-		for _, pid := range permissionIDs {
-			if pid == resp.GetId() {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return nil, permissionV1.ErrorForbidden("no access to the permission")
-		}
 	}
 
 	fakeItems := []*permissionV1.Permission{resp}
@@ -211,15 +164,7 @@ func (s *PermissionService) Create(ctx context.Context, req *permissionV1.Create
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
-	if err = s.permissionRepo.Create(ctx, req); err != nil {
+	if err := s.permissionRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -231,18 +176,7 @@ func (s *PermissionService) Update(ctx context.Context, req *permissionV1.Update
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if err = s.permissionRepo.Update(ctx, req); err != nil {
+	if err := s.permissionRepo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 

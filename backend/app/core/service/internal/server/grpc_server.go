@@ -39,6 +39,7 @@ func NewGrpcServer(
 	ctx *bootstrap.Context,
 	middlewares []middleware.Middleware,
 
+	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
 
 	taskService *service.TaskService,
@@ -98,6 +99,7 @@ func NewGrpcServer(
 	taskV1.RegisterTaskServiceServer(srv, taskService)
 
 	authenticationV1.RegisterLoginPolicyServiceServer(srv, loginPolicyService)
+	authenticationV1.RegisterAuthenticationServiceServer(srv, authenticationService)
 
 	dictV1.RegisterDictTypeServiceServer(srv, dictTypeService)
 	dictV1.RegisterDictEntryServiceServer(srv, dictEntryService)

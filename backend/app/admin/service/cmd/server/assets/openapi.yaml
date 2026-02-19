@@ -6111,6 +6111,10 @@ components:
                     $ref: '#/components/schemas/User'
                 password:
                     type: string
+                operatorUserId:
+                    type: integer
+                    description: 操作人用户ID
+                    format: uint32
             description: 创建租户及管理员用户 - 请求
         CreateUserRequest:
             type: object
@@ -9219,6 +9223,10 @@ components:
                 content:
                     type: string
                     description: 消息内容
+                sendUserId:
+                    type: integer
+                    description: 发送者用户ID
+                    format: uint32
         SendMessageResponse:
             type: object
             properties:
@@ -9704,6 +9712,14 @@ components:
                 mime:
                     type: string
                     description: 文件的MIME类型
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
         UEditorUploadResponse:
             type: object
             properties:
@@ -10205,6 +10221,14 @@ components:
                 size:
                     type: string
                     description: 文件大小（字节）
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
         UploadFileResponse:
             type: object
             properties:

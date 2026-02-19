@@ -19,7 +19,6 @@ import (
 
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
 	"go-wind-cms/pkg/oss"
 )
 
@@ -140,12 +139,6 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		return nil, storageV1.ErrorUploadFailed("unknown source file name")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	if req.StorageObject.BucketName == nil {
 		req.StorageObject.BucketName = trans.Ptr(oss.ContentTypeToBucketName(req.GetMime()))
 	}
@@ -174,7 +167,7 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 
 	if err = s.recordFile(
 		ctx,
-		operator.GetTenantId(), operator.GetUserId(),
+		req.GetTenantId(), req.GetUserId(),
 		req.GetFile(),
 		req.GetSourceFileName(),
 		info, downloadUrl); err != nil {
@@ -341,12 +334,6 @@ func (s *FileTransferService) UEditorUploadFile(ctx context.Context, req *storag
 		return nil, storageV1.ErrorUploadFailed("unknown file")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	var bucketName string
 	switch req.GetAction() {
 	default:
@@ -368,7 +355,7 @@ func (s *FileTransferService) UEditorUploadFile(ctx context.Context, req *storag
 
 	if err = s.recordFile(
 		ctx,
-		operator.GetTenantId(), operator.GetUserId(),
+		req.GetTenantId(), req.GetUserId(),
 		req.GetFile(),
 		req.GetSourceFileName(),
 		info, downloadUrl); err != nil {

@@ -207,6 +207,10 @@ func (x *UEditorUploadRequest) Redact() string {
 	// Safe field: SourceFileName
 
 	// Safe field: Mime
+
+	// Safe field: TenantId
+
+	// Safe field: UserId
 	return x.String()
 }
 

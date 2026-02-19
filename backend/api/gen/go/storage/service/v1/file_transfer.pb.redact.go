@@ -133,6 +133,10 @@ func (x *UploadFileRequest) Redact() string {
 	// Safe field: Mime
 
 	// Safe field: Size
+
+	// Safe field: TenantId
+
+	// Safe field: UserId
 	return x.String()
 }
 

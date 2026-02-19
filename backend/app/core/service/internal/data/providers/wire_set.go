@@ -26,6 +26,10 @@ var ProviderSet = wire.NewSet(
 
 	authorizer.NewAuthorizer,
 
+	data.NewAuthenticatorConfig,
+	data.NewAuthenticator,
+	data.NewUserTokenCache,
+
 	data.NewPasswordCrypto,
 
 	data.NewMinIoClient,

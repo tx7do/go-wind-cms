@@ -631,6 +631,8 @@ type UEditorUploadRequest struct {
 	File           []byte                 `protobuf:"bytes,2,opt,name=file,proto3,oneof" json:"file,omitempty"`                                             // 文件内容
 	SourceFileName *string                `protobuf:"bytes,3,opt,name=source_file_name,json=sourceFileName,proto3,oneof" json:"source_file_name,omitempty"` // 原文件文件名
 	Mime           *string                `protobuf:"bytes,4,opt,name=mime,proto3,oneof" json:"mime,omitempty"`                                             // 文件的MIME类型
+	TenantId       *uint32                `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	UserId         *uint32                `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -691,6 +693,20 @@ func (x *UEditorUploadRequest) GetMime() string {
 		return *x.Mime
 	}
 	return ""
+}
+
+func (x *UEditorUploadRequest) GetTenantId() uint32 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
+}
+
+func (x *UEditorUploadRequest) GetUserId() uint32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
 }
 
 type UEditorUploadResponse struct {
@@ -1202,16 +1218,23 @@ const file_storage_service_v1_ueditor_proto_rawDesc = "" +
 	"\x0e_formulaConfigB\b\n" +
 	"\x06_stateB\b\n" +
 	"\x06_startB\b\n" +
-	"\x06_total\"\x9d\x02\n" +
+	"\x06_total\"\xb3\x03\n" +
 	"\x14UEditorUploadRequest\x12)\n" +
 	"\x06action\x18\x01 \x01(\tB\f\xbaG\t\x92\x02\x06动作H\x00R\x06action\x88\x01\x01\x12+\n" +
 	"\x04file\x18\x02 \x01(\fB\x12\xbaG\x0f\x92\x02\f文件内容H\x01R\x04file\x88\x01\x01\x12G\n" +
 	"\x10source_file_name\x18\x03 \x01(\tB\x18\xbaG\x15\x92\x02\x12原文件文件名H\x02R\x0esourceFileName\x88\x01\x01\x122\n" +
-	"\x04mime\x18\x04 \x01(\tB\x19\xbaG\x16\x92\x02\x13文件的MIME类型H\x03R\x04mime\x88\x01\x01B\t\n" +
+	"\x04mime\x18\x04 \x01(\tB\x19\xbaG\x16\x92\x02\x13文件的MIME类型H\x03R\x04mime\x88\x01\x01\x12L\n" +
+	"\ttenant_id\x18\n" +
+	" \x01(\rB*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x04R\btenantId\x88\x01\x01\x12,\n" +
+	"\auser_id\x18\v \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\x05R\x06userId\x88\x01\x01B\t\n" +
 	"\a_actionB\a\n" +
 	"\x05_fileB\x13\n" +
 	"\x11_source_file_nameB\a\n" +
-	"\x05_mime\"\x8b\x04\n" +
+	"\x05_mimeB\f\n" +
+	"\n" +
+	"_tenant_idB\n" +
+	"\n" +
+	"\b_user_id\"\x8b\x04\n" +
 	"\x15UEditorUploadResponse\x12\x19\n" +
 	"\x05state\x18\x01 \x01(\tH\x00R\x05state\x88\x01\x01\x12\x15\n" +
 	"\x03url\x18\x02 \x01(\tH\x01R\x03url\x88\x01\x01\x12\x19\n" +

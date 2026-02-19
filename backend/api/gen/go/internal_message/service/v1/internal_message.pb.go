@@ -606,6 +606,7 @@ type SendMessageRequest struct {
 	TargetAll       *bool                  `protobuf:"varint,7,opt,name=target_all,json=targetAll,proto3,oneof" json:"target_all,omitempty"`                      // 全员发送标志
 	Title           *string                `protobuf:"bytes,10,opt,name=title,proto3,oneof" json:"title,omitempty"`                                               // 消息标题
 	Content         string                 `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`                                                 // 消息内容
+	SendUserId      *uint32                `protobuf:"varint,12,opt,name=send_user_id,json=sendUserId,proto3,oneof" json:"send_user_id,omitempty"`                // 发送者用户ID
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -694,6 +695,13 @@ func (x *SendMessageRequest) GetContent() string {
 		return x.Content
 	}
 	return ""
+}
+
+func (x *SendMessageRequest) GetSendUserId() uint32 {
+	if x != nil && x.SendUserId != nil {
+		return *x.SendUserId
+	}
+	return 0
 }
 
 type SendMessageResponse struct {
@@ -877,7 +885,7 @@ const file_internal_message_service_v1_internal_message_proto_rawDesc = "" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\".\n" +
 	"\x1cDeleteInternalMessageRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\"\xe5\x04\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\"\xb6\x05\n" +
 	"\x12SendMessageRequest\x12Y\n" +
 	"\x04type\x18\x01 \x01(\x0e21.internal_message.service.v1.InternalMessage.TypeB\x12\xbaG\x0f\x92\x02\f消息类型R\x04type\x12H\n" +
 	"\x11recipient_user_id\x18\x02 \x01(\rB\x17\xbaG\x14\x92\x02\x11接收者用户IDH\x00R\x0frecipientUserId\x88\x01\x01\x12<\n" +
@@ -889,12 +897,15 @@ const file_internal_message_service_v1_internal_message_proto_rawDesc = "" +
 	"target_all\x18\a \x01(\bB\x18\xbaG\x15\x92\x02\x12全员发送标志H\x03R\ttargetAll\x88\x01\x01\x12-\n" +
 	"\x05title\x18\n" +
 	" \x01(\tB\x12\xbaG\x0f\x92\x02\f消息标题H\x04R\x05title\x88\x01\x01\x12,\n" +
-	"\acontent\x18\v \x01(\tB\x12\xbaG\x0f\x92\x02\f消息内容R\acontentB\x14\n" +
+	"\acontent\x18\v \x01(\tB\x12\xbaG\x0f\x92\x02\f消息内容R\acontent\x12>\n" +
+	"\fsend_user_id\x18\f \x01(\rB\x17\xbaG\x14\x92\x02\x11发送者用户IDH\x05R\n" +
+	"sendUserId\x88\x01\x01B\x14\n" +
 	"\x12_recipient_user_idB\x12\n" +
 	"\x10_conversation_idB\x0e\n" +
 	"\f_category_idB\r\n" +
 	"\v_target_allB\b\n" +
-	"\x06_title\"D\n" +
+	"\x06_titleB\x0f\n" +
+	"\r_send_user_id\"D\n" +
 	"\x13SendMessageResponse\x12-\n" +
 	"\n" +
 	"message_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b消息IDR\tmessageId\"n\n" +

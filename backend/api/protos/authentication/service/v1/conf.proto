@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package authentication.service.v1;
+
+import "google/protobuf/duration.proto";
+
+// 认证配置
+message AuthenticatorOption {
+  message Auth {
+    string method = 1; // signing method, e.g. HS256, HS384, HS512
+    string key = 2; // signing key
+
+    optional google.protobuf.Duration access_token_expires = 3; // access token expiration duration
+    optional google.protobuf.Duration refresh_token_expires = 4; // refresh token expiration duration
+
+    optional string aes_key = 5; // AES encryption key for plain text password encryption
+  }
+  Auth admin = 1; // admin client config
+  Auth app = 2; // app client config
+}
+
+message AuthenticatorOptionWrapper {
+  AuthenticatorOption authenticator = 1;
+}

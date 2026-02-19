@@ -13,8 +13,6 @@ import (
 	"go-wind-cms/app/core/service/internal/data"
 
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-
-	"go-wind-cms/pkg/middleware/auth"
 )
 
 type OrgUnitService struct {
@@ -166,15 +164,7 @@ func (s *OrgUnitService) Create(ctx context.Context, req *identityV1.CreateOrgUn
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
-	if err = s.orgUnitRepo.Create(ctx, req); err != nil {
+	if err := s.orgUnitRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -186,18 +176,7 @@ func (s *OrgUnitService) Update(ctx context.Context, req *identityV1.UpdateOrgUn
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if err = s.orgUnitRepo.Update(ctx, req); err != nil {
+	if err := s.orgUnitRepo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 

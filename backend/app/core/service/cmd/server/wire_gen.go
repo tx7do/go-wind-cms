@@ -24,13 +24,20 @@ import (
 // initApp init kratos application.
 func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	v := server.NewGrpcMiddleware(context)
-	entClient, cleanup, err := data.NewEntClient(context)
+	authenticatorOption := data.NewAuthenticatorConfig(context)
+	client, cleanup, err := data.NewRedisClient(context)
 	if err != nil {
 		return nil, nil, err
 	}
-	loginPolicyRepo := data.NewLoginPolicyRepo(context, entClient)
-	loginPolicyService := service.NewLoginPolicyService(context, loginPolicyRepo)
-	taskRepo := data.NewTaskRepo(context, entClient)
+	userTokenCache := data.NewUserTokenCache(context, client)
+	authenticator := data.NewAuthenticator(context, authenticatorOption, userTokenCache)
+	entClient, cleanup2, err := data.NewEntClient(context)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	crypto := data.NewPasswordCrypto()
+	userCredentialRepo := data.NewUserCredentialRepo(context, entClient, crypto)
 	userRoleRepo := data.NewUserRoleRepo(context, entClient)
 	userOrgUnitRepo := data.NewUserOrgUnitRepo(context, entClient)
 	userPositionRepo := data.NewUserPositionRepo(context, entClient)
@@ -39,6 +46,17 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	membershipOrgUnitRepo := data.NewMembershipOrgUnitRepo(context, entClient)
 	membershipRepo := data.NewMembershipRepo(context, entClient, membershipRoleRepo, membershipPositionRepo, membershipOrgUnitRepo)
 	userRepo := data.NewUserRepo(context, entClient, userRoleRepo, userOrgUnitRepo, userPositionRepo, membershipRepo)
+	rolePermissionRepo := data.NewRolePermissionRepo(context, entClient)
+	permissionApiRepo := data.NewPermissionApiRepo(context, entClient)
+	permissionMenuRepo := data.NewPermissionMenuRepo(context, entClient)
+	permissionRepo := data.NewPermissionRepo(context, entClient, permissionApiRepo, permissionMenuRepo)
+	roleMetadataRepo := data.NewRoleMetadataRepo(context, entClient)
+	roleRepo := data.NewRoleRepo(context, entClient, rolePermissionRepo, permissionRepo, roleMetadataRepo)
+	tenantRepo := data.NewTenantRepo(context, entClient)
+	authenticationService := service.NewAuthenticationService(context, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo)
+	loginPolicyRepo := data.NewLoginPolicyRepo(context, entClient)
+	loginPolicyService := service.NewLoginPolicyService(context, loginPolicyRepo)
+	taskRepo := data.NewTaskRepo(context, entClient)
 	taskService := service.NewTaskService(context, taskRepo, userRepo)
 	minIOClient := data.NewMinIoClient(context)
 	uEditorService := service.NewUEditorService(context, minIOClient)
@@ -52,15 +70,6 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	dictEntryService := service.NewDictEntryService(context, dictEntryRepo)
 	languageRepo := data.NewLanguageRepo(context, entClient)
 	languageService := service.NewLanguageService(context, languageRepo)
-	tenantRepo := data.NewTenantRepo(context, entClient)
-	crypto := data.NewPasswordCrypto()
-	userCredentialRepo := data.NewUserCredentialRepo(context, entClient, crypto)
-	rolePermissionRepo := data.NewRolePermissionRepo(context, entClient)
-	permissionApiRepo := data.NewPermissionApiRepo(context, entClient)
-	permissionMenuRepo := data.NewPermissionMenuRepo(context, entClient)
-	permissionRepo := data.NewPermissionRepo(context, entClient, permissionApiRepo, permissionMenuRepo)
-	roleMetadataRepo := data.NewRoleMetadataRepo(context, entClient)
-	roleRepo := data.NewRoleRepo(context, entClient, rolePermissionRepo, permissionRepo, roleMetadataRepo)
 	tenantService := service.NewTenantService(context, tenantRepo, userRepo, userCredentialRepo, roleRepo)
 	positionRepo := data.NewPositionRepo(context, entClient)
 	orgUnitRepo := data.NewOrgUnitRepo(context, entClient)
@@ -116,13 +125,15 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	mediaVariantRepo := data.NewMediaVariantRepo(context, entClient)
 	mediaAssetRepo := data.NewMediaAssetRepo(context, entClient, mediaVariantRepo)
 	mediaAssetService := service.NewMediaAssetService(context, mediaAssetRepo)
-	grpcServer, err := server.NewGrpcServer(context, v, loginPolicyService, taskService, uEditorService, fileService, dictTypeService, dictEntryService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, commentService, postService, categoryService, tagService, pageService, siteSettingService, navigationService, mediaAssetService)
+	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, taskService, uEditorService, fileService, dictTypeService, dictEntryService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, commentService, postService, categoryService, tagService, pageService, siteSettingService, navigationService, mediaAssetService)
 	if err != nil {
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	app := newApp(context, grpcServer)
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }

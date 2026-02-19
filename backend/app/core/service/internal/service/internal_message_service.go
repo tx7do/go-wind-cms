@@ -15,8 +15,6 @@ import (
 	"go-wind-cms/app/core/service/internal/data"
 
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
-
-	"go-wind-cms/pkg/middleware/auth"
 )
 
 type InternalMessageService struct {
@@ -134,15 +132,8 @@ func (s *InternalMessageService) CreateMessage(ctx context.Context, req *interna
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
 	var created *internalMessageV1.InternalMessage
+	var err error
 	if created, err = s.internalMessageRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
@@ -155,18 +146,7 @@ func (s *InternalMessageService) UpdateMessage(ctx context.Context, req *interna
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if err = s.internalMessageRepo.Update(ctx, req); err != nil {
+	if err := s.internalMessageRepo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -196,14 +176,9 @@ func (s *InternalMessageService) RevokeMessage(ctx context.Context, req *interna
 
 // SendMessage 发送消息
 func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalMessageV1.SendMessageRequest) (*internalMessageV1.SendMessageResponse, error) {
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	now := time.Now()
 
+	var err error
 	var msg *internalMessageV1.InternalMessage
 	if msg, err = s.internalMessageRepo.Create(ctx, &internalMessageV1.CreateInternalMessageRequest{
 		Data: &internalMessageV1.InternalMessage{
@@ -212,7 +187,7 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 			Status:     trans.Ptr(internalMessageV1.InternalMessage_PUBLISHED),
 			Type:       trans.Ptr(req.GetType()),
 			CategoryId: req.CategoryId,
-			CreatedBy:  trans.Ptr(operator.GetUserId()),
+			CreatedBy:  trans.Ptr(req.GetSendUserId()),
 			CreatedAt:  timeutil.TimeToTimestamppb(&now),
 		},
 	}); err != nil {
@@ -226,16 +201,16 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 			s.log.Errorf("send message failed, list users failed, %s", err)
 		} else {
 			for _, user := range users.Items {
-				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
+				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), req.GetSendUserId(), &now, msg.GetTitle(), msg.GetContent())
 			}
 		}
 	} else {
 		if req.RecipientUserId != nil {
-			_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
+			_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), req.GetSendUserId(), &now, msg.GetTitle(), msg.GetContent())
 		} else {
 			if len(req.TargetUserIds) != 0 {
 				for _, uid := range req.TargetUserIds {
-					_ = s.sendNotification(ctx, msg.GetId(), uid, operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
+					_ = s.sendNotification(ctx, msg.GetId(), uid, req.GetSendUserId(), &now, msg.GetTitle(), msg.GetContent())
 				}
 			}
 		}

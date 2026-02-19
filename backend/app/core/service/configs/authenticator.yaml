@@ -1,0 +1,14 @@
+authenticator:
+  admin:
+    method: "HS256" # 对称加密算法，支持 HS256, HS384, HS512
+    key: "some_api_key" # 请根据实际情况更换为更复杂的密钥
+    access_token_expires: 5400s      # 1.5 小时
+    refresh_token_expires: 43200s       # 12 小时
+    aes_key: "f51d66a73d8a0927" # AES 加密密钥，必须是 16、24 或 32 字节长
+
+  app:
+    method: "HS256" # 对称加密算法，支持 HS256, HS384, HS512
+    key: "some_api_key" # 请根据实际情况更换为更复杂的密钥
+    access_token_expires: 900s        # 移动/客户端短期 token 15分钟
+    refresh_token_expires: 0s        # 0s 表示不颁发/禁用 refresh token
+    aes_key: "f51d66a73d8a0927"

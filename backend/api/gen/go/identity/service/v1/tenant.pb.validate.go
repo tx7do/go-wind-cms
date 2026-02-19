@@ -1670,6 +1670,10 @@ func (m *CreateTenantWithAdminUserRequest) validate(all bool) error {
 
 	// no validation rules for Password
 
+	if m.OperatorUserId != nil {
+		// no validation rules for OperatorUserId
+	}
+
 	if len(errors) > 0 {
 		return CreateTenantWithAdminUserRequestMultiError(errors)
 	}

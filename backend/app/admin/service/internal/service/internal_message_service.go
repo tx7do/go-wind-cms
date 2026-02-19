@@ -3,14 +3,9 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/go-utils/aggregator"
-	"github.com/tx7do/go-utils/sliceutil"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -65,82 +60,11 @@ func NewInternalMessageService(
 	}
 }
 
-func (s *InternalMessageService) extractRelationIDs(
-	messages []*internalMessageV1.InternalMessage,
-	categorySet aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory],
-) {
-	for _, p := range messages {
-		if p.GetCategoryId() > 0 {
-			categorySet[p.GetCategoryId()] = nil
-		}
-	}
-}
-
-func (s *InternalMessageService) fetchRelationInfo(
-	ctx context.Context,
-	categorySet aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory],
-) error {
-	if len(categorySet) > 0 {
-		categoryIds := make([]uint32, 0, len(categorySet))
-		for i := range categorySet {
-			categoryIds = append(categoryIds, i)
-		}
-
-		categories, err := s.internalMessageCategoryServiceClient.List(ctx, &paginationV1.PagingRequest{
-			NoPaging: trans.Ptr(true),
-			FilteringType: &paginationV1.PagingRequest_Query{
-				Query: fmt.Sprintf(`{"id__in": "[%s]"}`, strings.Join(
-					sliceutil.Map(categoryIds, func(value uint32, _ int, _ []uint32) string {
-						return strconv.FormatUint(uint64(value), 10)
-					}),
-					","),
-				),
-			},
-		})
-		if err != nil {
-			s.log.Errorf("query internal message category err: %v", err)
-			return err
-		}
-
-		for _, g := range categories.Items {
-			categorySet[g.GetId()] = g
-		}
-	}
-
-	return nil
-}
-
-func (s *InternalMessageService) bindRelations(
-	messages []*internalMessageV1.InternalMessage,
-	categorySet aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory],
-) {
-	aggregator.Populate(
-		messages,
-		categorySet,
-		func(ou *internalMessageV1.InternalMessage) uint32 { return ou.GetCategoryId() },
-		func(ou *internalMessageV1.InternalMessage, c *internalMessageV1.InternalMessageCategory) {
-			ou.CategoryName = c.Name
-		},
-	)
-}
-
-func (s *InternalMessageService) enrichRelations(ctx context.Context, messages []*internalMessageV1.InternalMessage) error {
-	var categorySet = make(aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory])
-	s.extractRelationIDs(messages, categorySet)
-	if err := s.fetchRelationInfo(ctx, categorySet); err != nil {
-		return err
-	}
-	s.bindRelations(messages, categorySet)
-	return nil
-}
-
 func (s *InternalMessageService) ListMessage(ctx context.Context, req *paginationV1.PagingRequest) (*internalMessageV1.ListInternalMessageResponse, error) {
 	resp, err := s.internalMessageServiceClient.ListMessage(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-
-	_ = s.enrichRelations(ctx, resp.Items)
 
 	return resp, nil
 }
@@ -150,9 +74,6 @@ func (s *InternalMessageService) GetMessage(ctx context.Context, req *internalMe
 	if err != nil {
 		return nil, err
 	}
-
-	fakeItems := []*internalMessageV1.InternalMessage{resp}
-	_ = s.enrichRelations(ctx, fakeItems)
 
 	return resp, nil
 }

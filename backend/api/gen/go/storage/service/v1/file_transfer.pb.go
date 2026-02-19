@@ -316,6 +316,8 @@ type UploadFileRequest struct {
 	SourceFileName *string                    `protobuf:"bytes,4,opt,name=source_file_name,json=sourceFileName,proto3,oneof" json:"source_file_name,omitempty"` // 原文件文件名
 	Mime           *string                    `protobuf:"bytes,5,opt,name=mime,proto3,oneof" json:"mime,omitempty"`                                             // 文件的MIME类型
 	Size           *int64                     `protobuf:"varint,6,opt,name=size,proto3,oneof" json:"size,omitempty"`                                            // 文件大小（字节）
+	TenantId       *uint32                    `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	UserId         *uint32                    `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -399,6 +401,20 @@ func (x *UploadFileRequest) GetMime() string {
 func (x *UploadFileRequest) GetSize() int64 {
 	if x != nil && x.Size != nil {
 		return *x.Size
+	}
+	return 0
+}
+
+func (x *UploadFileRequest) GetTenantId() uint32 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
+}
+
+func (x *UploadFileRequest) GetUserId() uint32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
 	}
 	return 0
 }
@@ -508,18 +524,25 @@ const file_storage_service_v1_file_transfer_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampB!\xbaG\x1e\x92\x02\x1b可选，最后修改时间H\x01R\tupdatedAt\x88\x01\x01B\t\n" +
 	"\acontentB\r\n" +
-	"\v_updated_at\"\xc0\x04\n" +
+	"\v_updated_at\"\xd6\x05\n" +
 	"\x11UploadFileRequest\x12b\n" +
 	"\x0estorage_object\x18\x01 \x01(\v2!.storage.service.v1.StorageObjectB\x18\xbaG\x15\x92\x02\x12对象存储对象R\rstorageObject\x12I\n" +
 	"\x04file\x18\x02 \x01(\fB3\xbaG0\x92\x02-直接上传的文件内容（内联字节）H\x00R\x04file\x12\x94\x01\n" +
 	"\apresign\x18\x03 \x01(\v2!.storage.service.v1.PresignOptionBU\xbaGR\x92\x02O请求服务返回预签名信息（不上传文件而是获取预签名 URL）H\x00R\apresign\x12G\n" +
 	"\x10source_file_name\x18\x04 \x01(\tB\x18\xbaG\x15\x92\x02\x12原文件文件名H\x01R\x0esourceFileName\x88\x01\x01\x122\n" +
 	"\x04mime\x18\x05 \x01(\tB\x19\xbaG\x16\x92\x02\x13文件的MIME类型H\x02R\x04mime\x88\x01\x01\x127\n" +
-	"\x04size\x18\x06 \x01(\x03B\x1e\xbaG\x1b\x92\x02\x18文件大小（字节）H\x03R\x04size\x88\x01\x01B\b\n" +
+	"\x04size\x18\x06 \x01(\x03B\x1e\xbaG\x1b\x92\x02\x18文件大小（字节）H\x03R\x04size\x88\x01\x01\x12L\n" +
+	"\ttenant_id\x18\n" +
+	" \x01(\rB*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x04R\btenantId\x88\x01\x01\x12,\n" +
+	"\auser_id\x18\v \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\x05R\x06userId\x88\x01\x01B\b\n" +
 	"\x06sourceB\x13\n" +
 	"\x11_source_file_nameB\a\n" +
 	"\x05_mimeB\a\n" +
-	"\x05_size\"\xb8\x01\n" +
+	"\x05_sizeB\f\n" +
+	"\n" +
+	"_tenant_idB\n" +
+	"\n" +
+	"\b_user_id\"\xb8\x01\n" +
 	"\x12UploadFileResponse\x129\n" +
 	"\vobject_name\x18\x01 \x01(\tB\x13\xbaG\x10\x92\x02\rOSS 对象键H\x00R\n" +
 	"objectName\x88\x01\x01\x12E\n" +

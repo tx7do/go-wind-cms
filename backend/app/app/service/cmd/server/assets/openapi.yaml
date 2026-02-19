@@ -2298,6 +2298,14 @@ components:
                 mime:
                     type: string
                     description: 文件的MIME类型
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
         UEditorUploadResponse:
             type: object
             properties:
@@ -2456,6 +2464,14 @@ components:
                 size:
                     type: string
                     description: 文件大小（字节）
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
         UploadFileResponse:
             type: object
             properties:

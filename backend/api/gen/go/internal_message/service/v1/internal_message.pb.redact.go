@@ -248,6 +248,8 @@ func (x *SendMessageRequest) Redact() string {
 	// Safe field: Title
 
 	// Safe field: Content
+
+	// Safe field: SendUserId
 	return x.String()
 }
 

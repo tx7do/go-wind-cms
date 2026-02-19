@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -13,7 +12,6 @@ import (
 
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
 	"go-wind-cms/pkg/oss"
 )
 
@@ -51,15 +49,7 @@ func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileReque
 		return nil, storageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
-	if err = s.fileRepo.Create(ctx, req); err != nil {
+	if err := s.fileRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -71,18 +61,7 @@ func (s *FileService) Update(ctx context.Context, req *storageV1.UpdateFileReque
 		return nil, storageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if err = s.fileRepo.Update(ctx, req); err != nil {
+	if err := s.fileRepo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 

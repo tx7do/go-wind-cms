@@ -6,7 +6,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
-	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -17,7 +16,6 @@ import (
 
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
-	"go-wind-cms/pkg/middleware/auth"
 	"go-wind-cms/pkg/utils"
 )
 
@@ -151,19 +149,7 @@ func (s *RoleService) Create(ctx context.Context, req *permissionV1.CreateRoleRe
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
-	if operator.GetTenantId() > 0 && req.Data.GetType() != permissionV1.Role_TENANT {
-		req.Data.Type = trans.Ptr(permissionV1.Role_TENANT)
-	}
-
-	if err = s.roleRepo.Create(ctx, req); err != nil {
+	if err := s.roleRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -175,22 +161,6 @@ func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRe
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		s.log.Errorf("get operator from context error: %v", err)
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if operator.GetTenantId() > 0 && req.Data.GetType() != permissionV1.Role_TENANT {
-		req.Data.Type = trans.Ptr(permissionV1.Role_TENANT)
-	}
-
 	r, err := s.roleRepo.Get(ctx, &permissionV1.GetRoleRequest{
 		QueryBy: &permissionV1.GetRoleRequest_Id{
 			Id: req.Data.GetId(),
@@ -198,11 +168,6 @@ func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRe
 	})
 	if err != nil {
 		return nil, err
-	}
-
-	// 非系统管理员禁止修改系统角色
-	if r.GetType() == permissionV1.Role_SYSTEM && operator.GetTenantId() > 0 {
-		return nil, identityV1.ErrorForbidden("no permission to update system role")
 	}
 
 	// 保护角色字段不可修改

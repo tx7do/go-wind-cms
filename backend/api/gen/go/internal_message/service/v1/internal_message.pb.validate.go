@@ -1031,6 +1031,10 @@ func (m *SendMessageRequest) validate(all bool) error {
 		// no validation rules for Title
 	}
 
+	if m.SendUserId != nil {
+		// no validation rules for SendUserId
+	}
+
 	if len(errors) > 0 {
 		return SendMessageRequestMultiError(errors)
 	}

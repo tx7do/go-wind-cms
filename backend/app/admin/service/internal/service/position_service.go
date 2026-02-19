@@ -2,14 +2,9 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"strconv"
-	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/go-utils/aggregator"
-	"github.com/tx7do/go-utils/sliceutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -41,82 +36,11 @@ func NewPositionService(
 	}
 }
 
-func (s *PositionService) extractRelationIDs(
-	positions []*identityV1.Position,
-	orgUnitSet aggregator.ResourceMap[uint32, *identityV1.OrgUnit],
-) {
-	for _, p := range positions {
-		if p.GetOrgUnitId() > 0 {
-			orgUnitSet[p.GetOrgUnitId()] = nil
-		}
-	}
-}
-
-func (s *PositionService) fetchRelationInfo(
-	ctx context.Context,
-	orgUnitSet aggregator.ResourceMap[uint32, *identityV1.OrgUnit],
-) error {
-	if len(orgUnitSet) > 0 {
-		orgUnitIds := make([]uint32, 0, len(orgUnitSet))
-		for id := range orgUnitSet {
-			orgUnitIds = append(orgUnitIds, id)
-		}
-
-		orgUnits, err := s.orgUnitServiceClient.List(ctx, &paginationV1.PagingRequest{
-			NoPaging: trans.Ptr(true),
-			FilteringType: &paginationV1.PagingRequest_Query{
-				Query: fmt.Sprintf(`{"id__in": "[%s]"}`, strings.Join(
-					sliceutil.Map(orgUnitIds, func(value uint32, _ int, _ []uint32) string {
-						return strconv.FormatUint(uint64(value), 10)
-					}),
-					","),
-				),
-			},
-		})
-		if err != nil {
-			s.log.Errorf("query orgUnits err: %v", err)
-			return err
-		}
-
-		for _, orgUnit := range orgUnits.Items {
-			orgUnitSet[orgUnit.GetId()] = orgUnit
-		}
-	}
-
-	return nil
-}
-
-func (s *PositionService) bindRelations(
-	positions []*identityV1.Position,
-	orgUnitSet aggregator.ResourceMap[uint32, *identityV1.OrgUnit],
-) {
-	aggregator.Populate(
-		positions,
-		orgUnitSet,
-		func(ou *identityV1.Position) uint32 { return ou.GetOrgUnitId() },
-		func(ou *identityV1.Position, org *identityV1.OrgUnit) {
-			ou.OrgUnitName = org.Name
-		},
-	)
-}
-
-func (s *PositionService) enrichRelations(ctx context.Context, positions []*identityV1.Position) error {
-	var orgUnitSet = make(aggregator.ResourceMap[uint32, *identityV1.OrgUnit])
-	s.extractRelationIDs(positions, orgUnitSet)
-	if err := s.fetchRelationInfo(ctx, orgUnitSet); err != nil {
-		return err
-	}
-	s.bindRelations(positions, orgUnitSet)
-	return nil
-}
-
 func (s *PositionService) List(ctx context.Context, req *paginationV1.PagingRequest) (*identityV1.ListPositionResponse, error) {
 	resp, err := s.positionServiceClient.List(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-
-	_ = s.enrichRelations(ctx, resp.Items)
 
 	return resp, nil
 }
@@ -130,9 +54,6 @@ func (s *PositionService) Get(ctx context.Context, req *identityV1.GetPositionRe
 	if err != nil {
 		return nil, err
 	}
-
-	fakeItems := []*identityV1.Position{resp}
-	_ = s.enrichRelations(ctx, fakeItems)
 
 	return resp, nil
 }

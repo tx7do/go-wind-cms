@@ -174,6 +174,30 @@ func (r *RoleRepo) fillPermissionIDs(ctx context.Context, dto *permissionV1.Role
 	return nil
 }
 
+// ListRoleCodesByIds 通过角色ID列表获取角色编码列表
+func (r *RoleRepo) ListRoleCodesByIds(ctx context.Context, roleIDs []uint32) ([]string, error) {
+	if len(roleIDs) == 0 {
+		return []string{}, nil
+	}
+
+	entities, err := r.entClient.Client().Role.Query().
+		Where(role.IDIn(roleIDs...)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query role codes failed: %s", err.Error())
+		return nil, permissionV1.ErrorInternalServerError("query role codes failed")
+	}
+
+	codes := make([]string, 0, len(entities))
+	for _, entity := range entities {
+		if entity.Code != nil {
+			codes = append(codes, *entity.Code)
+		}
+	}
+
+	return codes, nil
+}
+
 // ListRolesByRoleCodes 通过角色编码列表获取角色列表
 func (r *RoleRepo) ListRolesByRoleCodes(ctx context.Context, codes []string) ([]*permissionV1.Role, error) {
 	if len(codes) == 0 {

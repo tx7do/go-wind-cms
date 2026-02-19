@@ -7,14 +7,11 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/go-utils/trans"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-cms/app/core/service/internal/data"
 
 	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
-
-	"go-wind-cms/pkg/middleware/auth"
 )
 
 type ApiService struct {
@@ -55,15 +52,7 @@ func (s *ApiService) Create(ctx context.Context, req *resourceV1.CreateApiReques
 		return nil, resourceV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
-	if err = s.apiRepo.Create(ctx, req); err != nil {
+	if err := s.apiRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -75,18 +64,7 @@ func (s *ApiService) Update(ctx context.Context, req *resourceV1.UpdateApiReques
 		return nil, resourceV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if err = s.apiRepo.Update(ctx, req); err != nil {
+	if err := s.apiRepo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 

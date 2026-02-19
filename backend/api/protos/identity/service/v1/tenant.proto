@@ -38,6 +38,9 @@ service TenantService {
 
   // 分配租户管理员
   rpc AssignTenantAdmin(AssignTenantAdminRequest) returns (google.protobuf.Empty) {}
+
+  // 创建租户及管理员用户
+  rpc CreateTenantWithAdminUser (CreateTenantWithAdminUserRequest) returns (google.protobuf.Empty) {}
 }
 
 // 租户
@@ -263,6 +266,10 @@ message CreateTenantWithAdminUserRequest {
   identity.service.v1.Tenant tenant = 1;
   identity.service.v1.User user = 2;
   string password = 3;
+  optional uint32 operator_user_id = 4 [
+    json_name = "operatorUserId",
+    (gnostic.openapi.v3.property) = {description: "操作人用户ID"}
+  ]; // 操作人用户ID
 }
 
 message CountTenantResponse {

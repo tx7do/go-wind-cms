@@ -2,13 +2,10 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"sort"
 	"strconv"
-	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -85,75 +82,6 @@ func (s *PermissionService) init() {
 	}
 }
 
-func (s *PermissionService) extractRelationIDs(
-	permissions []*permissionV1.Permission,
-	groupSet aggregator.ResourceMap[uint32, *permissionV1.PermissionGroup],
-) {
-	for _, p := range permissions {
-		if p.GetGroupId() > 0 {
-			groupSet[p.GetGroupId()] = nil
-		}
-	}
-}
-
-func (s *PermissionService) fetchRelationInfo(
-	ctx context.Context,
-	groupSet aggregator.ResourceMap[uint32, *permissionV1.PermissionGroup],
-) error {
-	if len(groupSet) > 0 {
-		groupIds := make([]uint32, 0, len(groupSet))
-		for id := range groupSet {
-			groupIds = append(groupIds, id)
-		}
-
-		groups, err := s.permissionGroupServiceClient.List(ctx, &paginationV1.PagingRequest{
-			NoPaging: trans.Ptr(true),
-			FilteringType: &paginationV1.PagingRequest_Query{
-				Query: fmt.Sprintf(`{"id__in": "[%s]"}`, strings.Join(
-					sliceutil.Map(groupIds, func(value uint32, _ int, _ []uint32) string {
-						return strconv.FormatUint(uint64(value), 10)
-					}),
-					","),
-				),
-			},
-		})
-		if err != nil {
-			s.log.Errorf("query permission group err: %v", err)
-			return err
-		}
-
-		for _, g := range groups.Items {
-			groupSet[g.GetId()] = g
-		}
-	}
-
-	return nil
-}
-
-func (s *PermissionService) bindRelations(
-	permissions []*permissionV1.Permission,
-	groupSet aggregator.ResourceMap[uint32, *permissionV1.PermissionGroup],
-) {
-	aggregator.Populate(
-		permissions,
-		groupSet,
-		func(ou *permissionV1.Permission) uint32 { return ou.GetGroupId() },
-		func(ou *permissionV1.Permission, g *permissionV1.PermissionGroup) {
-			ou.GroupName = g.Name
-		},
-	)
-}
-
-func (s *PermissionService) enrichRelations(ctx context.Context, permissions []*permissionV1.Permission) error {
-	var groupSet = make(aggregator.ResourceMap[uint32, *permissionV1.PermissionGroup])
-	s.extractRelationIDs(permissions, groupSet)
-	if err := s.fetchRelationInfo(ctx, groupSet); err != nil {
-		return err
-	}
-	s.bindRelations(permissions, groupSet)
-	return nil
-}
-
 func (s *PermissionService) List(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.ListPermissionResponse, error) {
 	// 获取操作人信息
 	operator, err := auth.FromContext(ctx)
@@ -219,8 +147,6 @@ func (s *PermissionService) List(ctx context.Context, req *paginationV1.PagingRe
 		return nil, err
 	}
 
-	_ = s.enrichRelations(ctx, resp.Items)
-
 	return resp, nil
 }
 
@@ -235,9 +161,6 @@ func (s *PermissionService) Get(ctx context.Context, req *permissionV1.GetPermis
 	if err != nil {
 		return nil, err
 	}
-
-	fakeItems := []*permissionV1.Permission{resp}
-	_ = s.enrichRelations(ctx, fakeItems)
 
 	if operator.GetTenantId() > 0 {
 		var limitPermissionResp *permissionV1.ListPermissionIdsResponse

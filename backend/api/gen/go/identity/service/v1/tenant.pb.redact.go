@@ -145,6 +145,17 @@ func (s *redactedTenantServiceServer) AssignTenantAdmin(ctx context.Context, in 
 	return res, err
 }
 
+// CreateTenantWithAdminUser is the redacted wrapper for the actual TenantServiceServer.CreateTenantWithAdminUser method
+// Unary RPC
+func (s *redactedTenantServiceServer) CreateTenantWithAdminUser(ctx context.Context, in *CreateTenantWithAdminUserRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.CreateTenantWithAdminUser(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
 // Redact method implementation for Tenant
 func (x *Tenant) Redact() string {
 	if x == nil {
@@ -318,6 +329,8 @@ func (x *CreateTenantWithAdminUserRequest) Redact() string {
 	// Safe field: User
 
 	// Safe field: Password
+
+	// Safe field: OperatorUserId
 	return x.String()
 }
 

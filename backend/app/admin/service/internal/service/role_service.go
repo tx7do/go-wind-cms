@@ -2,15 +2,10 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"go-wind-cms/pkg/utils"
-	"strconv"
-	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/go-utils/aggregator"
-	"github.com/tx7do/go-utils/sliceutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -44,82 +39,11 @@ func NewRoleService(
 	}
 }
 
-func (s *RoleService) extractRelationIDs(
-	roles []*permissionV1.Role,
-	tenantSet aggregator.ResourceMap[uint32, *identityV1.Tenant],
-) {
-	for _, p := range roles {
-		if p.GetTenantId() > 0 {
-			tenantSet[p.GetTenantId()] = nil
-		}
-	}
-}
-
-func (s *RoleService) fetchRelationInfo(
-	ctx context.Context,
-	tenantSet aggregator.ResourceMap[uint32, *identityV1.Tenant],
-) error {
-	if len(tenantSet) > 0 {
-		tenantIds := make([]uint32, 0, len(tenantSet))
-		for id := range tenantSet {
-			tenantIds = append(tenantIds, id)
-		}
-
-		tenants, err := s.tenantServiceClient.List(ctx, &paginationV1.PagingRequest{
-			NoPaging: trans.Ptr(true),
-			FilteringType: &paginationV1.PagingRequest_Query{
-				Query: fmt.Sprintf(`{"id__in": "[%s]"}`, strings.Join(
-					sliceutil.Map(tenantIds, func(value uint32, _ int, _ []uint32) string {
-						return strconv.FormatUint(uint64(value), 10)
-					}),
-					","),
-				),
-			},
-		})
-		if err != nil {
-			s.log.Errorf("query tenants err: %v", err)
-			return err
-		}
-
-		for _, tenant := range tenants.Items {
-			tenantSet[tenant.GetId()] = tenant
-		}
-	}
-
-	return nil
-}
-
-func (s *RoleService) bindRelations(
-	roles []*permissionV1.Role,
-	tenantSet aggregator.ResourceMap[uint32, *identityV1.Tenant],
-) {
-	aggregator.Populate(
-		roles,
-		tenantSet,
-		func(ou *permissionV1.Role) uint32 { return ou.GetTenantId() },
-		func(ou *permissionV1.Role, r *identityV1.Tenant) {
-			ou.TenantName = r.Name
-		},
-	)
-}
-
-func (s *RoleService) enrichRelations(ctx context.Context, roles []*permissionV1.Role) error {
-	var tenantSet = make(aggregator.ResourceMap[uint32, *identityV1.Tenant])
-	s.extractRelationIDs(roles, tenantSet)
-	if err := s.fetchRelationInfo(ctx, tenantSet); err != nil {
-		return err
-	}
-	s.bindRelations(roles, tenantSet)
-	return nil
-}
-
 func (s *RoleService) List(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.ListRoleResponse, error) {
 	resp, err := s.roleServiceClient.List(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-
-	_ = s.enrichRelations(ctx, resp.Items)
 
 	return resp, nil
 }
@@ -133,9 +57,6 @@ func (s *RoleService) Get(ctx context.Context, req *permissionV1.GetRoleRequest)
 	if err != nil {
 		return nil, err
 	}
-
-	fakeItems := []*permissionV1.Role{resp}
-	_ = s.enrichRelations(ctx, fakeItems)
 
 	return resp, nil
 }

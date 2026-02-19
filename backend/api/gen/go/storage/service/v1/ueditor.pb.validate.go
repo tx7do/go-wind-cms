@@ -528,6 +528,14 @@ func (m *UEditorUploadRequest) validate(all bool) error {
 		// no validation rules for Mime
 	}
 
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
+
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
 	if len(errors) > 0 {
 		return UEditorUploadRequestMultiError(errors)
 	}

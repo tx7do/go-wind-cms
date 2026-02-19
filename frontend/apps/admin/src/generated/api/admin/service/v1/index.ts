@@ -2628,6 +2628,8 @@ export type storageservicev1_UploadFileRequest = {
   sourceFileName?: string;
   mime?: string;
   size?: number;
+  tenantId?: number;
+  userId?: number;
 };
 
 // 预签名选项
@@ -2647,6 +2649,8 @@ export type storageservicev1_UEditorUploadRequest = {
   file?: string;
   sourceFileName?: string;
   mime?: string;
+  tenantId?: number;
+  userId?: number;
 };
 
 export type storageservicev1_UEditorUploadResponse = {
@@ -2936,6 +2940,7 @@ export type internal_messageservicev1_SendMessageRequest = {
   targetAll?: boolean;
   title?: string;
   content: string | undefined;
+  sendUserId?: number;
 };
 
 export type internal_messageservicev1_SendMessageResponse = {
@@ -8346,6 +8351,7 @@ export type identityservicev1_CreateTenantWithAdminUserRequest = {
   tenant: identityservicev1_Tenant | undefined;
   user: identityservicev1_User | undefined;
   password: string | undefined;
+  operatorUserId?: number;
 };
 
 // 用户

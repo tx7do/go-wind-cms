@@ -214,6 +214,11 @@ message SendMessageRequest {
     json_name = "content",
     (gnostic.openapi.v3.property) = { description: "消息内容" }
   ]; // 消息内容
+
+  optional uint32 send_user_id = 12 [
+    json_name = "sendUserId",
+    (gnostic.openapi.v3.property) = { description: "发送者用户ID" }
+  ]; // 发送者用户ID
 }
 
 message SendMessageResponse {

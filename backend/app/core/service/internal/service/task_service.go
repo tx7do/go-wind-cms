@@ -16,7 +16,6 @@ import (
 
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
 	"go-wind-cms/pkg/task"
 )
 
@@ -83,15 +82,8 @@ func (s *TaskService) Create(ctx context.Context, req *taskV1.CreateTaskRequest)
 		return nil, taskV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
 	var t *taskV1.Task
+	var err error
 	if t, err = s.taskRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
@@ -108,18 +100,8 @@ func (s *TaskService) Update(ctx context.Context, req *taskV1.UpdateTaskRequest)
 		return nil, taskV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
 	var t *taskV1.Task
+	var err error
 	if t, err = s.taskRepo.Update(ctx, req); err != nil {
 
 		return nil, err

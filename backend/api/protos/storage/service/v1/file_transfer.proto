@@ -148,6 +148,15 @@ message UploadFileRequest {
     json_name = "size",
     (gnostic.openapi.v3.property) = { description: "文件大小（字节）" }
   ]; // 文件大小（字节）
+
+  optional uint32 tenant_id = 10 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
+  ];
+  optional uint32 user_id = 11 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "用户ID"}
+  ];
 }
 
 message UploadFileResponse {

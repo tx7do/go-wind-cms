@@ -5,15 +5,12 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-cms/app/core/service/internal/data"
 
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
-
-	"go-wind-cms/pkg/middleware/auth"
 )
 
 type LoginPolicyService struct {
@@ -44,15 +41,7 @@ func (s *LoginPolicyService) Create(ctx context.Context, req *authenticationV1.C
 		return nil, authenticationV1.ErrorBadRequest("invalid request")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
-	if err = s.loginPolicyRepo.Create(ctx, req); err != nil {
+	if err := s.loginPolicyRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -64,18 +53,7 @@ func (s *LoginPolicyService) Update(ctx context.Context, req *authenticationV1.U
 		return nil, authenticationV1.ErrorBadRequest("invalid request")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if err = s.loginPolicyRepo.Update(ctx, req); err != nil {
+	if err := s.loginPolicyRepo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 

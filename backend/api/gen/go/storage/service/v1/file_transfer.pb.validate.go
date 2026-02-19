@@ -526,6 +526,14 @@ func (m *UploadFileRequest) validate(all bool) error {
 		// no validation rules for Size
 	}
 
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
+
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
 	if len(errors) > 0 {
 		return UploadFileRequestMultiError(errors)
 	}

@@ -3,9 +3,12 @@ package service
 import (
 	"context"
 	"fmt"
+	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
+	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	paginationFilter "github.com/tx7do/go-crud/pagination/filter"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/sliceutil"
 	"github.com/tx7do/go-utils/trans"
@@ -20,8 +23,6 @@ import (
 
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
-	"go-wind-cms/pkg/middleware/auth"
-	"go-wind-cms/pkg/utils"
 )
 
 type UserService struct {
@@ -288,10 +289,225 @@ func (s *UserService) enrichRelations(ctx context.Context, users []*identityV1.U
 	return nil
 }
 
+// FilterFields 过滤掉不需要的字段条件
+func FilterFields(filterExpr *paginationV1.FilterExpr, excludeFields []string) []*paginationV1.FilterCondition {
+	if filterExpr == nil || len(filterExpr.Conditions) == 0 {
+		return []*paginationV1.FilterCondition{}
+	}
+
+	exclude := make(map[string]struct{}, len(excludeFields))
+	for _, f := range excludeFields {
+		if f == "" {
+			continue
+		}
+		exclude[f] = struct{}{}
+	}
+
+	includeConditions := make([]*paginationV1.FilterCondition, 0, len(filterExpr.Conditions))
+	excludeConditions := make([]*paginationV1.FilterCondition, 0, len(filterExpr.Conditions))
+	for _, cond := range filterExpr.Conditions {
+		if cond == nil || cond.Field == "" {
+			continue
+		}
+		if _, skip := exclude[cond.Field]; skip {
+			excludeConditions = append(excludeConditions, cond)
+			continue
+		}
+		includeConditions = append(includeConditions, cond)
+	}
+
+	filterExpr.Conditions = includeConditions
+
+	return excludeConditions
+}
+
+func (s *UserService) queryUserIDsByRelationIDs(ctx context.Context, roleIDs []uint32, orgUnitIDs []uint32, positionIDs []uint32) ([]uint32, error) {
+	if len(roleIDs) == 0 && len(orgUnitIDs) == 0 && len(positionIDs) == 0 {
+		return nil, nil
+	}
+
+	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
+	case constants.UserTenantRelationOneToOne:
+		return s.queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx, roleIDs, orgUnitIDs, positionIDs)
+	case constants.UserTenantRelationOneToMany:
+		return s.queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx, roleIDs, orgUnitIDs, positionIDs)
+	}
+}
+
+func (s *UserService) queryUserIDsByRelationIDsUserTenantRelationOneToMany(_ context.Context, _, _, _ []uint32) ([]uint32, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (s *UserService) queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx context.Context, roleIDs, orgUnitIDs, positionIDs []uint32) ([]uint32, error) {
+	if len(roleIDs) == 0 && len(orgUnitIDs) == 0 && len(positionIDs) == 0 {
+		return nil, nil
+	}
+
+	var err error
+
+	var orgUnitUserIDs []uint32
+	var positionUserIDs []uint32
+	var roleUserIDs []uint32
+	if len(orgUnitIDs) > 0 {
+		orgUnitUserIDs, err = s.userRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, true)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if len(positionIDs) > 0 {
+		positionUserIDs, err = s.userRepo.ListUserIDsByPositionIDs(ctx, positionIDs, true)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if len(roleIDs) > 0 {
+		roleUserIDs, err = s.userRepo.ListUserIDsByRoleIDs(ctx, roleIDs, true)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// 收集所有非空列表用于求交集
+	lists := make([][]uint32, 0, 3)
+	if orgUnitUserIDs != nil {
+		lists = append(lists, orgUnitUserIDs)
+	}
+	if positionUserIDs != nil {
+		lists = append(lists, positionUserIDs)
+	}
+	if roleUserIDs != nil {
+		lists = append(lists, roleUserIDs)
+	}
+
+	// 如果没有任何实际列表（例如对应 ids 为空导致查询未执行），返回空
+	if len(lists) == 0 {
+		return []uint32{}, nil
+	}
+
+	// 逐步求交集
+	result := lists[0]
+	for i := 1; i < len(lists); i++ {
+		result = sliceutil.Intersection(result, lists[i])
+		if len(result) == 0 {
+			break
+		}
+	}
+
+	return result, nil
+}
+
 func (s *UserService) List(ctx context.Context, req *paginationV1.PagingRequest) (*identityV1.ListUserResponse, error) {
+	filterExpr, err := paginationFilter.ConvertFilterByPagingRequest(req)
+	if err != nil {
+		s.log.Errorf("convert filter by paging request failed: %s", err.Error())
+		return nil, err
+	}
+
+	excludeConditions := FilterFields(filterExpr, []string{
+		"org_unit_id", "org_unit_ids",
+		"position_id", "position_ids",
+		"role_id", "role_ids",
+	})
+
+	var orgUnitIDs []uint32
+	var positionIDs []uint32
+	var roleIDs []uint32
+	for _, cond := range excludeConditions {
+		//r.log.Debugf("excluding filter condition: field=%s operator=%s value=%v", cond.GetField(), cond.GetOp(), cond.GetValue())
+
+		var val uint64
+		switch cond.GetField() {
+		case "org_unit_id":
+			if val, err = strconv.ParseUint(cond.GetValue(), 10, 64); err == nil {
+				orgUnitIDs = append(orgUnitIDs, uint32(val))
+			} else {
+				s.log.Errorf("parse org_unit_id value failed: %s", err.Error())
+			}
+		case "org_unit_ids":
+			for _, v := range cond.GetValues() {
+				if val, err = strconv.ParseUint(v, 10, 64); err == nil {
+					orgUnitIDs = append(orgUnitIDs, uint32(val))
+				} else {
+					s.log.Errorf("parse org_unit_ids value failed: %s", err.Error())
+				}
+			}
+
+		case "position_id":
+			if val, err = strconv.ParseUint(cond.GetValue(), 10, 64); err == nil {
+				positionIDs = append(positionIDs, uint32(val))
+			} else {
+				s.log.Errorf("parse position_id value failed: %s", err.Error())
+			}
+		case "position_ids":
+			for _, v := range cond.GetValues() {
+				if val, err = strconv.ParseUint(v, 10, 64); err == nil {
+					positionIDs = append(positionIDs, uint32(val))
+				} else {
+					s.log.Errorf("parse position_ids value failed: %s", err.Error())
+				}
+			}
+
+		case "role_id":
+			if val, err = strconv.ParseUint(cond.GetValue(), 10, 64); err == nil {
+				roleIDs = append(roleIDs, uint32(val))
+			} else {
+				s.log.Errorf("parse role_id value failed: %s", err.Error())
+			}
+		case "role_ids":
+			for _, v := range cond.GetValues() {
+				if val, err = strconv.ParseUint(v, 10, 64); err == nil {
+					roleIDs = append(roleIDs, uint32(val))
+				} else {
+					s.log.Errorf("parse role_ids value failed: %s", err.Error())
+				}
+			}
+		}
+	}
+
+	var mergedUserIDs []uint32
+	mergedUserIDs, err = s.queryUserIDsByRelationIDs(ctx, roleIDs, orgUnitIDs, positionIDs)
+	if err != nil {
+		s.log.Errorf("query user ids by relation ids failed: %s", err.Error())
+		return nil, err
+	}
+
+	hasRelationFilter := len(roleIDs) > 0 || len(orgUnitIDs) > 0 || len(positionIDs) > 0
+	if hasRelationFilter && len(mergedUserIDs) == 0 {
+		// 如果有关系过滤条件但没有匹配的用户ID，直接返回空结果
+		return &identityV1.ListUserResponse{Total: 0, Items: nil}, nil
+	}
+
+	if len(mergedUserIDs) > 0 {
+		filterExpr.Conditions = append(filterExpr.Conditions, &paginationV1.FilterCondition{
+			Field: "id",
+			Op:    paginationV1.Operator_IN,
+			Values: func() []string {
+				values := make([]string, 0, len(mergedUserIDs))
+				for _, d := range mergedUserIDs {
+					values = append(values, strconv.FormatUint(uint64(d), 10))
+				}
+				return values
+			}(),
+		})
+	}
+
+	req.FilteringType = &paginationV1.PagingRequest_FilterExpr{FilterExpr: filterExpr}
+
 	resp, err := s.userRepo.List(ctx, req)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, user := range resp.Items {
+		roleIds, err := s.userRepo.ListRoleIDsByUserID(ctx, user.GetId())
+		if err != nil {
+			s.log.Errorf("list user role ids failed [%s]", err.Error())
+			return nil, adminV1.ErrorInternalServerError("list user role ids failed")
+		}
+
+		user.RoleIds = roleIds
 	}
 
 	_ = s.enrichRelations(ctx, resp.Items)
@@ -327,76 +543,9 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// 获取操作者的用户信息
-	_, err = s.userRepo.Get(ctx, &identityV1.GetUserRequest{
-		QueryBy: &identityV1.GetUserRequest_Id{
-			Id: operator.UserId,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-	if operator.GetTenantId() > 0 {
-		req.Data.TenantId = operator.TenantId
-	}
-
-	var roleIds []uint32
-	if len(req.Data.GetRoleIds()) > 0 {
-		roleIds = req.Data.GetRoleIds()
-	}
-	if req.Data.RoleId != nil && *req.Data.RoleId > 0 {
-		roleIds = append(roleIds, *req.Data.RoleId)
-	}
-	roleIds = sliceutil.Unique(roleIds)
-	if len(roleIds) == 0 {
-		s.log.Errorf("role_ids is required")
-		return nil, identityV1.ErrorBadRequest("role_ids is required")
-	}
-
-	var queryString string
-	if operator.GetTenantId() > 0 || req.Data.GetTenantId() > 0 {
-		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "TENANT", "tenant_id": %d}`,
-			utils.NumberSliceToString(roleIds),
-			req.Data.GetTenantId(),
-		)
-	} else {
-		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "SYSTEM"}`,
-			utils.NumberSliceToString(roleIds),
-		)
-	}
-	roles, err := s.roleRepo.List(ctx, &paginationV1.PagingRequest{
-		NoPaging: trans.Ptr(true),
-		FilteringType: &paginationV1.PagingRequest_Query{
-			Query: queryString,
-		},
-	})
-	if err != nil {
-		s.log.Errorf("query roles err: %v", err)
-		return nil, err
-	}
-
-	if len(roles.Items) != len(roleIds) {
-		s.log.Errorf("some roles not found, requested role ids: %v", roleIds)
-		return nil, identityV1.ErrorBadRequest("some roles not found")
-	}
-	if len(roles.Items) == 0 {
-		s.log.Errorf("at least one role is required")
-		return nil, identityV1.ErrorBadRequest("at least one role is required")
-	}
-
-	req.Data.RoleId = nil
-	req.Data.RoleIds = roleIds
-
 	// 创建用户
 	var user *identityV1.User
+	var err error
 	if user, err = s.userRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
@@ -434,88 +583,14 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// 获取操作者的用户信息
-	_, err = s.userRepo.Get(ctx, &identityV1.GetUserRequest{
-		QueryBy: &identityV1.GetUserRequest_Id{
-			Id: operator.UserId,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	req.Data.Id = trans.Ptr(req.GetId())
-
-	if operator.GetTenantId() > 0 {
-		req.Data.TenantId = operator.TenantId
-	}
-
-	var roleIds []uint32
-	if len(req.Data.GetRoleIds()) > 0 {
-		roleIds = req.Data.GetRoleIds()
-	}
-	if req.Data.RoleId != nil && *req.Data.RoleId > 0 {
-		roleIds = append(roleIds, *req.Data.RoleId)
-	}
-	roleIds = sliceutil.Unique(roleIds)
-	if len(roleIds) == 0 {
-		s.log.Errorf("role_ids is required")
-		return nil, identityV1.ErrorBadRequest("role_ids is required")
-	}
-
-	var queryString string
-	if operator.GetTenantId() > 0 || req.Data.GetTenantId() > 0 {
-		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "TENANT", "tenant_id": %d}`,
-			utils.NumberSliceToString(roleIds),
-			req.Data.GetTenantId(),
-		)
-	} else {
-		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "SYSTEM"}`,
-			utils.NumberSliceToString(roleIds),
-		)
-	}
-	roles, err := s.roleRepo.List(ctx, &paginationV1.PagingRequest{
-		NoPaging: trans.Ptr(true),
-		FilteringType: &paginationV1.PagingRequest_Query{
-			Query: queryString,
-		},
-	})
-	if err != nil {
-		s.log.Errorf("query roles err: %v", err)
-		return nil, err
-	}
-
-	if len(roles.Items) != len(roleIds) {
-		s.log.Errorf("some roles not found, requested role ids: %v", roleIds)
-		return nil, identityV1.ErrorBadRequest("some roles not found")
-	}
-	if len(roles.Items) == 0 {
-		s.log.Errorf("at least one role is required")
-		return nil, identityV1.ErrorBadRequest("at least one role is required")
-	}
-
-	req.Data.RoleId = nil
-	req.Data.RoleIds = roleIds
-
 	// 更新用户
-	if err = s.userRepo.Update(ctx, req); err != nil {
+	if err := s.userRepo.Update(ctx, req); err != nil {
 		s.log.Error(err)
 		return nil, err
 	}
 
 	if len(req.GetPassword()) > 0 {
-		if err = s.userCredentialRepo.ResetCredential(ctx, &authenticationV1.ResetCredentialRequest{
+		if err := s.userCredentialRepo.ResetCredential(ctx, &authenticationV1.ResetCredentialRequest{
 			IdentityType:  authenticationV1.UserCredential_USERNAME,
 			Identifier:    req.Data.GetUsername(),
 			NewCredential: req.GetPassword(),
@@ -528,35 +603,7 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 }
 
 func (s *UserService) Delete(ctx context.Context, req *identityV1.DeleteUserRequest) (*emptypb.Empty, error) {
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// 获取操作者的用户信息
-	_, err = s.userRepo.Get(ctx, &identityV1.GetUserRequest{
-		QueryBy: &identityV1.GetUserRequest_Id{
-			Id: operator.UserId,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// 获取将被删除的用户信息
-	_, err = s.userRepo.Get(ctx, &identityV1.GetUserRequest{
-		QueryBy: &identityV1.GetUserRequest_Id{
-			Id: req.GetId(),
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// 删除用户
-	err = s.userRepo.Delete(ctx, req)
-
+	err := s.userRepo.Delete(ctx, req)
 	return &emptypb.Empty{}, err
 }
 

@@ -14,14 +14,16 @@ import (
 )
 
 const (
+	ProjectPrefix = "gwc:"
+
 	// AccessTokenKeyFormat 访问令牌键格式 at:{ct}:{uid}
-	AccessTokenKeyFormat = "at:%d:%d"
+	AccessTokenKeyFormat = ProjectPrefix + "at:%d:%d"
 	// RefreshTokenKeyFormat 刷新令牌键格式 rt:{ct}:{uid}
 
-	RefreshTokenKeyFormat = "rt:%d:%d"
+	RefreshTokenKeyFormat = ProjectPrefix + "rt:%d:%d"
 
 	// BlacklistKeyFormat 访问令牌黑名单键格式 bl:{jti}
-	BlacklistKeyFormat = "bl:%s"
+	BlacklistKeyFormat = ProjectPrefix + "bl:%s"
 )
 
 // UserTokenCache 用户令牌缓存
@@ -33,7 +35,7 @@ type UserTokenCache struct {
 func NewUserTokenCache(ctx *bootstrap.Context, rdb *redis.Client) *UserTokenCache {
 	utc := &UserTokenCache{
 		rdb: rdb,
-		log: ctx.NewLoggerHelper("user-token/cache"),
+		log: ctx.NewLoggerHelper("user-token/cache/core-service"),
 	}
 	return utc
 }

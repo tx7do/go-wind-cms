@@ -15,8 +15,6 @@ import (
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
-
-	"go-wind-cms/pkg/middleware/auth"
 )
 
 type TenantService struct {
@@ -144,15 +142,8 @@ func (s *TenantService) Create(ctx context.Context, req *identityV1.CreateTenant
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.CreatedBy = trans.Ptr(operator.UserId)
-
 	var tenant *identityV1.Tenant
+	var err error
 	if tenant, err = s.tenantRepo.Create(ctx, req.Data); err != nil {
 		return nil, err
 	}
@@ -165,18 +156,7 @@ func (s *TenantService) Update(ctx context.Context, req *identityV1.UpdateTenant
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.UpdatedBy = trans.Ptr(operator.UserId)
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	if err = s.tenantRepo.Update(ctx, req); err != nil {
+	if err := s.tenantRepo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -202,14 +182,7 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 获取操作人信息
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Tenant.CreatedBy = trans.Ptr(operator.UserId)
-	req.User.CreatedBy = trans.Ptr(operator.UserId)
+	var err error
 
 	// Check if tenant code or admin username already exists
 	if _, err = s.tenantRepo.TenantExists(ctx, &identityV1.TenantExistsRequest{
@@ -237,7 +210,6 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 		if cleanup != nil {
 			cleanup()
 		}
-
 	}()
 
 	// Create tenant
@@ -251,7 +223,7 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 
 	// copy tenant manager role to tenant
 	var role *permissionV1.Role
-	if role, err = s.roleRepo.CreateTenantRoleFromTemplate(ctx, tx, tenant.GetId(), operator.GetUserId()); err != nil {
+	if role, err = s.roleRepo.CreateTenantRoleFromTemplate(ctx, tx, tenant.GetId(), req.GetOperatorUserId()); err != nil {
 		s.log.Errorf("copy tenant admin role template to tenant err: %v", err)
 		return nil, err
 	}

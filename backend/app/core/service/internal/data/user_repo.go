@@ -62,8 +62,11 @@ type UserRepo interface {
 	ListPositionIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error)
 
 	ListOrgUnitIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error)
-
 	ListUserRelationIDs(ctx context.Context, userID uint32) (roleIDs []uint32, positionIDs []uint32, orgUnitIDs []uint32, err error)
+
+	ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint32, excludeExpired bool) ([]uint32, error)
+	ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint32, excludeExpired bool) ([]uint32, error)
+	ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint32, excludeExpired bool) ([]uint32, error)
 }
 
 type userRepo struct {
@@ -1150,4 +1153,16 @@ func (r *userRepo) listUserRelationIDs(ctx context.Context, userID uint32) (role
 	r.log.Debugf("list user relation ids: user_id=%d role_ids=%v position_ids=%v org_unit_ids=%v", userID, roleIDs, positionIDs, orgUnitIDs)
 
 	return
+}
+
+func (r *userRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint32, excludeExpired bool) ([]uint32, error) {
+	return r.userOrgUnitRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, excludeExpired)
+}
+
+func (r *userRepo) ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint32, excludeExpired bool) ([]uint32, error) {
+	return r.userPositionRepo.ListUserIDsByPositionIDs(ctx, positionIDs, excludeExpired)
+}
+
+func (r *userRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint32, excludeExpired bool) ([]uint32, error) {
+	return r.userRoleRepo.ListUserIDsByRoleIDs(ctx, roleIDs, excludeExpired)
 }
