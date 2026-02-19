@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "media/service/v1/media_asset.proto";
+
+// 媒体资源库服务
+service MediaAssetService {
+  // 获取媒体资源库列表
+  rpc List (pagination.PagingRequest) returns (media.service.v1.ListMediaAssetResponse) {
+      option (google.api.http) = {
+        get: "/admin/v1/media-assets"
+      };
+  }
+
+  // 获取媒体资源库数据
+  rpc Get (media.service.v1.GetMediaAssetRequest) returns (media.service.v1.MediaAsset) {
+      option (google.api.http) = {
+        get: "/admin/v1/media-assets/{id}"
+      };
+  }
+
+  // 创建媒体资源库
+  rpc Create (media.service.v1.CreateMediaAssetRequest) returns (media.service.v1.MediaAsset) {
+      option (google.api.http) = {
+        post: "/admin/v1/media-assets"
+        body: "*"
+      };
+  }
+
+  // 更新媒体资源库
+  rpc Update (media.service.v1.UpdateMediaAssetRequest) returns (media.service.v1.MediaAsset) {
+      option (google.api.http) = {
+        put: "/admin/v1/media-assets/{id}"
+        body: "*"
+      };
+  }
+
+  // 删除媒体资源库
+  rpc Delete (media.service.v1.DeleteMediaAssetRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        delete: "/admin/v1/media-assets/{id}"
+      };
+  }
+}

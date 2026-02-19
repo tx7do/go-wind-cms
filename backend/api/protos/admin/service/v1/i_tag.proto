@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package admin.service.v1;
 
-
 import "gnostic/openapi/v3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
@@ -13,21 +12,21 @@ import "content/service/v1/tag.proto";
 // 标签服务
 service TagService {
   // 获取标签列表
-  rpc ListTag (pagination.PagingRequest) returns (content.service.v1.ListTagResponse) {
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListTagResponse) {
     option (google.api.http) = {
       get: "/admin/v1/tags"
     };
   }
 
   // 获取标签数据
-  rpc GetTag (content.service.v1.GetTagRequest) returns (content.service.v1.Tag) {
+  rpc Get (content.service.v1.GetTagRequest) returns (content.service.v1.Tag) {
     option (google.api.http) = {
       get: "/admin/v1/tags/{id}"
     };
   }
 
   // 创建标签
-  rpc CreateTag (content.service.v1.CreateTagRequest) returns (content.service.v1.Tag) {
+  rpc Create (content.service.v1.CreateTagRequest) returns (content.service.v1.Tag) {
     option (google.api.http) = {
       post: "/admin/v1/tags"
       body: "*"
@@ -35,15 +34,15 @@ service TagService {
   }
 
   // 更新标签
-  rpc UpdateTag (content.service.v1.UpdateTagRequest) returns (content.service.v1.Tag) {
+  rpc Update (content.service.v1.UpdateTagRequest) returns (content.service.v1.Tag) {
     option (google.api.http) = {
       put: "/admin/v1/tags/{id}"
-      body: "tag"
+      body: "*"
     };
   }
 
   // 删除标签
-  rpc DeleteTag (content.service.v1.DeleteTagRequest) returns (google.protobuf.Empty) {
+  rpc Delete (content.service.v1.DeleteTagRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/admin/v1/tags/{id}"
     };

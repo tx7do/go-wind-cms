@@ -16,6 +16,7 @@
           <MarkDown
             v-model:value="postToStage.originalContent"
             @change="handleChange"
+
             ref="markDownRef"
             placeholder="这是占位文本"
           />

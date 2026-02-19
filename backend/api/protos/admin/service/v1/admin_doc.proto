@@ -2,23 +2,21 @@ syntax = "proto3";
 
 package admin.service.v1;
 
-
-
 import "gnostic/openapi/v3/annotations.proto";
 
 option (gnostic.openapi.v3.document) = {
   info: {
-    title: "Kratos-CMS 后台管理API";
+    title: "GoWind CMS Admin API";
     version: "1.0";
-    description: "Kratos-CMS 后台管理API";
+    description: "GoWind CMS Admin API";
     contact: {
       name: "tx7do";
-      url: "https://github.com/tx7do/kratos-cms";
+      url: "https://github.com/tx7do/go-wind-cms";
       email: "yanglinbo@gmail.com";
     }
     license: {
       name: "MIT License";
-      url: "https://github.com/tx7do/kratos-cms/blob/master/LICENSE";
+      url: "https://github.com/tx7do/go-wind-cms/blob/master/LICENSE";
     }
   }
 
@@ -43,7 +41,7 @@ option (gnostic.openapi.v3.document) = {
               flows: {
                 password: {
                   token_url: "/admin/v1/login";
-                  refresh_url: "/admin/v1/refresh_token";
+                  refresh_url: "/admin/v1/refresh-token";
                   scopes: {}
                 }
               }

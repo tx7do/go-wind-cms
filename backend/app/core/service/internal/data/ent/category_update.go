@@ -6,8 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/category"
-	"kratos-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-cms/app/core/service/internal/data/ent/category"
+	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -23,272 +24,412 @@ type CategoryUpdate struct {
 }
 
 // Where appends a list predicates to the CategoryUpdate builder.
-func (cu *CategoryUpdate) Where(ps ...predicate.Category) *CategoryUpdate {
-	cu.mutation.Where(ps...)
-	return cu
+func (_u *CategoryUpdate) Where(ps ...predicate.Category) *CategoryUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (cu *CategoryUpdate) SetUpdateTime(i int64) *CategoryUpdate {
-	cu.mutation.ResetUpdateTime()
-	cu.mutation.SetUpdateTime(i)
-	return cu
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *CategoryUpdate) SetUpdatedAt(v time.Time) *CategoryUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
-// AddUpdateTime adds i to the "update_time" field.
-func (cu *CategoryUpdate) AddUpdateTime(i int64) *CategoryUpdate {
-	cu.mutation.AddUpdateTime(i)
-	return cu
-}
-
-// ClearUpdateTime clears the value of the "update_time" field.
-func (cu *CategoryUpdate) ClearUpdateTime() *CategoryUpdate {
-	cu.mutation.ClearUpdateTime()
-	return cu
-}
-
-// SetDeleteTime sets the "delete_time" field.
-func (cu *CategoryUpdate) SetDeleteTime(i int64) *CategoryUpdate {
-	cu.mutation.ResetDeleteTime()
-	cu.mutation.SetDeleteTime(i)
-	return cu
-}
-
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillableDeleteTime(i *int64) *CategoryUpdate {
-	if i != nil {
-		cu.SetDeleteTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableUpdatedAt(v *time.Time) *CategoryUpdate {
+	if v != nil {
+		_u.SetUpdatedAt(*v)
 	}
-	return cu
+	return _u
 }
 
-// AddDeleteTime adds i to the "delete_time" field.
-func (cu *CategoryUpdate) AddDeleteTime(i int64) *CategoryUpdate {
-	cu.mutation.AddDeleteTime(i)
-	return cu
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *CategoryUpdate) ClearUpdatedAt() *CategoryUpdate {
+	_u.mutation.ClearUpdatedAt()
+	return _u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (cu *CategoryUpdate) ClearDeleteTime() *CategoryUpdate {
-	cu.mutation.ClearDeleteTime()
-	return cu
+// SetDeletedAt sets the "deleted_at" field.
+func (_u *CategoryUpdate) SetDeletedAt(v time.Time) *CategoryUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
-// SetName sets the "name" field.
-func (cu *CategoryUpdate) SetName(s string) *CategoryUpdate {
-	cu.mutation.SetName(s)
-	return cu
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillableName(s *string) *CategoryUpdate {
-	if s != nil {
-		cu.SetName(*s)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableDeletedAt(v *time.Time) *CategoryUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return cu
+	return _u
 }
 
-// ClearName clears the value of the "name" field.
-func (cu *CategoryUpdate) ClearName() *CategoryUpdate {
-	cu.mutation.ClearName()
-	return cu
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *CategoryUpdate) ClearDeletedAt() *CategoryUpdate {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
-// SetSlug sets the "slug" field.
-func (cu *CategoryUpdate) SetSlug(s string) *CategoryUpdate {
-	cu.mutation.SetSlug(s)
-	return cu
+// SetCreatedBy sets the "created_by" field.
+func (_u *CategoryUpdate) SetCreatedBy(v uint32) *CategoryUpdate {
+	_u.mutation.ResetCreatedBy()
+	_u.mutation.SetCreatedBy(v)
+	return _u
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillableSlug(s *string) *CategoryUpdate {
-	if s != nil {
-		cu.SetSlug(*s)
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableCreatedBy(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetCreatedBy(*v)
 	}
-	return cu
+	return _u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (cu *CategoryUpdate) ClearSlug() *CategoryUpdate {
-	cu.mutation.ClearSlug()
-	return cu
+// AddCreatedBy adds value to the "created_by" field.
+func (_u *CategoryUpdate) AddCreatedBy(v int32) *CategoryUpdate {
+	_u.mutation.AddCreatedBy(v)
+	return _u
 }
 
-// SetDescription sets the "description" field.
-func (cu *CategoryUpdate) SetDescription(s string) *CategoryUpdate {
-	cu.mutation.SetDescription(s)
-	return cu
+// ClearCreatedBy clears the value of the "created_by" field.
+func (_u *CategoryUpdate) ClearCreatedBy() *CategoryUpdate {
+	_u.mutation.ClearCreatedBy()
+	return _u
 }
 
-// SetNillableDescription sets the "description" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillableDescription(s *string) *CategoryUpdate {
-	if s != nil {
-		cu.SetDescription(*s)
+// SetUpdatedBy sets the "updated_by" field.
+func (_u *CategoryUpdate) SetUpdatedBy(v uint32) *CategoryUpdate {
+	_u.mutation.ResetUpdatedBy()
+	_u.mutation.SetUpdatedBy(v)
+	return _u
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableUpdatedBy(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetUpdatedBy(*v)
 	}
-	return cu
+	return _u
 }
 
-// ClearDescription clears the value of the "description" field.
-func (cu *CategoryUpdate) ClearDescription() *CategoryUpdate {
-	cu.mutation.ClearDescription()
-	return cu
+// AddUpdatedBy adds value to the "updated_by" field.
+func (_u *CategoryUpdate) AddUpdatedBy(v int32) *CategoryUpdate {
+	_u.mutation.AddUpdatedBy(v)
+	return _u
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (cu *CategoryUpdate) SetThumbnail(s string) *CategoryUpdate {
-	cu.mutation.SetThumbnail(s)
-	return cu
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (_u *CategoryUpdate) ClearUpdatedBy() *CategoryUpdate {
+	_u.mutation.ClearUpdatedBy()
+	return _u
 }
 
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillableThumbnail(s *string) *CategoryUpdate {
-	if s != nil {
-		cu.SetThumbnail(*s)
+// SetDeletedBy sets the "deleted_by" field.
+func (_u *CategoryUpdate) SetDeletedBy(v uint32) *CategoryUpdate {
+	_u.mutation.ResetDeletedBy()
+	_u.mutation.SetDeletedBy(v)
+	return _u
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableDeletedBy(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetDeletedBy(*v)
 	}
-	return cu
+	return _u
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (cu *CategoryUpdate) ClearThumbnail() *CategoryUpdate {
-	cu.mutation.ClearThumbnail()
-	return cu
+// AddDeletedBy adds value to the "deleted_by" field.
+func (_u *CategoryUpdate) AddDeletedBy(v int32) *CategoryUpdate {
+	_u.mutation.AddDeletedBy(v)
+	return _u
 }
 
-// SetPassword sets the "password" field.
-func (cu *CategoryUpdate) SetPassword(s string) *CategoryUpdate {
-	cu.mutation.SetPassword(s)
-	return cu
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (_u *CategoryUpdate) ClearDeletedBy() *CategoryUpdate {
+	_u.mutation.ClearDeletedBy()
+	return _u
 }
 
-// SetNillablePassword sets the "password" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillablePassword(s *string) *CategoryUpdate {
-	if s != nil {
-		cu.SetPassword(*s)
+// SetSortOrder sets the "sort_order" field.
+func (_u *CategoryUpdate) SetSortOrder(v uint32) *CategoryUpdate {
+	_u.mutation.ResetSortOrder()
+	_u.mutation.SetSortOrder(v)
+	return _u
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableSortOrder(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetSortOrder(*v)
 	}
-	return cu
+	return _u
 }
 
-// ClearPassword clears the value of the "password" field.
-func (cu *CategoryUpdate) ClearPassword() *CategoryUpdate {
-	cu.mutation.ClearPassword()
-	return cu
+// AddSortOrder adds value to the "sort_order" field.
+func (_u *CategoryUpdate) AddSortOrder(v int32) *CategoryUpdate {
+	_u.mutation.AddSortOrder(v)
+	return _u
 }
 
-// SetFullPath sets the "full_path" field.
-func (cu *CategoryUpdate) SetFullPath(s string) *CategoryUpdate {
-	cu.mutation.SetFullPath(s)
-	return cu
+// ClearSortOrder clears the value of the "sort_order" field.
+func (_u *CategoryUpdate) ClearSortOrder() *CategoryUpdate {
+	_u.mutation.ClearSortOrder()
+	return _u
 }
 
-// SetNillableFullPath sets the "full_path" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillableFullPath(s *string) *CategoryUpdate {
-	if s != nil {
-		cu.SetFullPath(*s)
+// SetPath sets the "path" field.
+func (_u *CategoryUpdate) SetPath(v string) *CategoryUpdate {
+	_u.mutation.SetPath(v)
+	return _u
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillablePath(v *string) *CategoryUpdate {
+	if v != nil {
+		_u.SetPath(*v)
 	}
-	return cu
+	return _u
 }
 
-// ClearFullPath clears the value of the "full_path" field.
-func (cu *CategoryUpdate) ClearFullPath() *CategoryUpdate {
-	cu.mutation.ClearFullPath()
-	return cu
+// ClearPath clears the value of the "path" field.
+func (_u *CategoryUpdate) ClearPath() *CategoryUpdate {
+	_u.mutation.ClearPath()
+	return _u
 }
 
 // SetParentID sets the "parent_id" field.
-func (cu *CategoryUpdate) SetParentID(u uint32) *CategoryUpdate {
-	cu.mutation.ResetParentID()
-	cu.mutation.SetParentID(u)
-	return cu
+func (_u *CategoryUpdate) SetParentID(v uint32) *CategoryUpdate {
+	_u.mutation.SetParentID(v)
+	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillableParentID(u *uint32) *CategoryUpdate {
-	if u != nil {
-		cu.SetParentID(*u)
+func (_u *CategoryUpdate) SetNillableParentID(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetParentID(*v)
 	}
-	return cu
-}
-
-// AddParentID adds u to the "parent_id" field.
-func (cu *CategoryUpdate) AddParentID(u int32) *CategoryUpdate {
-	cu.mutation.AddParentID(u)
-	return cu
+	return _u
 }
 
 // ClearParentID clears the value of the "parent_id" field.
-func (cu *CategoryUpdate) ClearParentID() *CategoryUpdate {
-	cu.mutation.ClearParentID()
-	return cu
+func (_u *CategoryUpdate) ClearParentID() *CategoryUpdate {
+	_u.mutation.ClearParentID()
+	return _u
 }
 
-// SetPriority sets the "priority" field.
-func (cu *CategoryUpdate) SetPriority(i int32) *CategoryUpdate {
-	cu.mutation.ResetPriority()
-	cu.mutation.SetPriority(i)
-	return cu
+// SetStatus sets the "status" field.
+func (_u *CategoryUpdate) SetStatus(v category.Status) *CategoryUpdate {
+	_u.mutation.SetStatus(v)
+	return _u
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillablePriority(i *int32) *CategoryUpdate {
-	if i != nil {
-		cu.SetPriority(*i)
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableStatus(v *category.Status) *CategoryUpdate {
+	if v != nil {
+		_u.SetStatus(*v)
 	}
-	return cu
+	return _u
 }
 
-// AddPriority adds i to the "priority" field.
-func (cu *CategoryUpdate) AddPriority(i int32) *CategoryUpdate {
-	cu.mutation.AddPriority(i)
-	return cu
+// ClearStatus clears the value of the "status" field.
+func (_u *CategoryUpdate) ClearStatus() *CategoryUpdate {
+	_u.mutation.ClearStatus()
+	return _u
 }
 
-// ClearPriority clears the value of the "priority" field.
-func (cu *CategoryUpdate) ClearPriority() *CategoryUpdate {
-	cu.mutation.ClearPriority()
-	return cu
+// SetDepth sets the "depth" field.
+func (_u *CategoryUpdate) SetDepth(v int32) *CategoryUpdate {
+	_u.mutation.ResetDepth()
+	_u.mutation.SetDepth(v)
+	return _u
+}
+
+// SetNillableDepth sets the "depth" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableDepth(v *int32) *CategoryUpdate {
+	if v != nil {
+		_u.SetDepth(*v)
+	}
+	return _u
+}
+
+// AddDepth adds value to the "depth" field.
+func (_u *CategoryUpdate) AddDepth(v int32) *CategoryUpdate {
+	_u.mutation.AddDepth(v)
+	return _u
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (_u *CategoryUpdate) ClearDepth() *CategoryUpdate {
+	_u.mutation.ClearDepth()
+	return _u
+}
+
+// SetIsNav sets the "is_nav" field.
+func (_u *CategoryUpdate) SetIsNav(v bool) *CategoryUpdate {
+	_u.mutation.SetIsNav(v)
+	return _u
+}
+
+// SetNillableIsNav sets the "is_nav" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableIsNav(v *bool) *CategoryUpdate {
+	if v != nil {
+		_u.SetIsNav(*v)
+	}
+	return _u
+}
+
+// ClearIsNav clears the value of the "is_nav" field.
+func (_u *CategoryUpdate) ClearIsNav() *CategoryUpdate {
+	_u.mutation.ClearIsNav()
+	return _u
+}
+
+// SetIcon sets the "icon" field.
+func (_u *CategoryUpdate) SetIcon(v string) *CategoryUpdate {
+	_u.mutation.SetIcon(v)
+	return _u
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableIcon(v *string) *CategoryUpdate {
+	if v != nil {
+		_u.SetIcon(*v)
+	}
+	return _u
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (_u *CategoryUpdate) ClearIcon() *CategoryUpdate {
+	_u.mutation.ClearIcon()
+	return _u
 }
 
 // SetPostCount sets the "post_count" field.
-func (cu *CategoryUpdate) SetPostCount(u uint32) *CategoryUpdate {
-	cu.mutation.ResetPostCount()
-	cu.mutation.SetPostCount(u)
-	return cu
+func (_u *CategoryUpdate) SetPostCount(v uint32) *CategoryUpdate {
+	_u.mutation.ResetPostCount()
+	_u.mutation.SetPostCount(v)
+	return _u
 }
 
 // SetNillablePostCount sets the "post_count" field if the given value is not nil.
-func (cu *CategoryUpdate) SetNillablePostCount(u *uint32) *CategoryUpdate {
-	if u != nil {
-		cu.SetPostCount(*u)
+func (_u *CategoryUpdate) SetNillablePostCount(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetPostCount(*v)
 	}
-	return cu
+	return _u
 }
 
-// AddPostCount adds u to the "post_count" field.
-func (cu *CategoryUpdate) AddPostCount(u int32) *CategoryUpdate {
-	cu.mutation.AddPostCount(u)
-	return cu
+// AddPostCount adds value to the "post_count" field.
+func (_u *CategoryUpdate) AddPostCount(v int32) *CategoryUpdate {
+	_u.mutation.AddPostCount(v)
+	return _u
 }
 
 // ClearPostCount clears the value of the "post_count" field.
-func (cu *CategoryUpdate) ClearPostCount() *CategoryUpdate {
-	cu.mutation.ClearPostCount()
-	return cu
+func (_u *CategoryUpdate) ClearPostCount() *CategoryUpdate {
+	_u.mutation.ClearPostCount()
+	return _u
+}
+
+// SetDirectPostCount sets the "direct_post_count" field.
+func (_u *CategoryUpdate) SetDirectPostCount(v uint32) *CategoryUpdate {
+	_u.mutation.ResetDirectPostCount()
+	_u.mutation.SetDirectPostCount(v)
+	return _u
+}
+
+// SetNillableDirectPostCount sets the "direct_post_count" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableDirectPostCount(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetDirectPostCount(*v)
+	}
+	return _u
+}
+
+// AddDirectPostCount adds value to the "direct_post_count" field.
+func (_u *CategoryUpdate) AddDirectPostCount(v int32) *CategoryUpdate {
+	_u.mutation.AddDirectPostCount(v)
+	return _u
+}
+
+// ClearDirectPostCount clears the value of the "direct_post_count" field.
+func (_u *CategoryUpdate) ClearDirectPostCount() *CategoryUpdate {
+	_u.mutation.ClearDirectPostCount()
+	return _u
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (_u *CategoryUpdate) SetCustomFields(v *map[string]string) *CategoryUpdate {
+	_u.mutation.SetCustomFields(v)
+	return _u
+}
+
+// ClearCustomFields clears the value of the "custom_fields" field.
+func (_u *CategoryUpdate) ClearCustomFields() *CategoryUpdate {
+	_u.mutation.ClearCustomFields()
+	return _u
+}
+
+// SetParent sets the "parent" edge to the Category entity.
+func (_u *CategoryUpdate) SetParent(v *Category) *CategoryUpdate {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Category entity by IDs.
+func (_u *CategoryUpdate) AddChildIDs(ids ...uint32) *CategoryUpdate {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Category entity.
+func (_u *CategoryUpdate) AddChildren(v ...*Category) *CategoryUpdate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
 }
 
 // Mutation returns the CategoryMutation object of the builder.
-func (cu *CategoryUpdate) Mutation() *CategoryMutation {
-	return cu.mutation
+func (_u *CategoryUpdate) Mutation() *CategoryMutation {
+	return _u.mutation
+}
+
+// ClearParent clears the "parent" edge to the Category entity.
+func (_u *CategoryUpdate) ClearParent() *CategoryUpdate {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the Category entity.
+func (_u *CategoryUpdate) ClearChildren() *CategoryUpdate {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to Category entities by IDs.
+func (_u *CategoryUpdate) RemoveChildIDs(ids ...uint32) *CategoryUpdate {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to Category entities.
+func (_u *CategoryUpdate) RemoveChildren(v ...*Category) *CategoryUpdate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (cu *CategoryUpdate) Save(ctx context.Context) (int, error) {
-	cu.defaults()
-	return withHooks(ctx, cu.sqlSave, cu.mutation, cu.hooks)
+func (_u *CategoryUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cu *CategoryUpdate) SaveX(ctx context.Context) int {
-	affected, err := cu.Save(ctx)
+func (_u *CategoryUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -296,150 +437,235 @@ func (cu *CategoryUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (cu *CategoryUpdate) Exec(ctx context.Context) error {
-	_, err := cu.Save(ctx)
+func (_u *CategoryUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cu *CategoryUpdate) ExecX(ctx context.Context) {
-	if err := cu.Exec(ctx); err != nil {
+func (_u *CategoryUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (cu *CategoryUpdate) defaults() {
-	if _, ok := cu.mutation.UpdateTime(); !ok && !cu.mutation.UpdateTimeCleared() {
-		v := category.UpdateDefaultUpdateTime()
-		cu.mutation.SetUpdateTime(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
-func (cu *CategoryUpdate) check() error {
-	if v, ok := cu.mutation.Name(); ok {
-		if err := category.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Category.name": %w`, err)}
+func (_u *CategoryUpdate) check() error {
+	if v, ok := _u.mutation.Path(); ok {
+		if err := category.PathValidator(v); err != nil {
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Category.path": %w`, err)}
 		}
 	}
-	if v, ok := cu.mutation.Description(); ok {
-		if err := category.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Category.description": %w`, err)}
-		}
-	}
-	if v, ok := cu.mutation.Thumbnail(); ok {
-		if err := category.ThumbnailValidator(v); err != nil {
-			return &ValidationError{Name: "thumbnail", err: fmt.Errorf(`ent: validator failed for field "Category.thumbnail": %w`, err)}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := category.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Category.status": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cu *CategoryUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CategoryUpdate {
-	cu.modifiers = append(cu.modifiers, modifiers...)
-	return cu
+func (_u *CategoryUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CategoryUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (cu *CategoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := cu.check(); err != nil {
-		return n, err
+func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(category.Table, category.Columns, sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32))
-	if ps := cu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if cu.mutation.CreateTimeCleared() {
-		_spec.ClearField(category.FieldCreateTime, field.TypeInt64)
+	if _u.mutation.CreatedAtCleared() {
+		_spec.ClearField(category.FieldCreatedAt, field.TypeTime)
 	}
-	if value, ok := cu.mutation.UpdateTime(); ok {
-		_spec.SetField(category.FieldUpdateTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(category.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := cu.mutation.AddedUpdateTime(); ok {
-		_spec.AddField(category.FieldUpdateTime, field.TypeInt64, value)
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(category.FieldUpdatedAt, field.TypeTime)
 	}
-	if cu.mutation.UpdateTimeCleared() {
-		_spec.ClearField(category.FieldUpdateTime, field.TypeInt64)
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(category.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := cu.mutation.DeleteTime(); ok {
-		_spec.SetField(category.FieldDeleteTime, field.TypeInt64, value)
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(category.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := cu.mutation.AddedDeleteTime(); ok {
-		_spec.AddField(category.FieldDeleteTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.CreatedBy(); ok {
+		_spec.SetField(category.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if cu.mutation.DeleteTimeCleared() {
-		_spec.ClearField(category.FieldDeleteTime, field.TypeInt64)
+	if value, ok := _u.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(category.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if value, ok := cu.mutation.Name(); ok {
-		_spec.SetField(category.FieldName, field.TypeString, value)
+	if _u.mutation.CreatedByCleared() {
+		_spec.ClearField(category.FieldCreatedBy, field.TypeUint32)
 	}
-	if cu.mutation.NameCleared() {
-		_spec.ClearField(category.FieldName, field.TypeString)
+	if value, ok := _u.mutation.UpdatedBy(); ok {
+		_spec.SetField(category.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := cu.mutation.Slug(); ok {
-		_spec.SetField(category.FieldSlug, field.TypeString, value)
+	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(category.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if cu.mutation.SlugCleared() {
-		_spec.ClearField(category.FieldSlug, field.TypeString)
+	if _u.mutation.UpdatedByCleared() {
+		_spec.ClearField(category.FieldUpdatedBy, field.TypeUint32)
 	}
-	if value, ok := cu.mutation.Description(); ok {
-		_spec.SetField(category.FieldDescription, field.TypeString, value)
+	if value, ok := _u.mutation.DeletedBy(); ok {
+		_spec.SetField(category.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if cu.mutation.DescriptionCleared() {
-		_spec.ClearField(category.FieldDescription, field.TypeString)
+	if value, ok := _u.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(category.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if value, ok := cu.mutation.Thumbnail(); ok {
-		_spec.SetField(category.FieldThumbnail, field.TypeString, value)
+	if _u.mutation.DeletedByCleared() {
+		_spec.ClearField(category.FieldDeletedBy, field.TypeUint32)
 	}
-	if cu.mutation.ThumbnailCleared() {
-		_spec.ClearField(category.FieldThumbnail, field.TypeString)
+	if value, ok := _u.mutation.SortOrder(); ok {
+		_spec.SetField(category.FieldSortOrder, field.TypeUint32, value)
 	}
-	if value, ok := cu.mutation.Password(); ok {
-		_spec.SetField(category.FieldPassword, field.TypeString, value)
+	if value, ok := _u.mutation.AddedSortOrder(); ok {
+		_spec.AddField(category.FieldSortOrder, field.TypeUint32, value)
 	}
-	if cu.mutation.PasswordCleared() {
-		_spec.ClearField(category.FieldPassword, field.TypeString)
+	if _u.mutation.SortOrderCleared() {
+		_spec.ClearField(category.FieldSortOrder, field.TypeUint32)
 	}
-	if value, ok := cu.mutation.FullPath(); ok {
-		_spec.SetField(category.FieldFullPath, field.TypeString, value)
+	if value, ok := _u.mutation.Path(); ok {
+		_spec.SetField(category.FieldPath, field.TypeString, value)
 	}
-	if cu.mutation.FullPathCleared() {
-		_spec.ClearField(category.FieldFullPath, field.TypeString)
+	if _u.mutation.PathCleared() {
+		_spec.ClearField(category.FieldPath, field.TypeString)
 	}
-	if value, ok := cu.mutation.ParentID(); ok {
-		_spec.SetField(category.FieldParentID, field.TypeUint32, value)
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(category.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := cu.mutation.AddedParentID(); ok {
-		_spec.AddField(category.FieldParentID, field.TypeUint32, value)
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(category.FieldStatus, field.TypeEnum)
 	}
-	if cu.mutation.ParentIDCleared() {
-		_spec.ClearField(category.FieldParentID, field.TypeUint32)
+	if value, ok := _u.mutation.Depth(); ok {
+		_spec.SetField(category.FieldDepth, field.TypeInt32, value)
 	}
-	if value, ok := cu.mutation.Priority(); ok {
-		_spec.SetField(category.FieldPriority, field.TypeInt32, value)
+	if value, ok := _u.mutation.AddedDepth(); ok {
+		_spec.AddField(category.FieldDepth, field.TypeInt32, value)
 	}
-	if value, ok := cu.mutation.AddedPriority(); ok {
-		_spec.AddField(category.FieldPriority, field.TypeInt32, value)
+	if _u.mutation.DepthCleared() {
+		_spec.ClearField(category.FieldDepth, field.TypeInt32)
 	}
-	if cu.mutation.PriorityCleared() {
-		_spec.ClearField(category.FieldPriority, field.TypeInt32)
+	if value, ok := _u.mutation.IsNav(); ok {
+		_spec.SetField(category.FieldIsNav, field.TypeBool, value)
 	}
-	if value, ok := cu.mutation.PostCount(); ok {
+	if _u.mutation.IsNavCleared() {
+		_spec.ClearField(category.FieldIsNav, field.TypeBool)
+	}
+	if value, ok := _u.mutation.Icon(); ok {
+		_spec.SetField(category.FieldIcon, field.TypeString, value)
+	}
+	if _u.mutation.IconCleared() {
+		_spec.ClearField(category.FieldIcon, field.TypeString)
+	}
+	if value, ok := _u.mutation.PostCount(); ok {
 		_spec.SetField(category.FieldPostCount, field.TypeUint32, value)
 	}
-	if value, ok := cu.mutation.AddedPostCount(); ok {
+	if value, ok := _u.mutation.AddedPostCount(); ok {
 		_spec.AddField(category.FieldPostCount, field.TypeUint32, value)
 	}
-	if cu.mutation.PostCountCleared() {
+	if _u.mutation.PostCountCleared() {
 		_spec.ClearField(category.FieldPostCount, field.TypeUint32)
 	}
-	_spec.AddModifiers(cu.modifiers...)
-	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
+	if value, ok := _u.mutation.DirectPostCount(); ok {
+		_spec.SetField(category.FieldDirectPostCount, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedDirectPostCount(); ok {
+		_spec.AddField(category.FieldDirectPostCount, field.TypeUint32, value)
+	}
+	if _u.mutation.DirectPostCountCleared() {
+		_spec.ClearField(category.FieldDirectPostCount, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.CustomFields(); ok {
+		_spec.SetField(category.FieldCustomFields, field.TypeJSON, value)
+	}
+	if _u.mutation.CustomFieldsCleared() {
+		_spec.ClearField(category.FieldCustomFields, field.TypeJSON)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   category.ParentTable,
+			Columns: []string{category.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   category.ParentTable,
+			Columns: []string{category.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.ChildrenTable,
+			Columns: []string{category.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.ChildrenTable,
+			Columns: []string{category.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.ChildrenTable,
+			Columns: []string{category.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(_u.modifiers...)
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{category.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -447,8 +673,8 @@ func (cu *CategoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	cu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // CategoryUpdateOne is the builder for updating a single Category entity.
@@ -460,280 +686,420 @@ type CategoryUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (cuo *CategoryUpdateOne) SetUpdateTime(i int64) *CategoryUpdateOne {
-	cuo.mutation.ResetUpdateTime()
-	cuo.mutation.SetUpdateTime(i)
-	return cuo
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *CategoryUpdateOne) SetUpdatedAt(v time.Time) *CategoryUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
-// AddUpdateTime adds i to the "update_time" field.
-func (cuo *CategoryUpdateOne) AddUpdateTime(i int64) *CategoryUpdateOne {
-	cuo.mutation.AddUpdateTime(i)
-	return cuo
-}
-
-// ClearUpdateTime clears the value of the "update_time" field.
-func (cuo *CategoryUpdateOne) ClearUpdateTime() *CategoryUpdateOne {
-	cuo.mutation.ClearUpdateTime()
-	return cuo
-}
-
-// SetDeleteTime sets the "delete_time" field.
-func (cuo *CategoryUpdateOne) SetDeleteTime(i int64) *CategoryUpdateOne {
-	cuo.mutation.ResetDeleteTime()
-	cuo.mutation.SetDeleteTime(i)
-	return cuo
-}
-
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillableDeleteTime(i *int64) *CategoryUpdateOne {
-	if i != nil {
-		cuo.SetDeleteTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableUpdatedAt(v *time.Time) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetUpdatedAt(*v)
 	}
-	return cuo
+	return _u
 }
 
-// AddDeleteTime adds i to the "delete_time" field.
-func (cuo *CategoryUpdateOne) AddDeleteTime(i int64) *CategoryUpdateOne {
-	cuo.mutation.AddDeleteTime(i)
-	return cuo
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *CategoryUpdateOne) ClearUpdatedAt() *CategoryUpdateOne {
+	_u.mutation.ClearUpdatedAt()
+	return _u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (cuo *CategoryUpdateOne) ClearDeleteTime() *CategoryUpdateOne {
-	cuo.mutation.ClearDeleteTime()
-	return cuo
+// SetDeletedAt sets the "deleted_at" field.
+func (_u *CategoryUpdateOne) SetDeletedAt(v time.Time) *CategoryUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
-// SetName sets the "name" field.
-func (cuo *CategoryUpdateOne) SetName(s string) *CategoryUpdateOne {
-	cuo.mutation.SetName(s)
-	return cuo
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillableName(s *string) *CategoryUpdateOne {
-	if s != nil {
-		cuo.SetName(*s)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableDeletedAt(v *time.Time) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return cuo
+	return _u
 }
 
-// ClearName clears the value of the "name" field.
-func (cuo *CategoryUpdateOne) ClearName() *CategoryUpdateOne {
-	cuo.mutation.ClearName()
-	return cuo
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *CategoryUpdateOne) ClearDeletedAt() *CategoryUpdateOne {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
-// SetSlug sets the "slug" field.
-func (cuo *CategoryUpdateOne) SetSlug(s string) *CategoryUpdateOne {
-	cuo.mutation.SetSlug(s)
-	return cuo
+// SetCreatedBy sets the "created_by" field.
+func (_u *CategoryUpdateOne) SetCreatedBy(v uint32) *CategoryUpdateOne {
+	_u.mutation.ResetCreatedBy()
+	_u.mutation.SetCreatedBy(v)
+	return _u
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillableSlug(s *string) *CategoryUpdateOne {
-	if s != nil {
-		cuo.SetSlug(*s)
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableCreatedBy(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetCreatedBy(*v)
 	}
-	return cuo
+	return _u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (cuo *CategoryUpdateOne) ClearSlug() *CategoryUpdateOne {
-	cuo.mutation.ClearSlug()
-	return cuo
+// AddCreatedBy adds value to the "created_by" field.
+func (_u *CategoryUpdateOne) AddCreatedBy(v int32) *CategoryUpdateOne {
+	_u.mutation.AddCreatedBy(v)
+	return _u
 }
 
-// SetDescription sets the "description" field.
-func (cuo *CategoryUpdateOne) SetDescription(s string) *CategoryUpdateOne {
-	cuo.mutation.SetDescription(s)
-	return cuo
+// ClearCreatedBy clears the value of the "created_by" field.
+func (_u *CategoryUpdateOne) ClearCreatedBy() *CategoryUpdateOne {
+	_u.mutation.ClearCreatedBy()
+	return _u
 }
 
-// SetNillableDescription sets the "description" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillableDescription(s *string) *CategoryUpdateOne {
-	if s != nil {
-		cuo.SetDescription(*s)
+// SetUpdatedBy sets the "updated_by" field.
+func (_u *CategoryUpdateOne) SetUpdatedBy(v uint32) *CategoryUpdateOne {
+	_u.mutation.ResetUpdatedBy()
+	_u.mutation.SetUpdatedBy(v)
+	return _u
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableUpdatedBy(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetUpdatedBy(*v)
 	}
-	return cuo
+	return _u
 }
 
-// ClearDescription clears the value of the "description" field.
-func (cuo *CategoryUpdateOne) ClearDescription() *CategoryUpdateOne {
-	cuo.mutation.ClearDescription()
-	return cuo
+// AddUpdatedBy adds value to the "updated_by" field.
+func (_u *CategoryUpdateOne) AddUpdatedBy(v int32) *CategoryUpdateOne {
+	_u.mutation.AddUpdatedBy(v)
+	return _u
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (cuo *CategoryUpdateOne) SetThumbnail(s string) *CategoryUpdateOne {
-	cuo.mutation.SetThumbnail(s)
-	return cuo
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (_u *CategoryUpdateOne) ClearUpdatedBy() *CategoryUpdateOne {
+	_u.mutation.ClearUpdatedBy()
+	return _u
 }
 
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillableThumbnail(s *string) *CategoryUpdateOne {
-	if s != nil {
-		cuo.SetThumbnail(*s)
+// SetDeletedBy sets the "deleted_by" field.
+func (_u *CategoryUpdateOne) SetDeletedBy(v uint32) *CategoryUpdateOne {
+	_u.mutation.ResetDeletedBy()
+	_u.mutation.SetDeletedBy(v)
+	return _u
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableDeletedBy(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetDeletedBy(*v)
 	}
-	return cuo
+	return _u
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (cuo *CategoryUpdateOne) ClearThumbnail() *CategoryUpdateOne {
-	cuo.mutation.ClearThumbnail()
-	return cuo
+// AddDeletedBy adds value to the "deleted_by" field.
+func (_u *CategoryUpdateOne) AddDeletedBy(v int32) *CategoryUpdateOne {
+	_u.mutation.AddDeletedBy(v)
+	return _u
 }
 
-// SetPassword sets the "password" field.
-func (cuo *CategoryUpdateOne) SetPassword(s string) *CategoryUpdateOne {
-	cuo.mutation.SetPassword(s)
-	return cuo
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (_u *CategoryUpdateOne) ClearDeletedBy() *CategoryUpdateOne {
+	_u.mutation.ClearDeletedBy()
+	return _u
 }
 
-// SetNillablePassword sets the "password" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillablePassword(s *string) *CategoryUpdateOne {
-	if s != nil {
-		cuo.SetPassword(*s)
+// SetSortOrder sets the "sort_order" field.
+func (_u *CategoryUpdateOne) SetSortOrder(v uint32) *CategoryUpdateOne {
+	_u.mutation.ResetSortOrder()
+	_u.mutation.SetSortOrder(v)
+	return _u
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableSortOrder(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetSortOrder(*v)
 	}
-	return cuo
+	return _u
 }
 
-// ClearPassword clears the value of the "password" field.
-func (cuo *CategoryUpdateOne) ClearPassword() *CategoryUpdateOne {
-	cuo.mutation.ClearPassword()
-	return cuo
+// AddSortOrder adds value to the "sort_order" field.
+func (_u *CategoryUpdateOne) AddSortOrder(v int32) *CategoryUpdateOne {
+	_u.mutation.AddSortOrder(v)
+	return _u
 }
 
-// SetFullPath sets the "full_path" field.
-func (cuo *CategoryUpdateOne) SetFullPath(s string) *CategoryUpdateOne {
-	cuo.mutation.SetFullPath(s)
-	return cuo
+// ClearSortOrder clears the value of the "sort_order" field.
+func (_u *CategoryUpdateOne) ClearSortOrder() *CategoryUpdateOne {
+	_u.mutation.ClearSortOrder()
+	return _u
 }
 
-// SetNillableFullPath sets the "full_path" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillableFullPath(s *string) *CategoryUpdateOne {
-	if s != nil {
-		cuo.SetFullPath(*s)
+// SetPath sets the "path" field.
+func (_u *CategoryUpdateOne) SetPath(v string) *CategoryUpdateOne {
+	_u.mutation.SetPath(v)
+	return _u
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillablePath(v *string) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetPath(*v)
 	}
-	return cuo
+	return _u
 }
 
-// ClearFullPath clears the value of the "full_path" field.
-func (cuo *CategoryUpdateOne) ClearFullPath() *CategoryUpdateOne {
-	cuo.mutation.ClearFullPath()
-	return cuo
+// ClearPath clears the value of the "path" field.
+func (_u *CategoryUpdateOne) ClearPath() *CategoryUpdateOne {
+	_u.mutation.ClearPath()
+	return _u
 }
 
 // SetParentID sets the "parent_id" field.
-func (cuo *CategoryUpdateOne) SetParentID(u uint32) *CategoryUpdateOne {
-	cuo.mutation.ResetParentID()
-	cuo.mutation.SetParentID(u)
-	return cuo
+func (_u *CategoryUpdateOne) SetParentID(v uint32) *CategoryUpdateOne {
+	_u.mutation.SetParentID(v)
+	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillableParentID(u *uint32) *CategoryUpdateOne {
-	if u != nil {
-		cuo.SetParentID(*u)
+func (_u *CategoryUpdateOne) SetNillableParentID(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetParentID(*v)
 	}
-	return cuo
-}
-
-// AddParentID adds u to the "parent_id" field.
-func (cuo *CategoryUpdateOne) AddParentID(u int32) *CategoryUpdateOne {
-	cuo.mutation.AddParentID(u)
-	return cuo
+	return _u
 }
 
 // ClearParentID clears the value of the "parent_id" field.
-func (cuo *CategoryUpdateOne) ClearParentID() *CategoryUpdateOne {
-	cuo.mutation.ClearParentID()
-	return cuo
+func (_u *CategoryUpdateOne) ClearParentID() *CategoryUpdateOne {
+	_u.mutation.ClearParentID()
+	return _u
 }
 
-// SetPriority sets the "priority" field.
-func (cuo *CategoryUpdateOne) SetPriority(i int32) *CategoryUpdateOne {
-	cuo.mutation.ResetPriority()
-	cuo.mutation.SetPriority(i)
-	return cuo
+// SetStatus sets the "status" field.
+func (_u *CategoryUpdateOne) SetStatus(v category.Status) *CategoryUpdateOne {
+	_u.mutation.SetStatus(v)
+	return _u
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillablePriority(i *int32) *CategoryUpdateOne {
-	if i != nil {
-		cuo.SetPriority(*i)
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableStatus(v *category.Status) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetStatus(*v)
 	}
-	return cuo
+	return _u
 }
 
-// AddPriority adds i to the "priority" field.
-func (cuo *CategoryUpdateOne) AddPriority(i int32) *CategoryUpdateOne {
-	cuo.mutation.AddPriority(i)
-	return cuo
+// ClearStatus clears the value of the "status" field.
+func (_u *CategoryUpdateOne) ClearStatus() *CategoryUpdateOne {
+	_u.mutation.ClearStatus()
+	return _u
 }
 
-// ClearPriority clears the value of the "priority" field.
-func (cuo *CategoryUpdateOne) ClearPriority() *CategoryUpdateOne {
-	cuo.mutation.ClearPriority()
-	return cuo
+// SetDepth sets the "depth" field.
+func (_u *CategoryUpdateOne) SetDepth(v int32) *CategoryUpdateOne {
+	_u.mutation.ResetDepth()
+	_u.mutation.SetDepth(v)
+	return _u
+}
+
+// SetNillableDepth sets the "depth" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableDepth(v *int32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetDepth(*v)
+	}
+	return _u
+}
+
+// AddDepth adds value to the "depth" field.
+func (_u *CategoryUpdateOne) AddDepth(v int32) *CategoryUpdateOne {
+	_u.mutation.AddDepth(v)
+	return _u
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (_u *CategoryUpdateOne) ClearDepth() *CategoryUpdateOne {
+	_u.mutation.ClearDepth()
+	return _u
+}
+
+// SetIsNav sets the "is_nav" field.
+func (_u *CategoryUpdateOne) SetIsNav(v bool) *CategoryUpdateOne {
+	_u.mutation.SetIsNav(v)
+	return _u
+}
+
+// SetNillableIsNav sets the "is_nav" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableIsNav(v *bool) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetIsNav(*v)
+	}
+	return _u
+}
+
+// ClearIsNav clears the value of the "is_nav" field.
+func (_u *CategoryUpdateOne) ClearIsNav() *CategoryUpdateOne {
+	_u.mutation.ClearIsNav()
+	return _u
+}
+
+// SetIcon sets the "icon" field.
+func (_u *CategoryUpdateOne) SetIcon(v string) *CategoryUpdateOne {
+	_u.mutation.SetIcon(v)
+	return _u
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableIcon(v *string) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetIcon(*v)
+	}
+	return _u
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (_u *CategoryUpdateOne) ClearIcon() *CategoryUpdateOne {
+	_u.mutation.ClearIcon()
+	return _u
 }
 
 // SetPostCount sets the "post_count" field.
-func (cuo *CategoryUpdateOne) SetPostCount(u uint32) *CategoryUpdateOne {
-	cuo.mutation.ResetPostCount()
-	cuo.mutation.SetPostCount(u)
-	return cuo
+func (_u *CategoryUpdateOne) SetPostCount(v uint32) *CategoryUpdateOne {
+	_u.mutation.ResetPostCount()
+	_u.mutation.SetPostCount(v)
+	return _u
 }
 
 // SetNillablePostCount sets the "post_count" field if the given value is not nil.
-func (cuo *CategoryUpdateOne) SetNillablePostCount(u *uint32) *CategoryUpdateOne {
-	if u != nil {
-		cuo.SetPostCount(*u)
+func (_u *CategoryUpdateOne) SetNillablePostCount(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetPostCount(*v)
 	}
-	return cuo
+	return _u
 }
 
-// AddPostCount adds u to the "post_count" field.
-func (cuo *CategoryUpdateOne) AddPostCount(u int32) *CategoryUpdateOne {
-	cuo.mutation.AddPostCount(u)
-	return cuo
+// AddPostCount adds value to the "post_count" field.
+func (_u *CategoryUpdateOne) AddPostCount(v int32) *CategoryUpdateOne {
+	_u.mutation.AddPostCount(v)
+	return _u
 }
 
 // ClearPostCount clears the value of the "post_count" field.
-func (cuo *CategoryUpdateOne) ClearPostCount() *CategoryUpdateOne {
-	cuo.mutation.ClearPostCount()
-	return cuo
+func (_u *CategoryUpdateOne) ClearPostCount() *CategoryUpdateOne {
+	_u.mutation.ClearPostCount()
+	return _u
+}
+
+// SetDirectPostCount sets the "direct_post_count" field.
+func (_u *CategoryUpdateOne) SetDirectPostCount(v uint32) *CategoryUpdateOne {
+	_u.mutation.ResetDirectPostCount()
+	_u.mutation.SetDirectPostCount(v)
+	return _u
+}
+
+// SetNillableDirectPostCount sets the "direct_post_count" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableDirectPostCount(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetDirectPostCount(*v)
+	}
+	return _u
+}
+
+// AddDirectPostCount adds value to the "direct_post_count" field.
+func (_u *CategoryUpdateOne) AddDirectPostCount(v int32) *CategoryUpdateOne {
+	_u.mutation.AddDirectPostCount(v)
+	return _u
+}
+
+// ClearDirectPostCount clears the value of the "direct_post_count" field.
+func (_u *CategoryUpdateOne) ClearDirectPostCount() *CategoryUpdateOne {
+	_u.mutation.ClearDirectPostCount()
+	return _u
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (_u *CategoryUpdateOne) SetCustomFields(v *map[string]string) *CategoryUpdateOne {
+	_u.mutation.SetCustomFields(v)
+	return _u
+}
+
+// ClearCustomFields clears the value of the "custom_fields" field.
+func (_u *CategoryUpdateOne) ClearCustomFields() *CategoryUpdateOne {
+	_u.mutation.ClearCustomFields()
+	return _u
+}
+
+// SetParent sets the "parent" edge to the Category entity.
+func (_u *CategoryUpdateOne) SetParent(v *Category) *CategoryUpdateOne {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Category entity by IDs.
+func (_u *CategoryUpdateOne) AddChildIDs(ids ...uint32) *CategoryUpdateOne {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Category entity.
+func (_u *CategoryUpdateOne) AddChildren(v ...*Category) *CategoryUpdateOne {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
 }
 
 // Mutation returns the CategoryMutation object of the builder.
-func (cuo *CategoryUpdateOne) Mutation() *CategoryMutation {
-	return cuo.mutation
+func (_u *CategoryUpdateOne) Mutation() *CategoryMutation {
+	return _u.mutation
+}
+
+// ClearParent clears the "parent" edge to the Category entity.
+func (_u *CategoryUpdateOne) ClearParent() *CategoryUpdateOne {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the Category entity.
+func (_u *CategoryUpdateOne) ClearChildren() *CategoryUpdateOne {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to Category entities by IDs.
+func (_u *CategoryUpdateOne) RemoveChildIDs(ids ...uint32) *CategoryUpdateOne {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to Category entities.
+func (_u *CategoryUpdateOne) RemoveChildren(v ...*Category) *CategoryUpdateOne {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // Where appends a list predicates to the CategoryUpdate builder.
-func (cuo *CategoryUpdateOne) Where(ps ...predicate.Category) *CategoryUpdateOne {
-	cuo.mutation.Where(ps...)
-	return cuo
+func (_u *CategoryUpdateOne) Where(ps ...predicate.Category) *CategoryUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (cuo *CategoryUpdateOne) Select(field string, fields ...string) *CategoryUpdateOne {
-	cuo.fields = append([]string{field}, fields...)
-	return cuo
+func (_u *CategoryUpdateOne) Select(field string, fields ...string) *CategoryUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Category entity.
-func (cuo *CategoryUpdateOne) Save(ctx context.Context) (*Category, error) {
-	cuo.defaults()
-	return withHooks(ctx, cuo.sqlSave, cuo.mutation, cuo.hooks)
+func (_u *CategoryUpdateOne) Save(ctx context.Context) (*Category, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cuo *CategoryUpdateOne) SaveX(ctx context.Context) *Category {
-	node, err := cuo.Save(ctx)
+func (_u *CategoryUpdateOne) SaveX(ctx context.Context) *Category {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -741,63 +1107,50 @@ func (cuo *CategoryUpdateOne) SaveX(ctx context.Context) *Category {
 }
 
 // Exec executes the query on the entity.
-func (cuo *CategoryUpdateOne) Exec(ctx context.Context) error {
-	_, err := cuo.Save(ctx)
+func (_u *CategoryUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cuo *CategoryUpdateOne) ExecX(ctx context.Context) {
-	if err := cuo.Exec(ctx); err != nil {
+func (_u *CategoryUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (cuo *CategoryUpdateOne) defaults() {
-	if _, ok := cuo.mutation.UpdateTime(); !ok && !cuo.mutation.UpdateTimeCleared() {
-		v := category.UpdateDefaultUpdateTime()
-		cuo.mutation.SetUpdateTime(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
-func (cuo *CategoryUpdateOne) check() error {
-	if v, ok := cuo.mutation.Name(); ok {
-		if err := category.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Category.name": %w`, err)}
+func (_u *CategoryUpdateOne) check() error {
+	if v, ok := _u.mutation.Path(); ok {
+		if err := category.PathValidator(v); err != nil {
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Category.path": %w`, err)}
 		}
 	}
-	if v, ok := cuo.mutation.Description(); ok {
-		if err := category.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Category.description": %w`, err)}
-		}
-	}
-	if v, ok := cuo.mutation.Thumbnail(); ok {
-		if err := category.ThumbnailValidator(v); err != nil {
-			return &ValidationError{Name: "thumbnail", err: fmt.Errorf(`ent: validator failed for field "Category.thumbnail": %w`, err)}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := category.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Category.status": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cuo *CategoryUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CategoryUpdateOne {
-	cuo.modifiers = append(cuo.modifiers, modifiers...)
-	return cuo
+func (_u *CategoryUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CategoryUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (cuo *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err error) {
-	if err := cuo.check(); err != nil {
+func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(category.Table, category.Columns, sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32))
-	id, ok := cuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Category.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := cuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, category.FieldID)
 		for _, f := range fields {
@@ -809,102 +1162,200 @@ func (cuo *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err
 			}
 		}
 	}
-	if ps := cuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if cuo.mutation.CreateTimeCleared() {
-		_spec.ClearField(category.FieldCreateTime, field.TypeInt64)
+	if _u.mutation.CreatedAtCleared() {
+		_spec.ClearField(category.FieldCreatedAt, field.TypeTime)
 	}
-	if value, ok := cuo.mutation.UpdateTime(); ok {
-		_spec.SetField(category.FieldUpdateTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(category.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := cuo.mutation.AddedUpdateTime(); ok {
-		_spec.AddField(category.FieldUpdateTime, field.TypeInt64, value)
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(category.FieldUpdatedAt, field.TypeTime)
 	}
-	if cuo.mutation.UpdateTimeCleared() {
-		_spec.ClearField(category.FieldUpdateTime, field.TypeInt64)
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(category.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := cuo.mutation.DeleteTime(); ok {
-		_spec.SetField(category.FieldDeleteTime, field.TypeInt64, value)
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(category.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := cuo.mutation.AddedDeleteTime(); ok {
-		_spec.AddField(category.FieldDeleteTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.CreatedBy(); ok {
+		_spec.SetField(category.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if cuo.mutation.DeleteTimeCleared() {
-		_spec.ClearField(category.FieldDeleteTime, field.TypeInt64)
+	if value, ok := _u.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(category.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if value, ok := cuo.mutation.Name(); ok {
-		_spec.SetField(category.FieldName, field.TypeString, value)
+	if _u.mutation.CreatedByCleared() {
+		_spec.ClearField(category.FieldCreatedBy, field.TypeUint32)
 	}
-	if cuo.mutation.NameCleared() {
-		_spec.ClearField(category.FieldName, field.TypeString)
+	if value, ok := _u.mutation.UpdatedBy(); ok {
+		_spec.SetField(category.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := cuo.mutation.Slug(); ok {
-		_spec.SetField(category.FieldSlug, field.TypeString, value)
+	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(category.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if cuo.mutation.SlugCleared() {
-		_spec.ClearField(category.FieldSlug, field.TypeString)
+	if _u.mutation.UpdatedByCleared() {
+		_spec.ClearField(category.FieldUpdatedBy, field.TypeUint32)
 	}
-	if value, ok := cuo.mutation.Description(); ok {
-		_spec.SetField(category.FieldDescription, field.TypeString, value)
+	if value, ok := _u.mutation.DeletedBy(); ok {
+		_spec.SetField(category.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if cuo.mutation.DescriptionCleared() {
-		_spec.ClearField(category.FieldDescription, field.TypeString)
+	if value, ok := _u.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(category.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if value, ok := cuo.mutation.Thumbnail(); ok {
-		_spec.SetField(category.FieldThumbnail, field.TypeString, value)
+	if _u.mutation.DeletedByCleared() {
+		_spec.ClearField(category.FieldDeletedBy, field.TypeUint32)
 	}
-	if cuo.mutation.ThumbnailCleared() {
-		_spec.ClearField(category.FieldThumbnail, field.TypeString)
+	if value, ok := _u.mutation.SortOrder(); ok {
+		_spec.SetField(category.FieldSortOrder, field.TypeUint32, value)
 	}
-	if value, ok := cuo.mutation.Password(); ok {
-		_spec.SetField(category.FieldPassword, field.TypeString, value)
+	if value, ok := _u.mutation.AddedSortOrder(); ok {
+		_spec.AddField(category.FieldSortOrder, field.TypeUint32, value)
 	}
-	if cuo.mutation.PasswordCleared() {
-		_spec.ClearField(category.FieldPassword, field.TypeString)
+	if _u.mutation.SortOrderCleared() {
+		_spec.ClearField(category.FieldSortOrder, field.TypeUint32)
 	}
-	if value, ok := cuo.mutation.FullPath(); ok {
-		_spec.SetField(category.FieldFullPath, field.TypeString, value)
+	if value, ok := _u.mutation.Path(); ok {
+		_spec.SetField(category.FieldPath, field.TypeString, value)
 	}
-	if cuo.mutation.FullPathCleared() {
-		_spec.ClearField(category.FieldFullPath, field.TypeString)
+	if _u.mutation.PathCleared() {
+		_spec.ClearField(category.FieldPath, field.TypeString)
 	}
-	if value, ok := cuo.mutation.ParentID(); ok {
-		_spec.SetField(category.FieldParentID, field.TypeUint32, value)
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(category.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := cuo.mutation.AddedParentID(); ok {
-		_spec.AddField(category.FieldParentID, field.TypeUint32, value)
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(category.FieldStatus, field.TypeEnum)
 	}
-	if cuo.mutation.ParentIDCleared() {
-		_spec.ClearField(category.FieldParentID, field.TypeUint32)
+	if value, ok := _u.mutation.Depth(); ok {
+		_spec.SetField(category.FieldDepth, field.TypeInt32, value)
 	}
-	if value, ok := cuo.mutation.Priority(); ok {
-		_spec.SetField(category.FieldPriority, field.TypeInt32, value)
+	if value, ok := _u.mutation.AddedDepth(); ok {
+		_spec.AddField(category.FieldDepth, field.TypeInt32, value)
 	}
-	if value, ok := cuo.mutation.AddedPriority(); ok {
-		_spec.AddField(category.FieldPriority, field.TypeInt32, value)
+	if _u.mutation.DepthCleared() {
+		_spec.ClearField(category.FieldDepth, field.TypeInt32)
 	}
-	if cuo.mutation.PriorityCleared() {
-		_spec.ClearField(category.FieldPriority, field.TypeInt32)
+	if value, ok := _u.mutation.IsNav(); ok {
+		_spec.SetField(category.FieldIsNav, field.TypeBool, value)
 	}
-	if value, ok := cuo.mutation.PostCount(); ok {
+	if _u.mutation.IsNavCleared() {
+		_spec.ClearField(category.FieldIsNav, field.TypeBool)
+	}
+	if value, ok := _u.mutation.Icon(); ok {
+		_spec.SetField(category.FieldIcon, field.TypeString, value)
+	}
+	if _u.mutation.IconCleared() {
+		_spec.ClearField(category.FieldIcon, field.TypeString)
+	}
+	if value, ok := _u.mutation.PostCount(); ok {
 		_spec.SetField(category.FieldPostCount, field.TypeUint32, value)
 	}
-	if value, ok := cuo.mutation.AddedPostCount(); ok {
+	if value, ok := _u.mutation.AddedPostCount(); ok {
 		_spec.AddField(category.FieldPostCount, field.TypeUint32, value)
 	}
-	if cuo.mutation.PostCountCleared() {
+	if _u.mutation.PostCountCleared() {
 		_spec.ClearField(category.FieldPostCount, field.TypeUint32)
 	}
-	_spec.AddModifiers(cuo.modifiers...)
-	_node = &Category{config: cuo.config}
+	if value, ok := _u.mutation.DirectPostCount(); ok {
+		_spec.SetField(category.FieldDirectPostCount, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedDirectPostCount(); ok {
+		_spec.AddField(category.FieldDirectPostCount, field.TypeUint32, value)
+	}
+	if _u.mutation.DirectPostCountCleared() {
+		_spec.ClearField(category.FieldDirectPostCount, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.CustomFields(); ok {
+		_spec.SetField(category.FieldCustomFields, field.TypeJSON, value)
+	}
+	if _u.mutation.CustomFieldsCleared() {
+		_spec.ClearField(category.FieldCustomFields, field.TypeJSON)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   category.ParentTable,
+			Columns: []string{category.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   category.ParentTable,
+			Columns: []string{category.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.ChildrenTable,
+			Columns: []string{category.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.ChildrenTable,
+			Columns: []string{category.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.ChildrenTable,
+			Columns: []string{category.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(_u.modifiers...)
+	_node = &Category{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, cuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{category.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -912,6 +1363,6 @@ func (cuo *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err
 		}
 		return nil, err
 	}
-	cuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

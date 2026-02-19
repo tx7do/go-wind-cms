@@ -1,0 +1,492 @@
+syntax = "proto3";
+
+package authentication.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "redact/v3/redact.proto";
+
+import "identity/service/v1/user.proto";
+
+import "authentication/service/v1/user_token.proto";
+
+// 用户登录认证服务
+service AuthenticationService {
+  // 用户登录
+  rpc Login (LoginRequest) returns (LoginResponse) {}
+
+  // 用户登出
+  rpc Logout (LogoutRequest) returns (google.protobuf.Empty) {}
+
+  // 注册用户
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse) {}
+
+
+  // 刷新认证令牌
+  rpc RefreshToken (LoginRequest) returns (LoginResponse) {}
+
+  // 验证令牌
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
+
+  // 获取访问令牌列表
+  rpc GetAccessTokens(GetAccessTokensRequest) returns (GetAccessTokensResponse) {}
+
+  // 根据令牌ID撤销令牌
+  rpc RevokeTokenById (RevokeTokenByIdRequest) returns (google.protobuf.Empty) {}
+
+  // 拉黑令牌
+  rpc BlockToken (BlockTokenRequest) returns (BlockTokenResponse) {}
+
+  // 解封令牌
+  rpc UnblockToken (UnblockTokenRequest) returns (google.protobuf.Empty) {}
+
+
+  // 获取当前用户身份信息
+  rpc WhoAmI(google.protobuf.Empty) returns (WhoAmIResponse) {}
+}
+
+// 授权类型
+enum GrantType {
+  password = 0; // 密码模式（Resource Owner Password Credentials Grant）
+  client_credentials = 1; // 客户端模式（Client Credentials Grant）
+  authorization_code = 2; // 授权码模式（Authorization Code Grant）
+  refresh_token = 3;  // 刷新令牌 (Refresh Token)
+  implicit = 4;  // 简化模式 (Implicit Grant)
+}
+
+// 令牌类型
+enum TokenType {
+  bearer = 0; // Bearer
+  mac = 1; // MAC
+}
+
+// 客户端类型
+enum ClientType {
+  admin = 0; // 管理端
+  app = 1; // APP
+}
+
+// 令牌类别
+enum TokenCategory {
+  TOKEN_CATEGORY_UNSPECIFIED = 0; // 由服务端根据 token 推断（默认）
+
+  ACCESS = 1;  // 访问令牌
+  REFRESH = 2; // 刷新令牌
+}
+
+// 用户登录 - 请求
+message LoginRequest {
+  GrantType grant_type = 1 [
+    json_name = "grant_type",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "授权类型，此处的值固定为\"password\"，必选项。",
+      default: {string: "password"}
+    }
+  ]; // 授权类型，此处的值固定为"password"，必选项。
+
+  optional string client_id = 2 [
+    json_name = "client_id",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端ID"
+    }
+  ];
+  optional string client_secret = 3 [
+    json_name = "client_secret",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端密钥"
+    }
+  ];
+
+  optional string scope = 4 [
+    json_name = "scope",
+    (gnostic.openapi.v3.property) = {
+      description: "以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。"
+    }
+  ]; // 以空格分隔的范围列表。如果未提供，scope则授权任何范围，默认为空列表。
+
+  optional string redirect_uri = 5 [
+    json_name = "redirect_uri",
+    (gnostic.openapi.v3.property) = {description: "跳转链接"}
+  ]; // 跳转链接
+
+  optional string username = 10 [
+    json_name = "username",
+    (gnostic.openapi.v3.property) = {description: "用户名"}
+  ]; // 用户名，必选项。
+
+  optional string password = 11 [
+    (redact.v3.value).string = "",
+    json_name = "password",
+    (gnostic.openapi.v3.property) = {description: "用户的密码"}
+  ]; // 用户的密码，必选项。
+
+  optional uint32 user_id = 12 [
+    json_name = "user_id",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  optional string refresh_token = 20 [
+    json_name = "refresh_token",
+    (gnostic.openapi.v3.property) = {
+      description: "更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。"
+    }
+  ]; // 更新令牌，用来获取下一次的访问令牌，必选项。
+
+  optional string code = 30 [
+    json_name = "code",
+    (gnostic.openapi.v3.property) = {
+      description: "授权请求中收到的一次性验证/认证码。(当使用授权码模式时)"
+    }
+  ]; // 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
+
+  optional ClientType client_type = 40 [
+    json_name = "client_type",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端类型"
+    }
+  ]; // 客户端类型
+
+  optional string device_id = 50 [
+    json_name = "device_id",
+    (gnostic.openapi.v3.property) = {
+      description: "设备唯一标识（可选），用于设备绑定、推送、风控等"
+    }
+  ];
+
+  optional string jti = 60 [
+    json_name = "jti",
+    (gnostic.openapi.v3.property) = {
+      description: "建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击"
+    }
+  ];
+}
+
+// 用户登录 - 回应
+message LoginResponse {
+  TokenType token_type = 1 [
+    json_name = "token_type",
+    (gnostic.openapi.v3.property) = {
+      description: "令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。",
+      default: {string: "Bearer"}
+    }
+  ]; // 令牌类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型。
+
+  string access_token = 2 [
+    json_name = "access_token",
+    (gnostic.openapi.v3.property) = {
+      description: "访问令牌，必选项。授权服务器颁发的访问令牌字符串。"
+    }
+  ]; // 访问令牌，必选项。
+
+  int64 expires_in = 3 [
+    json_name = "expires_in",
+    (gnostic.openapi.v3.property) = {
+      description: "访问令牌过期时间（秒）"
+    }
+  ]; // 访问令牌过期时间（秒）
+
+  optional string refresh_token = 4 [
+    json_name = "refresh_token",
+    (gnostic.openapi.v3.property) = {
+      description: "更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。"
+    }
+  ]; // 更新令牌，用来获取下一次的访问令牌，可选项。
+
+  optional string scope = 5 [
+    json_name = "scope",
+    (gnostic.openapi.v3.property) = {
+      description: "以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。"
+    }
+  ]; // 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
+
+  optional int64 refresh_expires_in = 6 [
+    json_name = "refresh_expires_in",
+    (gnostic.openapi.v3.property) = {
+      description: "刷新令牌过期时间（秒）"
+    }
+  ]; // 刷新令牌过期时间（秒）
+
+  optional string id_token = 7 [
+    json_name = "id_token",
+    (gnostic.openapi.v3.property) = {
+      description: "ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌"
+    }
+  ]; // ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+}
+
+// 用户登出 - 请求
+message LogoutRequest {
+  uint32 user_id = 1 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  ClientType client_type = 2 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端类型"
+    }
+  ]; // 客户端类型
+}
+
+// 验证令牌 - 请求
+message ValidateTokenRequest {
+  string token = 1 [
+    json_name = "token",
+    (gnostic.openapi.v3.property) = {
+      description: "令牌"
+    }
+  ]; // 令牌
+
+  ClientType client_type = 2 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端类型"
+    }
+  ]; // 客户端类型
+
+  TokenCategory token_category = 3 [
+    json_name = "tokenCategory",
+    (gnostic.openapi.v3.property) = {
+      description: "期望验证的令牌类别：ACCESS=访问令牌，REFRESH=刷新令牌。若未指定，服务端可尝试根据 token 推断处理方式。"
+    }
+  ];
+
+  optional uint32 user_id = 4 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  optional bool skip_redis = 5 [
+    json_name = "skipRedis",
+    (gnostic.openapi.v3.property) = {
+      description: "可选：为 true 时跳过 Redis 在库校验；默认 false（进行 Redis 校验）"
+    }
+  ];
+
+  optional bool skip_blacklist = 6 [
+    json_name = "skipBlacklist",
+    (gnostic.openapi.v3.property) = {
+      description: "可选：为 true 时跳过黑名单校验；默认 false（进行黑名单校验）"
+    }
+  ];
+}
+
+// 验证令牌 - 回应
+message ValidateTokenResponse {
+  optional UserTokenPayload payload = 1 [
+    json_name = "payload",
+    (gnostic.openapi.v3.property) = {
+      description: "用户令牌载体"
+    }
+  ]; // 用户令牌载体
+
+  bool is_valid = 2 [
+    json_name = "isValid",
+    (gnostic.openapi.v3.property) = {
+      description: "令牌是否有效"
+    }
+  ]; // 令牌是否有效
+
+  bool is_blocked = 3 [
+    json_name = "isBlocked",
+    (gnostic.openapi.v3.property) = {
+      description: "令牌是否被阻塞/列入黑名单"
+    }
+  ]; // 令牌是否被阻塞/列入黑名单
+}
+
+message RegisterUserRequest {
+  string username = 1 [
+    json_name = "username",
+    (gnostic.openapi.v3.property) = {
+      description: "用户名"
+    }
+  ]; // 用户名
+
+  string password = 2 [
+    json_name = "password",
+    (gnostic.openapi.v3.property) = {
+      description: "登入密码"
+    }
+  ]; // 登入密码
+
+  string tenant_code = 3 [
+    json_name = "tenantCode",
+    (gnostic.openapi.v3.property) = {
+      description: "租户代码"
+    }
+  ]; // 租户代码
+
+  optional string email = 4 [
+    json_name = "email",
+    (gnostic.openapi.v3.property) = {
+      description: "电子邮件地址"
+    }
+  ]; // 电子邮件地址
+
+  optional ClientType client_type = 5 [
+    json_name = "client_type",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端类型"
+    }
+  ]; // 客户端类型
+}
+message RegisterUserResponse {
+  uint32 user_id = 1 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ];
+}
+
+// 获取当前用户身份信息 - 响应
+message WhoAmIResponse {
+  uint32 user_id = 1 [
+    json_name = "uid",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  string username = 2 [
+    json_name = "username",
+    (gnostic.openapi.v3.property) = {
+      description: "当前用户的用户名"
+    }
+  ]; // 当前用户的用户名
+}
+
+message GetAccessTokensRequest {
+  uint32 user_id = 1 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  ClientType client_type = 2 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端类型"
+    }
+  ]; // 客户端类型
+}
+message GetAccessTokensResponse {
+  repeated string access_tokens = 1 [
+    json_name = "accessTokens",
+    (gnostic.openapi.v3.property) = {
+      description: "访问令牌列表"
+    }
+  ]; // 访问令牌列表
+}
+
+
+// 将指定令牌加入黑名单 / 拉黑（支持通过明文 token 或 token_id）
+message BlockTokenRequest {
+  uint32 user_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  ClientType client_type = 2 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端类型"
+    }
+  ];
+
+  oneof target {
+    string token = 10;    // 原始 token（服务端应立即哈希并只保存哈希）
+    string jti = 11; // 推荐：token_id（哈希或 DB id）
+  }
+
+  string reason = 20 [
+    json_name = "reason",
+    (gnostic.openapi.v3.property) = {
+      description: "拉黑原因"
+    }
+  ]; // 拉黑原因
+
+  optional google.protobuf.Duration duration = 30 [
+    json_name = "duration",
+    (gnostic.openapi.v3.property) = {
+      description: "黑名单保留时长（可选，默认永久）"
+    }
+  ]; // 黑名单保留时长（可选，默认永久）
+}
+
+message UnblockTokenRequest {
+  uint32 user_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  ClientType client_type = 2 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端类型"
+    }
+  ];
+
+  oneof target {
+    string token = 10; // 原始 token（服务端一般按哈希匹配）
+    string jti = 11;   // token id / 标识
+  }
+}
+
+message BlockTokenResponse {
+  google.protobuf.Timestamp blocked_until = 1 [
+    json_name = "blockedUntil",
+    (gnostic.openapi.v3.property) = {
+      description: "返回黑名单保留到期时间（可选）"
+    }
+  ]; // 返回黑名单保留到期时间（可选）
+}
+
+// 管理端按 id 撤销（仅管理员/系统）
+message RevokeTokenByIdRequest {
+  string jti = 1 [(google.api.field_behavior) = REQUIRED];
+
+  optional ClientType client_type = 2 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = {
+      description: "可选：目标令牌所属的客户端类型（当 jti 非全局唯一时必须提供）"
+    }
+  ]; // 目标令牌所属的客户端类型
+
+  string reason = 3 [
+    json_name = "reason",
+    (gnostic.openapi.v3.property) = {
+      description: "撤销原因"
+    }
+  ]; // 撤销原因
+
+  optional uint32 user_id = 4 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {
+      description: "可选：关联的用户ID，便于高效定位要撤销的令牌（向后兼容）"
+    }
+  ]; // 关联用户ID（可选）
+}

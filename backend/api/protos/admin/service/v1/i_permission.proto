@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "permission/service/v1/permission.proto";
+
+
+// 权限点管理服务
+service PermissionService {
+  // 查询权限点列表
+  rpc List (pagination.PagingRequest) returns (permission.service.v1.ListPermissionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/permissions"
+    };
+  }
+
+  // 查询权限点详情
+  rpc Get (permission.service.v1.GetPermissionRequest) returns (permission.service.v1.Permission) {
+    option (google.api.http) = {
+      get: "/admin/v1/permissions/{id}"
+    };
+  }
+
+  // 创建权限点
+  rpc Create (permission.service.v1.CreatePermissionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/permissions"
+      body: "*"
+    };
+  }
+
+  // 更新权限点
+  rpc Update (permission.service.v1.UpdatePermissionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/permissions/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除权限点
+  rpc Delete (permission.service.v1.DeletePermissionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/permissions/{id}"
+    };
+  }
+
+  // 同步权限点
+  rpc SyncPermissions (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/permissions/sync:perms"
+      body: "*"
+    };
+  }
+}

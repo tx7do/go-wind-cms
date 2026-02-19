@@ -4,39 +4,66 @@ package ent
 
 import (
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/user"
+	"go-wind-cms/app/core/service/internal/data/ent/user"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
-// User is the model entity for the User schema.
+// 用户表
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
+	// 创建者ID
+	CreatedBy *uint32 `json:"created_by,omitempty"`
+	// 更新者ID
+	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	// 删除者ID
+	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 创建时间
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
-	UpdateTime *int64 `json:"update_time,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// 删除时间
-	DeleteTime *int64 `json:"delete_time,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	// 备注
+	Remark *string `json:"remark,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 用户名
 	Username *string `json:"username,omitempty"`
-	// 登陆密码
-	Password *string `json:"password,omitempty"`
 	// 昵称
 	Nickname *string `json:"nickname,omitempty"`
+	// 真实名字
+	Realname *string `json:"realname,omitempty"`
 	// 电子邮箱
 	Email *string `json:"email,omitempty"`
+	// 手机号码
+	Mobile *string `json:"mobile,omitempty"`
+	// 座机号码
+	Telephone *string `json:"telephone,omitempty"`
 	// 头像
 	Avatar *string `json:"avatar,omitempty"`
+	// 地址
+	Address *string `json:"address,omitempty"`
+	// 国家地区
+	Region *string `json:"region,omitempty"`
 	// 个人说明
 	Description *string `json:"description,omitempty"`
-	// 授权
-	Authority    *user.Authority `json:"authority,omitempty"`
+	// 性别
+	Gender *user.Gender `json:"gender,omitempty"`
+	// 最后一次登录的时间
+	LastLoginAt *time.Time `json:"last_login_at,omitempty"`
+	// 最后一次登录的IP
+	LastLoginIP *string `json:"last_login_ip,omitempty"`
+	// 锁定截止时间
+	LockedUntil *time.Time `json:"locked_until,omitempty"`
+	// 状态
+	Status       *user.Status `json:"status,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -45,10 +72,12 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldCreateTime, user.FieldUpdateTime, user.FieldDeleteTime:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldTenantID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldUsername, user.FieldPassword, user.FieldNickname, user.FieldEmail, user.FieldAvatar, user.FieldDescription, user.FieldAuthority:
+		case user.FieldRemark, user.FieldUsername, user.FieldNickname, user.FieldRealname, user.FieldEmail, user.FieldMobile, user.FieldTelephone, user.FieldAvatar, user.FieldAddress, user.FieldRegion, user.FieldDescription, user.FieldGender, user.FieldLastLoginIP, user.FieldStatus:
 			values[i] = new(sql.NullString)
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldLastLoginAt, user.FieldLockedUntil:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -58,7 +87,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the User fields.
-func (u *User) assignValues(columns []string, values []any) error {
+func (_m *User) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -69,79 +98,170 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			u.ID = uint32(value.Int64)
-		case user.FieldCreateTime:
+			_m.ID = uint32(value.Int64)
+		case user.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				u.CreateTime = new(int64)
-				*u.CreateTime = value.Int64
+				_m.CreatedBy = new(uint32)
+				*_m.CreatedBy = uint32(value.Int64)
 			}
-		case user.FieldUpdateTime:
+		case user.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				u.UpdateTime = new(int64)
-				*u.UpdateTime = value.Int64
+				_m.UpdatedBy = new(uint32)
+				*_m.UpdatedBy = uint32(value.Int64)
 			}
-		case user.FieldDeleteTime:
+		case user.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field delete_time", values[i])
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				u.DeleteTime = new(int64)
-				*u.DeleteTime = value.Int64
+				_m.DeletedBy = new(uint32)
+				*_m.DeletedBy = uint32(value.Int64)
+			}
+		case user.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = new(time.Time)
+				*_m.CreatedAt = value.Time
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = new(time.Time)
+				*_m.UpdatedAt = value.Time
+			}
+		case user.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
+			}
+		case user.FieldRemark:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field remark", values[i])
+			} else if value.Valid {
+				_m.Remark = new(string)
+				*_m.Remark = value.String
+			}
+		case user.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case user.FieldUsername:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field username", values[i])
 			} else if value.Valid {
-				u.Username = new(string)
-				*u.Username = value.String
-			}
-		case user.FieldPassword:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field password", values[i])
-			} else if value.Valid {
-				u.Password = new(string)
-				*u.Password = value.String
+				_m.Username = new(string)
+				*_m.Username = value.String
 			}
 		case user.FieldNickname:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field nickname", values[i])
 			} else if value.Valid {
-				u.Nickname = new(string)
-				*u.Nickname = value.String
+				_m.Nickname = new(string)
+				*_m.Nickname = value.String
+			}
+		case user.FieldRealname:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field realname", values[i])
+			} else if value.Valid {
+				_m.Realname = new(string)
+				*_m.Realname = value.String
 			}
 		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				u.Email = new(string)
-				*u.Email = value.String
+				_m.Email = new(string)
+				*_m.Email = value.String
+			}
+		case user.FieldMobile:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mobile", values[i])
+			} else if value.Valid {
+				_m.Mobile = new(string)
+				*_m.Mobile = value.String
+			}
+		case user.FieldTelephone:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field telephone", values[i])
+			} else if value.Valid {
+				_m.Telephone = new(string)
+				*_m.Telephone = value.String
 			}
 		case user.FieldAvatar:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field avatar", values[i])
 			} else if value.Valid {
-				u.Avatar = new(string)
-				*u.Avatar = value.String
+				_m.Avatar = new(string)
+				*_m.Avatar = value.String
+			}
+		case user.FieldAddress:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field address", values[i])
+			} else if value.Valid {
+				_m.Address = new(string)
+				*_m.Address = value.String
+			}
+		case user.FieldRegion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field region", values[i])
+			} else if value.Valid {
+				_m.Region = new(string)
+				*_m.Region = value.String
 			}
 		case user.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				u.Description = new(string)
-				*u.Description = value.String
+				_m.Description = new(string)
+				*_m.Description = value.String
 			}
-		case user.FieldAuthority:
+		case user.FieldGender:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field authority", values[i])
+				return fmt.Errorf("unexpected type %T for field gender", values[i])
 			} else if value.Valid {
-				u.Authority = new(user.Authority)
-				*u.Authority = user.Authority(value.String)
+				_m.Gender = new(user.Gender)
+				*_m.Gender = user.Gender(value.String)
+			}
+		case user.FieldLastLoginAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_login_at", values[i])
+			} else if value.Valid {
+				_m.LastLoginAt = new(time.Time)
+				*_m.LastLoginAt = value.Time
+			}
+		case user.FieldLastLoginIP:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field last_login_ip", values[i])
+			} else if value.Valid {
+				_m.LastLoginIP = new(string)
+				*_m.LastLoginIP = value.String
+			}
+		case user.FieldLockedUntil:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field locked_until", values[i])
+			} else if value.Valid {
+				_m.LockedUntil = new(time.Time)
+				*_m.LockedUntil = value.Time
+			}
+		case user.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				_m.Status = new(user.Status)
+				*_m.Status = user.Status(value.String)
 			}
 		default:
-			u.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -149,80 +269,145 @@ func (u *User) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the User.
 // This includes values selected through modifiers, order, etc.
-func (u *User) Value(name string) (ent.Value, error) {
-	return u.selectValues.Get(name)
+func (_m *User) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (u *User) Update() *UserUpdateOne {
-	return NewUserClient(u.config).UpdateOne(u)
+func (_m *User) Update() *UserUpdateOne {
+	return NewUserClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the User entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (u *User) Unwrap() *User {
-	_tx, ok := u.config.driver.(*txDriver)
+func (_m *User) Unwrap() *User {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: User is not a transactional entity")
 	}
-	u.config.driver = _tx.drv
-	return u
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (u *User) String() string {
+func (_m *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
-	if v := u.CreateTime; v != nil {
-		builder.WriteString("create_time=")
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := u.UpdateTime; v != nil {
-		builder.WriteString("update_time=")
+	if v := _m.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := u.DeleteTime; v != nil {
-		builder.WriteString("delete_time=")
+	if v := _m.DeletedBy; v != nil {
+		builder.WriteString("deleted_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := u.Username; v != nil {
+	if v := _m.CreatedAt; v != nil {
+		builder.WriteString("created_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpdatedAt; v != nil {
+		builder.WriteString("updated_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.Remark; v != nil {
+		builder.WriteString("remark=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Username; v != nil {
 		builder.WriteString("username=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := u.Password; v != nil {
-		builder.WriteString("password=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := u.Nickname; v != nil {
+	if v := _m.Nickname; v != nil {
 		builder.WriteString("nickname=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := u.Email; v != nil {
+	if v := _m.Realname; v != nil {
+		builder.WriteString("realname=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Email; v != nil {
 		builder.WriteString("email=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := u.Avatar; v != nil {
+	if v := _m.Mobile; v != nil {
+		builder.WriteString("mobile=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Telephone; v != nil {
+		builder.WriteString("telephone=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Avatar; v != nil {
 		builder.WriteString("avatar=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := u.Description; v != nil {
+	if v := _m.Address; v != nil {
+		builder.WriteString("address=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Region; v != nil {
+		builder.WriteString("region=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Description; v != nil {
 		builder.WriteString("description=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := u.Authority; v != nil {
-		builder.WriteString("authority=")
+	if v := _m.Gender; v != nil {
+		builder.WriteString("gender=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.LastLoginAt; v != nil {
+		builder.WriteString("last_login_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.LastLoginIP; v != nil {
+		builder.WriteString("last_login_ip=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.LockedUntil; v != nil {
+		builder.WriteString("locked_until=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.Status; v != nil {
+		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

@@ -1,0 +1,221 @@
+syntax = "proto3";
+
+package site.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+// 导航服务
+service NavigationService {
+  // 获取导航列表
+  rpc List (pagination.PagingRequest) returns (ListNavigationResponse) {}
+
+  // 获取导航数据
+  rpc Get (GetNavigationRequest) returns (Navigation) {}
+
+  // 创建导航
+  rpc Create (CreateNavigationRequest) returns (Navigation) {}
+
+  // 更新导航
+  rpc Update (UpdateNavigationRequest) returns (Navigation) {}
+
+  // 删除导航
+  rpc Delete (DeleteNavigationRequest) returns (google.protobuf.Empty) {}
+}
+
+// 导航
+message Navigation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "导航ID"}
+  ]; // 导航ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "导航名称（如'主导航'、'页脚'）"}
+  ]; // 导航名称（如'主导航'、'页脚'）
+
+  optional string location = 3 [
+    json_name = "location",
+    (gnostic.openapi.v3.property) = {
+      description: "渲染位置标识（约定格式：{位置}-{语言}，如 'header', 'header-zh', 'header-en', 'footer-ja'；无语言后缀表示默认/通用导航）"
+    }
+  ]; // 渲染位置标识（约定格式：{位置}-{语言}，如 'header', 'header-zh', 'header-en', 'footer-ja'；无语言后缀表示默认/通用导航）
+
+  optional bool is_active = 4 [
+    json_name = "isActive",
+    (gnostic.openapi.v3.property) = {description: "是否启用（禁用后前端不渲染）"}
+  ]; // 是否启用（禁用后前端不渲染）
+
+  optional string locale = 5 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {
+      description: "关联的语言区域（如 'zh-CN', 'en-US'），空值表示默认/通用导航；仅用于后台管理筛选，不影响前端渲染逻辑"
+    }
+  ]; // 关联的语言区域（如 'zh-CN', 'en-US'），空值表示默认/通用导航；仅用于后台管理筛选，不影响前端渲染逻辑）
+
+
+  repeated NavigationItem items = 50 [
+    json_name = "items",
+    (gnostic.openapi.v3.property) = {description: "导航项列表（按 sort_order 排序）"}
+  ]; // 导航项列表（按 sort_order 排序）
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 导航项
+message NavigationItem {
+  // 链接类型
+  enum LinkType {
+    LINK_TYPE_UNSPECIFIED = 0;
+
+    LINK_TYPE_CUSTOM = 1;       // 站内自定义路径（如 "/about"）
+    LINK_TYPE_POST = 2;         // 关联文章
+    LINK_TYPE_PAGE = 3;         // 关联页面
+    LINK_TYPE_CATEGORY = 4;     // 关联分类
+    LINK_TYPE_EXTERNAL = 5;     // 外部链接（http/https）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "导航项ID"}
+  ]; // 导航项ID
+
+  optional uint32 navigation_id = 2 [
+    json_name = "navigationId",
+    (gnostic.openapi.v3.property) = {description: "所属导航菜单ID"}
+  ]; // 所属导航菜单ID
+
+  optional string title = 3 [
+    json_name = "title",
+    (gnostic.openapi.v3.property) = {description: "显示文本（单语言，多语言通过多套导航实现）"}
+  ]; // 显示文本（单语言，多语言通过多套导航实现）
+
+  optional string url = 4 [
+    json_name = "url",
+    (gnostic.openapi.v3.property) = {
+      description: "目标 URL（link_type=CUSTOM/EXTERNAL 时必填；关联类型可自动生成）"
+    }
+  ]; // 目标 URL（link_type=CUSTOM/EXTERNAL 时必填；关联类型可自动生成）
+
+  optional string icon = 5 [
+    json_name = "icon",
+    (gnostic.openapi.v3.property) = {
+      description: "图标（支持 Font Awesome 格式如 'fas fa-home'，或 SVG URL）"
+    }
+  ]; // 图标（支持 Font Awesome 格式如 'fas fa-home'，或 SVG URL）
+  optional string description = 6 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "描述文本（用于悬停提示或移动端）"}
+  ]; // 描述文本（用于悬停提示或移动端）
+
+  optional LinkType link_type = 7 [
+    json_name = "linkType",
+    (gnostic.openapi.v3.property) = {description: "链接类型"}
+  ]; // 链接类型
+
+  optional uint32 object_id = 8 [
+    json_name = "objectId",
+    (gnostic.openapi.v3.property) = {
+      description: "关联对象ID（link_type=POST/PAGE/CATEGORY 时使用）"
+    }
+  ]; // 关联对象ID（link_type=POST/PAGE/CATEGORY 时使用）
+
+  optional uint32 sort_order = 9 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序优先级（数值越小越靠前）"}
+  ]; // 排序优先级（数值越小越靠前）
+
+  optional bool is_open_new_tab = 10 [
+    json_name = "isOpenNewTab",
+    (gnostic.openapi.v3.property) = {description: "是否在新标签页打开"}
+  ]; // 是否在新标签页打开
+
+  optional bool is_invalid = 11 [
+    json_name = "isInvalid",
+    (gnostic.openapi.v3.property) = {description: "是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项）"}
+  ]; // 是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项）
+
+  optional string css_class = 12 [
+    json_name = "cssClass",
+    (gnostic.openapi.v3.property) = {description: "额外的 CSS 类（前端可选地将此字段添加到导航项的 HTML class 属性中，便于自定义样式）"}
+  ]; // 额外的 CSS 类（前端可选地将此字段添加到导航项的 HTML class 属性中，便于自定义样式）
+
+  optional string required_permission = 13 [
+    json_name = "requiredPermission",
+    (gnostic.openapi.v3.property) = {description: "访问权限标识（如 view_admin_panel，前端可根据用户权限决定是否显示该导航项）"}
+  ]; // 访问权限标识（如 "view_admin_panel"，前端可根据用户权限决定是否显示该导航项）
+
+
+  optional uint32 parent_id = 50 [
+    json_name = "parentId",
+    (gnostic.openapi.v3.property) = {description: "父菜单项ID（0 表示顶级项）"}
+  ]; // 父菜单项ID（0 表示顶级项）
+  repeated NavigationItem children = 51 [json_name = "children", (gnostic.openapi.v3.property) = {description: "子节点树"}];  // 子节点树
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 回应 - 导航列表
+message ListNavigationResponse {
+  repeated Navigation items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 导航数据
+message GetNavigationRequest {
+  uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 请求 - 创建导航
+message CreateNavigationRequest {
+  Navigation data = 1;
+}
+
+// 请求 - 更新导航
+message UpdateNavigationRequest {
+  uint32 id = 1;
+
+  Navigation data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 请求 - 删除导航
+message DeleteNavigationRequest {
+  uint32 id = 1;
+}

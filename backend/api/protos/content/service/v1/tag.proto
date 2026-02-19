@@ -2,70 +2,227 @@ syntax = "proto3";
 
 package content.service.v1;
 
-
+import "gnostic/openapi/v3/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
 import "pagination/v1/pagination.proto";
-
-// 变量的命名一律使用小驼峰命名法，例如：firstName、lastName等。
 
 // 标签服务
 service TagService {
   // 获取标签列表
-  rpc ListTag (pagination.PagingRequest) returns (ListTagResponse) {}
+  rpc List (pagination.PagingRequest) returns (ListTagResponse) {}
 
   // 获取标签数据
-  rpc GetTag (GetTagRequest) returns (Tag) {}
+  rpc Get (GetTagRequest) returns (Tag) {}
 
   // 创建标签
-  rpc CreateTag (CreateTagRequest) returns (Tag) {}
+  rpc Create (CreateTagRequest) returns (Tag) {}
 
   // 更新标签
-  rpc UpdateTag (UpdateTagRequest) returns (Tag) {}
+  rpc Update (UpdateTagRequest) returns (Tag) {}
 
   // 删除标签
-  rpc DeleteTag (DeleteTagRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteTagRequest) returns (google.protobuf.Empty) {}
 }
 
 // 标签
 message Tag {
-  uint32 id = 1;
-  optional string name = 2;
-  optional string slug = 3;
-  optional string slugName = 4;
-  optional string color = 5;
-  optional string thumbnail = 6;
-  optional string createTime = 7;
-  optional string updateTime = 8;
-  optional uint32 postCount = 9;
-  optional string fullPath = 10;
+  // 标签状态
+  enum TagStatus {
+    TAG_STATUS_UNSPECIFIED = 0;
+
+    TAG_STATUS_ACTIVE = 1;    // 启用（前台可见）
+    TAG_STATUS_HIDDEN = 2;    // 隐藏（仅后台可见）
+    TAG_STATUS_ARCHIVED = 3;  // 归档（不再使用，但保留历史数据）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "标签ID"}
+  ]; // 标签ID
+
+  optional TagStatus status = 2 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "标签状态"}
+  ]; // 标签状态（启用/隐藏/归档）
+
+  optional string color = 3 [
+    json_name = "color",
+    (gnostic.openapi.v3.property) = {
+      description: "标签颜色（HEX 格式，如 '#3498db'，用于标签云/前端展示）"
+    }
+  ]; // 标签颜色（HEX 格式，如 '#3498db'，用于标签云/前端展示）
+
+  optional string icon = 4 [
+    json_name = "icon",
+    (gnostic.openapi.v3.property) = {
+      description: "标签图标（可选，支持图标名称如 'fas fa-code' 或 SVG URL）"
+    }
+  ]; // 标签图标（可选，支持图标名称如 'fas fa-code' 或 SVG URL）
+
+  // 注：大多数 CMS 不需要标签分组，但某些场景（如多租户/大型站点）可能需要
+  optional string group = 5 [
+    json_name = "group",
+    (gnostic.openapi.v3.property) = {
+      description: "标签分组（可选，如 '技术栈'、'行业'，用于后台分类管理，不影响前台展示）"
+    }
+  ]; // 标签分组（可选，如 '技术栈'、'行业'，用于后台分类管理，不影响前台展示）
+
+  optional uint32 sort_order = 6 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序优先级（数值越小越靠前，同组内排序）"}
+  ]; // 排序优先级（数值越小越靠前，同组内排序）
+
+  optional bool is_featured = 7 [
+    json_name = "isFeatured",
+    (gnostic.openapi.v3.property) = {description: "是否推荐"}
+  ]; // 是否推荐（前台可用来突出显示，如标签云中加大字体或特殊标识）
+
+  optional uint32 post_count = 10 [
+    json_name = "postCount",
+    (gnostic.openapi.v3.property) = {description: "使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）"}
+  ]; // 使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）
+
+
+  repeated TagTranslation translations = 20 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ];
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 标签翻译
+message TagTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 tag_id = 2 [
+    json_name = "tagId",
+    (gnostic.openapi.v3.property) = {description: "关联的标签ID"}
+  ]; // 关联的标签ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+
+
+  optional string name = 10 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "标签名称"}
+  ]; // 标签名称
+
+  optional string slug = 11 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {description: "标签别名（同语言下唯一，不同语言可重复，如 zh-CN 的 'go' 与 en-US 的 'go' 允许共存）"}
+  ]; // 标签别名（同语言下唯一，不同语言可重复，如 zh-CN 的 'go' 与 en-US 的 'go' 允许共存）
+
+  optional string description = 12 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "标签描述"}
+  ]; // 标签描述
+
+  optional string cover_image = 13 [
+    json_name = "coverImage",
+    (gnostic.openapi.v3.property) = {description: "封面图"}
+  ]; // 封面图
+
+  optional string template = 14 [
+    json_name = "template",
+    (gnostic.openapi.v3.property) = {description: "模板名称"}
+  ]; // 模板名称
+
+
+  optional string full_path = 20 [
+    json_name = "fullPath",
+    (gnostic.openapi.v3.property) = {
+      description: "完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）"
+    }
+  ]; // 完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）
+
+
+  optional string meta_keywords = 30 [
+    json_name = "metaKeywords",
+    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
+  ]; // SEO 关键词
+  optional string meta_description = 31 [
+    json_name = "metaDescription",
+    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
+  ]; // SEO 描述
+  optional string seo_title = 32 [
+    json_name = "seoTitle",
+    (gnostic.openapi.v3.property) = {description: "SEO 标题"}
+  ]; // SEO 标题
+  optional string canonical_url = 33 [
+    json_name = "canonicalUrl",
+    (gnostic.openapi.v3.property) = {description: "规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）"}
+  ]; // 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
 }
 
 // 回应 - 标签列表
 message ListTagResponse {
   repeated Tag items = 1;
-  int32 total = 2;
+  uint64 total = 2;
 }
 
 // 请求 - 标签数据
 message GetTagRequest {
   uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
 }
 
 // 请求 - 创建标签
 message CreateTagRequest {
-  Tag tag = 1;
-  optional uint32 operatorId = 2;
+  Tag data = 1;
 }
 
 // 请求 - 更新标签
 message UpdateTagRequest {
   uint32 id = 1;
-  Tag tag = 2;
-  optional uint32 operatorId = 3;
+
+  Tag data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
 }
 
 // 请求 - 删除标签
 message DeleteTagRequest {
   uint32 id = 1;
-  optional uint32 operatorId = 2;
 }

@@ -5,7 +5,8 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"github.com/tx7do/go-utils/entgo/mixin"
+	"entgo.io/ent/schema/index"
+	"github.com/tx7do/go-crud/entgo/mixin"
 )
 
 // Tag holds the schema definition for the Tag entity.
@@ -16,47 +17,52 @@ type Tag struct {
 func (Tag) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entsql.Annotation{
-			Table:     "tag",
+			Table:     "tags",
 			Charset:   "utf8mb4",
 			Collation: "utf8mb4_bin",
 		},
 		entsql.WithComments(true),
-		schema.Comment("标签"),
+		schema.Comment("标签表"),
 	}
 }
 
 // Fields of the Tag.
 func (Tag) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").
-			Comment("标签名").
-			Unique().
-			NotEmpty().
+		field.Enum("status").
+			Comment("标签状态").
+			NamedValues(
+				"TAG_STATUS_ACTIVE", "TAG_STATUS_ACTIVE",
+				"TAG_STATUS_HIDDEN", "TAG_STATUS_HIDDEN",
+				"TAG_STATUS_ARCHIVED", "TAG_STATUS_ARCHIVED",
+			).
+			Default("TAG_STATUS_ACTIVE").
 			Optional().
 			Nillable(),
 
 		field.String("color").
-			Comment("颜色").
+			Comment("标签颜色").
 			Optional().
 			Nillable(),
 
-		field.String("thumbnail").
-			Comment("缩略图").
+		field.String("icon").
+			Comment("标签图标").
 			Optional().
 			Nillable(),
 
-		field.String("slug").
-			Comment("链接别名").
+		field.String("group").
+			Comment("标签分组").
 			Optional().
 			Nillable(),
 
-		field.String("slug_name").
-			Comment("链接别名").
+		field.Bool("is_featured").
+			Comment("是否推荐").
+			Default(false).
 			Optional().
 			Nillable(),
 
 		field.Uint32("post_count").
-			Comment("博文计数").
+			Comment("使用该标签的文章总数").
 			Optional().
 			Nillable(),
 	}
@@ -66,11 +72,23 @@ func (Tag) Fields() []ent.Field {
 func (Tag) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.Timestamp{},
+		mixin.TimeAt{},
+		mixin.OperatorID{},
+		mixin.SortOrder{},
 	}
 }
 
-// Edges of the Tag.
-func (Tag) Edges() []ent.Edge {
-	return nil
+func (Tag) Indexes() []ent.Index {
+	return []ent.Index{
+		// 单字段索引，用于按标签状态查询
+		index.Fields("status"),
+		// 单字段索引，用于按标签分组查询
+		index.Fields("group"),
+		// 单字段索引，用于按是否推荐过滤
+		index.Fields("is_featured"),
+		// 复合索引，优化按状态和分组查询
+		index.Fields("status", "group"),
+		// 复合索引，优化按状态和推荐状态查询
+		index.Fields("status", "is_featured"),
+	}
 }

@@ -1,0 +1,276 @@
+syntax = "proto3";
+
+package storage.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// OSS服务
+service OssService {
+  // 获取对象存储（OSS）上传链接
+  rpc GetUploadPresignedUrl (GetUploadPresignedUrlRequest) returns (GetUploadPresignedUrlResponse) {}
+
+  // 获取对象存储（OSS）下载链接
+  rpc GetDownloadUrl (GetDownloadInfoRequest) returns (GetDownloadInfoResponse) {}
+
+  // 获取文件夹下面的文件列表
+  rpc ListOssFile (ListOssFileRequest) returns (ListOssFileResponse) {}
+
+  // 删除一个文件
+  rpc DeleteOssFile (DeleteOssFileRequest) returns (DeleteOssFileResponse) {}
+}
+
+// 对象存储对象
+message StorageObject {
+  optional string bucket_name = 1 [
+    json_name = "bucketName",
+    (gnostic.openapi.v3.property) = { description: "目标文件桶名称" }
+  ];
+
+  optional string file_directory = 2 [
+    json_name = "fileDirectory",
+    (gnostic.openapi.v3.property) = {
+      description: "存储目录（如 'user/1001/avatar/'），服务端会在此目录下生成唯一文件名",
+      example: {yaml : "tenant/1001/user/avatar/"}
+    }
+  ];
+
+  optional string object_name = 3 [
+    json_name = "objectName",
+    (gnostic.openapi.v3.property) = {
+      description: "OSS 对象键（完整路径，如 'user/1001/avatar.jpg'）。若未提供，服务端将自动生成。",
+      example: {yaml : "user/1001/avatar.jpg"}
+    }
+  ]; // OSS 对象键（完整路径，如 'user/1001/avatar.jpg'）。若未提供，服务端将自动生成。
+}
+
+// 预签名选项
+message PresignOption {
+  optional string method = 1 [
+    json_name = "method",
+    (gnostic.openapi.v3.property) = { description: "预签名使用的 HTTP 方法，例如 PUT 或 POST" }
+  ];
+
+  optional int32 expire_seconds = 2 [
+    json_name = "expireSeconds",
+    (gnostic.openapi.v3.property) = { description: "预签名有效期（秒）" }
+  ];
+
+  optional string content_type = 3 [
+    json_name = "contentType",
+    (gnostic.openapi.v3.property) = { description: "预签名约束的 Content-Type（可选）" }
+  ];
+}
+
+// 获取对象存储上传链接 - 请求
+message GetUploadPresignedUrlRequest {
+  // 前端上传文件所用的HTTP方法
+  enum Method {
+    Put = 0;
+    Post = 1;
+  }
+
+  Method method = 1 [
+    json_name = "method",
+    (gnostic.openapi.v3.property) = { description: "上传文件所用的HTTP方法，支持POST和PUT" }
+  ];  // 上传文件所用的HTTP方法
+
+  optional string content_type = 2 [
+    json_name = "contentType",
+    (gnostic.openapi.v3.property) = { description: "文件的MIME类型" }
+  ];  // 文件的MIME类型
+
+  optional string bucket_name = 3 [
+    json_name = "bucketName",
+    (gnostic.openapi.v3.property) = { description: "文件桶名称，如果不填写，将会根据文件名或者MIME类型进行自动解析" }
+  ]; // 文件桶名称，如果不填写，将会根据文件名或者MIME类型进行自动解析。
+
+  optional string file_directory = 4 [
+    json_name = "fileDirectory",
+    (gnostic.openapi.v3.property) = { description: "远端的文件路径，可以不填写" }
+  ]; // 远端的文件路径，可以不填写。
+
+  optional string file_name = 5 [
+    json_name = "fileName",
+    (gnostic.openapi.v3.property) = { description: "文件名，如果不填写，则会生成UUID，有同名文件也会改为UUID" }
+  ]; // 文件名，如果不填写，则会生成UUID，有同名文件也会改为UUID。
+
+  optional int32 expire_seconds = 6 [
+    json_name = "expireSeconds",
+    (gnostic.openapi.v3.property) = { description: "预签名有效期（秒）" }
+  ];
+}
+
+// 获取对象存储上传链接 - 回应
+message GetUploadPresignedUrlResponse {
+  string upload_url = 1 [
+    json_name = "uploadUrl",
+    (gnostic.openapi.v3.property) = { description: "文件的上传链接，默认1个小时的过期时间" }
+  ]; // 文件的上传链接，默认1个小时的过期时间。
+
+  string download_url = 2 [
+    json_name = "downloadUrl",
+    (gnostic.openapi.v3.property) = { description: "文件的下载链接" }
+  ]; // 文件的下载链接
+
+  optional string bucket_name = 3 [
+    json_name = "bucketName",
+    (gnostic.openapi.v3.property) = { description: "文件桶名称" }
+  ]; // 文件桶名称
+
+  string object_name = 4 [
+    json_name = "objectName",
+    (gnostic.openapi.v3.property) = { description: "OSS 对象键" }
+  ];  // OSS 对象键
+
+  map<string, string> form_data = 5 [
+    json_name = "formData",
+    (gnostic.openapi.v3.property) = { description: "表单数据，使用POST方法时填写" }
+  ];
+}
+
+message GetDownloadInfoRequest {
+  oneof selector {
+    uint64 file_id = 1 [
+      json_name = "fileId",
+      (gnostic.openapi.v3.property) = { description: "服务端内部文件 ID" }
+    ]; // 服务端内部文件 ID
+
+    StorageObject storage_object = 2 [
+      json_name = "storageObject",
+      (gnostic.openapi.v3.property) = { description: "bucket + object 定位" }
+    ]; // bucket + object 定位
+
+    string download_url = 3 [
+      json_name = "downloadUrl",
+      (gnostic.openapi.v3.property) = { description: "直接的外部 URL（可用于代理或验证）" }
+    ]; // 直接的外部 URL（可用于代理或验证）
+  }
+
+  // 可选的分段下载范围（闭区间 start，开区间 end；为 0/0 表示全量）
+  optional int64 range_start = 4 [
+    json_name = "rangeStart",
+    (gnostic.openapi.v3.property) = { description: "下载范围开始区域，闭区间" }
+  ]; // 下载范围开始区域，闭区间
+  optional int64 range_end = 5 [
+    json_name = "rangeEnd",
+    (gnostic.openapi.v3.property) = { description: "下载范围结束区域，开区间" }
+  ]; // 下载范围结束区域，开区间
+
+  optional bool prefer_presigned_url = 6 [
+    json_name = "preferPresignedUrl",
+    (gnostic.openapi.v3.property) = { description: "优先返回预签名 URL 而非直接返回字节（当可用时）" }
+  ]; // 优先返回预签名 URL 而非直接返回字节（当可用时）
+
+  optional int32 presign_expire_seconds = 7 [
+    json_name = "presignExpireSeconds",
+    (gnostic.openapi.v3.property) = { description: "生成预签名 URL 的有效期（秒），仅在 prefer_presigned_url 为 true 时有意义" }
+  ]; // 生成预签名 URL 的有效期（秒），仅在 prefer_presigned_url 为 true 时有意义"
+
+  optional string disposition = 8 [
+    json_name = "disposition",
+    (gnostic.openapi.v3.property) = { description: "客户端期望的 Content-Disposition 值，常见 attachment 或 inline" }
+  ]; // 客户端期望的 Content-Disposition 值，常见 "attachment" 或 "inline"
+
+  // 客户端期望的 MIME 类型（可用于后端选择或转换）
+  optional string accept_mime = 9 [
+    json_name = "acceptMime",
+    (gnostic.openapi.v3.property) = { description: "客户端期望的 MIME 类型（可用于后端选择或转换）" }
+  ]; // 客户端期望的 MIME 类型（可用于后端选择或转换）
+}
+
+message GetDownloadInfoResponse {
+  // 传输内容（二选一）
+  oneof content {
+    bytes file = 1 [
+      json_name = "file",
+      (gnostic.openapi.v3.property) = { description: "直接返回文件字节（小文件或同步场景）" }
+    ]; // 直接返回文件字节（小文件或同步场景）
+
+    string download_url = 2 [
+      json_name = "downloadUrl",
+      (gnostic.openapi.v3.property) = { description: "预签名 URL（大文件或异步下载）" }
+    ]; // 预签名 URL（大文件或异步下载）
+  }
+
+  string source_file_name = 3 [
+    json_name = "sourceFileName",
+    (gnostic.openapi.v3.property) = { description: "原始文件名，客户端用于保存或显示" }
+  ]; // 原始文件名，客户端用于保存或显示
+
+  string mime = 4 [
+    json_name = "mime",
+    (gnostic.openapi.v3.property) = { description: "MIME 类型，默认 application/octet-stream" }
+  ]; // MIME 类型，默认 application/octet-stream
+
+  int64 size = 5 [
+    json_name = "size",
+    (gnostic.openapi.v3.property) = { description: "文件大小（字节），可用于进度或校验" }
+  ]; // 文件大小（字节），可用于进度或校验
+
+  string checksum = 6 [
+    json_name = "checksum",
+    (gnostic.openapi.v3.property) = { description: "可选，文件校验（如 MD5 或 SHA256）" }
+  ]; // 可选，文件校验（如 MD5 或 SHA256）
+
+  string storage_path = 7 [
+    json_name = "storagePath",
+    (gnostic.openapi.v3.property) = { description: "可选，后端存储位置或 key" }
+  ]; // 可选，后端存储位置或 key
+
+  optional google.protobuf.Timestamp updated_at = 8 [
+    json_name = "updatedAt",
+    (gnostic.openapi.v3.property) = { description: "可选，最后修改时间" }
+  ]; // 可选，最后修改时间
+
+  map<string, string> headers = 9 [
+    json_name = "headers",
+    (gnostic.openapi.v3.property) = { description: "当返回 presigned URL 时，可能需要额外的请求 headers（或表单字段）" }
+  ]; // 当返回 presigned URL 时，可能需要额外的请求 headers（或表单字段）
+
+  optional string method = 10 [
+    json_name = "method",
+    (gnostic.openapi.v3.property) = { description: "请求方法建议（如 GET / HEAD），返回预签名 URL 时可说明" }
+  ]; // 请求方法建议（如 GET / HEAD），返回预签名 URL 时可说明
+}
+
+message ListOssFileRequest {
+  optional string bucket_name = 1 [
+    json_name = "bucketName",
+    (gnostic.openapi.v3.property) = { description: "文件桶名称" }
+  ]; // 文件桶名称
+
+  optional string folder = 2 [
+    json_name = "folder",
+    (gnostic.openapi.v3.property) = { description: "文件夹名称" }
+  ]; // 文件夹名称
+
+  optional bool recursive = 3 [
+    json_name = "recursive",
+    (gnostic.openapi.v3.property) = { description: "是否递归文件夹" }
+  ]; // 是否递归文件夹
+}
+
+message ListOssFileResponse {
+  repeated string files = 1 [
+    json_name = "files",
+    (gnostic.openapi.v3.property) = { description: "文件列表" }
+  ];
+}
+
+message DeleteOssFileRequest {
+  optional string bucket_name = 1 [
+    json_name = "bucketName",
+    (gnostic.openapi.v3.property) = { description: "文件桶名称" }
+  ]; // 文件桶名称
+
+  optional string object_name = 2 [
+    json_name = "objectName",
+    (gnostic.openapi.v3.property) = { description: "OSS 对象键" }
+  ]; // OSS 对象键
+}
+
+message DeleteOssFileResponse {
+
+}

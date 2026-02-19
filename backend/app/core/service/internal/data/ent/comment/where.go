@@ -3,9 +3,11 @@
 package comment
 
 import (
-	"kratos-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -53,59 +55,34 @@ func IDLTE(id uint32) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldID, id))
 }
 
-// CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
-func CreateTime(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldCreateTime, v))
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UpdateTime applies equality check predicate on the "update_time" field. It's identical to UpdateTimeEQ.
-func UpdateTime(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldUpdateTime, v))
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// DeleteTime applies equality check predicate on the "delete_time" field. It's identical to DeleteTimeEQ.
-func DeleteTime(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldDeleteTime, v))
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// Author applies equality check predicate on the "author" field. It's identical to AuthorEQ.
-func Author(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldAuthor, v))
+// CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
+func CreatedBy(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldCreatedBy, v))
 }
 
-// Email applies equality check predicate on the "email" field. It's identical to EmailEQ.
-func Email(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldEmail, v))
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// IPAddress applies equality check predicate on the "ip_address" field. It's identical to IPAddressEQ.
-func IPAddress(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldIPAddress, v))
-}
-
-// AuthorURL applies equality check predicate on the "author_url" field. It's identical to AuthorURLEQ.
-func AuthorURL(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldAuthorURL, v))
-}
-
-// GravatarMd5 applies equality check predicate on the "gravatar_md5" field. It's identical to GravatarMd5EQ.
-func GravatarMd5(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldGravatarMd5, v))
-}
-
-// Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
-func Content(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldContent, v))
-}
-
-// UserAgent applies equality check predicate on the "user_agent" field. It's identical to UserAgentEQ.
-func UserAgent(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldUserAgent, v))
-}
-
-// Avatar applies equality check predicate on the "avatar" field. It's identical to AvatarEQ.
-func Avatar(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldAvatar, v))
+// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
+func DeletedBy(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
@@ -113,544 +90,494 @@ func ParentID(v uint32) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldParentID, v))
 }
 
-// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
-func Status(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldStatus, v))
+// ObjectID applies equality check predicate on the "object_id" field. It's identical to ObjectIDEQ.
+func ObjectID(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldObjectID, v))
 }
 
-// IsAdmin applies equality check predicate on the "is_admin" field. It's identical to IsAdminEQ.
-func IsAdmin(v bool) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldIsAdmin, v))
+// Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
+func Content(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldContent, v))
 }
 
-// AllowNotification applies equality check predicate on the "allow_notification" field. It's identical to AllowNotificationEQ.
-func AllowNotification(v bool) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldAllowNotification, v))
+// AuthorID applies equality check predicate on the "author_id" field. It's identical to AuthorIDEQ.
+func AuthorID(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorID, v))
 }
 
-// CreateTimeEQ applies the EQ predicate on the "create_time" field.
-func CreateTimeEQ(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldCreateTime, v))
+// AuthorName applies equality check predicate on the "author_name" field. It's identical to AuthorNameEQ.
+func AuthorName(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorName, v))
 }
 
-// CreateTimeNEQ applies the NEQ predicate on the "create_time" field.
-func CreateTimeNEQ(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldCreateTime, v))
+// AuthorEmail applies equality check predicate on the "author_email" field. It's identical to AuthorEmailEQ.
+func AuthorEmail(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorEmail, v))
 }
 
-// CreateTimeIn applies the In predicate on the "create_time" field.
-func CreateTimeIn(vs ...int64) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldCreateTime, vs...))
-}
-
-// CreateTimeNotIn applies the NotIn predicate on the "create_time" field.
-func CreateTimeNotIn(vs ...int64) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldCreateTime, vs...))
-}
-
-// CreateTimeGT applies the GT predicate on the "create_time" field.
-func CreateTimeGT(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldCreateTime, v))
-}
-
-// CreateTimeGTE applies the GTE predicate on the "create_time" field.
-func CreateTimeGTE(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldCreateTime, v))
-}
-
-// CreateTimeLT applies the LT predicate on the "create_time" field.
-func CreateTimeLT(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldCreateTime, v))
-}
-
-// CreateTimeLTE applies the LTE predicate on the "create_time" field.
-func CreateTimeLTE(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldCreateTime, v))
-}
-
-// CreateTimeIsNil applies the IsNil predicate on the "create_time" field.
-func CreateTimeIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldCreateTime))
-}
-
-// CreateTimeNotNil applies the NotNil predicate on the "create_time" field.
-func CreateTimeNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldCreateTime))
-}
-
-// UpdateTimeEQ applies the EQ predicate on the "update_time" field.
-func UpdateTimeEQ(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldUpdateTime, v))
-}
-
-// UpdateTimeNEQ applies the NEQ predicate on the "update_time" field.
-func UpdateTimeNEQ(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldUpdateTime, v))
-}
-
-// UpdateTimeIn applies the In predicate on the "update_time" field.
-func UpdateTimeIn(vs ...int64) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldUpdateTime, vs...))
-}
-
-// UpdateTimeNotIn applies the NotIn predicate on the "update_time" field.
-func UpdateTimeNotIn(vs ...int64) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldUpdateTime, vs...))
-}
-
-// UpdateTimeGT applies the GT predicate on the "update_time" field.
-func UpdateTimeGT(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldUpdateTime, v))
-}
-
-// UpdateTimeGTE applies the GTE predicate on the "update_time" field.
-func UpdateTimeGTE(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldUpdateTime, v))
-}
-
-// UpdateTimeLT applies the LT predicate on the "update_time" field.
-func UpdateTimeLT(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldUpdateTime, v))
-}
-
-// UpdateTimeLTE applies the LTE predicate on the "update_time" field.
-func UpdateTimeLTE(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldUpdateTime, v))
-}
-
-// UpdateTimeIsNil applies the IsNil predicate on the "update_time" field.
-func UpdateTimeIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldUpdateTime))
-}
-
-// UpdateTimeNotNil applies the NotNil predicate on the "update_time" field.
-func UpdateTimeNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldUpdateTime))
-}
-
-// DeleteTimeEQ applies the EQ predicate on the "delete_time" field.
-func DeleteTimeEQ(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldDeleteTime, v))
-}
-
-// DeleteTimeNEQ applies the NEQ predicate on the "delete_time" field.
-func DeleteTimeNEQ(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldDeleteTime, v))
-}
-
-// DeleteTimeIn applies the In predicate on the "delete_time" field.
-func DeleteTimeIn(vs ...int64) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldDeleteTime, vs...))
-}
-
-// DeleteTimeNotIn applies the NotIn predicate on the "delete_time" field.
-func DeleteTimeNotIn(vs ...int64) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldDeleteTime, vs...))
-}
-
-// DeleteTimeGT applies the GT predicate on the "delete_time" field.
-func DeleteTimeGT(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldDeleteTime, v))
-}
-
-// DeleteTimeGTE applies the GTE predicate on the "delete_time" field.
-func DeleteTimeGTE(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldDeleteTime, v))
-}
-
-// DeleteTimeLT applies the LT predicate on the "delete_time" field.
-func DeleteTimeLT(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldDeleteTime, v))
-}
-
-// DeleteTimeLTE applies the LTE predicate on the "delete_time" field.
-func DeleteTimeLTE(v int64) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldDeleteTime, v))
-}
-
-// DeleteTimeIsNil applies the IsNil predicate on the "delete_time" field.
-func DeleteTimeIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldDeleteTime))
-}
-
-// DeleteTimeNotNil applies the NotNil predicate on the "delete_time" field.
-func DeleteTimeNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldDeleteTime))
-}
-
-// AuthorEQ applies the EQ predicate on the "author" field.
-func AuthorEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldAuthor, v))
-}
-
-// AuthorNEQ applies the NEQ predicate on the "author" field.
-func AuthorNEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldAuthor, v))
-}
-
-// AuthorIn applies the In predicate on the "author" field.
-func AuthorIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldAuthor, vs...))
-}
-
-// AuthorNotIn applies the NotIn predicate on the "author" field.
-func AuthorNotIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldAuthor, vs...))
-}
-
-// AuthorGT applies the GT predicate on the "author" field.
-func AuthorGT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldAuthor, v))
-}
-
-// AuthorGTE applies the GTE predicate on the "author" field.
-func AuthorGTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldAuthor, v))
-}
-
-// AuthorLT applies the LT predicate on the "author" field.
-func AuthorLT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldAuthor, v))
-}
-
-// AuthorLTE applies the LTE predicate on the "author" field.
-func AuthorLTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldAuthor, v))
-}
-
-// AuthorContains applies the Contains predicate on the "author" field.
-func AuthorContains(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContains(FieldAuthor, v))
-}
-
-// AuthorHasPrefix applies the HasPrefix predicate on the "author" field.
-func AuthorHasPrefix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasPrefix(FieldAuthor, v))
-}
-
-// AuthorHasSuffix applies the HasSuffix predicate on the "author" field.
-func AuthorHasSuffix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasSuffix(FieldAuthor, v))
-}
-
-// AuthorIsNil applies the IsNil predicate on the "author" field.
-func AuthorIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldAuthor))
-}
-
-// AuthorNotNil applies the NotNil predicate on the "author" field.
-func AuthorNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldAuthor))
-}
-
-// AuthorEqualFold applies the EqualFold predicate on the "author" field.
-func AuthorEqualFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEqualFold(FieldAuthor, v))
-}
-
-// AuthorContainsFold applies the ContainsFold predicate on the "author" field.
-func AuthorContainsFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContainsFold(FieldAuthor, v))
-}
-
-// EmailEQ applies the EQ predicate on the "email" field.
-func EmailEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldEmail, v))
-}
-
-// EmailNEQ applies the NEQ predicate on the "email" field.
-func EmailNEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldEmail, v))
-}
-
-// EmailIn applies the In predicate on the "email" field.
-func EmailIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldEmail, vs...))
-}
-
-// EmailNotIn applies the NotIn predicate on the "email" field.
-func EmailNotIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldEmail, vs...))
-}
-
-// EmailGT applies the GT predicate on the "email" field.
-func EmailGT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldEmail, v))
-}
-
-// EmailGTE applies the GTE predicate on the "email" field.
-func EmailGTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldEmail, v))
-}
-
-// EmailLT applies the LT predicate on the "email" field.
-func EmailLT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldEmail, v))
-}
-
-// EmailLTE applies the LTE predicate on the "email" field.
-func EmailLTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldEmail, v))
-}
-
-// EmailContains applies the Contains predicate on the "email" field.
-func EmailContains(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContains(FieldEmail, v))
-}
-
-// EmailHasPrefix applies the HasPrefix predicate on the "email" field.
-func EmailHasPrefix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasPrefix(FieldEmail, v))
-}
-
-// EmailHasSuffix applies the HasSuffix predicate on the "email" field.
-func EmailHasSuffix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasSuffix(FieldEmail, v))
-}
-
-// EmailIsNil applies the IsNil predicate on the "email" field.
-func EmailIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldEmail))
-}
-
-// EmailNotNil applies the NotNil predicate on the "email" field.
-func EmailNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldEmail))
-}
-
-// EmailEqualFold applies the EqualFold predicate on the "email" field.
-func EmailEqualFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEqualFold(FieldEmail, v))
-}
-
-// EmailContainsFold applies the ContainsFold predicate on the "email" field.
-func EmailContainsFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContainsFold(FieldEmail, v))
-}
-
-// IPAddressEQ applies the EQ predicate on the "ip_address" field.
-func IPAddressEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldIPAddress, v))
-}
-
-// IPAddressNEQ applies the NEQ predicate on the "ip_address" field.
-func IPAddressNEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldIPAddress, v))
-}
-
-// IPAddressIn applies the In predicate on the "ip_address" field.
-func IPAddressIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldIPAddress, vs...))
-}
-
-// IPAddressNotIn applies the NotIn predicate on the "ip_address" field.
-func IPAddressNotIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldIPAddress, vs...))
-}
-
-// IPAddressGT applies the GT predicate on the "ip_address" field.
-func IPAddressGT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldIPAddress, v))
-}
-
-// IPAddressGTE applies the GTE predicate on the "ip_address" field.
-func IPAddressGTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldIPAddress, v))
-}
-
-// IPAddressLT applies the LT predicate on the "ip_address" field.
-func IPAddressLT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldIPAddress, v))
-}
-
-// IPAddressLTE applies the LTE predicate on the "ip_address" field.
-func IPAddressLTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldIPAddress, v))
-}
-
-// IPAddressContains applies the Contains predicate on the "ip_address" field.
-func IPAddressContains(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContains(FieldIPAddress, v))
-}
-
-// IPAddressHasPrefix applies the HasPrefix predicate on the "ip_address" field.
-func IPAddressHasPrefix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasPrefix(FieldIPAddress, v))
-}
-
-// IPAddressHasSuffix applies the HasSuffix predicate on the "ip_address" field.
-func IPAddressHasSuffix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasSuffix(FieldIPAddress, v))
-}
-
-// IPAddressIsNil applies the IsNil predicate on the "ip_address" field.
-func IPAddressIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldIPAddress))
-}
-
-// IPAddressNotNil applies the NotNil predicate on the "ip_address" field.
-func IPAddressNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldIPAddress))
-}
-
-// IPAddressEqualFold applies the EqualFold predicate on the "ip_address" field.
-func IPAddressEqualFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEqualFold(FieldIPAddress, v))
-}
-
-// IPAddressContainsFold applies the ContainsFold predicate on the "ip_address" field.
-func IPAddressContainsFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContainsFold(FieldIPAddress, v))
-}
-
-// AuthorURLEQ applies the EQ predicate on the "author_url" field.
-func AuthorURLEQ(v string) predicate.Comment {
+// AuthorURL applies equality check predicate on the "author_url" field. It's identical to AuthorURLEQ.
+func AuthorURL(v string) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldAuthorURL, v))
 }
 
-// AuthorURLNEQ applies the NEQ predicate on the "author_url" field.
-func AuthorURLNEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldAuthorURL, v))
+// LikeCount applies equality check predicate on the "like_count" field. It's identical to LikeCountEQ.
+func LikeCount(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldLikeCount, v))
 }
 
-// AuthorURLIn applies the In predicate on the "author_url" field.
-func AuthorURLIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldAuthorURL, vs...))
+// DislikeCount applies equality check predicate on the "dislike_count" field. It's identical to DislikeCountEQ.
+func DislikeCount(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDislikeCount, v))
 }
 
-// AuthorURLNotIn applies the NotIn predicate on the "author_url" field.
-func AuthorURLNotIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldAuthorURL, vs...))
+// ReplyCount applies equality check predicate on the "reply_count" field. It's identical to ReplyCountEQ.
+func ReplyCount(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldReplyCount, v))
 }
 
-// AuthorURLGT applies the GT predicate on the "author_url" field.
-func AuthorURLGT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldAuthorURL, v))
+// IPAddress applies equality check predicate on the "ip_address" field. It's identical to IPAddressEQ.
+func IPAddress(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldIPAddress, v))
 }
 
-// AuthorURLGTE applies the GTE predicate on the "author_url" field.
-func AuthorURLGTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldAuthorURL, v))
+// Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
+func Location(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldLocation, v))
 }
 
-// AuthorURLLT applies the LT predicate on the "author_url" field.
-func AuthorURLLT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldAuthorURL, v))
+// UserAgent applies equality check predicate on the "user_agent" field. It's identical to UserAgentEQ.
+func UserAgent(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldUserAgent, v))
 }
 
-// AuthorURLLTE applies the LTE predicate on the "author_url" field.
-func AuthorURLLTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldAuthorURL, v))
+// DetectedLanguage applies equality check predicate on the "detected_language" field. It's identical to DetectedLanguageEQ.
+func DetectedLanguage(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDetectedLanguage, v))
 }
 
-// AuthorURLContains applies the Contains predicate on the "author_url" field.
-func AuthorURLContains(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContains(FieldAuthorURL, v))
+// IsSpam applies equality check predicate on the "is_spam" field. It's identical to IsSpamEQ.
+func IsSpam(v bool) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldIsSpam, v))
 }
 
-// AuthorURLHasPrefix applies the HasPrefix predicate on the "author_url" field.
-func AuthorURLHasPrefix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasPrefix(FieldAuthorURL, v))
+// IsSticky applies equality check predicate on the "is_sticky" field. It's identical to IsStickyEQ.
+func IsSticky(v bool) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldIsSticky, v))
 }
 
-// AuthorURLHasSuffix applies the HasSuffix predicate on the "author_url" field.
-func AuthorURLHasSuffix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasSuffix(FieldAuthorURL, v))
+// ReplyToID applies equality check predicate on the "reply_to_id" field. It's identical to ReplyToIDEQ.
+func ReplyToID(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldReplyToID, v))
 }
 
-// AuthorURLIsNil applies the IsNil predicate on the "author_url" field.
-func AuthorURLIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldAuthorURL))
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// AuthorURLNotNil applies the NotNil predicate on the "author_url" field.
-func AuthorURLNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldAuthorURL))
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
-// AuthorURLEqualFold applies the EqualFold predicate on the "author_url" field.
-func AuthorURLEqualFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEqualFold(FieldAuthorURL, v))
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
-// AuthorURLContainsFold applies the ContainsFold predicate on the "author_url" field.
-func AuthorURLContainsFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContainsFold(FieldAuthorURL, v))
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
-// GravatarMd5EQ applies the EQ predicate on the "gravatar_md5" field.
-func GravatarMd5EQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldGravatarMd5, v))
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldCreatedAt, v))
 }
 
-// GravatarMd5NEQ applies the NEQ predicate on the "gravatar_md5" field.
-func GravatarMd5NEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldGravatarMd5, v))
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldCreatedAt, v))
 }
 
-// GravatarMd5In applies the In predicate on the "gravatar_md5" field.
-func GravatarMd5In(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldGravatarMd5, vs...))
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldCreatedAt, v))
 }
 
-// GravatarMd5NotIn applies the NotIn predicate on the "gravatar_md5" field.
-func GravatarMd5NotIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldGravatarMd5, vs...))
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// GravatarMd5GT applies the GT predicate on the "gravatar_md5" field.
-func GravatarMd5GT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldGravatarMd5, v))
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldCreatedAt))
 }
 
-// GravatarMd5GTE applies the GTE predicate on the "gravatar_md5" field.
-func GravatarMd5GTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldGravatarMd5, v))
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldCreatedAt))
 }
 
-// GravatarMd5LT applies the LT predicate on the "gravatar_md5" field.
-func GravatarMd5LT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldGravatarMd5, v))
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// GravatarMd5LTE applies the LTE predicate on the "gravatar_md5" field.
-func GravatarMd5LTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldGravatarMd5, v))
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldUpdatedAt, v))
 }
 
-// GravatarMd5Contains applies the Contains predicate on the "gravatar_md5" field.
-func GravatarMd5Contains(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContains(FieldGravatarMd5, v))
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldUpdatedAt, vs...))
 }
 
-// GravatarMd5HasPrefix applies the HasPrefix predicate on the "gravatar_md5" field.
-func GravatarMd5HasPrefix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasPrefix(FieldGravatarMd5, v))
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldUpdatedAt, vs...))
 }
 
-// GravatarMd5HasSuffix applies the HasSuffix predicate on the "gravatar_md5" field.
-func GravatarMd5HasSuffix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasSuffix(FieldGravatarMd5, v))
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldUpdatedAt, v))
 }
 
-// GravatarMd5IsNil applies the IsNil predicate on the "gravatar_md5" field.
-func GravatarMd5IsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldGravatarMd5))
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldUpdatedAt, v))
 }
 
-// GravatarMd5NotNil applies the NotNil predicate on the "gravatar_md5" field.
-func GravatarMd5NotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldGravatarMd5))
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldUpdatedAt, v))
 }
 
-// GravatarMd5EqualFold applies the EqualFold predicate on the "gravatar_md5" field.
-func GravatarMd5EqualFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEqualFold(FieldGravatarMd5, v))
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// GravatarMd5ContainsFold applies the ContainsFold predicate on the "gravatar_md5" field.
-func GravatarMd5ContainsFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContainsFold(FieldGravatarMd5, v))
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// CreatedByEQ applies the EQ predicate on the "created_by" field.
+func CreatedByEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldCreatedBy, v))
+}
+
+// CreatedByNEQ applies the NEQ predicate on the "created_by" field.
+func CreatedByNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldCreatedBy, v))
+}
+
+// CreatedByIn applies the In predicate on the "created_by" field.
+func CreatedByIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldCreatedBy, vs...))
+}
+
+// CreatedByNotIn applies the NotIn predicate on the "created_by" field.
+func CreatedByNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldCreatedBy, vs...))
+}
+
+// CreatedByGT applies the GT predicate on the "created_by" field.
+func CreatedByGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldCreatedBy, v))
+}
+
+// CreatedByGTE applies the GTE predicate on the "created_by" field.
+func CreatedByGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldCreatedBy, v))
+}
+
+// CreatedByLT applies the LT predicate on the "created_by" field.
+func CreatedByLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldCreatedBy, v))
+}
+
+// CreatedByLTE applies the LTE predicate on the "created_by" field.
+func CreatedByLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldCreatedBy, v))
+}
+
+// CreatedByIsNil applies the IsNil predicate on the "created_by" field.
+func CreatedByIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldCreatedBy))
+}
+
+// CreatedByNotNil applies the NotNil predicate on the "created_by" field.
+func CreatedByNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldCreatedBy))
+}
+
+// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
+func UpdatedByEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
+func UpdatedByNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByIn applies the In predicate on the "updated_by" field.
+func UpdatedByIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
+func UpdatedByNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByGT applies the GT predicate on the "updated_by" field.
+func UpdatedByGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldUpdatedBy, v))
+}
+
+// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
+func UpdatedByGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByLT applies the LT predicate on the "updated_by" field.
+func UpdatedByLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldUpdatedBy, v))
+}
+
+// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
+func UpdatedByLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldUpdatedBy))
+}
+
+// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
+func DeletedByEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
+func DeletedByNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldDeletedBy, v))
+}
+
+// DeletedByIn applies the In predicate on the "deleted_by" field.
+func DeletedByIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
+func DeletedByNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByGT applies the GT predicate on the "deleted_by" field.
+func DeletedByGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldDeletedBy, v))
+}
+
+// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
+func DeletedByGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldDeletedBy, v))
+}
+
+// DeletedByLT applies the LT predicate on the "deleted_by" field.
+func DeletedByLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldDeletedBy, v))
+}
+
+// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
+func DeletedByLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldDeletedBy, v))
+}
+
+// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
+func DeletedByIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldDeletedBy))
+}
+
+// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
+func DeletedByNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// ParentIDEQ applies the EQ predicate on the "parent_id" field.
+func ParentIDEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldParentID, v))
+}
+
+// ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
+func ParentIDNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldParentID, v))
+}
+
+// ParentIDIn applies the In predicate on the "parent_id" field.
+func ParentIDIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldParentID, vs...))
+}
+
+// ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
+func ParentIDNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldParentID, vs...))
+}
+
+// ParentIDIsNil applies the IsNil predicate on the "parent_id" field.
+func ParentIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldParentID))
+}
+
+// ParentIDNotNil applies the NotNil predicate on the "parent_id" field.
+func ParentIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldParentID))
+}
+
+// ContentTypeEQ applies the EQ predicate on the "content_type" field.
+func ContentTypeEQ(v ContentType) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldContentType, v))
+}
+
+// ContentTypeNEQ applies the NEQ predicate on the "content_type" field.
+func ContentTypeNEQ(v ContentType) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldContentType, v))
+}
+
+// ContentTypeIn applies the In predicate on the "content_type" field.
+func ContentTypeIn(vs ...ContentType) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldContentType, vs...))
+}
+
+// ContentTypeNotIn applies the NotIn predicate on the "content_type" field.
+func ContentTypeNotIn(vs ...ContentType) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldContentType, vs...))
+}
+
+// ContentTypeIsNil applies the IsNil predicate on the "content_type" field.
+func ContentTypeIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldContentType))
+}
+
+// ContentTypeNotNil applies the NotNil predicate on the "content_type" field.
+func ContentTypeNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldContentType))
+}
+
+// ObjectIDEQ applies the EQ predicate on the "object_id" field.
+func ObjectIDEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldObjectID, v))
+}
+
+// ObjectIDNEQ applies the NEQ predicate on the "object_id" field.
+func ObjectIDNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldObjectID, v))
+}
+
+// ObjectIDIn applies the In predicate on the "object_id" field.
+func ObjectIDIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldObjectID, vs...))
+}
+
+// ObjectIDNotIn applies the NotIn predicate on the "object_id" field.
+func ObjectIDNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldObjectID, vs...))
+}
+
+// ObjectIDGT applies the GT predicate on the "object_id" field.
+func ObjectIDGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldObjectID, v))
+}
+
+// ObjectIDGTE applies the GTE predicate on the "object_id" field.
+func ObjectIDGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldObjectID, v))
+}
+
+// ObjectIDLT applies the LT predicate on the "object_id" field.
+func ObjectIDLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldObjectID, v))
+}
+
+// ObjectIDLTE applies the LTE predicate on the "object_id" field.
+func ObjectIDLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldObjectID, v))
+}
+
+// ObjectIDIsNil applies the IsNil predicate on the "object_id" field.
+func ObjectIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldObjectID))
+}
+
+// ObjectIDNotNil applies the NotNil predicate on the "object_id" field.
+func ObjectIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldObjectID))
 }
 
 // ContentEQ applies the EQ predicate on the "content" field.
@@ -728,6 +655,641 @@ func ContentContainsFold(v string) predicate.Comment {
 	return predicate.Comment(sql.FieldContainsFold(FieldContent, v))
 }
 
+// AuthorIDEQ applies the EQ predicate on the "author_id" field.
+func AuthorIDEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorID, v))
+}
+
+// AuthorIDNEQ applies the NEQ predicate on the "author_id" field.
+func AuthorIDNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldAuthorID, v))
+}
+
+// AuthorIDIn applies the In predicate on the "author_id" field.
+func AuthorIDIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldAuthorID, vs...))
+}
+
+// AuthorIDNotIn applies the NotIn predicate on the "author_id" field.
+func AuthorIDNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldAuthorID, vs...))
+}
+
+// AuthorIDGT applies the GT predicate on the "author_id" field.
+func AuthorIDGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldAuthorID, v))
+}
+
+// AuthorIDGTE applies the GTE predicate on the "author_id" field.
+func AuthorIDGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldAuthorID, v))
+}
+
+// AuthorIDLT applies the LT predicate on the "author_id" field.
+func AuthorIDLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldAuthorID, v))
+}
+
+// AuthorIDLTE applies the LTE predicate on the "author_id" field.
+func AuthorIDLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldAuthorID, v))
+}
+
+// AuthorIDIsNil applies the IsNil predicate on the "author_id" field.
+func AuthorIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldAuthorID))
+}
+
+// AuthorIDNotNil applies the NotNil predicate on the "author_id" field.
+func AuthorIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldAuthorID))
+}
+
+// AuthorNameEQ applies the EQ predicate on the "author_name" field.
+func AuthorNameEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorName, v))
+}
+
+// AuthorNameNEQ applies the NEQ predicate on the "author_name" field.
+func AuthorNameNEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldAuthorName, v))
+}
+
+// AuthorNameIn applies the In predicate on the "author_name" field.
+func AuthorNameIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldAuthorName, vs...))
+}
+
+// AuthorNameNotIn applies the NotIn predicate on the "author_name" field.
+func AuthorNameNotIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldAuthorName, vs...))
+}
+
+// AuthorNameGT applies the GT predicate on the "author_name" field.
+func AuthorNameGT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldAuthorName, v))
+}
+
+// AuthorNameGTE applies the GTE predicate on the "author_name" field.
+func AuthorNameGTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldAuthorName, v))
+}
+
+// AuthorNameLT applies the LT predicate on the "author_name" field.
+func AuthorNameLT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldAuthorName, v))
+}
+
+// AuthorNameLTE applies the LTE predicate on the "author_name" field.
+func AuthorNameLTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldAuthorName, v))
+}
+
+// AuthorNameContains applies the Contains predicate on the "author_name" field.
+func AuthorNameContains(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContains(FieldAuthorName, v))
+}
+
+// AuthorNameHasPrefix applies the HasPrefix predicate on the "author_name" field.
+func AuthorNameHasPrefix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasPrefix(FieldAuthorName, v))
+}
+
+// AuthorNameHasSuffix applies the HasSuffix predicate on the "author_name" field.
+func AuthorNameHasSuffix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasSuffix(FieldAuthorName, v))
+}
+
+// AuthorNameIsNil applies the IsNil predicate on the "author_name" field.
+func AuthorNameIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldAuthorName))
+}
+
+// AuthorNameNotNil applies the NotNil predicate on the "author_name" field.
+func AuthorNameNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldAuthorName))
+}
+
+// AuthorNameEqualFold applies the EqualFold predicate on the "author_name" field.
+func AuthorNameEqualFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEqualFold(FieldAuthorName, v))
+}
+
+// AuthorNameContainsFold applies the ContainsFold predicate on the "author_name" field.
+func AuthorNameContainsFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContainsFold(FieldAuthorName, v))
+}
+
+// AuthorEmailEQ applies the EQ predicate on the "author_email" field.
+func AuthorEmailEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorEmail, v))
+}
+
+// AuthorEmailNEQ applies the NEQ predicate on the "author_email" field.
+func AuthorEmailNEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldAuthorEmail, v))
+}
+
+// AuthorEmailIn applies the In predicate on the "author_email" field.
+func AuthorEmailIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldAuthorEmail, vs...))
+}
+
+// AuthorEmailNotIn applies the NotIn predicate on the "author_email" field.
+func AuthorEmailNotIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldAuthorEmail, vs...))
+}
+
+// AuthorEmailGT applies the GT predicate on the "author_email" field.
+func AuthorEmailGT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldAuthorEmail, v))
+}
+
+// AuthorEmailGTE applies the GTE predicate on the "author_email" field.
+func AuthorEmailGTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldAuthorEmail, v))
+}
+
+// AuthorEmailLT applies the LT predicate on the "author_email" field.
+func AuthorEmailLT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldAuthorEmail, v))
+}
+
+// AuthorEmailLTE applies the LTE predicate on the "author_email" field.
+func AuthorEmailLTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldAuthorEmail, v))
+}
+
+// AuthorEmailContains applies the Contains predicate on the "author_email" field.
+func AuthorEmailContains(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContains(FieldAuthorEmail, v))
+}
+
+// AuthorEmailHasPrefix applies the HasPrefix predicate on the "author_email" field.
+func AuthorEmailHasPrefix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasPrefix(FieldAuthorEmail, v))
+}
+
+// AuthorEmailHasSuffix applies the HasSuffix predicate on the "author_email" field.
+func AuthorEmailHasSuffix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasSuffix(FieldAuthorEmail, v))
+}
+
+// AuthorEmailIsNil applies the IsNil predicate on the "author_email" field.
+func AuthorEmailIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldAuthorEmail))
+}
+
+// AuthorEmailNotNil applies the NotNil predicate on the "author_email" field.
+func AuthorEmailNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldAuthorEmail))
+}
+
+// AuthorEmailEqualFold applies the EqualFold predicate on the "author_email" field.
+func AuthorEmailEqualFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEqualFold(FieldAuthorEmail, v))
+}
+
+// AuthorEmailContainsFold applies the ContainsFold predicate on the "author_email" field.
+func AuthorEmailContainsFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContainsFold(FieldAuthorEmail, v))
+}
+
+// AuthorURLEQ applies the EQ predicate on the "author_url" field.
+func AuthorURLEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorURL, v))
+}
+
+// AuthorURLNEQ applies the NEQ predicate on the "author_url" field.
+func AuthorURLNEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldAuthorURL, v))
+}
+
+// AuthorURLIn applies the In predicate on the "author_url" field.
+func AuthorURLIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldAuthorURL, vs...))
+}
+
+// AuthorURLNotIn applies the NotIn predicate on the "author_url" field.
+func AuthorURLNotIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldAuthorURL, vs...))
+}
+
+// AuthorURLGT applies the GT predicate on the "author_url" field.
+func AuthorURLGT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldAuthorURL, v))
+}
+
+// AuthorURLGTE applies the GTE predicate on the "author_url" field.
+func AuthorURLGTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldAuthorURL, v))
+}
+
+// AuthorURLLT applies the LT predicate on the "author_url" field.
+func AuthorURLLT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldAuthorURL, v))
+}
+
+// AuthorURLLTE applies the LTE predicate on the "author_url" field.
+func AuthorURLLTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldAuthorURL, v))
+}
+
+// AuthorURLContains applies the Contains predicate on the "author_url" field.
+func AuthorURLContains(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContains(FieldAuthorURL, v))
+}
+
+// AuthorURLHasPrefix applies the HasPrefix predicate on the "author_url" field.
+func AuthorURLHasPrefix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasPrefix(FieldAuthorURL, v))
+}
+
+// AuthorURLHasSuffix applies the HasSuffix predicate on the "author_url" field.
+func AuthorURLHasSuffix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasSuffix(FieldAuthorURL, v))
+}
+
+// AuthorURLIsNil applies the IsNil predicate on the "author_url" field.
+func AuthorURLIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldAuthorURL))
+}
+
+// AuthorURLNotNil applies the NotNil predicate on the "author_url" field.
+func AuthorURLNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldAuthorURL))
+}
+
+// AuthorURLEqualFold applies the EqualFold predicate on the "author_url" field.
+func AuthorURLEqualFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEqualFold(FieldAuthorURL, v))
+}
+
+// AuthorURLContainsFold applies the ContainsFold predicate on the "author_url" field.
+func AuthorURLContainsFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContainsFold(FieldAuthorURL, v))
+}
+
+// AuthorTypeEQ applies the EQ predicate on the "author_type" field.
+func AuthorTypeEQ(v AuthorType) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldAuthorType, v))
+}
+
+// AuthorTypeNEQ applies the NEQ predicate on the "author_type" field.
+func AuthorTypeNEQ(v AuthorType) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldAuthorType, v))
+}
+
+// AuthorTypeIn applies the In predicate on the "author_type" field.
+func AuthorTypeIn(vs ...AuthorType) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldAuthorType, vs...))
+}
+
+// AuthorTypeNotIn applies the NotIn predicate on the "author_type" field.
+func AuthorTypeNotIn(vs ...AuthorType) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldAuthorType, vs...))
+}
+
+// AuthorTypeIsNil applies the IsNil predicate on the "author_type" field.
+func AuthorTypeIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldAuthorType))
+}
+
+// AuthorTypeNotNil applies the NotNil predicate on the "author_type" field.
+func AuthorTypeNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldAuthorType))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v Status) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v Status) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...Status) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...Status) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldStatus))
+}
+
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldStatus))
+}
+
+// LikeCountEQ applies the EQ predicate on the "like_count" field.
+func LikeCountEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldLikeCount, v))
+}
+
+// LikeCountNEQ applies the NEQ predicate on the "like_count" field.
+func LikeCountNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldLikeCount, v))
+}
+
+// LikeCountIn applies the In predicate on the "like_count" field.
+func LikeCountIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldLikeCount, vs...))
+}
+
+// LikeCountNotIn applies the NotIn predicate on the "like_count" field.
+func LikeCountNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldLikeCount, vs...))
+}
+
+// LikeCountGT applies the GT predicate on the "like_count" field.
+func LikeCountGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldLikeCount, v))
+}
+
+// LikeCountGTE applies the GTE predicate on the "like_count" field.
+func LikeCountGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldLikeCount, v))
+}
+
+// LikeCountLT applies the LT predicate on the "like_count" field.
+func LikeCountLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldLikeCount, v))
+}
+
+// LikeCountLTE applies the LTE predicate on the "like_count" field.
+func LikeCountLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldLikeCount, v))
+}
+
+// LikeCountIsNil applies the IsNil predicate on the "like_count" field.
+func LikeCountIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldLikeCount))
+}
+
+// LikeCountNotNil applies the NotNil predicate on the "like_count" field.
+func LikeCountNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldLikeCount))
+}
+
+// DislikeCountEQ applies the EQ predicate on the "dislike_count" field.
+func DislikeCountEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDislikeCount, v))
+}
+
+// DislikeCountNEQ applies the NEQ predicate on the "dislike_count" field.
+func DislikeCountNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldDislikeCount, v))
+}
+
+// DislikeCountIn applies the In predicate on the "dislike_count" field.
+func DislikeCountIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldDislikeCount, vs...))
+}
+
+// DislikeCountNotIn applies the NotIn predicate on the "dislike_count" field.
+func DislikeCountNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldDislikeCount, vs...))
+}
+
+// DislikeCountGT applies the GT predicate on the "dislike_count" field.
+func DislikeCountGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldDislikeCount, v))
+}
+
+// DislikeCountGTE applies the GTE predicate on the "dislike_count" field.
+func DislikeCountGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldDislikeCount, v))
+}
+
+// DislikeCountLT applies the LT predicate on the "dislike_count" field.
+func DislikeCountLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldDislikeCount, v))
+}
+
+// DislikeCountLTE applies the LTE predicate on the "dislike_count" field.
+func DislikeCountLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldDislikeCount, v))
+}
+
+// DislikeCountIsNil applies the IsNil predicate on the "dislike_count" field.
+func DislikeCountIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldDislikeCount))
+}
+
+// DislikeCountNotNil applies the NotNil predicate on the "dislike_count" field.
+func DislikeCountNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldDislikeCount))
+}
+
+// ReplyCountEQ applies the EQ predicate on the "reply_count" field.
+func ReplyCountEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldReplyCount, v))
+}
+
+// ReplyCountNEQ applies the NEQ predicate on the "reply_count" field.
+func ReplyCountNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldReplyCount, v))
+}
+
+// ReplyCountIn applies the In predicate on the "reply_count" field.
+func ReplyCountIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldReplyCount, vs...))
+}
+
+// ReplyCountNotIn applies the NotIn predicate on the "reply_count" field.
+func ReplyCountNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldReplyCount, vs...))
+}
+
+// ReplyCountGT applies the GT predicate on the "reply_count" field.
+func ReplyCountGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldReplyCount, v))
+}
+
+// ReplyCountGTE applies the GTE predicate on the "reply_count" field.
+func ReplyCountGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldReplyCount, v))
+}
+
+// ReplyCountLT applies the LT predicate on the "reply_count" field.
+func ReplyCountLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldReplyCount, v))
+}
+
+// ReplyCountLTE applies the LTE predicate on the "reply_count" field.
+func ReplyCountLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldReplyCount, v))
+}
+
+// ReplyCountIsNil applies the IsNil predicate on the "reply_count" field.
+func ReplyCountIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldReplyCount))
+}
+
+// ReplyCountNotNil applies the NotNil predicate on the "reply_count" field.
+func ReplyCountNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldReplyCount))
+}
+
+// IPAddressEQ applies the EQ predicate on the "ip_address" field.
+func IPAddressEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldIPAddress, v))
+}
+
+// IPAddressNEQ applies the NEQ predicate on the "ip_address" field.
+func IPAddressNEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldIPAddress, v))
+}
+
+// IPAddressIn applies the In predicate on the "ip_address" field.
+func IPAddressIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldIPAddress, vs...))
+}
+
+// IPAddressNotIn applies the NotIn predicate on the "ip_address" field.
+func IPAddressNotIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldIPAddress, vs...))
+}
+
+// IPAddressGT applies the GT predicate on the "ip_address" field.
+func IPAddressGT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldIPAddress, v))
+}
+
+// IPAddressGTE applies the GTE predicate on the "ip_address" field.
+func IPAddressGTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldIPAddress, v))
+}
+
+// IPAddressLT applies the LT predicate on the "ip_address" field.
+func IPAddressLT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldIPAddress, v))
+}
+
+// IPAddressLTE applies the LTE predicate on the "ip_address" field.
+func IPAddressLTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldIPAddress, v))
+}
+
+// IPAddressContains applies the Contains predicate on the "ip_address" field.
+func IPAddressContains(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContains(FieldIPAddress, v))
+}
+
+// IPAddressHasPrefix applies the HasPrefix predicate on the "ip_address" field.
+func IPAddressHasPrefix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasPrefix(FieldIPAddress, v))
+}
+
+// IPAddressHasSuffix applies the HasSuffix predicate on the "ip_address" field.
+func IPAddressHasSuffix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasSuffix(FieldIPAddress, v))
+}
+
+// IPAddressIsNil applies the IsNil predicate on the "ip_address" field.
+func IPAddressIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldIPAddress))
+}
+
+// IPAddressNotNil applies the NotNil predicate on the "ip_address" field.
+func IPAddressNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldIPAddress))
+}
+
+// IPAddressEqualFold applies the EqualFold predicate on the "ip_address" field.
+func IPAddressEqualFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEqualFold(FieldIPAddress, v))
+}
+
+// IPAddressContainsFold applies the ContainsFold predicate on the "ip_address" field.
+func IPAddressContainsFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContainsFold(FieldIPAddress, v))
+}
+
+// LocationEQ applies the EQ predicate on the "location" field.
+func LocationEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldLocation, v))
+}
+
+// LocationNEQ applies the NEQ predicate on the "location" field.
+func LocationNEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldLocation, v))
+}
+
+// LocationIn applies the In predicate on the "location" field.
+func LocationIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldLocation, vs...))
+}
+
+// LocationNotIn applies the NotIn predicate on the "location" field.
+func LocationNotIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldLocation, vs...))
+}
+
+// LocationGT applies the GT predicate on the "location" field.
+func LocationGT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldLocation, v))
+}
+
+// LocationGTE applies the GTE predicate on the "location" field.
+func LocationGTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldLocation, v))
+}
+
+// LocationLT applies the LT predicate on the "location" field.
+func LocationLT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldLocation, v))
+}
+
+// LocationLTE applies the LTE predicate on the "location" field.
+func LocationLTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldLocation, v))
+}
+
+// LocationContains applies the Contains predicate on the "location" field.
+func LocationContains(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContains(FieldLocation, v))
+}
+
+// LocationHasPrefix applies the HasPrefix predicate on the "location" field.
+func LocationHasPrefix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasPrefix(FieldLocation, v))
+}
+
+// LocationHasSuffix applies the HasSuffix predicate on the "location" field.
+func LocationHasSuffix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasSuffix(FieldLocation, v))
+}
+
+// LocationIsNil applies the IsNil predicate on the "location" field.
+func LocationIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldLocation))
+}
+
+// LocationNotNil applies the NotNil predicate on the "location" field.
+func LocationNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldLocation))
+}
+
+// LocationEqualFold applies the EqualFold predicate on the "location" field.
+func LocationEqualFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEqualFold(FieldLocation, v))
+}
+
+// LocationContainsFold applies the ContainsFold predicate on the "location" field.
+func LocationContainsFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContainsFold(FieldLocation, v))
+}
+
 // UserAgentEQ applies the EQ predicate on the "user_agent" field.
 func UserAgentEQ(v string) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldUserAgent, v))
@@ -803,219 +1365,215 @@ func UserAgentContainsFold(v string) predicate.Comment {
 	return predicate.Comment(sql.FieldContainsFold(FieldUserAgent, v))
 }
 
-// AvatarEQ applies the EQ predicate on the "avatar" field.
-func AvatarEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldAvatar, v))
+// DetectedLanguageEQ applies the EQ predicate on the "detected_language" field.
+func DetectedLanguageEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldDetectedLanguage, v))
 }
 
-// AvatarNEQ applies the NEQ predicate on the "avatar" field.
-func AvatarNEQ(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldAvatar, v))
+// DetectedLanguageNEQ applies the NEQ predicate on the "detected_language" field.
+func DetectedLanguageNEQ(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldDetectedLanguage, v))
 }
 
-// AvatarIn applies the In predicate on the "avatar" field.
-func AvatarIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldAvatar, vs...))
+// DetectedLanguageIn applies the In predicate on the "detected_language" field.
+func DetectedLanguageIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldDetectedLanguage, vs...))
 }
 
-// AvatarNotIn applies the NotIn predicate on the "avatar" field.
-func AvatarNotIn(vs ...string) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldAvatar, vs...))
+// DetectedLanguageNotIn applies the NotIn predicate on the "detected_language" field.
+func DetectedLanguageNotIn(vs ...string) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldDetectedLanguage, vs...))
 }
 
-// AvatarGT applies the GT predicate on the "avatar" field.
-func AvatarGT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldAvatar, v))
+// DetectedLanguageGT applies the GT predicate on the "detected_language" field.
+func DetectedLanguageGT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldDetectedLanguage, v))
 }
 
-// AvatarGTE applies the GTE predicate on the "avatar" field.
-func AvatarGTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldAvatar, v))
+// DetectedLanguageGTE applies the GTE predicate on the "detected_language" field.
+func DetectedLanguageGTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldDetectedLanguage, v))
 }
 
-// AvatarLT applies the LT predicate on the "avatar" field.
-func AvatarLT(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldAvatar, v))
+// DetectedLanguageLT applies the LT predicate on the "detected_language" field.
+func DetectedLanguageLT(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldDetectedLanguage, v))
 }
 
-// AvatarLTE applies the LTE predicate on the "avatar" field.
-func AvatarLTE(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldAvatar, v))
+// DetectedLanguageLTE applies the LTE predicate on the "detected_language" field.
+func DetectedLanguageLTE(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldDetectedLanguage, v))
 }
 
-// AvatarContains applies the Contains predicate on the "avatar" field.
-func AvatarContains(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContains(FieldAvatar, v))
+// DetectedLanguageContains applies the Contains predicate on the "detected_language" field.
+func DetectedLanguageContains(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContains(FieldDetectedLanguage, v))
 }
 
-// AvatarHasPrefix applies the HasPrefix predicate on the "avatar" field.
-func AvatarHasPrefix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasPrefix(FieldAvatar, v))
+// DetectedLanguageHasPrefix applies the HasPrefix predicate on the "detected_language" field.
+func DetectedLanguageHasPrefix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasPrefix(FieldDetectedLanguage, v))
 }
 
-// AvatarHasSuffix applies the HasSuffix predicate on the "avatar" field.
-func AvatarHasSuffix(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldHasSuffix(FieldAvatar, v))
+// DetectedLanguageHasSuffix applies the HasSuffix predicate on the "detected_language" field.
+func DetectedLanguageHasSuffix(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldHasSuffix(FieldDetectedLanguage, v))
 }
 
-// AvatarIsNil applies the IsNil predicate on the "avatar" field.
-func AvatarIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldAvatar))
+// DetectedLanguageIsNil applies the IsNil predicate on the "detected_language" field.
+func DetectedLanguageIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldDetectedLanguage))
 }
 
-// AvatarNotNil applies the NotNil predicate on the "avatar" field.
-func AvatarNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldAvatar))
+// DetectedLanguageNotNil applies the NotNil predicate on the "detected_language" field.
+func DetectedLanguageNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldDetectedLanguage))
 }
 
-// AvatarEqualFold applies the EqualFold predicate on the "avatar" field.
-func AvatarEqualFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldEqualFold(FieldAvatar, v))
+// DetectedLanguageEqualFold applies the EqualFold predicate on the "detected_language" field.
+func DetectedLanguageEqualFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldEqualFold(FieldDetectedLanguage, v))
 }
 
-// AvatarContainsFold applies the ContainsFold predicate on the "avatar" field.
-func AvatarContainsFold(v string) predicate.Comment {
-	return predicate.Comment(sql.FieldContainsFold(FieldAvatar, v))
+// DetectedLanguageContainsFold applies the ContainsFold predicate on the "detected_language" field.
+func DetectedLanguageContainsFold(v string) predicate.Comment {
+	return predicate.Comment(sql.FieldContainsFold(FieldDetectedLanguage, v))
 }
 
-// ParentIDEQ applies the EQ predicate on the "parent_id" field.
-func ParentIDEQ(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldParentID, v))
+// IsSpamEQ applies the EQ predicate on the "is_spam" field.
+func IsSpamEQ(v bool) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldIsSpam, v))
 }
 
-// ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
-func ParentIDNEQ(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldParentID, v))
+// IsSpamNEQ applies the NEQ predicate on the "is_spam" field.
+func IsSpamNEQ(v bool) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldIsSpam, v))
 }
 
-// ParentIDIn applies the In predicate on the "parent_id" field.
-func ParentIDIn(vs ...uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldParentID, vs...))
+// IsSpamIsNil applies the IsNil predicate on the "is_spam" field.
+func IsSpamIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldIsSpam))
 }
 
-// ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
-func ParentIDNotIn(vs ...uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldParentID, vs...))
+// IsSpamNotNil applies the NotNil predicate on the "is_spam" field.
+func IsSpamNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldIsSpam))
 }
 
-// ParentIDGT applies the GT predicate on the "parent_id" field.
-func ParentIDGT(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldParentID, v))
+// IsStickyEQ applies the EQ predicate on the "is_sticky" field.
+func IsStickyEQ(v bool) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldIsSticky, v))
 }
 
-// ParentIDGTE applies the GTE predicate on the "parent_id" field.
-func ParentIDGTE(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldParentID, v))
+// IsStickyNEQ applies the NEQ predicate on the "is_sticky" field.
+func IsStickyNEQ(v bool) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldIsSticky, v))
 }
 
-// ParentIDLT applies the LT predicate on the "parent_id" field.
-func ParentIDLT(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldParentID, v))
+// IsStickyIsNil applies the IsNil predicate on the "is_sticky" field.
+func IsStickyIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldIsSticky))
 }
 
-// ParentIDLTE applies the LTE predicate on the "parent_id" field.
-func ParentIDLTE(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldParentID, v))
+// IsStickyNotNil applies the NotNil predicate on the "is_sticky" field.
+func IsStickyNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldIsSticky))
 }
 
-// ParentIDIsNil applies the IsNil predicate on the "parent_id" field.
-func ParentIDIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldParentID))
+// ReplyToIDEQ applies the EQ predicate on the "reply_to_id" field.
+func ReplyToIDEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldReplyToID, v))
 }
 
-// ParentIDNotNil applies the NotNil predicate on the "parent_id" field.
-func ParentIDNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldParentID))
+// ReplyToIDNEQ applies the NEQ predicate on the "reply_to_id" field.
+func ReplyToIDNEQ(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldReplyToID, v))
 }
 
-// StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldStatus, v))
+// ReplyToIDIn applies the In predicate on the "reply_to_id" field.
+func ReplyToIDIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldReplyToID, vs...))
 }
 
-// StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldStatus, v))
+// ReplyToIDNotIn applies the NotIn predicate on the "reply_to_id" field.
+func ReplyToIDNotIn(vs ...uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldReplyToID, vs...))
 }
 
-// StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldIn(FieldStatus, vs...))
+// ReplyToIDGT applies the GT predicate on the "reply_to_id" field.
+func ReplyToIDGT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldReplyToID, v))
 }
 
-// StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldNotIn(FieldStatus, vs...))
+// ReplyToIDGTE applies the GTE predicate on the "reply_to_id" field.
+func ReplyToIDGTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldReplyToID, v))
 }
 
-// StatusGT applies the GT predicate on the "status" field.
-func StatusGT(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldGT(FieldStatus, v))
+// ReplyToIDLT applies the LT predicate on the "reply_to_id" field.
+func ReplyToIDLT(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldReplyToID, v))
 }
 
-// StatusGTE applies the GTE predicate on the "status" field.
-func StatusGTE(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldGTE(FieldStatus, v))
+// ReplyToIDLTE applies the LTE predicate on the "reply_to_id" field.
+func ReplyToIDLTE(v uint32) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldReplyToID, v))
 }
 
-// StatusLT applies the LT predicate on the "status" field.
-func StatusLT(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldLT(FieldStatus, v))
+// ReplyToIDIsNil applies the IsNil predicate on the "reply_to_id" field.
+func ReplyToIDIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldReplyToID))
 }
 
-// StatusLTE applies the LTE predicate on the "status" field.
-func StatusLTE(v uint32) predicate.Comment {
-	return predicate.Comment(sql.FieldLTE(FieldStatus, v))
+// ReplyToIDNotNil applies the NotNil predicate on the "reply_to_id" field.
+func ReplyToIDNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldReplyToID))
 }
 
-// StatusIsNil applies the IsNil predicate on the "status" field.
-func StatusIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldStatus))
+// HasParent applies the HasEdge predicate on the "parent" edge.
+func HasParent() predicate.Comment {
+	return predicate.Comment(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
 }
 
-// StatusNotNil applies the NotNil predicate on the "status" field.
-func StatusNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldStatus))
+// HasParentWith applies the HasEdge predicate on the "parent" edge with a given conditions (other predicates).
+func HasParentWith(preds ...predicate.Comment) predicate.Comment {
+	return predicate.Comment(func(s *sql.Selector) {
+		step := newParentStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
-// IsAdminEQ applies the EQ predicate on the "is_admin" field.
-func IsAdminEQ(v bool) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldIsAdmin, v))
+// HasChildren applies the HasEdge predicate on the "children" edge.
+func HasChildren() predicate.Comment {
+	return predicate.Comment(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
 }
 
-// IsAdminNEQ applies the NEQ predicate on the "is_admin" field.
-func IsAdminNEQ(v bool) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldIsAdmin, v))
-}
-
-// IsAdminIsNil applies the IsNil predicate on the "is_admin" field.
-func IsAdminIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldIsAdmin))
-}
-
-// IsAdminNotNil applies the NotNil predicate on the "is_admin" field.
-func IsAdminNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldIsAdmin))
-}
-
-// AllowNotificationEQ applies the EQ predicate on the "allow_notification" field.
-func AllowNotificationEQ(v bool) predicate.Comment {
-	return predicate.Comment(sql.FieldEQ(FieldAllowNotification, v))
-}
-
-// AllowNotificationNEQ applies the NEQ predicate on the "allow_notification" field.
-func AllowNotificationNEQ(v bool) predicate.Comment {
-	return predicate.Comment(sql.FieldNEQ(FieldAllowNotification, v))
-}
-
-// AllowNotificationIsNil applies the IsNil predicate on the "allow_notification" field.
-func AllowNotificationIsNil() predicate.Comment {
-	return predicate.Comment(sql.FieldIsNull(FieldAllowNotification))
-}
-
-// AllowNotificationNotNil applies the NotNil predicate on the "allow_notification" field.
-func AllowNotificationNotNil() predicate.Comment {
-	return predicate.Comment(sql.FieldNotNull(FieldAllowNotification))
+// HasChildrenWith applies the HasEdge predicate on the "children" edge with a given conditions (other predicates).
+func HasChildrenWith(preds ...predicate.Comment) predicate.Comment {
+	return predicate.Comment(func(s *sql.Selector) {
+		step := newChildrenStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package storage.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/httpbody.proto";
+import "google/protobuf/timestamp.proto";
+
+import "storage/service/v1/oss.proto";
+
+// 文件传输服务
+service FileTransferService {
+  // 下载文件
+  rpc DownloadFile (DownloadFileRequest) returns (stream google.api.HttpBody) {}
+
+  // 上传文件 PUT 方式
+  rpc PutUploadFile (stream google.api.HttpBody) returns (UploadFileResponse) {}
+
+  // 上传文件 POST 方式
+  rpc PostUploadFile (stream google.api.HttpBody) returns (UploadFileResponse) {}
+}
+
+// 文件下载请求
+message DownloadFileRequest {
+  oneof selector {
+    uint32 file_id = 1 [
+      json_name = "fileId",
+      (gnostic.openapi.v3.property) = { description: "服务端内部文件 ID" }
+    ]; // 服务端内部文件 ID
+
+    StorageObject storage_object = 2 [
+      json_name = "storageObject",
+      (gnostic.openapi.v3.property) = { description: "对象存储对象" }
+    ]; // 对象存储对象
+
+    string download_url = 3 [
+      json_name = "downloadUrl",
+      (gnostic.openapi.v3.property) = { description: "直接的外部 URL（可用于代理或验证）" }
+    ]; // 直接的外部 URL（可用于代理或验证）
+  }
+
+  // 可选的分段下载范围（闭区间 start，开区间 end；为 0/0 表示全量）
+  optional int64 range_start = 4 [
+    json_name = "rangeStart",
+    (gnostic.openapi.v3.property) = { description: "下载范围开始区域，闭区间" }
+  ]; // 下载范围开始区域，闭区间
+  optional int64 range_end = 5 [
+    json_name = "rangeEnd",
+    (gnostic.openapi.v3.property) = { description: "下载范围结束区域，开区间" }
+  ]; // 下载范围结束区域，开区间
+
+  optional bool prefer_presigned_url = 6 [
+    json_name = "preferPresignedUrl",
+    (gnostic.openapi.v3.property) = { description: "优先返回预签名 URL 而非直接返回字节（当可用时）" }
+  ]; // 优先返回预签名 URL 而非直接返回字节（当可用时）
+
+  optional int32 presign_expire_seconds = 7 [
+    json_name = "presignExpireSeconds",
+    (gnostic.openapi.v3.property) = { description: "生成预签名 URL 的有效期（秒），仅在 prefer_presigned_url 为 true 时有意义" }
+  ]; // 生成预签名 URL 的有效期（秒），仅在 prefer_presigned_url 为 true 时有意义
+
+  optional string disposition = 8 [
+    json_name = "disposition",
+    (gnostic.openapi.v3.property) = { description: "客户端期望的 Content-Disposition 值，常见 attachment 或 inline（默认 attachment）" }
+  ]; // 客户端期望的 Content-Disposition 值，常见 "attachment" 或 "inline"（默认 attachment）
+
+  optional string accept_mime = 9 [
+    json_name = "acceptMime",
+    (gnostic.openapi.v3.property) = { description: "客户端期望的 MIME 类型（可用于后端选择或转换）" }
+  ]; // 客户端期望的 MIME 类型（可用于后端选择或转换）
+}
+
+// 文件下载响应
+message DownloadFileResponse {
+  // 传输内容（二选一）
+  oneof content {
+    bytes file = 1 [
+      json_name = "file",
+      (gnostic.openapi.v3.property) = { description: "直接返回文件字节（小文件或同步场景）" }
+    ]; // 直接返回文件字节（小文件或同步场景）
+
+    string download_url = 2 [
+      json_name = "downloadUrl",
+      (gnostic.openapi.v3.property) = { description: "预签名 URL（大文件或异步下载）" }
+    ]; // 预签名 URL（大文件或异步下载）
+  }
+
+  string source_file_name = 3 [
+    json_name = "sourceFileName",
+    (gnostic.openapi.v3.property) = { description: "原始文件名，客户端用于保存或显示" }
+  ]; // 原始文件名，客户端用于保存或显示
+
+  string mime = 4 [
+    json_name = "mime",
+    (gnostic.openapi.v3.property) = { description: "MIME 类型，默认 application/octet-stream" }
+  ]; // MIME 类型，默认 application/octet-stream
+
+  int64 size = 5 [
+    json_name = "size",
+    (gnostic.openapi.v3.property) = { description: "文件大小（字节），可用于进度或校验" }
+  ]; // 文件大小（字节），可用于进度或校验
+
+  string checksum = 6 [
+    json_name = "checksum",
+    (gnostic.openapi.v3.property) = { description: "可选，文件校验（如 MD5 或 SHA256）" }
+  ]; // 可选，文件校验（如 MD5 或 SHA256）
+
+  string storage_path = 7 [
+    json_name = "storagePath",
+    (gnostic.openapi.v3.property) = { description: "可选，后端存储位置或 key" }
+  ]; // 可选，后端存储位置或 key
+
+  optional google.protobuf.Timestamp updated_at = 8 [
+    json_name = "updatedAt",
+    (gnostic.openapi.v3.property) = { description: "可选，最后修改时间" }
+  ]; // 可选，最后修改时间
+}
+
+message UploadFileRequest {
+  StorageObject storage_object = 1 [
+    json_name = "storageObject",
+    (gnostic.openapi.v3.property) = { description: "对象存储对象" }
+  ]; // 对象存储对象
+
+  oneof source {
+    bytes file = 2 [
+      json_name = "file",
+      (gnostic.openapi.v3.property) = { description: "直接上传的文件内容（内联字节）" }
+    ];
+
+    PresignOption presign = 3 [
+      json_name = "presign",
+      (gnostic.openapi.v3.property) = { description: "请求服务返回预签名信息（不上传文件而是获取预签名 URL）" }
+    ];
+  }
+
+  optional string source_file_name = 4 [
+    json_name = "sourceFileName",
+    (gnostic.openapi.v3.property) = { description: "原文件文件名" }
+  ]; // 原文件文件名
+
+  optional string mime = 5 [
+    json_name = "mime",
+    (gnostic.openapi.v3.property) = { description: "文件的MIME类型" }
+  ]; // 文件的MIME类型
+
+  optional int64 size = 6 [
+    json_name = "size",
+    (gnostic.openapi.v3.property) = { description: "文件大小（字节）" }
+  ]; // 文件大小（字节）
+}
+
+message UploadFileResponse {
+  optional string object_name = 1 [
+    json_name = "objectName",
+    (gnostic.openapi.v3.property) = { description: "OSS 对象键" }
+  ]; // OSS 对象键
+
+  optional string presigned_url = 2 [
+    json_name = "presignedUrl",
+    (gnostic.openapi.v3.property) = { description: "预签名上传链接" }
+  ]; // 预签名上传链接
+}

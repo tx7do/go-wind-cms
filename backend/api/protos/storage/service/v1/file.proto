@@ -1,0 +1,202 @@
+syntax = "proto3";
+
+package storage.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 文件服务
+service FileService {
+  // 获取文件列表
+  rpc List (pagination.PagingRequest) returns (ListFileResponse) {}
+
+  // 统计文件数量
+  rpc Count (pagination.PagingRequest) returns (CountFileResponse) {}
+
+  // 获取文件数据
+  rpc Get (GetFileRequest) returns (File) {}
+
+  // 创建文件
+  rpc Create (CreateFileRequest) returns (google.protobuf.Empty) {}
+
+  // 更新文件
+  rpc Update (UpdateFileRequest) returns (google.protobuf.Empty) {}
+
+  // 删除文件
+  rpc Delete (DeleteFileRequest) returns (google.protobuf.Empty) {}
+}
+
+// OSS供应商
+enum OSSProvider {
+  MINIO = 0; // MinIO
+  ALIYUN = 1; // 阿里云
+  AWS = 2; // 亚马逊云
+  AZURE = 3; // 微软云
+  BAIDU = 4; // 百度云
+  QINIU = 5; // 七牛云
+  TENCENT = 6; // 腾讯云
+  GOOGLE = 7; // 谷歌云
+  HUAWEI = 8; // 华为云
+
+  LOCAL = 10; // 本地文件系统
+}
+
+// 文件
+message File {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = { description: "文件ID" }
+  ]; // 文件ID
+
+  optional OSSProvider provider = 2 [
+    json_name = "provider",
+    (gnostic.openapi.v3.property) = { description: "OSS供应商" }
+  ];  // OSS供应商
+
+  optional string bucket_name = 3 [
+    json_name = "bucketName",
+    (gnostic.openapi.v3.property) = { description: "存储桶名称" }
+  ];  // 存储桶名称
+
+  optional string file_directory = 4 [
+    json_name = "fileDirectory",
+    (gnostic.openapi.v3.property) = {
+      description: "文件目录",
+      example: {yaml : "tenant/1001/user/avatar/"}
+    }
+  ];  // 文件目录
+
+  optional string file_guid = 5 [
+    json_name = "fileGuid",
+    (gnostic.openapi.v3.property) = { description: "文件Guid" }
+  ];  // 文件Guid
+
+  optional string save_file_name = 6 [
+    json_name = "saveFileName",
+    (gnostic.openapi.v3.property) = {
+      description: "实际存储文件名（防止在服务器文件系统发生文件冲突）",
+      example: {yaml : "f8a3b9c0-1234-5678-90ab-cdef12345678.pdf"}
+    }
+  ];  // 实际存储文件名（防止在服务器文件系统发生文件冲突）
+
+  optional string file_name = 7 [
+    json_name = "fileName",
+    (gnostic.openapi.v3.property) = {
+      description: "原始文件名",
+      example: {yaml : "2025年个人所得税申报表.pdf"}
+    }
+  ];  // 原始文件名
+
+  optional string extension = 8 [
+    json_name = "extension",
+    (gnostic.openapi.v3.property) = {
+      description: "文件扩展名",
+      example: {yaml : "pdf"}
+    }
+  ];  // 文件扩展名
+
+  optional uint64 size = 9 [
+    json_name = "size",
+    (gnostic.openapi.v3.property) = { description: "文件长度，单位：字节" }
+  ];  // 文件字节长度
+
+  optional string size_format = 10 [
+    json_name = "sizeFormat",
+    (gnostic.openapi.v3.property) = {
+      description: "格式化后的文件长度字符串",
+      example: {yaml : "2.3 MB"}
+    }
+  ];  // 格式化后的文件长度字符串
+
+  optional string link_url = 11 [
+    json_name = "linkUrl",
+    (gnostic.openapi.v3.property) = { description: "链接地址" }
+  ];  // 链接地址
+
+  optional string content_hash = 12 [
+    json_name = "contentHash",
+    (gnostic.openapi.v3.property) = { description: "文件内容hash值" }
+  ];  // 文件内容hash值
+
+  optional uint32 tenant_id = 40 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
+  ];  // 租户ID，0代表系统全局角色
+  optional string tenant_name = 41 [
+    json_name = "tenantName",
+    (gnostic.openapi.v3.property) = {description: "租户名称"}
+  ];  // 租户名称
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 查询列表 - 回应
+message ListFileResponse {
+  repeated File items = 1;
+  uint64 total = 2;
+}
+
+// 查询 - 请求
+message GetFileRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建 - 请求
+message CreateFileRequest {
+  File data = 1;
+}
+
+// 更新 - 请求
+message UpdateFileRequest {
+  uint32 id = 1;
+
+  File data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除 - 请求
+message DeleteFileRequest {
+  uint32 id = 1;
+}
+
+message CountFileResponse {
+  uint64 count = 1;
+}

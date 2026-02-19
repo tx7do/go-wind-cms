@@ -5,6 +5,7 @@ package user
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -13,43 +14,82 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreateTime holds the string denoting the create_time field in the database.
-	FieldCreateTime = "create_time"
-	// FieldUpdateTime holds the string denoting the update_time field in the database.
-	FieldUpdateTime = "update_time"
-	// FieldDeleteTime holds the string denoting the delete_time field in the database.
-	FieldDeleteTime = "delete_time"
+	// FieldCreatedBy holds the string denoting the created_by field in the database.
+	FieldCreatedBy = "created_by"
+	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
+	FieldUpdatedBy = "updated_by"
+	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
+	FieldDeletedBy = "deleted_by"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
+	// FieldRemark holds the string denoting the remark field in the database.
+	FieldRemark = "remark"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldUsername holds the string denoting the username field in the database.
 	FieldUsername = "username"
-	// FieldPassword holds the string denoting the password field in the database.
-	FieldPassword = "password"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
+	// FieldRealname holds the string denoting the realname field in the database.
+	FieldRealname = "realname"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldMobile holds the string denoting the mobile field in the database.
+	FieldMobile = "mobile"
+	// FieldTelephone holds the string denoting the telephone field in the database.
+	FieldTelephone = "telephone"
 	// FieldAvatar holds the string denoting the avatar field in the database.
 	FieldAvatar = "avatar"
+	// FieldAddress holds the string denoting the address field in the database.
+	FieldAddress = "address"
+	// FieldRegion holds the string denoting the region field in the database.
+	FieldRegion = "region"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldAuthority holds the string denoting the authority field in the database.
-	FieldAuthority = "authority"
+	// FieldGender holds the string denoting the gender field in the database.
+	FieldGender = "gender"
+	// FieldLastLoginAt holds the string denoting the last_login_at field in the database.
+	FieldLastLoginAt = "last_login_at"
+	// FieldLastLoginIP holds the string denoting the last_login_ip field in the database.
+	FieldLastLoginIP = "last_login_ip"
+	// FieldLockedUntil holds the string denoting the locked_until field in the database.
+	FieldLockedUntil = "locked_until"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// Table holds the table name of the user in the database.
-	Table = "user"
+	Table = "sys_users"
 )
 
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
-	FieldCreateTime,
-	FieldUpdateTime,
-	FieldDeleteTime,
+	FieldCreatedBy,
+	FieldUpdatedBy,
+	FieldDeletedBy,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeletedAt,
+	FieldRemark,
+	FieldTenantID,
 	FieldUsername,
-	FieldPassword,
 	FieldNickname,
+	FieldRealname,
 	FieldEmail,
+	FieldMobile,
+	FieldTelephone,
 	FieldAvatar,
+	FieldAddress,
+	FieldRegion,
 	FieldDescription,
-	FieldAuthority,
+	FieldGender,
+	FieldLastLoginAt,
+	FieldLastLoginIP,
+	FieldLockedUntil,
+	FieldStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -62,52 +102,92 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
-	// DefaultCreateTime holds the default value on creation for the "create_time" field.
-	DefaultCreateTime func() int64
-	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
-	UpdateDefaultUpdateTime func() int64
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// UsernameValidator is a validator for the "username" field. It is called by the builders before save.
 	UsernameValidator func(string) error
-	// PasswordValidator is a validator for the "password" field. It is called by the builders before save.
-	PasswordValidator func(string) error
-	// NicknameValidator is a validator for the "nickname" field. It is called by the builders before save.
-	NicknameValidator func(string) error
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
-	// AvatarValidator is a validator for the "avatar" field. It is called by the builders before save.
-	AvatarValidator func(string) error
+	// DefaultMobile holds the default value on creation for the "mobile" field.
+	DefaultMobile string
+	// MobileValidator is a validator for the "mobile" field. It is called by the builders before save.
+	MobileValidator func(string) error
+	// DefaultTelephone holds the default value on creation for the "telephone" field.
+	DefaultTelephone string
+	// TelephoneValidator is a validator for the "telephone" field. It is called by the builders before save.
+	TelephoneValidator func(string) error
+	// DefaultAddress holds the default value on creation for the "address" field.
+	DefaultAddress string
+	// DefaultRegion holds the default value on creation for the "region" field.
+	DefaultRegion string
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	DescriptionValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
 
-// Authority defines the type for the "authority" enum field.
-type Authority string
+// Gender defines the type for the "gender" enum field.
+type Gender string
 
-// AuthorityCUSTOMER_USER is the default value of the Authority enum.
-const DefaultAuthority = AuthorityCUSTOMER_USER
+// GenderSecret is the default value of the Gender enum.
+const DefaultGender = GenderSecret
 
-// Authority values.
+// Gender values.
 const (
-	AuthoritySYS_ADMIN     Authority = "SYS_ADMIN"
-	AuthorityCUSTOMER_USER Authority = "CUSTOMER_USER"
-	AuthorityGUEST_USER    Authority = "GUEST_USER"
-	AuthorityREFRESH_TOKEN Authority = "REFRESH_TOKEN"
+	GenderSecret Gender = "SECRET"
+	GenderMale   Gender = "MALE"
+	GenderFemale Gender = "FEMALE"
 )
 
-func (a Authority) String() string {
-	return string(a)
+func (ge Gender) String() string {
+	return string(ge)
 }
 
-// AuthorityValidator is a validator for the "authority" field enum values. It is called by the builders before save.
-func AuthorityValidator(a Authority) error {
-	switch a {
-	case AuthoritySYS_ADMIN, AuthorityCUSTOMER_USER, AuthorityGUEST_USER, AuthorityREFRESH_TOKEN:
+// GenderValidator is a validator for the "gender" field enum values. It is called by the builders before save.
+func GenderValidator(ge Gender) error {
+	switch ge {
+	case GenderSecret, GenderMale, GenderFemale:
 		return nil
 	default:
-		return fmt.Errorf("user: invalid enum value for authority field: %q", a)
+		return fmt.Errorf("user: invalid enum value for gender field: %q", ge)
+	}
+}
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusNormal is the default value of the Status enum.
+const DefaultStatus = StatusNormal
+
+// Status values.
+const (
+	StatusNormal   Status = "NORMAL"
+	StatusDisabled Status = "DISABLED"
+	StatusPending  Status = "PENDING"
+	StatusLocked   Status = "LOCKED"
+	StatusExpired  Status = "EXPIRED"
+	StatusClosed   Status = "CLOSED"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusNormal, StatusDisabled, StatusPending, StatusLocked, StatusExpired, StatusClosed:
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for status field: %q", s)
 	}
 }
 
@@ -119,19 +199,44 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByCreateTime orders the results by the create_time field.
-func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
+// ByCreatedBy orders the results by the created_by field.
+func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedBy, opts...).ToFunc()
 }
 
-// ByUpdateTime orders the results by the update_time field.
-func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+// ByUpdatedBy orders the results by the updated_by field.
+func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
-// ByDeleteTime orders the results by the delete_time field.
-func ByDeleteTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleteTime, opts...).ToFunc()
+// ByDeletedBy orders the results by the deleted_by field.
+func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
+}
+
+// ByRemark orders the results by the remark field.
+func ByRemark(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRemark, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByUsername orders the results by the username field.
@@ -139,14 +244,14 @@ func ByUsername(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUsername, opts...).ToFunc()
 }
 
-// ByPassword orders the results by the password field.
-func ByPassword(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldPassword, opts...).ToFunc()
-}
-
 // ByNickname orders the results by the nickname field.
 func ByNickname(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNickname, opts...).ToFunc()
+}
+
+// ByRealname orders the results by the realname field.
+func ByRealname(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRealname, opts...).ToFunc()
 }
 
 // ByEmail orders the results by the email field.
@@ -154,9 +259,29 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
 }
 
+// ByMobile orders the results by the mobile field.
+func ByMobile(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMobile, opts...).ToFunc()
+}
+
+// ByTelephone orders the results by the telephone field.
+func ByTelephone(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTelephone, opts...).ToFunc()
+}
+
 // ByAvatar orders the results by the avatar field.
 func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvatar, opts...).ToFunc()
+}
+
+// ByAddress orders the results by the address field.
+func ByAddress(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAddress, opts...).ToFunc()
+}
+
+// ByRegion orders the results by the region field.
+func ByRegion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRegion, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.
@@ -164,7 +289,27 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByAuthority orders the results by the authority field.
-func ByAuthority(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAuthority, opts...).ToFunc()
+// ByGender orders the results by the gender field.
+func ByGender(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGender, opts...).ToFunc()
+}
+
+// ByLastLoginAt orders the results by the last_login_at field.
+func ByLastLoginAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastLoginAt, opts...).ToFunc()
+}
+
+// ByLastLoginIP orders the results by the last_login_ip field.
+func ByLastLoginIP(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastLoginIP, opts...).ToFunc()
+}
+
+// ByLockedUntil orders the results by the locked_until field.
+func ByLockedUntil(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLockedUntil, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }

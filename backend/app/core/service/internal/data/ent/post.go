@@ -3,68 +3,68 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/post"
+	"go-wind-cms/app/core/service/internal/data/ent/post"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
-// Post is the model entity for the Post schema.
+// 帖子表
 type Post struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
 	// 创建时间
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
-	UpdateTime *int64 `json:"update_time,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// 删除时间
-	DeleteTime *int64 `json:"delete_time,omitempty"`
-	// 博文标题
-	Title *string `json:"title,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	// 创建者ID
+	CreatedBy *uint32 `json:"created_by,omitempty"`
+	// 更新者ID
+	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	// 删除者ID
+	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 排序值（越小越靠前）
+	SortOrder *uint32 `json:"sort_order,omitempty"`
+	// 帖子状态
+	Status *post.Status `json:"status,omitempty"`
+	// 编辑器类型
+	EditorType *post.EditorType `json:"editor_type,omitempty"`
 	// 链接别名
 	Slug *string `json:"slug,omitempty"`
-	// 关键词列表
-	MetaKeywords *string `json:"meta_keywords,omitempty"`
-	// 描述信息
-	MetaDescription *string `json:"meta_description,omitempty"`
-	// 全路径
-	FullPath *string `json:"full_path,omitempty"`
-	// 原始内容
-	OriginalContent *string `json:"original_content,omitempty"`
-	// 内容
-	Content *string `json:"content,omitempty"`
-	// 概要信息
-	Summary *string `json:"summary,omitempty"`
-	// 缩略图
-	Thumbnail *string `json:"thumbnail,omitempty"`
-	// 密码
-	Password *string `json:"password,omitempty"`
-	// 模板
-	Template *string `json:"template,omitempty"`
-	// 评论数
-	CommentCount *int32 `json:"comment_count,omitempty"`
-	// 访问数
-	Visits *int32 `json:"visits,omitempty"`
-	// 点赞数
-	Likes *int32 `json:"likes,omitempty"`
-	// 文章字数
-	WordCount *int32 `json:"word_count,omitempty"`
-	// 优先级
-	TopPriority *int32 `json:"top_priority,omitempty"`
-	// 状态
-	Status *int32 `json:"status,omitempty"`
-	// 编辑器类型
-	EditorType *int32 `json:"editor_type,omitempty"`
-	// 编辑时间
-	EditTime *int64 `json:"edit_time,omitempty"`
 	// 不允许评论
 	DisallowComment *bool `json:"disallow_comment,omitempty"`
 	// 审核中
-	InProgress   *bool `json:"in_progress,omitempty"`
+	InProgress *bool `json:"in_progress,omitempty"`
+	// 是否自动生成摘要
+	AutoSummary *bool `json:"auto_summary,omitempty"`
+	// 是否推荐
+	IsFeatured *bool `json:"is_featured,omitempty"`
+	// 帖子访问次数
+	Visits *int32 `json:"visits,omitempty"`
+	// 帖子点赞次数
+	Likes *int32 `json:"likes,omitempty"`
+	// 帖子评论数
+	CommentCount *int32 `json:"comment_count,omitempty"`
+	// 评论作者ID，0表示游客
+	AuthorID *uint32 `json:"author_id,omitempty"`
+	// 评论作者名称
+	AuthorName *string `json:"author_name,omitempty"`
+	// 密码哈希
+	PasswordHash *string `json:"password_hash,omitempty"`
+	// 自定义字段
+	CustomFields *map[string]string `json:"custom_fields,omitempty"`
+	// 关联的分类ID列表
+	CategoryIds *[]uint32 `json:"category_ids,omitempty"`
+	// 关联的标签ID列表
+	TagIds       *[]uint32 `json:"tag_ids,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -73,12 +73,16 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case post.FieldDisallowComment, post.FieldInProgress:
+		case post.FieldCustomFields, post.FieldCategoryIds, post.FieldTagIds:
+			values[i] = new([]byte)
+		case post.FieldDisallowComment, post.FieldInProgress, post.FieldAutoSummary, post.FieldIsFeatured:
 			values[i] = new(sql.NullBool)
-		case post.FieldID, post.FieldCreateTime, post.FieldUpdateTime, post.FieldDeleteTime, post.FieldCommentCount, post.FieldVisits, post.FieldLikes, post.FieldWordCount, post.FieldTopPriority, post.FieldStatus, post.FieldEditorType, post.FieldEditTime:
+		case post.FieldID, post.FieldCreatedBy, post.FieldUpdatedBy, post.FieldDeletedBy, post.FieldSortOrder, post.FieldVisits, post.FieldLikes, post.FieldCommentCount, post.FieldAuthorID:
 			values[i] = new(sql.NullInt64)
-		case post.FieldTitle, post.FieldSlug, post.FieldMetaKeywords, post.FieldMetaDescription, post.FieldFullPath, post.FieldOriginalContent, post.FieldContent, post.FieldSummary, post.FieldThumbnail, post.FieldPassword, post.FieldTemplate:
+		case post.FieldStatus, post.FieldEditorType, post.FieldSlug, post.FieldAuthorName, post.FieldPasswordHash:
 			values[i] = new(sql.NullString)
+		case post.FieldCreatedAt, post.FieldUpdatedAt, post.FieldDeletedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -88,7 +92,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Post fields.
-func (po *Post) assignValues(columns []string, values []any) error {
+func (_m *Post) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -99,177 +103,173 @@ func (po *Post) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			po.ID = uint32(value.Int64)
-		case post.FieldCreateTime:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+			_m.ID = uint32(value.Int64)
+		case post.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				po.CreateTime = new(int64)
-				*po.CreateTime = value.Int64
+				_m.CreatedAt = new(time.Time)
+				*_m.CreatedAt = value.Time
 			}
-		case post.FieldUpdateTime:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+		case post.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				po.UpdateTime = new(int64)
-				*po.UpdateTime = value.Int64
+				_m.UpdatedAt = new(time.Time)
+				*_m.UpdatedAt = value.Time
 			}
-		case post.FieldDeleteTime:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field delete_time", values[i])
+		case post.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				po.DeleteTime = new(int64)
-				*po.DeleteTime = value.Int64
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
 			}
-		case post.FieldTitle:
+		case post.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				_m.CreatedBy = new(uint32)
+				*_m.CreatedBy = uint32(value.Int64)
+			}
+		case post.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				_m.UpdatedBy = new(uint32)
+				*_m.UpdatedBy = uint32(value.Int64)
+			}
+		case post.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				_m.DeletedBy = new(uint32)
+				*_m.DeletedBy = uint32(value.Int64)
+			}
+		case post.FieldSortOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sort_order", values[i])
+			} else if value.Valid {
+				_m.SortOrder = new(uint32)
+				*_m.SortOrder = uint32(value.Int64)
+			}
+		case post.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field title", values[i])
+				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				po.Title = new(string)
-				*po.Title = value.String
+				_m.Status = new(post.Status)
+				*_m.Status = post.Status(value.String)
+			}
+		case post.FieldEditorType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field editor_type", values[i])
+			} else if value.Valid {
+				_m.EditorType = new(post.EditorType)
+				*_m.EditorType = post.EditorType(value.String)
 			}
 		case post.FieldSlug:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field slug", values[i])
 			} else if value.Valid {
-				po.Slug = new(string)
-				*po.Slug = value.String
-			}
-		case post.FieldMetaKeywords:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_keywords", values[i])
-			} else if value.Valid {
-				po.MetaKeywords = new(string)
-				*po.MetaKeywords = value.String
-			}
-		case post.FieldMetaDescription:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_description", values[i])
-			} else if value.Valid {
-				po.MetaDescription = new(string)
-				*po.MetaDescription = value.String
-			}
-		case post.FieldFullPath:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field full_path", values[i])
-			} else if value.Valid {
-				po.FullPath = new(string)
-				*po.FullPath = value.String
-			}
-		case post.FieldOriginalContent:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field original_content", values[i])
-			} else if value.Valid {
-				po.OriginalContent = new(string)
-				*po.OriginalContent = value.String
-			}
-		case post.FieldContent:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field content", values[i])
-			} else if value.Valid {
-				po.Content = new(string)
-				*po.Content = value.String
-			}
-		case post.FieldSummary:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field summary", values[i])
-			} else if value.Valid {
-				po.Summary = new(string)
-				*po.Summary = value.String
-			}
-		case post.FieldThumbnail:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field thumbnail", values[i])
-			} else if value.Valid {
-				po.Thumbnail = new(string)
-				*po.Thumbnail = value.String
-			}
-		case post.FieldPassword:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field password", values[i])
-			} else if value.Valid {
-				po.Password = new(string)
-				*po.Password = value.String
-			}
-		case post.FieldTemplate:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field template", values[i])
-			} else if value.Valid {
-				po.Template = new(string)
-				*po.Template = value.String
-			}
-		case post.FieldCommentCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field comment_count", values[i])
-			} else if value.Valid {
-				po.CommentCount = new(int32)
-				*po.CommentCount = int32(value.Int64)
-			}
-		case post.FieldVisits:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field visits", values[i])
-			} else if value.Valid {
-				po.Visits = new(int32)
-				*po.Visits = int32(value.Int64)
-			}
-		case post.FieldLikes:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field likes", values[i])
-			} else if value.Valid {
-				po.Likes = new(int32)
-				*po.Likes = int32(value.Int64)
-			}
-		case post.FieldWordCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field word_count", values[i])
-			} else if value.Valid {
-				po.WordCount = new(int32)
-				*po.WordCount = int32(value.Int64)
-			}
-		case post.FieldTopPriority:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field top_priority", values[i])
-			} else if value.Valid {
-				po.TopPriority = new(int32)
-				*po.TopPriority = int32(value.Int64)
-			}
-		case post.FieldStatus:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field status", values[i])
-			} else if value.Valid {
-				po.Status = new(int32)
-				*po.Status = int32(value.Int64)
-			}
-		case post.FieldEditorType:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field editor_type", values[i])
-			} else if value.Valid {
-				po.EditorType = new(int32)
-				*po.EditorType = int32(value.Int64)
-			}
-		case post.FieldEditTime:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field edit_time", values[i])
-			} else if value.Valid {
-				po.EditTime = new(int64)
-				*po.EditTime = value.Int64
+				_m.Slug = new(string)
+				*_m.Slug = value.String
 			}
 		case post.FieldDisallowComment:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field disallow_comment", values[i])
 			} else if value.Valid {
-				po.DisallowComment = new(bool)
-				*po.DisallowComment = value.Bool
+				_m.DisallowComment = new(bool)
+				*_m.DisallowComment = value.Bool
 			}
 		case post.FieldInProgress:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field in_progress", values[i])
 			} else if value.Valid {
-				po.InProgress = new(bool)
-				*po.InProgress = value.Bool
+				_m.InProgress = new(bool)
+				*_m.InProgress = value.Bool
+			}
+		case post.FieldAutoSummary:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field auto_summary", values[i])
+			} else if value.Valid {
+				_m.AutoSummary = new(bool)
+				*_m.AutoSummary = value.Bool
+			}
+		case post.FieldIsFeatured:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_featured", values[i])
+			} else if value.Valid {
+				_m.IsFeatured = new(bool)
+				*_m.IsFeatured = value.Bool
+			}
+		case post.FieldVisits:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field visits", values[i])
+			} else if value.Valid {
+				_m.Visits = new(int32)
+				*_m.Visits = int32(value.Int64)
+			}
+		case post.FieldLikes:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field likes", values[i])
+			} else if value.Valid {
+				_m.Likes = new(int32)
+				*_m.Likes = int32(value.Int64)
+			}
+		case post.FieldCommentCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field comment_count", values[i])
+			} else if value.Valid {
+				_m.CommentCount = new(int32)
+				*_m.CommentCount = int32(value.Int64)
+			}
+		case post.FieldAuthorID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field author_id", values[i])
+			} else if value.Valid {
+				_m.AuthorID = new(uint32)
+				*_m.AuthorID = uint32(value.Int64)
+			}
+		case post.FieldAuthorName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field author_name", values[i])
+			} else if value.Valid {
+				_m.AuthorName = new(string)
+				*_m.AuthorName = value.String
+			}
+		case post.FieldPasswordHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field password_hash", values[i])
+			} else if value.Valid {
+				_m.PasswordHash = new(string)
+				*_m.PasswordHash = value.String
+			}
+		case post.FieldCustomFields:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field custom_fields", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.CustomFields); err != nil {
+					return fmt.Errorf("unmarshal field custom_fields: %w", err)
+				}
+			}
+		case post.FieldCategoryIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field category_ids", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.CategoryIds); err != nil {
+					return fmt.Errorf("unmarshal field category_ids: %w", err)
+				}
+			}
+		case post.FieldTagIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tag_ids", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.TagIds); err != nil {
+					return fmt.Errorf("unmarshal field tag_ids: %w", err)
+				}
 			}
 		default:
-			po.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -277,152 +277,141 @@ func (po *Post) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Post.
 // This includes values selected through modifiers, order, etc.
-func (po *Post) Value(name string) (ent.Value, error) {
-	return po.selectValues.Get(name)
+func (_m *Post) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this Post.
 // Note that you need to call Post.Unwrap() before calling this method if this Post
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (po *Post) Update() *PostUpdateOne {
-	return NewPostClient(po.config).UpdateOne(po)
+func (_m *Post) Update() *PostUpdateOne {
+	return NewPostClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Post entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (po *Post) Unwrap() *Post {
-	_tx, ok := po.config.driver.(*txDriver)
+func (_m *Post) Unwrap() *Post {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Post is not a transactional entity")
 	}
-	po.config.driver = _tx.drv
-	return po
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (po *Post) String() string {
+func (_m *Post) String() string {
 	var builder strings.Builder
 	builder.WriteString("Post(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", po.ID))
-	if v := po.CreateTime; v != nil {
-		builder.WriteString("create_time=")
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.CreatedAt; v != nil {
+		builder.WriteString("created_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpdatedAt; v != nil {
+		builder.WriteString("updated_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := po.UpdateTime; v != nil {
-		builder.WriteString("update_time=")
+	if v := _m.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := po.DeleteTime; v != nil {
-		builder.WriteString("delete_time=")
+	if v := _m.DeletedBy; v != nil {
+		builder.WriteString("deleted_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := po.Title; v != nil {
-		builder.WriteString("title=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.Slug; v != nil {
-		builder.WriteString("slug=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.MetaKeywords; v != nil {
-		builder.WriteString("meta_keywords=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.MetaDescription; v != nil {
-		builder.WriteString("meta_description=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.FullPath; v != nil {
-		builder.WriteString("full_path=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.OriginalContent; v != nil {
-		builder.WriteString("original_content=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.Content; v != nil {
-		builder.WriteString("content=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.Summary; v != nil {
-		builder.WriteString("summary=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.Thumbnail; v != nil {
-		builder.WriteString("thumbnail=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.Password; v != nil {
-		builder.WriteString("password=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.Template; v != nil {
-		builder.WriteString("template=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := po.CommentCount; v != nil {
-		builder.WriteString("comment_count=")
+	if v := _m.SortOrder; v != nil {
+		builder.WriteString("sort_order=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := po.Visits; v != nil {
-		builder.WriteString("visits=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := po.Likes; v != nil {
-		builder.WriteString("likes=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := po.WordCount; v != nil {
-		builder.WriteString("word_count=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := po.TopPriority; v != nil {
-		builder.WriteString("top_priority=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := po.Status; v != nil {
+	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := po.EditorType; v != nil {
+	if v := _m.EditorType; v != nil {
 		builder.WriteString("editor_type=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := po.EditTime; v != nil {
-		builder.WriteString("edit_time=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
+	if v := _m.Slug; v != nil {
+		builder.WriteString("slug=")
+		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := po.DisallowComment; v != nil {
+	if v := _m.DisallowComment; v != nil {
 		builder.WriteString("disallow_comment=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := po.InProgress; v != nil {
+	if v := _m.InProgress; v != nil {
 		builder.WriteString("in_progress=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	if v := _m.AutoSummary; v != nil {
+		builder.WriteString("auto_summary=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.IsFeatured; v != nil {
+		builder.WriteString("is_featured=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Visits; v != nil {
+		builder.WriteString("visits=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Likes; v != nil {
+		builder.WriteString("likes=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.CommentCount; v != nil {
+		builder.WriteString("comment_count=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.AuthorID; v != nil {
+		builder.WriteString("author_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.AuthorName; v != nil {
+		builder.WriteString("author_name=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.PasswordHash; v != nil {
+		builder.WriteString("password_hash=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("custom_fields=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CustomFields))
+	builder.WriteString(", ")
+	builder.WriteString("category_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CategoryIds))
+	builder.WriteString(", ")
+	builder.WriteString("tag_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TagIds))
 	builder.WriteByte(')')
 	return builder.String()
 }

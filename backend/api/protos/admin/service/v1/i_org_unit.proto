@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+import "identity/service/v1/org_unit.proto";
+
+// 组织单元服务
+service OrgUnitService {
+  // 查询组织单元列表
+  rpc List (pagination.PagingRequest) returns (identity.service.v1.ListOrgUnitResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/org-units"
+    };
+  }
+
+  // 查询组织单元详情
+  rpc Get (identity.service.v1.GetOrgUnitRequest) returns (identity.service.v1.OrgUnit) {
+    option (google.api.http) = {
+      get: "/admin/v1/org-units/{id}"
+    };
+  }
+
+  // 创建组织单元
+  rpc Create (identity.service.v1.CreateOrgUnitRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/org-units"
+      body: "*"
+    };
+  }
+
+  // 更新组织单元
+  rpc Update (identity.service.v1.UpdateOrgUnitRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/org-units/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除组织单元
+  rpc Delete (identity.service.v1.DeleteOrgUnitRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/org-units/{id}"
+    };
+  }
+}

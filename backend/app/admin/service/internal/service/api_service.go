@@ -1,0 +1,253 @@
+package service
+
+import (
+	"context"
+	"sort"
+
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"google.golang.org/protobuf/types/known/emptypb"
+
+	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+
+	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
+	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
+
+	"go-wind-cms/app/admin/service/cmd/server/assets"
+
+	appViewer "go-wind-cms/pkg/entgo/viewer"
+	"go-wind-cms/pkg/middleware/auth"
+)
+
+type RouteWalker interface {
+	WalkRoute(fn http.WalkRouteFunc) error
+}
+
+type ApiService struct {
+	adminV1.ApiServiceHTTPServer
+
+	log *log.Helper
+
+	apiServiceClient resourceV1.ApiServiceClient
+	routeWalker      RouteWalker
+}
+
+func NewApiService(
+	ctx *bootstrap.Context,
+	apiServiceClient resourceV1.ApiServiceClient,
+) *ApiService {
+	svc := &ApiService{
+		log:              ctx.NewLoggerHelper("api/service/admin-service"),
+		apiServiceClient: apiServiceClient,
+	}
+
+	svc.init()
+
+	return svc
+}
+
+func (s *ApiService) init() {
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+	if resp, _ := s.apiServiceClient.Count(ctx, nil); resp != nil && resp.Count == 0 {
+		_, _ = s.SyncApis(ctx, &emptypb.Empty{})
+	}
+}
+
+func (s *ApiService) RegisterRouteWalker(routeWalker RouteWalker) {
+	s.routeWalker = routeWalker
+}
+
+func (s *ApiService) List(ctx context.Context, req *paginationV1.PagingRequest) (*resourceV1.ListApiResponse, error) {
+	return s.apiServiceClient.List(ctx, req)
+}
+
+func (s *ApiService) Get(ctx context.Context, req *resourceV1.GetApiRequest) (*resourceV1.Api, error) {
+	return s.apiServiceClient.Get(ctx, req)
+}
+
+func (s *ApiService) Create(ctx context.Context, req *resourceV1.CreateApiRequest) (*emptypb.Empty, error) {
+	if req.Data == nil {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// 获取操作人信息
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Data.CreatedBy = trans.Ptr(operator.UserId)
+
+	if _, err = s.apiServiceClient.Create(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+func (s *ApiService) Update(ctx context.Context, req *resourceV1.UpdateApiRequest) (*emptypb.Empty, error) {
+	if req.Data == nil {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// 获取操作人信息
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
+	if req.UpdateMask != nil {
+		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
+	}
+
+	if _, err = s.apiServiceClient.Update(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+func (s *ApiService) Delete(ctx context.Context, req *resourceV1.DeleteApiRequest) (*emptypb.Empty, error) {
+	if _, err := s.apiServiceClient.Delete(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+func (s *ApiService) SyncApis(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
+	if err := s.syncWithOpenAPI(ctx); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// syncWithOpenAPI 使用 OpenAPI 文档同步 API 资源
+func (s *ApiService) syncWithOpenAPI(ctx context.Context) error {
+	loader := openapi3.NewLoader()
+	doc, err := loader.LoadFromData(assets.OpenApiData)
+	if err != nil {
+		s.log.Fatalf("加载 OpenAPI 文档失败: %v", err)
+		return adminV1.ErrorInternalServerError("load OpenAPI document failed")
+	}
+
+	if doc == nil {
+		s.log.Fatal("OpenAPI 文档为空")
+		return adminV1.ErrorInternalServerError("OpenAPI document is nil")
+	}
+	if doc.Paths == nil {
+		s.log.Fatal("OpenAPI 文档的路径为空")
+		return adminV1.ErrorInternalServerError("OpenAPI document paths is nil")
+	}
+
+	var count uint32 = 0
+	var apiList []*resourceV1.Api
+
+	// 遍历所有路径和操作
+	for path, pathItem := range doc.Paths.Map() {
+		for method, operation := range pathItem.Operations() {
+
+			var module string
+			var moduleDescription string
+			if len(operation.Tags) > 0 {
+				tag := doc.Tags.Get(operation.Tags[0])
+				if tag != nil {
+					module = tag.Name
+					moduleDescription = tag.Description
+				}
+			}
+
+			count++
+
+			apiList = append(apiList, &resourceV1.Api{
+				Id:                trans.Ptr(count),
+				Path:              trans.Ptr(path),
+				Method:            trans.Ptr(method),
+				Module:            trans.Ptr(module),
+				ModuleDescription: trans.Ptr(moduleDescription),
+				Description:       trans.Ptr(operation.Description),
+				Operation:         trans.Ptr(operation.OperationID),
+			})
+		}
+	}
+
+	_, _ = s.apiServiceClient.SyncApis(ctx, &resourceV1.SyncApisRequest{
+		Apis: apiList,
+	})
+
+	return nil
+}
+
+// syncWithWalkRoute 使用 WalkRoute 同步 API 资源
+func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
+	if s.routeWalker == nil {
+		return adminV1.ErrorInternalServerError("router walker is nil")
+	}
+
+	var count uint32 = 0
+
+	var apiList []*resourceV1.Api
+
+	if err := s.routeWalker.WalkRoute(func(info http.RouteInfo) error {
+		//log.Infof("Path[%s] Method[%s]", info.Path, info.Method)
+		count++
+
+		apiList = append(apiList, &resourceV1.Api{
+			Id:     trans.Ptr(count),
+			Path:   trans.Ptr(info.Path),
+			Method: trans.Ptr(info.Method),
+		})
+
+		return nil
+	}); err != nil {
+		s.log.Errorf("failed to walk route: %v", err)
+		return adminV1.ErrorInternalServerError("failed to walk route")
+	}
+
+	sort.SliceStable(apiList, func(i, j int) bool {
+		if apiList[i].GetPath() == apiList[j].GetPath() {
+			return apiList[i].GetMethod() < apiList[j].GetMethod()
+		}
+		return apiList[i].GetPath() < apiList[j].GetPath()
+	})
+
+	_, _ = s.apiServiceClient.SyncApis(ctx, &resourceV1.SyncApisRequest{
+		Apis: apiList,
+	})
+
+	return nil
+}
+
+// GetWalkRouteData 获取通过 WalkRoute 获取的路由数据，用于调试
+func (s *ApiService) GetWalkRouteData(_ context.Context, _ *emptypb.Empty) (*resourceV1.ListApiResponse, error) {
+	if s.routeWalker == nil {
+		return nil, adminV1.ErrorInternalServerError("router walker is nil")
+	}
+
+	resp := &resourceV1.ListApiResponse{
+		Items: []*resourceV1.Api{},
+	}
+	var count uint32 = 0
+	if err := s.routeWalker.WalkRoute(func(info http.RouteInfo) error {
+		//log.Infof("Path[%s] Method[%s]", info.Path, info.Method)
+		count++
+		resp.Items = append(resp.Items, &resourceV1.Api{
+			Id:     trans.Ptr(count),
+			Path:   trans.Ptr(info.Path),
+			Method: trans.Ptr(info.Method),
+			Status: trans.Ptr(resourceV1.Api_ON),
+		})
+		return nil
+	}); err != nil {
+		s.log.Errorf("failed to walk route: %v", err)
+		return nil, adminV1.ErrorInternalServerError("failed to walk route")
+	}
+	resp.Total = uint64(count)
+
+	return resp, nil
+}

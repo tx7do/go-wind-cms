@@ -4,4 +4,4 @@ config:
   consul:
     scheme: "http"
     address: "localhost:8500"
-    key: "kratos-cms/admin/service"
+    key: "go-wind-cms/admin/service"

@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package admin.service.v1;
 
-
 import "gnostic/openapi/v3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
@@ -13,21 +12,21 @@ import "content/service/v1/category.proto";
 // 类别服务
 service CategoryService {
   // 获取类别列表
-  rpc ListCategory (pagination.PagingRequest) returns (content.service.v1.ListCategoryResponse) {
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListCategoryResponse) {
     option (google.api.http) = {
       get: "/admin/v1/categories"
     };
   }
 
   // 获取类别数据
-  rpc GetCategory (content.service.v1.GetCategoryRequest) returns (content.service.v1.Category) {
+  rpc Get (content.service.v1.GetCategoryRequest) returns (content.service.v1.Category) {
     option (google.api.http) = {
       get: "/admin/v1/categories/{id}"
     };
   }
 
   // 创建类别
-  rpc CreateCategory (content.service.v1.CreateCategoryRequest) returns (content.service.v1.Category) {
+  rpc Create (content.service.v1.CreateCategoryRequest) returns (content.service.v1.Category) {
     option (google.api.http) = {
       post: "/admin/v1/categories"
       body: "*"
@@ -35,15 +34,15 @@ service CategoryService {
   }
 
   // 更新类别
-  rpc UpdateCategory (content.service.v1.UpdateCategoryRequest) returns (content.service.v1.Category) {
+  rpc Update (content.service.v1.UpdateCategoryRequest) returns (content.service.v1.Category) {
     option (google.api.http) = {
       put: "/admin/v1/categories/{id}"
-      body: "category"
+      body: "*"
     };
   }
 
   // 删除类别
-  rpc DeleteCategory (content.service.v1.DeleteCategoryRequest) returns (google.protobuf.Empty) {
+  rpc Delete (content.service.v1.DeleteCategoryRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/admin/v1/categories/{id}"
     };

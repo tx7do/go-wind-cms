@@ -6,15 +6,61 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/attachment"
-	"kratos-cms/app/core/service/internal/data/ent/category"
-	"kratos-cms/app/core/service/internal/data/ent/comment"
-	"kratos-cms/app/core/service/internal/data/ent/link"
-	"kratos-cms/app/core/service/internal/data/ent/menu"
-	"kratos-cms/app/core/service/internal/data/ent/photo"
-	"kratos-cms/app/core/service/internal/data/ent/post"
-	"kratos-cms/app/core/service/internal/data/ent/tag"
-	"kratos-cms/app/core/service/internal/data/ent/user"
+	"go-wind-cms/app/core/service/internal/data/ent/api"
+	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-cms/app/core/service/internal/data/ent/category"
+	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/comment"
+	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
+	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
+	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
+	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
+	"go-wind-cms/app/core/service/internal/data/ent/dicttypei18n"
+	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
+	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
+	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-cms/app/core/service/internal/data/ent/language"
+	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
+	"go-wind-cms/app/core/service/internal/data/ent/loginpolicy"
+	"go-wind-cms/app/core/service/internal/data/ent/mediaasset"
+	"go-wind-cms/app/core/service/internal/data/ent/mediavariant"
+	"go-wind-cms/app/core/service/internal/data/ent/membership"
+	"go-wind-cms/app/core/service/internal/data/ent/membershiporgunit"
+	"go-wind-cms/app/core/service/internal/data/ent/membershipposition"
+	"go-wind-cms/app/core/service/internal/data/ent/membershiprole"
+	"go-wind-cms/app/core/service/internal/data/ent/menu"
+	"go-wind-cms/app/core/service/internal/data/ent/navigation"
+	"go-wind-cms/app/core/service/internal/data/ent/navigationitem"
+	"go-wind-cms/app/core/service/internal/data/ent/operationauditlog"
+	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
+	"go-wind-cms/app/core/service/internal/data/ent/page"
+	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/permission"
+	"go-wind-cms/app/core/service/internal/data/ent/permissionapi"
+	"go-wind-cms/app/core/service/internal/data/ent/permissionauditlog"
+	"go-wind-cms/app/core/service/internal/data/ent/permissiongroup"
+	"go-wind-cms/app/core/service/internal/data/ent/permissionmenu"
+	"go-wind-cms/app/core/service/internal/data/ent/permissionpolicy"
+	"go-wind-cms/app/core/service/internal/data/ent/policyevaluationlog"
+	"go-wind-cms/app/core/service/internal/data/ent/position"
+	"go-wind-cms/app/core/service/internal/data/ent/post"
+	"go-wind-cms/app/core/service/internal/data/ent/postcategory"
+	"go-wind-cms/app/core/service/internal/data/ent/posttag"
+	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/role"
+	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
+	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
+	"go-wind-cms/app/core/service/internal/data/ent/tag"
+	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/task"
+	"go-wind-cms/app/core/service/internal/data/ent/tenant"
+	"go-wind-cms/app/core/service/internal/data/ent/user"
+	"go-wind-cms/app/core/service/internal/data/ent/usercredential"
+	"go-wind-cms/app/core/service/internal/data/ent/userorgunit"
+	"go-wind-cms/app/core/service/internal/data/ent/userposition"
+	"go-wind-cms/app/core/service/internal/data/ent/userrole"
 	"reflect"
 	"sync"
 
@@ -78,21 +124,67 @@ var (
 )
 
 // checkColumn checks if the column exists in the given table.
-func checkColumn(table, column string) error {
+func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			attachment.Table: attachment.ValidColumn,
-			category.Table:   category.ValidColumn,
-			comment.Table:    comment.ValidColumn,
-			link.Table:       link.ValidColumn,
-			menu.Table:       menu.ValidColumn,
-			photo.Table:      photo.ValidColumn,
-			post.Table:       post.ValidColumn,
-			tag.Table:        tag.ValidColumn,
-			user.Table:       user.ValidColumn,
+			api.Table:                      api.ValidColumn,
+			apiauditlog.Table:              apiauditlog.ValidColumn,
+			category.Table:                 category.ValidColumn,
+			categorytranslation.Table:      categorytranslation.ValidColumn,
+			comment.Table:                  comment.ValidColumn,
+			dataaccessauditlog.Table:       dataaccessauditlog.ValidColumn,
+			dictentry.Table:                dictentry.ValidColumn,
+			dictentryi18n.Table:            dictentryi18n.ValidColumn,
+			dicttype.Table:                 dicttype.ValidColumn,
+			dicttypei18n.Table:             dicttypei18n.ValidColumn,
+			file.Table:                     file.ValidColumn,
+			internalmessage.Table:          internalmessage.ValidColumn,
+			internalmessagecategory.Table:  internalmessagecategory.ValidColumn,
+			internalmessagerecipient.Table: internalmessagerecipient.ValidColumn,
+			language.Table:                 language.ValidColumn,
+			loginauditlog.Table:            loginauditlog.ValidColumn,
+			loginpolicy.Table:              loginpolicy.ValidColumn,
+			mediaasset.Table:               mediaasset.ValidColumn,
+			mediavariant.Table:             mediavariant.ValidColumn,
+			membership.Table:               membership.ValidColumn,
+			membershiporgunit.Table:        membershiporgunit.ValidColumn,
+			membershipposition.Table:       membershipposition.ValidColumn,
+			membershiprole.Table:           membershiprole.ValidColumn,
+			menu.Table:                     menu.ValidColumn,
+			navigation.Table:               navigation.ValidColumn,
+			navigationitem.Table:           navigationitem.ValidColumn,
+			operationauditlog.Table:        operationauditlog.ValidColumn,
+			orgunit.Table:                  orgunit.ValidColumn,
+			page.Table:                     page.ValidColumn,
+			pagetranslation.Table:          pagetranslation.ValidColumn,
+			permission.Table:               permission.ValidColumn,
+			permissionapi.Table:            permissionapi.ValidColumn,
+			permissionauditlog.Table:       permissionauditlog.ValidColumn,
+			permissiongroup.Table:          permissiongroup.ValidColumn,
+			permissionmenu.Table:           permissionmenu.ValidColumn,
+			permissionpolicy.Table:         permissionpolicy.ValidColumn,
+			policyevaluationlog.Table:      policyevaluationlog.ValidColumn,
+			position.Table:                 position.ValidColumn,
+			post.Table:                     post.ValidColumn,
+			postcategory.Table:             postcategory.ValidColumn,
+			posttag.Table:                  posttag.ValidColumn,
+			posttranslation.Table:          posttranslation.ValidColumn,
+			role.Table:                     role.ValidColumn,
+			rolemetadata.Table:             rolemetadata.ValidColumn,
+			rolepermission.Table:           rolepermission.ValidColumn,
+			sitesetting.Table:              sitesetting.ValidColumn,
+			tag.Table:                      tag.ValidColumn,
+			tagtranslation.Table:           tagtranslation.ValidColumn,
+			task.Table:                     task.ValidColumn,
+			tenant.Table:                   tenant.ValidColumn,
+			user.Table:                     user.ValidColumn,
+			usercredential.Table:           usercredential.ValidColumn,
+			userorgunit.Table:              userorgunit.ValidColumn,
+			userposition.Table:             userposition.ValidColumn,
+			userrole.Table:                 userrole.ValidColumn,
 		})
 	})
-	return columnCheck(table, column)
+	return columnCheck(t, c)
 }
 
 // Asc applies the given fields in ASC order.

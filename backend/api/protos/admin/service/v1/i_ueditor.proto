@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+
+import "storage/service/v1/ueditor.proto";
+
+// UEditor后端服务
+service UEditorService {
+  // UEditor API
+  rpc UEditorAPI (storage.service.v1.UEditorRequest) returns (storage.service.v1.UEditorResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ueditor"
+    };
+  }
+}

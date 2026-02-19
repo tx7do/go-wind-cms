@@ -3,9 +3,11 @@
 package category
 
 import (
-	"kratos-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -53,49 +55,44 @@ func IDLTE(id uint32) predicate.Category {
 	return predicate.Category(sql.FieldLTE(FieldID, id))
 }
 
-// CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
-func CreateTime(v int64) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldCreateTime, v))
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UpdateTime applies equality check predicate on the "update_time" field. It's identical to UpdateTimeEQ.
-func UpdateTime(v int64) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldUpdateTime, v))
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// DeleteTime applies equality check predicate on the "delete_time" field. It's identical to DeleteTimeEQ.
-func DeleteTime(v int64) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldDeleteTime, v))
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldName, v))
+// CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
+func CreatedBy(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldCreatedBy, v))
 }
 
-// Slug applies equality check predicate on the "slug" field. It's identical to SlugEQ.
-func Slug(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldSlug, v))
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
-func Description(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldDescription, v))
+// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
+func DeletedBy(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDeletedBy, v))
 }
 
-// Thumbnail applies equality check predicate on the "thumbnail" field. It's identical to ThumbnailEQ.
-func Thumbnail(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldThumbnail, v))
+// SortOrder applies equality check predicate on the "sort_order" field. It's identical to SortOrderEQ.
+func SortOrder(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldSortOrder, v))
 }
 
-// Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
-func Password(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldPassword, v))
-}
-
-// FullPath applies equality check predicate on the "full_path" field. It's identical to FullPathEQ.
-func FullPath(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldFullPath, v))
+// Path applies equality check predicate on the "path" field. It's identical to PathEQ.
+func Path(v string) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldPath, v))
 }
 
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
@@ -103,9 +100,19 @@ func ParentID(v uint32) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldParentID, v))
 }
 
-// Priority applies equality check predicate on the "priority" field. It's identical to PriorityEQ.
-func Priority(v int32) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldPriority, v))
+// Depth applies equality check predicate on the "depth" field. It's identical to DepthEQ.
+func Depth(v int32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDepth, v))
+}
+
+// IsNav applies equality check predicate on the "is_nav" field. It's identical to IsNavEQ.
+func IsNav(v bool) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldIsNav, v))
+}
+
+// Icon applies equality check predicate on the "icon" field. It's identical to IconEQ.
+func Icon(v string) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldIcon, v))
 }
 
 // PostCount applies equality check predicate on the "post_count" field. It's identical to PostCountEQ.
@@ -113,604 +120,434 @@ func PostCount(v uint32) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldPostCount, v))
 }
 
-// CreateTimeEQ applies the EQ predicate on the "create_time" field.
-func CreateTimeEQ(v int64) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldCreateTime, v))
+// DirectPostCount applies equality check predicate on the "direct_post_count" field. It's identical to DirectPostCountEQ.
+func DirectPostCount(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDirectPostCount, v))
 }
 
-// CreateTimeNEQ applies the NEQ predicate on the "create_time" field.
-func CreateTimeNEQ(v int64) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldCreateTime, v))
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// CreateTimeIn applies the In predicate on the "create_time" field.
-func CreateTimeIn(vs ...int64) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldCreateTime, vs...))
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
-// CreateTimeNotIn applies the NotIn predicate on the "create_time" field.
-func CreateTimeNotIn(vs ...int64) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldCreateTime, vs...))
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
-// CreateTimeGT applies the GT predicate on the "create_time" field.
-func CreateTimeGT(v int64) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldCreateTime, v))
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
-// CreateTimeGTE applies the GTE predicate on the "create_time" field.
-func CreateTimeGTE(v int64) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldCreateTime, v))
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldCreatedAt, v))
 }
 
-// CreateTimeLT applies the LT predicate on the "create_time" field.
-func CreateTimeLT(v int64) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldCreateTime, v))
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldCreatedAt, v))
 }
 
-// CreateTimeLTE applies the LTE predicate on the "create_time" field.
-func CreateTimeLTE(v int64) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldCreateTime, v))
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldCreatedAt, v))
 }
 
-// CreateTimeIsNil applies the IsNil predicate on the "create_time" field.
-func CreateTimeIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldCreateTime))
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreateTimeNotNil applies the NotNil predicate on the "create_time" field.
-func CreateTimeNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldCreateTime))
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldCreatedAt))
 }
 
-// UpdateTimeEQ applies the EQ predicate on the "update_time" field.
-func UpdateTimeEQ(v int64) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldUpdateTime, v))
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldCreatedAt))
 }
 
-// UpdateTimeNEQ applies the NEQ predicate on the "update_time" field.
-func UpdateTimeNEQ(v int64) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldUpdateTime, v))
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// UpdateTimeIn applies the In predicate on the "update_time" field.
-func UpdateTimeIn(vs ...int64) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldUpdateTime, vs...))
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldUpdatedAt, v))
 }
 
-// UpdateTimeNotIn applies the NotIn predicate on the "update_time" field.
-func UpdateTimeNotIn(vs ...int64) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldUpdateTime, vs...))
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldUpdatedAt, vs...))
 }
 
-// UpdateTimeGT applies the GT predicate on the "update_time" field.
-func UpdateTimeGT(v int64) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldUpdateTime, v))
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldUpdatedAt, vs...))
 }
 
-// UpdateTimeGTE applies the GTE predicate on the "update_time" field.
-func UpdateTimeGTE(v int64) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldUpdateTime, v))
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldUpdatedAt, v))
 }
 
-// UpdateTimeLT applies the LT predicate on the "update_time" field.
-func UpdateTimeLT(v int64) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldUpdateTime, v))
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldUpdatedAt, v))
 }
 
-// UpdateTimeLTE applies the LTE predicate on the "update_time" field.
-func UpdateTimeLTE(v int64) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldUpdateTime, v))
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldUpdatedAt, v))
 }
 
-// UpdateTimeIsNil applies the IsNil predicate on the "update_time" field.
-func UpdateTimeIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldUpdateTime))
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdateTimeNotNil applies the NotNil predicate on the "update_time" field.
-func UpdateTimeNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldUpdateTime))
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldUpdatedAt))
 }
 
-// DeleteTimeEQ applies the EQ predicate on the "delete_time" field.
-func DeleteTimeEQ(v int64) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldDeleteTime, v))
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldUpdatedAt))
 }
 
-// DeleteTimeNEQ applies the NEQ predicate on the "delete_time" field.
-func DeleteTimeNEQ(v int64) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldDeleteTime, v))
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// DeleteTimeIn applies the In predicate on the "delete_time" field.
-func DeleteTimeIn(vs ...int64) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldDeleteTime, vs...))
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldDeletedAt, v))
 }
 
-// DeleteTimeNotIn applies the NotIn predicate on the "delete_time" field.
-func DeleteTimeNotIn(vs ...int64) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldDeleteTime, vs...))
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldDeletedAt, vs...))
 }
 
-// DeleteTimeGT applies the GT predicate on the "delete_time" field.
-func DeleteTimeGT(v int64) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldDeleteTime, v))
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldDeletedAt, vs...))
 }
 
-// DeleteTimeGTE applies the GTE predicate on the "delete_time" field.
-func DeleteTimeGTE(v int64) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldDeleteTime, v))
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldDeletedAt, v))
 }
 
-// DeleteTimeLT applies the LT predicate on the "delete_time" field.
-func DeleteTimeLT(v int64) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldDeleteTime, v))
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldDeletedAt, v))
 }
 
-// DeleteTimeLTE applies the LTE predicate on the "delete_time" field.
-func DeleteTimeLTE(v int64) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldDeleteTime, v))
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldDeletedAt, v))
 }
 
-// DeleteTimeIsNil applies the IsNil predicate on the "delete_time" field.
-func DeleteTimeIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldDeleteTime))
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldDeletedAt, v))
 }
 
-// DeleteTimeNotNil applies the NotNil predicate on the "delete_time" field.
-func DeleteTimeNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldDeleteTime))
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldDeletedAt))
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldName, v))
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldDeletedAt))
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldName, v))
+// CreatedByEQ applies the EQ predicate on the "created_by" field.
+func CreatedByEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldCreatedBy, v))
 }
 
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldName, vs...))
+// CreatedByNEQ applies the NEQ predicate on the "created_by" field.
+func CreatedByNEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldName, vs...))
+// CreatedByIn applies the In predicate on the "created_by" field.
+func CreatedByIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldName, v))
+// CreatedByNotIn applies the NotIn predicate on the "created_by" field.
+func CreatedByNotIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldName, v))
+// CreatedByGT applies the GT predicate on the "created_by" field.
+func CreatedByGT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldCreatedBy, v))
 }
 
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldName, v))
+// CreatedByGTE applies the GTE predicate on the "created_by" field.
+func CreatedByGTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldCreatedBy, v))
 }
 
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldName, v))
+// CreatedByLT applies the LT predicate on the "created_by" field.
+func CreatedByLT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldCreatedBy, v))
 }
 
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.Category {
-	return predicate.Category(sql.FieldContains(FieldName, v))
+// CreatedByLTE applies the LTE predicate on the "created_by" field.
+func CreatedByLTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldCreatedBy, v))
 }
 
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasPrefix(FieldName, v))
+// CreatedByIsNil applies the IsNil predicate on the "created_by" field.
+func CreatedByIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldCreatedBy))
 }
 
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasSuffix(FieldName, v))
+// CreatedByNotNil applies the NotNil predicate on the "created_by" field.
+func CreatedByNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldCreatedBy))
 }
 
-// NameIsNil applies the IsNil predicate on the "name" field.
-func NameIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldName))
+// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
+func UpdatedByEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// NameNotNil applies the NotNil predicate on the "name" field.
-func NameNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldName))
+// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
+func UpdatedByNEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldEqualFold(FieldName, v))
+// UpdatedByIn applies the In predicate on the "updated_by" field.
+func UpdatedByIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldContainsFold(FieldName, v))
+// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
+func UpdatedByNotIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
-// SlugEQ applies the EQ predicate on the "slug" field.
-func SlugEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldSlug, v))
+// UpdatedByGT applies the GT predicate on the "updated_by" field.
+func UpdatedByGT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldUpdatedBy, v))
 }
 
-// SlugNEQ applies the NEQ predicate on the "slug" field.
-func SlugNEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldSlug, v))
+// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
+func UpdatedByGTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
-// SlugIn applies the In predicate on the "slug" field.
-func SlugIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldSlug, vs...))
+// UpdatedByLT applies the LT predicate on the "updated_by" field.
+func UpdatedByLT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldUpdatedBy, v))
 }
 
-// SlugNotIn applies the NotIn predicate on the "slug" field.
-func SlugNotIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldSlug, vs...))
+// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
+func UpdatedByLTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
-// SlugGT applies the GT predicate on the "slug" field.
-func SlugGT(v string) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldSlug, v))
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldUpdatedBy))
 }
 
-// SlugGTE applies the GTE predicate on the "slug" field.
-func SlugGTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldSlug, v))
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldUpdatedBy))
 }
 
-// SlugLT applies the LT predicate on the "slug" field.
-func SlugLT(v string) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldSlug, v))
+// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
+func DeletedByEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDeletedBy, v))
 }
 
-// SlugLTE applies the LTE predicate on the "slug" field.
-func SlugLTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldSlug, v))
+// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
+func DeletedByNEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
-// SlugContains applies the Contains predicate on the "slug" field.
-func SlugContains(v string) predicate.Category {
-	return predicate.Category(sql.FieldContains(FieldSlug, v))
+// DeletedByIn applies the In predicate on the "deleted_by" field.
+func DeletedByIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
-// SlugHasPrefix applies the HasPrefix predicate on the "slug" field.
-func SlugHasPrefix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasPrefix(FieldSlug, v))
+// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
+func DeletedByNotIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
-// SlugHasSuffix applies the HasSuffix predicate on the "slug" field.
-func SlugHasSuffix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasSuffix(FieldSlug, v))
+// DeletedByGT applies the GT predicate on the "deleted_by" field.
+func DeletedByGT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldDeletedBy, v))
 }
 
-// SlugIsNil applies the IsNil predicate on the "slug" field.
-func SlugIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldSlug))
+// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
+func DeletedByGTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldDeletedBy, v))
 }
 
-// SlugNotNil applies the NotNil predicate on the "slug" field.
-func SlugNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldSlug))
+// DeletedByLT applies the LT predicate on the "deleted_by" field.
+func DeletedByLT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldDeletedBy, v))
 }
 
-// SlugEqualFold applies the EqualFold predicate on the "slug" field.
-func SlugEqualFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldEqualFold(FieldSlug, v))
+// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
+func DeletedByLTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldDeletedBy, v))
 }
 
-// SlugContainsFold applies the ContainsFold predicate on the "slug" field.
-func SlugContainsFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldContainsFold(FieldSlug, v))
+// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
+func DeletedByIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldDeletedBy))
 }
 
-// DescriptionEQ applies the EQ predicate on the "description" field.
-func DescriptionEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldDescription, v))
+// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
+func DeletedByNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldDeletedBy))
 }
 
-// DescriptionNEQ applies the NEQ predicate on the "description" field.
-func DescriptionNEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldDescription, v))
+// SortOrderEQ applies the EQ predicate on the "sort_order" field.
+func SortOrderEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldSortOrder, v))
 }
 
-// DescriptionIn applies the In predicate on the "description" field.
-func DescriptionIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldDescription, vs...))
+// SortOrderNEQ applies the NEQ predicate on the "sort_order" field.
+func SortOrderNEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldSortOrder, v))
 }
 
-// DescriptionNotIn applies the NotIn predicate on the "description" field.
-func DescriptionNotIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldDescription, vs...))
+// SortOrderIn applies the In predicate on the "sort_order" field.
+func SortOrderIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldSortOrder, vs...))
 }
 
-// DescriptionGT applies the GT predicate on the "description" field.
-func DescriptionGT(v string) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldDescription, v))
+// SortOrderNotIn applies the NotIn predicate on the "sort_order" field.
+func SortOrderNotIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldSortOrder, vs...))
 }
 
-// DescriptionGTE applies the GTE predicate on the "description" field.
-func DescriptionGTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldDescription, v))
+// SortOrderGT applies the GT predicate on the "sort_order" field.
+func SortOrderGT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldSortOrder, v))
 }
 
-// DescriptionLT applies the LT predicate on the "description" field.
-func DescriptionLT(v string) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldDescription, v))
+// SortOrderGTE applies the GTE predicate on the "sort_order" field.
+func SortOrderGTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldSortOrder, v))
 }
 
-// DescriptionLTE applies the LTE predicate on the "description" field.
-func DescriptionLTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldDescription, v))
+// SortOrderLT applies the LT predicate on the "sort_order" field.
+func SortOrderLT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldSortOrder, v))
 }
 
-// DescriptionContains applies the Contains predicate on the "description" field.
-func DescriptionContains(v string) predicate.Category {
-	return predicate.Category(sql.FieldContains(FieldDescription, v))
+// SortOrderLTE applies the LTE predicate on the "sort_order" field.
+func SortOrderLTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldSortOrder, v))
 }
 
-// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
-func DescriptionHasPrefix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasPrefix(FieldDescription, v))
+// SortOrderIsNil applies the IsNil predicate on the "sort_order" field.
+func SortOrderIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldSortOrder))
 }
 
-// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
-func DescriptionHasSuffix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasSuffix(FieldDescription, v))
+// SortOrderNotNil applies the NotNil predicate on the "sort_order" field.
+func SortOrderNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldSortOrder))
 }
 
-// DescriptionIsNil applies the IsNil predicate on the "description" field.
-func DescriptionIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldDescription))
+// PathEQ applies the EQ predicate on the "path" field.
+func PathEQ(v string) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldPath, v))
 }
 
-// DescriptionNotNil applies the NotNil predicate on the "description" field.
-func DescriptionNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldDescription))
+// PathNEQ applies the NEQ predicate on the "path" field.
+func PathNEQ(v string) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldPath, v))
 }
 
-// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
-func DescriptionEqualFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldEqualFold(FieldDescription, v))
+// PathIn applies the In predicate on the "path" field.
+func PathIn(vs ...string) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldPath, vs...))
 }
 
-// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
-func DescriptionContainsFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldContainsFold(FieldDescription, v))
+// PathNotIn applies the NotIn predicate on the "path" field.
+func PathNotIn(vs ...string) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldPath, vs...))
 }
 
-// ThumbnailEQ applies the EQ predicate on the "thumbnail" field.
-func ThumbnailEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldThumbnail, v))
+// PathGT applies the GT predicate on the "path" field.
+func PathGT(v string) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldPath, v))
 }
 
-// ThumbnailNEQ applies the NEQ predicate on the "thumbnail" field.
-func ThumbnailNEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldThumbnail, v))
+// PathGTE applies the GTE predicate on the "path" field.
+func PathGTE(v string) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldPath, v))
 }
 
-// ThumbnailIn applies the In predicate on the "thumbnail" field.
-func ThumbnailIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldThumbnail, vs...))
+// PathLT applies the LT predicate on the "path" field.
+func PathLT(v string) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldPath, v))
 }
 
-// ThumbnailNotIn applies the NotIn predicate on the "thumbnail" field.
-func ThumbnailNotIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldThumbnail, vs...))
+// PathLTE applies the LTE predicate on the "path" field.
+func PathLTE(v string) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldPath, v))
 }
 
-// ThumbnailGT applies the GT predicate on the "thumbnail" field.
-func ThumbnailGT(v string) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldThumbnail, v))
+// PathContains applies the Contains predicate on the "path" field.
+func PathContains(v string) predicate.Category {
+	return predicate.Category(sql.FieldContains(FieldPath, v))
 }
 
-// ThumbnailGTE applies the GTE predicate on the "thumbnail" field.
-func ThumbnailGTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldThumbnail, v))
+// PathHasPrefix applies the HasPrefix predicate on the "path" field.
+func PathHasPrefix(v string) predicate.Category {
+	return predicate.Category(sql.FieldHasPrefix(FieldPath, v))
 }
 
-// ThumbnailLT applies the LT predicate on the "thumbnail" field.
-func ThumbnailLT(v string) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldThumbnail, v))
+// PathHasSuffix applies the HasSuffix predicate on the "path" field.
+func PathHasSuffix(v string) predicate.Category {
+	return predicate.Category(sql.FieldHasSuffix(FieldPath, v))
 }
 
-// ThumbnailLTE applies the LTE predicate on the "thumbnail" field.
-func ThumbnailLTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldThumbnail, v))
+// PathIsNil applies the IsNil predicate on the "path" field.
+func PathIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldPath))
 }
 
-// ThumbnailContains applies the Contains predicate on the "thumbnail" field.
-func ThumbnailContains(v string) predicate.Category {
-	return predicate.Category(sql.FieldContains(FieldThumbnail, v))
+// PathNotNil applies the NotNil predicate on the "path" field.
+func PathNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldPath))
 }
 
-// ThumbnailHasPrefix applies the HasPrefix predicate on the "thumbnail" field.
-func ThumbnailHasPrefix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasPrefix(FieldThumbnail, v))
+// PathEqualFold applies the EqualFold predicate on the "path" field.
+func PathEqualFold(v string) predicate.Category {
+	return predicate.Category(sql.FieldEqualFold(FieldPath, v))
 }
 
-// ThumbnailHasSuffix applies the HasSuffix predicate on the "thumbnail" field.
-func ThumbnailHasSuffix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasSuffix(FieldThumbnail, v))
-}
-
-// ThumbnailIsNil applies the IsNil predicate on the "thumbnail" field.
-func ThumbnailIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldThumbnail))
-}
-
-// ThumbnailNotNil applies the NotNil predicate on the "thumbnail" field.
-func ThumbnailNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldThumbnail))
-}
-
-// ThumbnailEqualFold applies the EqualFold predicate on the "thumbnail" field.
-func ThumbnailEqualFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldEqualFold(FieldThumbnail, v))
-}
-
-// ThumbnailContainsFold applies the ContainsFold predicate on the "thumbnail" field.
-func ThumbnailContainsFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldContainsFold(FieldThumbnail, v))
-}
-
-// PasswordEQ applies the EQ predicate on the "password" field.
-func PasswordEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldPassword, v))
-}
-
-// PasswordNEQ applies the NEQ predicate on the "password" field.
-func PasswordNEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldPassword, v))
-}
-
-// PasswordIn applies the In predicate on the "password" field.
-func PasswordIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldPassword, vs...))
-}
-
-// PasswordNotIn applies the NotIn predicate on the "password" field.
-func PasswordNotIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldPassword, vs...))
-}
-
-// PasswordGT applies the GT predicate on the "password" field.
-func PasswordGT(v string) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldPassword, v))
-}
-
-// PasswordGTE applies the GTE predicate on the "password" field.
-func PasswordGTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldPassword, v))
-}
-
-// PasswordLT applies the LT predicate on the "password" field.
-func PasswordLT(v string) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldPassword, v))
-}
-
-// PasswordLTE applies the LTE predicate on the "password" field.
-func PasswordLTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldPassword, v))
-}
-
-// PasswordContains applies the Contains predicate on the "password" field.
-func PasswordContains(v string) predicate.Category {
-	return predicate.Category(sql.FieldContains(FieldPassword, v))
-}
-
-// PasswordHasPrefix applies the HasPrefix predicate on the "password" field.
-func PasswordHasPrefix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasPrefix(FieldPassword, v))
-}
-
-// PasswordHasSuffix applies the HasSuffix predicate on the "password" field.
-func PasswordHasSuffix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasSuffix(FieldPassword, v))
-}
-
-// PasswordIsNil applies the IsNil predicate on the "password" field.
-func PasswordIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldPassword))
-}
-
-// PasswordNotNil applies the NotNil predicate on the "password" field.
-func PasswordNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldPassword))
-}
-
-// PasswordEqualFold applies the EqualFold predicate on the "password" field.
-func PasswordEqualFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldEqualFold(FieldPassword, v))
-}
-
-// PasswordContainsFold applies the ContainsFold predicate on the "password" field.
-func PasswordContainsFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldContainsFold(FieldPassword, v))
-}
-
-// FullPathEQ applies the EQ predicate on the "full_path" field.
-func FullPathEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldFullPath, v))
-}
-
-// FullPathNEQ applies the NEQ predicate on the "full_path" field.
-func FullPathNEQ(v string) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldFullPath, v))
-}
-
-// FullPathIn applies the In predicate on the "full_path" field.
-func FullPathIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldFullPath, vs...))
-}
-
-// FullPathNotIn applies the NotIn predicate on the "full_path" field.
-func FullPathNotIn(vs ...string) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldFullPath, vs...))
-}
-
-// FullPathGT applies the GT predicate on the "full_path" field.
-func FullPathGT(v string) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldFullPath, v))
-}
-
-// FullPathGTE applies the GTE predicate on the "full_path" field.
-func FullPathGTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldFullPath, v))
-}
-
-// FullPathLT applies the LT predicate on the "full_path" field.
-func FullPathLT(v string) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldFullPath, v))
-}
-
-// FullPathLTE applies the LTE predicate on the "full_path" field.
-func FullPathLTE(v string) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldFullPath, v))
-}
-
-// FullPathContains applies the Contains predicate on the "full_path" field.
-func FullPathContains(v string) predicate.Category {
-	return predicate.Category(sql.FieldContains(FieldFullPath, v))
-}
-
-// FullPathHasPrefix applies the HasPrefix predicate on the "full_path" field.
-func FullPathHasPrefix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasPrefix(FieldFullPath, v))
-}
-
-// FullPathHasSuffix applies the HasSuffix predicate on the "full_path" field.
-func FullPathHasSuffix(v string) predicate.Category {
-	return predicate.Category(sql.FieldHasSuffix(FieldFullPath, v))
-}
-
-// FullPathIsNil applies the IsNil predicate on the "full_path" field.
-func FullPathIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldFullPath))
-}
-
-// FullPathNotNil applies the NotNil predicate on the "full_path" field.
-func FullPathNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldFullPath))
-}
-
-// FullPathEqualFold applies the EqualFold predicate on the "full_path" field.
-func FullPathEqualFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldEqualFold(FieldFullPath, v))
-}
-
-// FullPathContainsFold applies the ContainsFold predicate on the "full_path" field.
-func FullPathContainsFold(v string) predicate.Category {
-	return predicate.Category(sql.FieldContainsFold(FieldFullPath, v))
+// PathContainsFold applies the ContainsFold predicate on the "path" field.
+func PathContainsFold(v string) predicate.Category {
+	return predicate.Category(sql.FieldContainsFold(FieldPath, v))
 }
 
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.
@@ -733,26 +570,6 @@ func ParentIDNotIn(vs ...uint32) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldParentID, vs...))
 }
 
-// ParentIDGT applies the GT predicate on the "parent_id" field.
-func ParentIDGT(v uint32) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldParentID, v))
-}
-
-// ParentIDGTE applies the GTE predicate on the "parent_id" field.
-func ParentIDGTE(v uint32) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldParentID, v))
-}
-
-// ParentIDLT applies the LT predicate on the "parent_id" field.
-func ParentIDLT(v uint32) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldParentID, v))
-}
-
-// ParentIDLTE applies the LTE predicate on the "parent_id" field.
-func ParentIDLTE(v uint32) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldParentID, v))
-}
-
 // ParentIDIsNil applies the IsNil predicate on the "parent_id" field.
 func ParentIDIsNil() predicate.Category {
 	return predicate.Category(sql.FieldIsNull(FieldParentID))
@@ -763,54 +580,179 @@ func ParentIDNotNil() predicate.Category {
 	return predicate.Category(sql.FieldNotNull(FieldParentID))
 }
 
-// PriorityEQ applies the EQ predicate on the "priority" field.
-func PriorityEQ(v int32) predicate.Category {
-	return predicate.Category(sql.FieldEQ(FieldPriority, v))
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v Status) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldStatus, v))
 }
 
-// PriorityNEQ applies the NEQ predicate on the "priority" field.
-func PriorityNEQ(v int32) predicate.Category {
-	return predicate.Category(sql.FieldNEQ(FieldPriority, v))
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v Status) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldStatus, v))
 }
 
-// PriorityIn applies the In predicate on the "priority" field.
-func PriorityIn(vs ...int32) predicate.Category {
-	return predicate.Category(sql.FieldIn(FieldPriority, vs...))
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...Status) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldStatus, vs...))
 }
 
-// PriorityNotIn applies the NotIn predicate on the "priority" field.
-func PriorityNotIn(vs ...int32) predicate.Category {
-	return predicate.Category(sql.FieldNotIn(FieldPriority, vs...))
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...Status) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldStatus, vs...))
 }
 
-// PriorityGT applies the GT predicate on the "priority" field.
-func PriorityGT(v int32) predicate.Category {
-	return predicate.Category(sql.FieldGT(FieldPriority, v))
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldStatus))
 }
 
-// PriorityGTE applies the GTE predicate on the "priority" field.
-func PriorityGTE(v int32) predicate.Category {
-	return predicate.Category(sql.FieldGTE(FieldPriority, v))
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldStatus))
 }
 
-// PriorityLT applies the LT predicate on the "priority" field.
-func PriorityLT(v int32) predicate.Category {
-	return predicate.Category(sql.FieldLT(FieldPriority, v))
+// DepthEQ applies the EQ predicate on the "depth" field.
+func DepthEQ(v int32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDepth, v))
 }
 
-// PriorityLTE applies the LTE predicate on the "priority" field.
-func PriorityLTE(v int32) predicate.Category {
-	return predicate.Category(sql.FieldLTE(FieldPriority, v))
+// DepthNEQ applies the NEQ predicate on the "depth" field.
+func DepthNEQ(v int32) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldDepth, v))
 }
 
-// PriorityIsNil applies the IsNil predicate on the "priority" field.
-func PriorityIsNil() predicate.Category {
-	return predicate.Category(sql.FieldIsNull(FieldPriority))
+// DepthIn applies the In predicate on the "depth" field.
+func DepthIn(vs ...int32) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldDepth, vs...))
 }
 
-// PriorityNotNil applies the NotNil predicate on the "priority" field.
-func PriorityNotNil() predicate.Category {
-	return predicate.Category(sql.FieldNotNull(FieldPriority))
+// DepthNotIn applies the NotIn predicate on the "depth" field.
+func DepthNotIn(vs ...int32) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldDepth, vs...))
+}
+
+// DepthGT applies the GT predicate on the "depth" field.
+func DepthGT(v int32) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldDepth, v))
+}
+
+// DepthGTE applies the GTE predicate on the "depth" field.
+func DepthGTE(v int32) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldDepth, v))
+}
+
+// DepthLT applies the LT predicate on the "depth" field.
+func DepthLT(v int32) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldDepth, v))
+}
+
+// DepthLTE applies the LTE predicate on the "depth" field.
+func DepthLTE(v int32) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldDepth, v))
+}
+
+// DepthIsNil applies the IsNil predicate on the "depth" field.
+func DepthIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldDepth))
+}
+
+// DepthNotNil applies the NotNil predicate on the "depth" field.
+func DepthNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldDepth))
+}
+
+// IsNavEQ applies the EQ predicate on the "is_nav" field.
+func IsNavEQ(v bool) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldIsNav, v))
+}
+
+// IsNavNEQ applies the NEQ predicate on the "is_nav" field.
+func IsNavNEQ(v bool) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldIsNav, v))
+}
+
+// IsNavIsNil applies the IsNil predicate on the "is_nav" field.
+func IsNavIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldIsNav))
+}
+
+// IsNavNotNil applies the NotNil predicate on the "is_nav" field.
+func IsNavNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldIsNav))
+}
+
+// IconEQ applies the EQ predicate on the "icon" field.
+func IconEQ(v string) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldIcon, v))
+}
+
+// IconNEQ applies the NEQ predicate on the "icon" field.
+func IconNEQ(v string) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldIcon, v))
+}
+
+// IconIn applies the In predicate on the "icon" field.
+func IconIn(vs ...string) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldIcon, vs...))
+}
+
+// IconNotIn applies the NotIn predicate on the "icon" field.
+func IconNotIn(vs ...string) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldIcon, vs...))
+}
+
+// IconGT applies the GT predicate on the "icon" field.
+func IconGT(v string) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldIcon, v))
+}
+
+// IconGTE applies the GTE predicate on the "icon" field.
+func IconGTE(v string) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldIcon, v))
+}
+
+// IconLT applies the LT predicate on the "icon" field.
+func IconLT(v string) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldIcon, v))
+}
+
+// IconLTE applies the LTE predicate on the "icon" field.
+func IconLTE(v string) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldIcon, v))
+}
+
+// IconContains applies the Contains predicate on the "icon" field.
+func IconContains(v string) predicate.Category {
+	return predicate.Category(sql.FieldContains(FieldIcon, v))
+}
+
+// IconHasPrefix applies the HasPrefix predicate on the "icon" field.
+func IconHasPrefix(v string) predicate.Category {
+	return predicate.Category(sql.FieldHasPrefix(FieldIcon, v))
+}
+
+// IconHasSuffix applies the HasSuffix predicate on the "icon" field.
+func IconHasSuffix(v string) predicate.Category {
+	return predicate.Category(sql.FieldHasSuffix(FieldIcon, v))
+}
+
+// IconIsNil applies the IsNil predicate on the "icon" field.
+func IconIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldIcon))
+}
+
+// IconNotNil applies the NotNil predicate on the "icon" field.
+func IconNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldIcon))
+}
+
+// IconEqualFold applies the EqualFold predicate on the "icon" field.
+func IconEqualFold(v string) predicate.Category {
+	return predicate.Category(sql.FieldEqualFold(FieldIcon, v))
+}
+
+// IconContainsFold applies the ContainsFold predicate on the "icon" field.
+func IconContainsFold(v string) predicate.Category {
+	return predicate.Category(sql.FieldContainsFold(FieldIcon, v))
 }
 
 // PostCountEQ applies the EQ predicate on the "post_count" field.
@@ -861,6 +803,112 @@ func PostCountIsNil() predicate.Category {
 // PostCountNotNil applies the NotNil predicate on the "post_count" field.
 func PostCountNotNil() predicate.Category {
 	return predicate.Category(sql.FieldNotNull(FieldPostCount))
+}
+
+// DirectPostCountEQ applies the EQ predicate on the "direct_post_count" field.
+func DirectPostCountEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldDirectPostCount, v))
+}
+
+// DirectPostCountNEQ applies the NEQ predicate on the "direct_post_count" field.
+func DirectPostCountNEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldDirectPostCount, v))
+}
+
+// DirectPostCountIn applies the In predicate on the "direct_post_count" field.
+func DirectPostCountIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldDirectPostCount, vs...))
+}
+
+// DirectPostCountNotIn applies the NotIn predicate on the "direct_post_count" field.
+func DirectPostCountNotIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldDirectPostCount, vs...))
+}
+
+// DirectPostCountGT applies the GT predicate on the "direct_post_count" field.
+func DirectPostCountGT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldDirectPostCount, v))
+}
+
+// DirectPostCountGTE applies the GTE predicate on the "direct_post_count" field.
+func DirectPostCountGTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldDirectPostCount, v))
+}
+
+// DirectPostCountLT applies the LT predicate on the "direct_post_count" field.
+func DirectPostCountLT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldDirectPostCount, v))
+}
+
+// DirectPostCountLTE applies the LTE predicate on the "direct_post_count" field.
+func DirectPostCountLTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldDirectPostCount, v))
+}
+
+// DirectPostCountIsNil applies the IsNil predicate on the "direct_post_count" field.
+func DirectPostCountIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldDirectPostCount))
+}
+
+// DirectPostCountNotNil applies the NotNil predicate on the "direct_post_count" field.
+func DirectPostCountNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldDirectPostCount))
+}
+
+// CustomFieldsIsNil applies the IsNil predicate on the "custom_fields" field.
+func CustomFieldsIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldCustomFields))
+}
+
+// CustomFieldsNotNil applies the NotNil predicate on the "custom_fields" field.
+func CustomFieldsNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldCustomFields))
+}
+
+// HasParent applies the HasEdge predicate on the "parent" edge.
+func HasParent() predicate.Category {
+	return predicate.Category(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasParentWith applies the HasEdge predicate on the "parent" edge with a given conditions (other predicates).
+func HasParentWith(preds ...predicate.Category) predicate.Category {
+	return predicate.Category(func(s *sql.Selector) {
+		step := newParentStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasChildren applies the HasEdge predicate on the "children" edge.
+func HasChildren() predicate.Category {
+	return predicate.Category(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasChildrenWith applies the HasEdge predicate on the "children" edge with a given conditions (other predicates).
+func HasChildrenWith(preds ...predicate.Category) predicate.Category {
+	return predicate.Category(func(s *sql.Selector) {
+		step := newChildrenStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

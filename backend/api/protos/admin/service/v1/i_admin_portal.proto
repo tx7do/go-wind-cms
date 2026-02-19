@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "resource/service/v1/menu.proto";
+
+// 后台前端初始化数据与配置服务
+service AdminPortalService {
+  // 查询前端路由表
+  rpc GetNavigation (google.protobuf.Empty) returns (ListRouteResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/routes"
+    };
+  }
+
+  // 查询权限码列表
+  rpc GetMyPermissionCode (google.protobuf.Empty) returns (ListPermissionCodeResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/perm-codes"
+    };
+  }
+
+  // 一次性获取进入后台所需的所有上下文
+  rpc GetInitialContext (google.protobuf.Empty) returns (InitialContextResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/initial-context"
+    };
+  }
+}
+
+// 查询路由列表 - 回应
+message ListRouteResponse {
+  repeated resource.service.v1.MenuRouteItem items = 1;
+}
+
+// 查询权限码列表 - 回应
+message ListPermissionCodeResponse {
+  repeated string codes = 1;
+}
+
+message InitialContextResponse {
+  repeated resource.service.v1.MenuRouteItem menus = 1;  // 菜单树
+  repeated string permissions = 2;   // 权限码
+}

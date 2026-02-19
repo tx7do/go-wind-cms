@@ -1,0 +1,178 @@
+syntax = "proto3";
+
+package site.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+// 站点配置服务
+service SiteSettingService {
+  // 获取站点配置列表
+  rpc List (pagination.PagingRequest) returns (ListSiteSettingResponse) {}
+
+  // 获取站点配置数据
+  rpc Get (GetSiteSettingRequest) returns (SiteSetting) {}
+
+  // 创建站点配置
+  rpc Create (CreateSiteSettingRequest) returns (SiteSetting) {}
+
+  // 更新站点配置
+  rpc Update (UpdateSiteSettingRequest) returns (SiteSetting) {}
+
+  // 删除站点配置
+  rpc Delete (DeleteSiteSettingRequest) returns (google.protobuf.Empty) {}
+}
+
+// 站点配置
+message SiteSetting {
+  // 配置项类型（用于前端动态生成表单）
+  enum SettingType {
+    SETTING_TYPE_UNSPECIFIED = 0;
+
+    SETTING_TYPE_TEXT = 1;      // 单行文本
+    SETTING_TYPE_TEXTAREA = 2;  // 多行文本
+    SETTING_TYPE_NUMBER = 3;    // 数字
+    SETTING_TYPE_BOOLEAN = 4;   // 布尔开关
+    SETTING_TYPE_URL = 5;       // URL 验证
+    SETTING_TYPE_EMAIL = 6;     // 邮箱验证
+    SETTING_TYPE_IMAGE = 7;     // 图片（关联 MediaAsset ID）
+    SETTING_TYPE_SELECT = 8;    // 下拉选择
+    SETTING_TYPE_JSON = 9;      // JSON 配置（如社交媒体链接数组）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "站点配置ID"}
+  ]; // 站点配置ID
+
+  optional uint32 site_id = 2 [
+    json_name = "siteId",
+    (gnostic.openapi.v3.property) = {
+      description: "站点ID（多站点场景下隔离配置，0 表示全局默认配置）"
+    }
+  ]; // 站点ID（多站点场景下隔离配置，0 表示全局默认配置）
+
+  optional string locale = 3 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {
+      description: "语言区域（如 'zh-CN', 'en-US'，空值表示默认语言配置）"
+    }
+  ]; // 语言区域（如 'zh-CN', 'en-US'，空值表示默认语言配置）
+
+  optional string group = 4 [
+    json_name = "group",
+    (gnostic.openapi.v3.property) = {description: "配置分组标识"}
+  ]; // 配置分组（前端表单分组，如 'general', 'seo', 'social', 'comment'）
+
+  optional string key = 5 [
+    json_name = "key",
+    (gnostic.openapi.v3.property) = {
+      description: "配置键（如 'site_title', 'ga_id', 'posts_per_page'）"
+    }
+  ]; // 配置键（唯一标识，同 site_id+locale+key 唯一）
+
+  optional string value = 6 [
+    json_name = "value",
+    (gnostic.openapi.v3.property) = {
+      description: "配置值（布尔转 'true'/'false'，数字转字符串，复杂结构用 JSON）"
+    }
+  ]; // 配置值（布尔转 'true'/'false'，数字转字符串，复杂结构用 JSON）
+
+
+  optional SettingType type = 7 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {description: "配置项类型"}
+  ]; // 配置项类型（用于前端动态生成表单）
+
+  optional string label = 8 [
+    json_name = "label",
+    (gnostic.openapi.v3.property) = {description: "配置项标签（前端显示文本）"}
+  ]; // 配置项标签（前端显示文本）
+
+  optional string description = 9 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "配置项描述（前端提示/帮助文本）"}
+  ]; // 配置项描述（前端提示/帮助文本）
+
+  optional string placeholder = 10 [
+    json_name = "placeholder",
+    (gnostic.openapi.v3.property) = {description: "输入框占位符"}
+  ]; // 输入框占位符
+
+  map<string, string> options = 11 [
+    json_name = "options",
+    (gnostic.openapi.v3.property) = {
+      description: "下拉选项（JSON 格式：[{\"label\":\"中文\",\"value\":\"zh-CN\"}]）"
+    }
+  ]; // SELECT 类型的选项（JSON 数组，格式：[{\"label\":\"中文\",\"value\":\"zh-CN\"}]）
+
+  optional bool is_required = 12 [
+    json_name = "isRequired",
+    (gnostic.openapi.v3.property) = {description: "是否必填"}
+  ]; // 是否必填
+
+  optional string validation_regex = 13 [
+    json_name = "validationRegex",
+    (gnostic.openapi.v3.property) = {description: "验证正则表达式（可选）"}
+  ]; // 自定义正则验证（可选）
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 回应 - 站点配置列表
+message ListSiteSettingResponse {
+  repeated SiteSetting items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 站点配置数据
+message GetSiteSettingRequest {
+  uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 请求 - 创建站点配置
+message CreateSiteSettingRequest {
+  SiteSetting data = 1;
+}
+
+// 请求 - 更新站点配置
+message UpdateSiteSettingRequest {
+  uint32 id = 1;
+
+  SiteSetting data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 请求 - 删除站点配置
+message DeleteSiteSettingRequest {
+  uint32 id = 1;
+}

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "content/service/v1/page.proto";
+
+// 页面服务
+service PageService {
+  // 获取页面列表
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListPageResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/pages"
+    };
+  }
+
+  // 获取页面数据
+  rpc Get (content.service.v1.GetPageRequest) returns (content.service.v1.Page) {
+    option (google.api.http) = {
+      get: "/app/v1/pages/{id}"
+    };
+  }
+
+  // 创建页面
+  rpc Create (content.service.v1.CreatePageRequest) returns (content.service.v1.Page) {
+    option (google.api.http) = {
+      post: "/app/v1/pages"
+      body: "*"
+    };
+  }
+
+  // 更新页面
+  rpc Update (content.service.v1.UpdatePageRequest) returns (content.service.v1.Page) {
+    option (google.api.http) = {
+      put: "/app/v1/pages/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除页面
+  rpc Delete (content.service.v1.DeletePageRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/pages/{id}"
+    };
+  }
+}

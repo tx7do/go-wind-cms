@@ -1,0 +1,310 @@
+syntax = "proto3";
+
+package task.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 调度任务管理服务
+service TaskService {
+  // 查询调度任务列表
+  rpc List (pagination.PagingRequest) returns (ListTaskResponse) {}
+
+  // 统计调度任务数量
+  rpc Count (pagination.PagingRequest) returns (CountTaskResponse) {}
+
+  // 查询调度任务详情
+  rpc Get (GetTaskRequest) returns (Task) {}
+
+  // 创建调度任务
+  rpc Create (CreateTaskRequest) returns (google.protobuf.Empty) {}
+
+  // 更新调度任务
+  rpc Update (UpdateTaskRequest) returns (google.protobuf.Empty) {}
+
+  // 删除调度任务
+  rpc Delete (DeleteTaskRequest) returns (google.protobuf.Empty) {}
+
+  // 任务类型名称列表
+  rpc ListTaskTypeName (google.protobuf.Empty) returns (ListTaskTypeNameResponse) {}
+
+  // 重启所有的调度任务
+  rpc RestartAllTask (google.protobuf.Empty) returns (RestartAllTaskResponse) {}
+
+  // 启动所有的调度任务
+  rpc StartAllTask (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  // 停止所有的调度任务
+  rpc StopAllTask (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  // 控制调度任务
+  rpc ControlTask (ControlTaskRequest) returns (google.protobuf.Empty) {}
+}
+
+// 任务选项
+message TaskOption {
+  optional uint32 max_retry = 1 [
+    json_name = "maxRetry",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务最多可以重试的次数"
+    }
+  ]; // 任务最多可以重试的次数
+
+  optional google.protobuf.Duration timeout = 2 [
+    json_name = "timeout",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务超时时间"
+    }
+  ]; // 任务超时时间
+
+  optional google.protobuf.Timestamp deadline = 3 [
+    json_name = "deadline",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务截止时间"
+    }
+  ]; // 任务截止时间
+
+  optional google.protobuf.Duration process_in = 4 [
+    json_name = "processIn",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务延迟处理时间"
+    }
+  ]; // 任务延迟处理时间
+
+  optional google.protobuf.Timestamp process_at = 5 [
+    json_name = "processAt",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务执行时间点"
+    }
+  ]; // 任务执行时间点
+
+  optional google.protobuf.Duration unique_ttl = 6 [
+    json_name = "uniqueTTL",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务唯一锁定时间"
+    }
+  ]; // 任务唯一锁定时间
+
+  optional google.protobuf.Duration retention = 7 [
+    json_name = "retention",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务结果保留时间"
+    }
+  ]; // 任务结果保留时间
+
+  optional string group = 8 [
+    json_name = "group",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务分组"
+    }
+  ]; // 任务分组
+
+  optional string task_id = 9 [
+    json_name = "taskID",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务唯一标识ID"
+    }
+  ]; // 任务唯一标识ID
+}
+
+// 调度任务
+message Task {
+  // 调度任务类型
+  enum Type {
+    PERIODIC = 0;    // 周期性任务
+    DELAY = 1;       // 延时任务
+    WAIT_RESULT = 2;  // 等待结果
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务ID"
+    }
+  ]; // 任务ID
+
+  optional Type type = 2 [
+    json_name = "type",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务类型"
+    }
+  ]; // 任务类型
+
+  optional string type_name = 3 [
+    json_name = "typeName",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务执行类型名，例如 \"send_email\"、\"generate_report\" 等，用于区分不同类型的任务"
+    }
+  ]; // 任务执行类型名
+
+  optional string task_payload = 4 [
+    json_name = "taskPayload",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务数据，以 JSON 格式存储，方便存储不同类型和数量的参数"
+    }
+  ]; // 任务数据，以 JSON 格式存储，方便存储不同类型和数量的参数
+
+  optional string cron_spec = 5 [
+    json_name = "cronSpec",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "cron表达式，用于定义任务的调度时间"
+    }
+  ]; // cron表达式
+
+  optional TaskOption task_options = 6 [
+    json_name = "taskOptions",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务选项，以 JSON 格式存储，方便存储不同类型和数量的选项"
+    }
+  ]; // 任务选项
+
+  optional bool enable = 10 [
+    json_name = "enable",
+    (gnostic.openapi.v3.property) = {
+      description: "启用/禁用任务"
+    }
+  ]; // 启用/禁用任务
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+  
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
+  ];  // 租户ID，0代表系统全局角色
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 查询调度任务列表 - 回应
+message ListTaskResponse {
+  repeated Task items = 1;
+  uint64 total = 2;
+}
+
+// 查询调度任务详情 - 请求
+message GetTaskRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+
+    string type_name = 2 [
+      json_name = "typeName",
+      (google.api.field_behavior) = OPTIONAL,
+      (gnostic.openapi.v3.property) = {
+        description: "任务执行类型名，例如 \"send_email\"、\"generate_report\" 等，用于区分不同类型的任务"
+      }
+    ]; // 任务执行类型名
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建调度任务 - 请求
+message CreateTaskRequest {
+  Task data = 1;
+}
+
+// 更新调度任务 - 请求
+message UpdateTaskRequest {
+  uint32 id = 1;
+
+  Task data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除调度任务 - 请求
+message DeleteTaskRequest {
+  uint32 id = 1;
+}
+
+// 重启调度任务 - 回应
+message RestartAllTaskResponse {
+  int32 count = 1;
+}
+
+// 控制调度任务 - 请求
+message ControlTaskRequest {
+  // 调度任务控制类型
+  enum ControlType {
+    Start = 0; // 启动
+    Stop = 1;  // 停止
+    Restart = 2; // 重启
+  }
+
+  ControlType control_type = 1 [
+    json_name = "controlType",
+    (gnostic.openapi.v3.property) = {description: "控制类型"}
+  ]; // 控制类型
+
+  string type_name = 2 [
+    json_name = "typeName",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "任务执行类型名，例如 \"send_email\"、\"generate_report\" 等，用于区分不同类型的任务"
+    }
+  ]; // 任务执行类型名
+}
+
+// 任务类型名称列表 - 回应
+message ListTaskTypeNameResponse {
+  repeated string type_names = 1 [
+    json_name = "typeNames",
+    (gnostic.openapi.v3.property) = {description: "类型名称列表"}
+  ]; // 类型名称列表
+}
+
+message CountTaskResponse {
+  uint64 count = 1;
+}

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "content/service/v1/post.proto";
+
+// 帖子服务
+service PostService {
+  // 获取帖子列表
+  rpc ListPost (pagination.PagingRequest) returns (content.service.v1.ListPostResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/posts"
+    };
+  }
+
+  // 获取帖子数据
+  rpc GetPost (content.service.v1.GetPostRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      get: "/app/v1/posts/{id}"
+    };
+  }
+
+  // 创建帖子
+  rpc CreatePost (content.service.v1.CreatePostRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      post: "/app/v1/posts"
+      body: "*"
+    };
+  }
+
+  // 更新帖子
+  rpc UpdatePost (content.service.v1.UpdatePostRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      put: "/app/v1/posts/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除帖子
+  rpc DeletePost (content.service.v1.DeletePostRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/posts/{id}"
+    };
+  }
+}

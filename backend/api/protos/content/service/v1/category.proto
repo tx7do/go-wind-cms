@@ -2,75 +2,233 @@ syntax = "proto3";
 
 package content.service.v1;
 
-
+import "gnostic/openapi/v3/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
-
 import "pagination/v1/pagination.proto";
-
-// 变量的命名一律使用小驼峰命名法，例如：firstName、lastName等。
 
 // 类别服务
 service CategoryService {
   // 获取类别列表
-  rpc ListCategory (pagination.PagingRequest) returns (ListCategoryResponse) {}
+  rpc List (pagination.PagingRequest) returns (ListCategoryResponse) {}
 
   // 获取类别数据
-  rpc GetCategory (GetCategoryRequest) returns (Category) {}
+  rpc Get (GetCategoryRequest) returns (Category) {}
 
   // 创建类别
-  rpc CreateCategory (CreateCategoryRequest) returns (Category) {}
+  rpc Create (CreateCategoryRequest) returns (Category) {}
 
   // 更新类别
-  rpc UpdateCategory (UpdateCategoryRequest) returns (Category) {}
+  rpc Update (UpdateCategoryRequest) returns (Category) {}
 
   // 删除类别
-  rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteCategoryRequest) returns (google.protobuf.Empty) {}
 }
 
 // 类别
 message Category {
-  uint32 id = 1;
-  optional uint32 parentId = 2;
-  optional string name = 3;
-  optional string slug = 4;
-  optional string description = 5;
-  optional string thumbnail = 6;
-  optional string password = 7;
-  optional string fullPath = 8;
-  optional int32 priority = 9;
-  optional string createTime = 10;
-  optional string updateTime = 11;
-  optional uint32 postCount = 12;
+  // 分类状态
+  enum CategoryStatus {
+    CATEGORY_STATUS_UNSPECIFIED = 0;
+
+    CATEGORY_STATUS_ACTIVE = 1;    // 启用（前台可见）
+    CATEGORY_STATUS_HIDDEN = 2;    // 隐藏（仅后台可见）
+    CATEGORY_STATUS_ARCHIVED = 3;  // 归档（不再使用，但保留历史数据）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "类别ID"}
+  ]; // 类别ID
+
+  optional CategoryStatus status = 2 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "分类状态"}
+  ]; // 分类状态（启用/隐藏/归档）
+
+  optional uint32 sort_order = 3 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序优先级（数值越小越靠前，同级分类间排序）"}
+  ]; // 排序优先级（数值越小越靠前，同级分类间排序）
+
+  optional bool is_nav = 4 [
+    json_name = "isNav",
+    (gnostic.openapi.v3.property) = {description: "是否显示在导航菜单"}
+  ]; // 是否显示在导航菜单（可选，默认 false）
+
+  optional string icon = 5 [
+    json_name = "icon",
+    (gnostic.openapi.v3.property) = {description: "分类图标"}
+  ]; // 分类图标（可选，支持图标名称如 'fas fa-folder' 或 SVG URL）
+
+  optional uint32 post_count = 10 [
+    json_name = "postCount",
+    (gnostic.openapi.v3.property) = {description: "该分类下的文章总数（含子分类，可选）"}
+  ]; // 该分类下的文章总数（含子分类，可选）
+
+  optional uint32 direct_post_count = 11 [
+    json_name = "directPostCount",
+    (gnostic.openapi.v3.property) = {description: "该分类下的直接文章数（不含子分类）"}
+  ]; // 该分类下的直接文章数（不含子分类）
+
+
+  repeated CategoryTranslation translations = 20 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ];
+
+  map<string, string> custom_fields = 30 [
+    json_name = "customFields",
+    (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}
+  ]; // 自定义字段，键值对形式，便于扩展
+
+
+  optional uint32 parent_id = 60 [json_name = "parentId", (gnostic.openapi.v3.property) = {description: "父节点ID"}];  // 父节点ID
+  repeated Category children = 61 [json_name = "children", (gnostic.openapi.v3.property) = {description: "子节点树"}];  // 子节点树
+  optional int32 depth = 62 [
+    json_name = "depth",
+    (gnostic.openapi.v3.property) = {description: "分类层级深度（0=顶级，1=二级，以此类推）"}
+  ]; // 分类层级深度（0=顶级，1=二级，以此类推）
+
+  optional string path = 63 [
+    json_name = "path",
+    (gnostic.openapi.v3.property) = {description: "物化路径（Materialized Path），如 '1/5/23'，便于层级查询"}
+  ]; // 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 类别翻译
+message CategoryTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 category_id = 2 [
+    json_name = "categoryId",
+    (gnostic.openapi.v3.property) = {description: "关联的分类ID"}
+  ]; // 关联的分类ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+
+
+  optional string name = 10 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "分类名称"}
+  ]; // 分类名称
+
+  optional string slug = 11 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {description: "分类别名"}
+  ]; // 分类别名
+
+  optional string description = 12 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "分类描述"}
+  ]; // 分类描述
+
+  optional string thumbnail = 13 [
+    json_name = "thumbnail",
+    (gnostic.openapi.v3.property) = {description: "缩略图"}
+  ]; // 缩略图
+
+  optional string cover_image = 14 [
+    json_name = "coverImage",
+    (gnostic.openapi.v3.property) = {description: "封面图"}
+  ]; // 封面图
+
+  optional string template = 15 [
+    json_name = "template",
+    (gnostic.openapi.v3.property) = {description: "模板名称"}
+  ]; // 模板名称
+
+
+  optional string full_path = 20 [
+    json_name = "fullPath",
+    (gnostic.openapi.v3.property) = {
+      description: "完整路径（如 /zh-CN/category/tech）"
+    }
+  ]; // 完整路径
+
+
+  optional string meta_keywords = 30 [
+    json_name = "metaKeywords",
+    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
+  ]; // SEO 关键词
+  optional string meta_description = 31 [
+    json_name = "metaDescription",
+    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
+  ]; // SEO 描述
+  optional string seo_title = 32 [
+    json_name = "seoTitle",
+    (gnostic.openapi.v3.property) = {description: "SEO 标题"}
+  ]; // SEO 标题
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
 }
 
 // 回应 - 类别列表
 message ListCategoryResponse {
   repeated Category items = 1;
-  int32 total = 2;
+  uint64 total = 2;
 }
 
 // 请求 - 类别数据
 message GetCategoryRequest {
   uint32 id = 1;
-  google.protobuf.FieldMask field_mask = 2;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
 }
 
 // 请求 - 创建类别
 message CreateCategoryRequest {
-  Category category = 1;
-  optional uint32 operatorId = 2;
+  Category data = 1;
 }
 
 // 请求 - 更新类别
 message UpdateCategoryRequest {
   uint32 id = 1;
-  Category category = 2;
-  optional uint32 operatorId = 3;
+
+  Category data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
 }
 
 // 请求 - 删除类别
 message DeleteCategoryRequest {
   uint32 id = 1;
-  optional uint32 operatorId = 2;
 }

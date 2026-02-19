@@ -12,24 +12,116 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// Attachment is the client for interacting with the Attachment builders.
-	Attachment *AttachmentClient
+	// Api is the client for interacting with the Api builders.
+	Api *APIClient
+	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
+	ApiAuditLog *ApiAuditLogClient
 	// Category is the client for interacting with the Category builders.
 	Category *CategoryClient
+	// CategoryTranslation is the client for interacting with the CategoryTranslation builders.
+	CategoryTranslation *CategoryTranslationClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
-	// Link is the client for interacting with the Link builders.
-	Link *LinkClient
+	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
+	DataAccessAuditLog *DataAccessAuditLogClient
+	// DictEntry is the client for interacting with the DictEntry builders.
+	DictEntry *DictEntryClient
+	// DictEntryI18n is the client for interacting with the DictEntryI18n builders.
+	DictEntryI18n *DictEntryI18nClient
+	// DictType is the client for interacting with the DictType builders.
+	DictType *DictTypeClient
+	// DictTypeI18n is the client for interacting with the DictTypeI18n builders.
+	DictTypeI18n *DictTypeI18nClient
+	// File is the client for interacting with the File builders.
+	File *FileClient
+	// InternalMessage is the client for interacting with the InternalMessage builders.
+	InternalMessage *InternalMessageClient
+	// InternalMessageCategory is the client for interacting with the InternalMessageCategory builders.
+	InternalMessageCategory *InternalMessageCategoryClient
+	// InternalMessageRecipient is the client for interacting with the InternalMessageRecipient builders.
+	InternalMessageRecipient *InternalMessageRecipientClient
+	// Language is the client for interacting with the Language builders.
+	Language *LanguageClient
+	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
+	LoginAuditLog *LoginAuditLogClient
+	// LoginPolicy is the client for interacting with the LoginPolicy builders.
+	LoginPolicy *LoginPolicyClient
+	// MediaAsset is the client for interacting with the MediaAsset builders.
+	MediaAsset *MediaAssetClient
+	// MediaVariant is the client for interacting with the MediaVariant builders.
+	MediaVariant *MediaVariantClient
+	// Membership is the client for interacting with the Membership builders.
+	Membership *MembershipClient
+	// MembershipOrgUnit is the client for interacting with the MembershipOrgUnit builders.
+	MembershipOrgUnit *MembershipOrgUnitClient
+	// MembershipPosition is the client for interacting with the MembershipPosition builders.
+	MembershipPosition *MembershipPositionClient
+	// MembershipRole is the client for interacting with the MembershipRole builders.
+	MembershipRole *MembershipRoleClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
-	// Photo is the client for interacting with the Photo builders.
-	Photo *PhotoClient
+	// Navigation is the client for interacting with the Navigation builders.
+	Navigation *NavigationClient
+	// NavigationItem is the client for interacting with the NavigationItem builders.
+	NavigationItem *NavigationItemClient
+	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
+	OperationAuditLog *OperationAuditLogClient
+	// OrgUnit is the client for interacting with the OrgUnit builders.
+	OrgUnit *OrgUnitClient
+	// Page is the client for interacting with the Page builders.
+	Page *PageClient
+	// PageTranslation is the client for interacting with the PageTranslation builders.
+	PageTranslation *PageTranslationClient
+	// Permission is the client for interacting with the Permission builders.
+	Permission *PermissionClient
+	// PermissionApi is the client for interacting with the PermissionApi builders.
+	PermissionApi *PermissionApiClient
+	// PermissionAuditLog is the client for interacting with the PermissionAuditLog builders.
+	PermissionAuditLog *PermissionAuditLogClient
+	// PermissionGroup is the client for interacting with the PermissionGroup builders.
+	PermissionGroup *PermissionGroupClient
+	// PermissionMenu is the client for interacting with the PermissionMenu builders.
+	PermissionMenu *PermissionMenuClient
+	// PermissionPolicy is the client for interacting with the PermissionPolicy builders.
+	PermissionPolicy *PermissionPolicyClient
+	// PolicyEvaluationLog is the client for interacting with the PolicyEvaluationLog builders.
+	PolicyEvaluationLog *PolicyEvaluationLogClient
+	// Position is the client for interacting with the Position builders.
+	Position *PositionClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
+	// PostCategory is the client for interacting with the PostCategory builders.
+	PostCategory *PostCategoryClient
+	// PostTag is the client for interacting with the PostTag builders.
+	PostTag *PostTagClient
+	// PostTranslation is the client for interacting with the PostTranslation builders.
+	PostTranslation *PostTranslationClient
+	// Role is the client for interacting with the Role builders.
+	Role *RoleClient
+	// RoleMetadata is the client for interacting with the RoleMetadata builders.
+	RoleMetadata *RoleMetadataClient
+	// RolePermission is the client for interacting with the RolePermission builders.
+	RolePermission *RolePermissionClient
+	// SiteSetting is the client for interacting with the SiteSetting builders.
+	SiteSetting *SiteSettingClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
+	// TagTranslation is the client for interacting with the TagTranslation builders.
+	TagTranslation *TagTranslationClient
+	// Task is the client for interacting with the Task builders.
+	Task *TaskClient
+	// Tenant is the client for interacting with the Tenant builders.
+	Tenant *TenantClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserCredential is the client for interacting with the UserCredential builders.
+	UserCredential *UserCredentialClient
+	// UserOrgUnit is the client for interacting with the UserOrgUnit builders.
+	UserOrgUnit *UserOrgUnitClient
+	// UserPosition is the client for interacting with the UserPosition builders.
+	UserPosition *UserPositionClient
+	// UserRole is the client for interacting with the UserRole builders.
+	UserRole *UserRoleClient
 
 	// lazily loaded.
 	client     *Client
@@ -161,15 +253,61 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.Attachment = NewAttachmentClient(tx.config)
+	tx.Api = NewAPIClient(tx.config)
+	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.Category = NewCategoryClient(tx.config)
+	tx.CategoryTranslation = NewCategoryTranslationClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
-	tx.Link = NewLinkClient(tx.config)
+	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
+	tx.DictEntry = NewDictEntryClient(tx.config)
+	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
+	tx.DictType = NewDictTypeClient(tx.config)
+	tx.DictTypeI18n = NewDictTypeI18nClient(tx.config)
+	tx.File = NewFileClient(tx.config)
+	tx.InternalMessage = NewInternalMessageClient(tx.config)
+	tx.InternalMessageCategory = NewInternalMessageCategoryClient(tx.config)
+	tx.InternalMessageRecipient = NewInternalMessageRecipientClient(tx.config)
+	tx.Language = NewLanguageClient(tx.config)
+	tx.LoginAuditLog = NewLoginAuditLogClient(tx.config)
+	tx.LoginPolicy = NewLoginPolicyClient(tx.config)
+	tx.MediaAsset = NewMediaAssetClient(tx.config)
+	tx.MediaVariant = NewMediaVariantClient(tx.config)
+	tx.Membership = NewMembershipClient(tx.config)
+	tx.MembershipOrgUnit = NewMembershipOrgUnitClient(tx.config)
+	tx.MembershipPosition = NewMembershipPositionClient(tx.config)
+	tx.MembershipRole = NewMembershipRoleClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
-	tx.Photo = NewPhotoClient(tx.config)
+	tx.Navigation = NewNavigationClient(tx.config)
+	tx.NavigationItem = NewNavigationItemClient(tx.config)
+	tx.OperationAuditLog = NewOperationAuditLogClient(tx.config)
+	tx.OrgUnit = NewOrgUnitClient(tx.config)
+	tx.Page = NewPageClient(tx.config)
+	tx.PageTranslation = NewPageTranslationClient(tx.config)
+	tx.Permission = NewPermissionClient(tx.config)
+	tx.PermissionApi = NewPermissionApiClient(tx.config)
+	tx.PermissionAuditLog = NewPermissionAuditLogClient(tx.config)
+	tx.PermissionGroup = NewPermissionGroupClient(tx.config)
+	tx.PermissionMenu = NewPermissionMenuClient(tx.config)
+	tx.PermissionPolicy = NewPermissionPolicyClient(tx.config)
+	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
+	tx.Position = NewPositionClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
+	tx.PostCategory = NewPostCategoryClient(tx.config)
+	tx.PostTag = NewPostTagClient(tx.config)
+	tx.PostTranslation = NewPostTranslationClient(tx.config)
+	tx.Role = NewRoleClient(tx.config)
+	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
+	tx.RolePermission = NewRolePermissionClient(tx.config)
+	tx.SiteSetting = NewSiteSettingClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
+	tx.TagTranslation = NewTagTranslationClient(tx.config)
+	tx.Task = NewTaskClient(tx.config)
+	tx.Tenant = NewTenantClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserCredential = NewUserCredentialClient(tx.config)
+	tx.UserOrgUnit = NewUserOrgUnitClient(tx.config)
+	tx.UserPosition = NewUserPositionClient(tx.config)
+	tx.UserRole = NewUserRoleClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -179,7 +317,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Attachment.QueryXXX(), the query will be executed
+// applies a query, for example: Api.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

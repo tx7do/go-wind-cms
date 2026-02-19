@@ -3,7 +3,10 @@
 package comment
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,58 +14,103 @@ const (
 	Label = "comment"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreateTime holds the string denoting the create_time field in the database.
-	FieldCreateTime = "create_time"
-	// FieldUpdateTime holds the string denoting the update_time field in the database.
-	FieldUpdateTime = "update_time"
-	// FieldDeleteTime holds the string denoting the delete_time field in the database.
-	FieldDeleteTime = "delete_time"
-	// FieldAuthor holds the string denoting the author field in the database.
-	FieldAuthor = "author"
-	// FieldEmail holds the string denoting the email field in the database.
-	FieldEmail = "email"
-	// FieldIPAddress holds the string denoting the ip_address field in the database.
-	FieldIPAddress = "ip_address"
-	// FieldAuthorURL holds the string denoting the author_url field in the database.
-	FieldAuthorURL = "author_url"
-	// FieldGravatarMd5 holds the string denoting the gravatar_md5 field in the database.
-	FieldGravatarMd5 = "gravatar_md5"
-	// FieldContent holds the string denoting the content field in the database.
-	FieldContent = "content"
-	// FieldUserAgent holds the string denoting the user_agent field in the database.
-	FieldUserAgent = "user_agent"
-	// FieldAvatar holds the string denoting the avatar field in the database.
-	FieldAvatar = "avatar"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
+	// FieldCreatedBy holds the string denoting the created_by field in the database.
+	FieldCreatedBy = "created_by"
+	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
+	FieldUpdatedBy = "updated_by"
+	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
+	FieldDeletedBy = "deleted_by"
 	// FieldParentID holds the string denoting the parent_id field in the database.
 	FieldParentID = "parent_id"
+	// FieldContentType holds the string denoting the content_type field in the database.
+	FieldContentType = "content_type"
+	// FieldObjectID holds the string denoting the object_id field in the database.
+	FieldObjectID = "object_id"
+	// FieldContent holds the string denoting the content field in the database.
+	FieldContent = "content"
+	// FieldAuthorID holds the string denoting the author_id field in the database.
+	FieldAuthorID = "author_id"
+	// FieldAuthorName holds the string denoting the author_name field in the database.
+	FieldAuthorName = "author_name"
+	// FieldAuthorEmail holds the string denoting the author_email field in the database.
+	FieldAuthorEmail = "author_email"
+	// FieldAuthorURL holds the string denoting the author_url field in the database.
+	FieldAuthorURL = "author_url"
+	// FieldAuthorType holds the string denoting the author_type field in the database.
+	FieldAuthorType = "author_type"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldIsAdmin holds the string denoting the is_admin field in the database.
-	FieldIsAdmin = "is_admin"
-	// FieldAllowNotification holds the string denoting the allow_notification field in the database.
-	FieldAllowNotification = "allow_notification"
+	// FieldLikeCount holds the string denoting the like_count field in the database.
+	FieldLikeCount = "like_count"
+	// FieldDislikeCount holds the string denoting the dislike_count field in the database.
+	FieldDislikeCount = "dislike_count"
+	// FieldReplyCount holds the string denoting the reply_count field in the database.
+	FieldReplyCount = "reply_count"
+	// FieldIPAddress holds the string denoting the ip_address field in the database.
+	FieldIPAddress = "ip_address"
+	// FieldLocation holds the string denoting the location field in the database.
+	FieldLocation = "location"
+	// FieldUserAgent holds the string denoting the user_agent field in the database.
+	FieldUserAgent = "user_agent"
+	// FieldDetectedLanguage holds the string denoting the detected_language field in the database.
+	FieldDetectedLanguage = "detected_language"
+	// FieldIsSpam holds the string denoting the is_spam field in the database.
+	FieldIsSpam = "is_spam"
+	// FieldIsSticky holds the string denoting the is_sticky field in the database.
+	FieldIsSticky = "is_sticky"
+	// FieldReplyToID holds the string denoting the reply_to_id field in the database.
+	FieldReplyToID = "reply_to_id"
+	// EdgeParent holds the string denoting the parent edge name in mutations.
+	EdgeParent = "parent"
+	// EdgeChildren holds the string denoting the children edge name in mutations.
+	EdgeChildren = "children"
 	// Table holds the table name of the comment in the database.
-	Table = "comment"
+	Table = "comments"
+	// ParentTable is the table that holds the parent relation/edge.
+	ParentTable = "comments"
+	// ParentColumn is the table column denoting the parent relation/edge.
+	ParentColumn = "parent_id"
+	// ChildrenTable is the table that holds the children relation/edge.
+	ChildrenTable = "comments"
+	// ChildrenColumn is the table column denoting the children relation/edge.
+	ChildrenColumn = "parent_id"
 )
 
 // Columns holds all SQL columns for comment fields.
 var Columns = []string{
 	FieldID,
-	FieldCreateTime,
-	FieldUpdateTime,
-	FieldDeleteTime,
-	FieldAuthor,
-	FieldEmail,
-	FieldIPAddress,
-	FieldAuthorURL,
-	FieldGravatarMd5,
-	FieldContent,
-	FieldUserAgent,
-	FieldAvatar,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeletedAt,
+	FieldCreatedBy,
+	FieldUpdatedBy,
+	FieldDeletedBy,
 	FieldParentID,
+	FieldContentType,
+	FieldObjectID,
+	FieldContent,
+	FieldAuthorID,
+	FieldAuthorName,
+	FieldAuthorEmail,
+	FieldAuthorURL,
+	FieldAuthorType,
 	FieldStatus,
-	FieldIsAdmin,
-	FieldAllowNotification,
+	FieldLikeCount,
+	FieldDislikeCount,
+	FieldReplyCount,
+	FieldIPAddress,
+	FieldLocation,
+	FieldUserAgent,
+	FieldDetectedLanguage,
+	FieldIsSpam,
+	FieldIsSticky,
+	FieldReplyToID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -76,15 +124,94 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreateTime holds the default value on creation for the "create_time" field.
-	DefaultCreateTime func() int64
-	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
-	UpdateDefaultUpdateTime func() int64
-	// AuthorValidator is a validator for the "author" field. It is called by the builders before save.
-	AuthorValidator func(string) error
+	// DefaultAuthorID holds the default value on creation for the "author_id" field.
+	DefaultAuthorID uint32
+	// DefaultLikeCount holds the default value on creation for the "like_count" field.
+	DefaultLikeCount uint32
+	// DefaultDislikeCount holds the default value on creation for the "dislike_count" field.
+	DefaultDislikeCount uint32
+	// DefaultReplyCount holds the default value on creation for the "reply_count" field.
+	DefaultReplyCount uint32
+	// DefaultIsSpam holds the default value on creation for the "is_spam" field.
+	DefaultIsSpam bool
+	// DefaultIsSticky holds the default value on creation for the "is_sticky" field.
+	DefaultIsSticky bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
+
+// ContentType defines the type for the "content_type" enum field.
+type ContentType string
+
+// ContentType values.
+const (
+	ContentTypeContentTypePost    ContentType = "CONTENT_TYPE_POST"
+	ContentTypeContentTypePage    ContentType = "CONTENT_TYPE_PAGE"
+	ContentTypeContentTypeProduct ContentType = "CONTENT_TYPE_PRODUCT"
+)
+
+func (ct ContentType) String() string {
+	return string(ct)
+}
+
+// ContentTypeValidator is a validator for the "content_type" field enum values. It is called by the builders before save.
+func ContentTypeValidator(ct ContentType) error {
+	switch ct {
+	case ContentTypeContentTypePost, ContentTypeContentTypePage, ContentTypeContentTypeProduct:
+		return nil
+	default:
+		return fmt.Errorf("comment: invalid enum value for content_type field: %q", ct)
+	}
+}
+
+// AuthorType defines the type for the "author_type" enum field.
+type AuthorType string
+
+// AuthorType values.
+const (
+	AuthorTypeAuthorTypeUser      AuthorType = "AUTHOR_TYPE_USER"
+	AuthorTypeAuthorTypeAdmin     AuthorType = "AUTHOR_TYPE_ADMIN"
+	AuthorTypeAuthorTypeModerator AuthorType = "AUTHOR_TYPE_MODERATOR"
+)
+
+func (at AuthorType) String() string {
+	return string(at)
+}
+
+// AuthorTypeValidator is a validator for the "author_type" field enum values. It is called by the builders before save.
+func AuthorTypeValidator(at AuthorType) error {
+	switch at {
+	case AuthorTypeAuthorTypeUser, AuthorTypeAuthorTypeAdmin, AuthorTypeAuthorTypeModerator:
+		return nil
+	default:
+		return fmt.Errorf("comment: invalid enum value for author_type field: %q", at)
+	}
+}
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// Status values.
+const (
+	StatusStatusPending  Status = "STATUS_PENDING"
+	StatusStatusApproved Status = "STATUS_APPROVED"
+	StatusStatusRejected Status = "STATUS_REJECTED"
+	StatusStatusSpam     Status = "STATUS_SPAM"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusStatusPending, StatusStatusApproved, StatusStatusRejected, StatusStatusSpam:
+		return nil
+	default:
+		return fmt.Errorf("comment: invalid enum value for status field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the Comment queries.
 type OrderOption func(*sql.Selector)
@@ -94,59 +221,34 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByCreateTime orders the results by the create_time field.
-func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
-// ByUpdateTime orders the results by the update_time field.
-func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByDeleteTime orders the results by the delete_time field.
-func ByDeleteTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleteTime, opts...).ToFunc()
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
-// ByAuthor orders the results by the author field.
-func ByAuthor(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAuthor, opts...).ToFunc()
+// ByCreatedBy orders the results by the created_by field.
+func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedBy, opts...).ToFunc()
 }
 
-// ByEmail orders the results by the email field.
-func ByEmail(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+// ByUpdatedBy orders the results by the updated_by field.
+func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
-// ByIPAddress orders the results by the ip_address field.
-func ByIPAddress(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIPAddress, opts...).ToFunc()
-}
-
-// ByAuthorURL orders the results by the author_url field.
-func ByAuthorURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAuthorURL, opts...).ToFunc()
-}
-
-// ByGravatarMd5 orders the results by the gravatar_md5 field.
-func ByGravatarMd5(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldGravatarMd5, opts...).ToFunc()
-}
-
-// ByContent orders the results by the content field.
-func ByContent(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldContent, opts...).ToFunc()
-}
-
-// ByUserAgent orders the results by the user_agent field.
-func ByUserAgent(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUserAgent, opts...).ToFunc()
-}
-
-// ByAvatar orders the results by the avatar field.
-func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAvatar, opts...).ToFunc()
+// ByDeletedBy orders the results by the deleted_by field.
+func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
 }
 
 // ByParentID orders the results by the parent_id field.
@@ -154,17 +256,132 @@ func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentID, opts...).ToFunc()
 }
 
+// ByContentType orders the results by the content_type field.
+func ByContentType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContentType, opts...).ToFunc()
+}
+
+// ByObjectID orders the results by the object_id field.
+func ByObjectID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldObjectID, opts...).ToFunc()
+}
+
+// ByContent orders the results by the content field.
+func ByContent(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContent, opts...).ToFunc()
+}
+
+// ByAuthorID orders the results by the author_id field.
+func ByAuthorID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthorID, opts...).ToFunc()
+}
+
+// ByAuthorName orders the results by the author_name field.
+func ByAuthorName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthorName, opts...).ToFunc()
+}
+
+// ByAuthorEmail orders the results by the author_email field.
+func ByAuthorEmail(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthorEmail, opts...).ToFunc()
+}
+
+// ByAuthorURL orders the results by the author_url field.
+func ByAuthorURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthorURL, opts...).ToFunc()
+}
+
+// ByAuthorType orders the results by the author_type field.
+func ByAuthorType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthorType, opts...).ToFunc()
+}
+
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// ByIsAdmin orders the results by the is_admin field.
-func ByIsAdmin(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsAdmin, opts...).ToFunc()
+// ByLikeCount orders the results by the like_count field.
+func ByLikeCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLikeCount, opts...).ToFunc()
 }
 
-// ByAllowNotification orders the results by the allow_notification field.
-func ByAllowNotification(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAllowNotification, opts...).ToFunc()
+// ByDislikeCount orders the results by the dislike_count field.
+func ByDislikeCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDislikeCount, opts...).ToFunc()
+}
+
+// ByReplyCount orders the results by the reply_count field.
+func ByReplyCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReplyCount, opts...).ToFunc()
+}
+
+// ByIPAddress orders the results by the ip_address field.
+func ByIPAddress(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIPAddress, opts...).ToFunc()
+}
+
+// ByLocation orders the results by the location field.
+func ByLocation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocation, opts...).ToFunc()
+}
+
+// ByUserAgent orders the results by the user_agent field.
+func ByUserAgent(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserAgent, opts...).ToFunc()
+}
+
+// ByDetectedLanguage orders the results by the detected_language field.
+func ByDetectedLanguage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDetectedLanguage, opts...).ToFunc()
+}
+
+// ByIsSpam orders the results by the is_spam field.
+func ByIsSpam(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsSpam, opts...).ToFunc()
+}
+
+// ByIsSticky orders the results by the is_sticky field.
+func ByIsSticky(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsSticky, opts...).ToFunc()
+}
+
+// ByReplyToID orders the results by the reply_to_id field.
+func ByReplyToID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReplyToID, opts...).ToFunc()
+}
+
+// ByParentField orders the results by parent field.
+func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByChildrenCount orders the results by children count.
+func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newChildrenStep(), opts...)
+	}
+}
+
+// ByChildren orders the results by children terms.
+func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newParentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+	)
+}
+func newChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+	)
 }

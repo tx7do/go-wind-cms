@@ -6,8 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/post"
-	"kratos-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-cms/app/core/service/internal/data/ent/post"
+	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -23,547 +24,496 @@ type PostUpdate struct {
 }
 
 // Where appends a list predicates to the PostUpdate builder.
-func (pu *PostUpdate) Where(ps ...predicate.Post) *PostUpdate {
-	pu.mutation.Where(ps...)
-	return pu
+func (_u *PostUpdate) Where(ps ...predicate.Post) *PostUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (pu *PostUpdate) SetUpdateTime(i int64) *PostUpdate {
-	pu.mutation.ResetUpdateTime()
-	pu.mutation.SetUpdateTime(i)
-	return pu
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *PostUpdate) SetUpdatedAt(v time.Time) *PostUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
-// AddUpdateTime adds i to the "update_time" field.
-func (pu *PostUpdate) AddUpdateTime(i int64) *PostUpdate {
-	pu.mutation.AddUpdateTime(i)
-	return pu
-}
-
-// ClearUpdateTime clears the value of the "update_time" field.
-func (pu *PostUpdate) ClearUpdateTime() *PostUpdate {
-	pu.mutation.ClearUpdateTime()
-	return pu
-}
-
-// SetDeleteTime sets the "delete_time" field.
-func (pu *PostUpdate) SetDeleteTime(i int64) *PostUpdate {
-	pu.mutation.ResetDeleteTime()
-	pu.mutation.SetDeleteTime(i)
-	return pu
-}
-
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableDeleteTime(i *int64) *PostUpdate {
-	if i != nil {
-		pu.SetDeleteTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableUpdatedAt(v *time.Time) *PostUpdate {
+	if v != nil {
+		_u.SetUpdatedAt(*v)
 	}
-	return pu
+	return _u
 }
 
-// AddDeleteTime adds i to the "delete_time" field.
-func (pu *PostUpdate) AddDeleteTime(i int64) *PostUpdate {
-	pu.mutation.AddDeleteTime(i)
-	return pu
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *PostUpdate) ClearUpdatedAt() *PostUpdate {
+	_u.mutation.ClearUpdatedAt()
+	return _u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (pu *PostUpdate) ClearDeleteTime() *PostUpdate {
-	pu.mutation.ClearDeleteTime()
-	return pu
+// SetDeletedAt sets the "deleted_at" field.
+func (_u *PostUpdate) SetDeletedAt(v time.Time) *PostUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
-// SetTitle sets the "title" field.
-func (pu *PostUpdate) SetTitle(s string) *PostUpdate {
-	pu.mutation.SetTitle(s)
-	return pu
-}
-
-// SetNillableTitle sets the "title" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableTitle(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetTitle(*s)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableDeletedAt(v *time.Time) *PostUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return pu
+	return _u
 }
 
-// ClearTitle clears the value of the "title" field.
-func (pu *PostUpdate) ClearTitle() *PostUpdate {
-	pu.mutation.ClearTitle()
-	return pu
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *PostUpdate) ClearDeletedAt() *PostUpdate {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
-// SetSlug sets the "slug" field.
-func (pu *PostUpdate) SetSlug(s string) *PostUpdate {
-	pu.mutation.SetSlug(s)
-	return pu
+// SetCreatedBy sets the "created_by" field.
+func (_u *PostUpdate) SetCreatedBy(v uint32) *PostUpdate {
+	_u.mutation.ResetCreatedBy()
+	_u.mutation.SetCreatedBy(v)
+	return _u
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableSlug(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetSlug(*s)
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableCreatedBy(v *uint32) *PostUpdate {
+	if v != nil {
+		_u.SetCreatedBy(*v)
 	}
-	return pu
+	return _u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (pu *PostUpdate) ClearSlug() *PostUpdate {
-	pu.mutation.ClearSlug()
-	return pu
+// AddCreatedBy adds value to the "created_by" field.
+func (_u *PostUpdate) AddCreatedBy(v int32) *PostUpdate {
+	_u.mutation.AddCreatedBy(v)
+	return _u
 }
 
-// SetMetaKeywords sets the "meta_keywords" field.
-func (pu *PostUpdate) SetMetaKeywords(s string) *PostUpdate {
-	pu.mutation.SetMetaKeywords(s)
-	return pu
+// ClearCreatedBy clears the value of the "created_by" field.
+func (_u *PostUpdate) ClearCreatedBy() *PostUpdate {
+	_u.mutation.ClearCreatedBy()
+	return _u
 }
 
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableMetaKeywords(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetMetaKeywords(*s)
+// SetUpdatedBy sets the "updated_by" field.
+func (_u *PostUpdate) SetUpdatedBy(v uint32) *PostUpdate {
+	_u.mutation.ResetUpdatedBy()
+	_u.mutation.SetUpdatedBy(v)
+	return _u
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableUpdatedBy(v *uint32) *PostUpdate {
+	if v != nil {
+		_u.SetUpdatedBy(*v)
 	}
-	return pu
+	return _u
 }
 
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (pu *PostUpdate) ClearMetaKeywords() *PostUpdate {
-	pu.mutation.ClearMetaKeywords()
-	return pu
+// AddUpdatedBy adds value to the "updated_by" field.
+func (_u *PostUpdate) AddUpdatedBy(v int32) *PostUpdate {
+	_u.mutation.AddUpdatedBy(v)
+	return _u
 }
 
-// SetMetaDescription sets the "meta_description" field.
-func (pu *PostUpdate) SetMetaDescription(s string) *PostUpdate {
-	pu.mutation.SetMetaDescription(s)
-	return pu
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (_u *PostUpdate) ClearUpdatedBy() *PostUpdate {
+	_u.mutation.ClearUpdatedBy()
+	return _u
 }
 
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableMetaDescription(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetMetaDescription(*s)
+// SetDeletedBy sets the "deleted_by" field.
+func (_u *PostUpdate) SetDeletedBy(v uint32) *PostUpdate {
+	_u.mutation.ResetDeletedBy()
+	_u.mutation.SetDeletedBy(v)
+	return _u
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableDeletedBy(v *uint32) *PostUpdate {
+	if v != nil {
+		_u.SetDeletedBy(*v)
 	}
-	return pu
+	return _u
 }
 
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (pu *PostUpdate) ClearMetaDescription() *PostUpdate {
-	pu.mutation.ClearMetaDescription()
-	return pu
+// AddDeletedBy adds value to the "deleted_by" field.
+func (_u *PostUpdate) AddDeletedBy(v int32) *PostUpdate {
+	_u.mutation.AddDeletedBy(v)
+	return _u
 }
 
-// SetFullPath sets the "full_path" field.
-func (pu *PostUpdate) SetFullPath(s string) *PostUpdate {
-	pu.mutation.SetFullPath(s)
-	return pu
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (_u *PostUpdate) ClearDeletedBy() *PostUpdate {
+	_u.mutation.ClearDeletedBy()
+	return _u
 }
 
-// SetNillableFullPath sets the "full_path" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableFullPath(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetFullPath(*s)
+// SetSortOrder sets the "sort_order" field.
+func (_u *PostUpdate) SetSortOrder(v uint32) *PostUpdate {
+	_u.mutation.ResetSortOrder()
+	_u.mutation.SetSortOrder(v)
+	return _u
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableSortOrder(v *uint32) *PostUpdate {
+	if v != nil {
+		_u.SetSortOrder(*v)
 	}
-	return pu
+	return _u
 }
 
-// ClearFullPath clears the value of the "full_path" field.
-func (pu *PostUpdate) ClearFullPath() *PostUpdate {
-	pu.mutation.ClearFullPath()
-	return pu
+// AddSortOrder adds value to the "sort_order" field.
+func (_u *PostUpdate) AddSortOrder(v int32) *PostUpdate {
+	_u.mutation.AddSortOrder(v)
+	return _u
 }
 
-// SetOriginalContent sets the "original_content" field.
-func (pu *PostUpdate) SetOriginalContent(s string) *PostUpdate {
-	pu.mutation.SetOriginalContent(s)
-	return pu
-}
-
-// SetNillableOriginalContent sets the "original_content" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableOriginalContent(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetOriginalContent(*s)
-	}
-	return pu
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (pu *PostUpdate) ClearOriginalContent() *PostUpdate {
-	pu.mutation.ClearOriginalContent()
-	return pu
-}
-
-// SetContent sets the "content" field.
-func (pu *PostUpdate) SetContent(s string) *PostUpdate {
-	pu.mutation.SetContent(s)
-	return pu
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableContent(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetContent(*s)
-	}
-	return pu
-}
-
-// ClearContent clears the value of the "content" field.
-func (pu *PostUpdate) ClearContent() *PostUpdate {
-	pu.mutation.ClearContent()
-	return pu
-}
-
-// SetSummary sets the "summary" field.
-func (pu *PostUpdate) SetSummary(s string) *PostUpdate {
-	pu.mutation.SetSummary(s)
-	return pu
-}
-
-// SetNillableSummary sets the "summary" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableSummary(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetSummary(*s)
-	}
-	return pu
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (pu *PostUpdate) ClearSummary() *PostUpdate {
-	pu.mutation.ClearSummary()
-	return pu
-}
-
-// SetThumbnail sets the "thumbnail" field.
-func (pu *PostUpdate) SetThumbnail(s string) *PostUpdate {
-	pu.mutation.SetThumbnail(s)
-	return pu
-}
-
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableThumbnail(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetThumbnail(*s)
-	}
-	return pu
-}
-
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (pu *PostUpdate) ClearThumbnail() *PostUpdate {
-	pu.mutation.ClearThumbnail()
-	return pu
-}
-
-// SetPassword sets the "password" field.
-func (pu *PostUpdate) SetPassword(s string) *PostUpdate {
-	pu.mutation.SetPassword(s)
-	return pu
-}
-
-// SetNillablePassword sets the "password" field if the given value is not nil.
-func (pu *PostUpdate) SetNillablePassword(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetPassword(*s)
-	}
-	return pu
-}
-
-// ClearPassword clears the value of the "password" field.
-func (pu *PostUpdate) ClearPassword() *PostUpdate {
-	pu.mutation.ClearPassword()
-	return pu
-}
-
-// SetTemplate sets the "template" field.
-func (pu *PostUpdate) SetTemplate(s string) *PostUpdate {
-	pu.mutation.SetTemplate(s)
-	return pu
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableTemplate(s *string) *PostUpdate {
-	if s != nil {
-		pu.SetTemplate(*s)
-	}
-	return pu
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (pu *PostUpdate) ClearTemplate() *PostUpdate {
-	pu.mutation.ClearTemplate()
-	return pu
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (pu *PostUpdate) SetCommentCount(i int32) *PostUpdate {
-	pu.mutation.ResetCommentCount()
-	pu.mutation.SetCommentCount(i)
-	return pu
-}
-
-// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableCommentCount(i *int32) *PostUpdate {
-	if i != nil {
-		pu.SetCommentCount(*i)
-	}
-	return pu
-}
-
-// AddCommentCount adds i to the "comment_count" field.
-func (pu *PostUpdate) AddCommentCount(i int32) *PostUpdate {
-	pu.mutation.AddCommentCount(i)
-	return pu
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (pu *PostUpdate) ClearCommentCount() *PostUpdate {
-	pu.mutation.ClearCommentCount()
-	return pu
-}
-
-// SetVisits sets the "visits" field.
-func (pu *PostUpdate) SetVisits(i int32) *PostUpdate {
-	pu.mutation.ResetVisits()
-	pu.mutation.SetVisits(i)
-	return pu
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableVisits(i *int32) *PostUpdate {
-	if i != nil {
-		pu.SetVisits(*i)
-	}
-	return pu
-}
-
-// AddVisits adds i to the "visits" field.
-func (pu *PostUpdate) AddVisits(i int32) *PostUpdate {
-	pu.mutation.AddVisits(i)
-	return pu
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (pu *PostUpdate) ClearVisits() *PostUpdate {
-	pu.mutation.ClearVisits()
-	return pu
-}
-
-// SetLikes sets the "likes" field.
-func (pu *PostUpdate) SetLikes(i int32) *PostUpdate {
-	pu.mutation.ResetLikes()
-	pu.mutation.SetLikes(i)
-	return pu
-}
-
-// SetNillableLikes sets the "likes" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableLikes(i *int32) *PostUpdate {
-	if i != nil {
-		pu.SetLikes(*i)
-	}
-	return pu
-}
-
-// AddLikes adds i to the "likes" field.
-func (pu *PostUpdate) AddLikes(i int32) *PostUpdate {
-	pu.mutation.AddLikes(i)
-	return pu
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (pu *PostUpdate) ClearLikes() *PostUpdate {
-	pu.mutation.ClearLikes()
-	return pu
-}
-
-// SetWordCount sets the "word_count" field.
-func (pu *PostUpdate) SetWordCount(i int32) *PostUpdate {
-	pu.mutation.ResetWordCount()
-	pu.mutation.SetWordCount(i)
-	return pu
-}
-
-// SetNillableWordCount sets the "word_count" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableWordCount(i *int32) *PostUpdate {
-	if i != nil {
-		pu.SetWordCount(*i)
-	}
-	return pu
-}
-
-// AddWordCount adds i to the "word_count" field.
-func (pu *PostUpdate) AddWordCount(i int32) *PostUpdate {
-	pu.mutation.AddWordCount(i)
-	return pu
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (pu *PostUpdate) ClearWordCount() *PostUpdate {
-	pu.mutation.ClearWordCount()
-	return pu
-}
-
-// SetTopPriority sets the "top_priority" field.
-func (pu *PostUpdate) SetTopPriority(i int32) *PostUpdate {
-	pu.mutation.ResetTopPriority()
-	pu.mutation.SetTopPriority(i)
-	return pu
-}
-
-// SetNillableTopPriority sets the "top_priority" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableTopPriority(i *int32) *PostUpdate {
-	if i != nil {
-		pu.SetTopPriority(*i)
-	}
-	return pu
-}
-
-// AddTopPriority adds i to the "top_priority" field.
-func (pu *PostUpdate) AddTopPriority(i int32) *PostUpdate {
-	pu.mutation.AddTopPriority(i)
-	return pu
-}
-
-// ClearTopPriority clears the value of the "top_priority" field.
-func (pu *PostUpdate) ClearTopPriority() *PostUpdate {
-	pu.mutation.ClearTopPriority()
-	return pu
+// ClearSortOrder clears the value of the "sort_order" field.
+func (_u *PostUpdate) ClearSortOrder() *PostUpdate {
+	_u.mutation.ClearSortOrder()
+	return _u
 }
 
 // SetStatus sets the "status" field.
-func (pu *PostUpdate) SetStatus(i int32) *PostUpdate {
-	pu.mutation.ResetStatus()
-	pu.mutation.SetStatus(i)
-	return pu
+func (_u *PostUpdate) SetStatus(v post.Status) *PostUpdate {
+	_u.mutation.SetStatus(v)
+	return _u
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableStatus(i *int32) *PostUpdate {
-	if i != nil {
-		pu.SetStatus(*i)
+func (_u *PostUpdate) SetNillableStatus(v *post.Status) *PostUpdate {
+	if v != nil {
+		_u.SetStatus(*v)
 	}
-	return pu
-}
-
-// AddStatus adds i to the "status" field.
-func (pu *PostUpdate) AddStatus(i int32) *PostUpdate {
-	pu.mutation.AddStatus(i)
-	return pu
+	return _u
 }
 
 // ClearStatus clears the value of the "status" field.
-func (pu *PostUpdate) ClearStatus() *PostUpdate {
-	pu.mutation.ClearStatus()
-	return pu
+func (_u *PostUpdate) ClearStatus() *PostUpdate {
+	_u.mutation.ClearStatus()
+	return _u
 }
 
 // SetEditorType sets the "editor_type" field.
-func (pu *PostUpdate) SetEditorType(i int32) *PostUpdate {
-	pu.mutation.ResetEditorType()
-	pu.mutation.SetEditorType(i)
-	return pu
+func (_u *PostUpdate) SetEditorType(v post.EditorType) *PostUpdate {
+	_u.mutation.SetEditorType(v)
+	return _u
 }
 
 // SetNillableEditorType sets the "editor_type" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableEditorType(i *int32) *PostUpdate {
-	if i != nil {
-		pu.SetEditorType(*i)
+func (_u *PostUpdate) SetNillableEditorType(v *post.EditorType) *PostUpdate {
+	if v != nil {
+		_u.SetEditorType(*v)
 	}
-	return pu
-}
-
-// AddEditorType adds i to the "editor_type" field.
-func (pu *PostUpdate) AddEditorType(i int32) *PostUpdate {
-	pu.mutation.AddEditorType(i)
-	return pu
+	return _u
 }
 
 // ClearEditorType clears the value of the "editor_type" field.
-func (pu *PostUpdate) ClearEditorType() *PostUpdate {
-	pu.mutation.ClearEditorType()
-	return pu
+func (_u *PostUpdate) ClearEditorType() *PostUpdate {
+	_u.mutation.ClearEditorType()
+	return _u
 }
 
-// SetEditTime sets the "edit_time" field.
-func (pu *PostUpdate) SetEditTime(i int64) *PostUpdate {
-	pu.mutation.ResetEditTime()
-	pu.mutation.SetEditTime(i)
-	return pu
+// SetSlug sets the "slug" field.
+func (_u *PostUpdate) SetSlug(v string) *PostUpdate {
+	_u.mutation.SetSlug(v)
+	return _u
 }
 
-// SetNillableEditTime sets the "edit_time" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableEditTime(i *int64) *PostUpdate {
-	if i != nil {
-		pu.SetEditTime(*i)
+// SetNillableSlug sets the "slug" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableSlug(v *string) *PostUpdate {
+	if v != nil {
+		_u.SetSlug(*v)
 	}
-	return pu
+	return _u
 }
 
-// AddEditTime adds i to the "edit_time" field.
-func (pu *PostUpdate) AddEditTime(i int64) *PostUpdate {
-	pu.mutation.AddEditTime(i)
-	return pu
-}
-
-// ClearEditTime clears the value of the "edit_time" field.
-func (pu *PostUpdate) ClearEditTime() *PostUpdate {
-	pu.mutation.ClearEditTime()
-	return pu
+// ClearSlug clears the value of the "slug" field.
+func (_u *PostUpdate) ClearSlug() *PostUpdate {
+	_u.mutation.ClearSlug()
+	return _u
 }
 
 // SetDisallowComment sets the "disallow_comment" field.
-func (pu *PostUpdate) SetDisallowComment(b bool) *PostUpdate {
-	pu.mutation.SetDisallowComment(b)
-	return pu
+func (_u *PostUpdate) SetDisallowComment(v bool) *PostUpdate {
+	_u.mutation.SetDisallowComment(v)
+	return _u
 }
 
 // SetNillableDisallowComment sets the "disallow_comment" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableDisallowComment(b *bool) *PostUpdate {
-	if b != nil {
-		pu.SetDisallowComment(*b)
+func (_u *PostUpdate) SetNillableDisallowComment(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetDisallowComment(*v)
 	}
-	return pu
+	return _u
 }
 
 // ClearDisallowComment clears the value of the "disallow_comment" field.
-func (pu *PostUpdate) ClearDisallowComment() *PostUpdate {
-	pu.mutation.ClearDisallowComment()
-	return pu
+func (_u *PostUpdate) ClearDisallowComment() *PostUpdate {
+	_u.mutation.ClearDisallowComment()
+	return _u
 }
 
 // SetInProgress sets the "in_progress" field.
-func (pu *PostUpdate) SetInProgress(b bool) *PostUpdate {
-	pu.mutation.SetInProgress(b)
-	return pu
+func (_u *PostUpdate) SetInProgress(v bool) *PostUpdate {
+	_u.mutation.SetInProgress(v)
+	return _u
 }
 
 // SetNillableInProgress sets the "in_progress" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableInProgress(b *bool) *PostUpdate {
-	if b != nil {
-		pu.SetInProgress(*b)
+func (_u *PostUpdate) SetNillableInProgress(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetInProgress(*v)
 	}
-	return pu
+	return _u
 }
 
 // ClearInProgress clears the value of the "in_progress" field.
-func (pu *PostUpdate) ClearInProgress() *PostUpdate {
-	pu.mutation.ClearInProgress()
-	return pu
+func (_u *PostUpdate) ClearInProgress() *PostUpdate {
+	_u.mutation.ClearInProgress()
+	return _u
+}
+
+// SetAutoSummary sets the "auto_summary" field.
+func (_u *PostUpdate) SetAutoSummary(v bool) *PostUpdate {
+	_u.mutation.SetAutoSummary(v)
+	return _u
+}
+
+// SetNillableAutoSummary sets the "auto_summary" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableAutoSummary(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetAutoSummary(*v)
+	}
+	return _u
+}
+
+// ClearAutoSummary clears the value of the "auto_summary" field.
+func (_u *PostUpdate) ClearAutoSummary() *PostUpdate {
+	_u.mutation.ClearAutoSummary()
+	return _u
+}
+
+// SetIsFeatured sets the "is_featured" field.
+func (_u *PostUpdate) SetIsFeatured(v bool) *PostUpdate {
+	_u.mutation.SetIsFeatured(v)
+	return _u
+}
+
+// SetNillableIsFeatured sets the "is_featured" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableIsFeatured(v *bool) *PostUpdate {
+	if v != nil {
+		_u.SetIsFeatured(*v)
+	}
+	return _u
+}
+
+// ClearIsFeatured clears the value of the "is_featured" field.
+func (_u *PostUpdate) ClearIsFeatured() *PostUpdate {
+	_u.mutation.ClearIsFeatured()
+	return _u
+}
+
+// SetVisits sets the "visits" field.
+func (_u *PostUpdate) SetVisits(v int32) *PostUpdate {
+	_u.mutation.ResetVisits()
+	_u.mutation.SetVisits(v)
+	return _u
+}
+
+// SetNillableVisits sets the "visits" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableVisits(v *int32) *PostUpdate {
+	if v != nil {
+		_u.SetVisits(*v)
+	}
+	return _u
+}
+
+// AddVisits adds value to the "visits" field.
+func (_u *PostUpdate) AddVisits(v int32) *PostUpdate {
+	_u.mutation.AddVisits(v)
+	return _u
+}
+
+// ClearVisits clears the value of the "visits" field.
+func (_u *PostUpdate) ClearVisits() *PostUpdate {
+	_u.mutation.ClearVisits()
+	return _u
+}
+
+// SetLikes sets the "likes" field.
+func (_u *PostUpdate) SetLikes(v int32) *PostUpdate {
+	_u.mutation.ResetLikes()
+	_u.mutation.SetLikes(v)
+	return _u
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableLikes(v *int32) *PostUpdate {
+	if v != nil {
+		_u.SetLikes(*v)
+	}
+	return _u
+}
+
+// AddLikes adds value to the "likes" field.
+func (_u *PostUpdate) AddLikes(v int32) *PostUpdate {
+	_u.mutation.AddLikes(v)
+	return _u
+}
+
+// ClearLikes clears the value of the "likes" field.
+func (_u *PostUpdate) ClearLikes() *PostUpdate {
+	_u.mutation.ClearLikes()
+	return _u
+}
+
+// SetCommentCount sets the "comment_count" field.
+func (_u *PostUpdate) SetCommentCount(v int32) *PostUpdate {
+	_u.mutation.ResetCommentCount()
+	_u.mutation.SetCommentCount(v)
+	return _u
+}
+
+// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableCommentCount(v *int32) *PostUpdate {
+	if v != nil {
+		_u.SetCommentCount(*v)
+	}
+	return _u
+}
+
+// AddCommentCount adds value to the "comment_count" field.
+func (_u *PostUpdate) AddCommentCount(v int32) *PostUpdate {
+	_u.mutation.AddCommentCount(v)
+	return _u
+}
+
+// ClearCommentCount clears the value of the "comment_count" field.
+func (_u *PostUpdate) ClearCommentCount() *PostUpdate {
+	_u.mutation.ClearCommentCount()
+	return _u
+}
+
+// SetAuthorID sets the "author_id" field.
+func (_u *PostUpdate) SetAuthorID(v uint32) *PostUpdate {
+	_u.mutation.ResetAuthorID()
+	_u.mutation.SetAuthorID(v)
+	return _u
+}
+
+// SetNillableAuthorID sets the "author_id" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableAuthorID(v *uint32) *PostUpdate {
+	if v != nil {
+		_u.SetAuthorID(*v)
+	}
+	return _u
+}
+
+// AddAuthorID adds value to the "author_id" field.
+func (_u *PostUpdate) AddAuthorID(v int32) *PostUpdate {
+	_u.mutation.AddAuthorID(v)
+	return _u
+}
+
+// ClearAuthorID clears the value of the "author_id" field.
+func (_u *PostUpdate) ClearAuthorID() *PostUpdate {
+	_u.mutation.ClearAuthorID()
+	return _u
+}
+
+// SetAuthorName sets the "author_name" field.
+func (_u *PostUpdate) SetAuthorName(v string) *PostUpdate {
+	_u.mutation.SetAuthorName(v)
+	return _u
+}
+
+// SetNillableAuthorName sets the "author_name" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableAuthorName(v *string) *PostUpdate {
+	if v != nil {
+		_u.SetAuthorName(*v)
+	}
+	return _u
+}
+
+// ClearAuthorName clears the value of the "author_name" field.
+func (_u *PostUpdate) ClearAuthorName() *PostUpdate {
+	_u.mutation.ClearAuthorName()
+	return _u
+}
+
+// SetPasswordHash sets the "password_hash" field.
+func (_u *PostUpdate) SetPasswordHash(v string) *PostUpdate {
+	_u.mutation.SetPasswordHash(v)
+	return _u
+}
+
+// SetNillablePasswordHash sets the "password_hash" field if the given value is not nil.
+func (_u *PostUpdate) SetNillablePasswordHash(v *string) *PostUpdate {
+	if v != nil {
+		_u.SetPasswordHash(*v)
+	}
+	return _u
+}
+
+// ClearPasswordHash clears the value of the "password_hash" field.
+func (_u *PostUpdate) ClearPasswordHash() *PostUpdate {
+	_u.mutation.ClearPasswordHash()
+	return _u
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (_u *PostUpdate) SetCustomFields(v *map[string]string) *PostUpdate {
+	_u.mutation.SetCustomFields(v)
+	return _u
+}
+
+// ClearCustomFields clears the value of the "custom_fields" field.
+func (_u *PostUpdate) ClearCustomFields() *PostUpdate {
+	_u.mutation.ClearCustomFields()
+	return _u
+}
+
+// SetCategoryIds sets the "category_ids" field.
+func (_u *PostUpdate) SetCategoryIds(v *[]uint32) *PostUpdate {
+	_u.mutation.SetCategoryIds(v)
+	return _u
+}
+
+// ClearCategoryIds clears the value of the "category_ids" field.
+func (_u *PostUpdate) ClearCategoryIds() *PostUpdate {
+	_u.mutation.ClearCategoryIds()
+	return _u
+}
+
+// SetTagIds sets the "tag_ids" field.
+func (_u *PostUpdate) SetTagIds(v *[]uint32) *PostUpdate {
+	_u.mutation.SetTagIds(v)
+	return _u
+}
+
+// ClearTagIds clears the value of the "tag_ids" field.
+func (_u *PostUpdate) ClearTagIds() *PostUpdate {
+	_u.mutation.ClearTagIds()
+	return _u
 }
 
 // Mutation returns the PostMutation object of the builder.
-func (pu *PostUpdate) Mutation() *PostMutation {
-	return pu.mutation
+func (_u *PostUpdate) Mutation() *PostMutation {
+	return _u.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (pu *PostUpdate) Save(ctx context.Context) (int, error) {
-	pu.defaults()
-	return withHooks(ctx, pu.sqlSave, pu.mutation, pu.hooks)
+func (_u *PostUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (pu *PostUpdate) SaveX(ctx context.Context) int {
-	affected, err := pu.Save(ctx)
+func (_u *PostUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -571,227 +521,212 @@ func (pu *PostUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (pu *PostUpdate) Exec(ctx context.Context) error {
-	_, err := pu.Save(ctx)
+func (_u *PostUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (pu *PostUpdate) ExecX(ctx context.Context) {
-	if err := pu.Exec(ctx); err != nil {
+func (_u *PostUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (pu *PostUpdate) defaults() {
-	if _, ok := pu.mutation.UpdateTime(); !ok && !pu.mutation.UpdateTimeCleared() {
-		v := post.UpdateDefaultUpdateTime()
-		pu.mutation.SetUpdateTime(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
-func (pu *PostUpdate) check() error {
-	if v, ok := pu.mutation.Title(); ok {
-		if err := post.TitleValidator(v); err != nil {
-			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
+func (_u *PostUpdate) check() error {
+	if v, ok := _u.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.EditorType(); ok {
+		if err := post.EditorTypeValidator(v); err != nil {
+			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Post.editor_type": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (pu *PostUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PostUpdate {
-	pu.modifiers = append(pu.modifiers, modifiers...)
-	return pu
+func (_u *PostUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PostUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (pu *PostUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := pu.check(); err != nil {
-		return n, err
+func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(post.Table, post.Columns, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint32))
-	if ps := pu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if pu.mutation.CreateTimeCleared() {
-		_spec.ClearField(post.FieldCreateTime, field.TypeInt64)
+	if _u.mutation.CreatedAtCleared() {
+		_spec.ClearField(post.FieldCreatedAt, field.TypeTime)
 	}
-	if value, ok := pu.mutation.UpdateTime(); ok {
-		_spec.SetField(post.FieldUpdateTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(post.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := pu.mutation.AddedUpdateTime(); ok {
-		_spec.AddField(post.FieldUpdateTime, field.TypeInt64, value)
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(post.FieldUpdatedAt, field.TypeTime)
 	}
-	if pu.mutation.UpdateTimeCleared() {
-		_spec.ClearField(post.FieldUpdateTime, field.TypeInt64)
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(post.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := pu.mutation.DeleteTime(); ok {
-		_spec.SetField(post.FieldDeleteTime, field.TypeInt64, value)
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(post.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := pu.mutation.AddedDeleteTime(); ok {
-		_spec.AddField(post.FieldDeleteTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.CreatedBy(); ok {
+		_spec.SetField(post.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if pu.mutation.DeleteTimeCleared() {
-		_spec.ClearField(post.FieldDeleteTime, field.TypeInt64)
+	if value, ok := _u.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(post.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if value, ok := pu.mutation.Title(); ok {
-		_spec.SetField(post.FieldTitle, field.TypeString, value)
+	if _u.mutation.CreatedByCleared() {
+		_spec.ClearField(post.FieldCreatedBy, field.TypeUint32)
 	}
-	if pu.mutation.TitleCleared() {
-		_spec.ClearField(post.FieldTitle, field.TypeString)
+	if value, ok := _u.mutation.UpdatedBy(); ok {
+		_spec.SetField(post.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := pu.mutation.Slug(); ok {
+	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(post.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.UpdatedByCleared() {
+		_spec.ClearField(post.FieldUpdatedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.DeletedBy(); ok {
+		_spec.SetField(post.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(post.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.DeletedByCleared() {
+		_spec.ClearField(post.FieldDeletedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.SortOrder(); ok {
+		_spec.SetField(post.FieldSortOrder, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedSortOrder(); ok {
+		_spec.AddField(post.FieldSortOrder, field.TypeUint32, value)
+	}
+	if _u.mutation.SortOrderCleared() {
+		_spec.ClearField(post.FieldSortOrder, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(post.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.EditorType(); ok {
+		_spec.SetField(post.FieldEditorType, field.TypeEnum, value)
+	}
+	if _u.mutation.EditorTypeCleared() {
+		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(post.FieldSlug, field.TypeString, value)
 	}
-	if pu.mutation.SlugCleared() {
+	if _u.mutation.SlugCleared() {
 		_spec.ClearField(post.FieldSlug, field.TypeString)
 	}
-	if value, ok := pu.mutation.MetaKeywords(); ok {
-		_spec.SetField(post.FieldMetaKeywords, field.TypeString, value)
-	}
-	if pu.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(post.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := pu.mutation.MetaDescription(); ok {
-		_spec.SetField(post.FieldMetaDescription, field.TypeString, value)
-	}
-	if pu.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(post.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := pu.mutation.FullPath(); ok {
-		_spec.SetField(post.FieldFullPath, field.TypeString, value)
-	}
-	if pu.mutation.FullPathCleared() {
-		_spec.ClearField(post.FieldFullPath, field.TypeString)
-	}
-	if value, ok := pu.mutation.OriginalContent(); ok {
-		_spec.SetField(post.FieldOriginalContent, field.TypeString, value)
-	}
-	if pu.mutation.OriginalContentCleared() {
-		_spec.ClearField(post.FieldOriginalContent, field.TypeString)
-	}
-	if value, ok := pu.mutation.Content(); ok {
-		_spec.SetField(post.FieldContent, field.TypeString, value)
-	}
-	if pu.mutation.ContentCleared() {
-		_spec.ClearField(post.FieldContent, field.TypeString)
-	}
-	if value, ok := pu.mutation.Summary(); ok {
-		_spec.SetField(post.FieldSummary, field.TypeString, value)
-	}
-	if pu.mutation.SummaryCleared() {
-		_spec.ClearField(post.FieldSummary, field.TypeString)
-	}
-	if value, ok := pu.mutation.Thumbnail(); ok {
-		_spec.SetField(post.FieldThumbnail, field.TypeString, value)
-	}
-	if pu.mutation.ThumbnailCleared() {
-		_spec.ClearField(post.FieldThumbnail, field.TypeString)
-	}
-	if value, ok := pu.mutation.Password(); ok {
-		_spec.SetField(post.FieldPassword, field.TypeString, value)
-	}
-	if pu.mutation.PasswordCleared() {
-		_spec.ClearField(post.FieldPassword, field.TypeString)
-	}
-	if value, ok := pu.mutation.Template(); ok {
-		_spec.SetField(post.FieldTemplate, field.TypeString, value)
-	}
-	if pu.mutation.TemplateCleared() {
-		_spec.ClearField(post.FieldTemplate, field.TypeString)
-	}
-	if value, ok := pu.mutation.CommentCount(); ok {
-		_spec.SetField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedCommentCount(); ok {
-		_spec.AddField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if pu.mutation.CommentCountCleared() {
-		_spec.ClearField(post.FieldCommentCount, field.TypeInt32)
-	}
-	if value, ok := pu.mutation.Visits(); ok {
-		_spec.SetField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedVisits(); ok {
-		_spec.AddField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if pu.mutation.VisitsCleared() {
-		_spec.ClearField(post.FieldVisits, field.TypeInt32)
-	}
-	if value, ok := pu.mutation.Likes(); ok {
-		_spec.SetField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedLikes(); ok {
-		_spec.AddField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if pu.mutation.LikesCleared() {
-		_spec.ClearField(post.FieldLikes, field.TypeInt32)
-	}
-	if value, ok := pu.mutation.WordCount(); ok {
-		_spec.SetField(post.FieldWordCount, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedWordCount(); ok {
-		_spec.AddField(post.FieldWordCount, field.TypeInt32, value)
-	}
-	if pu.mutation.WordCountCleared() {
-		_spec.ClearField(post.FieldWordCount, field.TypeInt32)
-	}
-	if value, ok := pu.mutation.TopPriority(); ok {
-		_spec.SetField(post.FieldTopPriority, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedTopPriority(); ok {
-		_spec.AddField(post.FieldTopPriority, field.TypeInt32, value)
-	}
-	if pu.mutation.TopPriorityCleared() {
-		_spec.ClearField(post.FieldTopPriority, field.TypeInt32)
-	}
-	if value, ok := pu.mutation.Status(); ok {
-		_spec.SetField(post.FieldStatus, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedStatus(); ok {
-		_spec.AddField(post.FieldStatus, field.TypeInt32, value)
-	}
-	if pu.mutation.StatusCleared() {
-		_spec.ClearField(post.FieldStatus, field.TypeInt32)
-	}
-	if value, ok := pu.mutation.EditorType(); ok {
-		_spec.SetField(post.FieldEditorType, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedEditorType(); ok {
-		_spec.AddField(post.FieldEditorType, field.TypeInt32, value)
-	}
-	if pu.mutation.EditorTypeCleared() {
-		_spec.ClearField(post.FieldEditorType, field.TypeInt32)
-	}
-	if value, ok := pu.mutation.EditTime(); ok {
-		_spec.SetField(post.FieldEditTime, field.TypeInt64, value)
-	}
-	if value, ok := pu.mutation.AddedEditTime(); ok {
-		_spec.AddField(post.FieldEditTime, field.TypeInt64, value)
-	}
-	if pu.mutation.EditTimeCleared() {
-		_spec.ClearField(post.FieldEditTime, field.TypeInt64)
-	}
-	if value, ok := pu.mutation.DisallowComment(); ok {
+	if value, ok := _u.mutation.DisallowComment(); ok {
 		_spec.SetField(post.FieldDisallowComment, field.TypeBool, value)
 	}
-	if pu.mutation.DisallowCommentCleared() {
+	if _u.mutation.DisallowCommentCleared() {
 		_spec.ClearField(post.FieldDisallowComment, field.TypeBool)
 	}
-	if value, ok := pu.mutation.InProgress(); ok {
+	if value, ok := _u.mutation.InProgress(); ok {
 		_spec.SetField(post.FieldInProgress, field.TypeBool, value)
 	}
-	if pu.mutation.InProgressCleared() {
+	if _u.mutation.InProgressCleared() {
 		_spec.ClearField(post.FieldInProgress, field.TypeBool)
 	}
-	_spec.AddModifiers(pu.modifiers...)
-	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
+	if value, ok := _u.mutation.AutoSummary(); ok {
+		_spec.SetField(post.FieldAutoSummary, field.TypeBool, value)
+	}
+	if _u.mutation.AutoSummaryCleared() {
+		_spec.ClearField(post.FieldAutoSummary, field.TypeBool)
+	}
+	if value, ok := _u.mutation.IsFeatured(); ok {
+		_spec.SetField(post.FieldIsFeatured, field.TypeBool, value)
+	}
+	if _u.mutation.IsFeaturedCleared() {
+		_spec.ClearField(post.FieldIsFeatured, field.TypeBool)
+	}
+	if value, ok := _u.mutation.Visits(); ok {
+		_spec.SetField(post.FieldVisits, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedVisits(); ok {
+		_spec.AddField(post.FieldVisits, field.TypeInt32, value)
+	}
+	if _u.mutation.VisitsCleared() {
+		_spec.ClearField(post.FieldVisits, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.Likes(); ok {
+		_spec.SetField(post.FieldLikes, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedLikes(); ok {
+		_spec.AddField(post.FieldLikes, field.TypeInt32, value)
+	}
+	if _u.mutation.LikesCleared() {
+		_spec.ClearField(post.FieldLikes, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.CommentCount(); ok {
+		_spec.SetField(post.FieldCommentCount, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedCommentCount(); ok {
+		_spec.AddField(post.FieldCommentCount, field.TypeInt32, value)
+	}
+	if _u.mutation.CommentCountCleared() {
+		_spec.ClearField(post.FieldCommentCount, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.AuthorID(); ok {
+		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedAuthorID(); ok {
+		_spec.AddField(post.FieldAuthorID, field.TypeUint32, value)
+	}
+	if _u.mutation.AuthorIDCleared() {
+		_spec.ClearField(post.FieldAuthorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.AuthorName(); ok {
+		_spec.SetField(post.FieldAuthorName, field.TypeString, value)
+	}
+	if _u.mutation.AuthorNameCleared() {
+		_spec.ClearField(post.FieldAuthorName, field.TypeString)
+	}
+	if value, ok := _u.mutation.PasswordHash(); ok {
+		_spec.SetField(post.FieldPasswordHash, field.TypeString, value)
+	}
+	if _u.mutation.PasswordHashCleared() {
+		_spec.ClearField(post.FieldPasswordHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.CustomFields(); ok {
+		_spec.SetField(post.FieldCustomFields, field.TypeJSON, value)
+	}
+	if _u.mutation.CustomFieldsCleared() {
+		_spec.ClearField(post.FieldCustomFields, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.CategoryIds(); ok {
+		_spec.SetField(post.FieldCategoryIds, field.TypeJSON, value)
+	}
+	if _u.mutation.CategoryIdsCleared() {
+		_spec.ClearField(post.FieldCategoryIds, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.TagIds(); ok {
+		_spec.SetField(post.FieldTagIds, field.TypeJSON, value)
+	}
+	if _u.mutation.TagIdsCleared() {
+		_spec.ClearField(post.FieldTagIds, field.TypeJSON)
+	}
+	_spec.AddModifiers(_u.modifiers...)
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{post.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -799,8 +734,8 @@ func (pu *PostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	pu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // PostUpdateOne is the builder for updating a single Post entity.
@@ -812,555 +747,504 @@ type PostUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (puo *PostUpdateOne) SetUpdateTime(i int64) *PostUpdateOne {
-	puo.mutation.ResetUpdateTime()
-	puo.mutation.SetUpdateTime(i)
-	return puo
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *PostUpdateOne) SetUpdatedAt(v time.Time) *PostUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
-// AddUpdateTime adds i to the "update_time" field.
-func (puo *PostUpdateOne) AddUpdateTime(i int64) *PostUpdateOne {
-	puo.mutation.AddUpdateTime(i)
-	return puo
-}
-
-// ClearUpdateTime clears the value of the "update_time" field.
-func (puo *PostUpdateOne) ClearUpdateTime() *PostUpdateOne {
-	puo.mutation.ClearUpdateTime()
-	return puo
-}
-
-// SetDeleteTime sets the "delete_time" field.
-func (puo *PostUpdateOne) SetDeleteTime(i int64) *PostUpdateOne {
-	puo.mutation.ResetDeleteTime()
-	puo.mutation.SetDeleteTime(i)
-	return puo
-}
-
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableDeleteTime(i *int64) *PostUpdateOne {
-	if i != nil {
-		puo.SetDeleteTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableUpdatedAt(v *time.Time) *PostUpdateOne {
+	if v != nil {
+		_u.SetUpdatedAt(*v)
 	}
-	return puo
+	return _u
 }
 
-// AddDeleteTime adds i to the "delete_time" field.
-func (puo *PostUpdateOne) AddDeleteTime(i int64) *PostUpdateOne {
-	puo.mutation.AddDeleteTime(i)
-	return puo
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *PostUpdateOne) ClearUpdatedAt() *PostUpdateOne {
+	_u.mutation.ClearUpdatedAt()
+	return _u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (puo *PostUpdateOne) ClearDeleteTime() *PostUpdateOne {
-	puo.mutation.ClearDeleteTime()
-	return puo
+// SetDeletedAt sets the "deleted_at" field.
+func (_u *PostUpdateOne) SetDeletedAt(v time.Time) *PostUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
-// SetTitle sets the "title" field.
-func (puo *PostUpdateOne) SetTitle(s string) *PostUpdateOne {
-	puo.mutation.SetTitle(s)
-	return puo
-}
-
-// SetNillableTitle sets the "title" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableTitle(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetTitle(*s)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableDeletedAt(v *time.Time) *PostUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return puo
+	return _u
 }
 
-// ClearTitle clears the value of the "title" field.
-func (puo *PostUpdateOne) ClearTitle() *PostUpdateOne {
-	puo.mutation.ClearTitle()
-	return puo
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *PostUpdateOne) ClearDeletedAt() *PostUpdateOne {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
-// SetSlug sets the "slug" field.
-func (puo *PostUpdateOne) SetSlug(s string) *PostUpdateOne {
-	puo.mutation.SetSlug(s)
-	return puo
+// SetCreatedBy sets the "created_by" field.
+func (_u *PostUpdateOne) SetCreatedBy(v uint32) *PostUpdateOne {
+	_u.mutation.ResetCreatedBy()
+	_u.mutation.SetCreatedBy(v)
+	return _u
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableSlug(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetSlug(*s)
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableCreatedBy(v *uint32) *PostUpdateOne {
+	if v != nil {
+		_u.SetCreatedBy(*v)
 	}
-	return puo
+	return _u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (puo *PostUpdateOne) ClearSlug() *PostUpdateOne {
-	puo.mutation.ClearSlug()
-	return puo
+// AddCreatedBy adds value to the "created_by" field.
+func (_u *PostUpdateOne) AddCreatedBy(v int32) *PostUpdateOne {
+	_u.mutation.AddCreatedBy(v)
+	return _u
 }
 
-// SetMetaKeywords sets the "meta_keywords" field.
-func (puo *PostUpdateOne) SetMetaKeywords(s string) *PostUpdateOne {
-	puo.mutation.SetMetaKeywords(s)
-	return puo
+// ClearCreatedBy clears the value of the "created_by" field.
+func (_u *PostUpdateOne) ClearCreatedBy() *PostUpdateOne {
+	_u.mutation.ClearCreatedBy()
+	return _u
 }
 
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableMetaKeywords(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetMetaKeywords(*s)
+// SetUpdatedBy sets the "updated_by" field.
+func (_u *PostUpdateOne) SetUpdatedBy(v uint32) *PostUpdateOne {
+	_u.mutation.ResetUpdatedBy()
+	_u.mutation.SetUpdatedBy(v)
+	return _u
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableUpdatedBy(v *uint32) *PostUpdateOne {
+	if v != nil {
+		_u.SetUpdatedBy(*v)
 	}
-	return puo
+	return _u
 }
 
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (puo *PostUpdateOne) ClearMetaKeywords() *PostUpdateOne {
-	puo.mutation.ClearMetaKeywords()
-	return puo
+// AddUpdatedBy adds value to the "updated_by" field.
+func (_u *PostUpdateOne) AddUpdatedBy(v int32) *PostUpdateOne {
+	_u.mutation.AddUpdatedBy(v)
+	return _u
 }
 
-// SetMetaDescription sets the "meta_description" field.
-func (puo *PostUpdateOne) SetMetaDescription(s string) *PostUpdateOne {
-	puo.mutation.SetMetaDescription(s)
-	return puo
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (_u *PostUpdateOne) ClearUpdatedBy() *PostUpdateOne {
+	_u.mutation.ClearUpdatedBy()
+	return _u
 }
 
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableMetaDescription(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetMetaDescription(*s)
+// SetDeletedBy sets the "deleted_by" field.
+func (_u *PostUpdateOne) SetDeletedBy(v uint32) *PostUpdateOne {
+	_u.mutation.ResetDeletedBy()
+	_u.mutation.SetDeletedBy(v)
+	return _u
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableDeletedBy(v *uint32) *PostUpdateOne {
+	if v != nil {
+		_u.SetDeletedBy(*v)
 	}
-	return puo
+	return _u
 }
 
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (puo *PostUpdateOne) ClearMetaDescription() *PostUpdateOne {
-	puo.mutation.ClearMetaDescription()
-	return puo
+// AddDeletedBy adds value to the "deleted_by" field.
+func (_u *PostUpdateOne) AddDeletedBy(v int32) *PostUpdateOne {
+	_u.mutation.AddDeletedBy(v)
+	return _u
 }
 
-// SetFullPath sets the "full_path" field.
-func (puo *PostUpdateOne) SetFullPath(s string) *PostUpdateOne {
-	puo.mutation.SetFullPath(s)
-	return puo
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (_u *PostUpdateOne) ClearDeletedBy() *PostUpdateOne {
+	_u.mutation.ClearDeletedBy()
+	return _u
 }
 
-// SetNillableFullPath sets the "full_path" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableFullPath(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetFullPath(*s)
+// SetSortOrder sets the "sort_order" field.
+func (_u *PostUpdateOne) SetSortOrder(v uint32) *PostUpdateOne {
+	_u.mutation.ResetSortOrder()
+	_u.mutation.SetSortOrder(v)
+	return _u
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableSortOrder(v *uint32) *PostUpdateOne {
+	if v != nil {
+		_u.SetSortOrder(*v)
 	}
-	return puo
+	return _u
 }
 
-// ClearFullPath clears the value of the "full_path" field.
-func (puo *PostUpdateOne) ClearFullPath() *PostUpdateOne {
-	puo.mutation.ClearFullPath()
-	return puo
+// AddSortOrder adds value to the "sort_order" field.
+func (_u *PostUpdateOne) AddSortOrder(v int32) *PostUpdateOne {
+	_u.mutation.AddSortOrder(v)
+	return _u
 }
 
-// SetOriginalContent sets the "original_content" field.
-func (puo *PostUpdateOne) SetOriginalContent(s string) *PostUpdateOne {
-	puo.mutation.SetOriginalContent(s)
-	return puo
-}
-
-// SetNillableOriginalContent sets the "original_content" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableOriginalContent(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetOriginalContent(*s)
-	}
-	return puo
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (puo *PostUpdateOne) ClearOriginalContent() *PostUpdateOne {
-	puo.mutation.ClearOriginalContent()
-	return puo
-}
-
-// SetContent sets the "content" field.
-func (puo *PostUpdateOne) SetContent(s string) *PostUpdateOne {
-	puo.mutation.SetContent(s)
-	return puo
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableContent(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetContent(*s)
-	}
-	return puo
-}
-
-// ClearContent clears the value of the "content" field.
-func (puo *PostUpdateOne) ClearContent() *PostUpdateOne {
-	puo.mutation.ClearContent()
-	return puo
-}
-
-// SetSummary sets the "summary" field.
-func (puo *PostUpdateOne) SetSummary(s string) *PostUpdateOne {
-	puo.mutation.SetSummary(s)
-	return puo
-}
-
-// SetNillableSummary sets the "summary" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableSummary(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetSummary(*s)
-	}
-	return puo
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (puo *PostUpdateOne) ClearSummary() *PostUpdateOne {
-	puo.mutation.ClearSummary()
-	return puo
-}
-
-// SetThumbnail sets the "thumbnail" field.
-func (puo *PostUpdateOne) SetThumbnail(s string) *PostUpdateOne {
-	puo.mutation.SetThumbnail(s)
-	return puo
-}
-
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableThumbnail(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetThumbnail(*s)
-	}
-	return puo
-}
-
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (puo *PostUpdateOne) ClearThumbnail() *PostUpdateOne {
-	puo.mutation.ClearThumbnail()
-	return puo
-}
-
-// SetPassword sets the "password" field.
-func (puo *PostUpdateOne) SetPassword(s string) *PostUpdateOne {
-	puo.mutation.SetPassword(s)
-	return puo
-}
-
-// SetNillablePassword sets the "password" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillablePassword(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetPassword(*s)
-	}
-	return puo
-}
-
-// ClearPassword clears the value of the "password" field.
-func (puo *PostUpdateOne) ClearPassword() *PostUpdateOne {
-	puo.mutation.ClearPassword()
-	return puo
-}
-
-// SetTemplate sets the "template" field.
-func (puo *PostUpdateOne) SetTemplate(s string) *PostUpdateOne {
-	puo.mutation.SetTemplate(s)
-	return puo
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableTemplate(s *string) *PostUpdateOne {
-	if s != nil {
-		puo.SetTemplate(*s)
-	}
-	return puo
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (puo *PostUpdateOne) ClearTemplate() *PostUpdateOne {
-	puo.mutation.ClearTemplate()
-	return puo
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (puo *PostUpdateOne) SetCommentCount(i int32) *PostUpdateOne {
-	puo.mutation.ResetCommentCount()
-	puo.mutation.SetCommentCount(i)
-	return puo
-}
-
-// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableCommentCount(i *int32) *PostUpdateOne {
-	if i != nil {
-		puo.SetCommentCount(*i)
-	}
-	return puo
-}
-
-// AddCommentCount adds i to the "comment_count" field.
-func (puo *PostUpdateOne) AddCommentCount(i int32) *PostUpdateOne {
-	puo.mutation.AddCommentCount(i)
-	return puo
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (puo *PostUpdateOne) ClearCommentCount() *PostUpdateOne {
-	puo.mutation.ClearCommentCount()
-	return puo
-}
-
-// SetVisits sets the "visits" field.
-func (puo *PostUpdateOne) SetVisits(i int32) *PostUpdateOne {
-	puo.mutation.ResetVisits()
-	puo.mutation.SetVisits(i)
-	return puo
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableVisits(i *int32) *PostUpdateOne {
-	if i != nil {
-		puo.SetVisits(*i)
-	}
-	return puo
-}
-
-// AddVisits adds i to the "visits" field.
-func (puo *PostUpdateOne) AddVisits(i int32) *PostUpdateOne {
-	puo.mutation.AddVisits(i)
-	return puo
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (puo *PostUpdateOne) ClearVisits() *PostUpdateOne {
-	puo.mutation.ClearVisits()
-	return puo
-}
-
-// SetLikes sets the "likes" field.
-func (puo *PostUpdateOne) SetLikes(i int32) *PostUpdateOne {
-	puo.mutation.ResetLikes()
-	puo.mutation.SetLikes(i)
-	return puo
-}
-
-// SetNillableLikes sets the "likes" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableLikes(i *int32) *PostUpdateOne {
-	if i != nil {
-		puo.SetLikes(*i)
-	}
-	return puo
-}
-
-// AddLikes adds i to the "likes" field.
-func (puo *PostUpdateOne) AddLikes(i int32) *PostUpdateOne {
-	puo.mutation.AddLikes(i)
-	return puo
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (puo *PostUpdateOne) ClearLikes() *PostUpdateOne {
-	puo.mutation.ClearLikes()
-	return puo
-}
-
-// SetWordCount sets the "word_count" field.
-func (puo *PostUpdateOne) SetWordCount(i int32) *PostUpdateOne {
-	puo.mutation.ResetWordCount()
-	puo.mutation.SetWordCount(i)
-	return puo
-}
-
-// SetNillableWordCount sets the "word_count" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableWordCount(i *int32) *PostUpdateOne {
-	if i != nil {
-		puo.SetWordCount(*i)
-	}
-	return puo
-}
-
-// AddWordCount adds i to the "word_count" field.
-func (puo *PostUpdateOne) AddWordCount(i int32) *PostUpdateOne {
-	puo.mutation.AddWordCount(i)
-	return puo
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (puo *PostUpdateOne) ClearWordCount() *PostUpdateOne {
-	puo.mutation.ClearWordCount()
-	return puo
-}
-
-// SetTopPriority sets the "top_priority" field.
-func (puo *PostUpdateOne) SetTopPriority(i int32) *PostUpdateOne {
-	puo.mutation.ResetTopPriority()
-	puo.mutation.SetTopPriority(i)
-	return puo
-}
-
-// SetNillableTopPriority sets the "top_priority" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableTopPriority(i *int32) *PostUpdateOne {
-	if i != nil {
-		puo.SetTopPriority(*i)
-	}
-	return puo
-}
-
-// AddTopPriority adds i to the "top_priority" field.
-func (puo *PostUpdateOne) AddTopPriority(i int32) *PostUpdateOne {
-	puo.mutation.AddTopPriority(i)
-	return puo
-}
-
-// ClearTopPriority clears the value of the "top_priority" field.
-func (puo *PostUpdateOne) ClearTopPriority() *PostUpdateOne {
-	puo.mutation.ClearTopPriority()
-	return puo
+// ClearSortOrder clears the value of the "sort_order" field.
+func (_u *PostUpdateOne) ClearSortOrder() *PostUpdateOne {
+	_u.mutation.ClearSortOrder()
+	return _u
 }
 
 // SetStatus sets the "status" field.
-func (puo *PostUpdateOne) SetStatus(i int32) *PostUpdateOne {
-	puo.mutation.ResetStatus()
-	puo.mutation.SetStatus(i)
-	return puo
+func (_u *PostUpdateOne) SetStatus(v post.Status) *PostUpdateOne {
+	_u.mutation.SetStatus(v)
+	return _u
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableStatus(i *int32) *PostUpdateOne {
-	if i != nil {
-		puo.SetStatus(*i)
+func (_u *PostUpdateOne) SetNillableStatus(v *post.Status) *PostUpdateOne {
+	if v != nil {
+		_u.SetStatus(*v)
 	}
-	return puo
-}
-
-// AddStatus adds i to the "status" field.
-func (puo *PostUpdateOne) AddStatus(i int32) *PostUpdateOne {
-	puo.mutation.AddStatus(i)
-	return puo
+	return _u
 }
 
 // ClearStatus clears the value of the "status" field.
-func (puo *PostUpdateOne) ClearStatus() *PostUpdateOne {
-	puo.mutation.ClearStatus()
-	return puo
+func (_u *PostUpdateOne) ClearStatus() *PostUpdateOne {
+	_u.mutation.ClearStatus()
+	return _u
 }
 
 // SetEditorType sets the "editor_type" field.
-func (puo *PostUpdateOne) SetEditorType(i int32) *PostUpdateOne {
-	puo.mutation.ResetEditorType()
-	puo.mutation.SetEditorType(i)
-	return puo
+func (_u *PostUpdateOne) SetEditorType(v post.EditorType) *PostUpdateOne {
+	_u.mutation.SetEditorType(v)
+	return _u
 }
 
 // SetNillableEditorType sets the "editor_type" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableEditorType(i *int32) *PostUpdateOne {
-	if i != nil {
-		puo.SetEditorType(*i)
+func (_u *PostUpdateOne) SetNillableEditorType(v *post.EditorType) *PostUpdateOne {
+	if v != nil {
+		_u.SetEditorType(*v)
 	}
-	return puo
-}
-
-// AddEditorType adds i to the "editor_type" field.
-func (puo *PostUpdateOne) AddEditorType(i int32) *PostUpdateOne {
-	puo.mutation.AddEditorType(i)
-	return puo
+	return _u
 }
 
 // ClearEditorType clears the value of the "editor_type" field.
-func (puo *PostUpdateOne) ClearEditorType() *PostUpdateOne {
-	puo.mutation.ClearEditorType()
-	return puo
+func (_u *PostUpdateOne) ClearEditorType() *PostUpdateOne {
+	_u.mutation.ClearEditorType()
+	return _u
 }
 
-// SetEditTime sets the "edit_time" field.
-func (puo *PostUpdateOne) SetEditTime(i int64) *PostUpdateOne {
-	puo.mutation.ResetEditTime()
-	puo.mutation.SetEditTime(i)
-	return puo
+// SetSlug sets the "slug" field.
+func (_u *PostUpdateOne) SetSlug(v string) *PostUpdateOne {
+	_u.mutation.SetSlug(v)
+	return _u
 }
 
-// SetNillableEditTime sets the "edit_time" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableEditTime(i *int64) *PostUpdateOne {
-	if i != nil {
-		puo.SetEditTime(*i)
+// SetNillableSlug sets the "slug" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableSlug(v *string) *PostUpdateOne {
+	if v != nil {
+		_u.SetSlug(*v)
 	}
-	return puo
+	return _u
 }
 
-// AddEditTime adds i to the "edit_time" field.
-func (puo *PostUpdateOne) AddEditTime(i int64) *PostUpdateOne {
-	puo.mutation.AddEditTime(i)
-	return puo
-}
-
-// ClearEditTime clears the value of the "edit_time" field.
-func (puo *PostUpdateOne) ClearEditTime() *PostUpdateOne {
-	puo.mutation.ClearEditTime()
-	return puo
+// ClearSlug clears the value of the "slug" field.
+func (_u *PostUpdateOne) ClearSlug() *PostUpdateOne {
+	_u.mutation.ClearSlug()
+	return _u
 }
 
 // SetDisallowComment sets the "disallow_comment" field.
-func (puo *PostUpdateOne) SetDisallowComment(b bool) *PostUpdateOne {
-	puo.mutation.SetDisallowComment(b)
-	return puo
+func (_u *PostUpdateOne) SetDisallowComment(v bool) *PostUpdateOne {
+	_u.mutation.SetDisallowComment(v)
+	return _u
 }
 
 // SetNillableDisallowComment sets the "disallow_comment" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableDisallowComment(b *bool) *PostUpdateOne {
-	if b != nil {
-		puo.SetDisallowComment(*b)
+func (_u *PostUpdateOne) SetNillableDisallowComment(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetDisallowComment(*v)
 	}
-	return puo
+	return _u
 }
 
 // ClearDisallowComment clears the value of the "disallow_comment" field.
-func (puo *PostUpdateOne) ClearDisallowComment() *PostUpdateOne {
-	puo.mutation.ClearDisallowComment()
-	return puo
+func (_u *PostUpdateOne) ClearDisallowComment() *PostUpdateOne {
+	_u.mutation.ClearDisallowComment()
+	return _u
 }
 
 // SetInProgress sets the "in_progress" field.
-func (puo *PostUpdateOne) SetInProgress(b bool) *PostUpdateOne {
-	puo.mutation.SetInProgress(b)
-	return puo
+func (_u *PostUpdateOne) SetInProgress(v bool) *PostUpdateOne {
+	_u.mutation.SetInProgress(v)
+	return _u
 }
 
 // SetNillableInProgress sets the "in_progress" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableInProgress(b *bool) *PostUpdateOne {
-	if b != nil {
-		puo.SetInProgress(*b)
+func (_u *PostUpdateOne) SetNillableInProgress(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetInProgress(*v)
 	}
-	return puo
+	return _u
 }
 
 // ClearInProgress clears the value of the "in_progress" field.
-func (puo *PostUpdateOne) ClearInProgress() *PostUpdateOne {
-	puo.mutation.ClearInProgress()
-	return puo
+func (_u *PostUpdateOne) ClearInProgress() *PostUpdateOne {
+	_u.mutation.ClearInProgress()
+	return _u
+}
+
+// SetAutoSummary sets the "auto_summary" field.
+func (_u *PostUpdateOne) SetAutoSummary(v bool) *PostUpdateOne {
+	_u.mutation.SetAutoSummary(v)
+	return _u
+}
+
+// SetNillableAutoSummary sets the "auto_summary" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableAutoSummary(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetAutoSummary(*v)
+	}
+	return _u
+}
+
+// ClearAutoSummary clears the value of the "auto_summary" field.
+func (_u *PostUpdateOne) ClearAutoSummary() *PostUpdateOne {
+	_u.mutation.ClearAutoSummary()
+	return _u
+}
+
+// SetIsFeatured sets the "is_featured" field.
+func (_u *PostUpdateOne) SetIsFeatured(v bool) *PostUpdateOne {
+	_u.mutation.SetIsFeatured(v)
+	return _u
+}
+
+// SetNillableIsFeatured sets the "is_featured" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableIsFeatured(v *bool) *PostUpdateOne {
+	if v != nil {
+		_u.SetIsFeatured(*v)
+	}
+	return _u
+}
+
+// ClearIsFeatured clears the value of the "is_featured" field.
+func (_u *PostUpdateOne) ClearIsFeatured() *PostUpdateOne {
+	_u.mutation.ClearIsFeatured()
+	return _u
+}
+
+// SetVisits sets the "visits" field.
+func (_u *PostUpdateOne) SetVisits(v int32) *PostUpdateOne {
+	_u.mutation.ResetVisits()
+	_u.mutation.SetVisits(v)
+	return _u
+}
+
+// SetNillableVisits sets the "visits" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableVisits(v *int32) *PostUpdateOne {
+	if v != nil {
+		_u.SetVisits(*v)
+	}
+	return _u
+}
+
+// AddVisits adds value to the "visits" field.
+func (_u *PostUpdateOne) AddVisits(v int32) *PostUpdateOne {
+	_u.mutation.AddVisits(v)
+	return _u
+}
+
+// ClearVisits clears the value of the "visits" field.
+func (_u *PostUpdateOne) ClearVisits() *PostUpdateOne {
+	_u.mutation.ClearVisits()
+	return _u
+}
+
+// SetLikes sets the "likes" field.
+func (_u *PostUpdateOne) SetLikes(v int32) *PostUpdateOne {
+	_u.mutation.ResetLikes()
+	_u.mutation.SetLikes(v)
+	return _u
+}
+
+// SetNillableLikes sets the "likes" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableLikes(v *int32) *PostUpdateOne {
+	if v != nil {
+		_u.SetLikes(*v)
+	}
+	return _u
+}
+
+// AddLikes adds value to the "likes" field.
+func (_u *PostUpdateOne) AddLikes(v int32) *PostUpdateOne {
+	_u.mutation.AddLikes(v)
+	return _u
+}
+
+// ClearLikes clears the value of the "likes" field.
+func (_u *PostUpdateOne) ClearLikes() *PostUpdateOne {
+	_u.mutation.ClearLikes()
+	return _u
+}
+
+// SetCommentCount sets the "comment_count" field.
+func (_u *PostUpdateOne) SetCommentCount(v int32) *PostUpdateOne {
+	_u.mutation.ResetCommentCount()
+	_u.mutation.SetCommentCount(v)
+	return _u
+}
+
+// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableCommentCount(v *int32) *PostUpdateOne {
+	if v != nil {
+		_u.SetCommentCount(*v)
+	}
+	return _u
+}
+
+// AddCommentCount adds value to the "comment_count" field.
+func (_u *PostUpdateOne) AddCommentCount(v int32) *PostUpdateOne {
+	_u.mutation.AddCommentCount(v)
+	return _u
+}
+
+// ClearCommentCount clears the value of the "comment_count" field.
+func (_u *PostUpdateOne) ClearCommentCount() *PostUpdateOne {
+	_u.mutation.ClearCommentCount()
+	return _u
+}
+
+// SetAuthorID sets the "author_id" field.
+func (_u *PostUpdateOne) SetAuthorID(v uint32) *PostUpdateOne {
+	_u.mutation.ResetAuthorID()
+	_u.mutation.SetAuthorID(v)
+	return _u
+}
+
+// SetNillableAuthorID sets the "author_id" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableAuthorID(v *uint32) *PostUpdateOne {
+	if v != nil {
+		_u.SetAuthorID(*v)
+	}
+	return _u
+}
+
+// AddAuthorID adds value to the "author_id" field.
+func (_u *PostUpdateOne) AddAuthorID(v int32) *PostUpdateOne {
+	_u.mutation.AddAuthorID(v)
+	return _u
+}
+
+// ClearAuthorID clears the value of the "author_id" field.
+func (_u *PostUpdateOne) ClearAuthorID() *PostUpdateOne {
+	_u.mutation.ClearAuthorID()
+	return _u
+}
+
+// SetAuthorName sets the "author_name" field.
+func (_u *PostUpdateOne) SetAuthorName(v string) *PostUpdateOne {
+	_u.mutation.SetAuthorName(v)
+	return _u
+}
+
+// SetNillableAuthorName sets the "author_name" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableAuthorName(v *string) *PostUpdateOne {
+	if v != nil {
+		_u.SetAuthorName(*v)
+	}
+	return _u
+}
+
+// ClearAuthorName clears the value of the "author_name" field.
+func (_u *PostUpdateOne) ClearAuthorName() *PostUpdateOne {
+	_u.mutation.ClearAuthorName()
+	return _u
+}
+
+// SetPasswordHash sets the "password_hash" field.
+func (_u *PostUpdateOne) SetPasswordHash(v string) *PostUpdateOne {
+	_u.mutation.SetPasswordHash(v)
+	return _u
+}
+
+// SetNillablePasswordHash sets the "password_hash" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillablePasswordHash(v *string) *PostUpdateOne {
+	if v != nil {
+		_u.SetPasswordHash(*v)
+	}
+	return _u
+}
+
+// ClearPasswordHash clears the value of the "password_hash" field.
+func (_u *PostUpdateOne) ClearPasswordHash() *PostUpdateOne {
+	_u.mutation.ClearPasswordHash()
+	return _u
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (_u *PostUpdateOne) SetCustomFields(v *map[string]string) *PostUpdateOne {
+	_u.mutation.SetCustomFields(v)
+	return _u
+}
+
+// ClearCustomFields clears the value of the "custom_fields" field.
+func (_u *PostUpdateOne) ClearCustomFields() *PostUpdateOne {
+	_u.mutation.ClearCustomFields()
+	return _u
+}
+
+// SetCategoryIds sets the "category_ids" field.
+func (_u *PostUpdateOne) SetCategoryIds(v *[]uint32) *PostUpdateOne {
+	_u.mutation.SetCategoryIds(v)
+	return _u
+}
+
+// ClearCategoryIds clears the value of the "category_ids" field.
+func (_u *PostUpdateOne) ClearCategoryIds() *PostUpdateOne {
+	_u.mutation.ClearCategoryIds()
+	return _u
+}
+
+// SetTagIds sets the "tag_ids" field.
+func (_u *PostUpdateOne) SetTagIds(v *[]uint32) *PostUpdateOne {
+	_u.mutation.SetTagIds(v)
+	return _u
+}
+
+// ClearTagIds clears the value of the "tag_ids" field.
+func (_u *PostUpdateOne) ClearTagIds() *PostUpdateOne {
+	_u.mutation.ClearTagIds()
+	return _u
 }
 
 // Mutation returns the PostMutation object of the builder.
-func (puo *PostUpdateOne) Mutation() *PostMutation {
-	return puo.mutation
+func (_u *PostUpdateOne) Mutation() *PostMutation {
+	return _u.mutation
 }
 
 // Where appends a list predicates to the PostUpdate builder.
-func (puo *PostUpdateOne) Where(ps ...predicate.Post) *PostUpdateOne {
-	puo.mutation.Where(ps...)
-	return puo
+func (_u *PostUpdateOne) Where(ps ...predicate.Post) *PostUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (puo *PostUpdateOne) Select(field string, fields ...string) *PostUpdateOne {
-	puo.fields = append([]string{field}, fields...)
-	return puo
+func (_u *PostUpdateOne) Select(field string, fields ...string) *PostUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Post entity.
-func (puo *PostUpdateOne) Save(ctx context.Context) (*Post, error) {
-	puo.defaults()
-	return withHooks(ctx, puo.sqlSave, puo.mutation, puo.hooks)
+func (_u *PostUpdateOne) Save(ctx context.Context) (*Post, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (puo *PostUpdateOne) SaveX(ctx context.Context) *Post {
-	node, err := puo.Save(ctx)
+func (_u *PostUpdateOne) SaveX(ctx context.Context) *Post {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -1368,53 +1252,50 @@ func (puo *PostUpdateOne) SaveX(ctx context.Context) *Post {
 }
 
 // Exec executes the query on the entity.
-func (puo *PostUpdateOne) Exec(ctx context.Context) error {
-	_, err := puo.Save(ctx)
+func (_u *PostUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (puo *PostUpdateOne) ExecX(ctx context.Context) {
-	if err := puo.Exec(ctx); err != nil {
+func (_u *PostUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (puo *PostUpdateOne) defaults() {
-	if _, ok := puo.mutation.UpdateTime(); !ok && !puo.mutation.UpdateTimeCleared() {
-		v := post.UpdateDefaultUpdateTime()
-		puo.mutation.SetUpdateTime(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
-func (puo *PostUpdateOne) check() error {
-	if v, ok := puo.mutation.Title(); ok {
-		if err := post.TitleValidator(v); err != nil {
-			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Post.title": %w`, err)}
+func (_u *PostUpdateOne) check() error {
+	if v, ok := _u.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.EditorType(); ok {
+		if err := post.EditorTypeValidator(v); err != nil {
+			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Post.editor_type": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (puo *PostUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PostUpdateOne {
-	puo.modifiers = append(puo.modifiers, modifiers...)
-	return puo
+func (_u *PostUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PostUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (puo *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
-	if err := puo.check(); err != nil {
+func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(post.Table, post.Columns, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint32))
-	id, ok := puo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Post.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := puo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, post.FieldID)
 		for _, f := range fields {
@@ -1426,189 +1307,177 @@ func (puo *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) 
 			}
 		}
 	}
-	if ps := puo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if puo.mutation.CreateTimeCleared() {
-		_spec.ClearField(post.FieldCreateTime, field.TypeInt64)
+	if _u.mutation.CreatedAtCleared() {
+		_spec.ClearField(post.FieldCreatedAt, field.TypeTime)
 	}
-	if value, ok := puo.mutation.UpdateTime(); ok {
-		_spec.SetField(post.FieldUpdateTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(post.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := puo.mutation.AddedUpdateTime(); ok {
-		_spec.AddField(post.FieldUpdateTime, field.TypeInt64, value)
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(post.FieldUpdatedAt, field.TypeTime)
 	}
-	if puo.mutation.UpdateTimeCleared() {
-		_spec.ClearField(post.FieldUpdateTime, field.TypeInt64)
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(post.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := puo.mutation.DeleteTime(); ok {
-		_spec.SetField(post.FieldDeleteTime, field.TypeInt64, value)
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(post.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := puo.mutation.AddedDeleteTime(); ok {
-		_spec.AddField(post.FieldDeleteTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.CreatedBy(); ok {
+		_spec.SetField(post.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if puo.mutation.DeleteTimeCleared() {
-		_spec.ClearField(post.FieldDeleteTime, field.TypeInt64)
+	if value, ok := _u.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(post.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if value, ok := puo.mutation.Title(); ok {
-		_spec.SetField(post.FieldTitle, field.TypeString, value)
+	if _u.mutation.CreatedByCleared() {
+		_spec.ClearField(post.FieldCreatedBy, field.TypeUint32)
 	}
-	if puo.mutation.TitleCleared() {
-		_spec.ClearField(post.FieldTitle, field.TypeString)
+	if value, ok := _u.mutation.UpdatedBy(); ok {
+		_spec.SetField(post.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := puo.mutation.Slug(); ok {
+	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(post.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.UpdatedByCleared() {
+		_spec.ClearField(post.FieldUpdatedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.DeletedBy(); ok {
+		_spec.SetField(post.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(post.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.DeletedByCleared() {
+		_spec.ClearField(post.FieldDeletedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.SortOrder(); ok {
+		_spec.SetField(post.FieldSortOrder, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedSortOrder(); ok {
+		_spec.AddField(post.FieldSortOrder, field.TypeUint32, value)
+	}
+	if _u.mutation.SortOrderCleared() {
+		_spec.ClearField(post.FieldSortOrder, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(post.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.EditorType(); ok {
+		_spec.SetField(post.FieldEditorType, field.TypeEnum, value)
+	}
+	if _u.mutation.EditorTypeCleared() {
+		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(post.FieldSlug, field.TypeString, value)
 	}
-	if puo.mutation.SlugCleared() {
+	if _u.mutation.SlugCleared() {
 		_spec.ClearField(post.FieldSlug, field.TypeString)
 	}
-	if value, ok := puo.mutation.MetaKeywords(); ok {
-		_spec.SetField(post.FieldMetaKeywords, field.TypeString, value)
-	}
-	if puo.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(post.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := puo.mutation.MetaDescription(); ok {
-		_spec.SetField(post.FieldMetaDescription, field.TypeString, value)
-	}
-	if puo.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(post.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := puo.mutation.FullPath(); ok {
-		_spec.SetField(post.FieldFullPath, field.TypeString, value)
-	}
-	if puo.mutation.FullPathCleared() {
-		_spec.ClearField(post.FieldFullPath, field.TypeString)
-	}
-	if value, ok := puo.mutation.OriginalContent(); ok {
-		_spec.SetField(post.FieldOriginalContent, field.TypeString, value)
-	}
-	if puo.mutation.OriginalContentCleared() {
-		_spec.ClearField(post.FieldOriginalContent, field.TypeString)
-	}
-	if value, ok := puo.mutation.Content(); ok {
-		_spec.SetField(post.FieldContent, field.TypeString, value)
-	}
-	if puo.mutation.ContentCleared() {
-		_spec.ClearField(post.FieldContent, field.TypeString)
-	}
-	if value, ok := puo.mutation.Summary(); ok {
-		_spec.SetField(post.FieldSummary, field.TypeString, value)
-	}
-	if puo.mutation.SummaryCleared() {
-		_spec.ClearField(post.FieldSummary, field.TypeString)
-	}
-	if value, ok := puo.mutation.Thumbnail(); ok {
-		_spec.SetField(post.FieldThumbnail, field.TypeString, value)
-	}
-	if puo.mutation.ThumbnailCleared() {
-		_spec.ClearField(post.FieldThumbnail, field.TypeString)
-	}
-	if value, ok := puo.mutation.Password(); ok {
-		_spec.SetField(post.FieldPassword, field.TypeString, value)
-	}
-	if puo.mutation.PasswordCleared() {
-		_spec.ClearField(post.FieldPassword, field.TypeString)
-	}
-	if value, ok := puo.mutation.Template(); ok {
-		_spec.SetField(post.FieldTemplate, field.TypeString, value)
-	}
-	if puo.mutation.TemplateCleared() {
-		_spec.ClearField(post.FieldTemplate, field.TypeString)
-	}
-	if value, ok := puo.mutation.CommentCount(); ok {
-		_spec.SetField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedCommentCount(); ok {
-		_spec.AddField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if puo.mutation.CommentCountCleared() {
-		_spec.ClearField(post.FieldCommentCount, field.TypeInt32)
-	}
-	if value, ok := puo.mutation.Visits(); ok {
-		_spec.SetField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedVisits(); ok {
-		_spec.AddField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if puo.mutation.VisitsCleared() {
-		_spec.ClearField(post.FieldVisits, field.TypeInt32)
-	}
-	if value, ok := puo.mutation.Likes(); ok {
-		_spec.SetField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedLikes(); ok {
-		_spec.AddField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if puo.mutation.LikesCleared() {
-		_spec.ClearField(post.FieldLikes, field.TypeInt32)
-	}
-	if value, ok := puo.mutation.WordCount(); ok {
-		_spec.SetField(post.FieldWordCount, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedWordCount(); ok {
-		_spec.AddField(post.FieldWordCount, field.TypeInt32, value)
-	}
-	if puo.mutation.WordCountCleared() {
-		_spec.ClearField(post.FieldWordCount, field.TypeInt32)
-	}
-	if value, ok := puo.mutation.TopPriority(); ok {
-		_spec.SetField(post.FieldTopPriority, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedTopPriority(); ok {
-		_spec.AddField(post.FieldTopPriority, field.TypeInt32, value)
-	}
-	if puo.mutation.TopPriorityCleared() {
-		_spec.ClearField(post.FieldTopPriority, field.TypeInt32)
-	}
-	if value, ok := puo.mutation.Status(); ok {
-		_spec.SetField(post.FieldStatus, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedStatus(); ok {
-		_spec.AddField(post.FieldStatus, field.TypeInt32, value)
-	}
-	if puo.mutation.StatusCleared() {
-		_spec.ClearField(post.FieldStatus, field.TypeInt32)
-	}
-	if value, ok := puo.mutation.EditorType(); ok {
-		_spec.SetField(post.FieldEditorType, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedEditorType(); ok {
-		_spec.AddField(post.FieldEditorType, field.TypeInt32, value)
-	}
-	if puo.mutation.EditorTypeCleared() {
-		_spec.ClearField(post.FieldEditorType, field.TypeInt32)
-	}
-	if value, ok := puo.mutation.EditTime(); ok {
-		_spec.SetField(post.FieldEditTime, field.TypeInt64, value)
-	}
-	if value, ok := puo.mutation.AddedEditTime(); ok {
-		_spec.AddField(post.FieldEditTime, field.TypeInt64, value)
-	}
-	if puo.mutation.EditTimeCleared() {
-		_spec.ClearField(post.FieldEditTime, field.TypeInt64)
-	}
-	if value, ok := puo.mutation.DisallowComment(); ok {
+	if value, ok := _u.mutation.DisallowComment(); ok {
 		_spec.SetField(post.FieldDisallowComment, field.TypeBool, value)
 	}
-	if puo.mutation.DisallowCommentCleared() {
+	if _u.mutation.DisallowCommentCleared() {
 		_spec.ClearField(post.FieldDisallowComment, field.TypeBool)
 	}
-	if value, ok := puo.mutation.InProgress(); ok {
+	if value, ok := _u.mutation.InProgress(); ok {
 		_spec.SetField(post.FieldInProgress, field.TypeBool, value)
 	}
-	if puo.mutation.InProgressCleared() {
+	if _u.mutation.InProgressCleared() {
 		_spec.ClearField(post.FieldInProgress, field.TypeBool)
 	}
-	_spec.AddModifiers(puo.modifiers...)
-	_node = &Post{config: puo.config}
+	if value, ok := _u.mutation.AutoSummary(); ok {
+		_spec.SetField(post.FieldAutoSummary, field.TypeBool, value)
+	}
+	if _u.mutation.AutoSummaryCleared() {
+		_spec.ClearField(post.FieldAutoSummary, field.TypeBool)
+	}
+	if value, ok := _u.mutation.IsFeatured(); ok {
+		_spec.SetField(post.FieldIsFeatured, field.TypeBool, value)
+	}
+	if _u.mutation.IsFeaturedCleared() {
+		_spec.ClearField(post.FieldIsFeatured, field.TypeBool)
+	}
+	if value, ok := _u.mutation.Visits(); ok {
+		_spec.SetField(post.FieldVisits, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedVisits(); ok {
+		_spec.AddField(post.FieldVisits, field.TypeInt32, value)
+	}
+	if _u.mutation.VisitsCleared() {
+		_spec.ClearField(post.FieldVisits, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.Likes(); ok {
+		_spec.SetField(post.FieldLikes, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedLikes(); ok {
+		_spec.AddField(post.FieldLikes, field.TypeInt32, value)
+	}
+	if _u.mutation.LikesCleared() {
+		_spec.ClearField(post.FieldLikes, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.CommentCount(); ok {
+		_spec.SetField(post.FieldCommentCount, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedCommentCount(); ok {
+		_spec.AddField(post.FieldCommentCount, field.TypeInt32, value)
+	}
+	if _u.mutation.CommentCountCleared() {
+		_spec.ClearField(post.FieldCommentCount, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.AuthorID(); ok {
+		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedAuthorID(); ok {
+		_spec.AddField(post.FieldAuthorID, field.TypeUint32, value)
+	}
+	if _u.mutation.AuthorIDCleared() {
+		_spec.ClearField(post.FieldAuthorID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.AuthorName(); ok {
+		_spec.SetField(post.FieldAuthorName, field.TypeString, value)
+	}
+	if _u.mutation.AuthorNameCleared() {
+		_spec.ClearField(post.FieldAuthorName, field.TypeString)
+	}
+	if value, ok := _u.mutation.PasswordHash(); ok {
+		_spec.SetField(post.FieldPasswordHash, field.TypeString, value)
+	}
+	if _u.mutation.PasswordHashCleared() {
+		_spec.ClearField(post.FieldPasswordHash, field.TypeString)
+	}
+	if value, ok := _u.mutation.CustomFields(); ok {
+		_spec.SetField(post.FieldCustomFields, field.TypeJSON, value)
+	}
+	if _u.mutation.CustomFieldsCleared() {
+		_spec.ClearField(post.FieldCustomFields, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.CategoryIds(); ok {
+		_spec.SetField(post.FieldCategoryIds, field.TypeJSON, value)
+	}
+	if _u.mutation.CategoryIdsCleared() {
+		_spec.ClearField(post.FieldCategoryIds, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.TagIds(); ok {
+		_spec.SetField(post.FieldTagIds, field.TypeJSON, value)
+	}
+	if _u.mutation.TagIdsCleared() {
+		_spec.ClearField(post.FieldTagIds, field.TypeJSON)
+	}
+	_spec.AddModifiers(_u.modifiers...)
+	_node = &Post{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, puo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{post.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -1616,6 +1485,6 @@ func (puo *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) 
 		}
 		return nil, err
 	}
-	puo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

@@ -5,11 +5,11 @@ package enttest
 import (
 	"context"
 
-	"kratos-cms/app/core/service/internal/data/ent"
+	"go-wind-cms/app/core/service/internal/data/ent"
 	// required by schema hooks.
-	_ "kratos-cms/app/core/service/internal/data/ent/runtime"
+	_ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 
-	"kratos-cms/app/core/service/internal/data/ent/migrate"
+	"go-wind-cms/app/core/service/internal/data/ent/migrate"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

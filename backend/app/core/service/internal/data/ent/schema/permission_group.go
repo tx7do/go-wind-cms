@@ -1,0 +1,68 @@
+package schema
+
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
+
+	"github.com/tx7do/go-crud/entgo/mixin"
+)
+
+type PermissionGroup struct {
+	ent.Schema
+}
+
+func (PermissionGroup) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.Annotation{
+			Table:     "sys_permission_groups",
+			Charset:   "utf8mb4",
+			Collation: "utf8mb4_bin",
+		},
+		entsql.WithComments(true),
+		schema.Comment("权限分组表"),
+	}
+}
+
+func (PermissionGroup) Fields() []ent.Field {
+	return []ent.Field{
+		field.String("name").
+			NotEmpty().
+			Nillable().
+			Comment("分组名称（如：用户管理、订单操作）"),
+
+		field.String("module").
+			Comment("业务模块标识（如：opm、order、pay）").
+			Optional().
+			Nillable(),
+	}
+}
+
+func (PermissionGroup) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.AutoIncrementId{},
+		mixin.TimeAt{},
+		mixin.OperatorID{},
+		mixin.Description{},
+		mixin.SwitchStatus{},
+		mixin.SortOrder{},
+		mixin.Tree[PermissionGroup]{},
+		mixin.TreePath{},
+	}
+}
+
+func (PermissionGroup) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("parent_id").
+			StorageKey("idx_perm_group_parent_id"),
+
+		index.Fields("name").
+			StorageKey("idx_perm_group_name"),
+
+		// 按 module 的查询索引
+		index.Fields("module").
+			StorageKey("idx_perm_group_module"),
+	}
+}

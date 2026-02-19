@@ -6,7 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/tag"
+	"go-wind-cms/app/core/service/internal/data/ent/tag"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -21,152 +22,208 @@ type TagCreate struct {
 	conflict []sql.ConflictOption
 }
 
-// SetCreateTime sets the "create_time" field.
-func (tc *TagCreate) SetCreateTime(i int64) *TagCreate {
-	tc.mutation.SetCreateTime(i)
-	return tc
+// SetCreatedAt sets the "created_at" field.
+func (_c *TagCreate) SetCreatedAt(v time.Time) *TagCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
-// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (tc *TagCreate) SetNillableCreateTime(i *int64) *TagCreate {
-	if i != nil {
-		tc.SetCreateTime(*i)
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *TagCreate) SetNillableCreatedAt(v *time.Time) *TagCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return tc
+	return _c
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (tc *TagCreate) SetUpdateTime(i int64) *TagCreate {
-	tc.mutation.SetUpdateTime(i)
-	return tc
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *TagCreate) SetUpdatedAt(v time.Time) *TagCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
-// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (tc *TagCreate) SetNillableUpdateTime(i *int64) *TagCreate {
-	if i != nil {
-		tc.SetUpdateTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *TagCreate) SetNillableUpdatedAt(v *time.Time) *TagCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return tc
+	return _c
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (tc *TagCreate) SetDeleteTime(i int64) *TagCreate {
-	tc.mutation.SetDeleteTime(i)
-	return tc
+// SetDeletedAt sets the "deleted_at" field.
+func (_c *TagCreate) SetDeletedAt(v time.Time) *TagCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
 }
 
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (tc *TagCreate) SetNillableDeleteTime(i *int64) *TagCreate {
-	if i != nil {
-		tc.SetDeleteTime(*i)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_c *TagCreate) SetNillableDeletedAt(v *time.Time) *TagCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
 	}
-	return tc
+	return _c
 }
 
-// SetName sets the "name" field.
-func (tc *TagCreate) SetName(s string) *TagCreate {
-	tc.mutation.SetName(s)
-	return tc
+// SetCreatedBy sets the "created_by" field.
+func (_c *TagCreate) SetCreatedBy(v uint32) *TagCreate {
+	_c.mutation.SetCreatedBy(v)
+	return _c
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tc *TagCreate) SetNillableName(s *string) *TagCreate {
-	if s != nil {
-		tc.SetName(*s)
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_c *TagCreate) SetNillableCreatedBy(v *uint32) *TagCreate {
+	if v != nil {
+		_c.SetCreatedBy(*v)
 	}
-	return tc
+	return _c
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (_c *TagCreate) SetUpdatedBy(v uint32) *TagCreate {
+	_c.mutation.SetUpdatedBy(v)
+	return _c
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_c *TagCreate) SetNillableUpdatedBy(v *uint32) *TagCreate {
+	if v != nil {
+		_c.SetUpdatedBy(*v)
+	}
+	return _c
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (_c *TagCreate) SetDeletedBy(v uint32) *TagCreate {
+	_c.mutation.SetDeletedBy(v)
+	return _c
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_c *TagCreate) SetNillableDeletedBy(v *uint32) *TagCreate {
+	if v != nil {
+		_c.SetDeletedBy(*v)
+	}
+	return _c
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (_c *TagCreate) SetSortOrder(v uint32) *TagCreate {
+	_c.mutation.SetSortOrder(v)
+	return _c
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_c *TagCreate) SetNillableSortOrder(v *uint32) *TagCreate {
+	if v != nil {
+		_c.SetSortOrder(*v)
+	}
+	return _c
+}
+
+// SetStatus sets the "status" field.
+func (_c *TagCreate) SetStatus(v tag.Status) *TagCreate {
+	_c.mutation.SetStatus(v)
+	return _c
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_c *TagCreate) SetNillableStatus(v *tag.Status) *TagCreate {
+	if v != nil {
+		_c.SetStatus(*v)
+	}
+	return _c
 }
 
 // SetColor sets the "color" field.
-func (tc *TagCreate) SetColor(s string) *TagCreate {
-	tc.mutation.SetColor(s)
-	return tc
+func (_c *TagCreate) SetColor(v string) *TagCreate {
+	_c.mutation.SetColor(v)
+	return _c
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (tc *TagCreate) SetNillableColor(s *string) *TagCreate {
-	if s != nil {
-		tc.SetColor(*s)
+func (_c *TagCreate) SetNillableColor(v *string) *TagCreate {
+	if v != nil {
+		_c.SetColor(*v)
 	}
-	return tc
+	return _c
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (tc *TagCreate) SetThumbnail(s string) *TagCreate {
-	tc.mutation.SetThumbnail(s)
-	return tc
+// SetIcon sets the "icon" field.
+func (_c *TagCreate) SetIcon(v string) *TagCreate {
+	_c.mutation.SetIcon(v)
+	return _c
 }
 
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (tc *TagCreate) SetNillableThumbnail(s *string) *TagCreate {
-	if s != nil {
-		tc.SetThumbnail(*s)
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_c *TagCreate) SetNillableIcon(v *string) *TagCreate {
+	if v != nil {
+		_c.SetIcon(*v)
 	}
-	return tc
+	return _c
 }
 
-// SetSlug sets the "slug" field.
-func (tc *TagCreate) SetSlug(s string) *TagCreate {
-	tc.mutation.SetSlug(s)
-	return tc
+// SetGroup sets the "group" field.
+func (_c *TagCreate) SetGroup(v string) *TagCreate {
+	_c.mutation.SetGroup(v)
+	return _c
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (tc *TagCreate) SetNillableSlug(s *string) *TagCreate {
-	if s != nil {
-		tc.SetSlug(*s)
+// SetNillableGroup sets the "group" field if the given value is not nil.
+func (_c *TagCreate) SetNillableGroup(v *string) *TagCreate {
+	if v != nil {
+		_c.SetGroup(*v)
 	}
-	return tc
+	return _c
 }
 
-// SetSlugName sets the "slug_name" field.
-func (tc *TagCreate) SetSlugName(s string) *TagCreate {
-	tc.mutation.SetSlugName(s)
-	return tc
+// SetIsFeatured sets the "is_featured" field.
+func (_c *TagCreate) SetIsFeatured(v bool) *TagCreate {
+	_c.mutation.SetIsFeatured(v)
+	return _c
 }
 
-// SetNillableSlugName sets the "slug_name" field if the given value is not nil.
-func (tc *TagCreate) SetNillableSlugName(s *string) *TagCreate {
-	if s != nil {
-		tc.SetSlugName(*s)
+// SetNillableIsFeatured sets the "is_featured" field if the given value is not nil.
+func (_c *TagCreate) SetNillableIsFeatured(v *bool) *TagCreate {
+	if v != nil {
+		_c.SetIsFeatured(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetPostCount sets the "post_count" field.
-func (tc *TagCreate) SetPostCount(u uint32) *TagCreate {
-	tc.mutation.SetPostCount(u)
-	return tc
+func (_c *TagCreate) SetPostCount(v uint32) *TagCreate {
+	_c.mutation.SetPostCount(v)
+	return _c
 }
 
 // SetNillablePostCount sets the "post_count" field if the given value is not nil.
-func (tc *TagCreate) SetNillablePostCount(u *uint32) *TagCreate {
-	if u != nil {
-		tc.SetPostCount(*u)
+func (_c *TagCreate) SetNillablePostCount(v *uint32) *TagCreate {
+	if v != nil {
+		_c.SetPostCount(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (tc *TagCreate) SetID(u uint32) *TagCreate {
-	tc.mutation.SetID(u)
-	return tc
+func (_c *TagCreate) SetID(v uint32) *TagCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // Mutation returns the TagMutation object of the builder.
-func (tc *TagCreate) Mutation() *TagMutation {
-	return tc.mutation
+func (_c *TagCreate) Mutation() *TagMutation {
+	return _c.mutation
 }
 
 // Save creates the Tag in the database.
-func (tc *TagCreate) Save(ctx context.Context) (*Tag, error) {
-	tc.defaults()
-	return withHooks(ctx, tc.sqlSave, tc.mutation, tc.hooks)
+func (_c *TagCreate) Save(ctx context.Context) (*Tag, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (tc *TagCreate) SaveX(ctx context.Context) *Tag {
-	v, err := tc.Save(ctx)
+func (_c *TagCreate) SaveX(ctx context.Context) *Tag {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -174,34 +231,42 @@ func (tc *TagCreate) SaveX(ctx context.Context) *Tag {
 }
 
 // Exec executes the query.
-func (tc *TagCreate) Exec(ctx context.Context) error {
-	_, err := tc.Save(ctx)
+func (_c *TagCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tc *TagCreate) ExecX(ctx context.Context) {
-	if err := tc.Exec(ctx); err != nil {
+func (_c *TagCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tc *TagCreate) defaults() {
-	if _, ok := tc.mutation.CreateTime(); !ok {
-		v := tag.DefaultCreateTime()
-		tc.mutation.SetCreateTime(v)
+func (_c *TagCreate) defaults() {
+	if _, ok := _c.mutation.SortOrder(); !ok {
+		v := tag.DefaultSortOrder
+		_c.mutation.SetSortOrder(v)
+	}
+	if _, ok := _c.mutation.Status(); !ok {
+		v := tag.DefaultStatus
+		_c.mutation.SetStatus(v)
+	}
+	if _, ok := _c.mutation.IsFeatured(); !ok {
+		v := tag.DefaultIsFeatured
+		_c.mutation.SetIsFeatured(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tc *TagCreate) check() error {
-	if v, ok := tc.mutation.Name(); ok {
-		if err := tag.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
+func (_c *TagCreate) check() error {
+	if v, ok := _c.mutation.Status(); ok {
+		if err := tag.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Tag.status": %w`, err)}
 		}
 	}
-	if v, ok := tc.mutation.ID(); ok {
+	if v, ok := _c.mutation.ID(); ok {
 		if err := tag.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Tag.id": %w`, err)}
 		}
@@ -209,12 +274,12 @@ func (tc *TagCreate) check() error {
 	return nil
 }
 
-func (tc *TagCreate) sqlSave(ctx context.Context) (*Tag, error) {
-	if err := tc.check(); err != nil {
+func (_c *TagCreate) sqlSave(ctx context.Context) (*Tag, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := tc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, tc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -224,54 +289,70 @@ func (tc *TagCreate) sqlSave(ctx context.Context) (*Tag, error) {
 		id := _spec.ID.Value.(int64)
 		_node.ID = uint32(id)
 	}
-	tc.mutation.id = &_node.ID
-	tc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (tc *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
+func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Tag{config: tc.config}
+		_node = &Tag{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(tag.Table, sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUint32))
 	)
-	_spec.OnConflict = tc.conflict
-	if id, ok := tc.mutation.ID(); ok {
+	_spec.OnConflict = _c.conflict
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := tc.mutation.CreateTime(); ok {
-		_spec.SetField(tag.FieldCreateTime, field.TypeInt64, value)
-		_node.CreateTime = &value
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(tag.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = &value
 	}
-	if value, ok := tc.mutation.UpdateTime(); ok {
-		_spec.SetField(tag.FieldUpdateTime, field.TypeInt64, value)
-		_node.UpdateTime = &value
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = &value
 	}
-	if value, ok := tc.mutation.DeleteTime(); ok {
-		_spec.SetField(tag.FieldDeleteTime, field.TypeInt64, value)
-		_node.DeleteTime = &value
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(tag.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
 	}
-	if value, ok := tc.mutation.Name(); ok {
-		_spec.SetField(tag.FieldName, field.TypeString, value)
-		_node.Name = &value
+	if value, ok := _c.mutation.CreatedBy(); ok {
+		_spec.SetField(tag.FieldCreatedBy, field.TypeUint32, value)
+		_node.CreatedBy = &value
 	}
-	if value, ok := tc.mutation.Color(); ok {
+	if value, ok := _c.mutation.UpdatedBy(); ok {
+		_spec.SetField(tag.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = &value
+	}
+	if value, ok := _c.mutation.DeletedBy(); ok {
+		_spec.SetField(tag.FieldDeletedBy, field.TypeUint32, value)
+		_node.DeletedBy = &value
+	}
+	if value, ok := _c.mutation.SortOrder(); ok {
+		_spec.SetField(tag.FieldSortOrder, field.TypeUint32, value)
+		_node.SortOrder = &value
+	}
+	if value, ok := _c.mutation.Status(); ok {
+		_spec.SetField(tag.FieldStatus, field.TypeEnum, value)
+		_node.Status = &value
+	}
+	if value, ok := _c.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
 		_node.Color = &value
 	}
-	if value, ok := tc.mutation.Thumbnail(); ok {
-		_spec.SetField(tag.FieldThumbnail, field.TypeString, value)
-		_node.Thumbnail = &value
+	if value, ok := _c.mutation.Icon(); ok {
+		_spec.SetField(tag.FieldIcon, field.TypeString, value)
+		_node.Icon = &value
 	}
-	if value, ok := tc.mutation.Slug(); ok {
-		_spec.SetField(tag.FieldSlug, field.TypeString, value)
-		_node.Slug = &value
+	if value, ok := _c.mutation.Group(); ok {
+		_spec.SetField(tag.FieldGroup, field.TypeString, value)
+		_node.Group = &value
 	}
-	if value, ok := tc.mutation.SlugName(); ok {
-		_spec.SetField(tag.FieldSlugName, field.TypeString, value)
-		_node.SlugName = &value
+	if value, ok := _c.mutation.IsFeatured(); ok {
+		_spec.SetField(tag.FieldIsFeatured, field.TypeBool, value)
+		_node.IsFeatured = &value
 	}
-	if value, ok := tc.mutation.PostCount(); ok {
+	if value, ok := _c.mutation.PostCount(); ok {
 		_spec.SetField(tag.FieldPostCount, field.TypeUint32, value)
 		_node.PostCount = &value
 	}
@@ -282,7 +363,7 @@ func (tc *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Tag.Create().
-//		SetCreateTime(v).
+//		SetCreatedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -291,13 +372,13 @@ func (tc *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TagUpsert) {
-//			SetCreateTime(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-func (tc *TagCreate) OnConflict(opts ...sql.ConflictOption) *TagUpsertOne {
-	tc.conflict = opts
+func (_c *TagCreate) OnConflict(opts ...sql.ConflictOption) *TagUpsertOne {
+	_c.conflict = opts
 	return &TagUpsertOne{
-		create: tc,
+		create: _c,
 	}
 }
 
@@ -307,10 +388,10 @@ func (tc *TagCreate) OnConflict(opts ...sql.ConflictOption) *TagUpsertOne {
 //	client.Tag.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (tc *TagCreate) OnConflictColumns(columns ...string) *TagUpsertOne {
-	tc.conflict = append(tc.conflict, sql.ConflictColumns(columns...))
+func (_c *TagCreate) OnConflictColumns(columns ...string) *TagUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
 	return &TagUpsertOne{
-		create: tc,
+		create: _c,
 	}
 }
 
@@ -327,69 +408,153 @@ type (
 	}
 )
 
-// SetUpdateTime sets the "update_time" field.
-func (u *TagUpsert) SetUpdateTime(v int64) *TagUpsert {
-	u.Set(tag.FieldUpdateTime, v)
+// SetUpdatedAt sets the "updated_at" field.
+func (u *TagUpsert) SetUpdatedAt(v time.Time) *TagUpsert {
+	u.Set(tag.FieldUpdatedAt, v)
 	return u
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *TagUpsert) UpdateUpdateTime() *TagUpsert {
-	u.SetExcluded(tag.FieldUpdateTime)
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *TagUpsert) UpdateUpdatedAt() *TagUpsert {
+	u.SetExcluded(tag.FieldUpdatedAt)
 	return u
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *TagUpsert) AddUpdateTime(v int64) *TagUpsert {
-	u.Add(tag.FieldUpdateTime, v)
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *TagUpsert) ClearUpdatedAt() *TagUpsert {
+	u.SetNull(tag.FieldUpdatedAt)
 	return u
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *TagUpsert) ClearUpdateTime() *TagUpsert {
-	u.SetNull(tag.FieldUpdateTime)
+// SetDeletedAt sets the "deleted_at" field.
+func (u *TagUpsert) SetDeletedAt(v time.Time) *TagUpsert {
+	u.Set(tag.FieldDeletedAt, v)
 	return u
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *TagUpsert) SetDeleteTime(v int64) *TagUpsert {
-	u.Set(tag.FieldDeleteTime, v)
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *TagUpsert) UpdateDeletedAt() *TagUpsert {
+	u.SetExcluded(tag.FieldDeletedAt)
 	return u
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *TagUpsert) UpdateDeleteTime() *TagUpsert {
-	u.SetExcluded(tag.FieldDeleteTime)
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *TagUpsert) ClearDeletedAt() *TagUpsert {
+	u.SetNull(tag.FieldDeletedAt)
 	return u
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *TagUpsert) AddDeleteTime(v int64) *TagUpsert {
-	u.Add(tag.FieldDeleteTime, v)
+// SetCreatedBy sets the "created_by" field.
+func (u *TagUpsert) SetCreatedBy(v uint32) *TagUpsert {
+	u.Set(tag.FieldCreatedBy, v)
 	return u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *TagUpsert) ClearDeleteTime() *TagUpsert {
-	u.SetNull(tag.FieldDeleteTime)
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *TagUpsert) UpdateCreatedBy() *TagUpsert {
+	u.SetExcluded(tag.FieldCreatedBy)
 	return u
 }
 
-// SetName sets the "name" field.
-func (u *TagUpsert) SetName(v string) *TagUpsert {
-	u.Set(tag.FieldName, v)
+// AddCreatedBy adds v to the "created_by" field.
+func (u *TagUpsert) AddCreatedBy(v uint32) *TagUpsert {
+	u.Add(tag.FieldCreatedBy, v)
 	return u
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *TagUpsert) UpdateName() *TagUpsert {
-	u.SetExcluded(tag.FieldName)
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *TagUpsert) ClearCreatedBy() *TagUpsert {
+	u.SetNull(tag.FieldCreatedBy)
 	return u
 }
 
-// ClearName clears the value of the "name" field.
-func (u *TagUpsert) ClearName() *TagUpsert {
-	u.SetNull(tag.FieldName)
+// SetUpdatedBy sets the "updated_by" field.
+func (u *TagUpsert) SetUpdatedBy(v uint32) *TagUpsert {
+	u.Set(tag.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *TagUpsert) UpdateUpdatedBy() *TagUpsert {
+	u.SetExcluded(tag.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *TagUpsert) AddUpdatedBy(v uint32) *TagUpsert {
+	u.Add(tag.FieldUpdatedBy, v)
+	return u
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *TagUpsert) ClearUpdatedBy() *TagUpsert {
+	u.SetNull(tag.FieldUpdatedBy)
+	return u
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (u *TagUpsert) SetDeletedBy(v uint32) *TagUpsert {
+	u.Set(tag.FieldDeletedBy, v)
+	return u
+}
+
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *TagUpsert) UpdateDeletedBy() *TagUpsert {
+	u.SetExcluded(tag.FieldDeletedBy)
+	return u
+}
+
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *TagUpsert) AddDeletedBy(v uint32) *TagUpsert {
+	u.Add(tag.FieldDeletedBy, v)
+	return u
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *TagUpsert) ClearDeletedBy() *TagUpsert {
+	u.SetNull(tag.FieldDeletedBy)
+	return u
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (u *TagUpsert) SetSortOrder(v uint32) *TagUpsert {
+	u.Set(tag.FieldSortOrder, v)
+	return u
+}
+
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *TagUpsert) UpdateSortOrder() *TagUpsert {
+	u.SetExcluded(tag.FieldSortOrder)
+	return u
+}
+
+// AddSortOrder adds v to the "sort_order" field.
+func (u *TagUpsert) AddSortOrder(v uint32) *TagUpsert {
+	u.Add(tag.FieldSortOrder, v)
+	return u
+}
+
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *TagUpsert) ClearSortOrder() *TagUpsert {
+	u.SetNull(tag.FieldSortOrder)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *TagUpsert) SetStatus(v tag.Status) *TagUpsert {
+	u.Set(tag.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *TagUpsert) UpdateStatus() *TagUpsert {
+	u.SetExcluded(tag.FieldStatus)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *TagUpsert) ClearStatus() *TagUpsert {
+	u.SetNull(tag.FieldStatus)
 	return u
 }
 
@@ -411,57 +576,57 @@ func (u *TagUpsert) ClearColor() *TagUpsert {
 	return u
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (u *TagUpsert) SetThumbnail(v string) *TagUpsert {
-	u.Set(tag.FieldThumbnail, v)
+// SetIcon sets the "icon" field.
+func (u *TagUpsert) SetIcon(v string) *TagUpsert {
+	u.Set(tag.FieldIcon, v)
 	return u
 }
 
-// UpdateThumbnail sets the "thumbnail" field to the value that was provided on create.
-func (u *TagUpsert) UpdateThumbnail() *TagUpsert {
-	u.SetExcluded(tag.FieldThumbnail)
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *TagUpsert) UpdateIcon() *TagUpsert {
+	u.SetExcluded(tag.FieldIcon)
 	return u
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (u *TagUpsert) ClearThumbnail() *TagUpsert {
-	u.SetNull(tag.FieldThumbnail)
+// ClearIcon clears the value of the "icon" field.
+func (u *TagUpsert) ClearIcon() *TagUpsert {
+	u.SetNull(tag.FieldIcon)
 	return u
 }
 
-// SetSlug sets the "slug" field.
-func (u *TagUpsert) SetSlug(v string) *TagUpsert {
-	u.Set(tag.FieldSlug, v)
+// SetGroup sets the "group" field.
+func (u *TagUpsert) SetGroup(v string) *TagUpsert {
+	u.Set(tag.FieldGroup, v)
 	return u
 }
 
-// UpdateSlug sets the "slug" field to the value that was provided on create.
-func (u *TagUpsert) UpdateSlug() *TagUpsert {
-	u.SetExcluded(tag.FieldSlug)
+// UpdateGroup sets the "group" field to the value that was provided on create.
+func (u *TagUpsert) UpdateGroup() *TagUpsert {
+	u.SetExcluded(tag.FieldGroup)
 	return u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (u *TagUpsert) ClearSlug() *TagUpsert {
-	u.SetNull(tag.FieldSlug)
+// ClearGroup clears the value of the "group" field.
+func (u *TagUpsert) ClearGroup() *TagUpsert {
+	u.SetNull(tag.FieldGroup)
 	return u
 }
 
-// SetSlugName sets the "slug_name" field.
-func (u *TagUpsert) SetSlugName(v string) *TagUpsert {
-	u.Set(tag.FieldSlugName, v)
+// SetIsFeatured sets the "is_featured" field.
+func (u *TagUpsert) SetIsFeatured(v bool) *TagUpsert {
+	u.Set(tag.FieldIsFeatured, v)
 	return u
 }
 
-// UpdateSlugName sets the "slug_name" field to the value that was provided on create.
-func (u *TagUpsert) UpdateSlugName() *TagUpsert {
-	u.SetExcluded(tag.FieldSlugName)
+// UpdateIsFeatured sets the "is_featured" field to the value that was provided on create.
+func (u *TagUpsert) UpdateIsFeatured() *TagUpsert {
+	u.SetExcluded(tag.FieldIsFeatured)
 	return u
 }
 
-// ClearSlugName clears the value of the "slug_name" field.
-func (u *TagUpsert) ClearSlugName() *TagUpsert {
-	u.SetNull(tag.FieldSlugName)
+// ClearIsFeatured clears the value of the "is_featured" field.
+func (u *TagUpsert) ClearIsFeatured() *TagUpsert {
+	u.SetNull(tag.FieldIsFeatured)
 	return u
 }
 
@@ -506,8 +671,8 @@ func (u *TagUpsertOne) UpdateNewValues() *TagUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(tag.FieldID)
 		}
-		if _, exists := u.create.mutation.CreateTime(); exists {
-			s.SetIgnore(tag.FieldCreateTime)
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(tag.FieldCreatedAt)
 		}
 	}))
 	return u
@@ -540,80 +705,178 @@ func (u *TagUpsertOne) Update(set func(*TagUpsert)) *TagUpsertOne {
 	return u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (u *TagUpsertOne) SetUpdateTime(v int64) *TagUpsertOne {
+// SetUpdatedAt sets the "updated_at" field.
+func (u *TagUpsertOne) SetUpdatedAt(v time.Time) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.SetUpdateTime(v)
+		s.SetUpdatedAt(v)
 	})
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *TagUpsertOne) AddUpdateTime(v int64) *TagUpsertOne {
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateUpdatedAt() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.AddUpdateTime(v)
+		s.UpdateUpdatedAt()
 	})
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *TagUpsertOne) UpdateUpdateTime() *TagUpsertOne {
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *TagUpsertOne) ClearUpdatedAt() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateUpdateTime()
+		s.ClearUpdatedAt()
 	})
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *TagUpsertOne) ClearUpdateTime() *TagUpsertOne {
+// SetDeletedAt sets the "deleted_at" field.
+func (u *TagUpsertOne) SetDeletedAt(v time.Time) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearUpdateTime()
+		s.SetDeletedAt(v)
 	})
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *TagUpsertOne) SetDeleteTime(v int64) *TagUpsertOne {
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateDeletedAt() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.SetDeleteTime(v)
+		s.UpdateDeletedAt()
 	})
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *TagUpsertOne) AddDeleteTime(v int64) *TagUpsertOne {
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *TagUpsertOne) ClearDeletedAt() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.AddDeleteTime(v)
+		s.ClearDeletedAt()
 	})
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *TagUpsertOne) UpdateDeleteTime() *TagUpsertOne {
+// SetCreatedBy sets the "created_by" field.
+func (u *TagUpsertOne) SetCreatedBy(v uint32) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateDeleteTime()
+		s.SetCreatedBy(v)
 	})
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *TagUpsertOne) ClearDeleteTime() *TagUpsertOne {
+// AddCreatedBy adds v to the "created_by" field.
+func (u *TagUpsertOne) AddCreatedBy(v uint32) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearDeleteTime()
+		s.AddCreatedBy(v)
 	})
 }
 
-// SetName sets the "name" field.
-func (u *TagUpsertOne) SetName(v string) *TagUpsertOne {
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateCreatedBy() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.SetName(v)
+		s.UpdateCreatedBy()
 	})
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *TagUpsertOne) UpdateName() *TagUpsertOne {
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *TagUpsertOne) ClearCreatedBy() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateName()
+		s.ClearCreatedBy()
 	})
 }
 
-// ClearName clears the value of the "name" field.
-func (u *TagUpsertOne) ClearName() *TagUpsertOne {
+// SetUpdatedBy sets the "updated_by" field.
+func (u *TagUpsertOne) SetUpdatedBy(v uint32) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearName()
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *TagUpsertOne) AddUpdatedBy(v uint32) *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateUpdatedBy() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *TagUpsertOne) ClearUpdatedBy() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearUpdatedBy()
+	})
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (u *TagUpsertOne) SetDeletedBy(v uint32) *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.SetDeletedBy(v)
+	})
+}
+
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *TagUpsertOne) AddDeletedBy(v uint32) *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.AddDeletedBy(v)
+	})
+}
+
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateDeletedBy() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateDeletedBy()
+	})
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *TagUpsertOne) ClearDeletedBy() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearDeletedBy()
+	})
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (u *TagUpsertOne) SetSortOrder(v uint32) *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.SetSortOrder(v)
+	})
+}
+
+// AddSortOrder adds v to the "sort_order" field.
+func (u *TagUpsertOne) AddSortOrder(v uint32) *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.AddSortOrder(v)
+	})
+}
+
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateSortOrder() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateSortOrder()
+	})
+}
+
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *TagUpsertOne) ClearSortOrder() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearSortOrder()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *TagUpsertOne) SetStatus(v tag.Status) *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateStatus() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *TagUpsertOne) ClearStatus() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearStatus()
 	})
 }
 
@@ -638,66 +901,66 @@ func (u *TagUpsertOne) ClearColor() *TagUpsertOne {
 	})
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (u *TagUpsertOne) SetThumbnail(v string) *TagUpsertOne {
+// SetIcon sets the "icon" field.
+func (u *TagUpsertOne) SetIcon(v string) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.SetThumbnail(v)
+		s.SetIcon(v)
 	})
 }
 
-// UpdateThumbnail sets the "thumbnail" field to the value that was provided on create.
-func (u *TagUpsertOne) UpdateThumbnail() *TagUpsertOne {
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateIcon() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateThumbnail()
+		s.UpdateIcon()
 	})
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (u *TagUpsertOne) ClearThumbnail() *TagUpsertOne {
+// ClearIcon clears the value of the "icon" field.
+func (u *TagUpsertOne) ClearIcon() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearThumbnail()
+		s.ClearIcon()
 	})
 }
 
-// SetSlug sets the "slug" field.
-func (u *TagUpsertOne) SetSlug(v string) *TagUpsertOne {
+// SetGroup sets the "group" field.
+func (u *TagUpsertOne) SetGroup(v string) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.SetSlug(v)
+		s.SetGroup(v)
 	})
 }
 
-// UpdateSlug sets the "slug" field to the value that was provided on create.
-func (u *TagUpsertOne) UpdateSlug() *TagUpsertOne {
+// UpdateGroup sets the "group" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateGroup() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateSlug()
+		s.UpdateGroup()
 	})
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (u *TagUpsertOne) ClearSlug() *TagUpsertOne {
+// ClearGroup clears the value of the "group" field.
+func (u *TagUpsertOne) ClearGroup() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearSlug()
+		s.ClearGroup()
 	})
 }
 
-// SetSlugName sets the "slug_name" field.
-func (u *TagUpsertOne) SetSlugName(v string) *TagUpsertOne {
+// SetIsFeatured sets the "is_featured" field.
+func (u *TagUpsertOne) SetIsFeatured(v bool) *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.SetSlugName(v)
+		s.SetIsFeatured(v)
 	})
 }
 
-// UpdateSlugName sets the "slug_name" field to the value that was provided on create.
-func (u *TagUpsertOne) UpdateSlugName() *TagUpsertOne {
+// UpdateIsFeatured sets the "is_featured" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateIsFeatured() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateSlugName()
+		s.UpdateIsFeatured()
 	})
 }
 
-// ClearSlugName clears the value of the "slug_name" field.
-func (u *TagUpsertOne) ClearSlugName() *TagUpsertOne {
+// ClearIsFeatured clears the value of the "is_featured" field.
+func (u *TagUpsertOne) ClearIsFeatured() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearSlugName()
+		s.ClearIsFeatured()
 	})
 }
 
@@ -771,16 +1034,16 @@ type TagCreateBulk struct {
 }
 
 // Save creates the Tag entities in the database.
-func (tcb *TagCreateBulk) Save(ctx context.Context) ([]*Tag, error) {
-	if tcb.err != nil {
-		return nil, tcb.err
+func (_c *TagCreateBulk) Save(ctx context.Context) ([]*Tag, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(tcb.builders))
-	nodes := make([]*Tag, len(tcb.builders))
-	mutators := make([]Mutator, len(tcb.builders))
-	for i := range tcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Tag, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := tcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TagMutation)
@@ -794,12 +1057,12 @@ func (tcb *TagCreateBulk) Save(ctx context.Context) ([]*Tag, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, tcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
-					spec.OnConflict = tcb.conflict
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, tcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -823,7 +1086,7 @@ func (tcb *TagCreateBulk) Save(ctx context.Context) ([]*Tag, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, tcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -831,8 +1094,8 @@ func (tcb *TagCreateBulk) Save(ctx context.Context) ([]*Tag, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tcb *TagCreateBulk) SaveX(ctx context.Context) []*Tag {
-	v, err := tcb.Save(ctx)
+func (_c *TagCreateBulk) SaveX(ctx context.Context) []*Tag {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -840,14 +1103,14 @@ func (tcb *TagCreateBulk) SaveX(ctx context.Context) []*Tag {
 }
 
 // Exec executes the query.
-func (tcb *TagCreateBulk) Exec(ctx context.Context) error {
-	_, err := tcb.Save(ctx)
+func (_c *TagCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcb *TagCreateBulk) ExecX(ctx context.Context) {
-	if err := tcb.Exec(ctx); err != nil {
+func (_c *TagCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
@@ -864,13 +1127,13 @@ func (tcb *TagCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TagUpsert) {
-//			SetCreateTime(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-func (tcb *TagCreateBulk) OnConflict(opts ...sql.ConflictOption) *TagUpsertBulk {
-	tcb.conflict = opts
+func (_c *TagCreateBulk) OnConflict(opts ...sql.ConflictOption) *TagUpsertBulk {
+	_c.conflict = opts
 	return &TagUpsertBulk{
-		create: tcb,
+		create: _c,
 	}
 }
 
@@ -880,10 +1143,10 @@ func (tcb *TagCreateBulk) OnConflict(opts ...sql.ConflictOption) *TagUpsertBulk 
 //	client.Tag.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (tcb *TagCreateBulk) OnConflictColumns(columns ...string) *TagUpsertBulk {
-	tcb.conflict = append(tcb.conflict, sql.ConflictColumns(columns...))
+func (_c *TagCreateBulk) OnConflictColumns(columns ...string) *TagUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
 	return &TagUpsertBulk{
-		create: tcb,
+		create: _c,
 	}
 }
 
@@ -911,8 +1174,8 @@ func (u *TagUpsertBulk) UpdateNewValues() *TagUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(tag.FieldID)
 			}
-			if _, exists := b.mutation.CreateTime(); exists {
-				s.SetIgnore(tag.FieldCreateTime)
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(tag.FieldCreatedAt)
 			}
 		}
 	}))
@@ -946,80 +1209,178 @@ func (u *TagUpsertBulk) Update(set func(*TagUpsert)) *TagUpsertBulk {
 	return u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (u *TagUpsertBulk) SetUpdateTime(v int64) *TagUpsertBulk {
+// SetUpdatedAt sets the "updated_at" field.
+func (u *TagUpsertBulk) SetUpdatedAt(v time.Time) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.SetUpdateTime(v)
+		s.SetUpdatedAt(v)
 	})
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *TagUpsertBulk) AddUpdateTime(v int64) *TagUpsertBulk {
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateUpdatedAt() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.AddUpdateTime(v)
+		s.UpdateUpdatedAt()
 	})
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *TagUpsertBulk) UpdateUpdateTime() *TagUpsertBulk {
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *TagUpsertBulk) ClearUpdatedAt() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateUpdateTime()
+		s.ClearUpdatedAt()
 	})
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *TagUpsertBulk) ClearUpdateTime() *TagUpsertBulk {
+// SetDeletedAt sets the "deleted_at" field.
+func (u *TagUpsertBulk) SetDeletedAt(v time.Time) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearUpdateTime()
+		s.SetDeletedAt(v)
 	})
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *TagUpsertBulk) SetDeleteTime(v int64) *TagUpsertBulk {
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateDeletedAt() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.SetDeleteTime(v)
+		s.UpdateDeletedAt()
 	})
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *TagUpsertBulk) AddDeleteTime(v int64) *TagUpsertBulk {
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *TagUpsertBulk) ClearDeletedAt() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.AddDeleteTime(v)
+		s.ClearDeletedAt()
 	})
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *TagUpsertBulk) UpdateDeleteTime() *TagUpsertBulk {
+// SetCreatedBy sets the "created_by" field.
+func (u *TagUpsertBulk) SetCreatedBy(v uint32) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateDeleteTime()
+		s.SetCreatedBy(v)
 	})
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *TagUpsertBulk) ClearDeleteTime() *TagUpsertBulk {
+// AddCreatedBy adds v to the "created_by" field.
+func (u *TagUpsertBulk) AddCreatedBy(v uint32) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearDeleteTime()
+		s.AddCreatedBy(v)
 	})
 }
 
-// SetName sets the "name" field.
-func (u *TagUpsertBulk) SetName(v string) *TagUpsertBulk {
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateCreatedBy() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.SetName(v)
+		s.UpdateCreatedBy()
 	})
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *TagUpsertBulk) UpdateName() *TagUpsertBulk {
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *TagUpsertBulk) ClearCreatedBy() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateName()
+		s.ClearCreatedBy()
 	})
 }
 
-// ClearName clears the value of the "name" field.
-func (u *TagUpsertBulk) ClearName() *TagUpsertBulk {
+// SetUpdatedBy sets the "updated_by" field.
+func (u *TagUpsertBulk) SetUpdatedBy(v uint32) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearName()
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *TagUpsertBulk) AddUpdatedBy(v uint32) *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateUpdatedBy() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *TagUpsertBulk) ClearUpdatedBy() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearUpdatedBy()
+	})
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (u *TagUpsertBulk) SetDeletedBy(v uint32) *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.SetDeletedBy(v)
+	})
+}
+
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *TagUpsertBulk) AddDeletedBy(v uint32) *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.AddDeletedBy(v)
+	})
+}
+
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateDeletedBy() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateDeletedBy()
+	})
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *TagUpsertBulk) ClearDeletedBy() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearDeletedBy()
+	})
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (u *TagUpsertBulk) SetSortOrder(v uint32) *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.SetSortOrder(v)
+	})
+}
+
+// AddSortOrder adds v to the "sort_order" field.
+func (u *TagUpsertBulk) AddSortOrder(v uint32) *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.AddSortOrder(v)
+	})
+}
+
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateSortOrder() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateSortOrder()
+	})
+}
+
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *TagUpsertBulk) ClearSortOrder() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearSortOrder()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *TagUpsertBulk) SetStatus(v tag.Status) *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateStatus() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *TagUpsertBulk) ClearStatus() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearStatus()
 	})
 }
 
@@ -1044,66 +1405,66 @@ func (u *TagUpsertBulk) ClearColor() *TagUpsertBulk {
 	})
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (u *TagUpsertBulk) SetThumbnail(v string) *TagUpsertBulk {
+// SetIcon sets the "icon" field.
+func (u *TagUpsertBulk) SetIcon(v string) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.SetThumbnail(v)
+		s.SetIcon(v)
 	})
 }
 
-// UpdateThumbnail sets the "thumbnail" field to the value that was provided on create.
-func (u *TagUpsertBulk) UpdateThumbnail() *TagUpsertBulk {
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateIcon() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateThumbnail()
+		s.UpdateIcon()
 	})
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (u *TagUpsertBulk) ClearThumbnail() *TagUpsertBulk {
+// ClearIcon clears the value of the "icon" field.
+func (u *TagUpsertBulk) ClearIcon() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearThumbnail()
+		s.ClearIcon()
 	})
 }
 
-// SetSlug sets the "slug" field.
-func (u *TagUpsertBulk) SetSlug(v string) *TagUpsertBulk {
+// SetGroup sets the "group" field.
+func (u *TagUpsertBulk) SetGroup(v string) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.SetSlug(v)
+		s.SetGroup(v)
 	})
 }
 
-// UpdateSlug sets the "slug" field to the value that was provided on create.
-func (u *TagUpsertBulk) UpdateSlug() *TagUpsertBulk {
+// UpdateGroup sets the "group" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateGroup() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateSlug()
+		s.UpdateGroup()
 	})
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (u *TagUpsertBulk) ClearSlug() *TagUpsertBulk {
+// ClearGroup clears the value of the "group" field.
+func (u *TagUpsertBulk) ClearGroup() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearSlug()
+		s.ClearGroup()
 	})
 }
 
-// SetSlugName sets the "slug_name" field.
-func (u *TagUpsertBulk) SetSlugName(v string) *TagUpsertBulk {
+// SetIsFeatured sets the "is_featured" field.
+func (u *TagUpsertBulk) SetIsFeatured(v bool) *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.SetSlugName(v)
+		s.SetIsFeatured(v)
 	})
 }
 
-// UpdateSlugName sets the "slug_name" field to the value that was provided on create.
-func (u *TagUpsertBulk) UpdateSlugName() *TagUpsertBulk {
+// UpdateIsFeatured sets the "is_featured" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateIsFeatured() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.UpdateSlugName()
+		s.UpdateIsFeatured()
 	})
 }
 
-// ClearSlugName clears the value of the "slug_name" field.
-func (u *TagUpsertBulk) ClearSlugName() *TagUpsertBulk {
+// ClearIsFeatured clears the value of the "is_featured" field.
+func (u *TagUpsertBulk) ClearIsFeatured() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
-		s.ClearSlugName()
+		s.ClearIsFeatured()
 	})
 }
 

@@ -6,7 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/comment"
+	"go-wind-cms/app/core/service/internal/data/ent/comment"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -21,236 +22,410 @@ type CommentCreate struct {
 	conflict []sql.ConflictOption
 }
 
-// SetCreateTime sets the "create_time" field.
-func (cc *CommentCreate) SetCreateTime(i int64) *CommentCreate {
-	cc.mutation.SetCreateTime(i)
-	return cc
+// SetCreatedAt sets the "created_at" field.
+func (_c *CommentCreate) SetCreatedAt(v time.Time) *CommentCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
-// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableCreateTime(i *int64) *CommentCreate {
-	if i != nil {
-		cc.SetCreateTime(*i)
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableCreatedAt(v *time.Time) *CommentCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (cc *CommentCreate) SetUpdateTime(i int64) *CommentCreate {
-	cc.mutation.SetUpdateTime(i)
-	return cc
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *CommentCreate) SetUpdatedAt(v time.Time) *CommentCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
-// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableUpdateTime(i *int64) *CommentCreate {
-	if i != nil {
-		cc.SetUpdateTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableUpdatedAt(v *time.Time) *CommentCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (cc *CommentCreate) SetDeleteTime(i int64) *CommentCreate {
-	cc.mutation.SetDeleteTime(i)
-	return cc
+// SetDeletedAt sets the "deleted_at" field.
+func (_c *CommentCreate) SetDeletedAt(v time.Time) *CommentCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
 }
 
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableDeleteTime(i *int64) *CommentCreate {
-	if i != nil {
-		cc.SetDeleteTime(*i)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableDeletedAt(v *time.Time) *CommentCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetAuthor sets the "author" field.
-func (cc *CommentCreate) SetAuthor(s string) *CommentCreate {
-	cc.mutation.SetAuthor(s)
-	return cc
+// SetCreatedBy sets the "created_by" field.
+func (_c *CommentCreate) SetCreatedBy(v uint32) *CommentCreate {
+	_c.mutation.SetCreatedBy(v)
+	return _c
 }
 
-// SetNillableAuthor sets the "author" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableAuthor(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetAuthor(*s)
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableCreatedBy(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetCreatedBy(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetEmail sets the "email" field.
-func (cc *CommentCreate) SetEmail(s string) *CommentCreate {
-	cc.mutation.SetEmail(s)
-	return cc
+// SetUpdatedBy sets the "updated_by" field.
+func (_c *CommentCreate) SetUpdatedBy(v uint32) *CommentCreate {
+	_c.mutation.SetUpdatedBy(v)
+	return _c
 }
 
-// SetNillableEmail sets the "email" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableEmail(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetEmail(*s)
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableUpdatedBy(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetUpdatedBy(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetIPAddress sets the "ip_address" field.
-func (cc *CommentCreate) SetIPAddress(s string) *CommentCreate {
-	cc.mutation.SetIPAddress(s)
-	return cc
+// SetDeletedBy sets the "deleted_by" field.
+func (_c *CommentCreate) SetDeletedBy(v uint32) *CommentCreate {
+	_c.mutation.SetDeletedBy(v)
+	return _c
 }
 
-// SetNillableIPAddress sets the "ip_address" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableIPAddress(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetIPAddress(*s)
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableDeletedBy(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetDeletedBy(*v)
 	}
-	return cc
-}
-
-// SetAuthorURL sets the "author_url" field.
-func (cc *CommentCreate) SetAuthorURL(s string) *CommentCreate {
-	cc.mutation.SetAuthorURL(s)
-	return cc
-}
-
-// SetNillableAuthorURL sets the "author_url" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableAuthorURL(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetAuthorURL(*s)
-	}
-	return cc
-}
-
-// SetGravatarMd5 sets the "gravatar_md5" field.
-func (cc *CommentCreate) SetGravatarMd5(s string) *CommentCreate {
-	cc.mutation.SetGravatarMd5(s)
-	return cc
-}
-
-// SetNillableGravatarMd5 sets the "gravatar_md5" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableGravatarMd5(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetGravatarMd5(*s)
-	}
-	return cc
-}
-
-// SetContent sets the "content" field.
-func (cc *CommentCreate) SetContent(s string) *CommentCreate {
-	cc.mutation.SetContent(s)
-	return cc
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableContent(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetContent(*s)
-	}
-	return cc
-}
-
-// SetUserAgent sets the "user_agent" field.
-func (cc *CommentCreate) SetUserAgent(s string) *CommentCreate {
-	cc.mutation.SetUserAgent(s)
-	return cc
-}
-
-// SetNillableUserAgent sets the "user_agent" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableUserAgent(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetUserAgent(*s)
-	}
-	return cc
-}
-
-// SetAvatar sets the "avatar" field.
-func (cc *CommentCreate) SetAvatar(s string) *CommentCreate {
-	cc.mutation.SetAvatar(s)
-	return cc
-}
-
-// SetNillableAvatar sets the "avatar" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableAvatar(s *string) *CommentCreate {
-	if s != nil {
-		cc.SetAvatar(*s)
-	}
-	return cc
+	return _c
 }
 
 // SetParentID sets the "parent_id" field.
-func (cc *CommentCreate) SetParentID(u uint32) *CommentCreate {
-	cc.mutation.SetParentID(u)
-	return cc
+func (_c *CommentCreate) SetParentID(v uint32) *CommentCreate {
+	_c.mutation.SetParentID(v)
+	return _c
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableParentID(u *uint32) *CommentCreate {
-	if u != nil {
-		cc.SetParentID(*u)
+func (_c *CommentCreate) SetNillableParentID(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetParentID(*v)
 	}
-	return cc
+	return _c
+}
+
+// SetContentType sets the "content_type" field.
+func (_c *CommentCreate) SetContentType(v comment.ContentType) *CommentCreate {
+	_c.mutation.SetContentType(v)
+	return _c
+}
+
+// SetNillableContentType sets the "content_type" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableContentType(v *comment.ContentType) *CommentCreate {
+	if v != nil {
+		_c.SetContentType(*v)
+	}
+	return _c
+}
+
+// SetObjectID sets the "object_id" field.
+func (_c *CommentCreate) SetObjectID(v uint32) *CommentCreate {
+	_c.mutation.SetObjectID(v)
+	return _c
+}
+
+// SetNillableObjectID sets the "object_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableObjectID(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetObjectID(*v)
+	}
+	return _c
+}
+
+// SetContent sets the "content" field.
+func (_c *CommentCreate) SetContent(v string) *CommentCreate {
+	_c.mutation.SetContent(v)
+	return _c
+}
+
+// SetNillableContent sets the "content" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableContent(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetContent(*v)
+	}
+	return _c
+}
+
+// SetAuthorID sets the "author_id" field.
+func (_c *CommentCreate) SetAuthorID(v uint32) *CommentCreate {
+	_c.mutation.SetAuthorID(v)
+	return _c
+}
+
+// SetNillableAuthorID sets the "author_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableAuthorID(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetAuthorID(*v)
+	}
+	return _c
+}
+
+// SetAuthorName sets the "author_name" field.
+func (_c *CommentCreate) SetAuthorName(v string) *CommentCreate {
+	_c.mutation.SetAuthorName(v)
+	return _c
+}
+
+// SetNillableAuthorName sets the "author_name" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableAuthorName(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetAuthorName(*v)
+	}
+	return _c
+}
+
+// SetAuthorEmail sets the "author_email" field.
+func (_c *CommentCreate) SetAuthorEmail(v string) *CommentCreate {
+	_c.mutation.SetAuthorEmail(v)
+	return _c
+}
+
+// SetNillableAuthorEmail sets the "author_email" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableAuthorEmail(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetAuthorEmail(*v)
+	}
+	return _c
+}
+
+// SetAuthorURL sets the "author_url" field.
+func (_c *CommentCreate) SetAuthorURL(v string) *CommentCreate {
+	_c.mutation.SetAuthorURL(v)
+	return _c
+}
+
+// SetNillableAuthorURL sets the "author_url" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableAuthorURL(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetAuthorURL(*v)
+	}
+	return _c
+}
+
+// SetAuthorType sets the "author_type" field.
+func (_c *CommentCreate) SetAuthorType(v comment.AuthorType) *CommentCreate {
+	_c.mutation.SetAuthorType(v)
+	return _c
+}
+
+// SetNillableAuthorType sets the "author_type" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableAuthorType(v *comment.AuthorType) *CommentCreate {
+	if v != nil {
+		_c.SetAuthorType(*v)
+	}
+	return _c
 }
 
 // SetStatus sets the "status" field.
-func (cc *CommentCreate) SetStatus(u uint32) *CommentCreate {
-	cc.mutation.SetStatus(u)
-	return cc
+func (_c *CommentCreate) SetStatus(v comment.Status) *CommentCreate {
+	_c.mutation.SetStatus(v)
+	return _c
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableStatus(u *uint32) *CommentCreate {
-	if u != nil {
-		cc.SetStatus(*u)
+func (_c *CommentCreate) SetNillableStatus(v *comment.Status) *CommentCreate {
+	if v != nil {
+		_c.SetStatus(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetIsAdmin sets the "is_admin" field.
-func (cc *CommentCreate) SetIsAdmin(b bool) *CommentCreate {
-	cc.mutation.SetIsAdmin(b)
-	return cc
+// SetLikeCount sets the "like_count" field.
+func (_c *CommentCreate) SetLikeCount(v uint32) *CommentCreate {
+	_c.mutation.SetLikeCount(v)
+	return _c
 }
 
-// SetNillableIsAdmin sets the "is_admin" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableIsAdmin(b *bool) *CommentCreate {
-	if b != nil {
-		cc.SetIsAdmin(*b)
+// SetNillableLikeCount sets the "like_count" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableLikeCount(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetLikeCount(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetAllowNotification sets the "allow_notification" field.
-func (cc *CommentCreate) SetAllowNotification(b bool) *CommentCreate {
-	cc.mutation.SetAllowNotification(b)
-	return cc
+// SetDislikeCount sets the "dislike_count" field.
+func (_c *CommentCreate) SetDislikeCount(v uint32) *CommentCreate {
+	_c.mutation.SetDislikeCount(v)
+	return _c
 }
 
-// SetNillableAllowNotification sets the "allow_notification" field if the given value is not nil.
-func (cc *CommentCreate) SetNillableAllowNotification(b *bool) *CommentCreate {
-	if b != nil {
-		cc.SetAllowNotification(*b)
+// SetNillableDislikeCount sets the "dislike_count" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableDislikeCount(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetDislikeCount(*v)
 	}
-	return cc
+	return _c
+}
+
+// SetReplyCount sets the "reply_count" field.
+func (_c *CommentCreate) SetReplyCount(v uint32) *CommentCreate {
+	_c.mutation.SetReplyCount(v)
+	return _c
+}
+
+// SetNillableReplyCount sets the "reply_count" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableReplyCount(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetReplyCount(*v)
+	}
+	return _c
+}
+
+// SetIPAddress sets the "ip_address" field.
+func (_c *CommentCreate) SetIPAddress(v string) *CommentCreate {
+	_c.mutation.SetIPAddress(v)
+	return _c
+}
+
+// SetNillableIPAddress sets the "ip_address" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableIPAddress(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetIPAddress(*v)
+	}
+	return _c
+}
+
+// SetLocation sets the "location" field.
+func (_c *CommentCreate) SetLocation(v string) *CommentCreate {
+	_c.mutation.SetLocation(v)
+	return _c
+}
+
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableLocation(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetLocation(*v)
+	}
+	return _c
+}
+
+// SetUserAgent sets the "user_agent" field.
+func (_c *CommentCreate) SetUserAgent(v string) *CommentCreate {
+	_c.mutation.SetUserAgent(v)
+	return _c
+}
+
+// SetNillableUserAgent sets the "user_agent" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableUserAgent(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetUserAgent(*v)
+	}
+	return _c
+}
+
+// SetDetectedLanguage sets the "detected_language" field.
+func (_c *CommentCreate) SetDetectedLanguage(v string) *CommentCreate {
+	_c.mutation.SetDetectedLanguage(v)
+	return _c
+}
+
+// SetNillableDetectedLanguage sets the "detected_language" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableDetectedLanguage(v *string) *CommentCreate {
+	if v != nil {
+		_c.SetDetectedLanguage(*v)
+	}
+	return _c
+}
+
+// SetIsSpam sets the "is_spam" field.
+func (_c *CommentCreate) SetIsSpam(v bool) *CommentCreate {
+	_c.mutation.SetIsSpam(v)
+	return _c
+}
+
+// SetNillableIsSpam sets the "is_spam" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableIsSpam(v *bool) *CommentCreate {
+	if v != nil {
+		_c.SetIsSpam(*v)
+	}
+	return _c
+}
+
+// SetIsSticky sets the "is_sticky" field.
+func (_c *CommentCreate) SetIsSticky(v bool) *CommentCreate {
+	_c.mutation.SetIsSticky(v)
+	return _c
+}
+
+// SetNillableIsSticky sets the "is_sticky" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableIsSticky(v *bool) *CommentCreate {
+	if v != nil {
+		_c.SetIsSticky(*v)
+	}
+	return _c
+}
+
+// SetReplyToID sets the "reply_to_id" field.
+func (_c *CommentCreate) SetReplyToID(v uint32) *CommentCreate {
+	_c.mutation.SetReplyToID(v)
+	return _c
+}
+
+// SetNillableReplyToID sets the "reply_to_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableReplyToID(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetReplyToID(*v)
+	}
+	return _c
 }
 
 // SetID sets the "id" field.
-func (cc *CommentCreate) SetID(u uint32) *CommentCreate {
-	cc.mutation.SetID(u)
-	return cc
+func (_c *CommentCreate) SetID(v uint32) *CommentCreate {
+	_c.mutation.SetID(v)
+	return _c
+}
+
+// SetParent sets the "parent" edge to the Comment entity.
+func (_c *CommentCreate) SetParent(v *Comment) *CommentCreate {
+	return _c.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Comment entity by IDs.
+func (_c *CommentCreate) AddChildIDs(ids ...uint32) *CommentCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
+}
+
+// AddChildren adds the "children" edges to the Comment entity.
+func (_c *CommentCreate) AddChildren(v ...*Comment) *CommentCreate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddChildIDs(ids...)
 }
 
 // Mutation returns the CommentMutation object of the builder.
-func (cc *CommentCreate) Mutation() *CommentMutation {
-	return cc.mutation
+func (_c *CommentCreate) Mutation() *CommentMutation {
+	return _c.mutation
 }
 
 // Save creates the Comment in the database.
-func (cc *CommentCreate) Save(ctx context.Context) (*Comment, error) {
-	cc.defaults()
-	return withHooks(ctx, cc.sqlSave, cc.mutation, cc.hooks)
+func (_c *CommentCreate) Save(ctx context.Context) (*Comment, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (cc *CommentCreate) SaveX(ctx context.Context) *Comment {
-	v, err := cc.Save(ctx)
+func (_c *CommentCreate) SaveX(ctx context.Context) *Comment {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -258,34 +433,64 @@ func (cc *CommentCreate) SaveX(ctx context.Context) *Comment {
 }
 
 // Exec executes the query.
-func (cc *CommentCreate) Exec(ctx context.Context) error {
-	_, err := cc.Save(ctx)
+func (_c *CommentCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cc *CommentCreate) ExecX(ctx context.Context) {
-	if err := cc.Exec(ctx); err != nil {
+func (_c *CommentCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (cc *CommentCreate) defaults() {
-	if _, ok := cc.mutation.CreateTime(); !ok {
-		v := comment.DefaultCreateTime()
-		cc.mutation.SetCreateTime(v)
+func (_c *CommentCreate) defaults() {
+	if _, ok := _c.mutation.AuthorID(); !ok {
+		v := comment.DefaultAuthorID
+		_c.mutation.SetAuthorID(v)
+	}
+	if _, ok := _c.mutation.LikeCount(); !ok {
+		v := comment.DefaultLikeCount
+		_c.mutation.SetLikeCount(v)
+	}
+	if _, ok := _c.mutation.DislikeCount(); !ok {
+		v := comment.DefaultDislikeCount
+		_c.mutation.SetDislikeCount(v)
+	}
+	if _, ok := _c.mutation.ReplyCount(); !ok {
+		v := comment.DefaultReplyCount
+		_c.mutation.SetReplyCount(v)
+	}
+	if _, ok := _c.mutation.IsSpam(); !ok {
+		v := comment.DefaultIsSpam
+		_c.mutation.SetIsSpam(v)
+	}
+	if _, ok := _c.mutation.IsSticky(); !ok {
+		v := comment.DefaultIsSticky
+		_c.mutation.SetIsSticky(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cc *CommentCreate) check() error {
-	if v, ok := cc.mutation.Author(); ok {
-		if err := comment.AuthorValidator(v); err != nil {
-			return &ValidationError{Name: "author", err: fmt.Errorf(`ent: validator failed for field "Comment.author": %w`, err)}
+func (_c *CommentCreate) check() error {
+	if v, ok := _c.mutation.ContentType(); ok {
+		if err := comment.ContentTypeValidator(v); err != nil {
+			return &ValidationError{Name: "content_type", err: fmt.Errorf(`ent: validator failed for field "Comment.content_type": %w`, err)}
 		}
 	}
-	if v, ok := cc.mutation.ID(); ok {
+	if v, ok := _c.mutation.AuthorType(); ok {
+		if err := comment.AuthorTypeValidator(v); err != nil {
+			return &ValidationError{Name: "author_type", err: fmt.Errorf(`ent: validator failed for field "Comment.author_type": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.Status(); ok {
+		if err := comment.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Comment.status": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.ID(); ok {
 		if err := comment.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Comment.id": %w`, err)}
 		}
@@ -293,12 +498,12 @@ func (cc *CommentCreate) check() error {
 	return nil
 }
 
-func (cc *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
-	if err := cc.check(); err != nil {
+func (_c *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := cc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, cc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -308,80 +513,153 @@ func (cc *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
 		id := _spec.ID.Value.(int64)
 		_node.ID = uint32(id)
 	}
-	cc.mutation.id = &_node.ID
-	cc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
+func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Comment{config: cc.config}
+		_node = &Comment{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(comment.Table, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32))
 	)
-	_spec.OnConflict = cc.conflict
-	if id, ok := cc.mutation.ID(); ok {
+	_spec.OnConflict = _c.conflict
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := cc.mutation.CreateTime(); ok {
-		_spec.SetField(comment.FieldCreateTime, field.TypeInt64, value)
-		_node.CreateTime = &value
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(comment.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = &value
 	}
-	if value, ok := cc.mutation.UpdateTime(); ok {
-		_spec.SetField(comment.FieldUpdateTime, field.TypeInt64, value)
-		_node.UpdateTime = &value
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(comment.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = &value
 	}
-	if value, ok := cc.mutation.DeleteTime(); ok {
-		_spec.SetField(comment.FieldDeleteTime, field.TypeInt64, value)
-		_node.DeleteTime = &value
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(comment.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
 	}
-	if value, ok := cc.mutation.Author(); ok {
-		_spec.SetField(comment.FieldAuthor, field.TypeString, value)
-		_node.Author = &value
+	if value, ok := _c.mutation.CreatedBy(); ok {
+		_spec.SetField(comment.FieldCreatedBy, field.TypeUint32, value)
+		_node.CreatedBy = &value
 	}
-	if value, ok := cc.mutation.Email(); ok {
-		_spec.SetField(comment.FieldEmail, field.TypeString, value)
-		_node.Email = &value
+	if value, ok := _c.mutation.UpdatedBy(); ok {
+		_spec.SetField(comment.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = &value
 	}
-	if value, ok := cc.mutation.IPAddress(); ok {
-		_spec.SetField(comment.FieldIPAddress, field.TypeString, value)
-		_node.IPAddress = &value
+	if value, ok := _c.mutation.DeletedBy(); ok {
+		_spec.SetField(comment.FieldDeletedBy, field.TypeUint32, value)
+		_node.DeletedBy = &value
 	}
-	if value, ok := cc.mutation.AuthorURL(); ok {
-		_spec.SetField(comment.FieldAuthorURL, field.TypeString, value)
-		_node.AuthorURL = &value
+	if value, ok := _c.mutation.ContentType(); ok {
+		_spec.SetField(comment.FieldContentType, field.TypeEnum, value)
+		_node.ContentType = &value
 	}
-	if value, ok := cc.mutation.GravatarMd5(); ok {
-		_spec.SetField(comment.FieldGravatarMd5, field.TypeString, value)
-		_node.GravatarMd5 = &value
+	if value, ok := _c.mutation.ObjectID(); ok {
+		_spec.SetField(comment.FieldObjectID, field.TypeUint32, value)
+		_node.ObjectID = &value
 	}
-	if value, ok := cc.mutation.Content(); ok {
+	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(comment.FieldContent, field.TypeString, value)
 		_node.Content = &value
 	}
-	if value, ok := cc.mutation.UserAgent(); ok {
+	if value, ok := _c.mutation.AuthorID(); ok {
+		_spec.SetField(comment.FieldAuthorID, field.TypeUint32, value)
+		_node.AuthorID = &value
+	}
+	if value, ok := _c.mutation.AuthorName(); ok {
+		_spec.SetField(comment.FieldAuthorName, field.TypeString, value)
+		_node.AuthorName = &value
+	}
+	if value, ok := _c.mutation.AuthorEmail(); ok {
+		_spec.SetField(comment.FieldAuthorEmail, field.TypeString, value)
+		_node.AuthorEmail = &value
+	}
+	if value, ok := _c.mutation.AuthorURL(); ok {
+		_spec.SetField(comment.FieldAuthorURL, field.TypeString, value)
+		_node.AuthorURL = &value
+	}
+	if value, ok := _c.mutation.AuthorType(); ok {
+		_spec.SetField(comment.FieldAuthorType, field.TypeEnum, value)
+		_node.AuthorType = &value
+	}
+	if value, ok := _c.mutation.Status(); ok {
+		_spec.SetField(comment.FieldStatus, field.TypeEnum, value)
+		_node.Status = &value
+	}
+	if value, ok := _c.mutation.LikeCount(); ok {
+		_spec.SetField(comment.FieldLikeCount, field.TypeUint32, value)
+		_node.LikeCount = &value
+	}
+	if value, ok := _c.mutation.DislikeCount(); ok {
+		_spec.SetField(comment.FieldDislikeCount, field.TypeUint32, value)
+		_node.DislikeCount = &value
+	}
+	if value, ok := _c.mutation.ReplyCount(); ok {
+		_spec.SetField(comment.FieldReplyCount, field.TypeUint32, value)
+		_node.ReplyCount = &value
+	}
+	if value, ok := _c.mutation.IPAddress(); ok {
+		_spec.SetField(comment.FieldIPAddress, field.TypeString, value)
+		_node.IPAddress = &value
+	}
+	if value, ok := _c.mutation.Location(); ok {
+		_spec.SetField(comment.FieldLocation, field.TypeString, value)
+		_node.Location = &value
+	}
+	if value, ok := _c.mutation.UserAgent(); ok {
 		_spec.SetField(comment.FieldUserAgent, field.TypeString, value)
 		_node.UserAgent = &value
 	}
-	if value, ok := cc.mutation.Avatar(); ok {
-		_spec.SetField(comment.FieldAvatar, field.TypeString, value)
-		_node.Avatar = &value
+	if value, ok := _c.mutation.DetectedLanguage(); ok {
+		_spec.SetField(comment.FieldDetectedLanguage, field.TypeString, value)
+		_node.DetectedLanguage = &value
 	}
-	if value, ok := cc.mutation.ParentID(); ok {
-		_spec.SetField(comment.FieldParentID, field.TypeUint32, value)
-		_node.ParentID = &value
+	if value, ok := _c.mutation.IsSpam(); ok {
+		_spec.SetField(comment.FieldIsSpam, field.TypeBool, value)
+		_node.IsSpam = &value
 	}
-	if value, ok := cc.mutation.Status(); ok {
-		_spec.SetField(comment.FieldStatus, field.TypeUint32, value)
-		_node.Status = &value
+	if value, ok := _c.mutation.IsSticky(); ok {
+		_spec.SetField(comment.FieldIsSticky, field.TypeBool, value)
+		_node.IsSticky = &value
 	}
-	if value, ok := cc.mutation.IsAdmin(); ok {
-		_spec.SetField(comment.FieldIsAdmin, field.TypeBool, value)
-		_node.IsAdmin = &value
+	if value, ok := _c.mutation.ReplyToID(); ok {
+		_spec.SetField(comment.FieldReplyToID, field.TypeUint32, value)
+		_node.ReplyToID = &value
 	}
-	if value, ok := cc.mutation.AllowNotification(); ok {
-		_spec.SetField(comment.FieldAllowNotification, field.TypeBool, value)
-		_node.AllowNotification = &value
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   comment.ParentTable,
+			Columns: []string{comment.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ParentID = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comment.ChildrenTable,
+			Columns: []string{comment.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -390,7 +668,7 @@ func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Comment.Create().
-//		SetCreateTime(v).
+//		SetCreatedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -399,13 +677,13 @@ func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CommentUpsert) {
-//			SetCreateTime(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-func (cc *CommentCreate) OnConflict(opts ...sql.ConflictOption) *CommentUpsertOne {
-	cc.conflict = opts
+func (_c *CommentCreate) OnConflict(opts ...sql.ConflictOption) *CommentUpsertOne {
+	_c.conflict = opts
 	return &CommentUpsertOne{
-		create: cc,
+		create: _c,
 	}
 }
 
@@ -415,10 +693,10 @@ func (cc *CommentCreate) OnConflict(opts ...sql.ConflictOption) *CommentUpsertOn
 //	client.Comment.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (cc *CommentCreate) OnConflictColumns(columns ...string) *CommentUpsertOne {
-	cc.conflict = append(cc.conflict, sql.ConflictColumns(columns...))
+func (_c *CommentCreate) OnConflictColumns(columns ...string) *CommentUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
 	return &CommentUpsertOne{
-		create: cc,
+		create: _c,
 	}
 }
 
@@ -435,141 +713,171 @@ type (
 	}
 )
 
-// SetUpdateTime sets the "update_time" field.
-func (u *CommentUpsert) SetUpdateTime(v int64) *CommentUpsert {
-	u.Set(comment.FieldUpdateTime, v)
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CommentUpsert) SetUpdatedAt(v time.Time) *CommentUpsert {
+	u.Set(comment.FieldUpdatedAt, v)
 	return u
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateUpdateTime() *CommentUpsert {
-	u.SetExcluded(comment.FieldUpdateTime)
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateUpdatedAt() *CommentUpsert {
+	u.SetExcluded(comment.FieldUpdatedAt)
 	return u
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *CommentUpsert) AddUpdateTime(v int64) *CommentUpsert {
-	u.Add(comment.FieldUpdateTime, v)
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *CommentUpsert) ClearUpdatedAt() *CommentUpsert {
+	u.SetNull(comment.FieldUpdatedAt)
 	return u
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *CommentUpsert) ClearUpdateTime() *CommentUpsert {
-	u.SetNull(comment.FieldUpdateTime)
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CommentUpsert) SetDeletedAt(v time.Time) *CommentUpsert {
+	u.Set(comment.FieldDeletedAt, v)
 	return u
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *CommentUpsert) SetDeleteTime(v int64) *CommentUpsert {
-	u.Set(comment.FieldDeleteTime, v)
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateDeletedAt() *CommentUpsert {
+	u.SetExcluded(comment.FieldDeletedAt)
 	return u
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateDeleteTime() *CommentUpsert {
-	u.SetExcluded(comment.FieldDeleteTime)
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *CommentUpsert) ClearDeletedAt() *CommentUpsert {
+	u.SetNull(comment.FieldDeletedAt)
 	return u
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *CommentUpsert) AddDeleteTime(v int64) *CommentUpsert {
-	u.Add(comment.FieldDeleteTime, v)
+// SetCreatedBy sets the "created_by" field.
+func (u *CommentUpsert) SetCreatedBy(v uint32) *CommentUpsert {
+	u.Set(comment.FieldCreatedBy, v)
 	return u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *CommentUpsert) ClearDeleteTime() *CommentUpsert {
-	u.SetNull(comment.FieldDeleteTime)
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateCreatedBy() *CommentUpsert {
+	u.SetExcluded(comment.FieldCreatedBy)
 	return u
 }
 
-// SetAuthor sets the "author" field.
-func (u *CommentUpsert) SetAuthor(v string) *CommentUpsert {
-	u.Set(comment.FieldAuthor, v)
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CommentUpsert) AddCreatedBy(v uint32) *CommentUpsert {
+	u.Add(comment.FieldCreatedBy, v)
 	return u
 }
 
-// UpdateAuthor sets the "author" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateAuthor() *CommentUpsert {
-	u.SetExcluded(comment.FieldAuthor)
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *CommentUpsert) ClearCreatedBy() *CommentUpsert {
+	u.SetNull(comment.FieldCreatedBy)
 	return u
 }
 
-// ClearAuthor clears the value of the "author" field.
-func (u *CommentUpsert) ClearAuthor() *CommentUpsert {
-	u.SetNull(comment.FieldAuthor)
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CommentUpsert) SetUpdatedBy(v uint32) *CommentUpsert {
+	u.Set(comment.FieldUpdatedBy, v)
 	return u
 }
 
-// SetEmail sets the "email" field.
-func (u *CommentUpsert) SetEmail(v string) *CommentUpsert {
-	u.Set(comment.FieldEmail, v)
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateUpdatedBy() *CommentUpsert {
+	u.SetExcluded(comment.FieldUpdatedBy)
 	return u
 }
 
-// UpdateEmail sets the "email" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateEmail() *CommentUpsert {
-	u.SetExcluded(comment.FieldEmail)
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CommentUpsert) AddUpdatedBy(v uint32) *CommentUpsert {
+	u.Add(comment.FieldUpdatedBy, v)
 	return u
 }
 
-// ClearEmail clears the value of the "email" field.
-func (u *CommentUpsert) ClearEmail() *CommentUpsert {
-	u.SetNull(comment.FieldEmail)
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *CommentUpsert) ClearUpdatedBy() *CommentUpsert {
+	u.SetNull(comment.FieldUpdatedBy)
 	return u
 }
 
-// SetIPAddress sets the "ip_address" field.
-func (u *CommentUpsert) SetIPAddress(v string) *CommentUpsert {
-	u.Set(comment.FieldIPAddress, v)
+// SetDeletedBy sets the "deleted_by" field.
+func (u *CommentUpsert) SetDeletedBy(v uint32) *CommentUpsert {
+	u.Set(comment.FieldDeletedBy, v)
 	return u
 }
 
-// UpdateIPAddress sets the "ip_address" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateIPAddress() *CommentUpsert {
-	u.SetExcluded(comment.FieldIPAddress)
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateDeletedBy() *CommentUpsert {
+	u.SetExcluded(comment.FieldDeletedBy)
 	return u
 }
 
-// ClearIPAddress clears the value of the "ip_address" field.
-func (u *CommentUpsert) ClearIPAddress() *CommentUpsert {
-	u.SetNull(comment.FieldIPAddress)
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *CommentUpsert) AddDeletedBy(v uint32) *CommentUpsert {
+	u.Add(comment.FieldDeletedBy, v)
 	return u
 }
 
-// SetAuthorURL sets the "author_url" field.
-func (u *CommentUpsert) SetAuthorURL(v string) *CommentUpsert {
-	u.Set(comment.FieldAuthorURL, v)
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *CommentUpsert) ClearDeletedBy() *CommentUpsert {
+	u.SetNull(comment.FieldDeletedBy)
 	return u
 }
 
-// UpdateAuthorURL sets the "author_url" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateAuthorURL() *CommentUpsert {
-	u.SetExcluded(comment.FieldAuthorURL)
+// SetParentID sets the "parent_id" field.
+func (u *CommentUpsert) SetParentID(v uint32) *CommentUpsert {
+	u.Set(comment.FieldParentID, v)
 	return u
 }
 
-// ClearAuthorURL clears the value of the "author_url" field.
-func (u *CommentUpsert) ClearAuthorURL() *CommentUpsert {
-	u.SetNull(comment.FieldAuthorURL)
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateParentID() *CommentUpsert {
+	u.SetExcluded(comment.FieldParentID)
 	return u
 }
 
-// SetGravatarMd5 sets the "gravatar_md5" field.
-func (u *CommentUpsert) SetGravatarMd5(v string) *CommentUpsert {
-	u.Set(comment.FieldGravatarMd5, v)
+// ClearParentID clears the value of the "parent_id" field.
+func (u *CommentUpsert) ClearParentID() *CommentUpsert {
+	u.SetNull(comment.FieldParentID)
 	return u
 }
 
-// UpdateGravatarMd5 sets the "gravatar_md5" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateGravatarMd5() *CommentUpsert {
-	u.SetExcluded(comment.FieldGravatarMd5)
+// SetContentType sets the "content_type" field.
+func (u *CommentUpsert) SetContentType(v comment.ContentType) *CommentUpsert {
+	u.Set(comment.FieldContentType, v)
 	return u
 }
 
-// ClearGravatarMd5 clears the value of the "gravatar_md5" field.
-func (u *CommentUpsert) ClearGravatarMd5() *CommentUpsert {
-	u.SetNull(comment.FieldGravatarMd5)
+// UpdateContentType sets the "content_type" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateContentType() *CommentUpsert {
+	u.SetExcluded(comment.FieldContentType)
+	return u
+}
+
+// ClearContentType clears the value of the "content_type" field.
+func (u *CommentUpsert) ClearContentType() *CommentUpsert {
+	u.SetNull(comment.FieldContentType)
+	return u
+}
+
+// SetObjectID sets the "object_id" field.
+func (u *CommentUpsert) SetObjectID(v uint32) *CommentUpsert {
+	u.Set(comment.FieldObjectID, v)
+	return u
+}
+
+// UpdateObjectID sets the "object_id" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateObjectID() *CommentUpsert {
+	u.SetExcluded(comment.FieldObjectID)
+	return u
+}
+
+// AddObjectID adds v to the "object_id" field.
+func (u *CommentUpsert) AddObjectID(v uint32) *CommentUpsert {
+	u.Add(comment.FieldObjectID, v)
+	return u
+}
+
+// ClearObjectID clears the value of the "object_id" field.
+func (u *CommentUpsert) ClearObjectID() *CommentUpsert {
+	u.SetNull(comment.FieldObjectID)
 	return u
 }
 
@@ -591,6 +899,228 @@ func (u *CommentUpsert) ClearContent() *CommentUpsert {
 	return u
 }
 
+// SetAuthorID sets the "author_id" field.
+func (u *CommentUpsert) SetAuthorID(v uint32) *CommentUpsert {
+	u.Set(comment.FieldAuthorID, v)
+	return u
+}
+
+// UpdateAuthorID sets the "author_id" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateAuthorID() *CommentUpsert {
+	u.SetExcluded(comment.FieldAuthorID)
+	return u
+}
+
+// AddAuthorID adds v to the "author_id" field.
+func (u *CommentUpsert) AddAuthorID(v uint32) *CommentUpsert {
+	u.Add(comment.FieldAuthorID, v)
+	return u
+}
+
+// ClearAuthorID clears the value of the "author_id" field.
+func (u *CommentUpsert) ClearAuthorID() *CommentUpsert {
+	u.SetNull(comment.FieldAuthorID)
+	return u
+}
+
+// SetAuthorName sets the "author_name" field.
+func (u *CommentUpsert) SetAuthorName(v string) *CommentUpsert {
+	u.Set(comment.FieldAuthorName, v)
+	return u
+}
+
+// UpdateAuthorName sets the "author_name" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateAuthorName() *CommentUpsert {
+	u.SetExcluded(comment.FieldAuthorName)
+	return u
+}
+
+// ClearAuthorName clears the value of the "author_name" field.
+func (u *CommentUpsert) ClearAuthorName() *CommentUpsert {
+	u.SetNull(comment.FieldAuthorName)
+	return u
+}
+
+// SetAuthorEmail sets the "author_email" field.
+func (u *CommentUpsert) SetAuthorEmail(v string) *CommentUpsert {
+	u.Set(comment.FieldAuthorEmail, v)
+	return u
+}
+
+// UpdateAuthorEmail sets the "author_email" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateAuthorEmail() *CommentUpsert {
+	u.SetExcluded(comment.FieldAuthorEmail)
+	return u
+}
+
+// ClearAuthorEmail clears the value of the "author_email" field.
+func (u *CommentUpsert) ClearAuthorEmail() *CommentUpsert {
+	u.SetNull(comment.FieldAuthorEmail)
+	return u
+}
+
+// SetAuthorURL sets the "author_url" field.
+func (u *CommentUpsert) SetAuthorURL(v string) *CommentUpsert {
+	u.Set(comment.FieldAuthorURL, v)
+	return u
+}
+
+// UpdateAuthorURL sets the "author_url" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateAuthorURL() *CommentUpsert {
+	u.SetExcluded(comment.FieldAuthorURL)
+	return u
+}
+
+// ClearAuthorURL clears the value of the "author_url" field.
+func (u *CommentUpsert) ClearAuthorURL() *CommentUpsert {
+	u.SetNull(comment.FieldAuthorURL)
+	return u
+}
+
+// SetAuthorType sets the "author_type" field.
+func (u *CommentUpsert) SetAuthorType(v comment.AuthorType) *CommentUpsert {
+	u.Set(comment.FieldAuthorType, v)
+	return u
+}
+
+// UpdateAuthorType sets the "author_type" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateAuthorType() *CommentUpsert {
+	u.SetExcluded(comment.FieldAuthorType)
+	return u
+}
+
+// ClearAuthorType clears the value of the "author_type" field.
+func (u *CommentUpsert) ClearAuthorType() *CommentUpsert {
+	u.SetNull(comment.FieldAuthorType)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *CommentUpsert) SetStatus(v comment.Status) *CommentUpsert {
+	u.Set(comment.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateStatus() *CommentUpsert {
+	u.SetExcluded(comment.FieldStatus)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *CommentUpsert) ClearStatus() *CommentUpsert {
+	u.SetNull(comment.FieldStatus)
+	return u
+}
+
+// SetLikeCount sets the "like_count" field.
+func (u *CommentUpsert) SetLikeCount(v uint32) *CommentUpsert {
+	u.Set(comment.FieldLikeCount, v)
+	return u
+}
+
+// UpdateLikeCount sets the "like_count" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateLikeCount() *CommentUpsert {
+	u.SetExcluded(comment.FieldLikeCount)
+	return u
+}
+
+// AddLikeCount adds v to the "like_count" field.
+func (u *CommentUpsert) AddLikeCount(v uint32) *CommentUpsert {
+	u.Add(comment.FieldLikeCount, v)
+	return u
+}
+
+// ClearLikeCount clears the value of the "like_count" field.
+func (u *CommentUpsert) ClearLikeCount() *CommentUpsert {
+	u.SetNull(comment.FieldLikeCount)
+	return u
+}
+
+// SetDislikeCount sets the "dislike_count" field.
+func (u *CommentUpsert) SetDislikeCount(v uint32) *CommentUpsert {
+	u.Set(comment.FieldDislikeCount, v)
+	return u
+}
+
+// UpdateDislikeCount sets the "dislike_count" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateDislikeCount() *CommentUpsert {
+	u.SetExcluded(comment.FieldDislikeCount)
+	return u
+}
+
+// AddDislikeCount adds v to the "dislike_count" field.
+func (u *CommentUpsert) AddDislikeCount(v uint32) *CommentUpsert {
+	u.Add(comment.FieldDislikeCount, v)
+	return u
+}
+
+// ClearDislikeCount clears the value of the "dislike_count" field.
+func (u *CommentUpsert) ClearDislikeCount() *CommentUpsert {
+	u.SetNull(comment.FieldDislikeCount)
+	return u
+}
+
+// SetReplyCount sets the "reply_count" field.
+func (u *CommentUpsert) SetReplyCount(v uint32) *CommentUpsert {
+	u.Set(comment.FieldReplyCount, v)
+	return u
+}
+
+// UpdateReplyCount sets the "reply_count" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateReplyCount() *CommentUpsert {
+	u.SetExcluded(comment.FieldReplyCount)
+	return u
+}
+
+// AddReplyCount adds v to the "reply_count" field.
+func (u *CommentUpsert) AddReplyCount(v uint32) *CommentUpsert {
+	u.Add(comment.FieldReplyCount, v)
+	return u
+}
+
+// ClearReplyCount clears the value of the "reply_count" field.
+func (u *CommentUpsert) ClearReplyCount() *CommentUpsert {
+	u.SetNull(comment.FieldReplyCount)
+	return u
+}
+
+// SetIPAddress sets the "ip_address" field.
+func (u *CommentUpsert) SetIPAddress(v string) *CommentUpsert {
+	u.Set(comment.FieldIPAddress, v)
+	return u
+}
+
+// UpdateIPAddress sets the "ip_address" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateIPAddress() *CommentUpsert {
+	u.SetExcluded(comment.FieldIPAddress)
+	return u
+}
+
+// ClearIPAddress clears the value of the "ip_address" field.
+func (u *CommentUpsert) ClearIPAddress() *CommentUpsert {
+	u.SetNull(comment.FieldIPAddress)
+	return u
+}
+
+// SetLocation sets the "location" field.
+func (u *CommentUpsert) SetLocation(v string) *CommentUpsert {
+	u.Set(comment.FieldLocation, v)
+	return u
+}
+
+// UpdateLocation sets the "location" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateLocation() *CommentUpsert {
+	u.SetExcluded(comment.FieldLocation)
+	return u
+}
+
+// ClearLocation clears the value of the "location" field.
+func (u *CommentUpsert) ClearLocation() *CommentUpsert {
+	u.SetNull(comment.FieldLocation)
+	return u
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (u *CommentUpsert) SetUserAgent(v string) *CommentUpsert {
 	u.Set(comment.FieldUserAgent, v)
@@ -609,105 +1139,81 @@ func (u *CommentUpsert) ClearUserAgent() *CommentUpsert {
 	return u
 }
 
-// SetAvatar sets the "avatar" field.
-func (u *CommentUpsert) SetAvatar(v string) *CommentUpsert {
-	u.Set(comment.FieldAvatar, v)
+// SetDetectedLanguage sets the "detected_language" field.
+func (u *CommentUpsert) SetDetectedLanguage(v string) *CommentUpsert {
+	u.Set(comment.FieldDetectedLanguage, v)
 	return u
 }
 
-// UpdateAvatar sets the "avatar" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateAvatar() *CommentUpsert {
-	u.SetExcluded(comment.FieldAvatar)
+// UpdateDetectedLanguage sets the "detected_language" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateDetectedLanguage() *CommentUpsert {
+	u.SetExcluded(comment.FieldDetectedLanguage)
 	return u
 }
 
-// ClearAvatar clears the value of the "avatar" field.
-func (u *CommentUpsert) ClearAvatar() *CommentUpsert {
-	u.SetNull(comment.FieldAvatar)
+// ClearDetectedLanguage clears the value of the "detected_language" field.
+func (u *CommentUpsert) ClearDetectedLanguage() *CommentUpsert {
+	u.SetNull(comment.FieldDetectedLanguage)
 	return u
 }
 
-// SetParentID sets the "parent_id" field.
-func (u *CommentUpsert) SetParentID(v uint32) *CommentUpsert {
-	u.Set(comment.FieldParentID, v)
+// SetIsSpam sets the "is_spam" field.
+func (u *CommentUpsert) SetIsSpam(v bool) *CommentUpsert {
+	u.Set(comment.FieldIsSpam, v)
 	return u
 }
 
-// UpdateParentID sets the "parent_id" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateParentID() *CommentUpsert {
-	u.SetExcluded(comment.FieldParentID)
+// UpdateIsSpam sets the "is_spam" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateIsSpam() *CommentUpsert {
+	u.SetExcluded(comment.FieldIsSpam)
 	return u
 }
 
-// AddParentID adds v to the "parent_id" field.
-func (u *CommentUpsert) AddParentID(v uint32) *CommentUpsert {
-	u.Add(comment.FieldParentID, v)
+// ClearIsSpam clears the value of the "is_spam" field.
+func (u *CommentUpsert) ClearIsSpam() *CommentUpsert {
+	u.SetNull(comment.FieldIsSpam)
 	return u
 }
 
-// ClearParentID clears the value of the "parent_id" field.
-func (u *CommentUpsert) ClearParentID() *CommentUpsert {
-	u.SetNull(comment.FieldParentID)
+// SetIsSticky sets the "is_sticky" field.
+func (u *CommentUpsert) SetIsSticky(v bool) *CommentUpsert {
+	u.Set(comment.FieldIsSticky, v)
 	return u
 }
 
-// SetStatus sets the "status" field.
-func (u *CommentUpsert) SetStatus(v uint32) *CommentUpsert {
-	u.Set(comment.FieldStatus, v)
+// UpdateIsSticky sets the "is_sticky" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateIsSticky() *CommentUpsert {
+	u.SetExcluded(comment.FieldIsSticky)
 	return u
 }
 
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateStatus() *CommentUpsert {
-	u.SetExcluded(comment.FieldStatus)
+// ClearIsSticky clears the value of the "is_sticky" field.
+func (u *CommentUpsert) ClearIsSticky() *CommentUpsert {
+	u.SetNull(comment.FieldIsSticky)
 	return u
 }
 
-// AddStatus adds v to the "status" field.
-func (u *CommentUpsert) AddStatus(v uint32) *CommentUpsert {
-	u.Add(comment.FieldStatus, v)
+// SetReplyToID sets the "reply_to_id" field.
+func (u *CommentUpsert) SetReplyToID(v uint32) *CommentUpsert {
+	u.Set(comment.FieldReplyToID, v)
 	return u
 }
 
-// ClearStatus clears the value of the "status" field.
-func (u *CommentUpsert) ClearStatus() *CommentUpsert {
-	u.SetNull(comment.FieldStatus)
+// UpdateReplyToID sets the "reply_to_id" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateReplyToID() *CommentUpsert {
+	u.SetExcluded(comment.FieldReplyToID)
 	return u
 }
 
-// SetIsAdmin sets the "is_admin" field.
-func (u *CommentUpsert) SetIsAdmin(v bool) *CommentUpsert {
-	u.Set(comment.FieldIsAdmin, v)
+// AddReplyToID adds v to the "reply_to_id" field.
+func (u *CommentUpsert) AddReplyToID(v uint32) *CommentUpsert {
+	u.Add(comment.FieldReplyToID, v)
 	return u
 }
 
-// UpdateIsAdmin sets the "is_admin" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateIsAdmin() *CommentUpsert {
-	u.SetExcluded(comment.FieldIsAdmin)
-	return u
-}
-
-// ClearIsAdmin clears the value of the "is_admin" field.
-func (u *CommentUpsert) ClearIsAdmin() *CommentUpsert {
-	u.SetNull(comment.FieldIsAdmin)
-	return u
-}
-
-// SetAllowNotification sets the "allow_notification" field.
-func (u *CommentUpsert) SetAllowNotification(v bool) *CommentUpsert {
-	u.Set(comment.FieldAllowNotification, v)
-	return u
-}
-
-// UpdateAllowNotification sets the "allow_notification" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateAllowNotification() *CommentUpsert {
-	u.SetExcluded(comment.FieldAllowNotification)
-	return u
-}
-
-// ClearAllowNotification clears the value of the "allow_notification" field.
-func (u *CommentUpsert) ClearAllowNotification() *CommentUpsert {
-	u.SetNull(comment.FieldAllowNotification)
+// ClearReplyToID clears the value of the "reply_to_id" field.
+func (u *CommentUpsert) ClearReplyToID() *CommentUpsert {
+	u.SetNull(comment.FieldReplyToID)
 	return u
 }
 
@@ -728,8 +1234,8 @@ func (u *CommentUpsertOne) UpdateNewValues() *CommentUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(comment.FieldID)
 		}
-		if _, exists := u.create.mutation.CreateTime(); exists {
-			s.SetIgnore(comment.FieldCreateTime)
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(comment.FieldCreatedAt)
 		}
 	}))
 	return u
@@ -762,164 +1268,199 @@ func (u *CommentUpsertOne) Update(set func(*CommentUpsert)) *CommentUpsertOne {
 	return u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (u *CommentUpsertOne) SetUpdateTime(v int64) *CommentUpsertOne {
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CommentUpsertOne) SetUpdatedAt(v time.Time) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetUpdateTime(v)
+		s.SetUpdatedAt(v)
 	})
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *CommentUpsertOne) AddUpdateTime(v int64) *CommentUpsertOne {
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateUpdatedAt() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddUpdateTime(v)
+		s.UpdateUpdatedAt()
 	})
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateUpdateTime() *CommentUpsertOne {
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *CommentUpsertOne) ClearUpdatedAt() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateUpdateTime()
+		s.ClearUpdatedAt()
 	})
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *CommentUpsertOne) ClearUpdateTime() *CommentUpsertOne {
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CommentUpsertOne) SetDeletedAt(v time.Time) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearUpdateTime()
+		s.SetDeletedAt(v)
 	})
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *CommentUpsertOne) SetDeleteTime(v int64) *CommentUpsertOne {
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateDeletedAt() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetDeleteTime(v)
+		s.UpdateDeletedAt()
 	})
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *CommentUpsertOne) AddDeleteTime(v int64) *CommentUpsertOne {
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *CommentUpsertOne) ClearDeletedAt() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddDeleteTime(v)
+		s.ClearDeletedAt()
 	})
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateDeleteTime() *CommentUpsertOne {
+// SetCreatedBy sets the "created_by" field.
+func (u *CommentUpsertOne) SetCreatedBy(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateDeleteTime()
+		s.SetCreatedBy(v)
 	})
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *CommentUpsertOne) ClearDeleteTime() *CommentUpsertOne {
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CommentUpsertOne) AddCreatedBy(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearDeleteTime()
+		s.AddCreatedBy(v)
 	})
 }
 
-// SetAuthor sets the "author" field.
-func (u *CommentUpsertOne) SetAuthor(v string) *CommentUpsertOne {
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateCreatedBy() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetAuthor(v)
+		s.UpdateCreatedBy()
 	})
 }
 
-// UpdateAuthor sets the "author" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateAuthor() *CommentUpsertOne {
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *CommentUpsertOne) ClearCreatedBy() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAuthor()
+		s.ClearCreatedBy()
 	})
 }
 
-// ClearAuthor clears the value of the "author" field.
-func (u *CommentUpsertOne) ClearAuthor() *CommentUpsertOne {
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CommentUpsertOne) SetUpdatedBy(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearAuthor()
+		s.SetUpdatedBy(v)
 	})
 }
 
-// SetEmail sets the "email" field.
-func (u *CommentUpsertOne) SetEmail(v string) *CommentUpsertOne {
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CommentUpsertOne) AddUpdatedBy(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetEmail(v)
+		s.AddUpdatedBy(v)
 	})
 }
 
-// UpdateEmail sets the "email" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateEmail() *CommentUpsertOne {
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateUpdatedBy() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateEmail()
+		s.UpdateUpdatedBy()
 	})
 }
 
-// ClearEmail clears the value of the "email" field.
-func (u *CommentUpsertOne) ClearEmail() *CommentUpsertOne {
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *CommentUpsertOne) ClearUpdatedBy() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearEmail()
+		s.ClearUpdatedBy()
 	})
 }
 
-// SetIPAddress sets the "ip_address" field.
-func (u *CommentUpsertOne) SetIPAddress(v string) *CommentUpsertOne {
+// SetDeletedBy sets the "deleted_by" field.
+func (u *CommentUpsertOne) SetDeletedBy(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetIPAddress(v)
+		s.SetDeletedBy(v)
 	})
 }
 
-// UpdateIPAddress sets the "ip_address" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateIPAddress() *CommentUpsertOne {
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *CommentUpsertOne) AddDeletedBy(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateIPAddress()
+		s.AddDeletedBy(v)
 	})
 }
 
-// ClearIPAddress clears the value of the "ip_address" field.
-func (u *CommentUpsertOne) ClearIPAddress() *CommentUpsertOne {
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateDeletedBy() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearIPAddress()
+		s.UpdateDeletedBy()
 	})
 }
 
-// SetAuthorURL sets the "author_url" field.
-func (u *CommentUpsertOne) SetAuthorURL(v string) *CommentUpsertOne {
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *CommentUpsertOne) ClearDeletedBy() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetAuthorURL(v)
+		s.ClearDeletedBy()
 	})
 }
 
-// UpdateAuthorURL sets the "author_url" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateAuthorURL() *CommentUpsertOne {
+// SetParentID sets the "parent_id" field.
+func (u *CommentUpsertOne) SetParentID(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAuthorURL()
+		s.SetParentID(v)
 	})
 }
 
-// ClearAuthorURL clears the value of the "author_url" field.
-func (u *CommentUpsertOne) ClearAuthorURL() *CommentUpsertOne {
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateParentID() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearAuthorURL()
+		s.UpdateParentID()
 	})
 }
 
-// SetGravatarMd5 sets the "gravatar_md5" field.
-func (u *CommentUpsertOne) SetGravatarMd5(v string) *CommentUpsertOne {
+// ClearParentID clears the value of the "parent_id" field.
+func (u *CommentUpsertOne) ClearParentID() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetGravatarMd5(v)
+		s.ClearParentID()
 	})
 }
 
-// UpdateGravatarMd5 sets the "gravatar_md5" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateGravatarMd5() *CommentUpsertOne {
+// SetContentType sets the "content_type" field.
+func (u *CommentUpsertOne) SetContentType(v comment.ContentType) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateGravatarMd5()
+		s.SetContentType(v)
 	})
 }
 
-// ClearGravatarMd5 clears the value of the "gravatar_md5" field.
-func (u *CommentUpsertOne) ClearGravatarMd5() *CommentUpsertOne {
+// UpdateContentType sets the "content_type" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateContentType() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearGravatarMd5()
+		s.UpdateContentType()
+	})
+}
+
+// ClearContentType clears the value of the "content_type" field.
+func (u *CommentUpsertOne) ClearContentType() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearContentType()
+	})
+}
+
+// SetObjectID sets the "object_id" field.
+func (u *CommentUpsertOne) SetObjectID(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetObjectID(v)
+	})
+}
+
+// AddObjectID adds v to the "object_id" field.
+func (u *CommentUpsertOne) AddObjectID(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddObjectID(v)
+	})
+}
+
+// UpdateObjectID sets the "object_id" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateObjectID() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateObjectID()
+	})
+}
+
+// ClearObjectID clears the value of the "object_id" field.
+func (u *CommentUpsertOne) ClearObjectID() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearObjectID()
 	})
 }
 
@@ -944,6 +1485,265 @@ func (u *CommentUpsertOne) ClearContent() *CommentUpsertOne {
 	})
 }
 
+// SetAuthorID sets the "author_id" field.
+func (u *CommentUpsertOne) SetAuthorID(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorID(v)
+	})
+}
+
+// AddAuthorID adds v to the "author_id" field.
+func (u *CommentUpsertOne) AddAuthorID(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddAuthorID(v)
+	})
+}
+
+// UpdateAuthorID sets the "author_id" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateAuthorID() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorID()
+	})
+}
+
+// ClearAuthorID clears the value of the "author_id" field.
+func (u *CommentUpsertOne) ClearAuthorID() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorID()
+	})
+}
+
+// SetAuthorName sets the "author_name" field.
+func (u *CommentUpsertOne) SetAuthorName(v string) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorName(v)
+	})
+}
+
+// UpdateAuthorName sets the "author_name" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateAuthorName() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorName()
+	})
+}
+
+// ClearAuthorName clears the value of the "author_name" field.
+func (u *CommentUpsertOne) ClearAuthorName() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorName()
+	})
+}
+
+// SetAuthorEmail sets the "author_email" field.
+func (u *CommentUpsertOne) SetAuthorEmail(v string) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorEmail(v)
+	})
+}
+
+// UpdateAuthorEmail sets the "author_email" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateAuthorEmail() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorEmail()
+	})
+}
+
+// ClearAuthorEmail clears the value of the "author_email" field.
+func (u *CommentUpsertOne) ClearAuthorEmail() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorEmail()
+	})
+}
+
+// SetAuthorURL sets the "author_url" field.
+func (u *CommentUpsertOne) SetAuthorURL(v string) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorURL(v)
+	})
+}
+
+// UpdateAuthorURL sets the "author_url" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateAuthorURL() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorURL()
+	})
+}
+
+// ClearAuthorURL clears the value of the "author_url" field.
+func (u *CommentUpsertOne) ClearAuthorURL() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorURL()
+	})
+}
+
+// SetAuthorType sets the "author_type" field.
+func (u *CommentUpsertOne) SetAuthorType(v comment.AuthorType) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorType(v)
+	})
+}
+
+// UpdateAuthorType sets the "author_type" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateAuthorType() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorType()
+	})
+}
+
+// ClearAuthorType clears the value of the "author_type" field.
+func (u *CommentUpsertOne) ClearAuthorType() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorType()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *CommentUpsertOne) SetStatus(v comment.Status) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateStatus() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *CommentUpsertOne) ClearStatus() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearStatus()
+	})
+}
+
+// SetLikeCount sets the "like_count" field.
+func (u *CommentUpsertOne) SetLikeCount(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetLikeCount(v)
+	})
+}
+
+// AddLikeCount adds v to the "like_count" field.
+func (u *CommentUpsertOne) AddLikeCount(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddLikeCount(v)
+	})
+}
+
+// UpdateLikeCount sets the "like_count" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateLikeCount() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateLikeCount()
+	})
+}
+
+// ClearLikeCount clears the value of the "like_count" field.
+func (u *CommentUpsertOne) ClearLikeCount() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearLikeCount()
+	})
+}
+
+// SetDislikeCount sets the "dislike_count" field.
+func (u *CommentUpsertOne) SetDislikeCount(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetDislikeCount(v)
+	})
+}
+
+// AddDislikeCount adds v to the "dislike_count" field.
+func (u *CommentUpsertOne) AddDislikeCount(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddDislikeCount(v)
+	})
+}
+
+// UpdateDislikeCount sets the "dislike_count" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateDislikeCount() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateDislikeCount()
+	})
+}
+
+// ClearDislikeCount clears the value of the "dislike_count" field.
+func (u *CommentUpsertOne) ClearDislikeCount() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearDislikeCount()
+	})
+}
+
+// SetReplyCount sets the "reply_count" field.
+func (u *CommentUpsertOne) SetReplyCount(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetReplyCount(v)
+	})
+}
+
+// AddReplyCount adds v to the "reply_count" field.
+func (u *CommentUpsertOne) AddReplyCount(v uint32) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddReplyCount(v)
+	})
+}
+
+// UpdateReplyCount sets the "reply_count" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateReplyCount() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateReplyCount()
+	})
+}
+
+// ClearReplyCount clears the value of the "reply_count" field.
+func (u *CommentUpsertOne) ClearReplyCount() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearReplyCount()
+	})
+}
+
+// SetIPAddress sets the "ip_address" field.
+func (u *CommentUpsertOne) SetIPAddress(v string) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetIPAddress(v)
+	})
+}
+
+// UpdateIPAddress sets the "ip_address" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateIPAddress() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateIPAddress()
+	})
+}
+
+// ClearIPAddress clears the value of the "ip_address" field.
+func (u *CommentUpsertOne) ClearIPAddress() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearIPAddress()
+	})
+}
+
+// SetLocation sets the "location" field.
+func (u *CommentUpsertOne) SetLocation(v string) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetLocation(v)
+	})
+}
+
+// UpdateLocation sets the "location" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateLocation() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateLocation()
+	})
+}
+
+// ClearLocation clears the value of the "location" field.
+func (u *CommentUpsertOne) ClearLocation() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearLocation()
+	})
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (u *CommentUpsertOne) SetUserAgent(v string) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
@@ -965,122 +1765,94 @@ func (u *CommentUpsertOne) ClearUserAgent() *CommentUpsertOne {
 	})
 }
 
-// SetAvatar sets the "avatar" field.
-func (u *CommentUpsertOne) SetAvatar(v string) *CommentUpsertOne {
+// SetDetectedLanguage sets the "detected_language" field.
+func (u *CommentUpsertOne) SetDetectedLanguage(v string) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetAvatar(v)
+		s.SetDetectedLanguage(v)
 	})
 }
 
-// UpdateAvatar sets the "avatar" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateAvatar() *CommentUpsertOne {
+// UpdateDetectedLanguage sets the "detected_language" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateDetectedLanguage() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAvatar()
+		s.UpdateDetectedLanguage()
 	})
 }
 
-// ClearAvatar clears the value of the "avatar" field.
-func (u *CommentUpsertOne) ClearAvatar() *CommentUpsertOne {
+// ClearDetectedLanguage clears the value of the "detected_language" field.
+func (u *CommentUpsertOne) ClearDetectedLanguage() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearAvatar()
+		s.ClearDetectedLanguage()
 	})
 }
 
-// SetParentID sets the "parent_id" field.
-func (u *CommentUpsertOne) SetParentID(v uint32) *CommentUpsertOne {
+// SetIsSpam sets the "is_spam" field.
+func (u *CommentUpsertOne) SetIsSpam(v bool) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetParentID(v)
+		s.SetIsSpam(v)
 	})
 }
 
-// AddParentID adds v to the "parent_id" field.
-func (u *CommentUpsertOne) AddParentID(v uint32) *CommentUpsertOne {
+// UpdateIsSpam sets the "is_spam" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateIsSpam() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddParentID(v)
+		s.UpdateIsSpam()
 	})
 }
 
-// UpdateParentID sets the "parent_id" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateParentID() *CommentUpsertOne {
+// ClearIsSpam clears the value of the "is_spam" field.
+func (u *CommentUpsertOne) ClearIsSpam() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateParentID()
+		s.ClearIsSpam()
 	})
 }
 
-// ClearParentID clears the value of the "parent_id" field.
-func (u *CommentUpsertOne) ClearParentID() *CommentUpsertOne {
+// SetIsSticky sets the "is_sticky" field.
+func (u *CommentUpsertOne) SetIsSticky(v bool) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearParentID()
+		s.SetIsSticky(v)
 	})
 }
 
-// SetStatus sets the "status" field.
-func (u *CommentUpsertOne) SetStatus(v uint32) *CommentUpsertOne {
+// UpdateIsSticky sets the "is_sticky" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateIsSticky() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetStatus(v)
+		s.UpdateIsSticky()
 	})
 }
 
-// AddStatus adds v to the "status" field.
-func (u *CommentUpsertOne) AddStatus(v uint32) *CommentUpsertOne {
+// ClearIsSticky clears the value of the "is_sticky" field.
+func (u *CommentUpsertOne) ClearIsSticky() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddStatus(v)
+		s.ClearIsSticky()
 	})
 }
 
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateStatus() *CommentUpsertOne {
+// SetReplyToID sets the "reply_to_id" field.
+func (u *CommentUpsertOne) SetReplyToID(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateStatus()
+		s.SetReplyToID(v)
 	})
 }
 
-// ClearStatus clears the value of the "status" field.
-func (u *CommentUpsertOne) ClearStatus() *CommentUpsertOne {
+// AddReplyToID adds v to the "reply_to_id" field.
+func (u *CommentUpsertOne) AddReplyToID(v uint32) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearStatus()
+		s.AddReplyToID(v)
 	})
 }
 
-// SetIsAdmin sets the "is_admin" field.
-func (u *CommentUpsertOne) SetIsAdmin(v bool) *CommentUpsertOne {
+// UpdateReplyToID sets the "reply_to_id" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateReplyToID() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetIsAdmin(v)
+		s.UpdateReplyToID()
 	})
 }
 
-// UpdateIsAdmin sets the "is_admin" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateIsAdmin() *CommentUpsertOne {
+// ClearReplyToID clears the value of the "reply_to_id" field.
+func (u *CommentUpsertOne) ClearReplyToID() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateIsAdmin()
-	})
-}
-
-// ClearIsAdmin clears the value of the "is_admin" field.
-func (u *CommentUpsertOne) ClearIsAdmin() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearIsAdmin()
-	})
-}
-
-// SetAllowNotification sets the "allow_notification" field.
-func (u *CommentUpsertOne) SetAllowNotification(v bool) *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetAllowNotification(v)
-	})
-}
-
-// UpdateAllowNotification sets the "allow_notification" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateAllowNotification() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAllowNotification()
-	})
-}
-
-// ClearAllowNotification clears the value of the "allow_notification" field.
-func (u *CommentUpsertOne) ClearAllowNotification() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearAllowNotification()
+		s.ClearReplyToID()
 	})
 }
 
@@ -1126,16 +1898,16 @@ type CommentCreateBulk struct {
 }
 
 // Save creates the Comment entities in the database.
-func (ccb *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
-	if ccb.err != nil {
-		return nil, ccb.err
+func (_c *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(ccb.builders))
-	nodes := make([]*Comment, len(ccb.builders))
-	mutators := make([]Mutator, len(ccb.builders))
-	for i := range ccb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Comment, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := ccb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*CommentMutation)
@@ -1149,12 +1921,12 @@ func (ccb *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, ccb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
-					spec.OnConflict = ccb.conflict
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, ccb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -1178,7 +1950,7 @@ func (ccb *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, ccb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -1186,8 +1958,8 @@ func (ccb *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ccb *CommentCreateBulk) SaveX(ctx context.Context) []*Comment {
-	v, err := ccb.Save(ctx)
+func (_c *CommentCreateBulk) SaveX(ctx context.Context) []*Comment {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -1195,14 +1967,14 @@ func (ccb *CommentCreateBulk) SaveX(ctx context.Context) []*Comment {
 }
 
 // Exec executes the query.
-func (ccb *CommentCreateBulk) Exec(ctx context.Context) error {
-	_, err := ccb.Save(ctx)
+func (_c *CommentCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ccb *CommentCreateBulk) ExecX(ctx context.Context) {
-	if err := ccb.Exec(ctx); err != nil {
+func (_c *CommentCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
@@ -1219,13 +1991,13 @@ func (ccb *CommentCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CommentUpsert) {
-//			SetCreateTime(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-func (ccb *CommentCreateBulk) OnConflict(opts ...sql.ConflictOption) *CommentUpsertBulk {
-	ccb.conflict = opts
+func (_c *CommentCreateBulk) OnConflict(opts ...sql.ConflictOption) *CommentUpsertBulk {
+	_c.conflict = opts
 	return &CommentUpsertBulk{
-		create: ccb,
+		create: _c,
 	}
 }
 
@@ -1235,10 +2007,10 @@ func (ccb *CommentCreateBulk) OnConflict(opts ...sql.ConflictOption) *CommentUps
 //	client.Comment.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (ccb *CommentCreateBulk) OnConflictColumns(columns ...string) *CommentUpsertBulk {
-	ccb.conflict = append(ccb.conflict, sql.ConflictColumns(columns...))
+func (_c *CommentCreateBulk) OnConflictColumns(columns ...string) *CommentUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
 	return &CommentUpsertBulk{
-		create: ccb,
+		create: _c,
 	}
 }
 
@@ -1266,8 +2038,8 @@ func (u *CommentUpsertBulk) UpdateNewValues() *CommentUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(comment.FieldID)
 			}
-			if _, exists := b.mutation.CreateTime(); exists {
-				s.SetIgnore(comment.FieldCreateTime)
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(comment.FieldCreatedAt)
 			}
 		}
 	}))
@@ -1301,164 +2073,199 @@ func (u *CommentUpsertBulk) Update(set func(*CommentUpsert)) *CommentUpsertBulk 
 	return u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (u *CommentUpsertBulk) SetUpdateTime(v int64) *CommentUpsertBulk {
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CommentUpsertBulk) SetUpdatedAt(v time.Time) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetUpdateTime(v)
+		s.SetUpdatedAt(v)
 	})
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *CommentUpsertBulk) AddUpdateTime(v int64) *CommentUpsertBulk {
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateUpdatedAt() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddUpdateTime(v)
+		s.UpdateUpdatedAt()
 	})
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateUpdateTime() *CommentUpsertBulk {
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *CommentUpsertBulk) ClearUpdatedAt() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateUpdateTime()
+		s.ClearUpdatedAt()
 	})
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *CommentUpsertBulk) ClearUpdateTime() *CommentUpsertBulk {
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CommentUpsertBulk) SetDeletedAt(v time.Time) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearUpdateTime()
+		s.SetDeletedAt(v)
 	})
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *CommentUpsertBulk) SetDeleteTime(v int64) *CommentUpsertBulk {
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateDeletedAt() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetDeleteTime(v)
+		s.UpdateDeletedAt()
 	})
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *CommentUpsertBulk) AddDeleteTime(v int64) *CommentUpsertBulk {
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *CommentUpsertBulk) ClearDeletedAt() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddDeleteTime(v)
+		s.ClearDeletedAt()
 	})
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateDeleteTime() *CommentUpsertBulk {
+// SetCreatedBy sets the "created_by" field.
+func (u *CommentUpsertBulk) SetCreatedBy(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateDeleteTime()
+		s.SetCreatedBy(v)
 	})
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *CommentUpsertBulk) ClearDeleteTime() *CommentUpsertBulk {
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CommentUpsertBulk) AddCreatedBy(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearDeleteTime()
+		s.AddCreatedBy(v)
 	})
 }
 
-// SetAuthor sets the "author" field.
-func (u *CommentUpsertBulk) SetAuthor(v string) *CommentUpsertBulk {
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateCreatedBy() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetAuthor(v)
+		s.UpdateCreatedBy()
 	})
 }
 
-// UpdateAuthor sets the "author" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateAuthor() *CommentUpsertBulk {
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *CommentUpsertBulk) ClearCreatedBy() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAuthor()
+		s.ClearCreatedBy()
 	})
 }
 
-// ClearAuthor clears the value of the "author" field.
-func (u *CommentUpsertBulk) ClearAuthor() *CommentUpsertBulk {
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CommentUpsertBulk) SetUpdatedBy(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearAuthor()
+		s.SetUpdatedBy(v)
 	})
 }
 
-// SetEmail sets the "email" field.
-func (u *CommentUpsertBulk) SetEmail(v string) *CommentUpsertBulk {
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CommentUpsertBulk) AddUpdatedBy(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetEmail(v)
+		s.AddUpdatedBy(v)
 	})
 }
 
-// UpdateEmail sets the "email" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateEmail() *CommentUpsertBulk {
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateUpdatedBy() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateEmail()
+		s.UpdateUpdatedBy()
 	})
 }
 
-// ClearEmail clears the value of the "email" field.
-func (u *CommentUpsertBulk) ClearEmail() *CommentUpsertBulk {
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *CommentUpsertBulk) ClearUpdatedBy() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearEmail()
+		s.ClearUpdatedBy()
 	})
 }
 
-// SetIPAddress sets the "ip_address" field.
-func (u *CommentUpsertBulk) SetIPAddress(v string) *CommentUpsertBulk {
+// SetDeletedBy sets the "deleted_by" field.
+func (u *CommentUpsertBulk) SetDeletedBy(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetIPAddress(v)
+		s.SetDeletedBy(v)
 	})
 }
 
-// UpdateIPAddress sets the "ip_address" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateIPAddress() *CommentUpsertBulk {
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *CommentUpsertBulk) AddDeletedBy(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateIPAddress()
+		s.AddDeletedBy(v)
 	})
 }
 
-// ClearIPAddress clears the value of the "ip_address" field.
-func (u *CommentUpsertBulk) ClearIPAddress() *CommentUpsertBulk {
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateDeletedBy() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearIPAddress()
+		s.UpdateDeletedBy()
 	})
 }
 
-// SetAuthorURL sets the "author_url" field.
-func (u *CommentUpsertBulk) SetAuthorURL(v string) *CommentUpsertBulk {
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *CommentUpsertBulk) ClearDeletedBy() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetAuthorURL(v)
+		s.ClearDeletedBy()
 	})
 }
 
-// UpdateAuthorURL sets the "author_url" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateAuthorURL() *CommentUpsertBulk {
+// SetParentID sets the "parent_id" field.
+func (u *CommentUpsertBulk) SetParentID(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAuthorURL()
+		s.SetParentID(v)
 	})
 }
 
-// ClearAuthorURL clears the value of the "author_url" field.
-func (u *CommentUpsertBulk) ClearAuthorURL() *CommentUpsertBulk {
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateParentID() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearAuthorURL()
+		s.UpdateParentID()
 	})
 }
 
-// SetGravatarMd5 sets the "gravatar_md5" field.
-func (u *CommentUpsertBulk) SetGravatarMd5(v string) *CommentUpsertBulk {
+// ClearParentID clears the value of the "parent_id" field.
+func (u *CommentUpsertBulk) ClearParentID() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetGravatarMd5(v)
+		s.ClearParentID()
 	})
 }
 
-// UpdateGravatarMd5 sets the "gravatar_md5" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateGravatarMd5() *CommentUpsertBulk {
+// SetContentType sets the "content_type" field.
+func (u *CommentUpsertBulk) SetContentType(v comment.ContentType) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateGravatarMd5()
+		s.SetContentType(v)
 	})
 }
 
-// ClearGravatarMd5 clears the value of the "gravatar_md5" field.
-func (u *CommentUpsertBulk) ClearGravatarMd5() *CommentUpsertBulk {
+// UpdateContentType sets the "content_type" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateContentType() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearGravatarMd5()
+		s.UpdateContentType()
+	})
+}
+
+// ClearContentType clears the value of the "content_type" field.
+func (u *CommentUpsertBulk) ClearContentType() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearContentType()
+	})
+}
+
+// SetObjectID sets the "object_id" field.
+func (u *CommentUpsertBulk) SetObjectID(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetObjectID(v)
+	})
+}
+
+// AddObjectID adds v to the "object_id" field.
+func (u *CommentUpsertBulk) AddObjectID(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddObjectID(v)
+	})
+}
+
+// UpdateObjectID sets the "object_id" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateObjectID() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateObjectID()
+	})
+}
+
+// ClearObjectID clears the value of the "object_id" field.
+func (u *CommentUpsertBulk) ClearObjectID() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearObjectID()
 	})
 }
 
@@ -1483,6 +2290,265 @@ func (u *CommentUpsertBulk) ClearContent() *CommentUpsertBulk {
 	})
 }
 
+// SetAuthorID sets the "author_id" field.
+func (u *CommentUpsertBulk) SetAuthorID(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorID(v)
+	})
+}
+
+// AddAuthorID adds v to the "author_id" field.
+func (u *CommentUpsertBulk) AddAuthorID(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddAuthorID(v)
+	})
+}
+
+// UpdateAuthorID sets the "author_id" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateAuthorID() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorID()
+	})
+}
+
+// ClearAuthorID clears the value of the "author_id" field.
+func (u *CommentUpsertBulk) ClearAuthorID() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorID()
+	})
+}
+
+// SetAuthorName sets the "author_name" field.
+func (u *CommentUpsertBulk) SetAuthorName(v string) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorName(v)
+	})
+}
+
+// UpdateAuthorName sets the "author_name" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateAuthorName() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorName()
+	})
+}
+
+// ClearAuthorName clears the value of the "author_name" field.
+func (u *CommentUpsertBulk) ClearAuthorName() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorName()
+	})
+}
+
+// SetAuthorEmail sets the "author_email" field.
+func (u *CommentUpsertBulk) SetAuthorEmail(v string) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorEmail(v)
+	})
+}
+
+// UpdateAuthorEmail sets the "author_email" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateAuthorEmail() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorEmail()
+	})
+}
+
+// ClearAuthorEmail clears the value of the "author_email" field.
+func (u *CommentUpsertBulk) ClearAuthorEmail() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorEmail()
+	})
+}
+
+// SetAuthorURL sets the "author_url" field.
+func (u *CommentUpsertBulk) SetAuthorURL(v string) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorURL(v)
+	})
+}
+
+// UpdateAuthorURL sets the "author_url" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateAuthorURL() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorURL()
+	})
+}
+
+// ClearAuthorURL clears the value of the "author_url" field.
+func (u *CommentUpsertBulk) ClearAuthorURL() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorURL()
+	})
+}
+
+// SetAuthorType sets the "author_type" field.
+func (u *CommentUpsertBulk) SetAuthorType(v comment.AuthorType) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetAuthorType(v)
+	})
+}
+
+// UpdateAuthorType sets the "author_type" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateAuthorType() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateAuthorType()
+	})
+}
+
+// ClearAuthorType clears the value of the "author_type" field.
+func (u *CommentUpsertBulk) ClearAuthorType() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearAuthorType()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *CommentUpsertBulk) SetStatus(v comment.Status) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateStatus() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *CommentUpsertBulk) ClearStatus() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearStatus()
+	})
+}
+
+// SetLikeCount sets the "like_count" field.
+func (u *CommentUpsertBulk) SetLikeCount(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetLikeCount(v)
+	})
+}
+
+// AddLikeCount adds v to the "like_count" field.
+func (u *CommentUpsertBulk) AddLikeCount(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddLikeCount(v)
+	})
+}
+
+// UpdateLikeCount sets the "like_count" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateLikeCount() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateLikeCount()
+	})
+}
+
+// ClearLikeCount clears the value of the "like_count" field.
+func (u *CommentUpsertBulk) ClearLikeCount() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearLikeCount()
+	})
+}
+
+// SetDislikeCount sets the "dislike_count" field.
+func (u *CommentUpsertBulk) SetDislikeCount(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetDislikeCount(v)
+	})
+}
+
+// AddDislikeCount adds v to the "dislike_count" field.
+func (u *CommentUpsertBulk) AddDislikeCount(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddDislikeCount(v)
+	})
+}
+
+// UpdateDislikeCount sets the "dislike_count" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateDislikeCount() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateDislikeCount()
+	})
+}
+
+// ClearDislikeCount clears the value of the "dislike_count" field.
+func (u *CommentUpsertBulk) ClearDislikeCount() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearDislikeCount()
+	})
+}
+
+// SetReplyCount sets the "reply_count" field.
+func (u *CommentUpsertBulk) SetReplyCount(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetReplyCount(v)
+	})
+}
+
+// AddReplyCount adds v to the "reply_count" field.
+func (u *CommentUpsertBulk) AddReplyCount(v uint32) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddReplyCount(v)
+	})
+}
+
+// UpdateReplyCount sets the "reply_count" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateReplyCount() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateReplyCount()
+	})
+}
+
+// ClearReplyCount clears the value of the "reply_count" field.
+func (u *CommentUpsertBulk) ClearReplyCount() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearReplyCount()
+	})
+}
+
+// SetIPAddress sets the "ip_address" field.
+func (u *CommentUpsertBulk) SetIPAddress(v string) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetIPAddress(v)
+	})
+}
+
+// UpdateIPAddress sets the "ip_address" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateIPAddress() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateIPAddress()
+	})
+}
+
+// ClearIPAddress clears the value of the "ip_address" field.
+func (u *CommentUpsertBulk) ClearIPAddress() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearIPAddress()
+	})
+}
+
+// SetLocation sets the "location" field.
+func (u *CommentUpsertBulk) SetLocation(v string) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetLocation(v)
+	})
+}
+
+// UpdateLocation sets the "location" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateLocation() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateLocation()
+	})
+}
+
+// ClearLocation clears the value of the "location" field.
+func (u *CommentUpsertBulk) ClearLocation() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearLocation()
+	})
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (u *CommentUpsertBulk) SetUserAgent(v string) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
@@ -1504,122 +2570,94 @@ func (u *CommentUpsertBulk) ClearUserAgent() *CommentUpsertBulk {
 	})
 }
 
-// SetAvatar sets the "avatar" field.
-func (u *CommentUpsertBulk) SetAvatar(v string) *CommentUpsertBulk {
+// SetDetectedLanguage sets the "detected_language" field.
+func (u *CommentUpsertBulk) SetDetectedLanguage(v string) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetAvatar(v)
+		s.SetDetectedLanguage(v)
 	})
 }
 
-// UpdateAvatar sets the "avatar" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateAvatar() *CommentUpsertBulk {
+// UpdateDetectedLanguage sets the "detected_language" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateDetectedLanguage() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAvatar()
+		s.UpdateDetectedLanguage()
 	})
 }
 
-// ClearAvatar clears the value of the "avatar" field.
-func (u *CommentUpsertBulk) ClearAvatar() *CommentUpsertBulk {
+// ClearDetectedLanguage clears the value of the "detected_language" field.
+func (u *CommentUpsertBulk) ClearDetectedLanguage() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearAvatar()
+		s.ClearDetectedLanguage()
 	})
 }
 
-// SetParentID sets the "parent_id" field.
-func (u *CommentUpsertBulk) SetParentID(v uint32) *CommentUpsertBulk {
+// SetIsSpam sets the "is_spam" field.
+func (u *CommentUpsertBulk) SetIsSpam(v bool) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetParentID(v)
+		s.SetIsSpam(v)
 	})
 }
 
-// AddParentID adds v to the "parent_id" field.
-func (u *CommentUpsertBulk) AddParentID(v uint32) *CommentUpsertBulk {
+// UpdateIsSpam sets the "is_spam" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateIsSpam() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddParentID(v)
+		s.UpdateIsSpam()
 	})
 }
 
-// UpdateParentID sets the "parent_id" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateParentID() *CommentUpsertBulk {
+// ClearIsSpam clears the value of the "is_spam" field.
+func (u *CommentUpsertBulk) ClearIsSpam() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateParentID()
+		s.ClearIsSpam()
 	})
 }
 
-// ClearParentID clears the value of the "parent_id" field.
-func (u *CommentUpsertBulk) ClearParentID() *CommentUpsertBulk {
+// SetIsSticky sets the "is_sticky" field.
+func (u *CommentUpsertBulk) SetIsSticky(v bool) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearParentID()
+		s.SetIsSticky(v)
 	})
 }
 
-// SetStatus sets the "status" field.
-func (u *CommentUpsertBulk) SetStatus(v uint32) *CommentUpsertBulk {
+// UpdateIsSticky sets the "is_sticky" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateIsSticky() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetStatus(v)
+		s.UpdateIsSticky()
 	})
 }
 
-// AddStatus adds v to the "status" field.
-func (u *CommentUpsertBulk) AddStatus(v uint32) *CommentUpsertBulk {
+// ClearIsSticky clears the value of the "is_sticky" field.
+func (u *CommentUpsertBulk) ClearIsSticky() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.AddStatus(v)
+		s.ClearIsSticky()
 	})
 }
 
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateStatus() *CommentUpsertBulk {
+// SetReplyToID sets the "reply_to_id" field.
+func (u *CommentUpsertBulk) SetReplyToID(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateStatus()
+		s.SetReplyToID(v)
 	})
 }
 
-// ClearStatus clears the value of the "status" field.
-func (u *CommentUpsertBulk) ClearStatus() *CommentUpsertBulk {
+// AddReplyToID adds v to the "reply_to_id" field.
+func (u *CommentUpsertBulk) AddReplyToID(v uint32) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.ClearStatus()
+		s.AddReplyToID(v)
 	})
 }
 
-// SetIsAdmin sets the "is_admin" field.
-func (u *CommentUpsertBulk) SetIsAdmin(v bool) *CommentUpsertBulk {
+// UpdateReplyToID sets the "reply_to_id" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateReplyToID() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.SetIsAdmin(v)
+		s.UpdateReplyToID()
 	})
 }
 
-// UpdateIsAdmin sets the "is_admin" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateIsAdmin() *CommentUpsertBulk {
+// ClearReplyToID clears the value of the "reply_to_id" field.
+func (u *CommentUpsertBulk) ClearReplyToID() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
-		s.UpdateIsAdmin()
-	})
-}
-
-// ClearIsAdmin clears the value of the "is_admin" field.
-func (u *CommentUpsertBulk) ClearIsAdmin() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearIsAdmin()
-	})
-}
-
-// SetAllowNotification sets the "allow_notification" field.
-func (u *CommentUpsertBulk) SetAllowNotification(v bool) *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetAllowNotification(v)
-	})
-}
-
-// UpdateAllowNotification sets the "allow_notification" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateAllowNotification() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateAllowNotification()
-	})
-}
-
-// ClearAllowNotification clears the value of the "allow_notification" field.
-func (u *CommentUpsertBulk) ClearAllowNotification() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearAllowNotification()
+		s.ClearReplyToID()
 	})
 }
 

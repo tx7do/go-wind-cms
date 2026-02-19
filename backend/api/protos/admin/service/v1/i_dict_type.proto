@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+import "dict/service/v1/dict_type.proto";
+
+// 数据字典分类管理服务
+service DictTypeService {
+  // 分页查询字典类型列表
+  rpc List (pagination.PagingRequest) returns (dict.service.v1.ListDictTypeResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/dict/types"
+    };
+  }
+
+  // 查询字典类型详情
+  rpc Get (dict.service.v1.GetDictTypeRequest) returns (dict.service.v1.DictType) {
+    option (google.api.http) = {
+      get: "/admin/v1/dict/types/{id}"
+      additional_bindings {
+        get: "/admin/v1/dict/types/code/{code}"
+      }
+    };
+  }
+
+  // 创建字典类型
+  rpc Create (dict.service.v1.CreateDictTypeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/dict/types"
+      body: "*"
+    };
+  }
+
+  // 更新字典类型
+  rpc Update (dict.service.v1.UpdateDictTypeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/dict/types/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除字典类型
+  rpc Delete (dict.service.v1.DeleteDictTypeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/dict/types"
+    };
+  }
+}

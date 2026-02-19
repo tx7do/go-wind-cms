@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "identity/service/v1/user.proto";
+import "authentication/service/v1/authentication.proto";
+
+// 用户前台登录认证服务
+service AuthenticationService {
+  // 登录
+  rpc Login (authentication.service.v1.LoginRequest) returns (authentication.service.v1.LoginResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/login"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
+  // 登出
+  rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/logout"
+      body: "*"
+    };
+  }
+}

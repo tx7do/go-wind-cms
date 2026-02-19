@@ -3,7 +3,8 @@
 package tag
 
 import (
-	"kratos-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
@@ -53,24 +54,39 @@ func IDLTE(id uint32) predicate.Tag {
 	return predicate.Tag(sql.FieldLTE(FieldID, id))
 }
 
-// CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
-func CreateTime(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldCreateTime, v))
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UpdateTime applies equality check predicate on the "update_time" field. It's identical to UpdateTimeEQ.
-func UpdateTime(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldUpdateTime, v))
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// DeleteTime applies equality check predicate on the "delete_time" field. It's identical to DeleteTimeEQ.
-func DeleteTime(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldDeleteTime, v))
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldName, v))
+// CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
+func CreatedBy(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldCreatedBy, v))
+}
+
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
+// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
+func DeletedBy(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// SortOrder applies equality check predicate on the "sort_order" field. It's identical to SortOrderEQ.
+func SortOrder(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldSortOrder, v))
 }
 
 // Color applies equality check predicate on the "color" field. It's identical to ColorEQ.
@@ -78,19 +94,19 @@ func Color(v string) predicate.Tag {
 	return predicate.Tag(sql.FieldEQ(FieldColor, v))
 }
 
-// Thumbnail applies equality check predicate on the "thumbnail" field. It's identical to ThumbnailEQ.
-func Thumbnail(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldThumbnail, v))
+// Icon applies equality check predicate on the "icon" field. It's identical to IconEQ.
+func Icon(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldIcon, v))
 }
 
-// Slug applies equality check predicate on the "slug" field. It's identical to SlugEQ.
-func Slug(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldSlug, v))
+// Group applies equality check predicate on the "group" field. It's identical to GroupEQ.
+func Group(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldGroup, v))
 }
 
-// SlugName applies equality check predicate on the "slug_name" field. It's identical to SlugNameEQ.
-func SlugName(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldSlugName, v))
+// IsFeatured applies equality check predicate on the "is_featured" field. It's identical to IsFeaturedEQ.
+func IsFeatured(v bool) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldIsFeatured, v))
 }
 
 // PostCount applies equality check predicate on the "post_count" field. It's identical to PostCountEQ.
@@ -98,229 +114,384 @@ func PostCount(v uint32) predicate.Tag {
 	return predicate.Tag(sql.FieldEQ(FieldPostCount, v))
 }
 
-// CreateTimeEQ applies the EQ predicate on the "create_time" field.
-func CreateTimeEQ(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldCreateTime, v))
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// CreateTimeNEQ applies the NEQ predicate on the "create_time" field.
-func CreateTimeNEQ(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldNEQ(FieldCreateTime, v))
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
-// CreateTimeIn applies the In predicate on the "create_time" field.
-func CreateTimeIn(vs ...int64) predicate.Tag {
-	return predicate.Tag(sql.FieldIn(FieldCreateTime, vs...))
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
-// CreateTimeNotIn applies the NotIn predicate on the "create_time" field.
-func CreateTimeNotIn(vs ...int64) predicate.Tag {
-	return predicate.Tag(sql.FieldNotIn(FieldCreateTime, vs...))
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
-// CreateTimeGT applies the GT predicate on the "create_time" field.
-func CreateTimeGT(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldGT(FieldCreateTime, v))
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldCreatedAt, v))
 }
 
-// CreateTimeGTE applies the GTE predicate on the "create_time" field.
-func CreateTimeGTE(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldGTE(FieldCreateTime, v))
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldCreatedAt, v))
 }
 
-// CreateTimeLT applies the LT predicate on the "create_time" field.
-func CreateTimeLT(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldLT(FieldCreateTime, v))
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldCreatedAt, v))
 }
 
-// CreateTimeLTE applies the LTE predicate on the "create_time" field.
-func CreateTimeLTE(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldLTE(FieldCreateTime, v))
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreateTimeIsNil applies the IsNil predicate on the "create_time" field.
-func CreateTimeIsNil() predicate.Tag {
-	return predicate.Tag(sql.FieldIsNull(FieldCreateTime))
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldCreatedAt))
 }
 
-// CreateTimeNotNil applies the NotNil predicate on the "create_time" field.
-func CreateTimeNotNil() predicate.Tag {
-	return predicate.Tag(sql.FieldNotNull(FieldCreateTime))
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldCreatedAt))
 }
 
-// UpdateTimeEQ applies the EQ predicate on the "update_time" field.
-func UpdateTimeEQ(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldUpdateTime, v))
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// UpdateTimeNEQ applies the NEQ predicate on the "update_time" field.
-func UpdateTimeNEQ(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldNEQ(FieldUpdateTime, v))
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldUpdatedAt, v))
 }
 
-// UpdateTimeIn applies the In predicate on the "update_time" field.
-func UpdateTimeIn(vs ...int64) predicate.Tag {
-	return predicate.Tag(sql.FieldIn(FieldUpdateTime, vs...))
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldUpdatedAt, vs...))
 }
 
-// UpdateTimeNotIn applies the NotIn predicate on the "update_time" field.
-func UpdateTimeNotIn(vs ...int64) predicate.Tag {
-	return predicate.Tag(sql.FieldNotIn(FieldUpdateTime, vs...))
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldUpdatedAt, vs...))
 }
 
-// UpdateTimeGT applies the GT predicate on the "update_time" field.
-func UpdateTimeGT(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldGT(FieldUpdateTime, v))
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldUpdatedAt, v))
 }
 
-// UpdateTimeGTE applies the GTE predicate on the "update_time" field.
-func UpdateTimeGTE(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldGTE(FieldUpdateTime, v))
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldUpdatedAt, v))
 }
 
-// UpdateTimeLT applies the LT predicate on the "update_time" field.
-func UpdateTimeLT(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldLT(FieldUpdateTime, v))
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldUpdatedAt, v))
 }
 
-// UpdateTimeLTE applies the LTE predicate on the "update_time" field.
-func UpdateTimeLTE(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldLTE(FieldUpdateTime, v))
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdateTimeIsNil applies the IsNil predicate on the "update_time" field.
-func UpdateTimeIsNil() predicate.Tag {
-	return predicate.Tag(sql.FieldIsNull(FieldUpdateTime))
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldUpdatedAt))
 }
 
-// UpdateTimeNotNil applies the NotNil predicate on the "update_time" field.
-func UpdateTimeNotNil() predicate.Tag {
-	return predicate.Tag(sql.FieldNotNull(FieldUpdateTime))
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldUpdatedAt))
 }
 
-// DeleteTimeEQ applies the EQ predicate on the "delete_time" field.
-func DeleteTimeEQ(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldDeleteTime, v))
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// DeleteTimeNEQ applies the NEQ predicate on the "delete_time" field.
-func DeleteTimeNEQ(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldNEQ(FieldDeleteTime, v))
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldDeletedAt, v))
 }
 
-// DeleteTimeIn applies the In predicate on the "delete_time" field.
-func DeleteTimeIn(vs ...int64) predicate.Tag {
-	return predicate.Tag(sql.FieldIn(FieldDeleteTime, vs...))
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldDeletedAt, vs...))
 }
 
-// DeleteTimeNotIn applies the NotIn predicate on the "delete_time" field.
-func DeleteTimeNotIn(vs ...int64) predicate.Tag {
-	return predicate.Tag(sql.FieldNotIn(FieldDeleteTime, vs...))
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldDeletedAt, vs...))
 }
 
-// DeleteTimeGT applies the GT predicate on the "delete_time" field.
-func DeleteTimeGT(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldGT(FieldDeleteTime, v))
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldDeletedAt, v))
 }
 
-// DeleteTimeGTE applies the GTE predicate on the "delete_time" field.
-func DeleteTimeGTE(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldGTE(FieldDeleteTime, v))
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldDeletedAt, v))
 }
 
-// DeleteTimeLT applies the LT predicate on the "delete_time" field.
-func DeleteTimeLT(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldLT(FieldDeleteTime, v))
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldDeletedAt, v))
 }
 
-// DeleteTimeLTE applies the LTE predicate on the "delete_time" field.
-func DeleteTimeLTE(v int64) predicate.Tag {
-	return predicate.Tag(sql.FieldLTE(FieldDeleteTime, v))
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldDeletedAt, v))
 }
 
-// DeleteTimeIsNil applies the IsNil predicate on the "delete_time" field.
-func DeleteTimeIsNil() predicate.Tag {
-	return predicate.Tag(sql.FieldIsNull(FieldDeleteTime))
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldDeletedAt))
 }
 
-// DeleteTimeNotNil applies the NotNil predicate on the "delete_time" field.
-func DeleteTimeNotNil() predicate.Tag {
-	return predicate.Tag(sql.FieldNotNull(FieldDeleteTime))
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldDeletedAt))
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldName, v))
+// CreatedByEQ applies the EQ predicate on the "created_by" field.
+func CreatedByEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldCreatedBy, v))
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldNEQ(FieldName, v))
+// CreatedByNEQ applies the NEQ predicate on the "created_by" field.
+func CreatedByNEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldIn(FieldName, vs...))
+// CreatedByIn applies the In predicate on the "created_by" field.
+func CreatedByIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldNotIn(FieldName, vs...))
+// CreatedByNotIn applies the NotIn predicate on the "created_by" field.
+func CreatedByNotIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGT(FieldName, v))
+// CreatedByGT applies the GT predicate on the "created_by" field.
+func CreatedByGT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldCreatedBy, v))
 }
 
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGTE(FieldName, v))
+// CreatedByGTE applies the GTE predicate on the "created_by" field.
+func CreatedByGTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldCreatedBy, v))
 }
 
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLT(FieldName, v))
+// CreatedByLT applies the LT predicate on the "created_by" field.
+func CreatedByLT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldCreatedBy, v))
 }
 
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLTE(FieldName, v))
+// CreatedByLTE applies the LTE predicate on the "created_by" field.
+func CreatedByLTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldCreatedBy, v))
 }
 
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContains(FieldName, v))
+// CreatedByIsNil applies the IsNil predicate on the "created_by" field.
+func CreatedByIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldCreatedBy))
 }
 
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasPrefix(FieldName, v))
+// CreatedByNotNil applies the NotNil predicate on the "created_by" field.
+func CreatedByNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldCreatedBy))
 }
 
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasSuffix(FieldName, v))
+// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
+func UpdatedByEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// NameIsNil applies the IsNil predicate on the "name" field.
-func NameIsNil() predicate.Tag {
-	return predicate.Tag(sql.FieldIsNull(FieldName))
+// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
+func UpdatedByNEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
-// NameNotNil applies the NotNil predicate on the "name" field.
-func NameNotNil() predicate.Tag {
-	return predicate.Tag(sql.FieldNotNull(FieldName))
+// UpdatedByIn applies the In predicate on the "updated_by" field.
+func UpdatedByIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEqualFold(FieldName, v))
+// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
+func UpdatedByNotIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContainsFold(FieldName, v))
+// UpdatedByGT applies the GT predicate on the "updated_by" field.
+func UpdatedByGT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldUpdatedBy, v))
+}
+
+// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
+func UpdatedByGTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByLT applies the LT predicate on the "updated_by" field.
+func UpdatedByLT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldUpdatedBy, v))
+}
+
+// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
+func UpdatedByLTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldUpdatedBy))
+}
+
+// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
+func DeletedByEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
+func DeletedByNEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldDeletedBy, v))
+}
+
+// DeletedByIn applies the In predicate on the "deleted_by" field.
+func DeletedByIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
+func DeletedByNotIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByGT applies the GT predicate on the "deleted_by" field.
+func DeletedByGT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldDeletedBy, v))
+}
+
+// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
+func DeletedByGTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldDeletedBy, v))
+}
+
+// DeletedByLT applies the LT predicate on the "deleted_by" field.
+func DeletedByLT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldDeletedBy, v))
+}
+
+// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
+func DeletedByLTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldDeletedBy, v))
+}
+
+// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
+func DeletedByIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldDeletedBy))
+}
+
+// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
+func DeletedByNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// SortOrderEQ applies the EQ predicate on the "sort_order" field.
+func SortOrderEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldSortOrder, v))
+}
+
+// SortOrderNEQ applies the NEQ predicate on the "sort_order" field.
+func SortOrderNEQ(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldSortOrder, v))
+}
+
+// SortOrderIn applies the In predicate on the "sort_order" field.
+func SortOrderIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldSortOrder, vs...))
+}
+
+// SortOrderNotIn applies the NotIn predicate on the "sort_order" field.
+func SortOrderNotIn(vs ...uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldSortOrder, vs...))
+}
+
+// SortOrderGT applies the GT predicate on the "sort_order" field.
+func SortOrderGT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldSortOrder, v))
+}
+
+// SortOrderGTE applies the GTE predicate on the "sort_order" field.
+func SortOrderGTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldSortOrder, v))
+}
+
+// SortOrderLT applies the LT predicate on the "sort_order" field.
+func SortOrderLT(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldSortOrder, v))
+}
+
+// SortOrderLTE applies the LTE predicate on the "sort_order" field.
+func SortOrderLTE(v uint32) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldSortOrder, v))
+}
+
+// SortOrderIsNil applies the IsNil predicate on the "sort_order" field.
+func SortOrderIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldSortOrder))
+}
+
+// SortOrderNotNil applies the NotNil predicate on the "sort_order" field.
+func SortOrderNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldSortOrder))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v Status) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v Status) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...Status) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...Status) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldStatus))
+}
+
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldStatus))
 }
 
 // ColorEQ applies the EQ predicate on the "color" field.
@@ -398,229 +569,174 @@ func ColorContainsFold(v string) predicate.Tag {
 	return predicate.Tag(sql.FieldContainsFold(FieldColor, v))
 }
 
-// ThumbnailEQ applies the EQ predicate on the "thumbnail" field.
-func ThumbnailEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldThumbnail, v))
+// IconEQ applies the EQ predicate on the "icon" field.
+func IconEQ(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldIcon, v))
 }
 
-// ThumbnailNEQ applies the NEQ predicate on the "thumbnail" field.
-func ThumbnailNEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldNEQ(FieldThumbnail, v))
+// IconNEQ applies the NEQ predicate on the "icon" field.
+func IconNEQ(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldIcon, v))
 }
 
-// ThumbnailIn applies the In predicate on the "thumbnail" field.
-func ThumbnailIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldIn(FieldThumbnail, vs...))
+// IconIn applies the In predicate on the "icon" field.
+func IconIn(vs ...string) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldIcon, vs...))
 }
 
-// ThumbnailNotIn applies the NotIn predicate on the "thumbnail" field.
-func ThumbnailNotIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldNotIn(FieldThumbnail, vs...))
+// IconNotIn applies the NotIn predicate on the "icon" field.
+func IconNotIn(vs ...string) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldIcon, vs...))
 }
 
-// ThumbnailGT applies the GT predicate on the "thumbnail" field.
-func ThumbnailGT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGT(FieldThumbnail, v))
+// IconGT applies the GT predicate on the "icon" field.
+func IconGT(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldIcon, v))
 }
 
-// ThumbnailGTE applies the GTE predicate on the "thumbnail" field.
-func ThumbnailGTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGTE(FieldThumbnail, v))
+// IconGTE applies the GTE predicate on the "icon" field.
+func IconGTE(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldIcon, v))
 }
 
-// ThumbnailLT applies the LT predicate on the "thumbnail" field.
-func ThumbnailLT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLT(FieldThumbnail, v))
+// IconLT applies the LT predicate on the "icon" field.
+func IconLT(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldIcon, v))
 }
 
-// ThumbnailLTE applies the LTE predicate on the "thumbnail" field.
-func ThumbnailLTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLTE(FieldThumbnail, v))
+// IconLTE applies the LTE predicate on the "icon" field.
+func IconLTE(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldIcon, v))
 }
 
-// ThumbnailContains applies the Contains predicate on the "thumbnail" field.
-func ThumbnailContains(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContains(FieldThumbnail, v))
+// IconContains applies the Contains predicate on the "icon" field.
+func IconContains(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldContains(FieldIcon, v))
 }
 
-// ThumbnailHasPrefix applies the HasPrefix predicate on the "thumbnail" field.
-func ThumbnailHasPrefix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasPrefix(FieldThumbnail, v))
+// IconHasPrefix applies the HasPrefix predicate on the "icon" field.
+func IconHasPrefix(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldHasPrefix(FieldIcon, v))
 }
 
-// ThumbnailHasSuffix applies the HasSuffix predicate on the "thumbnail" field.
-func ThumbnailHasSuffix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasSuffix(FieldThumbnail, v))
+// IconHasSuffix applies the HasSuffix predicate on the "icon" field.
+func IconHasSuffix(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldHasSuffix(FieldIcon, v))
 }
 
-// ThumbnailIsNil applies the IsNil predicate on the "thumbnail" field.
-func ThumbnailIsNil() predicate.Tag {
-	return predicate.Tag(sql.FieldIsNull(FieldThumbnail))
+// IconIsNil applies the IsNil predicate on the "icon" field.
+func IconIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldIcon))
 }
 
-// ThumbnailNotNil applies the NotNil predicate on the "thumbnail" field.
-func ThumbnailNotNil() predicate.Tag {
-	return predicate.Tag(sql.FieldNotNull(FieldThumbnail))
+// IconNotNil applies the NotNil predicate on the "icon" field.
+func IconNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldIcon))
 }
 
-// ThumbnailEqualFold applies the EqualFold predicate on the "thumbnail" field.
-func ThumbnailEqualFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEqualFold(FieldThumbnail, v))
+// IconEqualFold applies the EqualFold predicate on the "icon" field.
+func IconEqualFold(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldEqualFold(FieldIcon, v))
 }
 
-// ThumbnailContainsFold applies the ContainsFold predicate on the "thumbnail" field.
-func ThumbnailContainsFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContainsFold(FieldThumbnail, v))
+// IconContainsFold applies the ContainsFold predicate on the "icon" field.
+func IconContainsFold(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldContainsFold(FieldIcon, v))
 }
 
-// SlugEQ applies the EQ predicate on the "slug" field.
-func SlugEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldSlug, v))
+// GroupEQ applies the EQ predicate on the "group" field.
+func GroupEQ(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldGroup, v))
 }
 
-// SlugNEQ applies the NEQ predicate on the "slug" field.
-func SlugNEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldNEQ(FieldSlug, v))
+// GroupNEQ applies the NEQ predicate on the "group" field.
+func GroupNEQ(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldGroup, v))
 }
 
-// SlugIn applies the In predicate on the "slug" field.
-func SlugIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldIn(FieldSlug, vs...))
+// GroupIn applies the In predicate on the "group" field.
+func GroupIn(vs ...string) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldGroup, vs...))
 }
 
-// SlugNotIn applies the NotIn predicate on the "slug" field.
-func SlugNotIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldNotIn(FieldSlug, vs...))
+// GroupNotIn applies the NotIn predicate on the "group" field.
+func GroupNotIn(vs ...string) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldGroup, vs...))
 }
 
-// SlugGT applies the GT predicate on the "slug" field.
-func SlugGT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGT(FieldSlug, v))
+// GroupGT applies the GT predicate on the "group" field.
+func GroupGT(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldGT(FieldGroup, v))
 }
 
-// SlugGTE applies the GTE predicate on the "slug" field.
-func SlugGTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGTE(FieldSlug, v))
+// GroupGTE applies the GTE predicate on the "group" field.
+func GroupGTE(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldGTE(FieldGroup, v))
 }
 
-// SlugLT applies the LT predicate on the "slug" field.
-func SlugLT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLT(FieldSlug, v))
+// GroupLT applies the LT predicate on the "group" field.
+func GroupLT(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldLT(FieldGroup, v))
 }
 
-// SlugLTE applies the LTE predicate on the "slug" field.
-func SlugLTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLTE(FieldSlug, v))
+// GroupLTE applies the LTE predicate on the "group" field.
+func GroupLTE(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldLTE(FieldGroup, v))
 }
 
-// SlugContains applies the Contains predicate on the "slug" field.
-func SlugContains(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContains(FieldSlug, v))
+// GroupContains applies the Contains predicate on the "group" field.
+func GroupContains(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldContains(FieldGroup, v))
 }
 
-// SlugHasPrefix applies the HasPrefix predicate on the "slug" field.
-func SlugHasPrefix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasPrefix(FieldSlug, v))
+// GroupHasPrefix applies the HasPrefix predicate on the "group" field.
+func GroupHasPrefix(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldHasPrefix(FieldGroup, v))
 }
 
-// SlugHasSuffix applies the HasSuffix predicate on the "slug" field.
-func SlugHasSuffix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasSuffix(FieldSlug, v))
+// GroupHasSuffix applies the HasSuffix predicate on the "group" field.
+func GroupHasSuffix(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldHasSuffix(FieldGroup, v))
 }
 
-// SlugIsNil applies the IsNil predicate on the "slug" field.
-func SlugIsNil() predicate.Tag {
-	return predicate.Tag(sql.FieldIsNull(FieldSlug))
+// GroupIsNil applies the IsNil predicate on the "group" field.
+func GroupIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldGroup))
 }
 
-// SlugNotNil applies the NotNil predicate on the "slug" field.
-func SlugNotNil() predicate.Tag {
-	return predicate.Tag(sql.FieldNotNull(FieldSlug))
+// GroupNotNil applies the NotNil predicate on the "group" field.
+func GroupNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldGroup))
 }
 
-// SlugEqualFold applies the EqualFold predicate on the "slug" field.
-func SlugEqualFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEqualFold(FieldSlug, v))
+// GroupEqualFold applies the EqualFold predicate on the "group" field.
+func GroupEqualFold(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldEqualFold(FieldGroup, v))
 }
 
-// SlugContainsFold applies the ContainsFold predicate on the "slug" field.
-func SlugContainsFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContainsFold(FieldSlug, v))
+// GroupContainsFold applies the ContainsFold predicate on the "group" field.
+func GroupContainsFold(v string) predicate.Tag {
+	return predicate.Tag(sql.FieldContainsFold(FieldGroup, v))
 }
 
-// SlugNameEQ applies the EQ predicate on the "slug_name" field.
-func SlugNameEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEQ(FieldSlugName, v))
+// IsFeaturedEQ applies the EQ predicate on the "is_featured" field.
+func IsFeaturedEQ(v bool) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldIsFeatured, v))
 }
 
-// SlugNameNEQ applies the NEQ predicate on the "slug_name" field.
-func SlugNameNEQ(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldNEQ(FieldSlugName, v))
+// IsFeaturedNEQ applies the NEQ predicate on the "is_featured" field.
+func IsFeaturedNEQ(v bool) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldIsFeatured, v))
 }
 
-// SlugNameIn applies the In predicate on the "slug_name" field.
-func SlugNameIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldIn(FieldSlugName, vs...))
+// IsFeaturedIsNil applies the IsNil predicate on the "is_featured" field.
+func IsFeaturedIsNil() predicate.Tag {
+	return predicate.Tag(sql.FieldIsNull(FieldIsFeatured))
 }
 
-// SlugNameNotIn applies the NotIn predicate on the "slug_name" field.
-func SlugNameNotIn(vs ...string) predicate.Tag {
-	return predicate.Tag(sql.FieldNotIn(FieldSlugName, vs...))
-}
-
-// SlugNameGT applies the GT predicate on the "slug_name" field.
-func SlugNameGT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGT(FieldSlugName, v))
-}
-
-// SlugNameGTE applies the GTE predicate on the "slug_name" field.
-func SlugNameGTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldGTE(FieldSlugName, v))
-}
-
-// SlugNameLT applies the LT predicate on the "slug_name" field.
-func SlugNameLT(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLT(FieldSlugName, v))
-}
-
-// SlugNameLTE applies the LTE predicate on the "slug_name" field.
-func SlugNameLTE(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldLTE(FieldSlugName, v))
-}
-
-// SlugNameContains applies the Contains predicate on the "slug_name" field.
-func SlugNameContains(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContains(FieldSlugName, v))
-}
-
-// SlugNameHasPrefix applies the HasPrefix predicate on the "slug_name" field.
-func SlugNameHasPrefix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasPrefix(FieldSlugName, v))
-}
-
-// SlugNameHasSuffix applies the HasSuffix predicate on the "slug_name" field.
-func SlugNameHasSuffix(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldHasSuffix(FieldSlugName, v))
-}
-
-// SlugNameIsNil applies the IsNil predicate on the "slug_name" field.
-func SlugNameIsNil() predicate.Tag {
-	return predicate.Tag(sql.FieldIsNull(FieldSlugName))
-}
-
-// SlugNameNotNil applies the NotNil predicate on the "slug_name" field.
-func SlugNameNotNil() predicate.Tag {
-	return predicate.Tag(sql.FieldNotNull(FieldSlugName))
-}
-
-// SlugNameEqualFold applies the EqualFold predicate on the "slug_name" field.
-func SlugNameEqualFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldEqualFold(FieldSlugName, v))
-}
-
-// SlugNameContainsFold applies the ContainsFold predicate on the "slug_name" field.
-func SlugNameContainsFold(v string) predicate.Tag {
-	return predicate.Tag(sql.FieldContainsFold(FieldSlugName, v))
+// IsFeaturedNotNil applies the NotNil predicate on the "is_featured" field.
+func IsFeaturedNotNil() predicate.Tag {
+	return predicate.Tag(sql.FieldNotNull(FieldIsFeatured))
 }
 
 // PostCountEQ applies the EQ predicate on the "post_count" field.

@@ -3,6 +3,8 @@
 package tag
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -11,39 +13,51 @@ const (
 	Label = "tag"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreateTime holds the string denoting the create_time field in the database.
-	FieldCreateTime = "create_time"
-	// FieldUpdateTime holds the string denoting the update_time field in the database.
-	FieldUpdateTime = "update_time"
-	// FieldDeleteTime holds the string denoting the delete_time field in the database.
-	FieldDeleteTime = "delete_time"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
+	// FieldCreatedBy holds the string denoting the created_by field in the database.
+	FieldCreatedBy = "created_by"
+	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
+	FieldUpdatedBy = "updated_by"
+	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
+	FieldDeletedBy = "deleted_by"
+	// FieldSortOrder holds the string denoting the sort_order field in the database.
+	FieldSortOrder = "sort_order"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// FieldColor holds the string denoting the color field in the database.
 	FieldColor = "color"
-	// FieldThumbnail holds the string denoting the thumbnail field in the database.
-	FieldThumbnail = "thumbnail"
-	// FieldSlug holds the string denoting the slug field in the database.
-	FieldSlug = "slug"
-	// FieldSlugName holds the string denoting the slug_name field in the database.
-	FieldSlugName = "slug_name"
+	// FieldIcon holds the string denoting the icon field in the database.
+	FieldIcon = "icon"
+	// FieldGroup holds the string denoting the group field in the database.
+	FieldGroup = "group"
+	// FieldIsFeatured holds the string denoting the is_featured field in the database.
+	FieldIsFeatured = "is_featured"
 	// FieldPostCount holds the string denoting the post_count field in the database.
 	FieldPostCount = "post_count"
 	// Table holds the table name of the tag in the database.
-	Table = "tag"
+	Table = "tags"
 )
 
 // Columns holds all SQL columns for tag fields.
 var Columns = []string{
 	FieldID,
-	FieldCreateTime,
-	FieldUpdateTime,
-	FieldDeleteTime,
-	FieldName,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeletedAt,
+	FieldCreatedBy,
+	FieldUpdatedBy,
+	FieldDeletedBy,
+	FieldSortOrder,
+	FieldStatus,
 	FieldColor,
-	FieldThumbnail,
-	FieldSlug,
-	FieldSlugName,
+	FieldIcon,
+	FieldGroup,
+	FieldIsFeatured,
 	FieldPostCount,
 }
 
@@ -58,15 +72,40 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreateTime holds the default value on creation for the "create_time" field.
-	DefaultCreateTime func() int64
-	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
-	UpdateDefaultUpdateTime func() int64
-	// NameValidator is a validator for the "name" field. It is called by the builders before save.
-	NameValidator func(string) error
+	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
+	DefaultSortOrder uint32
+	// DefaultIsFeatured holds the default value on creation for the "is_featured" field.
+	DefaultIsFeatured bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusTAG_STATUS_ACTIVE is the default value of the Status enum.
+const DefaultStatus = StatusTAG_STATUS_ACTIVE
+
+// Status values.
+const (
+	StatusTAG_STATUS_ACTIVE   Status = "TAG_STATUS_ACTIVE"
+	StatusTAG_STATUS_HIDDEN   Status = "TAG_STATUS_HIDDEN"
+	StatusTAG_STATUS_ARCHIVED Status = "TAG_STATUS_ARCHIVED"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusTAG_STATUS_ACTIVE, StatusTAG_STATUS_HIDDEN, StatusTAG_STATUS_ARCHIVED:
+		return nil
+	default:
+		return fmt.Errorf("tag: invalid enum value for status field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the Tag queries.
 type OrderOption func(*sql.Selector)
@@ -76,24 +115,44 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByCreateTime orders the results by the create_time field.
-func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
-// ByUpdateTime orders the results by the update_time field.
-func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByDeleteTime orders the results by the delete_time field.
-func ByDeleteTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleteTime, opts...).ToFunc()
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
-// ByName orders the results by the name field.
-func ByName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldName, opts...).ToFunc()
+// ByCreatedBy orders the results by the created_by field.
+func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedBy, opts...).ToFunc()
+}
+
+// ByUpdatedBy orders the results by the updated_by field.
+func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
+}
+
+// ByDeletedBy orders the results by the deleted_by field.
+func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
+// BySortOrder orders the results by the sort_order field.
+func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSortOrder, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 // ByColor orders the results by the color field.
@@ -101,19 +160,19 @@ func ByColor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldColor, opts...).ToFunc()
 }
 
-// ByThumbnail orders the results by the thumbnail field.
-func ByThumbnail(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldThumbnail, opts...).ToFunc()
+// ByIcon orders the results by the icon field.
+func ByIcon(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIcon, opts...).ToFunc()
 }
 
-// BySlug orders the results by the slug field.
-func BySlug(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSlug, opts...).ToFunc()
+// ByGroup orders the results by the group field.
+func ByGroup(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGroup, opts...).ToFunc()
 }
 
-// BySlugName orders the results by the slug_name field.
-func BySlugName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSlugName, opts...).ToFunc()
+// ByIsFeatured orders the results by the is_featured field.
+func ByIsFeatured(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsFeatured, opts...).ToFunc()
 }
 
 // ByPostCount orders the results by the post_count field.

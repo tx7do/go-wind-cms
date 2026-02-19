@@ -1,0 +1,221 @@
+syntax = "proto3";
+
+package media.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+// 媒体资源库服务
+service MediaAssetService {
+  // 获取媒体资源库列表
+  rpc List (pagination.PagingRequest) returns (ListMediaAssetResponse) {}
+
+  // 获取媒体资源库数据
+  rpc Get (GetMediaAssetRequest) returns (MediaAsset) {}
+
+  // 创建媒体资源库
+  rpc Create (CreateMediaAssetRequest) returns (MediaAsset) {}
+
+  // 更新媒体资源库
+  rpc Update (UpdateMediaAssetRequest) returns (MediaAsset) {}
+
+  // 删除媒体资源库
+  rpc Delete (DeleteMediaAssetRequest) returns (google.protobuf.Empty) {}
+}
+
+// 媒体资源库
+message MediaAsset {
+  // 媒体类型
+  enum AssetType {
+    ASSET_TYPE_UNSPECIFIED = 0;
+
+    ASSET_TYPE_IMAGE = 1;     // 图片
+    ASSET_TYPE_VIDEO = 2;     // 视频
+    ASSET_TYPE_DOCUMENT = 3;  // 文档（如 PDF）
+    ASSET_TYPE_AUDIO = 4;     // 音频
+    ASSET_TYPE_ARCHIVE = 5;   // 压缩包（zip/tar）
+  }
+
+  // 媒体处理状态
+  enum ProcessingStatus {
+    PROCESSING_STATUS_UNSPECIFIED = 0;
+
+    PROCESSING_STATUS_UPLOADING = 1;   // 上传中
+    PROCESSING_STATUS_PROCESSING = 2;  // 处理中（转码/压缩）
+    PROCESSING_STATUS_COMPLETED = 3;   // 处理完成
+    PROCESSING_STATUS_FAILED = 4;      // 处理失败
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "媒体资源库ID"}
+  ]; // 媒体资源库ID
+
+  optional AssetType type = 2 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {description: "媒体类型"}
+  ]; // 媒体类型
+
+  optional string filename = 3 [
+    json_name = "filename",
+    (gnostic.openapi.v3.property) = {description: "原始文件名（含扩展名，如 'cover.jpg'）"}
+  ]; // 原始文件名（含扩展名，如 'cover.jpg'）
+
+  optional string mime_type = 4 [
+    json_name = "mimeType",
+    (gnostic.openapi.v3.property) = {description: "MIME 类型（如 'image/jpeg'）"}
+  ]; // MIME 类型（如 'image/jpeg'）
+
+  optional uint64 size = 5 [
+    json_name = "size",
+    (gnostic.openapi.v3.property) = {description: "文件大小（字节）"}
+  ]; // 文件大小（字节）
+
+  optional string storage_path = 6 [
+    json_name = "storagePath",
+    (gnostic.openapi.v3.property) = {
+      description: "存储路径（对象存储内部路径，如 'assets/2024/06/cover.jpg'）"
+    }
+  ]; // 存储路径（对象存储内部路径，如 'assets/2024/06/cover.jpg'）
+
+  optional string url = 7 [
+    json_name = "url",
+    (gnostic.openapi.v3.property) = {
+      description: "CDN 访问 URL（带签名/过期时间的临时 URL 或永久 URL）"
+    }
+  ]; // CDN 访问 URL（带签名/过期时间的临时 URL 或永久 URL）
+
+  // 尺寸信息（图片/视频）
+  optional uint32 width = 8 [
+    json_name = "width",
+    (gnostic.openapi.v3.property) = {description: "宽度（像素，图片/视频有效）"}
+  ]; // 宽度（像素，图片/视频有效）
+  optional uint32 height = 9 [
+    json_name = "height",
+    (gnostic.openapi.v3.property) = {description: "高度（像素，图片/视频有效）"}
+  ]; // 高度（像素，图片/视频有效）
+  optional uint32 duration = 10 [
+    json_name = "duration",
+    (gnostic.openapi.v3.property) = {description: "时长（秒，视频/音频有效）"}
+  ]; // 时长（秒，视频/音频有效）
+
+  // SEO 与展示
+  optional string alt_text = 11 [
+    json_name = "altText",
+    (gnostic.openapi.v3.property) = {description: "ALT 文本（SEO 优化，图片必需）"}
+  ]; // ALT 文本（SEO 优化，图片必需）
+  optional string title = 12 [
+    json_name = "title",
+    (gnostic.openapi.v3.property) = {description: "标题（后台管理/图库展示用）"}
+  ]; // 标题（后台管理/图库展示用）
+  optional string caption = 13 [
+    json_name = "caption",
+    (gnostic.openapi.v3.property) = {description: "说明文字（前端展示用）"}
+  ]; // 说明文字（前端展示用）
+
+
+  optional ProcessingStatus processing_status = 14 [
+    json_name = "processingStatus",
+    (gnostic.openapi.v3.property) = {description: "媒体处理状态"}
+  ]; // 媒体处理状态
+  optional string processing_error = 15 [
+    json_name = "processingError",
+    (gnostic.openapi.v3.property) = {description: "处理失败时的错误信息"}
+  ]; // 处理失败时的错误信息
+
+  optional string file_hash = 16 [
+    json_name = "fileHash",
+    (gnostic.openapi.v3.property) = {
+      description: "文件哈希值（SHA256，用于去重和完整性校验）"
+    }
+  ]; // 文件哈希值（SHA256，用于去重和完整性校验）
+
+  optional uint32 reference_count = 17 [
+    json_name = "referenceCount",
+    (gnostic.openapi.v3.property) = {description: "被引用次数（用于垃圾回收，0 表示未被任何内容引用）"}
+  ]; // 被引用次数（用于垃圾回收，0 表示未被任何内容引用）
+
+  map<string, uint32> variant_file_ids = 18 [
+    json_name = "variantFileIds",
+    (gnostic.openapi.v3.property) = {description: "变体文件URL（如不同尺寸的图片/不同质量的视频），key为变体名称（如 'thumbnail'、'medium'、'high'），value为对应的文件ID"}
+  ]; // 变体文件URL（如不同尺寸的图片/不同质量的视频），key为变体名称（如 'thumbnail'、'medium'、'high'），value为对应的文件ID
+
+  optional bool is_private = 20 [
+    json_name = "isPrivate",
+    (gnostic.openapi.v3.property) = {description: "是否私密"}
+  ]; // 是否私密（true 表示仅管理员可见，前端不展示）
+
+  optional uint32 file_id = 21 [
+    json_name = "fileId",
+    (gnostic.openapi.v3.property) = {description: "存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）"}
+  ]; // 存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）
+
+  optional uint32 folder_id = 22 [
+    json_name = "folderId",
+    (gnostic.openapi.v3.property) = {description: "所属文件夹ID（0 表示根目录）"}
+  ]; // 所属文件夹ID（0 表示根目录）
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+message MediaVariant {
+
+}
+
+// 回应 - 媒体资源库列表
+message ListMediaAssetResponse {
+  repeated MediaAsset items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 媒体资源库数据
+message GetMediaAssetRequest {
+  uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 请求 - 创建媒体资源库
+message CreateMediaAssetRequest {
+  MediaAsset data = 1;
+}
+
+// 请求 - 更新媒体资源库
+message UpdateMediaAssetRequest {
+  uint32 id = 1;
+
+  MediaAsset data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 请求 - 删除媒体资源库
+message DeleteMediaAssetRequest {
+  uint32 id = 1;
+}

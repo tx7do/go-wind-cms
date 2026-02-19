@@ -6,7 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/category"
+	"go-wind-cms/app/core/service/internal/data/ent/category"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -21,194 +22,262 @@ type CategoryCreate struct {
 	conflict []sql.ConflictOption
 }
 
-// SetCreateTime sets the "create_time" field.
-func (cc *CategoryCreate) SetCreateTime(i int64) *CategoryCreate {
-	cc.mutation.SetCreateTime(i)
-	return cc
+// SetCreatedAt sets the "created_at" field.
+func (_c *CategoryCreate) SetCreatedAt(v time.Time) *CategoryCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
-// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableCreateTime(i *int64) *CategoryCreate {
-	if i != nil {
-		cc.SetCreateTime(*i)
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableCreatedAt(v *time.Time) *CategoryCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (cc *CategoryCreate) SetUpdateTime(i int64) *CategoryCreate {
-	cc.mutation.SetUpdateTime(i)
-	return cc
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *CategoryCreate) SetUpdatedAt(v time.Time) *CategoryCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
-// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableUpdateTime(i *int64) *CategoryCreate {
-	if i != nil {
-		cc.SetUpdateTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableUpdatedAt(v *time.Time) *CategoryCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (cc *CategoryCreate) SetDeleteTime(i int64) *CategoryCreate {
-	cc.mutation.SetDeleteTime(i)
-	return cc
+// SetDeletedAt sets the "deleted_at" field.
+func (_c *CategoryCreate) SetDeletedAt(v time.Time) *CategoryCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
 }
 
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableDeleteTime(i *int64) *CategoryCreate {
-	if i != nil {
-		cc.SetDeleteTime(*i)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableDeletedAt(v *time.Time) *CategoryCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetName sets the "name" field.
-func (cc *CategoryCreate) SetName(s string) *CategoryCreate {
-	cc.mutation.SetName(s)
-	return cc
+// SetCreatedBy sets the "created_by" field.
+func (_c *CategoryCreate) SetCreatedBy(v uint32) *CategoryCreate {
+	_c.mutation.SetCreatedBy(v)
+	return _c
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableName(s *string) *CategoryCreate {
-	if s != nil {
-		cc.SetName(*s)
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableCreatedBy(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetCreatedBy(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetSlug sets the "slug" field.
-func (cc *CategoryCreate) SetSlug(s string) *CategoryCreate {
-	cc.mutation.SetSlug(s)
-	return cc
+// SetUpdatedBy sets the "updated_by" field.
+func (_c *CategoryCreate) SetUpdatedBy(v uint32) *CategoryCreate {
+	_c.mutation.SetUpdatedBy(v)
+	return _c
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableSlug(s *string) *CategoryCreate {
-	if s != nil {
-		cc.SetSlug(*s)
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableUpdatedBy(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetUpdatedBy(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetDescription sets the "description" field.
-func (cc *CategoryCreate) SetDescription(s string) *CategoryCreate {
-	cc.mutation.SetDescription(s)
-	return cc
+// SetDeletedBy sets the "deleted_by" field.
+func (_c *CategoryCreate) SetDeletedBy(v uint32) *CategoryCreate {
+	_c.mutation.SetDeletedBy(v)
+	return _c
 }
 
-// SetNillableDescription sets the "description" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableDescription(s *string) *CategoryCreate {
-	if s != nil {
-		cc.SetDescription(*s)
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableDeletedBy(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetDeletedBy(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (cc *CategoryCreate) SetThumbnail(s string) *CategoryCreate {
-	cc.mutation.SetThumbnail(s)
-	return cc
+// SetSortOrder sets the "sort_order" field.
+func (_c *CategoryCreate) SetSortOrder(v uint32) *CategoryCreate {
+	_c.mutation.SetSortOrder(v)
+	return _c
 }
 
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableThumbnail(s *string) *CategoryCreate {
-	if s != nil {
-		cc.SetThumbnail(*s)
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableSortOrder(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetSortOrder(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetPassword sets the "password" field.
-func (cc *CategoryCreate) SetPassword(s string) *CategoryCreate {
-	cc.mutation.SetPassword(s)
-	return cc
+// SetPath sets the "path" field.
+func (_c *CategoryCreate) SetPath(v string) *CategoryCreate {
+	_c.mutation.SetPath(v)
+	return _c
 }
 
-// SetNillablePassword sets the "password" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillablePassword(s *string) *CategoryCreate {
-	if s != nil {
-		cc.SetPassword(*s)
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillablePath(v *string) *CategoryCreate {
+	if v != nil {
+		_c.SetPath(*v)
 	}
-	return cc
-}
-
-// SetFullPath sets the "full_path" field.
-func (cc *CategoryCreate) SetFullPath(s string) *CategoryCreate {
-	cc.mutation.SetFullPath(s)
-	return cc
-}
-
-// SetNillableFullPath sets the "full_path" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableFullPath(s *string) *CategoryCreate {
-	if s != nil {
-		cc.SetFullPath(*s)
-	}
-	return cc
+	return _c
 }
 
 // SetParentID sets the "parent_id" field.
-func (cc *CategoryCreate) SetParentID(u uint32) *CategoryCreate {
-	cc.mutation.SetParentID(u)
-	return cc
+func (_c *CategoryCreate) SetParentID(v uint32) *CategoryCreate {
+	_c.mutation.SetParentID(v)
+	return _c
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillableParentID(u *uint32) *CategoryCreate {
-	if u != nil {
-		cc.SetParentID(*u)
+func (_c *CategoryCreate) SetNillableParentID(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetParentID(*v)
 	}
-	return cc
+	return _c
 }
 
-// SetPriority sets the "priority" field.
-func (cc *CategoryCreate) SetPriority(i int32) *CategoryCreate {
-	cc.mutation.SetPriority(i)
-	return cc
+// SetStatus sets the "status" field.
+func (_c *CategoryCreate) SetStatus(v category.Status) *CategoryCreate {
+	_c.mutation.SetStatus(v)
+	return _c
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillablePriority(i *int32) *CategoryCreate {
-	if i != nil {
-		cc.SetPriority(*i)
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableStatus(v *category.Status) *CategoryCreate {
+	if v != nil {
+		_c.SetStatus(*v)
 	}
-	return cc
+	return _c
+}
+
+// SetDepth sets the "depth" field.
+func (_c *CategoryCreate) SetDepth(v int32) *CategoryCreate {
+	_c.mutation.SetDepth(v)
+	return _c
+}
+
+// SetNillableDepth sets the "depth" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableDepth(v *int32) *CategoryCreate {
+	if v != nil {
+		_c.SetDepth(*v)
+	}
+	return _c
+}
+
+// SetIsNav sets the "is_nav" field.
+func (_c *CategoryCreate) SetIsNav(v bool) *CategoryCreate {
+	_c.mutation.SetIsNav(v)
+	return _c
+}
+
+// SetNillableIsNav sets the "is_nav" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableIsNav(v *bool) *CategoryCreate {
+	if v != nil {
+		_c.SetIsNav(*v)
+	}
+	return _c
+}
+
+// SetIcon sets the "icon" field.
+func (_c *CategoryCreate) SetIcon(v string) *CategoryCreate {
+	_c.mutation.SetIcon(v)
+	return _c
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableIcon(v *string) *CategoryCreate {
+	if v != nil {
+		_c.SetIcon(*v)
+	}
+	return _c
 }
 
 // SetPostCount sets the "post_count" field.
-func (cc *CategoryCreate) SetPostCount(u uint32) *CategoryCreate {
-	cc.mutation.SetPostCount(u)
-	return cc
+func (_c *CategoryCreate) SetPostCount(v uint32) *CategoryCreate {
+	_c.mutation.SetPostCount(v)
+	return _c
 }
 
 // SetNillablePostCount sets the "post_count" field if the given value is not nil.
-func (cc *CategoryCreate) SetNillablePostCount(u *uint32) *CategoryCreate {
-	if u != nil {
-		cc.SetPostCount(*u)
+func (_c *CategoryCreate) SetNillablePostCount(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetPostCount(*v)
 	}
-	return cc
+	return _c
+}
+
+// SetDirectPostCount sets the "direct_post_count" field.
+func (_c *CategoryCreate) SetDirectPostCount(v uint32) *CategoryCreate {
+	_c.mutation.SetDirectPostCount(v)
+	return _c
+}
+
+// SetNillableDirectPostCount sets the "direct_post_count" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableDirectPostCount(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetDirectPostCount(*v)
+	}
+	return _c
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (_c *CategoryCreate) SetCustomFields(v *map[string]string) *CategoryCreate {
+	_c.mutation.SetCustomFields(v)
+	return _c
 }
 
 // SetID sets the "id" field.
-func (cc *CategoryCreate) SetID(u uint32) *CategoryCreate {
-	cc.mutation.SetID(u)
-	return cc
+func (_c *CategoryCreate) SetID(v uint32) *CategoryCreate {
+	_c.mutation.SetID(v)
+	return _c
+}
+
+// SetParent sets the "parent" edge to the Category entity.
+func (_c *CategoryCreate) SetParent(v *Category) *CategoryCreate {
+	return _c.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Category entity by IDs.
+func (_c *CategoryCreate) AddChildIDs(ids ...uint32) *CategoryCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
+}
+
+// AddChildren adds the "children" edges to the Category entity.
+func (_c *CategoryCreate) AddChildren(v ...*Category) *CategoryCreate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddChildIDs(ids...)
 }
 
 // Mutation returns the CategoryMutation object of the builder.
-func (cc *CategoryCreate) Mutation() *CategoryMutation {
-	return cc.mutation
+func (_c *CategoryCreate) Mutation() *CategoryMutation {
+	return _c.mutation
 }
 
 // Save creates the Category in the database.
-func (cc *CategoryCreate) Save(ctx context.Context) (*Category, error) {
-	cc.defaults()
-	return withHooks(ctx, cc.sqlSave, cc.mutation, cc.hooks)
+func (_c *CategoryCreate) Save(ctx context.Context) (*Category, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (cc *CategoryCreate) SaveX(ctx context.Context) *Category {
-	v, err := cc.Save(ctx)
+func (_c *CategoryCreate) SaveX(ctx context.Context) *Category {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -216,44 +285,39 @@ func (cc *CategoryCreate) SaveX(ctx context.Context) *Category {
 }
 
 // Exec executes the query.
-func (cc *CategoryCreate) Exec(ctx context.Context) error {
-	_, err := cc.Save(ctx)
+func (_c *CategoryCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cc *CategoryCreate) ExecX(ctx context.Context) {
-	if err := cc.Exec(ctx); err != nil {
+func (_c *CategoryCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (cc *CategoryCreate) defaults() {
-	if _, ok := cc.mutation.CreateTime(); !ok {
-		v := category.DefaultCreateTime()
-		cc.mutation.SetCreateTime(v)
+func (_c *CategoryCreate) defaults() {
+	if _, ok := _c.mutation.SortOrder(); !ok {
+		v := category.DefaultSortOrder
+		_c.mutation.SetSortOrder(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cc *CategoryCreate) check() error {
-	if v, ok := cc.mutation.Name(); ok {
-		if err := category.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Category.name": %w`, err)}
+func (_c *CategoryCreate) check() error {
+	if v, ok := _c.mutation.Path(); ok {
+		if err := category.PathValidator(v); err != nil {
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Category.path": %w`, err)}
 		}
 	}
-	if v, ok := cc.mutation.Description(); ok {
-		if err := category.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Category.description": %w`, err)}
+	if v, ok := _c.mutation.Status(); ok {
+		if err := category.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Category.status": %w`, err)}
 		}
 	}
-	if v, ok := cc.mutation.Thumbnail(); ok {
-		if err := category.ThumbnailValidator(v); err != nil {
-			return &ValidationError{Name: "thumbnail", err: fmt.Errorf(`ent: validator failed for field "Category.thumbnail": %w`, err)}
-		}
-	}
-	if v, ok := cc.mutation.ID(); ok {
+	if v, ok := _c.mutation.ID(); ok {
 		if err := category.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Category.id": %w`, err)}
 		}
@@ -261,12 +325,12 @@ func (cc *CategoryCreate) check() error {
 	return nil
 }
 
-func (cc *CategoryCreate) sqlSave(ctx context.Context) (*Category, error) {
-	if err := cc.check(); err != nil {
+func (_c *CategoryCreate) sqlSave(ctx context.Context) (*Category, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := cc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, cc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -276,68 +340,113 @@ func (cc *CategoryCreate) sqlSave(ctx context.Context) (*Category, error) {
 		id := _spec.ID.Value.(int64)
 		_node.ID = uint32(id)
 	}
-	cc.mutation.id = &_node.ID
-	cc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (cc *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
+func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Category{config: cc.config}
+		_node = &Category{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(category.Table, sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32))
 	)
-	_spec.OnConflict = cc.conflict
-	if id, ok := cc.mutation.ID(); ok {
+	_spec.OnConflict = _c.conflict
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := cc.mutation.CreateTime(); ok {
-		_spec.SetField(category.FieldCreateTime, field.TypeInt64, value)
-		_node.CreateTime = &value
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(category.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = &value
 	}
-	if value, ok := cc.mutation.UpdateTime(); ok {
-		_spec.SetField(category.FieldUpdateTime, field.TypeInt64, value)
-		_node.UpdateTime = &value
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(category.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = &value
 	}
-	if value, ok := cc.mutation.DeleteTime(); ok {
-		_spec.SetField(category.FieldDeleteTime, field.TypeInt64, value)
-		_node.DeleteTime = &value
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(category.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
 	}
-	if value, ok := cc.mutation.Name(); ok {
-		_spec.SetField(category.FieldName, field.TypeString, value)
-		_node.Name = &value
+	if value, ok := _c.mutation.CreatedBy(); ok {
+		_spec.SetField(category.FieldCreatedBy, field.TypeUint32, value)
+		_node.CreatedBy = &value
 	}
-	if value, ok := cc.mutation.Slug(); ok {
-		_spec.SetField(category.FieldSlug, field.TypeString, value)
-		_node.Slug = &value
+	if value, ok := _c.mutation.UpdatedBy(); ok {
+		_spec.SetField(category.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = &value
 	}
-	if value, ok := cc.mutation.Description(); ok {
-		_spec.SetField(category.FieldDescription, field.TypeString, value)
-		_node.Description = &value
+	if value, ok := _c.mutation.DeletedBy(); ok {
+		_spec.SetField(category.FieldDeletedBy, field.TypeUint32, value)
+		_node.DeletedBy = &value
 	}
-	if value, ok := cc.mutation.Thumbnail(); ok {
-		_spec.SetField(category.FieldThumbnail, field.TypeString, value)
-		_node.Thumbnail = &value
+	if value, ok := _c.mutation.SortOrder(); ok {
+		_spec.SetField(category.FieldSortOrder, field.TypeUint32, value)
+		_node.SortOrder = &value
 	}
-	if value, ok := cc.mutation.Password(); ok {
-		_spec.SetField(category.FieldPassword, field.TypeString, value)
-		_node.Password = &value
+	if value, ok := _c.mutation.Path(); ok {
+		_spec.SetField(category.FieldPath, field.TypeString, value)
+		_node.Path = &value
 	}
-	if value, ok := cc.mutation.FullPath(); ok {
-		_spec.SetField(category.FieldFullPath, field.TypeString, value)
-		_node.FullPath = &value
+	if value, ok := _c.mutation.Status(); ok {
+		_spec.SetField(category.FieldStatus, field.TypeEnum, value)
+		_node.Status = &value
 	}
-	if value, ok := cc.mutation.ParentID(); ok {
-		_spec.SetField(category.FieldParentID, field.TypeUint32, value)
-		_node.ParentID = &value
+	if value, ok := _c.mutation.Depth(); ok {
+		_spec.SetField(category.FieldDepth, field.TypeInt32, value)
+		_node.Depth = &value
 	}
-	if value, ok := cc.mutation.Priority(); ok {
-		_spec.SetField(category.FieldPriority, field.TypeInt32, value)
-		_node.Priority = &value
+	if value, ok := _c.mutation.IsNav(); ok {
+		_spec.SetField(category.FieldIsNav, field.TypeBool, value)
+		_node.IsNav = &value
 	}
-	if value, ok := cc.mutation.PostCount(); ok {
+	if value, ok := _c.mutation.Icon(); ok {
+		_spec.SetField(category.FieldIcon, field.TypeString, value)
+		_node.Icon = &value
+	}
+	if value, ok := _c.mutation.PostCount(); ok {
 		_spec.SetField(category.FieldPostCount, field.TypeUint32, value)
 		_node.PostCount = &value
+	}
+	if value, ok := _c.mutation.DirectPostCount(); ok {
+		_spec.SetField(category.FieldDirectPostCount, field.TypeUint32, value)
+		_node.DirectPostCount = &value
+	}
+	if value, ok := _c.mutation.CustomFields(); ok {
+		_spec.SetField(category.FieldCustomFields, field.TypeJSON, value)
+		_node.CustomFields = value
+	}
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   category.ParentTable,
+			Columns: []string{category.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ParentID = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   category.ChildrenTable,
+			Columns: []string{category.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -346,7 +455,7 @@ func (cc *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Category.Create().
-//		SetCreateTime(v).
+//		SetCreatedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -355,13 +464,13 @@ func (cc *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CategoryUpsert) {
-//			SetCreateTime(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-func (cc *CategoryCreate) OnConflict(opts ...sql.ConflictOption) *CategoryUpsertOne {
-	cc.conflict = opts
+func (_c *CategoryCreate) OnConflict(opts ...sql.ConflictOption) *CategoryUpsertOne {
+	_c.conflict = opts
 	return &CategoryUpsertOne{
-		create: cc,
+		create: _c,
 	}
 }
 
@@ -371,10 +480,10 @@ func (cc *CategoryCreate) OnConflict(opts ...sql.ConflictOption) *CategoryUpsert
 //	client.Category.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (cc *CategoryCreate) OnConflictColumns(columns ...string) *CategoryUpsertOne {
-	cc.conflict = append(cc.conflict, sql.ConflictColumns(columns...))
+func (_c *CategoryCreate) OnConflictColumns(columns ...string) *CategoryUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
 	return &CategoryUpsertOne{
-		create: cc,
+		create: _c,
 	}
 }
 
@@ -391,159 +500,153 @@ type (
 	}
 )
 
-// SetUpdateTime sets the "update_time" field.
-func (u *CategoryUpsert) SetUpdateTime(v int64) *CategoryUpsert {
-	u.Set(category.FieldUpdateTime, v)
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CategoryUpsert) SetUpdatedAt(v time.Time) *CategoryUpsert {
+	u.Set(category.FieldUpdatedAt, v)
 	return u
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdateUpdateTime() *CategoryUpsert {
-	u.SetExcluded(category.FieldUpdateTime)
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateUpdatedAt() *CategoryUpsert {
+	u.SetExcluded(category.FieldUpdatedAt)
 	return u
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *CategoryUpsert) AddUpdateTime(v int64) *CategoryUpsert {
-	u.Add(category.FieldUpdateTime, v)
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *CategoryUpsert) ClearUpdatedAt() *CategoryUpsert {
+	u.SetNull(category.FieldUpdatedAt)
 	return u
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *CategoryUpsert) ClearUpdateTime() *CategoryUpsert {
-	u.SetNull(category.FieldUpdateTime)
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CategoryUpsert) SetDeletedAt(v time.Time) *CategoryUpsert {
+	u.Set(category.FieldDeletedAt, v)
 	return u
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *CategoryUpsert) SetDeleteTime(v int64) *CategoryUpsert {
-	u.Set(category.FieldDeleteTime, v)
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateDeletedAt() *CategoryUpsert {
+	u.SetExcluded(category.FieldDeletedAt)
 	return u
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdateDeleteTime() *CategoryUpsert {
-	u.SetExcluded(category.FieldDeleteTime)
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *CategoryUpsert) ClearDeletedAt() *CategoryUpsert {
+	u.SetNull(category.FieldDeletedAt)
 	return u
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *CategoryUpsert) AddDeleteTime(v int64) *CategoryUpsert {
-	u.Add(category.FieldDeleteTime, v)
+// SetCreatedBy sets the "created_by" field.
+func (u *CategoryUpsert) SetCreatedBy(v uint32) *CategoryUpsert {
+	u.Set(category.FieldCreatedBy, v)
 	return u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *CategoryUpsert) ClearDeleteTime() *CategoryUpsert {
-	u.SetNull(category.FieldDeleteTime)
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateCreatedBy() *CategoryUpsert {
+	u.SetExcluded(category.FieldCreatedBy)
 	return u
 }
 
-// SetName sets the "name" field.
-func (u *CategoryUpsert) SetName(v string) *CategoryUpsert {
-	u.Set(category.FieldName, v)
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CategoryUpsert) AddCreatedBy(v uint32) *CategoryUpsert {
+	u.Add(category.FieldCreatedBy, v)
 	return u
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdateName() *CategoryUpsert {
-	u.SetExcluded(category.FieldName)
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *CategoryUpsert) ClearCreatedBy() *CategoryUpsert {
+	u.SetNull(category.FieldCreatedBy)
 	return u
 }
 
-// ClearName clears the value of the "name" field.
-func (u *CategoryUpsert) ClearName() *CategoryUpsert {
-	u.SetNull(category.FieldName)
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CategoryUpsert) SetUpdatedBy(v uint32) *CategoryUpsert {
+	u.Set(category.FieldUpdatedBy, v)
 	return u
 }
 
-// SetSlug sets the "slug" field.
-func (u *CategoryUpsert) SetSlug(v string) *CategoryUpsert {
-	u.Set(category.FieldSlug, v)
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateUpdatedBy() *CategoryUpsert {
+	u.SetExcluded(category.FieldUpdatedBy)
 	return u
 }
 
-// UpdateSlug sets the "slug" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdateSlug() *CategoryUpsert {
-	u.SetExcluded(category.FieldSlug)
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CategoryUpsert) AddUpdatedBy(v uint32) *CategoryUpsert {
+	u.Add(category.FieldUpdatedBy, v)
 	return u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (u *CategoryUpsert) ClearSlug() *CategoryUpsert {
-	u.SetNull(category.FieldSlug)
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *CategoryUpsert) ClearUpdatedBy() *CategoryUpsert {
+	u.SetNull(category.FieldUpdatedBy)
 	return u
 }
 
-// SetDescription sets the "description" field.
-func (u *CategoryUpsert) SetDescription(v string) *CategoryUpsert {
-	u.Set(category.FieldDescription, v)
+// SetDeletedBy sets the "deleted_by" field.
+func (u *CategoryUpsert) SetDeletedBy(v uint32) *CategoryUpsert {
+	u.Set(category.FieldDeletedBy, v)
 	return u
 }
 
-// UpdateDescription sets the "description" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdateDescription() *CategoryUpsert {
-	u.SetExcluded(category.FieldDescription)
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateDeletedBy() *CategoryUpsert {
+	u.SetExcluded(category.FieldDeletedBy)
 	return u
 }
 
-// ClearDescription clears the value of the "description" field.
-func (u *CategoryUpsert) ClearDescription() *CategoryUpsert {
-	u.SetNull(category.FieldDescription)
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *CategoryUpsert) AddDeletedBy(v uint32) *CategoryUpsert {
+	u.Add(category.FieldDeletedBy, v)
 	return u
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (u *CategoryUpsert) SetThumbnail(v string) *CategoryUpsert {
-	u.Set(category.FieldThumbnail, v)
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *CategoryUpsert) ClearDeletedBy() *CategoryUpsert {
+	u.SetNull(category.FieldDeletedBy)
 	return u
 }
 
-// UpdateThumbnail sets the "thumbnail" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdateThumbnail() *CategoryUpsert {
-	u.SetExcluded(category.FieldThumbnail)
+// SetSortOrder sets the "sort_order" field.
+func (u *CategoryUpsert) SetSortOrder(v uint32) *CategoryUpsert {
+	u.Set(category.FieldSortOrder, v)
 	return u
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (u *CategoryUpsert) ClearThumbnail() *CategoryUpsert {
-	u.SetNull(category.FieldThumbnail)
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateSortOrder() *CategoryUpsert {
+	u.SetExcluded(category.FieldSortOrder)
 	return u
 }
 
-// SetPassword sets the "password" field.
-func (u *CategoryUpsert) SetPassword(v string) *CategoryUpsert {
-	u.Set(category.FieldPassword, v)
+// AddSortOrder adds v to the "sort_order" field.
+func (u *CategoryUpsert) AddSortOrder(v uint32) *CategoryUpsert {
+	u.Add(category.FieldSortOrder, v)
 	return u
 }
 
-// UpdatePassword sets the "password" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdatePassword() *CategoryUpsert {
-	u.SetExcluded(category.FieldPassword)
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *CategoryUpsert) ClearSortOrder() *CategoryUpsert {
+	u.SetNull(category.FieldSortOrder)
 	return u
 }
 
-// ClearPassword clears the value of the "password" field.
-func (u *CategoryUpsert) ClearPassword() *CategoryUpsert {
-	u.SetNull(category.FieldPassword)
+// SetPath sets the "path" field.
+func (u *CategoryUpsert) SetPath(v string) *CategoryUpsert {
+	u.Set(category.FieldPath, v)
 	return u
 }
 
-// SetFullPath sets the "full_path" field.
-func (u *CategoryUpsert) SetFullPath(v string) *CategoryUpsert {
-	u.Set(category.FieldFullPath, v)
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdatePath() *CategoryUpsert {
+	u.SetExcluded(category.FieldPath)
 	return u
 }
 
-// UpdateFullPath sets the "full_path" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdateFullPath() *CategoryUpsert {
-	u.SetExcluded(category.FieldFullPath)
-	return u
-}
-
-// ClearFullPath clears the value of the "full_path" field.
-func (u *CategoryUpsert) ClearFullPath() *CategoryUpsert {
-	u.SetNull(category.FieldFullPath)
+// ClearPath clears the value of the "path" field.
+func (u *CategoryUpsert) ClearPath() *CategoryUpsert {
+	u.SetNull(category.FieldPath)
 	return u
 }
 
@@ -559,39 +662,87 @@ func (u *CategoryUpsert) UpdateParentID() *CategoryUpsert {
 	return u
 }
 
-// AddParentID adds v to the "parent_id" field.
-func (u *CategoryUpsert) AddParentID(v uint32) *CategoryUpsert {
-	u.Add(category.FieldParentID, v)
-	return u
-}
-
 // ClearParentID clears the value of the "parent_id" field.
 func (u *CategoryUpsert) ClearParentID() *CategoryUpsert {
 	u.SetNull(category.FieldParentID)
 	return u
 }
 
-// SetPriority sets the "priority" field.
-func (u *CategoryUpsert) SetPriority(v int32) *CategoryUpsert {
-	u.Set(category.FieldPriority, v)
+// SetStatus sets the "status" field.
+func (u *CategoryUpsert) SetStatus(v category.Status) *CategoryUpsert {
+	u.Set(category.FieldStatus, v)
 	return u
 }
 
-// UpdatePriority sets the "priority" field to the value that was provided on create.
-func (u *CategoryUpsert) UpdatePriority() *CategoryUpsert {
-	u.SetExcluded(category.FieldPriority)
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateStatus() *CategoryUpsert {
+	u.SetExcluded(category.FieldStatus)
 	return u
 }
 
-// AddPriority adds v to the "priority" field.
-func (u *CategoryUpsert) AddPriority(v int32) *CategoryUpsert {
-	u.Add(category.FieldPriority, v)
+// ClearStatus clears the value of the "status" field.
+func (u *CategoryUpsert) ClearStatus() *CategoryUpsert {
+	u.SetNull(category.FieldStatus)
 	return u
 }
 
-// ClearPriority clears the value of the "priority" field.
-func (u *CategoryUpsert) ClearPriority() *CategoryUpsert {
-	u.SetNull(category.FieldPriority)
+// SetDepth sets the "depth" field.
+func (u *CategoryUpsert) SetDepth(v int32) *CategoryUpsert {
+	u.Set(category.FieldDepth, v)
+	return u
+}
+
+// UpdateDepth sets the "depth" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateDepth() *CategoryUpsert {
+	u.SetExcluded(category.FieldDepth)
+	return u
+}
+
+// AddDepth adds v to the "depth" field.
+func (u *CategoryUpsert) AddDepth(v int32) *CategoryUpsert {
+	u.Add(category.FieldDepth, v)
+	return u
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (u *CategoryUpsert) ClearDepth() *CategoryUpsert {
+	u.SetNull(category.FieldDepth)
+	return u
+}
+
+// SetIsNav sets the "is_nav" field.
+func (u *CategoryUpsert) SetIsNav(v bool) *CategoryUpsert {
+	u.Set(category.FieldIsNav, v)
+	return u
+}
+
+// UpdateIsNav sets the "is_nav" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateIsNav() *CategoryUpsert {
+	u.SetExcluded(category.FieldIsNav)
+	return u
+}
+
+// ClearIsNav clears the value of the "is_nav" field.
+func (u *CategoryUpsert) ClearIsNav() *CategoryUpsert {
+	u.SetNull(category.FieldIsNav)
+	return u
+}
+
+// SetIcon sets the "icon" field.
+func (u *CategoryUpsert) SetIcon(v string) *CategoryUpsert {
+	u.Set(category.FieldIcon, v)
+	return u
+}
+
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateIcon() *CategoryUpsert {
+	u.SetExcluded(category.FieldIcon)
+	return u
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (u *CategoryUpsert) ClearIcon() *CategoryUpsert {
+	u.SetNull(category.FieldIcon)
 	return u
 }
 
@@ -619,6 +770,48 @@ func (u *CategoryUpsert) ClearPostCount() *CategoryUpsert {
 	return u
 }
 
+// SetDirectPostCount sets the "direct_post_count" field.
+func (u *CategoryUpsert) SetDirectPostCount(v uint32) *CategoryUpsert {
+	u.Set(category.FieldDirectPostCount, v)
+	return u
+}
+
+// UpdateDirectPostCount sets the "direct_post_count" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateDirectPostCount() *CategoryUpsert {
+	u.SetExcluded(category.FieldDirectPostCount)
+	return u
+}
+
+// AddDirectPostCount adds v to the "direct_post_count" field.
+func (u *CategoryUpsert) AddDirectPostCount(v uint32) *CategoryUpsert {
+	u.Add(category.FieldDirectPostCount, v)
+	return u
+}
+
+// ClearDirectPostCount clears the value of the "direct_post_count" field.
+func (u *CategoryUpsert) ClearDirectPostCount() *CategoryUpsert {
+	u.SetNull(category.FieldDirectPostCount)
+	return u
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (u *CategoryUpsert) SetCustomFields(v *map[string]string) *CategoryUpsert {
+	u.Set(category.FieldCustomFields, v)
+	return u
+}
+
+// UpdateCustomFields sets the "custom_fields" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateCustomFields() *CategoryUpsert {
+	u.SetExcluded(category.FieldCustomFields)
+	return u
+}
+
+// ClearCustomFields clears the value of the "custom_fields" field.
+func (u *CategoryUpsert) ClearCustomFields() *CategoryUpsert {
+	u.SetNull(category.FieldCustomFields)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -636,8 +829,8 @@ func (u *CategoryUpsertOne) UpdateNewValues() *CategoryUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(category.FieldID)
 		}
-		if _, exists := u.create.mutation.CreateTime(); exists {
-			s.SetIgnore(category.FieldCreateTime)
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(category.FieldCreatedAt)
 		}
 	}))
 	return u
@@ -670,185 +863,178 @@ func (u *CategoryUpsertOne) Update(set func(*CategoryUpsert)) *CategoryUpsertOne
 	return u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (u *CategoryUpsertOne) SetUpdateTime(v int64) *CategoryUpsertOne {
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CategoryUpsertOne) SetUpdatedAt(v time.Time) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetUpdateTime(v)
+		s.SetUpdatedAt(v)
 	})
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *CategoryUpsertOne) AddUpdateTime(v int64) *CategoryUpsertOne {
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateUpdatedAt() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.AddUpdateTime(v)
+		s.UpdateUpdatedAt()
 	})
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdateUpdateTime() *CategoryUpsertOne {
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *CategoryUpsertOne) ClearUpdatedAt() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateUpdateTime()
+		s.ClearUpdatedAt()
 	})
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *CategoryUpsertOne) ClearUpdateTime() *CategoryUpsertOne {
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CategoryUpsertOne) SetDeletedAt(v time.Time) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearUpdateTime()
+		s.SetDeletedAt(v)
 	})
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *CategoryUpsertOne) SetDeleteTime(v int64) *CategoryUpsertOne {
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateDeletedAt() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetDeleteTime(v)
+		s.UpdateDeletedAt()
 	})
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *CategoryUpsertOne) AddDeleteTime(v int64) *CategoryUpsertOne {
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *CategoryUpsertOne) ClearDeletedAt() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.AddDeleteTime(v)
+		s.ClearDeletedAt()
 	})
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdateDeleteTime() *CategoryUpsertOne {
+// SetCreatedBy sets the "created_by" field.
+func (u *CategoryUpsertOne) SetCreatedBy(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateDeleteTime()
+		s.SetCreatedBy(v)
 	})
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *CategoryUpsertOne) ClearDeleteTime() *CategoryUpsertOne {
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CategoryUpsertOne) AddCreatedBy(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearDeleteTime()
+		s.AddCreatedBy(v)
 	})
 }
 
-// SetName sets the "name" field.
-func (u *CategoryUpsertOne) SetName(v string) *CategoryUpsertOne {
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateCreatedBy() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetName(v)
+		s.UpdateCreatedBy()
 	})
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdateName() *CategoryUpsertOne {
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *CategoryUpsertOne) ClearCreatedBy() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateName()
+		s.ClearCreatedBy()
 	})
 }
 
-// ClearName clears the value of the "name" field.
-func (u *CategoryUpsertOne) ClearName() *CategoryUpsertOne {
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CategoryUpsertOne) SetUpdatedBy(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearName()
+		s.SetUpdatedBy(v)
 	})
 }
 
-// SetSlug sets the "slug" field.
-func (u *CategoryUpsertOne) SetSlug(v string) *CategoryUpsertOne {
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CategoryUpsertOne) AddUpdatedBy(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetSlug(v)
+		s.AddUpdatedBy(v)
 	})
 }
 
-// UpdateSlug sets the "slug" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdateSlug() *CategoryUpsertOne {
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateUpdatedBy() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateSlug()
+		s.UpdateUpdatedBy()
 	})
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (u *CategoryUpsertOne) ClearSlug() *CategoryUpsertOne {
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *CategoryUpsertOne) ClearUpdatedBy() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearSlug()
+		s.ClearUpdatedBy()
 	})
 }
 
-// SetDescription sets the "description" field.
-func (u *CategoryUpsertOne) SetDescription(v string) *CategoryUpsertOne {
+// SetDeletedBy sets the "deleted_by" field.
+func (u *CategoryUpsertOne) SetDeletedBy(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetDescription(v)
+		s.SetDeletedBy(v)
 	})
 }
 
-// UpdateDescription sets the "description" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdateDescription() *CategoryUpsertOne {
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *CategoryUpsertOne) AddDeletedBy(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateDescription()
+		s.AddDeletedBy(v)
 	})
 }
 
-// ClearDescription clears the value of the "description" field.
-func (u *CategoryUpsertOne) ClearDescription() *CategoryUpsertOne {
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateDeletedBy() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearDescription()
+		s.UpdateDeletedBy()
 	})
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (u *CategoryUpsertOne) SetThumbnail(v string) *CategoryUpsertOne {
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *CategoryUpsertOne) ClearDeletedBy() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetThumbnail(v)
+		s.ClearDeletedBy()
 	})
 }
 
-// UpdateThumbnail sets the "thumbnail" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdateThumbnail() *CategoryUpsertOne {
+// SetSortOrder sets the "sort_order" field.
+func (u *CategoryUpsertOne) SetSortOrder(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateThumbnail()
+		s.SetSortOrder(v)
 	})
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (u *CategoryUpsertOne) ClearThumbnail() *CategoryUpsertOne {
+// AddSortOrder adds v to the "sort_order" field.
+func (u *CategoryUpsertOne) AddSortOrder(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearThumbnail()
+		s.AddSortOrder(v)
 	})
 }
 
-// SetPassword sets the "password" field.
-func (u *CategoryUpsertOne) SetPassword(v string) *CategoryUpsertOne {
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateSortOrder() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetPassword(v)
+		s.UpdateSortOrder()
 	})
 }
 
-// UpdatePassword sets the "password" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdatePassword() *CategoryUpsertOne {
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *CategoryUpsertOne) ClearSortOrder() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdatePassword()
+		s.ClearSortOrder()
 	})
 }
 
-// ClearPassword clears the value of the "password" field.
-func (u *CategoryUpsertOne) ClearPassword() *CategoryUpsertOne {
+// SetPath sets the "path" field.
+func (u *CategoryUpsertOne) SetPath(v string) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearPassword()
+		s.SetPath(v)
 	})
 }
 
-// SetFullPath sets the "full_path" field.
-func (u *CategoryUpsertOne) SetFullPath(v string) *CategoryUpsertOne {
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdatePath() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetFullPath(v)
+		s.UpdatePath()
 	})
 }
 
-// UpdateFullPath sets the "full_path" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdateFullPath() *CategoryUpsertOne {
+// ClearPath clears the value of the "path" field.
+func (u *CategoryUpsertOne) ClearPath() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateFullPath()
-	})
-}
-
-// ClearFullPath clears the value of the "full_path" field.
-func (u *CategoryUpsertOne) ClearFullPath() *CategoryUpsertOne {
-	return u.Update(func(s *CategoryUpsert) {
-		s.ClearFullPath()
+		s.ClearPath()
 	})
 }
 
@@ -856,13 +1042,6 @@ func (u *CategoryUpsertOne) ClearFullPath() *CategoryUpsertOne {
 func (u *CategoryUpsertOne) SetParentID(v uint32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetParentID(v)
-	})
-}
-
-// AddParentID adds v to the "parent_id" field.
-func (u *CategoryUpsertOne) AddParentID(v uint32) *CategoryUpsertOne {
-	return u.Update(func(s *CategoryUpsert) {
-		s.AddParentID(v)
 	})
 }
 
@@ -880,31 +1059,94 @@ func (u *CategoryUpsertOne) ClearParentID() *CategoryUpsertOne {
 	})
 }
 
-// SetPriority sets the "priority" field.
-func (u *CategoryUpsertOne) SetPriority(v int32) *CategoryUpsertOne {
+// SetStatus sets the "status" field.
+func (u *CategoryUpsertOne) SetStatus(v category.Status) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetPriority(v)
+		s.SetStatus(v)
 	})
 }
 
-// AddPriority adds v to the "priority" field.
-func (u *CategoryUpsertOne) AddPriority(v int32) *CategoryUpsertOne {
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateStatus() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.AddPriority(v)
+		s.UpdateStatus()
 	})
 }
 
-// UpdatePriority sets the "priority" field to the value that was provided on create.
-func (u *CategoryUpsertOne) UpdatePriority() *CategoryUpsertOne {
+// ClearStatus clears the value of the "status" field.
+func (u *CategoryUpsertOne) ClearStatus() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdatePriority()
+		s.ClearStatus()
 	})
 }
 
-// ClearPriority clears the value of the "priority" field.
-func (u *CategoryUpsertOne) ClearPriority() *CategoryUpsertOne {
+// SetDepth sets the "depth" field.
+func (u *CategoryUpsertOne) SetDepth(v int32) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearPriority()
+		s.SetDepth(v)
+	})
+}
+
+// AddDepth adds v to the "depth" field.
+func (u *CategoryUpsertOne) AddDepth(v int32) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.AddDepth(v)
+	})
+}
+
+// UpdateDepth sets the "depth" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateDepth() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateDepth()
+	})
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (u *CategoryUpsertOne) ClearDepth() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearDepth()
+	})
+}
+
+// SetIsNav sets the "is_nav" field.
+func (u *CategoryUpsertOne) SetIsNav(v bool) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetIsNav(v)
+	})
+}
+
+// UpdateIsNav sets the "is_nav" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateIsNav() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateIsNav()
+	})
+}
+
+// ClearIsNav clears the value of the "is_nav" field.
+func (u *CategoryUpsertOne) ClearIsNav() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearIsNav()
+	})
+}
+
+// SetIcon sets the "icon" field.
+func (u *CategoryUpsertOne) SetIcon(v string) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetIcon(v)
+	})
+}
+
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateIcon() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateIcon()
+	})
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (u *CategoryUpsertOne) ClearIcon() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearIcon()
 	})
 }
 
@@ -933,6 +1175,55 @@ func (u *CategoryUpsertOne) UpdatePostCount() *CategoryUpsertOne {
 func (u *CategoryUpsertOne) ClearPostCount() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.ClearPostCount()
+	})
+}
+
+// SetDirectPostCount sets the "direct_post_count" field.
+func (u *CategoryUpsertOne) SetDirectPostCount(v uint32) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetDirectPostCount(v)
+	})
+}
+
+// AddDirectPostCount adds v to the "direct_post_count" field.
+func (u *CategoryUpsertOne) AddDirectPostCount(v uint32) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.AddDirectPostCount(v)
+	})
+}
+
+// UpdateDirectPostCount sets the "direct_post_count" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateDirectPostCount() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateDirectPostCount()
+	})
+}
+
+// ClearDirectPostCount clears the value of the "direct_post_count" field.
+func (u *CategoryUpsertOne) ClearDirectPostCount() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearDirectPostCount()
+	})
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (u *CategoryUpsertOne) SetCustomFields(v *map[string]string) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetCustomFields(v)
+	})
+}
+
+// UpdateCustomFields sets the "custom_fields" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateCustomFields() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateCustomFields()
+	})
+}
+
+// ClearCustomFields clears the value of the "custom_fields" field.
+func (u *CategoryUpsertOne) ClearCustomFields() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearCustomFields()
 	})
 }
 
@@ -978,16 +1269,16 @@ type CategoryCreateBulk struct {
 }
 
 // Save creates the Category entities in the database.
-func (ccb *CategoryCreateBulk) Save(ctx context.Context) ([]*Category, error) {
-	if ccb.err != nil {
-		return nil, ccb.err
+func (_c *CategoryCreateBulk) Save(ctx context.Context) ([]*Category, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(ccb.builders))
-	nodes := make([]*Category, len(ccb.builders))
-	mutators := make([]Mutator, len(ccb.builders))
-	for i := range ccb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Category, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := ccb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*CategoryMutation)
@@ -1001,12 +1292,12 @@ func (ccb *CategoryCreateBulk) Save(ctx context.Context) ([]*Category, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, ccb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
-					spec.OnConflict = ccb.conflict
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, ccb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -1030,7 +1321,7 @@ func (ccb *CategoryCreateBulk) Save(ctx context.Context) ([]*Category, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, ccb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -1038,8 +1329,8 @@ func (ccb *CategoryCreateBulk) Save(ctx context.Context) ([]*Category, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ccb *CategoryCreateBulk) SaveX(ctx context.Context) []*Category {
-	v, err := ccb.Save(ctx)
+func (_c *CategoryCreateBulk) SaveX(ctx context.Context) []*Category {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -1047,14 +1338,14 @@ func (ccb *CategoryCreateBulk) SaveX(ctx context.Context) []*Category {
 }
 
 // Exec executes the query.
-func (ccb *CategoryCreateBulk) Exec(ctx context.Context) error {
-	_, err := ccb.Save(ctx)
+func (_c *CategoryCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ccb *CategoryCreateBulk) ExecX(ctx context.Context) {
-	if err := ccb.Exec(ctx); err != nil {
+func (_c *CategoryCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
@@ -1071,13 +1362,13 @@ func (ccb *CategoryCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.CategoryUpsert) {
-//			SetCreateTime(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-func (ccb *CategoryCreateBulk) OnConflict(opts ...sql.ConflictOption) *CategoryUpsertBulk {
-	ccb.conflict = opts
+func (_c *CategoryCreateBulk) OnConflict(opts ...sql.ConflictOption) *CategoryUpsertBulk {
+	_c.conflict = opts
 	return &CategoryUpsertBulk{
-		create: ccb,
+		create: _c,
 	}
 }
 
@@ -1087,10 +1378,10 @@ func (ccb *CategoryCreateBulk) OnConflict(opts ...sql.ConflictOption) *CategoryU
 //	client.Category.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (ccb *CategoryCreateBulk) OnConflictColumns(columns ...string) *CategoryUpsertBulk {
-	ccb.conflict = append(ccb.conflict, sql.ConflictColumns(columns...))
+func (_c *CategoryCreateBulk) OnConflictColumns(columns ...string) *CategoryUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
 	return &CategoryUpsertBulk{
-		create: ccb,
+		create: _c,
 	}
 }
 
@@ -1118,8 +1409,8 @@ func (u *CategoryUpsertBulk) UpdateNewValues() *CategoryUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(category.FieldID)
 			}
-			if _, exists := b.mutation.CreateTime(); exists {
-				s.SetIgnore(category.FieldCreateTime)
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(category.FieldCreatedAt)
 			}
 		}
 	}))
@@ -1153,185 +1444,178 @@ func (u *CategoryUpsertBulk) Update(set func(*CategoryUpsert)) *CategoryUpsertBu
 	return u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (u *CategoryUpsertBulk) SetUpdateTime(v int64) *CategoryUpsertBulk {
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CategoryUpsertBulk) SetUpdatedAt(v time.Time) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetUpdateTime(v)
+		s.SetUpdatedAt(v)
 	})
 }
 
-// AddUpdateTime adds v to the "update_time" field.
-func (u *CategoryUpsertBulk) AddUpdateTime(v int64) *CategoryUpsertBulk {
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateUpdatedAt() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.AddUpdateTime(v)
+		s.UpdateUpdatedAt()
 	})
 }
 
-// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdateUpdateTime() *CategoryUpsertBulk {
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *CategoryUpsertBulk) ClearUpdatedAt() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateUpdateTime()
+		s.ClearUpdatedAt()
 	})
 }
 
-// ClearUpdateTime clears the value of the "update_time" field.
-func (u *CategoryUpsertBulk) ClearUpdateTime() *CategoryUpsertBulk {
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CategoryUpsertBulk) SetDeletedAt(v time.Time) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearUpdateTime()
+		s.SetDeletedAt(v)
 	})
 }
 
-// SetDeleteTime sets the "delete_time" field.
-func (u *CategoryUpsertBulk) SetDeleteTime(v int64) *CategoryUpsertBulk {
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateDeletedAt() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetDeleteTime(v)
+		s.UpdateDeletedAt()
 	})
 }
 
-// AddDeleteTime adds v to the "delete_time" field.
-func (u *CategoryUpsertBulk) AddDeleteTime(v int64) *CategoryUpsertBulk {
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (u *CategoryUpsertBulk) ClearDeletedAt() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.AddDeleteTime(v)
+		s.ClearDeletedAt()
 	})
 }
 
-// UpdateDeleteTime sets the "delete_time" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdateDeleteTime() *CategoryUpsertBulk {
+// SetCreatedBy sets the "created_by" field.
+func (u *CategoryUpsertBulk) SetCreatedBy(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateDeleteTime()
+		s.SetCreatedBy(v)
 	})
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (u *CategoryUpsertBulk) ClearDeleteTime() *CategoryUpsertBulk {
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CategoryUpsertBulk) AddCreatedBy(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearDeleteTime()
+		s.AddCreatedBy(v)
 	})
 }
 
-// SetName sets the "name" field.
-func (u *CategoryUpsertBulk) SetName(v string) *CategoryUpsertBulk {
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateCreatedBy() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetName(v)
+		s.UpdateCreatedBy()
 	})
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdateName() *CategoryUpsertBulk {
+// ClearCreatedBy clears the value of the "created_by" field.
+func (u *CategoryUpsertBulk) ClearCreatedBy() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateName()
+		s.ClearCreatedBy()
 	})
 }
 
-// ClearName clears the value of the "name" field.
-func (u *CategoryUpsertBulk) ClearName() *CategoryUpsertBulk {
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CategoryUpsertBulk) SetUpdatedBy(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearName()
+		s.SetUpdatedBy(v)
 	})
 }
 
-// SetSlug sets the "slug" field.
-func (u *CategoryUpsertBulk) SetSlug(v string) *CategoryUpsertBulk {
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CategoryUpsertBulk) AddUpdatedBy(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetSlug(v)
+		s.AddUpdatedBy(v)
 	})
 }
 
-// UpdateSlug sets the "slug" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdateSlug() *CategoryUpsertBulk {
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateUpdatedBy() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateSlug()
+		s.UpdateUpdatedBy()
 	})
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (u *CategoryUpsertBulk) ClearSlug() *CategoryUpsertBulk {
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (u *CategoryUpsertBulk) ClearUpdatedBy() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearSlug()
+		s.ClearUpdatedBy()
 	})
 }
 
-// SetDescription sets the "description" field.
-func (u *CategoryUpsertBulk) SetDescription(v string) *CategoryUpsertBulk {
+// SetDeletedBy sets the "deleted_by" field.
+func (u *CategoryUpsertBulk) SetDeletedBy(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetDescription(v)
+		s.SetDeletedBy(v)
 	})
 }
 
-// UpdateDescription sets the "description" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdateDescription() *CategoryUpsertBulk {
+// AddDeletedBy adds v to the "deleted_by" field.
+func (u *CategoryUpsertBulk) AddDeletedBy(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateDescription()
+		s.AddDeletedBy(v)
 	})
 }
 
-// ClearDescription clears the value of the "description" field.
-func (u *CategoryUpsertBulk) ClearDescription() *CategoryUpsertBulk {
+// UpdateDeletedBy sets the "deleted_by" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateDeletedBy() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearDescription()
+		s.UpdateDeletedBy()
 	})
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (u *CategoryUpsertBulk) SetThumbnail(v string) *CategoryUpsertBulk {
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (u *CategoryUpsertBulk) ClearDeletedBy() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetThumbnail(v)
+		s.ClearDeletedBy()
 	})
 }
 
-// UpdateThumbnail sets the "thumbnail" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdateThumbnail() *CategoryUpsertBulk {
+// SetSortOrder sets the "sort_order" field.
+func (u *CategoryUpsertBulk) SetSortOrder(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateThumbnail()
+		s.SetSortOrder(v)
 	})
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (u *CategoryUpsertBulk) ClearThumbnail() *CategoryUpsertBulk {
+// AddSortOrder adds v to the "sort_order" field.
+func (u *CategoryUpsertBulk) AddSortOrder(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearThumbnail()
+		s.AddSortOrder(v)
 	})
 }
 
-// SetPassword sets the "password" field.
-func (u *CategoryUpsertBulk) SetPassword(v string) *CategoryUpsertBulk {
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateSortOrder() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetPassword(v)
+		s.UpdateSortOrder()
 	})
 }
 
-// UpdatePassword sets the "password" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdatePassword() *CategoryUpsertBulk {
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *CategoryUpsertBulk) ClearSortOrder() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdatePassword()
+		s.ClearSortOrder()
 	})
 }
 
-// ClearPassword clears the value of the "password" field.
-func (u *CategoryUpsertBulk) ClearPassword() *CategoryUpsertBulk {
+// SetPath sets the "path" field.
+func (u *CategoryUpsertBulk) SetPath(v string) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearPassword()
+		s.SetPath(v)
 	})
 }
 
-// SetFullPath sets the "full_path" field.
-func (u *CategoryUpsertBulk) SetFullPath(v string) *CategoryUpsertBulk {
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdatePath() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetFullPath(v)
+		s.UpdatePath()
 	})
 }
 
-// UpdateFullPath sets the "full_path" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdateFullPath() *CategoryUpsertBulk {
+// ClearPath clears the value of the "path" field.
+func (u *CategoryUpsertBulk) ClearPath() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdateFullPath()
-	})
-}
-
-// ClearFullPath clears the value of the "full_path" field.
-func (u *CategoryUpsertBulk) ClearFullPath() *CategoryUpsertBulk {
-	return u.Update(func(s *CategoryUpsert) {
-		s.ClearFullPath()
+		s.ClearPath()
 	})
 }
 
@@ -1339,13 +1623,6 @@ func (u *CategoryUpsertBulk) ClearFullPath() *CategoryUpsertBulk {
 func (u *CategoryUpsertBulk) SetParentID(v uint32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetParentID(v)
-	})
-}
-
-// AddParentID adds v to the "parent_id" field.
-func (u *CategoryUpsertBulk) AddParentID(v uint32) *CategoryUpsertBulk {
-	return u.Update(func(s *CategoryUpsert) {
-		s.AddParentID(v)
 	})
 }
 
@@ -1363,31 +1640,94 @@ func (u *CategoryUpsertBulk) ClearParentID() *CategoryUpsertBulk {
 	})
 }
 
-// SetPriority sets the "priority" field.
-func (u *CategoryUpsertBulk) SetPriority(v int32) *CategoryUpsertBulk {
+// SetStatus sets the "status" field.
+func (u *CategoryUpsertBulk) SetStatus(v category.Status) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.SetPriority(v)
+		s.SetStatus(v)
 	})
 }
 
-// AddPriority adds v to the "priority" field.
-func (u *CategoryUpsertBulk) AddPriority(v int32) *CategoryUpsertBulk {
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateStatus() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.AddPriority(v)
+		s.UpdateStatus()
 	})
 }
 
-// UpdatePriority sets the "priority" field to the value that was provided on create.
-func (u *CategoryUpsertBulk) UpdatePriority() *CategoryUpsertBulk {
+// ClearStatus clears the value of the "status" field.
+func (u *CategoryUpsertBulk) ClearStatus() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.UpdatePriority()
+		s.ClearStatus()
 	})
 }
 
-// ClearPriority clears the value of the "priority" field.
-func (u *CategoryUpsertBulk) ClearPriority() *CategoryUpsertBulk {
+// SetDepth sets the "depth" field.
+func (u *CategoryUpsertBulk) SetDepth(v int32) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
-		s.ClearPriority()
+		s.SetDepth(v)
+	})
+}
+
+// AddDepth adds v to the "depth" field.
+func (u *CategoryUpsertBulk) AddDepth(v int32) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.AddDepth(v)
+	})
+}
+
+// UpdateDepth sets the "depth" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateDepth() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateDepth()
+	})
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (u *CategoryUpsertBulk) ClearDepth() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearDepth()
+	})
+}
+
+// SetIsNav sets the "is_nav" field.
+func (u *CategoryUpsertBulk) SetIsNav(v bool) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetIsNav(v)
+	})
+}
+
+// UpdateIsNav sets the "is_nav" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateIsNav() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateIsNav()
+	})
+}
+
+// ClearIsNav clears the value of the "is_nav" field.
+func (u *CategoryUpsertBulk) ClearIsNav() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearIsNav()
+	})
+}
+
+// SetIcon sets the "icon" field.
+func (u *CategoryUpsertBulk) SetIcon(v string) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetIcon(v)
+	})
+}
+
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateIcon() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateIcon()
+	})
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (u *CategoryUpsertBulk) ClearIcon() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearIcon()
 	})
 }
 
@@ -1416,6 +1756,55 @@ func (u *CategoryUpsertBulk) UpdatePostCount() *CategoryUpsertBulk {
 func (u *CategoryUpsertBulk) ClearPostCount() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.ClearPostCount()
+	})
+}
+
+// SetDirectPostCount sets the "direct_post_count" field.
+func (u *CategoryUpsertBulk) SetDirectPostCount(v uint32) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetDirectPostCount(v)
+	})
+}
+
+// AddDirectPostCount adds v to the "direct_post_count" field.
+func (u *CategoryUpsertBulk) AddDirectPostCount(v uint32) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.AddDirectPostCount(v)
+	})
+}
+
+// UpdateDirectPostCount sets the "direct_post_count" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateDirectPostCount() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateDirectPostCount()
+	})
+}
+
+// ClearDirectPostCount clears the value of the "direct_post_count" field.
+func (u *CategoryUpsertBulk) ClearDirectPostCount() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearDirectPostCount()
+	})
+}
+
+// SetCustomFields sets the "custom_fields" field.
+func (u *CategoryUpsertBulk) SetCustomFields(v *map[string]string) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetCustomFields(v)
+	})
+}
+
+// UpdateCustomFields sets the "custom_fields" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateCustomFields() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateCustomFields()
+	})
+}
+
+// ClearCustomFields clears the value of the "custom_fields" field.
+func (u *CategoryUpsertBulk) ClearCustomFields() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearCustomFields()
 	})
 }
 

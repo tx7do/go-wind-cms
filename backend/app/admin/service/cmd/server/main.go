@@ -1,25 +1,53 @@
 package main
 
 import (
+	"context"
+
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
-	"github.com/tx7do/go-utils/trans"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"github.com/tx7do/kratos-transport/transport/sse"
 
-	"kratos-cms/pkg/service"
+	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	_ "github.com/tx7do/kratos-bootstrap/registry/etcd"
+	_ "github.com/tx7do/kratos-bootstrap/tracer"
+
+	"go-wind-cms/pkg/serviceid"
 )
 
-var version string
+var version = "1.0.0"
 
 // go build -ldflags "-X main.version=x.y.z"
 
-func newApp(ll log.Logger, rr registry.Registrar, hs *http.Server) *kratos.App {
-	return bootstrap.NewApp(ll, rr, hs)
+func newApp(
+	ctx *bootstrap.Context,
+	hs *http.Server,
+	gs *grpc.Server,
+	ss *sse.Server,
+) *kratos.App {
+	return bootstrap.NewApp(ctx,
+		hs,
+		gs,
+		ss,
+	)
+}
+
+func runApp() error {
+	ctx := bootstrap.NewContext(
+		context.Background(),
+		&conf.AppInfo{
+			Project: serviceid.ProjectName,
+			AppId:   serviceid.AdminService,
+			Version: version,
+		},
+	)
+	return bootstrap.RunApp(ctx, initApp)
 }
 
 func main() {
-	bootstrap.Bootstrap(initApp, trans.Ptr(service.AdminService), trans.Ptr(version))
+	if err := runApp(); err != nil {
+		panic(err)
+	}
 }

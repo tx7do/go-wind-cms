@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+import "authentication/service/v1/login_policy.proto";
+
+// 登录策略管理服务
+service LoginPolicyService {
+  // 查询登录策略列表
+  rpc List (pagination.PagingRequest) returns (authentication.service.v1.ListLoginPolicyResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/login-policies"
+    };
+  }
+
+  // 查询登录策略详情
+  rpc Get (authentication.service.v1.GetLoginPolicyRequest) returns (authentication.service.v1.LoginPolicy) {
+    option (google.api.http) = {
+      get: "/admin/v1/login-policies/{id}"
+    };
+  }
+
+  // 创建登录策略
+  rpc Create (authentication.service.v1.CreateLoginPolicyRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/login-policies"
+      body: "*"
+    };
+  }
+
+  // 更新登录策略
+  rpc Update (authentication.service.v1.UpdateLoginPolicyRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/login-policies/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除登录策略
+  rpc Delete (authentication.service.v1.DeleteLoginPolicyRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/login-policies/{id}"
+    };
+  }
+}

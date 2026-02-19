@@ -6,8 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/predicate"
-	"kratos-cms/app/core/service/internal/data/ent/tag"
+	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-cms/app/core/service/internal/data/ent/tag"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -23,198 +24,299 @@ type TagUpdate struct {
 }
 
 // Where appends a list predicates to the TagUpdate builder.
-func (tu *TagUpdate) Where(ps ...predicate.Tag) *TagUpdate {
-	tu.mutation.Where(ps...)
-	return tu
+func (_u *TagUpdate) Where(ps ...predicate.Tag) *TagUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (tu *TagUpdate) SetUpdateTime(i int64) *TagUpdate {
-	tu.mutation.ResetUpdateTime()
-	tu.mutation.SetUpdateTime(i)
-	return tu
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *TagUpdate) SetUpdatedAt(v time.Time) *TagUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
-// AddUpdateTime adds i to the "update_time" field.
-func (tu *TagUpdate) AddUpdateTime(i int64) *TagUpdate {
-	tu.mutation.AddUpdateTime(i)
-	return tu
-}
-
-// ClearUpdateTime clears the value of the "update_time" field.
-func (tu *TagUpdate) ClearUpdateTime() *TagUpdate {
-	tu.mutation.ClearUpdateTime()
-	return tu
-}
-
-// SetDeleteTime sets the "delete_time" field.
-func (tu *TagUpdate) SetDeleteTime(i int64) *TagUpdate {
-	tu.mutation.ResetDeleteTime()
-	tu.mutation.SetDeleteTime(i)
-	return tu
-}
-
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (tu *TagUpdate) SetNillableDeleteTime(i *int64) *TagUpdate {
-	if i != nil {
-		tu.SetDeleteTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableUpdatedAt(v *time.Time) *TagUpdate {
+	if v != nil {
+		_u.SetUpdatedAt(*v)
 	}
-	return tu
+	return _u
 }
 
-// AddDeleteTime adds i to the "delete_time" field.
-func (tu *TagUpdate) AddDeleteTime(i int64) *TagUpdate {
-	tu.mutation.AddDeleteTime(i)
-	return tu
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *TagUpdate) ClearUpdatedAt() *TagUpdate {
+	_u.mutation.ClearUpdatedAt()
+	return _u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (tu *TagUpdate) ClearDeleteTime() *TagUpdate {
-	tu.mutation.ClearDeleteTime()
-	return tu
+// SetDeletedAt sets the "deleted_at" field.
+func (_u *TagUpdate) SetDeletedAt(v time.Time) *TagUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
-// SetName sets the "name" field.
-func (tu *TagUpdate) SetName(s string) *TagUpdate {
-	tu.mutation.SetName(s)
-	return tu
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tu *TagUpdate) SetNillableName(s *string) *TagUpdate {
-	if s != nil {
-		tu.SetName(*s)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableDeletedAt(v *time.Time) *TagUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return tu
+	return _u
 }
 
-// ClearName clears the value of the "name" field.
-func (tu *TagUpdate) ClearName() *TagUpdate {
-	tu.mutation.ClearName()
-	return tu
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *TagUpdate) ClearDeletedAt() *TagUpdate {
+	_u.mutation.ClearDeletedAt()
+	return _u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (_u *TagUpdate) SetCreatedBy(v uint32) *TagUpdate {
+	_u.mutation.ResetCreatedBy()
+	_u.mutation.SetCreatedBy(v)
+	return _u
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableCreatedBy(v *uint32) *TagUpdate {
+	if v != nil {
+		_u.SetCreatedBy(*v)
+	}
+	return _u
+}
+
+// AddCreatedBy adds value to the "created_by" field.
+func (_u *TagUpdate) AddCreatedBy(v int32) *TagUpdate {
+	_u.mutation.AddCreatedBy(v)
+	return _u
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (_u *TagUpdate) ClearCreatedBy() *TagUpdate {
+	_u.mutation.ClearCreatedBy()
+	return _u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (_u *TagUpdate) SetUpdatedBy(v uint32) *TagUpdate {
+	_u.mutation.ResetUpdatedBy()
+	_u.mutation.SetUpdatedBy(v)
+	return _u
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableUpdatedBy(v *uint32) *TagUpdate {
+	if v != nil {
+		_u.SetUpdatedBy(*v)
+	}
+	return _u
+}
+
+// AddUpdatedBy adds value to the "updated_by" field.
+func (_u *TagUpdate) AddUpdatedBy(v int32) *TagUpdate {
+	_u.mutation.AddUpdatedBy(v)
+	return _u
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (_u *TagUpdate) ClearUpdatedBy() *TagUpdate {
+	_u.mutation.ClearUpdatedBy()
+	return _u
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (_u *TagUpdate) SetDeletedBy(v uint32) *TagUpdate {
+	_u.mutation.ResetDeletedBy()
+	_u.mutation.SetDeletedBy(v)
+	return _u
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableDeletedBy(v *uint32) *TagUpdate {
+	if v != nil {
+		_u.SetDeletedBy(*v)
+	}
+	return _u
+}
+
+// AddDeletedBy adds value to the "deleted_by" field.
+func (_u *TagUpdate) AddDeletedBy(v int32) *TagUpdate {
+	_u.mutation.AddDeletedBy(v)
+	return _u
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (_u *TagUpdate) ClearDeletedBy() *TagUpdate {
+	_u.mutation.ClearDeletedBy()
+	return _u
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (_u *TagUpdate) SetSortOrder(v uint32) *TagUpdate {
+	_u.mutation.ResetSortOrder()
+	_u.mutation.SetSortOrder(v)
+	return _u
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableSortOrder(v *uint32) *TagUpdate {
+	if v != nil {
+		_u.SetSortOrder(*v)
+	}
+	return _u
+}
+
+// AddSortOrder adds value to the "sort_order" field.
+func (_u *TagUpdate) AddSortOrder(v int32) *TagUpdate {
+	_u.mutation.AddSortOrder(v)
+	return _u
+}
+
+// ClearSortOrder clears the value of the "sort_order" field.
+func (_u *TagUpdate) ClearSortOrder() *TagUpdate {
+	_u.mutation.ClearSortOrder()
+	return _u
+}
+
+// SetStatus sets the "status" field.
+func (_u *TagUpdate) SetStatus(v tag.Status) *TagUpdate {
+	_u.mutation.SetStatus(v)
+	return _u
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableStatus(v *tag.Status) *TagUpdate {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
+	return _u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (_u *TagUpdate) ClearStatus() *TagUpdate {
+	_u.mutation.ClearStatus()
+	return _u
 }
 
 // SetColor sets the "color" field.
-func (tu *TagUpdate) SetColor(s string) *TagUpdate {
-	tu.mutation.SetColor(s)
-	return tu
+func (_u *TagUpdate) SetColor(v string) *TagUpdate {
+	_u.mutation.SetColor(v)
+	return _u
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (tu *TagUpdate) SetNillableColor(s *string) *TagUpdate {
-	if s != nil {
-		tu.SetColor(*s)
+func (_u *TagUpdate) SetNillableColor(v *string) *TagUpdate {
+	if v != nil {
+		_u.SetColor(*v)
 	}
-	return tu
+	return _u
 }
 
 // ClearColor clears the value of the "color" field.
-func (tu *TagUpdate) ClearColor() *TagUpdate {
-	tu.mutation.ClearColor()
-	return tu
+func (_u *TagUpdate) ClearColor() *TagUpdate {
+	_u.mutation.ClearColor()
+	return _u
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (tu *TagUpdate) SetThumbnail(s string) *TagUpdate {
-	tu.mutation.SetThumbnail(s)
-	return tu
+// SetIcon sets the "icon" field.
+func (_u *TagUpdate) SetIcon(v string) *TagUpdate {
+	_u.mutation.SetIcon(v)
+	return _u
 }
 
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (tu *TagUpdate) SetNillableThumbnail(s *string) *TagUpdate {
-	if s != nil {
-		tu.SetThumbnail(*s)
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableIcon(v *string) *TagUpdate {
+	if v != nil {
+		_u.SetIcon(*v)
 	}
-	return tu
+	return _u
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (tu *TagUpdate) ClearThumbnail() *TagUpdate {
-	tu.mutation.ClearThumbnail()
-	return tu
+// ClearIcon clears the value of the "icon" field.
+func (_u *TagUpdate) ClearIcon() *TagUpdate {
+	_u.mutation.ClearIcon()
+	return _u
 }
 
-// SetSlug sets the "slug" field.
-func (tu *TagUpdate) SetSlug(s string) *TagUpdate {
-	tu.mutation.SetSlug(s)
-	return tu
+// SetGroup sets the "group" field.
+func (_u *TagUpdate) SetGroup(v string) *TagUpdate {
+	_u.mutation.SetGroup(v)
+	return _u
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (tu *TagUpdate) SetNillableSlug(s *string) *TagUpdate {
-	if s != nil {
-		tu.SetSlug(*s)
+// SetNillableGroup sets the "group" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableGroup(v *string) *TagUpdate {
+	if v != nil {
+		_u.SetGroup(*v)
 	}
-	return tu
+	return _u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (tu *TagUpdate) ClearSlug() *TagUpdate {
-	tu.mutation.ClearSlug()
-	return tu
+// ClearGroup clears the value of the "group" field.
+func (_u *TagUpdate) ClearGroup() *TagUpdate {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
-// SetSlugName sets the "slug_name" field.
-func (tu *TagUpdate) SetSlugName(s string) *TagUpdate {
-	tu.mutation.SetSlugName(s)
-	return tu
+// SetIsFeatured sets the "is_featured" field.
+func (_u *TagUpdate) SetIsFeatured(v bool) *TagUpdate {
+	_u.mutation.SetIsFeatured(v)
+	return _u
 }
 
-// SetNillableSlugName sets the "slug_name" field if the given value is not nil.
-func (tu *TagUpdate) SetNillableSlugName(s *string) *TagUpdate {
-	if s != nil {
-		tu.SetSlugName(*s)
+// SetNillableIsFeatured sets the "is_featured" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableIsFeatured(v *bool) *TagUpdate {
+	if v != nil {
+		_u.SetIsFeatured(*v)
 	}
-	return tu
+	return _u
 }
 
-// ClearSlugName clears the value of the "slug_name" field.
-func (tu *TagUpdate) ClearSlugName() *TagUpdate {
-	tu.mutation.ClearSlugName()
-	return tu
+// ClearIsFeatured clears the value of the "is_featured" field.
+func (_u *TagUpdate) ClearIsFeatured() *TagUpdate {
+	_u.mutation.ClearIsFeatured()
+	return _u
 }
 
 // SetPostCount sets the "post_count" field.
-func (tu *TagUpdate) SetPostCount(u uint32) *TagUpdate {
-	tu.mutation.ResetPostCount()
-	tu.mutation.SetPostCount(u)
-	return tu
+func (_u *TagUpdate) SetPostCount(v uint32) *TagUpdate {
+	_u.mutation.ResetPostCount()
+	_u.mutation.SetPostCount(v)
+	return _u
 }
 
 // SetNillablePostCount sets the "post_count" field if the given value is not nil.
-func (tu *TagUpdate) SetNillablePostCount(u *uint32) *TagUpdate {
-	if u != nil {
-		tu.SetPostCount(*u)
+func (_u *TagUpdate) SetNillablePostCount(v *uint32) *TagUpdate {
+	if v != nil {
+		_u.SetPostCount(*v)
 	}
-	return tu
+	return _u
 }
 
-// AddPostCount adds u to the "post_count" field.
-func (tu *TagUpdate) AddPostCount(u int32) *TagUpdate {
-	tu.mutation.AddPostCount(u)
-	return tu
+// AddPostCount adds value to the "post_count" field.
+func (_u *TagUpdate) AddPostCount(v int32) *TagUpdate {
+	_u.mutation.AddPostCount(v)
+	return _u
 }
 
 // ClearPostCount clears the value of the "post_count" field.
-func (tu *TagUpdate) ClearPostCount() *TagUpdate {
-	tu.mutation.ClearPostCount()
-	return tu
+func (_u *TagUpdate) ClearPostCount() *TagUpdate {
+	_u.mutation.ClearPostCount()
+	return _u
 }
 
 // Mutation returns the TagMutation object of the builder.
-func (tu *TagUpdate) Mutation() *TagMutation {
-	return tu.mutation
+func (_u *TagUpdate) Mutation() *TagMutation {
+	return _u.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (tu *TagUpdate) Save(ctx context.Context) (int, error) {
-	tu.defaults()
-	return withHooks(ctx, tu.sqlSave, tu.mutation, tu.hooks)
+func (_u *TagUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tu *TagUpdate) SaveX(ctx context.Context) int {
-	affected, err := tu.Save(ctx)
+func (_u *TagUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -222,116 +324,138 @@ func (tu *TagUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (tu *TagUpdate) Exec(ctx context.Context) error {
-	_, err := tu.Save(ctx)
+func (_u *TagUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tu *TagUpdate) ExecX(ctx context.Context) {
-	if err := tu.Exec(ctx); err != nil {
+func (_u *TagUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (tu *TagUpdate) defaults() {
-	if _, ok := tu.mutation.UpdateTime(); !ok && !tu.mutation.UpdateTimeCleared() {
-		v := tag.UpdateDefaultUpdateTime()
-		tu.mutation.SetUpdateTime(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
-func (tu *TagUpdate) check() error {
-	if v, ok := tu.mutation.Name(); ok {
-		if err := tag.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
+func (_u *TagUpdate) check() error {
+	if v, ok := _u.mutation.Status(); ok {
+		if err := tag.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Tag.status": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (tu *TagUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TagUpdate {
-	tu.modifiers = append(tu.modifiers, modifiers...)
-	return tu
+func (_u *TagUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TagUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (tu *TagUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := tu.check(); err != nil {
-		return n, err
+func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(tag.Table, tag.Columns, sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUint32))
-	if ps := tu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if tu.mutation.CreateTimeCleared() {
-		_spec.ClearField(tag.FieldCreateTime, field.TypeInt64)
+	if _u.mutation.CreatedAtCleared() {
+		_spec.ClearField(tag.FieldCreatedAt, field.TypeTime)
 	}
-	if value, ok := tu.mutation.UpdateTime(); ok {
-		_spec.SetField(tag.FieldUpdateTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := tu.mutation.AddedUpdateTime(); ok {
-		_spec.AddField(tag.FieldUpdateTime, field.TypeInt64, value)
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(tag.FieldUpdatedAt, field.TypeTime)
 	}
-	if tu.mutation.UpdateTimeCleared() {
-		_spec.ClearField(tag.FieldUpdateTime, field.TypeInt64)
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(tag.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := tu.mutation.DeleteTime(); ok {
-		_spec.SetField(tag.FieldDeleteTime, field.TypeInt64, value)
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(tag.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := tu.mutation.AddedDeleteTime(); ok {
-		_spec.AddField(tag.FieldDeleteTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.CreatedBy(); ok {
+		_spec.SetField(tag.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if tu.mutation.DeleteTimeCleared() {
-		_spec.ClearField(tag.FieldDeleteTime, field.TypeInt64)
+	if value, ok := _u.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(tag.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if value, ok := tu.mutation.Name(); ok {
-		_spec.SetField(tag.FieldName, field.TypeString, value)
+	if _u.mutation.CreatedByCleared() {
+		_spec.ClearField(tag.FieldCreatedBy, field.TypeUint32)
 	}
-	if tu.mutation.NameCleared() {
-		_spec.ClearField(tag.FieldName, field.TypeString)
+	if value, ok := _u.mutation.UpdatedBy(); ok {
+		_spec.SetField(tag.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := tu.mutation.Color(); ok {
+	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(tag.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.UpdatedByCleared() {
+		_spec.ClearField(tag.FieldUpdatedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.DeletedBy(); ok {
+		_spec.SetField(tag.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(tag.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.DeletedByCleared() {
+		_spec.ClearField(tag.FieldDeletedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.SortOrder(); ok {
+		_spec.SetField(tag.FieldSortOrder, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedSortOrder(); ok {
+		_spec.AddField(tag.FieldSortOrder, field.TypeUint32, value)
+	}
+	if _u.mutation.SortOrderCleared() {
+		_spec.ClearField(tag.FieldSortOrder, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(tag.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(tag.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
 	}
-	if tu.mutation.ColorCleared() {
+	if _u.mutation.ColorCleared() {
 		_spec.ClearField(tag.FieldColor, field.TypeString)
 	}
-	if value, ok := tu.mutation.Thumbnail(); ok {
-		_spec.SetField(tag.FieldThumbnail, field.TypeString, value)
+	if value, ok := _u.mutation.Icon(); ok {
+		_spec.SetField(tag.FieldIcon, field.TypeString, value)
 	}
-	if tu.mutation.ThumbnailCleared() {
-		_spec.ClearField(tag.FieldThumbnail, field.TypeString)
+	if _u.mutation.IconCleared() {
+		_spec.ClearField(tag.FieldIcon, field.TypeString)
 	}
-	if value, ok := tu.mutation.Slug(); ok {
-		_spec.SetField(tag.FieldSlug, field.TypeString, value)
+	if value, ok := _u.mutation.Group(); ok {
+		_spec.SetField(tag.FieldGroup, field.TypeString, value)
 	}
-	if tu.mutation.SlugCleared() {
-		_spec.ClearField(tag.FieldSlug, field.TypeString)
+	if _u.mutation.GroupCleared() {
+		_spec.ClearField(tag.FieldGroup, field.TypeString)
 	}
-	if value, ok := tu.mutation.SlugName(); ok {
-		_spec.SetField(tag.FieldSlugName, field.TypeString, value)
+	if value, ok := _u.mutation.IsFeatured(); ok {
+		_spec.SetField(tag.FieldIsFeatured, field.TypeBool, value)
 	}
-	if tu.mutation.SlugNameCleared() {
-		_spec.ClearField(tag.FieldSlugName, field.TypeString)
+	if _u.mutation.IsFeaturedCleared() {
+		_spec.ClearField(tag.FieldIsFeatured, field.TypeBool)
 	}
-	if value, ok := tu.mutation.PostCount(); ok {
+	if value, ok := _u.mutation.PostCount(); ok {
 		_spec.SetField(tag.FieldPostCount, field.TypeUint32, value)
 	}
-	if value, ok := tu.mutation.AddedPostCount(); ok {
+	if value, ok := _u.mutation.AddedPostCount(); ok {
 		_spec.AddField(tag.FieldPostCount, field.TypeUint32, value)
 	}
-	if tu.mutation.PostCountCleared() {
+	if _u.mutation.PostCountCleared() {
 		_spec.ClearField(tag.FieldPostCount, field.TypeUint32)
 	}
-	_spec.AddModifiers(tu.modifiers...)
-	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
+	_spec.AddModifiers(_u.modifiers...)
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{tag.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -339,8 +463,8 @@ func (tu *TagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	tu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // TagUpdateOne is the builder for updating a single Tag entity.
@@ -352,206 +476,307 @@ type TagUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetUpdateTime sets the "update_time" field.
-func (tuo *TagUpdateOne) SetUpdateTime(i int64) *TagUpdateOne {
-	tuo.mutation.ResetUpdateTime()
-	tuo.mutation.SetUpdateTime(i)
-	return tuo
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *TagUpdateOne) SetUpdatedAt(v time.Time) *TagUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
-// AddUpdateTime adds i to the "update_time" field.
-func (tuo *TagUpdateOne) AddUpdateTime(i int64) *TagUpdateOne {
-	tuo.mutation.AddUpdateTime(i)
-	return tuo
-}
-
-// ClearUpdateTime clears the value of the "update_time" field.
-func (tuo *TagUpdateOne) ClearUpdateTime() *TagUpdateOne {
-	tuo.mutation.ClearUpdateTime()
-	return tuo
-}
-
-// SetDeleteTime sets the "delete_time" field.
-func (tuo *TagUpdateOne) SetDeleteTime(i int64) *TagUpdateOne {
-	tuo.mutation.ResetDeleteTime()
-	tuo.mutation.SetDeleteTime(i)
-	return tuo
-}
-
-// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
-func (tuo *TagUpdateOne) SetNillableDeleteTime(i *int64) *TagUpdateOne {
-	if i != nil {
-		tuo.SetDeleteTime(*i)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableUpdatedAt(v *time.Time) *TagUpdateOne {
+	if v != nil {
+		_u.SetUpdatedAt(*v)
 	}
-	return tuo
+	return _u
 }
 
-// AddDeleteTime adds i to the "delete_time" field.
-func (tuo *TagUpdateOne) AddDeleteTime(i int64) *TagUpdateOne {
-	tuo.mutation.AddDeleteTime(i)
-	return tuo
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *TagUpdateOne) ClearUpdatedAt() *TagUpdateOne {
+	_u.mutation.ClearUpdatedAt()
+	return _u
 }
 
-// ClearDeleteTime clears the value of the "delete_time" field.
-func (tuo *TagUpdateOne) ClearDeleteTime() *TagUpdateOne {
-	tuo.mutation.ClearDeleteTime()
-	return tuo
+// SetDeletedAt sets the "deleted_at" field.
+func (_u *TagUpdateOne) SetDeletedAt(v time.Time) *TagUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
-// SetName sets the "name" field.
-func (tuo *TagUpdateOne) SetName(s string) *TagUpdateOne {
-	tuo.mutation.SetName(s)
-	return tuo
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tuo *TagUpdateOne) SetNillableName(s *string) *TagUpdateOne {
-	if s != nil {
-		tuo.SetName(*s)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableDeletedAt(v *time.Time) *TagUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return tuo
+	return _u
 }
 
-// ClearName clears the value of the "name" field.
-func (tuo *TagUpdateOne) ClearName() *TagUpdateOne {
-	tuo.mutation.ClearName()
-	return tuo
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *TagUpdateOne) ClearDeletedAt() *TagUpdateOne {
+	_u.mutation.ClearDeletedAt()
+	return _u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (_u *TagUpdateOne) SetCreatedBy(v uint32) *TagUpdateOne {
+	_u.mutation.ResetCreatedBy()
+	_u.mutation.SetCreatedBy(v)
+	return _u
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableCreatedBy(v *uint32) *TagUpdateOne {
+	if v != nil {
+		_u.SetCreatedBy(*v)
+	}
+	return _u
+}
+
+// AddCreatedBy adds value to the "created_by" field.
+func (_u *TagUpdateOne) AddCreatedBy(v int32) *TagUpdateOne {
+	_u.mutation.AddCreatedBy(v)
+	return _u
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (_u *TagUpdateOne) ClearCreatedBy() *TagUpdateOne {
+	_u.mutation.ClearCreatedBy()
+	return _u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (_u *TagUpdateOne) SetUpdatedBy(v uint32) *TagUpdateOne {
+	_u.mutation.ResetUpdatedBy()
+	_u.mutation.SetUpdatedBy(v)
+	return _u
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableUpdatedBy(v *uint32) *TagUpdateOne {
+	if v != nil {
+		_u.SetUpdatedBy(*v)
+	}
+	return _u
+}
+
+// AddUpdatedBy adds value to the "updated_by" field.
+func (_u *TagUpdateOne) AddUpdatedBy(v int32) *TagUpdateOne {
+	_u.mutation.AddUpdatedBy(v)
+	return _u
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (_u *TagUpdateOne) ClearUpdatedBy() *TagUpdateOne {
+	_u.mutation.ClearUpdatedBy()
+	return _u
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (_u *TagUpdateOne) SetDeletedBy(v uint32) *TagUpdateOne {
+	_u.mutation.ResetDeletedBy()
+	_u.mutation.SetDeletedBy(v)
+	return _u
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableDeletedBy(v *uint32) *TagUpdateOne {
+	if v != nil {
+		_u.SetDeletedBy(*v)
+	}
+	return _u
+}
+
+// AddDeletedBy adds value to the "deleted_by" field.
+func (_u *TagUpdateOne) AddDeletedBy(v int32) *TagUpdateOne {
+	_u.mutation.AddDeletedBy(v)
+	return _u
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (_u *TagUpdateOne) ClearDeletedBy() *TagUpdateOne {
+	_u.mutation.ClearDeletedBy()
+	return _u
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (_u *TagUpdateOne) SetSortOrder(v uint32) *TagUpdateOne {
+	_u.mutation.ResetSortOrder()
+	_u.mutation.SetSortOrder(v)
+	return _u
+}
+
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableSortOrder(v *uint32) *TagUpdateOne {
+	if v != nil {
+		_u.SetSortOrder(*v)
+	}
+	return _u
+}
+
+// AddSortOrder adds value to the "sort_order" field.
+func (_u *TagUpdateOne) AddSortOrder(v int32) *TagUpdateOne {
+	_u.mutation.AddSortOrder(v)
+	return _u
+}
+
+// ClearSortOrder clears the value of the "sort_order" field.
+func (_u *TagUpdateOne) ClearSortOrder() *TagUpdateOne {
+	_u.mutation.ClearSortOrder()
+	return _u
+}
+
+// SetStatus sets the "status" field.
+func (_u *TagUpdateOne) SetStatus(v tag.Status) *TagUpdateOne {
+	_u.mutation.SetStatus(v)
+	return _u
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableStatus(v *tag.Status) *TagUpdateOne {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
+	return _u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (_u *TagUpdateOne) ClearStatus() *TagUpdateOne {
+	_u.mutation.ClearStatus()
+	return _u
 }
 
 // SetColor sets the "color" field.
-func (tuo *TagUpdateOne) SetColor(s string) *TagUpdateOne {
-	tuo.mutation.SetColor(s)
-	return tuo
+func (_u *TagUpdateOne) SetColor(v string) *TagUpdateOne {
+	_u.mutation.SetColor(v)
+	return _u
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (tuo *TagUpdateOne) SetNillableColor(s *string) *TagUpdateOne {
-	if s != nil {
-		tuo.SetColor(*s)
+func (_u *TagUpdateOne) SetNillableColor(v *string) *TagUpdateOne {
+	if v != nil {
+		_u.SetColor(*v)
 	}
-	return tuo
+	return _u
 }
 
 // ClearColor clears the value of the "color" field.
-func (tuo *TagUpdateOne) ClearColor() *TagUpdateOne {
-	tuo.mutation.ClearColor()
-	return tuo
+func (_u *TagUpdateOne) ClearColor() *TagUpdateOne {
+	_u.mutation.ClearColor()
+	return _u
 }
 
-// SetThumbnail sets the "thumbnail" field.
-func (tuo *TagUpdateOne) SetThumbnail(s string) *TagUpdateOne {
-	tuo.mutation.SetThumbnail(s)
-	return tuo
+// SetIcon sets the "icon" field.
+func (_u *TagUpdateOne) SetIcon(v string) *TagUpdateOne {
+	_u.mutation.SetIcon(v)
+	return _u
 }
 
-// SetNillableThumbnail sets the "thumbnail" field if the given value is not nil.
-func (tuo *TagUpdateOne) SetNillableThumbnail(s *string) *TagUpdateOne {
-	if s != nil {
-		tuo.SetThumbnail(*s)
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableIcon(v *string) *TagUpdateOne {
+	if v != nil {
+		_u.SetIcon(*v)
 	}
-	return tuo
+	return _u
 }
 
-// ClearThumbnail clears the value of the "thumbnail" field.
-func (tuo *TagUpdateOne) ClearThumbnail() *TagUpdateOne {
-	tuo.mutation.ClearThumbnail()
-	return tuo
+// ClearIcon clears the value of the "icon" field.
+func (_u *TagUpdateOne) ClearIcon() *TagUpdateOne {
+	_u.mutation.ClearIcon()
+	return _u
 }
 
-// SetSlug sets the "slug" field.
-func (tuo *TagUpdateOne) SetSlug(s string) *TagUpdateOne {
-	tuo.mutation.SetSlug(s)
-	return tuo
+// SetGroup sets the "group" field.
+func (_u *TagUpdateOne) SetGroup(v string) *TagUpdateOne {
+	_u.mutation.SetGroup(v)
+	return _u
 }
 
-// SetNillableSlug sets the "slug" field if the given value is not nil.
-func (tuo *TagUpdateOne) SetNillableSlug(s *string) *TagUpdateOne {
-	if s != nil {
-		tuo.SetSlug(*s)
+// SetNillableGroup sets the "group" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableGroup(v *string) *TagUpdateOne {
+	if v != nil {
+		_u.SetGroup(*v)
 	}
-	return tuo
+	return _u
 }
 
-// ClearSlug clears the value of the "slug" field.
-func (tuo *TagUpdateOne) ClearSlug() *TagUpdateOne {
-	tuo.mutation.ClearSlug()
-	return tuo
+// ClearGroup clears the value of the "group" field.
+func (_u *TagUpdateOne) ClearGroup() *TagUpdateOne {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
-// SetSlugName sets the "slug_name" field.
-func (tuo *TagUpdateOne) SetSlugName(s string) *TagUpdateOne {
-	tuo.mutation.SetSlugName(s)
-	return tuo
+// SetIsFeatured sets the "is_featured" field.
+func (_u *TagUpdateOne) SetIsFeatured(v bool) *TagUpdateOne {
+	_u.mutation.SetIsFeatured(v)
+	return _u
 }
 
-// SetNillableSlugName sets the "slug_name" field if the given value is not nil.
-func (tuo *TagUpdateOne) SetNillableSlugName(s *string) *TagUpdateOne {
-	if s != nil {
-		tuo.SetSlugName(*s)
+// SetNillableIsFeatured sets the "is_featured" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableIsFeatured(v *bool) *TagUpdateOne {
+	if v != nil {
+		_u.SetIsFeatured(*v)
 	}
-	return tuo
+	return _u
 }
 
-// ClearSlugName clears the value of the "slug_name" field.
-func (tuo *TagUpdateOne) ClearSlugName() *TagUpdateOne {
-	tuo.mutation.ClearSlugName()
-	return tuo
+// ClearIsFeatured clears the value of the "is_featured" field.
+func (_u *TagUpdateOne) ClearIsFeatured() *TagUpdateOne {
+	_u.mutation.ClearIsFeatured()
+	return _u
 }
 
 // SetPostCount sets the "post_count" field.
-func (tuo *TagUpdateOne) SetPostCount(u uint32) *TagUpdateOne {
-	tuo.mutation.ResetPostCount()
-	tuo.mutation.SetPostCount(u)
-	return tuo
+func (_u *TagUpdateOne) SetPostCount(v uint32) *TagUpdateOne {
+	_u.mutation.ResetPostCount()
+	_u.mutation.SetPostCount(v)
+	return _u
 }
 
 // SetNillablePostCount sets the "post_count" field if the given value is not nil.
-func (tuo *TagUpdateOne) SetNillablePostCount(u *uint32) *TagUpdateOne {
-	if u != nil {
-		tuo.SetPostCount(*u)
+func (_u *TagUpdateOne) SetNillablePostCount(v *uint32) *TagUpdateOne {
+	if v != nil {
+		_u.SetPostCount(*v)
 	}
-	return tuo
+	return _u
 }
 
-// AddPostCount adds u to the "post_count" field.
-func (tuo *TagUpdateOne) AddPostCount(u int32) *TagUpdateOne {
-	tuo.mutation.AddPostCount(u)
-	return tuo
+// AddPostCount adds value to the "post_count" field.
+func (_u *TagUpdateOne) AddPostCount(v int32) *TagUpdateOne {
+	_u.mutation.AddPostCount(v)
+	return _u
 }
 
 // ClearPostCount clears the value of the "post_count" field.
-func (tuo *TagUpdateOne) ClearPostCount() *TagUpdateOne {
-	tuo.mutation.ClearPostCount()
-	return tuo
+func (_u *TagUpdateOne) ClearPostCount() *TagUpdateOne {
+	_u.mutation.ClearPostCount()
+	return _u
 }
 
 // Mutation returns the TagMutation object of the builder.
-func (tuo *TagUpdateOne) Mutation() *TagMutation {
-	return tuo.mutation
+func (_u *TagUpdateOne) Mutation() *TagMutation {
+	return _u.mutation
 }
 
 // Where appends a list predicates to the TagUpdate builder.
-func (tuo *TagUpdateOne) Where(ps ...predicate.Tag) *TagUpdateOne {
-	tuo.mutation.Where(ps...)
-	return tuo
+func (_u *TagUpdateOne) Where(ps ...predicate.Tag) *TagUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (tuo *TagUpdateOne) Select(field string, fields ...string) *TagUpdateOne {
-	tuo.fields = append([]string{field}, fields...)
-	return tuo
+func (_u *TagUpdateOne) Select(field string, fields ...string) *TagUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Tag entity.
-func (tuo *TagUpdateOne) Save(ctx context.Context) (*Tag, error) {
-	tuo.defaults()
-	return withHooks(ctx, tuo.sqlSave, tuo.mutation, tuo.hooks)
+func (_u *TagUpdateOne) Save(ctx context.Context) (*Tag, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tuo *TagUpdateOne) SaveX(ctx context.Context) *Tag {
-	node, err := tuo.Save(ctx)
+func (_u *TagUpdateOne) SaveX(ctx context.Context) *Tag {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -559,53 +784,45 @@ func (tuo *TagUpdateOne) SaveX(ctx context.Context) *Tag {
 }
 
 // Exec executes the query on the entity.
-func (tuo *TagUpdateOne) Exec(ctx context.Context) error {
-	_, err := tuo.Save(ctx)
+func (_u *TagUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tuo *TagUpdateOne) ExecX(ctx context.Context) {
-	if err := tuo.Exec(ctx); err != nil {
+func (_u *TagUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (tuo *TagUpdateOne) defaults() {
-	if _, ok := tuo.mutation.UpdateTime(); !ok && !tuo.mutation.UpdateTimeCleared() {
-		v := tag.UpdateDefaultUpdateTime()
-		tuo.mutation.SetUpdateTime(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
-func (tuo *TagUpdateOne) check() error {
-	if v, ok := tuo.mutation.Name(); ok {
-		if err := tag.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
+func (_u *TagUpdateOne) check() error {
+	if v, ok := _u.mutation.Status(); ok {
+		if err := tag.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Tag.status": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (tuo *TagUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TagUpdateOne {
-	tuo.modifiers = append(tuo.modifiers, modifiers...)
-	return tuo
+func (_u *TagUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TagUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (tuo *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
-	if err := tuo.check(); err != nil {
+func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(tag.Table, tag.Columns, sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUint32))
-	id, ok := tuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Tag.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := tuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, tag.FieldID)
 		for _, f := range fields {
@@ -617,78 +834,108 @@ func (tuo *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 			}
 		}
 	}
-	if ps := tuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if tuo.mutation.CreateTimeCleared() {
-		_spec.ClearField(tag.FieldCreateTime, field.TypeInt64)
+	if _u.mutation.CreatedAtCleared() {
+		_spec.ClearField(tag.FieldCreatedAt, field.TypeTime)
 	}
-	if value, ok := tuo.mutation.UpdateTime(); ok {
-		_spec.SetField(tag.FieldUpdateTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := tuo.mutation.AddedUpdateTime(); ok {
-		_spec.AddField(tag.FieldUpdateTime, field.TypeInt64, value)
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(tag.FieldUpdatedAt, field.TypeTime)
 	}
-	if tuo.mutation.UpdateTimeCleared() {
-		_spec.ClearField(tag.FieldUpdateTime, field.TypeInt64)
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(tag.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := tuo.mutation.DeleteTime(); ok {
-		_spec.SetField(tag.FieldDeleteTime, field.TypeInt64, value)
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(tag.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := tuo.mutation.AddedDeleteTime(); ok {
-		_spec.AddField(tag.FieldDeleteTime, field.TypeInt64, value)
+	if value, ok := _u.mutation.CreatedBy(); ok {
+		_spec.SetField(tag.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if tuo.mutation.DeleteTimeCleared() {
-		_spec.ClearField(tag.FieldDeleteTime, field.TypeInt64)
+	if value, ok := _u.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(tag.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if value, ok := tuo.mutation.Name(); ok {
-		_spec.SetField(tag.FieldName, field.TypeString, value)
+	if _u.mutation.CreatedByCleared() {
+		_spec.ClearField(tag.FieldCreatedBy, field.TypeUint32)
 	}
-	if tuo.mutation.NameCleared() {
-		_spec.ClearField(tag.FieldName, field.TypeString)
+	if value, ok := _u.mutation.UpdatedBy(); ok {
+		_spec.SetField(tag.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := tuo.mutation.Color(); ok {
+	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(tag.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.UpdatedByCleared() {
+		_spec.ClearField(tag.FieldUpdatedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.DeletedBy(); ok {
+		_spec.SetField(tag.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(tag.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if _u.mutation.DeletedByCleared() {
+		_spec.ClearField(tag.FieldDeletedBy, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.SortOrder(); ok {
+		_spec.SetField(tag.FieldSortOrder, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedSortOrder(); ok {
+		_spec.AddField(tag.FieldSortOrder, field.TypeUint32, value)
+	}
+	if _u.mutation.SortOrderCleared() {
+		_spec.ClearField(tag.FieldSortOrder, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(tag.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(tag.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
 	}
-	if tuo.mutation.ColorCleared() {
+	if _u.mutation.ColorCleared() {
 		_spec.ClearField(tag.FieldColor, field.TypeString)
 	}
-	if value, ok := tuo.mutation.Thumbnail(); ok {
-		_spec.SetField(tag.FieldThumbnail, field.TypeString, value)
+	if value, ok := _u.mutation.Icon(); ok {
+		_spec.SetField(tag.FieldIcon, field.TypeString, value)
 	}
-	if tuo.mutation.ThumbnailCleared() {
-		_spec.ClearField(tag.FieldThumbnail, field.TypeString)
+	if _u.mutation.IconCleared() {
+		_spec.ClearField(tag.FieldIcon, field.TypeString)
 	}
-	if value, ok := tuo.mutation.Slug(); ok {
-		_spec.SetField(tag.FieldSlug, field.TypeString, value)
+	if value, ok := _u.mutation.Group(); ok {
+		_spec.SetField(tag.FieldGroup, field.TypeString, value)
 	}
-	if tuo.mutation.SlugCleared() {
-		_spec.ClearField(tag.FieldSlug, field.TypeString)
+	if _u.mutation.GroupCleared() {
+		_spec.ClearField(tag.FieldGroup, field.TypeString)
 	}
-	if value, ok := tuo.mutation.SlugName(); ok {
-		_spec.SetField(tag.FieldSlugName, field.TypeString, value)
+	if value, ok := _u.mutation.IsFeatured(); ok {
+		_spec.SetField(tag.FieldIsFeatured, field.TypeBool, value)
 	}
-	if tuo.mutation.SlugNameCleared() {
-		_spec.ClearField(tag.FieldSlugName, field.TypeString)
+	if _u.mutation.IsFeaturedCleared() {
+		_spec.ClearField(tag.FieldIsFeatured, field.TypeBool)
 	}
-	if value, ok := tuo.mutation.PostCount(); ok {
+	if value, ok := _u.mutation.PostCount(); ok {
 		_spec.SetField(tag.FieldPostCount, field.TypeUint32, value)
 	}
-	if value, ok := tuo.mutation.AddedPostCount(); ok {
+	if value, ok := _u.mutation.AddedPostCount(); ok {
 		_spec.AddField(tag.FieldPostCount, field.TypeUint32, value)
 	}
-	if tuo.mutation.PostCountCleared() {
+	if _u.mutation.PostCountCleared() {
 		_spec.ClearField(tag.FieldPostCount, field.TypeUint32)
 	}
-	_spec.AddModifiers(tuo.modifiers...)
-	_node = &Tag{config: tuo.config}
+	_spec.AddModifiers(_u.modifiers...)
+	_node = &Tag{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, tuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{tag.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -696,6 +943,6 @@ func (tuo *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 		}
 		return nil, err
 	}
-	tuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

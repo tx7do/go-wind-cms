@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "audit/service/v1/login_audit_log.proto";
+
+
+// 登录审计日志管理服务
+service LoginAuditLogService {
+  // 查询登录审计日志列表
+  rpc List (pagination.PagingRequest) returns (audit.service.v1.ListLoginAuditLogResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/login-audit-logs"
+    };
+  }
+
+  // 查询登录审计日志详情
+  rpc Get (audit.service.v1.GetLoginAuditLogRequest) returns (audit.service.v1.LoginAuditLog) {
+    option (google.api.http) = {
+      get: "/admin/v1/login-audit-logs/{id}"
+    };
+  }
+}

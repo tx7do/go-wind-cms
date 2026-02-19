@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package dict.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 数据字典分类服务
+service DictTypeService {
+  // 分页查询字典类型列表
+  rpc List (pagination.PagingRequest) returns (ListDictTypeResponse) {}
+
+  // 统计字典类型数量
+  rpc Count (pagination.PagingRequest) returns (CountDictTypeResponse) {}
+
+  // 查询字典类型详情
+  rpc Get (GetDictTypeRequest) returns (DictType) {}
+
+  // 创建字典类型
+  rpc Create (CreateDictTypeRequest) returns (google.protobuf.Empty) {}
+
+  // 更新字典类型
+  rpc Update (UpdateDictTypeRequest) returns (google.protobuf.Empty) {}
+
+  // 删除字典类型
+  rpc Delete (DeleteDictTypeRequest) returns (google.protobuf.Empty) {}
+}
+
+// 字典类型
+message DictType {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "字典类型ID"
+    }
+  ]; // 字典类型ID
+
+  optional string type_code = 2 [
+    json_name = "typeCode",
+    (gnostic.openapi.v3.property) = {description: "字典类型唯一代码"}
+  ]; // 字典类型唯一代码
+
+  optional bool is_enabled = 3 [
+    json_name = "isEnabled",
+    (gnostic.openapi.v3.property) = {description: "是否启用"}
+  ]; // 是否启用
+
+  optional uint32 sort_order = 4 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序顺序，值越小越靠前"}
+  ]; // 排序顺序，值越小越靠前
+
+  map<string, DictTypeI18n> i18n = 5 [
+    json_name = "i18n",
+    (gnostic.openapi.v3.property) = {
+      description: "多语言信息，key 为 BCP-47 语言标签（如 zh-CN、en-US）"
+      example: {yaml: "{ \"zh-CN\": { \"typeName\": \"性别\" }, \"en-US\": { \"typeName\": \"Gender\" } }"}
+    }
+  ]; // 多语言信息，key为语言代码，如zh-CN、en-US等
+
+  optional DictTypeI18n current_i18n = 6 [
+    json_name = "currentI18n",
+    (gnostic.openapi.v3.property) = {
+      description: "【只读】当前请求语言（如 Accept-Language: zh-CN）下的翻译，由服务端自动填充",
+      read_only: true
+    }
+  ]; // 【只读】当前请求语言（如 Accept-Language: zh-CN）下的翻译，由服务端自动填充
+
+  optional uint32 tenant_id = 50 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
+  ];  // 租户ID，0代表系统全局角色
+  optional string tenant_name = 51 [
+    json_name = "tenantName",
+    (gnostic.openapi.v3.property) = {description: "租户名称"}
+  ];  // 租户名称
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 字典类型多语言信息
+message DictTypeI18n {
+  string type_name = 1 [
+    json_name = "typeName",
+    (gnostic.openapi.v3.property) = {description: "类型名称"}
+  ]; // 类型名称
+
+  optional string description = 2 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "描述信息"}
+  ]; // 描述信息
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码，如 zh-CN、en-US 等"}
+  ]; // 语言代码，如 zh-CN、en-US 等
+
+  optional string language_name = 4 [
+    json_name = "languageName",
+    (gnostic.openapi.v3.property) = {description: "语言名称"}
+  ]; // 语言名称
+}
+
+// 查询字典类型列表 - 回应
+message ListDictTypeResponse {
+  repeated DictType items = 1;
+  uint64 total = 2;
+}
+
+// 查询字典类型详情 - 请求
+message GetDictTypeRequest {
+  oneof query_by {
+    uint32 id = 1;
+    string code = 2;
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建字典类型 - 请求
+message CreateDictTypeRequest {
+  DictType data = 1;
+}
+
+// 更新字典类型 - 请求
+message UpdateDictTypeRequest {
+  uint32 id = 1;
+
+  DictType data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 批量删除字典 - 请求
+message DeleteDictTypeRequest {
+  repeated uint32 ids = 1;  // 要删除的ID列表
+}
+
+message CountDictTypeResponse {
+  uint64 count = 1;  // 字典类型数量
+}

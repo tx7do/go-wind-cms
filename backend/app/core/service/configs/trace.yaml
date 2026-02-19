@@ -1,6 +1,8 @@
 trace:
   endpoint: "localhost:4317"
-  batcher: "otlp-grpc"
+  exporter: "otlp-grpc"
   sampler: 1.0
   env: "dev"
   insecure: true
+  enable_trace_context: true
+  enable_baggage: true

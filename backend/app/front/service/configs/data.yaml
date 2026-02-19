@@ -1,6 +1,0 @@
-data:
-  redis:
-    addr: "localhost:6379"
-    dial_timeout: 10s
-    read_timeout: 0.4s
-    write_timeout: 0.6s

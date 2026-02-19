@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package authentication.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "identity/service/v1/types.proto";
+
+// 用户令牌载体
+message UserTokenPayload {
+  uint32 user_id = 1 [
+    json_name = "uid",
+    (gnostic.openapi.v3.property) = {
+      description: "用户ID"
+    }
+  ]; // 用户ID
+
+  optional uint32 tenant_id = 2 [
+    json_name = "tid",
+    (gnostic.openapi.v3.property) = {
+      description: "租户ID"
+    }
+  ]; // 租户ID
+
+  optional string client_id = 3 [
+    json_name = "cid",
+    (gnostic.openapi.v3.property) = {
+      description: "客户端ID"
+    }
+  ]; // 客户端ID
+
+  optional string device_id = 4 [
+    json_name = "did",
+    (gnostic.openapi.v3.property) = {
+      description: "设备ID"
+    }
+  ]; // 设备ID
+
+  optional string username = 5 [
+    json_name = "sub",
+    (gnostic.openapi.v3.property) = {
+      description: "用户名"
+    }
+  ]; // 用户名
+
+  repeated string roles = 10 [
+    json_name = "roc",
+    (gnostic.openapi.v3.property) = {
+      description: "用户角色码列表"
+    }
+  ]; // 用户角色码列表
+
+  optional identity.service.v1.DataScope data_scope = 11 [
+    json_name = "ds",
+    (gnostic.openapi.v3.property) = {
+      description: "数据权限范围"
+    }
+  ]; // 数据权限范围
+
+  optional uint32 org_unit_id = 12 [
+    json_name = "ouid",
+    (gnostic.openapi.v3.property) = {
+      description: "当前组织单元ID"
+    }
+  ]; // 当前组织单元ID
+
+  optional bool is_platform_admin = 20 [
+    json_name = "ipa",
+    (gnostic.openapi.v3.property) = {
+      description: "是否平台超级管理员"
+    }
+  ]; // 是否平台超级管理员
+
+  optional bool is_tenant_admin = 21 [
+    json_name = "ita",
+    (gnostic.openapi.v3.property) = {
+      description: "是否租户管理员"
+    }
+  ]; // 是否租户管理员
+
+  optional string jti = 100 [
+    json_name = "jti",
+    (gnostic.openapi.v3.property) = {
+      description: "令牌唯一标识(JWT ID)"
+    }
+  ]; // 令牌唯一标识(JWT ID)
+}

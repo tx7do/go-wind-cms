@@ -1,57 +1,63 @@
 package data
 
 import (
-	"context"
+	"github.com/go-kratos/kratos/v2/log"
+
+	"entgo.io/ent/dialect/sql"
 
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
 
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/go-utils/entgo"
+	entCrud "github.com/tx7do/go-crud/entgo"
 
-	"kratos-cms/app/core/service/internal/data/ent"
-	"kratos-cms/app/core/service/internal/data/ent/migrate"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	entBootstrap "github.com/tx7do/kratos-bootstrap/database/ent"
 
-	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"go-wind-cms/app/core/service/internal/data/ent"
+	"go-wind-cms/app/core/service/internal/data/ent/migrate"
+	_ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 )
 
 // NewEntClient 创建Ent ORM数据库客户端
-func NewEntClient(cfg *conf.Bootstrap, logger log.Logger) *entgo.EntClient[*ent.Client] {
-	l := log.NewHelper(log.With(logger, "module", "ent/data/core-service"))
+func NewEntClient(ctx *bootstrap.Context) (*entCrud.EntClient[*ent.Client], func(), error) {
+	l := ctx.NewLoggerHelper("ent/data/core-service")
 
-	drv, err := entgo.CreateDriver(
-		cfg.Data.Database.GetDriver(),
-		cfg.Data.Database.GetSource(),
-		cfg.Data.Database.GetEnableTrace(),
-		cfg.Data.Database.GetEnableMetrics(),
-	)
-	if err != nil {
-		l.Fatalf("failed opening connection to db: %v", err)
-		return nil
+	cfg := ctx.GetConfig()
+	if cfg == nil || cfg.Data == nil {
+		l.Fatalf("[ENT] failed getting config")
+		return nil, func() {}, nil
 	}
 
-	client := ent.NewClient(
-		ent.Driver(drv),
-		ent.Log(func(a ...any) {
-			l.Debug(a...)
-		}),
-	)
-
-	// 运行数据库迁移工具
-	if cfg.Data.Database.GetMigrate() {
-		if err = client.Schema.Create(context.Background(), migrate.WithForeignKeys(true)); err != nil {
-			l.Fatalf("failed creating schema resources: %v", err)
+	cli, err := entBootstrap.NewEntClient(cfg, func(drv *sql.Driver) *ent.Client {
+		client := ent.NewClient(
+			ent.Driver(drv),
+			ent.Log(func(a ...any) {
+				l.Debug(a...)
+			}),
+		)
+		if client == nil {
+			l.Fatalf("[ENT] failed creating ent client")
+			return nil
 		}
+
+		// run the auto migration tool
+		if cfg.Data.Database.GetMigrate() {
+			if err := client.Schema.Create(ctx.Context(), migrate.WithForeignKeys(true)); err != nil {
+				l.Fatalf("[ENT] failed creating schema resources: %v", err)
+			}
+		}
+
+		return client
+	})
+	if err != nil {
+		log.Fatalf("[ENT] failed creating ent client: %v", err)
+		return nil, func() {}, err
 	}
 
-	cli := entgo.NewEntClient(client, drv)
-
-	cli.SetConnectionOption(
-		int(cfg.Data.Database.GetMaxIdleConnections()),
-		int(cfg.Data.Database.GetMaxOpenConnections()),
-		cfg.Data.Database.GetConnectionMaxLifetime().AsDuration(),
-	)
-
-	return cli
+	return cli, func() {
+		if cleanErr := cli.Close(); cleanErr != nil {
+			log.Errorf("[ENT] failed closing ent client: %v", cleanErr)
+		}
+	}, nil
 }

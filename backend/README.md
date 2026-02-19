@@ -1,6 +1,6 @@
-# 克拉托斯博客 - Golang后端 - Kratos Blog Backend
+# GoWind CMS Backend
 
-一个Golang的博客系统/CMS。
+一个Golang的Headless CMS。
 
 - 后端基于 golang微服务框架 [go-kratos](https://go-kratos.dev/)
 - 前端基于 [VUE3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/)

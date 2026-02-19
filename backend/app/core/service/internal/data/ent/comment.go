@@ -4,50 +4,107 @@ package ent
 
 import (
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/comment"
+	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
-// Comment is the model entity for the Comment schema.
+// 评论表
 type Comment struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
 	// 创建时间
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
-	UpdateTime *int64 `json:"update_time,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// 删除时间
-	DeleteTime *int64 `json:"delete_time,omitempty"`
-	// 作者
-	Author *string `json:"author,omitempty"`
-	// 邮箱地址
-	Email *string `json:"email,omitempty"`
-	// IP地址
-	IPAddress *string `json:"ip_address,omitempty"`
-	// 作者链接
-	AuthorURL *string `json:"author_url,omitempty"`
-	// MD5
-	GravatarMd5 *string `json:"gravatar_md5,omitempty"`
-	// 内容
-	Content *string `json:"content,omitempty"`
-	// 用户浏览器信息
-	UserAgent *string `json:"user_agent,omitempty"`
-	// 头像
-	Avatar *string `json:"avatar,omitempty"`
-	// 父评论ID
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	// 创建者ID
+	CreatedBy *uint32 `json:"created_by,omitempty"`
+	// 更新者ID
+	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	// 删除者ID
+	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 父节点ID
 	ParentID *uint32 `json:"parent_id,omitempty"`
-	// 状态
-	Status *uint32 `json:"status,omitempty"`
-	// 是否管理员
-	IsAdmin *bool `json:"is_admin,omitempty"`
-	// 允许通知
-	AllowNotification *bool `json:"allow_notification,omitempty"`
-	selectValues      sql.SelectValues
+	// 内容类型
+	ContentType *comment.ContentType `json:"content_type,omitempty"`
+	// 对象ID
+	ObjectID *uint32 `json:"object_id,omitempty"`
+	// 评论内容
+	Content *string `json:"content,omitempty"`
+	// 评论作者ID，0表示游客
+	AuthorID *uint32 `json:"author_id,omitempty"`
+	// 评论作者名称
+	AuthorName *string `json:"author_name,omitempty"`
+	// 评论作者邮箱
+	AuthorEmail *string `json:"author_email,omitempty"`
+	// 评论作者网址
+	AuthorURL *string `json:"author_url,omitempty"`
+	// 作者类型
+	AuthorType *comment.AuthorType `json:"author_type,omitempty"`
+	// 评论状态
+	Status *comment.Status `json:"status,omitempty"`
+	// 点赞数
+	LikeCount *uint32 `json:"like_count,omitempty"`
+	// 点踩数
+	DislikeCount *uint32 `json:"dislike_count,omitempty"`
+	// 回复数
+	ReplyCount *uint32 `json:"reply_count,omitempty"`
+	// 评论者 IP
+	IPAddress *string `json:"ip_address,omitempty"`
+	// 评论者地理位置
+	Location *string `json:"location,omitempty"`
+	// User-Agent
+	UserAgent *string `json:"user_agent,omitempty"`
+	// 自动检测的语言代码
+	DetectedLanguage *string `json:"detected_language,omitempty"`
+	// 是否标记为垃圾评论
+	IsSpam *bool `json:"is_spam,omitempty"`
+	// 是否置顶评论
+	IsSticky *bool `json:"is_sticky,omitempty"`
+	// 回复的评论ID
+	ReplyToID *uint32 `json:"reply_to_id,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the CommentQuery when eager-loading is set.
+	Edges        CommentEdges `json:"edges"`
+	selectValues sql.SelectValues
+}
+
+// CommentEdges holds the relations/edges for other nodes in the graph.
+type CommentEdges struct {
+	// Parent holds the value of the parent edge.
+	Parent *Comment `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*Comment `json:"children,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CommentEdges) ParentOrErr() (*Comment, error) {
+	if e.Parent != nil {
+		return e.Parent, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: comment.Label}
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e CommentEdges) ChildrenOrErr() ([]*Comment, error) {
+	if e.loadedTypes[1] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -55,12 +112,14 @@ func (*Comment) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case comment.FieldIsAdmin, comment.FieldAllowNotification:
+		case comment.FieldIsSpam, comment.FieldIsSticky:
 			values[i] = new(sql.NullBool)
-		case comment.FieldID, comment.FieldCreateTime, comment.FieldUpdateTime, comment.FieldDeleteTime, comment.FieldParentID, comment.FieldStatus:
+		case comment.FieldID, comment.FieldCreatedBy, comment.FieldUpdatedBy, comment.FieldDeletedBy, comment.FieldParentID, comment.FieldObjectID, comment.FieldAuthorID, comment.FieldLikeCount, comment.FieldDislikeCount, comment.FieldReplyCount, comment.FieldReplyToID:
 			values[i] = new(sql.NullInt64)
-		case comment.FieldAuthor, comment.FieldEmail, comment.FieldIPAddress, comment.FieldAuthorURL, comment.FieldGravatarMd5, comment.FieldContent, comment.FieldUserAgent, comment.FieldAvatar:
+		case comment.FieldContentType, comment.FieldContent, comment.FieldAuthorName, comment.FieldAuthorEmail, comment.FieldAuthorURL, comment.FieldAuthorType, comment.FieldStatus, comment.FieldIPAddress, comment.FieldLocation, comment.FieldUserAgent, comment.FieldDetectedLanguage:
 			values[i] = new(sql.NullString)
+		case comment.FieldCreatedAt, comment.FieldUpdatedAt, comment.FieldDeletedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -70,7 +129,7 @@ func (*Comment) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Comment fields.
-func (c *Comment) assignValues(columns []string, values []any) error {
+func (_m *Comment) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -81,114 +140,191 @@ func (c *Comment) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			c.ID = uint32(value.Int64)
-		case comment.FieldCreateTime:
+			_m.ID = uint32(value.Int64)
+		case comment.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = new(time.Time)
+				*_m.CreatedAt = value.Time
+			}
+		case comment.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = new(time.Time)
+				*_m.UpdatedAt = value.Time
+			}
+		case comment.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
+			}
+		case comment.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				c.CreateTime = new(int64)
-				*c.CreateTime = value.Int64
+				_m.CreatedBy = new(uint32)
+				*_m.CreatedBy = uint32(value.Int64)
 			}
-		case comment.FieldUpdateTime:
+		case comment.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				c.UpdateTime = new(int64)
-				*c.UpdateTime = value.Int64
+				_m.UpdatedBy = new(uint32)
+				*_m.UpdatedBy = uint32(value.Int64)
 			}
-		case comment.FieldDeleteTime:
+		case comment.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field delete_time", values[i])
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				c.DeleteTime = new(int64)
-				*c.DeleteTime = value.Int64
-			}
-		case comment.FieldAuthor:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field author", values[i])
-			} else if value.Valid {
-				c.Author = new(string)
-				*c.Author = value.String
-			}
-		case comment.FieldEmail:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field email", values[i])
-			} else if value.Valid {
-				c.Email = new(string)
-				*c.Email = value.String
-			}
-		case comment.FieldIPAddress:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field ip_address", values[i])
-			} else if value.Valid {
-				c.IPAddress = new(string)
-				*c.IPAddress = value.String
-			}
-		case comment.FieldAuthorURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field author_url", values[i])
-			} else if value.Valid {
-				c.AuthorURL = new(string)
-				*c.AuthorURL = value.String
-			}
-		case comment.FieldGravatarMd5:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field gravatar_md5", values[i])
-			} else if value.Valid {
-				c.GravatarMd5 = new(string)
-				*c.GravatarMd5 = value.String
-			}
-		case comment.FieldContent:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field content", values[i])
-			} else if value.Valid {
-				c.Content = new(string)
-				*c.Content = value.String
-			}
-		case comment.FieldUserAgent:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_agent", values[i])
-			} else if value.Valid {
-				c.UserAgent = new(string)
-				*c.UserAgent = value.String
-			}
-		case comment.FieldAvatar:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field avatar", values[i])
-			} else if value.Valid {
-				c.Avatar = new(string)
-				*c.Avatar = value.String
+				_m.DeletedBy = new(uint32)
+				*_m.DeletedBy = uint32(value.Int64)
 			}
 		case comment.FieldParentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
-				c.ParentID = new(uint32)
-				*c.ParentID = uint32(value.Int64)
+				_m.ParentID = new(uint32)
+				*_m.ParentID = uint32(value.Int64)
+			}
+		case comment.FieldContentType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content_type", values[i])
+			} else if value.Valid {
+				_m.ContentType = new(comment.ContentType)
+				*_m.ContentType = comment.ContentType(value.String)
+			}
+		case comment.FieldObjectID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field object_id", values[i])
+			} else if value.Valid {
+				_m.ObjectID = new(uint32)
+				*_m.ObjectID = uint32(value.Int64)
+			}
+		case comment.FieldContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content", values[i])
+			} else if value.Valid {
+				_m.Content = new(string)
+				*_m.Content = value.String
+			}
+		case comment.FieldAuthorID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field author_id", values[i])
+			} else if value.Valid {
+				_m.AuthorID = new(uint32)
+				*_m.AuthorID = uint32(value.Int64)
+			}
+		case comment.FieldAuthorName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field author_name", values[i])
+			} else if value.Valid {
+				_m.AuthorName = new(string)
+				*_m.AuthorName = value.String
+			}
+		case comment.FieldAuthorEmail:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field author_email", values[i])
+			} else if value.Valid {
+				_m.AuthorEmail = new(string)
+				*_m.AuthorEmail = value.String
+			}
+		case comment.FieldAuthorURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field author_url", values[i])
+			} else if value.Valid {
+				_m.AuthorURL = new(string)
+				*_m.AuthorURL = value.String
+			}
+		case comment.FieldAuthorType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field author_type", values[i])
+			} else if value.Valid {
+				_m.AuthorType = new(comment.AuthorType)
+				*_m.AuthorType = comment.AuthorType(value.String)
 			}
 		case comment.FieldStatus:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				c.Status = new(uint32)
-				*c.Status = uint32(value.Int64)
+				_m.Status = new(comment.Status)
+				*_m.Status = comment.Status(value.String)
 			}
-		case comment.FieldIsAdmin:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_admin", values[i])
+		case comment.FieldLikeCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field like_count", values[i])
 			} else if value.Valid {
-				c.IsAdmin = new(bool)
-				*c.IsAdmin = value.Bool
+				_m.LikeCount = new(uint32)
+				*_m.LikeCount = uint32(value.Int64)
 			}
-		case comment.FieldAllowNotification:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field allow_notification", values[i])
+		case comment.FieldDislikeCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field dislike_count", values[i])
 			} else if value.Valid {
-				c.AllowNotification = new(bool)
-				*c.AllowNotification = value.Bool
+				_m.DislikeCount = new(uint32)
+				*_m.DislikeCount = uint32(value.Int64)
+			}
+		case comment.FieldReplyCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field reply_count", values[i])
+			} else if value.Valid {
+				_m.ReplyCount = new(uint32)
+				*_m.ReplyCount = uint32(value.Int64)
+			}
+		case comment.FieldIPAddress:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ip_address", values[i])
+			} else if value.Valid {
+				_m.IPAddress = new(string)
+				*_m.IPAddress = value.String
+			}
+		case comment.FieldLocation:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field location", values[i])
+			} else if value.Valid {
+				_m.Location = new(string)
+				*_m.Location = value.String
+			}
+		case comment.FieldUserAgent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_agent", values[i])
+			} else if value.Valid {
+				_m.UserAgent = new(string)
+				*_m.UserAgent = value.String
+			}
+		case comment.FieldDetectedLanguage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field detected_language", values[i])
+			} else if value.Valid {
+				_m.DetectedLanguage = new(string)
+				*_m.DetectedLanguage = value.String
+			}
+		case comment.FieldIsSpam:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_spam", values[i])
+			} else if value.Valid {
+				_m.IsSpam = new(bool)
+				*_m.IsSpam = value.Bool
+			}
+		case comment.FieldIsSticky:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_sticky", values[i])
+			} else if value.Valid {
+				_m.IsSticky = new(bool)
+				*_m.IsSticky = value.Bool
+			}
+		case comment.FieldReplyToID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field reply_to_id", values[i])
+			} else if value.Valid {
+				_m.ReplyToID = new(uint32)
+				*_m.ReplyToID = uint32(value.Int64)
 			}
 		default:
-			c.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -196,105 +332,170 @@ func (c *Comment) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Comment.
 // This includes values selected through modifiers, order, etc.
-func (c *Comment) Value(name string) (ent.Value, error) {
-	return c.selectValues.Get(name)
+func (_m *Comment) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
+}
+
+// QueryParent queries the "parent" edge of the Comment entity.
+func (_m *Comment) QueryParent() *CommentQuery {
+	return NewCommentClient(_m.config).QueryParent(_m)
+}
+
+// QueryChildren queries the "children" edge of the Comment entity.
+func (_m *Comment) QueryChildren() *CommentQuery {
+	return NewCommentClient(_m.config).QueryChildren(_m)
 }
 
 // Update returns a builder for updating this Comment.
 // Note that you need to call Comment.Unwrap() before calling this method if this Comment
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (c *Comment) Update() *CommentUpdateOne {
-	return NewCommentClient(c.config).UpdateOne(c)
+func (_m *Comment) Update() *CommentUpdateOne {
+	return NewCommentClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Comment entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (c *Comment) Unwrap() *Comment {
-	_tx, ok := c.config.driver.(*txDriver)
+func (_m *Comment) Unwrap() *Comment {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Comment is not a transactional entity")
 	}
-	c.config.driver = _tx.drv
-	return c
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (c *Comment) String() string {
+func (_m *Comment) String() string {
 	var builder strings.Builder
 	builder.WriteString("Comment(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", c.ID))
-	if v := c.CreateTime; v != nil {
-		builder.WriteString("create_time=")
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.CreatedAt; v != nil {
+		builder.WriteString("created_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpdatedAt; v != nil {
+		builder.WriteString("updated_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.UpdateTime; v != nil {
-		builder.WriteString("update_time=")
+	if v := _m.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.DeleteTime; v != nil {
-		builder.WriteString("delete_time=")
+	if v := _m.DeletedBy; v != nil {
+		builder.WriteString("deleted_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.Author; v != nil {
-		builder.WriteString("author=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.Email; v != nil {
-		builder.WriteString("email=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.IPAddress; v != nil {
-		builder.WriteString("ip_address=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.AuthorURL; v != nil {
-		builder.WriteString("author_url=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.GravatarMd5; v != nil {
-		builder.WriteString("gravatar_md5=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.Content; v != nil {
-		builder.WriteString("content=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.UserAgent; v != nil {
-		builder.WriteString("user_agent=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.Avatar; v != nil {
-		builder.WriteString("avatar=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.ParentID; v != nil {
+	if v := _m.ParentID; v != nil {
 		builder.WriteString("parent_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.Status; v != nil {
+	if v := _m.ContentType; v != nil {
+		builder.WriteString("content_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ObjectID; v != nil {
+		builder.WriteString("object_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Content; v != nil {
+		builder.WriteString("content=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.AuthorID; v != nil {
+		builder.WriteString("author_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.AuthorName; v != nil {
+		builder.WriteString("author_name=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.AuthorEmail; v != nil {
+		builder.WriteString("author_email=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.AuthorURL; v != nil {
+		builder.WriteString("author_url=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.AuthorType; v != nil {
+		builder.WriteString("author_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.IsAdmin; v != nil {
-		builder.WriteString("is_admin=")
+	if v := _m.LikeCount; v != nil {
+		builder.WriteString("like_count=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.AllowNotification; v != nil {
-		builder.WriteString("allow_notification=")
+	if v := _m.DislikeCount; v != nil {
+		builder.WriteString("dislike_count=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ReplyCount; v != nil {
+		builder.WriteString("reply_count=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.IPAddress; v != nil {
+		builder.WriteString("ip_address=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Location; v != nil {
+		builder.WriteString("location=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.UserAgent; v != nil {
+		builder.WriteString("user_agent=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.DetectedLanguage; v != nil {
+		builder.WriteString("detected_language=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.IsSpam; v != nil {
+		builder.WriteString("is_spam=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.IsSticky; v != nil {
+		builder.WriteString("is_sticky=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ReplyToID; v != nil {
+		builder.WriteString("reply_to_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

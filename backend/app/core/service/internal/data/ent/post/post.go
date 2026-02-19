@@ -3,6 +3,8 @@
 package post
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -11,85 +13,82 @@ const (
 	Label = "post"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreateTime holds the string denoting the create_time field in the database.
-	FieldCreateTime = "create_time"
-	// FieldUpdateTime holds the string denoting the update_time field in the database.
-	FieldUpdateTime = "update_time"
-	// FieldDeleteTime holds the string denoting the delete_time field in the database.
-	FieldDeleteTime = "delete_time"
-	// FieldTitle holds the string denoting the title field in the database.
-	FieldTitle = "title"
-	// FieldSlug holds the string denoting the slug field in the database.
-	FieldSlug = "slug"
-	// FieldMetaKeywords holds the string denoting the meta_keywords field in the database.
-	FieldMetaKeywords = "meta_keywords"
-	// FieldMetaDescription holds the string denoting the meta_description field in the database.
-	FieldMetaDescription = "meta_description"
-	// FieldFullPath holds the string denoting the full_path field in the database.
-	FieldFullPath = "full_path"
-	// FieldOriginalContent holds the string denoting the original_content field in the database.
-	FieldOriginalContent = "original_content"
-	// FieldContent holds the string denoting the content field in the database.
-	FieldContent = "content"
-	// FieldSummary holds the string denoting the summary field in the database.
-	FieldSummary = "summary"
-	// FieldThumbnail holds the string denoting the thumbnail field in the database.
-	FieldThumbnail = "thumbnail"
-	// FieldPassword holds the string denoting the password field in the database.
-	FieldPassword = "password"
-	// FieldTemplate holds the string denoting the template field in the database.
-	FieldTemplate = "template"
-	// FieldCommentCount holds the string denoting the comment_count field in the database.
-	FieldCommentCount = "comment_count"
-	// FieldVisits holds the string denoting the visits field in the database.
-	FieldVisits = "visits"
-	// FieldLikes holds the string denoting the likes field in the database.
-	FieldLikes = "likes"
-	// FieldWordCount holds the string denoting the word_count field in the database.
-	FieldWordCount = "word_count"
-	// FieldTopPriority holds the string denoting the top_priority field in the database.
-	FieldTopPriority = "top_priority"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
+	// FieldCreatedBy holds the string denoting the created_by field in the database.
+	FieldCreatedBy = "created_by"
+	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
+	FieldUpdatedBy = "updated_by"
+	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
+	FieldDeletedBy = "deleted_by"
+	// FieldSortOrder holds the string denoting the sort_order field in the database.
+	FieldSortOrder = "sort_order"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldEditorType holds the string denoting the editor_type field in the database.
 	FieldEditorType = "editor_type"
-	// FieldEditTime holds the string denoting the edit_time field in the database.
-	FieldEditTime = "edit_time"
+	// FieldSlug holds the string denoting the slug field in the database.
+	FieldSlug = "slug"
 	// FieldDisallowComment holds the string denoting the disallow_comment field in the database.
 	FieldDisallowComment = "disallow_comment"
 	// FieldInProgress holds the string denoting the in_progress field in the database.
 	FieldInProgress = "in_progress"
+	// FieldAutoSummary holds the string denoting the auto_summary field in the database.
+	FieldAutoSummary = "auto_summary"
+	// FieldIsFeatured holds the string denoting the is_featured field in the database.
+	FieldIsFeatured = "is_featured"
+	// FieldVisits holds the string denoting the visits field in the database.
+	FieldVisits = "visits"
+	// FieldLikes holds the string denoting the likes field in the database.
+	FieldLikes = "likes"
+	// FieldCommentCount holds the string denoting the comment_count field in the database.
+	FieldCommentCount = "comment_count"
+	// FieldAuthorID holds the string denoting the author_id field in the database.
+	FieldAuthorID = "author_id"
+	// FieldAuthorName holds the string denoting the author_name field in the database.
+	FieldAuthorName = "author_name"
+	// FieldPasswordHash holds the string denoting the password_hash field in the database.
+	FieldPasswordHash = "password_hash"
+	// FieldCustomFields holds the string denoting the custom_fields field in the database.
+	FieldCustomFields = "custom_fields"
+	// FieldCategoryIds holds the string denoting the category_ids field in the database.
+	FieldCategoryIds = "category_ids"
+	// FieldTagIds holds the string denoting the tag_ids field in the database.
+	FieldTagIds = "tag_ids"
 	// Table holds the table name of the post in the database.
-	Table = "post"
+	Table = "posts"
 )
 
 // Columns holds all SQL columns for post fields.
 var Columns = []string{
 	FieldID,
-	FieldCreateTime,
-	FieldUpdateTime,
-	FieldDeleteTime,
-	FieldTitle,
-	FieldSlug,
-	FieldMetaKeywords,
-	FieldMetaDescription,
-	FieldFullPath,
-	FieldOriginalContent,
-	FieldContent,
-	FieldSummary,
-	FieldThumbnail,
-	FieldPassword,
-	FieldTemplate,
-	FieldCommentCount,
-	FieldVisits,
-	FieldLikes,
-	FieldWordCount,
-	FieldTopPriority,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeletedAt,
+	FieldCreatedBy,
+	FieldUpdatedBy,
+	FieldDeletedBy,
+	FieldSortOrder,
 	FieldStatus,
 	FieldEditorType,
-	FieldEditTime,
+	FieldSlug,
 	FieldDisallowComment,
 	FieldInProgress,
+	FieldAutoSummary,
+	FieldIsFeatured,
+	FieldVisits,
+	FieldLikes,
+	FieldCommentCount,
+	FieldAuthorID,
+	FieldAuthorName,
+	FieldPasswordHash,
+	FieldCustomFields,
+	FieldCategoryIds,
+	FieldTagIds,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,15 +102,83 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreateTime holds the default value on creation for the "create_time" field.
-	DefaultCreateTime func() int64
-	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
-	UpdateDefaultUpdateTime func() int64
-	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	TitleValidator func(string) error
+	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
+	DefaultSortOrder uint32
+	// DefaultDisallowComment holds the default value on creation for the "disallow_comment" field.
+	DefaultDisallowComment bool
+	// DefaultInProgress holds the default value on creation for the "in_progress" field.
+	DefaultInProgress bool
+	// DefaultAutoSummary holds the default value on creation for the "auto_summary" field.
+	DefaultAutoSummary bool
+	// DefaultIsFeatured holds the default value on creation for the "is_featured" field.
+	DefaultIsFeatured bool
+	// DefaultVisits holds the default value on creation for the "visits" field.
+	DefaultVisits int32
+	// DefaultLikes holds the default value on creation for the "likes" field.
+	DefaultLikes int32
+	// DefaultCommentCount holds the default value on creation for the "comment_count" field.
+	DefaultCommentCount int32
+	// DefaultAuthorID holds the default value on creation for the "author_id" field.
+	DefaultAuthorID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusPostStatusDraft is the default value of the Status enum.
+const DefaultStatus = StatusPostStatusDraft
+
+// Status values.
+const (
+	StatusPostStatusDraft     Status = "POST_STATUS_DRAFT"
+	StatusPostStatusPublished Status = "POST_STATUS_PUBLISHED"
+	StatusPostStatusScheduled Status = "POST_STATUS_SCHEDULED"
+	StatusPostStatusTrashed   Status = "POST_STATUS_TRASHED"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusPostStatusDraft, StatusPostStatusPublished, StatusPostStatusScheduled, StatusPostStatusTrashed:
+		return nil
+	default:
+		return fmt.Errorf("post: invalid enum value for status field: %q", s)
+	}
+}
+
+// EditorType defines the type for the "editor_type" enum field.
+type EditorType string
+
+// EditorTypeEditorTypeMarkdown is the default value of the EditorType enum.
+const DefaultEditorType = EditorTypeEditorTypeMarkdown
+
+// EditorType values.
+const (
+	EditorTypeEditorTypeMarkdown  EditorType = "EDITOR_TYPE_MARKDOWN"
+	EditorTypeEditorTypeRichText  EditorType = "EDITOR_TYPE_RICH_TEXT"
+	EditorTypeEditorTypeHtml      EditorType = "EDITOR_TYPE_HTML"
+	EditorTypeEditorTypeJsonBlock EditorType = "EDITOR_TYPE_JSON_BLOCK"
+)
+
+func (et EditorType) String() string {
+	return string(et)
+}
+
+// EditorTypeValidator is a validator for the "editor_type" field enum values. It is called by the builders before save.
+func EditorTypeValidator(et EditorType) error {
+	switch et {
+	case EditorTypeEditorTypeMarkdown, EditorTypeEditorTypeRichText, EditorTypeEditorTypeHtml, EditorTypeEditorTypeJsonBlock:
+		return nil
+	default:
+		return fmt.Errorf("post: invalid enum value for editor_type field: %q", et)
+	}
+}
 
 // OrderOption defines the ordering options for the Post queries.
 type OrderOption func(*sql.Selector)
@@ -121,99 +188,39 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByCreateTime orders the results by the create_time field.
-func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
-// ByUpdateTime orders the results by the update_time field.
-func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByDeleteTime orders the results by the delete_time field.
-func ByDeleteTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleteTime, opts...).ToFunc()
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
-// ByTitle orders the results by the title field.
-func ByTitle(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTitle, opts...).ToFunc()
+// ByCreatedBy orders the results by the created_by field.
+func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedBy, opts...).ToFunc()
 }
 
-// BySlug orders the results by the slug field.
-func BySlug(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSlug, opts...).ToFunc()
+// ByUpdatedBy orders the results by the updated_by field.
+func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
-// ByMetaKeywords orders the results by the meta_keywords field.
-func ByMetaKeywords(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMetaKeywords, opts...).ToFunc()
+// ByDeletedBy orders the results by the deleted_by field.
+func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
 }
 
-// ByMetaDescription orders the results by the meta_description field.
-func ByMetaDescription(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMetaDescription, opts...).ToFunc()
-}
-
-// ByFullPath orders the results by the full_path field.
-func ByFullPath(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldFullPath, opts...).ToFunc()
-}
-
-// ByOriginalContent orders the results by the original_content field.
-func ByOriginalContent(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOriginalContent, opts...).ToFunc()
-}
-
-// ByContent orders the results by the content field.
-func ByContent(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldContent, opts...).ToFunc()
-}
-
-// BySummary orders the results by the summary field.
-func BySummary(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSummary, opts...).ToFunc()
-}
-
-// ByThumbnail orders the results by the thumbnail field.
-func ByThumbnail(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldThumbnail, opts...).ToFunc()
-}
-
-// ByPassword orders the results by the password field.
-func ByPassword(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldPassword, opts...).ToFunc()
-}
-
-// ByTemplate orders the results by the template field.
-func ByTemplate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTemplate, opts...).ToFunc()
-}
-
-// ByCommentCount orders the results by the comment_count field.
-func ByCommentCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCommentCount, opts...).ToFunc()
-}
-
-// ByVisits orders the results by the visits field.
-func ByVisits(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldVisits, opts...).ToFunc()
-}
-
-// ByLikes orders the results by the likes field.
-func ByLikes(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLikes, opts...).ToFunc()
-}
-
-// ByWordCount orders the results by the word_count field.
-func ByWordCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWordCount, opts...).ToFunc()
-}
-
-// ByTopPriority orders the results by the top_priority field.
-func ByTopPriority(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTopPriority, opts...).ToFunc()
+// BySortOrder orders the results by the sort_order field.
+func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSortOrder, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.
@@ -226,9 +233,9 @@ func ByEditorType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEditorType, opts...).ToFunc()
 }
 
-// ByEditTime orders the results by the edit_time field.
-func ByEditTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEditTime, opts...).ToFunc()
+// BySlug orders the results by the slug field.
+func BySlug(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSlug, opts...).ToFunc()
 }
 
 // ByDisallowComment orders the results by the disallow_comment field.
@@ -239,4 +246,44 @@ func ByDisallowComment(opts ...sql.OrderTermOption) OrderOption {
 // ByInProgress orders the results by the in_progress field.
 func ByInProgress(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldInProgress, opts...).ToFunc()
+}
+
+// ByAutoSummary orders the results by the auto_summary field.
+func ByAutoSummary(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAutoSummary, opts...).ToFunc()
+}
+
+// ByIsFeatured orders the results by the is_featured field.
+func ByIsFeatured(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsFeatured, opts...).ToFunc()
+}
+
+// ByVisits orders the results by the visits field.
+func ByVisits(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVisits, opts...).ToFunc()
+}
+
+// ByLikes orders the results by the likes field.
+func ByLikes(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLikes, opts...).ToFunc()
+}
+
+// ByCommentCount orders the results by the comment_count field.
+func ByCommentCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCommentCount, opts...).ToFunc()
+}
+
+// ByAuthorID orders the results by the author_id field.
+func ByAuthorID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthorID, opts...).ToFunc()
+}
+
+// ByAuthorName orders the results by the author_name field.
+func ByAuthorName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthorName, opts...).ToFunc()
+}
+
+// ByPasswordHash orders the results by the password_hash field.
+func ByPasswordHash(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPasswordHash, opts...).ToFunc()
 }

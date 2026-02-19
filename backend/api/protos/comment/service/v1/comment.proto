@@ -2,74 +2,232 @@ syntax = "proto3";
 
 package comment.service.v1;
 
+import "gnostic/openapi/v3/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
 import "pagination/v1/pagination.proto";
-
-// 变量的命名一律使用小驼峰命名法，例如：firstName、lastName等。
 
 // 评论服务
 service CommentService {
   // 获取评论列表
-  rpc ListComment (pagination.PagingRequest) returns (ListCommentResponse) {}
+  rpc List (pagination.PagingRequest) returns (ListCommentResponse) {}
+
+  // 统计评论数量
+  rpc Count (pagination.PagingRequest) returns (CountCommentResponse) {}
 
   // 获取评论数据
-  rpc GetComment (GetCommentRequest) returns (Comment) {}
+  rpc Get (GetCommentRequest) returns (Comment) {}
 
   // 创建评论
-  rpc CreateComment (CreateCommentRequest) returns (Comment) {}
+  rpc Create (CreateCommentRequest) returns (Comment) {}
 
   // 更新评论
-  rpc UpdateComment (UpdateCommentRequest) returns (Comment) {}
+  rpc Update (UpdateCommentRequest) returns (Comment) {}
 
   // 删除评论
-  rpc DeleteComment (DeleteCommentRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteCommentRequest) returns (google.protobuf.Empty) {}
 }
 
 // 评论
 message Comment {
-  uint32 id = 1;
-  optional string author = 2;
-  optional string email = 3;
-  optional string ipAddress = 4;
-  optional string authorUrl = 5;
-  optional string gravatarMd5 = 6;
-  optional string content = 7;
-  optional uint32 status = 8;
-  optional string userAgent = 9;
-  optional uint32 parentId = 10;
-  optional bool isAdmin = 11;
-  optional bool allowNotification = 12;
-  optional string avatar = 13;
-  optional string createTime = 14;
-  optional string updateTime = 15;
+  // 评论状态
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+
+    STATUS_PENDING = 1;   // 待审核
+    STATUS_APPROVED = 2;  // 已批准
+    STATUS_REJECTED = 3;  // 已拒绝
+    STATUS_SPAM = 4;      // 垃圾评论
+  }
+
+  // 内容类型
+  enum ContentType {
+    CONTENT_TYPE_UNSPECIFIED = 0;
+
+    CONTENT_TYPE_POST = 1;    // 文章
+    CONTENT_TYPE_PAGE = 2;    // 页面
+    CONTENT_TYPE_PRODUCT = 3; // 产品
+  }
+
+  // 作者类型
+  enum AuthorType {
+    AUTHOR_TYPE_UNSPECIFIED = 0;
+
+    AUTHOR_TYPE_USER = 1;      // 普通用户
+    AUTHOR_TYPE_ADMIN = 2;     // 管理员
+    AUTHOR_TYPE_MODERATOR = 3; // 审核员
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "评论ID"}
+  ];  // 评论ID
+
+  optional ContentType content_type = 2 [
+    json_name = "contentType",
+    (gnostic.openapi.v3.property) = {description: "内容类型"}
+  ]; // 内容类型（文章/页面/产品等）
+
+  optional uint32 object_id = 3 [
+    json_name = "objectId",
+    (gnostic.openapi.v3.property) = {description: "对象ID"}
+  ]; // 对象ID（配合 content_type 使用）
+
+  optional string content = 4 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "评论内容"}
+  ]; // 评论内容
+
+  optional uint32 author_id = 10 [
+    json_name = "authorId",
+    (gnostic.openapi.v3.property) = {description: "评论作者ID，0表示游客"}
+  ]; // 评论作者ID，0表示游客
+
+  optional string author_name = 11 [
+    json_name = "authorName",
+    (gnostic.openapi.v3.property) = {description: "评论作者名称（游客填写）"}
+  ]; // 评论作者名称（游客填写）
+
+  optional string author_email = 12 [
+    json_name = "authorEmail",
+    (gnostic.openapi.v3.property) = {description: "评论作者邮箱（游客填写）"}
+  ]; // 评论作者邮箱（游客填写）
+
+  optional string author_url = 13 [
+    json_name = "authorUrl",
+    (gnostic.openapi.v3.property) = {description: "评论作者网址（游客填写）"}
+  ]; // 评论作者网址（游客填写）
+
+  optional AuthorType author_type = 14 [
+    json_name = "authorType",
+    (gnostic.openapi.v3.property) = {
+      description: "作者类型（用于前端高亮管理员回复）"
+    }
+  ]; // 作者类型
+
+  optional Status status = 20 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "评论状态"}
+  ]; // 评论状态
+
+  optional uint32 like_count = 21 [
+    json_name = "likeCount",
+    (gnostic.openapi.v3.property) = {description: "点赞数"}
+  ]; // 点赞数
+
+  optional uint32 dislike_count = 22 [
+    json_name = "dislikeCount",
+    (gnostic.openapi.v3.property) = {description: "点踩数"}
+  ]; // 点踩数
+
+  optional uint32 reply_count = 23 [
+    json_name = "replyCount",
+    (gnostic.openapi.v3.property) = {description: "回复数"}
+  ]; // 回复数
+
+  optional string ip_address = 24 [
+    json_name = "ipAddress",
+    (gnostic.openapi.v3.property) = {
+      description: "评论者 IP（脱敏存储，如 192.168.1.*）"
+    }
+  ]; // 评论者 IP
+
+  optional string location = 25 [
+    json_name = "location",
+    (gnostic.openapi.v3.property) = {
+      description: "评论者地理位置（根据 IP 反查，可能不准确）"
+    }
+  ]; // 评论者地理位置（根据 IP 反查，可能不准确）
+
+  optional string user_agent = 26 [
+    json_name = "userAgent",
+    (gnostic.openapi.v3.property) = {description: "User-Agent"}
+  ]; // User-Agent
+
+  optional string detected_language = 27 [
+    json_name = "detectedLanguage",
+    (gnostic.openapi.v3.property) = {
+      description: "自动检测的语言代码（ISO 639-1，如 'zh', 'en'）"
+    }
+  ]; // 自动检测的语言代码
+
+
+  optional bool is_spam = 30 [
+    json_name = "isSpam",
+    (gnostic.openapi.v3.property) = {description: "是否标记为垃圾评论"}
+  ]; // 是否标记为垃圾评论
+
+  optional bool is_sticky = 31 [
+    json_name = "isSticky",
+    (gnostic.openapi.v3.property) = {description: "是否置顶评论"}
+  ]; // 是否置顶评论
+
+
+  optional uint32 parent_id = 50 [json_name = "parentId", (gnostic.openapi.v3.property) = {description: "父节点ID"}];  // 父节点ID
+  repeated Comment children = 51 [json_name = "children", (gnostic.openapi.v3.property) = {description: "子节点树"}];  // 子节点树
+  optional uint32 reply_to_id = 52 [
+    json_name = "replyToId",
+    (gnostic.openapi.v3.property) = {description: "回复的评论ID（记录 '@某人' 关系，可能与 parent_id 不同）"}
+  ]; // 回复的评论ID（记录 '@某人' 关系，可能与 parent_id 不同）
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
 }
 
 // 回应 - 评论列表
 message ListCommentResponse {
   repeated Comment items = 1;
-  int32 total = 2;
+  uint64 total = 2;
 }
 
 // 请求 - 评论数据
 message GetCommentRequest {
   uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
 }
 
 // 请求 - 创建评论
 message CreateCommentRequest {
-  Comment comment = 1;
-  optional uint32 operatorId = 2;
+  Comment data = 1;
 }
 
 // 请求 - 更新评论
 message UpdateCommentRequest {
   uint32 id = 1;
-  Comment comment = 2;
-  optional uint32 operatorId = 3;
+
+  Comment data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
 }
 
 // 请求 - 删除评论
 message DeleteCommentRequest {
   uint32 id = 1;
-  optional uint32 operatorId = 2;
+}
+
+message CountCommentResponse {
+  uint64 count = 1;
 }

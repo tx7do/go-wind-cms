@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+
+import "storage/service/v1/file_transfer.proto";
+import "storage/service/v1/ueditor.proto";
+
+// 文件传输服务
+service FileTransferService {
+  // 下载文件
+  rpc DownloadFile (storage.service.v1.DownloadFileRequest) returns (storage.service.v1.DownloadFileResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/file/download"
+    };
+  }
+
+  // 上传文件 PUT 方式
+  rpc PutUploadFile (storage.service.v1.UploadFileRequest) returns (storage.service.v1.UploadFileResponse) {
+    option (google.api.http) = {
+      put: "/app/v1/file/upload",
+      body: "*"
+    };
+  }
+
+  // 上传文件 POST 方式
+  rpc PostUploadFile (storage.service.v1.UploadFileRequest) returns (storage.service.v1.UploadFileResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/file/upload",
+      body: "*"
+    };
+  }
+
+  // UEditor 上传文件
+  rpc UEditorPostUploadFile (stream storage.service.v1.UEditorUploadRequest) returns (storage.service.v1.UEditorUploadResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/ueditor"
+      body: "*"
+    };
+  }
+
+  // UEditor 上传文件
+  rpc UEditorPutUploadFile (stream storage.service.v1.UEditorUploadRequest) returns (storage.service.v1.UEditorUploadResponse) {
+    option (google.api.http) = {
+      put: "/app/v1/ueditor"
+      body: "*"
+    };
+  }
+}

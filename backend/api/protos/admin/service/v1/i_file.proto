@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "storage/service/v1/file.proto";
+
+// 文件管理服务
+service FileService {
+  // 查询文件列表
+  rpc List (pagination.PagingRequest) returns (storage.service.v1.ListFileResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/files"
+    };
+  }
+
+  // 查询文件详情
+  rpc Get (storage.service.v1.GetFileRequest) returns (storage.service.v1.File) {
+    option (google.api.http) = {
+      get: "/admin/v1/files/{id}"
+    };
+  }
+
+  // 创建文件
+  rpc Create (storage.service.v1.CreateFileRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/files"
+      body: "*"
+    };
+  }
+
+  // 更新文件
+  rpc Update (storage.service.v1.UpdateFileRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/files/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除文件
+  rpc Delete (storage.service.v1.DeleteFileRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/files/{id}"
+    };
+  }
+}

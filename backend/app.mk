@@ -1,3 +1,15 @@
+# Makefile for building the GoWind micro service application
+
+MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+MKFILE_DIR  := $(dir $(MKFILE_PATH))
+ENV_FILE    := $(MKFILE_DIR).env
+
+# load environment variables from .env file if it exists
+ifneq (,$(wildcard $(ENV_FILE)))
+    include $(ENV_FILE)
+    export
+endif
+
 GOPATH ?= $(shell go env GOPATH)
 # GOVERSION is the current go version, e.g. go1.9.2
 GOVERSION ?= $(shell go version | awk '{print $$3;}')
@@ -6,28 +18,28 @@ GOVERSION ?= $(shell go version | awk '{print $$3;}')
 ifeq "$(GOPATH)" ""
   $(error Please set the environment variable GOPATH before running `make`)
 endif
-FAIL_ON_STDOUT := awk '{ print } END { if (NR > 0) { exit 1 } }'
+FAIL_ON_STDOUT	:= awk '{ print } END { if (NR > 0) { exit 1 } }'
 
 GO_CMD			:= GO111MODULE=on go
 GIT_CMD			:= git
 DOCKER_CMD		:= docker
 
-ARCH      := "`uname -s`"
-LINUX     := "Linux"
-MAC       := "Darwin"
+ARCH			:= "`uname -s`"
+LINUX			:= "Linux"
+MAC				:= "Darwin"
 
-DEFAULT_VERSION=0.0.1
+DEFAULT_VERSION	?= $(SERVICE_APP_VERSION)
 
 ifeq ($(OS),Windows_NT)
-    IS_WINDOWS:=TRUE
+    IS_WINDOWS	:= TRUE
 endif
 
 ifneq (git,)
-	GIT_EXIST:=TRUE
+	GIT_EXIST	:= TRUE
 endif
 
 ifneq ("$(wildcard .git)", "")
-	HAS_DOTGIT:=TRUE
+	HAS_DOTGIT	:= TRUE
 endif
 
 ifeq ($(GIT_EXIST),TRUE)
@@ -46,56 +58,65 @@ ifeq ($(HAS_DOTGIT),TRUE)
 endif
 endif
 
-CUR_TAG ?= $(DEFAULT_VERSION)
-LAST_TAG ?= v$(DEFAULT_VERSION)
-VERSION ?= $(DEFAULT_VERSION)
+CUR_TAG		?= $(DEFAULT_VERSION)
+LAST_TAG	?= v$(DEFAULT_VERSION)
+VERSION		?= $(DEFAULT_VERSION)
 
 # GOFLAGS is the flags for the go compiler.
-GOFLAGS ?= -ldflags "-X main.version=$(VERSION)"
+LDFLAGS ?= -X main.version=$(VERSION)
+GOFLAGS ?=
 
-APP_RELATIVE_PATH=$(shell a=`basename $$PWD` && cd .. && b=`basename $$PWD` && echo $$b/$$a)
-APP_NAME=$(shell echo $(APP_RELATIVE_PATH) | sed -En "s/\//-/p")
-APP_DOCKER_IMAGE=$(shell echo $(APP_NAME) |awk -F '@' '{print "restroom-system/" $$0 ":0.1.0"}')
+APP_RELATIVE_PATH	:= $(shell a=`basename $$PWD` && cd .. && b=`basename $$PWD` && echo $$b/$$a)
+SERVICE_NAME		:= $(shell a=`basename $$PWD` && cd .. && b=`basename $$PWD` && echo $$b)
+APP_NAME			:= $(shell echo $(APP_RELATIVE_PATH) | sed -En "s/\//-/p")
 
+.PHONY: build clean docker gen ent wire api openapi run app help
 
-.PHONY: dep vendor build clean docker gen ent wire api openapi run test cover vet lint app
-
-# download dependencies of module
-dep:
-	@go mod download
-
-# create vendor
-vendor:
-	@go mod vendor
+# show environment variables
+env:
+	@echo "GOPATH: $(GOPATH)"
+	@echo "GOVERSION: $(GOVERSION)"
+	@echo "GOFLAGS: $(GOFLAGS)"
+	@echo "LDFLAGS: $(LDFLAGS)"
+	@echo "PROJECT_NAME: $(PROJECT_NAME)"
+	@echo "SERVICE_APP_VERSION: $(SERVICE_APP_VERSION)"
+	@echo "APP_RELATIVE_PATH: $(APP_RELATIVE_PATH)"
+	@echo "SERVICE_NAME: $(SERVICE_NAME)"
+	@echo "APP_NAME: $(APP_NAME)"
+	@echo "CUR_TAG: $(CUR_TAG)"
+	@echo "LAST_TAG: $(LAST_TAG)"
+	@echo "VERSION: $(VERSION)"
 
 # build golang application
-build:
-ifeq ("$(wildcard ./bin/)","")
-	mkdir bin
-endif
-	@go build -ldflags "-X main.version=$(APP_VERSION)" -o ./bin/ ./...
+build: api openapi
+	@go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o ./bin/ ./...
+
+# build golang application only
+build_only:
+	@go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o ./bin/ ./...
+
+# run application
+run: api openapi
+	-@go run $(GOFLAGS) -ldflags "$(LDFLAGS)" ./cmd/server -c ./configs
+
+# build service app
+app: api openapi wire ent build
 
 # clean build files
 clean:
 	@go clean
 	$(if $(IS_WINDOWS), del "coverage.out", rm -f "coverage.out")
 
-# build docker image
-docker:
-	@docker build -t $(APP_DOCKER_IMAGE) . \
-				  -f ../../../.docker/Dockerfile \
-				  --build-arg APP_RELATIVE_PATH=$(APP_RELATIVE_PATH) GRPC_PORT=9000 REST_PORT=8000
-
 # generate code
 gen: ent wire api openapi
 
-# generate ent code
+# generate ent code, if ent schema exist in the project's internal/data/ent folder
 ent:
 ifneq ("$(wildcard ./internal/data/ent)","")
-	@go run -mod=mod entgo.io/ent/cmd/ent generate \
+	@ent generate \
 				--feature privacy \
-				--feature sql/modifier \
 				--feature entql \
+				--feature sql/modifier \
 				--feature sql/upsert \
 				--feature sql/lock \
 				./internal/data/ent/schema
@@ -110,34 +131,17 @@ api:
 	@cd ../../../api && \
 	buf generate
 
-# generate OpenAPI v3 doc
+# generate protobuf api OpenAPI v3 docs
 openapi:
 	@cd ../../../api && \
-	buf generate --template buf.admin.openapi.gen.yaml && \
-	buf generate --template buf.front.openapi.gen.yaml
+	buf generate --template buf.admin.openapi.gen.yaml
 
-# run application
-run: api openapi
-	@go run ./cmd/server -conf ./configs
-
-# run tests
-test:
-	@go test ./...
-
-# run coverage tests
-cover:
-	@go test -v ./... -coverprofile=coverage.out
-
-# run static analysis
-vet:
-	@go vet
-
-# run lint
-lint:
-	@golangci-lint run
-
-# build service app
-app: api wire ent build
+# build docker image
+docker:
+	@docker build -t $(PROJECT_NAME)/$(APP_NAME) \
+				  --build-arg SERVICE_NAME=$(SERVICE_NAME) \
+				  --build-arg APP_VERSION=$(APP_VERSION) \
+				  -f ../../../Dockerfile ../../../
 
 # show help
 help:
@@ -145,7 +149,7 @@ help:
 	@echo "Usage:"
 	@echo " make [target]"
 	@echo ""
-	@echo 'Targets:'
+	@echo "Targets:"
 	@awk '/^[a-zA-Z\-_0-9]+:/ { \
 	helpMessage = match(lastLine, /^# (.*)/); \
 		if (helpMessage) { \

@@ -9,335 +9,4152 @@ import (
 )
 
 var (
-	// AttachmentColumns holds the columns for the "attachment" table.
-	AttachmentColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "name", Type: field.TypeString, Unique: true, Nullable: true, Comment: "文件名"},
-		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "文件路径"},
-		{Name: "file_key", Type: field.TypeString, Nullable: true, Size: 100, Comment: "文件键"},
-		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "缩略图"},
-		{Name: "media_type", Type: field.TypeString, Nullable: true, Comment: "媒体类型"},
-		{Name: "suffix", Type: field.TypeString, Nullable: true, Comment: "后缀"},
-		{Name: "width", Type: field.TypeInt32, Nullable: true, Comment: "图片宽"},
-		{Name: "height", Type: field.TypeInt32, Nullable: true, Comment: "图片高"},
-		{Name: "size", Type: field.TypeUint64, Nullable: true, Comment: "文件大小"},
-		{Name: "type", Type: field.TypeInt32, Nullable: true, Comment: "类型"},
-	}
-	// AttachmentTable holds the schema information for the "attachment" table.
-	AttachmentTable = &schema.Table{
-		Name:       "attachment",
-		Columns:    AttachmentColumns,
-		PrimaryKey: []*schema.Column{AttachmentColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "attachment_id",
-				Unique:  false,
-				Columns: []*schema.Column{AttachmentColumns[0]},
-			},
-		},
-	}
-	// CategoryColumns holds the columns for the "category" table.
-	CategoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "name", Type: field.TypeString, Unique: true, Nullable: true, Comment: "分类名"},
-		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "链接别名"},
-		{Name: "description", Type: field.TypeString, Nullable: true, Size: 100, Comment: "描述"},
-		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "缩略图"},
-		{Name: "password", Type: field.TypeString, Nullable: true, Comment: "密码"},
-		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父分类ID"},
-		{Name: "priority", Type: field.TypeInt32, Nullable: true, Comment: "优先级"},
-		{Name: "post_count", Type: field.TypeUint32, Nullable: true, Comment: "博文计数"},
-	}
-	// CategoryTable holds the schema information for the "category" table.
-	CategoryTable = &schema.Table{
-		Name:       "category",
-		Columns:    CategoryColumns,
-		PrimaryKey: []*schema.Column{CategoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "category_id",
-				Unique:  false,
-				Columns: []*schema.Column{CategoryColumns[0]},
-			},
-		},
-	}
-	// CommentColumns holds the columns for the "comment" table.
-	CommentColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "author", Type: field.TypeString, Nullable: true, Comment: "作者"},
-		{Name: "email", Type: field.TypeString, Nullable: true, Comment: "邮箱地址"},
-		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
-		{Name: "author_url", Type: field.TypeString, Nullable: true, Comment: "作者链接"},
-		{Name: "gravatar_md5", Type: field.TypeString, Nullable: true, Comment: "MD5"},
-		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "内容"},
-		{Name: "user_agent", Type: field.TypeString, Nullable: true, Comment: "用户浏览器信息"},
-		{Name: "avatar", Type: field.TypeString, Nullable: true, Comment: "头像"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父评论ID"},
-		{Name: "status", Type: field.TypeUint32, Nullable: true, Comment: "状态"},
-		{Name: "is_admin", Type: field.TypeBool, Nullable: true, Comment: "是否管理员"},
-		{Name: "allow_notification", Type: field.TypeBool, Nullable: true, Comment: "允许通知"},
-	}
-	// CommentTable holds the schema information for the "comment" table.
-	CommentTable = &schema.Table{
-		Name:       "comment",
-		Columns:    CommentColumns,
-		PrimaryKey: []*schema.Column{CommentColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "comment_id",
-				Unique:  false,
-				Columns: []*schema.Column{CommentColumns[0]},
-			},
-		},
-	}
-	// LinkColumns holds the columns for the "link" table.
-	LinkColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "name", Type: field.TypeString, Unique: true, Nullable: true, Comment: "链接名"},
-		{Name: "url", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "链接"},
-		{Name: "logo", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "图标"},
-		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "说明"},
-		{Name: "team", Type: field.TypeString, Nullable: true, Comment: "分组"},
-		{Name: "priority", Type: field.TypeInt32, Nullable: true, Comment: "优先级"},
-	}
-	// LinkTable holds the schema information for the "link" table.
-	LinkTable = &schema.Table{
-		Name:       "link",
-		Columns:    LinkColumns,
-		PrimaryKey: []*schema.Column{LinkColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "link_id",
-				Unique:  false,
-				Columns: []*schema.Column{LinkColumns[0]},
-			},
-		},
-	}
-	// MenuColumns holds the columns for the "menu" table.
-	MenuColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "name", Type: field.TypeString, Unique: true, Nullable: true, Comment: "目录名"},
-		{Name: "url", Type: field.TypeString, Nullable: true, Comment: "链接"},
-		{Name: "priority", Type: field.TypeInt32, Nullable: true, Comment: "优先级"},
-		{Name: "target", Type: field.TypeString, Nullable: true, Comment: "目标"},
-		{Name: "icon", Type: field.TypeString, Nullable: true, Comment: "图标"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父目录ID"},
-		{Name: "team", Type: field.TypeString, Nullable: true, Comment: "分组"},
-	}
-	// MenuTable holds the schema information for the "menu" table.
-	MenuTable = &schema.Table{
-		Name:       "menu",
-		Columns:    MenuColumns,
-		PrimaryKey: []*schema.Column{MenuColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "menu_id",
-				Unique:  false,
-				Columns: []*schema.Column{MenuColumns[0]},
-			},
-		},
-	}
-	// PhotoColumns holds the columns for the "photo" table.
-	PhotoColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "图片名"},
-		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
-		{Name: "take_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "url", Type: field.TypeString, Nullable: true, Comment: "链接"},
-		{Name: "team", Type: field.TypeString, Nullable: true, Comment: "分组"},
-		{Name: "location", Type: field.TypeString, Nullable: true, Comment: "地理位置"},
+	// SysApisColumns holds the columns for the "sys_apis" table.
+	SysApisColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
-		{Name: "likes", Type: field.TypeInt32, Nullable: true, Comment: "点赞数"},
+		{Name: "module", Type: field.TypeString, Nullable: true, Comment: "所属业务模块"},
+		{Name: "module_description", Type: field.TypeString, Nullable: true, Comment: "业务模块描述"},
+		{Name: "operation", Type: field.TypeString, Nullable: true, Comment: "接口操作名"},
+		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "接口路径"},
+		{Name: "method", Type: field.TypeString, Nullable: true, Comment: "请求方法"},
+		{Name: "scope", Type: field.TypeEnum, Nullable: true, Comment: "作用域", Enums: []string{"ADMIN", "APP"}, Default: "ADMIN"},
 	}
-	// PhotoTable holds the schema information for the "photo" table.
-	PhotoTable = &schema.Table{
-		Name:       "photo",
-		Columns:    PhotoColumns,
-		PrimaryKey: []*schema.Column{PhotoColumns[0]},
+	// SysApisTable holds the schema information for the "sys_apis" table.
+	SysApisTable = &schema.Table{
+		Name:       "sys_apis",
+		Comment:    "API资源表",
+		Columns:    SysApisColumns,
+		PrimaryKey: []*schema.Column{SysApisColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "photo_id",
-				Unique:  false,
-				Columns: []*schema.Column{PhotoColumns[0]},
-			},
-		},
-	}
-	// PostColumns holds the columns for the "post" table.
-	PostColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "博文标题"},
-		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "链接别名"},
-		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "关键词列表"},
-		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "描述信息"},
-		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "全路径"},
-		{Name: "original_content", Type: field.TypeString, Nullable: true, Comment: "原始内容"},
-		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "内容"},
-		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "概要信息"},
-		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
-		{Name: "password", Type: field.TypeString, Nullable: true, Comment: "密码"},
-		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "模板"},
-		{Name: "comment_count", Type: field.TypeInt32, Nullable: true, Comment: "评论数"},
-		{Name: "visits", Type: field.TypeInt32, Nullable: true, Comment: "访问数"},
-		{Name: "likes", Type: field.TypeInt32, Nullable: true, Comment: "点赞数"},
-		{Name: "word_count", Type: field.TypeInt32, Nullable: true, Comment: "文章字数"},
-		{Name: "top_priority", Type: field.TypeInt32, Nullable: true, Comment: "优先级"},
-		{Name: "status", Type: field.TypeInt32, Nullable: true, Comment: "状态"},
-		{Name: "editor_type", Type: field.TypeInt32, Nullable: true, Comment: "编辑器类型"},
-		{Name: "edit_time", Type: field.TypeInt64, Nullable: true, Comment: "编辑时间"},
-		{Name: "disallow_comment", Type: field.TypeBool, Nullable: true, Comment: "不允许评论"},
-		{Name: "in_progress", Type: field.TypeBool, Nullable: true, Comment: "审核中"},
-	}
-	// PostTable holds the schema information for the "post" table.
-	PostTable = &schema.Table{
-		Name:       "post",
-		Columns:    PostColumns,
-		PrimaryKey: []*schema.Column{PostColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "post_id",
-				Unique:  false,
-				Columns: []*schema.Column{PostColumns[0]},
-			},
-		},
-	}
-	// TagColumns holds the columns for the "tag" table.
-	TagColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "name", Type: field.TypeString, Unique: true, Nullable: true, Comment: "标签名"},
-		{Name: "color", Type: field.TypeString, Nullable: true, Comment: "颜色"},
-		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
-		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "链接别名"},
-		{Name: "slug_name", Type: field.TypeString, Nullable: true, Comment: "链接别名"},
-		{Name: "post_count", Type: field.TypeUint32, Nullable: true, Comment: "博文计数"},
-	}
-	// TagTable holds the schema information for the "tag" table.
-	TagTable = &schema.Table{
-		Name:       "tag",
-		Comment:    "标签",
-		Columns:    TagColumns,
-		PrimaryKey: []*schema.Column{TagColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "tag_id",
-				Unique:  false,
-				Columns: []*schema.Column{TagColumns[0]},
-			},
-		},
-	}
-	// UserColumns holds the columns for the "user" table.
-	UserColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
-		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "创建时间"},
-		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "更新时间"},
-		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "删除时间"},
-		{Name: "username", Type: field.TypeString, Unique: true, Nullable: true, Size: 50, Comment: "用户名"},
-		{Name: "password", Type: field.TypeString, Nullable: true, Size: 255, Comment: "登陆密码"},
-		{Name: "nickname", Type: field.TypeString, Nullable: true, Size: 128, Comment: "昵称"},
-		{Name: "email", Type: field.TypeString, Nullable: true, Size: 127, Comment: "电子邮箱"},
-		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "头像"},
-		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "个人说明"},
-		{Name: "authority", Type: field.TypeEnum, Nullable: true, Comment: "授权", Enums: []string{"SYS_ADMIN", "CUSTOMER_USER", "GUEST_USER", "REFRESH_TOKEN"}, Default: "CUSTOMER_USER"},
-	}
-	// UserTable holds the schema information for the "user" table.
-	UserTable = &schema.Table{
-		Name:       "user",
-		Columns:    UserColumns,
-		PrimaryKey: []*schema.Column{UserColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "user_id",
-				Unique:  false,
-				Columns: []*schema.Column{UserColumns[0]},
-			},
-			{
-				Name:    "user_id_username",
+				Name:    "idx_sys_api_res_module_path_method_scope",
 				Unique:  true,
-				Columns: []*schema.Column{UserColumns[0], UserColumns[4]},
+				Columns: []*schema.Column{SysApisColumns[9], SysApisColumns[12], SysApisColumns[13], SysApisColumns[14]},
+			},
+			{
+				Name:    "idx_sys_api_res_module",
+				Unique:  false,
+				Columns: []*schema.Column{SysApisColumns[9]},
+			},
+			{
+				Name:    "idx_sys_api_res_scope",
+				Unique:  false,
+				Columns: []*schema.Column{SysApisColumns[14]},
+			},
+			{
+				Name:    "idx_sys_api_res_path_method",
+				Unique:  false,
+				Columns: []*schema.Column{SysApisColumns[12], SysApisColumns[13]},
+			},
+			{
+				Name:    "idx_sys_api_res_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysApisColumns[4], SysApisColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_res_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysApisColumns[1]},
+			},
+		},
+	}
+	// SysAPIAuditLogsColumns holds the columns for the "sys_api_audit_logs" table.
+	SysAPIAuditLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
+		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
+		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
+		{Name: "device_info", Type: field.TypeJSON, Nullable: true, Comment: "设备信息"},
+		{Name: "referer", Type: field.TypeString, Nullable: true, Comment: "请求来源URL"},
+		{Name: "app_version", Type: field.TypeString, Nullable: true, Comment: "客户端版本号"},
+		{Name: "http_method", Type: field.TypeString, Nullable: true, Comment: "HTTP请求方法"},
+		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "请求路径"},
+		{Name: "request_uri", Type: field.TypeString, Nullable: true, Comment: "完整请求URI"},
+		{Name: "api_module", Type: field.TypeString, Nullable: true, Comment: "API所属业务模块"},
+		{Name: "api_operation", Type: field.TypeString, Nullable: true, Comment: "API业务操作"},
+		{Name: "api_description", Type: field.TypeString, Nullable: true, Comment: "API功能描述"},
+		{Name: "request_id", Type: field.TypeString, Nullable: true, Comment: "请求ID"},
+		{Name: "trace_id", Type: field.TypeString, Nullable: true, Comment: "全局链路追踪ID"},
+		{Name: "span_id", Type: field.TypeString, Nullable: true, Comment: "当前跨度ID"},
+		{Name: "latency_ms", Type: field.TypeUint32, Nullable: true, Comment: "操作耗时"},
+		{Name: "success", Type: field.TypeBool, Nullable: true, Comment: "操作结果"},
+		{Name: "status_code", Type: field.TypeUint32, Nullable: true, Comment: "HTTP状态码"},
+		{Name: "reason", Type: field.TypeString, Nullable: true, Comment: "操作失败原因"},
+		{Name: "request_header", Type: field.TypeString, Nullable: true, Comment: "请求头"},
+		{Name: "request_body", Type: field.TypeString, Nullable: true, Comment: "请求体"},
+		{Name: "response", Type: field.TypeString, Nullable: true, Comment: "响应信息"},
+		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
+	}
+	// SysAPIAuditLogsTable holds the schema information for the "sys_api_audit_logs" table.
+	SysAPIAuditLogsTable = &schema.Table{
+		Name:       "sys_api_audit_logs",
+		Comment:    "API审计日志表",
+		Columns:    SysAPIAuditLogsColumns,
+		PrimaryKey: []*schema.Column{SysAPIAuditLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_api_audit_logs_tenant_request_id",
+				Unique:  true,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[16]},
+			},
+			{
+				Name:    "uidx_sys_api_audit_logs_tenant_log_hash",
+				Unique:  true,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[26]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_user_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[3], SysAPIAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_username_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[4], SysAPIAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_ip_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[5], SysAPIAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_trace_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[17]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_api_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[13], SysAPIAuditLogsColumns[14], SysAPIAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_path_method_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[11], SysAPIAuditLogsColumns[10], SysAPIAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_api_audit_logs_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAPIAuditLogsColumns[2], SysAPIAuditLogsColumns[21], SysAPIAuditLogsColumns[20], SysAPIAuditLogsColumns[1]},
+			},
+		},
+	}
+	// CategoriesColumns holds the columns for the "categories" table.
+	CategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "分类状态", Enums: []string{"CATEGORY_STATUS_ACTIVE", "CATEGORY_STATUS_HIDDEN", "CATEGORY_STATUS_ARCHIVED"}},
+		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "分类层级深度"},
+		{Name: "is_nav", Type: field.TypeBool, Nullable: true, Comment: "是否显示在导航菜单"},
+		{Name: "icon", Type: field.TypeString, Nullable: true, Comment: "分类图标"},
+		{Name: "post_count", Type: field.TypeUint32, Nullable: true, Comment: "该分类下的文章总数"},
+		{Name: "direct_post_count", Type: field.TypeUint32, Nullable: true, Comment: "该分类下的直接文章数"},
+		{Name: "custom_fields", Type: field.TypeJSON, Nullable: true, Comment: "自定义字段"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// CategoriesTable holds the schema information for the "categories" table.
+	CategoriesTable = &schema.Table{
+		Name:       "categories",
+		Comment:    "类别表",
+		Columns:    CategoriesColumns,
+		PrimaryKey: []*schema.Column{CategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "categories_categories_children",
+				Columns:    []*schema.Column{CategoriesColumns[16]},
+				RefColumns: []*schema.Column{CategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "category_status",
+				Unique:  false,
+				Columns: []*schema.Column{CategoriesColumns[9]},
+			},
+			{
+				Name:    "category_is_nav",
+				Unique:  false,
+				Columns: []*schema.Column{CategoriesColumns[11]},
+			},
+			{
+				Name:    "category_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{CategoriesColumns[16]},
+			},
+		},
+	}
+	// CategoryTranslationsColumns holds the columns for the "category_translations" table.
+	CategoryTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的分类ID"},
+		{Name: "is_nav", Type: field.TypeBool, Nullable: true, Comment: "是否显示在导航菜单"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "分类名称"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "分类别名"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "分类描述"},
+		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
+		{Name: "cover_image", Type: field.TypeString, Nullable: true, Comment: "封面图"},
+		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "模板名称"},
+		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
+		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
+		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
+		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
+	}
+	// CategoryTranslationsTable holds the schema information for the "category_translations" table.
+	CategoryTranslationsTable = &schema.Table{
+		Name:       "category_translations",
+		Comment:    "分类翻译表",
+		Columns:    CategoryTranslationsColumns,
+		PrimaryKey: []*schema.Column{CategoryTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "categorytranslation_category_id_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{CategoryTranslationsColumns[7], CategoryTranslationsColumns[9]},
+			},
+			{
+				Name:    "categorytranslation_category_id",
+				Unique:  false,
+				Columns: []*schema.Column{CategoryTranslationsColumns[7]},
+			},
+			{
+				Name:    "categorytranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{CategoryTranslationsColumns[9]},
+			},
+			{
+				Name:    "categorytranslation_is_nav",
+				Unique:  false,
+				Columns: []*schema.Column{CategoryTranslationsColumns[8]},
+			},
+			{
+				Name:    "categorytranslation_slug",
+				Unique:  false,
+				Columns: []*schema.Column{CategoryTranslationsColumns[11]},
+			},
+		},
+	}
+	// CommentsColumns holds the columns for the "comments" table.
+	CommentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "content_type", Type: field.TypeEnum, Nullable: true, Comment: "内容类型", Enums: []string{"CONTENT_TYPE_POST", "CONTENT_TYPE_PAGE", "CONTENT_TYPE_PRODUCT"}},
+		{Name: "object_id", Type: field.TypeUint32, Nullable: true, Comment: "对象ID"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "评论内容"},
+		{Name: "author_id", Type: field.TypeUint32, Nullable: true, Comment: "评论作者ID，0表示游客", Default: 0},
+		{Name: "author_name", Type: field.TypeString, Nullable: true, Comment: "评论作者名称"},
+		{Name: "author_email", Type: field.TypeString, Nullable: true, Comment: "评论作者邮箱"},
+		{Name: "author_url", Type: field.TypeString, Nullable: true, Comment: "评论作者网址"},
+		{Name: "author_type", Type: field.TypeEnum, Nullable: true, Comment: "作者类型", Enums: []string{"AUTHOR_TYPE_USER", "AUTHOR_TYPE_ADMIN", "AUTHOR_TYPE_MODERATOR"}},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "评论状态", Enums: []string{"STATUS_PENDING", "STATUS_APPROVED", "STATUS_REJECTED", "STATUS_SPAM"}},
+		{Name: "like_count", Type: field.TypeUint32, Nullable: true, Comment: "点赞数", Default: 0},
+		{Name: "dislike_count", Type: field.TypeUint32, Nullable: true, Comment: "点踩数", Default: 0},
+		{Name: "reply_count", Type: field.TypeUint32, Nullable: true, Comment: "回复数", Default: 0},
+		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "评论者 IP"},
+		{Name: "location", Type: field.TypeString, Nullable: true, Comment: "评论者地理位置"},
+		{Name: "user_agent", Type: field.TypeString, Nullable: true, Comment: "User-Agent"},
+		{Name: "detected_language", Type: field.TypeString, Nullable: true, Comment: "自动检测的语言代码"},
+		{Name: "is_spam", Type: field.TypeBool, Nullable: true, Comment: "是否标记为垃圾评论", Default: false},
+		{Name: "is_sticky", Type: field.TypeBool, Nullable: true, Comment: "是否置顶评论", Default: false},
+		{Name: "reply_to_id", Type: field.TypeUint32, Nullable: true, Comment: "回复的评论ID"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// CommentsTable holds the schema information for the "comments" table.
+	CommentsTable = &schema.Table{
+		Name:       "comments",
+		Comment:    "评论表",
+		Columns:    CommentsColumns,
+		PrimaryKey: []*schema.Column{CommentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "comments_comments_children",
+				Columns:    []*schema.Column{CommentsColumns[26]},
+				RefColumns: []*schema.Column{CommentsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "comment_content_type_object_id",
+				Unique:  false,
+				Columns: []*schema.Column{CommentsColumns[7], CommentsColumns[8]},
+			},
+			{
+				Name:    "comment_status",
+				Unique:  false,
+				Columns: []*schema.Column{CommentsColumns[15]},
+			},
+			{
+				Name:    "comment_author_id",
+				Unique:  false,
+				Columns: []*schema.Column{CommentsColumns[10]},
+			},
+			{
+				Name:    "comment_reply_to_id",
+				Unique:  false,
+				Columns: []*schema.Column{CommentsColumns[25]},
+			},
+			{
+				Name:    "comment_is_spam",
+				Unique:  false,
+				Columns: []*schema.Column{CommentsColumns[23]},
+			},
+			{
+				Name:    "comment_is_sticky",
+				Unique:  false,
+				Columns: []*schema.Column{CommentsColumns[24]},
+			},
+		},
+	}
+	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
+	SysDataAccessAuditLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
+		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
+		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
+		{Name: "device_info", Type: field.TypeJSON, Nullable: true, Comment: "设备信息"},
+		{Name: "request_id", Type: field.TypeString, Nullable: true, Comment: "全局请求ID"},
+		{Name: "trace_id", Type: field.TypeString, Nullable: true, Comment: "全局链路追踪ID"},
+		{Name: "data_source", Type: field.TypeString, Nullable: true, Comment: "数据源类型"},
+		{Name: "table_name", Type: field.TypeString, Nullable: true, Comment: "数据表名"},
+		{Name: "data_id", Type: field.TypeString, Nullable: true, Comment: "数据主键ID"},
+		{Name: "access_type", Type: field.TypeEnum, Nullable: true, Comment: "数据访问类型", Enums: []string{"SELECT", "INSERT", "UPDATE", "DELETE", "VIEW", "BULK_READ", "EXPORT", "IMPORT", "DDL_CREATE", "DDL_ALTER", "DDL_DROP", "METADATA_READ", "SCAN", "ADMIN_OPERATION", "OTHER"}},
+		{Name: "sql_digest", Type: field.TypeString, Nullable: true, Comment: "执行的SQL语句摘要"},
+		{Name: "sql_text", Type: field.TypeString, Nullable: true, Comment: "执行的SQL语句"},
+		{Name: "affected_rows", Type: field.TypeUint32, Nullable: true, Comment: "影响行数"},
+		{Name: "latency_ms", Type: field.TypeUint32, Nullable: true, Comment: "延迟时间（毫秒）"},
+		{Name: "success", Type: field.TypeBool, Nullable: true, Comment: "操作结果"},
+		{Name: "sensitive_level", Type: field.TypeEnum, Nullable: true, Comment: "数据敏感级别", Enums: []string{"PUBLIC", "INTERNAL", "CONFIDENTIAL", "SECRET"}},
+		{Name: "data_masked", Type: field.TypeBool, Nullable: true, Comment: "是否已脱敏"},
+		{Name: "masking_rules", Type: field.TypeString, Nullable: true, Comment: "脱敏规则"},
+		{Name: "business_purpose", Type: field.TypeString, Nullable: true, Comment: "业务处理目的"},
+		{Name: "data_category", Type: field.TypeString, Nullable: true, Comment: "数据分类标签"},
+		{Name: "db_user", Type: field.TypeString, Nullable: true, Comment: "数据库用户"},
+		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
+	}
+	// SysDataAccessAuditLogsTable holds the schema information for the "sys_data_access_audit_logs" table.
+	SysDataAccessAuditLogsTable = &schema.Table{
+		Name:       "sys_data_access_audit_logs",
+		Comment:    "数据访问审计日志表",
+		Columns:    SysDataAccessAuditLogsColumns,
+		PrimaryKey: []*schema.Column{SysDataAccessAuditLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "dataaccessauditlog_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[3]},
+			},
+			{
+				Name:    "dataaccessauditlog_username",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[4]},
+			},
+			{
+				Name:    "dataaccessauditlog_request_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[8]},
+			},
+			{
+				Name:    "dataaccessauditlog_trace_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[9]},
+			},
+			{
+				Name:    "dataaccessauditlog_ip_address",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[5]},
+			},
+			{
+				Name:    "dataaccessauditlog_ip_address_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[5], SysDataAccessAuditLogsColumns[1]},
+			},
+			{
+				Name:    "dataaccessauditlog_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[2]},
+			},
+			{
+				Name:    "dataaccessauditlog_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[1]},
+			},
+			{
+				Name:    "dataaccessauditlog_tenant_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[2], SysDataAccessAuditLogsColumns[1]},
+			},
+			{
+				Name:    "dataaccessauditlog_tenant_id_user_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[2], SysDataAccessAuditLogsColumns[3], SysDataAccessAuditLogsColumns[1]},
+			},
+			{
+				Name:    "dataaccessauditlog_data_source_table_name_data_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[10], SysDataAccessAuditLogsColumns[11], SysDataAccessAuditLogsColumns[12]},
+			},
+			{
+				Name:    "dataaccessauditlog_access_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[13]},
+			},
+			{
+				Name:    "dataaccessauditlog_access_type_success_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[13], SysDataAccessAuditLogsColumns[18], SysDataAccessAuditLogsColumns[1]},
+			},
+			{
+				Name:    "dataaccessauditlog_sql_digest",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[14]},
+			},
+			{
+				Name:    "dataaccessauditlog_data_masked",
+				Unique:  false,
+				Columns: []*schema.Column{SysDataAccessAuditLogsColumns[20]},
+			},
+		},
+	}
+	// SysDictEntriesColumns holds the columns for the "sys_dict_entries" table.
+	SysDictEntriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "entry_value", Type: field.TypeString, Comment: "字典项的实际值"},
+		{Name: "numeric_value", Type: field.TypeInt32, Nullable: true, Comment: "数值型值"},
+		{Name: "type_id", Type: field.TypeUint32, Nullable: true},
+	}
+	// SysDictEntriesTable holds the schema information for the "sys_dict_entries" table.
+	SysDictEntriesTable = &schema.Table{
+		Name:       "sys_dict_entries",
+		Comment:    "字典项表",
+		Columns:    SysDictEntriesColumns,
+		PrimaryKey: []*schema.Column{SysDictEntriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_dict_entries_sys_dict_types_entries",
+				Columns:    []*schema.Column{SysDictEntriesColumns[12]},
+				RefColumns: []*schema.Column{SysDictTypesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sys_dict_entries_tenant_type_value",
+				Unique:  true,
+				Columns: []*schema.Column{SysDictEntriesColumns[9], SysDictEntriesColumns[0], SysDictEntriesColumns[10]},
+			},
+			{
+				Name:    "idx_sys_dict_entries_tenant_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictEntriesColumns[9], SysDictEntriesColumns[0]},
+			},
+			{
+				Name:    "idx_sys_dict_entries_tenant_entry_value",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictEntriesColumns[9], SysDictEntriesColumns[10]},
+			},
+			{
+				Name:    "idx_sys_dict_entries_entry_value",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictEntriesColumns[10]},
+			},
+			{
+				Name:    "idx_sys_dict_entries_numeric_value",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictEntriesColumns[11]},
+			},
+			{
+				Name:    "idx_sys_dict_entries_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictEntriesColumns[9]},
+			},
+		},
+	}
+	// SysDictEntryI18nColumns holds the columns for the "sys_dict_entry_i18n" table.
+	SysDictEntryI18nColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "entry_label", Type: field.TypeString, Nullable: true, Comment: "字典项的显示标签"},
+		{Name: "entry_id", Type: field.TypeUint32, Nullable: true},
+	}
+	// SysDictEntryI18nTable holds the schema information for the "sys_dict_entry_i18n" table.
+	SysDictEntryI18nTable = &schema.Table{
+		Name:       "sys_dict_entry_i18n",
+		Comment:    "字典项翻译表",
+		Columns:    SysDictEntryI18nColumns,
+		PrimaryKey: []*schema.Column{SysDictEntryI18nColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_dict_entry_i18n_sys_dict_entries_i18ns",
+				Columns:    []*schema.Column{SysDictEntryI18nColumns[12]},
+				RefColumns: []*schema.Column{SysDictEntriesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_dict_entry_i18n_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictEntryI18nColumns[10]},
+			},
+		},
+	}
+	// SysDictTypesColumns holds the columns for the "sys_dict_types" table.
+	SysDictTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "type_code", Type: field.TypeString, Nullable: true, Comment: "字典类型唯一代码"},
+	}
+	// SysDictTypesTable holds the schema information for the "sys_dict_types" table.
+	SysDictTypesTable = &schema.Table{
+		Name:       "sys_dict_types",
+		Comment:    "字典类型表",
+		Columns:    SysDictTypesColumns,
+		PrimaryKey: []*schema.Column{SysDictTypesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sys_dict_types_tenant_type_code",
+				Unique:  true,
+				Columns: []*schema.Column{SysDictTypesColumns[9], SysDictTypesColumns[10]},
+			},
+			{
+				Name:    "idx_sys_dict_types_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictTypesColumns[9]},
+			},
+			{
+				Name:    "idx_sys_dict_types_is_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictTypesColumns[7]},
+			},
+			{
+				Name:    "idx_sys_dict_types_sort_order",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictTypesColumns[8]},
+			},
+		},
+	}
+	// SysDictTypeI18nColumns holds the columns for the "sys_dict_type_i18n" table.
+	SysDictTypeI18nColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "type_name", Type: field.TypeString, Nullable: true, Comment: "字典类型名称"},
+		{Name: "type_id", Type: field.TypeUint32, Nullable: true},
+	}
+	// SysDictTypeI18nTable holds the schema information for the "sys_dict_type_i18n" table.
+	SysDictTypeI18nTable = &schema.Table{
+		Name:       "sys_dict_type_i18n",
+		Comment:    "字典类型翻译表",
+		Columns:    SysDictTypeI18nColumns,
+		PrimaryKey: []*schema.Column{SysDictTypeI18nColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_dict_type_i18n_sys_dict_types_i18ns",
+				Columns:    []*schema.Column{SysDictTypeI18nColumns[11]},
+				RefColumns: []*schema.Column{SysDictTypesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_dict_type_i18n_lang_code",
+				Unique:  false,
+				Columns: []*schema.Column{SysDictTypeI18nColumns[9]},
+			},
+		},
+	}
+	// FilesColumns holds the columns for the "files" table.
+	FilesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "provider", Type: field.TypeEnum, Nullable: true, Comment: "OSS供应商", Enums: []string{"UNKNOWN", "MINIO", "ALIYUN", "QINIU", "TENCENT", "AWS", "GOOGLE", "AZURE", "BAIDU", "HUAWEI", "LOCAL"}, Default: "MINIO"},
+		{Name: "bucket_name", Type: field.TypeString, Nullable: true, Comment: "存储桶名称"},
+		{Name: "file_directory", Type: field.TypeString, Nullable: true, Comment: "文件目录"},
+		{Name: "file_guid", Type: field.TypeString, Nullable: true, Comment: "文件Guid"},
+		{Name: "save_file_name", Type: field.TypeString, Nullable: true, Comment: "实际存储文件名"},
+		{Name: "file_name", Type: field.TypeString, Nullable: true, Comment: "原始文件名"},
+		{Name: "extension", Type: field.TypeString, Nullable: true, Comment: "文件扩展名"},
+		{Name: "size", Type: field.TypeUint64, Nullable: true, Comment: "文件长度，单位：字节"},
+		{Name: "size_format", Type: field.TypeString, Nullable: true, Comment: "格式化后的文件长度字符串"},
+		{Name: "link_url", Type: field.TypeString, Nullable: true, Comment: "链接地址"},
+		{Name: "content_hash", Type: field.TypeString, Nullable: true, Comment: "文件内容hash值，防止上传重复文件"},
+	}
+	// FilesTable holds the schema information for the "files" table.
+	FilesTable = &schema.Table{
+		Name:       "files",
+		Comment:    "文件表",
+		Columns:    FilesColumns,
+		PrimaryKey: []*schema.Column{FilesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_files_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[8]},
+			},
+			{
+				Name:    "uix_files_tenant_file_guid",
+				Unique:  true,
+				Columns: []*schema.Column{FilesColumns[8], FilesColumns[12]},
+			},
+			{
+				Name:    "idx_files_tenant_content_hash",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[8], FilesColumns[19]},
+			},
+			{
+				Name:    "idx_files_content_hash",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[19]},
+			},
+			{
+				Name:    "idx_files_bucket_name",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[10]},
+			},
+			{
+				Name:    "idx_files_file_name",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[14]},
+			},
+			{
+				Name:    "idx_files_extension",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[15]},
+			},
+			{
+				Name:    "idx_files_size",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[16]},
+			},
+			{
+				Name:    "idx_files_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{FilesColumns[1]},
+			},
+		},
+	}
+	// InternalMessagesColumns holds the columns for the "internal_messages" table.
+	InternalMessagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "消息标题"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "消息内容"},
+		{Name: "sender_id", Type: field.TypeUint32, Comment: "发送者用户ID"},
+		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "分类ID"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "消息状态", Enums: []string{"DRAFT", "PUBLISHED", "SCHEDULED", "REVOKED", "ARCHIVED", "DELETED"}, Default: "DRAFT"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "消息类型", Enums: []string{"NOTIFICATION", "PRIVATE", "GROUP"}, Default: "NOTIFICATION"},
+	}
+	// InternalMessagesTable holds the schema information for the "internal_messages" table.
+	InternalMessagesTable = &schema.Table{
+		Name:       "internal_messages",
+		Comment:    "站内信消息表",
+		Columns:    InternalMessagesColumns,
+		PrimaryKey: []*schema.Column{InternalMessagesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_internal_msg_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessagesColumns[7], InternalMessagesColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessagesColumns[7], InternalMessagesColumns[12], InternalMessagesColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_tenant_sender_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessagesColumns[7], InternalMessagesColumns[10], InternalMessagesColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_tenant_category",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessagesColumns[7], InternalMessagesColumns[11]},
+			},
+			{
+				Name:    "idx_internal_msg_tenant_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessagesColumns[7], InternalMessagesColumns[4], InternalMessagesColumns[1]},
+			},
+		},
+	}
+	// InternalMessageCategoriesColumns holds the columns for the "internal_message_categories" table.
+	InternalMessageCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "名称"},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "编码"},
+		{Name: "icon_url", Type: field.TypeString, Nullable: true, Comment: "图标URL"},
+	}
+	// InternalMessageCategoriesTable holds the schema information for the "internal_message_categories" table.
+	InternalMessageCategoriesTable = &schema.Table{
+		Name:       "internal_message_categories",
+		Comment:    "站内信消息分类表",
+		Columns:    InternalMessageCategoriesColumns,
+		PrimaryKey: []*schema.Column{InternalMessageCategoriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_internal_msg_cat_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[12]},
+			},
+			{
+				Name:    "idx_internal_msg_cat_tenant_name",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[11]},
+			},
+			{
+				Name:    "idx_internal_msg_cat_tenant_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[7]},
+			},
+			{
+				Name:    "idx_internal_msg_cat_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_cat_tenant_created_by",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[4]},
+			},
+		},
+	}
+	// InternalMessageRecipientsColumns holds the columns for the "internal_message_recipients" table.
+	InternalMessageRecipientsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "message_id", Type: field.TypeUint32, Nullable: true, Comment: "站内信内容ID"},
+		{Name: "recipient_user_id", Type: field.TypeUint32, Nullable: true, Comment: "接收者用户ID"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "消息状态", Enums: []string{"SENT", "RECEIVED", "READ", "REVOKED", "DELETED"}},
+		{Name: "received_at", Type: field.TypeTime, Nullable: true, Comment: "消息到达用户收件箱的时间"},
+		{Name: "read_at", Type: field.TypeTime, Nullable: true, Comment: "用户阅读消息的时间"},
+	}
+	// InternalMessageRecipientsTable holds the schema information for the "internal_message_recipients" table.
+	InternalMessageRecipientsTable = &schema.Table{
+		Name:       "internal_message_recipients",
+		Comment:    "站内信消息用户接收信息表",
+		Columns:    InternalMessageRecipientsColumns,
+		PrimaryKey: []*schema.Column{InternalMessageRecipientsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_internal_msg_recipient_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageRecipientsColumns[4], InternalMessageRecipientsColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_recipient_tenant_message",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageRecipientsColumns[4], InternalMessageRecipientsColumns[5]},
+			},
+			{
+				Name:    "idx_internal_msg_recipient_tenant_recipient_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageRecipientsColumns[4], InternalMessageRecipientsColumns[6], InternalMessageRecipientsColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_recipient_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageRecipientsColumns[4], InternalMessageRecipientsColumns[7], InternalMessageRecipientsColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_recipient_recipient_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageRecipientsColumns[6], InternalMessageRecipientsColumns[7], InternalMessageRecipientsColumns[1]},
+			},
+			{
+				Name:    "idx_internal_msg_recipient_message_recipient",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageRecipientsColumns[5], InternalMessageRecipientsColumns[6]},
+			},
+		},
+	}
+	// SysLanguagesColumns holds the columns for the "sys_languages" table.
+	SysLanguagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "标准语言代码"},
+		{Name: "language_name", Type: field.TypeString, Nullable: true, Comment: "语言名称"},
+		{Name: "native_name", Type: field.TypeString, Nullable: true, Comment: "本地语言名称"},
+		{Name: "is_default", Type: field.TypeBool, Nullable: true, Comment: "是否为默认语言", Default: false},
+	}
+	// SysLanguagesTable holds the schema information for the "sys_languages" table.
+	SysLanguagesTable = &schema.Table{
+		Name:       "sys_languages",
+		Comment:    "语言表",
+		Columns:    SysLanguagesColumns,
+		PrimaryKey: []*schema.Column{SysLanguagesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sys_languages_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{SysLanguagesColumns[9]},
+			},
+			{
+				Name:    "idx_sys_languages_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{SysLanguagesColumns[9]},
+			},
+			{
+				Name:    "idx_sys_languages_language_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysLanguagesColumns[10]},
+			},
+			{
+				Name:    "idx_sys_languages_native_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysLanguagesColumns[11]},
+			},
+			{
+				Name:    "idx_sys_languages_is_default",
+				Unique:  false,
+				Columns: []*schema.Column{SysLanguagesColumns[12]},
+			},
+			{
+				Name:    "idx_sys_languages_is_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{SysLanguagesColumns[8]},
+			},
+			{
+				Name:    "idx_sys_languages_sort_order",
+				Unique:  false,
+				Columns: []*schema.Column{SysLanguagesColumns[7]},
+			},
+			{
+				Name:    "idx_sys_languages_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysLanguagesColumns[1]},
+			},
+		},
+	}
+	// SysLoginAuditLogsColumns holds the columns for the "sys_login_audit_logs" table.
+	SysLoginAuditLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
+		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
+		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
+		{Name: "session_id", Type: field.TypeString, Nullable: true, Comment: "会话ID"},
+		{Name: "device_info", Type: field.TypeJSON, Nullable: true, Comment: "设备信息"},
+		{Name: "request_id", Type: field.TypeString, Nullable: true, Comment: "全局请求ID"},
+		{Name: "trace_id", Type: field.TypeString, Nullable: true, Comment: "全局链路追踪ID"},
+		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Comment: "事件动作类型", Enums: []string{"LOGIN", "LOGOUT", "SESSION_EXPIRED", "KICKED_OUT", "PASSWORD_RESET"}},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "操作结果状态", Enums: []string{"SUCCESS", "FAILED", "PARTIAL", "LOCKED"}},
+		{Name: "login_method", Type: field.TypeEnum, Nullable: true, Comment: "登录方式", Enums: []string{"PASSWORD", "SMS_CODE", "QR_CODE", "OIDC_SOCIAL", "BIOMETRIC", "FIDO2"}},
+		{Name: "failure_reason", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "mfa_status", Type: field.TypeString, Nullable: true, Comment: "MFA状态"},
+		{Name: "risk_score", Type: field.TypeUint32, Nullable: true, Comment: "风险评分（0-100，分值越高风险越大）"},
+		{Name: "risk_level", Type: field.TypeEnum, Nullable: true, Comment: "风险等级（高风险需实时告警）", Enums: []string{"LOW", "MEDIUM", "HIGH"}},
+		{Name: "risk_factors", Type: field.TypeJSON, Nullable: true, Comment: "风险因素（ISO 27001标准，如：异地登录/新设备/密码尝试次数过多）"},
+		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
+	}
+	// SysLoginAuditLogsTable holds the schema information for the "sys_login_audit_logs" table.
+	SysLoginAuditLogsTable = &schema.Table{
+		Name:       "sys_login_audit_logs",
+		Comment:    "登录审计日志表",
+		Columns:    SysLoginAuditLogsColumns,
+		PrimaryKey: []*schema.Column{SysLoginAuditLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "loginauditlog_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[3]},
+			},
+			{
+				Name:    "loginauditlog_username",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[4]},
+			},
+			{
+				Name:    "loginauditlog_ip_address",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[5]},
+			},
+			{
+				Name:    "loginauditlog_ip_address_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[5], SysLoginAuditLogsColumns[1]},
+			},
+			{
+				Name:    "loginauditlog_session_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[7]},
+			},
+			{
+				Name:    "loginauditlog_request_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[9]},
+			},
+			{
+				Name:    "loginauditlog_action_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[11]},
+			},
+			{
+				Name:    "loginauditlog_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[12]},
+			},
+			{
+				Name:    "loginauditlog_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[2]},
+			},
+			{
+				Name:    "loginauditlog_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[1]},
+			},
+			{
+				Name:    "loginauditlog_tenant_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginAuditLogsColumns[2], SysLoginAuditLogsColumns[1]},
+			},
+		},
+	}
+	// SysLoginPoliciesColumns holds the columns for the "sys_login_policies" table.
+	SysLoginPoliciesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "target_id", Type: field.TypeUint32, Nullable: true, Comment: "目标用户ID"},
+		{Name: "value", Type: field.TypeString, Nullable: true, Comment: "限制值（如IP地址、MAC地址或地区代码）"},
+		{Name: "reason", Type: field.TypeString, Nullable: true, Comment: "限制原因"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "限制类型", Enums: []string{"BLACK_LIST", "WHITE_LIST"}, Default: "BLACK_LIST"},
+		{Name: "method", Type: field.TypeEnum, Nullable: true, Comment: "限制方式", Enums: []string{"IP", "MAC", "REGION", "TIME", "DEVICE"}, Default: "IP"},
+	}
+	// SysLoginPoliciesTable holds the schema information for the "sys_login_policies" table.
+	SysLoginPoliciesTable = &schema.Table{
+		Name:       "sys_login_policies",
+		Comment:    "登录策略表",
+		Columns:    SysLoginPoliciesColumns,
+		PrimaryKey: []*schema.Column{SysLoginPoliciesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_login_policy_tenant_target_type_method",
+				Unique:  true,
+				Columns: []*schema.Column{SysLoginPoliciesColumns[7], SysLoginPoliciesColumns[8], SysLoginPoliciesColumns[11], SysLoginPoliciesColumns[12]},
+			},
+			{
+				Name:    "idx_sys_login_policy_tenant_type_method",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginPoliciesColumns[7], SysLoginPoliciesColumns[11], SysLoginPoliciesColumns[12]},
+			},
+			{
+				Name:    "idx_sys_login_policy_tenant_value",
+				Unique:  false,
+				Columns: []*schema.Column{SysLoginPoliciesColumns[7], SysLoginPoliciesColumns[9]},
+			},
+		},
+	}
+	// MediaAssetsColumns holds the columns for the "media_assets" table.
+	MediaAssetsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "filename", Type: field.TypeString, Nullable: true, Comment: "原始文件名"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "媒体类型", Enums: []string{"ASSET_TYPE_IMAGE", "ASSET_TYPE_VIDEO", "ASSET_TYPE_DOCUMENT", "ASSET_TYPE_AUDIO", "ASSET_TYPE_ARCHIVE"}},
+		{Name: "mime_type", Type: field.TypeString, Nullable: true, Comment: "MIME 类型"},
+		{Name: "size", Type: field.TypeUint64, Nullable: true, Comment: "文件大小（字节）", Default: 0},
+		{Name: "storage_path", Type: field.TypeString, Nullable: true, Comment: "存储路径"},
+		{Name: "url", Type: field.TypeString, Nullable: true, Comment: "CDN 访问 URL"},
+		{Name: "width", Type: field.TypeUint32, Nullable: true, Comment: "宽度（像素）", Default: 0},
+		{Name: "height", Type: field.TypeUint32, Nullable: true, Comment: "高度（像素）", Default: 0},
+		{Name: "duration", Type: field.TypeUint32, Nullable: true, Comment: "时长（秒）", Default: 0},
+		{Name: "alt_text", Type: field.TypeString, Nullable: true, Comment: "ALT 文本"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "标题"},
+		{Name: "caption", Type: field.TypeString, Nullable: true, Comment: "说明文字"},
+		{Name: "processing_status", Type: field.TypeEnum, Nullable: true, Comment: "媒体处理状态", Enums: []string{"PROCESSING_STATUS_UPLOADING", "PROCESSING_STATUS_PROCESSING", "PROCESSING_STATUS_COMPLETED", "PROCESSING_STATUS_FAILED"}},
+		{Name: "processing_error", Type: field.TypeString, Nullable: true, Comment: "处理失败时的错误信息"},
+		{Name: "file_hash", Type: field.TypeString, Nullable: true, Comment: "文件哈希值"},
+		{Name: "folder_id", Type: field.TypeUint32, Nullable: true, Comment: "所属文件夹ID", Default: 0},
+		{Name: "file_id", Type: field.TypeUint32, Nullable: true, Comment: "存储文件ID"},
+		{Name: "reference_count", Type: field.TypeUint32, Nullable: true, Comment: "被引用次数", Default: 0},
+		{Name: "is_private", Type: field.TypeBool, Nullable: true, Comment: "是否私密", Default: false},
+		{Name: "variant_file_ids", Type: field.TypeJSON, Nullable: true, Comment: "变体文件URL"},
+	}
+	// MediaAssetsTable holds the schema information for the "media_assets" table.
+	MediaAssetsTable = &schema.Table{
+		Name:       "media_assets",
+		Comment:    "媒体资源库表",
+		Columns:    MediaAssetsColumns,
+		PrimaryKey: []*schema.Column{MediaAssetsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "mediaasset_type",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[8]},
+			},
+			{
+				Name:    "mediaasset_processing_status",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[19]},
+			},
+			{
+				Name:    "mediaasset_folder_id",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[22]},
+			},
+			{
+				Name:    "mediaasset_file_id",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[23]},
+			},
+			{
+				Name:    "mediaasset_is_private",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[25]},
+			},
+			{
+				Name:    "mediaasset_file_hash",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[21]},
+			},
+			{
+				Name:    "mediaasset_folder_id_is_private",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[22], MediaAssetsColumns[25]},
+			},
+			{
+				Name:    "mediaasset_type_processing_status",
+				Unique:  false,
+				Columns: []*schema.Column{MediaAssetsColumns[8], MediaAssetsColumns[19]},
+			},
+		},
+	}
+	// MediaVariantsColumns holds the columns for the "media_variants" table.
+	MediaVariantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "media_id", Type: field.TypeUint32, Comment: "媒体资源ID"},
+		{Name: "file_id", Type: field.TypeUint32, Comment: "文件ID"},
+		{Name: "variant_name", Type: field.TypeUint32, Nullable: true, Comment: "变体名称"},
+	}
+	// MediaVariantsTable holds the schema information for the "media_variants" table.
+	MediaVariantsTable = &schema.Table{
+		Name:       "media_variants",
+		Comment:    "媒体变体表，关联媒体文件和标签",
+		Columns:    MediaVariantsColumns,
+		PrimaryKey: []*schema.Column{MediaVariantsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "mediavariant_media_id_file_id",
+				Unique:  true,
+				Columns: []*schema.Column{MediaVariantsColumns[2], MediaVariantsColumns[3]},
+			},
+			{
+				Name:    "mediavariant_media_id",
+				Unique:  false,
+				Columns: []*schema.Column{MediaVariantsColumns[2]},
+			},
+			{
+				Name:    "mediavariant_file_id",
+				Unique:  false,
+				Columns: []*schema.Column{MediaVariantsColumns[3]},
+			},
+		},
+	}
+	// SysMembershipsColumns holds the columns for the "sys_memberships" table.
+	SysMembershipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
+		{Name: "org_unit_id", Type: field.TypeUint32, Nullable: true, Comment: "组织架构ID（单一，冗余/互斥）"},
+		{Name: "position_id", Type: field.TypeUint32, Nullable: true, Comment: "职位ID（单一，冗余/互斥）"},
+		{Name: "role_id", Type: field.TypeUint32, Nullable: true, Comment: "角色ID（单一，冗余/互斥）"},
+		{Name: "is_primary", Type: field.TypeBool, Comment: "是否主身份", Default: false},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
+		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
+		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户ID"},
+		{Name: "joined_at", Type: field.TypeTime, Nullable: true, Comment: "加入时间（UTC）"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "状态", Enums: []string{"ACTIVE", "DISABLED", "PENDING", "INVITED", "EXPIRED", "REJECTED"}, Default: "ACTIVE"},
+	}
+	// SysMembershipsTable holds the schema information for the "sys_memberships" table.
+	SysMembershipsTable = &schema.Table{
+		Name:       "sys_memberships",
+		Comment:    "成员关联表",
+		Columns:    SysMembershipsColumns,
+		PrimaryKey: []*schema.Column{SysMembershipsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sys_membership_tenant_user",
+				Unique:  true,
+				Columns: []*schema.Column{SysMembershipsColumns[7], SysMembershipsColumns[9]},
+			},
+			{
+				Name:    "uix_sys_membership_tenant_user_primary",
+				Unique:  true,
+				Columns: []*schema.Column{SysMembershipsColumns[7], SysMembershipsColumns[9], SysMembershipsColumns[13]},
+			},
+			{
+				Name:    "idx_sys_membership_tenant_user_status_start_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[7], SysMembershipsColumns[9], SysMembershipsColumns[19], SysMembershipsColumns[14]},
+			},
+			{
+				Name:    "idx_sys_membership_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[9]},
+			},
+			{
+				Name:    "idx_sys_membership_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[7]},
+			},
+			{
+				Name:    "idx_sys_membership_org_unit_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[10]},
+			},
+			{
+				Name:    "idx_sys_membership_role_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[12]},
+			},
+			{
+				Name:    "idx_sys_membership_position_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[11]},
+			},
+			{
+				Name:    "idx_sys_membership_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[17]},
+			},
+			{
+				Name:    "idx_sys_membership_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[19]},
+			},
+			{
+				Name:    "idx_sys_membership_start_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[14]},
+			},
+			{
+				Name:    "idx_sys_membership_end_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[15]},
+			},
+			{
+				Name:    "idx_sys_membership_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[4], SysMembershipsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_membership_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipsColumns[1]},
+			},
+		},
+	}
+	// SysMembershipOrgUnitsColumns holds the columns for the "sys_membership_org_units" table.
+	SysMembershipOrgUnitsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "membership_id", Type: field.TypeUint32, Comment: "membership ID"},
+		{Name: "org_unit_id", Type: field.TypeUint32, Comment: "组织单元 ID"},
+		{Name: "position_id", Type: field.TypeUint32, Nullable: true, Comment: "岗位 ID（可选，冗余）"},
+		{Name: "role_id", Type: field.TypeUint32, Nullable: true, Comment: "角色 ID（可选，冗余）"},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间（UTC）"},
+		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
+		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主所属", Default: false},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "关联状态", Enums: []string{"ACTIVE", "PENDING", "INACTIVE", "SUSPENDED", "EXPIRED"}, Default: "ACTIVE"},
+	}
+	// SysMembershipOrgUnitsTable holds the schema information for the "sys_membership_org_units" table.
+	SysMembershipOrgUnitsTable = &schema.Table{
+		Name:       "sys_membership_org_units",
+		Comment:    "成员与组织单元关联表",
+		Columns:    SysMembershipOrgUnitsColumns,
+		PrimaryKey: []*schema.Column{SysMembershipOrgUnitsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_mou_tenant_mem_org_pos_role",
+				Unique:  true,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[7], SysMembershipOrgUnitsColumns[9], SysMembershipOrgUnitsColumns[10], SysMembershipOrgUnitsColumns[11], SysMembershipOrgUnitsColumns[12]},
+			},
+			{
+				Name:    "uix_mou_tenant_membership_primary",
+				Unique:  true,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[7], SysMembershipOrgUnitsColumns[9], SysMembershipOrgUnitsColumns[17]},
+			},
+			{
+				Name:    "idx_mou_tenant_membership",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[7], SysMembershipOrgUnitsColumns[9]},
+			},
+			{
+				Name:    "idx_mou_tenant_org_unit",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[7], SysMembershipOrgUnitsColumns[10]},
+			},
+			{
+				Name:    "idx_mou_membership_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[9]},
+			},
+			{
+				Name:    "idx_mou_org_unit_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[10]},
+			},
+			{
+				Name:    "idx_mou_position_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[11]},
+			},
+			{
+				Name:    "idx_mou_role_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[12]},
+			},
+			{
+				Name:    "idx_mou_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[16]},
+			},
+			{
+				Name:    "idx_mou_is_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[17]},
+			},
+			{
+				Name:    "idx_mou_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[18]},
+			},
+			{
+				Name:    "idx_mou_start_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[13]},
+			},
+			{
+				Name:    "idx_mou_end_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[14]},
+			},
+			{
+				Name:    "idx_mou_assigned_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[15]},
+			},
+			{
+				Name:    "idx_mou_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[4], SysMembershipOrgUnitsColumns[1]},
+			},
+			{
+				Name:    "idx_mou_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[7], SysMembershipOrgUnitsColumns[1]},
+			},
+			{
+				Name:    "idx_mou_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipOrgUnitsColumns[1]},
+			},
+		},
+	}
+	// SysMembershipPositionsColumns holds the columns for the "sys_membership_positions" table.
+	SysMembershipPositionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "membership_id", Type: field.TypeUint32, Comment: "membership ID"},
+		{Name: "position_id", Type: field.TypeUint32, Comment: "岗位ID"},
+		{Name: "is_primary", Type: field.TypeBool, Nullable: true, Comment: "是否主岗位", Default: false},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
+		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "岗位分配时间"},
+		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PROBATION", "ACTIVE", "LEAVE", "TERMINATED", "EXPIRED"}, Default: "ACTIVE"},
+	}
+	// SysMembershipPositionsTable holds the schema information for the "sys_membership_positions" table.
+	SysMembershipPositionsTable = &schema.Table{
+		Name:       "sys_membership_positions",
+		Comment:    "成员与岗位关联表",
+		Columns:    SysMembershipPositionsColumns,
+		PrimaryKey: []*schema.Column{SysMembershipPositionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_mp_tenant_membership_pos",
+				Unique:  true,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[7], SysMembershipPositionsColumns[9], SysMembershipPositionsColumns[10]},
+			},
+			{
+				Name:    "idx_mp_tenant_membership",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[7], SysMembershipPositionsColumns[9]},
+			},
+			{
+				Name:    "idx_mp_tenant_position",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[7], SysMembershipPositionsColumns[10]},
+			},
+			{
+				Name:    "idx_mp_tenant_membership_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[7], SysMembershipPositionsColumns[9], SysMembershipPositionsColumns[11]},
+			},
+			{
+				Name:    "idx_mp_tenant_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[7], SysMembershipPositionsColumns[15]},
+			},
+			{
+				Name:    "idx_mp_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[15]},
+			},
+			{
+				Name:    "idx_mp_membership_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[9]},
+			},
+			{
+				Name:    "idx_mp_position_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[10]},
+			},
+			{
+				Name:    "idx_mp_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[7]},
+			},
+			{
+				Name:    "idx_mp_is_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[11]},
+			},
+			{
+				Name:    "idx_mp_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipPositionsColumns[16]},
+			},
+		},
+	}
+	// SysMembershipRolesColumns holds the columns for the "sys_membership_roles" table.
+	SysMembershipRolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "membership_id", Type: field.TypeUint32, Comment: "membership ID"},
+		{Name: "role_id", Type: field.TypeUint32, Comment: "角色ID"},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间（UTC）"},
+		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
+		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户ID"},
+		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主角色", Default: false},
+		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PENDING", "ACTIVE", "DISABLED", "EXPIRED"}, Default: "ACTIVE"},
+	}
+	// SysMembershipRolesTable holds the schema information for the "sys_membership_roles" table.
+	SysMembershipRolesTable = &schema.Table{
+		Name:       "sys_membership_roles",
+		Comment:    "成员与角色关联表",
+		Columns:    SysMembershipRolesColumns,
+		PrimaryKey: []*schema.Column{SysMembershipRolesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_mr_tenant_membership_role",
+				Unique:  true,
+				Columns: []*schema.Column{SysMembershipRolesColumns[7], SysMembershipRolesColumns[8], SysMembershipRolesColumns[9]},
+			},
+			{
+				Name:    "idx_mr_tenant_membership",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[7], SysMembershipRolesColumns[8]},
+			},
+			{
+				Name:    "idx_mr_tenant_role",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[7], SysMembershipRolesColumns[9]},
+			},
+			{
+				Name:    "idx_mr_tenant_membership_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[7], SysMembershipRolesColumns[8], SysMembershipRolesColumns[14]},
+			},
+			{
+				Name:    "idx_mr_tenant_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[7], SysMembershipRolesColumns[13]},
+			},
+			{
+				Name:    "idx_mr_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[13]},
+			},
+			{
+				Name:    "idx_mr_role_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[9]},
+			},
+			{
+				Name:    "idx_mr_membership_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[8]},
+			},
+			{
+				Name:    "idx_mr_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[7]},
+			},
+			{
+				Name:    "idx_mr_is_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[14]},
+			},
+			{
+				Name:    "idx_mr_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysMembershipRolesColumns[15]},
+			},
+		},
+	}
+	// SysMenusColumns holds the columns for the "sys_menus" table.
+	SysMenusColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "菜单类型 CATALOG: 目录 MENU: 菜单 BUTTON: 按钮 EMBEDDED: 内嵌 LINK: 外链", Enums: []string{"CATALOG", "MENU", "BUTTON", "EMBEDDED", "LINK"}, Default: "MENU"},
+		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "路径,当其类型为'按钮'的时候对应的数据操作名,例如:/identity.service.v1.UserService/Login", Default: ""},
+		{Name: "redirect", Type: field.TypeString, Nullable: true, Comment: "重定向地址"},
+		{Name: "alias", Type: field.TypeString, Nullable: true, Comment: "路由别名"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "路由命名，然后我们可以使用 name 而不是 path 来传递 to 属性给 <router-link>。"},
+		{Name: "component", Type: field.TypeString, Nullable: true, Comment: "前端页面组件", Default: ""},
+		{Name: "meta", Type: field.TypeJSON, Nullable: true, Comment: "路由元信息"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// SysMenusTable holds the schema information for the "sys_menus" table.
+	SysMenusTable = &schema.Table{
+		Name:       "sys_menus",
+		Comment:    "菜单资源表",
+		Columns:    SysMenusColumns,
+		PrimaryKey: []*schema.Column{SysMenusColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_menus_sys_menus_children",
+				Columns:    []*schema.Column{SysMenusColumns[16]},
+				RefColumns: []*schema.Column{SysMenusColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_menu_parent_name",
+				Unique:  true,
+				Columns: []*schema.Column{SysMenusColumns[16], SysMenusColumns[13]},
+			},
+			{
+				Name:    "idx_sys_menu_parent_path",
+				Unique:  true,
+				Columns: []*schema.Column{SysMenusColumns[16], SysMenusColumns[10]},
+			},
+			{
+				Name:    "idx_sys_menu_path",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[10]},
+			},
+			{
+				Name:    "idx_sys_menu_alias",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[12]},
+			},
+			{
+				Name:    "idx_sys_menu_component",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[14]},
+			},
+			{
+				Name:    "idx_sys_menu_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[9]},
+			},
+			{
+				Name:    "idx_sys_menu_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[8]},
+			},
+			{
+				Name:    "idx_sys_menu_parent",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[16]},
+			},
+			{
+				Name:    "idx_sys_menu_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[4], SysMenusColumns[1]},
+			},
+			{
+				Name:    "idx_sys_menu_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysMenusColumns[1]},
+			},
+		},
+	}
+	// NavigationsColumns holds the columns for the "navigations" table.
+	NavigationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "导航名称"},
+		{Name: "location", Type: field.TypeString, Nullable: true, Comment: "渲染位置标识"},
+		{Name: "locale", Type: field.TypeString, Nullable: true, Comment: "关联的语言区域"},
+		{Name: "is_active", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+	}
+	// NavigationsTable holds the schema information for the "navigations" table.
+	NavigationsTable = &schema.Table{
+		Name:       "navigations",
+		Comment:    "导航表",
+		Columns:    NavigationsColumns,
+		PrimaryKey: []*schema.Column{NavigationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "navigation_location_locale",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationsColumns[8], NavigationsColumns[9]},
+			},
+			{
+				Name:    "navigation_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationsColumns[10]},
+			},
+			{
+				Name:    "navigation_locale",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationsColumns[9]},
+			},
+			{
+				Name:    "navigation_location_locale_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationsColumns[8], NavigationsColumns[9], NavigationsColumns[10]},
+			},
+		},
+	}
+	// NavigationItemsColumns holds the columns for the "navigation_items" table.
+	NavigationItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "link_type", Type: field.TypeEnum, Nullable: true, Comment: "链接类型", Enums: []string{"LINK_TYPE_CUSTOM", "LINK_TYPE_POST", "LINK_TYPE_PAGE", "LINK_TYPE_CATEGORY", "LINK_TYPE_EXTERNAL"}, Default: "LINK_TYPE_POST"},
+		{Name: "navigation_id", Type: field.TypeUint32, Nullable: true, Comment: "所属导航菜单ID"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "显示文本"},
+		{Name: "url", Type: field.TypeString, Nullable: true, Comment: "目标 URL"},
+		{Name: "object_id", Type: field.TypeUint32, Nullable: true, Comment: "关联对象ID"},
+		{Name: "icon", Type: field.TypeString, Nullable: true, Comment: "图标"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述文本"},
+		{Name: "is_open_new_tab", Type: field.TypeBool, Nullable: true, Comment: "是否在新标签页打开", Default: false},
+		{Name: "is_invalid", Type: field.TypeBool, Nullable: true, Comment: "是否无效", Default: false},
+		{Name: "css_class", Type: field.TypeString, Nullable: true, Comment: "额外的 CSS 类"},
+		{Name: "required_permission", Type: field.TypeString, Nullable: true, Comment: "访问权限标识"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// NavigationItemsTable holds the schema information for the "navigation_items" table.
+	NavigationItemsTable = &schema.Table{
+		Name:       "navigation_items",
+		Comment:    "导航项表",
+		Columns:    NavigationItemsColumns,
+		PrimaryKey: []*schema.Column{NavigationItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "navigation_items_navigation_items_children",
+				Columns:    []*schema.Column{NavigationItemsColumns[19]},
+				RefColumns: []*schema.Column{NavigationItemsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "navigationitem_navigation_id",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationItemsColumns[9]},
+			},
+			{
+				Name:    "navigationitem_link_type",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationItemsColumns[8]},
+			},
+			{
+				Name:    "navigationitem_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationItemsColumns[19]},
+			},
+			{
+				Name:    "navigationitem_object_id",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationItemsColumns[12]},
+			},
+			{
+				Name:    "navigationitem_is_invalid",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationItemsColumns[16]},
+			},
+			{
+				Name:    "navigationitem_navigation_id_link_type",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationItemsColumns[9], NavigationItemsColumns[8]},
+			},
+			{
+				Name:    "navigationitem_navigation_id_is_invalid",
+				Unique:  false,
+				Columns: []*schema.Column{NavigationItemsColumns[9], NavigationItemsColumns[16]},
+			},
+		},
+	}
+	// SysOperationAuditLogsColumns holds the columns for the "sys_operation_audit_logs" table.
+	SysOperationAuditLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
+		{Name: "resource_type", Type: field.TypeString, Nullable: true, Comment: "资源类型"},
+		{Name: "resource_id", Type: field.TypeString, Nullable: true, Comment: "资源ID"},
+		{Name: "action", Type: field.TypeEnum, Nullable: true, Comment: "动作", Enums: []string{"CREATE", "UPDATE", "DELETE", "READ", "ASSIGN", "UNASSIGN", "EXPORT", "IMPORT", "OTHER"}},
+		{Name: "before_data", Type: field.TypeString, Nullable: true, Comment: "操作前数据", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
+		{Name: "after_data", Type: field.TypeString, Nullable: true, Comment: "操作后数据", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
+		{Name: "sensitive_level", Type: field.TypeEnum, Nullable: true, Comment: "数据敏感级别", Enums: []string{"PUBLIC", "INTERNAL", "CONFIDENTIAL", "SECRET"}},
+		{Name: "request_id", Type: field.TypeString, Nullable: true, Comment: "全局请求ID"},
+		{Name: "trace_id", Type: field.TypeString, Nullable: true, Comment: "全局链路追踪ID"},
+		{Name: "success", Type: field.TypeBool, Nullable: true, Comment: "操作结果"},
+		{Name: "failure_reason", Type: field.TypeString, Nullable: true, Comment: "失败原因"},
+		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
+		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
+		{Name: "device_info", Type: field.TypeJSON, Nullable: true, Comment: "设备信息"},
+		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
+	}
+	// SysOperationAuditLogsTable holds the schema information for the "sys_operation_audit_logs" table.
+	SysOperationAuditLogsTable = &schema.Table{
+		Name:       "sys_operation_audit_logs",
+		Comment:    "操作审计日志表",
+		Columns:    SysOperationAuditLogsColumns,
+		PrimaryKey: []*schema.Column{SysOperationAuditLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "operationauditlog_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[3]},
+			},
+			{
+				Name:    "operationauditlog_username",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[4]},
+			},
+			{
+				Name:    "operationauditlog_request_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[11]},
+			},
+			{
+				Name:    "operationauditlog_trace_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[12]},
+			},
+			{
+				Name:    "operationauditlog_ip_address",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[15]},
+			},
+			{
+				Name:    "operationauditlog_ip_address_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[15], SysOperationAuditLogsColumns[1]},
+			},
+			{
+				Name:    "operationauditlog_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[2]},
+			},
+			{
+				Name:    "operationauditlog_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[1]},
+			},
+			{
+				Name:    "operationauditlog_tenant_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[2], SysOperationAuditLogsColumns[1]},
+			},
+			{
+				Name:    "operationauditlog_tenant_id_user_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[2], SysOperationAuditLogsColumns[3], SysOperationAuditLogsColumns[1]},
+			},
+			{
+				Name:    "operationauditlog_resource_type_resource_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[5], SysOperationAuditLogsColumns[6]},
+			},
+			{
+				Name:    "operationauditlog_action",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[7]},
+			},
+			{
+				Name:    "operationauditlog_action_success_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[7], SysOperationAuditLogsColumns[13], SysOperationAuditLogsColumns[1]},
+			},
+			{
+				Name:    "operationauditlog_sensitive_level",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[10]},
+			},
+			{
+				Name:    "operationauditlog_success",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[13]},
+			},
+			{
+				Name:    "operationauditlog_log_hash",
+				Unique:  false,
+				Columns: []*schema.Column{SysOperationAuditLogsColumns[18]},
+			},
+		},
+	}
+	// SysOrgUnitsColumns holds the columns for the "sys_org_units" table.
+	SysOrgUnitsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "name", Type: field.TypeString, Comment: "名称"},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "唯一编码（可用于导入/识别）"},
+		{Name: "leader_id", Type: field.TypeUint32, Nullable: true, Comment: "负责人用户ID"},
+		{Name: "type", Type: field.TypeEnum, Comment: "组织类型", Enums: []string{"COMPANY", "DIVISION", "DEPARTMENT", "TEAM", "PROJECT", "COMMITTEE", "REGION", "OTHER"}, Default: "DEPARTMENT"},
+		{Name: "business_scopes", Type: field.TypeJSON, Nullable: true, Comment: "组织的业务范围/服务条线"},
+		{Name: "external_id", Type: field.TypeString, Nullable: true, Comment: "外部系统ID"},
+		{Name: "is_legal_entity", Type: field.TypeBool, Nullable: true, Comment: "是否为法定主体", Default: false},
+		{Name: "registration_number", Type: field.TypeString, Nullable: true, Comment: "注册号/统一社会信用代码"},
+		{Name: "tax_id", Type: field.TypeString, Nullable: true, Comment: "税号"},
+		{Name: "legal_entity_org_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的法定主体组织ID"},
+		{Name: "address", Type: field.TypeString, Nullable: true, Comment: "详细地址"},
+		{Name: "phone", Type: field.TypeString, Nullable: true, Comment: "联系电话"},
+		{Name: "email", Type: field.TypeString, Nullable: true, Comment: "联系邮箱"},
+		{Name: "timezone", Type: field.TypeString, Nullable: true, Comment: "时区"},
+		{Name: "country", Type: field.TypeString, Nullable: true, Comment: "国家/地区代码"},
+		{Name: "latitude", Type: field.TypeFloat64, Nullable: true, Comment: "纬度"},
+		{Name: "longitude", Type: field.TypeFloat64, Nullable: true, Comment: "经度"},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束有效期（UTC）"},
+		{Name: "contact_user_id", Type: field.TypeUint32, Nullable: true, Comment: "业务联系人用户ID"},
+		{Name: "permission_tags", Type: field.TypeJSON, Nullable: true, Comment: "与权限/角色映射的标签"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// SysOrgUnitsTable holds the schema information for the "sys_org_units" table.
+	SysOrgUnitsTable = &schema.Table{
+		Name:       "sys_org_units",
+		Comment:    "组织单元表",
+		Columns:    SysOrgUnitsColumns,
+		PrimaryKey: []*schema.Column{SysOrgUnitsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_org_units_sys_org_units_children",
+				Columns:    []*schema.Column{SysOrgUnitsColumns[34]},
+				RefColumns: []*schema.Column{SysOrgUnitsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_org_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[9]},
+			},
+			{
+				Name:    "uix_org_tenant_parent_name",
+				Unique:  true,
+				Columns: []*schema.Column{SysOrgUnitsColumns[9], SysOrgUnitsColumns[34], SysOrgUnitsColumns[13]},
+			},
+			{
+				Name:    "uix_org_tenant_parent_path",
+				Unique:  true,
+				Columns: []*schema.Column{SysOrgUnitsColumns[9], SysOrgUnitsColumns[34], SysOrgUnitsColumns[12]},
+			},
+			{
+				Name:    "idx_org_tenant_path",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[9], SysOrgUnitsColumns[12]},
+			},
+			{
+				Name:    "idx_org_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[34]},
+			},
+			{
+				Name:    "idx_org_leader_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[15]},
+			},
+			{
+				Name:    "idx_org_contact_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[32]},
+			},
+			{
+				Name:    "idx_org_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[16]},
+			},
+			{
+				Name:    "idx_org_external_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[18]},
+			},
+			{
+				Name:    "idx_org_is_legal_entity",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[19]},
+			},
+			{
+				Name:    "idx_org_start_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[30]},
+			},
+			{
+				Name:    "idx_org_end_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[31]},
+			},
+			{
+				Name:    "uix_org_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{SysOrgUnitsColumns[9], SysOrgUnitsColumns[14]},
+			},
+			{
+				Name:    "idx_org_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[4], SysOrgUnitsColumns[1]},
+			},
+			{
+				Name:    "idx_org_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[9], SysOrgUnitsColumns[1]},
+			},
+			{
+				Name:    "idx_org_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysOrgUnitsColumns[1]},
+			},
+		},
+	}
+	// PagesColumns holds the columns for the "pages" table.
+	PagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "页面状态", Enums: []string{"PAGE_STATUS_DRAFT", "PAGE_STATUS_PUBLISHED", "PAGE_STATUS_ARCHIVED"}, Default: "PAGE_STATUS_DRAFT"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "页面类型", Enums: []string{"PAGE_TYPE_DEFAULT", "PAGE_TYPE_HOME", "PAGE_TYPE_ERROR_404", "PAGE_TYPE_ERROR_500", "PAGE_TYPE_CUSTOM"}, Default: "PAGE_TYPE_HOME"},
+		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_HTML", "EDITOR_TYPE_JSON_BLOCK"}, Default: "EDITOR_TYPE_MARKDOWN"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "页面别名"},
+		{Name: "author_id", Type: field.TypeUint32, Nullable: true, Comment: "评论作者ID，0表示游客", Default: 0},
+		{Name: "author_name", Type: field.TypeString, Nullable: true, Comment: "评论作者名称"},
+		{Name: "disallow_comment", Type: field.TypeBool, Nullable: true, Comment: "是否禁止评论", Default: false},
+		{Name: "redirect_url", Type: field.TypeString, Nullable: true, Comment: "重定向 URL"},
+		{Name: "show_in_navigation", Type: field.TypeBool, Nullable: true, Comment: "是否在主导航中显示", Default: false},
+		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "页面模板名称"},
+		{Name: "is_custom_template", Type: field.TypeBool, Nullable: true, Comment: "是否使用自定义模板代码", Default: false},
+		{Name: "visits", Type: field.TypeUint32, Nullable: true, Comment: "页面访问次数", Default: 0},
+		{Name: "custom_fields", Type: field.TypeJSON, Nullable: true, Comment: "自定义字段"},
+		{Name: "custom_head", Type: field.TypeString, Nullable: true, Comment: "自定义 head 代码"},
+		{Name: "custom_foot", Type: field.TypeString, Nullable: true, Comment: "自定义 foot 代码"},
+		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "页面层级深度"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// PagesTable holds the schema information for the "pages" table.
+	PagesTable = &schema.Table{
+		Name:       "pages",
+		Comment:    "页面表",
+		Columns:    PagesColumns,
+		PrimaryKey: []*schema.Column{PagesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "pages_pages_children",
+				Columns:    []*schema.Column{PagesColumns[25]},
+				RefColumns: []*schema.Column{PagesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "page_status",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[9]},
+			},
+			{
+				Name:    "page_type",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[10]},
+			},
+			{
+				Name:    "page_author_id",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[13]},
+			},
+			{
+				Name:    "page_slug",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[12]},
+			},
+			{
+				Name:    "page_show_in_navigation",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[17]},
+			},
+			{
+				Name:    "page_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[25]},
+			},
+			{
+				Name:    "page_disallow_comment",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[15]},
+			},
+			{
+				Name:    "page_status_type",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[9], PagesColumns[10]},
+			},
+			{
+				Name:    "page_status_show_in_navigation",
+				Unique:  false,
+				Columns: []*schema.Column{PagesColumns[9], PagesColumns[17]},
+			},
+		},
+	}
+	// PageTranslationsColumns holds the columns for the "page_translations" table.
+	PageTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的页面ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "页面标题"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "语言特定 slug"},
+		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "页面摘要"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "页面内容"},
+		{Name: "original_content", Type: field.TypeString, Nullable: true, Comment: "原始内容"},
+		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
+		{Name: "cover_image", Type: field.TypeString, Nullable: true, Comment: "封面图"},
+		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
+		{Name: "word_count", Type: field.TypeUint32, Nullable: true, Comment: "当前语言版本的字数"},
+		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
+		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
+		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
+	}
+	// PageTranslationsTable holds the schema information for the "page_translations" table.
+	PageTranslationsTable = &schema.Table{
+		Name:       "page_translations",
+		Comment:    "页面翻译表",
+		Columns:    PageTranslationsColumns,
+		PrimaryKey: []*schema.Column{PageTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "pagetranslation_page_id",
+				Unique:  false,
+				Columns: []*schema.Column{PageTranslationsColumns[7]},
+			},
+			{
+				Name:    "pagetranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{PageTranslationsColumns[8]},
+			},
+			{
+				Name:    "pagetranslation_slug",
+				Unique:  false,
+				Columns: []*schema.Column{PageTranslationsColumns[10]},
+			},
+			{
+				Name:    "pagetranslation_page_id_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{PageTranslationsColumns[7], PageTranslationsColumns[8]},
+			},
+			{
+				Name:    "pagetranslation_language_code_slug",
+				Unique:  false,
+				Columns: []*schema.Column{PageTranslationsColumns[8], PageTranslationsColumns[10]},
+			},
+			{
+				Name:    "pagetranslation_meta_keywords",
+				Unique:  false,
+				Columns: []*schema.Column{PageTranslationsColumns[18]},
+			},
+		},
+	}
+	// SysPermissionsColumns holds the columns for the "sys_permissions" table.
+	SysPermissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "name", Type: field.TypeString, Comment: "权限名称（如：删除用户）"},
+		{Name: "code", Type: field.TypeString, Comment: "权限编码（如：opm:user:delete、order:export）"},
+		{Name: "group_id", Type: field.TypeUint32, Nullable: true, Comment: "关联权限分组 ID"},
+	}
+	// SysPermissionsTable holds the schema information for the "sys_permissions" table.
+	SysPermissionsTable = &schema.Table{
+		Name:       "sys_permissions",
+		Comment:    "权限点表",
+		Columns:    SysPermissionsColumns,
+		PrimaryKey: []*schema.Column{SysPermissionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_perm_code",
+				Unique:  true,
+				Columns: []*schema.Column{SysPermissionsColumns[10]},
+			},
+			{
+				Name:    "idx_perm_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionsColumns[9]},
+			},
+			{
+				Name:    "idx_perm_group_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionsColumns[11]},
+			},
+		},
+	}
+	// SysPermissionApisColumns holds the columns for the "sys_permission_apis" table.
+	SysPermissionApisColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "api_id", Type: field.TypeUint32, Comment: "API资源ID（关联sys_apis.id）"},
+	}
+	// SysPermissionApisTable holds the schema information for the "sys_permission_apis" table.
+	SysPermissionApisTable = &schema.Table{
+		Name:       "sys_permission_apis",
+		Comment:    "权限点与API接口关联表",
+		Columns:    SysPermissionApisColumns,
+		PrimaryKey: []*schema.Column{SysPermissionApisColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_perm_api_permission_api_id",
+				Unique:  true,
+				Columns: []*schema.Column{SysPermissionApisColumns[7], SysPermissionApisColumns[8]},
+			},
+			{
+				Name:    "idx_perm_api_permission_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionApisColumns[7]},
+			},
+			{
+				Name:    "idx_perm_api_api_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionApisColumns[8]},
+			},
+		},
+	}
+	// SysPermissionAuditLogsColumns holds the columns for the "sys_permission_audit_logs" table.
+	SysPermissionAuditLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者 用户ID"},
+		{Name: "target_type", Type: field.TypeString, Nullable: true, Comment: "目标类型"},
+		{Name: "target_id", Type: field.TypeString, Nullable: true, Comment: "目标ID"},
+		{Name: "action", Type: field.TypeEnum, Nullable: true, Comment: "动作", Enums: []string{"GRANT", "REVOKE", "UPDATE", "RESET", "CREATE", "DELETE", "ASSIGN", "UNASSIGN", "BULK_GRANT", "BULK_REVOKE", "EXPIRE", "SUSPEND", "RESUME", "ROLLBACK", "OTHER"}},
+		{Name: "old_value", Type: field.TypeString, Nullable: true, Comment: "旧值（JSON）", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
+		{Name: "new_value", Type: field.TypeString, Nullable: true, Comment: "新值（JSON）", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
+		{Name: "ip_address", Type: field.TypeString, Comment: "操作者IP地址"},
+		{Name: "request_id", Type: field.TypeString, Comment: "关联全局请求ID"},
+		{Name: "reason", Type: field.TypeString, Comment: "变更原因"},
+		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
+	}
+	// SysPermissionAuditLogsTable holds the schema information for the "sys_permission_audit_logs" table.
+	SysPermissionAuditLogsTable = &schema.Table{
+		Name:       "sys_permission_audit_logs",
+		Comment:    "权限变更审计日志表",
+		Columns:    SysPermissionAuditLogsColumns,
+		PrimaryKey: []*schema.Column{SysPermissionAuditLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_permission_audit_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionAuditLogsColumns[2], SysPermissionAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_permission_audit_tenant_operator_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionAuditLogsColumns[2], SysPermissionAuditLogsColumns[3], SysPermissionAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_permission_audit_tenant_target_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionAuditLogsColumns[2], SysPermissionAuditLogsColumns[4], SysPermissionAuditLogsColumns[5], SysPermissionAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_permission_audit_target",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionAuditLogsColumns[4], SysPermissionAuditLogsColumns[5]},
+			},
+			{
+				Name:    "idx_permission_audit_tenant_action_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionAuditLogsColumns[2], SysPermissionAuditLogsColumns[6], SysPermissionAuditLogsColumns[1]},
+			},
+			{
+				Name:    "idx_permission_audit_tenant_ip",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionAuditLogsColumns[2], SysPermissionAuditLogsColumns[9]},
+			},
+		},
+	}
+	// SysPermissionGroupsColumns holds the columns for the "sys_permission_groups" table.
+	SysPermissionGroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "name", Type: field.TypeString, Comment: "分组名称（如：用户管理、订单操作）"},
+		{Name: "module", Type: field.TypeString, Nullable: true, Comment: "业务模块标识（如：opm、order、pay）"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// SysPermissionGroupsTable holds the schema information for the "sys_permission_groups" table.
+	SysPermissionGroupsTable = &schema.Table{
+		Name:       "sys_permission_groups",
+		Comment:    "权限分组表",
+		Columns:    SysPermissionGroupsColumns,
+		PrimaryKey: []*schema.Column{SysPermissionGroupsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_permission_groups_sys_permission_groups_children",
+				Columns:    []*schema.Column{SysPermissionGroupsColumns[13]},
+				RefColumns: []*schema.Column{SysPermissionGroupsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_perm_group_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionGroupsColumns[13]},
+			},
+			{
+				Name:    "idx_perm_group_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionGroupsColumns[11]},
+			},
+			{
+				Name:    "idx_perm_group_module",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionGroupsColumns[12]},
+			},
+		},
+	}
+	// SysPermissionMenusColumns holds the columns for the "sys_permission_menus" table.
+	SysPermissionMenusColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "menu_id", Type: field.TypeUint32, Comment: "菜单ID（关联sys_menus.id）"},
+	}
+	// SysPermissionMenusTable holds the schema information for the "sys_permission_menus" table.
+	SysPermissionMenusTable = &schema.Table{
+		Name:       "sys_permission_menus",
+		Comment:    "权限点与前端菜单关联表",
+		Columns:    SysPermissionMenusColumns,
+		PrimaryKey: []*schema.Column{SysPermissionMenusColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_perm_menu_permission_menu_id",
+				Unique:  true,
+				Columns: []*schema.Column{SysPermissionMenusColumns[7], SysPermissionMenusColumns[8]},
+			},
+			{
+				Name:    "idx_perm_menu_permission_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionMenusColumns[7]},
+			},
+			{
+				Name:    "idx_perm_menu_menu_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionMenusColumns[8]},
+			},
+		},
+	}
+	// SysPermissionPoliciesColumns holds the columns for the "sys_permission_policies" table.
+	SysPermissionPoliciesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "policy_engine", Type: field.TypeEnum, Comment: "策略引擎", Enums: []string{"CEL", "CASBIN", "OPA", "SQL"}, Default: "CASBIN"},
+		{Name: "definition", Type: field.TypeString, Nullable: true, Comment: "策略定义（动态结构）", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
+		{Name: "version", Type: field.TypeUint32, Comment: "策略版本（用于灰度/回滚）", Default: 1},
+		{Name: "eval_order", Type: field.TypeUint32, Comment: "评估优先级（越小越先执行）", Default: 0},
+		{Name: "cache_ttl", Type: field.TypeUint32, Comment: "结果缓存秒数（0=不缓存）", Default: 300},
+	}
+	// SysPermissionPoliciesTable holds the schema information for the "sys_permission_policies" table.
+	SysPermissionPoliciesTable = &schema.Table{
+		Name:       "sys_permission_policies",
+		Comment:    "权限点动态策略表",
+		Columns:    SysPermissionPoliciesColumns,
+		PrimaryKey: []*schema.Column{SysPermissionPoliciesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_perm_policy_perm_version",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[8], SysPermissionPoliciesColumns[11]},
+			},
+			{
+				Name:    "idx_perm_policy_perm",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[8]},
+			},
+			{
+				Name:    "idx_perm_policy_engine",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[9]},
+			},
+			{
+				Name:    "idx_perm_policy_version",
+				Unique:  false,
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[11]},
+			},
+		},
+	}
+	// SysPolicyEvaluationLogsColumns holds the columns for the "sys_policy_evaluation_logs" table.
+	SysPolicyEvaluationLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
+		{Name: "membership_id", Type: field.TypeUint32, Comment: "成员身份ID"},
+		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限点ID"},
+		{Name: "policy_id", Type: field.TypeUint32, Nullable: true, Comment: "策略ID（可能无策略）"},
+		{Name: "request_path", Type: field.TypeString, Nullable: true, Comment: "请求API路径"},
+		{Name: "request_method", Type: field.TypeString, Nullable: true, Comment: "请求HTTP方法"},
+		{Name: "result", Type: field.TypeBool, Comment: "是否通过", Default: false},
+		{Name: "effect_details", Type: field.TypeString, Nullable: true, Comment: "评估详情/拒绝原因"},
+		{Name: "scope_sql", Type: field.TypeString, Nullable: true, Comment: "生成的SQL条件"},
+		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "操作者IP地址"},
+		{Name: "trace_id", Type: field.TypeString, Nullable: true, Comment: "全局链路追踪ID"},
+		{Name: "evaluation_context", Type: field.TypeString, Nullable: true, Comment: "决策上下文快照"},
+		{Name: "log_hash", Type: field.TypeString, Nullable: true, Comment: "日志内容哈希（SHA256，十六进制字符串）"},
+		{Name: "signature", Type: field.TypeBytes, Nullable: true, Comment: "日志数字签名"},
+	}
+	// SysPolicyEvaluationLogsTable holds the schema information for the "sys_policy_evaluation_logs" table.
+	SysPolicyEvaluationLogsTable = &schema.Table{
+		Name:       "sys_policy_evaluation_logs",
+		Comment:    "策略评估日志表",
+		Columns:    SysPolicyEvaluationLogsColumns,
+		PrimaryKey: []*schema.Column{SysPolicyEvaluationLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_policy_eval_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[2], SysPolicyEvaluationLogsColumns[1]},
+			},
+			{
+				Name:    "idx_policy_eval_tenant_user_permission_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[2], SysPolicyEvaluationLogsColumns[3], SysPolicyEvaluationLogsColumns[5], SysPolicyEvaluationLogsColumns[1]},
+			},
+			{
+				Name:    "idx_policy_eval_tenant_policy_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[2], SysPolicyEvaluationLogsColumns[6], SysPolicyEvaluationLogsColumns[1]},
+			},
+			{
+				Name:    "idx_policy_eval_tenant_membership_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[2], SysPolicyEvaluationLogsColumns[4], SysPolicyEvaluationLogsColumns[1]},
+			},
+			{
+				Name:    "idx_policy_eval_tenant_permission_result_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[2], SysPolicyEvaluationLogsColumns[5], SysPolicyEvaluationLogsColumns[9], SysPolicyEvaluationLogsColumns[1]},
+			},
+			{
+				Name:    "idx_policy_eval_request_path",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[7]},
+			},
+			{
+				Name:    "idx_policy_eval_request_method",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[8]},
+			},
+			{
+				Name:    "idx_policy_eval_trace_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[13]},
+			},
+			{
+				Name:    "idx_policy_eval_ip_address_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[12], SysPolicyEvaluationLogsColumns[1]},
+			},
+			{
+				Name:    "idx_policy_eval_log_hash",
+				Unique:  false,
+				Columns: []*schema.Column{SysPolicyEvaluationLogsColumns[15]},
+			},
+		},
+	}
+	// SysPositionsColumns holds the columns for the "sys_positions" table.
+	SysPositionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "name", Type: field.TypeString, Comment: "职位名称"},
+		{Name: "code", Type: field.TypeString, Comment: "唯一编码"},
+		{Name: "org_unit_id", Type: field.TypeUint32, Comment: "所属组织单元ID"},
+		{Name: "reports_to_position_id", Type: field.TypeUint32, Nullable: true, Comment: "汇报关系"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "职位描述"},
+		{Name: "job_family", Type: field.TypeString, Nullable: true, Comment: "职类/序列"},
+		{Name: "job_grade", Type: field.TypeString, Nullable: true, Comment: "职级"},
+		{Name: "level", Type: field.TypeInt32, Nullable: true, Comment: "数值化职级"},
+		{Name: "headcount", Type: field.TypeUint32, Comment: "编制人数", Default: 0},
+		{Name: "is_key_position", Type: field.TypeBool, Comment: "是否关键岗位", Default: false},
+		{Name: "type", Type: field.TypeEnum, Comment: "岗位类型", Enums: []string{"REGULAR", "MANAGER", "LEAD", "INTERN", "CONTRACT", "OTHER"}, Default: "REGULAR"},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束有效期（UTC）"},
+	}
+	// SysPositionsTable holds the schema information for the "sys_positions" table.
+	SysPositionsTable = &schema.Table{
+		Name:       "sys_positions",
+		Comment:    "职位表",
+		Columns:    SysPositionsColumns,
+		PrimaryKey: []*schema.Column{SysPositionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sys_positions_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{SysPositionsColumns[9], SysPositionsColumns[12]},
+			},
+			{
+				Name:    "idx_sys_positions_code",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[12]},
+			},
+			{
+				Name:    "idx_sys_positions_tenant_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[9], SysPositionsColumns[11]},
+			},
+			{
+				Name:    "idx_sys_positions_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[11]},
+			},
+			{
+				Name:    "idx_sys_positions_tenant_org_unit_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[9], SysPositionsColumns[13]},
+			},
+			{
+				Name:    "idx_sys_positions_org_unit_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[13]},
+			},
+			{
+				Name:    "idx_sys_positions_tenant_reports_to",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[9], SysPositionsColumns[14]},
+			},
+			{
+				Name:    "idx_sys_positions_reports_to",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[14]},
+			},
+			{
+				Name:    "idx_sys_positions_tenant_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[9], SysPositionsColumns[21]},
+			},
+			{
+				Name:    "idx_sys_positions_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[21]},
+			},
+			{
+				Name:    "idx_sys_positions_tenant_is_key",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[9], SysPositionsColumns[20]},
+			},
+			{
+				Name:    "idx_sys_positions_is_key",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[20]},
+			},
+			{
+				Name:    "idx_sys_positions_level",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[18]},
+			},
+			{
+				Name:    "idx_sys_positions_headcount",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[19]},
+			},
+			{
+				Name:    "idx_sys_positions_sort_order",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[7]},
+			},
+			{
+				Name:    "idx_sys_positions_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[10]},
+			},
+			{
+				Name:    "idx_sys_positions_start_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[22]},
+			},
+			{
+				Name:    "idx_sys_positions_end_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[23]},
+			},
+			{
+				Name:    "idx_sys_positions_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_positions_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysPositionsColumns[9]},
+			},
+		},
+	}
+	// PostsColumns holds the columns for the "posts" table.
+	PostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "帖子状态", Enums: []string{"POST_STATUS_DRAFT", "POST_STATUS_PUBLISHED", "POST_STATUS_SCHEDULED", "POST_STATUS_TRASHED"}, Default: "POST_STATUS_DRAFT"},
+		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_HTML", "EDITOR_TYPE_JSON_BLOCK"}, Default: "EDITOR_TYPE_MARKDOWN"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "链接别名"},
+		{Name: "disallow_comment", Type: field.TypeBool, Nullable: true, Comment: "不允许评论", Default: false},
+		{Name: "in_progress", Type: field.TypeBool, Nullable: true, Comment: "审核中", Default: false},
+		{Name: "auto_summary", Type: field.TypeBool, Nullable: true, Comment: "是否自动生成摘要", Default: true},
+		{Name: "is_featured", Type: field.TypeBool, Nullable: true, Comment: "是否推荐", Default: false},
+		{Name: "visits", Type: field.TypeInt32, Nullable: true, Comment: "帖子访问次数", Default: 0},
+		{Name: "likes", Type: field.TypeInt32, Nullable: true, Comment: "帖子点赞次数", Default: 0},
+		{Name: "comment_count", Type: field.TypeInt32, Nullable: true, Comment: "帖子评论数", Default: 0},
+		{Name: "author_id", Type: field.TypeUint32, Nullable: true, Comment: "评论作者ID，0表示游客", Default: 0},
+		{Name: "author_name", Type: field.TypeString, Nullable: true, Comment: "评论作者名称"},
+		{Name: "password_hash", Type: field.TypeString, Nullable: true, Comment: "密码哈希"},
+		{Name: "custom_fields", Type: field.TypeJSON, Nullable: true, Comment: "自定义字段"},
+		{Name: "category_ids", Type: field.TypeJSON, Nullable: true, Comment: "关联的分类ID列表"},
+		{Name: "tag_ids", Type: field.TypeJSON, Nullable: true, Comment: "关联的标签ID列表"},
+	}
+	// PostsTable holds the schema information for the "posts" table.
+	PostsTable = &schema.Table{
+		Name:       "posts",
+		Comment:    "帖子表",
+		Columns:    PostsColumns,
+		PrimaryKey: []*schema.Column{PostsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "post_status",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[8]},
+			},
+			{
+				Name:    "post_editor_type",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[9]},
+			},
+			{
+				Name:    "post_slug",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[10]},
+			},
+			{
+				Name:    "post_author_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[18]},
+			},
+			{
+				Name:    "post_is_featured",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[14]},
+			},
+			{
+				Name:    "post_in_progress",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[12]},
+			},
+			{
+				Name:    "post_disallow_comment",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[11]},
+			},
+			{
+				Name:    "post_status_author_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[8], PostsColumns[18]},
+			},
+			{
+				Name:    "post_status_is_featured",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[8], PostsColumns[14]},
+			},
+			{
+				Name:    "post_status_in_progress",
+				Unique:  false,
+				Columns: []*schema.Column{PostsColumns[8], PostsColumns[12]},
+			},
+		},
+	}
+	// PostCategoriesColumns holds the columns for the "post_categories" table.
+	PostCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "post_id", Type: field.TypeUint32, Comment: "帖子ID"},
+		{Name: "category_id", Type: field.TypeUint32, Comment: "分类ID"},
+	}
+	// PostCategoriesTable holds the schema information for the "post_categories" table.
+	PostCategoriesTable = &schema.Table{
+		Name:       "post_categories",
+		Comment:    "帖子分类关联表",
+		Columns:    PostCategoriesColumns,
+		PrimaryKey: []*schema.Column{PostCategoriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "postcategory_post_id_category_id",
+				Unique:  true,
+				Columns: []*schema.Column{PostCategoriesColumns[2], PostCategoriesColumns[3]},
+			},
+			{
+				Name:    "postcategory_post_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostCategoriesColumns[2]},
+			},
+			{
+				Name:    "postcategory_category_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostCategoriesColumns[3]},
+			},
+		},
+	}
+	// PostTagsColumns holds the columns for the "post_tags" table.
+	PostTagsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "post_id", Type: field.TypeUint32, Comment: "帖子ID"},
+		{Name: "tag_id", Type: field.TypeUint32, Comment: "标签ID"},
+	}
+	// PostTagsTable holds the schema information for the "post_tags" table.
+	PostTagsTable = &schema.Table{
+		Name:       "post_tags",
+		Comment:    "帖子标签关联表",
+		Columns:    PostTagsColumns,
+		PrimaryKey: []*schema.Column{PostTagsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "posttag_post_id_tag_id",
+				Unique:  true,
+				Columns: []*schema.Column{PostTagsColumns[2], PostTagsColumns[3]},
+			},
+			{
+				Name:    "posttag_post_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostTagsColumns[2]},
+			},
+			{
+				Name:    "posttag_tag_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostTagsColumns[3]},
+			},
+		},
+	}
+	// PostTranslationsColumns holds the columns for the "post_translations" table.
+	PostTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "post_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的帖子ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "帖子标题"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "语言特定 slug"},
+		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "帖子摘要"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "帖子内容"},
+		{Name: "original_content", Type: field.TypeString, Nullable: true, Comment: "原始内容"},
+		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
+		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "模板名称"},
+		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
+		{Name: "word_count", Type: field.TypeUint32, Nullable: true, Comment: "当前语言版本的字数"},
+		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
+		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
+		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
+	}
+	// PostTranslationsTable holds the schema information for the "post_translations" table.
+	PostTranslationsTable = &schema.Table{
+		Name:       "post_translations",
+		Comment:    "帖子翻译表",
+		Columns:    PostTranslationsColumns,
+		PrimaryKey: []*schema.Column{PostTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "posttranslation_post_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostTranslationsColumns[7]},
+			},
+			{
+				Name:    "posttranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{PostTranslationsColumns[8]},
+			},
+			{
+				Name:    "posttranslation_slug",
+				Unique:  false,
+				Columns: []*schema.Column{PostTranslationsColumns[10]},
+			},
+			{
+				Name:    "posttranslation_full_path",
+				Unique:  false,
+				Columns: []*schema.Column{PostTranslationsColumns[16]},
+			},
+			{
+				Name:    "posttranslation_meta_keywords",
+				Unique:  false,
+				Columns: []*schema.Column{PostTranslationsColumns[18]},
+			},
+			{
+				Name:    "posttranslation_post_id_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{PostTranslationsColumns[7], PostTranslationsColumns[8]},
+			},
+			{
+				Name:    "posttranslation_language_code_slug",
+				Unique:  false,
+				Columns: []*schema.Column{PostTranslationsColumns[8], PostTranslationsColumns[10]},
+			},
+		},
+	}
+	// SysRolesColumns holds the columns for the "sys_roles" table.
+	SysRolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "角色名称"},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "角色标识"},
+		{Name: "is_protected", Type: field.TypeBool, Comment: "是否受保护的角色", Default: false},
+		{Name: "type", Type: field.TypeEnum, Comment: "角色类型", Enums: []string{"SYSTEM", "TEMPLATE", "TENANT"}, Default: "TENANT"},
+	}
+	// SysRolesTable holds the schema information for the "sys_roles" table.
+	SysRolesTable = &schema.Table{
+		Name:       "sys_roles",
+		Comment:    "角色表",
+		Columns:    SysRolesColumns,
+		PrimaryKey: []*schema.Column{SysRolesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sys_roles_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{SysRolesColumns[10], SysRolesColumns[13]},
+			},
+			{
+				Name:    "idx_sys_roles_tenant_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[10], SysRolesColumns[12]},
+			},
+			{
+				Name:    "idx_sys_roles_name",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[12]},
+			},
+			{
+				Name:    "idx_sys_roles_code",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[13]},
+			},
+			{
+				Name:    "idx_sys_roles_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[10]},
+			},
+			{
+				Name:    "idx_sys_roles_is_protected",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[14]},
+			},
+			{
+				Name:    "idx_sys_roles_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[11]},
+			},
+			{
+				Name:    "idx_sys_roles_sort_order",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[9]},
+			},
+			{
+				Name:    "idx_sys_roles_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[1]},
+			},
+			{
+				Name:    "idx_sys_roles_created_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[4]},
+			},
+		},
+	}
+	// SysRoleMetadataColumns holds the columns for the "sys_role_metadata" table.
+	SysRoleMetadataColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "role_id", Type: field.TypeUint32, Nullable: true, Comment: "角色ID"},
+		{Name: "is_template", Type: field.TypeBool, Nullable: true, Comment: "是否是模版", Default: false},
+		{Name: "template_for", Type: field.TypeString, Nullable: true, Comment: "模板适用对象"},
+		{Name: "template_version", Type: field.TypeInt32, Nullable: true, Comment: "模板版本号", Default: 1},
+		{Name: "last_synced_version", Type: field.TypeInt32, Nullable: true, Comment: "上次同步的版本号"},
+		{Name: "last_synced_at", Type: field.TypeTime, Nullable: true, Comment: "最后同步时间"},
+		{Name: "sync_policy", Type: field.TypeEnum, Nullable: true, Comment: "同步策略", Enums: []string{"AUTO", "MANUAL", "BLOCKED"}, Default: "AUTO"},
+		{Name: "scope", Type: field.TypeEnum, Nullable: true, Comment: "作用域", Enums: []string{"PLATFORM", "TENANT"}, Default: "TENANT"},
+		{Name: "custom_overrides", Type: field.TypeJSON, Comment: "租户自定义覆盖项"},
+	}
+	// SysRoleMetadataTable holds the schema information for the "sys_role_metadata" table.
+	SysRoleMetadataTable = &schema.Table{
+		Name:       "sys_role_metadata",
+		Comment:    "角色元数据",
+		Columns:    SysRoleMetadataColumns,
+		PrimaryKey: []*schema.Column{SysRoleMetadataColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_role_metadata_tenant_role",
+				Unique:  true,
+				Columns: []*schema.Column{SysRoleMetadataColumns[7], SysRoleMetadataColumns[8]},
+			},
+			{
+				Name:    "idx_role_metadata_unique_template",
+				Unique:  true,
+				Columns: []*schema.Column{SysRoleMetadataColumns[7], SysRoleMetadataColumns[9], SysRoleMetadataColumns[10], SysRoleMetadataColumns[11], SysRoleMetadataColumns[15]},
+			},
+			{
+				Name:    "idx_role_metadata_template_lookup",
+				Unique:  false,
+				Columns: []*schema.Column{SysRoleMetadataColumns[7], SysRoleMetadataColumns[9], SysRoleMetadataColumns[10]},
+			},
+			{
+				Name:    "idx_role_metadata_scope_role",
+				Unique:  false,
+				Columns: []*schema.Column{SysRoleMetadataColumns[7], SysRoleMetadataColumns[15], SysRoleMetadataColumns[8]},
+			},
+			{
+				Name:    "idx_role_metadata_last_synced_version",
+				Unique:  false,
+				Columns: []*schema.Column{SysRoleMetadataColumns[7], SysRoleMetadataColumns[12]},
+			},
+			{
+				Name:    "idx_role_metadata_last_synced_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysRoleMetadataColumns[7], SysRoleMetadataColumns[13]},
+			},
+		},
+	}
+	// SysRolePermissionsColumns holds the columns for the "sys_role_permissions" table.
+	SysRolePermissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "role_id", Type: field.TypeUint32, Comment: "API资源ID（关联sys_apis.id）"},
+		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "effect", Type: field.TypeEnum, Nullable: true, Comment: "生效方式", Enums: []string{"ALLOW", "DENY"}, Default: "ALLOW"},
+		{Name: "priority", Type: field.TypeInt32, Nullable: true, Comment: "优先级（-100~100，值越大优先级越高）", Default: 0},
+	}
+	// SysRolePermissionsTable holds the schema information for the "sys_role_permissions" table.
+	SysRolePermissionsTable = &schema.Table{
+		Name:       "sys_role_permissions",
+		Comment:    "角色与权限关联表",
+		Columns:    SysRolePermissionsColumns,
+		PrimaryKey: []*schema.Column{SysRolePermissionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_rp_tenant_role_permission",
+				Unique:  true,
+				Columns: []*schema.Column{SysRolePermissionsColumns[7], SysRolePermissionsColumns[9], SysRolePermissionsColumns[10]},
+			},
+			{
+				Name:    "uix_rp_role_permission",
+				Unique:  true,
+				Columns: []*schema.Column{SysRolePermissionsColumns[9], SysRolePermissionsColumns[10]},
+			},
+			{
+				Name:    "idx_rp_tenant_role",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolePermissionsColumns[7], SysRolePermissionsColumns[9]},
+			},
+			{
+				Name:    "idx_rp_tenant_permission",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolePermissionsColumns[7], SysRolePermissionsColumns[10]},
+			},
+			{
+				Name:    "idx_rp_role_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolePermissionsColumns[9]},
+			},
+			{
+				Name:    "idx_rp_permission_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolePermissionsColumns[10]},
+			},
+			{
+				Name:    "idx_rp_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolePermissionsColumns[7]},
+			},
+			{
+				Name:    "idx_rp_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolePermissionsColumns[1]},
+			},
+			{
+				Name:    "idx_rp_created_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolePermissionsColumns[4]},
+			},
+		},
+	}
+	// SiteSettingsColumns holds the columns for the "site_settings" table.
+	SiteSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "site_id", Type: field.TypeUint32, Nullable: true, Comment: "站点ID"},
+		{Name: "locale", Type: field.TypeString, Nullable: true, Comment: "语言区域"},
+		{Name: "group", Type: field.TypeString, Nullable: true, Comment: "配置分组标识"},
+		{Name: "key", Type: field.TypeString, Nullable: true, Comment: "配置键"},
+		{Name: "value", Type: field.TypeString, Nullable: true, Comment: "配置值"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "配置项类型", Enums: []string{"SETTING_TYPE_TEXT", "SETTING_TYPE_TEXTAREA", "SETTING_TYPE_NUMBER", "SETTING_TYPE_BOOLEAN", "SETTING_TYPE_URL", "SETTING_TYPE_EMAIL", "SETTING_TYPE_IMAGE", "SETTING_TYPE_SELECT", "SETTING_TYPE_JSON"}, Default: "SETTING_TYPE_TEXT"},
+		{Name: "label", Type: field.TypeString, Nullable: true, Comment: "配置项标签"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "配置项描述"},
+		{Name: "placeholder", Type: field.TypeString, Nullable: true, Comment: "输入框占位符"},
+		{Name: "options", Type: field.TypeJSON, Nullable: true, Comment: "下拉选项"},
+		{Name: "is_required", Type: field.TypeBool, Nullable: true, Comment: "是否必填", Default: false},
+		{Name: "validation_regex", Type: field.TypeString, Nullable: true, Comment: "验证正则表达式"},
+	}
+	// SiteSettingsTable holds the schema information for the "site_settings" table.
+	SiteSettingsTable = &schema.Table{
+		Name:       "site_settings",
+		Comment:    "站点设置表",
+		Columns:    SiteSettingsColumns,
+		PrimaryKey: []*schema.Column{SiteSettingsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "sitesetting_site_id",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[7]},
+			},
+			{
+				Name:    "sitesetting_locale",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[8]},
+			},
+			{
+				Name:    "sitesetting_group",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[9]},
+			},
+			{
+				Name:    "sitesetting_key",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[10]},
+			},
+			{
+				Name:    "sitesetting_type",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[12]},
+			},
+			{
+				Name:    "sitesetting_site_id_locale",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[7], SiteSettingsColumns[8]},
+			},
+			{
+				Name:    "sitesetting_site_id_group_key",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[7], SiteSettingsColumns[9], SiteSettingsColumns[10]},
+			},
+			{
+				Name:    "sitesetting_locale_group_key",
+				Unique:  false,
+				Columns: []*schema.Column{SiteSettingsColumns[8], SiteSettingsColumns[9], SiteSettingsColumns[10]},
+			},
+		},
+	}
+	// TagsColumns holds the columns for the "tags" table.
+	TagsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "标签状态", Enums: []string{"TAG_STATUS_ACTIVE", "TAG_STATUS_HIDDEN", "TAG_STATUS_ARCHIVED"}, Default: "TAG_STATUS_ACTIVE"},
+		{Name: "color", Type: field.TypeString, Nullable: true, Comment: "标签颜色"},
+		{Name: "icon", Type: field.TypeString, Nullable: true, Comment: "标签图标"},
+		{Name: "group", Type: field.TypeString, Nullable: true, Comment: "标签分组"},
+		{Name: "is_featured", Type: field.TypeBool, Nullable: true, Comment: "是否推荐", Default: false},
+		{Name: "post_count", Type: field.TypeUint32, Nullable: true, Comment: "使用该标签的文章总数"},
+	}
+	// TagsTable holds the schema information for the "tags" table.
+	TagsTable = &schema.Table{
+		Name:       "tags",
+		Comment:    "标签表",
+		Columns:    TagsColumns,
+		PrimaryKey: []*schema.Column{TagsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "tag_status",
+				Unique:  false,
+				Columns: []*schema.Column{TagsColumns[8]},
+			},
+			{
+				Name:    "tag_group",
+				Unique:  false,
+				Columns: []*schema.Column{TagsColumns[11]},
+			},
+			{
+				Name:    "tag_is_featured",
+				Unique:  false,
+				Columns: []*schema.Column{TagsColumns[12]},
+			},
+			{
+				Name:    "tag_status_group",
+				Unique:  false,
+				Columns: []*schema.Column{TagsColumns[8], TagsColumns[11]},
+			},
+			{
+				Name:    "tag_status_is_featured",
+				Unique:  false,
+				Columns: []*schema.Column{TagsColumns[8], TagsColumns[12]},
+			},
+		},
+	}
+	// TagTranslationsColumns holds the columns for the "tag_translations" table.
+	TagTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tag_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的标签ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "标签名称"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "语言特定 slug"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "标签描述"},
+		{Name: "cover_image", Type: field.TypeString, Nullable: true, Comment: "封面图"},
+		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "模板名称"},
+		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
+		{Name: "canonical_url", Type: field.TypeString, Nullable: true, Comment: "规范 URL"},
+		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
+		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
+		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
+	}
+	// TagTranslationsTable holds the schema information for the "tag_translations" table.
+	TagTranslationsTable = &schema.Table{
+		Name:       "tag_translations",
+		Comment:    "标签翻译表",
+		Columns:    TagTranslationsColumns,
+		PrimaryKey: []*schema.Column{TagTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "tagtranslation_tag_id",
+				Unique:  false,
+				Columns: []*schema.Column{TagTranslationsColumns[7]},
+			},
+			{
+				Name:    "tagtranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{TagTranslationsColumns[8]},
+			},
+			{
+				Name:    "tagtranslation_slug",
+				Unique:  false,
+				Columns: []*schema.Column{TagTranslationsColumns[10]},
+			},
+			{
+				Name:    "tagtranslation_full_path",
+				Unique:  false,
+				Columns: []*schema.Column{TagTranslationsColumns[14]},
+			},
+			{
+				Name:    "tagtranslation_meta_keywords",
+				Unique:  false,
+				Columns: []*schema.Column{TagTranslationsColumns[16]},
+			},
+			{
+				Name:    "tagtranslation_tag_id_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{TagTranslationsColumns[7], TagTranslationsColumns[8]},
+			},
+			{
+				Name:    "tagtranslation_language_code_slug",
+				Unique:  false,
+				Columns: []*schema.Column{TagTranslationsColumns[8], TagTranslationsColumns[10]},
+			},
+		},
+	}
+	// SysTasksColumns holds the columns for the "sys_tasks" table.
+	SysTasksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "任务类型", Enums: []string{"PERIODIC", "DELAY", "WAIT_RESULT"}, Default: "PERIODIC"},
+		{Name: "type_name", Type: field.TypeString, Nullable: true, Comment: "任务执行类型名"},
+		{Name: "task_payload", Type: field.TypeString, Nullable: true, Comment: "任务数据", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
+		{Name: "cron_spec", Type: field.TypeString, Nullable: true, Comment: "cron表达式"},
+		{Name: "task_options", Type: field.TypeJSON, Nullable: true, Comment: "任务选项"},
+		{Name: "enable", Type: field.TypeBool, Nullable: true, Comment: "启用/禁用任务", Default: false},
+	}
+	// SysTasksTable holds the schema information for the "sys_tasks" table.
+	SysTasksTable = &schema.Table{
+		Name:       "sys_tasks",
+		Comment:    "任务表",
+		Columns:    SysTasksColumns,
+		PrimaryKey: []*schema.Column{SysTasksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_task_tenant_type_name",
+				Unique:  true,
+				Columns: []*schema.Column{SysTasksColumns[8], SysTasksColumns[10]},
+			},
+			{
+				Name:    "idx_sys_task_tenant_type",
+				Unique:  false,
+				Columns: []*schema.Column{SysTasksColumns[8], SysTasksColumns[9]},
+			},
+			{
+				Name:    "idx_sys_task_tenant_enable_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTasksColumns[8], SysTasksColumns[14], SysTasksColumns[1]},
+			},
+			{
+				Name:    "idx_sys_task_tenant_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTasksColumns[8], SysTasksColumns[4], SysTasksColumns[1]},
+			},
+			{
+				Name:    "idx_sys_task_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTasksColumns[8], SysTasksColumns[1]},
+			},
+		},
+	}
+	// SysTenantsColumns holds the columns for the "sys_tenants" table.
+	SysTenantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "租户名称"},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "租户编号"},
+		{Name: "logo_url", Type: field.TypeString, Nullable: true, Comment: "租户logo地址"},
+		{Name: "domain", Type: field.TypeString, Nullable: true, Comment: "租户专属域名"},
+		{Name: "industry", Type: field.TypeString, Nullable: true, Comment: "所属行业"},
+		{Name: "admin_user_id", Type: field.TypeUint32, Nullable: true, Comment: "管理员用户ID"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "租户状态", Enums: []string{"ON", "OFF", "EXPIRED", "FREEZE"}, Default: "ON"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "租户类型", Enums: []string{"TRIAL", "PAID", "INTERNAL", "PARTNER", "CUSTOM"}, Default: "PAID"},
+		{Name: "audit_status", Type: field.TypeEnum, Nullable: true, Comment: "审核状态", Enums: []string{"PENDING", "APPROVED", "REJECTED"}},
+		{Name: "subscription_at", Type: field.TypeTime, Nullable: true, Comment: "订阅时间"},
+		{Name: "unsubscribe_at", Type: field.TypeTime, Nullable: true, Comment: "取消订阅时间"},
+		{Name: "subscription_plan", Type: field.TypeString, Nullable: true, Comment: "订阅套餐"},
+		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "租户有效期"},
+	}
+	// SysTenantsTable holds the schema information for the "sys_tenants" table.
+	SysTenantsTable = &schema.Table{
+		Name:       "sys_tenants",
+		Comment:    "租户表",
+		Columns:    SysTenantsColumns,
+		PrimaryKey: []*schema.Column{SysTenantsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_tenant_name",
+				Unique:  true,
+				Columns: []*schema.Column{SysTenantsColumns[8]},
+			},
+			{
+				Name:    "idx_sys_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{SysTenantsColumns[9]},
+			},
+			{
+				Name:    "idx_sys_tenant_domain",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[11]},
+			},
+			{
+				Name:    "idx_sys_tenant_admin_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[13]},
+			},
+			{
+				Name:    "idx_sys_tenant_status_audit_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[14], SysTenantsColumns[16]},
+			},
+			{
+				Name:    "idx_sys_tenant_type_expired_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[15], SysTenantsColumns[20]},
+			},
+			{
+				Name:    "idx_sys_tenant_subscription_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[17]},
+			},
+			{
+				Name:    "idx_sys_tenant_expired_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[20]},
+			},
+			{
+				Name:    "idx_sys_tenant_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[4], SysTenantsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysTenantsColumns[1]},
+			},
+		},
+	}
+	// SysUsersColumns holds the columns for the "sys_users" table.
+	SysUsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "用户名"},
+		{Name: "nickname", Type: field.TypeString, Nullable: true, Comment: "昵称"},
+		{Name: "realname", Type: field.TypeString, Nullable: true, Comment: "真实名字"},
+		{Name: "email", Type: field.TypeString, Nullable: true, Size: 320, Comment: "电子邮箱"},
+		{Name: "mobile", Type: field.TypeString, Nullable: true, Size: 255, Comment: "手机号码", Default: ""},
+		{Name: "telephone", Type: field.TypeString, Nullable: true, Size: 255, Comment: "座机号码", Default: ""},
+		{Name: "avatar", Type: field.TypeString, Nullable: true, Comment: "头像"},
+		{Name: "address", Type: field.TypeString, Nullable: true, Comment: "地址", Default: ""},
+		{Name: "region", Type: field.TypeString, Nullable: true, Comment: "国家地区", Default: ""},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "个人说明"},
+		{Name: "gender", Type: field.TypeEnum, Nullable: true, Comment: "性别", Enums: []string{"SECRET", "MALE", "FEMALE"}, Default: "SECRET"},
+		{Name: "last_login_at", Type: field.TypeTime, Nullable: true, Comment: "最后一次登录的时间"},
+		{Name: "last_login_ip", Type: field.TypeString, Nullable: true, Comment: "最后一次登录的IP"},
+		{Name: "locked_until", Type: field.TypeTime, Nullable: true, Comment: "锁定截止时间"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "状态", Enums: []string{"NORMAL", "DISABLED", "PENDING", "LOCKED", "EXPIRED", "CLOSED"}, Default: "NORMAL"},
+	}
+	// SysUsersTable holds the schema information for the "sys_users" table.
+	SysUsersTable = &schema.Table{
+		Name:       "sys_users",
+		Comment:    "用户表",
+		Columns:    SysUsersColumns,
+		PrimaryKey: []*schema.Column{SysUsersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_user_tenant_username",
+				Unique:  true,
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[9]},
+			},
+			{
+				Name:    "idx_sys_user_tenant_email",
+				Unique:  true,
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[12]},
+			},
+			{
+				Name:    "idx_sys_user_tenant_mobile",
+				Unique:  false,
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[13]},
+			},
+			{
+				Name:    "idx_sys_user_tenant_last_login_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[20]},
+			},
+			{
+				Name:    "idx_sys_user_tenant_last_login_ip",
+				Unique:  false,
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[21]},
+			},
+			{
+				Name:    "idx_sys_user_tenant_created_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[1]},
+			},
+			{
+				Name:    "idx_sys_user_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[4]},
+			},
+		},
+	}
+	// SysUserCredentialsColumns holds the columns for the "sys_user_credentials" table.
+	SysUserCredentialsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "关联主表的用户ID"},
+		{Name: "identity_type", Type: field.TypeEnum, Nullable: true, Comment: "认证方式类型", Enums: []string{"USERNAME", "USERID", "EMAIL", "PHONE", "SOCIAL_OAUTH", "ENTERPRISE_SSO", "IDENTITY_API_KEY", "DEVICE_ID", "CUSTOM"}, Default: "USERNAME"},
+		{Name: "identifier", Type: field.TypeString, Nullable: true, Comment: "身份唯一标识符"},
+		{Name: "credential_type", Type: field.TypeEnum, Nullable: true, Comment: "凭证类型", Enums: []string{"PASSWORD_HASH", "API_KEY", "API_SECRET", "ACCESS_TOKEN", "REFRESH_TOKEN", "JWT", "OAUTH_TOKEN", "OAUTH_AUTHORIZATION_CODE", "OAUTH_CLIENT_CREDENTIALS", "OTP", "TOTP", "SMS_OTP", "EMAIL_OTP", "HARDWARE_TOKEN", "SOFTWARE_TOKEN", "SECURITY_QUESTION", "BIOMETRIC", "BIOMETRIC_TOKEN", "SSO_TOKEN", "SAML_ASSERTION", "OPENID_CONNECT_ID_TOKEN", "SESSION_COOKIE", "TEMPORARY_CREDENTIAL", "CUSTOM", "RESERVED_FOR_FUTURE"}, Default: "PASSWORD_HASH"},
+		{Name: "credential", Type: field.TypeString, Nullable: true, Comment: "凭证"},
+		{Name: "is_primary", Type: field.TypeBool, Nullable: true, Comment: "是否主认证方式", Default: false},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "凭证状态", Enums: []string{"DISABLED", "ENABLED", "EXPIRED", "UNVERIFIED", "REMOVED", "BLOCKED", "TEMPORARY"}, Default: "ENABLED"},
+		{Name: "extra_info", Type: field.TypeString, Nullable: true, Comment: "扩展信息", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
+		{Name: "provider", Type: field.TypeString, Nullable: true, Comment: "第三方平台标识"},
+		{Name: "provider_account_id", Type: field.TypeString, Nullable: true, Comment: "第三方平台的账号唯一ID"},
+		{Name: "activate_token_hash", Type: field.TypeString, Nullable: true, Size: 255, Comment: "激活令牌哈希（不要存明文）"},
+		{Name: "activate_token_expires_at", Type: field.TypeTime, Nullable: true, Comment: "激活令牌到期时间"},
+		{Name: "activate_token_used_at", Type: field.TypeTime, Nullable: true, Comment: "激活令牌使用时间，单次使用时记录"},
+		{Name: "reset_token_hash", Type: field.TypeString, Nullable: true, Size: 255, Comment: "重置密码令牌哈希（不要存明文）"},
+		{Name: "reset_token_expires_at", Type: field.TypeTime, Nullable: true, Comment: "重置令牌到期时间"},
+		{Name: "reset_token_used_at", Type: field.TypeTime, Nullable: true, Comment: "重置令牌使用时间"},
+	}
+	// SysUserCredentialsTable holds the schema information for the "sys_user_credentials" table.
+	SysUserCredentialsTable = &schema.Table{
+		Name:       "sys_user_credentials",
+		Comment:    "用户认证信息表",
+		Columns:    SysUserCredentialsColumns,
+		PrimaryKey: []*schema.Column{SysUserCredentialsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_user_cred_tenant_uid_identity_identifier",
+				Unique:  true,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[5], SysUserCredentialsColumns[6], SysUserCredentialsColumns[7]},
+			},
+			{
+				Name:    "idx_sys_user_cred_tenant_identifier",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[7]},
+			},
+			{
+				Name:    "idx_sys_user_cred_tenant_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[5]},
+			},
+			{
+				Name:    "idx_sys_user_cred_tenant_provider_account",
+				Unique:  true,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[13], SysUserCredentialsColumns[14]},
+			},
+			{
+				Name:    "idx_sys_user_cred_tenant_provider",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[13]},
+			},
+			{
+				Name:    "idx_sys_user_cred_tenant_is_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[10]},
+			},
+			{
+				Name:    "idx_sys_user_cred_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[11], SysUserCredentialsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_user_cred_tenant_activate_expires_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserCredentialsColumns[4], SysUserCredentialsColumns[16]},
+			},
+		},
+	}
+	// SysUserOrgUnitsColumns holds the columns for the "sys_user_org_units" table.
+	SysUserOrgUnitsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
+		{Name: "org_unit_id", Type: field.TypeUint32, Comment: "组织单元 ID"},
+		{Name: "position_id", Type: field.TypeUint32, Nullable: true, Comment: "岗位 ID（可选，冗余）"},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间（UTC）"},
+		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
+		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主所属", Default: false},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "关联状态", Enums: []string{"ACTIVE", "PENDING", "INACTIVE", "SUSPENDED", "EXPIRED"}, Default: "ACTIVE"},
+	}
+	// SysUserOrgUnitsTable holds the schema information for the "sys_user_org_units" table.
+	SysUserOrgUnitsTable = &schema.Table{
+		Name:       "sys_user_org_units",
+		Comment:    "成员与组织单元关联表",
+		Columns:    SysUserOrgUnitsColumns,
+		PrimaryKey: []*schema.Column{SysUserOrgUnitsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_uou_tenant_user_org_pos",
+				Unique:  true,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[7], SysUserOrgUnitsColumns[9], SysUserOrgUnitsColumns[10], SysUserOrgUnitsColumns[11]},
+			},
+			{
+				Name:    "uix_uou_tenant_user_primary",
+				Unique:  true,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[7], SysUserOrgUnitsColumns[9], SysUserOrgUnitsColumns[16]},
+			},
+			{
+				Name:    "idx_uou_tenant_user",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[7], SysUserOrgUnitsColumns[9]},
+			},
+			{
+				Name:    "idx_uou_tenant_org_unit",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[7], SysUserOrgUnitsColumns[10]},
+			},
+			{
+				Name:    "idx_uou_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[9]},
+			},
+			{
+				Name:    "idx_uou_org_unit_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[10]},
+			},
+			{
+				Name:    "idx_uou_position_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[11]},
+			},
+			{
+				Name:    "idx_uou_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[15]},
+			},
+			{
+				Name:    "idx_uou_is_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[16]},
+			},
+			{
+				Name:    "idx_uou_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[17]},
+			},
+			{
+				Name:    "idx_uou_start_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[12]},
+			},
+			{
+				Name:    "idx_uou_end_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[13]},
+			},
+			{
+				Name:    "idx_uou_assigned_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[14]},
+			},
+			{
+				Name:    "idx_uou_created_by_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[4], SysUserOrgUnitsColumns[1]},
+			},
+			{
+				Name:    "idx_uou_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[7], SysUserOrgUnitsColumns[1]},
+			},
+			{
+				Name:    "idx_uou_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserOrgUnitsColumns[1]},
+			},
+		},
+	}
+	// SysUserPositionsColumns holds the columns for the "sys_user_positions" table.
+	SysUserPositionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
+		{Name: "position_id", Type: field.TypeUint32, Comment: "岗位ID"},
+		{Name: "is_primary", Type: field.TypeBool, Nullable: true, Comment: "是否主岗位", Default: false},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
+		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "岗位分配时间"},
+		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PROBATION", "ACTIVE", "LEAVE", "TERMINATED", "EXPIRED"}, Default: "ACTIVE"},
+	}
+	// SysUserPositionsTable holds the schema information for the "sys_user_positions" table.
+	SysUserPositionsTable = &schema.Table{
+		Name:       "sys_user_positions",
+		Comment:    "用户与岗位关联表",
+		Columns:    SysUserPositionsColumns,
+		PrimaryKey: []*schema.Column{SysUserPositionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_up_tenant_user_pos",
+				Unique:  true,
+				Columns: []*schema.Column{SysUserPositionsColumns[7], SysUserPositionsColumns[9], SysUserPositionsColumns[10]},
+			},
+			{
+				Name:    "idx_up_tenant_user",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[7], SysUserPositionsColumns[9]},
+			},
+			{
+				Name:    "idx_up_tenant_position",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[7], SysUserPositionsColumns[10]},
+			},
+			{
+				Name:    "idx_up_tenant_user_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[7], SysUserPositionsColumns[9], SysUserPositionsColumns[11]},
+			},
+			{
+				Name:    "idx_up_tenant_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[7], SysUserPositionsColumns[15]},
+			},
+			{
+				Name:    "idx_up_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[15]},
+			},
+			{
+				Name:    "idx_up_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[9]},
+			},
+			{
+				Name:    "idx_up_position_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[10]},
+			},
+			{
+				Name:    "idx_up_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[7]},
+			},
+			{
+				Name:    "idx_up_is_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[11]},
+			},
+			{
+				Name:    "idx_up_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserPositionsColumns[16]},
+			},
+		},
+	}
+	// SysUserRolesColumns holds the columns for the "sys_user_roles" table.
+	SysUserRolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
+		{Name: "role_id", Type: field.TypeUint32, Comment: "角色ID"},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间（UTC）"},
+		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
+		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户ID"},
+		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主角色", Default: false},
+		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PENDING", "ACTIVE", "DISABLED", "EXPIRED"}, Default: "ACTIVE"},
+	}
+	// SysUserRolesTable holds the schema information for the "sys_user_roles" table.
+	SysUserRolesTable = &schema.Table{
+		Name:       "sys_user_roles",
+		Comment:    "用户与角色关联表",
+		Columns:    SysUserRolesColumns,
+		PrimaryKey: []*schema.Column{SysUserRolesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_ur_tenant_user_role",
+				Unique:  true,
+				Columns: []*schema.Column{SysUserRolesColumns[7], SysUserRolesColumns[8], SysUserRolesColumns[9]},
+			},
+			{
+				Name:    "idx_ur_tenant_user",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[7], SysUserRolesColumns[8]},
+			},
+			{
+				Name:    "idx_ur_tenant_role",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[7], SysUserRolesColumns[9]},
+			},
+			{
+				Name:    "idx_ur_tenant_user_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[7], SysUserRolesColumns[8], SysUserRolesColumns[14]},
+			},
+			{
+				Name:    "idx_ur_tenant_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[7], SysUserRolesColumns[13]},
+			},
+			{
+				Name:    "idx_ur_assigned_by",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[13]},
+			},
+			{
+				Name:    "idx_ur_role_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[9]},
+			},
+			{
+				Name:    "idx_ur_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[8]},
+			},
+			{
+				Name:    "idx_ur_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[7]},
+			},
+			{
+				Name:    "idx_ur_is_primary",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[14]},
+			},
+			{
+				Name:    "idx_ur_status",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserRolesColumns[15]},
 			},
 		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		AttachmentTable,
-		CategoryTable,
-		CommentTable,
-		LinkTable,
-		MenuTable,
-		PhotoTable,
-		PostTable,
-		TagTable,
-		UserTable,
+		SysApisTable,
+		SysAPIAuditLogsTable,
+		CategoriesTable,
+		CategoryTranslationsTable,
+		CommentsTable,
+		SysDataAccessAuditLogsTable,
+		SysDictEntriesTable,
+		SysDictEntryI18nTable,
+		SysDictTypesTable,
+		SysDictTypeI18nTable,
+		FilesTable,
+		InternalMessagesTable,
+		InternalMessageCategoriesTable,
+		InternalMessageRecipientsTable,
+		SysLanguagesTable,
+		SysLoginAuditLogsTable,
+		SysLoginPoliciesTable,
+		MediaAssetsTable,
+		MediaVariantsTable,
+		SysMembershipsTable,
+		SysMembershipOrgUnitsTable,
+		SysMembershipPositionsTable,
+		SysMembershipRolesTable,
+		SysMenusTable,
+		NavigationsTable,
+		NavigationItemsTable,
+		SysOperationAuditLogsTable,
+		SysOrgUnitsTable,
+		PagesTable,
+		PageTranslationsTable,
+		SysPermissionsTable,
+		SysPermissionApisTable,
+		SysPermissionAuditLogsTable,
+		SysPermissionGroupsTable,
+		SysPermissionMenusTable,
+		SysPermissionPoliciesTable,
+		SysPolicyEvaluationLogsTable,
+		SysPositionsTable,
+		PostsTable,
+		PostCategoriesTable,
+		PostTagsTable,
+		PostTranslationsTable,
+		SysRolesTable,
+		SysRoleMetadataTable,
+		SysRolePermissionsTable,
+		SiteSettingsTable,
+		TagsTable,
+		TagTranslationsTable,
+		SysTasksTable,
+		SysTenantsTable,
+		SysUsersTable,
+		SysUserCredentialsTable,
+		SysUserOrgUnitsTable,
+		SysUserPositionsTable,
+		SysUserRolesTable,
 	}
 )
 
 func init() {
-	AttachmentTable.Annotation = &entsql.Annotation{
-		Table:     "attachment",
+	SysApisTable.Annotation = &entsql.Annotation{
+		Table:     "sys_apis",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	CategoryTable.Annotation = &entsql.Annotation{
-		Table:     "category",
+	SysAPIAuditLogsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_api_audit_logs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	CommentTable.Annotation = &entsql.Annotation{
-		Table:     "comment",
+	CategoriesTable.ForeignKeys[0].RefTable = CategoriesTable
+	CategoriesTable.Annotation = &entsql.Annotation{
+		Table:     "categories",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	LinkTable.Annotation = &entsql.Annotation{
-		Table:     "link",
+	CategoryTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "category_translations",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	MenuTable.Annotation = &entsql.Annotation{
-		Table:     "menu",
+	CommentsTable.ForeignKeys[0].RefTable = CommentsTable
+	CommentsTable.Annotation = &entsql.Annotation{
+		Table:     "comments",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	PhotoTable.Annotation = &entsql.Annotation{
-		Table:     "photo",
+	SysDataAccessAuditLogsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_data_access_audit_logs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	PostTable.Annotation = &entsql.Annotation{
-		Table:     "post",
+	SysDictEntriesTable.ForeignKeys[0].RefTable = SysDictTypesTable
+	SysDictEntriesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_dict_entries",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	TagTable.Annotation = &entsql.Annotation{
-		Table:     "tag",
+	SysDictEntryI18nTable.ForeignKeys[0].RefTable = SysDictEntriesTable
+	SysDictEntryI18nTable.Annotation = &entsql.Annotation{
+		Table:     "sys_dict_entry_i18n",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	UserTable.Annotation = &entsql.Annotation{
-		Table:     "user",
+	SysDictTypesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_dict_types",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysDictTypeI18nTable.ForeignKeys[0].RefTable = SysDictTypesTable
+	SysDictTypeI18nTable.Annotation = &entsql.Annotation{
+		Table:     "sys_dict_type_i18n",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FilesTable.Annotation = &entsql.Annotation{
+		Table:     "files",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InternalMessagesTable.Annotation = &entsql.Annotation{
+		Table:     "internal_messages",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InternalMessageCategoriesTable.Annotation = &entsql.Annotation{
+		Table:     "internal_message_categories",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InternalMessageRecipientsTable.Annotation = &entsql.Annotation{
+		Table:     "internal_message_recipients",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysLanguagesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_languages",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysLoginAuditLogsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_login_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysLoginPoliciesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_login_policies",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MediaAssetsTable.Annotation = &entsql.Annotation{
+		Table:     "media_assets",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MediaVariantsTable.Annotation = &entsql.Annotation{
+		Table:     "media_variants",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysMembershipsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_memberships",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysMembershipOrgUnitsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_membership_org_units",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysMembershipPositionsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_membership_positions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysMembershipRolesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_membership_roles",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysMenusTable.ForeignKeys[0].RefTable = SysMenusTable
+	SysMenusTable.Annotation = &entsql.Annotation{
+		Table:     "sys_menus",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	NavigationsTable.Annotation = &entsql.Annotation{
+		Table:     "navigations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	NavigationItemsTable.ForeignKeys[0].RefTable = NavigationItemsTable
+	NavigationItemsTable.Annotation = &entsql.Annotation{
+		Table:     "navigation_items",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysOperationAuditLogsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_operation_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysOrgUnitsTable.ForeignKeys[0].RefTable = SysOrgUnitsTable
+	SysOrgUnitsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_org_units",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PagesTable.ForeignKeys[0].RefTable = PagesTable
+	PagesTable.Annotation = &entsql.Annotation{
+		Table:     "pages",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PageTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "page_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPermissionsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPermissionApisTable.Annotation = &entsql.Annotation{
+		Table:     "sys_permission_apis",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPermissionAuditLogsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_permission_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPermissionGroupsTable.ForeignKeys[0].RefTable = SysPermissionGroupsTable
+	SysPermissionGroupsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_permission_groups",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPermissionMenusTable.Annotation = &entsql.Annotation{
+		Table:     "sys_permission_menus",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPermissionPoliciesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_permission_policies",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPolicyEvaluationLogsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_policy_evaluation_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysPositionsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_positions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PostsTable.Annotation = &entsql.Annotation{
+		Table:     "posts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PostCategoriesTable.Annotation = &entsql.Annotation{
+		Table:     "post_categories",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PostTagsTable.Annotation = &entsql.Annotation{
+		Table:     "post_tags",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PostTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "post_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysRolesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_roles",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysRoleMetadataTable.Annotation = &entsql.Annotation{
+		Table:     "sys_role_metadata",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysRolePermissionsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_role_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SiteSettingsTable.Annotation = &entsql.Annotation{
+		Table:     "site_settings",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	TagsTable.Annotation = &entsql.Annotation{
+		Table:     "tags",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	TagTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "tag_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysTasksTable.Annotation = &entsql.Annotation{
+		Table:     "sys_tasks",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysTenantsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_tenants",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysUsersTable.Annotation = &entsql.Annotation{
+		Table:     "sys_users",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysUserCredentialsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_user_credentials",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysUserOrgUnitsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_user_org_units",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysUserPositionsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_user_positions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysUserRolesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_user_roles",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

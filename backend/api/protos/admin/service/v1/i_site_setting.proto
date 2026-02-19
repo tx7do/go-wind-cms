@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "site/service/v1/site_setting.proto";
+
+// 站点配置服务
+service SiteSettingService {
+  // 获取站点配置列表
+  rpc List (pagination.PagingRequest) returns (site.service.v1.ListSiteSettingResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/site-settings"
+    };
+  }
+
+  // 获取站点配置数据
+  rpc Get (site.service.v1.GetSiteSettingRequest) returns (site.service.v1.SiteSetting) {
+    option (google.api.http) = {
+      get: "/admin/v1/site-settings/{id}"
+    };
+  }
+
+  // 创建站点配置
+  rpc Create (site.service.v1.CreateSiteSettingRequest) returns (site.service.v1.SiteSetting) {
+    option (google.api.http) = {
+      post: "/admin/v1/site-settings"
+      body: "*"
+    };
+  }
+
+  // 更新站点配置
+  rpc Update (site.service.v1.UpdateSiteSettingRequest) returns (site.service.v1.SiteSetting) {
+    option (google.api.http) = {
+      put: "/admin/v1/site-settings/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除站点配置
+  rpc Delete (site.service.v1.DeleteSiteSettingRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/site-settings/{id}"
+    };
+  }
+}

@@ -4,36 +4,45 @@ package ent
 
 import (
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/tag"
+	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
-// 标签
+// 标签表
 type Tag struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
 	// 创建时间
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
-	UpdateTime *int64 `json:"update_time,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// 删除时间
-	DeleteTime *int64 `json:"delete_time,omitempty"`
-	// 标签名
-	Name *string `json:"name,omitempty"`
-	// 颜色
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	// 创建者ID
+	CreatedBy *uint32 `json:"created_by,omitempty"`
+	// 更新者ID
+	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	// 删除者ID
+	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 排序值（越小越靠前）
+	SortOrder *uint32 `json:"sort_order,omitempty"`
+	// 标签状态
+	Status *tag.Status `json:"status,omitempty"`
+	// 标签颜色
 	Color *string `json:"color,omitempty"`
-	// 缩略图
-	Thumbnail *string `json:"thumbnail,omitempty"`
-	// 链接别名
-	Slug *string `json:"slug,omitempty"`
-	// 链接别名
-	SlugName *string `json:"slug_name,omitempty"`
-	// 博文计数
+	// 标签图标
+	Icon *string `json:"icon,omitempty"`
+	// 标签分组
+	Group *string `json:"group,omitempty"`
+	// 是否推荐
+	IsFeatured *bool `json:"is_featured,omitempty"`
+	// 使用该标签的文章总数
 	PostCount    *uint32 `json:"post_count,omitempty"`
 	selectValues sql.SelectValues
 }
@@ -43,10 +52,14 @@ func (*Tag) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tag.FieldID, tag.FieldCreateTime, tag.FieldUpdateTime, tag.FieldDeleteTime, tag.FieldPostCount:
+		case tag.FieldIsFeatured:
+			values[i] = new(sql.NullBool)
+		case tag.FieldID, tag.FieldCreatedBy, tag.FieldUpdatedBy, tag.FieldDeletedBy, tag.FieldSortOrder, tag.FieldPostCount:
 			values[i] = new(sql.NullInt64)
-		case tag.FieldName, tag.FieldColor, tag.FieldThumbnail, tag.FieldSlug, tag.FieldSlugName:
+		case tag.FieldStatus, tag.FieldColor, tag.FieldIcon, tag.FieldGroup:
 			values[i] = new(sql.NullString)
+		case tag.FieldCreatedAt, tag.FieldUpdatedAt, tag.FieldDeletedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -56,7 +69,7 @@ func (*Tag) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Tag fields.
-func (t *Tag) assignValues(columns []string, values []any) error {
+func (_m *Tag) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -67,72 +80,100 @@ func (t *Tag) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			t.ID = uint32(value.Int64)
-		case tag.FieldCreateTime:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+			_m.ID = uint32(value.Int64)
+		case tag.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				t.CreateTime = new(int64)
-				*t.CreateTime = value.Int64
+				_m.CreatedAt = new(time.Time)
+				*_m.CreatedAt = value.Time
 			}
-		case tag.FieldUpdateTime:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+		case tag.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				t.UpdateTime = new(int64)
-				*t.UpdateTime = value.Int64
+				_m.UpdatedAt = new(time.Time)
+				*_m.UpdatedAt = value.Time
 			}
-		case tag.FieldDeleteTime:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field delete_time", values[i])
+		case tag.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				t.DeleteTime = new(int64)
-				*t.DeleteTime = value.Int64
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
 			}
-		case tag.FieldName:
+		case tag.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				_m.CreatedBy = new(uint32)
+				*_m.CreatedBy = uint32(value.Int64)
+			}
+		case tag.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				_m.UpdatedBy = new(uint32)
+				*_m.UpdatedBy = uint32(value.Int64)
+			}
+		case tag.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				_m.DeletedBy = new(uint32)
+				*_m.DeletedBy = uint32(value.Int64)
+			}
+		case tag.FieldSortOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sort_order", values[i])
+			} else if value.Valid {
+				_m.SortOrder = new(uint32)
+				*_m.SortOrder = uint32(value.Int64)
+			}
+		case tag.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field name", values[i])
+				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				t.Name = new(string)
-				*t.Name = value.String
+				_m.Status = new(tag.Status)
+				*_m.Status = tag.Status(value.String)
 			}
 		case tag.FieldColor:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field color", values[i])
 			} else if value.Valid {
-				t.Color = new(string)
-				*t.Color = value.String
+				_m.Color = new(string)
+				*_m.Color = value.String
 			}
-		case tag.FieldThumbnail:
+		case tag.FieldIcon:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field thumbnail", values[i])
+				return fmt.Errorf("unexpected type %T for field icon", values[i])
 			} else if value.Valid {
-				t.Thumbnail = new(string)
-				*t.Thumbnail = value.String
+				_m.Icon = new(string)
+				*_m.Icon = value.String
 			}
-		case tag.FieldSlug:
+		case tag.FieldGroup:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field slug", values[i])
+				return fmt.Errorf("unexpected type %T for field group", values[i])
 			} else if value.Valid {
-				t.Slug = new(string)
-				*t.Slug = value.String
+				_m.Group = new(string)
+				*_m.Group = value.String
 			}
-		case tag.FieldSlugName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field slug_name", values[i])
+		case tag.FieldIsFeatured:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_featured", values[i])
 			} else if value.Valid {
-				t.SlugName = new(string)
-				*t.SlugName = value.String
+				_m.IsFeatured = new(bool)
+				*_m.IsFeatured = value.Bool
 			}
 		case tag.FieldPostCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field post_count", values[i])
 			} else if value.Valid {
-				t.PostCount = new(uint32)
-				*t.PostCount = uint32(value.Int64)
+				_m.PostCount = new(uint32)
+				*_m.PostCount = uint32(value.Int64)
 			}
 		default:
-			t.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -140,74 +181,94 @@ func (t *Tag) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Tag.
 // This includes values selected through modifiers, order, etc.
-func (t *Tag) Value(name string) (ent.Value, error) {
-	return t.selectValues.Get(name)
+func (_m *Tag) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this Tag.
 // Note that you need to call Tag.Unwrap() before calling this method if this Tag
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (t *Tag) Update() *TagUpdateOne {
-	return NewTagClient(t.config).UpdateOne(t)
+func (_m *Tag) Update() *TagUpdateOne {
+	return NewTagClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Tag entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (t *Tag) Unwrap() *Tag {
-	_tx, ok := t.config.driver.(*txDriver)
+func (_m *Tag) Unwrap() *Tag {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Tag is not a transactional entity")
 	}
-	t.config.driver = _tx.drv
-	return t
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (t *Tag) String() string {
+func (_m *Tag) String() string {
 	var builder strings.Builder
 	builder.WriteString("Tag(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
-	if v := t.CreateTime; v != nil {
-		builder.WriteString("create_time=")
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.CreatedAt; v != nil {
+		builder.WriteString("created_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpdatedAt; v != nil {
+		builder.WriteString("updated_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := t.UpdateTime; v != nil {
-		builder.WriteString("update_time=")
+	if v := _m.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := t.DeleteTime; v != nil {
-		builder.WriteString("delete_time=")
+	if v := _m.DeletedBy; v != nil {
+		builder.WriteString("deleted_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := t.Name; v != nil {
-		builder.WriteString("name=")
-		builder.WriteString(*v)
+	if v := _m.SortOrder; v != nil {
+		builder.WriteString("sort_order=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := t.Color; v != nil {
+	if v := _m.Status; v != nil {
+		builder.WriteString("status=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Color; v != nil {
 		builder.WriteString("color=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := t.Thumbnail; v != nil {
-		builder.WriteString("thumbnail=")
+	if v := _m.Icon; v != nil {
+		builder.WriteString("icon=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := t.Slug; v != nil {
-		builder.WriteString("slug=")
+	if v := _m.Group; v != nil {
+		builder.WriteString("group=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := t.SlugName; v != nil {
-		builder.WriteString("slug_name=")
-		builder.WriteString(*v)
+	if v := _m.IsFeatured; v != nil {
+		builder.WriteString("is_featured=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := t.PostCount; v != nil {
+	if v := _m.PostCount; v != nil {
 		builder.WriteString("post_count=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}

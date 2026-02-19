@@ -3,45 +3,89 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
-	"kratos-cms/app/core/service/internal/data/ent/category"
+	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
-// Category is the model entity for the Category schema.
+// 类别表
 type Category struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
 	ID uint32 `json:"id,omitempty"`
 	// 创建时间
-	CreateTime *int64 `json:"create_time,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
-	UpdateTime *int64 `json:"update_time,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// 删除时间
-	DeleteTime *int64 `json:"delete_time,omitempty"`
-	// 分类名
-	Name *string `json:"name,omitempty"`
-	// 链接别名
-	Slug *string `json:"slug,omitempty"`
-	// 描述
-	Description *string `json:"description,omitempty"`
-	// 缩略图
-	Thumbnail *string `json:"thumbnail,omitempty"`
-	// 密码
-	Password *string `json:"password,omitempty"`
-	// 完整路径
-	FullPath *string `json:"full_path,omitempty"`
-	// 父分类ID
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	// 创建者ID
+	CreatedBy *uint32 `json:"created_by,omitempty"`
+	// 更新者ID
+	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	// 删除者ID
+	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 排序值（越小越靠前）
+	SortOrder *uint32 `json:"sort_order,omitempty"`
+	// 树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。
+	Path *string `json:"path,omitempty"`
+	// 父节点ID
 	ParentID *uint32 `json:"parent_id,omitempty"`
-	// 优先级
-	Priority *int32 `json:"priority,omitempty"`
-	// 博文计数
-	PostCount    *uint32 `json:"post_count,omitempty"`
+	// 分类状态
+	Status *category.Status `json:"status,omitempty"`
+	// 分类层级深度
+	Depth *int32 `json:"depth,omitempty"`
+	// 是否显示在导航菜单
+	IsNav *bool `json:"is_nav,omitempty"`
+	// 分类图标
+	Icon *string `json:"icon,omitempty"`
+	// 该分类下的文章总数
+	PostCount *uint32 `json:"post_count,omitempty"`
+	// 该分类下的直接文章数
+	DirectPostCount *uint32 `json:"direct_post_count,omitempty"`
+	// 自定义字段
+	CustomFields *map[string]string `json:"custom_fields,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the CategoryQuery when eager-loading is set.
+	Edges        CategoryEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// CategoryEdges holds the relations/edges for other nodes in the graph.
+type CategoryEdges struct {
+	// Parent holds the value of the parent edge.
+	Parent *Category `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*Category `json:"children,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CategoryEdges) ParentOrErr() (*Category, error) {
+	if e.Parent != nil {
+		return e.Parent, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: category.Label}
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e CategoryEdges) ChildrenOrErr() ([]*Category, error) {
+	if e.loadedTypes[1] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -49,10 +93,16 @@ func (*Category) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case category.FieldID, category.FieldCreateTime, category.FieldUpdateTime, category.FieldDeleteTime, category.FieldParentID, category.FieldPriority, category.FieldPostCount:
+		case category.FieldCustomFields:
+			values[i] = new([]byte)
+		case category.FieldIsNav:
+			values[i] = new(sql.NullBool)
+		case category.FieldID, category.FieldCreatedBy, category.FieldUpdatedBy, category.FieldDeletedBy, category.FieldSortOrder, category.FieldParentID, category.FieldDepth, category.FieldPostCount, category.FieldDirectPostCount:
 			values[i] = new(sql.NullInt64)
-		case category.FieldName, category.FieldSlug, category.FieldDescription, category.FieldThumbnail, category.FieldPassword, category.FieldFullPath:
+		case category.FieldPath, category.FieldStatus, category.FieldIcon:
 			values[i] = new(sql.NullString)
+		case category.FieldCreatedAt, category.FieldUpdatedAt, category.FieldDeletedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -62,7 +112,7 @@ func (*Category) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Category fields.
-func (c *Category) assignValues(columns []string, values []any) error {
+func (_m *Category) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -73,93 +123,122 @@ func (c *Category) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			c.ID = uint32(value.Int64)
-		case category.FieldCreateTime:
+			_m.ID = uint32(value.Int64)
+		case category.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = new(time.Time)
+				*_m.CreatedAt = value.Time
+			}
+		case category.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = new(time.Time)
+				*_m.UpdatedAt = value.Time
+			}
+		case category.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
+			}
+		case category.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				c.CreateTime = new(int64)
-				*c.CreateTime = value.Int64
+				_m.CreatedBy = new(uint32)
+				*_m.CreatedBy = uint32(value.Int64)
 			}
-		case category.FieldUpdateTime:
+		case category.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				c.UpdateTime = new(int64)
-				*c.UpdateTime = value.Int64
+				_m.UpdatedBy = new(uint32)
+				*_m.UpdatedBy = uint32(value.Int64)
 			}
-		case category.FieldDeleteTime:
+		case category.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field delete_time", values[i])
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				c.DeleteTime = new(int64)
-				*c.DeleteTime = value.Int64
+				_m.DeletedBy = new(uint32)
+				*_m.DeletedBy = uint32(value.Int64)
 			}
-		case category.FieldName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field name", values[i])
+		case category.FieldSortOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sort_order", values[i])
 			} else if value.Valid {
-				c.Name = new(string)
-				*c.Name = value.String
+				_m.SortOrder = new(uint32)
+				*_m.SortOrder = uint32(value.Int64)
 			}
-		case category.FieldSlug:
+		case category.FieldPath:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field slug", values[i])
+				return fmt.Errorf("unexpected type %T for field path", values[i])
 			} else if value.Valid {
-				c.Slug = new(string)
-				*c.Slug = value.String
-			}
-		case category.FieldDescription:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field description", values[i])
-			} else if value.Valid {
-				c.Description = new(string)
-				*c.Description = value.String
-			}
-		case category.FieldThumbnail:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field thumbnail", values[i])
-			} else if value.Valid {
-				c.Thumbnail = new(string)
-				*c.Thumbnail = value.String
-			}
-		case category.FieldPassword:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field password", values[i])
-			} else if value.Valid {
-				c.Password = new(string)
-				*c.Password = value.String
-			}
-		case category.FieldFullPath:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field full_path", values[i])
-			} else if value.Valid {
-				c.FullPath = new(string)
-				*c.FullPath = value.String
+				_m.Path = new(string)
+				*_m.Path = value.String
 			}
 		case category.FieldParentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
-				c.ParentID = new(uint32)
-				*c.ParentID = uint32(value.Int64)
+				_m.ParentID = new(uint32)
+				*_m.ParentID = uint32(value.Int64)
 			}
-		case category.FieldPriority:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field priority", values[i])
+		case category.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				c.Priority = new(int32)
-				*c.Priority = int32(value.Int64)
+				_m.Status = new(category.Status)
+				*_m.Status = category.Status(value.String)
+			}
+		case category.FieldDepth:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field depth", values[i])
+			} else if value.Valid {
+				_m.Depth = new(int32)
+				*_m.Depth = int32(value.Int64)
+			}
+		case category.FieldIsNav:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_nav", values[i])
+			} else if value.Valid {
+				_m.IsNav = new(bool)
+				*_m.IsNav = value.Bool
+			}
+		case category.FieldIcon:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field icon", values[i])
+			} else if value.Valid {
+				_m.Icon = new(string)
+				*_m.Icon = value.String
 			}
 		case category.FieldPostCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field post_count", values[i])
 			} else if value.Valid {
-				c.PostCount = new(uint32)
-				*c.PostCount = uint32(value.Int64)
+				_m.PostCount = new(uint32)
+				*_m.PostCount = uint32(value.Int64)
+			}
+		case category.FieldDirectPostCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field direct_post_count", values[i])
+			} else if value.Valid {
+				_m.DirectPostCount = new(uint32)
+				*_m.DirectPostCount = uint32(value.Int64)
+			}
+		case category.FieldCustomFields:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field custom_fields", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.CustomFields); err != nil {
+					return fmt.Errorf("unmarshal field custom_fields: %w", err)
+				}
 			}
 		default:
-			c.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -167,92 +246,120 @@ func (c *Category) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Category.
 // This includes values selected through modifiers, order, etc.
-func (c *Category) Value(name string) (ent.Value, error) {
-	return c.selectValues.Get(name)
+func (_m *Category) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
+}
+
+// QueryParent queries the "parent" edge of the Category entity.
+func (_m *Category) QueryParent() *CategoryQuery {
+	return NewCategoryClient(_m.config).QueryParent(_m)
+}
+
+// QueryChildren queries the "children" edge of the Category entity.
+func (_m *Category) QueryChildren() *CategoryQuery {
+	return NewCategoryClient(_m.config).QueryChildren(_m)
 }
 
 // Update returns a builder for updating this Category.
 // Note that you need to call Category.Unwrap() before calling this method if this Category
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (c *Category) Update() *CategoryUpdateOne {
-	return NewCategoryClient(c.config).UpdateOne(c)
+func (_m *Category) Update() *CategoryUpdateOne {
+	return NewCategoryClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Category entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (c *Category) Unwrap() *Category {
-	_tx, ok := c.config.driver.(*txDriver)
+func (_m *Category) Unwrap() *Category {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Category is not a transactional entity")
 	}
-	c.config.driver = _tx.drv
-	return c
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (c *Category) String() string {
+func (_m *Category) String() string {
 	var builder strings.Builder
 	builder.WriteString("Category(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", c.ID))
-	if v := c.CreateTime; v != nil {
-		builder.WriteString("create_time=")
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.CreatedAt; v != nil {
+		builder.WriteString("created_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpdatedAt; v != nil {
+		builder.WriteString("updated_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.UpdateTime; v != nil {
-		builder.WriteString("update_time=")
+	if v := _m.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.DeleteTime; v != nil {
-		builder.WriteString("delete_time=")
+	if v := _m.DeletedBy; v != nil {
+		builder.WriteString("deleted_by=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.Name; v != nil {
-		builder.WriteString("name=")
+	if v := _m.SortOrder; v != nil {
+		builder.WriteString("sort_order=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Path; v != nil {
+		builder.WriteString("path=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := c.Slug; v != nil {
-		builder.WriteString("slug=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.Description; v != nil {
-		builder.WriteString("description=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.Thumbnail; v != nil {
-		builder.WriteString("thumbnail=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.Password; v != nil {
-		builder.WriteString("password=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.FullPath; v != nil {
-		builder.WriteString("full_path=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := c.ParentID; v != nil {
+	if v := _m.ParentID; v != nil {
 		builder.WriteString("parent_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.Priority; v != nil {
-		builder.WriteString("priority=")
+	if v := _m.Status; v != nil {
+		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := c.PostCount; v != nil {
+	if v := _m.Depth; v != nil {
+		builder.WriteString("depth=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.IsNav; v != nil {
+		builder.WriteString("is_nav=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Icon; v != nil {
+		builder.WriteString("icon=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.PostCount; v != nil {
 		builder.WriteString("post_count=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	if v := _m.DirectPostCount; v != nil {
+		builder.WriteString("direct_post_count=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("custom_fields=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CustomFields))
 	builder.WriteByte(')')
 	return builder.String()
 }

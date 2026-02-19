@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "site/service/v1/navigation.proto";
+
+// 导航服务
+service NavigationService {
+  // 获取导航列表
+  rpc List (pagination.PagingRequest) returns (site.service.v1.ListNavigationResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/navigations"
+    };
+  }
+
+  // 获取导航数据
+  rpc Get (site.service.v1.GetNavigationRequest) returns (site.service.v1.Navigation) {
+    option (google.api.http) = {
+      get: "/app/v1/navigations/{id}"
+    };
+  }
+
+  // 创建导航
+  rpc Create (site.service.v1.CreateNavigationRequest) returns (site.service.v1.Navigation) {
+    option (google.api.http) = {
+      post: "/app/v1/navigations"
+      body: "*"
+    };
+  }
+
+  // 更新导航
+  rpc Update (site.service.v1.UpdateNavigationRequest) returns (site.service.v1.Navigation) {
+    option (google.api.http) = {
+      put: "/app/v1/navigations/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除导航
+  rpc Delete (site.service.v1.DeleteNavigationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/navigations/{id}"
+    };
+  }
+}

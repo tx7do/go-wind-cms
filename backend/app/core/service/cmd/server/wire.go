@@ -9,17 +9,22 @@ import (
 	"github.com/google/wire"
 
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/registry"
 
-	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	"kratos-cms/app/core/service/internal/data"
-	"kratos-cms/app/core/service/internal/server"
-	"kratos-cms/app/core/service/internal/service"
+	dataProviders "go-wind-cms/app/core/service/internal/data/providers"
+	serverProviders "go-wind-cms/app/core/service/internal/server/providers"
+	serviceProviders "go-wind-cms/app/core/service/internal/service/providers"
 )
 
 // initApp init kratos application.
-func initApp(log.Logger, registry.Registrar, *conf.Bootstrap) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, service.ProviderSet, newApp))
+func initApp(*bootstrap.Context) (*kratos.App, func(), error) {
+	panic(
+		wire.Build(
+			serverProviders.ProviderSet,
+			serviceProviders.ProviderSet,
+			dataProviders.ProviderSet,
+			newApp,
+		),
+	)
 }

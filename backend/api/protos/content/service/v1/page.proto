@@ -1,0 +1,338 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+// 页面服务
+service PageService {
+  // 获取页面列表
+  rpc List (pagination.PagingRequest) returns (ListPageResponse) {}
+
+  // 获取页面数据
+  rpc Get (GetPageRequest) returns (Page) {}
+
+  // 创建页面
+  rpc Create (CreatePageRequest) returns (Page) {}
+
+  // 更新页面
+  rpc Update (UpdatePageRequest) returns (Page) {}
+
+  // 删除页面
+  rpc Delete (DeletePageRequest) returns (google.protobuf.Empty) {}
+}
+
+// 页面
+message Page {
+  // 页面状态
+  enum PageStatus {
+    PAGE_STATUS_UNSPECIFIED = 0;
+
+    PAGE_STATUS_DRAFT = 1;      // 草稿
+    PAGE_STATUS_PUBLISHED = 2;  // 已发布
+    PAGE_STATUS_ARCHIVED = 3;   // 归档
+  }
+
+  // 页面类型（用于特殊页面处理）
+  enum PageType {
+    PAGE_TYPE_UNSPECIFIED = 0;
+
+    PAGE_TYPE_DEFAULT = 1;      // 普通页面
+    PAGE_TYPE_HOME = 2;         // 首页（特殊路由 /）
+    PAGE_TYPE_ERROR_404 = 3;    // 404 页面
+    PAGE_TYPE_ERROR_500 = 4;    // 500 页面
+    PAGE_TYPE_CUSTOM = 5;       // 自定义逻辑页面（如登录页）
+  }
+
+  // 编辑器类型（与 Post 共享）
+  enum EditorType {
+    EDITOR_TYPE_UNSPECIFIED = 0;
+
+    EDITOR_TYPE_MARKDOWN = 1;   // Markdown
+    EDITOR_TYPE_RICH_TEXT = 2;  // 富文本
+    EDITOR_TYPE_HTML = 3;       // HTML
+    EDITOR_TYPE_JSON_BLOCK = 4; // JSON 块编辑器（如 Notion 风格）
+  }
+
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ]; // 页面ID
+
+  optional PageStatus status = 2 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "页面状态"}
+  ]; // 页面状态
+
+  optional PageType type = 3 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {
+      description: "页面类型（首页/404/普通页面等，影响路由和渲染逻辑）"
+    }
+  ]; // 页面类型
+
+  optional EditorType editor_type = 4 [
+    json_name = "editorType",
+    (gnostic.openapi.v3.property) = {description: "编辑器类型"}
+  ]; // 编辑器类型
+
+  optional string slug = 5 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {
+      description: "页面别名（URL 友好，首页可为空表示 '/'）"
+    }
+  ]; // 页面别名
+
+  optional uint32 author_id = 6 [
+    json_name = "authorId",
+    (gnostic.openapi.v3.property) = {description: "页面作者ID"}
+  ]; // 页面作者ID
+  optional string author_name = 7 [
+    json_name = "authorName",
+    (gnostic.openapi.v3.property) = {description: "页面作者名称"}
+  ]; // 页面作者名称
+  optional bool disallow_comment = 8 [
+    json_name = "disallowComment",
+    (gnostic.openapi.v3.property) = {
+      description: "是否禁止评论（默认 true，页面通常关闭评论）"
+    }
+  ]; // 是否禁止评论
+  optional string redirect_url = 9 [
+    json_name = "redirectUrl",
+    (gnostic.openapi.v3.property) = {
+      description: "重定向 URL"
+    }
+  ]; // 重定向 URL（如果设置则访问该页面时会重定向到这个 URL）
+
+
+  optional bool show_in_navigation = 10 [
+    json_name = "showInNavigation",
+    (gnostic.openapi.v3.property) = {
+      description: "是否在主导航中显示（用于自动生成菜单）"
+    }
+  ]; // 是否在主导航中显示
+
+  optional uint32 sort_order = 11 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {
+      description: "导航排序（数值越小越靠前）"
+    }
+  ]; // 导航排序
+
+  optional string template = 12 [
+    json_name = "template",
+    (gnostic.openapi.v3.property) = {
+      description: "页面模板名称（如 'about-us', 'contact'，覆盖全局默认模板）"
+    }
+  ]; // 页面模板名称
+
+  optional bool is_custom_template = 13 [
+    json_name = "isCustomTemplate",
+    (gnostic.openapi.v3.property) = {
+      description: "是否使用自定义模板代码（而非预设模板）"
+    }
+  ]; // 是否使用自定义模板代码
+
+
+  optional uint32 visits = 20 [
+    json_name = "visits",
+    (gnostic.openapi.v3.property) = {description: "页面访问次数"}
+  ]; // 页面访问次数
+  map<string, string> custom_fields = 21 [
+    json_name = "customFields",
+    (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}
+  ]; // 自定义字段，键值对形式，便于扩展
+
+  optional string custom_head = 23 [
+    json_name = "customHead",
+    (gnostic.openapi.v3.property) = {description: "自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）"}
+  ]; // 自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）
+  optional string custom_foot = 24 [
+    json_name = "customFoot",
+    (gnostic.openapi.v3.property) = {description: "自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）"}
+  ]; // 自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）
+
+
+  repeated PageTranslation translations = 30 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ]; // 多语言翻译列表
+
+
+  optional uint32 parent_id = 50 [
+    json_name = "parentId",
+    (gnostic.openapi.v3.property) = {
+      description: "父页面ID（0 表示顶级页面，用于构建站点树形结构）"
+    }
+  ]; // 父页面ID
+  repeated Page children = 61 [json_name = "children", (gnostic.openapi.v3.property) = {description: "子节点树"}];  // 子节点树
+  optional int32 depth = 52 [
+    json_name = "depth",
+    (gnostic.openapi.v3.property) = {
+      description: "页面层级深度（0=顶级，1=二级，用于面包屑导航）"
+    }
+  ]; // 页面层级深度
+
+  optional string path = 53 [
+    json_name = "path",
+    (gnostic.openapi.v3.property) = {
+      description: "物化路径（如 '1/5/23'，便于层级查询）"
+    }
+  ]; // 物化路径
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 页面翻译
+message PageTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 page_id = 2 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "关联的页面ID"}
+  ]; // 关联的页面ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {
+      description: "语言代码（ISO 639-1 标准）"
+    }
+  ]; // 语言代码
+
+
+  optional string title = 10 [
+    json_name = "title",
+    (gnostic.openapi.v3.property) = {description: "页面标题"}
+  ]; // 页面标题
+
+  optional string slug = 11 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {
+      description: "语言特定的 slug（覆盖主表 slug，如中文用拼音）"
+    }
+  ]; // 语言特定的 slug
+
+  optional string summary = 12 [
+    json_name = "summary",
+    (gnostic.openapi.v3.property) = {description: "页面摘要（用于 meta description）"}
+  ]; // 页面摘要
+
+  optional string content = 13 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "页面内容"}
+  ]; // 页面内容
+
+  optional string original_content = 14 [
+    json_name = "originalContent",
+    (gnostic.openapi.v3.property) = {description: "原始内容（未渲染前）"}
+  ]; // 原始内容（未渲染前）
+
+  optional string thumbnail = 15 [
+    json_name = "thumbnail",
+    (gnostic.openapi.v3.property) = {description: "缩略图"}
+  ]; // 缩略图
+
+  optional string cover_image = 16 [
+    json_name = "coverImage",
+    (gnostic.openapi.v3.property) = {description: "封面图"}
+  ]; // 封面图
+
+  optional uint32 word_count = 17 [
+    json_name = "wordCount",
+    (gnostic.openapi.v3.property) = {description: "当前语言版本的字数（中文按字符数，英文按单词数）"}
+  ]; // 当前语言版本的字数（中文按字符数，英文按单词数）
+
+
+  optional string full_path = 20 [
+    json_name = "fullPath",
+    (gnostic.openapi.v3.property) = {
+      description: "完整路径（如 /zh-CN/about-us），首页应为 '/' 或 '/zh-CN/'"
+    }
+  ]; // 完整路径
+
+
+  optional string meta_keywords = 30 [
+    json_name = "metaKeywords",
+    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
+  ]; // SEO 关键词
+  optional string meta_description = 31 [
+    json_name = "metaDescription",
+    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
+  ]; // SEO 描述
+  optional string seo_title = 32 [
+    json_name = "seoTitle",
+    (gnostic.openapi.v3.property) = {description: "SEO 标题（覆盖默认 title）"}
+  ]; // SEO 标题
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 回应 - 页面列表
+message ListPageResponse {
+  repeated Page items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 页面数据
+message GetPageRequest {
+  uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 请求 - 创建页面
+message CreatePageRequest {
+  Page data = 1;
+}
+
+// 请求 - 更新页面
+message UpdatePageRequest {
+  uint32 id = 1;
+
+  Page data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 请求 - 删除页面
+message DeletePageRequest {
+  uint32 id = 1;
+}

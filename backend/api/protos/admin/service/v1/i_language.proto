@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "dict/service/v1/language.proto";
+
+// 语言管理服务
+service LanguageService {
+  // 分页查询语言列表
+  rpc List (pagination.PagingRequest) returns (dict.service.v1.ListLanguageResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/dict/langs"
+    };
+  }
+
+  // 查询语言详情
+  rpc Get (dict.service.v1.GetLanguageRequest) returns (dict.service.v1.Language) {
+    option (google.api.http) = {
+      get: "/admin/v1/dict/langs/{id}"
+    };
+  }
+
+  // 创建语言
+  rpc Create (dict.service.v1.CreateLanguageRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/dict/langs"
+      body: "*"
+    };
+  }
+
+  // 更新语言
+  rpc Update (dict.service.v1.UpdateLanguageRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/dict/langs/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除语言
+  rpc Delete (dict.service.v1.DeleteLanguageRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/dict/langs"
+    };
+  }
+
+  // 批量创建语言
+  rpc BatchCreate (dict.service.v1.BatchCreateLanguagesRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/dict/langs/batch"
+      body: "*"
+    };
+  }
+}

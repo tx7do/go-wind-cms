@@ -2,84 +2,302 @@ syntax = "proto3";
 
 package content.service.v1;
 
-
+import "gnostic/openapi/v3/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
 import "pagination/v1/pagination.proto";
-
-// 变量的命名一律使用小驼峰命名法，例如：firstName、lastName等。
 
 // 帖子服务
 service PostService {
   // 获取帖子列表
-  rpc ListPost (pagination.PagingRequest) returns (ListPostResponse) {}
+  rpc List (pagination.PagingRequest) returns (ListPostResponse) {}
 
   // 获取帖子数据
-  rpc GetPost (GetPostRequest) returns (Post) {}
+  rpc Get (GetPostRequest) returns (Post) {}
 
   // 创建帖子
-  rpc CreatePost (CreatePostRequest) returns (Post) {}
+  rpc Create (CreatePostRequest) returns (Post) {}
 
   // 更新帖子
-  rpc UpdatePost (UpdatePostRequest) returns (Post) {}
+  rpc Update (UpdatePostRequest) returns (Post) {}
 
   // 删除帖子
-  rpc DeletePost (DeletePostRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeletePostRequest) returns (google.protobuf.Empty) {}
 }
 
 // 帖子
 message Post {
-  uint32 id = 1;
-  optional string title = 2;
-  optional int32 status = 3;
-  optional string slug = 4;
-  optional int32 editorType = 5;
-  optional string metaKeywords = 6;
-  optional string metaDescription = 7;
-  optional string fullPath = 8;
-  optional string summary = 9;
-  optional string thumbnail = 10;
-  optional string password = 11;
-  optional string template = 12;
-  optional string content = 13;
-  optional string originalContent = 14;
-  optional int32 visits = 15;
-  optional int32 topPriority = 16;
-  optional int32 likes = 17;
-  optional int32 wordCount = 18;
-  optional int32 commentCount = 19;
-  optional bool disallowComment = 20;
-  optional bool inProgress = 21;
-  optional string createTime = 22;
-  optional string updateTime = 23;
-  optional string editTime = 24;
+  // 帖子状态
+  enum PostStatus {
+    POST_STATUS_UNSPECIFIED = 0;
+
+    POST_STATUS_DRAFT = 1;      // 草稿
+    POST_STATUS_PUBLISHED = 2;  // 已发布
+    POST_STATUS_SCHEDULED = 3;  // 定时发布
+    POST_STATUS_TRASHED = 4;    // 回收站
+  }
+
+  // 编辑器类型
+  enum EditorType {
+    EDITOR_TYPE_UNSPECIFIED = 0;
+
+    EDITOR_TYPE_MARKDOWN = 1;   // Markdown
+    EDITOR_TYPE_RICH_TEXT = 2;  // 富文本
+    EDITOR_TYPE_HTML = 3;       // HTML
+    EDITOR_TYPE_JSON_BLOCK = 4; // JSON 块编辑器（如 Notion 风格）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "帖子ID"}
+  ];  // 帖子ID
+
+  optional PostStatus status = 2 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "帖子状态"}
+  ]; // 帖子状态
+
+  optional EditorType editor_type = 3 [
+    json_name = "editorType",
+    (gnostic.openapi.v3.property) = {description: "编辑器类型"}
+  ]; // 编辑器类型
+
+  optional string slug = 4 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {description: "默认 slug（当翻译中未提供 slug 时使用，建议保持英文）"}
+  ]; // 默认 slug（当翻译中未提供 slug 时使用，建议保持英文）
+
+
+  optional bool disallow_comment = 5 [
+    json_name = "disallowComment",
+    (gnostic.openapi.v3.property) = {description: "帖子是否禁止评论"}
+  ]; // 帖子是否禁止评论
+  optional bool in_progress = 6 [
+    json_name = "inProgress",
+    (gnostic.openapi.v3.property) = {description: "帖子是否正在编辑中（如正在编辑则不允许发布，避免内容不完整）"}
+  ]; // 帖子是否正在编辑中（如正在编辑则不允许发布，避免内容不完整）
+  optional bool auto_summary = 7 [
+    json_name = "autoSummary",
+    (gnostic.openapi.v3.property) = {description: "是否自动生成摘要"}
+  ]; // 是否自动生成摘要（如果 content 发生变化且 summary 为空，则自动生成摘要）
+  optional bool is_featured = 8 [
+    json_name = "isFeatured",
+    (gnostic.openapi.v3.property) = {description: "是否推荐"}
+  ]; // 是否推荐（前台可用来突出显示，如列表中加大字体或特殊标识）
+
+  optional uint32 sort_order = 9 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序优先级（数值越小越靠前，同组内排序）"}
+  ]; // 排序优先级（数值越小越靠前，同组内排序）
+
+  optional int32 visits = 10 [
+    json_name = "visits",
+    (gnostic.openapi.v3.property) = {description: "帖子访问次数"}
+  ]; // 帖子访问次数
+  optional int32 likes = 11 [
+    json_name = "likes",
+    (gnostic.openapi.v3.property) = {description: "帖子点赞次数"}
+  ]; // 帖子点赞次数
+  optional int32 comment_count = 12 [
+    json_name = "commentCount",
+    (gnostic.openapi.v3.property) = {description: "帖子评论数"}
+  ]; // 帖子评论数
+
+
+  optional uint32 author_id = 20 [
+    json_name = "authorId",
+    (gnostic.openapi.v3.property) = {description: "评论作者ID，0表示游客"}
+  ]; // 帖子作者ID，0表示游客
+
+  optional string author_name = 21 [
+    json_name = "authorName",
+    (gnostic.openapi.v3.property) = {description: "帖子作者名称（游客填写）"}
+  ]; // 帖子作者名称（游客填写）
+
+
+  map<string, string> custom_fields = 30 [
+    json_name = "customFields",
+    (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}
+  ]; // 自定义字段，键值对形式，便于扩展
+
+  repeated PostTranslation translations = 40 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ]; // 多语言翻译列表
+
+  repeated uint32 category_ids = 50 [
+    json_name = "categoryIds",
+    (gnostic.openapi.v3.property) = {description: "关联的分类ID列表（多选）"}
+  ]; // 关联的分类ID列表（多选）
+  repeated uint32 tag_ids = 51 [
+    json_name = "tagIds",
+    (gnostic.openapi.v3.property) = {description: "关联的标签ID列表（多选）"}
+  ]; // 关联的标签ID列表（多选）
+
+
+  optional string password_hash = 60 [
+    json_name = "passwordHash",
+    (gnostic.openapi.v3.property) = {description: "密码哈希"}
+  ]; // 密码哈希（如果帖子受密码保护，存储密码的哈希值，前端不返回该字段）
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+  optional google.protobuf.Timestamp publish_time = 203 [json_name = "publishTime", (gnostic.openapi.v3.property) = {description: "发布时间"}];// 发布时间
+}
+
+// 帖子翻译
+message PostTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 post_id = 2 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "关联的帖子ID"}
+  ]; // 关联的帖子ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+
+
+  optional string title = 10 [
+    json_name = "title",
+    (gnostic.openapi.v3.property) = {description: "帖子标题"}
+  ]; // 帖子标题
+
+  optional string slug = 11 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {
+      description: "语言特定 slug（覆盖主表 slug，如中文用拼音 /post/hou-duan）"
+    }
+  ]; // 语言特定 slug（覆盖主表 slug，如中文用拼音 /post/hou-duan）
+
+  optional string summary = 12 [
+    json_name = "summary",
+    (gnostic.openapi.v3.property) = {description: "帖子摘要"}
+  ]; // 帖子摘要
+
+  optional string content = 13 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "帖子内容"}
+  ]; // 帖子内容
+
+  optional string original_content = 14 [
+    json_name = "originalContent",
+    (gnostic.openapi.v3.property) = {description: "原始内容"}
+  ]; // 原始内容
+
+  optional string thumbnail = 15 [
+    json_name = "thumbnail",
+    (gnostic.openapi.v3.property) = {
+      description: "缩略图（某些语言可能需要不同图片）"
+    }
+  ]; // 缩略图
+
+  optional string template = 16 [
+    json_name = "template",
+    (gnostic.openapi.v3.property) = {
+      description: "模板名称（某些语言可能使用不同模板）"
+    }
+  ]; // 模板名称
+
+  optional string full_path = 17 [
+    json_name = "fullPath",
+    (gnostic.openapi.v3.property) = {
+      description: "完整路径（如 /zh-CN/blog/post-slug）"
+    }
+  ]; // 完整路径（如 /zh-CN/blog/post-slug）
+
+  optional uint32 word_count = 18 [
+    json_name = "wordCount",
+    (gnostic.openapi.v3.property) = {
+      description: "当前语言版本的字数（中文按字符数，英文按单词数）"
+    }
+  ]; // 当前语言版本的字数（中文按字符数，英文按单词数）
+
+
+  optional string meta_keywords = 20 [
+    json_name = "metaKeywords",
+    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
+  ]; // SEO 关键词
+  optional string meta_description = 21 [
+    json_name = "metaDescription",
+    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
+  ]; // SEO 描述
+  optional string seo_title = 22 [
+    json_name = "seoTitle",
+    (gnostic.openapi.v3.property) = {description: "SEO 标题"}
+  ]; // SEO 标题（覆盖默认的 title）
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+message PostCategory {
+  uint32 post_id = 1;
+  uint32 category_id = 2;
 }
 
 // 回应 - 帖子列表
 message ListPostResponse {
   repeated Post items = 1;
-  int32 total = 2;
+  uint64 total = 2;
 }
 
 // 请求 - 帖子数据
 message GetPostRequest {
   uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
 }
 
 // 请求 - 创建帖子
 message CreatePostRequest {
-  Post post = 1;
-  optional uint32 operatorId = 2;
+  Post data = 1;
 }
 
 // 请求 - 更新帖子
 message UpdatePostRequest {
   uint32 id = 1;
-  Post post = 2;
-  optional uint32 operatorId = 3;
+
+  Post data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
 }
 
 // 请求 - 删除帖子
 message DeletePostRequest {
   uint32 id = 1;
-  optional uint32 operatorId = 2;
 }
