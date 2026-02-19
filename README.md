@@ -1,6 +1,6 @@
-# 克拉托斯波克 Kratos-Blog
+# Go Wind CMS（风行内容管理系统）
 
-一个Golang的博客系统/CMS。
+一个Golang的无头内容管理系统。
 
 - 后端基于 [golang](https://go.dev/) + [go-kratos](https://go-kratos.dev/)
 - 前端基于 [VUE3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/)
