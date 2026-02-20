@@ -1,11 +1,12 @@
 server:
   rest:
-    addr: "0.0.0.0:8800"
+    addr: "0.0.0.0:9700"
     timeout: 10s
     enable_swagger: true
     cors:
       headers:
         - "X-Requested-With"
+        - "X-Request-ID"
         - "Content-Type"
         - "Authorization"
       methods:
@@ -23,7 +24,7 @@ server:
         key: "some_api_key"
 
   sse:
-    addr: ":8801"
+    addr: ":9701"
     codec: "json"
     path: "/events"
     auto_stream: true

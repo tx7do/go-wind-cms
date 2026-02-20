@@ -1,6 +1,6 @@
 ports:
-  - port: 3344
+  - port: 5555
     onOpen: open-preview
 tasks:
-  - init: pnpm install
-    command: pnpm run dev
+  - init: corepack enable && pnpm install
+    command: pnpm run dev:play

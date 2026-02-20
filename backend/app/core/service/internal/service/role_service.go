@@ -24,19 +24,22 @@ type RoleService struct {
 
 	log *log.Helper
 
-	roleRepo   *data.RoleRepo
-	tenantRepo *data.TenantRepo
+	roleRepo     *data.RoleRepo
+	tenantRepo   *data.TenantRepo
+	userRoleRepo *data.UserRoleRepo
 }
 
 func NewRoleService(
 	ctx *bootstrap.Context,
 	roleRepo *data.RoleRepo,
 	tenantRepo *data.TenantRepo,
+	userRoleRepo *data.UserRoleRepo,
 ) *RoleService {
 	svc := &RoleService{
-		log:        ctx.NewLoggerHelper("role/service/core-service"),
-		roleRepo:   roleRepo,
-		tenantRepo: tenantRepo,
+		log:          ctx.NewLoggerHelper("role/service/core-service"),
+		roleRepo:     roleRepo,
+		tenantRepo:   tenantRepo,
+		userRoleRepo: userRoleRepo,
 	}
 
 	svc.init()
@@ -237,6 +240,61 @@ func (s *RoleService) GetRolesByRoleIds(ctx context.Context, req *permissionV1.G
 	return &permissionV1.ListRoleResponse{
 		Items: roles,
 		Total: uint64(len(roles)),
+	}, nil
+}
+
+func (s *RoleService) ListPermissionIds(ctx context.Context, req *permissionV1.ListPermissionIdsRequest) (*permissionV1.ListPermissionIdsResponse, error) {
+	var permissionIDs []uint32
+	var err error
+
+	switch req.QueryBy.(type) {
+	case *permissionV1.ListPermissionIdsRequest_RoleId:
+		permissionIDs, err = s.roleRepo.ListPermissionIDsByRoleIDs(ctx, []uint32{req.GetRoleId()})
+		if err != nil {
+			return nil, err
+		}
+
+	case *permissionV1.ListPermissionIdsRequest_RoleCode:
+		permissionIDs, err = s.roleRepo.ListPermissionIDsByRoleCodes(ctx, []string{req.GetRoleCode()})
+		if err != nil {
+			return nil, err
+		}
+
+	case *permissionV1.ListPermissionIdsRequest_UserId:
+		permissionIDs, err = s.roleRepo.ListPermissionIDsByUserID(ctx, req.GetUserId())
+		if err != nil {
+			return nil, err
+		}
+
+	default:
+		if len(req.RoleIds) > 0 {
+			permissionIDs, err = s.roleRepo.ListPermissionIDsByRoleIDs(ctx, req.GetRoleIds())
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if len(req.RoleCodes) > 0 {
+			permissionIDs, err = s.roleRepo.ListPermissionIDsByRoleCodes(ctx, req.GetRoleCodes())
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return &permissionV1.ListPermissionIdsResponse{
+		PermissionIds: permissionIDs,
+	}, nil
+}
+
+func (s *RoleService) ListUserRoleIDs(ctx context.Context, req *permissionV1.ListUserRoleIDsRequest) (*permissionV1.ListUserRoleIDsResponse, error) {
+	roleIDs, err := s.userRoleRepo.ListRoleIDs(ctx, req.GetUserId(), false)
+	if err != nil {
+		return nil, err
+	}
+
+	return &permissionV1.ListUserRoleIDsResponse{
+		RoleIds: roleIDs,
 	}, nil
 }
 

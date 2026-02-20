@@ -56,6 +56,7 @@ require (
 	github.com/tx7do/kratos-bootstrap/transport/sse v0.0.4
 	github.com/tx7do/kratos-swagger-ui v0.0.1
 	github.com/tx7do/kratos-transport/broker v1.3.2
+	github.com/tx7do/kratos-transport/transport/asynq v1.3.2
 	github.com/tx7do/kratos-transport/transport/sse v1.3.2
 	github.com/yuin/gopher-lua v1.1.1
 	go.etcd.io/etcd/client/v3 v3.6.7
@@ -200,6 +201,7 @@ require (
 	github.com/tx7do/kratos-bootstrap/logger v0.1.2 // indirect
 	github.com/tx7do/kratos-transport/tracing v1.1.1 // indirect
 	github.com/tx7do/kratos-transport/transport v1.3.3 // indirect
+	github.com/tx7do/kratos-transport/transport/keepalive v1.3.3 // indirect
 	github.com/valyala/fastjson v1.6.7 // indirect
 	github.com/vearutop/statigz v1.5.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.31 // indirect

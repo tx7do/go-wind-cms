@@ -1,0 +1,56 @@
+{
+  "dashboard": {
+    "index": "数据中心",
+    "dashboard": "仪表盘",
+    "analysis": "统计分析",
+    "workbench": "工作台",
+    "about": "关于"
+  },
+  "profile": {
+    "moduleName": "个人中心",
+    "profile": "个人资料",
+    "settings": "个人设置",
+    "security": "安全设置",
+    "customize": "界面定制",
+    "notification": "消息通知",
+    "internalMessage": "站内消息"
+  },
+  "permission": {
+    "moduleName": "权限管理",
+    "role": "角色管理",
+    "permission": "权限管理"
+  },
+  "opm": {
+    "moduleName": "组织人员",
+    "orgUnit": "组织管理",
+    "position": "职位管理",
+    "user": "用户管理",
+    "userDetail": "用户详情"
+  },
+  "tenant": {
+    "moduleName": "租户管理",
+    "member": "租户列表"
+  },
+  "system": {
+    "moduleName": "系统管理",
+    "dict": "数据字典",
+    "task": "任务调度",
+    "file": "文件管理",
+    "loginPolicy": "登录策略",
+    "menu": "菜单管理",
+    "api": "API管理"
+  },
+  "log": {
+    "moduleName": "日志审计",
+    "loginAuditLog": "登录日志",
+    "apiAuditLog": "API日志",
+    "dataAccessAuditLog": "数据日志",
+    "operationAuditLog": "操作日志",
+    "permissionAuditLog": "权限日志"
+  },
+  "internalMessage": {
+    "moduleName": "站内消息",
+    "internalMessage": "消息管理",
+    "internalMessageCategory": "消息分类"
+  }
+}

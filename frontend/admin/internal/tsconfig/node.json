@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node Config",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "composite": false,
+    "lib": ["ESNext", "es2015"],
+    "baseUrl": "./",
+    "types": ["node"],
+    "noImplicitAny": true
+  }
+}

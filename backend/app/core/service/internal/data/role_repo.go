@@ -44,6 +44,7 @@ type RoleRepo struct {
 	rolePermissionRepo *RolePermissionRepo
 	permissionRepo     *PermissionRepo
 	roleMetadataRepo   *RoleMetadataRepo
+	userRoleRepo       *UserRoleRepo
 }
 
 func NewRoleRepo(
@@ -52,6 +53,7 @@ func NewRoleRepo(
 	rolePermissionRepo *RolePermissionRepo,
 	permissionRepo *PermissionRepo,
 	roleMetadataRepo *RoleMetadataRepo,
+	userRoleRepo *UserRoleRepo,
 ) *RoleRepo {
 	repo := &RoleRepo{
 		log:       ctx.NewLoggerHelper("role/repo/core-service"),
@@ -68,6 +70,7 @@ func NewRoleRepo(
 		permissionRepo:     permissionRepo,
 		rolePermissionRepo: rolePermissionRepo,
 		roleMetadataRepo:   roleMetadataRepo,
+		userRoleRepo:       userRoleRepo,
 	}
 
 	repo.init()
@@ -628,6 +631,15 @@ func (r *RoleRepo) ListPermissionIDsByRoleIDs(ctx context.Context, roleIDs []uin
 // ListPermissionIDsByRoleCodes 通过角色编码列表获取权限ID列表
 func (r *RoleRepo) ListPermissionIDsByRoleCodes(ctx context.Context, roleCodes []string) ([]uint32, error) {
 	roleIDs, err := r.ListRoleIDsByRoleCodes(ctx, roleCodes)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.rolePermissionRepo.ListPermissionIDsByRoleIDs(ctx, roleIDs)
+}
+
+func (r *RoleRepo) ListPermissionIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error) {
+	roleIDs, err := r.userRoleRepo.ListRoleIDs(ctx, userID, false)
 	if err != nil {
 		return nil, err
 	}

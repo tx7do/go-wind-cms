@@ -1,0 +1,243 @@
+{
+  "status": {
+    "ON": "正常",
+    "OFF": "停用"
+  },
+  "enable": {
+    "true": "启用",
+    "false": "禁用"
+  },
+  "gender": {
+    "SECRET": "保密",
+    "MALE": "男性",
+    "FEMALE": "女性"
+  },
+  "successStatus": {
+    "success": "成功",
+    "failed": "失败"
+  },
+  "user": {
+    "status": {
+      "DISABLED": "禁用",
+      "NORMAL": "正常",
+      "PENDING": "待激活",
+      "LOCKED": "锁定",
+      "EXPIRED": "过期",
+      "CLOSED": "注销"
+    }
+  },
+  "menu": {
+    "type": {
+      "CATALOG": "目录",
+      "MENU": "菜单",
+      "BUTTON": "按钮",
+      "EMBEDDED": "内嵌",
+      "LINK": "外链"
+    }
+  },
+  "task": {
+    "type": {
+      "Periodic": "周期性",
+      "Delay": "延时任务",
+      "WaitResult": "等待结果"
+    }
+  },
+  "loginPolicy": {
+    "type": {
+      "BLACKLIST": "黑名单",
+      "WHITELIST": "白名单"
+    },
+    "method": {
+      "IP": "IP地址限制",
+      "MAC": "MAC地址限制",
+      "REGION": "地区限制",
+      "TIME": "时间限制",
+      "DEVICE": "设备限制"
+    }
+  },
+  "orgUnit": {
+    "type": {
+      "DEPARTMENT": "部门",
+      "TEAM": "团队",
+      "COMPANY": "集团",
+      "DIVISION": "事业部",
+      "PROJECT": "项目组",
+      "COMMITTEE": "委员会",
+      "REGION": "区域中心",
+      "SUBSIDIARY": "子公司",
+      "BRANCH": "分公司",
+      "OTHER": "其他"
+    },
+    "status": {
+      "ON": "启用",
+      "OFF": "禁用"
+    }
+  },
+  "tenant": {
+    "status": {
+      "ON": "启用",
+      "OFF": "禁用",
+      "EXPIRED": "过期",
+      "FREEZE": "冻结"
+    },
+    "type": {
+      "TRIAL": "试用",
+      "PAID": "付费",
+      "INTERNAL": "内部",
+      "PARTNER": "合作伙伴",
+      "CUSTOM": "定制"
+    },
+    "auditStatus": {
+      "PENDING": "待审核",
+      "APPROVED": "已通过",
+      "REJECTED": "已拒绝"
+    }
+  },
+  "role": {
+    "type": {
+      "SYSTEM": "内置角色",
+      "CUSTOM": "自定义角色"
+    },
+    "dataScope": {
+      "ALL": "全部",
+      "SELECTED_UNITS": "自定义",
+      "UNIT_AND_CHILD": "本部门及以下",
+      "UNIT_ONLY": "本部门",
+      "SELF": "仅本人"
+    }
+  },
+  "membershipPosition": {
+    "status": {
+      "PROBATION": "试用期",
+      "ACTIVE": "在职",
+      "LEAVE": "离职",
+      "RESIGNED": "辞职",
+      "TERMINATED": "解聘",
+      "EXPIRED": "已过期"
+    }
+  },
+  "position": {
+    "type": {
+      "REGULAR": "普通岗",
+      "LEADER": "领导岗",
+      "MANAGER": "管理岗",
+      "INTERN": "实习岗",
+      "CONTRACT": "合同岗",
+      "OTHER": "其他"
+    }
+  },
+  "permission": {
+    "type": {
+      "CATALOG": "目录权限",
+      "MENU": "菜单权限",
+      "PAGE": "页面权限",
+      "BUTTON": "按钮权限",
+      "API": "接口权限",
+      "DATA": "数据权限"
+    }
+  },
+  "loginAuditLog": {
+    "status": {
+      "SUCCESS": "成功",
+      "FAILED": "失败",
+      "PARTIAL": "部分成功"
+    },
+    "actionType": {
+      "LOGIN": "用户登录",
+      "LOGOUT": "用户登出",
+      "SESSION_EXPIRED": "会话过期"
+    },
+    "riskLevel": {
+      "LOW": "低风险",
+      "MEDIUM": "中风险",
+      "HIGH": "高风险"
+    }
+  },
+  "operationAuditLog": {
+    "action": {
+      "CREATE": "创建",
+      "UPDATE": "更新",
+      "DELETE": "删除",
+      "READ": "读取",
+      "ASSIGN": "分配",
+      "UNASSIGN": "取消分配",
+      "EXPORT": "导出",
+      "IMPORT": "导入",
+      "OTHER": "其他"
+    }
+  },
+  "dataAccessAuditLog": {
+    "accessType": {
+      "SELECT": "读取",
+      "INSERT": "插入",
+      "UPDATE": "更新",
+      "DELETE": "删除",
+      "VIEW": "查看",
+      "BULK_READ": "批量读取",
+      "EXPORT": "导入",
+      "IMPORT": "导入",
+      "DDL_CREATE": "创建表",
+      "DDL_ALTER": "修改表",
+      "DDL_DROP": "删除表",
+      "METADATA_READ": "元数据",
+      "SCAN": "扫描",
+      "ADMIN_OPERATION": "管理类操作",
+      "OTHER": "其他"
+    }
+  },
+  "permissionAuditLog": {
+    "action": {
+      "GRANT": "授予权限",
+      "REVOKE": "回收权限",
+      "UPDATE": "修改权限",
+      "RESET": "重置权限",
+      "CREATE": "创建权限",
+      "DELETE": "删除权限",
+      "ASSIGN": "分配权限",
+      "UNASSIGN": "取消权限",
+      "BULK_GRANT": "批量授予",
+      "BULK_REVOKE": "批量回收",
+      "EXPIRE": "权限到期",
+      "SUSPEND": "冻结权限",
+      "RESUME": "恢复权限",
+      "ROLLBACK": "回滚变更",
+      "OTHER": "其他"
+    }
+  },
+  "internalMessage": {
+    "status": {
+      "DRAFT": "草稿",
+      "PUBLISHED": "已发布",
+      "SCHEDULED": "定时发布",
+      "REVOKED": "已撤销",
+      "ARCHIVED": "已归档",
+      "DELETED": "已删除"
+    },
+    "type": {
+      "NOTIFICATION": "通知",
+      "PRIVATE": "私信",
+      "GROUP": "群聊"
+    }
+  },
+  "internalMessageRecipient": {
+    "status": {
+      "SENT": "已发送",
+      "RECEIVED": "已接收",
+      "READ": "已阅读",
+      "REVOKED": "已撤回",
+      "DELETED": "已删除"
+    }
+  },
+  "ossProvider": {
+    "LOCAL": "本地存储",
+    "MINIO": "MinIO",
+    "ALIYUN": "阿里云OSS",
+    "QINIU": "七牛云存储",
+    "TENCENT": "腾讯云COS",
+    "BAIDU": "百度云BOS",
+    "HUAWEI": "华为云OBS",
+    "AWS": "亚马逊S3",
+    "AZURE": "微软AzureBlob",
+    "GOOGLE": "谷歌云存储"
+  }
+}

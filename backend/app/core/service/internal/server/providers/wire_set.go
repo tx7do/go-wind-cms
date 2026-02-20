@@ -20,4 +20,5 @@ import (
 var ProviderSet = wire.NewSet(
 	server.NewGrpcMiddleware,
 	server.NewGrpcServer,
+	server.NewAsynqServer,
 )

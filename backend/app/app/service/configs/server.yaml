@@ -6,6 +6,7 @@ server:
     cors:
       headers:
         - "X-Requested-With"
+        - "X-Request-ID"
         - "Content-Type"
         - "Authorization"
       methods:

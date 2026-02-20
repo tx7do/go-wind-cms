@@ -1,0 +1,452 @@
+{
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "codeLogin": "验证码登录",
+    "qrcodeLogin": "二维码登录",
+    "forgetPassword": "忘记密码"
+  },
+  "dashboard": {
+    "title": "概览",
+    "analytics": "分析页",
+    "workspace": "工作台"
+  },
+  "analytics": {
+    "currentUserCount": "用户量",
+    "totalUserCount": "总用户量",
+    "currentTenantCount": "租户量",
+    "totalTenantCount": "总租户量",
+    "currentOrgUnitCount": "组织数",
+    "totalOrgUnitCount": "总组织数",
+    "currentPositionCount": "职位数",
+    "totalPositionCount": "总职位数",
+    "currentDownloadCount": "下载量",
+    "totalDownloadCount": "总下载量",
+    "currentUsageCount": "使用量",
+    "totalUsageCount": "总使用量",
+    "currentAccessCount": "访问量",
+    "totalAccessCount": "总访问量",
+    "accessCount": "访问数量",
+    "monthAccessCount": "月访问量",
+    "accessSource": "访问来源",
+    "trafficTrend": "访问趋势",
+    "month": "月"
+  },
+  "user": {
+    "moduleName": "用户",
+    "form": {
+      "username": "用户名",
+      "nickname": "昵称",
+      "realname": "真实姓名",
+      "email": "电子邮箱",
+      "mobile": "手机号码",
+      "tenant": "所属租户",
+      "role": "角色",
+      "orgUnit": "所属组织",
+      "position": "所属岗位",
+      "oldPassword": "旧密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认密码",
+      "status": "状态"
+    },
+    "table": {
+      "seq": "编号",
+      "username": "用户名",
+      "nickname": "昵称",
+      "realname": "姓名",
+      "password": "密码",
+      "avatar": "头像",
+      "email": "邮箱",
+      "mobile": "手机号",
+      "telephone": "座机号",
+      "gender": "性别",
+      "address": "住址",
+      "region": "国家地区",
+      "description": "个人描述",
+      "lastLoginAt": "最后登录时间",
+      "lastLoginIp": "最后登录IP",
+      "roleId": "角色",
+      "tenantId": "所属租户",
+      "orgUnitId": "所属组织",
+      "positionId": "所属岗位",
+      "workId": "工号",
+      "status": "状态"
+    },
+    "button": {
+      "create": "创建账号",
+      "editPassword": "修改密码",
+      "banAccount": "禁用账号",
+      "updateUserInfo": "更新基本信息",
+      "updatePassword": "更新密码"
+    },
+    "profile": {
+      "tab": {
+        "basicSettings": "基本设置",
+        "securitySettings": "安全设置",
+        "editPassword": "修改密码",
+        "accountBind": "账号绑定",
+        "notification": "消息通知"
+      }
+    },
+    "detail": {
+      "title": "用户{userId}的资料",
+      "tab": {
+        "basicInfo": "基础信息",
+        "permission": "权限信息",
+        "apiAuditLog": "API日志",
+        "internalMessage": "收件箱"
+      },
+      "desc": {
+        "username": "用户名",
+        "realname": "真实姓名",
+        "nickname": "昵称",
+        "gender": "性别",
+        "mobile": "手机号",
+        "email": "电子邮箱",
+        "region": "国家地区",
+        "address": "住址",
+        "roleNames": "角色列表",
+        "tenantName": "所属租户",
+        "orgUnitName": "所属组织",
+        "positionName": "所属岗位",
+        "lastLoginAt": "最后登录时间",
+        "lastLoginIp": "最后登录IP"
+      }
+    }
+  },
+  "role": {
+    "moduleName": "角色",
+    "name": "角色名称",
+    "code": "角色值",
+    "description": "角色描述",
+    "isProtected": "内置角色",
+    "apis": "分配API",
+    "permissions": "分配权限",
+    "tenantName": "所属租户",
+    "button": {
+      "create": "创建角色"
+    }
+  },
+  "permission": {
+    "moduleName": "权限",
+    "name": "权限名称",
+    "code": "权限编码",
+    "path": "树路径",
+    "groupId": "分组",
+    "groupName": "分组名称",
+    "menuIds": "分配菜单",
+    "apiIds": "分配API",
+    "description": "权限描述",
+    "button": {
+      "create": "创建权限",
+      "syncPermissions": "同步权限"
+    }
+  },
+  "permissionGroup": {
+    "moduleName": "权限分组",
+    "name": "分组名称",
+    "module": "业务模块",
+    "parentId": "上级分组",
+    "button": {
+      "create": "创建分组"
+    }
+  },
+  "dict": {
+    "moduleName": "字典",
+    "dictType": "字典类型",
+    "dictEntry": "字典项",
+    "dictTypeList": "字典类型列表",
+    "dictEntryList": "字典项列表",
+    "typeCode": "编码",
+    "typeName": "类型名称",
+    "entryLabel": "标签",
+    "entryValue": "值",
+    "numericValue": "数值",
+    "typeId": "字典类型",
+    "languageCode": "语言代码",
+    "languageName": "语言名称",
+    "button": {
+      "create": "新增"
+    }
+  },
+  "menu": {
+    "moduleName": "菜单",
+    "name": "标题",
+    "type": "类型",
+    "icon": "图标",
+    "path": "路由地址",
+    "component": "组件路径",
+    "show": "是否显示",
+    "isExt": "是否外链",
+    "keepAlive": "缓存标签页",
+    "affixTab": "固定在标签",
+    "hideInMenu": "隐藏菜单",
+    "hideChildrenInMenu": "隐藏子菜单",
+    "hideInTab": "在标签栏中不隐藏",
+    "hideInBreadcrumb": "在面包屑中隐藏",
+    "parentId": "上级菜单",
+    "authority": "权限标识",
+    "order": "排序",
+    "title": "菜单标题",
+    "advancedSettings": "其他设置",
+    "tips": {
+      "authority": "多个权限用逗号隔开，如：sys:user:add,sys:user:edit"
+    },
+    "button": {
+      "create": "创建菜单"
+    }
+  },
+  "orgUnit": {
+    "moduleName": "组织列表",
+    "name": "组织名称",
+    "code": "唯一编码",
+    "parentId": "上级组织",
+    "type": "组织类型",
+    "isLegalEntity": "是否为法定主体",
+    "businessScope": "核心业务范围",
+    "registrationNumber": "注册号",
+    "taxId": "税号",
+    "address": "详细地址",
+    "phone": "联系电话",
+    "email": "联系邮箱",
+    "timezone": "时区",
+    "country": "地区代码",
+    "leaderId": "负责人ID",
+    "leaderName": "负责人名称",
+    "contactUserId": "业务联系人ID",
+    "contactUserName": "业务联系人名称",
+    "description": "组织描述",
+    "button": {
+      "create": "创建组织"
+    }
+  },
+  "position": {
+    "moduleName": "职位",
+    "name": "职位名称",
+    "parentId": "上级职位",
+    "orgUnit": "所属组织",
+    "orgUnitId": "所属组织ID",
+    "orgUnitName": "所属组织名称",
+    "description": "职责描述",
+    "type": "职位类型",
+    "code": "唯一编码",
+    "headcount": "编制人数",
+    "button": {
+      "create": "创建职位"
+    }
+  },
+  "tenant": {
+    "moduleName": "租户",
+    "name": "租户名称",
+    "code": "租户编码",
+    "type": "租户类型",
+    "auditStatus": "审核状态",
+    "adminSetting": "管理员账号配置",
+    "lastLoginAt": "最后登录时间",
+    "lastLoginIp": "最后登录IP",
+    "logoUrl": "LOGO地址",
+    "industry": "所属行业",
+    "subscriptionPlan": "订阅套餐",
+    "expiredAt": "到期时间",
+    "memberCount": "成员数量",
+    "subscriptionAt": "订阅时间",
+    "unsubscribeAt": "退订时间",
+    "adminUserName": "管理员用户名",
+    "adminPassword": "初始密码",
+    "adminPasswordConfirm": "确认密码",
+    "adminMobile": "手机号",
+    "adminEmail": "电子邮箱",
+    "button": {
+      "create": "创建租户"
+    },
+    "notification": {
+      "tenant_code_exists": "租户编码已存在，请更换后重新创建！",
+      "user_username_exists": "管理员用户名已存在，请更换后重新创建！"
+    }
+  },
+  "file": {
+    "moduleName": "文件",
+    "fileName": "原始文件名",
+    "saveFileName": "存储名",
+    "bucketName": "存储桶",
+    "fileDirectory": "目录",
+    "provider": "OSS提供商",
+    "fileGuid": "GUID",
+    "extension": "文件扩展名",
+    "size": "大小",
+    "createdBy": "上传人",
+    "createdAt": "上传时间",
+    "button": {
+      "create": "创建文件",
+      "upload": "上传文件",
+      "download": "下载文件"
+    }
+  },
+  "task": {
+    "moduleName": "任务",
+    "type": "调度类型",
+    "typeName": "调度方法",
+    "taskPayload": "任务数据",
+    "taskOptions": "任务选项",
+    "taskOptionsMaxRetry": "重试次数",
+    "taskOptionsTimeout": "超时时间",
+    "taskOptionsDeadline": "截止时间",
+    "taskOptionsProcessIn": "延迟时间",
+    "taskOptionsProcessAt": "执行时间",
+    "cronSpec": "cron表达式",
+    "enable": "启用状态",
+    "button": {
+      "create": "创建任务",
+      "start": "启动任务",
+      "restart": "重启任务",
+      "stop": "停止任务",
+      "startAll": "启动全部任务",
+      "restartAll": "重启全部任务",
+      "stopAll": "停止全部任务"
+    },
+    "text": {
+      "do_you_want_start_all_task": "您确定要启动全部任务吗？",
+      "do_you_want_restart_all_task": "您确定要重启全部任务吗？",
+      "do_you_want_stop_all_task": "您确定要停止全部任务吗？",
+      "do_you_want_start_task": "您确定要启动该任务吗？",
+      "do_you_want_restart_task": "您确定要重启该任务吗？",
+      "do_you_want_stop_task": "您确定要停止该任务吗？"
+    }
+  },
+  "internalMessage": {
+    "moduleName": "消息管理",
+    "title": "消息主题",
+    "content": "消息内容",
+    "type": "消息类型",
+    "status": "消息状态",
+    "categoryName": "消息分类",
+    "senderName": "发送者",
+    "categoryId": "消息分类",
+    "readAt": "读取时间",
+    "button": {
+      "create": "发布消息"
+    },
+    "drawer": {
+      "create": "发布消息",
+      "update": "修改消息"
+    }
+  },
+  "internalMessageCategory": {
+    "moduleName": "消息分类",
+    "name": "分类名称",
+    "code": "分类编码",
+    "parentId": "父节点",
+    "button": {
+      "create": "创建分类"
+    }
+  },
+  "privateMessage": {
+    "moduleName": "私信消息",
+    "subject": "私信主题",
+    "button": {
+      "create": "创建私信"
+    }
+  },
+  "loginAuditLog": {
+    "moduleName": "登录审计日志",
+    "username": "登录名",
+    "status": "登录状态",
+    "actionType": "事件动作",
+    "geoLocation": "地理位置",
+    "platform": "登录平台",
+    "ipAddress": "IP地址",
+    "failureReason": "失败原因",
+    "riskScore": "风险评分",
+    "riskLevel": "风险等级",
+    "riskFactors": "风险因素",
+    "createdAt": "日志时间"
+  },
+  "apiAuditLog": {
+    "moduleName": "API日志",
+    "username": "操作者名",
+    "success": "操作状态",
+    "geoLocation": "地理位置",
+    "platform": "操作平台",
+    "ipAddress": "IP地址",
+    "createdAt": "日志时间",
+    "path": "请求路径",
+    "httpMethod": "请求方法",
+    "latencyMs": "耗时（毫秒）"
+  },
+  "dataAccessAuditLog": {
+    "moduleName": "数据访问日志",
+    "createdAt": "日志时间",
+    "username": "操作者名",
+    "requestId": "请求ID",
+    "ipAddress": "IP地址",
+    "geoLocation": "地理位置",
+    "latencyMs": "耗时（毫秒）",
+    "success": "操作状态",
+    "sensitiveLevel": "敏感等级",
+    "dataSource": "数据源类型",
+    "tableName": "数据表名",
+    "dataId": "数据主键ID",
+    "accessType": "访问类型",
+    "sqlDigest": "SQL语句摘要",
+    "sqlText": "SQL语句",
+    "affectedRows": "影响行数",
+    "dataMasked": "是否已脱敏",
+    "maskingRules": "脱敏规则",
+    "businessPurpose": "业务处理目的",
+    "dataCategory": "数据分类",
+    "dbUser": "数据库用户"
+  },
+  "operationAuditLog": {
+    "moduleName": "操作日志",
+    "createdAt": "日志时间",
+    "username": "操作者名",
+    "resourceType": "资源类型",
+    "resourceId": "资源ID",
+    "action": "动作",
+    "beforeData": "动作",
+    "afterData": "动作",
+    "sensitiveLevel": "敏感等级",
+    "requestId": "请求ID",
+    "success": "操作状态",
+    "ipAddress": "IP地址",
+    "geoLocation": "地理位置"
+  },
+  "permissionAuditLog": {
+    "moduleName": "权限变更日志",
+    "createdAt": "日志时间",
+    "username": "操作者名",
+    "requestId": "请求ID",
+    "ipAddress": "IP地址",
+    "geoLocation": "地理位置",
+    "operatorId": "操作者ID",
+    "operatorName": "操作者用户名",
+    "targetType": "目标类型",
+    "targetId": "目标ID",
+    "targetName": "目标名称",
+    "action": "动作",
+    "reason": "变更原因"
+  },
+  "api": {
+    "moduleName": "API资源",
+    "path": "路径",
+    "method": "方法",
+    "module": "模块",
+    "moduleDescription": "模块描述",
+    "operation": "操作",
+    "button": {
+      "create": "创建API",
+      "sync": "同步API"
+    }
+  },
+  "loginPolicy": {
+    "moduleName": "登录策略",
+    "targetId": "目标用户ID",
+    "type": "限制类型",
+    "method": "限制方式",
+    "value": "限制值",
+    "reason": "限制原因",
+    "button": {
+      "create": "创建限制"
+    }
+  }
+}

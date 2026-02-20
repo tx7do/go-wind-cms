@@ -1,0 +1,243 @@
+{
+  "status": {
+    "ON": "Active",
+    "OFF": "Disabled"
+  },
+  "enable": {
+    "true": "Enabled",
+    "false": "Disabled"
+  },
+  "gender": {
+    "SECRET": "Secret",
+    "MALE": "Male",
+    "FEMALE": "Female"
+  },
+  "successStatus": {
+    "success": "Success",
+    "failed": "Failed"
+  },
+  "user": {
+    "status": {
+      "DISABLED": "Disabled",
+      "NORMAL": "Normal",
+      "PENDING": "Pending Activation",
+      "LOCKED": "Locked",
+      "EXPIRED": "Expired",
+      "CLOSED": "Closed"
+    }
+  },
+  "menu": {
+    "type": {
+      "CATALOG": "Catalog",
+      "MENU": "Menu",
+      "BUTTON": "Button",
+      "EMBEDDED": "Embedded",
+      "LINK": "External Link"
+    }
+  },
+  "task": {
+    "type": {
+      "Periodic": "Periodic",
+      "Delay": "Delayed",
+      "WaitResult": "Wait for Result"
+    }
+  },
+  "loginPolicy": {
+    "type": {
+      "BLACKLIST": "Blacklist",
+      "WHITELIST": "Whitelist"
+    },
+    "method": {
+      "IP": "IP Restriction",
+      "MAC": "MAC Restriction",
+      "REGION": "Region Restriction",
+      "TIME": "Time Restriction",
+      "DEVICE": "Device Restriction"
+    }
+  },
+  "orgUnit": {
+    "type": {
+      "DEPARTMENT": "Department",
+      "TEAM": "Team",
+      "COMPANY": "Company",
+      "DIVISION": "Division",
+      "PROJECT": "Project",
+      "COMMITTEE": "Committee",
+      "REGION": "Regional Center",
+      "SUBSIDIARY": "Subsidiary",
+      "BRANCH": "Branch",
+      "OTHER": "Other"
+    },
+    "status": {
+      "ON": "Enabled",
+      "OFF": "Disabled"
+    }
+  },
+  "tenant": {
+    "status": {
+      "ON": "Enabled",
+      "OFF": "Disabled",
+      "EXPIRED": "Expired",
+      "FREEZE": "Frozen"
+    },
+    "type": {
+      "TRIAL": "Trial",
+      "PAID": "Paid",
+      "INTERNAL": "Internal",
+      "PARTNER": "Partner",
+      "CUSTOM": "Custom"
+    },
+    "auditStatus": {
+      "PENDING": "Pending Review",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    }
+  },
+  "role": {
+    "type": {
+      "SYSTEM": "Built-in Role",
+      "CUSTOM": "Custom Role"
+    },
+    "dataScope": {
+      "ALL": "All",
+      "SELECTED_UNITS": "Custom",
+      "UNIT_AND_CHILD": "Department and Subordinates",
+      "UNIT_ONLY": "Department Only",
+      "SELF": "Self Only"
+    }
+  },
+  "membershipPosition": {
+    "status": {
+      "PROBATION": "Probation",
+      "ACTIVE": "Active",
+      "LEAVE": "Left",
+      "RESIGNED": "Resigned",
+      "TERMINATED": "Terminated",
+      "EXPIRED": "Expired"
+    }
+  },
+  "position": {
+    "type": {
+      "REGULAR": "Regular",
+      "LEADER": "Leader",
+      "MANAGER": "Manager",
+      "INTERN": "Intern",
+      "CONTRACT": "Contract",
+      "OTHER": "Other"
+    }
+  },
+  "permission": {
+    "type": {
+      "CATALOG": "Catalog Permission",
+      "MENU": "Menu Permission",
+      "PAGE": "Page Permission",
+      "BUTTON": "Button Permission",
+      "API": "API Permission",
+      "DATA": "Data Permission"
+    }
+  },
+  "loginAuditLog": {
+    "status": {
+      "SUCCESS": "Success",
+      "FAILED": "Failed",
+      "PARTIAL": "Partial Success"
+    },
+    "actionType": {
+      "LOGIN": "User Login",
+      "LOGOUT": "User Logout",
+      "SESSION_EXPIRED": "Session Expired"
+    },
+    "riskLevel": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    }
+  },
+  "operationAuditLog": {
+    "action": {
+      "CREATE": "CREATE",
+      "UPDATE": "UPDATE",
+      "DELETE": "DELETE",
+      "READ": "READ",
+      "ASSIGN": "ASSIGN",
+      "UNASSIGN": "UNASSIGN",
+      "EXPORT": "EXPORT",
+      "IMPORT": "IMPORT",
+      "OTHER": "OTHER"
+    }
+  },
+  "dataAccessAuditLog": {
+    "accessType": {
+      "SELECT": "SELECT",
+      "INSERT": "INSERT",
+      "UPDATE": "UPDATE",
+      "DELETE": "DELETE",
+      "VIEW": "VIEW",
+      "BULK_READ": "BULK READ",
+      "EXPORT": "EXPORT",
+      "IMPORT": "IMPORT",
+      "DDL_CREATE": "CREATE TABLE",
+      "DDL_ALTER": "ALTER TABLE",
+      "DDL_DROP": "DROP TABLE",
+      "METADATA_READ": "METADATA READ",
+      "SCAN": "SCAN",
+      "ADMIN_OPERATION": "ADMIN OPERATION",
+      "OTHER": "OTHER"
+    }
+  },
+  "permissionAuditLog": {
+    "action": {
+      "GRANT": "Grant Permission",
+      "REVOKE": "Revoke Permission",
+      "UPDATE": "Update Permission",
+      "RESET": "Reset Permission",
+      "CREATE": "Create Permission",
+      "DELETE": "Delete Permission",
+      "ASSIGN": "Assign Permission",
+      "UNASSIGN": "Unassign Permission",
+      "BULK_GRANT": "Bulk Grant",
+      "BULK_REVOKE": "Bulk Revoke",
+      "EXPIRE": "Expire Permission",
+      "SUSPEND": "Suspend Permission",
+      "RESUME": "Resume Permission",
+      "ROLLBACK": "Rollback Change",
+      "OTHER": "Other"
+    }
+  },
+  "internalMessage": {
+    "status": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "SCHEDULED": "Scheduled",
+      "REVOKED": "Revoked",
+      "ARCHIVED": "Archived",
+      "DELETED": "Deleted"
+    },
+    "type": {
+      "NOTIFICATION": "Notification",
+      "PRIVATE": "Private Message",
+      "GROUP": "Group"
+    }
+  },
+  "internalMessageRecipient": {
+    "status": {
+      "SENT": "Sent",
+      "RECEIVED": "Received",
+      "READ": "Read",
+      "REVOKED": "Revoked",
+      "DELETED": "Deleted"
+    }
+  },
+  "ossProvider": {
+    "LOCAL": "Local Storage",
+    "MINIO": "MinIO",
+    "ALIYUN": "Alibaba Cloud OSS",
+    "QINIU": "Qiniu Cloud Storage",
+    "TENCENT": "Tencent COS",
+    "BAIDU": "Baidu BOS",
+    "HUAWEI": "Huawei OBS",
+    "AWS": "Amazon S3",
+    "AZURE": "Azure Blob Storage",
+    "GOOGLE": "Google Cloud Storage"
+  }
+}

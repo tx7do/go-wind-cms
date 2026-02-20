@@ -30,6 +30,8 @@ func NewRestMiddleware(
 	ctx *bootstrap.Context,
 	accessTokenChecker auth.AccessTokenChecker,
 	authorizer authzEngine.Engine,
+	apiAuditLogRepo auditV1.ApiAuditLogServiceClient,
+	loginLogRepo auditV1.LoginAuditLogServiceClient,
 ) []middleware.Middleware {
 	var ms []middleware.Middleware
 	ms = append(ms, logging.Server(ctx.GetLogger()))
@@ -41,10 +43,14 @@ func NewRestMiddleware(
 
 	ms = append(ms, applogging.Server(
 		applogging.WithWriteApiLogFunc(func(ctx context.Context, data *auditV1.ApiAuditLog) error {
-			return nil
+			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
+			_, err := apiAuditLogRepo.Create(ctx, &auditV1.CreateApiAuditLogRequest{Data: data})
+			return err
 		}),
 		applogging.WithWriteLoginLogFunc(func(ctx context.Context, data *auditV1.LoginAuditLog) error {
-			return nil
+			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
+			_, err := loginLogRepo.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
+			return err
 		}),
 	))
 

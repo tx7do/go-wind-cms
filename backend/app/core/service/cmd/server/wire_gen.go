@@ -51,7 +51,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionMenuRepo := data.NewPermissionMenuRepo(context, entClient)
 	permissionRepo := data.NewPermissionRepo(context, entClient, permissionApiRepo, permissionMenuRepo)
 	roleMetadataRepo := data.NewRoleMetadataRepo(context, entClient)
-	roleRepo := data.NewRoleRepo(context, entClient, rolePermissionRepo, permissionRepo, roleMetadataRepo)
+	roleRepo := data.NewRoleRepo(context, entClient, rolePermissionRepo, permissionRepo, roleMetadataRepo, userRoleRepo)
 	tenantRepo := data.NewTenantRepo(context, entClient)
 	authenticationService := service.NewAuthenticationService(context, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo)
 	loginPolicyRepo := data.NewLoginPolicyRepo(context, entClient)
@@ -74,7 +74,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	positionRepo := data.NewPositionRepo(context, entClient)
 	orgUnitRepo := data.NewOrgUnitRepo(context, entClient)
 	userService := service.NewUserService(context, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo)
-	roleService := service.NewRoleService(context, roleRepo, tenantRepo)
+	roleService := service.NewRoleService(context, roleRepo, tenantRepo, userRoleRepo)
 	positionService := service.NewPositionService(context, positionRepo, orgUnitRepo)
 	orgUnitService := service.NewOrgUnitService(context, orgUnitRepo, userRepo)
 	menuRepo := data.NewMenuRepo(context, entClient)
@@ -131,7 +131,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(context, grpcServer)
+	asynqServer := server.NewAsynqServer(context, taskService)
+	app := newApp(context, grpcServer, asynqServer)
 	return app, func() {
 		cleanup2()
 		cleanup()

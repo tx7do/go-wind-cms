@@ -21,12 +21,12 @@
 
 ### Swagger UI
 
-- [Admin Swagger UI](http://localhost:8800/docs/)
+- [Admin Swagger UI](http://localhost:9700/docs/)
 - [Front Swagger UI](http://localhost:9800/docs/)
 
 ### openapi.yaml
 
-- [Admin openapi.yaml](http://localhost:8800/docs/openapi.yaml)
+- [Admin openapi.yaml](http://localhost:9700/docs/openapi.yaml)
 - [Front openapi.yaml](http://localhost:9800/docs/openapi.yaml)
 
 ## 生成Protobuf API
