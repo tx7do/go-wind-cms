@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+// 编辑器类型
+enum EditorType {
+  EDITOR_TYPE_UNSPECIFIED = 0;
+
+  EDITOR_TYPE_MARKDOWN = 1;   // Markdown
+  EDITOR_TYPE_RICH_TEXT = 2;  // 富文本
+  EDITOR_TYPE_HTML = 3;       // HTML
+  EDITOR_TYPE_JSON_BLOCK = 4; // JSON 块编辑器（如 Notion 风格）
+  EDITOR_TYPE_PLAIN_TEXT = 5;      // 纯文本
+  EDITOR_TYPE_CODE = 6;            // 代码编辑器
+  EDITOR_TYPE_WYSIWYG = 7;         // WYSIWYG 编辑器
+  EDITOR_TYPE_VISUAL_BUILDER = 8;  // 可视化构建器
+  EDITOR_TYPE_SLATE = 9;           // Slate 编辑器
+  EDITOR_TYPE_PROSEMIRROR = 10;    // ProseMirror 编辑器
+}

@@ -48,6 +48,12 @@ func (Post) Fields() []ent.Field {
 				"EditorTypeRichText", "EDITOR_TYPE_RICH_TEXT",
 				"EditorTypeHtml", "EDITOR_TYPE_HTML",
 				"EditorTypeJsonBlock", "EDITOR_TYPE_JSON_BLOCK",
+				"EditorTypePlainText", "EDITOR_TYPE_PLAIN_TEXT",
+				"EditorTypeCode", "EDITOR_TYPE_CODE",
+				"EditorTypeWysiwyg", "EDITOR_TYPE_WYSIWYG",
+				"EditorTypeVisualBuilder", "EDITOR_TYPE_VISUAL_BUILDER",
+				"EditorTypeSlate", "EDITOR_TYPE_SLATE",
+				"EditorTypeProsemirror", "EDITOR_TYPE_PROSEMIRROR",
 			).
 			Default("EDITOR_TYPE_MARKDOWN").
 			Optional().

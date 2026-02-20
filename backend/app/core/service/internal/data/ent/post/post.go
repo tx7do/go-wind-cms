@@ -160,10 +160,16 @@ const DefaultEditorType = EditorTypeEditorTypeMarkdown
 
 // EditorType values.
 const (
-	EditorTypeEditorTypeMarkdown  EditorType = "EDITOR_TYPE_MARKDOWN"
-	EditorTypeEditorTypeRichText  EditorType = "EDITOR_TYPE_RICH_TEXT"
-	EditorTypeEditorTypeHtml      EditorType = "EDITOR_TYPE_HTML"
-	EditorTypeEditorTypeJsonBlock EditorType = "EDITOR_TYPE_JSON_BLOCK"
+	EditorTypeEditorTypeMarkdown      EditorType = "EDITOR_TYPE_MARKDOWN"
+	EditorTypeEditorTypeRichText      EditorType = "EDITOR_TYPE_RICH_TEXT"
+	EditorTypeEditorTypeHtml          EditorType = "EDITOR_TYPE_HTML"
+	EditorTypeEditorTypeJsonBlock     EditorType = "EDITOR_TYPE_JSON_BLOCK"
+	EditorTypeEditorTypePlainText     EditorType = "EDITOR_TYPE_PLAIN_TEXT"
+	EditorTypeEditorTypeCode          EditorType = "EDITOR_TYPE_CODE"
+	EditorTypeEditorTypeWysiwyg       EditorType = "EDITOR_TYPE_WYSIWYG"
+	EditorTypeEditorTypeVisualBuilder EditorType = "EDITOR_TYPE_VISUAL_BUILDER"
+	EditorTypeEditorTypeSlate         EditorType = "EDITOR_TYPE_SLATE"
+	EditorTypeEditorTypeProsemirror   EditorType = "EDITOR_TYPE_PROSEMIRROR"
 )
 
 func (et EditorType) String() string {
@@ -173,7 +179,7 @@ func (et EditorType) String() string {
 // EditorTypeValidator is a validator for the "editor_type" field enum values. It is called by the builders before save.
 func EditorTypeValidator(et EditorType) error {
 	switch et {
-	case EditorTypeEditorTypeMarkdown, EditorTypeEditorTypeRichText, EditorTypeEditorTypeHtml, EditorTypeEditorTypeJsonBlock:
+	case EditorTypeEditorTypeMarkdown, EditorTypeEditorTypeRichText, EditorTypeEditorTypeHtml, EditorTypeEditorTypeJsonBlock, EditorTypeEditorTypePlainText, EditorTypeEditorTypeCode, EditorTypeEditorTypeWysiwyg, EditorTypeEditorTypeVisualBuilder, EditorTypeEditorTypeSlate, EditorTypeEditorTypeProsemirror:
 		return nil
 	default:
 		return fmt.Errorf("post: invalid enum value for editor_type field: %q", et)

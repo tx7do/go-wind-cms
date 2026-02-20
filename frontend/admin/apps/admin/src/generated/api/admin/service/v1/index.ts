@@ -1539,6 +1539,7 @@ export type commentservicev1_Comment_ContentType =
 // 作者类型
 export type commentservicev1_Comment_AuthorType =
   | "AUTHOR_TYPE_UNSPECIFIED"
+  | "AUTHOR_TYPE_GUEST"
   | "AUTHOR_TYPE_USER"
   | "AUTHOR_TYPE_ADMIN"
   | "AUTHOR_TYPE_MODERATOR";
@@ -5426,7 +5427,7 @@ export type contentservicev1_Page = {
   id?: number;
   status?: contentservicev1_Page_PageStatus;
   type?: contentservicev1_Page_PageType;
-  editorType?: contentservicev1_Page_EditorType;
+  editorType?: contentservicev1_EditorType;
   slug?: string;
   authorId?: number;
   authorName?: string;
@@ -5467,13 +5468,19 @@ export type contentservicev1_Page_PageType =
   | "PAGE_TYPE_ERROR_404"
   | "PAGE_TYPE_ERROR_500"
   | "PAGE_TYPE_CUSTOM";
-// 编辑器类型（与 Post 共享）
-export type contentservicev1_Page_EditorType =
+// 编辑器类型
+export type contentservicev1_EditorType =
   | "EDITOR_TYPE_UNSPECIFIED"
   | "EDITOR_TYPE_MARKDOWN"
   | "EDITOR_TYPE_RICH_TEXT"
   | "EDITOR_TYPE_HTML"
-  | "EDITOR_TYPE_JSON_BLOCK";
+  | "EDITOR_TYPE_JSON_BLOCK"
+  | "EDITOR_TYPE_PLAIN_TEXT"
+  | "EDITOR_TYPE_CODE"
+  | "EDITOR_TYPE_WYSIWYG"
+  | "EDITOR_TYPE_VISUAL_BUILDER"
+  | "EDITOR_TYPE_SLATE"
+  | "EDITOR_TYPE_PROSEMIRROR";
 // 页面翻译
 export type contentservicev1_PageTranslation = {
   id?: number;
@@ -6782,7 +6789,7 @@ export type contentservicev1_ListPostResponse = {
 export type contentservicev1_Post = {
   id?: number;
   status?: contentservicev1_Post_PostStatus;
-  editorType?: contentservicev1_Post_EditorType;
+  editorType?: contentservicev1_EditorType;
   slug?: string;
   disallowComment?: boolean;
   inProgress?: boolean;
@@ -6815,13 +6822,6 @@ export type contentservicev1_Post_PostStatus =
   | "POST_STATUS_PUBLISHED"
   | "POST_STATUS_SCHEDULED"
   | "POST_STATUS_TRASHED";
-// 编辑器类型
-export type contentservicev1_Post_EditorType =
-  | "EDITOR_TYPE_UNSPECIFIED"
-  | "EDITOR_TYPE_MARKDOWN"
-  | "EDITOR_TYPE_RICH_TEXT"
-  | "EDITOR_TYPE_HTML"
-  | "EDITOR_TYPE_JSON_BLOCK";
 // 帖子翻译
 export type contentservicev1_PostTranslation = {
   id?: number;

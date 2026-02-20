@@ -5865,6 +5865,7 @@ components:
                 authorType:
                     enum:
                         - AUTHOR_TYPE_UNSPECIFIED
+                        - AUTHOR_TYPE_GUEST
                         - AUTHOR_TYPE_USER
                         - AUTHOR_TYPE_ADMIN
                         - AUTHOR_TYPE_MODERATOR
@@ -8319,6 +8320,12 @@ components:
                         - EDITOR_TYPE_RICH_TEXT
                         - EDITOR_TYPE_HTML
                         - EDITOR_TYPE_JSON_BLOCK
+                        - EDITOR_TYPE_PLAIN_TEXT
+                        - EDITOR_TYPE_CODE
+                        - EDITOR_TYPE_WYSIWYG
+                        - EDITOR_TYPE_VISUAL_BUILDER
+                        - EDITOR_TYPE_SLATE
+                        - EDITOR_TYPE_PROSEMIRROR
                     type: string
                     description: 编辑器类型
                     format: enum
@@ -8905,6 +8912,12 @@ components:
                         - EDITOR_TYPE_RICH_TEXT
                         - EDITOR_TYPE_HTML
                         - EDITOR_TYPE_JSON_BLOCK
+                        - EDITOR_TYPE_PLAIN_TEXT
+                        - EDITOR_TYPE_CODE
+                        - EDITOR_TYPE_WYSIWYG
+                        - EDITOR_TYPE_VISUAL_BUILDER
+                        - EDITOR_TYPE_SLATE
+                        - EDITOR_TYPE_PROSEMIRROR
                     type: string
                     description: 编辑器类型
                     format: enum

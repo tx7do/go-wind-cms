@@ -118,7 +118,7 @@ export const membershipPositionStatusList = computed(() => [
  * 状态转名称
  * @param status 状态值
  */
-export function membershipPositionStatusToName(status: any) {
+export function membershipPositionStatusToName(status: Position_Status) {
   const values = membershipPositionStatusList.value;
   const matchedItem = values.find((item) => item.value === status);
   return matchedItem ? matchedItem.label : '';
@@ -173,9 +173,9 @@ export const positionTypeList = computed(() => [
   },
 ]);
 
-export function positionTypeToName(status: Position_Status) {
+export function positionTypeToName(positionType: Position_Type) {
   const values = positionTypeList.value;
-  const matchedItem = values.find((item) => item.value === status);
+  const matchedItem = values.find((item) => item.value === positionType);
   return matchedItem ? matchedItem.label : '';
 }
 

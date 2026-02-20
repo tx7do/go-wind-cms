@@ -140,24 +140,27 @@ type Comment_AuthorType int32
 
 const (
 	Comment_AUTHOR_TYPE_UNSPECIFIED Comment_AuthorType = 0
-	Comment_AUTHOR_TYPE_USER        Comment_AuthorType = 1 // 普通用户
-	Comment_AUTHOR_TYPE_ADMIN       Comment_AuthorType = 2 // 管理员
-	Comment_AUTHOR_TYPE_MODERATOR   Comment_AuthorType = 3 // 审核员
+	Comment_AUTHOR_TYPE_GUEST       Comment_AuthorType = 1 // 游客
+	Comment_AUTHOR_TYPE_USER        Comment_AuthorType = 2 // 普通用户
+	Comment_AUTHOR_TYPE_ADMIN       Comment_AuthorType = 3 // 管理员
+	Comment_AUTHOR_TYPE_MODERATOR   Comment_AuthorType = 4 // 审核员
 )
 
 // Enum value maps for Comment_AuthorType.
 var (
 	Comment_AuthorType_name = map[int32]string{
 		0: "AUTHOR_TYPE_UNSPECIFIED",
-		1: "AUTHOR_TYPE_USER",
-		2: "AUTHOR_TYPE_ADMIN",
-		3: "AUTHOR_TYPE_MODERATOR",
+		1: "AUTHOR_TYPE_GUEST",
+		2: "AUTHOR_TYPE_USER",
+		3: "AUTHOR_TYPE_ADMIN",
+		4: "AUTHOR_TYPE_MODERATOR",
 	}
 	Comment_AuthorType_value = map[string]int32{
 		"AUTHOR_TYPE_UNSPECIFIED": 0,
-		"AUTHOR_TYPE_USER":        1,
-		"AUTHOR_TYPE_ADMIN":       2,
-		"AUTHOR_TYPE_MODERATOR":   3,
+		"AUTHOR_TYPE_GUEST":       1,
+		"AUTHOR_TYPE_USER":        2,
+		"AUTHOR_TYPE_ADMIN":       3,
+		"AUTHOR_TYPE_MODERATOR":   4,
 	}
 )
 
@@ -762,7 +765,7 @@ var File_comment_service_v1_comment_proto protoreflect.FileDescriptor
 
 const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"\n" +
-	" comment/service/v1/comment.proto\x12\x12comment.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xbe\x16\n" +
+	" comment/service/v1/comment.proto\x12\x12comment.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xd6\x16\n" +
 	"\aComment\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b评论IDH\x00R\x02id\x88\x01\x01\x12c\n" +
 	"\fcontent_type\x18\x02 \x01(\x0e2'.comment.service.v1.Comment.ContentTypeB\x12\xbaG\x0f\x92\x02\f内容类型H\x01R\vcontentType\x88\x01\x01\x120\n" +
@@ -818,13 +821,14 @@ const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"\x18CONTENT_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11CONTENT_TYPE_POST\x10\x01\x12\x15\n" +
 	"\x11CONTENT_TYPE_PAGE\x10\x02\x12\x18\n" +
-	"\x14CONTENT_TYPE_PRODUCT\x10\x03\"q\n" +
+	"\x14CONTENT_TYPE_PRODUCT\x10\x03\"\x88\x01\n" +
 	"\n" +
 	"AuthorType\x12\x1b\n" +
-	"\x17AUTHOR_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
-	"\x10AUTHOR_TYPE_USER\x10\x01\x12\x15\n" +
-	"\x11AUTHOR_TYPE_ADMIN\x10\x02\x12\x19\n" +
-	"\x15AUTHOR_TYPE_MODERATOR\x10\x03B\x05\n" +
+	"\x17AUTHOR_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x11AUTHOR_TYPE_GUEST\x10\x01\x12\x14\n" +
+	"\x10AUTHOR_TYPE_USER\x10\x02\x12\x15\n" +
+	"\x11AUTHOR_TYPE_ADMIN\x10\x03\x12\x19\n" +
+	"\x15AUTHOR_TYPE_MODERATOR\x10\x04B\x05\n" +
 	"\x03_idB\x0f\n" +
 	"\r_content_typeB\f\n" +
 	"\n" +

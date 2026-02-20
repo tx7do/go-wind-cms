@@ -52,5 +52,30 @@
     "moduleName": "Internal Messages",
     "internalMessage": "Message Management",
     "internalMessageCategory": "Message Categories"
+  },
+  "content": {
+    "moduleName": "Content Management",
+    "post": "Post Management",
+    "page": "Page Management",
+    "category": "Category Management",
+    "tag": "Tag Management"
+  },
+  "media": {
+    "moduleName": "Media Center",
+    "mediaAsset": "Media Assets",
+    "mediaCategory": "Media Categories"
+  },
+  "engagement": {
+    "moduleName": "Engagement Operations",
+    "comment": "Comment Management",
+    "feedback": "Feedback Management"
+  },
+  "siteSetting": {
+    "moduleName": "Site Configuration",
+    "siteSetting": "Site Settings",
+    "navigation": "Navigation Management",
+    "seoSetting": "SEO Settings",
+    "socialSetting": "Social Settings",
+    "analyticsSetting": "Analytics Settings"
   }
 }

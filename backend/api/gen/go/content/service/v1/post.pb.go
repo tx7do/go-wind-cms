@@ -82,68 +82,12 @@ func (Post_PostStatus) EnumDescriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{0, 0}
 }
 
-// 编辑器类型
-type Post_EditorType int32
-
-const (
-	Post_EDITOR_TYPE_UNSPECIFIED Post_EditorType = 0
-	Post_EDITOR_TYPE_MARKDOWN    Post_EditorType = 1 // Markdown
-	Post_EDITOR_TYPE_RICH_TEXT   Post_EditorType = 2 // 富文本
-	Post_EDITOR_TYPE_HTML        Post_EditorType = 3 // HTML
-	Post_EDITOR_TYPE_JSON_BLOCK  Post_EditorType = 4 // JSON 块编辑器（如 Notion 风格）
-)
-
-// Enum value maps for Post_EditorType.
-var (
-	Post_EditorType_name = map[int32]string{
-		0: "EDITOR_TYPE_UNSPECIFIED",
-		1: "EDITOR_TYPE_MARKDOWN",
-		2: "EDITOR_TYPE_RICH_TEXT",
-		3: "EDITOR_TYPE_HTML",
-		4: "EDITOR_TYPE_JSON_BLOCK",
-	}
-	Post_EditorType_value = map[string]int32{
-		"EDITOR_TYPE_UNSPECIFIED": 0,
-		"EDITOR_TYPE_MARKDOWN":    1,
-		"EDITOR_TYPE_RICH_TEXT":   2,
-		"EDITOR_TYPE_HTML":        3,
-		"EDITOR_TYPE_JSON_BLOCK":  4,
-	}
-)
-
-func (x Post_EditorType) Enum() *Post_EditorType {
-	p := new(Post_EditorType)
-	*p = x
-	return p
-}
-
-func (x Post_EditorType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (Post_EditorType) Descriptor() protoreflect.EnumDescriptor {
-	return file_content_service_v1_post_proto_enumTypes[1].Descriptor()
-}
-
-func (Post_EditorType) Type() protoreflect.EnumType {
-	return &file_content_service_v1_post_proto_enumTypes[1]
-}
-
-func (x Post_EditorType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use Post_EditorType.Descriptor instead.
-func (Post_EditorType) EnumDescriptor() ([]byte, []int) {
-	return file_content_service_v1_post_proto_rawDescGZIP(), []int{0, 1}
-}
-
 // 帖子
 type Post struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 帖子ID
 	Status          *Post_PostStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Post_PostStatus,oneof" json:"status,omitempty"`                                                             // 帖子状态
-	EditorType      *Post_EditorType       `protobuf:"varint,3,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.Post_EditorType,oneof" json:"editor_type,omitempty"`                                   // 编辑器类型
+	EditorType      *EditorType            `protobuf:"varint,3,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
 	Slug            *string                `protobuf:"bytes,4,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                                                                          // 默认 slug（当翻译中未提供 slug 时使用，建议保持英文）
 	DisallowComment *bool                  `protobuf:"varint,5,opt,name=disallow_comment,json=disallowComment,proto3,oneof" json:"disallow_comment,omitempty"`                                                            // 帖子是否禁止评论
 	InProgress      *bool                  `protobuf:"varint,6,opt,name=in_progress,json=inProgress,proto3,oneof" json:"in_progress,omitempty"`                                                                           // 帖子是否正在编辑中（如正在编辑则不允许发布，避免内容不完整）
@@ -215,11 +159,11 @@ func (x *Post) GetStatus() Post_PostStatus {
 	return Post_POST_STATUS_UNSPECIFIED
 }
 
-func (x *Post) GetEditorType() Post_EditorType {
+func (x *Post) GetEditorType() EditorType {
 	if x != nil && x.EditorType != nil {
 		return *x.EditorType
 	}
-	return Post_EDITOR_TYPE_UNSPECIFIED
+	return EditorType_EDITOR_TYPE_UNSPECIFIED
 }
 
 func (x *Post) GetSlug() string {
@@ -909,11 +853,11 @@ var File_content_service_v1_post_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_post_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcontent/service/v1/post.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xcf\x15\n" +
+	"\x1dcontent/service/v1/post.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xb7\x14\n" +
 	"\x04Post\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDH\x00R\x02id\x88\x01\x01\x12T\n" +
-	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Post.PostStatusB\x12\xbaG\x0f\x92\x02\f帖子状态H\x01R\x06status\x88\x01\x01\x12`\n" +
-	"\veditor_type\x18\x03 \x01(\x0e2#.content.service.v1.Post.EditorTypeB\x15\xbaG\x12\x92\x02\x0f编辑器类型H\x02R\n" +
+	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Post.PostStatusB\x12\xbaG\x0f\x92\x02\f帖子状态H\x01R\x06status\x88\x01\x01\x12[\n" +
+	"\veditor_type\x18\x03 \x01(\x0e2\x1e.content.service.v1.EditorTypeB\x15\xbaG\x12\x92\x02\x0f编辑器类型H\x02R\n" +
 	"editorType\x88\x01\x01\x12i\n" +
 	"\x04slug\x18\x04 \x01(\tBP\xbaGM\x92\x02J默认 slug（当翻译中未提供 slug 时使用，建议保持英文）H\x03R\x04slug\x88\x01\x01\x12N\n" +
 	"\x10disallow_comment\x18\x05 \x01(\bB\x1e\xbaG\x1b\x92\x02\x18帖子是否禁止评论H\x04R\x0fdisallowComment\x88\x01\x01\x12\x86\x01\n" +
@@ -959,14 +903,7 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\x11POST_STATUS_DRAFT\x10\x01\x12\x19\n" +
 	"\x15POST_STATUS_PUBLISHED\x10\x02\x12\x19\n" +
 	"\x15POST_STATUS_SCHEDULED\x10\x03\x12\x17\n" +
-	"\x13POST_STATUS_TRASHED\x10\x04\"\x90\x01\n" +
-	"\n" +
-	"EditorType\x12\x1b\n" +
-	"\x17EDITOR_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
-	"\x14EDITOR_TYPE_MARKDOWN\x10\x01\x12\x19\n" +
-	"\x15EDITOR_TYPE_RICH_TEXT\x10\x02\x12\x14\n" +
-	"\x10EDITOR_TYPE_HTML\x10\x03\x12\x1a\n" +
-	"\x16EDITOR_TYPE_JSON_BLOCK\x10\x04B\x05\n" +
+	"\x13POST_STATUS_TRASHED\x10\x04B\x05\n" +
 	"\x03_idB\t\n" +
 	"\a_statusB\x0e\n" +
 	"\f_editor_typeB\a\n" +
@@ -1093,20 +1030,20 @@ func file_content_service_v1_post_proto_rawDescGZIP() []byte {
 	return file_content_service_v1_post_proto_rawDescData
 }
 
-var file_content_service_v1_post_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_content_service_v1_post_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_content_service_v1_post_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_content_service_v1_post_proto_goTypes = []any{
 	(Post_PostStatus)(0),          // 0: content.service.v1.Post.PostStatus
-	(Post_EditorType)(0),          // 1: content.service.v1.Post.EditorType
-	(*Post)(nil),                  // 2: content.service.v1.Post
-	(*PostTranslation)(nil),       // 3: content.service.v1.PostTranslation
-	(*PostCategory)(nil),          // 4: content.service.v1.PostCategory
-	(*ListPostResponse)(nil),      // 5: content.service.v1.ListPostResponse
-	(*GetPostRequest)(nil),        // 6: content.service.v1.GetPostRequest
-	(*CreatePostRequest)(nil),     // 7: content.service.v1.CreatePostRequest
-	(*UpdatePostRequest)(nil),     // 8: content.service.v1.UpdatePostRequest
-	(*DeletePostRequest)(nil),     // 9: content.service.v1.DeletePostRequest
-	nil,                           // 10: content.service.v1.Post.CustomFieldsEntry
+	(*Post)(nil),                  // 1: content.service.v1.Post
+	(*PostTranslation)(nil),       // 2: content.service.v1.PostTranslation
+	(*PostCategory)(nil),          // 3: content.service.v1.PostCategory
+	(*ListPostResponse)(nil),      // 4: content.service.v1.ListPostResponse
+	(*GetPostRequest)(nil),        // 5: content.service.v1.GetPostRequest
+	(*CreatePostRequest)(nil),     // 6: content.service.v1.CreatePostRequest
+	(*UpdatePostRequest)(nil),     // 7: content.service.v1.UpdatePostRequest
+	(*DeletePostRequest)(nil),     // 8: content.service.v1.DeletePostRequest
+	nil,                           // 9: content.service.v1.Post.CustomFieldsEntry
+	(EditorType)(0),               // 10: content.service.v1.EditorType
 	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
 	(*fieldmaskpb.FieldMask)(nil), // 12: google.protobuf.FieldMask
 	(*v1.PagingRequest)(nil),      // 13: pagination.PagingRequest
@@ -1114,9 +1051,9 @@ var file_content_service_v1_post_proto_goTypes = []any{
 }
 var file_content_service_v1_post_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Post.status:type_name -> content.service.v1.Post.PostStatus
-	1,  // 1: content.service.v1.Post.editor_type:type_name -> content.service.v1.Post.EditorType
-	10, // 2: content.service.v1.Post.custom_fields:type_name -> content.service.v1.Post.CustomFieldsEntry
-	3,  // 3: content.service.v1.Post.translations:type_name -> content.service.v1.PostTranslation
+	10, // 1: content.service.v1.Post.editor_type:type_name -> content.service.v1.EditorType
+	9,  // 2: content.service.v1.Post.custom_fields:type_name -> content.service.v1.Post.CustomFieldsEntry
+	2,  // 3: content.service.v1.Post.translations:type_name -> content.service.v1.PostTranslation
 	11, // 4: content.service.v1.Post.created_at:type_name -> google.protobuf.Timestamp
 	11, // 5: content.service.v1.Post.updated_at:type_name -> google.protobuf.Timestamp
 	11, // 6: content.service.v1.Post.deleted_at:type_name -> google.protobuf.Timestamp
@@ -1124,20 +1061,20 @@ var file_content_service_v1_post_proto_depIdxs = []int32{
 	11, // 8: content.service.v1.PostTranslation.created_at:type_name -> google.protobuf.Timestamp
 	11, // 9: content.service.v1.PostTranslation.updated_at:type_name -> google.protobuf.Timestamp
 	11, // 10: content.service.v1.PostTranslation.deleted_at:type_name -> google.protobuf.Timestamp
-	2,  // 11: content.service.v1.ListPostResponse.items:type_name -> content.service.v1.Post
+	1,  // 11: content.service.v1.ListPostResponse.items:type_name -> content.service.v1.Post
 	12, // 12: content.service.v1.GetPostRequest.view_mask:type_name -> google.protobuf.FieldMask
-	2,  // 13: content.service.v1.CreatePostRequest.data:type_name -> content.service.v1.Post
-	2,  // 14: content.service.v1.UpdatePostRequest.data:type_name -> content.service.v1.Post
+	1,  // 13: content.service.v1.CreatePostRequest.data:type_name -> content.service.v1.Post
+	1,  // 14: content.service.v1.UpdatePostRequest.data:type_name -> content.service.v1.Post
 	12, // 15: content.service.v1.UpdatePostRequest.update_mask:type_name -> google.protobuf.FieldMask
 	13, // 16: content.service.v1.PostService.List:input_type -> pagination.PagingRequest
-	6,  // 17: content.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
-	7,  // 18: content.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
-	8,  // 19: content.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
-	9,  // 20: content.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
-	5,  // 21: content.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
-	2,  // 22: content.service.v1.PostService.Get:output_type -> content.service.v1.Post
-	2,  // 23: content.service.v1.PostService.Create:output_type -> content.service.v1.Post
-	2,  // 24: content.service.v1.PostService.Update:output_type -> content.service.v1.Post
+	5,  // 17: content.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
+	6,  // 18: content.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
+	7,  // 19: content.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
+	8,  // 20: content.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
+	4,  // 21: content.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
+	1,  // 22: content.service.v1.PostService.Get:output_type -> content.service.v1.Post
+	1,  // 23: content.service.v1.PostService.Create:output_type -> content.service.v1.Post
+	1,  // 24: content.service.v1.PostService.Update:output_type -> content.service.v1.Post
 	14, // 25: content.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
 	21, // [21:26] is the sub-list for method output_type
 	16, // [16:21] is the sub-list for method input_type
@@ -1151,6 +1088,7 @@ func file_content_service_v1_post_proto_init() {
 	if File_content_service_v1_post_proto != nil {
 		return
 	}
+	file_content_service_v1_types_proto_init()
 	file_content_service_v1_post_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_post_proto_msgTypes[1].OneofWrappers = []any{}
 	file_content_service_v1_post_proto_msgTypes[4].OneofWrappers = []any{}
@@ -1160,7 +1098,7 @@ func file_content_service_v1_post_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_post_proto_rawDesc), len(file_content_service_v1_post_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      1,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,

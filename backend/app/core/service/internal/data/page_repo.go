@@ -37,7 +37,7 @@ type PageRepo struct {
 
 	statusConverter     *mapper.EnumTypeConverter[contentV1.Page_PageStatus, page.Status]
 	typeConverter       *mapper.EnumTypeConverter[contentV1.Page_PageType, page.Type]
-	editorTypeConverter *mapper.EnumTypeConverter[contentV1.Page_EditorType, page.EditorType]
+	editorTypeConverter *mapper.EnumTypeConverter[contentV1.EditorType, page.EditorType]
 
 	pageTranslationRepo *PageTranslationRepo
 }
@@ -57,8 +57,8 @@ func NewPageRepo(
 		typeConverter: mapper.NewEnumTypeConverter[contentV1.Page_PageType, page.Type](
 			contentV1.Page_PageType_name, contentV1.Page_PageType_value,
 		),
-		editorTypeConverter: mapper.NewEnumTypeConverter[contentV1.Page_EditorType, page.EditorType](
-			contentV1.Page_EditorType_name, contentV1.Page_EditorType_value,
+		editorTypeConverter: mapper.NewEnumTypeConverter[contentV1.EditorType, page.EditorType](
+			contentV1.EditorType_name, contentV1.EditorType_value,
 		),
 		pageTranslationRepo: pageTranslationRepo,
 	}

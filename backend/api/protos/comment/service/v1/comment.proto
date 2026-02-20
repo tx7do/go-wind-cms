@@ -54,9 +54,10 @@ message Comment {
   enum AuthorType {
     AUTHOR_TYPE_UNSPECIFIED = 0;
 
-    AUTHOR_TYPE_USER = 1;      // 普通用户
-    AUTHOR_TYPE_ADMIN = 2;     // 管理员
-    AUTHOR_TYPE_MODERATOR = 3; // 审核员
+    AUTHOR_TYPE_GUEST = 1;     // 游客
+    AUTHOR_TYPE_USER = 2;      // 普通用户
+    AUTHOR_TYPE_ADMIN = 3;     // 管理员
+    AUTHOR_TYPE_MODERATOR = 4; // 审核员
   }
 
   optional uint32 id = 1 [

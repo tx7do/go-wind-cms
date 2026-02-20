@@ -138,69 +138,13 @@ func (Page_PageType) EnumDescriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{0, 1}
 }
 
-// 编辑器类型（与 Post 共享）
-type Page_EditorType int32
-
-const (
-	Page_EDITOR_TYPE_UNSPECIFIED Page_EditorType = 0
-	Page_EDITOR_TYPE_MARKDOWN    Page_EditorType = 1 // Markdown
-	Page_EDITOR_TYPE_RICH_TEXT   Page_EditorType = 2 // 富文本
-	Page_EDITOR_TYPE_HTML        Page_EditorType = 3 // HTML
-	Page_EDITOR_TYPE_JSON_BLOCK  Page_EditorType = 4 // JSON 块编辑器（如 Notion 风格）
-)
-
-// Enum value maps for Page_EditorType.
-var (
-	Page_EditorType_name = map[int32]string{
-		0: "EDITOR_TYPE_UNSPECIFIED",
-		1: "EDITOR_TYPE_MARKDOWN",
-		2: "EDITOR_TYPE_RICH_TEXT",
-		3: "EDITOR_TYPE_HTML",
-		4: "EDITOR_TYPE_JSON_BLOCK",
-	}
-	Page_EditorType_value = map[string]int32{
-		"EDITOR_TYPE_UNSPECIFIED": 0,
-		"EDITOR_TYPE_MARKDOWN":    1,
-		"EDITOR_TYPE_RICH_TEXT":   2,
-		"EDITOR_TYPE_HTML":        3,
-		"EDITOR_TYPE_JSON_BLOCK":  4,
-	}
-)
-
-func (x Page_EditorType) Enum() *Page_EditorType {
-	p := new(Page_EditorType)
-	*p = x
-	return p
-}
-
-func (x Page_EditorType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (Page_EditorType) Descriptor() protoreflect.EnumDescriptor {
-	return file_content_service_v1_page_proto_enumTypes[2].Descriptor()
-}
-
-func (Page_EditorType) Type() protoreflect.EnumType {
-	return &file_content_service_v1_page_proto_enumTypes[2]
-}
-
-func (x Page_EditorType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use Page_EditorType.Descriptor instead.
-func (Page_EditorType) EnumDescriptor() ([]byte, []int) {
-	return file_content_service_v1_page_proto_rawDescGZIP(), []int{0, 2}
-}
-
 // 页面
 type Page struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 页面ID
 	Status           *Page_PageStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Page_PageStatus,oneof" json:"status,omitempty"`                                                             // 页面状态
 	Type             *Page_PageType         `protobuf:"varint,3,opt,name=type,proto3,enum=content.service.v1.Page_PageType,oneof" json:"type,omitempty"`                                                                   // 页面类型
-	EditorType       *Page_EditorType       `protobuf:"varint,4,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.Page_EditorType,oneof" json:"editor_type,omitempty"`                                   // 编辑器类型
+	EditorType       *EditorType            `protobuf:"varint,4,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
 	Slug             *string                `protobuf:"bytes,5,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                                                                          // 页面别名
 	AuthorId         *uint32                `protobuf:"varint,6,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                 // 页面作者ID
 	AuthorName       *string                `protobuf:"bytes,7,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                            // 页面作者名称
@@ -280,11 +224,11 @@ func (x *Page) GetType() Page_PageType {
 	return Page_PAGE_TYPE_UNSPECIFIED
 }
 
-func (x *Page) GetEditorType() Page_EditorType {
+func (x *Page) GetEditorType() EditorType {
 	if x != nil && x.EditorType != nil {
 		return *x.EditorType
 	}
-	return Page_EDITOR_TYPE_UNSPECIFIED
+	return EditorType_EDITOR_TYPE_UNSPECIFIED
 }
 
 func (x *Page) GetSlug() string {
@@ -929,12 +873,12 @@ var File_content_service_v1_page_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc6\x1a\n" +
+	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xae\x19\n" +
 	"\x04Page\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b页面IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Page.PageStatusB\x12\xbaG\x0f\x92\x02\f页面状态H\x01R\x06status\x88\x01\x01\x12\x8c\x01\n" +
-	"\x04type\x18\x03 \x01(\x0e2!.content.service.v1.Page.PageTypeBP\xbaGM\x92\x02J页面类型（首页/404/普通页面等，影响路由和渲染逻辑）H\x02R\x04type\x88\x01\x01\x12`\n" +
-	"\veditor_type\x18\x04 \x01(\x0e2#.content.service.v1.Page.EditorTypeB\x15\xbaG\x12\x92\x02\x0f编辑器类型H\x03R\n" +
+	"\x04type\x18\x03 \x01(\x0e2!.content.service.v1.Page.PageTypeBP\xbaGM\x92\x02J页面类型（首页/404/普通页面等，影响路由和渲染逻辑）H\x02R\x04type\x88\x01\x01\x12[\n" +
+	"\veditor_type\x18\x04 \x01(\x0e2\x1e.content.service.v1.EditorTypeB\x15\xbaG\x12\x92\x02\x0f编辑器类型H\x03R\n" +
 	"editorType\x88\x01\x01\x12W\n" +
 	"\x04slug\x18\x05 \x01(\tB>\xbaG;\x92\x028页面别名（URL 友好，首页可为空表示 '/'）H\x04R\x04slug\x88\x01\x01\x126\n" +
 	"\tauthor_id\x18\x06 \x01(\rB\x14\xbaG\x11\x92\x02\x0e页面作者IDH\x05R\bauthorId\x88\x01\x01\x12>\n" +
@@ -987,14 +931,7 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\x0ePAGE_TYPE_HOME\x10\x02\x12\x17\n" +
 	"\x13PAGE_TYPE_ERROR_404\x10\x03\x12\x17\n" +
 	"\x13PAGE_TYPE_ERROR_500\x10\x04\x12\x14\n" +
-	"\x10PAGE_TYPE_CUSTOM\x10\x05\"\x90\x01\n" +
-	"\n" +
-	"EditorType\x12\x1b\n" +
-	"\x17EDITOR_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
-	"\x14EDITOR_TYPE_MARKDOWN\x10\x01\x12\x19\n" +
-	"\x15EDITOR_TYPE_RICH_TEXT\x10\x02\x12\x14\n" +
-	"\x10EDITOR_TYPE_HTML\x10\x03\x12\x1a\n" +
-	"\x16EDITOR_TYPE_JSON_BLOCK\x10\x04B\x05\n" +
+	"\x10PAGE_TYPE_CUSTOM\x10\x05B\x05\n" +
 	"\x03_idB\t\n" +
 	"\a_statusB\a\n" +
 	"\x05_typeB\x0e\n" +
@@ -1121,20 +1058,20 @@ func file_content_service_v1_page_proto_rawDescGZIP() []byte {
 	return file_content_service_v1_page_proto_rawDescData
 }
 
-var file_content_service_v1_page_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_content_service_v1_page_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_content_service_v1_page_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_content_service_v1_page_proto_goTypes = []any{
 	(Page_PageStatus)(0),          // 0: content.service.v1.Page.PageStatus
 	(Page_PageType)(0),            // 1: content.service.v1.Page.PageType
-	(Page_EditorType)(0),          // 2: content.service.v1.Page.EditorType
-	(*Page)(nil),                  // 3: content.service.v1.Page
-	(*PageTranslation)(nil),       // 4: content.service.v1.PageTranslation
-	(*ListPageResponse)(nil),      // 5: content.service.v1.ListPageResponse
-	(*GetPageRequest)(nil),        // 6: content.service.v1.GetPageRequest
-	(*CreatePageRequest)(nil),     // 7: content.service.v1.CreatePageRequest
-	(*UpdatePageRequest)(nil),     // 8: content.service.v1.UpdatePageRequest
-	(*DeletePageRequest)(nil),     // 9: content.service.v1.DeletePageRequest
-	nil,                           // 10: content.service.v1.Page.CustomFieldsEntry
+	(*Page)(nil),                  // 2: content.service.v1.Page
+	(*PageTranslation)(nil),       // 3: content.service.v1.PageTranslation
+	(*ListPageResponse)(nil),      // 4: content.service.v1.ListPageResponse
+	(*GetPageRequest)(nil),        // 5: content.service.v1.GetPageRequest
+	(*CreatePageRequest)(nil),     // 6: content.service.v1.CreatePageRequest
+	(*UpdatePageRequest)(nil),     // 7: content.service.v1.UpdatePageRequest
+	(*DeletePageRequest)(nil),     // 8: content.service.v1.DeletePageRequest
+	nil,                           // 9: content.service.v1.Page.CustomFieldsEntry
+	(EditorType)(0),               // 10: content.service.v1.EditorType
 	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
 	(*fieldmaskpb.FieldMask)(nil), // 12: google.protobuf.FieldMask
 	(*v1.PagingRequest)(nil),      // 13: pagination.PagingRequest
@@ -1143,30 +1080,30 @@ var file_content_service_v1_page_proto_goTypes = []any{
 var file_content_service_v1_page_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Page.status:type_name -> content.service.v1.Page.PageStatus
 	1,  // 1: content.service.v1.Page.type:type_name -> content.service.v1.Page.PageType
-	2,  // 2: content.service.v1.Page.editor_type:type_name -> content.service.v1.Page.EditorType
-	10, // 3: content.service.v1.Page.custom_fields:type_name -> content.service.v1.Page.CustomFieldsEntry
-	4,  // 4: content.service.v1.Page.translations:type_name -> content.service.v1.PageTranslation
-	3,  // 5: content.service.v1.Page.children:type_name -> content.service.v1.Page
+	10, // 2: content.service.v1.Page.editor_type:type_name -> content.service.v1.EditorType
+	9,  // 3: content.service.v1.Page.custom_fields:type_name -> content.service.v1.Page.CustomFieldsEntry
+	3,  // 4: content.service.v1.Page.translations:type_name -> content.service.v1.PageTranslation
+	2,  // 5: content.service.v1.Page.children:type_name -> content.service.v1.Page
 	11, // 6: content.service.v1.Page.created_at:type_name -> google.protobuf.Timestamp
 	11, // 7: content.service.v1.Page.updated_at:type_name -> google.protobuf.Timestamp
 	11, // 8: content.service.v1.Page.deleted_at:type_name -> google.protobuf.Timestamp
 	11, // 9: content.service.v1.PageTranslation.created_at:type_name -> google.protobuf.Timestamp
 	11, // 10: content.service.v1.PageTranslation.updated_at:type_name -> google.protobuf.Timestamp
 	11, // 11: content.service.v1.PageTranslation.deleted_at:type_name -> google.protobuf.Timestamp
-	3,  // 12: content.service.v1.ListPageResponse.items:type_name -> content.service.v1.Page
+	2,  // 12: content.service.v1.ListPageResponse.items:type_name -> content.service.v1.Page
 	12, // 13: content.service.v1.GetPageRequest.view_mask:type_name -> google.protobuf.FieldMask
-	3,  // 14: content.service.v1.CreatePageRequest.data:type_name -> content.service.v1.Page
-	3,  // 15: content.service.v1.UpdatePageRequest.data:type_name -> content.service.v1.Page
+	2,  // 14: content.service.v1.CreatePageRequest.data:type_name -> content.service.v1.Page
+	2,  // 15: content.service.v1.UpdatePageRequest.data:type_name -> content.service.v1.Page
 	12, // 16: content.service.v1.UpdatePageRequest.update_mask:type_name -> google.protobuf.FieldMask
 	13, // 17: content.service.v1.PageService.List:input_type -> pagination.PagingRequest
-	6,  // 18: content.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
-	7,  // 19: content.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
-	8,  // 20: content.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
-	9,  // 21: content.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
-	5,  // 22: content.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
-	3,  // 23: content.service.v1.PageService.Get:output_type -> content.service.v1.Page
-	3,  // 24: content.service.v1.PageService.Create:output_type -> content.service.v1.Page
-	3,  // 25: content.service.v1.PageService.Update:output_type -> content.service.v1.Page
+	5,  // 18: content.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
+	6,  // 19: content.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
+	7,  // 20: content.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
+	8,  // 21: content.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
+	4,  // 22: content.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
+	2,  // 23: content.service.v1.PageService.Get:output_type -> content.service.v1.Page
+	2,  // 24: content.service.v1.PageService.Create:output_type -> content.service.v1.Page
+	2,  // 25: content.service.v1.PageService.Update:output_type -> content.service.v1.Page
 	14, // 26: content.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
 	22, // [22:27] is the sub-list for method output_type
 	17, // [17:22] is the sub-list for method input_type
@@ -1180,6 +1117,7 @@ func file_content_service_v1_page_proto_init() {
 	if File_content_service_v1_page_proto != nil {
 		return
 	}
+	file_content_service_v1_types_proto_init()
 	file_content_service_v1_page_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_page_proto_msgTypes[1].OneofWrappers = []any{}
 	file_content_service_v1_page_proto_msgTypes[3].OneofWrappers = []any{}
@@ -1189,7 +1127,7 @@ func file_content_service_v1_page_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_page_proto_rawDesc), len(file_content_service_v1_page_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      2,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,

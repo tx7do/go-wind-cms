@@ -169,6 +169,7 @@ type AuthorType string
 
 // AuthorType values.
 const (
+	AuthorTypeAuthorTypeGuest     AuthorType = "AUTHOR_TYPE_GUEST"
 	AuthorTypeAuthorTypeUser      AuthorType = "AUTHOR_TYPE_USER"
 	AuthorTypeAuthorTypeAdmin     AuthorType = "AUTHOR_TYPE_ADMIN"
 	AuthorTypeAuthorTypeModerator AuthorType = "AUTHOR_TYPE_MODERATOR"
@@ -181,7 +182,7 @@ func (at AuthorType) String() string {
 // AuthorTypeValidator is a validator for the "author_type" field enum values. It is called by the builders before save.
 func AuthorTypeValidator(at AuthorType) error {
 	switch at {
-	case AuthorTypeAuthorTypeUser, AuthorTypeAuthorTypeAdmin, AuthorTypeAuthorTypeModerator:
+	case AuthorTypeAuthorTypeGuest, AuthorTypeAuthorTypeUser, AuthorTypeAuthorTypeAdmin, AuthorTypeAuthorTypeModerator:
 		return nil
 	default:
 		return fmt.Errorf("comment: invalid enum value for author_type field: %q", at)

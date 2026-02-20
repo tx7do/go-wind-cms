@@ -8,6 +8,8 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 import "pagination/v1/pagination.proto";
 
+import "content/service/v1/types.proto";
+
 // 帖子服务
 service PostService {
   // 获取帖子列表
@@ -36,16 +38,6 @@ message Post {
     POST_STATUS_PUBLISHED = 2;  // 已发布
     POST_STATUS_SCHEDULED = 3;  // 定时发布
     POST_STATUS_TRASHED = 4;    // 回收站
-  }
-
-  // 编辑器类型
-  enum EditorType {
-    EDITOR_TYPE_UNSPECIFIED = 0;
-
-    EDITOR_TYPE_MARKDOWN = 1;   // Markdown
-    EDITOR_TYPE_RICH_TEXT = 2;  // 富文本
-    EDITOR_TYPE_HTML = 3;       // HTML
-    EDITOR_TYPE_JSON_BLOCK = 4; // JSON 块编辑器（如 Notion 风格）
   }
 
   optional uint32 id = 1 [

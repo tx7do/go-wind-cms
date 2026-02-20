@@ -39,7 +39,7 @@ type PostRepo struct {
 	]
 
 	statusConverter     *mapper.EnumTypeConverter[contentV1.Post_PostStatus, post.Status]
-	editorTypeConverter *mapper.EnumTypeConverter[contentV1.Post_EditorType, post.EditorType]
+	editorTypeConverter *mapper.EnumTypeConverter[contentV1.EditorType, post.EditorType]
 
 	postTranslationRepo *PostTranslationRepo
 	postCategoryRepo    *PostCategoryRepo
@@ -58,8 +58,8 @@ func NewPostRepo(
 		statusConverter: mapper.NewEnumTypeConverter[contentV1.Post_PostStatus, post.Status](
 			contentV1.Post_PostStatus_name, contentV1.Post_PostStatus_value,
 		),
-		editorTypeConverter: mapper.NewEnumTypeConverter[contentV1.Post_EditorType, post.EditorType](
-			contentV1.Post_EditorType_name, contentV1.Post_EditorType_value,
+		editorTypeConverter: mapper.NewEnumTypeConverter[contentV1.EditorType, post.EditorType](
+			contentV1.EditorType_name, contentV1.EditorType_value,
 		),
 		postTranslationRepo: postTranslationRepo,
 		postCategoryRepo:    postCategoryRepo,

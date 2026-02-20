@@ -11,7 +11,7 @@ const log: RouteRecordRaw[] = [
     redirect: '/log/login-audit-logs',
     meta: {
       order: 2004,
-      icon: 'lucide:logs',
+      icon: 'lucide:file-text',
       title: $t('menu.log.moduleName'),
       keepAlive: true,
       authority: ['sys:platform_admin'],

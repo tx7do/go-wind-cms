@@ -73,6 +73,7 @@ func (Comment) Fields() []ent.Field {
 		field.Enum("author_type").
 			Comment("作者类型").
 			NamedValues(
+				"AuthorTypeGuest", "AUTHOR_TYPE_GUEST",
 				"AuthorTypeUser", "AUTHOR_TYPE_USER",
 				"AuthorTypeAdmin", "AUTHOR_TYPE_ADMIN",
 				"AuthorTypeModerator", "AUTHOR_TYPE_MODERATOR",

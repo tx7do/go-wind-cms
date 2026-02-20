@@ -52,5 +52,30 @@
     "moduleName": "站内消息",
     "internalMessage": "消息管理",
     "internalMessageCategory": "消息分类"
+  },
+  "content": {
+    "moduleName": "内容管理",
+    "post": "帖子管理",
+    "page": "页面管理",
+    "category": "分类管理",
+    "tag": "标签管理"
+  },
+  "media": {
+    "moduleName": "媒体中心",
+    "mediaAsset": "媒体资源",
+    "mediaCategory": "媒体分类"
+  },
+  "engagement": {
+    "moduleName": "互动运营",
+    "comment": "评论管理",
+    "feedback": "反馈管理"
+  },
+  "siteSetting": {
+    "moduleName": "站点配置",
+    "siteSetting": "站点设置",
+    "navigation": "导航管理",
+    "seoSetting": "SEO设置",
+    "socialSetting": "社交设置",
+    "analyticsSetting": "统计设置"
   }
 }
