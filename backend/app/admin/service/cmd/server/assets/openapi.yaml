@@ -4489,6 +4489,168 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/sites:
+        get:
+            tags:
+                - SiteService
+            description: 获取站点列表
+            operationId: SiteService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListSiteResponse'
+        post:
+            tags:
+                - SiteService
+            description: 创建站点
+            operationId: SiteService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateSiteRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Site'
+    /admin/v1/sites/{id}:
+        get:
+            tags:
+                - SiteService
+            description: 获取站点数据
+            operationId: SiteService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Site'
+        put:
+            tags:
+                - SiteService
+            description: 更新站点
+            operationId: SiteService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateSiteRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Site'
+        delete:
+            tags:
+                - SiteService
+            description: 删除站点
+            operationId: SiteService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/tags:
         get:
             tags:
@@ -6079,6 +6241,12 @@ components:
                 data:
                     $ref: '#/components/schemas/Role'
             description: 创建角色 - 请求
+        CreateSiteRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/Site'
+            description: 请求 - 创建站点
         CreateSiteSettingRequest:
             type: object
             properties:
@@ -7239,6 +7407,16 @@ components:
                     items:
                         $ref: '#/components/schemas/MenuRouteItem'
             description: 查询路由列表 - 回应
+        ListSiteResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Site'
+                total:
+                    type: string
+            description: 回应 - 站点列表
         ListSiteSettingResponse:
             type: object
             properties:
@@ -9248,6 +9426,80 @@ components:
                     type: integer
                     description: 消息ID
                     format: uint32
+        Site:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 站点ID
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 站点名称（如'主站'、'博客'）
+                slug:
+                    type: string
+                    description: 站点标识（如'main'、'blog'）
+                domain:
+                    type: string
+                    description: 主域名（如'www.example.com'）
+                alternateDomains:
+                    type: array
+                    items:
+                        type: string
+                    description: 备用域名列表
+                isDefault:
+                    type: boolean
+                    description: 是否为默认站点
+                status:
+                    enum:
+                        - SITE_STATUS_UNSPECIFIED
+                        - SITE_STATUS_ACTIVE
+                        - SITE_STATUS_INACTIVE
+                        - SITE_STATUS_MAINTENANCE
+                    type: string
+                    description: 站点状态
+                    format: enum
+                defaultLocale:
+                    type: string
+                    description: 默认语言（如'zh-CN'、'en-US'）
+                template:
+                    type: string
+                    description: 站点模板（如'blog'、'portfolio'）
+                theme:
+                    type: string
+                    description: 主题名称
+                visitCount:
+                    type: string
+                    description: 访问次数
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 站点
         SiteSetting:
             type: object
             properties:
@@ -10110,6 +10362,23 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新角色 - 请求
+        UpdateSiteRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/Site'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 请求 - 更新站点
         UpdateSiteSettingRequest:
             type: object
             properties:
@@ -10504,6 +10773,8 @@ tags:
       description: 帖子服务
     - name: RoleService
       description: 角色管理服务
+    - name: SiteService
+      description: 站点服务
     - name: SiteSettingService
       description: 站点配置服务
     - name: TagService

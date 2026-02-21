@@ -559,14 +559,17 @@
     "locale": "语言区域",
     "group": "配置分组",
     "key": "配置键",
-    "value": "配置值",
-    "type": "配置项类型",
-    "label": "配置项标签",
+    "value": "值",
+    "type": "类型",
+    "label": "标签",
     "description": "配置项描述",
     "placeholder": "输入框占位符",
     "options": "下拉选项",
     "isRequired": "是否必填",
-    "validationRegex": "验证正则表达式"
+    "validationRegex": "验证正则表达式",
+    "button": {
+      "create": "创建配置"
+    }
   },
   "navigation": {
     "moduleName": "导航管理",
@@ -575,5 +578,21 @@
     "isActive": "是否启用",
     "locale": "语言区域",
     "items": "导航项列表"
+  },
+  "site": {
+    "moduleName": "站点管理",
+    "name": "站点名称",
+    "slug": "站点标识",
+    "domain": "主域名",
+    "alternateDomains": "备用域名列表",
+    "isDefault": "是否默认站点",
+    "status": "站点状态",
+    "defaultLocale": "默认语言",
+    "template": "站点模板",
+    "theme": "主题名称",
+    "visitCount": "访问次数",
+    "button": {
+      "create": "创建站点"
+    }
   }
 }

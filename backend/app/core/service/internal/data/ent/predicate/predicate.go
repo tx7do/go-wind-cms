@@ -141,6 +141,9 @@ type RoleMetadata func(*sql.Selector)
 // RolePermission is the predicate function for rolepermission builders.
 type RolePermission func(*sql.Selector)
 
+// Site is the predicate function for site builders.
+type Site func(*sql.Selector)
+
 // SiteSetting is the predicate function for sitesetting builders.
 type SiteSetting func(*sql.Selector)
 

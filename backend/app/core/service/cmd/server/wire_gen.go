@@ -117,6 +117,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	pageTranslationRepo := data.NewPageTranslationRepo(context, entClient)
 	pageRepo := data.NewPageRepo(context, entClient, pageTranslationRepo)
 	pageService := service.NewPageService(context, pageRepo)
+	siteRepo := data.NewSiteRepo(context, entClient)
+	siteService := service.NewSiteService(context, siteRepo)
 	siteSettingRepo := data.NewSiteSettingRepo(context, entClient)
 	siteSettingService := service.NewSiteSettingService(context, siteSettingRepo)
 	navigationItemRepo := data.NewNavigationItemRepo(context, entClient)
@@ -125,7 +127,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	mediaVariantRepo := data.NewMediaVariantRepo(context, entClient)
 	mediaAssetRepo := data.NewMediaAssetRepo(context, entClient, mediaVariantRepo)
 	mediaAssetService := service.NewMediaAssetService(context, mediaAssetRepo)
-	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, taskService, uEditorService, fileService, dictTypeService, dictEntryService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, commentService, postService, categoryService, tagService, pageService, siteSettingService, navigationService, mediaAssetService)
+	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, taskService, uEditorService, fileService, dictTypeService, dictEntryService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, commentService, postService, categoryService, tagService, pageService, siteService, siteSettingService, navigationService, mediaAssetService)
 	if err != nil {
 		cleanup2()
 		cleanup()

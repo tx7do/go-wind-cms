@@ -2,7 +2,6 @@ package data
 
 import (
 	"github.com/redis/go-redis/v9"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	authnEngine "github.com/tx7do/kratos-authn/engine"
 	"github.com/tx7do/kratos-authn/engine/jwt"
@@ -13,6 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
@@ -387,6 +387,15 @@ func NewSiteSettingServiceClient(ctx *bootstrap.Context, r registry.Discovery) s
 	}
 
 	return siteV1.NewSiteSettingServiceClient(cli)
+}
+
+func NewSiteServiceClient(ctx *bootstrap.Context, r registry.Discovery) siteV1.SiteServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return siteV1.NewSiteServiceClient(cli)
 }
 
 func NewMediaAssetServiceClient(ctx *bootstrap.Context, r registry.Discovery) mediaV1.MediaAssetServiceClient {

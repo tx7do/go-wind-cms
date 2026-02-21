@@ -1191,6 +1191,30 @@ func (f RolePermissionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RolePermissionMutation", m)
 }
 
+// The SiteQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SiteQueryRuleFunc func(context.Context, *ent.SiteQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SiteQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SiteQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SiteQuery", q)
+}
+
+// The SiteMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SiteMutationRuleFunc func(context.Context, *ent.SiteMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SiteMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SiteMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SiteMutation", m)
+}
+
 // The SiteSettingQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SiteSettingQueryRuleFunc func(context.Context, *ent.SiteSettingQuery) error
@@ -1556,6 +1580,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.RolePermissionQuery:
 		return q.Filter(), nil
+	case *ent.SiteQuery:
+		return q.Filter(), nil
 	case *ent.SiteSettingQuery:
 		return q.Filter(), nil
 	case *ent.TagQuery:
@@ -1672,6 +1698,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RoleMetadataMutation:
 		return m.Filter(), nil
 	case *ent.RolePermissionMutation:
+		return m.Filter(), nil
+	case *ent.SiteMutation:
 		return m.Filter(), nil
 	case *ent.SiteSettingMutation:
 		return m.Filter(), nil

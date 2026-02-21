@@ -65,10 +65,14 @@ var ProviderSet = wire.NewSet(
 
 	data.NewPageServiceClient,
 	data.NewCategoryServiceClient,
-	data.NewCommentServiceClient,
 	data.NewPostServiceClient,
 	data.NewTagServiceClient,
+
+	data.NewCommentServiceClient,
+
 	data.NewNavigationServiceClient,
 	data.NewSiteSettingServiceClient,
+	data.NewSiteServiceClient,
+
 	data.NewMediaAssetServiceClient,
 )

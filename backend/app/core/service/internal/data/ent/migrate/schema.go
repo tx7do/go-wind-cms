@@ -3067,6 +3067,56 @@ var (
 			},
 		},
 	}
+	// SitesColumns holds the columns for the "sites" table.
+	SitesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "站点名称"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "站点标识"},
+		{Name: "domain", Type: field.TypeString, Nullable: true, Comment: "主域名"},
+		{Name: "alternate_domains", Type: field.TypeJSON, Nullable: true, Comment: "备用域名列表"},
+		{Name: "is_default", Type: field.TypeBool, Nullable: true, Comment: "是否为默认站点", Default: false},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "站点状态", Enums: []string{"SITE_STATUS_ACTIVE", "SITE_STATUS_INACTIVE", "SITE_STATUS_MAINTENANCE"}, Default: "SITE_STATUS_ACTIVE"},
+		{Name: "default_locale", Type: field.TypeString, Nullable: true, Comment: "默认语言"},
+		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "站点模板"},
+		{Name: "theme", Type: field.TypeString, Nullable: true, Comment: "主题名称"},
+		{Name: "visit_count", Type: field.TypeUint64, Nullable: true, Comment: "访问次数"},
+	}
+	// SitesTable holds the schema information for the "sites" table.
+	SitesTable = &schema.Table{
+		Name:       "sites",
+		Comment:    "站点表",
+		Columns:    SitesColumns,
+		PrimaryKey: []*schema.Column{SitesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "site_tenant_id_slug",
+				Unique:  true,
+				Columns: []*schema.Column{SitesColumns[7], SitesColumns[9]},
+			},
+			{
+				Name:    "site_tenant_id_domain",
+				Unique:  true,
+				Columns: []*schema.Column{SitesColumns[7], SitesColumns[10]},
+			},
+			{
+				Name:    "site_tenant_id_is_default",
+				Unique:  false,
+				Columns: []*schema.Column{SitesColumns[7], SitesColumns[12]},
+			},
+			{
+				Name:    "site_tenant_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{SitesColumns[7], SitesColumns[13]},
+			},
+		},
+	}
 	// SiteSettingsColumns holds the columns for the "site_settings" table.
 	SiteSettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3858,6 +3908,7 @@ var (
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
+		SitesTable,
 		SiteSettingsTable,
 		TagsTable,
 		TagTranslationsTable,
@@ -4104,6 +4155,11 @@ func init() {
 	}
 	SysRolePermissionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_role_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SitesTable.Annotation = &entsql.Annotation{
+		Table:     "sites",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

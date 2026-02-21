@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+import "site/service/v1/site.proto";
+
+// 站点服务
+service SiteService {
+  // 获取站点列表
+  rpc List (pagination.PagingRequest) returns (site.service.v1.ListSiteResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/sites"
+    };
+  }
+
+  // 获取站点数据
+  rpc Get (site.service.v1.GetSiteRequest) returns (site.service.v1.Site) {
+    option (google.api.http) = {
+      get: "/admin/v1/sites/{id}"
+    };
+  }
+
+  // 创建站点
+  rpc Create (site.service.v1.CreateSiteRequest) returns (site.service.v1.Site) {
+    option (google.api.http) = {
+      post: "/admin/v1/sites"
+      body: "*"
+    };
+  }
+
+  // 更新站点
+  rpc Update (site.service.v1.UpdateSiteRequest) returns (site.service.v1.Site) {
+    option (google.api.http) = {
+      put: "/admin/v1/sites/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除站点
+  rpc Delete (site.service.v1.DeleteSiteRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/sites/{id}"
+    };
+  }
+}

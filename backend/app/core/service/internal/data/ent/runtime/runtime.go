@@ -51,6 +51,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-cms/app/core/service/internal/data/ent/schema"
+	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
@@ -1243,6 +1244,34 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	siteMixin := schema.Site{}.Mixin()
+	site.Policy = privacy.NewPolicies(siteMixin[3], schema.Site{})
+	site.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := site.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	siteMixinFields0 := siteMixin[0].Fields()
+	_ = siteMixinFields0
+	siteMixinFields3 := siteMixin[3].Fields()
+	_ = siteMixinFields3
+	siteFields := schema.Site{}.Fields()
+	_ = siteFields
+	// siteDescTenantID is the schema descriptor for tenant_id field.
+	siteDescTenantID := siteMixinFields3[0].Descriptor()
+	// site.DefaultTenantID holds the default value on creation for the tenant_id field.
+	site.DefaultTenantID = siteDescTenantID.Default.(uint32)
+	// siteDescIsDefault is the schema descriptor for is_default field.
+	siteDescIsDefault := siteFields[4].Descriptor()
+	// site.DefaultIsDefault holds the default value on creation for the is_default field.
+	site.DefaultIsDefault = siteDescIsDefault.Default.(bool)
+	// siteDescID is the schema descriptor for id field.
+	siteDescID := siteMixinFields0[0].Descriptor()
+	// site.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	site.IDValidator = siteDescID.Validators[0].(func(uint32) error)
 	sitesettingMixin := schema.SiteSetting{}.Mixin()
 	sitesettingMixinFields0 := sitesettingMixin[0].Fields()
 	_ = sitesettingMixinFields0

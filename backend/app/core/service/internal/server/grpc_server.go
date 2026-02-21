@@ -80,6 +80,7 @@ func NewGrpcServer(
 	tagService *service.TagService,
 	pageService *service.PageService,
 
+	siteService *service.SiteService,
 	siteSettingService *service.SiteSettingService,
 	navigationService *service.NavigationService,
 
@@ -140,6 +141,7 @@ func NewGrpcServer(
 
 	siteV1.RegisterSiteSettingServiceServer(srv, siteSettingService)
 	siteV1.RegisterNavigationServiceServer(srv, navigationService)
+	siteV1.RegisterSiteServiceServer(srv, siteService)
 
 	mediaV1.RegisterMediaAssetServiceServer(srv, mediaAssetService)
 

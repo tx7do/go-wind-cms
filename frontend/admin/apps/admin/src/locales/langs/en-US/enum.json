@@ -335,5 +335,12 @@
       "SETTING_TYPE_SELECT": "Select",
       "SETTING_TYPE_JSON": "JSON"
     }
+  },
+  "site": {
+    "status": {
+      "SITE_STATUS_ACTIVE": "Active",
+      "SITE_STATUS_INACTIVE": "Inactive",
+      "SITE_STATUS_MAINTENANCE": "Maintenance"
+    }
   }
 }

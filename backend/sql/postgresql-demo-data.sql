@@ -450,4 +450,178 @@ INSERT INTO public.media_assets (
     0, false
 );
 
+INSERT INTO public.site_settings (
+    created_at, updated_at, deleted_at, created_by, updated_by, deleted_by,
+    site_id, locale, "group", key, value, type,
+    label, description, placeholder, options, is_required, validation_regex
+) VALUES
+-- ===================== 全局配置（site_id=0）- 通用分组 =====================
+-- 1. 站点标题（单行文本，必填）
+(
+    '2026-02-01 09:00:00+08', '2026-02-01 09:00:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'general', 'site_title', '我的企业官网', 'SETTING_TYPE_TEXT',
+    '站点标题', '浏览器标签和页面头部显示的站点名称', '请输入站点标题',
+    '{}'::jsonb, true, '^.{2,50}$'
+),
+-- 2. 站点描述（多行文本）
+(
+    '2026-02-01 09:05:00+08', '2026-02-01 09:05:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'general', 'site_description', '专注于企业数字化解决方案的专业平台，提供一站式技术服务。',
+    'SETTING_TYPE_TEXTAREA',
+    '站点描述', '用于SEO和社交分享的站点简介', '请输入站点描述（不超过200字）',
+    '{}'::jsonb, false, '^.{0,200}$'
+),
+-- 3. 每页文章数（数字）
+(
+    '2026-02-01 09:10:00+08', '2026-02-01 09:10:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'general', 'posts_per_page', '10', 'SETTING_TYPE_NUMBER',
+    '每页文章数量', '列表页默认显示的文章条数', '请输入数字（1-50）',
+    '{}'::jsonb, true, '^[1-9][0-9]?$|^50$'
+),
+-- 4. 开启评论功能（布尔）
+(
+    '2026-02-01 09:15:00+08', '2026-02-01 09:15:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'general', 'enable_comments', 'true', 'SETTING_TYPE_BOOLEAN',
+    '开启评论功能', '是否允许访客/用户在文章下发表评论', '',
+    '{}'::jsonb, false, ''
+),
+-- 5. 站点LOGO（图片，关联MediaAsset ID）
+(
+    '2026-02-01 09:20:00+08', '2026-02-01 09:20:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'general', 'site_logo', '10001', 'SETTING_TYPE_IMAGE',
+    '站点LOGO', '上传的LOGO图片ID（关联media_assets表）', '上传LOGO图片',
+    '{}'::jsonb, true, ''
+),
+
+-- ===================== 全局配置（site_id=0）- SEO分组 =====================
+-- 6. 网站域名（URL）
+(
+    '2026-02-01 09:25:00+08', '2026-02-01 09:25:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'seo', 'site_domain', 'https://www.example.com', 'SETTING_TYPE_URL',
+    '网站域名', '站点的主域名（带https）', '请输入完整的网站域名',
+    '{}'::jsonb, true, '^https?://.+$'
+),
+-- 7. 站长邮箱（邮箱）
+(
+    '2026-02-01 09:30:00+08', '2026-02-01 09:30:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'seo', 'webmaster_email', 'webmaster@example.com', 'SETTING_TYPE_EMAIL',
+    '站长邮箱', '用于搜索引擎验证和站长工具通知', '请输入有效的邮箱地址',
+    '{}'::jsonb, true, '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
+),
+-- 8. 搜索引擎索引（下拉选择）
+(
+    '2026-02-01 09:35:00+08', '2026-02-01 09:35:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'seo', 'robots_index', 'index', 'SETTING_TYPE_SELECT',
+    '搜索引擎索引', '是否允许搜索引擎抓取站点内容', '',
+    '{"index":"允许索引", "noindex":"禁止索引"}'::jsonb,
+    true, ''
+),
+
+-- ===================== 全局配置（site_id=0）- 社交分组 =====================
+-- 9. 社交媒体链接（JSON）
+(
+    '2026-02-01 09:40:00+08', '2026-02-01 09:40:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'social', 'social_links', '[{"name":"微信","icon":"wechat","url":"https://weixin.example.com"},{"name":"微博","icon":"weibo","url":"https://weibo.example.com"},{"name":"GitHub","icon":"github","url":"https://github.com/example"}]',
+    'SETTING_TYPE_JSON',
+    '社交媒体链接', '站点底部显示的社交平台链接（JSON格式）', '输入JSON格式的社交链接数组',
+    '{}'::jsonb, false, ''
+),
+
+-- ===================== 站点1配置（site_id=1）- 英文版本 =====================
+-- 10. 站点标题（英文）
+(
+    '2026-02-01 10:00:00+08', '2026-02-01 10:00:00+08', NULL, 1, 1, NULL,
+    1, 'en-US', 'general', 'site_title', 'My Enterprise Website', 'SETTING_TYPE_TEXT',
+    'Site Title', 'Site name displayed in browser tab and page header', 'Enter site title',
+    '{}'::jsonb, true, '^.{2,50}$'
+),
+-- 11. 每页文章数（英文站点，自定义值）
+(
+    '2026-02-01 10:05:00+08', '2026-02-01 10:05:00+08', NULL, 1, 1, NULL,
+    1, 'en-US', 'general', 'posts_per_page', '15', 'SETTING_TYPE_NUMBER',
+    'Posts Per Page', 'Number of articles displayed per page', 'Enter number (1-50)',
+    '{}'::jsonb, true, '^[1-9][0-9]?$|^50$'
+),
+
+-- ===================== 特殊场景配置 =====================
+-- 12. 软删除的配置项
+(
+    '2026-01-15 08:00:00+08', '2026-02-01 11:00:00+08', '2026-02-01 11:00:00+08',
+    1, 1, 1,
+    0, 'zh-CN', 'general', 'old_site_footer', '© 2025 我的企业 版权所有', 'SETTING_TYPE_TEXT',
+    '旧版页脚文案', '已废弃的页脚版权文案', '',
+    '{}'::jsonb, false, ''
+),
+-- 13. 评论审核方式（下拉选择，多选项示例）
+(
+    '2026-02-01 11:10:00+08', '2026-02-01 11:10:00+08', NULL, 1, 1, NULL,
+    0, 'zh-CN', 'comment', 'comment_moderation', 'manual', 'SETTING_TYPE_SELECT',
+    '评论审核方式', '评论发布前的审核规则', '',
+    '{"auto":"自动审核", "manual":"人工审核", "admin_only":"仅管理员审核"}'::jsonb,
+    true, ''
+);
+
+INSERT INTO public.sites (
+    created_at, updated_at, deleted_at, created_by, updated_by, deleted_by,
+    tenant_id, name, slug, domain, alternate_domains, is_default,
+    status, default_locale, template, theme, visit_count
+) VALUES
+-- 1. 主站点（默认站点，活跃状态）
+(
+    '2026-01-01 09:00:00+08', '2026-02-01 10:00:00+08', NULL, 1, 1, NULL,
+    1, '企业官网主站', 'main-site', 'https://www.example.com',
+    '["https://example.com", "https://www.example.cn"]'::jsonb, true,
+    'SITE_STATUS_ACTIVE', 'zh-CN', 'enterprise', 'default-dark',
+    158920
+),
+-- 2. 英文站点（租户1，活跃状态）
+(
+    '2026-01-05 10:00:00+08', '2026-02-01 11:00:00+08', NULL, 1, 1, NULL,
+    1, 'Enterprise English Site', 'english-site', 'https://en.example.com',
+    '["https://english.example.com"]'::jsonb, false,
+    'SITE_STATUS_ACTIVE', 'en-US', 'enterprise', 'default-light',
+    85640
+),
+-- 3. 营销活动站点（租户1，暂存状态）
+(
+    '2026-01-10 14:00:00+08', '2026-02-01 12:00:00+08', NULL, 1, 1, NULL,
+    1, '2026春季促销活动站', 'spring-2026-promotion', 'https://promo2026.example.com',
+    '[]'::jsonb, false,
+    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'spring-theme',
+    0
+),
+-- 4. 租户2的电商站点（独立租户，活跃状态）
+(
+    '2026-01-15 09:30:00+08', '2026-02-01 13:00:00+08', NULL, 2, 2, NULL,
+    2, '优品电商平台', 'youpin-shop', 'https://www.youpin.com',
+    '["https://youpin.com", "https://m.youpin.com"]'::jsonb, true,
+    'SITE_STATUS_ACTIVE', 'zh-CN', 'ecommerce', 'youpin-default',
+    987540
+),
+-- 5. 废弃站点（租户1，已归档）
+(
+    '2025-06-01 08:00:00+08', '2026-01-20 15:00:00+08', NULL, 1, 1, NULL,
+    1, '2025夏季活动站', 'summer-2025', 'https://summer2025.example.com',
+    '[]'::jsonb, false,
+    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'summer-theme',
+    45210
+),
+-- 6. 测试站点（租户1，禁用状态）
+(
+    '2026-01-20 16:00:00+08', '2026-02-01 14:00:00+08', NULL, 1, 1, NULL,
+    1, '内部测试站点', 'test-site', 'https://test.example.com',
+    '["https://dev.example.com"]'::jsonb, false,
+    'SITE_STATUS_INACTIVE', 'zh-CN', 'test', 'test-theme',
+    1250
+),
+-- 7. 软删除的站点（租户2，已删除）
+(
+    '2025-10-01 10:00:00+08', '2026-02-01 15:00:00+08', '2026-02-01 15:00:00+08',
+    2, 2, 2,
+    2, '旧版移动端站点', 'old-mobile-site', 'https://m.old.youpin.com',
+    '[]'::jsonb, false,
+    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'mobile', 'old-mobile-theme',
+    256800
+);
+
 COMMIT;

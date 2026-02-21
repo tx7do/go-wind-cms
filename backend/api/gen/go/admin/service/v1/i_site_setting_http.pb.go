@@ -43,14 +43,14 @@ type SiteSettingServiceHTTPServer interface {
 
 func RegisterSiteSettingServiceHTTPServer(s *http.Server, srv SiteSettingServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/site-settings", _SiteSettingService_List25_HTTP_Handler(srv))
-	r.GET("/admin/v1/site-settings/{id}", _SiteSettingService_Get25_HTTP_Handler(srv))
-	r.POST("/admin/v1/site-settings", _SiteSettingService_Create19_HTTP_Handler(srv))
-	r.PUT("/admin/v1/site-settings/{id}", _SiteSettingService_Update19_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/site-settings/{id}", _SiteSettingService_Delete19_HTTP_Handler(srv))
+	r.GET("/admin/v1/site-settings", _SiteSettingService_List26_HTTP_Handler(srv))
+	r.GET("/admin/v1/site-settings/{id}", _SiteSettingService_Get26_HTTP_Handler(srv))
+	r.POST("/admin/v1/site-settings", _SiteSettingService_Create20_HTTP_Handler(srv))
+	r.PUT("/admin/v1/site-settings/{id}", _SiteSettingService_Update20_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/site-settings/{id}", _SiteSettingService_Delete20_HTTP_Handler(srv))
 }
 
-func _SiteSettingService_List25_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_List26_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _SiteSettingService_List25_HTTP_Handler(srv SiteSettingServiceHTTPServer) f
 	}
 }
 
-func _SiteSettingService_Get25_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_Get26_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSiteSettingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _SiteSettingService_Get25_HTTP_Handler(srv SiteSettingServiceHTTPServer) fu
 	}
 }
 
-func _SiteSettingService_Create19_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_Create20_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateSiteSettingRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _SiteSettingService_Create19_HTTP_Handler(srv SiteSettingServiceHTTPServer)
 	}
 }
 
-func _SiteSettingService_Update19_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_Update20_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateSiteSettingRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _SiteSettingService_Update19_HTTP_Handler(srv SiteSettingServiceHTTPServer)
 	}
 }
 
-func _SiteSettingService_Delete19_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_Delete20_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteSiteSettingRequest
 		if err := ctx.BindQuery(&in); err != nil {

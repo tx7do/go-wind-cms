@@ -42,6 +42,19 @@ const site_setting: RouteRecordRaw[] = [
         component: () =>
           import('#/views/app/site_setting/navigation/index.vue'),
       },
+
+      {
+        path: 'sites',
+        name: 'SiteManagement',
+        meta: {
+          order: 3,
+          icon: 'lucide:globe',
+          title: $t('menu.siteSetting.site'),
+          authority: ['sys:platform_admin'],
+        },
+        component: () =>
+          import('#/views/app/site_setting/site/index.vue'),
+      },
     ],
   },
 ];

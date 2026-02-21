@@ -335,5 +335,12 @@
       "SETTING_TYPE_SELECT": "下拉选择",
       "SETTING_TYPE_JSON": "JSON数据"
     }
+  },
+  "site": {
+    "status": {
+      "SITE_STATUS_ACTIVE": "正常",
+      "SITE_STATUS_INACTIVE": "停用",
+      "SITE_STATUS_MAINTENANCE": "维护中"
+    }
   }
 }

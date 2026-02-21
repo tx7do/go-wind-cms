@@ -56,6 +56,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
@@ -127,6 +128,7 @@ const (
 	TypeRole                     = "Role"
 	TypeRoleMetadata             = "RoleMetadata"
 	TypeRolePermission           = "RolePermission"
+	TypeSite                     = "Site"
 	TypeSiteSetting              = "SiteSetting"
 	TypeTag                      = "Tag"
 	TypeTagTranslation           = "TagTranslation"
@@ -72840,6 +72842,1718 @@ func (m *RolePermissionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *RolePermissionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RolePermission edge %s", name)
+}
+
+// SiteMutation represents an operation that mutates the Site nodes in the graph.
+type SiteMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *uint32
+	created_at              *time.Time
+	updated_at              *time.Time
+	deleted_at              *time.Time
+	created_by              *uint32
+	addcreated_by           *int32
+	updated_by              *uint32
+	addupdated_by           *int32
+	deleted_by              *uint32
+	adddeleted_by           *int32
+	tenant_id               *uint32
+	addtenant_id            *int32
+	name                    *string
+	slug                    *string
+	domain                  *string
+	alternate_domains       *[]string
+	appendalternate_domains []string
+	is_default              *bool
+	status                  *site.Status
+	default_locale          *string
+	template                *string
+	theme                   *string
+	visit_count             *uint64
+	addvisit_count          *int64
+	clearedFields           map[string]struct{}
+	done                    bool
+	oldValue                func(context.Context) (*Site, error)
+	predicates              []predicate.Site
+}
+
+var _ ent.Mutation = (*SiteMutation)(nil)
+
+// siteOption allows management of the mutation configuration using functional options.
+type siteOption func(*SiteMutation)
+
+// newSiteMutation creates new mutation for the Site entity.
+func newSiteMutation(c config, op Op, opts ...siteOption) *SiteMutation {
+	m := &SiteMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSite,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSiteID sets the ID field of the mutation.
+func withSiteID(id uint32) siteOption {
+	return func(m *SiteMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Site
+		)
+		m.oldValue = func(ctx context.Context) (*Site, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Site.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSite sets the old Site of the mutation.
+func withSite(node *Site) siteOption {
+	return func(m *SiteMutation) {
+		m.oldValue = func(context.Context) (*Site, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SiteMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SiteMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Site entities.
+func (m *SiteMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SiteMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SiteMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Site.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SiteMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SiteMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SiteMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[site.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SiteMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[site.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SiteMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, site.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SiteMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SiteMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SiteMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[site.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SiteMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[site.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SiteMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, site.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SiteMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SiteMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SiteMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[site.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SiteMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[site.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SiteMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, site.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SiteMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SiteMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *SiteMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SiteMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SiteMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[site.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SiteMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[site.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SiteMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, site.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SiteMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SiteMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *SiteMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SiteMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SiteMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[site.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SiteMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[site.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SiteMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, site.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SiteMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SiteMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *SiteMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *SiteMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SiteMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[site.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SiteMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[site.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SiteMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, site.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *SiteMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *SiteMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *SiteMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *SiteMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *SiteMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[site.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *SiteMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[site.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *SiteMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, site.FieldTenantID)
+}
+
+// SetName sets the "name" field.
+func (m *SiteMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *SiteMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *SiteMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[site.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *SiteMutation) NameCleared() bool {
+	_, ok := m.clearedFields[site.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *SiteMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, site.FieldName)
+}
+
+// SetSlug sets the "slug" field.
+func (m *SiteMutation) SetSlug(s string) {
+	m.slug = &s
+}
+
+// Slug returns the value of the "slug" field in the mutation.
+func (m *SiteMutation) Slug() (r string, exists bool) {
+	v := m.slug
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSlug returns the old "slug" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldSlug(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSlug is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSlug requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSlug: %w", err)
+	}
+	return oldValue.Slug, nil
+}
+
+// ClearSlug clears the value of the "slug" field.
+func (m *SiteMutation) ClearSlug() {
+	m.slug = nil
+	m.clearedFields[site.FieldSlug] = struct{}{}
+}
+
+// SlugCleared returns if the "slug" field was cleared in this mutation.
+func (m *SiteMutation) SlugCleared() bool {
+	_, ok := m.clearedFields[site.FieldSlug]
+	return ok
+}
+
+// ResetSlug resets all changes to the "slug" field.
+func (m *SiteMutation) ResetSlug() {
+	m.slug = nil
+	delete(m.clearedFields, site.FieldSlug)
+}
+
+// SetDomain sets the "domain" field.
+func (m *SiteMutation) SetDomain(s string) {
+	m.domain = &s
+}
+
+// Domain returns the value of the "domain" field in the mutation.
+func (m *SiteMutation) Domain() (r string, exists bool) {
+	v := m.domain
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDomain returns the old "domain" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldDomain(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDomain is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDomain requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDomain: %w", err)
+	}
+	return oldValue.Domain, nil
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (m *SiteMutation) ClearDomain() {
+	m.domain = nil
+	m.clearedFields[site.FieldDomain] = struct{}{}
+}
+
+// DomainCleared returns if the "domain" field was cleared in this mutation.
+func (m *SiteMutation) DomainCleared() bool {
+	_, ok := m.clearedFields[site.FieldDomain]
+	return ok
+}
+
+// ResetDomain resets all changes to the "domain" field.
+func (m *SiteMutation) ResetDomain() {
+	m.domain = nil
+	delete(m.clearedFields, site.FieldDomain)
+}
+
+// SetAlternateDomains sets the "alternate_domains" field.
+func (m *SiteMutation) SetAlternateDomains(s []string) {
+	m.alternate_domains = &s
+	m.appendalternate_domains = nil
+}
+
+// AlternateDomains returns the value of the "alternate_domains" field in the mutation.
+func (m *SiteMutation) AlternateDomains() (r []string, exists bool) {
+	v := m.alternate_domains
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlternateDomains returns the old "alternate_domains" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldAlternateDomains(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAlternateDomains is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAlternateDomains requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlternateDomains: %w", err)
+	}
+	return oldValue.AlternateDomains, nil
+}
+
+// AppendAlternateDomains adds s to the "alternate_domains" field.
+func (m *SiteMutation) AppendAlternateDomains(s []string) {
+	m.appendalternate_domains = append(m.appendalternate_domains, s...)
+}
+
+// AppendedAlternateDomains returns the list of values that were appended to the "alternate_domains" field in this mutation.
+func (m *SiteMutation) AppendedAlternateDomains() ([]string, bool) {
+	if len(m.appendalternate_domains) == 0 {
+		return nil, false
+	}
+	return m.appendalternate_domains, true
+}
+
+// ClearAlternateDomains clears the value of the "alternate_domains" field.
+func (m *SiteMutation) ClearAlternateDomains() {
+	m.alternate_domains = nil
+	m.appendalternate_domains = nil
+	m.clearedFields[site.FieldAlternateDomains] = struct{}{}
+}
+
+// AlternateDomainsCleared returns if the "alternate_domains" field was cleared in this mutation.
+func (m *SiteMutation) AlternateDomainsCleared() bool {
+	_, ok := m.clearedFields[site.FieldAlternateDomains]
+	return ok
+}
+
+// ResetAlternateDomains resets all changes to the "alternate_domains" field.
+func (m *SiteMutation) ResetAlternateDomains() {
+	m.alternate_domains = nil
+	m.appendalternate_domains = nil
+	delete(m.clearedFields, site.FieldAlternateDomains)
+}
+
+// SetIsDefault sets the "is_default" field.
+func (m *SiteMutation) SetIsDefault(b bool) {
+	m.is_default = &b
+}
+
+// IsDefault returns the value of the "is_default" field in the mutation.
+func (m *SiteMutation) IsDefault() (r bool, exists bool) {
+	v := m.is_default
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsDefault returns the old "is_default" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldIsDefault(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsDefault is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsDefault requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsDefault: %w", err)
+	}
+	return oldValue.IsDefault, nil
+}
+
+// ClearIsDefault clears the value of the "is_default" field.
+func (m *SiteMutation) ClearIsDefault() {
+	m.is_default = nil
+	m.clearedFields[site.FieldIsDefault] = struct{}{}
+}
+
+// IsDefaultCleared returns if the "is_default" field was cleared in this mutation.
+func (m *SiteMutation) IsDefaultCleared() bool {
+	_, ok := m.clearedFields[site.FieldIsDefault]
+	return ok
+}
+
+// ResetIsDefault resets all changes to the "is_default" field.
+func (m *SiteMutation) ResetIsDefault() {
+	m.is_default = nil
+	delete(m.clearedFields, site.FieldIsDefault)
+}
+
+// SetStatus sets the "status" field.
+func (m *SiteMutation) SetStatus(s site.Status) {
+	m.status = &s
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *SiteMutation) Status() (r site.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldStatus(ctx context.Context) (v *site.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *SiteMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[site.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *SiteMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[site.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *SiteMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, site.FieldStatus)
+}
+
+// SetDefaultLocale sets the "default_locale" field.
+func (m *SiteMutation) SetDefaultLocale(s string) {
+	m.default_locale = &s
+}
+
+// DefaultLocale returns the value of the "default_locale" field in the mutation.
+func (m *SiteMutation) DefaultLocale() (r string, exists bool) {
+	v := m.default_locale
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultLocale returns the old "default_locale" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldDefaultLocale(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultLocale is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultLocale requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultLocale: %w", err)
+	}
+	return oldValue.DefaultLocale, nil
+}
+
+// ClearDefaultLocale clears the value of the "default_locale" field.
+func (m *SiteMutation) ClearDefaultLocale() {
+	m.default_locale = nil
+	m.clearedFields[site.FieldDefaultLocale] = struct{}{}
+}
+
+// DefaultLocaleCleared returns if the "default_locale" field was cleared in this mutation.
+func (m *SiteMutation) DefaultLocaleCleared() bool {
+	_, ok := m.clearedFields[site.FieldDefaultLocale]
+	return ok
+}
+
+// ResetDefaultLocale resets all changes to the "default_locale" field.
+func (m *SiteMutation) ResetDefaultLocale() {
+	m.default_locale = nil
+	delete(m.clearedFields, site.FieldDefaultLocale)
+}
+
+// SetTemplate sets the "template" field.
+func (m *SiteMutation) SetTemplate(s string) {
+	m.template = &s
+}
+
+// Template returns the value of the "template" field in the mutation.
+func (m *SiteMutation) Template() (r string, exists bool) {
+	v := m.template
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTemplate returns the old "template" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldTemplate(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTemplate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTemplate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTemplate: %w", err)
+	}
+	return oldValue.Template, nil
+}
+
+// ClearTemplate clears the value of the "template" field.
+func (m *SiteMutation) ClearTemplate() {
+	m.template = nil
+	m.clearedFields[site.FieldTemplate] = struct{}{}
+}
+
+// TemplateCleared returns if the "template" field was cleared in this mutation.
+func (m *SiteMutation) TemplateCleared() bool {
+	_, ok := m.clearedFields[site.FieldTemplate]
+	return ok
+}
+
+// ResetTemplate resets all changes to the "template" field.
+func (m *SiteMutation) ResetTemplate() {
+	m.template = nil
+	delete(m.clearedFields, site.FieldTemplate)
+}
+
+// SetTheme sets the "theme" field.
+func (m *SiteMutation) SetTheme(s string) {
+	m.theme = &s
+}
+
+// Theme returns the value of the "theme" field in the mutation.
+func (m *SiteMutation) Theme() (r string, exists bool) {
+	v := m.theme
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTheme returns the old "theme" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldTheme(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTheme is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTheme requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTheme: %w", err)
+	}
+	return oldValue.Theme, nil
+}
+
+// ClearTheme clears the value of the "theme" field.
+func (m *SiteMutation) ClearTheme() {
+	m.theme = nil
+	m.clearedFields[site.FieldTheme] = struct{}{}
+}
+
+// ThemeCleared returns if the "theme" field was cleared in this mutation.
+func (m *SiteMutation) ThemeCleared() bool {
+	_, ok := m.clearedFields[site.FieldTheme]
+	return ok
+}
+
+// ResetTheme resets all changes to the "theme" field.
+func (m *SiteMutation) ResetTheme() {
+	m.theme = nil
+	delete(m.clearedFields, site.FieldTheme)
+}
+
+// SetVisitCount sets the "visit_count" field.
+func (m *SiteMutation) SetVisitCount(u uint64) {
+	m.visit_count = &u
+	m.addvisit_count = nil
+}
+
+// VisitCount returns the value of the "visit_count" field in the mutation.
+func (m *SiteMutation) VisitCount() (r uint64, exists bool) {
+	v := m.visit_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVisitCount returns the old "visit_count" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldVisitCount(ctx context.Context) (v *uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVisitCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVisitCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVisitCount: %w", err)
+	}
+	return oldValue.VisitCount, nil
+}
+
+// AddVisitCount adds u to the "visit_count" field.
+func (m *SiteMutation) AddVisitCount(u int64) {
+	if m.addvisit_count != nil {
+		*m.addvisit_count += u
+	} else {
+		m.addvisit_count = &u
+	}
+}
+
+// AddedVisitCount returns the value that was added to the "visit_count" field in this mutation.
+func (m *SiteMutation) AddedVisitCount() (r int64, exists bool) {
+	v := m.addvisit_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearVisitCount clears the value of the "visit_count" field.
+func (m *SiteMutation) ClearVisitCount() {
+	m.visit_count = nil
+	m.addvisit_count = nil
+	m.clearedFields[site.FieldVisitCount] = struct{}{}
+}
+
+// VisitCountCleared returns if the "visit_count" field was cleared in this mutation.
+func (m *SiteMutation) VisitCountCleared() bool {
+	_, ok := m.clearedFields[site.FieldVisitCount]
+	return ok
+}
+
+// ResetVisitCount resets all changes to the "visit_count" field.
+func (m *SiteMutation) ResetVisitCount() {
+	m.visit_count = nil
+	m.addvisit_count = nil
+	delete(m.clearedFields, site.FieldVisitCount)
+}
+
+// Where appends a list predicates to the SiteMutation builder.
+func (m *SiteMutation) Where(ps ...predicate.Site) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SiteMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SiteMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Site, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SiteMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SiteMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Site).
+func (m *SiteMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SiteMutation) Fields() []string {
+	fields := make([]string, 0, 17)
+	if m.created_at != nil {
+		fields = append(fields, site.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, site.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, site.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, site.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, site.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, site.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, site.FieldTenantID)
+	}
+	if m.name != nil {
+		fields = append(fields, site.FieldName)
+	}
+	if m.slug != nil {
+		fields = append(fields, site.FieldSlug)
+	}
+	if m.domain != nil {
+		fields = append(fields, site.FieldDomain)
+	}
+	if m.alternate_domains != nil {
+		fields = append(fields, site.FieldAlternateDomains)
+	}
+	if m.is_default != nil {
+		fields = append(fields, site.FieldIsDefault)
+	}
+	if m.status != nil {
+		fields = append(fields, site.FieldStatus)
+	}
+	if m.default_locale != nil {
+		fields = append(fields, site.FieldDefaultLocale)
+	}
+	if m.template != nil {
+		fields = append(fields, site.FieldTemplate)
+	}
+	if m.theme != nil {
+		fields = append(fields, site.FieldTheme)
+	}
+	if m.visit_count != nil {
+		fields = append(fields, site.FieldVisitCount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SiteMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case site.FieldCreatedAt:
+		return m.CreatedAt()
+	case site.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case site.FieldDeletedAt:
+		return m.DeletedAt()
+	case site.FieldCreatedBy:
+		return m.CreatedBy()
+	case site.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case site.FieldDeletedBy:
+		return m.DeletedBy()
+	case site.FieldTenantID:
+		return m.TenantID()
+	case site.FieldName:
+		return m.Name()
+	case site.FieldSlug:
+		return m.Slug()
+	case site.FieldDomain:
+		return m.Domain()
+	case site.FieldAlternateDomains:
+		return m.AlternateDomains()
+	case site.FieldIsDefault:
+		return m.IsDefault()
+	case site.FieldStatus:
+		return m.Status()
+	case site.FieldDefaultLocale:
+		return m.DefaultLocale()
+	case site.FieldTemplate:
+		return m.Template()
+	case site.FieldTheme:
+		return m.Theme()
+	case site.FieldVisitCount:
+		return m.VisitCount()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SiteMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case site.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case site.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case site.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case site.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case site.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case site.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case site.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case site.FieldName:
+		return m.OldName(ctx)
+	case site.FieldSlug:
+		return m.OldSlug(ctx)
+	case site.FieldDomain:
+		return m.OldDomain(ctx)
+	case site.FieldAlternateDomains:
+		return m.OldAlternateDomains(ctx)
+	case site.FieldIsDefault:
+		return m.OldIsDefault(ctx)
+	case site.FieldStatus:
+		return m.OldStatus(ctx)
+	case site.FieldDefaultLocale:
+		return m.OldDefaultLocale(ctx)
+	case site.FieldTemplate:
+		return m.OldTemplate(ctx)
+	case site.FieldTheme:
+		return m.OldTheme(ctx)
+	case site.FieldVisitCount:
+		return m.OldVisitCount(ctx)
+	}
+	return nil, fmt.Errorf("unknown Site field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SiteMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case site.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case site.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case site.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case site.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case site.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case site.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case site.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case site.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case site.FieldSlug:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSlug(v)
+		return nil
+	case site.FieldDomain:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDomain(v)
+		return nil
+	case site.FieldAlternateDomains:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlternateDomains(v)
+		return nil
+	case site.FieldIsDefault:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsDefault(v)
+		return nil
+	case site.FieldStatus:
+		v, ok := value.(site.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case site.FieldDefaultLocale:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultLocale(v)
+		return nil
+	case site.FieldTemplate:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTemplate(v)
+		return nil
+	case site.FieldTheme:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTheme(v)
+		return nil
+	case site.FieldVisitCount:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVisitCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Site field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SiteMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, site.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, site.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, site.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, site.FieldTenantID)
+	}
+	if m.addvisit_count != nil {
+		fields = append(fields, site.FieldVisitCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SiteMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case site.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case site.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case site.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case site.FieldTenantID:
+		return m.AddedTenantID()
+	case site.FieldVisitCount:
+		return m.AddedVisitCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SiteMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case site.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case site.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case site.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case site.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case site.FieldVisitCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVisitCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Site numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SiteMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(site.FieldCreatedAt) {
+		fields = append(fields, site.FieldCreatedAt)
+	}
+	if m.FieldCleared(site.FieldUpdatedAt) {
+		fields = append(fields, site.FieldUpdatedAt)
+	}
+	if m.FieldCleared(site.FieldDeletedAt) {
+		fields = append(fields, site.FieldDeletedAt)
+	}
+	if m.FieldCleared(site.FieldCreatedBy) {
+		fields = append(fields, site.FieldCreatedBy)
+	}
+	if m.FieldCleared(site.FieldUpdatedBy) {
+		fields = append(fields, site.FieldUpdatedBy)
+	}
+	if m.FieldCleared(site.FieldDeletedBy) {
+		fields = append(fields, site.FieldDeletedBy)
+	}
+	if m.FieldCleared(site.FieldTenantID) {
+		fields = append(fields, site.FieldTenantID)
+	}
+	if m.FieldCleared(site.FieldName) {
+		fields = append(fields, site.FieldName)
+	}
+	if m.FieldCleared(site.FieldSlug) {
+		fields = append(fields, site.FieldSlug)
+	}
+	if m.FieldCleared(site.FieldDomain) {
+		fields = append(fields, site.FieldDomain)
+	}
+	if m.FieldCleared(site.FieldAlternateDomains) {
+		fields = append(fields, site.FieldAlternateDomains)
+	}
+	if m.FieldCleared(site.FieldIsDefault) {
+		fields = append(fields, site.FieldIsDefault)
+	}
+	if m.FieldCleared(site.FieldStatus) {
+		fields = append(fields, site.FieldStatus)
+	}
+	if m.FieldCleared(site.FieldDefaultLocale) {
+		fields = append(fields, site.FieldDefaultLocale)
+	}
+	if m.FieldCleared(site.FieldTemplate) {
+		fields = append(fields, site.FieldTemplate)
+	}
+	if m.FieldCleared(site.FieldTheme) {
+		fields = append(fields, site.FieldTheme)
+	}
+	if m.FieldCleared(site.FieldVisitCount) {
+		fields = append(fields, site.FieldVisitCount)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SiteMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SiteMutation) ClearField(name string) error {
+	switch name {
+	case site.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case site.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case site.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case site.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case site.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case site.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case site.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case site.FieldName:
+		m.ClearName()
+		return nil
+	case site.FieldSlug:
+		m.ClearSlug()
+		return nil
+	case site.FieldDomain:
+		m.ClearDomain()
+		return nil
+	case site.FieldAlternateDomains:
+		m.ClearAlternateDomains()
+		return nil
+	case site.FieldIsDefault:
+		m.ClearIsDefault()
+		return nil
+	case site.FieldStatus:
+		m.ClearStatus()
+		return nil
+	case site.FieldDefaultLocale:
+		m.ClearDefaultLocale()
+		return nil
+	case site.FieldTemplate:
+		m.ClearTemplate()
+		return nil
+	case site.FieldTheme:
+		m.ClearTheme()
+		return nil
+	case site.FieldVisitCount:
+		m.ClearVisitCount()
+		return nil
+	}
+	return fmt.Errorf("unknown Site nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SiteMutation) ResetField(name string) error {
+	switch name {
+	case site.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case site.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case site.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case site.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case site.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case site.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case site.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case site.FieldName:
+		m.ResetName()
+		return nil
+	case site.FieldSlug:
+		m.ResetSlug()
+		return nil
+	case site.FieldDomain:
+		m.ResetDomain()
+		return nil
+	case site.FieldAlternateDomains:
+		m.ResetAlternateDomains()
+		return nil
+	case site.FieldIsDefault:
+		m.ResetIsDefault()
+		return nil
+	case site.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case site.FieldDefaultLocale:
+		m.ResetDefaultLocale()
+		return nil
+	case site.FieldTemplate:
+		m.ResetTemplate()
+		return nil
+	case site.FieldTheme:
+		m.ResetTheme()
+		return nil
+	case site.FieldVisitCount:
+		m.ResetVisitCount()
+		return nil
+	}
+	return fmt.Errorf("unknown Site field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SiteMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SiteMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SiteMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SiteMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SiteMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SiteMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SiteMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Site unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SiteMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Site edge %s", name)
 }
 
 // SiteSettingMutation represents an operation that mutates the SiteSetting nodes in the graph.

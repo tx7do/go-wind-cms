@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"go-wind-cms/pkg/middleware/auth"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -12,6 +11,8 @@ import (
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
+
+	"go-wind-cms/pkg/middleware/auth"
 )
 
 type SiteSettingService struct {

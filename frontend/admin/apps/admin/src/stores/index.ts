@@ -30,6 +30,7 @@ export * from './policy-evaluation-log.state';
 export * from './position.state';
 export * from './post.state';
 export * from './role.state';
+export * from './site.state';
 export * from './site-setting.state';
 export * from './tag.state';
 export * from './task.state';

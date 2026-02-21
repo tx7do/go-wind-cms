@@ -7,12 +7,13 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport/http"
+
 	authzEngine "github.com/tx7do/kratos-authz/engine"
 	authz "github.com/tx7do/kratos-authz/middleware"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	swaggerUI "github.com/tx7do/kratos-swagger-ui"
 
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
 	"go-wind-cms/app/admin/service/cmd/server/assets"
@@ -20,7 +21,9 @@ import (
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
+	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 
+	"go-wind-cms/pkg/metadata"
 	"go-wind-cms/pkg/middleware/auth"
 	applogging "go-wind-cms/pkg/middleware/logging"
 )
@@ -30,8 +33,8 @@ func NewRestMiddleware(
 	ctx *bootstrap.Context,
 	accessTokenChecker auth.AccessTokenChecker,
 	authorizer authzEngine.Engine,
-	apiAuditLogRepo auditV1.ApiAuditLogServiceClient,
-	loginLogRepo auditV1.LoginAuditLogServiceClient,
+	apiAuditLogServiceClient auditV1.ApiAuditLogServiceClient,
+	loginAuditLogServiceClient auditV1.LoginAuditLogServiceClient,
 ) []middleware.Middleware {
 	var ms []middleware.Middleware
 	ms = append(ms, logging.Server(ctx.GetLogger()))
@@ -43,13 +46,15 @@ func NewRestMiddleware(
 
 	ms = append(ms, applogging.Server(
 		applogging.WithWriteApiLogFunc(func(ctx context.Context, data *auditV1.ApiAuditLog) error {
+			ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
 			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
-			_, err := apiAuditLogRepo.Create(ctx, &auditV1.CreateApiAuditLogRequest{Data: data})
+			_, err := apiAuditLogServiceClient.Create(ctx, &auditV1.CreateApiAuditLogRequest{Data: data})
 			return err
 		}),
 		applogging.WithWriteLoginLogFunc(func(ctx context.Context, data *auditV1.LoginAuditLog) error {
 			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
-			_, err := loginLogRepo.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
+			ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
+			_, err := loginAuditLogServiceClient.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
 			return err
 		}),
 	))
@@ -115,6 +120,7 @@ func NewRestServer(
 	tagService *service.TagService,
 	pageService *service.PageService,
 
+	siteService *service.SiteService,
 	siteSettingService *service.SiteSettingService,
 	navigationService *service.NavigationService,
 
@@ -179,6 +185,7 @@ func NewRestServer(
 
 	adminV1.RegisterSiteSettingServiceHTTPServer(srv, siteSettingService)
 	adminV1.RegisterNavigationServiceHTTPServer(srv, navigationService)
+	adminV1.RegisterSiteServiceHTTPServer(srv, siteService)
 
 	adminV1.RegisterMediaAssetServiceHTTPServer(srv, mediaAssetService)
 
