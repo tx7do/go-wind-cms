@@ -28,7 +28,6 @@ const media: RouteRecordRaw[] = [
         },
         component: () => import('#/views/app/media/media_asset/index.vue'),
       },
-
     ],
   },
 ];

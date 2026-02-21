@@ -139,6 +139,7 @@ const (
 	TypeAssetTypeDocument Type = "ASSET_TYPE_DOCUMENT"
 	TypeAssetTypeAudio    Type = "ASSET_TYPE_AUDIO"
 	TypeAssetTypeArchive  Type = "ASSET_TYPE_ARCHIVE"
+	TypeAssetTypeOther    Type = "ASSET_TYPE_OTHER"
 )
 
 func (_type Type) String() string {
@@ -148,7 +149,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeAssetTypeImage, TypeAssetTypeVideo, TypeAssetTypeDocument, TypeAssetTypeAudio, TypeAssetTypeArchive:
+	case TypeAssetTypeImage, TypeAssetTypeVideo, TypeAssetTypeDocument, TypeAssetTypeAudio, TypeAssetTypeArchive, TypeAssetTypeOther:
 		return nil
 	default:
 		return fmt.Errorf("mediaasset: invalid enum value for type field: %q", _type)

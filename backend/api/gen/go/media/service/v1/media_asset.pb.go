@@ -31,22 +31,24 @@ type MediaAsset_AssetType int32
 
 const (
 	MediaAsset_ASSET_TYPE_UNSPECIFIED MediaAsset_AssetType = 0
-	MediaAsset_ASSET_TYPE_IMAGE       MediaAsset_AssetType = 1 // 图片
-	MediaAsset_ASSET_TYPE_VIDEO       MediaAsset_AssetType = 2 // 视频
-	MediaAsset_ASSET_TYPE_DOCUMENT    MediaAsset_AssetType = 3 // 文档（如 PDF）
-	MediaAsset_ASSET_TYPE_AUDIO       MediaAsset_AssetType = 4 // 音频
-	MediaAsset_ASSET_TYPE_ARCHIVE     MediaAsset_AssetType = 5 // 压缩包（zip/tar）
+	MediaAsset_ASSET_TYPE_IMAGE       MediaAsset_AssetType = 1   // 图片
+	MediaAsset_ASSET_TYPE_VIDEO       MediaAsset_AssetType = 2   // 视频
+	MediaAsset_ASSET_TYPE_DOCUMENT    MediaAsset_AssetType = 3   // 文档（如 PDF）
+	MediaAsset_ASSET_TYPE_AUDIO       MediaAsset_AssetType = 4   // 音频
+	MediaAsset_ASSET_TYPE_ARCHIVE     MediaAsset_AssetType = 5   // 压缩包（zip/tar）
+	MediaAsset_ASSET_TYPE_OTHER       MediaAsset_AssetType = 100 // 其他（未分类的媒体类型）
 )
 
 // Enum value maps for MediaAsset_AssetType.
 var (
 	MediaAsset_AssetType_name = map[int32]string{
-		0: "ASSET_TYPE_UNSPECIFIED",
-		1: "ASSET_TYPE_IMAGE",
-		2: "ASSET_TYPE_VIDEO",
-		3: "ASSET_TYPE_DOCUMENT",
-		4: "ASSET_TYPE_AUDIO",
-		5: "ASSET_TYPE_ARCHIVE",
+		0:   "ASSET_TYPE_UNSPECIFIED",
+		1:   "ASSET_TYPE_IMAGE",
+		2:   "ASSET_TYPE_VIDEO",
+		3:   "ASSET_TYPE_DOCUMENT",
+		4:   "ASSET_TYPE_AUDIO",
+		5:   "ASSET_TYPE_ARCHIVE",
+		100: "ASSET_TYPE_OTHER",
 	}
 	MediaAsset_AssetType_value = map[string]int32{
 		"ASSET_TYPE_UNSPECIFIED": 0,
@@ -55,6 +57,7 @@ var (
 		"ASSET_TYPE_DOCUMENT":    3,
 		"ASSET_TYPE_AUDIO":       4,
 		"ASSET_TYPE_ARCHIVE":     5,
+		"ASSET_TYPE_OTHER":       100,
 	}
 )
 
@@ -701,7 +704,7 @@ var File_media_service_v1_media_asset_proto protoreflect.FileDescriptor
 
 const file_media_service_v1_media_asset_proto_rawDesc = "" +
 	"\n" +
-	"\"media/service/v1/media_asset.proto\x12\x10media.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x8e\x19\n" +
+	"\"media/service/v1/media_asset.proto\x12\x10media.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa4\x19\n" +
 	"\n" +
 	"MediaAsset\x12,\n" +
 	"\x02id\x18\x01 \x01(\rB\x17\xbaG\x14\x92\x02\x11媒体资源库IDH\x00R\x02id\x88\x01\x01\x12S\n" +
@@ -742,14 +745,15 @@ const file_media_service_v1_media_asset_proto_rawDesc = "" +
 	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x19R\tdeletedAt\x88\x01\x01\x1aA\n" +
 	"\x13VariantFileIdsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"\x9a\x01\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"\xb0\x01\n" +
 	"\tAssetType\x12\x1a\n" +
 	"\x16ASSET_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10ASSET_TYPE_IMAGE\x10\x01\x12\x14\n" +
 	"\x10ASSET_TYPE_VIDEO\x10\x02\x12\x17\n" +
 	"\x13ASSET_TYPE_DOCUMENT\x10\x03\x12\x14\n" +
 	"\x10ASSET_TYPE_AUDIO\x10\x04\x12\x16\n" +
-	"\x12ASSET_TYPE_ARCHIVE\x10\x05\"\xb7\x01\n" +
+	"\x12ASSET_TYPE_ARCHIVE\x10\x05\x12\x14\n" +
+	"\x10ASSET_TYPE_OTHER\x10d\"\xb7\x01\n" +
 	"\x10ProcessingStatus\x12!\n" +
 	"\x1dPROCESSING_STATUS_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bPROCESSING_STATUS_UPLOADING\x10\x01\x12 \n" +

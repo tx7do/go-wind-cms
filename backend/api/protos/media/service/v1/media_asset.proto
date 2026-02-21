@@ -37,6 +37,7 @@ message MediaAsset {
     ASSET_TYPE_DOCUMENT = 3;  // 文档（如 PDF）
     ASSET_TYPE_AUDIO = 4;     // 音频
     ASSET_TYPE_ARCHIVE = 5;   // 压缩包（zip/tar）
+    ASSET_TYPE_OTHER = 100;   // 其他（未分类的媒体类型）
   }
 
   // 媒体处理状态

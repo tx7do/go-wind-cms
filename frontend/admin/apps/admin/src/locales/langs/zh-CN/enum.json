@@ -306,5 +306,34 @@
       "TAG_STATUS_HIDDEN": "隐藏",
       "TAG_STATUS_ARCHIVED": "归档"
     }
+  },
+  "mediaAsset": {
+    "type": {
+      "ASSET_TYPE_IMAGE": "图片",
+      "ASSET_TYPE_VIDEO": "视频",
+      "ASSET_TYPE_DOCUMENT": "文档",
+      "ASSET_TYPE_AUDIO": "音频",
+      "ASSET_TYPE_ARCHIVE": "压缩包",
+      "ASSET_TYPE_OTHER": "其他"
+    },
+    "processingStatus": {
+      "PROCESSING_STATUS_UPLOADING": "上传中",
+      "PROCESSING_STATUS_PROCESSING": "处理中",
+      "PROCESSING_STATUS_COMPLETED": "已完成",
+      "PROCESSING_STATUS_FAILED": "处理失败"
+    }
+  },
+  "siteSetting": {
+    "type": {
+      "SETTING_TYPE_TEXT": "单行文本",
+      "SETTING_TYPE_TEXTAREA": "多行文本",
+      "SETTING_TYPE_NUMBER": "数字",
+      "SETTING_TYPE_BOOLEAN": "布尔值",
+      "SETTING_TYPE_URL": "URL地址",
+      "SETTING_TYPE_EMAIL": "邮箱地址",
+      "SETTING_TYPE_IMAGE": "图片",
+      "SETTING_TYPE_SELECT": "下拉选择",
+      "SETTING_TYPE_JSON": "JSON数据"
+    }
   }
 }

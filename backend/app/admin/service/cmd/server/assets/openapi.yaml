@@ -7597,6 +7597,7 @@ components:
                         - ASSET_TYPE_DOCUMENT
                         - ASSET_TYPE_AUDIO
                         - ASSET_TYPE_ARCHIVE
+                        - ASSET_TYPE_OTHER
                     type: string
                     description: 媒体类型
                     format: enum

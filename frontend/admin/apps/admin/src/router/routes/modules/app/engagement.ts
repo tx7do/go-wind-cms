@@ -28,7 +28,6 @@ const engagement: RouteRecordRaw[] = [
         },
         component: () => import('#/views/app/engagement/comment/index.vue'),
       },
-
     ],
   },
 ];

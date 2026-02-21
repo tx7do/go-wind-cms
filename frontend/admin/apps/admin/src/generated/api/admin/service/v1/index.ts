@@ -4255,7 +4255,8 @@ export type mediaservicev1_MediaAsset_AssetType =
   | "ASSET_TYPE_VIDEO"
   | "ASSET_TYPE_DOCUMENT"
   | "ASSET_TYPE_AUDIO"
-  | "ASSET_TYPE_ARCHIVE";
+  | "ASSET_TYPE_ARCHIVE"
+  | "ASSET_TYPE_OTHER";
 // 媒体处理状态
 export type mediaservicev1_MediaAsset_ProcessingStatus =
   | "PROCESSING_STATUS_UNSPECIFIED"

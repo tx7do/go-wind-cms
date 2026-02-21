@@ -1076,7 +1076,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "filename", Type: field.TypeString, Nullable: true, Comment: "原始文件名"},
-		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "媒体类型", Enums: []string{"ASSET_TYPE_IMAGE", "ASSET_TYPE_VIDEO", "ASSET_TYPE_DOCUMENT", "ASSET_TYPE_AUDIO", "ASSET_TYPE_ARCHIVE"}},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "媒体类型", Enums: []string{"ASSET_TYPE_IMAGE", "ASSET_TYPE_VIDEO", "ASSET_TYPE_DOCUMENT", "ASSET_TYPE_AUDIO", "ASSET_TYPE_ARCHIVE", "ASSET_TYPE_OTHER"}},
 		{Name: "mime_type", Type: field.TypeString, Nullable: true, Comment: "MIME 类型"},
 		{Name: "size", Type: field.TypeUint64, Nullable: true, Comment: "文件大小（字节）", Default: 0},
 		{Name: "storage_path", Type: field.TypeString, Nullable: true, Comment: "存储路径"},

@@ -42,6 +42,7 @@ func (MediaAsset) Fields() []ent.Field {
 				"AssetTypeDocument", "ASSET_TYPE_DOCUMENT",
 				"AssetTypeAudio", "ASSET_TYPE_AUDIO",
 				"AssetTypeArchive", "ASSET_TYPE_ARCHIVE",
+				"AssetTypeOther", "ASSET_TYPE_OTHER",
 			).
 			Optional().
 			Nillable(),
