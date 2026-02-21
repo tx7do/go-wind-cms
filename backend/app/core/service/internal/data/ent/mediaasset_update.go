@@ -579,18 +579,6 @@ func (_u *MediaAssetUpdate) ClearIsPrivate() *MediaAssetUpdate {
 	return _u
 }
 
-// SetVariantFileIds sets the "variant_file_ids" field.
-func (_u *MediaAssetUpdate) SetVariantFileIds(v *map[string]uint32) *MediaAssetUpdate {
-	_u.mutation.SetVariantFileIds(v)
-	return _u
-}
-
-// ClearVariantFileIds clears the value of the "variant_file_ids" field.
-func (_u *MediaAssetUpdate) ClearVariantFileIds() *MediaAssetUpdate {
-	_u.mutation.ClearVariantFileIds()
-	return _u
-}
-
 // Mutation returns the MediaAssetMutation object of the builder.
 func (_u *MediaAssetUpdate) Mutation() *MediaAssetMutation {
 	return _u.mutation
@@ -832,12 +820,6 @@ func (_u *MediaAssetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	}
 	if _u.mutation.IsPrivateCleared() {
 		_spec.ClearField(mediaasset.FieldIsPrivate, field.TypeBool)
-	}
-	if value, ok := _u.mutation.VariantFileIds(); ok {
-		_spec.SetField(mediaasset.FieldVariantFileIds, field.TypeJSON, value)
-	}
-	if _u.mutation.VariantFileIdsCleared() {
-		_spec.ClearField(mediaasset.FieldVariantFileIds, field.TypeJSON)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -1411,18 +1393,6 @@ func (_u *MediaAssetUpdateOne) ClearIsPrivate() *MediaAssetUpdateOne {
 	return _u
 }
 
-// SetVariantFileIds sets the "variant_file_ids" field.
-func (_u *MediaAssetUpdateOne) SetVariantFileIds(v *map[string]uint32) *MediaAssetUpdateOne {
-	_u.mutation.SetVariantFileIds(v)
-	return _u
-}
-
-// ClearVariantFileIds clears the value of the "variant_file_ids" field.
-func (_u *MediaAssetUpdateOne) ClearVariantFileIds() *MediaAssetUpdateOne {
-	_u.mutation.ClearVariantFileIds()
-	return _u
-}
-
 // Mutation returns the MediaAssetMutation object of the builder.
 func (_u *MediaAssetUpdateOne) Mutation() *MediaAssetMutation {
 	return _u.mutation
@@ -1694,12 +1664,6 @@ func (_u *MediaAssetUpdateOne) sqlSave(ctx context.Context) (_node *MediaAsset, 
 	}
 	if _u.mutation.IsPrivateCleared() {
 		_spec.ClearField(mediaasset.FieldIsPrivate, field.TypeBool)
-	}
-	if value, ok := _u.mutation.VariantFileIds(); ok {
-		_spec.SetField(mediaasset.FieldVariantFileIds, field.TypeJSON, value)
-	}
-	if _u.mutation.VariantFileIdsCleared() {
-		_spec.ClearField(mediaasset.FieldVariantFileIds, field.TypeJSON)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &MediaAsset{config: _u.config}

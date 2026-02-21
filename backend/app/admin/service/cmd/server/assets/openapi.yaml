@@ -7665,7 +7665,7 @@ components:
                     description: 变体文件URL（如不同尺寸的图片/不同质量的视频），key为变体名称（如 'thumbnail'、'medium'、'high'），value为对应的文件ID
                 isPrivate:
                     type: boolean
-                    description: 是否私密
+                    description: 是否私密资源
                 fileId:
                     type: integer
                     description: 存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）

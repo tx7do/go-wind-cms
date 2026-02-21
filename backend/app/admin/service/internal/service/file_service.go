@@ -20,23 +20,23 @@ type FileService struct {
 
 	log *log.Helper
 
-	uc storageV1.FileServiceClient
+	fileServiceClient storageV1.FileServiceClient
 }
 
-func NewFileService(ctx *bootstrap.Context, uc storageV1.FileServiceClient) *FileService {
+func NewFileService(ctx *bootstrap.Context, fileServiceClient storageV1.FileServiceClient) *FileService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "file/service/admin-service"))
 	return &FileService{
-		log: l,
-		uc:  uc,
+		log:               l,
+		fileServiceClient: fileServiceClient,
 	}
 }
 
 func (s *FileService) List(ctx context.Context, req *paginationV1.PagingRequest) (*storageV1.ListFileResponse, error) {
-	return s.uc.List(ctx, req)
+	return s.fileServiceClient.List(ctx, req)
 }
 
 func (s *FileService) Get(ctx context.Context, req *storageV1.GetFileRequest) (*storageV1.File, error) {
-	return s.uc.Get(ctx, req)
+	return s.fileServiceClient.Get(ctx, req)
 }
 
 func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileRequest) (*emptypb.Empty, error) {
@@ -51,7 +51,7 @@ func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileReque
 
 	req.Data.CreatedBy = trans.Ptr(operator.GetUserId())
 
-	return s.uc.Create(ctx, req)
+	return s.fileServiceClient.Create(ctx, req)
 }
 
 func (s *FileService) Update(ctx context.Context, req *storageV1.UpdateFileRequest) (*emptypb.Empty, error) {
@@ -69,7 +69,7 @@ func (s *FileService) Update(ctx context.Context, req *storageV1.UpdateFileReque
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.uc.Update(ctx, req)
+	return s.fileServiceClient.Update(ctx, req)
 }
 
 func (s *FileService) Delete(ctx context.Context, req *storageV1.DeleteFileRequest) (*emptypb.Empty, error) {
@@ -77,5 +77,5 @@ func (s *FileService) Delete(ctx context.Context, req *storageV1.DeleteFileReque
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
 
-	return s.uc.Delete(ctx, req)
+	return s.fileServiceClient.Delete(ctx, req)
 }

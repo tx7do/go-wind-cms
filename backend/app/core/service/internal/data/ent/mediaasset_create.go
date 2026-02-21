@@ -372,12 +372,6 @@ func (_c *MediaAssetCreate) SetNillableIsPrivate(v *bool) *MediaAssetCreate {
 	return _c
 }
 
-// SetVariantFileIds sets the "variant_file_ids" field.
-func (_c *MediaAssetCreate) SetVariantFileIds(v *map[string]uint32) *MediaAssetCreate {
-	_c.mutation.SetVariantFileIds(v)
-	return _c
-}
-
 // SetID sets the "id" field.
 func (_c *MediaAssetCreate) SetID(v uint32) *MediaAssetCreate {
 	_c.mutation.SetID(v)
@@ -598,10 +592,6 @@ func (_c *MediaAssetCreate) createSpec() (*MediaAsset, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsPrivate(); ok {
 		_spec.SetField(mediaasset.FieldIsPrivate, field.TypeBool, value)
 		_node.IsPrivate = &value
-	}
-	if value, ok := _c.mutation.VariantFileIds(); ok {
-		_spec.SetField(mediaasset.FieldVariantFileIds, field.TypeJSON, value)
-		_node.VariantFileIds = value
 	}
 	return _node, _spec
 }
@@ -1144,24 +1134,6 @@ func (u *MediaAssetUpsert) UpdateIsPrivate() *MediaAssetUpsert {
 // ClearIsPrivate clears the value of the "is_private" field.
 func (u *MediaAssetUpsert) ClearIsPrivate() *MediaAssetUpsert {
 	u.SetNull(mediaasset.FieldIsPrivate)
-	return u
-}
-
-// SetVariantFileIds sets the "variant_file_ids" field.
-func (u *MediaAssetUpsert) SetVariantFileIds(v *map[string]uint32) *MediaAssetUpsert {
-	u.Set(mediaasset.FieldVariantFileIds, v)
-	return u
-}
-
-// UpdateVariantFileIds sets the "variant_file_ids" field to the value that was provided on create.
-func (u *MediaAssetUpsert) UpdateVariantFileIds() *MediaAssetUpsert {
-	u.SetExcluded(mediaasset.FieldVariantFileIds)
-	return u
-}
-
-// ClearVariantFileIds clears the value of the "variant_file_ids" field.
-func (u *MediaAssetUpsert) ClearVariantFileIds() *MediaAssetUpsert {
-	u.SetNull(mediaasset.FieldVariantFileIds)
 	return u
 }
 
@@ -1787,27 +1759,6 @@ func (u *MediaAssetUpsertOne) UpdateIsPrivate() *MediaAssetUpsertOne {
 func (u *MediaAssetUpsertOne) ClearIsPrivate() *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.ClearIsPrivate()
-	})
-}
-
-// SetVariantFileIds sets the "variant_file_ids" field.
-func (u *MediaAssetUpsertOne) SetVariantFileIds(v *map[string]uint32) *MediaAssetUpsertOne {
-	return u.Update(func(s *MediaAssetUpsert) {
-		s.SetVariantFileIds(v)
-	})
-}
-
-// UpdateVariantFileIds sets the "variant_file_ids" field to the value that was provided on create.
-func (u *MediaAssetUpsertOne) UpdateVariantFileIds() *MediaAssetUpsertOne {
-	return u.Update(func(s *MediaAssetUpsert) {
-		s.UpdateVariantFileIds()
-	})
-}
-
-// ClearVariantFileIds clears the value of the "variant_file_ids" field.
-func (u *MediaAssetUpsertOne) ClearVariantFileIds() *MediaAssetUpsertOne {
-	return u.Update(func(s *MediaAssetUpsert) {
-		s.ClearVariantFileIds()
 	})
 }
 
@@ -2599,27 +2550,6 @@ func (u *MediaAssetUpsertBulk) UpdateIsPrivate() *MediaAssetUpsertBulk {
 func (u *MediaAssetUpsertBulk) ClearIsPrivate() *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.ClearIsPrivate()
-	})
-}
-
-// SetVariantFileIds sets the "variant_file_ids" field.
-func (u *MediaAssetUpsertBulk) SetVariantFileIds(v *map[string]uint32) *MediaAssetUpsertBulk {
-	return u.Update(func(s *MediaAssetUpsert) {
-		s.SetVariantFileIds(v)
-	})
-}
-
-// UpdateVariantFileIds sets the "variant_file_ids" field to the value that was provided on create.
-func (u *MediaAssetUpsertBulk) UpdateVariantFileIds() *MediaAssetUpsertBulk {
-	return u.Update(func(s *MediaAssetUpsert) {
-		s.UpdateVariantFileIds()
-	})
-}
-
-// ClearVariantFileIds clears the value of the "variant_file_ids" field.
-func (u *MediaAssetUpsertBulk) ClearVariantFileIds() *MediaAssetUpsertBulk {
-	return u.Update(func(s *MediaAssetUpsert) {
-		s.ClearVariantFileIds()
 	})
 }
 

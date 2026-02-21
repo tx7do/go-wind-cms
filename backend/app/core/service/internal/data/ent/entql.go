@@ -594,7 +594,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			mediaasset.FieldFileID:           {Type: field.TypeUint32, Column: mediaasset.FieldFileID},
 			mediaasset.FieldReferenceCount:   {Type: field.TypeUint32, Column: mediaasset.FieldReferenceCount},
 			mediaasset.FieldIsPrivate:        {Type: field.TypeBool, Column: mediaasset.FieldIsPrivate},
-			mediaasset.FieldVariantFileIds:   {Type: field.TypeJSON, Column: mediaasset.FieldVariantFileIds},
 		},
 	}
 	graph.Nodes[18] = &sqlgraph.Node{
@@ -4236,11 +4235,6 @@ func (f *MediaAssetFilter) WhereReferenceCount(p entql.Uint32P) {
 // WhereIsPrivate applies the entql bool predicate on the is_private field.
 func (f *MediaAssetFilter) WhereIsPrivate(p entql.BoolP) {
 	f.Where(p.Field(mediaasset.FieldIsPrivate))
-}
-
-// WhereVariantFileIds applies the entql json.RawMessage predicate on the variant_file_ids field.
-func (f *MediaAssetFilter) WhereVariantFileIds(p entql.BytesP) {
-	f.Where(p.Field(mediaasset.FieldVariantFileIds))
 }
 
 // addPredicate implements the predicateAdder interface.

@@ -52,3 +52,46 @@ export function deepClone<T>(value: T): T {
 
   return _clone(value);
 }
+
+/**
+ * 将以分为单位的金额转换为以美元为单位的字符串，保留两位小数。
+ * @param cents - 以分为单位的金额
+ */
+export function centToDollar(cents: number): string {
+  return (cents / 100).toFixed(2);
+}
+
+/**
+ * 将以字节为单位的大小转换为以 GB 为单位的字符串，保留两位小数。
+ * @param bytes
+ */
+export function bytesToGB(bytes: number): string {
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
+
+/**
+ * 将字节数格式化为最接近的可读单位（B/KB/MB/GB/TB/PB）
+ * @param bytes 字节数
+ * @param decimals 保留的小数位数，默认2位
+ * @returns 格式化后的字符串（如 "2.50 MB", "1.80 GB"）
+ */
+export function formatBytes(bytes: number, decimals: number = 2): string {
+  // 处理0的特殊情况
+  if (bytes === 0) return '0 B';
+
+  // 定义单位换算的基数（1024进制）和单位列表
+  const k = 1024;
+  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+  // 计算最合适的单位索引
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  // 处理超出最大单位（PB）的情况
+  const unitIndex = Math.min(i, units.length - 1);
+
+  // 计算对应单位的数值并保留指定小数位
+  const value = (bytes / k ** unitIndex).toFixed(decimals);
+
+  // 返回格式化后的字符串
+  return `${value} ${units[unitIndex]}`;
+}

@@ -20,26 +20,26 @@ type InternalMessageCategoryService struct {
 
 	log *log.Helper
 
-	repo internalMessageV1.InternalMessageCategoryServiceClient
+	messageCategoryServiceClient internalMessageV1.InternalMessageCategoryServiceClient
 }
 
 func NewInternalMessageCategoryService(
 	ctx *bootstrap.Context,
-	repo internalMessageV1.InternalMessageCategoryServiceClient,
+	messageCategoryServiceClient internalMessageV1.InternalMessageCategoryServiceClient,
 ) *InternalMessageCategoryService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "internal-message-category/service/admin-service"))
 	return &InternalMessageCategoryService{
-		log:  l,
-		repo: repo,
+		log:                          l,
+		messageCategoryServiceClient: messageCategoryServiceClient,
 	}
 }
 
 func (s *InternalMessageCategoryService) List(ctx context.Context, req *paginationV1.PagingRequest) (*internalMessageV1.ListInternalMessageCategoryResponse, error) {
-	return s.repo.List(ctx, req)
+	return s.messageCategoryServiceClient.List(ctx, req)
 }
 
 func (s *InternalMessageCategoryService) Get(ctx context.Context, req *internalMessageV1.GetInternalMessageCategoryRequest) (*internalMessageV1.InternalMessageCategory, error) {
-	return s.repo.Get(ctx, req)
+	return s.messageCategoryServiceClient.Get(ctx, req)
 }
 
 func (s *InternalMessageCategoryService) Create(ctx context.Context, req *internalMessageV1.CreateInternalMessageCategoryRequest) (*emptypb.Empty, error) {
@@ -55,7 +55,7 @@ func (s *InternalMessageCategoryService) Create(ctx context.Context, req *intern
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.repo.Create(ctx, req)
+	return s.messageCategoryServiceClient.Create(ctx, req)
 }
 
 func (s *InternalMessageCategoryService) Update(ctx context.Context, req *internalMessageV1.UpdateInternalMessageCategoryRequest) (*emptypb.Empty, error) {
@@ -74,9 +74,9 @@ func (s *InternalMessageCategoryService) Update(ctx context.Context, req *intern
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.repo.Update(ctx, req)
+	return s.messageCategoryServiceClient.Update(ctx, req)
 }
 
 func (s *InternalMessageCategoryService) Delete(ctx context.Context, req *internalMessageV1.DeleteInternalMessageCategoryRequest) (*emptypb.Empty, error) {
-	return s.repo.Delete(ctx, req)
+	return s.messageCategoryServiceClient.Delete(ctx, req)
 }

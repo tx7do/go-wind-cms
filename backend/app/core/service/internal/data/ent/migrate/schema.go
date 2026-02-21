@@ -1094,7 +1094,6 @@ var (
 		{Name: "file_id", Type: field.TypeUint32, Nullable: true, Comment: "存储文件ID"},
 		{Name: "reference_count", Type: field.TypeUint32, Nullable: true, Comment: "被引用次数", Default: 0},
 		{Name: "is_private", Type: field.TypeBool, Nullable: true, Comment: "是否私密", Default: false},
-		{Name: "variant_file_ids", Type: field.TypeJSON, Nullable: true, Comment: "变体文件URL"},
 	}
 	// MediaAssetsTable holds the schema information for the "media_assets" table.
 	MediaAssetsTable = &schema.Table{

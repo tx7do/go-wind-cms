@@ -145,9 +145,9 @@ func (MediaAsset) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.JSON("variant_file_ids", &map[string]uint32{}).
-			Comment("变体文件URL").
-			Optional(),
+		//field.JSON("variant_file_ids", &map[string]uint32{}).
+		//	Comment("变体文件URL").
+		//	Optional(),
 	}
 }
 

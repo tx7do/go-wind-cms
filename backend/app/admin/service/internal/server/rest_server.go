@@ -108,10 +108,17 @@ func NewRestServer(
 	operationAuditLogService *service.OperationAuditLogService,
 	permissionAuditLogService *service.PermissionAuditLogService,
 
-	postSvc *service.PostService,
-	cateSvc *service.CategoryService,
-	commentSvc *service.CommentService,
-	tagSvc *service.TagService,
+	commentService *service.CommentService,
+
+	postService *service.PostService,
+	categoryService *service.CategoryService,
+	tagService *service.TagService,
+	pageService *service.PageService,
+
+	siteSettingService *service.SiteSettingService,
+	navigationService *service.NavigationService,
+
+	mediaAssetService *service.MediaAssetService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -164,10 +171,16 @@ func NewRestServer(
 	// 但，代码生成器生成代码可以提供给OpenAPI使用。
 	registerFileTransferServiceHandler(srv, fileTransferService)
 
-	adminV1.RegisterPostServiceHTTPServer(srv, postSvc)
-	adminV1.RegisterCategoryServiceHTTPServer(srv, cateSvc)
-	adminV1.RegisterTagServiceHTTPServer(srv, tagSvc)
-	adminV1.RegisterCommentServiceHTTPServer(srv, commentSvc)
+	adminV1.RegisterPostServiceHTTPServer(srv, postService)
+	adminV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
+	adminV1.RegisterTagServiceHTTPServer(srv, tagService)
+	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
+	adminV1.RegisterPageServiceHTTPServer(srv, pageService)
+
+	adminV1.RegisterSiteSettingServiceHTTPServer(srv, siteSettingService)
+	adminV1.RegisterNavigationServiceHTTPServer(srv, navigationService)
+
+	adminV1.RegisterMediaAssetServiceHTTPServer(srv, mediaAssetService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

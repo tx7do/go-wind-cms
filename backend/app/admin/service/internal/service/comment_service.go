@@ -17,23 +17,23 @@ import (
 type CommentService struct {
 	adminV1.CommentServiceHTTPServer
 
-	commentClient commentV1.CommentServiceClient
-	log           *log.Helper
+	commentServiceClient commentV1.CommentServiceClient
+	log                  *log.Helper
 }
 
-func NewCommentService(ctx *bootstrap.Context, commentClient commentV1.CommentServiceClient) *CommentService {
+func NewCommentService(ctx *bootstrap.Context, commentServiceClient commentV1.CommentServiceClient) *CommentService {
 	return &CommentService{
-		log:           ctx.NewLoggerHelper("comment/service/admin-service"),
-		commentClient: commentClient,
+		log:                  ctx.NewLoggerHelper("comment/service/admin-service"),
+		commentServiceClient: commentServiceClient,
 	}
 }
 
 func (s *CommentService) List(ctx context.Context, req *paginationV1.PagingRequest) (*commentV1.ListCommentResponse, error) {
-	return s.commentClient.List(ctx, req)
+	return s.commentServiceClient.List(ctx, req)
 }
 
 func (s *CommentService) Get(ctx context.Context, req *commentV1.GetCommentRequest) (*commentV1.Comment, error) {
-	return s.commentClient.Get(ctx, req)
+	return s.commentServiceClient.Get(ctx, req)
 }
 
 func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommentRequest) (*commentV1.Comment, error) {
@@ -49,7 +49,7 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.commentClient.Create(ctx, req)
+	return s.commentServiceClient.Create(ctx, req)
 }
 
 func (s *CommentService) Update(ctx context.Context, req *commentV1.UpdateCommentRequest) (*commentV1.Comment, error) {
@@ -68,9 +68,9 @@ func (s *CommentService) Update(ctx context.Context, req *commentV1.UpdateCommen
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.commentClient.Update(ctx, req)
+	return s.commentServiceClient.Update(ctx, req)
 }
 
 func (s *CommentService) Delete(ctx context.Context, req *commentV1.DeleteCommentRequest) (*emptypb.Empty, error) {
-	return s.commentClient.Delete(ctx, req)
+	return s.commentServiceClient.Delete(ctx, req)
 }

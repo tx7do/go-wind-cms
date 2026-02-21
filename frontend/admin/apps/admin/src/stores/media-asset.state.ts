@@ -95,6 +95,55 @@ export const useMediaAssetStore = defineStore('media-asset', () => {
 
 export const mediaAssetProcessingStatusList = computed(() => [
   {
+    value: 'PROCESSING_STATUS_UPLOADING',
+    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_UPLOADING'),
+  },
+  {
+    value: 'PROCESSING_STATUS_PROCESSING',
+    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_PROCESSING'),
+  },
+  {
+    value: 'PROCESSING_STATUS_COMPLETED',
+    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_COMPLETED'),
+  },
+  {
+    value: 'PROCESSING_STATUS_FAILED',
+    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_FAILED'),
+  },
+]);
+
+export function mediaAssetProcessingStatusToName(
+  status: MediaAsset_ProcessingStatus,
+) {
+  const values = mediaAssetProcessingStatusList.value;
+  const matchedItem = values.find((item) => item.value === status);
+  return matchedItem ? matchedItem.label : '';
+}
+
+const MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP = {
+  // 上传中 - 进度蓝（代表传输中、进行中，中性无情绪）
+  PROCESSING_STATUS_UPLOADING: '#3b82f6',
+  // 处理中 - 进度黄（代表后台处理、待完成，温和提醒）
+  PROCESSING_STATUS_PROCESSING: '#f59e0b',
+  // 已完成 - 成功绿（代表处理完成、成功，正向积极）
+  PROCESSING_STATUS_COMPLETED: '#22c55e',
+  // 处理失败 - 警示红（代表出错、失败，需关注）
+  PROCESSING_STATUS_FAILED: '#ef4444',
+  // 默认值 - 中性浅灰（无明确状态时的兜底）
+  DEFAULT: '#94a3b8',
+} as const;
+export function mediaAssetProcessingStatusToColor(
+  status: MediaAsset_ProcessingStatus,
+) {
+  return (
+    MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP[
+      status as keyof typeof MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP
+    ] || MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP.DEFAULT
+  );
+}
+
+export const mediaAssetAssetTypeList = computed(() => [
+  {
     value: 'ASSET_TYPE_IMAGE',
     label: $t('enum.mediaAsset.type.ASSET_TYPE_IMAGE'),
   },
@@ -120,15 +169,13 @@ export const mediaAssetProcessingStatusList = computed(() => [
   },
 ]);
 
-export function mediaAssetProcessingStatusToName(
-  status: MediaAsset_ProcessingStatus,
-) {
-  const values = mediaAssetProcessingStatusList.value;
-  const matchedItem = values.find((item) => item.value === status);
+export function mediaAssetAssetTypeToName(assetType: MediaAsset_AssetType) {
+  const values = mediaAssetAssetTypeList.value;
+  const matchedItem = values.find((item) => item.value === assetType);
   return matchedItem ? matchedItem.label : '';
 }
 
-const MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP = {
+const MEDIA_ASSET_ASSET_TYPE_COLOR_MAP = {
   // 图片 - 创意紫（视觉创意、图像类，贴合设计属性）
   ASSET_TYPE_IMAGE: '#8b5cf6',
   // 视频 - 活力蓝（动态影像、多媒体，贴合视频播放属性）
@@ -142,53 +189,6 @@ const MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP = {
   // 其他类型 - 中性浅紫（兜底分类，温和不抢镜）
   ASSET_TYPE_OTHER: '#a855f7',
   // 默认值 - 中性浅灰（无明确类型时的兜底）
-  DEFAULT: '#94a3b8',
-} as const;
-export function mediaAssetProcessingStatusToColor(
-  status: MediaAsset_ProcessingStatus,
-) {
-  return (
-    MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP[
-      status as keyof typeof MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP
-    ] || MEDIA_ASSET_PROCESSING_STATUS_COLOR_MAP.DEFAULT
-  );
-}
-
-export const mediaAssetAssetTypeList = computed(() => [
-  {
-    value: 'PROCESSING_STATUS_UPLOADING',
-    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_UPLOADING'),
-  },
-  {
-    value: 'PROCESSING_STATUS_PROCESSING',
-    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_PROCESSING'),
-  },
-  {
-    value: 'PROCESSING_STATUS_COMPLETED',
-    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_COMPLETED'),
-  },
-  {
-    value: 'PROCESSING_STATUS_FAILED',
-    label: $t('enum.mediaAsset.processingStatus.PROCESSING_STATUS_FAILED'),
-  },
-]);
-
-export function mediaAssetAssetTypeToName(assetType: MediaAsset_AssetType) {
-  const values = mediaAssetAssetTypeList.value;
-  const matchedItem = values.find((item) => item.value === assetType);
-  return matchedItem ? matchedItem.label : '';
-}
-
-const MEDIA_ASSET_ASSET_TYPE_COLOR_MAP = {
-  // 上传中 - 进度蓝（代表传输中、进行中，中性无情绪）
-  PROCESSING_STATUS_UPLOADING: '#3b82f6',
-  // 处理中 - 进度黄（代表后台处理、待完成，温和提醒）
-  PROCESSING_STATUS_PROCESSING: '#f59e0b',
-  // 已完成 - 成功绿（代表处理完成、成功，正向积极）
-  PROCESSING_STATUS_COMPLETED: '#22c55e',
-  // 处理失败 - 警示红（代表出错、失败，需关注）
-  PROCESSING_STATUS_FAILED: '#ef4444',
-  // 默认值 - 中性浅灰（无明确状态时的兜底）
   DEFAULT: '#94a3b8',
 } as const;
 

@@ -18,7 +18,6 @@ import (
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 )
 
@@ -84,7 +83,7 @@ func (r *LoginPolicyRepo) Count(ctx context.Context, whereCond []func(s *sql.Sel
 	count, err := builder.Count(ctx)
 	if err != nil {
 		r.log.Errorf("query count failed: %s", err.Error())
-		return 0, adminV1.ErrorInternalServerError("query count failed")
+		return 0, authenticationV1.ErrorInternalServerError("query count failed")
 	}
 
 	return count, nil
@@ -92,7 +91,7 @@ func (r *LoginPolicyRepo) Count(ctx context.Context, whereCond []func(s *sql.Sel
 
 func (r *LoginPolicyRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*authenticationV1.ListLoginPolicyResponse, error) {
 	if req == nil {
-		return nil, adminV1.ErrorBadRequest("invalid parameter")
+		return nil, authenticationV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().LoginPolicy.Query()
@@ -117,14 +116,14 @@ func (r *LoginPolicyRepo) IsExist(ctx context.Context, id uint32) (bool, error) 
 		Exist(ctx)
 	if err != nil {
 		r.log.Errorf("query exist failed: %s", err.Error())
-		return false, adminV1.ErrorInternalServerError("query exist failed")
+		return false, authenticationV1.ErrorInternalServerError("query exist failed")
 	}
 	return exist, nil
 }
 
 func (r *LoginPolicyRepo) Get(ctx context.Context, req *authenticationV1.GetLoginPolicyRequest) (*authenticationV1.LoginPolicy, error) {
 	if req == nil {
-		return nil, adminV1.ErrorBadRequest("invalid parameter")
+		return nil, authenticationV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().LoginPolicy.Query()
@@ -146,7 +145,7 @@ func (r *LoginPolicyRepo) Get(ctx context.Context, req *authenticationV1.GetLogi
 
 func (r *LoginPolicyRepo) Create(ctx context.Context, req *authenticationV1.CreateLoginPolicyRequest) error {
 	if req == nil || req.Data == nil {
-		return adminV1.ErrorBadRequest("invalid request")
+		return authenticationV1.ErrorBadRequest("invalid request")
 	}
 
 	builder := r.entClient.Client().LoginPolicy.Create().
@@ -161,7 +160,7 @@ func (r *LoginPolicyRepo) Create(ctx context.Context, req *authenticationV1.Crea
 
 	if err := builder.Exec(ctx); err != nil {
 		r.log.Errorf("insert admin login restriction failed: %s", err.Error())
-		return adminV1.ErrorInternalServerError("insert admin login restriction failed")
+		return authenticationV1.ErrorInternalServerError("insert admin login restriction failed")
 	}
 
 	return nil
@@ -169,7 +168,7 @@ func (r *LoginPolicyRepo) Create(ctx context.Context, req *authenticationV1.Crea
 
 func (r *LoginPolicyRepo) Update(ctx context.Context, req *authenticationV1.UpdateLoginPolicyRequest) error {
 	if req == nil || req.Data == nil {
-		return adminV1.ErrorBadRequest("invalid request")
+		return authenticationV1.ErrorBadRequest("invalid request")
 	}
 
 	// 如果不存在则创建
@@ -208,7 +207,7 @@ func (r *LoginPolicyRepo) Update(ctx context.Context, req *authenticationV1.Upda
 
 func (r *LoginPolicyRepo) Delete(ctx context.Context, req *authenticationV1.DeleteLoginPolicyRequest) error {
 	if req == nil {
-		return adminV1.ErrorBadRequest("invalid parameter")
+		return authenticationV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().Debug().LoginPolicy.Delete()
@@ -217,7 +216,7 @@ func (r *LoginPolicyRepo) Delete(ctx context.Context, req *authenticationV1.Dele
 	})
 	if err != nil {
 		r.log.Errorf("delete internal message categories failed: %s", err.Error())
-		return adminV1.ErrorInternalServerError("delete admin login restriction failed")
+		return authenticationV1.ErrorInternalServerError("delete admin login restriction failed")
 	}
 
 	return nil

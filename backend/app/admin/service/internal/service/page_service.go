@@ -17,23 +17,23 @@ import (
 type PageService struct {
 	adminV1.PageServiceHTTPServer
 
-	postClient contentV1.PageServiceClient
-	log        *log.Helper
+	pageServiceClient contentV1.PageServiceClient
+	log               *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, postClient contentV1.PageServiceClient) *PageService {
+func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServiceClient) *PageService {
 	return &PageService{
-		log:        ctx.NewLoggerHelper("page/service/admin-service"),
-		postClient: postClient,
+		log:               ctx.NewLoggerHelper("page/service/admin-service"),
+		pageServiceClient: pageServiceClient,
 	}
 }
 
 func (s *PageService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListPageResponse, error) {
-	return s.postClient.List(ctx, req)
+	return s.pageServiceClient.List(ctx, req)
 }
 
 func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*contentV1.Page, error) {
-	return s.postClient.Get(ctx, req)
+	return s.pageServiceClient.Get(ctx, req)
 }
 
 func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageRequest) (*contentV1.Page, error) {
@@ -49,7 +49,7 @@ func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageReque
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.postClient.Create(ctx, req)
+	return s.pageServiceClient.Create(ctx, req)
 }
 
 func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageRequest) (*contentV1.Page, error) {
@@ -68,9 +68,9 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.postClient.Update(ctx, req)
+	return s.pageServiceClient.Update(ctx, req)
 }
 
 func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageRequest) (*emptypb.Empty, error) {
-	return s.postClient.Delete(ctx, req)
+	return s.pageServiceClient.Delete(ctx, req)
 }

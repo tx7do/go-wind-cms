@@ -18,7 +18,6 @@ import (
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 )
 
@@ -83,7 +82,7 @@ func (r *OperationAuditLogRepo) Count(ctx context.Context, whereCond []func(s *s
 	count, err := builder.Count(ctx)
 	if err != nil {
 		r.log.Errorf("query count failed: %s", err.Error())
-		return 0, adminV1.ErrorInternalServerError("query count failed")
+		return 0, auditV1.ErrorInternalServerError("query count failed")
 	}
 
 	return count, nil
@@ -91,7 +90,7 @@ func (r *OperationAuditLogRepo) Count(ctx context.Context, whereCond []func(s *s
 
 func (r *OperationAuditLogRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*auditV1.ListOperationAuditLogResponse, error) {
 	if req == nil {
-		return nil, adminV1.ErrorBadRequest("invalid parameter")
+		return nil, auditV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().OperationAuditLog.Query()
@@ -116,14 +115,14 @@ func (r *OperationAuditLogRepo) IsExist(ctx context.Context, id uint32) (bool, e
 		Exist(ctx)
 	if err != nil {
 		r.log.Errorf("query exist failed: %s", err.Error())
-		return false, adminV1.ErrorInternalServerError("query exist failed")
+		return false, auditV1.ErrorInternalServerError("query exist failed")
 	}
 	return exist, nil
 }
 
 func (r *OperationAuditLogRepo) Get(ctx context.Context, req *auditV1.GetOperationAuditLogRequest) (*auditV1.OperationAuditLog, error) {
 	if req == nil {
-		return nil, adminV1.ErrorBadRequest("invalid parameter")
+		return nil, auditV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().Debug().OperationAuditLog.Query()
@@ -145,7 +144,7 @@ func (r *OperationAuditLogRepo) Get(ctx context.Context, req *auditV1.GetOperati
 
 func (r *OperationAuditLogRepo) Create(ctx context.Context, req *auditV1.CreateOperationAuditLogRequest) error {
 	if req == nil || req.Data == nil {
-		return adminV1.ErrorBadRequest("invalid parameter")
+		return auditV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().OperationAuditLog.
@@ -171,7 +170,7 @@ func (r *OperationAuditLogRepo) Create(ctx context.Context, req *auditV1.CreateO
 
 	if err := builder.Exec(ctx); err != nil {
 		r.log.Errorf("insert operation audit log failed: %s", err.Error())
-		return adminV1.ErrorInternalServerError("insert operation audit log failed")
+		return auditV1.ErrorInternalServerError("insert operation audit log failed")
 	}
 
 	return nil

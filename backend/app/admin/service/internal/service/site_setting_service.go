@@ -17,23 +17,23 @@ import (
 type SiteSettingService struct {
 	adminV1.SiteSettingServiceHTTPServer
 
-	categoryClient siteV1.SiteSettingServiceClient
-	log            *log.Helper
+	siteSettingServiceClient siteV1.SiteSettingServiceClient
+	log                      *log.Helper
 }
 
-func NewSiteSettingService(ctx *bootstrap.Context, categoryClient siteV1.SiteSettingServiceClient) *SiteSettingService {
+func NewSiteSettingService(ctx *bootstrap.Context, siteSettingServiceClient siteV1.SiteSettingServiceClient) *SiteSettingService {
 	return &SiteSettingService{
-		log:            ctx.NewLoggerHelper("site-setting/service/admin-service"),
-		categoryClient: categoryClient,
+		log:                      ctx.NewLoggerHelper("site-setting/service/admin-service"),
+		siteSettingServiceClient: siteSettingServiceClient,
 	}
 }
 
 func (s *SiteSettingService) List(ctx context.Context, req *paginationV1.PagingRequest) (*siteV1.ListSiteSettingResponse, error) {
-	return s.categoryClient.List(ctx, req)
+	return s.siteSettingServiceClient.List(ctx, req)
 }
 
 func (s *SiteSettingService) Get(ctx context.Context, req *siteV1.GetSiteSettingRequest) (*siteV1.SiteSetting, error) {
-	return s.categoryClient.Get(ctx, req)
+	return s.siteSettingServiceClient.Get(ctx, req)
 }
 
 func (s *SiteSettingService) Create(ctx context.Context, req *siteV1.CreateSiteSettingRequest) (*siteV1.SiteSetting, error) {
@@ -49,7 +49,7 @@ func (s *SiteSettingService) Create(ctx context.Context, req *siteV1.CreateSiteS
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.categoryClient.Create(ctx, req)
+	return s.siteSettingServiceClient.Create(ctx, req)
 }
 
 func (s *SiteSettingService) Update(ctx context.Context, req *siteV1.UpdateSiteSettingRequest) (*siteV1.SiteSetting, error) {
@@ -68,9 +68,9 @@ func (s *SiteSettingService) Update(ctx context.Context, req *siteV1.UpdateSiteS
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.categoryClient.Update(ctx, req)
+	return s.siteSettingServiceClient.Update(ctx, req)
 }
 
 func (s *SiteSettingService) Delete(ctx context.Context, req *siteV1.DeleteSiteSettingRequest) (*emptypb.Empty, error) {
-	return s.categoryClient.Delete(ctx, req)
+	return s.siteSettingServiceClient.Delete(ctx, req)
 }

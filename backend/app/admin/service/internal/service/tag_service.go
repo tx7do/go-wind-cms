@@ -17,23 +17,23 @@ import (
 type TagService struct {
 	adminV1.TagServiceHTTPServer
 
-	tagClient contentV1.TagServiceClient
-	log       *log.Helper
+	tagServiceClient contentV1.TagServiceClient
+	log              *log.Helper
 }
 
-func NewTagService(ctx *bootstrap.Context, tagClient contentV1.TagServiceClient) *TagService {
+func NewTagService(ctx *bootstrap.Context, tagServiceClient contentV1.TagServiceClient) *TagService {
 	return &TagService{
-		log:       ctx.NewLoggerHelper("tag/service/admin-service"),
-		tagClient: tagClient,
+		log:              ctx.NewLoggerHelper("tag/service/admin-service"),
+		tagServiceClient: tagServiceClient,
 	}
 }
 
 func (s *TagService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListTagResponse, error) {
-	return s.tagClient.List(ctx, req)
+	return s.tagServiceClient.List(ctx, req)
 }
 
 func (s *TagService) Get(ctx context.Context, req *contentV1.GetTagRequest) (*contentV1.Tag, error) {
-	return s.tagClient.Get(ctx, req)
+	return s.tagServiceClient.Get(ctx, req)
 }
 
 func (s *TagService) Create(ctx context.Context, req *contentV1.CreateTagRequest) (*contentV1.Tag, error) {
@@ -49,7 +49,7 @@ func (s *TagService) Create(ctx context.Context, req *contentV1.CreateTagRequest
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.tagClient.Create(ctx, req)
+	return s.tagServiceClient.Create(ctx, req)
 }
 
 func (s *TagService) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (*contentV1.Tag, error) {
@@ -68,9 +68,9 @@ func (s *TagService) Update(ctx context.Context, req *contentV1.UpdateTagRequest
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.tagClient.Update(ctx, req)
+	return s.tagServiceClient.Update(ctx, req)
 }
 
 func (s *TagService) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (*emptypb.Empty, error) {
-	return s.tagClient.Delete(ctx, req)
+	return s.tagServiceClient.Delete(ctx, req)
 }

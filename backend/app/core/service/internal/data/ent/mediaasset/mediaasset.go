@@ -63,8 +63,6 @@ const (
 	FieldReferenceCount = "reference_count"
 	// FieldIsPrivate holds the string denoting the is_private field in the database.
 	FieldIsPrivate = "is_private"
-	// FieldVariantFileIds holds the string denoting the variant_file_ids field in the database.
-	FieldVariantFileIds = "variant_file_ids"
 	// Table holds the table name of the mediaasset in the database.
 	Table = "media_assets"
 )
@@ -97,7 +95,6 @@ var Columns = []string{
 	FieldFileID,
 	FieldReferenceCount,
 	FieldIsPrivate,
-	FieldVariantFileIds,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

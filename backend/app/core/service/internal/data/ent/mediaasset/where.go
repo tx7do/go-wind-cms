@@ -1574,16 +1574,6 @@ func IsPrivateNotNil() predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotNull(FieldIsPrivate))
 }
 
-// VariantFileIdsIsNil applies the IsNil predicate on the "variant_file_ids" field.
-func VariantFileIdsIsNil() predicate.MediaAsset {
-	return predicate.MediaAsset(sql.FieldIsNull(FieldVariantFileIds))
-}
-
-// VariantFileIdsNotNil applies the NotNil predicate on the "variant_file_ids" field.
-func VariantFileIdsNotNil() predicate.MediaAsset {
-	return predicate.MediaAsset(sql.FieldNotNull(FieldVariantFileIds))
-}
-
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.MediaAsset) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.AndPredicates(predicates...))

@@ -136,15 +136,15 @@ export function commentStatusToColor(status: Comment_Status) {
 export const commentContentTypeList = computed(() => [
   {
     value: 'CONTENT_TYPE_POST',
-    label: $t('enum.content.contentType.CONTENT_TYPE_POST'),
+    label: $t('enum.comment.contentType.CONTENT_TYPE_POST'),
   },
   {
     value: 'CONTENT_TYPE_PAGE',
-    label: $t('enum.content.contentType.CONTENT_TYPE_PAGE'),
+    label: $t('enum.comment.contentType.CONTENT_TYPE_PAGE'),
   },
   {
     value: 'CONTENT_TYPE_PRODUCT',
-    label: $t('enum.content.contentType.CONTENT_TYPE_PRODUCT'),
+    label: $t('enum.comment.contentType.CONTENT_TYPE_PRODUCT'),
   },
 ]);
 

@@ -146,8 +146,8 @@ message MediaAsset {
 
   optional bool is_private = 20 [
     json_name = "isPrivate",
-    (gnostic.openapi.v3.property) = {description: "是否私密"}
-  ]; // 是否私密（true 表示仅管理员可见，前端不展示）
+    (gnostic.openapi.v3.property) = {description: "是否私密资源"}
+  ]; // 是否私密资源（true 表示仅管理员可见，前端不展示）
 
   optional uint32 file_id = 21 [
     json_name = "fileId",

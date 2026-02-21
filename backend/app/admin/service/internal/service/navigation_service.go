@@ -17,23 +17,23 @@ import (
 type NavigationService struct {
 	adminV1.NavigationServiceHTTPServer
 
-	categoryClient siteV1.NavigationServiceClient
-	log            *log.Helper
+	navigationServiceClient siteV1.NavigationServiceClient
+	log                     *log.Helper
 }
 
-func NewNavigationService(ctx *bootstrap.Context, categoryClient siteV1.NavigationServiceClient) *NavigationService {
+func NewNavigationService(ctx *bootstrap.Context, navigationServiceClient siteV1.NavigationServiceClient) *NavigationService {
 	return &NavigationService{
-		log:            ctx.NewLoggerHelper("navigation/service/admin-service"),
-		categoryClient: categoryClient,
+		log:                     ctx.NewLoggerHelper("navigation/service/admin-service"),
+		navigationServiceClient: navigationServiceClient,
 	}
 }
 
 func (s *NavigationService) List(ctx context.Context, req *paginationV1.PagingRequest) (*siteV1.ListNavigationResponse, error) {
-	return s.categoryClient.List(ctx, req)
+	return s.navigationServiceClient.List(ctx, req)
 }
 
 func (s *NavigationService) Get(ctx context.Context, req *siteV1.GetNavigationRequest) (*siteV1.Navigation, error) {
-	return s.categoryClient.Get(ctx, req)
+	return s.navigationServiceClient.Get(ctx, req)
 }
 
 func (s *NavigationService) Create(ctx context.Context, req *siteV1.CreateNavigationRequest) (*siteV1.Navigation, error) {
@@ -49,7 +49,7 @@ func (s *NavigationService) Create(ctx context.Context, req *siteV1.CreateNaviga
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.categoryClient.Create(ctx, req)
+	return s.navigationServiceClient.Create(ctx, req)
 }
 
 func (s *NavigationService) Update(ctx context.Context, req *siteV1.UpdateNavigationRequest) (*siteV1.Navigation, error) {
@@ -68,9 +68,9 @@ func (s *NavigationService) Update(ctx context.Context, req *siteV1.UpdateNaviga
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.categoryClient.Update(ctx, req)
+	return s.navigationServiceClient.Update(ctx, req)
 }
 
 func (s *NavigationService) Delete(ctx context.Context, req *siteV1.DeleteNavigationRequest) (*emptypb.Empty, error) {
-	return s.categoryClient.Delete(ctx, req)
+	return s.navigationServiceClient.Delete(ctx, req)
 }

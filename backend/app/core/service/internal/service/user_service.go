@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -504,7 +503,7 @@ func (s *UserService) List(ctx context.Context, req *paginationV1.PagingRequest)
 		roleIds, err := s.userRepo.ListRoleIDsByUserID(ctx, user.GetId())
 		if err != nil {
 			s.log.Errorf("list user role ids failed [%s]", err.Error())
-			return nil, adminV1.ErrorInternalServerError("list user role ids failed")
+			return nil, identityV1.ErrorInternalServerError("list user role ids failed")
 		}
 
 		user.RoleIds = roleIds

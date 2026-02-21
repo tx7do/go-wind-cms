@@ -17,27 +17,27 @@ import (
 type MediaAssetService struct {
 	adminV1.MediaAssetServiceHTTPServer
 
-	categoryClient mediaV1.MediaAssetServiceClient
-	log            *log.Helper
+	mediaAssetServiceClient mediaV1.MediaAssetServiceClient
+	log                     *log.Helper
 }
 
-func NewMediaAssetService(ctx *bootstrap.Context, categoryClient mediaV1.MediaAssetServiceClient) *MediaAssetService {
+func NewMediaAssetService(ctx *bootstrap.Context, mediaAssetServiceClient mediaV1.MediaAssetServiceClient) *MediaAssetService {
 	return &MediaAssetService{
-		log:            ctx.NewLoggerHelper("media-asset/service/admin-service"),
-		categoryClient: categoryClient,
+		log:                     ctx.NewLoggerHelper("media-asset/service/admin-service"),
+		mediaAssetServiceClient: mediaAssetServiceClient,
 	}
 }
 
 func (s *MediaAssetService) List(ctx context.Context, req *paginationV1.PagingRequest) (*mediaV1.ListMediaAssetResponse, error) {
-	return s.categoryClient.List(ctx, req)
+	return s.mediaAssetServiceClient.List(ctx, req)
 }
 
 func (s *MediaAssetService) Get(ctx context.Context, req *mediaV1.GetMediaAssetRequest) (*mediaV1.MediaAsset, error) {
-	return s.categoryClient.Get(ctx, req)
+	return s.mediaAssetServiceClient.Get(ctx, req)
 }
 
 func (s *MediaAssetService) Create(ctx context.Context, req *mediaV1.CreateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
-	return s.categoryClient.Create(ctx, req)
+	return s.mediaAssetServiceClient.Create(ctx, req)
 }
 
 func (s *MediaAssetService) Update(ctx context.Context, req *mediaV1.UpdateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
@@ -56,9 +56,9 @@ func (s *MediaAssetService) Update(ctx context.Context, req *mediaV1.UpdateMedia
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.categoryClient.Update(ctx, req)
+	return s.mediaAssetServiceClient.Update(ctx, req)
 }
 
 func (s *MediaAssetService) Delete(ctx context.Context, req *mediaV1.DeleteMediaAssetRequest) (*emptypb.Empty, error) {
-	return s.categoryClient.Delete(ctx, req)
+	return s.mediaAssetServiceClient.Delete(ctx, req)
 }

@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/mediaasset"
 	"strings"
@@ -68,10 +67,8 @@ type MediaAsset struct {
 	// 被引用次数
 	ReferenceCount *uint32 `json:"reference_count,omitempty"`
 	// 是否私密
-	IsPrivate *bool `json:"is_private,omitempty"`
-	// 变体文件URL
-	VariantFileIds *map[string]uint32 `json:"variant_file_ids,omitempty"`
-	selectValues   sql.SelectValues
+	IsPrivate    *bool `json:"is_private,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -79,8 +76,6 @@ func (*MediaAsset) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mediaasset.FieldVariantFileIds:
-			values[i] = new([]byte)
 		case mediaasset.FieldIsPrivate:
 			values[i] = new(sql.NullBool)
 		case mediaasset.FieldID, mediaasset.FieldCreatedBy, mediaasset.FieldUpdatedBy, mediaasset.FieldDeletedBy, mediaasset.FieldSize, mediaasset.FieldWidth, mediaasset.FieldHeight, mediaasset.FieldDuration, mediaasset.FieldFolderID, mediaasset.FieldFileID, mediaasset.FieldReferenceCount:
@@ -285,14 +280,6 @@ func (_m *MediaAsset) assignValues(columns []string, values []any) error {
 				_m.IsPrivate = new(bool)
 				*_m.IsPrivate = value.Bool
 			}
-		case mediaasset.FieldVariantFileIds:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field variant_file_ids", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.VariantFileIds); err != nil {
-					return fmt.Errorf("unmarshal field variant_file_ids: %w", err)
-				}
-			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -453,9 +440,6 @@ func (_m *MediaAsset) String() string {
 		builder.WriteString("is_private=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
-	builder.WriteString(", ")
-	builder.WriteString("variant_file_ids=")
-	builder.WriteString(fmt.Sprintf("%v", _m.VariantFileIds))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -239,5 +239,101 @@
     "AWS": "Amazon S3",
     "AZURE": "Azure Blob Storage",
     "GOOGLE": "Google Cloud Storage"
+  },
+  "editorType": {
+    "EDITOR_TYPE_MARKDOWN": "Markdown Editor",
+    "EDITOR_TYPE_RICH_TEXT": "Rich Text Editor",
+    "EDITOR_TYPE_HTML": "HTML Editor",
+    "EDITOR_TYPE_JSON_BLOCK": "JSON Block Editor",
+    "EDITOR_TYPE_PLAIN_TEXT": "Plain Text Editor",
+    "EDITOR_TYPE_CODE": "Code Editor",
+    "EDITOR_TYPE_WYSIWYG": "WYSIWYG Editor",
+    "EDITOR_TYPE_VISUAL_BUILDER": "Visual Editor",
+    "EDITOR_TYPE_SLATE": "Slate Editor",
+    "EDITOR_TYPE_PROSEMIRROR": "ProseMirror Editor"
+  },
+  "comment": {
+    "status": {
+      "STATUS_PENDING": "Pending Review",
+      "STATUS_APPROVED": "Approved",
+      "STATUS_REJECTED": "Rejected",
+      "STATUS_SPAM": "Spam"
+    },
+    "contentType": {
+      "CONTENT_TYPE_POST": "Post",
+      "CONTENT_TYPE_PAGE": "Page",
+      "CONTENT_TYPE_PRODUCT": "Product"
+    },
+    "authorType": {
+      "AUTHOR_TYPE_USER": "User",
+      "AUTHOR_TYPE_ADMIN": "Administrator",
+      "AUTHOR_TYPE_MODERATOR": "Moderator",
+      "AUTHOR_TYPE_GUEST": "Guest"
+    }
+  },
+  "post": {
+    "status": {
+      "POST_STATUS_DRAFT": "Draft",
+      "POST_STATUS_PUBLISHED": "Published",
+      "POST_STATUS_SCHEDULED": "Scheduled",
+      "POST_STATUS_TRASHED": "Deleted"
+    }
+  },
+  "page": {
+    "status": {
+      "PAGE_STATUS_DRAFT": "Draft",
+      "PAGE_STATUS_PUBLISHED": "Published",
+      "PAGE_STATUS_ARCHIVED": "Archived"
+    },
+    "type": {
+      "PAGE_TYPE_DEFAULT": "Default Page",
+      "PAGE_TYPE_HOME": "Home Page",
+      "PAGE_TYPE_ERROR_404": "404 Error Page",
+      "PAGE_TYPE_ERROR_500": "500 Error Page",
+      "PAGE_TYPE_CUSTOM": "Custom Page"
+    }
+  },
+  "category": {
+    "status": {
+      "CATEGORY_STATUS_ACTIVE": "Active",
+      "CATEGORY_STATUS_HIDDEN": "Hidden",
+      "CATEGORY_STATUS_ARCHIVED": "Archived"
+    }
+  },
+  "tag": {
+    "status": {
+      "TAG_STATUS_ACTIVE": "Active",
+      "TAG_STATUS_HIDDEN": "Hidden",
+      "TAG_STATUS_ARCHIVED": "Archived"
+    }
+  },
+  "mediaAsset": {
+    "type": {
+      "ASSET_TYPE_IMAGE": "Image",
+      "ASSET_TYPE_VIDEO": "Video",
+      "ASSET_TYPE_DOCUMENT": "Document",
+      "ASSET_TYPE_AUDIO": "Audio",
+      "ASSET_TYPE_ARCHIVE": "Archive",
+      "ASSET_TYPE_OTHER": "Other"
+    },
+    "processingStatus": {
+      "PROCESSING_STATUS_UPLOADING": "Uploading",
+      "PROCESSING_STATUS_PROCESSING": "Processing",
+      "PROCESSING_STATUS_COMPLETED": "Completed",
+      "PROCESSING_STATUS_FAILED": "Failed"
+    }
+  },
+  "siteSetting": {
+    "type": {
+      "SETTING_TYPE_TEXT": "Single Line Text",
+      "SETTING_TYPE_TEXTAREA": "Multi-line Text",
+      "SETTING_TYPE_NUMBER": "Number",
+      "SETTING_TYPE_BOOLEAN": "Boolean",
+      "SETTING_TYPE_URL": "URL",
+      "SETTING_TYPE_EMAIL": "Email",
+      "SETTING_TYPE_IMAGE": "Image",
+      "SETTING_TYPE_SELECT": "Select",
+      "SETTING_TYPE_JSON": "JSON"
+    }
   }
 }

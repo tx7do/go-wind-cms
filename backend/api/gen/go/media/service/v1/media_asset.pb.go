@@ -167,7 +167,7 @@ type MediaAsset struct {
 	FileHash         *string                      `protobuf:"bytes,16,opt,name=file_hash,json=fileHash,proto3,oneof" json:"file_hash,omitempty"`                                                                                          // 文件哈希值（SHA256，用于去重和完整性校验）
 	ReferenceCount   *uint32                      `protobuf:"varint,17,opt,name=reference_count,json=referenceCount,proto3,oneof" json:"reference_count,omitempty"`                                                                       // 被引用次数（用于垃圾回收，0 表示未被任何内容引用）
 	VariantFileIds   map[string]uint32            `protobuf:"bytes,18,rep,name=variant_file_ids,json=variantFileIds,proto3" json:"variant_file_ids,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"` // 变体文件URL（如不同尺寸的图片/不同质量的视频），key为变体名称（如 'thumbnail'、'medium'、'high'），value为对应的文件ID
-	IsPrivate        *bool                        `protobuf:"varint,20,opt,name=is_private,json=isPrivate,proto3,oneof" json:"is_private,omitempty"`                                                                                      // 是否私密（true 表示仅管理员可见，前端不展示）
+	IsPrivate        *bool                        `protobuf:"varint,20,opt,name=is_private,json=isPrivate,proto3,oneof" json:"is_private,omitempty"`                                                                                      // 是否私密资源（true 表示仅管理员可见，前端不展示）
 	FileId           *uint32                      `protobuf:"varint,21,opt,name=file_id,json=fileId,proto3,oneof" json:"file_id,omitempty"`                                                                                               // 存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）
 	FolderId         *uint32                      `protobuf:"varint,22,opt,name=folder_id,json=folderId,proto3,oneof" json:"folder_id,omitempty"`                                                                                         // 所属文件夹ID（0 表示根目录）
 	CreatedBy        *uint32                      `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                                     // 创建者用户ID
@@ -704,7 +704,7 @@ var File_media_service_v1_media_asset_proto protoreflect.FileDescriptor
 
 const file_media_service_v1_media_asset_proto_rawDesc = "" +
 	"\n" +
-	"\"media/service/v1/media_asset.proto\x12\x10media.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa4\x19\n" +
+	"\"media/service/v1/media_asset.proto\x12\x10media.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xaa\x19\n" +
 	"\n" +
 	"MediaAsset\x12,\n" +
 	"\x02id\x18\x01 \x01(\rB\x17\xbaG\x14\x92\x02\x11媒体资源库IDH\x00R\x02id\x88\x01\x01\x12S\n" +
@@ -726,9 +726,9 @@ const file_media_service_v1_media_asset_proto_rawDesc = "" +
 	"\x10processing_error\x18\x0f \x01(\tB$\xbaG!\x92\x02\x1e处理失败时的错误信息H\x0eR\x0fprocessingError\x88\x01\x01\x12d\n" +
 	"\tfile_hash\x18\x10 \x01(\tBB\xbaG?\x92\x02<文件哈希值（SHA256，用于去重和完整性校验）H\x0fR\bfileHash\x88\x01\x01\x12~\n" +
 	"\x0freference_count\x18\x11 \x01(\rBP\xbaGM\x92\x02J被引用次数（用于垃圾回收，0 表示未被任何内容引用）H\x10R\x0ereferenceCount\x88\x01\x01\x12\x82\x02\n" +
-	"\x10variant_file_ids\x18\x12 \x03(\v20.media.service.v1.MediaAsset.VariantFileIdsEntryB\xa5\x01\xbaG\xa1\x01\x92\x02\x9d\x01变体文件URL（如不同尺寸的图片/不同质量的视频），key为变体名称（如 'thumbnail'、'medium'、'high'），value为对应的文件IDR\x0evariantFileIds\x126\n" +
+	"\x10variant_file_ids\x18\x12 \x03(\v20.media.service.v1.MediaAsset.VariantFileIdsEntryB\xa5\x01\xbaG\xa1\x01\x92\x02\x9d\x01变体文件URL（如不同尺寸的图片/不同质量的视频），key为变体名称（如 'thumbnail'、'medium'、'high'），value为对应的文件IDR\x0evariantFileIds\x12<\n" +
 	"\n" +
-	"is_private\x18\x14 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否私密H\x11R\tisPrivate\x88\x01\x01\x12|\n" +
+	"is_private\x18\x14 \x01(\bB\x18\xbaG\x15\x92\x02\x12是否私密资源H\x11R\tisPrivate\x88\x01\x01\x12|\n" +
 	"\afile_id\x18\x15 \x01(\rB^\xbaG[\x92\x02X存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）H\x12R\x06fileId\x88\x01\x01\x12P\n" +
 	"\tfolder_id\x18\x16 \x01(\rB.\xbaG+\x92\x02(所属文件夹ID（0 表示根目录）H\x13R\bfolderId\x88\x01\x01\x12;\n" +
 	"\n" +

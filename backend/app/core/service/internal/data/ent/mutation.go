@@ -28059,7 +28059,6 @@ type MediaAssetMutation struct {
 	reference_count    *uint32
 	addreference_count *int32
 	is_private         *bool
-	variant_file_ids   **map[string]uint32
 	clearedFields      map[string]struct{}
 	done               bool
 	oldValue           func(context.Context) (*MediaAsset, error)
@@ -29605,55 +29604,6 @@ func (m *MediaAssetMutation) ResetIsPrivate() {
 	delete(m.clearedFields, mediaasset.FieldIsPrivate)
 }
 
-// SetVariantFileIds sets the "variant_file_ids" field.
-func (m *MediaAssetMutation) SetVariantFileIds(value *map[string]uint32) {
-	m.variant_file_ids = &value
-}
-
-// VariantFileIds returns the value of the "variant_file_ids" field in the mutation.
-func (m *MediaAssetMutation) VariantFileIds() (r *map[string]uint32, exists bool) {
-	v := m.variant_file_ids
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldVariantFileIds returns the old "variant_file_ids" field's value of the MediaAsset entity.
-// If the MediaAsset object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MediaAssetMutation) OldVariantFileIds(ctx context.Context) (v *map[string]uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVariantFileIds is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVariantFileIds requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVariantFileIds: %w", err)
-	}
-	return oldValue.VariantFileIds, nil
-}
-
-// ClearVariantFileIds clears the value of the "variant_file_ids" field.
-func (m *MediaAssetMutation) ClearVariantFileIds() {
-	m.variant_file_ids = nil
-	m.clearedFields[mediaasset.FieldVariantFileIds] = struct{}{}
-}
-
-// VariantFileIdsCleared returns if the "variant_file_ids" field was cleared in this mutation.
-func (m *MediaAssetMutation) VariantFileIdsCleared() bool {
-	_, ok := m.clearedFields[mediaasset.FieldVariantFileIds]
-	return ok
-}
-
-// ResetVariantFileIds resets all changes to the "variant_file_ids" field.
-func (m *MediaAssetMutation) ResetVariantFileIds() {
-	m.variant_file_ids = nil
-	delete(m.clearedFields, mediaasset.FieldVariantFileIds)
-}
-
 // Where appends a list predicates to the MediaAssetMutation builder.
 func (m *MediaAssetMutation) Where(ps ...predicate.MediaAsset) {
 	m.predicates = append(m.predicates, ps...)
@@ -29688,7 +29638,7 @@ func (m *MediaAssetMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MediaAssetMutation) Fields() []string {
-	fields := make([]string, 0, 26)
+	fields := make([]string, 0, 25)
 	if m.created_at != nil {
 		fields = append(fields, mediaasset.FieldCreatedAt)
 	}
@@ -29764,9 +29714,6 @@ func (m *MediaAssetMutation) Fields() []string {
 	if m.is_private != nil {
 		fields = append(fields, mediaasset.FieldIsPrivate)
 	}
-	if m.variant_file_ids != nil {
-		fields = append(fields, mediaasset.FieldVariantFileIds)
-	}
 	return fields
 }
 
@@ -29825,8 +29772,6 @@ func (m *MediaAssetMutation) Field(name string) (ent.Value, bool) {
 		return m.ReferenceCount()
 	case mediaasset.FieldIsPrivate:
 		return m.IsPrivate()
-	case mediaasset.FieldVariantFileIds:
-		return m.VariantFileIds()
 	}
 	return nil, false
 }
@@ -29886,8 +29831,6 @@ func (m *MediaAssetMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldReferenceCount(ctx)
 	case mediaasset.FieldIsPrivate:
 		return m.OldIsPrivate(ctx)
-	case mediaasset.FieldVariantFileIds:
-		return m.OldVariantFileIds(ctx)
 	}
 	return nil, fmt.Errorf("unknown MediaAsset field %s", name)
 }
@@ -30071,13 +30014,6 @@ func (m *MediaAssetMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsPrivate(v)
-		return nil
-	case mediaasset.FieldVariantFileIds:
-		v, ok := value.(*map[string]uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetVariantFileIds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MediaAsset field %s", name)
@@ -30307,9 +30243,6 @@ func (m *MediaAssetMutation) ClearedFields() []string {
 	if m.FieldCleared(mediaasset.FieldIsPrivate) {
 		fields = append(fields, mediaasset.FieldIsPrivate)
 	}
-	if m.FieldCleared(mediaasset.FieldVariantFileIds) {
-		fields = append(fields, mediaasset.FieldVariantFileIds)
-	}
 	return fields
 }
 
@@ -30399,9 +30332,6 @@ func (m *MediaAssetMutation) ClearField(name string) error {
 	case mediaasset.FieldIsPrivate:
 		m.ClearIsPrivate()
 		return nil
-	case mediaasset.FieldVariantFileIds:
-		m.ClearVariantFileIds()
-		return nil
 	}
 	return fmt.Errorf("unknown MediaAsset nullable field %s", name)
 }
@@ -30484,9 +30414,6 @@ func (m *MediaAssetMutation) ResetField(name string) error {
 		return nil
 	case mediaasset.FieldIsPrivate:
 		m.ResetIsPrivate()
-		return nil
-	case mediaasset.FieldVariantFileIds:
-		m.ResetVariantFileIds()
 		return nil
 	}
 	return fmt.Errorf("unknown MediaAsset field %s", name)
