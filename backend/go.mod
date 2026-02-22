@@ -7,7 +7,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.36.1
 	github.com/dtm-labs/dtm v1.19.0
 	github.com/dtm-labs/dtmdriver v0.0.6
-	github.com/envoyproxy/protoc-gen-validate v1.3.0
+	github.com/envoyproxy/protoc-gen-validate v1.3.3
 	github.com/getkin/kin-openapi v0.133.0
 	github.com/go-kratos/kratos/v2 v2.9.2
 	github.com/go-sql-driver/mysql v1.9.3
@@ -52,16 +52,16 @@ require (
 	github.com/tx7do/kratos-bootstrap/registry v0.2.2
 	github.com/tx7do/kratos-bootstrap/registry/etcd v0.2.2
 	github.com/tx7do/kratos-bootstrap/rpc v0.1.1
-	github.com/tx7do/kratos-bootstrap/tracer v0.1.3
+	github.com/tx7do/kratos-bootstrap/tracer v0.1.4
 	github.com/tx7do/kratos-bootstrap/transport/sse v0.0.4
 	github.com/tx7do/kratos-swagger-ui v0.0.1
 	github.com/tx7do/kratos-transport/broker v1.3.2
 	github.com/tx7do/kratos-transport/transport/asynq v1.3.2
 	github.com/tx7do/kratos-transport/transport/sse v1.3.2
 	github.com/yuin/gopher-lua v1.1.1
-	go.etcd.io/etcd/client/v3 v3.6.7
+	go.etcd.io/etcd/client/v3 v3.6.8
 	go.opentelemetry.io/otel/trace v1.40.0
-	google.golang.org/genproto v0.0.0-20240711142825-46eb208f015d
+	google.golang.org/genproto v0.0.0-20260217215200-42d3e9bedb6d
 	google.golang.org/genproto/googleapis/api v0.0.0-20260217215200-42d3e9bedb6d
 	google.golang.org/grpc v1.79.1
 	google.golang.org/protobuf v1.36.11
@@ -91,7 +91,7 @@ require (
 	github.com/clipperhouse/stringish v0.1.1 // indirect
 	github.com/clipperhouse/uax29/v2 v2.3.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
-	github.com/coreos/go-systemd/v22 v22.6.0 // indirect
+	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -123,7 +123,7 @@ require (
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/graph-gophers/dataloader/v7 v7.1.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.8 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
@@ -217,8 +217,8 @@ require (
 	github.com/zclconf/go-cty v1.17.0 // indirect
 	github.com/zclconf/go-cty-yaml v1.2.0 // indirect
 	go.einride.tech/aip v0.80.0 // indirect
-	go.etcd.io/etcd/api/v3 v3.6.7 // indirect
-	go.etcd.io/etcd/client/pkg/v3 v3.6.7 // indirect
+	go.etcd.io/etcd/api/v3 v3.6.8 // indirect
+	go.etcd.io/etcd/client/pkg/v3 v3.6.8 // indirect
 	go.mongodb.org/mongo-driver v1.17.7 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.40.0 // indirect
