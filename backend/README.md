@@ -31,177 +31,73 @@
 
 ## 生成Protobuf API
 
-使用[buf.build](https://buf.build/)进行Protobuf API的构建。
+本项目使用[buf.build](https://buf.build/)进行Protobuf API构建。
 
 相关命令行工具和插件的具体安装方法请参见：[Kratos微服务框架API工程化指南](https://juejin.cn/post/7191095845096259641)
 
-在`{项目根目录}/backend/api`下执行命令：
+本项目提供了两种生成API代码的方式：`Makefile`和`gow cli`。
 
-- 更新buf.lock
+一键生成API的所有代码，该命令可以在后端项目的任何位置执行：
 
-    ```bash
-    buf dep update
-    ```
+```bash
+gow api
+```
 
-- 生成GO代码
+### 生成GO代码
 
-    ```bash
-    buf generate
-    ```
+```bash
+cd `{项目根目录}/backend`
+make api
+```
 
-- 生成OpenAPI v3文档
+### 生成TypeScript代码
 
-    ```bash
-    buf generate --template buf.admin.openapi.gen.yaml
-    buf generate --template buf.front.openapi.gen.yaml
-    ```
+```bash
+cd `{项目根目录}/backend`
+make ts
+```
 
-## Make构建
+### 生成OpenAPI v3文档
 
-请在`app/{服务名}/service`下执行：
+```bash
+cd `{项目根目录}/backend`
+make openapi
+```
 
-- 初始化开发环境
+## 其他代码生成
 
-   ```bash
-   make init
-   ```
+### 生成ent代码
 
-- 生成API的go代码
+```bash
+cd `{项目根目录}/backend/app/{服务名}/service`
+make ent
+```
 
-   ```bash
-   make api
-   ```
+### 生成wire代码
 
-- 生成API的OpenAPI v3 文档
+```bash
+cd `{项目根目录}/backend/app/{服务名}/service`
+make wire
+```
 
-   ```bash
-   make openapi
-   ```
+### 构建Docker镜像
 
-- 生成ent代码
+```bash
+make docker
+```
 
-   ```bash
-   make ent
-   ```
+## 构建程序
 
-- 生成wire代码
+```bash
+cd `{项目根目录}/backend/app/{服务名}/service`
+make build
+```
 
-   ```bash
-   make wire
-   ```
+### 调试运行
 
-- 构建程序
-
-   ```bash
-   make build
-   ```
-
-- 调试运行
-
-   ```bash
-   make run
-   ```
-
-- 构建Docker镜像
-
-   ```bash
-   make docker
-   ```
-
-## Bazel构建
-
-使用[bazel.build](https://bazel.build/)进行服务器程序的构建。
-
-如何安装bazel.build的文档，请参考官方文档：<https://bazel.build/install>。
-
-在`blog-backend`根目录下执行命令：
-
-- 更新GO依赖库引入的构建配置文件repos.bzl
-
-   ```bash
-   bazel run //:gazelle-update-repos
-   ```
-
-- 拉取依赖项，生成配置文件BUILD.bazel
-
-   ```bash
-   bazel run //:gazelle
-   ```
-
-- 构建单个服务
-
-  ```bash
-  bazel build //app/admin/service/cmd/server:server
-  bazel build //app/comment/service/cmd/server:server
-  bazel build //app/content/service/cmd/server:server
-  bazel build //app/file/service/cmd/server:server
-  bazel build //app/user/service/cmd/server:server
-  ```
-
-  或者
-
-  ```bash
-  bazel build //:admin-service
-  bazel build //:comment-service
-  bazel build //:content-service
-  bazel build //:file-service
-  bazel build //:user-service
-  ```
-
-- 运行单个服务
-
-  ```bash
-  bazel run //app/admin/service/cmd/server:server
-  bazel run //app/comment/service/cmd/server:server
-  bazel run //app/content/service/cmd/server:server
-  bazel run //app/file/service/cmd/server:server
-  bazel run //app/user/service/cmd/server:server
-  ```
-
-  或者
-
-  ```bash
-  bazel run //:admin-service
-  bazel run //:comment-service
-  bazel run //:content-service
-  bazel run //:file-service
-  bazel run //:user-service
-  ```
-
-- 单个服务生成Docker镜像tar文件
-
-  ```bash
-  bazel build //:admin-service-image
-  bazel build //:comment-service-image
-  bazel build //:content-service-image
-  bazel build //:file-service-image
-  bazel build //:user-service-image
-  ```
-
-- 单个服务生成本地Docker镜像
-
-  ```bash
-  bazel run //:admin-service-image
-  bazel run //:comment-service-image
-  bazel run //:content-service-image
-  bazel run //:file-service-image
-  bazel run //:user-service-image
-  ```
-
-- 单个服务推送Docker镜像到DockerHub
-
-  ```bash
-  bazel run //:admin-service-image-push
-  bazel run //:comment-service-image-push
-  bazel run //:content-service-image-push
-  bazel run //:file-service-image-push
-  bazel run //:user-service-image-push
-  ```
-
-- 构建全部服务
-
-  ```bash
-  bazel build //...
-  ```
+```bash
+cd `{项目根目录}/backend/app/{服务名}/service`
+make run
+```
 
 ## Docker部署
