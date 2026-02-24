@@ -11,6 +11,7 @@ import { notification } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { type contentservicev1_Post as Post } from '#/generated/api/admin/service/v1';
 import { $t } from '#/locales';
+import { router } from '#/router';
 import {
   editorTypeToColor,
   editorTypeToName,
@@ -19,7 +20,6 @@ import {
   statusList,
   usePostStore,
 } from '#/stores';
-import { router } from "#/router";
 
 const postStore = usePostStore();
 

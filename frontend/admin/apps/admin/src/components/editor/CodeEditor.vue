@@ -38,7 +38,7 @@ interface Props {
   height?: number | string;
   disabled?: boolean;
   placeholder?: string;
-  autoDetectLanguage?: boolean; // 新增：是否自动侦测语言
+  autoDetectLanguage?: boolean;
   options?: {
     fontSize?: number;
     language?: EditorLanguage;
@@ -70,7 +70,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'change', value: string): void;
-  (e: 'error', error: Error): void; // 新增错误事件
+  (e: 'error', error: Error): void;
   (e: 'ready'): void;
   (e: 'update:modelValue', value: string): void;
 }>();
@@ -378,7 +378,6 @@ defineExpose({
     return editor;
   },
   formatCode: () => {
-    // 新增代码格式化方法
     if (editor && editorModel && !props.disabled) {
       // 注：格式化需要集成外部格式化工具（如prettier）
       // 这里仅保留接口，实现需在外部完成

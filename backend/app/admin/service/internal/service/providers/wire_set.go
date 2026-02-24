@@ -43,6 +43,7 @@ var ProviderSet = wire.NewSet(
 
 	service.NewDictTypeService,
 	service.NewDictEntryService,
+	service.NewLanguageService,
 
 	service.NewApiAuditLogService,
 	service.NewDataAccessAuditLogService,

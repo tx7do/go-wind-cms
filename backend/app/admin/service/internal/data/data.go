@@ -317,6 +317,15 @@ func NewDictTypeServiceClient(ctx *bootstrap.Context, r registry.Discovery) dict
 	return dictV1.NewDictTypeServiceClient(cli)
 }
 
+func NewLanguageServiceClient(ctx *bootstrap.Context, r registry.Discovery) dictV1.LanguageServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return dictV1.NewLanguageServiceClient(cli)
+}
+
 func NewTaskServiceClient(ctx *bootstrap.Context, r registry.Discovery) taskV1.TaskServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

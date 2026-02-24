@@ -1,15 +1,24 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { Props } from './types';
+
+import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { Page } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
+import { useTabs } from '@vben/hooks';
 import { LucideArrowLeft } from '@vben/icons';
 import { $t } from '@vben/locales';
 
 import { Editor, EditorType } from '#/components/editor';
-import { router } from '#/router';
+import { useLanguageStore, usePostStore } from '#/stores';
+
+import PublishPostModal from './publish-post-modal.vue';
+
+const postStore = usePostStore();
+const languageStore = useLanguageStore();
 
 const route = useRoute();
+const { closeCurrentTab } = useTabs();
 
 const isCreateMode = computed(() => {
   return route.name === 'CreatePost';
@@ -48,18 +57,45 @@ const editorTypeOptions = [
   { label: $t('enum.editorType.EDITOR_TYPE_CODE'), value: EditorType.CODE },
 ];
 
+const languageOptions = ref<{ label: string; value: string }[]>([]);
+
+async function reloadLanguages() {
+  try {
+    const resp = await languageStore.listLanguage(undefined, {}, undefined, [
+      'id',
+    ]);
+    languageOptions.value =
+      resp.items?.map((lang) => ({
+        label: lang.languageName || '',
+        value: lang.languageCode || '',
+      })) || [];
+  } catch (error) {
+    console.error('Failed to load languages:', error);
+  }
+}
+
 // 表单数据
-const formData = ref({
+const formData = ref<Props>({
   title: '',
   content: '',
+  lang: 'zh-CN',
   editorType: EditorType.MARKDOWN,
-  excerpt: '',
-  slug: '',
-  status: 'POST_STATUS_DRAFT',
 });
 
+const [Modal, modalApi] = useVbenModal({
+  // 连接抽离的组件
+  connectedComponent: PublishPostModal,
+});
+
+/* 打开模态窗口 */
+function openModal() {
+  modalApi.setData(formData.value);
+  modalApi.open();
+}
+
 function goBack() {
-  router.push('/content/posts');
+  closeCurrentTab();
+  // router.push('/content/posts');
 }
 
 function handleSave() {
@@ -68,9 +104,18 @@ function handleSave() {
 }
 
 function handlePublish() {
-  formData.value.status = 'POST_STATUS_PUBLISHED';
-  handleSave();
+  openModal();
 }
+
+onMounted(async () => {
+  await reloadLanguages();
+
+  if (isCreateMode.value) {
+    formData.value.title = $t('page.post.placeholder.untitled');
+  } else {
+    const item = await postStore.getPost({ id: postId.value || 0 });
+  }
+});
 </script>
 
 <template>
@@ -91,7 +136,15 @@ function handlePublish() {
           size="large"
           class="flex-1"
         />
-
+        <a-select v-model:value="formData.lang" style="width: 200px">
+          <a-select-option
+            v-for="option in languageOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </a-select-option>
+        </a-select>
         <a-select v-model:value="formData.editorType" style="width: 200px">
           <a-select-option
             v-for="option in editorTypeOptions"
@@ -126,6 +179,7 @@ function handlePublish() {
         </a-space>
       </div>
     </template>
+    <Modal />
   </Page>
 </template>
 

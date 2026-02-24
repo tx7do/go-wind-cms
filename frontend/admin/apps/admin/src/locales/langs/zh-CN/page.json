@@ -494,6 +494,8 @@
     "authorId": "作者ID",
     "authorName": "作者名称",
     "customFields": "是否自定义模板",
+    "summary": "帖子摘要",
+    "thumbnail": "缩略图",
     "button": {
       "create": "创建帖子",
       "saveDraft": "保存草稿",
@@ -506,7 +508,8 @@
     "placeholder": {
       "title": "请输入帖子标题",
       "slug": "请输入帖子别名",
-      "content": "请输入帖子内容"
+      "content": "请输入帖子内容",
+      "untitled": "【无标题】"
     }
   },
   "tag": {

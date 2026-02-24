@@ -53,6 +53,7 @@ var ProviderSet = wire.NewSet(
 
 	data.NewDictEntryServiceClient,
 	data.NewDictTypeServiceClient,
+	data.NewLanguageServiceClient,
 
 	data.NewTaskServiceClient,
 

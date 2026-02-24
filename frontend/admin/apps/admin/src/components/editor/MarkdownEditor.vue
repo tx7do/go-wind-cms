@@ -3,16 +3,19 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 import { preferences } from '@vben/preferences';
 
-import VMdEditor from '@kangc/v-md-editor';
+import VueMarkdownEditor from '@kangc/v-md-editor';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
 import Prism from 'prismjs';
 
 import { isDarkMode } from './utils';
 
-// 引入Prism暗黑高亮样式（关键补充）
+// 引入Prism暗黑高亮样式
 import 'prismjs/themes/prism-tomorrow.css';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
+import 'highlight.js/styles/github-dark.css';
 
 interface Props {
   modelValue: string;
@@ -43,9 +46,12 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
 }>();
 
+hljs.registerLanguage('javascript', javascript);
+
 // 初始化主题时配置Prism（确保代码高亮生效）
-VMdEditor.use(githubTheme, {
+VueMarkdownEditor.use(githubTheme, {
   Prism,
+  Hljs: hljs,
   // 自定义代码高亮样式前缀（适配暗黑模式）
   codeHighlightExtensionMap: {
     vue: 'html',
@@ -152,7 +158,7 @@ onMounted(() => {
 
 <template>
   <div class="markdown-editor-wrapper" :class="{ 'is-dark': isDarkMode() }">
-    <VMdEditor
+    <VueMarkdownEditor
       v-model="localValue"
       :disabled="disabled"
       :height="editorHeight"
@@ -173,13 +179,21 @@ onMounted(() => {
   --v-md-editor-dark-border: #1e293b;
   --v-md-editor-dark-hover: #334155;
   --v-md-editor-primary: #60a5fa;
+  --v-md-editor-active-icon: #60a5fa;
+  --v-md-editor-active-border: #60a5fa;
 }
 
 .markdown-editor {
   height: 100%;
+  width: 100%;
   /* 确保样式继承 */
   color: inherit;
   background-color: inherit;
+}
+
+/* 确保深层button样式传递 */
+.markdown-editor :deep(button) {
+  /* 基础样式 */
 }
 
 /* 暗黑模式 - 全局重置（提升优先级） */
@@ -215,15 +229,71 @@ onMounted(() => {
   background-color: transparent !important;
 }
 
+.markdown-editor-wrapper.is-dark :deep(.v-md-editor__toolbar button svg) {
+  color: inherit !important;
+  fill: currentColor !important;
+}
+
 .markdown-editor-wrapper.is-dark :deep(.v-md-editor__toolbar button:hover) {
   background-color: var(--v-md-editor-dark-hover) !important;
-  color: #f1f5f9 !important;
+  color: #cbd5e1 !important;
+  cursor: pointer !important;
+}
+
+.markdown-editor-wrapper.is-dark :deep(.v-md-editor__toolbar button:focus) {
+  background-color: var(--v-md-editor-dark-hover) !important;
+  color: #cbd5e1 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.markdown-editor-wrapper.is-dark,
+:deep(.v-md-editor__toolbar button:focus-visible) {
+  background-color: var(--v-md-editor-dark-hover) !important;
+  color: #cbd5e1 !important;
+  outline: 1px solid var(--v-md-editor-primary) !important;
+}
+
+.markdown-editor-wrapper.is-dark :deep(.v-md-editor__toolbar button:disabled) {
+  color: #64748b !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
 }
 
 .markdown-editor-wrapper.is-dark :deep(.v-md-editor__toolbar button.active) {
-  background-color: var(--v-md-editor-dark-bg) !important;
-  color: var(--v-md-editor-primary) !important;
-  border-color: var(--v-md-editor-primary) !important;
+  background-color: var(--v-md-editor-dark-border) !important;
+  color: var(--v-md-editor-active-icon) !important;
+  border-color: var(--v-md-editor-active-border) !important;
+  /* 增加内阴影，强化选中视觉效果 */
+  box-shadow: inset 0 0 0 1px var(--v-md-editor-active-border) !important;
+}
+
+/* 确保所有图标元素都继承选中色 */
+.markdown-editor-wrapper.is-dark,
+:deep(.v-md-editor__toolbar button.active svg) {
+  color: var(--v-md-editor-active-icon) !important;
+  fill: var(--v-md-editor-active-icon) !important;
+}
+
+.markdown-editor-wrapper.is-dark,
+:deep(.v-md-editor__toolbar button.active svg path) {
+  fill: var(--v-md-editor-active-icon) !important;
+  stroke: var(--v-md-editor-active-icon) !important;
+}
+
+.markdown-editor-wrapper.is-dark,
+:deep(.v-md-editor__toolbar button.active svg use) {
+  color: var(--v-md-editor-active-icon) !important;
+  fill: var(--v-md-editor-active-icon) !important;
+}
+
+.markdown-editor-wrapper.is-dark :deep(.v-md-editor__toolbar button.active i) {
+  color: var(--v-md-editor-active-icon) !important;
+}
+
+.markdown-editor-wrapper.is-dark,
+:deep(.v-md-editor__toolbar button.active span) {
+  color: var(--v-md-editor-active-icon) !important;
 }
 
 .markdown-editor-wrapper.is-dark :deep(.v-md-editor__toolbar .dividing-line) {
@@ -400,23 +470,23 @@ onMounted(() => {
 
 .markdown-editor-wrapper.is-dark,
 :deep(.v-md-editor__left::-webkit-scrollbar-track),
-.markdown-editor-wrapper.is-dark,
-:deep(.v-md-editor__right::-webkit-scrollbar-track) {
+.markdown-editor-wrapper.is-dark
+  :deep(.v-md-editor__right::-webkit-scrollbar-track) {
   background-color: var(--v-md-editor-dark-bg) !important;
 }
 
-.markdown-editor-wrapper.is-dark,
-:deep(.v-md-editor__left::-webkit-scrollbar-thumb),
-.markdown-editor-wrapper.is-dark,
-:deep(.v-md-editor__right::-webkit-scrollbar-thumb) {
+.markdown-editor-wrapper.is-dark
+  :deep(.v-md-editor__left::-webkit-scrollbar-thumb),
+.markdown-editor-wrapper.is-dark
+  :deep(.v-md-editor__right::-webkit-scrollbar-thumb) {
   background-color: var(--v-md-editor-dark-hover) !important;
   border-radius: 4px !important;
 }
 
-.markdown-editor-wrapper.is-dark,
-:deep(.v-md-editor__left::-webkit-scrollbar-thumb:hover),
-.markdown-editor-wrapper.is-dark,
-:deep(.v-md-editor__right::-webkit-scrollbar-thumb:hover) {
+.markdown-editor-wrapper.is-dark
+  :deep(.v-md-editor__left::-webkit-scrollbar-thumb:hover),
+.markdown-editor-wrapper.is-dark
+  :deep(.v-md-editor__right::-webkit-scrollbar-thumb:hover) {
   background-color: #475569 !important;
 }
 </style>

@@ -138,7 +138,6 @@ export function loginPolicyTypeToColor(typeName: LoginPolicy_Type) {
       return 'green'; // 白名单用绿色（表示允许/信任）
     }
     default: {
-      // 新增默认分支，处理未知类型，避免返回undefined
       return 'gray'; // 未知类型用灰色（中性默认值）
     }
   }
