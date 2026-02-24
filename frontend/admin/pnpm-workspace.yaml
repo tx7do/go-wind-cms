@@ -183,3 +183,9 @@ catalog:
   vue-json-viewer: ^3.0.4
   json-bigint: ^1.0.0
   "vue-ueditor-wrap": "~3.0.8"
+  "@toast-ui/editor": ^3.2.2
+  "@toast-ui/vue-editor": ^3.2.2
+  "vue-codemirror": ^6.1.1
+  "codemirror": ^6.0.1
+  "@kangc/v-md-editor": ^2.3.18
+  prismjs: ^1.29.0

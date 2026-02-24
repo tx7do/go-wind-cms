@@ -177,26 +177,6 @@ func (_u *PostUpdate) ClearSortOrder() *PostUpdate {
 	return _u
 }
 
-// SetStatus sets the "status" field.
-func (_u *PostUpdate) SetStatus(v post.Status) *PostUpdate {
-	_u.mutation.SetStatus(v)
-	return _u
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableStatus(v *post.Status) *PostUpdate {
-	if v != nil {
-		_u.SetStatus(*v)
-	}
-	return _u
-}
-
-// ClearStatus clears the value of the "status" field.
-func (_u *PostUpdate) ClearStatus() *PostUpdate {
-	_u.mutation.ClearStatus()
-	return _u
-}
-
 // SetEditorType sets the "editor_type" field.
 func (_u *PostUpdate) SetEditorType(v post.EditorType) *PostUpdate {
 	_u.mutation.SetEditorType(v)
@@ -214,6 +194,26 @@ func (_u *PostUpdate) SetNillableEditorType(v *post.EditorType) *PostUpdate {
 // ClearEditorType clears the value of the "editor_type" field.
 func (_u *PostUpdate) ClearEditorType() *PostUpdate {
 	_u.mutation.ClearEditorType()
+	return _u
+}
+
+// SetStatus sets the "status" field.
+func (_u *PostUpdate) SetStatus(v post.Status) *PostUpdate {
+	_u.mutation.SetStatus(v)
+	return _u
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *PostUpdate) SetNillableStatus(v *post.Status) *PostUpdate {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
+	return _u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (_u *PostUpdate) ClearStatus() *PostUpdate {
+	_u.mutation.ClearStatus()
 	return _u
 }
 
@@ -535,14 +535,14 @@ func (_u *PostUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *PostUpdate) check() error {
-	if v, ok := _u.mutation.Status(); ok {
-		if err := post.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.EditorType(); ok {
 		if err := post.EditorTypeValidator(v); err != nil {
 			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Post.editor_type": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
 		}
 	}
 	return nil
@@ -617,17 +617,17 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(post.FieldSortOrder, field.TypeUint32)
 	}
-	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
-	}
-	if _u.mutation.StatusCleared() {
-		_spec.ClearField(post.FieldStatus, field.TypeEnum)
-	}
 	if value, ok := _u.mutation.EditorType(); ok {
 		_spec.SetField(post.FieldEditorType, field.TypeEnum, value)
 	}
 	if _u.mutation.EditorTypeCleared() {
 		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(post.FieldStatus, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(post.FieldSlug, field.TypeString, value)
@@ -895,26 +895,6 @@ func (_u *PostUpdateOne) ClearSortOrder() *PostUpdateOne {
 	return _u
 }
 
-// SetStatus sets the "status" field.
-func (_u *PostUpdateOne) SetStatus(v post.Status) *PostUpdateOne {
-	_u.mutation.SetStatus(v)
-	return _u
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableStatus(v *post.Status) *PostUpdateOne {
-	if v != nil {
-		_u.SetStatus(*v)
-	}
-	return _u
-}
-
-// ClearStatus clears the value of the "status" field.
-func (_u *PostUpdateOne) ClearStatus() *PostUpdateOne {
-	_u.mutation.ClearStatus()
-	return _u
-}
-
 // SetEditorType sets the "editor_type" field.
 func (_u *PostUpdateOne) SetEditorType(v post.EditorType) *PostUpdateOne {
 	_u.mutation.SetEditorType(v)
@@ -932,6 +912,26 @@ func (_u *PostUpdateOne) SetNillableEditorType(v *post.EditorType) *PostUpdateOn
 // ClearEditorType clears the value of the "editor_type" field.
 func (_u *PostUpdateOne) ClearEditorType() *PostUpdateOne {
 	_u.mutation.ClearEditorType()
+	return _u
+}
+
+// SetStatus sets the "status" field.
+func (_u *PostUpdateOne) SetStatus(v post.Status) *PostUpdateOne {
+	_u.mutation.SetStatus(v)
+	return _u
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *PostUpdateOne) SetNillableStatus(v *post.Status) *PostUpdateOne {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
+	return _u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (_u *PostUpdateOne) ClearStatus() *PostUpdateOne {
+	_u.mutation.ClearStatus()
 	return _u
 }
 
@@ -1266,14 +1266,14 @@ func (_u *PostUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *PostUpdateOne) check() error {
-	if v, ok := _u.mutation.Status(); ok {
-		if err := post.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.EditorType(); ok {
 		if err := post.EditorTypeValidator(v); err != nil {
 			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Post.editor_type": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
 		}
 	}
 	return nil
@@ -1365,17 +1365,17 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(post.FieldSortOrder, field.TypeUint32)
 	}
-	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
-	}
-	if _u.mutation.StatusCleared() {
-		_spec.ClearField(post.FieldStatus, field.TypeEnum)
-	}
 	if value, ok := _u.mutation.EditorType(); ok {
 		_spec.SetField(post.FieldEditorType, field.TypeEnum, value)
 	}
 	if _u.mutation.EditorTypeCleared() {
 		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(post.FieldStatus, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(post.FieldSlug, field.TypeString, value)

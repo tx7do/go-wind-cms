@@ -494,36 +494,6 @@ func SortOrderNotNil() predicate.Post {
 	return predicate.Post(sql.FieldNotNull(FieldSortOrder))
 }
 
-// StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.Post {
-	return predicate.Post(sql.FieldEQ(FieldStatus, v))
-}
-
-// StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.Post {
-	return predicate.Post(sql.FieldNEQ(FieldStatus, v))
-}
-
-// StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.Post {
-	return predicate.Post(sql.FieldIn(FieldStatus, vs...))
-}
-
-// StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.Post {
-	return predicate.Post(sql.FieldNotIn(FieldStatus, vs...))
-}
-
-// StatusIsNil applies the IsNil predicate on the "status" field.
-func StatusIsNil() predicate.Post {
-	return predicate.Post(sql.FieldIsNull(FieldStatus))
-}
-
-// StatusNotNil applies the NotNil predicate on the "status" field.
-func StatusNotNil() predicate.Post {
-	return predicate.Post(sql.FieldNotNull(FieldStatus))
-}
-
 // EditorTypeEQ applies the EQ predicate on the "editor_type" field.
 func EditorTypeEQ(v EditorType) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldEditorType, v))
@@ -552,6 +522,36 @@ func EditorTypeIsNil() predicate.Post {
 // EditorTypeNotNil applies the NotNil predicate on the "editor_type" field.
 func EditorTypeNotNil() predicate.Post {
 	return predicate.Post(sql.FieldNotNull(FieldEditorType))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v Status) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v Status) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...Status) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...Status) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.Post {
+	return predicate.Post(sql.FieldIsNull(FieldStatus))
+}
+
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.Post {
+	return predicate.Post(sql.FieldNotNull(FieldStatus))
 }
 
 // SlugEQ applies the EQ predicate on the "slug" field.

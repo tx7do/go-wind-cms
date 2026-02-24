@@ -615,6 +615,36 @@ func ParentIDNotNil() predicate.Page {
 	return predicate.Page(sql.FieldNotNull(FieldParentID))
 }
 
+// EditorTypeEQ applies the EQ predicate on the "editor_type" field.
+func EditorTypeEQ(v EditorType) predicate.Page {
+	return predicate.Page(sql.FieldEQ(FieldEditorType, v))
+}
+
+// EditorTypeNEQ applies the NEQ predicate on the "editor_type" field.
+func EditorTypeNEQ(v EditorType) predicate.Page {
+	return predicate.Page(sql.FieldNEQ(FieldEditorType, v))
+}
+
+// EditorTypeIn applies the In predicate on the "editor_type" field.
+func EditorTypeIn(vs ...EditorType) predicate.Page {
+	return predicate.Page(sql.FieldIn(FieldEditorType, vs...))
+}
+
+// EditorTypeNotIn applies the NotIn predicate on the "editor_type" field.
+func EditorTypeNotIn(vs ...EditorType) predicate.Page {
+	return predicate.Page(sql.FieldNotIn(FieldEditorType, vs...))
+}
+
+// EditorTypeIsNil applies the IsNil predicate on the "editor_type" field.
+func EditorTypeIsNil() predicate.Page {
+	return predicate.Page(sql.FieldIsNull(FieldEditorType))
+}
+
+// EditorTypeNotNil applies the NotNil predicate on the "editor_type" field.
+func EditorTypeNotNil() predicate.Page {
+	return predicate.Page(sql.FieldNotNull(FieldEditorType))
+}
+
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v Status) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldStatus, v))
@@ -673,36 +703,6 @@ func TypeIsNil() predicate.Page {
 // TypeNotNil applies the NotNil predicate on the "type" field.
 func TypeNotNil() predicate.Page {
 	return predicate.Page(sql.FieldNotNull(FieldType))
-}
-
-// EditorTypeEQ applies the EQ predicate on the "editor_type" field.
-func EditorTypeEQ(v EditorType) predicate.Page {
-	return predicate.Page(sql.FieldEQ(FieldEditorType, v))
-}
-
-// EditorTypeNEQ applies the NEQ predicate on the "editor_type" field.
-func EditorTypeNEQ(v EditorType) predicate.Page {
-	return predicate.Page(sql.FieldNEQ(FieldEditorType, v))
-}
-
-// EditorTypeIn applies the In predicate on the "editor_type" field.
-func EditorTypeIn(vs ...EditorType) predicate.Page {
-	return predicate.Page(sql.FieldIn(FieldEditorType, vs...))
-}
-
-// EditorTypeNotIn applies the NotIn predicate on the "editor_type" field.
-func EditorTypeNotIn(vs ...EditorType) predicate.Page {
-	return predicate.Page(sql.FieldNotIn(FieldEditorType, vs...))
-}
-
-// EditorTypeIsNil applies the IsNil predicate on the "editor_type" field.
-func EditorTypeIsNil() predicate.Page {
-	return predicate.Page(sql.FieldIsNull(FieldEditorType))
-}
-
-// EditorTypeNotNil applies the NotNil predicate on the "editor_type" field.
-func EditorTypeNotNil() predicate.Page {
-	return predicate.Page(sql.FieldNotNull(FieldEditorType))
 }
 
 // SlugEQ applies the EQ predicate on the "slug" field.

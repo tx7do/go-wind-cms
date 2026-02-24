@@ -6,7 +6,10 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+
 	"github.com/tx7do/go-crud/entgo/mixin"
+
+	appMixin "go-wind-cms/pkg/entgo/mixin"
 )
 
 // Post holds the schema definition for the Post entity.
@@ -38,24 +41,6 @@ func (Post) Fields() []ent.Field {
 				"PostStatusTrashed", "POST_STATUS_TRASHED",
 			).
 			Default("POST_STATUS_DRAFT").
-			Optional().
-			Nillable(),
-
-		field.Enum("editor_type").
-			Comment("编辑器类型").
-			NamedValues(
-				"EditorTypeMarkdown", "EDITOR_TYPE_MARKDOWN",
-				"EditorTypeRichText", "EDITOR_TYPE_RICH_TEXT",
-				"EditorTypeHtml", "EDITOR_TYPE_HTML",
-				"EditorTypeJsonBlock", "EDITOR_TYPE_JSON_BLOCK",
-				"EditorTypePlainText", "EDITOR_TYPE_PLAIN_TEXT",
-				"EditorTypeCode", "EDITOR_TYPE_CODE",
-				"EditorTypeWysiwyg", "EDITOR_TYPE_WYSIWYG",
-				"EditorTypeVisualBuilder", "EDITOR_TYPE_VISUAL_BUILDER",
-				"EditorTypeSlate", "EDITOR_TYPE_SLATE",
-				"EditorTypeProsemirror", "EDITOR_TYPE_PROSEMIRROR",
-			).
-			Default("EDITOR_TYPE_MARKDOWN").
 			Optional().
 			Nillable(),
 
@@ -143,6 +128,7 @@ func (Post) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 		mixin.SortOrder{},
+		appMixin.EditorType{},
 	}
 }
 

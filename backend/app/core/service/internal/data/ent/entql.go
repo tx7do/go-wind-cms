@@ -917,9 +917,9 @@ var schemaGraph = func() *sqlgraph.Schema {
 			page.FieldSortOrder:        {Type: field.TypeUint32, Column: page.FieldSortOrder},
 			page.FieldPath:             {Type: field.TypeString, Column: page.FieldPath},
 			page.FieldParentID:         {Type: field.TypeUint32, Column: page.FieldParentID},
+			page.FieldEditorType:       {Type: field.TypeEnum, Column: page.FieldEditorType},
 			page.FieldStatus:           {Type: field.TypeEnum, Column: page.FieldStatus},
 			page.FieldType:             {Type: field.TypeEnum, Column: page.FieldType},
-			page.FieldEditorType:       {Type: field.TypeEnum, Column: page.FieldEditorType},
 			page.FieldSlug:             {Type: field.TypeString, Column: page.FieldSlug},
 			page.FieldAuthorID:         {Type: field.TypeUint32, Column: page.FieldAuthorID},
 			page.FieldAuthorName:       {Type: field.TypeString, Column: page.FieldAuthorName},
@@ -1195,8 +1195,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			post.FieldUpdatedBy:       {Type: field.TypeUint32, Column: post.FieldUpdatedBy},
 			post.FieldDeletedBy:       {Type: field.TypeUint32, Column: post.FieldDeletedBy},
 			post.FieldSortOrder:       {Type: field.TypeUint32, Column: post.FieldSortOrder},
-			post.FieldStatus:          {Type: field.TypeEnum, Column: post.FieldStatus},
 			post.FieldEditorType:      {Type: field.TypeEnum, Column: post.FieldEditorType},
+			post.FieldStatus:          {Type: field.TypeEnum, Column: post.FieldStatus},
 			post.FieldSlug:            {Type: field.TypeString, Column: post.FieldSlug},
 			post.FieldDisallowComment: {Type: field.TypeBool, Column: post.FieldDisallowComment},
 			post.FieldInProgress:      {Type: field.TypeBool, Column: post.FieldInProgress},
@@ -5687,6 +5687,11 @@ func (f *PageFilter) WhereParentID(p entql.Uint32P) {
 	f.Where(p.Field(page.FieldParentID))
 }
 
+// WhereEditorType applies the entql string predicate on the editor_type field.
+func (f *PageFilter) WhereEditorType(p entql.StringP) {
+	f.Where(p.Field(page.FieldEditorType))
+}
+
 // WhereStatus applies the entql string predicate on the status field.
 func (f *PageFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(page.FieldStatus))
@@ -5695,11 +5700,6 @@ func (f *PageFilter) WhereStatus(p entql.StringP) {
 // WhereType applies the entql string predicate on the type field.
 func (f *PageFilter) WhereType(p entql.StringP) {
 	f.Where(p.Field(page.FieldType))
-}
-
-// WhereEditorType applies the entql string predicate on the editor_type field.
-func (f *PageFilter) WhereEditorType(p entql.StringP) {
-	f.Where(p.Field(page.FieldEditorType))
 }
 
 // WhereSlug applies the entql string predicate on the slug field.
@@ -6883,14 +6883,14 @@ func (f *PostFilter) WhereSortOrder(p entql.Uint32P) {
 	f.Where(p.Field(post.FieldSortOrder))
 }
 
-// WhereStatus applies the entql string predicate on the status field.
-func (f *PostFilter) WhereStatus(p entql.StringP) {
-	f.Where(p.Field(post.FieldStatus))
-}
-
 // WhereEditorType applies the entql string predicate on the editor_type field.
 func (f *PostFilter) WhereEditorType(p entql.StringP) {
 	f.Where(p.Field(post.FieldEditorType))
+}
+
+// WhereStatus applies the entql string predicate on the status field.
+func (f *PostFilter) WhereStatus(p entql.StringP) {
+	f.Where(p.Field(post.FieldStatus))
 }
 
 // WhereSlug applies the entql string predicate on the slug field.

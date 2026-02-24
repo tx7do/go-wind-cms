@@ -2024,9 +2024,9 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_PLAIN_TEXT", "EDITOR_TYPE_CODE", "EDITOR_TYPE_JSON_BLOCK", "EDITOR_TYPE_VISUAL_BUILDER"}, Default: "EDITOR_TYPE_MARKDOWN"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "页面状态", Enums: []string{"PAGE_STATUS_DRAFT", "PAGE_STATUS_PUBLISHED", "PAGE_STATUS_ARCHIVED"}, Default: "PAGE_STATUS_DRAFT"},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "页面类型", Enums: []string{"PAGE_TYPE_DEFAULT", "PAGE_TYPE_HOME", "PAGE_TYPE_ERROR_404", "PAGE_TYPE_ERROR_500", "PAGE_TYPE_CUSTOM"}, Default: "PAGE_TYPE_HOME"},
-		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_HTML", "EDITOR_TYPE_JSON_BLOCK", "EDITOR_TYPE_PLAIN_TEXT", "EDITOR_TYPE_CODE", "EDITOR_TYPE_WYSIWYG", "EDITOR_TYPE_VISUAL_BUILDER", "EDITOR_TYPE_SLATE", "EDITOR_TYPE_PROSEMIRROR"}, Default: "EDITOR_TYPE_MARKDOWN"},
 		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "页面别名"},
 		{Name: "author_id", Type: field.TypeUint32, Nullable: true, Comment: "评论作者ID，0表示游客", Default: 0},
 		{Name: "author_name", Type: field.TypeString, Nullable: true, Comment: "评论作者名称"},
@@ -2060,12 +2060,12 @@ var (
 			{
 				Name:    "page_status",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[9]},
+				Columns: []*schema.Column{PagesColumns[10]},
 			},
 			{
 				Name:    "page_type",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[10]},
+				Columns: []*schema.Column{PagesColumns[11]},
 			},
 			{
 				Name:    "page_author_id",
@@ -2095,12 +2095,12 @@ var (
 			{
 				Name:    "page_status_type",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[9], PagesColumns[10]},
+				Columns: []*schema.Column{PagesColumns[10], PagesColumns[11]},
 			},
 			{
 				Name:    "page_status_show_in_navigation",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[9], PagesColumns[17]},
+				Columns: []*schema.Column{PagesColumns[10], PagesColumns[17]},
 			},
 		},
 	}
@@ -2654,8 +2654,8 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_PLAIN_TEXT", "EDITOR_TYPE_CODE", "EDITOR_TYPE_JSON_BLOCK", "EDITOR_TYPE_VISUAL_BUILDER"}, Default: "EDITOR_TYPE_MARKDOWN"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "帖子状态", Enums: []string{"POST_STATUS_DRAFT", "POST_STATUS_PUBLISHED", "POST_STATUS_SCHEDULED", "POST_STATUS_TRASHED"}, Default: "POST_STATUS_DRAFT"},
-		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_HTML", "EDITOR_TYPE_JSON_BLOCK", "EDITOR_TYPE_PLAIN_TEXT", "EDITOR_TYPE_CODE", "EDITOR_TYPE_WYSIWYG", "EDITOR_TYPE_VISUAL_BUILDER", "EDITOR_TYPE_SLATE", "EDITOR_TYPE_PROSEMIRROR"}, Default: "EDITOR_TYPE_MARKDOWN"},
 		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "链接别名"},
 		{Name: "disallow_comment", Type: field.TypeBool, Nullable: true, Comment: "不允许评论", Default: false},
 		{Name: "in_progress", Type: field.TypeBool, Nullable: true, Comment: "审核中", Default: false},
@@ -2681,12 +2681,12 @@ var (
 			{
 				Name:    "post_status",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[8]},
+				Columns: []*schema.Column{PostsColumns[9]},
 			},
 			{
 				Name:    "post_editor_type",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[9]},
+				Columns: []*schema.Column{PostsColumns[8]},
 			},
 			{
 				Name:    "post_slug",
@@ -2716,17 +2716,17 @@ var (
 			{
 				Name:    "post_status_author_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[8], PostsColumns[18]},
+				Columns: []*schema.Column{PostsColumns[9], PostsColumns[18]},
 			},
 			{
 				Name:    "post_status_is_featured",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[8], PostsColumns[14]},
+				Columns: []*schema.Column{PostsColumns[9], PostsColumns[14]},
 			},
 			{
 				Name:    "post_status_in_progress",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[8], PostsColumns[12]},
+				Columns: []*schema.Column{PostsColumns[9], PostsColumns[12]},
 			},
 		},
 	}

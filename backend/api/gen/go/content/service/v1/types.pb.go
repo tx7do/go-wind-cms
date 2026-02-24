@@ -25,17 +25,14 @@ const (
 type EditorType int32
 
 const (
-	EditorType_EDITOR_TYPE_UNSPECIFIED    EditorType = 0
-	EditorType_EDITOR_TYPE_MARKDOWN       EditorType = 1  // Markdown
-	EditorType_EDITOR_TYPE_RICH_TEXT      EditorType = 2  // 富文本
-	EditorType_EDITOR_TYPE_HTML           EditorType = 3  // HTML
-	EditorType_EDITOR_TYPE_JSON_BLOCK     EditorType = 4  // JSON 块编辑器（如 Notion 风格）
-	EditorType_EDITOR_TYPE_PLAIN_TEXT     EditorType = 5  // 纯文本
-	EditorType_EDITOR_TYPE_CODE           EditorType = 6  // 代码编辑器
-	EditorType_EDITOR_TYPE_WYSIWYG        EditorType = 7  // WYSIWYG 编辑器
-	EditorType_EDITOR_TYPE_VISUAL_BUILDER EditorType = 8  // 可视化构建器
-	EditorType_EDITOR_TYPE_SLATE          EditorType = 9  // Slate 编辑器
-	EditorType_EDITOR_TYPE_PROSEMIRROR    EditorType = 10 // ProseMirror 编辑器
+	EditorType_EDITOR_TYPE_UNSPECIFIED EditorType = 0
+	EditorType_EDITOR_TYPE_MARKDOWN    EditorType = 1 // Markdown 编辑器
+	EditorType_EDITOR_TYPE_RICH_TEXT   EditorType = 2 // 富文本编辑器（含HTML源码编辑）
+	EditorType_EDITOR_TYPE_PLAIN_TEXT  EditorType = 3 // 纯文本编辑器
+	EditorType_EDITOR_TYPE_CODE        EditorType = 4 // 代码编辑器（支持多语言语法高亮）
+	// 扩展类型（预留，默认不展示，供高级功能扩展）
+	EditorType_EDITOR_TYPE_JSON_BLOCK     EditorType = 10 // JSON 块编辑器（Notion风格）
+	EditorType_EDITOR_TYPE_VISUAL_BUILDER EditorType = 11 // 可视化构建器
 )
 
 // Enum value maps for EditorType.
@@ -44,27 +41,19 @@ var (
 		0:  "EDITOR_TYPE_UNSPECIFIED",
 		1:  "EDITOR_TYPE_MARKDOWN",
 		2:  "EDITOR_TYPE_RICH_TEXT",
-		3:  "EDITOR_TYPE_HTML",
-		4:  "EDITOR_TYPE_JSON_BLOCK",
-		5:  "EDITOR_TYPE_PLAIN_TEXT",
-		6:  "EDITOR_TYPE_CODE",
-		7:  "EDITOR_TYPE_WYSIWYG",
-		8:  "EDITOR_TYPE_VISUAL_BUILDER",
-		9:  "EDITOR_TYPE_SLATE",
-		10: "EDITOR_TYPE_PROSEMIRROR",
+		3:  "EDITOR_TYPE_PLAIN_TEXT",
+		4:  "EDITOR_TYPE_CODE",
+		10: "EDITOR_TYPE_JSON_BLOCK",
+		11: "EDITOR_TYPE_VISUAL_BUILDER",
 	}
 	EditorType_value = map[string]int32{
 		"EDITOR_TYPE_UNSPECIFIED":    0,
 		"EDITOR_TYPE_MARKDOWN":       1,
 		"EDITOR_TYPE_RICH_TEXT":      2,
-		"EDITOR_TYPE_HTML":           3,
-		"EDITOR_TYPE_JSON_BLOCK":     4,
-		"EDITOR_TYPE_PLAIN_TEXT":     5,
-		"EDITOR_TYPE_CODE":           6,
-		"EDITOR_TYPE_WYSIWYG":        7,
-		"EDITOR_TYPE_VISUAL_BUILDER": 8,
-		"EDITOR_TYPE_SLATE":          9,
-		"EDITOR_TYPE_PROSEMIRROR":    10,
+		"EDITOR_TYPE_PLAIN_TEXT":     3,
+		"EDITOR_TYPE_CODE":           4,
+		"EDITOR_TYPE_JSON_BLOCK":     10,
+		"EDITOR_TYPE_VISUAL_BUILDER": 11,
 	}
 )
 
@@ -99,21 +88,17 @@ var File_content_service_v1_types_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_types_proto_rawDesc = "" +
 	"\n" +
-	"\x1econtent/service/v1/types.proto\x12\x12content.service.v1*\xaf\x02\n" +
+	"\x1econtent/service/v1/types.proto\x12\x12content.service.v1*\xcc\x01\n" +
 	"\n" +
 	"EditorType\x12\x1b\n" +
 	"\x17EDITOR_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14EDITOR_TYPE_MARKDOWN\x10\x01\x12\x19\n" +
-	"\x15EDITOR_TYPE_RICH_TEXT\x10\x02\x12\x14\n" +
-	"\x10EDITOR_TYPE_HTML\x10\x03\x12\x1a\n" +
-	"\x16EDITOR_TYPE_JSON_BLOCK\x10\x04\x12\x1a\n" +
-	"\x16EDITOR_TYPE_PLAIN_TEXT\x10\x05\x12\x14\n" +
-	"\x10EDITOR_TYPE_CODE\x10\x06\x12\x17\n" +
-	"\x13EDITOR_TYPE_WYSIWYG\x10\a\x12\x1e\n" +
-	"\x1aEDITOR_TYPE_VISUAL_BUILDER\x10\b\x12\x15\n" +
-	"\x11EDITOR_TYPE_SLATE\x10\t\x12\x1b\n" +
-	"\x17EDITOR_TYPE_PROSEMIRROR\x10\n" +
-	"B\xc3\x01\n" +
+	"\x15EDITOR_TYPE_RICH_TEXT\x10\x02\x12\x1a\n" +
+	"\x16EDITOR_TYPE_PLAIN_TEXT\x10\x03\x12\x14\n" +
+	"\x10EDITOR_TYPE_CODE\x10\x04\x12\x1a\n" +
+	"\x16EDITOR_TYPE_JSON_BLOCK\x10\n" +
+	"\x12\x1e\n" +
+	"\x1aEDITOR_TYPE_VISUAL_BUILDER\x10\vB\xc3\x01\n" +
 	"\x16com.content.service.v1B\n" +
 	"TypesProtoP\x01Z3go-wind-cms/api/gen/go/content/service/v1;contentpb\xa2\x02\x03CSX\xaa\x02\x12Content.Service.V1\xca\x02\x12Content\\Service\\V1\xe2\x02\x1eContent\\Service\\V1\\GPBMetadata\xea\x02\x14Content::Service::V1b\x06proto3"
 

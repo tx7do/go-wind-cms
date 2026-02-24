@@ -7,7 +7,7 @@ import { makeOrderBy, makeQueryString, makeUpdateMask } from '#/utils/query';
 import { type Paging, requestClientRequestHandler } from '#/utils/request';
 
 export const useInternalMessageCategoryStore = defineStore(
-  'internal_message_category',
+  'internal-message-category',
   () => {
     const service = createInternalMessageCategoryServiceClient(
       requestClientRequestHandler,

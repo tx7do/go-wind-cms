@@ -120,20 +120,6 @@ func (_c *PostCreate) SetNillableSortOrder(v *uint32) *PostCreate {
 	return _c
 }
 
-// SetStatus sets the "status" field.
-func (_c *PostCreate) SetStatus(v post.Status) *PostCreate {
-	_c.mutation.SetStatus(v)
-	return _c
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (_c *PostCreate) SetNillableStatus(v *post.Status) *PostCreate {
-	if v != nil {
-		_c.SetStatus(*v)
-	}
-	return _c
-}
-
 // SetEditorType sets the "editor_type" field.
 func (_c *PostCreate) SetEditorType(v post.EditorType) *PostCreate {
 	_c.mutation.SetEditorType(v)
@@ -144,6 +130,20 @@ func (_c *PostCreate) SetEditorType(v post.EditorType) *PostCreate {
 func (_c *PostCreate) SetNillableEditorType(v *post.EditorType) *PostCreate {
 	if v != nil {
 		_c.SetEditorType(*v)
+	}
+	return _c
+}
+
+// SetStatus sets the "status" field.
+func (_c *PostCreate) SetStatus(v post.Status) *PostCreate {
+	_c.mutation.SetStatus(v)
+	return _c
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_c *PostCreate) SetNillableStatus(v *post.Status) *PostCreate {
+	if v != nil {
+		_c.SetStatus(*v)
 	}
 	return _c
 }
@@ -365,13 +365,13 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
 	}
-	if _, ok := _c.mutation.Status(); !ok {
-		v := post.DefaultStatus
-		_c.mutation.SetStatus(v)
-	}
 	if _, ok := _c.mutation.EditorType(); !ok {
 		v := post.DefaultEditorType
 		_c.mutation.SetEditorType(v)
+	}
+	if _, ok := _c.mutation.Status(); !ok {
+		v := post.DefaultStatus
+		_c.mutation.SetStatus(v)
 	}
 	if _, ok := _c.mutation.DisallowComment(); !ok {
 		v := post.DefaultDisallowComment
@@ -409,14 +409,14 @@ func (_c *PostCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *PostCreate) check() error {
-	if v, ok := _c.mutation.Status(); ok {
-		if err := post.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
-		}
-	}
 	if v, ok := _c.mutation.EditorType(); ok {
 		if err := post.EditorTypeValidator(v); err != nil {
 			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Post.editor_type": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.Status(); ok {
+		if err := post.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Post.status": %w`, err)}
 		}
 	}
 	if v, ok := _c.mutation.ID(); ok {
@@ -485,13 +485,13 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldSortOrder, field.TypeUint32, value)
 		_node.SortOrder = &value
 	}
-	if value, ok := _c.mutation.Status(); ok {
-		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
-		_node.Status = &value
-	}
 	if value, ok := _c.mutation.EditorType(); ok {
 		_spec.SetField(post.FieldEditorType, field.TypeEnum, value)
 		_node.EditorType = &value
+	}
+	if value, ok := _c.mutation.Status(); ok {
+		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
+		_node.Status = &value
 	}
 	if value, ok := _c.mutation.Slug(); ok {
 		_spec.SetField(post.FieldSlug, field.TypeString, value)
@@ -733,24 +733,6 @@ func (u *PostUpsert) ClearSortOrder() *PostUpsert {
 	return u
 }
 
-// SetStatus sets the "status" field.
-func (u *PostUpsert) SetStatus(v post.Status) *PostUpsert {
-	u.Set(post.FieldStatus, v)
-	return u
-}
-
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *PostUpsert) UpdateStatus() *PostUpsert {
-	u.SetExcluded(post.FieldStatus)
-	return u
-}
-
-// ClearStatus clears the value of the "status" field.
-func (u *PostUpsert) ClearStatus() *PostUpsert {
-	u.SetNull(post.FieldStatus)
-	return u
-}
-
 // SetEditorType sets the "editor_type" field.
 func (u *PostUpsert) SetEditorType(v post.EditorType) *PostUpsert {
 	u.Set(post.FieldEditorType, v)
@@ -766,6 +748,24 @@ func (u *PostUpsert) UpdateEditorType() *PostUpsert {
 // ClearEditorType clears the value of the "editor_type" field.
 func (u *PostUpsert) ClearEditorType() *PostUpsert {
 	u.SetNull(post.FieldEditorType)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *PostUpsert) SetStatus(v post.Status) *PostUpsert {
+	u.Set(post.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *PostUpsert) UpdateStatus() *PostUpsert {
+	u.SetExcluded(post.FieldStatus)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PostUpsert) ClearStatus() *PostUpsert {
+	u.SetNull(post.FieldStatus)
 	return u
 }
 
@@ -1250,27 +1250,6 @@ func (u *PostUpsertOne) ClearSortOrder() *PostUpsertOne {
 	})
 }
 
-// SetStatus sets the "status" field.
-func (u *PostUpsertOne) SetStatus(v post.Status) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetStatus(v)
-	})
-}
-
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateStatus() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateStatus()
-	})
-}
-
-// ClearStatus clears the value of the "status" field.
-func (u *PostUpsertOne) ClearStatus() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearStatus()
-	})
-}
-
 // SetEditorType sets the "editor_type" field.
 func (u *PostUpsertOne) SetEditorType(v post.EditorType) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
@@ -1289,6 +1268,27 @@ func (u *PostUpsertOne) UpdateEditorType() *PostUpsertOne {
 func (u *PostUpsertOne) ClearEditorType() *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearEditorType()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *PostUpsertOne) SetStatus(v post.Status) *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *PostUpsertOne) UpdateStatus() *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PostUpsertOne) ClearStatus() *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.ClearStatus()
 	})
 }
 
@@ -1985,27 +1985,6 @@ func (u *PostUpsertBulk) ClearSortOrder() *PostUpsertBulk {
 	})
 }
 
-// SetStatus sets the "status" field.
-func (u *PostUpsertBulk) SetStatus(v post.Status) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetStatus(v)
-	})
-}
-
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateStatus() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateStatus()
-	})
-}
-
-// ClearStatus clears the value of the "status" field.
-func (u *PostUpsertBulk) ClearStatus() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearStatus()
-	})
-}
-
 // SetEditorType sets the "editor_type" field.
 func (u *PostUpsertBulk) SetEditorType(v post.EditorType) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
@@ -2024,6 +2003,27 @@ func (u *PostUpsertBulk) UpdateEditorType() *PostUpsertBulk {
 func (u *PostUpsertBulk) ClearEditorType() *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearEditorType()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *PostUpsertBulk) SetStatus(v post.Status) *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *PostUpsertBulk) UpdateStatus() *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PostUpsertBulk) ClearStatus() *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.ClearStatus()
 	})
 }
 

@@ -37,12 +37,12 @@ type Page struct {
 	Path *string `json:"path,omitempty"`
 	// 父节点ID
 	ParentID *uint32 `json:"parent_id,omitempty"`
+	// 编辑器类型
+	EditorType *page.EditorType `json:"editor_type,omitempty"`
 	// 页面状态
 	Status *page.Status `json:"status,omitempty"`
 	// 页面类型
 	Type *page.Type `json:"type,omitempty"`
-	// 编辑器类型
-	EditorType *page.EditorType `json:"editor_type,omitempty"`
 	// 页面别名
 	Slug *string `json:"slug,omitempty"`
 	// 评论作者ID，0表示游客
@@ -117,7 +117,7 @@ func (*Page) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldAuthorID, page.FieldVisits, page.FieldDepth:
 			values[i] = new(sql.NullInt64)
-		case page.FieldPath, page.FieldStatus, page.FieldType, page.FieldEditorType, page.FieldSlug, page.FieldAuthorName, page.FieldRedirectURL, page.FieldTemplate, page.FieldCustomHead, page.FieldCustomFoot:
+		case page.FieldPath, page.FieldEditorType, page.FieldStatus, page.FieldType, page.FieldSlug, page.FieldAuthorName, page.FieldRedirectURL, page.FieldTemplate, page.FieldCustomHead, page.FieldCustomFoot:
 			values[i] = new(sql.NullString)
 		case page.FieldCreatedAt, page.FieldUpdatedAt, page.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -205,6 +205,13 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 				_m.ParentID = new(uint32)
 				*_m.ParentID = uint32(value.Int64)
 			}
+		case page.FieldEditorType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field editor_type", values[i])
+			} else if value.Valid {
+				_m.EditorType = new(page.EditorType)
+				*_m.EditorType = page.EditorType(value.String)
+			}
 		case page.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
@@ -218,13 +225,6 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Type = new(page.Type)
 				*_m.Type = page.Type(value.String)
-			}
-		case page.FieldEditorType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field editor_type", values[i])
-			} else if value.Valid {
-				_m.EditorType = new(page.EditorType)
-				*_m.EditorType = page.EditorType(value.String)
 			}
 		case page.FieldSlug:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -409,6 +409,11 @@ func (_m *Page) String() string {
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
+	if v := _m.EditorType; v != nil {
+		builder.WriteString("editor_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
@@ -416,11 +421,6 @@ func (_m *Page) String() string {
 	builder.WriteString(", ")
 	if v := _m.Type; v != nil {
 		builder.WriteString("type=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.EditorType; v != nil {
-		builder.WriteString("editor_type=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

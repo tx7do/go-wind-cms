@@ -28,6 +28,26 @@ const content: RouteRecordRaw[] = [
         },
         component: () => import('#/views/app/content/post/index.vue'),
       },
+      {
+        path: 'posts/create',
+        name: 'CreatePost',
+        meta: {
+          hideInMenu: true,
+          title: $t('menu.content.createPost'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+        component: () => import('#/views/app/content/post/edit/index.vue'),
+      },
+      {
+        path: 'posts/edit/:id',
+        name: 'EditPost',
+        meta: {
+          hideInMenu: true,
+          title: $t('menu.content.editPost'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+        component: () => import('#/views/app/content/post/edit/index.vue'),
+      },
 
       {
         path: 'pages',

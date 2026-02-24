@@ -5474,14 +5474,11 @@ export type contentservicev1_EditorType =
   | "EDITOR_TYPE_UNSPECIFIED"
   | "EDITOR_TYPE_MARKDOWN"
   | "EDITOR_TYPE_RICH_TEXT"
-  | "EDITOR_TYPE_HTML"
-  | "EDITOR_TYPE_JSON_BLOCK"
   | "EDITOR_TYPE_PLAIN_TEXT"
   | "EDITOR_TYPE_CODE"
-  | "EDITOR_TYPE_WYSIWYG"
-  | "EDITOR_TYPE_VISUAL_BUILDER"
-  | "EDITOR_TYPE_SLATE"
-  | "EDITOR_TYPE_PROSEMIRROR";
+  // 扩展类型（预留，默认不展示，供高级功能扩展）
+  | "EDITOR_TYPE_JSON_BLOCK"
+  | "EDITOR_TYPE_VISUAL_BUILDER";
 // 页面翻译
 export type contentservicev1_PageTranslation = {
   id?: number;

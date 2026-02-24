@@ -33,10 +33,10 @@ type Post struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 排序值（越小越靠前）
 	SortOrder *uint32 `json:"sort_order,omitempty"`
-	// 帖子状态
-	Status *post.Status `json:"status,omitempty"`
 	// 编辑器类型
 	EditorType *post.EditorType `json:"editor_type,omitempty"`
+	// 帖子状态
+	Status *post.Status `json:"status,omitempty"`
 	// 链接别名
 	Slug *string `json:"slug,omitempty"`
 	// 不允许评论
@@ -79,7 +79,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case post.FieldID, post.FieldCreatedBy, post.FieldUpdatedBy, post.FieldDeletedBy, post.FieldSortOrder, post.FieldVisits, post.FieldLikes, post.FieldCommentCount, post.FieldAuthorID:
 			values[i] = new(sql.NullInt64)
-		case post.FieldStatus, post.FieldEditorType, post.FieldSlug, post.FieldAuthorName, post.FieldPasswordHash:
+		case post.FieldEditorType, post.FieldStatus, post.FieldSlug, post.FieldAuthorName, post.FieldPasswordHash:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt, post.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -153,19 +153,19 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 				_m.SortOrder = new(uint32)
 				*_m.SortOrder = uint32(value.Int64)
 			}
-		case post.FieldStatus:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field status", values[i])
-			} else if value.Valid {
-				_m.Status = new(post.Status)
-				*_m.Status = post.Status(value.String)
-			}
 		case post.FieldEditorType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field editor_type", values[i])
 			} else if value.Valid {
 				_m.EditorType = new(post.EditorType)
 				*_m.EditorType = post.EditorType(value.String)
+			}
+		case post.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				_m.Status = new(post.Status)
+				*_m.Status = post.Status(value.String)
 			}
 		case post.FieldSlug:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -339,13 +339,13 @@ func (_m *Post) String() string {
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := _m.Status; v != nil {
-		builder.WriteString("status=")
+	if v := _m.EditorType; v != nil {
+		builder.WriteString("editor_type=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := _m.EditorType; v != nil {
-		builder.WriteString("editor_type=")
+	if v := _m.Status; v != nil {
+		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

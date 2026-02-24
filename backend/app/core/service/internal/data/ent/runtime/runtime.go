@@ -834,6 +834,8 @@ func init() {
 	_ = pageMixinFields3
 	pageMixinFields4 := pageMixin[4].Fields()
 	_ = pageMixinFields4
+	pageMixinFields6 := pageMixin[6].Fields()
+	_ = pageMixinFields6
 	pageFields := schema.Page{}.Fields()
 	_ = pageFields
 	// pageDescSortOrder is the schema descriptor for sort_order field.
@@ -845,23 +847,23 @@ func init() {
 	// page.PathValidator is a validator for the "path" field. It is called by the builders before save.
 	page.PathValidator = pageDescPath.Validators[0].(func(string) error)
 	// pageDescAuthorID is the schema descriptor for author_id field.
-	pageDescAuthorID := pageFields[4].Descriptor()
+	pageDescAuthorID := pageFields[3].Descriptor()
 	// page.DefaultAuthorID holds the default value on creation for the author_id field.
 	page.DefaultAuthorID = pageDescAuthorID.Default.(uint32)
 	// pageDescDisallowComment is the schema descriptor for disallow_comment field.
-	pageDescDisallowComment := pageFields[6].Descriptor()
+	pageDescDisallowComment := pageFields[5].Descriptor()
 	// page.DefaultDisallowComment holds the default value on creation for the disallow_comment field.
 	page.DefaultDisallowComment = pageDescDisallowComment.Default.(bool)
 	// pageDescShowInNavigation is the schema descriptor for show_in_navigation field.
-	pageDescShowInNavigation := pageFields[8].Descriptor()
+	pageDescShowInNavigation := pageFields[7].Descriptor()
 	// page.DefaultShowInNavigation holds the default value on creation for the show_in_navigation field.
 	page.DefaultShowInNavigation = pageDescShowInNavigation.Default.(bool)
 	// pageDescIsCustomTemplate is the schema descriptor for is_custom_template field.
-	pageDescIsCustomTemplate := pageFields[10].Descriptor()
+	pageDescIsCustomTemplate := pageFields[9].Descriptor()
 	// page.DefaultIsCustomTemplate holds the default value on creation for the is_custom_template field.
 	page.DefaultIsCustomTemplate = pageDescIsCustomTemplate.Default.(bool)
 	// pageDescVisits is the schema descriptor for visits field.
-	pageDescVisits := pageFields[11].Descriptor()
+	pageDescVisits := pageFields[10].Descriptor()
 	// page.DefaultVisits holds the default value on creation for the visits field.
 	page.DefaultVisits = pageDescVisits.Default.(uint32)
 	// pageDescID is the schema descriptor for id field.
@@ -1065,6 +1067,8 @@ func init() {
 	_ = postMixinFields0
 	postMixinFields3 := postMixin[3].Fields()
 	_ = postMixinFields3
+	postMixinFields4 := postMixin[4].Fields()
+	_ = postMixinFields4
 	postFields := schema.Post{}.Fields()
 	_ = postFields
 	// postDescSortOrder is the schema descriptor for sort_order field.
@@ -1072,35 +1076,35 @@ func init() {
 	// post.DefaultSortOrder holds the default value on creation for the sort_order field.
 	post.DefaultSortOrder = postDescSortOrder.Default.(uint32)
 	// postDescDisallowComment is the schema descriptor for disallow_comment field.
-	postDescDisallowComment := postFields[3].Descriptor()
+	postDescDisallowComment := postFields[2].Descriptor()
 	// post.DefaultDisallowComment holds the default value on creation for the disallow_comment field.
 	post.DefaultDisallowComment = postDescDisallowComment.Default.(bool)
 	// postDescInProgress is the schema descriptor for in_progress field.
-	postDescInProgress := postFields[4].Descriptor()
+	postDescInProgress := postFields[3].Descriptor()
 	// post.DefaultInProgress holds the default value on creation for the in_progress field.
 	post.DefaultInProgress = postDescInProgress.Default.(bool)
 	// postDescAutoSummary is the schema descriptor for auto_summary field.
-	postDescAutoSummary := postFields[5].Descriptor()
+	postDescAutoSummary := postFields[4].Descriptor()
 	// post.DefaultAutoSummary holds the default value on creation for the auto_summary field.
 	post.DefaultAutoSummary = postDescAutoSummary.Default.(bool)
 	// postDescIsFeatured is the schema descriptor for is_featured field.
-	postDescIsFeatured := postFields[6].Descriptor()
+	postDescIsFeatured := postFields[5].Descriptor()
 	// post.DefaultIsFeatured holds the default value on creation for the is_featured field.
 	post.DefaultIsFeatured = postDescIsFeatured.Default.(bool)
 	// postDescVisits is the schema descriptor for visits field.
-	postDescVisits := postFields[7].Descriptor()
+	postDescVisits := postFields[6].Descriptor()
 	// post.DefaultVisits holds the default value on creation for the visits field.
 	post.DefaultVisits = postDescVisits.Default.(int32)
 	// postDescLikes is the schema descriptor for likes field.
-	postDescLikes := postFields[8].Descriptor()
+	postDescLikes := postFields[7].Descriptor()
 	// post.DefaultLikes holds the default value on creation for the likes field.
 	post.DefaultLikes = postDescLikes.Default.(int32)
 	// postDescCommentCount is the schema descriptor for comment_count field.
-	postDescCommentCount := postFields[9].Descriptor()
+	postDescCommentCount := postFields[8].Descriptor()
 	// post.DefaultCommentCount holds the default value on creation for the comment_count field.
 	post.DefaultCommentCount = postDescCommentCount.Default.(int32)
 	// postDescAuthorID is the schema descriptor for author_id field.
-	postDescAuthorID := postFields[10].Descriptor()
+	postDescAuthorID := postFields[9].Descriptor()
 	// post.DefaultAuthorID holds the default value on creation for the author_id field.
 	post.DefaultAuthorID = postDescAuthorID.Default.(uint32)
 	// postDescID is the schema descriptor for id field.

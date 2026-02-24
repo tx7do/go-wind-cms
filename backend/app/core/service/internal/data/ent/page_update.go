@@ -217,6 +217,26 @@ func (_u *PageUpdate) ClearParentID() *PageUpdate {
 	return _u
 }
 
+// SetEditorType sets the "editor_type" field.
+func (_u *PageUpdate) SetEditorType(v page.EditorType) *PageUpdate {
+	_u.mutation.SetEditorType(v)
+	return _u
+}
+
+// SetNillableEditorType sets the "editor_type" field if the given value is not nil.
+func (_u *PageUpdate) SetNillableEditorType(v *page.EditorType) *PageUpdate {
+	if v != nil {
+		_u.SetEditorType(*v)
+	}
+	return _u
+}
+
+// ClearEditorType clears the value of the "editor_type" field.
+func (_u *PageUpdate) ClearEditorType() *PageUpdate {
+	_u.mutation.ClearEditorType()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *PageUpdate) SetStatus(v page.Status) *PageUpdate {
 	_u.mutation.SetStatus(v)
@@ -254,26 +274,6 @@ func (_u *PageUpdate) SetNillableType(v *page.Type) *PageUpdate {
 // ClearType clears the value of the "type" field.
 func (_u *PageUpdate) ClearType() *PageUpdate {
 	_u.mutation.ClearType()
-	return _u
-}
-
-// SetEditorType sets the "editor_type" field.
-func (_u *PageUpdate) SetEditorType(v page.EditorType) *PageUpdate {
-	_u.mutation.SetEditorType(v)
-	return _u
-}
-
-// SetNillableEditorType sets the "editor_type" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableEditorType(v *page.EditorType) *PageUpdate {
-	if v != nil {
-		_u.SetEditorType(*v)
-	}
-	return _u
-}
-
-// ClearEditorType clears the value of the "editor_type" field.
-func (_u *PageUpdate) ClearEditorType() *PageUpdate {
-	_u.mutation.ClearEditorType()
 	return _u
 }
 
@@ -636,6 +636,11 @@ func (_u *PageUpdate) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Page.path": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.EditorType(); ok {
+		if err := page.EditorTypeValidator(v); err != nil {
+			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Page.editor_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := page.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Page.status": %w`, err)}
@@ -644,11 +649,6 @@ func (_u *PageUpdate) check() error {
 	if v, ok := _u.mutation.GetType(); ok {
 		if err := page.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Page.type": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.EditorType(); ok {
-		if err := page.EditorTypeValidator(v); err != nil {
-			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Page.editor_type": %w`, err)}
 		}
 	}
 	return nil
@@ -729,6 +729,12 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.PathCleared() {
 		_spec.ClearField(page.FieldPath, field.TypeString)
 	}
+	if value, ok := _u.mutation.EditorType(); ok {
+		_spec.SetField(page.FieldEditorType, field.TypeEnum, value)
+	}
+	if _u.mutation.EditorTypeCleared() {
+		_spec.ClearField(page.FieldEditorType, field.TypeEnum)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(page.FieldStatus, field.TypeEnum, value)
 	}
@@ -740,12 +746,6 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.TypeCleared() {
 		_spec.ClearField(page.FieldType, field.TypeEnum)
-	}
-	if value, ok := _u.mutation.EditorType(); ok {
-		_spec.SetField(page.FieldEditorType, field.TypeEnum, value)
-	}
-	if _u.mutation.EditorTypeCleared() {
-		_spec.ClearField(page.FieldEditorType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(page.FieldSlug, field.TypeString, value)
@@ -1118,6 +1118,26 @@ func (_u *PageUpdateOne) ClearParentID() *PageUpdateOne {
 	return _u
 }
 
+// SetEditorType sets the "editor_type" field.
+func (_u *PageUpdateOne) SetEditorType(v page.EditorType) *PageUpdateOne {
+	_u.mutation.SetEditorType(v)
+	return _u
+}
+
+// SetNillableEditorType sets the "editor_type" field if the given value is not nil.
+func (_u *PageUpdateOne) SetNillableEditorType(v *page.EditorType) *PageUpdateOne {
+	if v != nil {
+		_u.SetEditorType(*v)
+	}
+	return _u
+}
+
+// ClearEditorType clears the value of the "editor_type" field.
+func (_u *PageUpdateOne) ClearEditorType() *PageUpdateOne {
+	_u.mutation.ClearEditorType()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *PageUpdateOne) SetStatus(v page.Status) *PageUpdateOne {
 	_u.mutation.SetStatus(v)
@@ -1155,26 +1175,6 @@ func (_u *PageUpdateOne) SetNillableType(v *page.Type) *PageUpdateOne {
 // ClearType clears the value of the "type" field.
 func (_u *PageUpdateOne) ClearType() *PageUpdateOne {
 	_u.mutation.ClearType()
-	return _u
-}
-
-// SetEditorType sets the "editor_type" field.
-func (_u *PageUpdateOne) SetEditorType(v page.EditorType) *PageUpdateOne {
-	_u.mutation.SetEditorType(v)
-	return _u
-}
-
-// SetNillableEditorType sets the "editor_type" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableEditorType(v *page.EditorType) *PageUpdateOne {
-	if v != nil {
-		_u.SetEditorType(*v)
-	}
-	return _u
-}
-
-// ClearEditorType clears the value of the "editor_type" field.
-func (_u *PageUpdateOne) ClearEditorType() *PageUpdateOne {
-	_u.mutation.ClearEditorType()
 	return _u
 }
 
@@ -1550,6 +1550,11 @@ func (_u *PageUpdateOne) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Page.path": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.EditorType(); ok {
+		if err := page.EditorTypeValidator(v); err != nil {
+			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Page.editor_type": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := page.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Page.status": %w`, err)}
@@ -1558,11 +1563,6 @@ func (_u *PageUpdateOne) check() error {
 	if v, ok := _u.mutation.GetType(); ok {
 		if err := page.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Page.type": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.EditorType(); ok {
-		if err := page.EditorTypeValidator(v); err != nil {
-			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Page.editor_type": %w`, err)}
 		}
 	}
 	return nil
@@ -1660,6 +1660,12 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 	if _u.mutation.PathCleared() {
 		_spec.ClearField(page.FieldPath, field.TypeString)
 	}
+	if value, ok := _u.mutation.EditorType(); ok {
+		_spec.SetField(page.FieldEditorType, field.TypeEnum, value)
+	}
+	if _u.mutation.EditorTypeCleared() {
+		_spec.ClearField(page.FieldEditorType, field.TypeEnum)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(page.FieldStatus, field.TypeEnum, value)
 	}
@@ -1671,12 +1677,6 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 	}
 	if _u.mutation.TypeCleared() {
 		_spec.ClearField(page.FieldType, field.TypeEnum)
-	}
-	if value, ok := _u.mutation.EditorType(); ok {
-		_spec.SetField(page.FieldEditorType, field.TypeEnum, value)
-	}
-	if _u.mutation.EditorTypeCleared() {
-		_spec.ClearField(page.FieldEditorType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(page.FieldSlug, field.TypeString, value)

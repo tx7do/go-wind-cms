@@ -493,7 +493,21 @@
     "commentCount": "评论数",
     "authorId": "作者ID",
     "authorName": "作者名称",
-    "customFields": "是否自定义模板"
+    "customFields": "是否自定义模板",
+    "button": {
+      "create": "创建帖子",
+      "saveDraft": "保存草稿",
+      "publish": "发布帖子"
+    },
+    "title": {
+      "create": "创建帖子",
+      "edit": "编辑帖子"
+    },
+    "placeholder": {
+      "title": "请输入帖子标题",
+      "slug": "请输入帖子别名",
+      "content": "请输入帖子内容"
+    }
   },
   "tag": {
     "moduleName": "标签管理",

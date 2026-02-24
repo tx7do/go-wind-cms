@@ -56,6 +56,8 @@
   "content": {
     "moduleName": "内容管理",
     "post": "帖子管理",
+    "createPost": "帖子创建",
+    "editPost": "帖子编辑",
     "page": "页面管理",
     "category": "分类管理",
     "tag": "标签管理"

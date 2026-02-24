@@ -47843,9 +47843,9 @@ type PageMutation struct {
 	sort_order         *uint32
 	addsort_order      *int32
 	_path              *string
+	editor_type        *page.EditorType
 	status             *page.Status
 	_type              *page.Type
-	editor_type        *page.EditorType
 	slug               *string
 	author_id          *uint32
 	addauthor_id       *int32
@@ -48502,6 +48502,55 @@ func (m *PageMutation) ResetParentID() {
 	delete(m.clearedFields, page.FieldParentID)
 }
 
+// SetEditorType sets the "editor_type" field.
+func (m *PageMutation) SetEditorType(pt page.EditorType) {
+	m.editor_type = &pt
+}
+
+// EditorType returns the value of the "editor_type" field in the mutation.
+func (m *PageMutation) EditorType() (r page.EditorType, exists bool) {
+	v := m.editor_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEditorType returns the old "editor_type" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldEditorType(ctx context.Context) (v *page.EditorType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEditorType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEditorType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEditorType: %w", err)
+	}
+	return oldValue.EditorType, nil
+}
+
+// ClearEditorType clears the value of the "editor_type" field.
+func (m *PageMutation) ClearEditorType() {
+	m.editor_type = nil
+	m.clearedFields[page.FieldEditorType] = struct{}{}
+}
+
+// EditorTypeCleared returns if the "editor_type" field was cleared in this mutation.
+func (m *PageMutation) EditorTypeCleared() bool {
+	_, ok := m.clearedFields[page.FieldEditorType]
+	return ok
+}
+
+// ResetEditorType resets all changes to the "editor_type" field.
+func (m *PageMutation) ResetEditorType() {
+	m.editor_type = nil
+	delete(m.clearedFields, page.FieldEditorType)
+}
+
 // SetStatus sets the "status" field.
 func (m *PageMutation) SetStatus(pa page.Status) {
 	m.status = &pa
@@ -48598,55 +48647,6 @@ func (m *PageMutation) TypeCleared() bool {
 func (m *PageMutation) ResetType() {
 	m._type = nil
 	delete(m.clearedFields, page.FieldType)
-}
-
-// SetEditorType sets the "editor_type" field.
-func (m *PageMutation) SetEditorType(pt page.EditorType) {
-	m.editor_type = &pt
-}
-
-// EditorType returns the value of the "editor_type" field in the mutation.
-func (m *PageMutation) EditorType() (r page.EditorType, exists bool) {
-	v := m.editor_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldEditorType returns the old "editor_type" field's value of the Page entity.
-// If the Page object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageMutation) OldEditorType(ctx context.Context) (v *page.EditorType, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEditorType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEditorType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEditorType: %w", err)
-	}
-	return oldValue.EditorType, nil
-}
-
-// ClearEditorType clears the value of the "editor_type" field.
-func (m *PageMutation) ClearEditorType() {
-	m.editor_type = nil
-	m.clearedFields[page.FieldEditorType] = struct{}{}
-}
-
-// EditorTypeCleared returns if the "editor_type" field was cleared in this mutation.
-func (m *PageMutation) EditorTypeCleared() bool {
-	_, ok := m.clearedFields[page.FieldEditorType]
-	return ok
-}
-
-// ResetEditorType resets all changes to the "editor_type" field.
-func (m *PageMutation) ResetEditorType() {
-	m.editor_type = nil
-	delete(m.clearedFields, page.FieldEditorType)
 }
 
 // SetSlug sets the "slug" field.
@@ -49492,14 +49492,14 @@ func (m *PageMutation) Fields() []string {
 	if m.parent != nil {
 		fields = append(fields, page.FieldParentID)
 	}
+	if m.editor_type != nil {
+		fields = append(fields, page.FieldEditorType)
+	}
 	if m.status != nil {
 		fields = append(fields, page.FieldStatus)
 	}
 	if m._type != nil {
 		fields = append(fields, page.FieldType)
-	}
-	if m.editor_type != nil {
-		fields = append(fields, page.FieldEditorType)
 	}
 	if m.slug != nil {
 		fields = append(fields, page.FieldSlug)
@@ -49566,12 +49566,12 @@ func (m *PageMutation) Field(name string) (ent.Value, bool) {
 		return m.Path()
 	case page.FieldParentID:
 		return m.ParentID()
+	case page.FieldEditorType:
+		return m.EditorType()
 	case page.FieldStatus:
 		return m.Status()
 	case page.FieldType:
 		return m.GetType()
-	case page.FieldEditorType:
-		return m.EditorType()
 	case page.FieldSlug:
 		return m.Slug()
 	case page.FieldAuthorID:
@@ -49625,12 +49625,12 @@ func (m *PageMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPath(ctx)
 	case page.FieldParentID:
 		return m.OldParentID(ctx)
+	case page.FieldEditorType:
+		return m.OldEditorType(ctx)
 	case page.FieldStatus:
 		return m.OldStatus(ctx)
 	case page.FieldType:
 		return m.OldType(ctx)
-	case page.FieldEditorType:
-		return m.OldEditorType(ctx)
 	case page.FieldSlug:
 		return m.OldSlug(ctx)
 	case page.FieldAuthorID:
@@ -49729,6 +49729,13 @@ func (m *PageMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetParentID(v)
 		return nil
+	case page.FieldEditorType:
+		v, ok := value.(page.EditorType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEditorType(v)
+		return nil
 	case page.FieldStatus:
 		v, ok := value.(page.Status)
 		if !ok {
@@ -49742,13 +49749,6 @@ func (m *PageMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
-		return nil
-	case page.FieldEditorType:
-		v, ok := value.(page.EditorType)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetEditorType(v)
 		return nil
 	case page.FieldSlug:
 		v, ok := value.(string)
@@ -49985,14 +49985,14 @@ func (m *PageMutation) ClearedFields() []string {
 	if m.FieldCleared(page.FieldParentID) {
 		fields = append(fields, page.FieldParentID)
 	}
+	if m.FieldCleared(page.FieldEditorType) {
+		fields = append(fields, page.FieldEditorType)
+	}
 	if m.FieldCleared(page.FieldStatus) {
 		fields = append(fields, page.FieldStatus)
 	}
 	if m.FieldCleared(page.FieldType) {
 		fields = append(fields, page.FieldType)
-	}
-	if m.FieldCleared(page.FieldEditorType) {
-		fields = append(fields, page.FieldEditorType)
 	}
 	if m.FieldCleared(page.FieldSlug) {
 		fields = append(fields, page.FieldSlug)
@@ -50074,14 +50074,14 @@ func (m *PageMutation) ClearField(name string) error {
 	case page.FieldParentID:
 		m.ClearParentID()
 		return nil
+	case page.FieldEditorType:
+		m.ClearEditorType()
+		return nil
 	case page.FieldStatus:
 		m.ClearStatus()
 		return nil
 	case page.FieldType:
 		m.ClearType()
-		return nil
-	case page.FieldEditorType:
-		m.ClearEditorType()
 		return nil
 	case page.FieldSlug:
 		m.ClearSlug()
@@ -50157,14 +50157,14 @@ func (m *PageMutation) ResetField(name string) error {
 	case page.FieldParentID:
 		m.ResetParentID()
 		return nil
+	case page.FieldEditorType:
+		m.ResetEditorType()
+		return nil
 	case page.FieldStatus:
 		m.ResetStatus()
 		return nil
 	case page.FieldType:
 		m.ResetType()
-		return nil
-	case page.FieldEditorType:
-		m.ResetEditorType()
 		return nil
 	case page.FieldSlug:
 		m.ResetSlug()
@@ -63148,8 +63148,8 @@ type PostMutation struct {
 	adddeleted_by    *int32
 	sort_order       *uint32
 	addsort_order    *int32
-	status           *post.Status
 	editor_type      *post.EditorType
+	status           *post.Status
 	slug             *string
 	disallow_comment *bool
 	in_progress      *bool
@@ -63705,55 +63705,6 @@ func (m *PostMutation) ResetSortOrder() {
 	delete(m.clearedFields, post.FieldSortOrder)
 }
 
-// SetStatus sets the "status" field.
-func (m *PostMutation) SetStatus(po post.Status) {
-	m.status = &po
-}
-
-// Status returns the value of the "status" field in the mutation.
-func (m *PostMutation) Status() (r post.Status, exists bool) {
-	v := m.status
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStatus returns the old "status" field's value of the Post entity.
-// If the Post object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldStatus(ctx context.Context) (v *post.Status, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStatus requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
-	}
-	return oldValue.Status, nil
-}
-
-// ClearStatus clears the value of the "status" field.
-func (m *PostMutation) ClearStatus() {
-	m.status = nil
-	m.clearedFields[post.FieldStatus] = struct{}{}
-}
-
-// StatusCleared returns if the "status" field was cleared in this mutation.
-func (m *PostMutation) StatusCleared() bool {
-	_, ok := m.clearedFields[post.FieldStatus]
-	return ok
-}
-
-// ResetStatus resets all changes to the "status" field.
-func (m *PostMutation) ResetStatus() {
-	m.status = nil
-	delete(m.clearedFields, post.FieldStatus)
-}
-
 // SetEditorType sets the "editor_type" field.
 func (m *PostMutation) SetEditorType(pt post.EditorType) {
 	m.editor_type = &pt
@@ -63801,6 +63752,55 @@ func (m *PostMutation) EditorTypeCleared() bool {
 func (m *PostMutation) ResetEditorType() {
 	m.editor_type = nil
 	delete(m.clearedFields, post.FieldEditorType)
+}
+
+// SetStatus sets the "status" field.
+func (m *PostMutation) SetStatus(po post.Status) {
+	m.status = &po
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *PostMutation) Status() (r post.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Post entity.
+// If the Post object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostMutation) OldStatus(ctx context.Context) (v *post.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *PostMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[post.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *PostMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[post.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *PostMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, post.FieldStatus)
 }
 
 // SetSlug sets the "slug" field.
@@ -64629,11 +64629,11 @@ func (m *PostMutation) Fields() []string {
 	if m.sort_order != nil {
 		fields = append(fields, post.FieldSortOrder)
 	}
-	if m.status != nil {
-		fields = append(fields, post.FieldStatus)
-	}
 	if m.editor_type != nil {
 		fields = append(fields, post.FieldEditorType)
+	}
+	if m.status != nil {
+		fields = append(fields, post.FieldStatus)
 	}
 	if m.slug != nil {
 		fields = append(fields, post.FieldSlug)
@@ -64699,10 +64699,10 @@ func (m *PostMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case post.FieldSortOrder:
 		return m.SortOrder()
-	case post.FieldStatus:
-		return m.Status()
 	case post.FieldEditorType:
 		return m.EditorType()
+	case post.FieldStatus:
+		return m.Status()
 	case post.FieldSlug:
 		return m.Slug()
 	case post.FieldDisallowComment:
@@ -64754,10 +64754,10 @@ func (m *PostMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDeletedBy(ctx)
 	case post.FieldSortOrder:
 		return m.OldSortOrder(ctx)
-	case post.FieldStatus:
-		return m.OldStatus(ctx)
 	case post.FieldEditorType:
 		return m.OldEditorType(ctx)
+	case post.FieldStatus:
+		return m.OldStatus(ctx)
 	case post.FieldSlug:
 		return m.OldSlug(ctx)
 	case post.FieldDisallowComment:
@@ -64844,19 +64844,19 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSortOrder(v)
 		return nil
-	case post.FieldStatus:
-		v, ok := value.(post.Status)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStatus(v)
-		return nil
 	case post.FieldEditorType:
 		v, ok := value.(post.EditorType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEditorType(v)
+		return nil
+	case post.FieldStatus:
+		v, ok := value.(post.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	case post.FieldSlug:
 		v, ok := value.(string)
@@ -65106,11 +65106,11 @@ func (m *PostMutation) ClearedFields() []string {
 	if m.FieldCleared(post.FieldSortOrder) {
 		fields = append(fields, post.FieldSortOrder)
 	}
-	if m.FieldCleared(post.FieldStatus) {
-		fields = append(fields, post.FieldStatus)
-	}
 	if m.FieldCleared(post.FieldEditorType) {
 		fields = append(fields, post.FieldEditorType)
+	}
+	if m.FieldCleared(post.FieldStatus) {
+		fields = append(fields, post.FieldStatus)
 	}
 	if m.FieldCleared(post.FieldSlug) {
 		fields = append(fields, post.FieldSlug)
@@ -65189,11 +65189,11 @@ func (m *PostMutation) ClearField(name string) error {
 	case post.FieldSortOrder:
 		m.ClearSortOrder()
 		return nil
-	case post.FieldStatus:
-		m.ClearStatus()
-		return nil
 	case post.FieldEditorType:
 		m.ClearEditorType()
+		return nil
+	case post.FieldStatus:
+		m.ClearStatus()
 		return nil
 	case post.FieldSlug:
 		m.ClearSlug()
@@ -65266,11 +65266,11 @@ func (m *PostMutation) ResetField(name string) error {
 	case post.FieldSortOrder:
 		m.ResetSortOrder()
 		return nil
-	case post.FieldStatus:
-		m.ResetStatus()
-		return nil
 	case post.FieldEditorType:
 		m.ResetEditorType()
+		return nil
+	case post.FieldStatus:
+		m.ResetStatus()
 		return nil
 	case post.FieldSlug:
 		m.ResetSlug()

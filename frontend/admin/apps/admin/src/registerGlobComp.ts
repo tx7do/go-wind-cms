@@ -6,10 +6,12 @@ import {
   Card,
   Divider,
   Dropdown,
+  Form,
   Input,
   Layout,
   Menu,
   Popconfirm,
+  Select,
   Space,
   Switch,
   Tabs,
@@ -28,7 +30,9 @@ export function registerGlobComp(app: App) {
     .use(Layout)
     .use(Space)
     .use(Card)
+    .use(Form)
     .use(Switch)
+    .use(Select)
     .use(Popconfirm)
     .use(Dropdown)
     .use(Tag)

@@ -148,6 +148,20 @@ func (_c *PageCreate) SetNillableParentID(v *uint32) *PageCreate {
 	return _c
 }
 
+// SetEditorType sets the "editor_type" field.
+func (_c *PageCreate) SetEditorType(v page.EditorType) *PageCreate {
+	_c.mutation.SetEditorType(v)
+	return _c
+}
+
+// SetNillableEditorType sets the "editor_type" field if the given value is not nil.
+func (_c *PageCreate) SetNillableEditorType(v *page.EditorType) *PageCreate {
+	if v != nil {
+		_c.SetEditorType(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *PageCreate) SetStatus(v page.Status) *PageCreate {
 	_c.mutation.SetStatus(v)
@@ -172,20 +186,6 @@ func (_c *PageCreate) SetType(v page.Type) *PageCreate {
 func (_c *PageCreate) SetNillableType(v *page.Type) *PageCreate {
 	if v != nil {
 		_c.SetType(*v)
-	}
-	return _c
-}
-
-// SetEditorType sets the "editor_type" field.
-func (_c *PageCreate) SetEditorType(v page.EditorType) *PageCreate {
-	_c.mutation.SetEditorType(v)
-	return _c
-}
-
-// SetNillableEditorType sets the "editor_type" field if the given value is not nil.
-func (_c *PageCreate) SetNillableEditorType(v *page.EditorType) *PageCreate {
-	if v != nil {
-		_c.SetEditorType(*v)
 	}
 	return _c
 }
@@ -429,6 +429,10 @@ func (_c *PageCreate) defaults() {
 		v := page.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
 	}
+	if _, ok := _c.mutation.EditorType(); !ok {
+		v := page.DefaultEditorType
+		_c.mutation.SetEditorType(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := page.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -436,10 +440,6 @@ func (_c *PageCreate) defaults() {
 	if _, ok := _c.mutation.GetType(); !ok {
 		v := page.DefaultType
 		_c.mutation.SetType(v)
-	}
-	if _, ok := _c.mutation.EditorType(); !ok {
-		v := page.DefaultEditorType
-		_c.mutation.SetEditorType(v)
 	}
 	if _, ok := _c.mutation.AuthorID(); !ok {
 		v := page.DefaultAuthorID
@@ -470,6 +470,11 @@ func (_c *PageCreate) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Page.path": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.EditorType(); ok {
+		if err := page.EditorTypeValidator(v); err != nil {
+			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Page.editor_type": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.Status(); ok {
 		if err := page.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Page.status": %w`, err)}
@@ -478,11 +483,6 @@ func (_c *PageCreate) check() error {
 	if v, ok := _c.mutation.GetType(); ok {
 		if err := page.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Page.type": %w`, err)}
-		}
-	}
-	if v, ok := _c.mutation.EditorType(); ok {
-		if err := page.EditorTypeValidator(v); err != nil {
-			return &ValidationError{Name: "editor_type", err: fmt.Errorf(`ent: validator failed for field "Page.editor_type": %w`, err)}
 		}
 	}
 	if v, ok := _c.mutation.ID(); ok {
@@ -555,6 +555,10 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 		_spec.SetField(page.FieldPath, field.TypeString, value)
 		_node.Path = &value
 	}
+	if value, ok := _c.mutation.EditorType(); ok {
+		_spec.SetField(page.FieldEditorType, field.TypeEnum, value)
+		_node.EditorType = &value
+	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(page.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
@@ -562,10 +566,6 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(page.FieldType, field.TypeEnum, value)
 		_node.Type = &value
-	}
-	if value, ok := _c.mutation.EditorType(); ok {
-		_spec.SetField(page.FieldEditorType, field.TypeEnum, value)
-		_node.EditorType = &value
 	}
 	if value, ok := _c.mutation.Slug(); ok {
 		_spec.SetField(page.FieldSlug, field.TypeString, value)
@@ -872,6 +872,24 @@ func (u *PageUpsert) ClearParentID() *PageUpsert {
 	return u
 }
 
+// SetEditorType sets the "editor_type" field.
+func (u *PageUpsert) SetEditorType(v page.EditorType) *PageUpsert {
+	u.Set(page.FieldEditorType, v)
+	return u
+}
+
+// UpdateEditorType sets the "editor_type" field to the value that was provided on create.
+func (u *PageUpsert) UpdateEditorType() *PageUpsert {
+	u.SetExcluded(page.FieldEditorType)
+	return u
+}
+
+// ClearEditorType clears the value of the "editor_type" field.
+func (u *PageUpsert) ClearEditorType() *PageUpsert {
+	u.SetNull(page.FieldEditorType)
+	return u
+}
+
 // SetStatus sets the "status" field.
 func (u *PageUpsert) SetStatus(v page.Status) *PageUpsert {
 	u.Set(page.FieldStatus, v)
@@ -905,24 +923,6 @@ func (u *PageUpsert) UpdateType() *PageUpsert {
 // ClearType clears the value of the "type" field.
 func (u *PageUpsert) ClearType() *PageUpsert {
 	u.SetNull(page.FieldType)
-	return u
-}
-
-// SetEditorType sets the "editor_type" field.
-func (u *PageUpsert) SetEditorType(v page.EditorType) *PageUpsert {
-	u.Set(page.FieldEditorType, v)
-	return u
-}
-
-// UpdateEditorType sets the "editor_type" field to the value that was provided on create.
-func (u *PageUpsert) UpdateEditorType() *PageUpsert {
-	u.SetExcluded(page.FieldEditorType)
-	return u
-}
-
-// ClearEditorType clears the value of the "editor_type" field.
-func (u *PageUpsert) ClearEditorType() *PageUpsert {
-	u.SetNull(page.FieldEditorType)
 	return u
 }
 
@@ -1425,6 +1425,27 @@ func (u *PageUpsertOne) ClearParentID() *PageUpsertOne {
 	})
 }
 
+// SetEditorType sets the "editor_type" field.
+func (u *PageUpsertOne) SetEditorType(v page.EditorType) *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.SetEditorType(v)
+	})
+}
+
+// UpdateEditorType sets the "editor_type" field to the value that was provided on create.
+func (u *PageUpsertOne) UpdateEditorType() *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.UpdateEditorType()
+	})
+}
+
+// ClearEditorType clears the value of the "editor_type" field.
+func (u *PageUpsertOne) ClearEditorType() *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.ClearEditorType()
+	})
+}
+
 // SetStatus sets the "status" field.
 func (u *PageUpsertOne) SetStatus(v page.Status) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
@@ -1464,27 +1485,6 @@ func (u *PageUpsertOne) UpdateType() *PageUpsertOne {
 func (u *PageUpsertOne) ClearType() *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearType()
-	})
-}
-
-// SetEditorType sets the "editor_type" field.
-func (u *PageUpsertOne) SetEditorType(v page.EditorType) *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.SetEditorType(v)
-	})
-}
-
-// UpdateEditorType sets the "editor_type" field to the value that was provided on create.
-func (u *PageUpsertOne) UpdateEditorType() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateEditorType()
-	})
-}
-
-// ClearEditorType clears the value of the "editor_type" field.
-func (u *PageUpsertOne) ClearEditorType() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearEditorType()
 	})
 }
 
@@ -2195,6 +2195,27 @@ func (u *PageUpsertBulk) ClearParentID() *PageUpsertBulk {
 	})
 }
 
+// SetEditorType sets the "editor_type" field.
+func (u *PageUpsertBulk) SetEditorType(v page.EditorType) *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.SetEditorType(v)
+	})
+}
+
+// UpdateEditorType sets the "editor_type" field to the value that was provided on create.
+func (u *PageUpsertBulk) UpdateEditorType() *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.UpdateEditorType()
+	})
+}
+
+// ClearEditorType clears the value of the "editor_type" field.
+func (u *PageUpsertBulk) ClearEditorType() *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.ClearEditorType()
+	})
+}
+
 // SetStatus sets the "status" field.
 func (u *PageUpsertBulk) SetStatus(v page.Status) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
@@ -2234,27 +2255,6 @@ func (u *PageUpsertBulk) UpdateType() *PageUpsertBulk {
 func (u *PageUpsertBulk) ClearType() *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearType()
-	})
-}
-
-// SetEditorType sets the "editor_type" field.
-func (u *PageUpsertBulk) SetEditorType(v page.EditorType) *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.SetEditorType(v)
-	})
-}
-
-// UpdateEditorType sets the "editor_type" field to the value that was provided on create.
-func (u *PageUpsertBulk) UpdateEditorType() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateEditorType()
-	})
-}
-
-// ClearEditorType clears the value of the "editor_type" field.
-func (u *PageUpsertBulk) ClearEditorType() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearEditorType()
 	})
 }
 

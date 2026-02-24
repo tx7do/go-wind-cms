@@ -27,10 +27,10 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldSortOrder holds the string denoting the sort_order field in the database.
 	FieldSortOrder = "sort_order"
-	// FieldStatus holds the string denoting the status field in the database.
-	FieldStatus = "status"
 	// FieldEditorType holds the string denoting the editor_type field in the database.
 	FieldEditorType = "editor_type"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// FieldSlug holds the string denoting the slug field in the database.
 	FieldSlug = "slug"
 	// FieldDisallowComment holds the string denoting the disallow_comment field in the database.
@@ -73,8 +73,8 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedBy,
 	FieldSortOrder,
-	FieldStatus,
 	FieldEditorType,
+	FieldStatus,
 	FieldSlug,
 	FieldDisallowComment,
 	FieldInProgress,
@@ -124,6 +124,36 @@ var (
 	IDValidator func(uint32) error
 )
 
+// EditorType defines the type for the "editor_type" enum field.
+type EditorType string
+
+// EditorTypeEditorTypeMarkdown is the default value of the EditorType enum.
+const DefaultEditorType = EditorTypeEditorTypeMarkdown
+
+// EditorType values.
+const (
+	EditorTypeEditorTypeMarkdown      EditorType = "EDITOR_TYPE_MARKDOWN"
+	EditorTypeEditorTypeRichText      EditorType = "EDITOR_TYPE_RICH_TEXT"
+	EditorTypeEditorTypePlainText     EditorType = "EDITOR_TYPE_PLAIN_TEXT"
+	EditorTypeEditorTypeCode          EditorType = "EDITOR_TYPE_CODE"
+	EditorTypeEditorTypeJsonBlock     EditorType = "EDITOR_TYPE_JSON_BLOCK"
+	EditorTypeEditorTypeVisualBuilder EditorType = "EDITOR_TYPE_VISUAL_BUILDER"
+)
+
+func (et EditorType) String() string {
+	return string(et)
+}
+
+// EditorTypeValidator is a validator for the "editor_type" field enum values. It is called by the builders before save.
+func EditorTypeValidator(et EditorType) error {
+	switch et {
+	case EditorTypeEditorTypeMarkdown, EditorTypeEditorTypeRichText, EditorTypeEditorTypePlainText, EditorTypeEditorTypeCode, EditorTypeEditorTypeJsonBlock, EditorTypeEditorTypeVisualBuilder:
+		return nil
+	default:
+		return fmt.Errorf("post: invalid enum value for editor_type field: %q", et)
+	}
+}
+
 // Status defines the type for the "status" enum field.
 type Status string
 
@@ -149,40 +179,6 @@ func StatusValidator(s Status) error {
 		return nil
 	default:
 		return fmt.Errorf("post: invalid enum value for status field: %q", s)
-	}
-}
-
-// EditorType defines the type for the "editor_type" enum field.
-type EditorType string
-
-// EditorTypeEditorTypeMarkdown is the default value of the EditorType enum.
-const DefaultEditorType = EditorTypeEditorTypeMarkdown
-
-// EditorType values.
-const (
-	EditorTypeEditorTypeMarkdown      EditorType = "EDITOR_TYPE_MARKDOWN"
-	EditorTypeEditorTypeRichText      EditorType = "EDITOR_TYPE_RICH_TEXT"
-	EditorTypeEditorTypeHtml          EditorType = "EDITOR_TYPE_HTML"
-	EditorTypeEditorTypeJsonBlock     EditorType = "EDITOR_TYPE_JSON_BLOCK"
-	EditorTypeEditorTypePlainText     EditorType = "EDITOR_TYPE_PLAIN_TEXT"
-	EditorTypeEditorTypeCode          EditorType = "EDITOR_TYPE_CODE"
-	EditorTypeEditorTypeWysiwyg       EditorType = "EDITOR_TYPE_WYSIWYG"
-	EditorTypeEditorTypeVisualBuilder EditorType = "EDITOR_TYPE_VISUAL_BUILDER"
-	EditorTypeEditorTypeSlate         EditorType = "EDITOR_TYPE_SLATE"
-	EditorTypeEditorTypeProsemirror   EditorType = "EDITOR_TYPE_PROSEMIRROR"
-)
-
-func (et EditorType) String() string {
-	return string(et)
-}
-
-// EditorTypeValidator is a validator for the "editor_type" field enum values. It is called by the builders before save.
-func EditorTypeValidator(et EditorType) error {
-	switch et {
-	case EditorTypeEditorTypeMarkdown, EditorTypeEditorTypeRichText, EditorTypeEditorTypeHtml, EditorTypeEditorTypeJsonBlock, EditorTypeEditorTypePlainText, EditorTypeEditorTypeCode, EditorTypeEditorTypeWysiwyg, EditorTypeEditorTypeVisualBuilder, EditorTypeEditorTypeSlate, EditorTypeEditorTypeProsemirror:
-		return nil
-	default:
-		return fmt.Errorf("post: invalid enum value for editor_type field: %q", et)
 	}
 }
 
@@ -229,14 +225,14 @@ func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSortOrder, opts...).ToFunc()
 }
 
-// ByStatus orders the results by the status field.
-func ByStatus(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStatus, opts...).ToFunc()
-}
-
 // ByEditorType orders the results by the editor_type field.
 func ByEditorType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEditorType, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 // BySlug orders the results by the slug field.
