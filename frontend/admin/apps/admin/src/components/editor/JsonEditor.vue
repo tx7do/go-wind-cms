@@ -13,8 +13,6 @@ import { preferences } from '@vben/preferences';
 
 import VueJsonEditor from 'json-editor-vue';
 
-import { isDarkMode } from './utils';
-
 import 'jsoneditor/dist/jsoneditor.min.css';
 
 // 类型定义
@@ -57,7 +55,25 @@ const parseError = ref<string>('');
 const isValidJson = ref(true);
 const instance = getCurrentInstance();
 let observer: MutationObserver | null = null;
+let themeObserver: MutationObserver | null = null;
 
+const isDark = ref(false);
+
+const updateIsDark = () => {
+  const prefersDark = preferences.theme.mode === 'dark';
+  if (typeof document === 'undefined') {
+    isDark.value = prefersDark;
+    return;
+  }
+  const root = document.documentElement;
+  isDark.value =
+    prefersDark ||
+    root.classList.contains('dark') ||
+    root.classList.contains('theme-dark') ||
+    root.classList.contains('json-editor-dark');
+};
+
+// computed
 // 验证并格式化 JSON
 const validateAndFormat = (value: string) => {
   try {
@@ -179,15 +195,9 @@ const editorHeight = computed(() => {
 // 刷新编辑器样式
 const refreshEditor = () => {
   nextTick(() => {
-    if (!instance?.el) return;
-    const container = instance.el as HTMLElement;
-    const editorEl = container.querySelector('.json-editor-core');
-
-    if (editorEl && editorEl instanceof HTMLElement) {
-      editorEl.classList.remove('jsoneditor');
-      void editorEl.offsetWidth; // 触发重绘
-      editorEl.classList.add('jsoneditor');
-    }
+    const container = instance?.proxy?.$el as HTMLElement | undefined;
+    if (!container) return;
+    container.dataset.theme = isDark.value ? 'dark' : 'light';
   });
 };
 
@@ -195,6 +205,7 @@ const refreshEditor = () => {
 watch(
   () => preferences.theme.mode,
   () => {
+    updateIsDark();
     refreshEditor();
   },
   { immediate: true },
@@ -233,13 +244,26 @@ const handleEditorChange = (value: any) => {
 
 // 初始化和销毁逻辑
 onMounted(() => {
+  updateIsDark();
   initData();
   nextTick(() => {
     emit('ready');
     refreshEditor();
 
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement;
+      themeObserver = new MutationObserver(() => {
+        updateIsDark();
+        refreshEditor();
+      });
+      themeObserver.observe(root, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    }
+
     if (!instance?.el) return;
-    const container = instance.el as HTMLElement;
+    const container = instance?.proxy?.$el as HTMLElement | undefined;
     const editorEl = container.querySelector('.json-editor-core');
 
     if (editorEl) {
@@ -249,7 +273,7 @@ onMounted(() => {
             m.type === 'attributes' &&
             ['class', 'style'].includes(m.attributeName || ''),
         );
-        if (isDarkMode() && hasStyleChange) {
+        if (isDark.value && hasStyleChange) {
           refreshEditor();
         }
       });
@@ -265,6 +289,10 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  if (themeObserver) {
+    themeObserver.disconnect();
+    themeObserver = null;
+  }
   if (observer) {
     observer.disconnect();
     observer = null;
@@ -273,10 +301,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    class="json-editor-container"
-    :class="{ 'json-editor-dark': isDarkMode() }"
-  >
+  <div class="json-editor-container" :class="{ 'json-editor-dark': isDark }">
     <!-- 错误提示 -->
     <div v-if="parseError" class="error-message">
       {{ parseError }}
