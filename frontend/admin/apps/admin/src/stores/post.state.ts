@@ -145,10 +145,6 @@ export const editorTypeList = computed(() => [
     label: $t('enum.editorType.EDITOR_TYPE_RICH_TEXT'),
   },
   {
-    value: 'EDITOR_TYPE_HTML',
-    label: $t('enum.editorType.EDITOR_TYPE_HTML'),
-  },
-  {
     value: 'EDITOR_TYPE_JSON_BLOCK',
     label: $t('enum.editorType.EDITOR_TYPE_JSON_BLOCK'),
   },
@@ -161,20 +157,8 @@ export const editorTypeList = computed(() => [
     label: $t('enum.editorType.EDITOR_TYPE_CODE'),
   },
   {
-    value: 'EDITOR_TYPE_WYSIWYG',
-    label: $t('enum.editorType.EDITOR_TYPE_WYSIWYG'),
-  },
-  {
     value: 'EDITOR_TYPE_VISUAL_BUILDER',
     label: $t('enum.editorType.EDITOR_TYPE_VISUAL_BUILDER'),
-  },
-  {
-    value: 'EDITOR_TYPE_SLATE',
-    label: $t('enum.editorType.EDITOR_TYPE_SLATE'),
-  },
-  {
-    value: 'EDITOR_TYPE_PROSEMIRROR',
-    label: $t('enum.editorType.EDITOR_TYPE_PROSEMIRROR'),
   },
 ]);
 
@@ -189,22 +173,14 @@ const EDITOR_TYPE_COLOR_MAP = {
   EDITOR_TYPE_MARKDOWN: '#4f46e5',
   // 富文本编辑器 - 清新青柠绿（可视化、易用、富内容）
   EDITOR_TYPE_RICH_TEXT: '#14b8a6',
-  // HTML编辑器 - 专业暖橙（代码、定制化、网页原生）
-  EDITOR_TYPE_HTML: '#f97316',
   // JSON块编辑器 - 沉稳紫玫红（结构化、数据、严谨）
   EDITOR_TYPE_JSON_BLOCK: '#d946ef',
   // 纯文本编辑器 - 中性石板灰（极简、无格式、基础文本）
   EDITOR_TYPE_PLAIN_TEXT: '#64748b',
   // 代码编辑器 - 科技冷蓝（编程、语法高亮、开发者工具）
   EDITOR_TYPE_CODE: '#0ea5e9',
-  // WYSIWYG编辑器 - 柔和薄荷绿（所见即所得，与富文本同源但更浅）
-  EDITOR_TYPE_WYSIWYG: '#34d399',
   // 可视化构建器 - 活力青蓝（拖拽、可视化、低代码）
   EDITOR_TYPE_VISUAL_BUILDER: '#06b6d4',
-  // Slate编辑器 - 雅致紫罗兰（现代富文本框架、轻量定制）
-  EDITOR_TYPE_SLATE: '#8b5cf6',
-  // ProseMirror编辑器 - 柔和梅子紫（专业编辑器框架、结构化编辑）
-  EDITOR_TYPE_PROSEMIRROR: '#a855f7',
   // 默认值 - 中性浅灰（无明确类型时的兜底）
   DEFAULT: '#94a3b8',
 } as const;

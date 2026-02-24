@@ -28,10 +28,16 @@ export interface EditorProps {
     modes?: string[];
     search?: boolean;
   };
+  // Code Editor specific
+  codeOptions?: {
+    language?: string;
+    lineNumbers?: boolean;
+    tabSize?: number;
+    theme?: 'dark' | 'light';
+  };
 }
 
 export interface EditorEmits {
-  (e: 'update:modelValue', value: string): void;
-  (e: 'change', value: string): void;
+  (e: 'change' | 'update:modelValue', value: string): void;
   (e: 'ready'): void;
 }

@@ -7,7 +7,7 @@ import VMdEditor from '@kangc/v-md-editor';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import Prism from 'prismjs';
 
-import { isDarkMode } from '#/adapter/component/UEditor/src/utils';
+import { isDarkMode } from './utils';
 
 // 引入Prism暗黑高亮样式（关键补充）
 import 'prismjs/themes/prism-tomorrow.css';

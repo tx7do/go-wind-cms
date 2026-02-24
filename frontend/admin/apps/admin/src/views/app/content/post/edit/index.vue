@@ -27,6 +27,15 @@ const postId = computed(() => {
   return Number(id);
 });
 
+// 编辑器类型列表
+const editorTypeOptions = [
+  { label: 'Markdown Editor', value: EditorType.MARKDOWN },
+  { label: 'Rich Text Editor (UEditor)', value: EditorType.RICH_TEXT },
+  { label: 'JSON Editor', value: EditorType.JSON },
+  { label: 'Plain Text Editor', value: EditorType.PLAIN_TEXT },
+  { label: 'Code Editor', value: EditorType.CODE },
+];
+
 // 表单数据
 const formData = ref({
   title: '',
@@ -72,14 +81,12 @@ function handlePublish() {
         />
 
         <a-select v-model:value="formData.editorType" style="width: 200px">
-          <a-select-option :value="EditorType.MARKDOWN">
-            Markdown Editor
-          </a-select-option>
-          <a-select-option :value="EditorType.RICH_TEXT">
-            Rich Text Editor (UEditor)
-          </a-select-option>
-          <a-select-option :value="EditorType.JSON">
-            JSON Editor
+          <a-select-option
+            v-for="option in editorTypeOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
           </a-select-option>
         </a-select>
       </div>

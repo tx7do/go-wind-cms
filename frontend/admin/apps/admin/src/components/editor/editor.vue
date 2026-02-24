@@ -20,6 +20,10 @@ const MarkdownEditor = defineAsyncComponent(
   () => import('./MarkdownEditor.vue'),
 );
 const JsonEditor = defineAsyncComponent(() => import('./JsonEditor.vue'));
+const PlainTextEditor = defineAsyncComponent(
+  () => import('./PlainTextEditor.vue'),
+);
+const CodeEditor = defineAsyncComponent(() => import('./CodeEditor.vue'));
 
 // 根据编辑器类型确定使用哪个编辑器
 const currentEditorComponent = computed(() => {
@@ -34,10 +38,20 @@ const currentEditorComponent = computed(() => {
       return UEditor;
     }
 
+    case EditorType.MARKDOWN: {
+      return MarkdownEditor;
+    }
+
+    case EditorType.PLAIN_TEXT: {
+      return PlainTextEditor;
+    }
+
+    case EditorType.CODE: {
+      return CodeEditor;
+    }
+
     default: {
-      // CODE, MARKDOWN, PLAIN_TEXT 和其他类型
-      // 可以使用 Monaco Editor 或 CodeMirror
-      // 暂时使用 Markdown 编辑器
+      // 其他未知类型，默认使用 Markdown 编辑器
       return MarkdownEditor;
     }
   }
@@ -54,6 +68,22 @@ const handleChange = (value: string) => {
 const handleReady = () => {
   emit('ready');
 };
+
+// 计算当前编辑器的选项
+const currentOptions = computed(() => {
+  const type = props.editorType;
+  switch (type) {
+    case EditorType.MARKDOWN:
+      return props.markdownOptions;
+    case EditorType.JSON:
+      return props.jsonOptions;
+    case EditorType.CODE:
+      return props.codeOptions;
+    default:
+      return undefined;
+  }
+});
+
 </script>
 
 <template>
@@ -65,9 +95,7 @@ const handleReady = () => {
       :disabled="disabled"
       :placeholder="placeholder"
       :config="ueditorConfig"
-      :options="
-        editorType === EditorType.MARKDOWN ? markdownOptions : jsonOptions
-      "
+      :options="currentOptions"
       @update:model-value="handleUpdate"
       @change="handleChange"
       @ready="handleReady"

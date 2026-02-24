@@ -13,7 +13,7 @@ import { preferences } from '@vben/preferences';
 
 import Vue3JsonEditor from 'json-editor-vue';
 
-import { isDarkMode } from '#/adapter/component/UEditor/src/utils';
+import { isDarkMode } from './utils';
 
 import 'jsoneditor/dist/jsoneditor.min.css';
 
