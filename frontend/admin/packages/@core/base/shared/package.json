@@ -79,10 +79,10 @@
     }
   },
   "dependencies": {
-    "@ctrl/tinycolor": "catalog:",
+    "@ctrl/tinycolor": "^4.2.0",
     "@tanstack/vue-store": "catalog:",
     "@vue/shared": "catalog:",
-    "clsx": "catalog:",
+    "clsx": "^2.1.1",
     "dayjs": "catalog:",
     "defu": "catalog:",
     "lodash.clonedeep": "catalog:",

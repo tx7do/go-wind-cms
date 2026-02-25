@@ -611,5 +611,31 @@
     "button": {
       "create": "创建站点"
     }
+  },
+  "editor": {
+    "please_input_content": "请输入内容...",
+    "clear_content_confirm": "确定要清空内容吗？",
+    "h1": "标题 1",
+    "h2": "标题 2",
+    "h3": "标题 3",
+    "bold": "加粗 (Ctrl+B)",
+    "italic": "斜体 (Ctrl+I)",
+    "strike": "删除线",
+    "code": "行内代码",
+    "bulletList": "无序列表",
+    "orderedList": "有序列表",
+    "blockquote": "引用",
+    "codeBlock": "代码块",
+    "left": "左对齐",
+    "center": "居中对齐",
+    "right": "右对齐",
+    "remove_url": "移除链接",
+    "insert_url": "插入链接",
+    "insert_image": "插入图片",
+    "undo": "撤销 (Ctrl+Z)",
+    "redo": "重做 (Ctrl+Y)",
+    "clearContent": "清空内容",
+    "words": "字",
+    "chars": "字符"
   }
 }

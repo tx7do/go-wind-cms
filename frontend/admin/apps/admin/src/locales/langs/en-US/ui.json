@@ -95,5 +95,25 @@
     "do_you_want_delete": "Do you want to delete this {moduleName}?",
     "do_you_want_sync_permissions": "Are you sure you want to sync permissions? This will rebuild data in the database. If there are many API or menu resources, it may take some time; please wait patiently.",
     "do_you_want_disable": "Do you want to disable this {moduleName}?"
+  },
+  "placeholder": {
+    "input": "Please enter {moduleName}",
+    "select": "Please select {moduleName}",
+    "date": "Please select {moduleName} date",
+    "datetime": "Please select {moduleName} date and time",
+    "search": "Search {moduleName}",
+    "upload": "Click to upload {moduleName}",
+    "select_file": "Select file",
+    "select_image": "Select image",
+    "select_icon": "Select icon",
+    "select_color": "Select color",
+    "input_url": "Please enter link address (e.g.: https://example.com)"
+  },
+  "title": {
+    "create": "Create {moduleName}",
+    "update": "Edit {moduleName}",
+    "delete": "Delete {moduleName}",
+    "insert_url": "Insert Link",
+    "confirm": "Confirm {action}"
   }
 }

@@ -55,3 +55,5 @@ export const LucideFileDownload = createIconifyIcon('lucide:file-down');
 
 export const LucideUserRoundPen = createIconifyIcon('lucide:user-round-pen');
 export const LucideInbox = createIconifyIcon('lucide:inbox');
+
+export const LucideCircleAlert = createIconifyIcon('lucide:circle-alert');

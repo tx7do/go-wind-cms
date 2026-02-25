@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
+import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 
 import { type EditorProps, MdEditor } from 'md-editor-v3';
@@ -20,7 +21,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   height: '100%', // 默认撑满父容器
-  placeholder: 'Please enter markdown content...',
+  placeholder: $t('ui.editor.please_input_content'),
   options: () => ({}),
 });
 

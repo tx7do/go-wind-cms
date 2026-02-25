@@ -8,6 +8,7 @@ import {
   watch,
 } from 'vue';
 
+import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 
 import detect from 'language-detect';
@@ -56,7 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
   autoDetectLanguage: true, // 默认启用自动侦测
   disabled: false,
   height: '100%',
-  placeholder: 'Please enter code...',
+  placeholder: $t('ui.editor.please_input_content'),
   options: () => ({
     language: 'javascript',
     theme: 'light',
