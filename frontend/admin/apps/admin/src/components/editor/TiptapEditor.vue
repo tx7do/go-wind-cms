@@ -7,7 +7,7 @@ import { LucideCircleAlert } from '@vben/icons';
 import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 
-import { mergeAttributes } from '@tiptap/core';
+import { mergeAttributes, Node } from '@tiptap/core';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Color from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
@@ -193,6 +193,74 @@ const CustomCodeBlockLowlight = CodeBlockLowlight.extend({
   defaultLanguage: 'javascript',
 });
 
+// 自定义视频扩展
+const CustomVideo = Node.create({
+  name: 'video',
+  group: 'block',
+  atom: true,
+  draggable: true,
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('src'),
+        renderHTML: (attributes) => {
+          if (!attributes.src) {
+            return {};
+          }
+          return { src: attributes.src };
+        },
+      },
+      width: {
+        default: '100%',
+        parseHTML: (element) => element.style.width || '100%',
+        renderHTML: (attributes) => {
+          return { style: `width: ${attributes.width}` };
+        },
+      },
+      height: {
+        default: 'auto',
+        parseHTML: (element) => element.style.height || 'auto',
+        renderHTML: (attributes) => {
+          return { style: `height: ${attributes.height}` };
+        },
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'video',
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'video',
+      mergeAttributes(HTMLAttributes, {
+        controls: 'controls',
+        style: `max-width: 100%; height: auto;`,
+      }),
+    ];
+  },
+
+  addCommands() {
+    return {
+      setVideo:
+        (options: { height?: string; src: string; width?: string }) =>
+        ({ commands }: { commands: any }) => {
+          return commands.insertContent({
+            type: this.name,
+            attrs: options,
+          });
+        },
+    } as any;
+  },
+});
+
 // 响应式数据
 const isDark = ref(preferences.theme.mode === 'dark');
 const contentRef = ref(props.modelValue);
@@ -207,6 +275,10 @@ const linkUrl = ref('');
 const codeBlockModalVisible = ref(false);
 const codeBlockLanguage = ref('javascript');
 const codeBlockContent = ref('');
+
+const videoModalVisible = ref(false);
+const videoUrl = ref('');
+const videoWidth = ref('100%');
 
 // 常用编程语言列表
 const languages = [
@@ -270,6 +342,7 @@ const editor = useEditor({
     Placeholder.configure({ placeholder: props.placeholder }),
     Link.configure({ openOnClick: false, autolink: true }),
     Image.configure({ inline: true }),
+    CustomVideo,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),
   ],
   editable: !props.disabled,
@@ -408,6 +481,12 @@ const openCodeBlockModal = () => {
   codeBlockModalVisible.value = true;
 };
 
+const openVideoModal = () => {
+  videoUrl.value = '';
+  videoWidth.value = '100%';
+  videoModalVisible.value = true;
+};
+
 const toolbarActions = {
   toggleBold: () => editor.value?.chain().focus().toggleBold().run(),
   toggleItalic: () => editor.value?.chain().focus().toggleItalic().run(),
@@ -459,6 +538,7 @@ const toolbarActions = {
   setHighlight: (color: string) =>
     editor.value?.chain().focus().toggleHighlight({ color }).run(),
   uploadImage: () => fileInputRef.value?.click(),
+  insertVideo: () => openVideoModal(),
   importMarkdown: () => markdownInputRef.value?.click(),
   undo: () => editor.value?.chain().focus().undo().run(),
   redo: () => editor.value?.chain().focus().redo().run(),
@@ -562,6 +642,29 @@ const handleCodeBlockCancel = () => {
   codeBlockModalVisible.value = false;
   codeBlockContent.value = '';
   codeBlockLanguage.value = 'javascript';
+  editor.value?.chain().focus().run();
+};
+
+// 处理视频 Modal
+const handleVideoOk = () => {
+  const url = videoUrl.value.trim();
+  if (url && editor.value) {
+    (editor.value.chain().focus() as any)
+      .setVideo({
+        src: url,
+        width: videoWidth.value,
+      })
+      .run();
+  }
+  videoModalVisible.value = false;
+  videoUrl.value = '';
+  videoWidth.value = '100%';
+};
+
+const handleVideoCancel = () => {
+  videoModalVisible.value = false;
+  videoUrl.value = '';
+  videoWidth.value = '100%';
   editor.value?.chain().focus().run();
 };
 
@@ -1292,6 +1395,26 @@ onUnmounted(() => {
         <button
           type="button"
           class="toolbar-btn"
+          @click="toolbarActions.insertVideo"
+          :title="$t('page.editor.insertVideo')"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+            />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="toolbar-btn"
           @click="toolbarActions.importMarkdown"
           :title="$t('page.editor.importMarkdown')"
         >
@@ -1402,6 +1525,48 @@ onUnmounted(() => {
             class="code-textarea"
             rows="10"
           ></textarea>
+        </div>
+      </div>
+    </Modal>
+
+    <!-- Video Insert Modal -->
+    <Modal
+      v-model:open="videoModalVisible"
+      :title="$t('page.editor.insertVideo')"
+      @ok="handleVideoOk"
+      @cancel="handleVideoCancel"
+      :ok-text="$t('common.confirm') || 'OK'"
+      :cancel-text="$t('common.cancel') || 'Cancel'"
+      :mask-closable="false"
+      width="500px"
+    >
+      <div class="video-modal">
+        <div class="modal-field">
+          <label class="field-label">
+            {{ $t('page.editor.videoUrl') }}
+          </label>
+          <Input
+            v-model:value="videoUrl"
+            :placeholder="$t('page.editor.videoUrlPlaceholder')"
+            allow-clear
+            @keyup.enter="handleVideoOk"
+          />
+        </div>
+        <div class="modal-field">
+          <label class="field-label">
+            {{ $t('page.editor.videoWidth') }}
+          </label>
+          <a-select
+            v-model:value="videoWidth"
+            :options="[
+              { value: '100%', label: '100%' },
+              { value: '75%', label: '75%' },
+              { value: '50%', label: '50%' },
+              { value: '640px', label: '640px' },
+              { value: '800px', label: '800px' },
+            ]"
+            class="width-select"
+          />
         </div>
       </div>
     </Modal>
@@ -2018,5 +2183,43 @@ onUnmounted(() => {
 .tiptap-editor-dark .code-textarea:focus {
   border-color: var(--tte-link) !important;
   box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2) !important;
+}
+
+/* ============ Video Modal ============ */
+.video-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.width-select {
+  width: 100%;
+}
+
+/* ============ Video Styles ============ */
+:deep(.ProseMirror video) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 12px 0;
+  display: block;
+  cursor: pointer;
+}
+
+:deep(.ProseMirror video:hover) {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+:deep(.ProseMirror .ProseMirror-selectednode video) {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.tiptap-editor-dark :deep(.ProseMirror video) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tiptap-editor-dark :deep(.ProseMirror .ProseMirror-selectednode video) {
+  outline-color: var(--tte-link);
 }
 </style>
