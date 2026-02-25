@@ -261,6 +261,100 @@ const CustomVideo = Node.create({
   },
 });
 
+// 自定义 Iframe 扩展
+const CustomIframe = Node.create({
+  name: 'iframe',
+  group: 'block',
+  atom: true,
+  draggable: true,
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('src'),
+        renderHTML: (attributes) => {
+          if (!attributes.src) {
+            return {};
+          }
+          return { src: attributes.src };
+        },
+      },
+      width: {
+        default: '100%',
+        parseHTML: (element) => element.style.width || '100%',
+        renderHTML: (attributes) => {
+          return { style: `width: ${attributes.width}` };
+        },
+      },
+      height: {
+        default: '500px',
+        parseHTML: (element) => element.style.height || '500px',
+        renderHTML: (attributes) => {
+          return { style: `height: ${attributes.height}` };
+        },
+      },
+      title: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('title'),
+        renderHTML: (attributes) => {
+          if (!attributes.title) {
+            return {};
+          }
+          return { title: attributes.title };
+        },
+      },
+      allowfullscreen: {
+        default: true,
+        parseHTML: (element) => element.hasAttribute('allowfullscreen'),
+        renderHTML: (attributes) => {
+          if (!attributes.allowfullscreen) {
+            return {};
+          }
+          return { allowfullscreen: 'allowfullscreen' };
+        },
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'iframe',
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'iframe',
+      mergeAttributes(HTMLAttributes, {
+        frameborder: '0',
+        style: `max-width: 100%; border: 1px solid #e5e7eb; border-radius: 6px; margin: 12px 0;`,
+      }),
+    ];
+  },
+
+  addCommands() {
+    return {
+      setIframe:
+        (options: {
+          allowfullscreen?: boolean;
+          height?: string;
+          src: string;
+          title?: string;
+          width?: string;
+        }) =>
+        ({ commands }: { commands: any }) => {
+          return commands.insertContent({
+            type: this.name,
+            attrs: options,
+          });
+        },
+    } as any;
+  },
+});
+
 // 响应式数据
 const isDark = ref(preferences.theme.mode === 'dark');
 const contentRef = ref(props.modelValue);
@@ -279,6 +373,13 @@ const codeBlockContent = ref('');
 const videoModalVisible = ref(false);
 const videoUrl = ref('');
 const videoWidth = ref('100%');
+
+const iframeModalVisible = ref(false);
+const iframeUrl = ref('');
+const iframeWidth = ref('100%');
+const iframeHeight = ref('500px');
+const iframeTitle = ref('');
+const iframeAllowFullscreen = ref(true);
 
 // 常用编程语言列表
 const languages = [
@@ -343,6 +444,7 @@ const editor = useEditor({
     Link.configure({ openOnClick: false, autolink: true }),
     Image.configure({ inline: true }),
     CustomVideo,
+    CustomIframe,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),
   ],
   editable: !props.disabled,
@@ -487,6 +589,15 @@ const openVideoModal = () => {
   videoModalVisible.value = true;
 };
 
+const openIframeModal = () => {
+  iframeUrl.value = '';
+  iframeWidth.value = '100%';
+  iframeHeight.value = '500px';
+  iframeTitle.value = '';
+  iframeAllowFullscreen.value = true;
+  iframeModalVisible.value = true;
+};
+
 const toolbarActions = {
   toggleBold: () => editor.value?.chain().focus().toggleBold().run(),
   toggleItalic: () => editor.value?.chain().focus().toggleItalic().run(),
@@ -539,6 +650,7 @@ const toolbarActions = {
     editor.value?.chain().focus().toggleHighlight({ color }).run(),
   uploadImage: () => fileInputRef.value?.click(),
   insertVideo: () => openVideoModal(),
+  insertIframe: () => openIframeModal(),
   importMarkdown: () => markdownInputRef.value?.click(),
   undo: () => editor.value?.chain().focus().undo().run(),
   redo: () => editor.value?.chain().focus().redo().run(),
@@ -665,6 +777,37 @@ const handleVideoCancel = () => {
   videoModalVisible.value = false;
   videoUrl.value = '';
   videoWidth.value = '100%';
+};
+
+// 处理 iframe Modal
+const handleIframeOk = () => {
+  const url = iframeUrl.value.trim();
+  if (url && editor.value) {
+    (editor.value.chain().focus() as any)
+      .setIframe({
+        src: url,
+        width: iframeWidth.value,
+        height: iframeHeight.value,
+        title: iframeTitle.value || undefined,
+        allowfullscreen: iframeAllowFullscreen.value,
+      })
+      .run();
+  }
+  iframeModalVisible.value = false;
+  iframeUrl.value = '';
+  iframeWidth.value = '100%';
+  iframeHeight.value = '500px';
+  iframeTitle.value = '';
+  iframeAllowFullscreen.value = true;
+};
+
+const handleIframeCancel = () => {
+  iframeModalVisible.value = false;
+  iframeUrl.value = '';
+  iframeWidth.value = '100%';
+  iframeHeight.value = '500px';
+  iframeTitle.value = '';
+  iframeAllowFullscreen.value = true;
   editor.value?.chain().focus().run();
 };
 
@@ -1415,6 +1558,27 @@ onUnmounted(() => {
         <button
           type="button"
           class="toolbar-btn"
+          @click="toolbarActions.insertIframe"
+          :title="$t('page.editor.insertIframe')"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 12h8M12 8v8"
+            />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="toolbar-btn"
           @click="toolbarActions.importMarkdown"
           :title="$t('page.editor.importMarkdown')"
         >
@@ -1567,6 +1731,85 @@ onUnmounted(() => {
             ]"
             class="width-select"
           />
+        </div>
+      </div>
+    </Modal>
+
+    <!-- Iframe Insert Modal -->
+    <Modal
+      v-model:open="iframeModalVisible"
+      :title="$t('page.editor.insertIframe')"
+      @ok="handleIframeOk"
+      @cancel="handleIframeCancel"
+      :ok-text="$t('common.confirm') || 'OK'"
+      :cancel-text="$t('common.cancel') || 'Cancel'"
+      :mask-closable="false"
+      width="500px"
+    >
+      <div class="iframe-modal">
+        <div class="modal-field">
+          <label class="field-label">
+            {{ $t('page.editor.iframeUrl') }}
+          </label>
+          <Input
+            v-model:value="iframeUrl"
+            :placeholder="$t('page.editor.iframeUrlPlaceholder')"
+            allow-clear
+            @keyup.enter="handleIframeOk"
+          />
+        </div>
+        <div class="modal-field">
+          <label class="field-label">
+            {{ $t('page.editor.iframeWidth') }}
+          </label>
+          <a-select
+            v-model:value="iframeWidth"
+            :options="[
+              { value: '100%', label: '100%' },
+              { value: '75%', label: '75%' },
+              { value: '50%', label: '50%' },
+              { value: '640px', label: '640px' },
+              { value: '800px', label: '800px' },
+            ]"
+            class="width-select"
+          />
+        </div>
+        <div class="modal-field">
+          <label class="field-label">
+            {{ $t('page.editor.iframeHeight') }}
+          </label>
+          <a-select
+            v-model:value="iframeHeight"
+            :options="[
+              { value: '500px', label: '500px' },
+              { value: '300px', label: '300px' },
+              { value: '100%', label: '100%' },
+            ]"
+            class="height-select"
+          />
+        </div>
+        <div class="modal-field">
+          <label class="field-label">
+            {{ $t('page.editor.iframeTitle') }}
+          </label>
+          <Input
+            v-model:value="iframeTitle"
+            :placeholder="$t('page.editor.iframeTitlePlaceholder')"
+            allow-clear
+          />
+        </div>
+        <div class="modal-field">
+          <label class="field-label">
+            {{ $t('page.editor.allowFullscreen') }}
+          </label>
+          <div style="display: flex; align-items: center; gap: 12px">
+            <a-switch v-model:checked="iframeAllowFullscreen" />
+            <span>{{
+              iframeAllowFullscreen
+                ? $t('page.editor.allowFullscreenEnabled')
+                : $t('page.editor.allowFullscreenDisabled')
+            }}</span>
+          </div>
         </div>
       </div>
     </Modal>
@@ -2221,5 +2464,16 @@ onUnmounted(() => {
 
 .tiptap-editor-dark :deep(.ProseMirror .ProseMirror-selectednode video) {
   outline-color: var(--tte-link);
+}
+
+/* ============ Iframe Modal ============ */
+.iframe-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.height-select {
+  width: 100%;
 }
 </style>

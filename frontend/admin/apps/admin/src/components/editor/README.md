@@ -244,6 +244,7 @@ const handleUploadImage = async (file: File): Promise<string> => {
 - ✅ **导入 Markdown 文档**（.md 文件）
 - ✅ **插入代码块**（支持 JavaScript、TypeScript、Python、Java、C++、Go 等 200+ 种语言，右上角内联语言选择器）
 - ✅ **插入视频**（支持 MP4、WebM 等格式，自定义宽度）
+- ✅ **插入 Iframe**（支持 YouTube、Figma、CodePen 等嵌入式内容）
 - ✅ 撤销/重做
 - ✅ 清除格式、清空内容
 - ✅ 暗黑模式适配
@@ -629,6 +630,58 @@ Tiptap Editor 支持插入视频文件，支持常见的视频格式：
 2. 建议使用 MP4 格式以获得最佳兼容性
 3. 大视频文件建议使用 CDN 或视频托管服务
 4. 视频会自动显示原生浏览器控件（播放、暂停、音量等）
+
+### 插入 Iframe 功能
+
+Tiptap Editor 支持插入 iframe，用于嵌入外部内容如 YouTube 视频、Figma 设计、CodePen 演示等：
+
+**支持的内容类型：**
+- YouTube 视频
+- Figma 设计
+- CodePen 演示
+- Google 文档
+- 其他支持 iframe 嵌入的服务
+
+**使用方式：**
+
+1. 点击工具栏中的 iframe 按钮（框架图标）
+2. 在弹出的对话框中输入 iframe URL
+3. 选择 iframe 的宽度和高度
+4. （可选）输入 iframe 标题
+5. 设置是否允许全屏
+6. 点击确认插入
+
+**功能特性：**
+- ✅ 支持多种嵌入式内容源
+- ✅ 自定义宽度（100%, 75%, 50%, 640px, 800px）
+- ✅ 自定义高度（300px, 500px, 100%）
+- ✅ 可选的 iframe 标题
+- ✅ 全屏控制开关
+- ✅ 响应式设计
+- ✅ 暗黑模式适配
+- ✅ 可拖拽移动位置
+
+**代码示例：**
+
+```vue
+<template>
+  <TiptapEditor v-model="content" :height="600" />
+</template>
+```
+
+**常见 iframe URL 示例：**
+
+- YouTube：`https://www.youtube.com/embed/VIDEO_ID`
+- Figma：`https://www.figma.com/embed?url=YOUR_FIGMA_URL`
+- CodePen：`https://codepen.io/USERNAME/embed/SLUG`
+- Google 文档：`https://docs.google.com/document/d/DOC_ID/preview`
+
+**注意事项：**
+1. 确保使用正确的 embed URL（不是普通链接）
+2. 某些服务可能需要登录或权限才能访问
+3. 嵌入内容的加载速度取决于源服务器
+4. 不是所有网站都支持 iframe 嵌入（受 X-Frame-Options 限制）
+5. 全屏功能取决于 iframe 源是否允许
 
 ### 在 Post 编辑页面中使用
 
