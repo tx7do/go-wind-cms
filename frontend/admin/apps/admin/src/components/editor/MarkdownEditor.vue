@@ -10,15 +10,16 @@ import { isDarkMode } from './utils';
 
 import 'md-editor-v3/lib/style.css';
 
-interface Props {
+interface UseEditorConfigProps {
   modelValue: string;
   height?: number | string;
   disabled?: boolean;
   placeholder?: string;
   options?: Partial<EditorProps>;
+  enableExport?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<UseEditorConfigProps>(), {
   disabled: false,
   height: '100%', // 默认撑满父容器
   placeholder: $t('page.editor.please_input_content'),
@@ -33,46 +34,86 @@ const emit = defineEmits<{
 
 const localValue = ref(props.modelValue);
 const isDark = ref(isDarkMode());
-const wrapperRef = ref<HTMLDivElement>(null); // 修正类型定义
+const wrapperRef = ref<HTMLDivElement>(); // 修正类型定义
 let resizeObserver: null | ResizeObserver = null; // 监听容器尺寸变化
 
-// 编辑器配置
-const editorProps = computed<EditorProps>(() => ({
-  previewOnly: false,
-  preview: true,
-  toolbars: [
+const toolbars = computed(() => {
+  const base = [
+    // === 文本格式 ===
     'bold',
     'underline',
     'italic',
-    '-',
     'strikeThrough',
+    '-',
+
+    // === 文本样式 ===
     'title',
     'sub',
     'sup',
+    'alignLeft',
+    'alignCenter',
+    'alignRight',
+    'alignJustify',
     '-',
+
+    // === 列表与引用 ===
     'quote',
     'unorderedList',
     'orderedList',
     'task',
+    'indent',
+    'outdent',
     '-',
+
+    // === 代码与插入 ===
     'codeRow',
     'code',
     'link',
     'image',
     'table',
+    'horizontalRule',
+    'emoji',
+    'footnote',
+    '-',
+
+    // === 图表与公式 ===
     'mermaid',
     'katex',
     '-',
+
+    // === 编辑操作 ===
     'revoke',
     'next',
+    'clear',
     'save',
     '=',
+
+    // === 视图与导出 ===
     'pageFullscreen',
     'fullscreen',
     'preview',
     'htmlPreview',
     'catalog',
-  ],
+    'help',
+  ];
+
+  // 导出功能（按需）
+  if (props.enableExport) {
+    base.splice(base.indexOf('save') + 1, 0, 'exportPdf', 'exportHtml', '-');
+  }
+
+  return base;
+});
+
+// 编辑器配置
+const editorProps = computed<EditorProps>(() => ({
+  previewOnly: false,
+  preview: true,
+  showCodeRowNumber: true,
+  noMermaid: false,
+  noKatex: false,
+  toolbars: toolbars.value,
+  // 合并用户自定义配置
   ...props.options,
 }));
 
@@ -102,6 +143,7 @@ const updateEditorHeight = () => {
   } else if (typeof props.height === 'string') {
     // 处理带px的字符串（如"800px"）
     const pxMatch = props.height.match(/^(\d+)px$/);
+    // eslint-disable-next-line unicorn/prefer-ternary
     if (pxMatch) {
       editorHeight.value = Number(pxMatch[1]);
     } else {
