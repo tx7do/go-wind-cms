@@ -3,13 +3,15 @@ import type { EditorEmits, EditorProps } from './types';
 
 import { computed, defineAsyncComponent } from 'vue';
 
+import { $t } from '@vben/locales';
+
 import { EditorType } from './types';
 
 const props = withDefaults(defineProps<EditorProps>(), {
   editorType: EditorType.MARKDOWN,
-  height: 500,
+  height: '100%',
   disabled: false,
-  placeholder: 'Please enter content...',
+  placeholder: $t('page.editor.please_input_content'),
 });
 
 const emit = defineEmits<EditorEmits>();
@@ -98,7 +100,7 @@ const currentOptions = computed(() => {
       :height="height"
       :disabled="disabled"
       :placeholder="placeholder"
-      :config="ueditorConfig"
+      :upload-image="uploadImage"
       :options="currentOptions"
       @update:model-value="handleUpdate"
       @change="handleChange"

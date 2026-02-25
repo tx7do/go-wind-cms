@@ -1225,6 +1225,24 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/file/asset/upload:
+        post:
+            tags:
+                - FileTransferService
+            operationId: FileTransferService_UploadMediaAsset
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UploadMediaAssetRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UploadFileResponse'
     /admin/v1/file/download:
         get:
             tags:
@@ -1286,6 +1304,43 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/DownloadFileResponse'
+    /admin/v1/file/ueditor/upload:
+        put:
+            tags:
+                - FileTransferService
+            description: UEditor 上传文件
+            operationId: FileTransferService_UEditorPutUploadFile
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UEditorUploadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UEditorUploadResponse'
+        post:
+            tags:
+                - FileTransferService
+            description: UEditor 上传文件
+            operationId: FileTransferService_UEditorPostUploadFile
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UEditorUploadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UEditorUploadResponse'
     /admin/v1/file/upload:
         put:
             tags:
@@ -5314,42 +5369,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/UEditorResponse'
-        put:
-            tags:
-                - FileTransferService
-            description: UEditor 上传文件
-            operationId: FileTransferService_UEditorPutUploadFile
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/UEditorUploadRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/UEditorUploadResponse'
-        post:
-            tags:
-                - FileTransferService
-            description: UEditor 上传文件
-            operationId: FileTransferService_UEditorPostUploadFile
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/UEditorUploadRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/UEditorUploadResponse'
     /admin/v1/users:
         get:
             tags:
@@ -10513,6 +10532,40 @@ components:
                 presignedUrl:
                     type: string
                     description: 预签名上传链接
+        UploadMediaAssetRequest:
+            type: object
+            properties:
+                file:
+                    type: string
+                    description: 文件内容
+                    format: bytes
+                sourceFileName:
+                    type: string
+                    description: 原文件文件名
+                mimeType:
+                    type: string
+                    description: 文件的MIME类型
+                fileDirectory:
+                    example: tenant/1001/user/avatar/
+                    type: string
+                    description: 存储目录（如 'user/1001/avatar/'），服务端会在此目录下生成唯一文件名
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                altText:
+                    type: string
+                    description: ALT 文本（SEO 优化，图片必需）
+                title:
+                    type: string
+                    description: 标题（后台管理/图库展示用）
+                caption:
+                    type: string
+                    description: 说明文字（前端展示用）
         User:
             type: object
             properties:

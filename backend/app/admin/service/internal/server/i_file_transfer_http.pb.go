@@ -9,13 +9,15 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/tx7do/go-utils/trans"
 
 	"github.com/go-kratos/kratos/v2/encoding"
 	_ "github.com/go-kratos/kratos/v2/encoding/json"
 
+	"github.com/tx7do/go-utils/trans"
+
 	"go-wind-cms/app/admin/service/internal/service"
 
+	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 )
 
@@ -29,21 +31,15 @@ func registerFileTransferServiceHandler(srv *http.Server, svc *service.FileTrans
 
 	r.GET("admin/v1/file/download", _FileTransferService_DownloadFile_HTTP_Handler(svc))
 
-	r.POST("admin/v1/ueditor", _FileTransferService_UEditorPostUploadFile_HTTP_Handler(svc))
-	r.PUT("admin/v1/ueditor", _FileTransferService_UEditorPutUploadFile_HTTP_Handler(svc))
+	r.POST("admin/v1/file/ueditor/upload", _FileTransferService_UEditorPostUploadFile_HTTP_Handler(svc))
+	r.PUT("admin/v1/file/ueditor/upload", _FileTransferService_UEditorPutUploadFile_HTTP_Handler(svc))
+
+	r.POST("admin/v1/file/asset/upload", _FileTransferService_UploadMediaAsset_HTTP_Handler(svc))
 }
-
-const OperationFileTransferServicePostUploadFile = "/admin.service.v1.FileTransferService/PostUploadFile"
-const OperationFileTransferServicePutUploadFile = "/admin.service.v1.FileTransferService/PutUploadFile"
-
-const OperationFileTransferServiceDownloadFile = "/admin.service.v1.FileTransferService/DownloadFile"
-
-const OperationFileTransferServiceUEditorPostUploadFile = "/admin.service.v1.FileTransferService/UEditorPostUploadFile"
-const OperationFileTransferServiceUEditorPutUploadFile = "/admin.service.v1.FileTransferService/UEditorPutUploadFile"
 
 func _FileTransferService_PostUploadFile_HTTP_Handler(svc *service.FileTransferService) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		http.SetOperation(ctx, OperationFileTransferServicePostUploadFile)
+		http.SetOperation(ctx, adminV1.OperationFileTransferServicePostUploadFile)
 
 		var in storageV1.UploadFileRequest
 		var err error
@@ -125,7 +121,7 @@ func _FileTransferService_PostUploadFile_HTTP_Handler(svc *service.FileTransferS
 
 func _FileTransferService_PutUploadFile_HTTP_Handler(svc *service.FileTransferService) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		http.SetOperation(ctx, OperationFileTransferServicePutUploadFile)
+		http.SetOperation(ctx, adminV1.OperationFileTransferServicePutUploadFile)
 
 		var in storageV1.UploadFileRequest
 		var err error
@@ -207,7 +203,7 @@ func _FileTransferService_PutUploadFile_HTTP_Handler(svc *service.FileTransferSe
 
 func _FileTransferService_DownloadFile_HTTP_Handler(svc *service.FileTransferService) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		http.SetOperation(ctx, OperationFileTransferServiceDownloadFile)
+		http.SetOperation(ctx, adminV1.OperationFileTransferServiceDownloadFile)
 
 		var in storageV1.DownloadFileRequest
 		var err error
@@ -325,7 +321,7 @@ func _FileTransferService_DownloadFile_HTTP_Handler(svc *service.FileTransferSer
 
 func _FileTransferService_UEditorPostUploadFile_HTTP_Handler(svc *service.FileTransferService) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		http.SetOperation(ctx, OperationFileTransferServiceUEditorPostUploadFile)
+		http.SetOperation(ctx, adminV1.FileTransferService_UEditorPostUploadFile_FullMethodName)
 
 		var in storageV1.UEditorUploadRequest
 		var err error
@@ -369,7 +365,7 @@ func _FileTransferService_UEditorPostUploadFile_HTTP_Handler(svc *service.FileTr
 
 func _FileTransferService_UEditorPutUploadFile_HTTP_Handler(svc *service.FileTransferService) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		http.SetOperation(ctx, OperationFileTransferServiceUEditorPutUploadFile)
+		http.SetOperation(ctx, adminV1.FileTransferService_UEditorPutUploadFile_FullMethodName)
 
 		var in storageV1.UEditorUploadRequest
 		var err error
@@ -406,6 +402,50 @@ func _FileTransferService_UEditorPutUploadFile_HTTP_Handler(svc *service.FileTra
 		}
 
 		reply := out.(*storageV1.UEditorUploadResponse)
+
+		return ctx.Result(200, reply)
+	}
+}
+
+func _FileTransferService_UploadMediaAsset_HTTP_Handler(svc *service.FileTransferService) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		http.SetOperation(ctx, adminV1.FileTransferService_UploadMediaAsset_FullMethodName)
+
+		var in storageV1.UploadMediaAssetRequest
+		var err error
+
+		file, header, err := ctx.Request().FormFile("file")
+		if err == nil {
+			defer file.Close()
+
+			b := new(strings.Builder)
+			_, err = io.Copy(b, file)
+
+			in.SourceFileName = trans.Ptr(header.Filename)
+			in.MimeType = trans.Ptr(header.Header.Get("Content-Type"))
+			in.File = []byte(b.String())
+		}
+
+		if err = ctx.BindQuery(&in); err != nil {
+			return err
+		}
+
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			var resp *storageV1.UploadFileResponse
+
+			resp, err = svc.UploadMediaAsset(ctx, req.(*storageV1.UploadMediaAssetRequest))
+			in.File = nil
+
+			return resp, err
+		})
+
+		// 逻辑处理，取数据
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+
+		reply := out.(*storageV1.UploadFileResponse)
 
 		return ctx.Result(200, reply)
 	}

@@ -42,7 +42,7 @@ type FileServiceClient interface {
 	// 获取文件数据
 	Get(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*File, error)
 	// 创建文件
-	Create(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Create(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*File, error)
 	// 更新文件
 	Update(ctx context.Context, in *UpdateFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除文件
@@ -87,9 +87,9 @@ func (c *fileServiceClient) Get(ctx context.Context, in *GetFileRequest, opts ..
 	return out, nil
 }
 
-func (c *fileServiceClient) Create(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileServiceClient) Create(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*File, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
+	out := new(File)
 	err := c.cc.Invoke(ctx, FileService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ type FileServiceServer interface {
 	// 获取文件数据
 	Get(context.Context, *GetFileRequest) (*File, error)
 	// 创建文件
-	Create(context.Context, *CreateFileRequest) (*emptypb.Empty, error)
+	Create(context.Context, *CreateFileRequest) (*File, error)
 	// 更新文件
 	Update(context.Context, *UpdateFileRequest) (*emptypb.Empty, error)
 	// 删除文件
@@ -154,7 +154,7 @@ func (UnimplementedFileServiceServer) Count(context.Context, *v1.PagingRequest) 
 func (UnimplementedFileServiceServer) Get(context.Context, *GetFileRequest) (*File, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedFileServiceServer) Create(context.Context, *CreateFileRequest) (*emptypb.Empty, error) {
+func (UnimplementedFileServiceServer) Create(context.Context, *CreateFileRequest) (*File, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedFileServiceServer) Update(context.Context, *UpdateFileRequest) (*emptypb.Empty, error) {

@@ -151,3 +151,29 @@ func (x *UploadFileResponse) Redact() string {
 	// Safe field: PresignedUrl
 	return x.String()
 }
+
+// Redact method implementation for UploadMediaAssetRequest
+func (x *UploadMediaAssetRequest) Redact() string {
+	if x == nil {
+		return ""
+	}
+
+	// Safe field: File
+
+	// Safe field: SourceFileName
+
+	// Safe field: MimeType
+
+	// Safe field: FileDirectory
+
+	// Safe field: TenantId
+
+	// Safe field: UserId
+
+	// Safe field: AltText
+
+	// Safe field: Title
+
+	// Safe field: Caption
+	return x.String()
+}

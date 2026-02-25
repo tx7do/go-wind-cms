@@ -17,6 +17,7 @@ interface UseEditorConfigProps {
   placeholder?: string;
   options?: Partial<EditorProps>;
   enableExport?: boolean;
+  uploadImage?: (file: File) => Promise<string>;
 }
 
 const props = withDefaults(defineProps<UseEditorConfigProps>(), {
@@ -24,10 +25,12 @@ const props = withDefaults(defineProps<UseEditorConfigProps>(), {
   height: '100%', // 默认撑满父容器
   placeholder: $t('page.editor.please_input_content'),
   options: () => ({}),
+  uploadImage: undefined,
 });
 
 const emit = defineEmits<{
   (e: 'change', value: string): void;
+  (e: 'imageUpload', file: File): void;
   (e: 'ready'): void;
   (e: 'update:modelValue', value: string): void;
 }>();
@@ -158,6 +161,54 @@ const handleChange = (value: string) => {
   emit('change', value);
 };
 
+async function doUploadImage(file: File): Promise<string> {
+  console.log('Uploading image:', file);
+
+  if (!file || !props.uploadImage) {
+    emit('imageUpload', file!);
+    return '';
+  }
+
+  try {
+    return await props.uploadImage(file);
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    return '';
+  }
+}
+
+const handleUploadImages = async (
+  files: File[],
+  callback: (urls: string[]) => void,
+) => {
+  const uploadPromises = files.map((file) => doUploadImage(file));
+  const urls = await Promise.all(uploadPromises);
+  callback(urls);
+};
+
+const handleSave = (val: string, _html: string) => {
+  // 创建 Blob 对象（Markdown 格式）
+  const blob = new Blob([val], { type: 'text/markdown;charset=utf-8' });
+
+  // 生成文件名（带时间戳）
+  const timestamp = new Date().toISOString().slice(0, 19).replaceAll(':', '-');
+  const filename = `document-${timestamp}.md`;
+
+  // 创建下载链接
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+
+  // 触发下载
+  document.body.append(link);
+  link.click();
+
+  // 清理
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
 // 监听外部值变化
 watch(
   () => props.modelValue,
@@ -174,6 +225,14 @@ watch(
   (mode) => {
     isDark.value = mode === 'dark';
     nextTick(() => updateEditorHeight()); // 主题切换后重新计算高度
+  },
+);
+
+// 监听props.height变化
+watch(
+  () => props.height,
+  () => {
+    nextTick(updateEditorHeight);
   },
 );
 
@@ -203,14 +262,6 @@ onUnmounted(() => {
   }
   window.removeEventListener('resize', updateEditorHeight);
 });
-
-// 监听props.height变化
-watch(
-  () => props.height,
-  () => {
-    nextTick(updateEditorHeight);
-  },
-);
 </script>
 
 <template>
@@ -227,6 +278,8 @@ watch(
       :disabled="disabled"
       v-bind="editorProps"
       @change="handleChange"
+      @on-upload-img="handleUploadImages"
+      @on-save="handleSave"
       class="md-editor-inner"
     />
   </div>

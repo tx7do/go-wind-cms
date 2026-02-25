@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
 
-import { createFileTransferServiceClient } from '#/generated/api/admin/service/v1';
+import {
+  createFileTransferServiceClient,
+  type storageservicev1_UploadMediaAssetRequest,
+} from '#/generated/api/admin/service/v1';
 import { requestClient, requestClientRequestHandler } from '#/utils/request';
 
 export const useFileTransferStore = defineStore('file-transfer', () => {
@@ -132,11 +135,35 @@ export const useFileTransferStore = defineStore('file-transfer', () => {
     );
   }
 
+  async function uploadMediaAsset(
+    data: {
+      altText?: string;
+      caption?: string;
+      fileDirectory?: string;
+      title?: string;
+    },
+    fileData: File,
+    onUploadProgress?: (progressEvent: any) => void,
+  ): Promise<storageservicev1_UploadFileResponse> {
+    return await requestClient.upload(
+      'admin/v1/file/asset/upload',
+      {
+        file: fileData,
+        ...data,
+        sourceFileName: fileData.name,
+        mime: fileData.type,
+        size: fileData.size,
+      },
+      { onUploadProgress },
+    );
+  }
+
   function $reset() {}
 
   return {
     $reset,
     downloadFile,
     uploadFile,
+    uploadMediaAsset,
   };
 });

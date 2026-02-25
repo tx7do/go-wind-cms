@@ -2554,7 +2554,7 @@ export function createFileTransferServiceClient(
       }) as Promise<storageservicev1_UploadFileResponse>;
     },
     UEditorPostUploadFile(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
-      const path = `admin/v1/ueditor`; // eslint-disable-line quotes
+      const path = `admin/v1/file/ueditor/upload`; // eslint-disable-line quotes
       const body = JSON.stringify(request);
       const queryParams: string[] = [];
       let uri = path;
@@ -2571,7 +2571,7 @@ export function createFileTransferServiceClient(
       }) as Promise<storageservicev1_UEditorUploadResponse>;
     },
     UEditorPutUploadFile(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
-      const path = `admin/v1/ueditor`; // eslint-disable-line quotes
+      const path = `admin/v1/file/ueditor/upload`; // eslint-disable-line quotes
       const body = JSON.stringify(request);
       const queryParams: string[] = [];
       let uri = path;
@@ -2586,6 +2586,23 @@ export function createFileTransferServiceClient(
         service: "FileTransferService",
         method: "UEditorPutUploadFile",
       }) as Promise<storageservicev1_UEditorUploadResponse>;
+    },
+    UploadMediaAsset(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+      const path = `admin/v1/file/asset/upload`; // eslint-disable-line quotes
+      const body = JSON.stringify(request);
+      const queryParams: string[] = [];
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join("&")}`
+      }
+      return handler({
+        path: uri,
+        method: "POST",
+        body,
+      }, {
+        service: "FileTransferService",
+        method: "UploadMediaAsset",
+      }) as Promise<storageservicev1_UploadFileResponse>;
     },
   };
 }
@@ -2671,6 +2688,19 @@ export type storageservicev1_UEditorUploadResponse_Item = {
   original?: string;
   type?: string;
   size?: number;
+};
+
+export type storageservicev1_UploadMediaAssetRequest = {
+  file?: string;
+  sourceFileName?: string;
+  mimeType?: string;
+  fileDirectory?: string;
+  tenantId?: number;
+  userId?: number;
+  // SEO 与展示
+  altText?: string;
+  title?: string;
+  caption?: string;
 };
 
 // 站内信消息管理服务

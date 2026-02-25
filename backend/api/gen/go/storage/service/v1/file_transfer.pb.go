@@ -487,6 +487,115 @@ func (x *UploadFileResponse) GetPresignedUrl() string {
 	return ""
 }
 
+type UploadMediaAssetRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	File           []byte                 `protobuf:"bytes,1,opt,name=file,proto3,oneof" json:"file,omitempty"`                                             // 文件内容
+	SourceFileName *string                `protobuf:"bytes,2,opt,name=source_file_name,json=sourceFileName,proto3,oneof" json:"source_file_name,omitempty"` // 原文件文件名
+	MimeType       *string                `protobuf:"bytes,3,opt,name=mime_type,json=mimeType,proto3,oneof" json:"mime_type,omitempty"`                     // 文件的MIME类型
+	FileDirectory  *string                `protobuf:"bytes,4,opt,name=file_directory,json=fileDirectory,proto3,oneof" json:"file_directory,omitempty"`
+	TenantId       *uint32                `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	UserId         *uint32                `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	// SEO 与展示
+	AltText       *string `protobuf:"bytes,20,opt,name=alt_text,json=altText,proto3,oneof" json:"alt_text,omitempty"` // ALT 文本（SEO 优化，图片必需）
+	Title         *string `protobuf:"bytes,21,opt,name=title,proto3,oneof" json:"title,omitempty"`                    // 标题（后台管理/图库展示用）
+	Caption       *string `protobuf:"bytes,22,opt,name=caption,proto3,oneof" json:"caption,omitempty"`                // 说明文字（前端展示用）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMediaAssetRequest) Reset() {
+	*x = UploadMediaAssetRequest{}
+	mi := &file_storage_service_v1_file_transfer_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMediaAssetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMediaAssetRequest) ProtoMessage() {}
+
+func (x *UploadMediaAssetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_storage_service_v1_file_transfer_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMediaAssetRequest.ProtoReflect.Descriptor instead.
+func (*UploadMediaAssetRequest) Descriptor() ([]byte, []int) {
+	return file_storage_service_v1_file_transfer_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UploadMediaAssetRequest) GetFile() []byte {
+	if x != nil {
+		return x.File
+	}
+	return nil
+}
+
+func (x *UploadMediaAssetRequest) GetSourceFileName() string {
+	if x != nil && x.SourceFileName != nil {
+		return *x.SourceFileName
+	}
+	return ""
+}
+
+func (x *UploadMediaAssetRequest) GetMimeType() string {
+	if x != nil && x.MimeType != nil {
+		return *x.MimeType
+	}
+	return ""
+}
+
+func (x *UploadMediaAssetRequest) GetFileDirectory() string {
+	if x != nil && x.FileDirectory != nil {
+		return *x.FileDirectory
+	}
+	return ""
+}
+
+func (x *UploadMediaAssetRequest) GetTenantId() uint32 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
+}
+
+func (x *UploadMediaAssetRequest) GetUserId() uint32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *UploadMediaAssetRequest) GetAltText() string {
+	if x != nil && x.AltText != nil {
+		return *x.AltText
+	}
+	return ""
+}
+
+func (x *UploadMediaAssetRequest) GetTitle() string {
+	if x != nil && x.Title != nil {
+		return *x.Title
+	}
+	return ""
+}
+
+func (x *UploadMediaAssetRequest) GetCaption() string {
+	if x != nil && x.Caption != nil {
+		return *x.Caption
+	}
+	return ""
+}
+
 var File_storage_service_v1_file_transfer_proto protoreflect.FileDescriptor
 
 const file_storage_service_v1_file_transfer_proto_rawDesc = "" +
@@ -548,7 +657,31 @@ const file_storage_service_v1_file_transfer_proto_rawDesc = "" +
 	"objectName\x88\x01\x01\x12E\n" +
 	"\rpresigned_url\x18\x02 \x01(\tB\x1b\xbaG\x18\x92\x02\x15预签名上传链接H\x01R\fpresignedUrl\x88\x01\x01B\x0e\n" +
 	"\f_object_nameB\x10\n" +
-	"\x0e_presigned_url2\x8f\x02\n" +
+	"\x0e_presigned_url\"\xd5\x06\n" +
+	"\x17UploadMediaAssetRequest\x12+\n" +
+	"\x04file\x18\x01 \x01(\fB\x12\xbaG\x0f\x92\x02\f文件内容H\x00R\x04file\x88\x01\x01\x12G\n" +
+	"\x10source_file_name\x18\x02 \x01(\tB\x18\xbaG\x15\x92\x02\x12原文件文件名H\x01R\x0esourceFileName\x88\x01\x01\x12;\n" +
+	"\tmime_type\x18\x03 \x01(\tB\x19\xbaG\x16\x92\x02\x13文件的MIME类型H\x02R\bmimeType\x88\x01\x01\x12\xaa\x01\n" +
+	"\x0efile_directory\x18\x04 \x01(\tB~\xbaG{:\x1a\x12\x18tenant/1001/user/avatar/\x92\x02\\存储目录（如 'user/1001/avatar/'），服务端会在此目录下生成唯一文件名H\x03R\rfileDirectory\x88\x01\x01\x12L\n" +
+	"\ttenant_id\x18\n" +
+	" \x01(\rB*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x04R\btenantId\x88\x01\x01\x12,\n" +
+	"\auser_id\x18\v \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\x05R\x06userId\x88\x01\x01\x12O\n" +
+	"\balt_text\x18\x14 \x01(\tB/\xbaG,\x92\x02)ALT 文本（SEO 优化，图片必需）H\x06R\aaltText\x88\x01\x01\x12I\n" +
+	"\x05title\x18\x15 \x01(\tB.\xbaG+\x92\x02(标题（后台管理/图库展示用）H\aR\x05title\x88\x01\x01\x12F\n" +
+	"\acaption\x18\x16 \x01(\tB'\xbaG$\x92\x02!说明文字（前端展示用）H\bR\acaption\x88\x01\x01B\a\n" +
+	"\x05_fileB\x13\n" +
+	"\x11_source_file_nameB\f\n" +
+	"\n" +
+	"_mime_typeB\x11\n" +
+	"\x0f_file_directoryB\f\n" +
+	"\n" +
+	"_tenant_idB\n" +
+	"\n" +
+	"\b_user_idB\v\n" +
+	"\t_alt_textB\b\n" +
+	"\x06_titleB\n" +
+	"\n" +
+	"\b_caption2\x8f\x02\n" +
 	"\x13FileTransferService\x12Q\n" +
 	"\fDownloadFile\x12'.storage.service.v1.DownloadFileRequest\x1a\x14.google.api.HttpBody\"\x000\x01\x12Q\n" +
 	"\rPutUploadFile\x12\x14.google.api.HttpBody\x1a&.storage.service.v1.UploadFileResponse\"\x00(\x01\x12R\n" +
@@ -567,26 +700,27 @@ func file_storage_service_v1_file_transfer_proto_rawDescGZIP() []byte {
 	return file_storage_service_v1_file_transfer_proto_rawDescData
 }
 
-var file_storage_service_v1_file_transfer_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_storage_service_v1_file_transfer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_storage_service_v1_file_transfer_proto_goTypes = []any{
-	(*DownloadFileRequest)(nil),   // 0: storage.service.v1.DownloadFileRequest
-	(*DownloadFileResponse)(nil),  // 1: storage.service.v1.DownloadFileResponse
-	(*UploadFileRequest)(nil),     // 2: storage.service.v1.UploadFileRequest
-	(*UploadFileResponse)(nil),    // 3: storage.service.v1.UploadFileResponse
-	(*StorageObject)(nil),         // 4: storage.service.v1.StorageObject
-	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
-	(*PresignOption)(nil),         // 6: storage.service.v1.PresignOption
-	(*httpbody.HttpBody)(nil),     // 7: google.api.HttpBody
+	(*DownloadFileRequest)(nil),     // 0: storage.service.v1.DownloadFileRequest
+	(*DownloadFileResponse)(nil),    // 1: storage.service.v1.DownloadFileResponse
+	(*UploadFileRequest)(nil),       // 2: storage.service.v1.UploadFileRequest
+	(*UploadFileResponse)(nil),      // 3: storage.service.v1.UploadFileResponse
+	(*UploadMediaAssetRequest)(nil), // 4: storage.service.v1.UploadMediaAssetRequest
+	(*StorageObject)(nil),           // 5: storage.service.v1.StorageObject
+	(*timestamppb.Timestamp)(nil),   // 6: google.protobuf.Timestamp
+	(*PresignOption)(nil),           // 7: storage.service.v1.PresignOption
+	(*httpbody.HttpBody)(nil),       // 8: google.api.HttpBody
 }
 var file_storage_service_v1_file_transfer_proto_depIdxs = []int32{
-	4, // 0: storage.service.v1.DownloadFileRequest.storage_object:type_name -> storage.service.v1.StorageObject
-	5, // 1: storage.service.v1.DownloadFileResponse.updated_at:type_name -> google.protobuf.Timestamp
-	4, // 2: storage.service.v1.UploadFileRequest.storage_object:type_name -> storage.service.v1.StorageObject
-	6, // 3: storage.service.v1.UploadFileRequest.presign:type_name -> storage.service.v1.PresignOption
+	5, // 0: storage.service.v1.DownloadFileRequest.storage_object:type_name -> storage.service.v1.StorageObject
+	6, // 1: storage.service.v1.DownloadFileResponse.updated_at:type_name -> google.protobuf.Timestamp
+	5, // 2: storage.service.v1.UploadFileRequest.storage_object:type_name -> storage.service.v1.StorageObject
+	7, // 3: storage.service.v1.UploadFileRequest.presign:type_name -> storage.service.v1.PresignOption
 	0, // 4: storage.service.v1.FileTransferService.DownloadFile:input_type -> storage.service.v1.DownloadFileRequest
-	7, // 5: storage.service.v1.FileTransferService.PutUploadFile:input_type -> google.api.HttpBody
-	7, // 6: storage.service.v1.FileTransferService.PostUploadFile:input_type -> google.api.HttpBody
-	7, // 7: storage.service.v1.FileTransferService.DownloadFile:output_type -> google.api.HttpBody
+	8, // 5: storage.service.v1.FileTransferService.PutUploadFile:input_type -> google.api.HttpBody
+	8, // 6: storage.service.v1.FileTransferService.PostUploadFile:input_type -> google.api.HttpBody
+	8, // 7: storage.service.v1.FileTransferService.DownloadFile:output_type -> google.api.HttpBody
 	3, // 8: storage.service.v1.FileTransferService.PutUploadFile:output_type -> storage.service.v1.UploadFileResponse
 	3, // 9: storage.service.v1.FileTransferService.PostUploadFile:output_type -> storage.service.v1.UploadFileResponse
 	7, // [7:10] is the sub-list for method output_type
@@ -616,13 +750,14 @@ func file_storage_service_v1_file_transfer_proto_init() {
 		(*UploadFileRequest_Presign)(nil),
 	}
 	file_storage_service_v1_file_transfer_proto_msgTypes[3].OneofWrappers = []any{}
+	file_storage_service_v1_file_transfer_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_storage_service_v1_file_transfer_proto_rawDesc), len(file_storage_service_v1_file_transfer_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

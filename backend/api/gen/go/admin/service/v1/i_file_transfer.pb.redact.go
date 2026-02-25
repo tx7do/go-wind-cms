@@ -91,3 +91,11 @@ func (s *redactedFileTransferServiceServer) UEditorPutUploadFile(stream grpc.Cli
 	// Streaming methods pass through without redaction
 	return s.srv.UEditorPutUploadFile(stream)
 }
+
+// UploadMediaAsset is the redacted wrapper for the actual FileTransferServiceServer.UploadMediaAsset method
+// Client streaming
+func (s *redactedFileTransferServiceServer) UploadMediaAsset(stream grpc.ClientStreamingServer[storagepb.UploadMediaAssetRequest, storagepb.UploadFileResponse]) error {
+	// Note: Redaction for client streaming is not fully implemented
+	// Streaming methods pass through without redaction
+	return s.srv.UploadMediaAsset(stream)
+}

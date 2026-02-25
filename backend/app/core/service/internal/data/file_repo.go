@@ -9,18 +9,18 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 
+	"github.com/tx7do/go-utils/copierutil"
+	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
+
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
-
-	"github.com/tx7do/go-utils/copierutil"
-	"github.com/tx7do/go-utils/mapper"
 
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 )
@@ -162,9 +162,9 @@ func (r *FileRepo) Get(ctx context.Context, req *storageV1.GetFileRequest) (*sto
 	return dto, err
 }
 
-func (r *FileRepo) Create(ctx context.Context, req *storageV1.CreateFileRequest) error {
+func (r *FileRepo) Create(ctx context.Context, req *storageV1.CreateFileRequest) (*storageV1.File, error) {
 	if req == nil || req.Data == nil {
-		return storageV1.ErrorBadRequest("invalid parameter")
+		return nil, storageV1.ErrorBadRequest("invalid parameter")
 	}
 
 	if req.Data.Size != nil {
@@ -191,12 +191,14 @@ func (r *FileRepo) Create(ctx context.Context, req *storageV1.CreateFileRequest)
 		builder.SetID(req.GetData().GetId())
 	}
 
-	if err := builder.Exec(ctx); err != nil {
+	var err error
+	var entity *ent.File
+	if entity, err = builder.Save(ctx); err != nil {
 		r.log.Errorf("insert file failed: %s", err.Error())
-		return storageV1.ErrorInternalServerError("insert file failed")
+		return nil, storageV1.ErrorInternalServerError("insert file failed")
 	}
 
-	return nil
+	return r.mapper.ToDTO(entity), nil
 }
 
 func (r *FileRepo) Update(ctx context.Context, req *storageV1.UpdateFileRequest) error {
@@ -218,7 +220,8 @@ func (r *FileRepo) Update(ctx context.Context, req *storageV1.UpdateFileRequest)
 			createReq := &storageV1.CreateFileRequest{Data: req.Data}
 			createReq.Data.CreatedBy = createReq.Data.UpdatedBy
 			createReq.Data.UpdatedBy = nil
-			return r.Create(ctx, createReq)
+			_, err = r.Create(ctx, createReq)
+			return err
 		}
 	}
 

@@ -726,12 +726,12 @@ const file_storage_service_v1_file_proto_rawDesc = "" +
 	"\n" +
 	"\x06HUAWEI\x10\b\x12\t\n" +
 	"\x05LOCAL\x10\n" +
-	"2\xcd\x03\n" +
+	"2\xcf\x03\n" +
 	"\vFileService\x12I\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.storage.service.v1.ListFileResponse\"\x00\x12K\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a%.storage.service.v1.CountFileResponse\"\x00\x12E\n" +
-	"\x03Get\x12\".storage.service.v1.GetFileRequest\x1a\x18.storage.service.v1.File\"\x00\x12I\n" +
-	"\x06Create\x12%.storage.service.v1.CreateFileRequest\x1a\x16.google.protobuf.Empty\"\x00\x12I\n" +
+	"\x03Get\x12\".storage.service.v1.GetFileRequest\x1a\x18.storage.service.v1.File\"\x00\x12K\n" +
+	"\x06Create\x12%.storage.service.v1.CreateFileRequest\x1a\x18.storage.service.v1.File\"\x00\x12I\n" +
 	"\x06Update\x12%.storage.service.v1.UpdateFileRequest\x1a\x16.google.protobuf.Empty\"\x00\x12I\n" +
 	"\x06Delete\x12%.storage.service.v1.DeleteFileRequest\x1a\x16.google.protobuf.Empty\"\x00B\xc2\x01\n" +
 	"\x16com.storage.service.v1B\tFileProtoP\x01Z3go-wind-cms/api/gen/go/storage/service/v1;storagepb\xa2\x02\x03SSX\xaa\x02\x12Storage.Service.V1\xca\x02\x12Storage\\Service\\V1\xe2\x02\x1eStorage\\Service\\V1\\GPBMetadata\xea\x02\x14Storage::Service::V1b\x06proto3"
@@ -783,7 +783,7 @@ var file_storage_service_v1_file_proto_depIdxs = []int32{
 	2,  // 15: storage.service.v1.FileService.List:output_type -> storage.service.v1.ListFileResponse
 	7,  // 16: storage.service.v1.FileService.Count:output_type -> storage.service.v1.CountFileResponse
 	1,  // 17: storage.service.v1.FileService.Get:output_type -> storage.service.v1.File
-	11, // 18: storage.service.v1.FileService.Create:output_type -> google.protobuf.Empty
+	1,  // 18: storage.service.v1.FileService.Create:output_type -> storage.service.v1.File
 	11, // 19: storage.service.v1.FileService.Update:output_type -> google.protobuf.Empty
 	11, // 20: storage.service.v1.FileService.Delete:output_type -> google.protobuf.Empty
 	15, // [15:21] is the sub-list for method output_type

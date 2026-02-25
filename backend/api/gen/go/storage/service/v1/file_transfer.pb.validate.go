@@ -723,3 +723,141 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UploadFileResponseValidationError{}
+
+// Validate checks the field values on UploadMediaAssetRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UploadMediaAssetRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UploadMediaAssetRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UploadMediaAssetRequestMultiError, or nil if none found.
+func (m *UploadMediaAssetRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UploadMediaAssetRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.File != nil {
+		// no validation rules for File
+	}
+
+	if m.SourceFileName != nil {
+		// no validation rules for SourceFileName
+	}
+
+	if m.MimeType != nil {
+		// no validation rules for MimeType
+	}
+
+	if m.FileDirectory != nil {
+		// no validation rules for FileDirectory
+	}
+
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
+
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
+	if m.AltText != nil {
+		// no validation rules for AltText
+	}
+
+	if m.Title != nil {
+		// no validation rules for Title
+	}
+
+	if m.Caption != nil {
+		// no validation rules for Caption
+	}
+
+	if len(errors) > 0 {
+		return UploadMediaAssetRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UploadMediaAssetRequestMultiError is an error wrapping multiple validation
+// errors returned by UploadMediaAssetRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UploadMediaAssetRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UploadMediaAssetRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UploadMediaAssetRequestMultiError) AllErrors() []error { return m }
+
+// UploadMediaAssetRequestValidationError is the validation error returned by
+// UploadMediaAssetRequest.Validate if the designated constraints aren't met.
+type UploadMediaAssetRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UploadMediaAssetRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UploadMediaAssetRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UploadMediaAssetRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UploadMediaAssetRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UploadMediaAssetRequestValidationError) ErrorName() string {
+	return "UploadMediaAssetRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UploadMediaAssetRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUploadMediaAssetRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UploadMediaAssetRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UploadMediaAssetRequestValidationError{}

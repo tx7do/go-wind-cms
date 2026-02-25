@@ -24,7 +24,7 @@ service FileService {
   rpc Get (GetFileRequest) returns (File) {}
 
   // 创建文件
-  rpc Create (CreateFileRequest) returns (google.protobuf.Empty) {}
+  rpc Create (CreateFileRequest) returns (File) {}
 
   // 更新文件
   rpc Update (UpdateFileRequest) returns (google.protobuf.Empty) {}

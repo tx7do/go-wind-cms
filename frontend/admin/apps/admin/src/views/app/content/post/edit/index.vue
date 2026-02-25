@@ -10,12 +10,13 @@ import { LucideArrowLeft } from '@vben/icons';
 import { $t } from '@vben/locales';
 
 import { Editor, EditorType } from '#/components/editor';
-import { useLanguageStore, usePostStore } from '#/stores';
+import { useFileTransferStore, useLanguageStore, usePostStore } from "#/stores";
 
 import PublishPostModal from './publish-post-modal.vue';
 
 const postStore = usePostStore();
 const languageStore = useLanguageStore();
+const fileTransferStore = useFileTransferStore();
 
 const route = useRoute();
 const { closeCurrentTab } = useTabs();
@@ -107,13 +108,25 @@ function handlePublish() {
   openModal();
 }
 
+async function handleUploadImage(file: File): Promise<string> {
+  console.log('Upload image:', file);
+
+  try {
+    const resp = await fileTransferStore.uploadMediaAsset({}, file);
+    return resp.objectName || '';
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    return '';
+  }
+}
+
 onMounted(async () => {
   await reloadLanguages();
 
   if (isCreateMode.value) {
     formData.value.title = $t('page.post.placeholder.untitled');
   } else {
-    const item = await postStore.getPost({ id: postId.value || 0 });
+    const item = await postStore.getPost(postId.value || 0);
   }
 });
 </script>
@@ -159,11 +172,12 @@ onMounted(async () => {
 
     <div class="post-edit-container min-h-0 flex-1">
       <Editor
+        class="h-full"
+        height="100%"
         v-model="formData.content"
         :editor-type="formData.editorType"
-        height="100%"
         :placeholder="$t('page.post.placeholder.content')"
-        class="h-full"
+        :upload-image="handleUploadImage"
       />
     </div>
 

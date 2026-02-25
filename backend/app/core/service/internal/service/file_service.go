@@ -44,16 +44,12 @@ func (s *FileService) Get(ctx context.Context, req *storageV1.GetFileRequest) (*
 	return s.fileRepo.Get(ctx, req)
 }
 
-func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileRequest) (*emptypb.Empty, error) {
+func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileRequest) (*storageV1.File, error) {
 	if req.Data == nil {
 		return nil, storageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err := s.fileRepo.Create(ctx, req); err != nil {
-		return nil, err
-	}
-
-	return &emptypb.Empty{}, nil
+	return s.fileRepo.Create(ctx, req)
 }
 
 func (s *FileService) Update(ctx context.Context, req *storageV1.UpdateFileRequest) (*emptypb.Empty, error) {

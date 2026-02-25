@@ -27,22 +27,24 @@ var File_admin_service_v1_i_file_transfer_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_file_transfer_proto_rawDesc = "" +
 	"\n" +
-	"&admin/service/v1/i_file_transfer.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x19google/api/httpbody.proto\x1a&storage/service/v1/file_transfer.proto\x1a storage/service/v1/ueditor.proto2\xbe\x05\n" +
+	"&admin/service/v1/i_file_transfer.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x19google/api/httpbody.proto\x1a&storage/service/v1/file_transfer.proto\x1a storage/service/v1/ueditor.proto2\xea\x06\n" +
 	"\x13FileTransferService\x12\x82\x01\n" +
 	"\fDownloadFile\x12'.storage.service.v1.DownloadFileRequest\x1a(.storage.service.v1.DownloadFileResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/file/download\x12\x80\x01\n" +
 	"\rPutUploadFile\x12%.storage.service.v1.UploadFileRequest\x1a&.storage.service.v1.UploadFileResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/admin/v1/file/upload\x12\x81\x01\n" +
-	"\x0ePostUploadFile\x12%.storage.service.v1.UploadFileRequest\x1a&.storage.service.v1.UploadFileResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/file/upload\x12\x8c\x01\n" +
-	"\x15UEditorPostUploadFile\x12(.storage.service.v1.UEditorUploadRequest\x1a).storage.service.v1.UEditorUploadResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/admin/v1/ueditor(\x01\x12\x8b\x01\n" +
-	"\x14UEditorPutUploadFile\x12(.storage.service.v1.UEditorUploadRequest\x1a).storage.service.v1.UEditorUploadResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\x1a\x11/admin/v1/ueditor(\x01B\xbd\x01\n" +
+	"\x0ePostUploadFile\x12%.storage.service.v1.UploadFileRequest\x1a&.storage.service.v1.UploadFileResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/file/upload\x12\x98\x01\n" +
+	"\x15UEditorPostUploadFile\x12(.storage.service.v1.UEditorUploadRequest\x1a).storage.service.v1.UEditorUploadResponse\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/admin/v1/file/ueditor/upload(\x01\x12\x97\x01\n" +
+	"\x14UEditorPutUploadFile\x12(.storage.service.v1.UEditorUploadRequest\x1a).storage.service.v1.UEditorUploadResponse\"(\x82\xd3\xe4\x93\x02\":\x01*\x1a\x1d/admin/v1/file/ueditor/upload(\x01\x12\x91\x01\n" +
+	"\x10UploadMediaAsset\x12+.storage.service.v1.UploadMediaAssetRequest\x1a&.storage.service.v1.UploadFileResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/admin/v1/file/asset/upload(\x01B\xbd\x01\n" +
 	"\x14com.admin.service.v1B\x12IFileTransferProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_file_transfer_proto_goTypes = []any{
-	(*v1.DownloadFileRequest)(nil),   // 0: storage.service.v1.DownloadFileRequest
-	(*v1.UploadFileRequest)(nil),     // 1: storage.service.v1.UploadFileRequest
-	(*v1.UEditorUploadRequest)(nil),  // 2: storage.service.v1.UEditorUploadRequest
-	(*v1.DownloadFileResponse)(nil),  // 3: storage.service.v1.DownloadFileResponse
-	(*v1.UploadFileResponse)(nil),    // 4: storage.service.v1.UploadFileResponse
-	(*v1.UEditorUploadResponse)(nil), // 5: storage.service.v1.UEditorUploadResponse
+	(*v1.DownloadFileRequest)(nil),     // 0: storage.service.v1.DownloadFileRequest
+	(*v1.UploadFileRequest)(nil),       // 1: storage.service.v1.UploadFileRequest
+	(*v1.UEditorUploadRequest)(nil),    // 2: storage.service.v1.UEditorUploadRequest
+	(*v1.UploadMediaAssetRequest)(nil), // 3: storage.service.v1.UploadMediaAssetRequest
+	(*v1.DownloadFileResponse)(nil),    // 4: storage.service.v1.DownloadFileResponse
+	(*v1.UploadFileResponse)(nil),      // 5: storage.service.v1.UploadFileResponse
+	(*v1.UEditorUploadResponse)(nil),   // 6: storage.service.v1.UEditorUploadResponse
 }
 var file_admin_service_v1_i_file_transfer_proto_depIdxs = []int32{
 	0, // 0: admin.service.v1.FileTransferService.DownloadFile:input_type -> storage.service.v1.DownloadFileRequest
@@ -50,13 +52,15 @@ var file_admin_service_v1_i_file_transfer_proto_depIdxs = []int32{
 	1, // 2: admin.service.v1.FileTransferService.PostUploadFile:input_type -> storage.service.v1.UploadFileRequest
 	2, // 3: admin.service.v1.FileTransferService.UEditorPostUploadFile:input_type -> storage.service.v1.UEditorUploadRequest
 	2, // 4: admin.service.v1.FileTransferService.UEditorPutUploadFile:input_type -> storage.service.v1.UEditorUploadRequest
-	3, // 5: admin.service.v1.FileTransferService.DownloadFile:output_type -> storage.service.v1.DownloadFileResponse
-	4, // 6: admin.service.v1.FileTransferService.PutUploadFile:output_type -> storage.service.v1.UploadFileResponse
-	4, // 7: admin.service.v1.FileTransferService.PostUploadFile:output_type -> storage.service.v1.UploadFileResponse
-	5, // 8: admin.service.v1.FileTransferService.UEditorPostUploadFile:output_type -> storage.service.v1.UEditorUploadResponse
-	5, // 9: admin.service.v1.FileTransferService.UEditorPutUploadFile:output_type -> storage.service.v1.UEditorUploadResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	3, // 5: admin.service.v1.FileTransferService.UploadMediaAsset:input_type -> storage.service.v1.UploadMediaAssetRequest
+	4, // 6: admin.service.v1.FileTransferService.DownloadFile:output_type -> storage.service.v1.DownloadFileResponse
+	5, // 7: admin.service.v1.FileTransferService.PutUploadFile:output_type -> storage.service.v1.UploadFileResponse
+	5, // 8: admin.service.v1.FileTransferService.PostUploadFile:output_type -> storage.service.v1.UploadFileResponse
+	6, // 9: admin.service.v1.FileTransferService.UEditorPostUploadFile:output_type -> storage.service.v1.UEditorUploadResponse
+	6, // 10: admin.service.v1.FileTransferService.UEditorPutUploadFile:output_type -> storage.service.v1.UEditorUploadResponse
+	5, // 11: admin.service.v1.FileTransferService.UploadMediaAsset:output_type -> storage.service.v1.UploadFileResponse
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

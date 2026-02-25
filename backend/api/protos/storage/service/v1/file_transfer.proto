@@ -170,3 +170,51 @@ message UploadFileResponse {
     (gnostic.openapi.v3.property) = { description: "预签名上传链接" }
   ]; // 预签名上传链接
 }
+
+message UploadMediaAssetRequest {
+  optional bytes file = 1 [
+    json_name = "file",
+    (gnostic.openapi.v3.property) = { description: "文件内容" }
+  ]; // 文件内容
+
+  optional string source_file_name = 2 [
+    json_name = "sourceFileName",
+    (gnostic.openapi.v3.property) = { description: "原文件文件名" }
+  ]; // 原文件文件名
+
+  optional string mime_type = 3 [
+    json_name = "mimeType",
+    (gnostic.openapi.v3.property) = { description: "文件的MIME类型" }
+  ]; // 文件的MIME类型
+
+  optional string file_directory = 4 [
+    json_name = "fileDirectory",
+    (gnostic.openapi.v3.property) = {
+      description: "存储目录（如 'user/1001/avatar/'），服务端会在此目录下生成唯一文件名",
+      example: {yaml : "tenant/1001/user/avatar/"}
+    }
+  ];
+
+  optional uint32 tenant_id = 10 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
+  ];
+  optional uint32 user_id = 11 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "用户ID"}
+  ];
+
+  // SEO 与展示
+  optional string alt_text = 20 [
+    json_name = "altText",
+    (gnostic.openapi.v3.property) = {description: "ALT 文本（SEO 优化，图片必需）"}
+  ]; // ALT 文本（SEO 优化，图片必需）
+  optional string title = 21 [
+    json_name = "title",
+    (gnostic.openapi.v3.property) = {description: "标题（后台管理/图库展示用）"}
+  ]; // 标题（后台管理/图库展示用）
+  optional string caption = 22 [
+    json_name = "caption",
+    (gnostic.openapi.v3.property) = {description: "说明文字（前端展示用）"}
+  ]; // 说明文字（前端展示用）
+}

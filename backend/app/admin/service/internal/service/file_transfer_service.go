@@ -17,6 +17,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
+	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 
 	"go-wind-cms/pkg/middleware/auth"
@@ -28,19 +29,23 @@ type FileTransferService struct {
 
 	log *log.Helper
 
-	mc                *oss.MinIOClient
-	fileServiceClient storageV1.FileServiceClient
+	mc *oss.MinIOClient
+
+	fileServiceClient       storageV1.FileServiceClient
+	mediaAssetServiceClient mediaV1.MediaAssetServiceClient
 }
 
 func NewFileTransferService(
 	ctx *bootstrap.Context,
 	mc *oss.MinIOClient,
 	fileServiceClient storageV1.FileServiceClient,
+	mediaAssetServiceClient mediaV1.MediaAssetServiceClient,
 ) *FileTransferService {
 	return &FileTransferService{
-		log:               ctx.NewLoggerHelper("file-transfer/service/admin-service"),
-		mc:                mc,
-		fileServiceClient: fileServiceClient,
+		log:                     ctx.NewLoggerHelper("file-transfer/service/admin-service"),
+		mc:                      mc,
+		fileServiceClient:       fileServiceClient,
+		mediaAssetServiceClient: mediaAssetServiceClient,
 	}
 }
 
@@ -84,6 +89,12 @@ func parseKey(key string) (folder, filename, ext string) {
 	return dir, name, ext
 }
 
+func (s *FileTransferService) hashFileContent(fileData []byte) string {
+	sum := sha256.Sum256(fileData)          // sha256.Sum256 返回 [32]byte
+	sha256Hex := hex.EncodeToString(sum[:]) // 转为十六进制字符串
+	return sha256Hex
+}
+
 // recordFile 记录文件元数据到数据库
 func (s *FileTransferService) recordFile(
 	ctx context.Context,
@@ -92,15 +103,16 @@ func (s *FileTransferService) recordFile(
 	sourceFileName string,
 	info minio.UploadInfo,
 	downloadUrl string,
-) error {
+) (*storageV1.File, error) {
 
-	sum := sha256.Sum256(fileData)          // sha256.Sum256 返回 [32]byte
-	sha256Hex := hex.EncodeToString(sum[:]) // 转为十六进制字符串
+	sha256Hex := s.hashFileContent(fileData)
 
 	dir, fileName, ext := parseKey(info.Key)
 	//s.log.Debugf("Parsed file - Dir: %s, FileName: %s, Ext: %s", dir, fileName, ext)
 
-	if _, err := s.fileServiceClient.Create(ctx, &storageV1.CreateFileRequest{
+	var err error
+	var file *storageV1.File
+	if file, err = s.fileServiceClient.Create(ctx, &storageV1.CreateFileRequest{
 		Data: &storageV1.File{
 			Provider:      trans.Ptr(storageV1.OSSProvider_MINIO),
 			BucketName:    trans.Ptr(info.Bucket),
@@ -117,9 +129,9 @@ func (s *FileTransferService) recordFile(
 		},
 	}); err != nil {
 		s.log.Errorf("Failed to create file record: %v", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return file, nil
 }
 
 // directUploadFile 直接上传文件
@@ -162,17 +174,18 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		)
 	}
 
-	info, downloadUrl, err := s.mc.UploadFile(
+	info, _, downloadUrl, err := s.mc.UploadFile(
 		ctx,
 		req.GetStorageObject().GetBucketName(),
 		req.GetStorageObject().GetObjectName(),
+		req.GetMime(),
 		req.GetFile(),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = s.recordFile(
+	if _, err = s.recordFile(
 		ctx,
 		operator.GetTenantId(), operator.GetUserId(),
 		req.GetFile(),
@@ -347,6 +360,9 @@ func (s *FileTransferService) UEditorUploadFile(ctx context.Context, req *storag
 		return nil, err
 	}
 
+	req.TenantId = trans.Ptr(operator.GetTenantId())
+	req.UserId = trans.Ptr(operator.GetUserId())
+
 	var bucketName string
 	switch req.GetAction() {
 	default:
@@ -359,14 +375,18 @@ func (s *FileTransferService) UEditorUploadFile(ctx context.Context, req *storag
 		bucketName = "videos"
 	}
 
-	info, downloadUrl, err := s.mc.UploadFile(ctx, bucketName, req.GetSourceFileName(), req.GetFile())
+	info, _, downloadUrl, err := s.mc.UploadFile(
+		ctx,
+		bucketName,
+		req.GetSourceFileName(),
+		req.GetMime(),
+		req.GetFile(),
+	)
 	if err != nil {
-		return &storageV1.UEditorUploadResponse{
-			State: trans.Ptr(err.Error()),
-		}, err
+		return nil, err
 	}
 
-	if err = s.recordFile(
+	if _, err = s.recordFile(
 		ctx,
 		operator.GetTenantId(), operator.GetUserId(),
 		req.GetFile(),
@@ -381,5 +401,167 @@ func (s *FileTransferService) UEditorUploadFile(ctx context.Context, req *storag
 		Url:      trans.Ptr(downloadUrl),
 		Size:     trans.Ptr(int32(len(req.GetFile()))),
 		Type:     trans.Ptr(path.Ext(req.GetSourceFileName())),
+	}, nil
+}
+
+func (s *FileTransferService) mimeTypeToBucketName(mimeType string) string {
+	if mimeType == "" {
+		return "files"
+	}
+
+	if strings.HasPrefix(mimeType, "image/") {
+		return "images"
+	}
+
+	if strings.HasPrefix(mimeType, "video/") {
+		return "videos"
+	}
+
+	if strings.HasPrefix(mimeType, "audio/") {
+		return "audios"
+	}
+
+	return "files"
+}
+
+func (s *FileTransferService) mimeTypeToAssetType(mimeType string) *mediaV1.MediaAsset_AssetType {
+	if mimeType == "" {
+		return trans.Ptr(mediaV1.MediaAsset_ASSET_TYPE_UNSPECIFIED)
+	}
+
+	mt := strings.ToLower(strings.TrimSpace(mimeType))
+	if idx := strings.Index(mt, ";"); idx >= 0 {
+		mt = strings.TrimSpace(mt[:idx])
+	}
+
+	if strings.HasPrefix(mt, "image/") {
+		return trans.Ptr(mediaV1.MediaAsset_ASSET_TYPE_IMAGE)
+	}
+
+	if strings.HasPrefix(mt, "video/") {
+		return trans.Ptr(mediaV1.MediaAsset_ASSET_TYPE_VIDEO)
+	}
+
+	if strings.HasPrefix(mt, "audio/") {
+		return trans.Ptr(mediaV1.MediaAsset_ASSET_TYPE_AUDIO)
+	}
+
+	if s.isArchiveMimeType(mt) {
+		return trans.Ptr(mediaV1.MediaAsset_ASSET_TYPE_ARCHIVE)
+	}
+
+	if s.isDocumentMimeType(mt) {
+		return trans.Ptr(mediaV1.MediaAsset_ASSET_TYPE_DOCUMENT)
+	}
+
+	return trans.Ptr(mediaV1.MediaAsset_ASSET_TYPE_OTHER)
+}
+
+func (s *FileTransferService) isDocumentMimeType(mimeType string) bool {
+	if strings.HasPrefix(mimeType, "application/pdf") {
+		return true
+	}
+
+	if strings.HasPrefix(mimeType, "application/msword") ||
+		strings.HasPrefix(mimeType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+		return true
+	}
+
+	if strings.HasPrefix(mimeType, "application/vnd.ms-excel") ||
+		strings.HasPrefix(mimeType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+		return true
+	}
+
+	if strings.HasPrefix(mimeType, "application/vnd.ms-powerpoint") ||
+		strings.HasPrefix(mimeType, "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+		return true
+	}
+
+	return false
+}
+
+func (s *FileTransferService) isArchiveMimeType(mimeType string) bool {
+	switch mimeType {
+	case "application/zip",
+		"application/x-zip-compressed",
+		"multipart/x-zip",
+		"application/x-7z-compressed",
+		"application/x-tar",
+		"application/gzip",
+		"application/x-gzip",
+		"application/x-bzip2",
+		"application/x-bzip",
+		"application/x-xz",
+		"application/vnd.rar",
+		"application/x-rar-compressed",
+		"application/java-archive",
+		"application/zstd",
+		"application/x-zstd":
+		return true
+	default:
+		return false
+	}
+}
+
+func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storageV1.UploadMediaAssetRequest) (*storageV1.UploadFileResponse, error) {
+	if req.File == nil {
+		return nil, storageV1.ErrorUploadFailed("unknown file")
+	}
+
+	// 获取操作人信息
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	req.TenantId = trans.Ptr(operator.GetTenantId())
+	req.UserId = trans.Ptr(operator.GetUserId())
+
+	var bucketName = s.mimeTypeToBucketName(req.GetMimeType())
+
+	info, storagePath, downloadUrl, err := s.mc.UploadFile(
+		ctx,
+		bucketName,
+		"",
+		req.GetMimeType(),
+		req.GetFile(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var file *storageV1.File
+	if file, err = s.recordFile(
+		ctx,
+		operator.GetTenantId(), operator.GetUserId(),
+		req.GetFile(),
+		req.GetSourceFileName(),
+		info, downloadUrl,
+	); err != nil {
+		return nil, err
+	}
+
+	if _, err = s.mediaAssetServiceClient.Create(ctx, &mediaV1.CreateMediaAssetRequest{
+		Data: &mediaV1.MediaAsset{
+			FileId:           file.Id,
+			AltText:          req.AltText,
+			Title:            req.Title,
+			Caption:          req.Caption,
+			Url:              trans.Ptr(downloadUrl),
+			StoragePath:      trans.Ptr(storagePath),
+			Size:             trans.Ptr(uint64(info.Size)),
+			MimeType:         req.MimeType,
+			Filename:         req.SourceFileName,
+			Type:             s.mimeTypeToAssetType(req.GetMimeType()),
+			FileHash:         trans.Ptr(s.hashFileContent(req.File)),
+			CreatedBy:        trans.Ptr(operator.GetUserId()),
+			ProcessingStatus: trans.Ptr(mediaV1.MediaAsset_PROCESSING_STATUS_COMPLETED),
+		},
+	}); err != nil {
+		return nil, err
+	}
+
+	return &storageV1.UploadFileResponse{
+		ObjectName: trans.Ptr(downloadUrl),
 	}, nil
 }

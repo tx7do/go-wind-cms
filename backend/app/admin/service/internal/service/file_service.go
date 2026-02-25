@@ -51,7 +51,8 @@ func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileReque
 
 	req.Data.CreatedBy = trans.Ptr(operator.GetUserId())
 
-	return s.fileServiceClient.Create(ctx, req)
+	_, err = s.fileServiceClient.Create(ctx, req)
+	return &emptypb.Empty{}, err
 }
 
 func (s *FileService) Update(ctx context.Context, req *storageV1.UpdateFileRequest) (*emptypb.Empty, error) {

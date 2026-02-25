@@ -13,8 +13,7 @@ export interface EditorProps {
   height?: number | string;
   disabled?: boolean;
   placeholder?: string;
-  // UEditor specific
-  ueditorConfig?: Record<string, any>;
+  uploadImage?: (file: File) => Promise<string>;
   // Markdown specific
   markdownOptions?: {
     hideModeSwitch?: boolean;
@@ -33,7 +32,6 @@ export interface EditorProps {
     language?: string;
     lineNumbers?: boolean;
     tabSize?: number;
-    theme?: 'dark' | 'light';
   };
 }
 

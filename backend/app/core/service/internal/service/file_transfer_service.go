@@ -99,7 +99,7 @@ func (s *FileTransferService) recordFile(
 	dir, fileName, ext := parseKey(info.Key)
 	//s.log.Debugf("Parsed file - Dir: %s, FileName: %s, Ext: %s", dir, fileName, ext)
 
-	if err := s.fileRepo.Create(ctx, &storageV1.CreateFileRequest{
+	if _, err := s.fileRepo.Create(ctx, &storageV1.CreateFileRequest{
 		Data: &storageV1.File{
 			Provider:      trans.Ptr(storageV1.OSSProvider_MINIO),
 			BucketName:    trans.Ptr(info.Bucket),
@@ -155,10 +155,11 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		)
 	}
 
-	info, downloadUrl, err := s.mc.UploadFile(
+	info, _, downloadUrl, err := s.mc.UploadFile(
 		ctx,
 		req.GetStorageObject().GetBucketName(),
 		req.GetStorageObject().GetObjectName(),
+		req.GetMime(),
 		req.GetFile(),
 	)
 	if err != nil {
@@ -346,7 +347,13 @@ func (s *FileTransferService) UEditorUploadFile(ctx context.Context, req *storag
 		bucketName = "videos"
 	}
 
-	info, downloadUrl, err := s.mc.UploadFile(ctx, bucketName, req.GetSourceFileName(), req.GetFile())
+	info, _, downloadUrl, err := s.mc.UploadFile(
+		ctx,
+		bucketName,
+		req.GetSourceFileName(),
+		req.GetMime(),
+		req.GetFile(),
+	)
 	if err != nil {
 		return &storageV1.UEditorUploadResponse{
 			State: trans.Ptr(err.Error()),

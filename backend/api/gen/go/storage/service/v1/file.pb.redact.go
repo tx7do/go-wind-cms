@@ -83,7 +83,7 @@ func (s *redactedFileServiceServer) Get(ctx context.Context, in *GetFileRequest)
 
 // Create is the redacted wrapper for the actual FileServiceServer.Create method
 // Unary RPC
-func (s *redactedFileServiceServer) Create(ctx context.Context, in *CreateFileRequest) (*emptypb.Empty, error) {
+func (s *redactedFileServiceServer) Create(ctx context.Context, in *CreateFileRequest) (*File, error) {
 	res, err := s.srv.Create(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response

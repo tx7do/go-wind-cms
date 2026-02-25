@@ -25,6 +25,7 @@ const (
 	FileTransferService_PostUploadFile_FullMethodName        = "/admin.service.v1.FileTransferService/PostUploadFile"
 	FileTransferService_UEditorPostUploadFile_FullMethodName = "/admin.service.v1.FileTransferService/UEditorPostUploadFile"
 	FileTransferService_UEditorPutUploadFile_FullMethodName  = "/admin.service.v1.FileTransferService/UEditorPutUploadFile"
+	FileTransferService_UploadMediaAsset_FullMethodName      = "/admin.service.v1.FileTransferService/UploadMediaAsset"
 )
 
 // FileTransferServiceClient is the client API for FileTransferService service.
@@ -43,6 +44,7 @@ type FileTransferServiceClient interface {
 	UEditorPostUploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[v1.UEditorUploadRequest, v1.UEditorUploadResponse], error)
 	// UEditor 上传文件
 	UEditorPutUploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[v1.UEditorUploadRequest, v1.UEditorUploadResponse], error)
+	UploadMediaAsset(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[v1.UploadMediaAssetRequest, v1.UploadFileResponse], error)
 }
 
 type fileTransferServiceClient struct {
@@ -109,6 +111,19 @@ func (c *fileTransferServiceClient) UEditorPutUploadFile(ctx context.Context, op
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type FileTransferService_UEditorPutUploadFileClient = grpc.ClientStreamingClient[v1.UEditorUploadRequest, v1.UEditorUploadResponse]
 
+func (c *fileTransferServiceClient) UploadMediaAsset(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[v1.UploadMediaAssetRequest, v1.UploadFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &FileTransferService_ServiceDesc.Streams[2], FileTransferService_UploadMediaAsset_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[v1.UploadMediaAssetRequest, v1.UploadFileResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type FileTransferService_UploadMediaAssetClient = grpc.ClientStreamingClient[v1.UploadMediaAssetRequest, v1.UploadFileResponse]
+
 // FileTransferServiceServer is the server API for FileTransferService service.
 // All implementations must embed UnimplementedFileTransferServiceServer
 // for forward compatibility.
@@ -125,6 +140,7 @@ type FileTransferServiceServer interface {
 	UEditorPostUploadFile(grpc.ClientStreamingServer[v1.UEditorUploadRequest, v1.UEditorUploadResponse]) error
 	// UEditor 上传文件
 	UEditorPutUploadFile(grpc.ClientStreamingServer[v1.UEditorUploadRequest, v1.UEditorUploadResponse]) error
+	UploadMediaAsset(grpc.ClientStreamingServer[v1.UploadMediaAssetRequest, v1.UploadFileResponse]) error
 	mustEmbedUnimplementedFileTransferServiceServer()
 }
 
@@ -149,6 +165,9 @@ func (UnimplementedFileTransferServiceServer) UEditorPostUploadFile(grpc.ClientS
 }
 func (UnimplementedFileTransferServiceServer) UEditorPutUploadFile(grpc.ClientStreamingServer[v1.UEditorUploadRequest, v1.UEditorUploadResponse]) error {
 	return status.Error(codes.Unimplemented, "method UEditorPutUploadFile not implemented")
+}
+func (UnimplementedFileTransferServiceServer) UploadMediaAsset(grpc.ClientStreamingServer[v1.UploadMediaAssetRequest, v1.UploadFileResponse]) error {
+	return status.Error(codes.Unimplemented, "method UploadMediaAsset not implemented")
 }
 func (UnimplementedFileTransferServiceServer) mustEmbedUnimplementedFileTransferServiceServer() {}
 func (UnimplementedFileTransferServiceServer) testEmbeddedByValue()                             {}
@@ -239,6 +258,13 @@ func _FileTransferService_UEditorPutUploadFile_Handler(srv interface{}, stream g
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type FileTransferService_UEditorPutUploadFileServer = grpc.ClientStreamingServer[v1.UEditorUploadRequest, v1.UEditorUploadResponse]
 
+func _FileTransferService_UploadMediaAsset_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(FileTransferServiceServer).UploadMediaAsset(&grpc.GenericServerStream[v1.UploadMediaAssetRequest, v1.UploadFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type FileTransferService_UploadMediaAssetServer = grpc.ClientStreamingServer[v1.UploadMediaAssetRequest, v1.UploadFileResponse]
+
 // FileTransferService_ServiceDesc is the grpc.ServiceDesc for FileTransferService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -268,6 +294,11 @@ var FileTransferService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "UEditorPutUploadFile",
 			Handler:       _FileTransferService_UEditorPutUploadFile_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "UploadMediaAsset",
+			Handler:       _FileTransferService_UploadMediaAsset_Handler,
 			ClientStreams: true,
 		},
 	},

@@ -36,7 +36,7 @@ service FileTransferService {
   // UEditor 上传文件
   rpc UEditorPostUploadFile (stream storage.service.v1.UEditorUploadRequest) returns (storage.service.v1.UEditorUploadResponse) {
     option (google.api.http) = {
-      post: "/admin/v1/ueditor"
+      post: "/admin/v1/file/ueditor/upload"
       body: "*"
     };
   }
@@ -44,7 +44,14 @@ service FileTransferService {
   // UEditor 上传文件
   rpc UEditorPutUploadFile (stream storage.service.v1.UEditorUploadRequest) returns (storage.service.v1.UEditorUploadResponse) {
     option (google.api.http) = {
-      put: "/admin/v1/ueditor"
+      put: "/admin/v1/file/ueditor/upload"
+      body: "*"
+    };
+  }
+
+  rpc UploadMediaAsset (stream storage.service.v1.UploadMediaAssetRequest) returns (storage.service.v1.UploadFileResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/file/asset/upload",
       body: "*"
     };
   }
