@@ -225,6 +225,7 @@ const toolbarActions = {
     editor.value?.chain().focus().toggleBulletList().run(),
   toggleOrderedList: () =>
     editor.value?.chain().focus().toggleOrderedList().run(),
+  toggleTaskList: () => editor.value?.chain().focus().toggleTaskList().run(),
   toggleCodeBlock: () => editor.value?.chain().focus().toggleCodeBlock().run(),
   toggleBlockquote: () =>
     editor.value?.chain().focus().toggleBlockquote().run(),
@@ -617,6 +618,26 @@ onUnmounted(() => {
             <text x="2" y="8" font-size="8" fill="currentColor">1.</text>
             <text x="2" y="14" font-size="8" fill="currentColor">2.</text>
             <text x="2" y="20" font-size="8" fill="currentColor">3.</text>
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="toolbar-btn"
+          :class="{ active: isActive('taskList') }"
+          @click="toolbarActions.toggleTaskList"
+          :title="$t('page.editor.taskList')"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <rect x="3" y="4" width="4" height="4" rx="1" />
+            <path d="M10 6h10" stroke-width="2" />
+            <rect x="3" y="12" width="4" height="4" rx="1" />
+            <path d="M10 14h10" stroke-width="2" />
+            <path d="M4 6l1 1 2-2" stroke-width="2" />
           </svg>
         </button>
         <button
