@@ -2136,8 +2136,8 @@ onUnmounted(() => {
   z-index: 10;
 }
 
-.tiptap-editor-wrapper,
-:deep(.ProseMirror pre .code-block-language-selector select) {
+.tiptap-editor-wrapper
+  :deep(.ProseMirror pre .code-block-language-selector select) {
   padding: 2px 20px 2px 8px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 11px;
