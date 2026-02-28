@@ -7,6 +7,7 @@ import { StorageManager } from '@vben-core/shared/cache';
 
 import { notification } from 'ant-design-vue';
 
+import { EditorType } from '#/adapter/component/Editor';
 import { useVbenForm } from '#/adapter/form';
 import {
   type internal_messageservicev1_InternalMessage as InternalMessage,
@@ -114,49 +115,16 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
     },
     {
-      component: 'UEditor',
+      component: 'Editor',
       fieldName: 'content',
+      defaultValue: '',
       label: $t('page.internalMessage.content'),
       formItemClass: 'col-span-2 md:col-span-2',
       componentProps: {
-        editorId: 'editor_content',
-        toolbars: [
-          [
-            'fullscreen',
-            'source',
-            'undo',
-            'redo',
-            'bold',
-            'italic',
-            'underline',
-            'fontborder',
-            'fontsize',
-            'fontfamily',
-            'justifyleft',
-            'justifyright',
-            'justifycenter',
-            'justifyjustify',
-            'strikethrough',
-            'superscript',
-            'subscript',
-            'removeformat',
-            'formatmatch',
-            'autotypeset',
-            'blockquote',
-            'pasteplain',
-            '|',
-            'forecolor',
-            'backcolor',
-            'insertorderedlist',
-            'insertunorderedlist',
-            'selectall',
-            'cleardoc',
-            'link',
-            'unlink',
-            'emotion',
-            'help',
-          ],
-        ],
+        height: '100%',
+        placeholder: $t('ui.editor.please_input_content'),
+        editorType: EditorType.RICH_TEXT,
+        uploadImage: handleUploadImage,
       },
     },
   ],
@@ -244,6 +212,17 @@ async function onCloseDrawer() {
 
 function setLoading(loading: boolean) {
   drawerApi.setState({ confirmLoading: loading });
+}
+
+async function handleUploadImage(file: File): Promise<string> {
+  console.log('Upload image:', file);
+
+  try {
+    return '';
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    return '';
+  }
 }
 </script>
 

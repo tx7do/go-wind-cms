@@ -9,8 +9,8 @@ import { useTabs } from '@vben/hooks';
 import { LucideArrowLeft } from '@vben/icons';
 import { $t } from '@vben/locales';
 
-import { Editor, EditorType } from '#/components/editor';
-import { useFileTransferStore, useLanguageStore, usePostStore } from "#/stores";
+import { Editor, EditorType } from '#/adapter/component/Editor';
+import { useFileTransferStore, useLanguageStore, usePostStore } from '#/stores';
 
 import PublishPostModal from './publish-post-modal.vue';
 

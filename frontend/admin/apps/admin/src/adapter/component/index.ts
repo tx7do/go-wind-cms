@@ -37,7 +37,7 @@ import {
 } from 'ant-design-vue';
 
 import { ApiTree } from './ApiTree';
-import { UEditor } from './UEditor';
+import { Editor } from './Editor';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -76,7 +76,7 @@ export type ComponentType =
   | 'Textarea'
   | 'TimePicker'
   | 'TreeSelect'
-  | 'UEditor'
+  | 'Editor'
   | 'Upload'
   | BaseFormComponentType;
 
@@ -153,7 +153,7 @@ async function initComponentAdapter() {
     TimePicker,
     TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
     Upload,
-    UEditor,
+    Editor,
     ApiTree,
   };
 
