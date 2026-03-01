@@ -15,7 +15,7 @@ else
 fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-project_root="$script_dir/.."
+project_root="$script_dir/../.."
 env_file="$project_root/.env"
 project_root="$(cd "$project_root" && pwd)"
 
@@ -107,7 +107,7 @@ for app_dir in "${apps[@]}"; do
   fi
 
   # 使用绝对二进制路径启动，传入配置目录作为参数
-  # pm2 usage: pm2 start <script> --name <name> --namespace <ns> -- <args...>
+  # pm2 usage: pm2 start <scripts> --name <name> --namespace <ns> -- <args...>
   if ! command -v pm2 >/dev/null 2>&1; then
     err "pm2 not installed or not in PATH; please install pm2"
     exit 1

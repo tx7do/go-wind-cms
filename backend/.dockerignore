@@ -34,7 +34,7 @@ build/
 testdata/
 
 # Scripts (if not needed at runtime)
-script/
+scripts/
 
 # Logs
 *.log
