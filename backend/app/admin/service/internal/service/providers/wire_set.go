@@ -39,7 +39,6 @@ var ProviderSet = wire.NewSet(
 
 	service.NewFileTransferService,
 	service.NewFileService,
-	service.NewUEditorService,
 
 	service.NewDictTypeService,
 	service.NewDictEntryService,
@@ -68,4 +67,6 @@ var ProviderSet = wire.NewSet(
 	service.NewNavigationService,
 	service.NewSiteSettingService,
 	service.NewSiteService,
+
+	service.NewTranslatorService,
 )

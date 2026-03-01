@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/site/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_site_setting_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_site_setting_proto_rawDesc = "" +
 	"\n" +
-	"%admin/service/v1/i_site_setting.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\"site/service/v1/site_setting.proto2\xdb\x04\n" +
+	"%admin/service/v1/i_site_setting.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\"site/service/v1/site_setting.proto2\xdb\x04\n" +
 	"\x12SiteSettingService\x12l\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.site.service.v1.ListSiteSettingResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/site-settings\x12q\n" +
 	"\x03Get\x12&.site.service.v1.GetSiteSettingRequest\x1a\x1c.site.service.v1.SiteSetting\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/v1/site-settings/{id}\x12u\n" +

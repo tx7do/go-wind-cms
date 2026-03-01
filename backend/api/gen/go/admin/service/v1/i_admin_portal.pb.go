@@ -7,14 +7,11 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "go-wind-cms/api/gen/go/resource/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	_ "google.golang.org/protobuf/types/known/fieldmaskpb"
-	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -173,7 +170,7 @@ var File_admin_service_v1_i_admin_portal_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_admin_portal_proto_rawDesc = "" +
 	"\n" +
-	"%admin/service/v1/i_admin_portal.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1eresource/service/v1/menu.proto\"M\n" +
+	"%admin/service/v1/i_admin_portal.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eresource/service/v1/menu.proto\"M\n" +
 	"\x11ListRouteResponse\x128\n" +
 	"\x05items\x18\x01 \x03(\v2\".resource.service.v1.MenuRouteItemR\x05items\"2\n" +
 	"\x1aListPermissionCodeResponse\x12\x14\n" +

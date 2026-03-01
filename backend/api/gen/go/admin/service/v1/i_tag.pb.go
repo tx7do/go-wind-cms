@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/content/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_tag_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_tag_proto_rawDesc = "" +
 	"\n" +
-	"\x1cadmin/service/v1/i_tag.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ccontent/service/v1/tag.proto2\xfe\x03\n" +
+	"\x1cadmin/service/v1/i_tag.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ccontent/service/v1/tag.proto2\xfe\x03\n" +
 	"\n" +
 	"TagService\x12^\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.content.service.v1.ListTagResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/admin/v1/tags\x12^\n" +

@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_internal_message_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_internal_message_proto_rawDesc = "" +
 	"\n" +
-	")admin/service/v1/i_internal_message.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a2internal_message/service/v1/internal_message.proto2\xac\a\n" +
+	")admin/service/v1/i_internal_message.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a2internal_message/service/v1/internal_message.proto2\xac\a\n" +
 	"\x16InternalMessageService\x12\x8f\x01\n" +
 	"\vListMessage\x12\x19.pagination.PagingRequest\x1a8.internal_message.service.v1.ListInternalMessageResponse\"+\x82\xd3\xe4\x93\x02%\x12#/admin/v1/internal-message/messages\x12\xa4\x01\n" +
 	"\n" +

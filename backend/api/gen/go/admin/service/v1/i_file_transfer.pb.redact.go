@@ -7,7 +7,6 @@ import (
 	context "context"
 	redact "github.com/menta2k/protoc-gen-redact/v3/redact/v3"
 	storagepb "go-wind-cms/api/gen/go/storage/service/v1"
-	httpbody "google.golang.org/genproto/googleapis/api/httpbody"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,7 +19,6 @@ var (
 	_ redact.Redactor
 	_ codes.Code
 	_ status.Status
-	_ httpbody.HttpBody
 	_ storagepb.DownloadFileRequest
 	_ storagepb.UEditorRequest
 )

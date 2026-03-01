@@ -3,7 +3,6 @@ syntax = "proto3";
 package admin.service.v1;
 
 import "google/api/annotations.proto";
-import "google/api/httpbody.proto";
 
 import "storage/service/v1/file_transfer.proto";
 import "storage/service/v1/ueditor.proto";

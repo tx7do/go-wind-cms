@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "go-wind-cms/api/gen/go/identity/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -28,7 +27,7 @@ var File_admin_service_v1_i_user_profile_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_user_profile_proto_rawDesc = "" +
 	"\n" +
-	"%admin/service/v1/i_user_profile.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto2\x97\x06\n" +
+	"%admin/service/v1/i_user_profile.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto2\x97\x06\n" +
 	"\x12UserProfileService\x12R\n" +
 	"\aGetUser\x12\x16.google.protobuf.Empty\x1a\x19.identity.service.v1.User\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/admin/v1/me\x12e\n" +
 	"\n" +

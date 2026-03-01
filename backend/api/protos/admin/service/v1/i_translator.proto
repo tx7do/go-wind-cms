@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "translator/service/v1/translator.proto";
+
+// 翻译服务
+service TranslatorService {
+  // 翻译文本
+  rpc Translate (translator.service.v1.TranslateRequest) returns (translator.service.v1.TranslateResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/translate"
+      body: "*"
+    };
+  }
+}

@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/audit/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -28,7 +27,7 @@ var File_admin_service_v1_i_data_access_audit_log_proto protoreflect.FileDescrip
 
 const file_admin_service_v1_i_data_access_audit_log_proto_rawDesc = "" +
 	"\n" +
-	".admin/service/v1/i_data_access_audit_log.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a,audit/service/v1/data_access_audit_log.proto2\xa7\x02\n" +
+	".admin/service/v1/i_data_access_audit_log.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a,audit/service/v1/data_access_audit_log.proto2\xa7\x02\n" +
 	"\x19DataAccessAuditLogService\x12}\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a0.audit.service.v1.ListDataAccessAuditLogResponse\"(\x82\xd3\xe4\x93\x02\"\x12 /admin/v1/data-access-audit-logs\x12\x8a\x01\n" +
 	"\x03Get\x12..audit.service.v1.GetDataAccessAuditLogRequest\x1a$.audit.service.v1.DataAccessAuditLog\"-\x82\xd3\xe4\x93\x02'\x12%/admin/v1/data-access-audit-logs/{id}B\xc3\x01\n" +

@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package admin.service.v1;
 
-import "gnostic/openapi/v3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 

@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/site/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_site_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_site_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_site.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1asite/service/v1/site.proto2\xf4\x03\n" +
+	"\x1dadmin/service/v1/i_site.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1asite/service/v1/site.proto2\xf4\x03\n" +
 	"\vSiteService\x12]\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a!.site.service.v1.ListSiteResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/v1/sites\x12[\n" +
 	"\x03Get\x12\x1f.site.service.v1.GetSiteRequest\x1a\x15.site.service.v1.Site\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/sites/{id}\x12_\n" +

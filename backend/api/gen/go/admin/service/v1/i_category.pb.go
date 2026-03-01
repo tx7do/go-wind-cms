@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/content/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_category_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_category_proto_rawDesc = "" +
 	"\n" +
-	"!admin/service/v1/i_category.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a!content/service/v1/category.proto2\xc9\x04\n" +
+	"!admin/service/v1/i_category.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a!content/service/v1/category.proto2\xc9\x04\n" +
 	"\x0fCategoryService\x12i\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.content.service.v1.ListCategoryResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/categories\x12n\n" +
 	"\x03Get\x12&.content.service.v1.GetCategoryRequest\x1a\x1c.content.service.v1.Category\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/categories/{id}\x12r\n" +

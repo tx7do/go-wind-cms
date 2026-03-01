@@ -101,7 +101,8 @@ func NewRestServer(
 
 	fileSvc *service.FileService,
 	fileTransferService *service.FileTransferService,
-	ueditorSvc *service.UEditorService,
+
+	translatorService *service.TranslatorService,
 
 	internalMessageService *service.InternalMessageService,
 	internalMessageCategoryService *service.InternalMessageCategoryService,
@@ -171,13 +172,13 @@ func NewRestServer(
 	adminV1.RegisterInternalMessageCategoryServiceHTTPServer(srv, internalMessageCategoryService)
 	adminV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
 
-	adminV1.RegisterFileServiceHTTPServer(srv, fileSvc)
-	adminV1.RegisterUEditorServiceHTTPServer(srv, ueditorSvc)
+	adminV1.RegisterTranslatorServiceHTTPServer(srv, translatorService)
 
 	// 注册文件传输服务，用于处理文件上传下载等功能
 	// TODO 它不能够使用代码生成器生成的Handler，需要手动注册。代码生成器生成的Handler无法处理文件上传下载的请求。
 	// 但，代码生成器生成代码可以提供给OpenAPI使用。
 	registerFileTransferServiceHandler(srv, fileTransferService)
+	adminV1.RegisterFileServiceHTTPServer(srv, fileSvc)
 
 	adminV1.RegisterPostServiceHTTPServer(srv, postService)
 	adminV1.RegisterCategoryServiceHTTPServer(srv, categoryService)

@@ -9,7 +9,6 @@ package adminpb
 import (
 	v1 "go-wind-cms/api/gen/go/storage/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
-	_ "google.golang.org/genproto/googleapis/api/httpbody"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -27,7 +26,7 @@ var File_admin_service_v1_i_file_transfer_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_file_transfer_proto_rawDesc = "" +
 	"\n" +
-	"&admin/service/v1/i_file_transfer.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x19google/api/httpbody.proto\x1a&storage/service/v1/file_transfer.proto\x1a storage/service/v1/ueditor.proto2\xea\x06\n" +
+	"&admin/service/v1/i_file_transfer.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a&storage/service/v1/file_transfer.proto\x1a storage/service/v1/ueditor.proto2\xea\x06\n" +
 	"\x13FileTransferService\x12\x82\x01\n" +
 	"\fDownloadFile\x12'.storage.service.v1.DownloadFileRequest\x1a(.storage.service.v1.DownloadFileResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/file/download\x12\x80\x01\n" +
 	"\rPutUploadFile\x12%.storage.service.v1.UploadFileRequest\x1a&.storage.service.v1.UploadFileResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/admin/v1/file/upload\x12\x81\x01\n" +

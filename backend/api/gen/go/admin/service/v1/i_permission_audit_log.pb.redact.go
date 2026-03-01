@@ -11,10 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	durationpb "google.golang.org/protobuf/types/known/durationpb"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -24,10 +20,6 @@ var (
 	_ redact.Redactor
 	_ codes.Code
 	_ status.Status
-	_ emptypb.Empty
-	_ timestamppb.Timestamp
-	_ fieldmaskpb.FieldMask
-	_ durationpb.Duration
 	_ pagination.Sorting
 	_ auditpb.PermissionAuditLog
 )

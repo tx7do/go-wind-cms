@@ -8688,118 +8688,44 @@ export type identityservicev1_TenantExistsResponse = {
   exist: boolean | undefined;
 };
 
-// UEditor后端服务
-export interface UEditorService {
-  // UEditor API
-  UEditorAPI(request: storageservicev1_UEditorRequest): Promise<storageservicev1_UEditorResponse>;
+// 翻译服务
+export interface TranslatorService {
+  // 翻译文本
+  Translate(request: translatorservicev1_TranslateRequest): Promise<translatorservicev1_TranslateResponse>;
 }
 
-export function createUEditorServiceClient(
+export function createTranslatorServiceClient(
   handler: RequestHandler
-): UEditorService {
+): TranslatorService {
   return {
-    UEditorAPI(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
-      const path = `admin/v1/ueditor`; // eslint-disable-line quotes
-      const body = null;
+    Translate(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+      const path = `admin/v1/translate`; // eslint-disable-line quotes
+      const body = JSON.stringify(request);
       const queryParams: string[] = [];
-      if (request.action) {
-        queryParams.push(`action=${encodeURIComponent(request.action.toString())}`)
-      }
-      if (request.encode) {
-        queryParams.push(`encode=${encodeURIComponent(request.encode.toString())}`)
-      }
-      if (request.start) {
-        queryParams.push(`start=${encodeURIComponent(request.start.toString())}`)
-      }
-      if (request.size) {
-        queryParams.push(`size=${encodeURIComponent(request.size.toString())}`)
-      }
       let uri = path;
       if (queryParams.length > 0) {
         uri += `?${queryParams.join("&")}`
       }
       return handler({
         path: uri,
-        method: "GET",
+        method: "POST",
         body,
       }, {
-        service: "UEditorService",
-        method: "UEditorAPI",
-      }) as Promise<storageservicev1_UEditorResponse>;
+        service: "TranslatorService",
+        method: "Translate",
+      }) as Promise<translatorservicev1_TranslateResponse>;
     },
   };
 }
-export type storageservicev1_UEditorRequest = {
-  action: string | undefined;
-  encode: string | undefined;
-  start: number | undefined;
-  size: number | undefined;
+export type translatorservicev1_TranslateRequest = {
+  sourceLanguage?: string;
+  targetLanguage?: string;
+  content?: string;
 };
 
-export type storageservicev1_UEditorResponse = {
-  imageActionName?: string;
-  imageFieldName?: string;
-  imageMaxSize?: number;
-  imageAllowFiles: string[] | undefined;
-  imageCompressEnable?: boolean;
-  imageCompressBorder?: number;
-  imageInsertAlign?: string;
-  imageUrlPrefix?: string;
-  imagePathFormat?: string;
-  scrawlActionName?: string;
-  scrawlFieldName?: string;
-  scrawlMaxSize?: number;
-  scrawlUrlPrefix?: string;
-  scrawlInsertAlign?: string;
-  scrawlPathFormat?: string;
-  snapscreenActionName?: string;
-  snapscreenUrlPrefix?: string;
-  snapscreenInsertAlign?: string;
-  snapscreenPathFormat?: string;
-  catcherActionName?: string;
-  catcherFieldName?: string;
-  catcherLocalDomain: string[] | undefined;
-  catcherUrlPrefix?: string;
-  catcherMaxSize?: number;
-  catcherAllowFiles: string[] | undefined;
-  catcherPathFormat?: string;
-  videoActionName?: string;
-  videoFieldName?: string;
-  videoUrlPrefix?: string;
-  videoMaxSize?: number;
-  videoAllowFiles: string[] | undefined;
-  videoPathFormat?: string;
-  fileActionName?: string;
-  fileFieldName?: string;
-  fileUrlPrefix?: string;
-  fileMaxSize?: number;
-  fileAllowFiles: string[] | undefined;
-  filePathFormat?: string;
-  imageManagerActionName?: string;
-  imageManagerListSize?: number;
-  imageManagerUrlPrefix?: string;
-  imageManagerInsertAlign?: string;
-  imageManagerAllowFiles: string[] | undefined;
-  imageManagerListPath?: string;
-  fileManagerActionName?: string;
-  fileManagerUrlPrefix?: string;
-  fileManagerListSize?: number;
-  fileManagerAllowFiles: string[] | undefined;
-  FileManagerListPath?: string;
-  formulaConfig?: storageservicev1_UEditorResponse_FormulaConfig;
-  state?: string;
-  start?: number;
-  total?: number;
-  list: storageservicev1_UEditorResponse_Item[] | undefined;
-};
-
-export type storageservicev1_UEditorResponse_FormulaConfig = {
-  imageUrlTemplate: string | undefined;
-};
-
-export type storageservicev1_UEditorResponse_Item = {
-  url: string | undefined;
-  mtime: number | undefined;
+export type translatorservicev1_TranslateResponse = {
+  translatedContent?: string;
+  rawContent?: string;
 };
 
 // 用户管理服务

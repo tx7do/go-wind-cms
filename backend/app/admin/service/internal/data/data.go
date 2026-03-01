@@ -3,19 +3,18 @@ package data
 import (
 	"github.com/redis/go-redis/v9"
 
-	authnEngine "github.com/tx7do/kratos-authn/engine"
-	"github.com/tx7do/kratos-authn/engine/jwt"
-
 	authzEngine "github.com/tx7do/kratos-authz/engine"
 	"github.com/tx7do/kratos-authz/engine/noop"
 
 	"github.com/go-kratos/kratos/v2/registry"
 
-	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
+
+	"github.com/tx7do/go-utils/translator"
+	"github.com/tx7do/go-utils/translator/google"
 
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
@@ -78,13 +77,11 @@ func NewMinIoClient(ctx *bootstrap.Context) *oss.MinIOClient {
 	return oss.NewMinIoClient(ctx.GetConfig(), ctx.GetLogger())
 }
 
-// NewAuthenticator 创建认证器
-func NewAuthenticator(cfg *conf.Bootstrap) authnEngine.Authenticator {
-	authenticator, _ := jwt.NewAuthenticator(
-		jwt.WithKey([]byte(cfg.Server.Rest.Middleware.Auth.Key)),
-		jwt.WithSigningMethod(cfg.Server.Rest.Middleware.Auth.Method),
+// NewTranslator 创建翻译器
+func NewTranslator(_ *bootstrap.Context) translator.Translator {
+	return google.NewTranslator(
+		google.WithVersion("v1"),
 	)
-	return authenticator
 }
 
 // NewAuthorizer 创建权鉴器

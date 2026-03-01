@@ -27,6 +27,8 @@ var ProviderSet = wire.NewSet(
 	data.NewClientType,
 	data.NewAuthorizer,
 
+	data.NewTranslator,
+
 	auth.NewTokenChecker,
 
 	data.NewAuthenticationServiceClient,

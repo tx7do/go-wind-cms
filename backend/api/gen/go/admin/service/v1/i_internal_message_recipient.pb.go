@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_internal_message_recipient_proto protoreflect.FileDe
 
 const file_admin_service_v1_i_internal_message_recipient_proto_rawDesc = "" +
 	"\n" +
-	"3admin/service/v1/i_internal_message_recipient.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a<internal_message/service/v1/internal_message_recipient.proto2\xf4\x03\n" +
+	"3admin/service/v1/i_internal_message_recipient.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a<internal_message/service/v1/internal_message_recipient.proto2\xf4\x03\n" +
 	"\x1fInternalMessageRecipientService\x12\x88\x01\n" +
 	"\rListUserInbox\x12\x19.pagination.PagingRequest\x1a2.internal_message.service.v1.ListUserInboxResponse\"(\x82\xd3\xe4\x93\x02\"\x12 /admin/v1/internal-message/inbox\x12\xaa\x01\n" +
 	"\x1bDeleteNotificationFromInbox\x12?.internal_message.service.v1.DeleteNotificationFromInboxRequest\x1a\x16.google.protobuf.Empty\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/admin/v1/internal-message/inbox/delete\x12\x98\x01\n" +

@@ -7,16 +7,11 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/permission/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/durationpb"
-	_ "google.golang.org/protobuf/types/known/emptypb"
-	_ "google.golang.org/protobuf/types/known/fieldmaskpb"
-	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -32,7 +27,7 @@ var File_admin_service_v1_i_policy_evaluation_log_proto protoreflect.FileDescrip
 
 const file_admin_service_v1_i_policy_evaluation_log_proto_rawDesc = "" +
 	"\n" +
-	".admin/service/v1/i_policy_evaluation_log.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1epagination/v1/pagination.proto\x1a1permission/service/v1/policy_evaluation_log.proto2\xbb\x02\n" +
+	".admin/service/v1/i_policy_evaluation_log.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a1permission/service/v1/policy_evaluation_log.proto2\xbb\x02\n" +
 	"\x1aPolicyEvaluationLogService\x12\x83\x01\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a6.permission.service.v1.ListPolicyEvaluationLogResponse\"(\x82\xd3\xe4\x93\x02\"\x12 /admin/v1/policy-evaluation-logs\x12\x96\x01\n" +
 	"\x03Get\x124.permission.service.v1.GetPolicyEvaluationLogRequest\x1a*.permission.service.v1.PolicyEvaluationLog\"-\x82\xd3\xe4\x93\x02'\x12%/admin/v1/policy-evaluation-logs/{id}B\xc4\x01\n" +

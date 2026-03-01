@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	_ "github.com/menta2k/protoc-gen-redact/v3/redact/v3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/identity/service/v1"
@@ -30,7 +29,7 @@ var File_admin_service_v1_i_user_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_user.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x16redact/v3/redact.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1eidentity/service/v1/user.proto2\xf2\x06\n" +
+	"\x1dadmin/service/v1/i_user.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x16redact/v3/redact.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1eidentity/service/v1/user.proto2\xf2\x06\n" +
 	"\vUserService\x12e\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a%.identity.service.v1.ListUserResponse\"\x1b\xe0\xb6\x1a\x01\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/v1/users\x12\x8e\x01\n" +
 	"\x03Get\x12#.identity.service.v1.GetUserRequest\x1a\x19.identity.service.v1.User\"G\xe0\xb6\x1a\x01\x82\xd3\xe4\x93\x02=Z%\x12#/admin/v1/users/username/{username}\x12\x14/admin/v1/users/{id}\x12g\n" +

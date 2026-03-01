@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/comment/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_comment_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_comment_proto_rawDesc = "" +
 	"\n" +
-	" admin/service/v1/i_comment.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto2\xb6\x04\n" +
+	" admin/service/v1/i_comment.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto2\xb6\x04\n" +
 	"\x0eCommentService\x12f\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.comment.service.v1.ListCommentResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/admin/v1/comments\x12j\n" +
 	"\x03Get\x12%.comment.service.v1.GetCommentRequest\x1a\x1b.comment.service.v1.Comment\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/comments/{id}\x12n\n" +

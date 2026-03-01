@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package translator.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+// 翻译服务
+service TranslatorService {
+  // 翻译文本
+  rpc Translate (TranslateRequest) returns (TranslateResponse) {}
+}
+
+message TranslateRequest {
+  optional string source_language = 1 [
+    json_name = "sourceLanguage",
+    (gnostic.openapi.v3.property) = {description: "源语言（如 'en'）"}
+  ]; // 源语言（如 'en'）
+
+  optional string target_language = 2 [
+    json_name = "targetLanguage",
+    (gnostic.openapi.v3.property) = {description: "目标语言（如 'zh'）"}
+  ]; // 目标语言（如 'zh'）
+
+  optional string content = 3 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "待翻译内容"}
+  ]; // 待翻译内容
+}
+
+message TranslateResponse {
+  optional string translated_content = 1 [
+    json_name = "translatedContent",
+    (gnostic.openapi.v3.property) = {description: "翻译后的内容"}
+  ]; // 翻译后的内容
+
+  optional string raw_content = 2 [
+    json_name = "rawContent",
+    (gnostic.openapi.v3.property) = {description: "原始内容（供调试使用）"}
+  ]; // 原始内容（供调试使用）
+}

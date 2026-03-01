@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/permission/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_role_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_role_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_role.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a permission/service/v1/role.proto2\x9a\x04\n" +
+	"\x1dadmin/service/v1/i_role.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a permission/service/v1/role.proto2\x9a\x04\n" +
 	"\vRoleService\x12c\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.permission.service.v1.ListRoleResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/v1/roles\x12g\n" +
 	"\x03Get\x12%.permission.service.v1.GetRoleRequest\x1a\x1b.permission.service.v1.Role\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/roles/{id}\x12f\n" +

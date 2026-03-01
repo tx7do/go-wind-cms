@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/audit/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -28,7 +27,7 @@ var File_admin_service_v1_i_api_audit_log_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_api_audit_log_proto_rawDesc = "" +
 	"\n" +
-	"&admin/service/v1/i_api_audit_log.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a$audit/service/v1/api_audit_log.proto2\xfa\x01\n" +
+	"&admin/service/v1/i_api_audit_log.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a$audit/service/v1/api_audit_log.proto2\xfa\x01\n" +
 	"\x12ApiAuditLogService\x12n\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a).audit.service.v1.ListApiAuditLogResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/api-audit-logs\x12t\n" +
 	"\x03Get\x12'.audit.service.v1.GetApiAuditLogRequest\x1a\x1d.audit.service.v1.ApiAuditLog\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/api-audit-logs/{id}B\xbc\x01\n" +

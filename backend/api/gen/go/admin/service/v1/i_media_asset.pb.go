@@ -7,7 +7,6 @@
 package adminpb
 
 import (
-	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-cms/api/gen/go/media/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -29,7 +28,7 @@ var File_admin_service_v1_i_media_asset_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_media_asset_proto_rawDesc = "" +
 	"\n" +
-	"$admin/service/v1/i_media_asset.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\"media/service/v1/media_asset.proto2\xd5\x04\n" +
+	"$admin/service/v1/i_media_asset.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\"media/service/v1/media_asset.proto2\xd5\x04\n" +
 	"\x11MediaAssetService\x12k\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.media.service.v1.ListMediaAssetResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/admin/v1/media-assets\x12p\n" +
 	"\x03Get\x12&.media.service.v1.GetMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/admin/v1/media-assets/{id}\x12t\n" +
