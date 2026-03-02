@@ -109,6 +109,8 @@ func (s *InternalMessageService) UpdateMessage(ctx context.Context, req *interna
 		return nil, err
 	}
 
+	req.Data.Id = trans.Ptr(req.GetId())
+
 	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
 	if req.UpdateMask != nil {
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")

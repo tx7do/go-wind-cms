@@ -77,6 +77,8 @@ func (s *MenuService) Update(ctx context.Context, req *resourceV1.UpdateMenuRequ
 		return nil, err
 	}
 
+	req.Data.Id = trans.Ptr(req.GetId())
+
 	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
 	if req.UpdateMask != nil {
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")

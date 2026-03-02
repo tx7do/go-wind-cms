@@ -83,6 +83,8 @@ func (s *PermissionGroupService) Update(ctx context.Context, req *permissionV1.U
 		return nil, err
 	}
 
+	req.Data.Id = trans.Ptr(req.GetId())
+
 	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
 	if req.UpdateMask != nil {
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")

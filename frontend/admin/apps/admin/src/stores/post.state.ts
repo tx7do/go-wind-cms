@@ -43,7 +43,12 @@ export const usePostStore = defineStore('post', () => {
   /**
    * 获取帖子
    */
-  async function getPost(id: number, languageCode: string) {
+  async function getPost(id: number) {
+    if (!id) return null;
+    return await service.Get({ id });
+  }
+
+  async function getPostWithLanguageCode(id: number, languageCode: string) {
     if (!id) return null;
     return await service.Get({ id, languageCode });
   }
@@ -86,6 +91,7 @@ export const usePostStore = defineStore('post', () => {
     $reset,
     listPost,
     getPost,
+    getPostWithLanguageCode,
     createPost,
     updatePost,
     deletePost,

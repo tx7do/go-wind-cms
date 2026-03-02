@@ -200,12 +200,14 @@ async function loadPost() {
   }
 
   try {
-    const item = await postStore.getPost(
-      postId.value || 0,
-      formData.value.lang,
-    );
+    const item = await postStore.getPost(postId.value || 0);
     if (!item) {
       console.error('Post not found');
+      return;
+    }
+
+    if (!item.translations || item.translations.length === 0) {
+      console.error('No translations found for post');
       return;
     }
 
@@ -216,6 +218,7 @@ async function loadPost() {
       langItem = item.translations?.[0];
       formData.value.lang = langItem?.languageCode || formData.value.lang;
     }
+
     if (!langItem) {
       console.error('No translations found for post');
       return;

@@ -69,6 +69,8 @@ func (s *DictEntryService) Update(ctx context.Context, req *dictV1.UpdateDictEnt
 		return nil, err
 	}
 
+	req.Data.Id = trans.Ptr(req.GetId())
+
 	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
 	if req.UpdateMask != nil {
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")

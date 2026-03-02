@@ -499,7 +499,8 @@
     "button": {
       "create": "创建帖子",
       "saveDraft": "保存草稿",
-      "publish": "发布帖子"
+      "publish": "发布帖子",
+      "oneClickTranslate": "一键翻译"
     },
     "title": {
       "create": "创建帖子",

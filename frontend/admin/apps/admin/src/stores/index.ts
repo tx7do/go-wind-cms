@@ -35,6 +35,7 @@ export * from './site-setting.state';
 export * from './tag.state';
 export * from './task.state';
 export * from './tenant.state';
+export * from './translator.state';
 export * from './user.state';
 export * from './user-profile.state';
 
