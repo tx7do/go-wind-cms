@@ -198,12 +198,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
       finalValues.menuIds = filterNumbers(values.menuIds);
     }
 
-    console.log(getTitle.value, values);
+    console.log(getTitle.value, finalValues);
 
     try {
       await (data.value?.create
-        ? permissionStore.createPermission(values)
-        : permissionStore.updatePermission(data.value.row.id, values));
+        ? permissionStore.createPermission(finalValues)
+        : permissionStore.updatePermission(data.value.row.id, finalValues));
 
       notification.success({
         message: data.value?.create

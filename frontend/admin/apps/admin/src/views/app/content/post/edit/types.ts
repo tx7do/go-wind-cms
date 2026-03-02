@@ -1,6 +1,9 @@
 import { EditorType } from '#/adapter/component/Editor';
 
-export interface PublishProps {
+/**
+ * 文章编辑表单数据接口
+ */
+export interface PostEditProps {
   id?: number;
   title: string;
   content: string;

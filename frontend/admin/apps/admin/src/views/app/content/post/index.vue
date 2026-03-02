@@ -136,7 +136,7 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 function handleCreate() {
   console.log('创建', i18n.global.locale.value);
   router.push({
-    path: '/content/posts/create',
+    name: 'CreatePost',
     query: { lang: i18n.global.locale.value },
   });
 }
@@ -145,8 +145,9 @@ function handleCreate() {
 function handleEdit(row: any) {
   console.log('编辑', row, i18n.global.locale.value);
   router.push({
-    path: `/content/posts/edit/${row.id}`,
-    query: { lang: i18n.global.locale.value },
+    name: 'EditPost',
+    params: { id: row.id },
+    query: { lang: 'zh-CN' },
   });
 }
 

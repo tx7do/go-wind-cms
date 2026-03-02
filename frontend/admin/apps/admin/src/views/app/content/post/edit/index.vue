@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { PublishProps } from './types';
-
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { Page, useVbenModal } from '@vben/common-ui';
@@ -11,22 +9,21 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
-import { Editor, EditorType } from '#/adapter/component/Editor';
+import { Editor } from '#/adapter/component/Editor';
 import { router } from '#/router';
 import {
-  convertToEditorType,
   convertToUIEditorType,
   editorTypeOptions,
   useFileTransferStore,
-  useLanguageStore,
   usePostStore,
 } from '#/stores';
 
+import { usePostEditViewStore } from './post-edit-view.state';
 import PublishPostModal from './publish-post-modal.vue';
 
 const postStore = usePostStore();
-const languageStore = useLanguageStore();
 const fileTransferStore = useFileTransferStore();
+const postEditViewStore = usePostEditViewStore();
 
 const route = useRoute();
 const { closeCurrentTab } = useTabs();
@@ -51,51 +48,29 @@ const postId = computed(() => {
   return Number(id);
 });
 
-// 表单数据
-const formData = ref<PublishProps>({
-  title: '',
-  content: '',
-  lang: initLanguage.value,
-  editorType: EditorType.MARKDOWN,
-});
-
-const languageOptions = ref<{ label: string; value: string }[]>([]);
-
-async function reloadLanguages() {
-  try {
-    const resp = await languageStore.listLanguage(undefined, {}, undefined, [
-      'id',
-    ]);
-    languageOptions.value =
-      resp.items?.map((lang) => ({
-        label: lang.nativeName || '',
-        value: lang.languageCode || '',
-      })) || [];
-  } catch (error) {
-    console.error('Failed to load languages:', error);
-  }
-}
-
-const [Modal, modalApi] = useVbenModal({
+const [Modal] = useVbenModal({
   // 连接抽离的组件
   connectedComponent: PublishPostModal,
 });
 
-/**
- * 当用户切换语言时，同时更新URL查询参数
- */
-function handleLanguageChange(newLang: string) {
-  formData.value.lang = newLang;
+async function handleLanguageChange(newLang: string) {
+  postEditViewStore.formData.lang = newLang;
 
   // 更新URL中的 lang 查询参数
-  router.replace({
+  await router.replace({
     path: route.path,
     query: { ...route.query, lang: newLang },
   });
 
   // 如果是编辑模式，需要重新加载该语言版本的文章
   if (isEditMode.value) {
-    loadPost();
+    try {
+      await loadPost();
+    } catch {
+      notification.error({
+        message: $t('page.post.validation.loadFailed'),
+      });
+    }
   }
 }
 
@@ -105,22 +80,22 @@ function handleLanguageChange(newLang: string) {
  */
 watch(
   () => route.query.lang,
-  (newLang) => {
-    if (newLang && formData.value.lang !== newLang) {
-      formData.value.lang = newLang as string;
+  async (newLang) => {
+    if (newLang && postEditViewStore.formData.lang !== newLang) {
+      postEditViewStore.formData.lang = newLang as string;
       // 如果是编辑模式，重新加载该语言版本的文章
       if (isEditMode.value) {
-        loadPost();
+        try {
+          await loadPost();
+        } catch {
+          notification.error({
+            message: $t('page.post.validation.loadFailed'),
+          });
+        }
       }
     }
   },
 );
-
-/* 打开模态窗口 */
-function openModal() {
-  modalApi.setData(formData.value);
-  modalApi.open();
-}
 
 function goBack() {
   closeCurrentTab();
@@ -128,56 +103,30 @@ function goBack() {
 }
 
 function handleSaveDraft() {
-  console.log('Save post:', formData.value);
-  // TODO: 调用保存接口
+  try {
+    postEditViewStore.savePostDraft();
+    notification.success({
+      message: $t('page.post.validation.saveDraftSuccess'),
+    });
+  } catch (error) {
+    console.error('Save draft failed:', error);
+    notification.error({
+      message: $t('page.post.validation.saveDraftFailed'),
+    });
+  }
 }
 
 async function handlePublish() {
-  if (!formData.value.title) {
-    notification.error({
-      message: $t('page.post.validation.titleRequired'),
-    });
-    return;
-  }
-  if (!formData.value.content) {
-    notification.error({
-      message: $t('page.post.validation.contentRequired'),
-    });
-    return;
-  }
-
-  try {
-    await (isCreateMode.value
-      ? postStore.createPost({
-          editorType: convertToEditorType(formData.value.editorType),
-          translations: [
-            {
-              title: formData.value.title,
-              content: formData.value.content,
-              languageCode: formData.value.lang,
-            },
-          ],
-        })
-      : postStore.updatePost(formData.value.id || 0, {
-          editorType: convertToEditorType(formData.value.editorType),
-          translations: [
-            {
-              title: formData.value.title,
-              content: formData.value.content,
-              languageCode: formData.value.lang,
-            },
-          ],
-        }));
-
+  const resp = await postEditViewStore.publishPost();
+  if (!resp || resp === '') {
     notification.success({
       message: $t('page.post.validation.publishSuccess'),
     });
 
     goBack();
-  } catch (error) {
-    console.error('Failed to publish post:', error);
+  } else {
     notification.error({
-      message: $t('page.post.validation.publishFailed'),
+      message: resp,
     });
   }
 }
@@ -202,46 +151,67 @@ async function loadPost() {
   try {
     const item = await postStore.getPost(postId.value || 0);
     if (!item) {
-      console.error('Post not found');
-      return;
+      throw new Error('Post not found');
     }
 
     if (!item.translations || item.translations.length === 0) {
-      console.error('No translations found for post');
-      return;
+      throw new Error('No translations found for post');
     }
 
     let langItem = item.translations?.find(
-      (t) => t.languageCode === formData.value.lang,
+      (t) => t.languageCode === postEditViewStore.formData.lang,
     );
     if (!langItem) {
       langItem = item.translations?.[0];
-      formData.value.lang = langItem?.languageCode || formData.value.lang;
+      postEditViewStore.formData.lang =
+        langItem?.languageCode || postEditViewStore.formData.lang;
     }
 
     if (!langItem) {
-      console.error('No translations found for post');
-      return;
+      throw new Error('No translations found for post');
     }
 
-    formData.value.id = item.id;
-    formData.value.title = langItem.title || '';
-    formData.value.content = langItem.content || '';
-    formData.value.lang = formData.value.lang || 'zh-CN';
-    formData.value.editorType = convertToUIEditorType(item.editorType);
+    postEditViewStore.formData.id = item.id;
+    postEditViewStore.formData.title = langItem.title || '';
+    postEditViewStore.formData.content = langItem.content || '';
+    postEditViewStore.formData.lang =
+      postEditViewStore.formData.lang || 'zh-CN';
+    postEditViewStore.formData.editorType = convertToUIEditorType(
+      item.editorType,
+    );
   } catch (error) {
     console.error('Failed to load post:', error);
+    throw error;
+  }
+}
+
+async function init() {
+  try {
+    await postEditViewStore.fetchLanguageList();
+  } catch {
+    notification.error({
+      message: $t('page.post.validation.loadLanguageFailed'),
+    });
+  }
+
+  if (isCreateMode.value) {
+    postEditViewStore.initCreateMode(initLanguage.value);
+  } else if (isEditMode.value) {
+    postEditViewStore.initEditMode(postId.value || 0, initLanguage.value);
+    try {
+      await postEditViewStore.fetchPost();
+    } catch {
+      notification.error({
+        message: $t('page.post.validation.loadFailed'),
+      });
+    }
+  } else {
+    console.error('Unknown route name:', route.name);
   }
 }
 
 onMounted(async () => {
-  await reloadLanguages();
-
-  if (isCreateMode.value) {
-    formData.value.title = $t('page.post.placeholder.untitled');
-  } else {
-    await loadPost();
-  }
+  await init();
 });
 </script>
 
@@ -258,25 +228,28 @@ onMounted(async () => {
           </template>
         </a-button>
         <a-input
-          v-model:value="formData.title"
+          v-model:value="postEditViewStore.formData.title"
           :placeholder="$t('page.post.placeholder.title')"
           size="large"
           class="flex-1"
         />
         <a-select
-          :value="formData.lang"
+          :value="postEditViewStore.formData.lang"
           style="width: 200px"
           @change="handleLanguageChange"
         >
           <a-select-option
-            v-for="option in languageOptions"
+            v-for="option in postEditViewStore.languageOptions"
             :key="option.value"
             :value="option.value"
           >
             {{ option.label }}
           </a-select-option>
         </a-select>
-        <a-select v-model:value="formData.editorType" style="width: 200px">
+        <a-select
+          v-model:value="postEditViewStore.formData.editorType"
+          style="width: 200px"
+        >
           <a-select-option
             v-for="option in editorTypeOptions"
             :key="option.value"
@@ -292,8 +265,8 @@ onMounted(async () => {
       <Editor
         class="h-full"
         height="100%"
-        v-model="formData.content"
-        :editor-type="formData.editorType"
+        v-model="postEditViewStore.formData.content"
+        :editor-type="postEditViewStore.formData.editorType"
         :placeholder="$t('page.post.placeholder.content')"
         :upload-image="handleUploadImage"
       />
