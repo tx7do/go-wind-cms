@@ -20,7 +20,19 @@ const storageManager = new StorageManager({
   prefix: 'post-draft',
 });
 
-const storageKeyMessage = 'post-edit-draft';
+/**
+ * Generate unique cache key based on post ID, language, and mode
+ */
+function getCacheKey(
+  postId: null | number,
+  lang: string,
+  isCreateMode: boolean,
+): string {
+  if (isCreateMode) {
+    return `create-${lang}`;
+  }
+  return `edit-${postId}-${lang}`;
+}
 
 /**
  * 文章编辑视图状态接口
@@ -64,7 +76,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
     },
 
     /**
-     * 初始化创建模式
+     * Initialize create mode
      */
     initCreateMode(initialLang: string) {
       this.isCreateMode = true;
@@ -76,6 +88,9 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
         lang: initialLang,
         editorType: EditorType.MARKDOWN,
       };
+
+      // Try to load draft for this language
+      this.loadPostDraft();
     },
 
     /**
@@ -103,7 +118,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
     },
 
     /**
-     * 加载文章数据（编辑模式）
+     * Load post data (edit mode only)
      */
     async fetchPost() {
       if (this.isCreateMode || !this.postId) {
@@ -121,14 +136,14 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
           throw new Error('No translations found for post');
         }
 
-        // 查找对应语言的翻译
+        // Find translation for selected language
         let langItem = item.translations?.find(
           (t) => t.languageCode === this.formData.lang,
         );
 
         this.needTranslate = false;
 
-        // 如果没找到对应语言，使用第一个翻译
+        // If translation not found, use first available translation
         if (!langItem) {
           langItem = item.translations?.[0];
           this.needTranslate = true;
@@ -142,18 +157,22 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
           throw new Error('No translations found for post');
         }
 
-        // 使用 availableLanguages 标记语言选项中的翻译状态
+        // Mark translation status in language options using availableLanguages
         const availableLanguages = item.availableLanguages || [];
         this.languageOptions = this.languageOptions.map((option) => ({
           ...option,
           hasTranslation: availableLanguages.includes(option.value),
         }));
 
-        // 更新表单数据
+        // Update form data
         this.formData.id = item.id;
         this.formData.title = langItem.title || '';
         this.formData.content = langItem.content || '';
         this.formData.editorType = convertToUIEditorType(item.editorType);
+
+        // Try to load draft after fetching backend data
+        // Draft will override backend data if exists
+        this.loadPostDraft();
 
         return item;
       } finally {
@@ -162,12 +181,15 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
     },
 
     /**
-     * 切换语言
+     * Switch language
      */
     async switchLanguage(languageCode: string) {
       this.formData.lang = languageCode;
-      // 如果是编辑模式，重新加载该语言版本的文章
-      if (!this.isCreateMode) {
+      // If in create mode, try to load draft for this language
+      if (this.isCreateMode) {
+        // this.loadPostDraft();
+      } else {
+        // If in edit mode, reload the article for this language
         await this.fetchPost();
       }
     },
@@ -180,27 +202,61 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
     },
 
     /**
-     * 保存草稿数据
+     * Save draft data
      */
     savePostDraft() {
-      storageManager.setItem(storageKeyMessage, this.formData);
+      const cacheKey = getCacheKey(
+        this.postId,
+        this.formData.lang,
+        this.isCreateMode,
+      );
+      storageManager.setItem(cacheKey, this.formData);
+      console.log(`Draft saved with key: ${cacheKey}`);
     },
 
     /**
-     * 加载草稿数据
+     * Load draft data
      */
     loadPostDraft() {
-      const draft = storageManager.getItem<PostEditProps>(storageKeyMessage);
+      const cacheKey = getCacheKey(
+        this.postId,
+        this.formData.lang,
+        this.isCreateMode,
+      );
+      const draft = storageManager.getItem<PostEditProps>(cacheKey);
       if (draft) {
+        console.log(`Draft loaded with key: ${cacheKey}`, draft);
         this.formData = draft;
+        return true;
       }
+      console.log(`No draft found with key: ${cacheKey}`);
+      return false;
     },
 
     /**
-     * 清除草稿数据
+     * Clear draft data
      */
     clearPostDraft() {
-      storageManager.removeItem(storageKeyMessage);
+      const cacheKey = getCacheKey(
+        this.postId,
+        this.formData.lang,
+        this.isCreateMode,
+      );
+      storageManager.removeItem(cacheKey);
+      console.log(`Draft cleared with key: ${cacheKey}`);
+    },
+
+    /**
+     * Check if draft exists
+     */
+    hasDraft(): boolean {
+      const cacheKey = getCacheKey(
+        this.postId,
+        this.formData.lang,
+        this.isCreateMode,
+      );
+      const draft = storageManager.getItem<PostEditProps>(cacheKey);
+      return draft !== null && draft !== undefined;
     },
 
     /**

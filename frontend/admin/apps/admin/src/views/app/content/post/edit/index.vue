@@ -74,18 +74,26 @@ function goBack() {
 }
 
 /**
- * 处理语言切换
+ * Handle language switch
  */
 async function handleLanguageChange(newLang: string) {
   console.log('handleLanguageChange', newLang);
 
-  postEditViewStore.formData.lang = newLang;
-
-  // 更新URL中的 lang 查询参数
+  // Update URL query parameter
   await router.replace({
     path: route.path,
     query: { ...route.query, lang: newLang },
   });
+
+  // Use store's switchLanguage method to handle language change with draft loading
+  await postEditViewStore.switchLanguage(newLang);
+
+  // Show notification if translation doesn't exist
+  if (postEditViewStore.needTranslate) {
+    notification.info({
+      message: $t('page.post.validation.translationNotExists'),
+    });
+  }
 }
 
 /**
