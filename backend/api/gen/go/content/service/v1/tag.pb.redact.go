@@ -125,6 +125,8 @@ func (x *Tag) Redact() string {
 
 	// Safe field: Translations
 
+	// Safe field: AvailableLanguages
+
 	// Safe field: CreatedBy
 
 	// Safe field: UpdatedBy

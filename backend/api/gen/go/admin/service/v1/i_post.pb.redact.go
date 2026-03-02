@@ -99,10 +99,10 @@ func (s *redactedPostServiceServer) Delete(ctx context.Context, in *contentpb.De
 	return res, err
 }
 
-// IsExistTranslation is the redacted wrapper for the actual PostServiceServer.IsExistTranslation method
+// TranslationExists is the redacted wrapper for the actual PostServiceServer.TranslationExists method
 // Unary RPC
-func (s *redactedPostServiceServer) IsExistTranslation(ctx context.Context, in *contentpb.IsExistTranslationRequest) (*contentpb.IsExistTranslationResponse, error) {
-	res, err := s.srv.IsExistTranslation(ctx, in)
+func (s *redactedPostServiceServer) TranslationExists(ctx context.Context, in *contentpb.PostTranslationExistsRequest) (*contentpb.PostTranslationExistsResponse, error) {
+	res, err := s.srv.TranslationExists(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)

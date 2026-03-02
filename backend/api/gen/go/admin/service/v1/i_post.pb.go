@@ -28,28 +28,28 @@ var File_admin_service_v1_i_post_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_post_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_post.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto2\xc2\x05\n" +
+	"\x1dadmin/service/v1/i_post.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto2\xc7\x05\n" +
 	"\vPostService\x12`\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/v1/posts\x12a\n" +
 	"\x03Get\x12\".content.service.v1.GetPostRequest\x1a\x18.content.service.v1.Post\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/posts/{id}\x12e\n" +
 	"\x06Create\x12%.content.service.v1.CreatePostRequest\x1a\x18.content.service.v1.Post\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/v1/posts\x12j\n" +
 	"\x06Update\x12%.content.service.v1.UpdatePostRequest\x1a\x18.content.service.v1.Post\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\x1a\x14/admin/v1/posts/{id}\x12e\n" +
-	"\x06Delete\x12%.content.service.v1.DeletePostRequest\x1a\x16.google.protobuf.Empty\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/admin/v1/posts/{id}\x12\xb3\x01\n" +
-	"\x12IsExistTranslation\x12-.content.service.v1.IsExistTranslationRequest\x1a..content.service.v1.IsExistTranslationResponse\">\x82\xd3\xe4\x93\x028\x126/admin/v1/posts/{post_id}/translations/{language_code}B\xb5\x01\n" +
+	"\x06Delete\x12%.content.service.v1.DeletePostRequest\x1a\x16.google.protobuf.Empty\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/admin/v1/posts/{id}\x12\xb8\x01\n" +
+	"\x11TranslationExists\x120.content.service.v1.PostTranslationExistsRequest\x1a1.content.service.v1.PostTranslationExistsResponse\">\x82\xd3\xe4\x93\x028\x126/admin/v1/posts/{post_id}/translations/{language_code}B\xb5\x01\n" +
 	"\x14com.admin.service.v1B\n" +
 	"IPostProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_post_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),               // 0: pagination.PagingRequest
-	(*v11.GetPostRequest)(nil),             // 1: content.service.v1.GetPostRequest
-	(*v11.CreatePostRequest)(nil),          // 2: content.service.v1.CreatePostRequest
-	(*v11.UpdatePostRequest)(nil),          // 3: content.service.v1.UpdatePostRequest
-	(*v11.DeletePostRequest)(nil),          // 4: content.service.v1.DeletePostRequest
-	(*v11.IsExistTranslationRequest)(nil),  // 5: content.service.v1.IsExistTranslationRequest
-	(*v11.ListPostResponse)(nil),           // 6: content.service.v1.ListPostResponse
-	(*v11.Post)(nil),                       // 7: content.service.v1.Post
-	(*emptypb.Empty)(nil),                  // 8: google.protobuf.Empty
-	(*v11.IsExistTranslationResponse)(nil), // 9: content.service.v1.IsExistTranslationResponse
+	(*v1.PagingRequest)(nil),                  // 0: pagination.PagingRequest
+	(*v11.GetPostRequest)(nil),                // 1: content.service.v1.GetPostRequest
+	(*v11.CreatePostRequest)(nil),             // 2: content.service.v1.CreatePostRequest
+	(*v11.UpdatePostRequest)(nil),             // 3: content.service.v1.UpdatePostRequest
+	(*v11.DeletePostRequest)(nil),             // 4: content.service.v1.DeletePostRequest
+	(*v11.PostTranslationExistsRequest)(nil),  // 5: content.service.v1.PostTranslationExistsRequest
+	(*v11.ListPostResponse)(nil),              // 6: content.service.v1.ListPostResponse
+	(*v11.Post)(nil),                          // 7: content.service.v1.Post
+	(*emptypb.Empty)(nil),                     // 8: google.protobuf.Empty
+	(*v11.PostTranslationExistsResponse)(nil), // 9: content.service.v1.PostTranslationExistsResponse
 }
 var file_admin_service_v1_i_post_proto_depIdxs = []int32{
 	0, // 0: admin.service.v1.PostService.List:input_type -> pagination.PagingRequest
@@ -57,13 +57,13 @@ var file_admin_service_v1_i_post_proto_depIdxs = []int32{
 	2, // 2: admin.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
 	3, // 3: admin.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
 	4, // 4: admin.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
-	5, // 5: admin.service.v1.PostService.IsExistTranslation:input_type -> content.service.v1.IsExistTranslationRequest
+	5, // 5: admin.service.v1.PostService.TranslationExists:input_type -> content.service.v1.PostTranslationExistsRequest
 	6, // 6: admin.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
 	7, // 7: admin.service.v1.PostService.Get:output_type -> content.service.v1.Post
 	7, // 8: admin.service.v1.PostService.Create:output_type -> content.service.v1.Post
 	7, // 9: admin.service.v1.PostService.Update:output_type -> content.service.v1.Post
 	8, // 10: admin.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
-	9, // 11: admin.service.v1.PostService.IsExistTranslation:output_type -> content.service.v1.IsExistTranslationResponse
+	9, // 11: admin.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
 	6, // [6:12] is the sub-list for method output_type
 	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

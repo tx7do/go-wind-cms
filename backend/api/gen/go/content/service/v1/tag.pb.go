@@ -87,19 +87,20 @@ type Tag struct {
 	Color  *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof" json:"color,omitempty"`                                          // 标签颜色（HEX 格式，如 '#3498db'，用于标签云/前端展示）
 	Icon   *string                `protobuf:"bytes,4,opt,name=icon,proto3,oneof" json:"icon,omitempty"`                                            // 标签图标（可选，支持图标名称如 'fas fa-code' 或 SVG URL）
 	// 注：大多数 CMS 不需要标签分组，但某些场景（如多租户/大型站点）可能需要
-	Group         *string                `protobuf:"bytes,5,opt,name=group,proto3,oneof" json:"group,omitempty"`                              // 标签分组（可选，如 '技术栈'、'行业'，用于后台分类管理，不影响前台展示）
-	SortOrder     *uint32                `protobuf:"varint,6,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`    // 排序优先级（数值越小越靠前，同组内排序）
-	IsFeatured    *bool                  `protobuf:"varint,7,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"` // 是否推荐（前台可用来突出显示，如标签云中加大字体或特殊标识）
-	PostCount     *uint32                `protobuf:"varint,10,opt,name=post_count,json=postCount,proto3,oneof" json:"post_count,omitempty"`   // 使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）
-	Translations  []*TagTranslation      `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`
-	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
-	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
-	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`  // 删除时间
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Group              *string                `protobuf:"bytes,5,opt,name=group,proto3,oneof" json:"group,omitempty"`                              // 标签分组（可选，如 '技术栈'、'行业'，用于后台分类管理，不影响前台展示）
+	SortOrder          *uint32                `protobuf:"varint,6,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`    // 排序优先级（数值越小越靠前，同组内排序）
+	IsFeatured         *bool                  `protobuf:"varint,7,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"` // 是否推荐（前台可用来突出显示，如标签云中加大字体或特殊标识）
+	PostCount          *uint32                `protobuf:"varint,10,opt,name=post_count,json=postCount,proto3,oneof" json:"post_count,omitempty"`   // 使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）
+	Translations       []*TagTranslation      `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`
+	AvailableLanguages []string               `protobuf:"bytes,21,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"` // 可用的语言代码列表
+	CreatedBy          *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                    // 创建者用户ID
+	UpdatedBy          *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                    // 更新者用户ID
+	DeletedBy          *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                    // 删除者用户ID
+	CreatedAt          *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                     // 创建时间
+	UpdatedAt          *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                     // 更新时间
+	DeletedAt          *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                     // 删除时间
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Tag) Reset() {
@@ -191,6 +192,13 @@ func (x *Tag) GetPostCount() uint32 {
 func (x *Tag) GetTranslations() []*TagTranslation {
 	if x != nil {
 		return x.Translations
+	}
+	return nil
+}
+
+func (x *Tag) GetAvailableLanguages() []string {
+	if x != nil {
+		return x.AvailableLanguages
 	}
 	return nil
 }
@@ -695,7 +703,7 @@ var File_content_service_v1_tag_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_tag_proto_rawDesc = "" +
 	"\n" +
-	"\x1ccontent/service/v1/tag.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xcb\f\n" +
+	"\x1ccontent/service/v1/tag.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xed\r\n" +
 	"\x03Tag\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b标签IDH\x00R\x02id\x88\x01\x01\x12R\n" +
 	"\x06status\x18\x02 \x01(\x0e2!.content.service.v1.Tag.TagStatusB\x12\xbaG\x0f\x92\x02\f标签状态H\x01R\x06status\x88\x01\x01\x12l\n" +
@@ -709,7 +717,8 @@ const file_content_service_v1_tag_proto_rawDesc = "" +
 	"\n" +
 	"post_count\x18\n" +
 	" \x01(\rB]\xbaGZ\x92\x02W使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）H\aR\tpostCount\x88\x01\x01\x12c\n" +
-	"\ftranslations\x18\x14 \x03(\v2\".content.service.v1.TagTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12;\n" +
+	"\ftranslations\x18\x14 \x03(\v2\".content.service.v1.TagTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
+	"\x13available_languages\x18\x15 \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12;\n" +
 	"\n" +
 	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +

@@ -101,10 +101,10 @@ func (s *redactedPostServiceServer) Delete(ctx context.Context, in *DeletePostRe
 	return res, err
 }
 
-// IsExistTranslation is the redacted wrapper for the actual PostServiceServer.IsExistTranslation method
+// TranslationExists is the redacted wrapper for the actual PostServiceServer.TranslationExists method
 // Unary RPC
-func (s *redactedPostServiceServer) IsExistTranslation(ctx context.Context, in *IsExistTranslationRequest) (*IsExistTranslationResponse, error) {
-	res, err := s.srv.IsExistTranslation(ctx, in)
+func (s *redactedPostServiceServer) TranslationExists(ctx context.Context, in *PostTranslationExistsRequest) (*PostTranslationExistsResponse, error) {
+	res, err := s.srv.TranslationExists(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -149,6 +149,8 @@ func (x *Post) Redact() string {
 	// Safe field: CustomFields
 
 	// Safe field: Translations
+
+	// Safe field: AvailableLanguages
 
 	// Safe field: CategoryIds
 
@@ -296,8 +298,8 @@ func (x *DeletePostRequest) Redact() string {
 	return x.String()
 }
 
-// Redact method implementation for IsExistTranslationRequest
-func (x *IsExistTranslationRequest) Redact() string {
+// Redact method implementation for PostTranslationExistsRequest
+func (x *PostTranslationExistsRequest) Redact() string {
 	if x == nil {
 		return ""
 	}
@@ -308,12 +310,12 @@ func (x *IsExistTranslationRequest) Redact() string {
 	return x.String()
 }
 
-// Redact method implementation for IsExistTranslationResponse
-func (x *IsExistTranslationResponse) Redact() string {
+// Redact method implementation for PostTranslationExistsResponse
+func (x *PostTranslationExistsResponse) Redact() string {
 	if x == nil {
 		return ""
 	}
 
-	// Safe field: Exist
+	// Safe field: Exists
 	return x.String()
 }

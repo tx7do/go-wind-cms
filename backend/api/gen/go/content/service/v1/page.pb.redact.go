@@ -143,6 +143,8 @@ func (x *Page) Redact() string {
 
 	// Safe field: Translations
 
+	// Safe field: AvailableLanguages
+
 	// Safe field: ParentId
 
 	// Safe field: Children

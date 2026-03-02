@@ -84,35 +84,36 @@ func (Post_PostStatus) EnumDescriptor() ([]byte, []int) {
 
 // 帖子
 type Post struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 帖子ID
-	Status          *Post_PostStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Post_PostStatus,oneof" json:"status,omitempty"`                                                             // 帖子状态
-	EditorType      *EditorType            `protobuf:"varint,3,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
-	Slug            *string                `protobuf:"bytes,4,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                                                                          // 默认 slug（当翻译中未提供 slug 时使用，建议保持英文）
-	DisallowComment *bool                  `protobuf:"varint,5,opt,name=disallow_comment,json=disallowComment,proto3,oneof" json:"disallow_comment,omitempty"`                                                            // 帖子是否禁止评论
-	InProgress      *bool                  `protobuf:"varint,6,opt,name=in_progress,json=inProgress,proto3,oneof" json:"in_progress,omitempty"`                                                                           // 帖子是否正在编辑中（如正在编辑则不允许发布，避免内容不完整）
-	AutoSummary     *bool                  `protobuf:"varint,7,opt,name=auto_summary,json=autoSummary,proto3,oneof" json:"auto_summary,omitempty"`                                                                        // 是否自动生成摘要（如果 content 发生变化且 summary 为空，则自动生成摘要）
-	IsFeatured      *bool                  `protobuf:"varint,8,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"`                                                                           // 是否推荐（前台可用来突出显示，如列表中加大字体或特殊标识）
-	SortOrder       *uint32                `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                                                              // 排序优先级（数值越小越靠前，同组内排序）
-	Visits          *int32                 `protobuf:"varint,10,opt,name=visits,proto3,oneof" json:"visits,omitempty"`                                                                                                    // 帖子访问次数
-	Likes           *int32                 `protobuf:"varint,11,opt,name=likes,proto3,oneof" json:"likes,omitempty"`                                                                                                      // 帖子点赞次数
-	CommentCount    *int32                 `protobuf:"varint,12,opt,name=comment_count,json=commentCount,proto3,oneof" json:"comment_count,omitempty"`                                                                    // 帖子评论数
-	AuthorId        *uint32                `protobuf:"varint,20,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                // 帖子作者ID，0表示游客
-	AuthorName      *string                `protobuf:"bytes,21,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                           // 帖子作者名称（游客填写）
-	CustomFields    map[string]string      `protobuf:"bytes,30,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
-	Translations    []*PostTranslation     `protobuf:"bytes,40,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
-	CategoryIds     []uint32               `protobuf:"varint,50,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`                                                                      // 关联的分类ID列表（多选）
-	TagIds          []uint32               `protobuf:"varint,51,rep,packed,name=tag_ids,json=tagIds,proto3" json:"tag_ids,omitempty"`                                                                                     // 关联的标签ID列表（多选）
-	PasswordHash    *string                `protobuf:"bytes,60,opt,name=password_hash,json=passwordHash,proto3,oneof" json:"password_hash,omitempty"`                                                                     // 密码哈希（如果帖子受密码保护，存储密码的哈希值，前端不返回该字段）
-	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
-	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
-	DeletedBy       *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                                             // 创建时间
-	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                                             // 更新时间
-	DeletedAt       *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                                                             // 删除时间
-	PublishTime     *timestamppb.Timestamp `protobuf:"bytes,203,opt,name=publish_time,json=publishTime,proto3,oneof" json:"publish_time,omitempty"`                                                                       // 发布时间
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 帖子ID
+	Status             *Post_PostStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Post_PostStatus,oneof" json:"status,omitempty"`                                                             // 帖子状态
+	EditorType         *EditorType            `protobuf:"varint,3,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
+	Slug               *string                `protobuf:"bytes,4,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                                                                          // 默认 slug（当翻译中未提供 slug 时使用，建议保持英文）
+	DisallowComment    *bool                  `protobuf:"varint,5,opt,name=disallow_comment,json=disallowComment,proto3,oneof" json:"disallow_comment,omitempty"`                                                            // 帖子是否禁止评论
+	InProgress         *bool                  `protobuf:"varint,6,opt,name=in_progress,json=inProgress,proto3,oneof" json:"in_progress,omitempty"`                                                                           // 帖子是否正在编辑中（如正在编辑则不允许发布，避免内容不完整）
+	AutoSummary        *bool                  `protobuf:"varint,7,opt,name=auto_summary,json=autoSummary,proto3,oneof" json:"auto_summary,omitempty"`                                                                        // 是否自动生成摘要（如果 content 发生变化且 summary 为空，则自动生成摘要）
+	IsFeatured         *bool                  `protobuf:"varint,8,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"`                                                                           // 是否推荐（前台可用来突出显示，如列表中加大字体或特殊标识）
+	SortOrder          *uint32                `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                                                              // 排序优先级（数值越小越靠前，同组内排序）
+	Visits             *int32                 `protobuf:"varint,10,opt,name=visits,proto3,oneof" json:"visits,omitempty"`                                                                                                    // 帖子访问次数
+	Likes              *int32                 `protobuf:"varint,11,opt,name=likes,proto3,oneof" json:"likes,omitempty"`                                                                                                      // 帖子点赞次数
+	CommentCount       *int32                 `protobuf:"varint,12,opt,name=comment_count,json=commentCount,proto3,oneof" json:"comment_count,omitempty"`                                                                    // 帖子评论数
+	AuthorId           *uint32                `protobuf:"varint,20,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                // 帖子作者ID，0表示游客
+	AuthorName         *string                `protobuf:"bytes,21,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                           // 帖子作者名称（游客填写）
+	CustomFields       map[string]string      `protobuf:"bytes,30,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
+	Translations       []*PostTranslation     `protobuf:"bytes,40,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
+	AvailableLanguages []string               `protobuf:"bytes,41,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
+	CategoryIds        []uint32               `protobuf:"varint,50,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`                                                                      // 关联的分类ID列表（多选）
+	TagIds             []uint32               `protobuf:"varint,51,rep,packed,name=tag_ids,json=tagIds,proto3" json:"tag_ids,omitempty"`                                                                                     // 关联的标签ID列表（多选）
+	PasswordHash       *string                `protobuf:"bytes,60,opt,name=password_hash,json=passwordHash,proto3,oneof" json:"password_hash,omitempty"`                                                                     // 密码哈希（如果帖子受密码保护，存储密码的哈希值，前端不返回该字段）
+	CreatedBy          *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
+	UpdatedBy          *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
+	DeletedBy          *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
+	CreatedAt          *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                                             // 创建时间
+	UpdatedAt          *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                                             // 更新时间
+	DeletedAt          *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                                                             // 删除时间
+	PublishTime        *timestamppb.Timestamp `protobuf:"bytes,203,opt,name=publish_time,json=publishTime,proto3,oneof" json:"publish_time,omitempty"`                                                                       // 发布时间
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Post) Reset() {
@@ -253,6 +254,13 @@ func (x *Post) GetCustomFields() map[string]string {
 func (x *Post) GetTranslations() []*PostTranslation {
 	if x != nil {
 		return x.Translations
+	}
+	return nil
+}
+
+func (x *Post) GetAvailableLanguages() []string {
+	if x != nil {
+		return x.AvailableLanguages
 	}
 	return nil
 }
@@ -857,7 +865,7 @@ func (x *DeletePostRequest) GetId() uint32 {
 	return 0
 }
 
-type IsExistTranslationRequest struct {
+type PostTranslationExistsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PostId        uint32                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`                  // 帖子ID
 	LanguageCode  string                 `protobuf:"bytes,2,opt,name=language_code,json=languageCode,proto3" json:"language_code,omitempty"` // 语言代码
@@ -865,20 +873,20 @@ type IsExistTranslationRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *IsExistTranslationRequest) Reset() {
-	*x = IsExistTranslationRequest{}
+func (x *PostTranslationExistsRequest) Reset() {
+	*x = PostTranslationExistsRequest{}
 	mi := &file_content_service_v1_post_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *IsExistTranslationRequest) String() string {
+func (x *PostTranslationExistsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*IsExistTranslationRequest) ProtoMessage() {}
+func (*PostTranslationExistsRequest) ProtoMessage() {}
 
-func (x *IsExistTranslationRequest) ProtoReflect() protoreflect.Message {
+func (x *PostTranslationExistsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_content_service_v1_post_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -890,46 +898,46 @@ func (x *IsExistTranslationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use IsExistTranslationRequest.ProtoReflect.Descriptor instead.
-func (*IsExistTranslationRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use PostTranslationExistsRequest.ProtoReflect.Descriptor instead.
+func (*PostTranslationExistsRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *IsExistTranslationRequest) GetPostId() uint32 {
+func (x *PostTranslationExistsRequest) GetPostId() uint32 {
 	if x != nil {
 		return x.PostId
 	}
 	return 0
 }
 
-func (x *IsExistTranslationRequest) GetLanguageCode() string {
+func (x *PostTranslationExistsRequest) GetLanguageCode() string {
 	if x != nil {
 		return x.LanguageCode
 	}
 	return ""
 }
 
-type IsExistTranslationResponse struct {
+type PostTranslationExistsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Exist         bool                   `protobuf:"varint,1,opt,name=exist,proto3" json:"exist,omitempty"` // 翻译是否存在
+	Exists        bool                   `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"` // 翻译是否存在
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *IsExistTranslationResponse) Reset() {
-	*x = IsExistTranslationResponse{}
+func (x *PostTranslationExistsResponse) Reset() {
+	*x = PostTranslationExistsResponse{}
 	mi := &file_content_service_v1_post_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *IsExistTranslationResponse) String() string {
+func (x *PostTranslationExistsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*IsExistTranslationResponse) ProtoMessage() {}
+func (*PostTranslationExistsResponse) ProtoMessage() {}
 
-func (x *IsExistTranslationResponse) ProtoReflect() protoreflect.Message {
+func (x *PostTranslationExistsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_content_service_v1_post_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -941,14 +949,14 @@ func (x *IsExistTranslationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use IsExistTranslationResponse.ProtoReflect.Descriptor instead.
-func (*IsExistTranslationResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use PostTranslationExistsResponse.ProtoReflect.Descriptor instead.
+func (*PostTranslationExistsResponse) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *IsExistTranslationResponse) GetExist() bool {
+func (x *PostTranslationExistsResponse) GetExists() bool {
 	if x != nil {
-		return x.Exist
+		return x.Exists
 	}
 	return false
 }
@@ -957,7 +965,7 @@ var File_content_service_v1_post_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_post_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcontent/service/v1/post.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xb7\x14\n" +
+	"\x1dcontent/service/v1/post.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xd9\x15\n" +
 	"\x04Post\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Post.PostStatusB\x12\xbaG\x0f\x92\x02\f帖子状态H\x01R\x06status\x88\x01\x01\x12[\n" +
@@ -981,7 +989,8 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\vauthor_name\x18\x15 \x01(\tB*\xbaG'\x92\x02$帖子作者名称（游客填写）H\rR\n" +
 	"authorName\x88\x01\x01\x12\x87\x01\n" +
 	"\rcustom_fields\x18\x1e \x03(\v2*.content.service.v1.Post.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12d\n" +
-	"\ftranslations\x18( \x03(\v2#.content.service.v1.PostTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12L\n" +
+	"\ftranslations\x18( \x03(\v2#.content.service.v1.PostTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
+	"\x13available_languages\x18) \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12L\n" +
 	"\fcategory_ids\x182 \x03(\rB)\xbaG&\x92\x02#关联的分类ID列表（多选）R\vcategoryIds\x12B\n" +
 	"\atag_ids\x183 \x03(\rB)\xbaG&\x92\x02#关联的标签ID列表（多选）R\x06tagIds\x12<\n" +
 	"\rpassword_hash\x18< \x01(\tB\x12\xbaG\x0f\x92\x02\f密码哈希H\x0eR\fpasswordHash\x88\x01\x01\x12;\n" +
@@ -1115,19 +1124,19 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"#\n" +
 	"\x11DeletePostRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\"}\n" +
-	"\x19IsExistTranslationRequest\x12'\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\"\x80\x01\n" +
+	"\x1cPostTranslationExistsRequest\x12'\n" +
 	"\apost_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x127\n" +
-	"\rlanguage_code\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\flanguageCode\"L\n" +
-	"\x1aIsExistTranslationResponse\x12.\n" +
-	"\x05exist\x18\x01 \x01(\bB\x18\xbaG\x15\x92\x02\x12翻译是否存在R\x05exist2\xfb\x03\n" +
+	"\rlanguage_code\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\flanguageCode\"Q\n" +
+	"\x1dPostTranslationExistsResponse\x120\n" +
+	"\x06exists\x18\x01 \x01(\bB\x18\xbaG\x15\x92\x02\x12翻译是否存在R\x06exists2\x80\x04\n" +
 	"\vPostService\x12I\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x00\x12E\n" +
 	"\x03Get\x12\".content.service.v1.GetPostRequest\x1a\x18.content.service.v1.Post\"\x00\x12K\n" +
 	"\x06Create\x12%.content.service.v1.CreatePostRequest\x1a\x18.content.service.v1.Post\"\x00\x12K\n" +
 	"\x06Update\x12%.content.service.v1.UpdatePostRequest\x1a\x18.content.service.v1.Post\"\x00\x12I\n" +
-	"\x06Delete\x12%.content.service.v1.DeletePostRequest\x1a\x16.google.protobuf.Empty\"\x00\x12u\n" +
-	"\x12IsExistTranslation\x12-.content.service.v1.IsExistTranslationRequest\x1a..content.service.v1.IsExistTranslationResponse\"\x00B\xc2\x01\n" +
+	"\x06Delete\x12%.content.service.v1.DeletePostRequest\x1a\x16.google.protobuf.Empty\"\x00\x12z\n" +
+	"\x11TranslationExists\x120.content.service.v1.PostTranslationExistsRequest\x1a1.content.service.v1.PostTranslationExistsResponse\"\x00B\xc2\x01\n" +
 	"\x16com.content.service.v1B\tPostProtoP\x01Z3go-wind-cms/api/gen/go/content/service/v1;contentpb\xa2\x02\x03CSX\xaa\x02\x12Content.Service.V1\xca\x02\x12Content\\Service\\V1\xe2\x02\x1eContent\\Service\\V1\\GPBMetadata\xea\x02\x14Content::Service::V1b\x06proto3"
 
 var (
@@ -1145,23 +1154,23 @@ func file_content_service_v1_post_proto_rawDescGZIP() []byte {
 var file_content_service_v1_post_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_content_service_v1_post_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_content_service_v1_post_proto_goTypes = []any{
-	(Post_PostStatus)(0),               // 0: content.service.v1.Post.PostStatus
-	(*Post)(nil),                       // 1: content.service.v1.Post
-	(*PostTranslation)(nil),            // 2: content.service.v1.PostTranslation
-	(*PostCategory)(nil),               // 3: content.service.v1.PostCategory
-	(*ListPostResponse)(nil),           // 4: content.service.v1.ListPostResponse
-	(*GetPostRequest)(nil),             // 5: content.service.v1.GetPostRequest
-	(*CreatePostRequest)(nil),          // 6: content.service.v1.CreatePostRequest
-	(*UpdatePostRequest)(nil),          // 7: content.service.v1.UpdatePostRequest
-	(*DeletePostRequest)(nil),          // 8: content.service.v1.DeletePostRequest
-	(*IsExistTranslationRequest)(nil),  // 9: content.service.v1.IsExistTranslationRequest
-	(*IsExistTranslationResponse)(nil), // 10: content.service.v1.IsExistTranslationResponse
-	nil,                                // 11: content.service.v1.Post.CustomFieldsEntry
-	(EditorType)(0),                    // 12: content.service.v1.EditorType
-	(*timestamppb.Timestamp)(nil),      // 13: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),      // 14: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),           // 15: pagination.PagingRequest
-	(*emptypb.Empty)(nil),              // 16: google.protobuf.Empty
+	(Post_PostStatus)(0),                  // 0: content.service.v1.Post.PostStatus
+	(*Post)(nil),                          // 1: content.service.v1.Post
+	(*PostTranslation)(nil),               // 2: content.service.v1.PostTranslation
+	(*PostCategory)(nil),                  // 3: content.service.v1.PostCategory
+	(*ListPostResponse)(nil),              // 4: content.service.v1.ListPostResponse
+	(*GetPostRequest)(nil),                // 5: content.service.v1.GetPostRequest
+	(*CreatePostRequest)(nil),             // 6: content.service.v1.CreatePostRequest
+	(*UpdatePostRequest)(nil),             // 7: content.service.v1.UpdatePostRequest
+	(*DeletePostRequest)(nil),             // 8: content.service.v1.DeletePostRequest
+	(*PostTranslationExistsRequest)(nil),  // 9: content.service.v1.PostTranslationExistsRequest
+	(*PostTranslationExistsResponse)(nil), // 10: content.service.v1.PostTranslationExistsResponse
+	nil,                                   // 11: content.service.v1.Post.CustomFieldsEntry
+	(EditorType)(0),                       // 12: content.service.v1.EditorType
+	(*timestamppb.Timestamp)(nil),         // 13: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),         // 14: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),              // 15: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                 // 16: google.protobuf.Empty
 }
 var file_content_service_v1_post_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Post.status:type_name -> content.service.v1.Post.PostStatus
@@ -1185,13 +1194,13 @@ var file_content_service_v1_post_proto_depIdxs = []int32{
 	6,  // 18: content.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
 	7,  // 19: content.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
 	8,  // 20: content.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
-	9,  // 21: content.service.v1.PostService.IsExistTranslation:input_type -> content.service.v1.IsExistTranslationRequest
+	9,  // 21: content.service.v1.PostService.TranslationExists:input_type -> content.service.v1.PostTranslationExistsRequest
 	4,  // 22: content.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
 	1,  // 23: content.service.v1.PostService.Get:output_type -> content.service.v1.Post
 	1,  // 24: content.service.v1.PostService.Create:output_type -> content.service.v1.Post
 	1,  // 25: content.service.v1.PostService.Update:output_type -> content.service.v1.Post
 	16, // 26: content.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
-	10, // 27: content.service.v1.PostService.IsExistTranslation:output_type -> content.service.v1.IsExistTranslationResponse
+	10, // 27: content.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
 	22, // [22:28] is the sub-list for method output_type
 	16, // [16:22] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name

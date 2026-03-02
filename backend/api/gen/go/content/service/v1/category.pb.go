@@ -81,28 +81,29 @@ func (Category_CategoryStatus) EnumDescriptor() ([]byte, []int) {
 
 // 类别
 type Category struct {
-	state           protoimpl.MessageState   `protogen:"open.v1"`
-	Id              *uint32                  `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                         // 类别ID
-	Status          *Category_CategoryStatus `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Category_CategoryStatus,oneof" json:"status,omitempty"` // 分类状态（启用/隐藏/归档）
-	SortOrder       *uint32                  `protobuf:"varint,3,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                          // 排序优先级（数值越小越靠前，同级分类间排序）
-	IsNav           *bool                    `protobuf:"varint,4,opt,name=is_nav,json=isNav,proto3,oneof" json:"is_nav,omitempty"`                                      // 是否显示在导航菜单（可选，默认 false）
-	Icon            *string                  `protobuf:"bytes,5,opt,name=icon,proto3,oneof" json:"icon,omitempty"`                                                      // 分类图标（可选，支持图标名称如 'fas fa-folder' 或 SVG URL）
-	PostCount       *uint32                  `protobuf:"varint,10,opt,name=post_count,json=postCount,proto3,oneof" json:"post_count,omitempty"`                         // 该分类下的文章总数（含子分类，可选）
-	DirectPostCount *uint32                  `protobuf:"varint,11,opt,name=direct_post_count,json=directPostCount,proto3,oneof" json:"direct_post_count,omitempty"`     // 该分类下的直接文章数（不含子分类）
-	Translations    []*CategoryTranslation   `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`
-	CustomFields    map[string]string        `protobuf:"bytes,30,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
-	ParentId        *uint32                  `protobuf:"varint,60,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                                                                // 父节点ID
-	Children        []*Category              `protobuf:"bytes,61,rep,name=children,proto3" json:"children,omitempty"`                                                                                                       // 子节点树
-	Depth           *int32                   `protobuf:"varint,62,opt,name=depth,proto3,oneof" json:"depth,omitempty"`                                                                                                      // 分类层级深度（0=顶级，1=二级，以此类推）
-	Path            *string                  `protobuf:"bytes,63,opt,name=path,proto3,oneof" json:"path,omitempty"`                                                                                                         // 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
-	CreatedBy       *uint32                  `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
-	UpdatedBy       *uint32                  `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
-	DeletedBy       *uint32                  `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
-	CreatedAt       *timestamppb.Timestamp   `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                                             // 创建时间
-	UpdatedAt       *timestamppb.Timestamp   `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                                             // 更新时间
-	DeletedAt       *timestamppb.Timestamp   `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                                                             // 删除时间
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state              protoimpl.MessageState   `protogen:"open.v1"`
+	Id                 *uint32                  `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                         // 类别ID
+	Status             *Category_CategoryStatus `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Category_CategoryStatus,oneof" json:"status,omitempty"` // 分类状态（启用/隐藏/归档）
+	SortOrder          *uint32                  `protobuf:"varint,3,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                          // 排序优先级（数值越小越靠前，同级分类间排序）
+	IsNav              *bool                    `protobuf:"varint,4,opt,name=is_nav,json=isNav,proto3,oneof" json:"is_nav,omitempty"`                                      // 是否显示在导航菜单（可选，默认 false）
+	Icon               *string                  `protobuf:"bytes,5,opt,name=icon,proto3,oneof" json:"icon,omitempty"`                                                      // 分类图标（可选，支持图标名称如 'fas fa-folder' 或 SVG URL）
+	PostCount          *uint32                  `protobuf:"varint,10,opt,name=post_count,json=postCount,proto3,oneof" json:"post_count,omitempty"`                         // 该分类下的文章总数（含子分类，可选）
+	DirectPostCount    *uint32                  `protobuf:"varint,11,opt,name=direct_post_count,json=directPostCount,proto3,oneof" json:"direct_post_count,omitempty"`     // 该分类下的直接文章数（不含子分类）
+	Translations       []*CategoryTranslation   `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`
+	AvailableLanguages []string                 `protobuf:"bytes,21,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
+	CustomFields       map[string]string        `protobuf:"bytes,30,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
+	ParentId           *uint32                  `protobuf:"varint,60,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                                                                // 父节点ID
+	Children           []*Category              `protobuf:"bytes,61,rep,name=children,proto3" json:"children,omitempty"`                                                                                                       // 子节点树
+	Depth              *int32                   `protobuf:"varint,62,opt,name=depth,proto3,oneof" json:"depth,omitempty"`                                                                                                      // 分类层级深度（0=顶级，1=二级，以此类推）
+	Path               *string                  `protobuf:"bytes,63,opt,name=path,proto3,oneof" json:"path,omitempty"`                                                                                                         // 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
+	CreatedBy          *uint32                  `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
+	UpdatedBy          *uint32                  `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
+	DeletedBy          *uint32                  `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
+	CreatedAt          *timestamppb.Timestamp   `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                                             // 创建时间
+	UpdatedAt          *timestamppb.Timestamp   `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                                             // 更新时间
+	DeletedAt          *timestamppb.Timestamp   `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                                                             // 删除时间
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Category) Reset() {
@@ -187,6 +188,13 @@ func (x *Category) GetDirectPostCount() uint32 {
 func (x *Category) GetTranslations() []*CategoryTranslation {
 	if x != nil {
 		return x.Translations
+	}
+	return nil
+}
+
+func (x *Category) GetAvailableLanguages() []string {
+	if x != nil {
+		return x.AvailableLanguages
 	}
 	return nil
 }
@@ -726,7 +734,7 @@ var File_content_service_v1_category_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_category_proto_rawDesc = "" +
 	"\n" +
-	"!content/service/v1/category.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xcb\x0f\n" +
+	"!content/service/v1/category.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xed\x10\n" +
 	"\bCategory\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b类别IDH\x00R\x02id\x88\x01\x01\x12\\\n" +
 	"\x06status\x18\x02 \x01(\x0e2+.content.service.v1.Category.CategoryStatusB\x12\xbaG\x0f\x92\x02\f分类状态H\x01R\x06status\x88\x01\x01\x12l\n" +
@@ -738,7 +746,8 @@ const file_content_service_v1_category_proto_rawDesc = "" +
 	"post_count\x18\n" +
 	" \x01(\rB<\xbaG9\x92\x026该分类下的文章总数（含子分类，可选）H\x05R\tpostCount\x88\x01\x01\x12j\n" +
 	"\x11direct_post_count\x18\v \x01(\rB9\xbaG6\x92\x023该分类下的直接文章数（不含子分类）H\x06R\x0fdirectPostCount\x88\x01\x01\x12h\n" +
-	"\ftranslations\x18\x14 \x03(\v2'.content.service.v1.CategoryTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x8b\x01\n" +
+	"\ftranslations\x18\x14 \x03(\v2'.content.service.v1.CategoryTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
+	"\x13available_languages\x18\x15 \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12\x8b\x01\n" +
 	"\rcustom_fields\x18\x1e \x03(\v2..content.service.v1.Category.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x123\n" +
 	"\tparent_id\x18< \x01(\rB\x11\xbaG\x0e\x92\x02\v父节点IDH\aR\bparentId\x88\x01\x01\x12L\n" +
 	"\bchildren\x18= \x03(\v2\x1c.content.service.v1.CategoryB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12[\n" +

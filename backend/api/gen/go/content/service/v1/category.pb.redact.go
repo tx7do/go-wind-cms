@@ -123,6 +123,8 @@ func (x *Category) Redact() string {
 
 	// Safe field: Translations
 
+	// Safe field: AvailableLanguages
+
 	// Safe field: CustomFields
 
 	// Safe field: ParentId

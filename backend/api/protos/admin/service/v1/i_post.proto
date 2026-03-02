@@ -48,7 +48,7 @@ service PostService {
   }
 
   // 检查翻译是否存在
-  rpc IsExistTranslation(content.service.v1.IsExistTranslationRequest) returns (content.service.v1.IsExistTranslationResponse) {
+  rpc TranslationExists(content.service.v1.PostTranslationExistsRequest) returns (content.service.v1.PostTranslationExistsResponse) {
     option (google.api.http) = {
       get: "/admin/v1/posts/{post_id}/translations/{language_code}"
     };

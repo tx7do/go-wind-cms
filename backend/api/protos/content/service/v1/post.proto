@@ -28,7 +28,7 @@ service PostService {
   rpc Delete (DeletePostRequest) returns (google.protobuf.Empty) {}
 
   // 检查翻译是否存在
-  rpc IsExistTranslation(IsExistTranslationRequest) returns (IsExistTranslationResponse) {}
+  rpc TranslationExists(PostTranslationExistsRequest) returns (PostTranslationExistsResponse) {}
 }
 
 // 帖子
@@ -120,6 +120,14 @@ message Post {
     json_name = "translations",
     (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
   ]; // 多语言翻译列表
+
+  repeated string available_languages = 41 [
+    json_name = "availableLanguages",
+    (gnostic.openapi.v3.property) = {
+      description: "可用的语言代码列表（快速查询，避免遍历 translations）",
+      example: {yaml: '["zh-CN", "en-US", "ja-JP"]'}
+    }
+  ]; // 可用的语言代码列表
 
   repeated uint32 category_ids = 50 [
     json_name = "categoryIds",
@@ -302,7 +310,7 @@ message DeletePostRequest {
   uint32 id = 1;
 }
 
-message IsExistTranslationRequest {
+message PostTranslationExistsRequest {
   uint32 post_id = 1 [
     json_name = "postId",
     (gnostic.openapi.v3.property) = {description: "帖子ID"}
@@ -314,9 +322,9 @@ message IsExistTranslationRequest {
   ]; // 语言代码
 }
 
-message IsExistTranslationResponse {
-  bool exist = 1 [
-    json_name = "exist",
+message PostTranslationExistsResponse {
+  bool exists = 1 [
+    json_name = "exists",
     (gnostic.openapi.v3.property) = {description: "翻译是否存在"}
   ]; // 翻译是否存在
 }

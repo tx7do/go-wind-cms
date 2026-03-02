@@ -131,13 +131,22 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		return &contentV1.ListPostResponse{Total: 0, Items: nil}, nil
 	}
 
+	//for _, item := range ret.Items {
+	//	translations, err := r.postTranslationRepo.ListTranslations(ctx, item.GetId())
+	//	if err != nil {
+	//		r.log.Errorf("query translations failed: %s", err.Error())
+	//		return nil, contentV1.ErrorInternalServerError("query translations failed")
+	//	}
+	//	item.Translations = translations
+	//}
+
 	for _, item := range ret.Items {
-		translations, err := r.postTranslationRepo.ListTranslations(ctx, item.GetId())
+		languages, err := r.postTranslationRepo.ListAvailedLanguages(ctx, item.GetId())
 		if err != nil {
-			r.log.Errorf("query translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("query translations failed")
+			r.log.Errorf("query availed languages failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("query availed languages failed")
 		}
-		item.Translations = translations
+		item.AvailableLanguages = languages
 	}
 
 	return &contentV1.ListPostResponse{
@@ -167,6 +176,13 @@ func (r *PostRepo) Get(ctx context.Context, req *contentV1.GetPostRequest) (*con
 	}
 
 	dto := r.mapper.ToDTO(entity)
+
+	languages, err := r.postTranslationRepo.ListAvailedLanguages(ctx, dto.GetId())
+	if err != nil {
+		r.log.Errorf("query availed languages failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query availed languages failed")
+	}
+	dto.AvailableLanguages = languages
 
 	if req.LanguageCode == nil {
 		translations, err := r.postTranslationRepo.ListTranslations(ctx, dto.GetId())
@@ -426,6 +442,6 @@ func (r *PostRepo) Delete(ctx context.Context, req *contentV1.DeletePostRequest)
 	return err
 }
 
-func (r *PostRepo) IsExistTranslation(ctx context.Context, postId uint32, languageCode string) (bool, error) {
-	return r.postTranslationRepo.IsExistTranslation(ctx, postId, languageCode)
+func (r *PostRepo) TranslationExists(ctx context.Context, postId uint32, languageCode string) (bool, error) {
+	return r.postTranslationRepo.TranslationExists(ctx, postId, languageCode)
 }

@@ -4186,7 +4186,7 @@ paths:
             tags:
                 - PostService
             description: 检查翻译是否存在
-            operationId: PostService_IsExistTranslation
+            operationId: PostService_TranslationExists
             parameters:
                 - name: postId
                   in: path
@@ -4205,7 +4205,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/IsExistTranslationResponse'
+                                $ref: '#/components/schemas/PostTranslationExistsResponse'
     /admin/v1/refresh-token:
         post:
             tags:
@@ -5898,6 +5898,12 @@ components:
                     items:
                         $ref: '#/components/schemas/CategoryTranslation'
                     description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
                 customFields:
                     type: object
                     additionalProperties:
@@ -7098,12 +7104,6 @@ components:
                     description: 删除时间
                     format: date-time
             description: 站内信消息用户接收信息
-        IsExistTranslationResponse:
-            type: object
-            properties:
-                exist:
-                    type: boolean
-                    description: 翻译是否存在
         KratosStatus:
             type: object
             properties:
@@ -8594,6 +8594,12 @@ components:
                     items:
                         $ref: '#/components/schemas/PageTranslation'
                     description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
                 parentId:
                     type: integer
                     description: 父页面ID（0 表示顶级页面，用于构建站点树形结构）
@@ -9181,6 +9187,12 @@ components:
                     items:
                         $ref: '#/components/schemas/PostTranslation'
                     description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
                 categoryIds:
                     type: array
                     items:
@@ -9301,6 +9313,12 @@ components:
                     description: 删除时间
                     format: date-time
             description: 帖子翻译
+        PostTranslationExistsResponse:
+            type: object
+            properties:
+                exists:
+                    type: boolean
+                    description: 翻译是否存在
         PresignOption:
             type: object
             properties:

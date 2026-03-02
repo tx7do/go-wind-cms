@@ -78,6 +78,14 @@ message Category {
     (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
   ];
 
+  repeated string available_languages = 21 [
+    json_name = "availableLanguages",
+    (gnostic.openapi.v3.property) = {
+      description: "可用的语言代码列表（快速查询，避免遍历 translations）",
+      example: {yaml: '["zh-CN", "en-US", "ja-JP"]'}
+    }
+  ]; // 可用的语言代码列表
+
   map<string, string> custom_fields = 30 [
     json_name = "customFields",
     (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}

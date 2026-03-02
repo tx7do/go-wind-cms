@@ -140,37 +140,38 @@ func (Page_PageType) EnumDescriptor() ([]byte, []int) {
 
 // 页面
 type Page struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 页面ID
-	Status           *Page_PageStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Page_PageStatus,oneof" json:"status,omitempty"`                                                             // 页面状态
-	Type             *Page_PageType         `protobuf:"varint,3,opt,name=type,proto3,enum=content.service.v1.Page_PageType,oneof" json:"type,omitempty"`                                                                   // 页面类型
-	EditorType       *EditorType            `protobuf:"varint,4,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
-	Slug             *string                `protobuf:"bytes,5,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                                                                          // 页面别名
-	AuthorId         *uint32                `protobuf:"varint,6,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                 // 页面作者ID
-	AuthorName       *string                `protobuf:"bytes,7,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                            // 页面作者名称
-	DisallowComment  *bool                  `protobuf:"varint,8,opt,name=disallow_comment,json=disallowComment,proto3,oneof" json:"disallow_comment,omitempty"`                                                            // 是否禁止评论
-	RedirectUrl      *string                `protobuf:"bytes,9,opt,name=redirect_url,json=redirectUrl,proto3,oneof" json:"redirect_url,omitempty"`                                                                         // 重定向 URL（如果设置则访问该页面时会重定向到这个 URL）
-	ShowInNavigation *bool                  `protobuf:"varint,10,opt,name=show_in_navigation,json=showInNavigation,proto3,oneof" json:"show_in_navigation,omitempty"`                                                      // 是否在主导航中显示
-	SortOrder        *uint32                `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                                                             // 导航排序
-	Template         *string                `protobuf:"bytes,12,opt,name=template,proto3,oneof" json:"template,omitempty"`                                                                                                 // 页面模板名称
-	IsCustomTemplate *bool                  `protobuf:"varint,13,opt,name=is_custom_template,json=isCustomTemplate,proto3,oneof" json:"is_custom_template,omitempty"`                                                      // 是否使用自定义模板代码
-	Visits           *uint32                `protobuf:"varint,20,opt,name=visits,proto3,oneof" json:"visits,omitempty"`                                                                                                    // 页面访问次数
-	CustomFields     map[string]string      `protobuf:"bytes,21,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
-	CustomHead       *string                `protobuf:"bytes,23,opt,name=custom_head,json=customHead,proto3,oneof" json:"custom_head,omitempty"`                                                                           // 自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）
-	CustomFoot       *string                `protobuf:"bytes,24,opt,name=custom_foot,json=customFoot,proto3,oneof" json:"custom_foot,omitempty"`                                                                           // 自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）
-	Translations     []*PageTranslation     `protobuf:"bytes,30,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
-	ParentId         *uint32                `protobuf:"varint,50,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                                                                // 父页面ID
-	Children         []*Page                `protobuf:"bytes,61,rep,name=children,proto3" json:"children,omitempty"`                                                                                                       // 子节点树
-	Depth            *int32                 `protobuf:"varint,52,opt,name=depth,proto3,oneof" json:"depth,omitempty"`                                                                                                      // 页面层级深度
-	Path             *string                `protobuf:"bytes,53,opt,name=path,proto3,oneof" json:"path,omitempty"`                                                                                                         // 物化路径
-	CreatedBy        *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
-	UpdatedBy        *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
-	DeletedBy        *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
-	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                                             // 创建时间
-	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                                             // 更新时间
-	DeletedAt        *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                                                             // 删除时间
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 页面ID
+	Status             *Page_PageStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Page_PageStatus,oneof" json:"status,omitempty"`                                                             // 页面状态
+	Type               *Page_PageType         `protobuf:"varint,3,opt,name=type,proto3,enum=content.service.v1.Page_PageType,oneof" json:"type,omitempty"`                                                                   // 页面类型
+	EditorType         *EditorType            `protobuf:"varint,4,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
+	Slug               *string                `protobuf:"bytes,5,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                                                                          // 页面别名
+	AuthorId           *uint32                `protobuf:"varint,6,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                 // 页面作者ID
+	AuthorName         *string                `protobuf:"bytes,7,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                            // 页面作者名称
+	DisallowComment    *bool                  `protobuf:"varint,8,opt,name=disallow_comment,json=disallowComment,proto3,oneof" json:"disallow_comment,omitempty"`                                                            // 是否禁止评论
+	RedirectUrl        *string                `protobuf:"bytes,9,opt,name=redirect_url,json=redirectUrl,proto3,oneof" json:"redirect_url,omitempty"`                                                                         // 重定向 URL（如果设置则访问该页面时会重定向到这个 URL）
+	ShowInNavigation   *bool                  `protobuf:"varint,10,opt,name=show_in_navigation,json=showInNavigation,proto3,oneof" json:"show_in_navigation,omitempty"`                                                      // 是否在主导航中显示
+	SortOrder          *uint32                `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                                                             // 导航排序
+	Template           *string                `protobuf:"bytes,12,opt,name=template,proto3,oneof" json:"template,omitempty"`                                                                                                 // 页面模板名称
+	IsCustomTemplate   *bool                  `protobuf:"varint,13,opt,name=is_custom_template,json=isCustomTemplate,proto3,oneof" json:"is_custom_template,omitempty"`                                                      // 是否使用自定义模板代码
+	Visits             *uint32                `protobuf:"varint,20,opt,name=visits,proto3,oneof" json:"visits,omitempty"`                                                                                                    // 页面访问次数
+	CustomFields       map[string]string      `protobuf:"bytes,21,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
+	CustomHead         *string                `protobuf:"bytes,23,opt,name=custom_head,json=customHead,proto3,oneof" json:"custom_head,omitempty"`                                                                           // 自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）
+	CustomFoot         *string                `protobuf:"bytes,24,opt,name=custom_foot,json=customFoot,proto3,oneof" json:"custom_foot,omitempty"`                                                                           // 自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）
+	Translations       []*PageTranslation     `protobuf:"bytes,30,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
+	AvailableLanguages []string               `protobuf:"bytes,31,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
+	ParentId           *uint32                `protobuf:"varint,50,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                                                                // 父页面ID
+	Children           []*Page                `protobuf:"bytes,61,rep,name=children,proto3" json:"children,omitempty"`                                                                                                       // 子节点树
+	Depth              *int32                 `protobuf:"varint,52,opt,name=depth,proto3,oneof" json:"depth,omitempty"`                                                                                                      // 页面层级深度
+	Path               *string                `protobuf:"bytes,53,opt,name=path,proto3,oneof" json:"path,omitempty"`                                                                                                         // 物化路径
+	CreatedBy          *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
+	UpdatedBy          *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
+	DeletedBy          *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
+	CreatedAt          *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                                             // 创建时间
+	UpdatedAt          *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                                             // 更新时间
+	DeletedAt          *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                                                             // 删除时间
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Page) Reset() {
@@ -325,6 +326,13 @@ func (x *Page) GetCustomFoot() string {
 func (x *Page) GetTranslations() []*PageTranslation {
 	if x != nil {
 		return x.Translations
+	}
+	return nil
+}
+
+func (x *Page) GetAvailableLanguages() []string {
+	if x != nil {
+		return x.AvailableLanguages
 	}
 	return nil
 }
@@ -873,7 +881,7 @@ var File_content_service_v1_page_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xae\x19\n" +
+	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xd0\x1a\n" +
 	"\x04Page\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b页面IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Page.PageStatusB\x12\xbaG\x0f\x92\x02\f页面状态H\x01R\x06status\x88\x01\x01\x12\x8c\x01\n" +
@@ -899,7 +907,8 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"customHead\x88\x01\x01\x12w\n" +
 	"\vcustom_foot\x18\x18 \x01(\tBQ\xbaGN\x92\x02K自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）H\x0fR\n" +
 	"customFoot\x88\x01\x01\x12d\n" +
-	"\ftranslations\x18\x1e \x03(\v2#.content.service.v1.PageTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12n\n" +
+	"\ftranslations\x18\x1e \x03(\v2#.content.service.v1.PageTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
+	"\x13available_languages\x18\x1f \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12n\n" +
 	"\tparent_id\x182 \x01(\rBL\xbaGI\x92\x02F父页面ID（0 表示顶级页面，用于构建站点树形结构）H\x10R\bparentId\x88\x01\x01\x12H\n" +
 	"\bchildren\x18= \x03(\v2\x18.content.service.v1.PageB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12d\n" +
 	"\x05depth\x184 \x01(\x05BI\xbaGF\x92\x02C页面层级深度（0=顶级，1=二级，用于面包屑导航）H\x11R\x05depth\x88\x01\x01\x12R\n" +

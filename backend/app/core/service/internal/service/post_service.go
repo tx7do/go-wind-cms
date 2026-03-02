@@ -56,13 +56,13 @@ func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostReque
 	return &emptypb.Empty{}, nil
 }
 
-func (s *PostService) IsExistTranslation(ctx context.Context, req *contentV1.IsExistTranslationRequest) (*contentV1.IsExistTranslationResponse, error) {
-	isExist, err := s.postRepo.IsExistTranslation(ctx, req.GetPostId(), req.GetLanguageCode())
+func (s *PostService) TranslationExists(ctx context.Context, req *contentV1.PostTranslationExistsRequest) (*contentV1.PostTranslationExistsResponse, error) {
+	exists, err := s.postRepo.TranslationExists(ctx, req.GetPostId(), req.GetLanguageCode())
 	if err != nil {
 		return nil, err
 	}
 
-	return &contentV1.IsExistTranslationResponse{
-		Exist: isExist,
+	return &contentV1.PostTranslationExistsResponse{
+		Exists: exists,
 	}, nil
 }

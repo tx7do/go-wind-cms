@@ -1208,6 +1208,12 @@ components:
                     items:
                         $ref: '#/components/schemas/CategoryTranslation'
                     description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
                 customFields:
                     type: object
                     additionalProperties:
@@ -1934,6 +1940,12 @@ components:
                     items:
                         $ref: '#/components/schemas/PageTranslation'
                     description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
                 parentId:
                     type: integer
                     description: 父页面ID（0 表示顶级页面，用于构建站点树形结构）
@@ -2128,6 +2140,12 @@ components:
                     items:
                         $ref: '#/components/schemas/PostTranslation'
                     description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
                 categoryIds:
                     type: array
                     items:

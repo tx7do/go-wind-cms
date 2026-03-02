@@ -154,6 +154,14 @@ message Page {
     (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
   ]; // 多语言翻译列表
 
+  repeated string available_languages = 31 [
+    json_name = "availableLanguages",
+    (gnostic.openapi.v3.property) = {
+      description: "可用的语言代码列表（快速查询，避免遍历 translations）",
+      example: {yaml: '["zh-CN", "en-US", "ja-JP"]'}
+    }
+  ]; // 可用的语言代码列表
+
 
   optional uint32 parent_id = 50 [
     json_name = "parentId",

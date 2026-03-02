@@ -61,16 +61,6 @@ watch(
   async (newLang) => {
     if (newLang && postEditViewStore.formData.lang !== newLang) {
       postEditViewStore.formData.lang = newLang as string;
-      // 如果是编辑模式，重新加载该语言版本的文章
-      if (isEditMode.value) {
-        try {
-          await loadPost();
-        } catch {
-          notification.error({
-            message: $t('page.post.validation.loadFailed'),
-          });
-        }
-      }
     }
   },
 );
@@ -96,17 +86,6 @@ async function handleLanguageChange(newLang: string) {
     path: route.path,
     query: { ...route.query, lang: newLang },
   });
-
-  // 如果是编辑模式，需要重新加载该语言版本的文章
-  if (isEditMode.value) {
-    try {
-      await loadPost();
-    } catch {
-      notification.error({
-        message: $t('page.post.validation.loadFailed'),
-      });
-    }
-  }
 }
 
 /**
@@ -206,9 +185,9 @@ async function loadPost() {
   try {
     await postEditViewStore.fetchPost();
 
-    if (!postEditViewStore.needTranslate) {
+    if (postEditViewStore.needTranslate) {
       notification.info({
-        message: $t('page.post.validation.'),
+        message: $t('page.post.validation.translationNotExists'),
       });
     }
   } catch (error) {
@@ -224,6 +203,8 @@ async function loadPost() {
  * 初始化页面数据
  */
 async function init() {
+  console.log('init');
+
   try {
     await postEditViewStore.fetchLanguageList();
   } catch {

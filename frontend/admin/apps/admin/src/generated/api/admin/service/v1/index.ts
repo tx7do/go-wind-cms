@@ -1247,6 +1247,7 @@ export type contentservicev1_Category = {
   postCount?: number;
   directPostCount?: number;
   translations: contentservicev1_CategoryTranslation[] | undefined;
+  availableLanguages: string[] | undefined;
   customFields: { [key: string]: string } | undefined;
   parentId?: number;
   children: contentservicev1_Category[] | undefined;
@@ -5473,6 +5474,7 @@ export type contentservicev1_Page = {
   customHead?: string;
   customFoot?: string;
   translations: contentservicev1_PageTranslation[] | undefined;
+  availableLanguages: string[] | undefined;
   parentId?: number;
   children: contentservicev1_Page[] | undefined;
   depth?: number;
@@ -6641,7 +6643,7 @@ export interface PostService {
   // 删除帖子
   Delete(request: contentservicev1_DeletePostRequest): Promise<wellKnownEmpty>;
   // 检查翻译是否存在
-  IsExistTranslation(request: contentservicev1_IsExistTranslationRequest): Promise<contentservicev1_IsExistTranslationResponse>;
+  TranslationExists(request: contentservicev1_PostTranslationExistsRequest): Promise<contentservicev1_PostTranslationExistsResponse>;
 }
 
 export function createPostServiceClient(
@@ -6810,7 +6812,7 @@ export function createPostServiceClient(
         method: "Delete",
       }) as Promise<wellKnownEmpty>;
     },
-    IsExistTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    TranslationExists(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.postId) {
         throw new Error("missing required field request.post_id");
       }
@@ -6830,8 +6832,8 @@ export function createPostServiceClient(
         body,
       }, {
         service: "PostService",
-        method: "IsExistTranslation",
-      }) as Promise<contentservicev1_IsExistTranslationResponse>;
+        method: "TranslationExists",
+      }) as Promise<contentservicev1_PostTranslationExistsResponse>;
     },
   };
 }
@@ -6859,6 +6861,7 @@ export type contentservicev1_Post = {
   authorName?: string;
   customFields: { [key: string]: string } | undefined;
   translations: contentservicev1_PostTranslation[] | undefined;
+  availableLanguages: string[] | undefined;
   categoryIds: number[] | undefined;
   tagIds: number[] | undefined;
   passwordHash?: string;
@@ -6928,13 +6931,13 @@ export type contentservicev1_DeletePostRequest = {
   id: number | undefined;
 };
 
-export type contentservicev1_IsExistTranslationRequest = {
+export type contentservicev1_PostTranslationExistsRequest = {
   postId: number | undefined;
   languageCode: string | undefined;
 };
 
-export type contentservicev1_IsExistTranslationResponse = {
-  exist: boolean | undefined;
+export type contentservicev1_PostTranslationExistsResponse = {
+  exists: boolean | undefined;
 };
 
 // 角色管理服务
@@ -7870,6 +7873,7 @@ export type contentservicev1_Tag = {
   isFeatured?: boolean;
   postCount?: number;
   translations: contentservicev1_TagTranslation[] | undefined;
+  availableLanguages: string[] | undefined;
   createdBy?: number;
   updatedBy?: number;
   deletedBy?: number;

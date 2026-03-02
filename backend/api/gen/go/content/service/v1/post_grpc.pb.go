@@ -21,12 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PostService_List_FullMethodName               = "/content.service.v1.PostService/List"
-	PostService_Get_FullMethodName                = "/content.service.v1.PostService/Get"
-	PostService_Create_FullMethodName             = "/content.service.v1.PostService/Create"
-	PostService_Update_FullMethodName             = "/content.service.v1.PostService/Update"
-	PostService_Delete_FullMethodName             = "/content.service.v1.PostService/Delete"
-	PostService_IsExistTranslation_FullMethodName = "/content.service.v1.PostService/IsExistTranslation"
+	PostService_List_FullMethodName              = "/content.service.v1.PostService/List"
+	PostService_Get_FullMethodName               = "/content.service.v1.PostService/Get"
+	PostService_Create_FullMethodName            = "/content.service.v1.PostService/Create"
+	PostService_Update_FullMethodName            = "/content.service.v1.PostService/Update"
+	PostService_Delete_FullMethodName            = "/content.service.v1.PostService/Delete"
+	PostService_TranslationExists_FullMethodName = "/content.service.v1.PostService/TranslationExists"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -46,7 +46,7 @@ type PostServiceClient interface {
 	// 删除帖子
 	Delete(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 检查翻译是否存在
-	IsExistTranslation(ctx context.Context, in *IsExistTranslationRequest, opts ...grpc.CallOption) (*IsExistTranslationResponse, error)
+	TranslationExists(ctx context.Context, in *PostTranslationExistsRequest, opts ...grpc.CallOption) (*PostTranslationExistsResponse, error)
 }
 
 type postServiceClient struct {
@@ -107,10 +107,10 @@ func (c *postServiceClient) Delete(ctx context.Context, in *DeletePostRequest, o
 	return out, nil
 }
 
-func (c *postServiceClient) IsExistTranslation(ctx context.Context, in *IsExistTranslationRequest, opts ...grpc.CallOption) (*IsExistTranslationResponse, error) {
+func (c *postServiceClient) TranslationExists(ctx context.Context, in *PostTranslationExistsRequest, opts ...grpc.CallOption) (*PostTranslationExistsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(IsExistTranslationResponse)
-	err := c.cc.Invoke(ctx, PostService_IsExistTranslation_FullMethodName, in, out, cOpts...)
+	out := new(PostTranslationExistsResponse)
+	err := c.cc.Invoke(ctx, PostService_TranslationExists_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ type PostServiceServer interface {
 	// 删除帖子
 	Delete(context.Context, *DeletePostRequest) (*emptypb.Empty, error)
 	// 检查翻译是否存在
-	IsExistTranslation(context.Context, *IsExistTranslationRequest) (*IsExistTranslationResponse, error)
+	TranslationExists(context.Context, *PostTranslationExistsRequest) (*PostTranslationExistsResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -160,8 +160,8 @@ func (UnimplementedPostServiceServer) Update(context.Context, *UpdatePostRequest
 func (UnimplementedPostServiceServer) Delete(context.Context, *DeletePostRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedPostServiceServer) IsExistTranslation(context.Context, *IsExistTranslationRequest) (*IsExistTranslationResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method IsExistTranslation not implemented")
+func (UnimplementedPostServiceServer) TranslationExists(context.Context, *PostTranslationExistsRequest) (*PostTranslationExistsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TranslationExists not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -274,20 +274,20 @@ func _PostService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostService_IsExistTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IsExistTranslationRequest)
+func _PostService_TranslationExists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PostTranslationExistsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).IsExistTranslation(ctx, in)
+		return srv.(PostServiceServer).TranslationExists(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PostService_IsExistTranslation_FullMethodName,
+		FullMethod: PostService_TranslationExists_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).IsExistTranslation(ctx, req.(*IsExistTranslationRequest))
+		return srv.(PostServiceServer).TranslationExists(ctx, req.(*PostTranslationExistsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -320,8 +320,8 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PostService_Delete_Handler,
 		},
 		{
-			MethodName: "IsExistTranslation",
-			Handler:    _PostService_IsExistTranslation_Handler,
+			MethodName: "TranslationExists",
+			Handler:    _PostService_TranslationExists_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1423,22 +1423,22 @@ var _ interface {
 	ErrorName() string
 } = DeletePostRequestValidationError{}
 
-// Validate checks the field values on IsExistTranslationRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on PostTranslationExistsRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *IsExistTranslationRequest) Validate() error {
+func (m *PostTranslationExistsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on IsExistTranslationRequest with the
+// ValidateAll checks the field values on PostTranslationExistsRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// IsExistTranslationRequestMultiError, or nil if none found.
-func (m *IsExistTranslationRequest) ValidateAll() error {
+// PostTranslationExistsRequestMultiError, or nil if none found.
+func (m *PostTranslationExistsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *IsExistTranslationRequest) validate(all bool) error {
+func (m *PostTranslationExistsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1450,19 +1450,19 @@ func (m *IsExistTranslationRequest) validate(all bool) error {
 	// no validation rules for LanguageCode
 
 	if len(errors) > 0 {
-		return IsExistTranslationRequestMultiError(errors)
+		return PostTranslationExistsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// IsExistTranslationRequestMultiError is an error wrapping multiple validation
-// errors returned by IsExistTranslationRequest.ValidateAll() if the
-// designated constraints aren't met.
-type IsExistTranslationRequestMultiError []error
+// PostTranslationExistsRequestMultiError is an error wrapping multiple
+// validation errors returned by PostTranslationExistsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PostTranslationExistsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m IsExistTranslationRequestMultiError) Error() string {
+func (m PostTranslationExistsRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1471,11 +1471,12 @@ func (m IsExistTranslationRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m IsExistTranslationRequestMultiError) AllErrors() []error { return m }
+func (m PostTranslationExistsRequestMultiError) AllErrors() []error { return m }
 
-// IsExistTranslationRequestValidationError is the validation error returned by
-// IsExistTranslationRequest.Validate if the designated constraints aren't met.
-type IsExistTranslationRequestValidationError struct {
+// PostTranslationExistsRequestValidationError is the validation error returned
+// by PostTranslationExistsRequest.Validate if the designated constraints
+// aren't met.
+type PostTranslationExistsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1483,24 +1484,24 @@ type IsExistTranslationRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e IsExistTranslationRequestValidationError) Field() string { return e.field }
+func (e PostTranslationExistsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e IsExistTranslationRequestValidationError) Reason() string { return e.reason }
+func (e PostTranslationExistsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e IsExistTranslationRequestValidationError) Cause() error { return e.cause }
+func (e PostTranslationExistsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e IsExistTranslationRequestValidationError) Key() bool { return e.key }
+func (e PostTranslationExistsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e IsExistTranslationRequestValidationError) ErrorName() string {
-	return "IsExistTranslationRequestValidationError"
+func (e PostTranslationExistsRequestValidationError) ErrorName() string {
+	return "PostTranslationExistsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e IsExistTranslationRequestValidationError) Error() string {
+func (e PostTranslationExistsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1512,14 +1513,14 @@ func (e IsExistTranslationRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sIsExistTranslationRequest.%s: %s%s",
+		"invalid %sPostTranslationExistsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = IsExistTranslationRequestValidationError{}
+var _ error = PostTranslationExistsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1527,46 +1528,46 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = IsExistTranslationRequestValidationError{}
+} = PostTranslationExistsRequestValidationError{}
 
-// Validate checks the field values on IsExistTranslationResponse with the
+// Validate checks the field values on PostTranslationExistsResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *IsExistTranslationResponse) Validate() error {
+func (m *PostTranslationExistsResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on IsExistTranslationResponse with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// IsExistTranslationResponseMultiError, or nil if none found.
-func (m *IsExistTranslationResponse) ValidateAll() error {
+// ValidateAll checks the field values on PostTranslationExistsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PostTranslationExistsResponseMultiError, or nil if none found.
+func (m *PostTranslationExistsResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *IsExistTranslationResponse) validate(all bool) error {
+func (m *PostTranslationExistsResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Exist
+	// no validation rules for Exists
 
 	if len(errors) > 0 {
-		return IsExistTranslationResponseMultiError(errors)
+		return PostTranslationExistsResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// IsExistTranslationResponseMultiError is an error wrapping multiple
-// validation errors returned by IsExistTranslationResponse.ValidateAll() if
-// the designated constraints aren't met.
-type IsExistTranslationResponseMultiError []error
+// PostTranslationExistsResponseMultiError is an error wrapping multiple
+// validation errors returned by PostTranslationExistsResponse.ValidateAll()
+// if the designated constraints aren't met.
+type PostTranslationExistsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m IsExistTranslationResponseMultiError) Error() string {
+func (m PostTranslationExistsResponseMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1575,11 +1576,12 @@ func (m IsExistTranslationResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m IsExistTranslationResponseMultiError) AllErrors() []error { return m }
+func (m PostTranslationExistsResponseMultiError) AllErrors() []error { return m }
 
-// IsExistTranslationResponseValidationError is the validation error returned
-// by IsExistTranslationResponse.Validate if the designated constraints aren't met.
-type IsExistTranslationResponseValidationError struct {
+// PostTranslationExistsResponseValidationError is the validation error
+// returned by PostTranslationExistsResponse.Validate if the designated
+// constraints aren't met.
+type PostTranslationExistsResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1587,24 +1589,24 @@ type IsExistTranslationResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e IsExistTranslationResponseValidationError) Field() string { return e.field }
+func (e PostTranslationExistsResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e IsExistTranslationResponseValidationError) Reason() string { return e.reason }
+func (e PostTranslationExistsResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e IsExistTranslationResponseValidationError) Cause() error { return e.cause }
+func (e PostTranslationExistsResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e IsExistTranslationResponseValidationError) Key() bool { return e.key }
+func (e PostTranslationExistsResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e IsExistTranslationResponseValidationError) ErrorName() string {
-	return "IsExistTranslationResponseValidationError"
+func (e PostTranslationExistsResponseValidationError) ErrorName() string {
+	return "PostTranslationExistsResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e IsExistTranslationResponseValidationError) Error() string {
+func (e PostTranslationExistsResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1616,14 +1618,14 @@ func (e IsExistTranslationResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sIsExistTranslationResponse.%s: %s%s",
+		"invalid %sPostTranslationExistsResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = IsExistTranslationResponseValidationError{}
+var _ error = PostTranslationExistsResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1631,4 +1633,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = IsExistTranslationResponseValidationError{}
+} = PostTranslationExistsResponseValidationError{}

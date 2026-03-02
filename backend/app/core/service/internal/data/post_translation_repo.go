@@ -166,7 +166,8 @@ func (r *PostTranslationRepo) CountByBaseSlug(ctx context.Context, baseSlug stri
 	return int64(count), nil
 }
 
-func (r *PostTranslationRepo) IsExistTranslation(ctx context.Context, postId uint32, languageCode string) (bool, error) {
+// TranslationExists checks if a translation exists for the given post ID and language code.
+func (r *PostTranslationRepo) TranslationExists(ctx context.Context, postId uint32, languageCode string) (bool, error) {
 	count, err := r.entClient.Client().PostTranslation.Query().
 		Where(
 			posttranslation.PostIDEQ(postId),
@@ -179,4 +180,20 @@ func (r *PostTranslationRepo) IsExistTranslation(ctx context.Context, postId uin
 	}
 
 	return count > 0, nil
+}
+
+// ListAvailedLanguages lists the language codes of all translations available for the given post ID.
+func (r *PostTranslationRepo) ListAvailedLanguages(ctx context.Context, postId uint32) ([]string, error) {
+	entities, err := r.entClient.Client().PostTranslation.Query().
+		Where(
+			posttranslation.PostIDEQ(postId),
+		).
+		Select(posttranslation.FieldLanguageCode).
+		Strings(ctx)
+	if err != nil {
+		r.log.Errorf("query available translation languages by post id failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query available translation languages by post id failed")
+	}
+
+	return entities, nil
 }
