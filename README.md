@@ -6,9 +6,9 @@
 
 ## 演示地址
 
-> 前端地址：<http://124.221.26.30:8080/>
+> 后端管理前端地址：<https://admin.cms.gowind.cloud>
 >
-> 后端Swagger地址：<http://124.221.26.30:7788/docs/>
+> 后端API Swagger地址：<https://api.admin.cms.gowind.cloud/docs/>
 >
 > 默认账号密码: `admin` / `admin`
 
