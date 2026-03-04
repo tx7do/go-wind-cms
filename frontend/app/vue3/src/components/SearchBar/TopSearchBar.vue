@@ -8,6 +8,8 @@ import {
   LogOutOutline,
   PersonCircleOutline,
   ShieldCheckmarkOutline,
+  MoonOutline,
+  SunnyOutline,
 } from '@vicons/ionicons5';
 import {CrownOutlined} from '@vicons/antd';
 import {UserCircle} from '@vicons/fa';
@@ -24,6 +26,7 @@ import {
 import {navigateTo} from '@/router';
 import {renderIcon} from '@/utils';
 import {updatePreferences} from "@/preferences";
+import { isDark, toggleDark } from '@/composables/dark';
 
 import logoImage from '@/assets/images/logo.png';
 
@@ -99,6 +102,10 @@ function handleSelectUserItem(key: string | number) {
 function handleClickButtonVip() {
   console.log('handleClickButtonVip:')
 }
+
+function handleToggleTheme() {
+  toggleDark();
+}
 </script>
 
 <template>
@@ -147,6 +154,14 @@ function handleClickButtonVip() {
             {{ getLanguageLabel() }}
           </n-button>
         </n-dropdown>
+        <n-button round class="theme-btn" @click="handleToggleTheme">
+          <template #icon>
+            <n-icon>
+              <component :is="isDark ? SunnyOutline : MoonOutline" />
+            </n-icon>
+          </template>
+          {{ isDark ? $t('navbar.top.light_mode') : $t('navbar.top.dark_mode') }}
+        </n-button>
       </n-space>
     </div>
   </div>
@@ -170,38 +185,6 @@ function handleClickButtonVip() {
   display: flex;
   align-items: center;
 
-  // 所有按钮默认深色文字
-  :deep(.n-button) {
-    color: var(--color-text-primary);
-  }
-
-  // 普通按钮（非 primary/info）
-  :deep(.n-button:not(.n-button--primary):not(.n-button--info):not(.vip-btn)) {
-    color: var(--color-text-primary) !important;
-    border-color: var(--color-border);
-    background: #ffffff;
-  }
-
-  :deep(.n-button:not(.n-button--primary):not(.n-button--info):not(.vip-btn):hover) {
-    border-color: var(--color-brand);
-    color: var(--color-brand) !important;
-  }
-
-  // 文字按钮
-  :deep(.n-button.n-button--text-type) {
-    color: var(--color-text-secondary) !important;
-  }
-
-  :deep(.n-button.n-button--text-type:hover) {
-    color: var(--color-text-primary) !important;
-  }
-
-  // Dropdown 下拉菜单
-  :deep(.n-dropdown) {
-    background: #ffffff;
-    color: var(--color-text-primary);
-  }
-
   // 分割线
   :deep(.n-divider) {
     background-color: var(--color-border);
@@ -220,23 +203,26 @@ function handleClickButtonVip() {
 
 .icon-btn {
   font-size: 28px;
-  color: var(--color-text-secondary) !important;
+  --n-text-color: var(--header-control-text-muted);
+  --n-text-color-hover: var(--header-control-text);
+  --n-text-color-pressed: var(--header-control-text);
 }
 
-.icon-btn:hover {
-  color: var(--color-text-primary) !important;
-  background: rgba(102, 126, 234, 0.1) !important;
+:deep(.icon-btn.n-button.n-button--text-type:hover) {
+  background: var(--header-control-hover-bg) !important;
 }
 
-.lang-btn {
-  background: #ffffff !important;
-  color: var(--color-text-primary) !important;
-  border: 1px solid var(--color-border) !important;
-}
-
-.lang-btn:hover {
-  border-color: var(--color-brand) !important;
-  color: var(--color-brand) !important;
+.lang-btn,
+.theme-btn {
+  --n-color: var(--header-control-bg);
+  --n-color-hover: var(--header-control-bg);
+  --n-color-pressed: var(--header-control-bg);
+  --n-border: 1px solid var(--header-control-border);
+  --n-border-hover: 1px solid var(--color-brand);
+  --n-border-pressed: 1px solid var(--color-brand);
+  --n-text-color: var(--header-control-text);
+  --n-text-color-hover: var(--color-brand);
+  --n-text-color-pressed: var(--color-brand);
 }
 
 .header-login-btn,
@@ -245,25 +231,39 @@ function handleClickButtonVip() {
 }
 
 .header-login-btn {
-  background: #e9f4ff !important;
-  color: #0f5c8c !important;
-  border-color: #b7dcf7 !important;
+  --n-color: var(--header-login-bg);
+  --n-color-hover: var(--header-login-bg);
+  --n-color-pressed: var(--header-login-bg);
+  --n-border: 1px solid var(--header-login-border);
+  --n-border-hover: 1px solid var(--color-brand);
+  --n-border-pressed: 1px solid var(--color-brand);
+  --n-text-color: var(--header-login-text);
+  --n-text-color-hover: var(--header-login-text);
+  --n-text-color-pressed: var(--header-login-text);
 }
 
 .header-register-btn {
-  background: #dff8f0 !important;
-  color: #0f6b4e !important;
-  border-color: #b7efde !important;
+  --n-color: var(--header-register-bg);
+  --n-color-hover: var(--header-register-bg);
+  --n-color-pressed: var(--header-register-bg);
+  --n-border: 1px solid var(--header-register-border);
+  --n-border-hover: 1px solid var(--color-brand);
+  --n-border-pressed: 1px solid var(--color-brand);
+  --n-text-color: var(--header-register-text);
+  --n-text-color-hover: var(--header-register-text);
+  --n-text-color-pressed: var(--header-register-text);
 }
 
 :deep(.lang-btn .n-button__content),
+:deep(.theme-btn .n-button__content),
 :deep(.header-login-btn .n-button__content),
 :deep(.header-register-btn .n-button__content) {
   color: inherit !important;
 }
 
-// 确保图标颜色正确
-:deep(.n-icon) {
+:deep(.lang-btn .n-icon),
+:deep(.theme-btn .n-icon),
+:deep(.icon-btn .n-icon) {
   color: currentColor;
 }
 </style>

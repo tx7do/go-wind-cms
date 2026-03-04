@@ -41,21 +41,20 @@ function handleSearch() {
   flex: 1;
   margin: 0 20px;
 
-  /* force visible input border/text in light header */
-  --n-color: #ffffff;
-  --n-color-focus: #ffffff;
-  --n-text-color: var(--color-text-primary);
-  --n-placeholder-color: var(--color-text-secondary);
-  --n-border: 1px solid #cfd6e4;
+  --n-color: var(--header-control-bg);
+  --n-color-focus: var(--header-control-bg);
+  --n-text-color: var(--header-control-text);
+  --n-placeholder-color: var(--header-control-text-muted);
+  --n-border: 1px solid var(--header-control-border);
   --n-border-hover: 1px solid var(--color-brand);
   --n-border-focus: 1px solid var(--color-brand);
   --n-border-radius: 8px;
-  --n-box-shadow-focus: 0 0 0 2px rgba(102, 126, 234, 0.14);
+  --n-box-shadow-focus: var(--header-focus-ring);
 
   :deep(.n-input-wrapper) {
-    background: #ffffff;
+    background: var(--header-control-bg);
     border-radius: 8px !important;
-    box-shadow: inset 0 0 0 1px #cfd6e4 !important;
+    box-shadow: inset 0 0 0 1px var(--header-control-border) !important;
   }
 
   :deep(.n-input-wrapper:hover) {
@@ -65,19 +64,19 @@ function handleSearch() {
 
   :deep(.n-input.n-input--focus .n-input-wrapper) {
     border-radius: 8px !important;
-    box-shadow: inset 0 0 0 1px var(--color-brand), 0 0 0 2px rgba(102, 126, 234, 0.14) !important;
+    box-shadow: inset 0 0 0 1px var(--color-brand), var(--header-focus-ring) !important;
   }
 
   :deep(.n-input__input-el) {
-    color: var(--color-text-primary) !important;
+    color: var(--header-control-text) !important;
   }
 
   :deep(.n-input__placeholder) {
-    color: var(--color-text-secondary) !important;
+    color: var(--header-control-text-muted) !important;
   }
 
   :deep(.n-input__prefix .n-icon) {
-    color: var(--color-text-secondary) !important;
+    color: var(--header-control-text-muted) !important;
   }
 }
 </style>

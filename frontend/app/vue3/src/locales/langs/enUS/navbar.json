@@ -5,6 +5,8 @@
     "about": "About",
     "register": "Register",
     "login": "Login",
-    "search_placeholder": "Please enter keywords to search"
+    "search_placeholder": "Please enter keywords to search",
+    "dark_mode": "Dark",
+    "light_mode": "Light"
   }
 }

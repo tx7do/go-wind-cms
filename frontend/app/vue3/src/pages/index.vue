@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { definePage } from 'unplugin-vue-router/runtime'
 import { useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { usePostStore, useCategoryStore } from '@/stores/modules/app'
-import { $t } from '@/locales'
+import { $t, i18n } from '@/locales'
 
 definePage({
   name: 'home',
@@ -89,28 +89,33 @@ function handleViewCategory(id: number) {
   router.push(`/category/${id}`)
 }
 
-const features = [
-  {
-    icon: 'carbon:content-management',
-    title: $t('page.home.flexible_content_management'),
-    description: $t('page.home.content_management_desc'),
-  },
-  {
-    icon: 'carbon:multi-tenant',
-    title: $t('page.home.multi_tenant_architecture'),
-    description: $t('page.home.multi_tenant_desc'),
-  },
-  {
-    icon: 'carbon:security',
-    title: $t('page.home.enterprise_security'),
-    description: $t('page.home.security_desc'),
-  },
-  {
-    icon: 'carbon:chart-area',
-    title: $t('page.home.advanced_analytics'),
-    description: $t('page.home.analytics_desc'),
-  },
-]
+const features = computed(() => {
+  // Track locale so this list recomputes immediately on language switch.
+  void i18n.global.locale.value
+
+  return [
+    {
+      icon: 'carbon:content-management',
+      title: $t('page.home.flexible_content_management'),
+      description: $t('page.home.content_management_desc'),
+    },
+    {
+      icon: 'carbon:multi-tenant',
+      title: $t('page.home.multi_tenant_architecture'),
+      description: $t('page.home.multi_tenant_desc'),
+    },
+    {
+      icon: 'carbon:security',
+      title: $t('page.home.enterprise_security'),
+      description: $t('page.home.security_desc'),
+    },
+    {
+      icon: 'carbon:chart-area',
+      title: $t('page.home.advanced_analytics'),
+      description: $t('page.home.analytics_desc'),
+    },
+  ]
+})
 
 onMounted(async () => {
   loading.value = true

@@ -212,6 +212,8 @@ watch(() => route.query.category, (newVal) => {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
 }
 
 .page-header {
@@ -253,63 +255,8 @@ watch(() => route.query.category, (newVal) => {
     }
 
     :deep(.n-card-header) {
-      background: var(--color-surface);
-      color: var(--color-text-primary);
       border-bottom: 1px solid var(--color-border);
       padding: 1rem;
-    }
-
-    :deep(.n-menu) {
-      background: transparent;
-      color: var(--color-text-primary);
-    }
-
-    :deep(.n-menu-item) {
-      color: var(--color-text-primary);
-
-      &:hover {
-        background: rgba(102, 126, 234, 0.1);
-        color: var(--color-brand);
-      }
-
-      &.n-menu-item--selected {
-        background: rgba(102, 126, 234, 0.15);
-        color: var(--color-brand);
-        font-weight: 500;
-      }
-    }
-
-    :deep(.n-input) {
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      border-color: var(--color-border);
-
-      &:hover {
-        border-color: var(--color-brand);
-      }
-
-      &:focus,
-      &.n-input--focus {
-        border-color: var(--color-brand);
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-      }
-    }
-
-    :deep(.n-input__input-el) {
-      color: var(--color-text-primary);
-
-      &::placeholder {
-        color: var(--color-text-secondary);
-      }
-    }
-
-    :deep(.n-button) {
-      color: var(--color-text-primary);
-
-      &:hover {
-        color: var(--color-brand);
-        background: rgba(102, 126, 234, 0.1);
-      }
     }
   }
 }
@@ -335,7 +282,7 @@ watch(() => route.query.category, (newVal) => {
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--post-card-hover-shadow);
   }
 
   .post-image {
