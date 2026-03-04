@@ -135,6 +135,20 @@ func (r *PageTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 	return nil
 }
 
+func (r *PageTranslationRepo) CountByBaseSlug(ctx context.Context, baseSlug string) (int64, error) {
+	count, err := r.entClient.Client().PageTranslation.Query().
+		Where(
+			pagetranslation.SlugHasPrefix(baseSlug),
+		).
+		Count(ctx)
+	if err != nil {
+		r.log.Errorf("count page translations by slug failed: %s", err.Error())
+		return 0, contentV1.ErrorInternalServerError("count page translations by slug failed")
+	}
+
+	return int64(count), nil
+}
+
 // TranslationExists checks if a translation exists for the given page ID and language code.
 func (r *PageTranslationRepo) TranslationExists(ctx context.Context, pageId uint32, languageCode string) (bool, error) {
 	count, err := r.entClient.Client().PageTranslation.Query().

@@ -722,7 +722,7 @@ INSERT INTO public.site_settings (
     NOW(), NOW(), 1, 'zh-CN', 'theme', 'primary_color',
     '#1890ff',
     'SETTING_TYPE_SELECT', '主题主色', '站点的核心品牌色', NULL,
-    '["#1890ff", "#e53e3e", "#389e0d", "#faad14"]'::jsonb,
+    '{"#1890ff": "Sky Blue (Default)", "#e53e3e": "Red", "#389e0d": "Green", "#faad14": "Yellow"}'::jsonb,
     false, '^#[0-9a-fA-F]{6}$'
 ),
 -- ========== 站点1（ID=1）：英文配置 ==========
@@ -764,5 +764,919 @@ INSERT INTO public.site_settings (
     'SETTING_TYPE_TEXT', '维护页面内容', '站点维护时显示的提示内容', '请输入维护提示', NULL,
     true, NULL
 );
+
+
+-- ----------------------------
+-- 插入 navigations 表（导航组）测试数据
+-- ----------------------------
+INSERT INTO public.navigations (
+    created_at, updated_at, name, location, locale, is_active
+) VALUES
+-- 中文 - 顶部导航
+(
+    NOW(), NOW(),
+    '顶部导航',
+    'NAV_LOCATION_HEADER',
+    'zh-CN',
+    true
+),
+-- 英文 - 顶部导航
+(
+    NOW(), NOW(),
+    'Header Navigation',
+    'NAV_LOCATION_HEADER',
+    'en-US',
+    true
+),
+-- 中文 - 底部导航
+(
+    NOW(), NOW(),
+    '底部导航',
+    'NAV_LOCATION_FOOTER',
+    'zh-CN',
+    true
+),
+-- 英文 - 底部导航
+(
+    NOW(), NOW(),
+    'Footer Navigation',
+    'NAV_LOCATION_FOOTER',
+    'en-US',
+    true
+),
+-- 中文 - 侧边栏导航（文档中心）
+(
+    NOW(), NOW(),
+    '侧边栏导航',
+    'NAV_LOCATION_SIDEBAR',
+    'zh-CN',
+    true
+);
+
+-- ----------------------------
+-- 插入 navigation_items 表（导航项）测试数据
+-- 关联上述导航组，包含多级嵌套、不同链接类型
+-- ----------------------------
+INSERT INTO public.navigation_items (
+    created_at, updated_at, sort_order, link_type, navigation_id,
+    title, url, object_id, icon, description, is_open_new_tab,
+    is_invalid, css_class, required_permission, parent_id
+) VALUES
+-- ========== 导航组1（zh-CN 顶部导航） - 一级导航项 ==========
+-- 首页
+(
+    NOW(), NOW(),
+    1, 'LINK_TYPE_PAGE', 1,
+    '首页',
+    '/',
+    1, -- 关联页面ID（示例值）
+    'icon-home',
+    '网站首页',
+    false, false,
+    'nav-item header-nav',
+    '',
+    NULL
+),
+-- 博客
+(
+    NOW(), NOW(),
+    2, 'LINK_TYPE_POST', 1,
+    '博客',
+    '/posts',
+    0,
+    'icon-blog',
+    '最新文章列表',
+    false, false,
+    'nav-item header-nav',
+    '',
+    NULL
+),
+-- 文档中心（有子菜单）
+(
+    NOW(), NOW(),
+    3, 'LINK_TYPE_CUSTOM', 1,
+    '文档中心',
+    '/docs',
+    0,
+    'icon-docs',
+    '使用文档与教程',
+    false, false,
+    'nav-item header-nav has-children',
+    '',
+    NULL
+),
+-- 关于我们
+(
+    NOW(), NOW(),
+    4, 'LINK_TYPE_EXTERNAL', 1,
+    '关于我们',
+    'https://gowind.com/about',
+    0,
+    'icon-about',
+    'GoWind CMS 介绍',
+    true, false,
+    'nav-item header-nav',
+    '',
+    NULL
+),
+
+-- ========== 导航组1（zh-CN 顶部导航） - 文档中心子菜单（二级） ==========
+-- 快速开始（父ID=3，即「文档中心」）
+(
+    NOW(), NOW(),
+    1, 'LINK_TYPE_POST', 1,
+    '快速开始',
+    '/docs/quick-start',
+    101, -- 关联帖子ID（示例值）
+    'icon-quickstart',
+    '5分钟快速搭建CMS',
+    false, false,
+    'nav-item child-nav',
+    '',
+    3
+),
+-- 配置指南（父ID=3）
+(
+    NOW(), NOW(),
+    2, 'LINK_TYPE_POST', 1,
+    '配置指南',
+    '/docs/configuration',
+    102,
+    'icon-config',
+    '站点/导航/权限配置',
+    false, false,
+    'nav-item child-nav',
+    '',
+    3
+),
+-- API 文档（父ID=3）
+(
+    NOW(), NOW(),
+    3, 'LINK_TYPE_EXTERNAL', 1,
+    'API 文档',
+    'https://gowind.com/api-docs',
+    0,
+    'icon-api',
+    '开发者API参考',
+    true, false,
+    'nav-item child-nav',
+    'admin', -- 需要管理员权限
+    3
+),
+
+-- ========== 导航组2（en-US 顶部导航） ==========
+-- Home
+(
+    NOW(), NOW(),
+    1, 'LINK_TYPE_PAGE', 2,
+    'Home',
+    '/',
+    1,
+    'icon-home',
+    'Website Home Page',
+    false, false,
+    'nav-item header-nav',
+    '',
+    NULL
+),
+-- Blog
+(
+    NOW(), NOW(),
+    2, 'LINK_TYPE_POST', 2,
+    'Blog',
+    '/posts',
+    0,
+    'icon-blog',
+    'Latest Articles',
+    false, false,
+    'nav-item header-nav',
+    '',
+    NULL
+),
+-- Documentation
+(
+    NOW(), NOW(),
+    3, 'LINK_TYPE_CUSTOM', 2,
+    'Documentation',
+    '/docs',
+    0,
+    'icon-docs',
+    'User Guides & Tutorials',
+    false, false,
+    'nav-item header-nav has-children',
+    '',
+    NULL
+),
+
+-- ========== 导航组3（zh-CN 底部导航） ==========
+-- 隐私政策
+(
+    NOW(), NOW(),
+    1, 'LINK_TYPE_PAGE', 3,
+    '隐私政策',
+    '/privacy',
+    201,
+    '',
+    '网站隐私政策',
+    false, false,
+    'nav-item footer-nav',
+    '',
+    NULL
+),
+-- 用户协议
+(
+    NOW(), NOW(),
+    2, 'LINK_TYPE_PAGE', 3,
+    '用户协议',
+    '/terms',
+    202,
+    '',
+    '用户使用协议',
+    false, false,
+    'nav-item footer-nav',
+    '',
+    NULL
+),
+-- 联系我们
+(
+    NOW(), NOW(),
+    3, 'LINK_TYPE_EXTERNAL', 3,
+    '联系我们',
+    'mailto:contact@gowind.com',
+    0,
+    '',
+    '发送邮件联系我们',
+    true, false,
+    'nav-item footer-nav',
+    '',
+    NULL
+),
+
+-- ========== 导航组5（zh-CN 侧边栏导航） - 多级嵌套示例 ==========
+-- 基础功能（一级）
+(
+    NOW(), NOW(),
+    1, 'LINK_TYPE_CUSTOM', 5,
+    '基础功能',
+    '/docs/basic',
+    0,
+    'icon-basic',
+    'CMS基础操作',
+    false, false,
+    'nav-item sidebar-nav',
+    '',
+    NULL
+),
+-- 文章管理（二级，父ID=11）
+(
+    NOW(), NOW(),
+    1, 'LINK_TYPE_POST', 5,
+    '文章管理',
+    '/docs/basic/post',
+    0,
+    'icon-post',
+    '创建/编辑/发布文章',
+    false, false,
+    'nav-item sidebar-nav child',
+    '',
+    11
+),
+-- 标签管理（三级，父ID=12）
+(
+    NOW(), NOW(),
+    2, 'LINK_TYPE_CUSTOM', 5,
+    '标签管理',
+    '/docs/basic/post/tags',
+    0,
+    'icon-tag',
+    '标签的创建与关联',
+    false, false,
+    'nav-item sidebar-nav grandchild',
+    '',
+    12
+),
+-- 站点配置（二级，父ID=11）
+(
+    NOW(), NOW(),
+    2, 'LINK_TYPE_CUSTOM', 5,
+    '站点配置',
+    '/docs/basic/site',
+    0,
+    'icon-site',
+    '站点基本信息配置',
+    false, false,
+    'nav-item sidebar-nav child',
+    'admin', -- 需要管理员权限
+    11
+);
+
+
+-- ----------------------------
+-- 插入 comments 表测试数据
+-- 包含多级评论、不同状态/作者类型、统计字段
+-- ----------------------------
+INSERT INTO public.comments (
+    created_at, updated_at, content_type, object_id, content,
+    author_id, author_name, author_email, author_url, author_type,
+    status, like_count, dislike_count, reply_count, ip_address,
+    location, user_agent, detected_language, is_spam, is_sticky,
+    reply_to_id, parent_id
+) VALUES
+-- ========== 场景1：文章（object_id=101）的核心评论 ==========
+-- 父评论1：管理员发布的置顶评论（已发布、置顶）
+(
+    NOW() - INTERVAL '3 days', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '感谢大家使用 GoWind CMS！如果有使用问题，欢迎在下方留言交流～',
+    1, -- 管理员ID
+    'GoWind 官方',
+    'admin@gowind.com',
+    'https://gowind.com',
+    'AUTHOR_TYPE_ADMIN',
+    'STATUS_APPROVED',
+    89, 2, 12,
+    '103.2xx.xx.1',
+    '北京市 阿里云',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    'zh-CN',
+    false, true,
+    NULL, NULL
+),
+-- 父评论2：登录用户的正常评论（已发布）
+(
+    NOW() - INTERVAL '2 days', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '这个CMS的多语言功能太实用了！我用它搭建了中英文双语博客，体验很棒～',
+    1001, -- 普通用户ID
+    '张三',
+    'zhangsan@example.com',
+    'https://zhangsan-blog.com',
+    'AUTHOR_TYPE_USER',
+    'STATUS_APPROVED',
+    45, 1, 3,
+    '180.1xx.xx.2',
+    '上海市 电信',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/121.0.0.0 Safari/537.36',
+    'zh-CN',
+    false, false,
+    NULL, NULL
+),
+-- 父评论3：访客评论（待审核）
+(
+    NOW() - INTERVAL '1 day', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '请问如何配置ES全站搜索？尝试了几次都没成功，求教程～',
+    0, -- 访客无ID
+    '小李',
+    'xiaoli@qq.com',
+    '',
+    'AUTHOR_TYPE_GUEST',
+    'STATUS_PENDING',
+    8, 0, 1,
+    '27.1xx.xx.3',
+    '广东省广州市 联通',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Safari/604.1',
+    'zh-CN',
+    false, false,
+    NULL, NULL
+),
+-- 父评论4：垃圾评论（广告、标记为spam）
+(
+    NOW() - INTERVAL '12 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '【代开发票】增值税发票/普通发票，保真可查验，联系微信：138xxxx8888',
+    0,
+    '诚信代开',
+    'fake@spam.com',
+    'http://fake-invoice.com',
+    'AUTHOR_TYPE_GUEST',
+    'STATUS_REJECTED',
+    0, 15, 0,
+    '43.2xx.xx.4',
+    '海外 未知',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+    'zh-CN',
+    true, false,
+    NULL, NULL
+),
+-- 父评论5：英文评论（海外用户）
+(
+    NOW() - INTERVAL '8 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    'This CMS is really lightweight and fast! I love the dark mode design, it''s very eye-friendly.',
+    2001, -- 海外用户ID
+    'John Doe',
+    'john.doe@gmail.com',
+    'https://john-doe.dev',
+    'AUTHOR_TYPE_USER',
+    'STATUS_APPROVED',
+    23, 0, 2,
+    '198.51.xx.5',
+    'New York, USA',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+    'en-US',
+    false, false,
+    NULL, NULL
+),
+
+-- ========== 场景2：父评论1的子回复（多级嵌套） ==========
+-- 回复1-1：回复管理员的置顶评论（子评论）
+(
+    NOW() - INTERVAL '2 days 18 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '官方大大，请问多站点配置时，域名解析需要注意什么？',
+    1002,
+    '李四',
+    'lisi@163.com',
+    '',
+    'AUTHOR_TYPE_USER',
+    'STATUS_APPROVED',
+    12, 0, 1,
+    '117.1xx.xx.6',
+    '浙江省杭州市 阿里云',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36',
+    'zh-CN',
+    false, false,
+    1, -- 回复的是ID=1的评论
+    1  -- 父评论ID=1
+),
+-- 回复1-1-1：回复李四的评论（孙评论，管理员回复）
+(
+    NOW() - INTERVAL '2 days 12 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '您好！多站点域名解析需确保A记录指向服务器IP，同时在CMS中配置域名白名单，避免跨域问题～',
+    1,
+    'GoWind 官方',
+    'admin@gowind.com',
+    'https://gowind.com',
+    'AUTHOR_TYPE_ADMIN',
+    'STATUS_APPROVED',
+    8, 0, 0,
+    '103.2xx.xx.1',
+    '北京市 阿里云',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/122.0.0.0 Safari/537.36',
+    'zh-CN',
+    false, false,
+    6, -- 回复的是ID=6的评论
+    6  -- 父评论ID=6
+),
+
+-- ========== 场景3：父评论2的子回复 ==========
+-- 回复2-1：回复张三的评论（访客）
+(
+    NOW() - INTERVAL '1 day 6 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '请问中英文切换时，Tag标签的多语言是自动同步的吗？',
+    0,
+    '王老五',
+    'wanglaowu@126.com',
+    '',
+    'AUTHOR_TYPE_GUEST',
+    'STATUS_PENDING',
+    3, 0, 0,
+    '140.1xx.xx.7',
+    '四川省成都市 移动',
+    'Mozilla/5.0 (Android 14; Mobile; rv:123.0) Gecko/123.0 Firefox/123.0',
+    'zh-CN',
+    false, false,
+    2, -- 回复的是ID=2的评论
+    2  -- 父评论ID=2
+),
+-- 回复2-2：张三回复王老五（登录用户）
+(
+    NOW() - INTERVAL '1 day 2 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '是的，我测试过，Tag的多语言是绑定同一个key的，切换语言会自动显示对应名称～',
+    1001,
+    '张三',
+    'zhangsan@example.com',
+    'https://zhangsan-blog.com',
+    'AUTHOR_TYPE_USER',
+    'STATUS_APPROVED',
+    5, 0, 0,
+    '180.1xx.xx.2',
+    '上海市 电信',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Edge/121.0.0.0 Safari/537.36',
+    'zh-CN',
+    false, false,
+    8, -- 回复的是ID=8的评论
+    8  -- 父评论ID=8
+),
+
+-- ========== 场景4：父评论3的子回复 ==========
+-- 回复3-1：管理员回复小李的问题
+(
+    NOW() - INTERVAL '8 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    '您好！ES配置教程已更新：https://gowind.com/docs/es-setup，可参考～',
+    1,
+    'GoWind 官方',
+    'admin@gowind.com',
+    'https://gowind.com',
+    'AUTHOR_TYPE_ADMIN',
+    'STATUS_APPROVED',
+    10, 0, 0,
+    '103.2xx.xx.1',
+    '北京市 阿里云',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/122.0.0.0 Safari/537.36',
+    'zh-CN',
+    false, false,
+    3, -- 回复的是ID=3的评论
+    3  -- 父评论ID=3
+),
+
+-- ========== 场景5：父评论5的子回复（英文） ==========
+-- 回复5-1：回复John Doe的英文评论
+(
+    NOW() - INTERVAL '6 hours', NOW(),
+    'CONTENT_TYPE_POST', 101,
+    'I agree! The performance is amazing even with 10k+ posts. Have you tried the multi-tenant feature?',
+    2002,
+    'Jane Smith',
+    'jane.smith@outlook.com',
+    'https://jane-smith.dev',
+    'AUTHOR_TYPE_USER',
+    'STATUS_APPROVED',
+    7, 0, 0,
+    '203.0xx.xx.8',
+    'London, UK',
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/123.0 Firefox/123.0',
+    'en-US',
+    false, false,
+    5, -- 回复的是ID=5的评论
+    5  -- 父评论ID=5
+),
+
+-- ========== 场景6：页面（object_id=201）的评论 ==========
+-- 父评论6：页面的访客评论（已拒绝）
+(
+    NOW() - INTERVAL '3 days', NOW(),
+    'CONTENT_TYPE_PAGE', 201,
+    '这个页面的排版有问题，手机端显示不全，希望尽快修复',
+    0,
+    '赵六',
+    'zhaoliu@foxmail.com',
+    '',
+    'AUTHOR_TYPE_GUEST',
+    'STATUS_REJECTED',
+    2, 3, 0,
+    '58.2xx.xx.9',
+    '江苏省南京市 电信',
+    'Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/121.0.6167.140 Mobile/15E148 Safari/604.1',
+    'zh-CN',
+    false, false,
+    NULL, NULL
+),
+-- 父评论7：页面的垃圾评论（广告）
+(
+    NOW() - INTERVAL '1 day', NOW(),
+    'CONTENT_TYPE_PAGE', 201,
+    '低价出售阿里云服务器/域名，一年仅需99元，联系QQ：123456789',
+    0,
+    '优惠促销',
+    'sale@fake.com',
+    'http://fake-sale.com',
+    'AUTHOR_TYPE_GUEST',
+    'STATUS_REJECTED',
+    0, 8, 0,
+    '124.1xx.xx.10',
+    '海外 未知',
+    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
+    'zh-CN',
+    true, false,
+    NULL, NULL
+),
+-- 父评论8：页面的正常评论（已发布）
+(
+    NOW() - INTERVAL '5 hours', NOW(),
+    'CONTENT_TYPE_PAGE', 201,
+    '页面的暗黑模式切换很丝滑，希望能增加自定义主题色的功能～',
+    1003,
+    '小七',
+    'xiaoqi@139.com',
+    'https://xiaoqi.tech',
+    'AUTHOR_TYPE_USER',
+    'STATUS_APPROVED',
+    15, 0, 0,
+    '220.1xx.xx.11',
+    '湖北省武汉市 移动',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    'zh-CN',
+    false, false,
+    NULL, NULL
+),
+-- 父评论9：页面的审核中评论（英文）
+(
+    NOW() - INTERVAL '2 hours', NOW(),
+    'CONTENT_TYPE_PAGE', 201,
+    'The SEO settings for this page are very comprehensive, it helped me improve my Google ranking!',
+    2003,
+    'Mike Wilson',
+    'mike.wilson@yahoo.com',
+    'https://mike-wilson.com',
+    'AUTHOR_TYPE_USER',
+    'STATUS_PENDING',
+    4, 0, 0,
+    '172.1xx.xx.12',
+    'California, USA',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    'en-US',
+    false, false,
+    NULL, NULL
+);
+
+
+-- ----------------------------
+-- 插入 pages 表（页面主表）测试数据（匹配 PageType 枚举）
+-- ----------------------------
+INSERT INTO public.pages (
+    created_at, updated_at, sort_order, path, editor_type,
+    status, type, slug, author_id, author_name,
+    disallow_comment, redirect_url, show_in_navigation,
+    template, is_custom_template, visits, custom_fields,
+    custom_head, custom_foot, depth, parent_id
+) VALUES
+-- 页面1：首页（PAGE_TYPE_HOME=2）
+(
+    NOW() - INTERVAL '30 days', NOW(),
+    1, '/', 'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_HOME', 'home',
+    1, 'GoWind 官方',
+    false, '', true,
+    'default-home', false, 15890,
+    '{"banner_show": "true", "banner_delay": "3000", "show_hot_articles": "true"}'::jsonb,
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<script src="/js/home-footer.js"></script>',
+    0, NULL
+),
+-- 页面2：关于我们（普通页面 PAGE_TYPE_DEFAULT=1）
+(
+    NOW() - INTERVAL '25 days', NOW(),
+    2, '/about', 'EDITOR_TYPE_RICH_TEXT',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'about',
+    1, 'GoWind 官方',
+    true, '', true,
+    'default-static', false, 8760,
+    '{"show_team_avatar": "true", "team_size": "15", "founded_year": "2024"}'::jsonb,
+    '', '',
+    0, NULL
+),
+-- 页面3：文档中心（普通页面 PAGE_TYPE_DEFAULT=1）
+(
+    NOW() - INTERVAL '20 days', NOW(),
+    3, '/docs', 'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'docs',
+    1, 'GoWind 官方',
+    false, '', true,
+    'default-docs', false, 12540,
+    '{"sidebar_collapse": "false", "edit_on_github": "true", "github_repo": "gowind/cms-docs"}'::jsonb,
+    '<link rel="stylesheet" href="/css/docs.css">',
+    '<script src="/js/docs-sidebar.js"></script>',
+    0, NULL
+),
+-- 页面4：快速开始（普通页面 PAGE_TYPE_DEFAULT=1，二级）
+(
+    NOW() - INTERVAL '18 days', NOW(),
+    1, '/docs/quick-start', 'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'quick-start',
+    1, 'GoWind 官方',
+    false, '', true,
+    'default-docs', false, 9870,
+    '{"difficulty": "beginner", "estimated_time": "5分钟"}'::jsonb,
+    '', '',
+    1, 3
+),
+-- 页面5：404错误页（PAGE_TYPE_ERROR_404=3，特殊页面）
+(
+    NOW() - INTERVAL '15 days', NOW(),
+    0, '/404', 'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_ERROR_404', '404',
+    1, 'GoWind 官方',
+    true, '', false,
+    'default-error', false, 5680,
+    '{"show_search": "true", "show_home_button": "true", "custom_message": "您访问的页面不存在～"}'::jsonb,
+    '', '<script src="/js/404-tracking.js"></script>',
+    0, NULL
+),
+-- 页面6：500错误页（PAGE_TYPE_ERROR_500=4，特殊页面）
+(
+    NOW() - INTERVAL '15 days', NOW(),
+    0, '/500', 'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_ERROR_500', '500',
+    1, 'GoWind 官方',
+    true, '', false,
+    'default-error', false, 1230,
+    '{"show_contact_button": "true", "maintenance_phone": "400-123-4567"}'::jsonb,
+    '', '',
+    0, NULL
+),
+-- 页面7：登录页（自定义逻辑页 PAGE_TYPE_CUSTOM=5）
+(
+    NOW() - INTERVAL '12 days', NOW(),
+    0, '/login', 'EDITOR_TYPE_RICH_TEXT', -- 自定义编辑器（无内容编辑）
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_CUSTOM', 'login',
+    1, 'GoWind 官方',
+    true, '', false,
+    'custom-login', true, 8920,
+    '{"show_captcha": "true", "remember_me_days": "7", "oauth_github": "true", "oauth_google": "false"}'::jsonb,
+    '<link rel="stylesheet" href="/css/login.css">',
+    '<script src="/js/login-validation.js"></script>',
+    0, NULL
+),
+-- 页面8：隐私政策（普通页面 PAGE_TYPE_DEFAULT=1）
+(
+    NOW() - INTERVAL '12 days', NOW(),
+    4, '/privacy', 'EDITOR_TYPE_RICH_TEXT',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'privacy-policy',
+    1, 'GoWind 官方',
+    true, '', true,
+    'default-static', false, 4320,
+    '{"last_updated": "2024-03-01", "version": "1.0"}'::jsonb,
+    '', '',
+    0, NULL
+),
+-- 页面9：注册页（自定义逻辑页 PAGE_TYPE_CUSTOM=5）
+(
+    NOW() - INTERVAL '10 days', NOW(),
+    0, '/register', 'EDITOR_TYPE_RICH_TEXT',
+    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_CUSTOM', 'register',
+    1, 'GoWind 官方',
+    true, '', false,
+    'custom-register', true, 5430,
+    '{"need_email_verify": "true", "default_role": "user", "invite_code_required": "false"}'::jsonb,
+    '<link rel="stylesheet" href="/css/register.css">',
+    '<script src="/js/register-verify.js"></script>',
+    0, NULL
+);
+
+-- ----------------------------
+-- 插入 page_translations 表（页面多语言翻译）测试数据
+-- 核心修正：所有 \n 替换为真实换行，用多行字符串写法
+-- ----------------------------
+INSERT INTO public.page_translations (
+    created_at, updated_at, page_id, language_code, title,
+    slug, summary, content, original_content, thumbnail,
+    cover_image, full_path, word_count, meta_keywords,
+    meta_description, seo_title
+) VALUES
+-- ========== 页面1（首页） - 中文翻译（真实换行） ==========
+(
+    NOW() - INTERVAL '30 days', NOW(), 1, 'zh-CN',
+    'GoWind CMS - 高性能Go语言多站点多语言CMS系统',
+    'home',
+    'GoWind CMS 是基于Go+Vue3开发的高性能、轻量级CMS系统，支持多站点、多语言、多租户，开箱即用。',
+    '# GoWind CMS
+
+## 核心特性
+- 多站点管理：一个系统管理多个独立站点
+- 多语言支持：内置多语言翻译体系
+- 高性能：基于Go语言开发，QPS可达10万+
+- 易扩展：插件化架构，支持自定义模板/主题',
+    '# GoWind CMS
+
+## 核心特性
+- 多站点管理：一个系统管理多个独立站点
+- 多语言支持：内置多语言翻译体系
+- 高性能：基于Go语言开发，QPS可达10万+
+- 易扩展：插件化架构，支持自定义模板/主题',
+    '/images/thumbnails/home-zh.jpg',
+    '/images/covers/home-zh.jpg',
+    '/',
+    520,
+    'GoWind,CMS,Go语言,多站点,多语言,高性能',
+    'GoWind CMS 是基于Go+Vue3开发的高性能CMS系统，支持多站点、多语言、多租户，开箱即用。',
+    'GoWind CMS - 高性能Go语言多站点多语言CMS系统'
+),
+-- ========== 页面1（首页） - 英文翻译（真实换行） ==========
+(
+    NOW() - INTERVAL '30 days', NOW(), 1, 'en-US',
+    'GoWind CMS - High Performance Go CMS for Multi-site & Multi-language',
+    'home',
+    'GoWind CMS is a high-performance, lightweight CMS built with Go+Vue3, supporting multi-site, multi-language, and multi-tenant features, ready to use out of the box.',
+    '# GoWind CMS
+
+## Core Features
+- Multi-site Management: Manage multiple independent sites with one system
+- Multi-language Support: Built-in multi-language translation system
+- High Performance: Developed with Go, QPS up to 100,000+
+- Extensible: Plugin-based architecture, support custom templates/themes',
+    '# GoWind CMS
+
+## Core Features
+- Multi-site Management: Manage multiple independent sites with one system
+- Multi-language Support: Built-in multi-language translation system
+- High Performance: Developed with Go, QPS up to 100,000+
+- Extensible: Plugin-based architecture, support custom templates/themes',
+    '/images/thumbnails/home-en.jpg',
+    '/images/covers/home-en.jpg',
+    '/en',
+    480,
+    'GoWind,CMS,Go,Multi-site,Multi-language,High Performance',
+    'GoWind CMS is a high-performance CMS built with Go+Vue3, supporting multi-site, multi-language, and multi-tenant features, ready to use out of the box.',
+    'GoWind CMS - High Performance Go CMS for Multi-site & Multi-language'
+),
+-- ========== 页面5（404错误页） - 中文翻译（真实换行） ==========
+(
+    NOW() - INTERVAL '15 days', NOW(), 5, 'zh-CN',
+    '404 - 页面不存在',
+    '404',
+    '您访问的页面不存在或已被删除，可返回首页或使用搜索功能查找相关内容。',
+    '# 404 - 页面不存在
+
+抱歉，您访问的页面不存在或已被删除。
+
+### 您可以：
+- 点击 <a href="/">首页</a> 返回网站首页
+- 使用下方搜索框查找相关内容
+- 联系客服：400-123-4567',
+    '# 404 - 页面不存在
+
+抱歉，您访问的页面不存在或已被删除。
+
+### 您可以：
+- 点击 <a href="/">首页</a> 返回网站首页
+- 使用下方搜索框查找相关内容
+- 联系客服：400-123-4567',
+    '/images/thumbnails/404-zh.jpg',
+    '/images/covers/404-zh.jpg',
+    '/404',
+    280,
+    '404,页面不存在,返回首页',
+    '您访问的页面不存在或已被删除，可返回首页或使用搜索功能查找相关内容。',
+    '404 - 页面不存在 | GoWind CMS'
+),
+-- ========== 页面5（404错误页） - 英文翻译（真实换行） ==========
+(
+    NOW() - INTERVAL '15 days', NOW(), 5, 'en-US',
+    '404 - Page Not Found',
+    '404',
+    'The page you are looking for does not exist or has been deleted. You can return to the homepage or use the search function to find relevant content.',
+    '# 404 - Page Not Found
+
+Sorry, the page you are looking for does not exist or has been deleted.
+
+### You can:
+- Click <a href="/en">Home</a> to return to the homepage
+- Use the search box below to find relevant content
+- Contact support: 400-123-4567',
+    '# 404 - Page Not Found
+
+Sorry, the page you are looking for does not exist or has been deleted.
+
+### You can:
+- Click <a href="/en">Home</a> to return to the homepage
+- Use the search box below to find relevant content
+- Contact support: 400-123-4567',
+    '/images/thumbnails/404-en.jpg',
+    '/images/covers/404-en.jpg',
+    '/en/404',
+    260,
+    '404,Page Not Found,Return Home',
+    'The page you are looking for does not exist or has been deleted. You can return to the homepage or use the search function to find relevant content.',
+    '404 - Page Not Found | GoWind CMS'
+),
+-- ========== 页面7（登录页） - 中文翻译 ==========
+(
+    NOW() - INTERVAL '12 days', NOW(), 7, 'zh-CN',
+    '登录 - GoWind CMS',
+    'login',
+    '登录GoWind CMS系统，管理您的站点内容、配置和用户。',
+    '', -- 自定义逻辑页无Markdown/富文本内容
+    '',
+    '/images/thumbnails/login-zh.jpg',
+    '/images/covers/login-zh.jpg',
+    '/login',
+    0,
+    '登录,GoWind CMS,账号登录,用户中心',
+    '登录GoWind CMS系统，管理您的站点内容、配置和用户。',
+    '登录 - GoWind CMS'
+),
+-- ========== 页面2（关于我们） - 中文翻译 ==========
+(
+    NOW() - INTERVAL '25 days', NOW(), 2, 'zh-CN',
+    '关于我们 - GoWind CMS',
+    'about',
+    'GoWind 团队成立于2024年，专注于高性能开源CMS系统的研发，致力于为开发者提供简单、高效的内容管理解决方案。',
+    '<h1>关于 GoWind CMS</h1>
+<p>GoWind 团队成立于2024年，核心成员均有10年以上互联网研发经验，专注于高性能开源CMS系统的研发。</p>
+<h2>我们的使命</h2>
+<p>让内容管理更简单，让开发者更高效。</p>
+<h2>团队规模</h2>
+<p>目前团队共15人，涵盖后端、前端、产品、设计等多个领域。</p>',
+    '<h1>关于 GoWind CMS</h1>
+<p>GoWind 团队成立于2024年，核心成员均有10年以上互联网研发经验，专注于高性能开源CMS系统的研发。</p>
+<h2>我们的使命</h2>
+<p>让内容管理更简单，让开发者更高效。</p>
+<h2>团队规模</h2>
+<p>目前团队共15人，涵盖后端、前端、产品、设计等多个领域。</p>',
+    '/images/thumbnails/about-zh.jpg',
+    '/images/covers/about-zh.jpg',
+    '/about',
+    850,
+    'GoWind,关于我们,团队介绍,CMS研发',
+    'GoWind 团队成立于2024年，专注于高性能开源CMS系统的研发，致力于为开发者提供简单、高效的内容管理解决方案。',
+    '关于我们 - GoWind CMS'
+);
+
 
 COMMIT;

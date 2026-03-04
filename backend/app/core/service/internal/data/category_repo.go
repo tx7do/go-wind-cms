@@ -2,10 +2,13 @@ package data
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/go-utils/slug"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -219,11 +222,29 @@ func (r *CategoryRepo) Create(ctx context.Context, req *contentV1.CreateCategory
 		return nil, contentV1.ErrorInternalServerError("insert category failed")
 	}
 
-	if req.Data.Translations != nil {
+	if len(req.Data.Translations) > 0 {
 		if err = r.categoryTranslationRepo.CleanTranslations(ctx, tx, entity.ID); err != nil {
 			r.log.Errorf("clean translations failed: %s", err.Error())
 			return nil, contentV1.ErrorInternalServerError("clean translations failed")
 		}
+
+		for i := range req.Data.Translations {
+			req.Data.Translations[i].CategoryId = trans.Ptr(entity.ID)
+
+			baseSlug := slug.Generate(req.Data.Translations[i].GetName())
+			slugCount, err := r.categoryTranslationRepo.CountByBaseSlug(ctx, baseSlug)
+			if err != nil {
+				r.log.Errorf("count slug failed: %s", err.Error())
+				return nil, contentV1.ErrorInternalServerError("count slug failed")
+			}
+
+			if slugCount > 0 {
+				baseSlug = slug.Generate(req.Data.Translations[i].GetName()) + "-" + strconv.Itoa(int(slugCount))
+			}
+
+			req.Data.Translations[i].Slug = trans.Ptr(baseSlug)
+		}
+
 		if err = r.categoryTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
 			r.log.Errorf("batch insert translations failed: %s", err.Error())
 			return nil, contentV1.ErrorInternalServerError("batch insert translations failed")
@@ -271,11 +292,28 @@ func (r *CategoryRepo) Update(ctx context.Context, req *contentV1.UpdateCategory
 		}
 	}()
 
-	if req.Data.Translations != nil {
+	if len(req.Data.Translations) > 0 {
 		//if err = r.categoryTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
 		//	r.log.Errorf("clean translations failed: %s", err.Error())
 		//	return nil, contentV1.ErrorInternalServerError("clean translations failed")
 		//}
+
+		for i := range req.Data.Translations {
+			req.Data.Translations[i].CategoryId = trans.Ptr(req.GetId())
+
+			baseSlug := slug.Generate(req.Data.Translations[i].GetName())
+			slugCount, err := r.categoryTranslationRepo.CountByBaseSlug(ctx, baseSlug)
+			if err != nil {
+				r.log.Errorf("count slug failed: %s", err.Error())
+				return nil, contentV1.ErrorInternalServerError("count slug failed")
+			}
+
+			if slugCount > 0 {
+				baseSlug = slug.Generate(req.Data.Translations[i].GetName()) + "-" + strconv.Itoa(int(slugCount))
+			}
+
+			req.Data.Translations[i].Slug = trans.Ptr(baseSlug)
+		}
 
 		if err = r.categoryTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
 			r.log.Errorf("batch insert translations failed: %s", err.Error())

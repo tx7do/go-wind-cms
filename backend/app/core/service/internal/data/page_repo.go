@@ -2,6 +2,9 @@ package data
 
 import (
 	"context"
+	"go-wind-cms/pkg/content/count"
+	"go-wind-cms/pkg/content/summary"
+	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -10,6 +13,7 @@ import (
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/slug"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -227,11 +231,37 @@ func (r *PageRepo) Create(ctx context.Context, req *contentV1.CreatePageRequest)
 		return nil, contentV1.ErrorInternalServerError("insert page failed")
 	}
 
-	if req.Data.Translations != nil {
+	if len(req.Data.Translations) > 0 {
 		if err = r.pageTranslationRepo.CleanTranslations(ctx, tx, entity.ID); err != nil {
 			r.log.Errorf("clean translations failed: %s", err.Error())
 			return nil, contentV1.ErrorInternalServerError("clean translations failed")
 		}
+
+		for i := range req.Data.Translations {
+			req.Data.Translations[i].PageId = trans.Ptr(entity.ID)
+
+			baseSlug := slug.Generate(req.Data.Translations[i].GetTitle())
+			slugCount, err := r.pageTranslationRepo.CountByBaseSlug(ctx, baseSlug)
+			if err != nil {
+				r.log.Errorf("count slug failed: %s", err.Error())
+				return nil, contentV1.ErrorInternalServerError("count slug failed")
+			}
+
+			if slugCount > 0 {
+				baseSlug = slug.Generate(req.Data.Translations[i].GetTitle()) + "-" + strconv.Itoa(int(slugCount))
+			}
+
+			if len(req.Data.Translations[i].GetSummary()) == 0 {
+				sm := summary.GenerateSummaryByRule(req.Data.Translations[i].GetContent(), 100, true)
+				req.Data.Translations[i].Summary = trans.Ptr(sm)
+			}
+
+			counter := count.NewContentCounter(req.Data.Translations[i].GetContent())
+
+			req.Data.Translations[i].Slug = trans.Ptr(baseSlug)
+			req.Data.Translations[i].WordCount = trans.Ptr(uint32(counter.RawChars()))
+		}
+
 		if err = r.pageTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
 			r.log.Errorf("batch insert translations failed: %s", err.Error())
 			return nil, contentV1.ErrorInternalServerError("batch insert translations failed")
@@ -279,11 +309,36 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 		}
 	}()
 
-	if req.Data.Translations != nil {
+	if len(req.Data.Translations) > 0 {
 		//if err = r.pageTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
 		//	r.log.Errorf("clean translations failed: %s", err.Error())
 		//	return nil, contentV1.ErrorInternalServerError("clean translations failed")
 		//}
+
+		for i := range req.Data.Translations {
+			req.Data.Translations[i].PageId = trans.Ptr(req.GetId())
+
+			baseSlug := slug.Generate(req.Data.Translations[i].GetTitle())
+			slugCount, err := r.pageTranslationRepo.CountByBaseSlug(ctx, baseSlug)
+			if err != nil {
+				r.log.Errorf("count slug failed: %s", err.Error())
+				return nil, contentV1.ErrorInternalServerError("count slug failed")
+			}
+
+			if slugCount > 0 {
+				baseSlug = slug.Generate(req.Data.Translations[i].GetTitle()) + "-" + strconv.Itoa(int(slugCount))
+			}
+
+			if len(req.Data.Translations[i].GetSummary()) == 0 {
+				sm := summary.GenerateSummaryByRule(req.Data.Translations[i].GetContent(), 100, true)
+				req.Data.Translations[i].Summary = trans.Ptr(sm)
+			}
+
+			counter := count.NewContentCounter(req.Data.Translations[i].GetContent())
+
+			req.Data.Translations[i].Slug = trans.Ptr(baseSlug)
+			req.Data.Translations[i].WordCount = trans.Ptr(uint32(counter.RawChars()))
+		}
 
 		if err = r.pageTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
 			r.log.Errorf("batch insert translations failed: %s", err.Error())
