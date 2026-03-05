@@ -131,6 +131,16 @@ function handleEdit() {
   router.push('/settings')
 }
 
+// 查看帖子详情
+function handleViewPost(postId: number) {
+  router.push({
+    path: `/post/${postId}`,
+    query: {
+      from: 'user'
+    }
+  })
+}
+
 // 加载用户的帖子列表
 async function loadUserPosts() {
   if (!user.value?.id) return
@@ -325,7 +335,7 @@ onMounted(() => {
                             </span>
                           </div>
                         </div>
-                        <n-button text tag="a" :href="`/post/${post.id}`" target="_blank">
+                        <n-button text @click="handleViewPost(post.id)">
                           {{ $t('page.user.view_post') }} →
                         </n-button>
                       </div>

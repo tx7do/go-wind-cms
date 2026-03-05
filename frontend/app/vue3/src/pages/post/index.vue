@@ -82,8 +82,19 @@ function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString()
 }
 
-function handleViewPost(id: number) {
-  router.push(`/post/${id}`)
+function handleViewPost(postId: number) {
+  const query: any = {}
+
+  // 如果有选中的分类，传递分类信息
+  if (selectedCategory.value) {
+    query.from = 'post'
+    query.categoryId = selectedCategory.value
+  }
+
+  router.push({
+    path: `/post/${postId}`,
+    query
+  })
 }
 
 function handleCategoryChange(categoryId: number | null) {

@@ -138,6 +138,32 @@ function handleViewRelatedPost(id: number) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+function handleBack() {
+  // 检查是否有来源页面信息
+  const from = route.query.from as string
+  const categoryId = route.query.categoryId as string
+
+  if (from === 'category' && categoryId) {
+    // 从分类页面进入，返回到分类页面
+    router.push(`/category/${categoryId}`)
+  } else if (from === 'user') {
+    // 从用户资料页面进入，返回到用户资料页面
+    router.push('/user')
+  } else if (from === 'post') {
+    // 从文章列表页面进入，返回到文章列表页面
+    router.push('/post')
+  } else if (from === 'home') {
+    // 从首页进入，返回到首页
+    router.push('/')
+  } else if (window.history.length > 2) {
+    // 有浏览历史，使用浏览器返回
+    router.back()
+  } else {
+    // 默认返回文章列表
+    router.push('/post')
+  }
+}
+
 onMounted(async () => {
   await loadPost()
   await Promise.all([
@@ -153,7 +179,7 @@ onMounted(async () => {
       <div v-if="post" class="post-container">
         <!-- Back Button -->
         <div class="back-navigation">
-          <n-button text @click="router.push('/post')">
+          <n-button text @click="handleBack()">
             <template #icon>
               <span class="i-carbon:arrow-left" />
             </template>

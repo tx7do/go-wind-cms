@@ -99,7 +99,13 @@ function formatDate(dateString: string) {
 }
 
 function handleViewPost(id: number) {
-  router.push(`/post/${id}`)
+  router.push({
+    path: `/post/${id}`,
+    query: {
+      from: 'category',
+      categoryId: categoryId.value?.toString()
+    }
+  })
 }
 
 function handlePageChange(page: number) {
