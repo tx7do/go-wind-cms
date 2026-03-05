@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref, computed} from 'vue';
+import {useRoute} from 'vue-router';
 import {
   HomeOutline,
   LogOutOutline,
@@ -26,6 +27,7 @@ import {isDark, toggleDark} from '@/composables/dark';
 import logoImage from '@/assets/images/logo.png';
 
 const isLogin = ref(true);
+const route = useRoute();
 
 const userOptions = computed(() => {
   return [
@@ -112,11 +114,26 @@ function handleClickLogin() {
 function handleClickLogout() {
 }
 
+function handleClickLogo() {
+  if (route.path === '/') {
+    return;
+  }
+  navigateTo('/');
+}
+
 </script>
 
 <template>
   <div class="top-bar">
-    <div class="logo-section">
+    <div
+      class="logo-section"
+      role="button"
+      tabindex="0"
+      aria-label="Go to homepage"
+      @click="handleClickLogo"
+      @keydown.enter.prevent="handleClickLogo"
+      @keydown.space.prevent="handleClickLogo"
+    >
       <n-image :src="logoImage" class="logo" alt="Logo" preview-disabled/>
       <span class="site-name">{{ $t('authentication.login.brand_title') }}</span>
     </div>
