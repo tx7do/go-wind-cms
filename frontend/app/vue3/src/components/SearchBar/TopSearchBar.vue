@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, computed} from 'vue';
+import {computed} from 'vue';
 import {useRoute} from 'vue-router';
 import {
   HomeOutline,
@@ -23,11 +23,16 @@ import {navigateTo} from '@/router';
 import {renderIcon} from '@/utils';
 import {updatePreferences} from "@/preferences";
 import {isDark, toggleDark} from '@/composables/dark';
+import {useAccessStore, useAuthStore} from '@/stores';
 
 import logoImage from '@/assets/images/logo.png';
 
-const isLogin = ref(true);
+const accessStore = useAccessStore();
+const authStore = useAuthStore();
+const isLogin = computed(() => Boolean(accessStore.accessToken));
 const route = useRoute();
+
+type UserOptionKey = 'homepage' | 'profile' | 'logout'
 
 const userOptions = computed(() => {
   return [
@@ -53,16 +58,25 @@ const userOptions = computed(() => {
   ]
 });
 
-function getLanguageLabel() {
+const languageLabel = computed(() => {
   const lang = i18n.global.locale.value;
   const ret = languageShorts.find((item) => item.key === lang);
   return ret?.label ?? lang;
+});
+
+function navigateIfNeeded(path: string) {
+  if (route.path === path) {
+    return;
+  }
+  navigateTo(path);
 }
 
 async function handleSelectLanguage(key: string | number) {
-  console.log('handleSelectLanguage:', key)
-
   const locale = key as SupportedLanguagesType;
+  if (locale === i18n.global.locale.value) {
+    return;
+  }
+
   updatePreferences({
     app: {
       locale,
@@ -77,18 +91,12 @@ function handleToggleTheme() {
 }
 
 function handleSelectUserItem(key: string | number) {
-  console.log('handleSelectUserItem:', key)
-  switch (key) {
-    case 'homepage':
-      handleClickUserHomepage();
-      break;
-    case 'profile':
-      handleClickSettings();
-      break;
-    case 'logout':
-      handleClickLogout();
-      break;
-  }
+  const actionMap: Record<UserOptionKey, () => void | Promise<void>> = {
+    homepage: handleClickUserHomepage,
+    profile: handleClickSettings,
+    logout: handleClickLogout,
+  };
+  void actionMap[key as UserOptionKey]?.();
 }
 
 function handleClickUserAvatar() {
@@ -96,29 +104,27 @@ function handleClickUserAvatar() {
 }
 
 function handleClickSettings() {
-  navigateTo('/settings');
+  navigateIfNeeded('/settings');
 }
 
 function handleClickUserHomepage() {
-  navigateTo('/user');
+  navigateIfNeeded('/user');
 }
 
 function handleClickRegister() {
-  navigateTo('/register')
+  navigateIfNeeded('/register')
 }
 
 function handleClickLogin() {
-  navigateTo('/login')
+  navigateIfNeeded('/login')
 }
 
-function handleClickLogout() {
+async function handleClickLogout() {
+  await authStore.logout(false);
 }
 
 function handleClickLogo() {
-  if (route.path === '/') {
-    return;
-  }
-  navigateTo('/');
+  navigateIfNeeded('/');
 }
 
 </script>
@@ -146,7 +152,13 @@ function handleClickLogo() {
           :options="userOptions"
           @select="handleSelectUserItem"
         >
-          <n-button v-show="isLogin" text class="icon-btn" @click="handleClickUserAvatar()">
+          <n-button
+            v-show="isLogin"
+            text
+            class="icon-btn"
+            :aria-label="$t('menu.my_profile')"
+            @click="handleClickUserAvatar"
+          >
             <n-icon>
               <UserCircle/>
             </n-icon>
@@ -154,20 +166,27 @@ function handleClickLogo() {
         </n-dropdown>
         <n-divider :vertical="true"/>
         <n-button v-show="!isLogin" type="info" class="header-login-btn"
-                  @click="handleClickLogin()">
+                  :aria-label="$t('navbar.top.login')"
+                  @click="handleClickLogin">
           {{ $t('navbar.top.login') }}
         </n-button>
         <n-button v-show="!isLogin" type="primary" class="header-register-btn"
-                  @click="handleClickRegister()">
+                  :aria-label="$t('navbar.top.register')"
+                  @click="handleClickRegister">
           {{ $t('navbar.top.register') }}
         </n-button>
         <n-dropdown trigger="hover" size="huge" :options="languageColumns"
                     @select="handleSelectLanguage">
-          <n-button round class="lang-btn">
-            {{ getLanguageLabel() }}
+          <n-button round class="lang-btn" aria-label="Language">
+            {{ languageLabel }}
           </n-button>
         </n-dropdown>
-        <n-button round class="theme-btn" @click="handleToggleTheme">
+        <n-button
+          round
+          class="theme-btn"
+          :aria-label="isDark ? $t('navbar.top.light_mode') : $t('navbar.top.dark_mode')"
+          @click="handleToggleTheme"
+        >
           <template #icon>
             <n-icon>
               <component :is="isDark ? SunnyOutline : MoonOutline"/>

@@ -5,6 +5,9 @@ import {$t} from '@/locales';
 const username = ref('');
 const password = ref('');
 const confirmPassword = ref('');
+const usernameInputId = 'register-account-username'
+const passwordInputId = 'register-account-password'
+const confirmPasswordInputId = 'register-account-confirm-password'
 
 // 用户名验证（3-20个字符，只能包含字母、数字、下划线）
 const isValidUsername = computed(() => {
@@ -30,11 +33,9 @@ const isFormValid = computed(() => {
 
 function handleButtonRegister() {
   if (!isFormValid.value) {
-    // TODO: 显示错误提示
     return;
   }
 
-  // TODO: 实现注册逻辑
   console.log('注册信息：', {
     username: username.value,
     password: password.value,
@@ -46,12 +47,14 @@ function handleButtonRegister() {
   <div class="register-form">
     <!-- Username -->
     <div class="form-group">
-      <label>{{ $t('authentication.register.username') }}</label>
+      <label :for="usernameInputId">{{ $t('authentication.register.username') }}</label>
       <n-input
+        :id="usernameInputId"
         v-model:value="username"
         :placeholder="$t('authentication.register.input_username')"
         clearable
         type="text"
+        autocomplete="username"
         :status="username && !isValidUsername ? 'error' : undefined"
       />
       <span v-if="username && !isValidUsername" class="error-hint">
@@ -61,13 +64,15 @@ function handleButtonRegister() {
 
     <!-- Password -->
     <div class="form-group">
-      <label>{{ $t('authentication.register.password') }}</label>
+      <label :for="passwordInputId">{{ $t('authentication.register.password') }}</label>
       <n-input
+        :id="passwordInputId"
         v-model:value="password"
         :placeholder="$t('authentication.register.input_password')"
         clearable
         type="password"
         show-password-on="click"
+        autocomplete="new-password"
         :status="password && !isValidPassword ? 'error' : undefined"
       />
       <span v-if="password && !isValidPassword" class="error-hint">
@@ -77,13 +82,15 @@ function handleButtonRegister() {
 
     <!-- Confirm Password -->
     <div class="form-group">
-      <label>{{ $t('authentication.register.confirm_password') }}</label>
+      <label :for="confirmPasswordInputId">{{ $t('authentication.register.confirm_password') }}</label>
       <n-input
+        :id="confirmPasswordInputId"
         v-model:value="confirmPassword"
         :placeholder="$t('authentication.register.input_confirm_password')"
         clearable
         type="password"
         show-password-on="click"
+        autocomplete="new-password"
         :status="confirmPassword && !isPasswordMatch ? 'error' : undefined"
       />
       <span v-if="confirmPassword && !isPasswordMatch" class="error-hint">
@@ -110,6 +117,17 @@ function handleButtonRegister() {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  :deep(.n-input) {
+    --n-color: var(--auth-card-bg);
+    --n-color-focus: var(--auth-card-bg);
+    --n-text-color: var(--auth-text-primary);
+    --n-placeholder-color: var(--auth-text-secondary);
+    --n-border: 1px solid var(--auth-border);
+    --n-border-hover: 1px solid var(--color-brand);
+    --n-border-focus: 1px solid var(--color-brand);
+    --n-box-shadow-focus: var(--auth-focus-ring);
+  }
 }
 
 .form-group {
@@ -121,7 +139,7 @@ function handleButtonRegister() {
     display: block;
     font-weight: 500;
     font-size: 0.95rem;
-    color: var(--color-text-primary);
+    color: var(--auth-text-primary);
   }
 
   .error-hint {
@@ -142,4 +160,3 @@ function handleButtonRegister() {
   }
 }
 </style>
-

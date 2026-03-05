@@ -5,9 +5,10 @@ import {$t} from '@/locales';
 const email = ref('');
 const password = ref('');
 const rememberMe = ref(false);
+const emailInputId = 'login-email-address'
+const passwordInputId = 'login-email-password'
 
 function handleLogin() {
-  // TODO: 实现登录逻辑
   console.log('登录信息：', {
     email: email.value,
     password: password.value,
@@ -24,20 +25,24 @@ function handleForgotPassword() {
 <template>
   <div class="login-form">
     <div class="form-group">
-      <label>{{ $t('authentication.register.email') }}</label>
+      <label :for="emailInputId">{{ $t('authentication.register.email') }}</label>
       <n-input
+        :id="emailInputId"
         v-model:value="email"
         :placeholder="$t('authentication.login.placeholder_email')"
         type="text"
+        autocomplete="email"
         clearable
       />
     </div>
     <div class="form-group">
-      <label>{{ $t('authentication.login.password') }}</label>
+      <label :for="passwordInputId">{{ $t('authentication.login.password') }}</label>
       <n-input
+        :id="passwordInputId"
         v-model:value="password"
         type="password"
         :placeholder="$t('authentication.login.placeholder_password')"
+        autocomplete="current-password"
         clearable
         show-password-on="click"
         @keyup.enter="handleLogin"
@@ -59,6 +64,21 @@ function handleForgotPassword() {
 .login-form {
   display: flex;
   flex-direction: column;
+
+  :deep(.n-input) {
+    --n-color: var(--auth-card-bg);
+    --n-color-focus: var(--auth-card-bg);
+    --n-text-color: var(--auth-text-primary);
+    --n-placeholder-color: var(--auth-text-secondary);
+    --n-border: 1px solid var(--auth-border);
+    --n-border-hover: 1px solid var(--color-brand);
+    --n-border-focus: 1px solid var(--color-brand);
+    --n-box-shadow-focus: var(--auth-focus-ring);
+  }
+
+  :deep(.n-checkbox) {
+    --n-text-color: var(--auth-text-secondary);
+  }
 }
 
 .form-group {
@@ -69,7 +89,7 @@ function handleForgotPassword() {
     font-weight: 500;
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
-    color: var(--color-text-primary);
+    color: var(--auth-text-primary);
   }
 }
 
@@ -79,6 +99,11 @@ function handleForgotPassword() {
   align-items: center;
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
+
+  :deep(.n-button--text-type) {
+    --n-text-color-text: var(--color-brand);
+    --n-text-color-text-hover: var(--auth-tab-active-text);
+  }
 }
 
 .login-button {
@@ -87,4 +112,3 @@ function handleForgotPassword() {
   margin-bottom: 1.5rem;
 }
 </style>
-

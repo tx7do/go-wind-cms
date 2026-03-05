@@ -1,28 +1,35 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import {onBeforeUnmount, ref} from 'vue';
 import {$t} from '@/locales';
 
 const phone = ref('');
 const verificationCode = ref('');
 const codeSent = ref(false);
 const codeCountdown = ref(0);
+const phoneInputId = 'login-phone-number'
+const codeInputId = 'login-phone-code'
+let codeTimer: number | null = null
+
+function clearCodeTimer() {
+  if (codeTimer !== null) {
+    clearInterval(codeTimer)
+    codeTimer = null
+  }
+}
 
 function handleSendCode() {
   if (!phone.value) {
-    // TODO: 显示错误提示
     return;
   }
 
   codeSent.value = true;
   codeCountdown.value = 60;
 
-  // TODO: 实现发送验证码逻辑
-
-  // 倒计时
-  const timer = setInterval(() => {
+  clearCodeTimer()
+  codeTimer = window.setInterval(() => {
     codeCountdown.value--;
     if (codeCountdown.value <= 0) {
-      clearInterval(timer);
+      clearCodeTimer()
       codeSent.value = false;
     }
   }, 1000);
@@ -30,43 +37,50 @@ function handleSendCode() {
 
 function handleLogin() {
   if (!phone.value || !verificationCode.value) {
-    // TODO: 显示错误提示
     return;
   }
 
-  // TODO: 实现登录逻辑
   console.log('登录信息：', {
     phone: phone.value,
     code: verificationCode.value,
   });
 }
+
+onBeforeUnmount(() => {
+  clearCodeTimer()
+})
 </script>
 
 <template>
   <div class="login-form">
     <div class="form-group">
-      <label>{{ $t('authentication.register.phone') }}</label>
+      <label :for="phoneInputId">{{ $t('authentication.register.phone') }}</label>
       <n-input
+        :id="phoneInputId"
         v-model:value="phone"
         :placeholder="$t('authentication.login.placeholder_phone')"
         clearable
         type="text"
+        autocomplete="tel"
       />
     </div>
     <div class="form-group">
-      <label>{{ $t('authentication.register.code') }}</label>
+      <label :for="codeInputId">{{ $t('authentication.register.code') }}</label>
       <div class="code-input-row">
         <n-input
+          :id="codeInputId"
           v-model:value="verificationCode"
           :placeholder="$t('authentication.login.placeholder_code')"
           maxlength="6"
           type="text"
+          autocomplete="one-time-code"
           @keyup.enter="handleLogin"
         />
         <n-button
           :disabled="codeSent"
           :type="codeSent ? 'default' : 'primary'"
           class="send-code-btn"
+          aria-live="polite"
           @click="handleSendCode"
         >
           {{ codeSent ? `${codeCountdown}s` : $t('authentication.register.send_code') }}
@@ -83,6 +97,17 @@ function handleLogin() {
 .login-form {
   display: flex;
   flex-direction: column;
+
+  :deep(.n-input) {
+    --n-color: var(--auth-card-bg);
+    --n-color-focus: var(--auth-card-bg);
+    --n-text-color: var(--auth-text-primary);
+    --n-placeholder-color: var(--auth-text-secondary);
+    --n-border: 1px solid var(--auth-border);
+    --n-border-hover: 1px solid var(--color-brand);
+    --n-border-focus: 1px solid var(--color-brand);
+    --n-box-shadow-focus: var(--auth-focus-ring);
+  }
 }
 
 .form-group {
@@ -93,7 +118,7 @@ function handleLogin() {
     font-weight: 500;
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
-    color: var(--color-text-primary);
+    color: var(--auth-text-primary);
   }
 }
 
@@ -121,4 +146,3 @@ function handleLogin() {
   margin-bottom: 1.5rem;
 }
 </style>
-

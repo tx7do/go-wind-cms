@@ -54,9 +54,9 @@ function handleGithubLogin() {
 .social-button {
   font-weight: 500;
   height: 44px;
-  background: #ffffff;
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
+  background: var(--auth-card-bg);
+  color: var(--auth-text-primary);
+  border: 1px solid var(--auth-border);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -71,8 +71,12 @@ function handleGithubLogin() {
   &:hover {
     border-color: var(--color-brand);
     color: var(--color-brand);
-    background: rgba(102, 126, 234, 0.05);
+    background: var(--auth-tab-bg);
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.12);
+  }
+
+  &:focus-visible {
+    box-shadow: var(--auth-focus-ring);
   }
 
   &:active {
@@ -80,4 +84,3 @@ function handleGithubLogin() {
   }
 }
 </style>
-

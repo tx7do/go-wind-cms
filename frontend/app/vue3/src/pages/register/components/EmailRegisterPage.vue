@@ -6,6 +6,7 @@ import EmailRegisterEnterCodePage from "@/pages/register/components/EmailRegiste
 
 const email = ref<string>('');
 const visibleEnter = ref<boolean>(false);
+const emailInputId = 'register-email-address';
 
 // 简单的邮箱格式验证
 const isValidEmail = computed(() => {
@@ -16,7 +17,6 @@ const isValidEmail = computed(() => {
 
 function handleButtonNext() {
   if (!isValidEmail.value) {
-    // TODO: 显示错误提示
     return;
   }
   visibleEnter.value = true;
@@ -27,12 +27,14 @@ function handleButtonNext() {
   <div v-show="!visibleEnter" class="register-form">
     <!-- Email Input Group -->
     <div class="form-group">
-      <label>{{ $t('authentication.register.email') }}</label>
+      <label :for="emailInputId">{{ $t('authentication.register.email') }}</label>
       <n-input
+        :id="emailInputId"
         v-model:value="email"
         :placeholder="$t('authentication.register.input_email')"
         clearable
         type="text"
+        autocomplete="email"
         :status="email && !isValidEmail ? 'error' : undefined"
       />
       <span v-if="email && !isValidEmail" class="error-hint">
@@ -61,6 +63,17 @@ function handleButtonNext() {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  :deep(.n-input) {
+    --n-color: var(--auth-card-bg);
+    --n-color-focus: var(--auth-card-bg);
+    --n-text-color: var(--auth-text-primary);
+    --n-placeholder-color: var(--auth-text-secondary);
+    --n-border: 1px solid var(--auth-border);
+    --n-border-hover: 1px solid var(--color-brand);
+    --n-border-focus: 1px solid var(--color-brand);
+    --n-box-shadow-focus: var(--auth-focus-ring);
+  }
 }
 
 .form-group {
@@ -72,7 +85,7 @@ function handleButtonNext() {
     display: block;
     font-weight: 500;
     font-size: 0.95rem;
-    color: var(--color-text-primary);
+    color: var(--auth-text-primary);
   }
 
   .error-hint {
