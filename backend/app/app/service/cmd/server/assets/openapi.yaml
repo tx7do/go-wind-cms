@@ -2860,6 +2860,21 @@ components:
                     type: string
                     description: 锁定截止时间
                     format: date-time
+                followers:
+                    type: string
+                    description: 粉丝数
+                following:
+                    type: string
+                    description: 关注数
+                postCount:
+                    type: string
+                    description: 发帖数
+                commentCount:
+                    type: string
+                    description: 评论数
+                likeCount:
+                    type: string
+                    description: 获赞数
                 createdBy:
                     type: integer
                     description: 创建者用户ID

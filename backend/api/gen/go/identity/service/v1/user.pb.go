@@ -171,6 +171,11 @@ type User struct {
 	LastLoginIp   *string                `protobuf:"bytes,51,opt,name=last_login_ip,json=lastLoginIp,proto3,oneof" json:"last_login_ip,omitempty"`        // 最后登录IP
 	Status        *User_Status           `protobuf:"varint,52,opt,name=status,proto3,enum=identity.service.v1.User_Status,oneof" json:"status,omitempty"` // 状态
 	LockedUntil   *timestamppb.Timestamp `protobuf:"bytes,53,opt,name=locked_until,json=lockedUntil,proto3,oneof" json:"locked_until,omitempty"`          // 锁定截止时间
+	Followers     *uint64                `protobuf:"varint,80,opt,name=followers,proto3,oneof" json:"followers,omitempty"`                                // 粉丝数
+	Following     *uint64                `protobuf:"varint,81,opt,name=following,proto3,oneof" json:"following,omitempty"`                                // 关注数
+	PostCount     *uint64                `protobuf:"varint,90,opt,name=post_count,json=postCount,proto3,oneof" json:"post_count,omitempty"`               // 发帖数
+	CommentCount  *uint64                `protobuf:"varint,91,opt,name=comment_count,json=commentCount,proto3,oneof" json:"comment_count,omitempty"`      // 评论数
+	LikeCount     *uint64                `protobuf:"varint,92,opt,name=like_count,json=likeCount,proto3,oneof" json:"like_count,omitempty"`               // 获赞数
 	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`              // 创建者用户ID
 	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`              // 更新者用户ID
 	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`              // 删除者用户ID
@@ -426,6 +431,41 @@ func (x *User) GetLockedUntil() *timestamppb.Timestamp {
 		return x.LockedUntil
 	}
 	return nil
+}
+
+func (x *User) GetFollowers() uint64 {
+	if x != nil && x.Followers != nil {
+		return *x.Followers
+	}
+	return 0
+}
+
+func (x *User) GetFollowing() uint64 {
+	if x != nil && x.Following != nil {
+		return *x.Following
+	}
+	return 0
+}
+
+func (x *User) GetPostCount() uint64 {
+	if x != nil && x.PostCount != nil {
+		return *x.PostCount
+	}
+	return 0
+}
+
+func (x *User) GetCommentCount() uint64 {
+	if x != nil && x.CommentCount != nil {
+		return *x.CommentCount
+	}
+	return 0
+}
+
+func (x *User) GetLikeCount() uint64 {
+	if x != nil && x.LikeCount != nil {
+		return *x.LikeCount
+	}
+	return 0
 }
 
 func (x *User) GetCreatedBy() uint32 {
@@ -1994,7 +2034,7 @@ var File_identity_service_v1_user_proto protoreflect.FileDescriptor
 
 const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1eidentity/service/v1/user.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v3/redact.proto\x1a\x1epagination/v1/pagination.proto\"\xc5\x15\n" +
+	"\x1eidentity/service/v1/user.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v3/redact.proto\x1a\x1epagination/v1/pagination.proto\"\x9e\x18\n" +
 	"\x04User\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\x00R\x02id\x88\x01\x01\x120\n" +
 	"\ttenant_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x01R\btenantId\x88\x01\x01\x128\n" +
@@ -2033,19 +2073,26 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\rlast_login_at\x182 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12最后登录时间H\x14R\vlastLoginAt\x88\x01\x01\x12=\n" +
 	"\rlast_login_ip\x183 \x01(\tB\x14\xbaG\x11\x92\x02\x0e最后登录IPH\x15R\vlastLoginIp\x88\x01\x01\x12K\n" +
 	"\x06status\x184 \x01(\x0e2 .identity.service.v1.User.StatusB\f\xbaG\t\x92\x02\x06状态H\x16R\x06status\x88\x01\x01\x12\\\n" +
-	"\flocked_until\x185 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12锁定截止时间H\x17R\vlockedUntil\x88\x01\x01\x12;\n" +
+	"\flocked_until\x185 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12锁定截止时间H\x17R\vlockedUntil\x88\x01\x01\x122\n" +
+	"\tfollowers\x18P \x01(\x04B\x0f\xbaG\f\x92\x02\t粉丝数H\x18R\tfollowers\x88\x01\x01\x122\n" +
+	"\tfollowing\x18Q \x01(\x04B\x0f\xbaG\f\x92\x02\t关注数H\x19R\tfollowing\x88\x01\x01\x123\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x18R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"post_count\x18Z \x01(\x04B\x0f\xbaG\f\x92\x02\t发帖数H\x1aR\tpostCount\x88\x01\x01\x129\n" +
+	"\rcomment_count\x18[ \x01(\x04B\x0f\xbaG\f\x92\x02\t评论数H\x1bR\fcommentCount\x88\x01\x01\x123\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x19R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"like_count\x18\\ \x01(\x04B\x0f\xbaG\f\x92\x02\t获赞数H\x1cR\tlikeCount\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x1aR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x1dR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x1bR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x1eR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x1cR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x1fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x1dR\tdeletedAt\x88\x01\x01\"*\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H!R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\"R\tdeletedAt\x88\x01\x01\"*\n" +
 	"\x06Gender\x12\n" +
 	"\n" +
 	"\x06SECRET\x10\x00\x12\b\n" +
@@ -2089,7 +2136,14 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\x0e_last_login_atB\x10\n" +
 	"\x0e_last_login_ipB\t\n" +
 	"\a_statusB\x0f\n" +
-	"\r_locked_untilB\r\n" +
+	"\r_locked_untilB\f\n" +
+	"\n" +
+	"_followersB\f\n" +
+	"\n" +
+	"_followingB\r\n" +
+	"\v_post_countB\x10\n" +
+	"\x0e_comment_countB\r\n" +
+	"\v_like_countB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
 	"\v_deleted_byB\r\n" +

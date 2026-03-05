@@ -210,6 +210,26 @@ func (m *User) validate(all bool) error {
 
 	}
 
+	if m.Followers != nil {
+		// no validation rules for Followers
+	}
+
+	if m.Following != nil {
+		// no validation rules for Following
+	}
+
+	if m.PostCount != nil {
+		// no validation rules for PostCount
+	}
+
+	if m.CommentCount != nil {
+		// no validation rules for CommentCount
+	}
+
+	if m.LikeCount != nil {
+		// no validation rules for LikeCount
+	}
+
 	if m.CreatedBy != nil {
 		// no validation rules for CreatedBy
 	}

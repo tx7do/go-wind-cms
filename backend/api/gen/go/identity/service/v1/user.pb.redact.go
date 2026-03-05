@@ -251,6 +251,16 @@ func (x *User) Redact() string {
 
 	// Safe field: LockedUntil
 
+	// Safe field: Followers
+
+	// Safe field: Following
+
+	// Safe field: PostCount
+
+	// Safe field: CommentCount
+
+	// Safe field: LikeCount
+
 	// Safe field: CreatedBy
 
 	// Safe field: UpdatedBy

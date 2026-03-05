@@ -212,6 +212,29 @@ message User {
     (gnostic.openapi.v3.property) = {description: "锁定截止时间"}
   ];// 锁定截止时间
 
+  optional uint64 followers = 80 [
+    json_name = "followers",
+    (gnostic.openapi.v3.property) = {description: "粉丝数"}
+  ]; // 粉丝数
+  optional uint64 following = 81 [
+    json_name = "following",
+    (gnostic.openapi.v3.property) = {description: "关注数"}
+  ]; // 关注数
+
+  optional uint64 post_count = 90 [
+    json_name = "postCount",
+    (gnostic.openapi.v3.property) = {description: "发帖数"}
+  ]; // 发帖数
+  optional uint64 comment_count = 91 [
+    json_name = "commentCount",
+    (gnostic.openapi.v3.property) = {description: "评论数"}
+  ]; // 评论数
+  optional uint64 like_count = 92 [
+    json_name = "likeCount",
+    (gnostic.openapi.v3.property) = {description: "获赞数"}
+  ]; // 获赞数
+
+
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
   optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
   optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
