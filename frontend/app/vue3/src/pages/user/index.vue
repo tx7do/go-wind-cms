@@ -3,6 +3,7 @@ import { definePage } from 'unplugin-vue-router/runtime'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserProfileStore } from '@/stores/modules/app/user-profile.state'
+import { usePostStore } from '@/stores/modules/app/post.state'
 import { $t } from '@/locales'
 import type { identityservicev1_User } from '@/api/generated/app/service/v1'
 
@@ -16,10 +17,14 @@ definePage({
 
 const router = useRouter()
 const userProfileStore = useUserProfileStore()
+const postStore = usePostStore()
 
 const loading = ref(false)
+const postsLoading = ref(false)
 const user = ref<identityservicev1_User | null>(null)
 const activeTab = ref('posts')
+const posts = ref<any[]>([])
+const postsTotal = ref(0)
 
 // 统计数据
 const stats = computed(() => ({
@@ -109,6 +114,11 @@ async function loadUserProfile() {
   try {
     const result = await userProfileStore.getMe()
     user.value = result || null
+
+    // 如果当前 tab 是 posts，自动加载帖子列表
+    if (user.value && activeTab.value === 'posts') {
+      await loadUserPosts()
+    }
   } catch (error) {
     console.error('Load user profile failed:', error)
   } finally {
@@ -119,6 +129,37 @@ async function loadUserProfile() {
 // 编辑资料
 function handleEdit() {
   router.push('/settings')
+}
+
+// 加载用户的帖子列表
+async function loadUserPosts() {
+  if (!user.value?.id) return
+
+  postsLoading.value = true
+  try {
+    const result = await postStore.listPost(
+      { page: 1, pageSize: 10 },
+      { authorId: user.value.id }, // 使用作者ID进行过滤
+      null,
+      ['createdAt desc'] // 按创建时间倒序
+    )
+
+    if (result) {
+      posts.value = result.items || []
+      postsTotal.value = result.total || 0
+    }
+  } catch (error) {
+    console.error('Load user posts failed:', error)
+  } finally {
+    postsLoading.value = false
+  }
+}
+
+// 监听 activeTab 变化，加载对应内容
+async function handleTabChange(tabName: string) {
+  if (tabName === 'posts' && posts.value.length === 0) {
+    await loadUserPosts()
+  }
 }
 
 onMounted(() => {
@@ -257,13 +298,44 @@ onMounted(() => {
           <!-- 主内容区 -->
           <main class="profile-content-area">
             <div class="content-card">
-              <n-tabs v-model:value="activeTab" type="line" animated>
+              <n-tabs v-model:value="activeTab" type="line" animated @update:value="handleTabChange">
                 <n-tab-pane name="posts" :tab="$t('page.user.tab_posts')">
-                  <n-empty :description="$t('page.user.no_posts')">
-                    <template #icon>
-                      <span class="i-carbon:document" />
-                    </template>
-                  </n-empty>
+                  <n-spin :show="postsLoading">
+                    <div v-if="posts.length > 0" class="posts-list">
+                      <div v-for="post in posts" :key="post.id" class="post-item">
+                        <div class="post-content">
+                          <h3 class="post-title">{{ post.translations?.[0]?.title || 'Untitled' }}</h3>
+                          <p class="post-summary">{{ post.translations?.[0]?.summary || '' }}</p>
+                          <div class="post-meta">
+                            <span class="meta-info">
+                              <span class="i-carbon:view" />
+                              {{ post.visits || 0 }} {{ $t('page.user.views') }}
+                            </span>
+                            <span class="meta-info">
+                              <span class="i-carbon:thumbs-up" />
+                              {{ post.likes || 0 }} {{ $t('page.user.likes') }}
+                            </span>
+                            <span class="meta-info">
+                              <span class="i-carbon:chat" />
+                              {{ post.commentCount || 0 }} {{ $t('page.user.comments') }}
+                            </span>
+                            <span class="meta-info">
+                              <span class="i-carbon:time" />
+                              {{ formatDateTime(post.createdAt) }}
+                            </span>
+                          </div>
+                        </div>
+                        <n-button text tag="a" :href="`/post/${post.id}`" target="_blank">
+                          {{ $t('page.user.view_post') }} →
+                        </n-button>
+                      </div>
+                    </div>
+                    <n-empty v-else :description="$t('page.user.no_posts')">
+                      <template #icon>
+                        <span class="i-carbon:document" />
+                      </template>
+                    </n-empty>
+                  </n-spin>
                 </n-tab-pane>
                 <n-tab-pane name="activities" :tab="$t('page.user.tab_activities')">
                   <n-empty :description="$t('page.user.no_activities')">
@@ -681,6 +753,88 @@ onMounted(() => {
 
     :deep(.n-empty) {
       padding: 60px 20px;
+    }
+  }
+}
+
+// Posts List Styling
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .post-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    transition: all 0.3s;
+
+    &:hover {
+      border-color: var(--color-brand);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .post-content {
+      flex: 1;
+
+      .post-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin: 0 0 8px 0;
+        line-height: 1.4;
+        cursor: pointer;
+        transition: color 0.3s;
+
+        &:hover {
+          color: var(--color-brand);
+        }
+      }
+
+      .post-summary {
+        font-size: 14px;
+        color: var(--color-text-secondary);
+        line-height: 1.6;
+        margin: 0 0 12px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .post-meta {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+
+        .meta-info {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 13px;
+          color: var(--color-text-secondary);
+
+          span[class^="i-"] {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+
+    :deep(.n-button) {
+      color: var(--color-brand);
+      font-weight: 500;
+
+      &:hover {
+        color: var(--color-brand);
+        background: var(--post-accent-bg-hover);
+      }
     }
   }
 }

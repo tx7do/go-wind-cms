@@ -716,4 +716,36 @@ const menuItems = computed(() => [
     gap: 10px;
   }
 }
+
+// 暗色模式优化
+html.dark {
+  .toggle-switch {
+    .slider {
+      background-color: #4a5568;
+    }
+  }
+
+  .third-party-item {
+    background: rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+      border-color: var(--color-brand);
+    }
+  }
+
+  .help-list li {
+    &:hover {
+      color: #69c0ff;
+    }
+
+    a {
+      color: #69c0ff;
+
+      &:hover {
+        color: #91d5ff;
+      }
+    }
+  }
+}
 </style>

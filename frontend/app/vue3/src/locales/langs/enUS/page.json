@@ -204,6 +204,10 @@
     "tab_collections": "Collections",
     "no_posts": "No posts yet",
     "no_activities": "No activities yet",
-    "no_collections": "No collections yet"
+    "no_collections": "No collections yet",
+    "views": "Views",
+    "likes": "Likes",
+    "comments": "Comments",
+    "view_post": "View Post"
   }
 }

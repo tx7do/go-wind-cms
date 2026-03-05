@@ -204,6 +204,10 @@
     "tab_collections": "收藏",
     "no_posts": "暂无文章",
     "no_activities": "暂无动态",
-    "no_collections": "暂无收藏"
+    "no_collections": "暂无收藏",
+    "views": "阅读",
+    "likes": "点赞",
+    "comments": "评论",
+    "view_post": "查看文章"
   }
 }
