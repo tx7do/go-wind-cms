@@ -174,7 +174,7 @@ onMounted(async () => {
             @click="handleViewCategory(category.id)"
           >
             <div class="category-icon">
-              <XIcon :name="category.icon || 'folder'" :size="48"/>
+              <XIcon :name="category.icon?.includes(':') ? category.icon : `carbon:${category.icon || 'folder'}`" :size="48"/>
             </div>
             <div class="category-info">
               <h3>{{ getCategoryName(category) }}</h3>
