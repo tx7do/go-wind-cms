@@ -112,6 +112,10 @@ export function createVitePlugins() {
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'safari-pinned-tab.svg'],
+      workbox: {
+        // Allow large editor chunks/workers to be precached without aborting build.
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
+      },
       manifest: {
         name: 'vue3-naiveui-pc',
         short_name: 'vue3-naiveui-pc',
