@@ -1,6 +1,3 @@
-<script setup lang="ts">
-</script>
-
 <template>
   <div class="fixed-top">
     <div class="stick-content header-inner">
@@ -23,7 +20,6 @@
 .header-inner {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: var(--space-3) 0;
+  gap: 0;
 }
 </style>
