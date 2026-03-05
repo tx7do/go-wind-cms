@@ -1,4 +1,4 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import {defineMock} from 'vite-plugin-mock-dev-server'
 
 const categories = [
   {
@@ -6,7 +6,7 @@ const categories = [
     status: 'CATEGORY_STATUS_ACTIVE',
     sortOrder: 1,
     isNav: true,
-    icon: 'document',
+    icon: 'carbon:document',
     postCount: 15,
     directPostCount: 15,
     translations: [
@@ -34,7 +34,7 @@ const categories = [
     status: 'CATEGORY_STATUS_ACTIVE',
     sortOrder: 2,
     isNav: true,
-    icon: 'blog',
+    icon: 'carbon:blog',
     postCount: 12,
     directPostCount: 12,
     translations: [
@@ -62,7 +62,7 @@ const categories = [
     status: 'CATEGORY_STATUS_ACTIVE',
     sortOrder: 3,
     isNav: true,
-    icon: 'chart-line',
+    icon: 'carbon:chart-line',
     postCount: 8,
     directPostCount: 8,
     translations: [
@@ -90,7 +90,7 @@ const categories = [
     status: 'CATEGORY_STATUS_ACTIVE',
     sortOrder: 4,
     isNav: true,
-    icon: 'idea',
+    icon: 'carbon:idea',
     postCount: 10,
     directPostCount: 10,
     translations: [
@@ -119,7 +119,7 @@ export default defineMock([
   {
     url: '/app/v1/categories',
     method: 'GET',
-    body: ({ query }: any) => {
+    body: ({query}: any) => {
       const page = parseInt(query.page || '1')
       const pageSize = parseInt(query.pageSize || '10')
       const start = (page - 1) * pageSize
@@ -134,10 +134,10 @@ export default defineMock([
   {
     url: '/app/v1/categories/:id',
     method: 'GET',
-    body: ({ params }: any) => {
+    body: ({params}: any) => {
       const id = parseInt(params.id)
       const category = categories.find(c => c.id === id)
-      return category || { error: 'Category not found' }
+      return category || {error: 'Category not found'}
     },
   },
 ])

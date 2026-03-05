@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { definePage } from 'unplugin-vue-router/runtime'
-import { useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
-import { usePostStore, useCategoryStore } from '@/stores/modules/app'
-import { $t, i18n } from '@/locales'
+import {definePage} from 'unplugin-vue-router/runtime'
+import {useRouter} from 'vue-router'
+import {ref, onMounted, computed} from 'vue'
+import {usePostStore, useCategoryStore} from '@/stores/modules/app'
+import {$t, i18n} from '@/locales'
 import {XIcon} from "@/plugins/xicon";
 
 definePage({
@@ -26,8 +26,8 @@ const loading = ref(false)
 async function loadLatestPosts() {
   try {
     const res = await postStore.listPost(
-      { page: 1, pageSize: 6 },
-      { status: 'POST_STATUS_PUBLISHED' }
+      {page: 1, pageSize: 6},
+      {status: 'POST_STATUS_PUBLISHED'}
     )
     latestPosts.value = res.items || []
   } catch (error) {
@@ -39,8 +39,8 @@ async function loadLatestPosts() {
 async function loadFeaturedPosts() {
   try {
     const res = await postStore.listPost(
-      { page: 1, pageSize: 3 },
-      { status: 'POST_STATUS_PUBLISHED', isFeatured: true }
+      {page: 1, pageSize: 3},
+      {status: 'POST_STATUS_PUBLISHED', isFeatured: true}
     )
     featuredPosts.value = res.items || []
   } catch (error) {
@@ -52,8 +52,8 @@ async function loadFeaturedPosts() {
 async function loadCategories() {
   try {
     const res = await categoryStore.listCategory(
-      { page: 1, pageSize: 8 },
-      { status: 'CATEGORY_STATUS_ACTIVE' }
+      {page: 1, pageSize: 8},
+      {status: 'CATEGORY_STATUS_ACTIVE'}
     )
     categories.value = res.items || []
   } catch (error) {
@@ -174,12 +174,12 @@ onMounted(async () => {
             @click="handleViewCategory(category.id)"
           >
             <div class="category-icon">
-              <div :class="`i-carbon:${category.icon || 'folder'}`" />
+              <XIcon :name="category.icon || 'folder'" :size="48"/>
             </div>
             <div class="category-info">
               <h3>{{ getCategoryName(category) }}</h3>
               <span class="post-count">
-                {{ $t('page.home.article_count', { count: category.postCount || 0 }) }}
+                {{ $t('page.home.article_count', {count: category.postCount || 0}) }}
               </span>
             </div>
           </div>
@@ -201,7 +201,7 @@ onMounted(async () => {
             @click="handleViewPost(post.id)"
           >
             <div class="featured-image">
-              <img :src="getPostThumbnail(post)" :alt="getPostTitle(post)" />
+              <img :src="getPostThumbnail(post)" :alt="getPostTitle(post)"/>
             </div>
             <div class="featured-content">
               <h3>{{ getPostTitle(post) }}</h3>
@@ -233,7 +233,7 @@ onMounted(async () => {
             @click="handleViewPost(post.id)"
           >
             <div class="post-image">
-              <img :src="getPostThumbnail(post)" :alt="getPostTitle(post)" />
+              <img :src="getPostThumbnail(post)" :alt="getPostTitle(post)"/>
             </div>
             <div class="post-content">
               <h3>{{ getPostTitle(post) }}</h3>
@@ -241,7 +241,9 @@ onMounted(async () => {
               <div class="post-meta">
                 <span class="author">{{ post.authorName }}</span>
                 <span class="date">{{ formatDate(post.createdAt) }}</span>
-                <span class="views">{{ $t('page.home.views_count', { count: post.visits || 0 }) }}</span>
+                <span class="views">{{
+                    $t('page.home.views_count', {count: post.visits || 0})
+                  }}</span>
               </div>
             </div>
           </div>
@@ -257,7 +259,7 @@ onMounted(async () => {
       <div class="features-grid">
         <div v-for="feature in features" :key="feature.title" class="feature-card">
           <div class="feature-icon">
-            <XIcon :name="feature.icon" :size="48" />
+            <XIcon :name="feature.icon" :size="48"/>
           </div>
           <h3>{{ feature.title }}</h3>
           <p>{{ feature.description }}</p>
