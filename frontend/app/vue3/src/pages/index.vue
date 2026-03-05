@@ -423,23 +423,30 @@ onMounted(async () => {
       width: 100%;
       height: 100%;
       pointer-events: none;
+      perspective: 1000px; // 添加 3D 透视
 
       .code-snippet {
         position: absolute;
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        padding: 12px 16px;
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 14px 18px;
         font-family: 'Fira Code', 'Consolas', monospace;
         font-size: 13px;
         line-height: 1.6;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        opacity: 0.85;
+        box-shadow:
+          0 10px 40px rgba(0, 0, 0, 0.4),
+          0 0 20px rgba(168, 85, 247, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        opacity: 0.9;
+        transform-style: preserve-3d;
+        transition: all 0.3s ease;
 
         .code-line {
           white-space: nowrap;
-          color: rgba(255, 255, 255, 0.9);
+          color: rgba(255, 255, 255, 0.95);
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .code-keyword {
@@ -471,19 +478,22 @@ onMounted(async () => {
         &.snippet-1 {
           top: 15%;
           right: 8%;
-          animation: float 8s ease-in-out infinite, fadeInOut 4s ease-in-out infinite;
+          animation: floatRotate3D 8s ease-in-out infinite,
+                    glowPulseSnippet 4s ease-in-out infinite;
         }
 
         &.snippet-2 {
           top: 55%;
           left: 5%;
-          animation: float 10s ease-in-out infinite reverse, fadeInOut 5s ease-in-out infinite 1s;
+          animation: floatRotate3D 10s ease-in-out infinite reverse,
+                    glowPulseSnippet 5s ease-in-out infinite 1s;
         }
 
         &.snippet-3 {
           bottom: 20%;
           right: 12%;
-          animation: float 12s ease-in-out infinite, fadeInOut 6s ease-in-out infinite 2s;
+          animation: floatRotate3D 12s ease-in-out infinite,
+                    glowPulseSnippet 6s ease-in-out infinite 2s;
         }
       }
     }
@@ -707,19 +717,62 @@ onMounted(async () => {
     margin-bottom: 1.5rem;
     line-height: 1.1;
     letter-spacing: -2px;
+    position: relative;
 
-    // 直接使用纯白色，配合多层发光阴影表达迅疾感
-    color: #ffffff;
+    // 使用渐变文字效果
+    background: linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f0f0ff 25%,
+      #e0e0ff 50%,
+      #f0f0ff 75%,
+      #ffffff 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    // 多层外发光和阴影，创造强烈的视觉冲击
     text-shadow:
-      0 0 30px rgba(255, 255, 255, 0.8),
-      0 0 60px rgba(168, 85, 247, 0.6),
-      0 4px 20px rgba(0, 0, 0, 0.4),
-      0 2px 8px rgba(0, 0, 0, 0.3);
+      0 0 40px rgba(255, 255, 255, 0.9),
+      0 0 80px rgba(168, 85, 247, 0.7),
+      0 0 120px rgba(99, 102, 241, 0.5),
+      0 6px 24px rgba(0, 0, 0, 0.5),
+      0 3px 12px rgba(0, 0, 0, 0.4);
 
-    // 添加发光动画，制造迅疾风动的效果
-    filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5));
-    animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
-              glowPulse 3s ease-in-out infinite 0.5s;
+    // 添加多层滤镜外发光
+    filter:
+      drop-shadow(0 0 30px rgba(168, 85, 247, 0.6))
+      drop-shadow(0 0 60px rgba(99, 102, 241, 0.4))
+      drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+
+    // 添加渐变动画和发光脉冲动画
+    animation-name: slideDown, glowPulseTitle, gradientShine;
+    animation-duration: 0.8s, 3s, 6s;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
+    animation-iteration-count: 1, infinite, infinite;
+    animation-delay: 0s, 0.5s, 0s;
+
+    // 在标题下方添加光晕效果
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 40px;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(168, 85, 247, 0.3) 0%,
+        rgba(99, 102, 241, 0.2) 50%,
+        transparent 100%
+      );
+      filter: blur(20px);
+      opacity: 0.8;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
   }
 
   .hero-subtitle {
@@ -835,6 +888,79 @@ onMounted(async () => {
       0 0 70px rgba(168, 85, 247, 0.8),
       0 4px 20px rgba(0, 0, 0, 0.4),
       0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// 代码卡片 3D 旋转悬浮动画
+@keyframes floatRotate3D {
+  0%, 100% {
+    transform: translate(0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% {
+    transform: translate(15px, -25px) rotateX(5deg) rotateY(-8deg) rotateZ(3deg);
+  }
+  50% {
+    transform: translate(0, -50px) rotateX(-5deg) rotateY(8deg) rotateZ(-3deg);
+  }
+  75% {
+    transform: translate(-15px, -25px) rotateX(5deg) rotateY(-5deg) rotateZ(5deg);
+  }
+}
+
+// 代码卡片发光脉冲动画
+@keyframes glowPulseSnippet {
+  0%, 100% {
+    box-shadow:
+      0 10px 40px rgba(0, 0, 0, 0.3),
+      0 0 15px rgba(168, 85, 247, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    opacity: 0.85;
+  }
+  50% {
+    box-shadow:
+      0 15px 50px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(168, 85, 247, 0.4),
+      0 0 60px rgba(99, 102, 241, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    opacity: 1;
+  }
+}
+
+// 标题增强发光脉冲动画
+@keyframes glowPulseTitle {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 25px rgba(168, 85, 247, 0.5))
+      drop-shadow(0 0 50px rgba(99, 102, 241, 0.3))
+      drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 40px rgba(168, 85, 247, 0.8))
+      drop-shadow(0 0 80px rgba(99, 102, 241, 0.6))
+      drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
+  }
+}
+
+// 渐变光泽扫过动画
+@keyframes gradientShine {
+  0% {
+    background-position: 0 center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+// 底部光晕脉冲动画
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
   }
 }
 
@@ -1548,18 +1674,38 @@ html.dark {
 
     .hero-code-snippets .code-snippet {
       background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(168, 85, 247, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     .hero-title {
-      color: #ffffff;
+      background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f5f5ff 25%,
+        #ebebff 50%,
+        #f5f5ff 75%,
+        #ffffff 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+
       text-shadow:
-        0 0 30px rgba(255, 255, 255, 0.8),
-        0 0 60px rgba(168, 85, 247, 0.6),
-        0 4px 20px rgba(0, 0, 0, 0.4),
-        0 2px 10px rgba(0, 0, 0, 0.3);
-      filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5));
+        0 0 50px rgba(255, 255, 255, 1),
+        0 0 100px rgba(168, 85, 247, 0.8),
+        0 0 150px rgba(99, 102, 241, 0.6),
+        0 8px 30px rgba(0, 0, 0, 0.6),
+        0 4px 15px rgba(0, 0, 0, 0.4);
+
+      filter:
+        drop-shadow(0 0 35px rgba(168, 85, 247, 0.7))
+        drop-shadow(0 0 70px rgba(99, 102, 241, 0.5))
+        drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
     }
 
     .hero-subtitle {
