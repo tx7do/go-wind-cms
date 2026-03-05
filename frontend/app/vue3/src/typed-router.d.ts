@@ -28,8 +28,9 @@ declare module 'vue-router/auto-routes' {
     'post-list': RouteRecordInfo<'post-list', '/post', Record<never, never>, Record<never, never>>,
     'post-detail': RouteRecordInfo<'post-detail', '/post/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
+    'settings': RouteRecordInfo<'settings', '/settings', Record<never, never>, Record<never, never>>,
     '/test-navigation': RouteRecordInfo<'/test-navigation', '/test-navigation', Record<never, never>, Record<never, never>>,
+    'user-profile': RouteRecordInfo<'user-profile', '/user', Record<never, never>, Record<never, never>>,
     '/viewer-demo': RouteRecordInfo<'/viewer-demo', '/viewer-demo', Record<never, never>, Record<never, never>>,
-    'workbench': RouteRecordInfo<'workbench', '/workbench', Record<never, never>, Record<never, never>>,
   }
 }

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import {h, ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
+
 import {useNavbarStore, useNavigationStore} from "@/stores";
 import {XIcon} from '@/plugins/xicon';
+
 import type {TopNavBarTabItem} from "./types";
 import TopNavbarTab from './TopNavbarTab.vue';
 
@@ -48,7 +50,6 @@ function handleNavigate(item: any) {
     router.push(item.url);
   }
 }
-
 
 onMounted(() => {
   loadNavigation();
