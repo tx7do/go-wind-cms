@@ -148,14 +148,34 @@ onMounted(async () => {
   <div class="home-page">
     <!-- Hero Section -->
     <section class="hero">
+      <!-- Animated Background Elements -->
+      <div class="hero-bg-wrapper">
+        <div class="hero-gradient-bg"></div>
+        <div class="hero-animated-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+        </div>
+        <svg class="hero-waves" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+      </div>
+
       <div class="hero-content">
         <h1 class="hero-title">{{ $t('authentication.login.brand_title') }}</h1>
         <p class="hero-subtitle">{{ $t('authentication.login.brand_subtitle') }}</p>
+        <p class="hero-tagline">基于 Go + Vue3 的高性能、多语言 CMS 系统</p>
         <div class="hero-actions">
-          <n-button type="primary" size="large" @click="router.push('/post')">
+          <n-button type="primary" size="large" class="btn-primary" @click="router.push('/post')">
+            <template #icon>
+              <XIcon name="carbon:document-export" :size="20"/>
+            </template>
             {{ $t('page.home.browse_posts') }}
           </n-button>
-          <n-button type="default" size="large" class="learn-more-btn" @click="router.push('/about')">
+          <n-button type="default" size="large" class="btn-secondary" @click="router.push('/about')">
+            <template #icon>
+              <XIcon name="carbon:information" :size="20"/>
+            </template>
             {{ $t('page.home.learn_more') }}
           </n-button>
         </div>
@@ -176,16 +196,31 @@ onMounted(async () => {
             v-for="category in categories"
             :key="category.id"
             class="category-card"
+            :style="{ '--card-hue': (category.id % 6) * 60 }"
             @click="handleViewCategory(category.id)"
           >
-            <div class="category-icon">
-              <XIcon :name="category.icon?.includes(':') ? category.icon : `carbon:${category.icon || 'folder'}`" :size="48"/>
-            </div>
-            <div class="category-info">
-              <h3>{{ getCategoryName(category) }}</h3>
-              <span class="post-count">
-                {{ $t('page.home.article_count', {count: category.postCount || 0}) }}
-              </span>
+            <!-- Card Background Gradient -->
+            <div class="category-card-bg"></div>
+
+            <!-- Content -->
+            <div class="category-card-content">
+              <div class="category-card-header">
+                <div class="category-icon">
+                  <XIcon :name="category.icon?.includes(':') ? category.icon : `carbon:${category.icon || 'folder'}`" :size="48"/>
+                </div>
+                <div class="category-info">
+                  <h3>{{ getCategoryName(category) }}</h3>
+                  <span class="post-count">
+                    {{ $t('page.home.article_count', {count: category.postCount || 0}) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Updated Badge -->
+              <div class="category-badge">
+                <XIcon name="carbon:time" :size="14"/>
+                <span>3 天前更新</span>
+              </div>
             </div>
           </div>
         </div>
@@ -290,17 +325,81 @@ onMounted(async () => {
   color: white;
   position: relative;
   overflow: hidden;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  &::before {
-    content: '';
+  .hero-bg-wrapper {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.05)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-    background-size: cover;
-    opacity: 0.3;
+    overflow: hidden;
+    z-index: 0;
+
+    .hero-gradient-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, var(--color-brand) 0%, #764ba2 100%);
+      animation: gradientShift 15s ease-in-out infinite;
+    }
+
+    .hero-animated-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+
+      .shape {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.15;
+        filter: blur(60px);
+
+        &.shape-1 {
+          width: 300px;
+          height: 300px;
+          background: rgba(255, 255, 255, 0.5);
+          top: -150px;
+          right: -100px;
+          animation: float 8s ease-in-out infinite;
+        }
+
+        &.shape-2 {
+          width: 400px;
+          height: 400px;
+          background: rgba(255, 255, 255, 0.3);
+          bottom: -200px;
+          left: -150px;
+          animation: float 10s ease-in-out infinite reverse;
+        }
+
+        &.shape-3 {
+          width: 250px;
+          height: 250px;
+          background: rgba(255, 255, 255, 0.4);
+          top: 50%;
+          left: 50%;
+          animation: float 12s ease-in-out infinite;
+        }
+      }
+    }
+
+    .hero-waves {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      animation: wave 10s linear infinite;
+    }
   }
 
   .hero-content {
@@ -317,17 +416,32 @@ onMounted(async () => {
     margin-bottom: 1rem;
     line-height: 1.2;
     letter-spacing: -1px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .hero-subtitle {
     font-size: 1.5rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 0.75rem;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
     opacity: 0.95;
     font-weight: 500;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+  }
+
+  .hero-tagline {
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+    font-weight: 400;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s ease-out 0.4s both;
   }
 
   .hero-actions {
@@ -335,51 +449,110 @@ onMounted(async () => {
     gap: 1.5rem;
     justify-content: center;
     flex-wrap: wrap;
+    animation: fadeInUp 0.8s ease-out 0.6s both;
 
-    :deep(.n-button) {
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 12px 32px;
-      border-radius: 50px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    .btn-primary {
+      :deep(.n-button) {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 14px 36px !important;
+        border-radius: 50px !important;
+        border: none !important;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 
-    :deep(.n-button--primary) {
-      background: white !important;
-      color: var(--color-brand) !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5), 0 4px 8px rgba(0, 0, 0, 0.15);
+          background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+        }
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        &:active {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
       }
     }
 
-    :deep(.n-button--default) {
-      background: transparent !important;
-      color: white !important;
-      border: 2px solid white !important;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        transform: translateY(-2px);
-      }
-    }
-
-    :deep(.learn-more-btn) {
-      color: white !important;
-      border-color: white !important;
-
-      &:hover {
+    .btn-secondary {
+      :deep(.n-button) {
         background: rgba(255, 255, 255, 0.15) !important;
         color: white !important;
-      }
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 14px 36px !important;
+        border-radius: 50px !important;
+        border: 2px solid rgba(255, 255, 255, 0.4) !important;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-      &:active {
-        background: rgba(255, 255, 255, 0.2) !important;
-        color: white !important;
+        &:hover {
+          background: rgba(255, 255, 255, 0.25) !important;
+          border-color: rgba(255, 255, 255, 0.6) !important;
+          transform: translateY(-3px);
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        }
+
+        &:active {
+          transform: translateY(-1px);
+          background: rgba(255, 255, 255, 0.2) !important;
+        }
       }
     }
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+      linear-gradient(135deg, var(--color-brand) 0%, #764ba2 100%);
+  }
+  50% {
+    background:
+      radial-gradient(ellipse at 80% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+      linear-gradient(135deg, #764ba2 0%, var(--color-brand) 100%);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(30px, -20px) rotate(90deg);
+  }
+  50% {
+    transform: translate(0, -40px) rotate(180deg);
+  }
+  75% {
+    transform: translate(-30px, -20px) rotate(270deg);
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -418,75 +591,183 @@ onMounted(async () => {
 
   .category-card {
     display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding: 2rem;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    flex-direction: column;
+    padding: 1.75rem;
+    background: var(--color-card-bg, linear-gradient(135deg, #ffffff 0%, #f9fafb 100%));
+    border: 1px solid var(--color-card-border, #e5e7eb);
+    border-radius: 16px;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    overflow: visible;
+    box-shadow: 0 2px 8px var(--color-card-shadow, rgba(0, 0, 0, 0.06)), 0 1px 3px rgba(0, 0, 0, 0.04);
+    min-height: 240px;
+    height: 100%;
 
     &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        hsl(var(--card-hue), 70%, 60%) 0%,
+        hsl(var(--card-hue), 60%, 70%) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 0;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+
+    &::after {
       content: '';
       position: absolute;
       top: 0;
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
       transition: left 0.6s;
+      z-index: 0;
+      pointer-events: none;
     }
 
     &:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-color: var(--color-brand);
+      transform: translateY(-8px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: hsl(var(--card-hue), 70%, 60%);
 
       &::before {
+        opacity: 0.15;
+      }
+
+      &::after {
         left: 100%;
       }
 
       .category-icon {
-        transform: scale(1.1) rotate(5deg);
-        color: #fff;
-        background: linear-gradient(135deg, var(--color-brand) 0%, #764ba2 100%);
+        transform: scale(1.15) rotate(8deg);
+        color: white;
+        background: linear-gradient(
+          135deg,
+          hsl(var(--card-hue), 70%, 60%) 0%,
+          hsl(var(--card-hue), 60%, 70%) 100%
+        );
+        box-shadow: 0 8px 16px hsl(var(--card-hue), 70%, 60%, 0.3);
       }
+
+      .category-info h3 {
+        color: hsl(var(--card-hue), 70%, 50%);
+      }
+    }
+
+    .category-card-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        hsla(var(--card-hue), 70%, 60%, 0.05) 0%,
+        hsla(var(--card-hue), 60%, 70%, 0.05) 100%
+      );
+      z-index: 0;
+      pointer-events: none;
+      border-radius: 16px;
+    }
+
+    .category-card-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+    }
+
+    .category-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      width: 100%;
     }
 
     .category-icon {
       font-size: 2.5rem;
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(102, 126, 234, 0.12);
-      border-radius: 12px;
-      color: var(--color-brand);
+      background: linear-gradient(
+        135deg,
+        hsla(var(--card-hue), 70%, 60%, 0.15) 0%,
+        hsla(var(--card-hue), 60%, 70%, 0.1) 100%
+      );
+      border-radius: 14px;
+      color: hsl(var(--card-hue), 70%, 60%);
       flex-shrink: 0;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px hsla(var(--card-hue), 70%, 60%, 0.1);
     }
 
     .category-info {
       flex: 1;
+      width: 100%;
 
       h3 {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         font-weight: 700;
         margin: 0 0 0.5rem 0;
         color: var(--color-text-primary);
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
+        transition: color 0.3s;
+        word-break: break-word;
       }
 
       .post-count {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: var(--color-text-secondary);
-        font-weight: 500;
+        font-weight: 600;
+        letter-spacing: 0.2px;
       }
+    }
+
+    .category-badge {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: auto;
+      padding: 0.5rem 0.875rem;
+      background: linear-gradient(
+        135deg,
+        hsla(var(--card-hue), 70%, 60%, 0.1) 0%,
+        hsla(var(--card-hue), 60%, 70%, 0.08) 100%
+      );
+      border-radius: 8px;
+      border-left: 3px solid hsl(var(--card-hue), 70%, 60%);
+      color: hsl(var(--card-hue), 70%, 50%);
+      font-size: 0.8rem;
+      font-weight: 600;
+      width: fit-content;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      opacity: 0.85;
+    }
+
+    &:hover .category-badge {
+      opacity: 1;
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px hsla(var(--card-hue), 70%, 60%, 0.2);
     }
   }
 }
@@ -506,17 +787,17 @@ onMounted(async () => {
   }
 
   .featured-card {
-    background: #ffffff;
+    background: var(--color-card-bg, #ffffff);
     border-radius: 16px;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--color-card-border, #e5e7eb);
+    box-shadow: 0 2px 8px var(--color-card-shadow, rgba(0, 0, 0, 0.08)), 0 1px 3px rgba(0, 0, 0, 0.06);
 
     &:hover {
       transform: translateY(-12px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 20px 40px var(--color-hover-shadow, rgba(0, 0, 0, 0.12)), 0 8px 16px var(--color-hover-shadow, rgba(0, 0, 0, 0.08));
       border-color: var(--color-brand);
 
       .featured-image {
@@ -548,9 +829,10 @@ onMounted(async () => {
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+        background: radial-gradient(ellipse at center, transparent 30%, rgba(102, 126, 234, 0.1) 100%);
         opacity: 0;
         transition: opacity 0.3s;
+        mix-blend-mode: screen;
       }
 
       img {
@@ -612,20 +894,20 @@ onMounted(async () => {
   }
 
   .post-card {
-    background: #ffffff;
+    background: var(--color-card-bg, #ffffff);
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-card-border, #e5e7eb);
     height: 100%;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px var(--color-card-shadow, rgba(0, 0, 0, 0.08)), 0 1px 2px rgba(0, 0, 0, 0.06);
 
     &:hover {
       transform: translateY(-8px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 12px 24px var(--color-hover-shadow, rgba(0, 0, 0, 0.12)), 0 4px 8px var(--color-hover-shadow, rgba(0, 0, 0, 0.08));
       border-color: var(--color-brand);
 
       .post-image {
@@ -657,9 +939,10 @@ onMounted(async () => {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.1);
+        background: radial-gradient(ellipse at center, transparent 40%, rgba(255, 255, 255, 0.05) 100%);
         opacity: 0;
         transition: opacity 0.3s;
+        mix-blend-mode: multiply;
       }
 
       img {
@@ -745,12 +1028,13 @@ onMounted(async () => {
   .feature-card {
     padding: 2.5rem 2rem;
     border-radius: 12px;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-card-border, var(--color-border));
     background: var(--color-surface);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: center;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 2px 8px var(--color-card-shadow, rgba(0, 0, 0, 0.06));
 
     &::before {
       content: '';
@@ -766,7 +1050,7 @@ onMounted(async () => {
 
     &:hover {
       transform: translateY(-8px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 12px 32px var(--color-hover-shadow, rgba(0, 0, 0, 0.12));
       border-color: var(--color-brand);
 
       &::before {
@@ -827,59 +1111,245 @@ onMounted(async () => {
   }
 }
 
+// 图片加载状态优化
+.featured-image,
+.post-image {
+  background: linear-gradient(90deg, var(--color-border) 25%, transparent 25%, transparent 50%, var(--color-border) 50%, var(--color-border) 75%, transparent 75%);
+  background-size: 60px 60px;
+  animation: loading 1.5s infinite;
+
+  img {
+    &[loading="lazy"] {
+      background: var(--color-border);
+    }
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 60px 60px;
+  }
+}
+
 // 暗黑模式优化 - 创造层次感和视觉节奏
 html.dark {
+  // 定义暗黑模式的CSS变量 - 增强背景颜色深度
+  --color-card-bg: linear-gradient(135deg, rgba(65, 75, 95, 0.85) 0%, rgba(48, 56, 72, 0.85) 100%);
+  --color-card-border: rgba(255, 255, 255, 0.12);
+  --color-card-shadow: rgba(0, 0, 0, 0.5);
+  --color-hover-shadow: rgba(0, 0, 0, 0.6);
+
   // 卡片基础样式
-  .category-card,
-  .post-card,
-  .featured-card,
-  .feature-card {
-    background: rgba(42, 49, 64, 0.6) !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
-    backdrop-filter: blur(10px) !important;
+  .category-card {
+    backdrop-filter: blur(10px);
+
+    // 增强背景遮罩在暗黑模式下的可见度
+    .category-card-bg {
+      background: linear-gradient(
+        135deg,
+        hsla(var(--card-hue), 70%, 55%, 0.12) 0%,
+        hsla(var(--card-hue), 60%, 65%, 0.08) 100%
+      ) !important;
+      opacity: 1;
+    }
 
     &:hover {
-      background: rgba(47, 55, 71, 0.8) !important;
-      border-color: var(--color-brand) !important;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4),
-                  0 0 0 1px var(--color-brand) !important;
+      background: linear-gradient(135deg, rgba(80, 95, 120, 0.95) 0%, rgba(65, 75, 95, 0.95) 100%);
+      border-color: hsl(var(--card-hue), 70%, 60%);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px hsl(var(--card-hue), 70%, 60%);
+
+      .category-card-bg {
+        background: linear-gradient(
+          135deg,
+          hsla(var(--card-hue), 70%, 60%, 0.18) 0%,
+          hsla(var(--card-hue), 60%, 70%, 0.12) 100%
+        ) !important;
+      }
+    }
+  }
+
+  .post-card {
+    background: linear-gradient(135deg, rgba(65, 75, 95, 0.85) 0%, rgba(48, 56, 72, 0.85) 100%);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(80, 95, 120, 0.95) 0%, rgba(65, 75, 95, 0.95) 100%);
+      border-color: var(--color-brand);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--color-brand);
+    }
+  }
+
+  .featured-card {
+    background: linear-gradient(135deg, rgba(65, 75, 95, 0.85) 0%, rgba(48, 56, 72, 0.85) 100%);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(80, 95, 120, 0.95) 0%, rgba(65, 75, 95, 0.95) 100%);
+      border-color: var(--color-brand);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--color-brand);
     }
   }
 
   // Section 背景交替：创造视觉节奏
   .categories-section {
-    background: #18191c !important; // 深黑
+    background: #18191c;
   }
 
   .featured-section {
-    background: #1e2024 !important; // 稍浅的灰黑
+    background: #1e2024;
   }
 
   .latest-section {
-    background: #18191c !important; // 深黑（与 categories 保持一致）
+    background: #18191c;
   }
 
   .features {
-    background: #1e2024 !important; // 稍浅的灰黑（与 featured 保持一致）
-  }
-
-  // 在浅色背景上的卡片需要更明显
-  .featured-section,
-  .features {
-    .featured-card,
-    .feature-card {
-      background: rgba(48, 56, 72, 0.7) !important;
-
-      &:hover {
-        background: rgba(55, 64, 82, 0.9) !important;
-      }
-    }
+    background: #1e2024;
   }
 
   // Section header 文字优化
   .section-header h2 {
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  // 卡片内部元素优化
+  .category-card {
+    .category-icon {
+      background: linear-gradient(
+        135deg,
+        hsla(var(--card-hue), 70%, 60%, 0.25) 0%,
+        hsla(var(--card-hue), 60%, 70%, 0.15) 100%
+      );
+      box-shadow: 0 2px 12px hsla(var(--card-hue), 70%, 60%, 0.2);
+      color: hsl(var(--card-hue), 75%, 70%) !important;
+    }
+
+    .category-info {
+      h3 {
+        color: #f3f4f6 !important;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6),
+                     0 1px 2px rgba(0, 0, 0, 0.4);
+      }
+
+      .post-count {
+        color: #e5e7eb !important;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5),
+                     0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .category-badge {
+      background: linear-gradient(
+        135deg,
+        hsla(var(--card-hue), 70%, 50%, 0.4) 0%,
+        hsla(var(--card-hue), 60%, 55%, 0.3) 100%
+      ) !important;
+      border-left: 3px solid hsla(var(--card-hue), 75%, 70%, 0.9) !important;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px hsla(var(--card-hue), 70%, 50%, 0.3),
+                  inset 0 1px 0 hsla(var(--card-hue), 80%, 80%, 0.15);
+      opacity: 1 !important;
+
+      // 图标和文字使用纯白色
+      svg,
+      span {
+        color: #ffffff !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    &:hover {
+      .category-icon {
+        color: hsl(var(--card-hue), 80%, 75%) !important;
+      }
+
+      .category-info {
+        h3 {
+          color: #ffffff !important;
+          text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7),
+                       0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .post-count {
+          color: #f3f4f6 !important;
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6),
+                       0 1px 2px rgba(0, 0, 0, 0.4);
+        }
+      }
+
+      .category-badge {
+        background: linear-gradient(
+          135deg,
+          hsla(var(--card-hue), 75%, 55%, 0.5) 0%,
+          hsla(var(--card-hue), 65%, 60%, 0.4) 100%
+        ) !important;
+        border-left-color: hsla(var(--card-hue), 80%, 75%, 1) !important;
+        box-shadow: 0 4px 12px hsla(var(--card-hue), 70%, 55%, 0.4),
+                    inset 0 1px 0 hsla(var(--card-hue), 85%, 85%, 0.2);
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  // Feature卡片在暗黑模式下的优化
+  .feature-card {
+    background: linear-gradient(135deg, rgba(65, 75, 95, 0.85) 0%, rgba(48, 56, 72, 0.85) 100%);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+
+    h3 {
+      color: #e5e7eb !important;
+    }
+
+    p {
+      color: #9ca3af !important;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(80, 95, 120, 0.95) 0%, rgba(65, 75, 95, 0.95) 100%);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+      h3 {
+        color: #f9fafb !important;
+      }
+    }
+  }
+
+  // 文章卡片文字优化
+  .post-card,
+  .featured-card {
+    .post-content,
+    .featured-content {
+      h3 {
+        color: #e5e7eb !important;
+      }
+
+      p {
+        color: #9ca3af !important;
+      }
+
+      .post-meta,
+      .featured-meta {
+        color: #9ca3af !important;
+      }
+    }
+
+    &:hover {
+      .post-content h3,
+      .featured-content h3 {
+        color: #f9fafb !important;
+      }
+    }
   }
 }
 
