@@ -39,7 +39,9 @@ function handleSearch() {
   display: flex;
   align-items: center;
   flex: 1;
-  margin: 0 20px;
+  margin: 0 16px;
+  max-width: 600px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   --n-color: var(--header-control-bg);
   --n-color-focus: var(--header-control-bg);
@@ -49,12 +51,13 @@ function handleSearch() {
   --n-border-hover: 1px solid var(--color-brand);
   --n-border-focus: 1px solid var(--color-brand);
   --n-border-radius: 8px;
-  --n-box-shadow-focus: var(--header-focus-ring);
+  --n-box-shadow-focus: 0 0 0 2px rgba(102, 126, 234, 0.1);
 
   :deep(.n-input-wrapper) {
     background: var(--header-control-bg);
     border-radius: 8px !important;
     box-shadow: inset 0 0 0 1px var(--header-control-border) !important;
+    transition: all 0.3s;
   }
 
   :deep(.n-input-wrapper:hover) {
@@ -64,11 +67,12 @@ function handleSearch() {
 
   :deep(.n-input.n-input--focus .n-input-wrapper) {
     border-radius: 8px !important;
-    box-shadow: inset 0 0 0 1px var(--color-brand), var(--header-focus-ring) !important;
+    box-shadow: inset 0 0 0 1px var(--color-brand), 0 0 0 2px rgba(102, 126, 234, 0.1) !important;
   }
 
   :deep(.n-input__input-el) {
     color: var(--header-control-text) !important;
+    font-weight: 500;
   }
 
   :deep(.n-input__placeholder) {
@@ -77,6 +81,45 @@ function handleSearch() {
 
   :deep(.n-input__prefix .n-icon) {
     color: var(--header-control-text-muted) !important;
+    transition: color 0.3s;
+  }
+
+  :deep(.n-input.n-input--focus .n-input__prefix .n-icon) {
+    color: var(--color-brand) !important;
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .search-bar {
+    margin: 0 12px;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-bar {
+    margin: 0 8px;
+    max-width: 300px;
+
+    :deep(.n-input__input-el) {
+      font-size: 14px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar {
+    margin: 0 4px;
+    max-width: 200px;
+
+    :deep(.n-input__input-el) {
+      font-size: 12px;
+    }
+
+    :deep(.n-input__prefix .n-icon) {
+      font-size: 14px !important;
+    }
   }
 }
 </style>

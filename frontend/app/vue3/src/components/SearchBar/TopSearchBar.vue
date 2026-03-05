@@ -168,25 +168,29 @@ function handleClickLogout() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: 0;
+  gap: 16px;
+  padding: 6px 32px;
   color: var(--color-text-primary);
+  height: 56px;
+  overflow: hidden;
+  width: 100%;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: var(--radius-sm);
-  padding: 4px 8px;
+  padding: 6px 10px;
+  flex-shrink: 0;
 
   &:hover {
-    background-color: rgba(102, 126, 234, 0.08);
+    background-color: rgba(102, 126, 234, 0.12);
 
     .site-name {
-      color: var(--color-brand-accent);
+      color: var(--color-brand);
     }
   }
 }
@@ -194,15 +198,20 @@ function handleClickLogout() {
 .logo {
   height: 40px;
   flex-shrink: 0;
+  transition: transform 0.3s;
+
+  .logo-section:hover & {
+    transform: scale(1.05);
+  }
 }
 
 .site-name {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--color-brand);
   white-space: nowrap;
-  letter-spacing: 0.5px;
-  transition: color 0.2s;
+  letter-spacing: 0.8px;
+  transition: all 0.3s;
 }
 
 .actions {
@@ -212,60 +221,85 @@ function handleClickLogout() {
   // 分割线
   :deep(.n-divider) {
     background-color: var(--color-border);
+    opacity: 0.5;
   }
 }
 
 .icon-btn {
-  font-size: 28px;
+  font-size: 24px;
   --n-text-color: var(--header-control-text-muted);
-  --n-text-color-hover: var(--header-control-text);
-  --n-text-color-pressed: var(--header-control-text);
+  --n-text-color-hover: var(--color-brand);
+  --n-text-color-pressed: var(--color-brand);
+  transition: all 0.3s;
+  border-radius: 8px;
+
+  &:hover {
+    background: rgba(102, 126, 234, 0.08) !important;
+  }
 }
 
 :deep(.icon-btn.n-button.n-button--text-type:hover) {
-  background: var(--header-control-hover-bg) !important;
+  background: rgba(102, 126, 234, 0.08) !important;
 }
 
 .lang-btn,
 .theme-btn {
   --n-color: var(--header-control-bg);
-  --n-color-hover: var(--header-control-bg);
-  --n-color-pressed: var(--header-control-bg);
+  --n-color-hover: rgba(102, 126, 234, 0.08);
+  --n-color-pressed: rgba(102, 126, 234, 0.12);
   --n-border: 1px solid var(--header-control-border);
   --n-border-hover: 1px solid var(--color-brand);
   --n-border-pressed: 1px solid var(--color-brand);
   --n-text-color: var(--header-control-text);
   --n-text-color-hover: var(--color-brand);
   --n-text-color-pressed: var(--color-brand);
+  font-weight: 500;
+  transition: all 0.3s;
+  min-width: 80px;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+  }
 }
 
 .header-login-btn,
 .header-register-btn {
   border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
 }
 
 .header-login-btn {
   --n-color: var(--header-login-bg);
-  --n-color-hover: var(--header-login-bg);
-  --n-color-pressed: var(--header-login-bg);
+  --n-color-hover: rgba(102, 126, 234, 0.1);
+  --n-color-pressed: rgba(102, 126, 234, 0.15);
   --n-border: 1px solid var(--header-login-border);
   --n-border-hover: 1px solid var(--color-brand);
   --n-border-pressed: 1px solid var(--color-brand);
   --n-text-color: var(--header-login-text);
-  --n-text-color-hover: var(--header-login-text);
-  --n-text-color-pressed: var(--header-login-text);
+  --n-text-color-hover: var(--color-brand);
+  --n-text-color-pressed: var(--color-brand);
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  }
 }
 
 .header-register-btn {
   --n-color: var(--header-register-bg);
-  --n-color-hover: var(--header-register-bg);
-  --n-color-pressed: var(--header-register-bg);
+  --n-color-hover: var(--color-brand);
+  --n-color-pressed: var(--color-brand);
   --n-border: 1px solid var(--header-register-border);
   --n-border-hover: 1px solid var(--color-brand);
   --n-border-pressed: 1px solid var(--color-brand);
-  --n-text-color: var(--header-register-text);
-  --n-text-color-hover: var(--header-register-text);
-  --n-text-color-pressed: var(--header-register-text);
+  --n-text-color: #fff;
+  --n-text-color-hover: #fff;
+  --n-text-color-pressed: #fff;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
 }
 
 :deep(.lang-btn .n-button__content),
@@ -279,5 +313,49 @@ function handleClickLogout() {
 :deep(.theme-btn .n-icon),
 :deep(.icon-btn .n-icon) {
   color: currentColor;
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .top-bar {
+    padding: 12px 24px;
+    gap: 12px;
+  }
+
+  .site-name {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 10px 16px;
+    gap: 8px;
+  }
+
+  .logo {
+    height: 32px;
+  }
+
+  .site-name {
+    font-size: 13px;
+    display: none;
+  }
+
+  .lang-btn,
+  .theme-btn {
+    min-width: auto;
+    padding: 0 8px !important;
+
+    :deep(.n-button__content) {
+      font-size: 12px;
+    }
+  }
+
+  .header-login-btn,
+  .header-register-btn {
+    font-size: 12px;
+    padding: 0 12px !important;
+  }
 }
 </style>
