@@ -75,7 +75,7 @@ async function loadComments() {
 
 async function handleSubmitComment() {
   if (!newComment.value.content || !newComment.value.authorName || !newComment.value.email) {
-    message.warning($t('page.post_detail.fill_form_info'))
+    message.warning($t('comment.fill_form_info'))
     return
   }
   if (!props.objectId || submitting.value) return
@@ -89,7 +89,7 @@ async function handleSubmitComment() {
       email: newComment.value.email,
       status: 'COMMENT_STATUS_PENDING',
     })
-    message.success($t('page.post_detail.comment_submitted'))
+    message.success($t('comment.comment_submitted'))
     newComment.value = {content: '', authorName: '', email: ''}
     await loadComments()
     // 用户体验优化：提交后滚动到评论列表
@@ -98,7 +98,7 @@ async function handleSubmitComment() {
     }, 100)
   } catch (error) {
     console.error('Submit comment failed:', error)
-    message.error($t('page.post_detail.submit_comment_failed'))
+    message.error($t('comment.submit_comment_failed'))
   } finally {
     submitting.value = false
   }
@@ -115,39 +115,39 @@ onMounted(() => {
     <div class="section-header">
       <h2>
         <span class="i-carbon:chat"/>
-        {{ $t('page.post_detail.comments_count', {count: displayComments.length}) }}
+        {{ $t('comment.comments_count', {count: displayComments.length}) }}
       </h2>
     </div>
 
     <!-- Comment Form -->
     <div class="comment-form">
-      <h3>{{ $t('page.post_detail.write_comment') }}</h3>
+      <h3>{{ $t('comment.write_comment') }}</h3>
       <n-form>
         <n-grid :cols="2" :x-gap="16">
-          <n-form-item-gi :label="$t('page.post_detail.nickname')">
+          <n-form-item-gi :label="$t('comment.nickname')">
             <n-input
               v-model:value="newComment.authorName"
-              :placeholder="$t('page.post_detail.enter_nickname')"
+              :placeholder="$t('comment.enter_nickname')"
               size="large"
               :disabled="submitting"
             />
           </n-form-item-gi>
-          <n-form-item-gi :label="$t('page.post_detail.email')">
+          <n-form-item-gi :label="$t('comment.email')">
             <n-input
               v-model:value="newComment.email"
-              :placeholder="$t('page.post_detail.enter_email')"
+              :placeholder="$t('comment.enter_email')"
               type="text"
               size="large"
               :disabled="submitting"
             />
           </n-form-item-gi>
         </n-grid>
-        <n-form-item :label="$t('page.post_detail.comment_content')">
+        <n-form-item :label="$t('comment.comment_content')">
           <n-input
             v-model:value="newComment.content"
             type="textarea"
             :rows="5"
-            :placeholder="$t('page.post_detail.write_comment')"
+            :placeholder="$t('comment.write_comment')"
             size="large"
             :disabled="submitting"
           />
@@ -162,7 +162,7 @@ onMounted(() => {
             <template #icon>
               <span class="i-carbon:send-alt"/>
             </template>
-            {{ $t('page.post_detail.submit_comment') }}
+            {{ $t('comment.submit_comment') }}
           </n-button>
         </n-form-item>
       </n-form>
@@ -172,7 +172,7 @@ onMounted(() => {
     <div v-if="hasComments" class="comments-list">
       <CommentTree :comments="displayComments"/>
     </div>
-    <n-empty v-else :description="$t('page.post_detail.no_comments')"
+    <n-empty v-else :description="$t('comment.no_comments')"
              style="margin-top: 40px;"/>
   </section>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {$t} from '@/locales'
 import {ContentViewer} from '@/components/ContentViewer'
 import type {commentservicev1_Comment} from "@/api/generated/app/service/v1"
 
@@ -39,7 +40,7 @@ function isOwnerReply(comment: commentservicev1_Comment): boolean {
               <strong class="comment-author">
                 <span v-if="isOwnerReply(comment)" class="owner-badge">
                   <span class="i-carbon:badge"/>
-                  博主回复
+                  {{ $t('comment.owner_reply') }}
                 </span>
                 {{ comment.authorName }}
               </strong>
@@ -58,11 +59,11 @@ function isOwnerReply(comment: commentservicev1_Comment): boolean {
             </span>
             <span class="action-item">
               <span class="i-carbon:chat"/>
-              回复
+              {{ $t('comment.reply') }}
             </span>
             <span class="action-item">
               <span class="i-carbon:share"/>
-              分享
+              {{ $t('comment.share') }}
             </span>
           </div>
         </div>
