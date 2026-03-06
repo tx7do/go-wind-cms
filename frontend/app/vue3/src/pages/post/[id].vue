@@ -54,6 +54,7 @@ const loading = ref(false)
 const showBackToTop = ref(false)
 const isLiked = ref(false)
 const isBookmarked = ref(false)
+const isTocExpanded = ref(true)
 
 const newComment = ref<CommentForm>({
   content: '',
@@ -358,14 +359,25 @@ watch(() => displayContent.value, () => {
             <div class="banner-overlay"/>
           </div>
 
-          <div class="post-wrapper">
+          <div class="post-wrapper" :class="{ 'toc-collapsed': !isTocExpanded }">
             <!-- Table of Contents Sidebar -->
-            <aside v-if="tableOfContents.length > 0" class="toc-sidebar">
+            <aside v-if="tableOfContents.length > 0 && isTocExpanded" class="toc-sidebar">
               <div class="toc-container">
-                <h3 class="toc-title">
-                  <span class="i-carbon:list"/>
-                  {{ $t('page.post_detail.table_of_contents') }}
-                </h3>
+                <div class="toc-header">
+                  <h3 class="toc-title">
+                    <span class="i-carbon:list"/>
+                    {{ $t('page.post_detail.table_of_contents') }}
+                  </h3>
+                  <n-button
+                    text
+                    size="small"
+                    @click="isTocExpanded = false"
+                    class="toc-collapse-btn"
+                    aria-label="Collapse TOC"
+                  >
+                    <span class="i-carbon:chevron-left"/>
+                  </n-button>
+                </div>
                 <nav class="toc-list">
                   <a
                     v-for="item in tableOfContents"
@@ -381,6 +393,21 @@ watch(() => displayContent.value, () => {
             </aside>
 
             <div class="article-content">
+              <!-- TOC Expand Trigger (when collapsed) -->
+              <div v-if="tableOfContents.length > 0 && !isTocExpanded" class="toc-expand-trigger">
+                <n-button
+                  text
+                  @click="isTocExpanded = true"
+                  aria-label="Expand TOC"
+                >
+                  <template #icon>
+                    <span class="i-carbon:list"/>
+                  </template>
+                  {{ $t('page.post_detail.table_of_contents') }}
+                  <span class="i-carbon:chevron-right"/>
+                </n-button>
+              </div>
+
               <!-- Post Header -->
               <header class="post-header">
                 <h1 class="post-title">{{ displayTitle }}</h1>
@@ -630,74 +657,159 @@ watch(() => displayContent.value, () => {
 // Post Wrapper (包含 TOC 和内容)
 .post-wrapper {
   display: flex;
-  gap: 32px;
+  gap: 24px;
   background: var(--color-surface);
   position: relative;
+  transition: all 0.3s ease;
+
+  &.toc-collapsed {
+    .toc-sidebar {
+      width: 0 !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      opacity: 0;
+      border: none;
+    }
+
+    &::after {
+      opacity: 0;
+    }
+
+    .article-content {
+      flex: 1;
+      max-width: 100%;
+    }
+  }
 
   &::after {
     content: '';
     position: absolute;
-    left: 240px; // TOC 宽度
+    left: 200px;
     top: 0;
     bottom: 0;
     width: 1px;
     background: var(--color-border);
+    transition: opacity 0.3s ease;
+  }
+}
+
+// TOC Expand Trigger
+.toc-expand-trigger {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  padding: 12px 16px;
+  background: var(--color-bg);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    border-color: var(--color-brand);
+    background: rgba(168, 85, 247, 0.05);
+    transform: translateX(2px);
+  }
+
+  :deep(.n-button) {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    transition: all 0.3s;
+    background: transparent;
+
+    &:hover {
+      color: var(--color-brand);
+      background: transparent;
+    }
+
+    span[class^="i-"] {
+      font-size: 16px;
+      margin-left: 8px;
+    }
   }
 }
 
 // Table of Contents Sidebar
 .toc-sidebar {
-  flex: 0 0 240px;
-  padding: 48px 24px;
+  flex: 0 0 200px;
+  width: 200px;
+  padding: 40px 16px;
   background: var(--color-surface);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
   max-height: calc(100vh - 120px);
   position: sticky;
   top: 60px;
   overflow-y: auto;
+  transition: all 0.3s ease;
 
   .toc-container {
-    .toc-title {
+    .toc-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      margin: 0 0 20px 0;
-      color: var(--color-text-primary);
+      margin-bottom: 20px;
 
-      span[class^="i-"] {
-        font-size: 18px;
-        color: var(--color-brand);
+      .toc-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--color-text-primary);
+
+        span[class^="i-"] {
+          font-size: 17px;
+          color: var(--color-brand);
+        }
+      }
+
+      .toc-collapse-btn {
+        padding: 4px;
+        color: var(--color-text-secondary);
+        transition: all 0.3s;
+
+        &:hover {
+          color: var(--color-brand);
+          transform: translateX(-2px);
+        }
       }
     }
 
     .toc-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
 
       .toc-item {
-        padding: 10px 12px;
-        border-radius: 8px;
+        padding: 8px 10px;
+        border-radius: 6px;
         color: var(--color-text-secondary);
-        font-size: 14px;
+        font-size: 13px;
         text-decoration: none;
         transition: all 0.3s;
-        border-left: 3px solid transparent;
+        border-left: 2px solid transparent;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         display: block;
 
         &.level-2 {
-          padding-left: 12px;
+          padding-left: 10px;
           font-weight: 500;
         }
 
         &.level-3 {
-          padding-left: 28px;
-          font-size: 13px;
+          padding-left: 24px;
+          font-size: 12px;
           color: var(--color-text-secondary);
         }
 
@@ -719,7 +831,7 @@ watch(() => displayContent.value, () => {
 
   // 美化滚动条
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
 
   &::-webkit-scrollbar-track {
@@ -728,7 +840,7 @@ watch(() => displayContent.value, () => {
 
   &::-webkit-scrollbar-thumb {
     background: rgba(168, 85, 247, 0.3);
-    border-radius: 3px;
+    border-radius: 2px;
 
     &:hover {
       background: rgba(168, 85, 247, 0.6);
@@ -774,22 +886,26 @@ watch(() => displayContent.value, () => {
 
 // Article Content
 .article-content {
-  padding: 56px 64px 48px;
+  padding: 48px 56px 40px;
   background: var(--color-surface);
   position: relative;
   flex: 1;
+  transition: all 0.3s ease;
 
-  // ✅ 改进：增强过渡效果
+  .post-wrapper.toc-collapsed & {
+    max-width: 100%;
+  }
+
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 16px;
+    height: 12px;
     background: linear-gradient(to bottom,
-    rgba(0, 0, 0, 0.08),
-    rgba(0, 0, 0, 0.04) 50%,
+    rgba(0, 0, 0, 0.06),
+    rgba(0, 0, 0, 0.03) 50%,
     transparent);
     pointer-events: none;
   }
@@ -797,7 +913,7 @@ watch(() => displayContent.value, () => {
 
 // Post Header
 .post-header {
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 
   .post-title {
     font-size: 42px;
@@ -831,62 +947,58 @@ watch(() => displayContent.value, () => {
 
 // Post Content
 .post-content {
-  font-size: 18px;
-  line-height: 2.1;
-  letter-spacing: 0.5px;
+  font-size: 17px;
+  line-height: 2;
+  letter-spacing: 0.3px;
   color: var(--color-text-primary);
-  margin-bottom: 48px;
+  margin-bottom: 40px;
   text-rendering: optimizeLegibility;
 
   :deep(h2) {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
-    margin: 64px 0 32px;
-    padding-bottom: 16px;
-    border-bottom: 3px solid var(--color-brand);
+    margin: 56px 0 28px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-brand);
     color: var(--color-text-primary);
     position: relative;
     line-height: 1.4;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.2px;
 
     &::after {
       content: '';
       position: absolute;
-      bottom: -3px;
+      bottom: -2px;
       left: 0;
-      width: 60px;
-      height: 3px;
+      width: 50px;
+      height: 2px;
       background: linear-gradient(90deg, #a855f7, transparent);
     }
   }
 
   :deep(h3) {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 600;
-    margin: 48px 0 28px;
+    margin: 40px 0 24px;
     color: var(--color-text-primary);
-    padding-left: 16px;
-    border-left: 4px solid var(--color-brand);
+    padding-left: 12px;
+    border-left: 3px solid var(--color-brand);
     line-height: 1.4;
-    letter-spacing: -0.2px;
   }
 
   :deep(p) {
-    margin: 28px 0;
+    margin: 24px 0;
     text-align: justify;
-    text-indent: 2em;
-    line-height: 2.15;
-    letter-spacing: 0.4px;
+    line-height: 2.1;
+    letter-spacing: 0.3px;
     word-spacing: 0.1em;
 
-    // ✅ 改进：段落间距
     & + p {
-      margin-top: 24px;
+      margin-top: 20px;
     }
 
-    // 首字下沉效果（可选）
     &:first-of-type::first-letter {
-      font-size: 2em;
+      font-size: 1.8em;
       font-weight: 700;
       color: var(--color-brand);
       margin-right: 4px;
@@ -895,16 +1007,16 @@ watch(() => displayContent.value, () => {
 
   :deep(img) {
     max-width: 100%;
-    border-radius: 12px;
-    margin: 40px 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    margin: 32px 0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
     cursor: zoom-in;
     display: block;
 
     &:hover {
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+      transform: translateY(-3px);
     }
   }
 
@@ -915,61 +1027,67 @@ watch(() => displayContent.value, () => {
     font-family: 'Fira Code', 'Courier New', monospace;
     font-size: 0.9em;
     color: var(--color-brand);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-    letter-spacing: 0.2px;
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    letter-spacing: 0.1px;
   }
 
   :deep(pre) {
     background: var(--color-bg);
-    padding: 24px;
-    border-radius: 12px;
+    padding: 20px;
+    border-radius: 10px;
     overflow-x: auto;
     border: 1px solid var(--color-border);
-    margin: 32px 0;
-    line-height: 1.7;
-    letter-spacing: 0.3px;
+    margin: 28px 0;
+    line-height: 1.65;
+    letter-spacing: 0.2px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
 
     code {
       background: none;
       padding: 0;
       color: var(--color-text-primary);
       border: none;
-      font-size: 0.95em;
+      font-size: 0.92em;
     }
   }
 
   :deep(blockquote) {
-    border-left: 5px solid var(--color-brand);
-    padding: 20px 24px;
-    margin: 32px 0;
-    background: rgba(168, 85, 247, 0.05);
-    border-radius: 0 8px 8px 0;
+    border-left: 4px solid var(--color-brand);
+    padding: 18px 20px;
+    margin: 28px 0;
+    background: rgba(168, 85, 247, 0.04);
+    border-radius: 0 6px 6px 0;
     color: var(--color-text-secondary);
     font-style: italic;
     position: relative;
-    letter-spacing: 0.3px;
-    line-height: 2;
+    letter-spacing: 0.2px;
+    line-height: 1.9;
 
     &::before {
       content: '"';
       position: absolute;
-      top: -10px;
-      left: 10px;
-      font-size: 60px;
+      top: -8px;
+      left: 8px;
+      font-size: 48px;
       color: var(--color-brand);
-      opacity: 0.3;
+      opacity: 0.25;
       font-family: Georgia, serif;
+    }
+
+    p {
+      margin: 12px 0;
+      text-indent: 0;
     }
   }
 
   :deep(ul), :deep(ol) {
-    padding-left: 40px;
-    margin: 28px 0;
+    padding-left: 36px;
+    margin: 24px 0;
 
     li {
-      margin: 16px 0;
-      line-height: 2.1;
-      letter-spacing: 0.4px;
+      margin: 14px 0;
+      line-height: 2.05;
+      letter-spacing: 0.25px;
 
       &::marker {
         color: var(--color-brand);
@@ -981,66 +1099,66 @@ watch(() => displayContent.value, () => {
   :deep(a) {
     color: var(--color-brand);
     text-decoration: none;
-    border-bottom: 2px solid rgba(168, 85, 247, 0.3);
-    transition: all 0.3s;
+    border-bottom: 1.5px solid rgba(168, 85, 247, 0.25);
+    transition: all 0.25s;
     font-weight: 500;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.15px;
 
     &:hover {
       border-bottom-color: var(--color-brand);
-      background: rgba(168, 85, 247, 0.08);
-      padding: 2px 4px;
-      margin: -2px -4px;
-      border-radius: 4px;
+      background: rgba(168, 85, 247, 0.06);
+      padding: 1px 3px;
+      margin: -1px -3px;
+      border-radius: 3px;
     }
   }
 
   :deep(strong) {
     color: var(--color-brand);
     font-weight: 700;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.25px;
   }
 
   :deep(em) {
     color: var(--color-text-secondary);
     font-style: italic;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.15px;
   }
 
   :deep(hr) {
     border: none;
-    height: 2px;
+    height: 1.5px;
     background: linear-gradient(to right, transparent, var(--color-brand), transparent);
-    margin: 48px 0;
+    margin: 40px 0;
   }
 
   :deep(table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 32px 0;
-    border-radius: 8px;
+    margin: 28px 0;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    font-size: 15px;
-    letter-spacing: 0.3px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    font-size: 14px;
+    letter-spacing: 0.2px;
 
     th {
       background: var(--color-brand);
       color: white;
-      padding: 16px;
+      padding: 14px;
       text-align: left;
       font-weight: 600;
-      line-height: 1.6;
+      line-height: 1.55;
     }
 
     td {
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--color-border);
-      line-height: 1.8;
+      line-height: 1.75;
     }
 
     tr:hover {
-      background: rgba(168, 85, 247, 0.05);
+      background: rgba(168, 85, 247, 0.04);
     }
   }
 }
@@ -1329,10 +1447,41 @@ watch(() => displayContent.value, () => {
   }
 
   .article-content {
-    padding: 48px 48px 40px;
+    padding: 40px 40px 36px;
 
     &::before {
       height: 6px;
+    }
+  }
+
+  .post-wrapper {
+    gap: 20px;
+
+    &::after {
+      left: 180px;
+    }
+  }
+
+  .toc-sidebar {
+    flex: 0 0 180px;
+    width: 180px;
+    padding: 36px 16px;
+
+    .toc-container {
+      .toc-header {
+        .toc-title {
+          font-size: 14px;
+        }
+      }
+
+      .toc-list {
+        gap: 5px;
+
+        .toc-item {
+          padding: 7px 9px;
+          font-size: 12px;
+        }
+      }
     }
   }
 
@@ -1359,32 +1508,33 @@ watch(() => displayContent.value, () => {
   }
 
   .post-content {
-    font-size: 17px;
-    margin-bottom: 40px;
+    font-size: 16px;
+    line-height: 1.95;
+    margin-bottom: 36px;
 
     :deep(h2) {
-      font-size: 28px;
-      margin: 48px 0 24px;
-      padding-bottom: 14px;
+      font-size: 26px;
+      margin: 44px 0 22px;
+      padding-bottom: 12px;
 
       &::after {
-        width: 50px;
+        width: 45px;
       }
     }
 
     :deep(h3) {
-      font-size: 23px;
-      margin: 36px 0 20px;
-      padding-left: 14px;
+      font-size: 21px;
+      margin: 32px 0 18px;
+      padding-left: 12px;
     }
 
     :deep(p) {
-      margin: 20px 0;
-      line-height: 2.1;
+      margin: 18px 0;
+      line-height: 2.05;
     }
 
     :deep(img) {
-      margin: 36px 0;
+      margin: 28px 0;
     }
   }
 
@@ -1403,18 +1553,6 @@ watch(() => displayContent.value, () => {
     &::after {
       left: 200px;
     }
-  }
-
-  .toc-sidebar {
-    flex: 0 0 200px;
-    padding: 40px 20px;
-  }
-
-  .back-to-top {
-    bottom: 32px;
-    right: 32px;
-    width: 54px !important;
-    height: 54px !important;
   }
 
   .related-grid {
@@ -1455,6 +1593,10 @@ watch(() => displayContent.value, () => {
 
   // 只隐藏 TOC 侧边栏
   .toc-sidebar {
+    display: none;
+  }
+
+  .toc-expand-trigger {
     display: none;
   }
 
@@ -2324,4 +2466,3 @@ watch(() => displayContent.value, () => {
   }
 }
 </style>
-
