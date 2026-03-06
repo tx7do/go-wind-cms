@@ -36,6 +36,13 @@ const submitting = ref(false)
 const loading = ref(false)
 const comments = ref<commentservicev1_Comment[]>([])
 
+// 分页相关状态
+const currentPage = ref(1)
+const pageSize = ref(20) // 每页加载 20 条评论
+const total = ref(0)
+const hasMore = ref(true)
+const loadingMore = ref(false)
+
 const newComment = ref<CommentForm>({
   content: '',
   authorName: '',
@@ -47,16 +54,24 @@ const displayComments = computed(() => comments.value || [])
 
 const hasComments = computed(() => displayComments.value.length > 0)
 
-async function loadComments() {
-  if (!props.objectId || !props.contentType) return
-  if (loading.value) return
+const showLoadMore = computed(() => hasMore.value && !loadingMore.value)
 
-  loading.value = true
+// 加载评论 (分页)
+async function loadComments(reset = false) {
+  if (!props.objectId || !props.contentType) return
+  if (loading.value || (loadingMore.value && !reset)) return
+
+  if (reset) {
+    loading.value = true
+  } else {
+    loadingMore.value = true
+  }
+
   try {
     const res = await commentStore.listComment(
       {
-        page: 1,
-        pageSize: 50
+        page: reset ? 1 : currentPage.value,
+        pageSize: pageSize.value
       },
       {
         objectId: props.objectId,
@@ -64,12 +79,33 @@ async function loadComments() {
         status: 'STATUS_APPROVED'
       }
     )
-    comments.value = res.items || []
+
+    const newComments = res.items || []
+    total.value = res.total || 0
+
+    if (reset) {
+      comments.value = newComments
+    } else {
+      comments.value = [...comments.value, ...newComments]
+    }
+
+    // 判断是否还有更多数据
+    hasMore.value = comments.value.length < total.value
+    currentPage.value++
+
     emit('update:comments', comments.value)
   } catch (error) {
     console.error('Load comments failed:', error)
   } finally {
     loading.value = false
+    loadingMore.value = false
+  }
+}
+
+// 加载更多
+function loadMoreComments() {
+  if (hasMore.value && !loadingMore.value) {
+    loadComments()
   }
 }
 
@@ -91,7 +127,8 @@ async function handleSubmitComment() {
     })
     message.success($t('comment.comment_submitted'))
     newComment.value = {content: '', authorName: '', authorEmail: ''}
-    await loadComments()
+    currentPage.value = 1
+    await loadComments(true)
     // 用户体验优化：提交后滚动到评论列表
     setTimeout(() => {
       document.querySelector('.comments-list')?.scrollIntoView({behavior: 'smooth'})
@@ -125,7 +162,8 @@ async function handleReply(comment: commentservicev1_Comment, content: string) {
       status: 'COMMENT_STATUS_PENDING',
     })
     message.success($t('comment.comment_posted'))
-    await loadComments()
+    currentPage.value = 1
+    await loadComments(true)
   } catch (error) {
     console.error('Submit reply failed:', error)
     message.error($t('comment.submit_comment_failed'))
@@ -134,9 +172,35 @@ async function handleReply(comment: commentservicev1_Comment, content: string) {
   }
 }
 
+// 加载子评论
+async function loadChildren(parentComment: commentservicev1_Comment) {
+  if (!props.objectId || !props.contentType) return
+
+  try {
+    const res = await commentStore.listComment(
+      {
+        page: 1,
+        pageSize: 50 // 一次性加载所有子评论
+      },
+      {
+        objectId: props.objectId,
+        contentType: props.contentType,
+        parentId: parentComment.id, // 根据父评论 ID 过滤
+        status: 'STATUS_APPROVED'
+      }
+    )
+
+    // 将子评论添加到父评论的 children 中
+    parentComment.children = res.items || []
+  } catch (error) {
+    console.error('Load children failed:', error)
+    throw error
+  }
+}
+
 // --- 生命周期 ---
 onMounted(() => {
-  loadComments()
+  loadComments(true)
 })
 </script>
 
@@ -203,7 +267,24 @@ onMounted(() => {
       <CommentTree
         :comments="displayComments"
         @reply="handleReply"
+        @load-children="loadChildren"
       />
+
+      <!-- 加载更多按钮 -->
+      <div v-if="showLoadMore" class="load-more-container">
+        <n-button
+          size="large"
+          @click="loadMoreComments"
+          :loading="loadingMore"
+        >
+          {{ $t('comment.load_more') }}
+        </n-button>
+      </div>
+
+      <!-- 没有更多提示 -->
+      <div v-else-if="!hasMore && hasComments" class="no-more-text">
+        {{ $t('comment.no_more') }}
+      </div>
     </div>
     <n-empty v-else :description="$t('comment.no_comments')"
              style="margin-top: 40px;"/>
@@ -344,6 +425,47 @@ onMounted(() => {
     rgba(168, 85, 247, 0.05) 100%);
     z-index: 0;
   }
+}
+
+// 加载更多按钮
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(168, 85, 247, 0.08);
+
+  :deep(.n-button) {
+    min-width: 160px;
+    height: 44px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 12px;
+    background: linear-gradient(135deg,
+    var(--color-brand) 0%,
+    #764ba2 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(168, 85, 247, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// 没有更多提示
+.no-more-text {
+  text-align: center;
+  padding: 20px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .comment-item {

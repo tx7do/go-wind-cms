@@ -15,6 +15,7 @@ defineProps<{
 // --- Emits ---
 const emit = defineEmits<{
   (e: 'reply', comment: commentservicev1_Comment, content: string): void
+  (e: 'load-children', comment: commentservicev1_Comment): Promise<void>
 }>()
 
 // --- 状态 ---
@@ -22,14 +23,25 @@ const message = useMessage()
 const replyingCommentId = ref<number | null>(null)
 const replyContent = ref('')
 const submitting = ref(false)
+const expandedComments = ref<Set<number>>(new Set()) // 已展开的评论 ID
+const loadingChildren = ref<Set<number>>(new Set()) // 正在加载子评论的评论 ID
 
 function hasChildren(comment: commentservicev1_Comment): boolean {
-  return !!comment.children && comment.children.length > 0
+  // 有子评论数据，或者有回复数量但未加载
+  return !!comment.children || (comment.replyCount && comment.replyCount > 0)
 }
 
 function isOwnerReply(comment: commentservicev1_Comment): boolean {
   // 博主回复：authorType 为 ADMIN 且有 replyToId (回复他人)
   return comment.authorType === 'AUTHOR_TYPE_ADMIN' && !!comment.replyToId
+}
+
+function isExpanded(comment: commentservicev1_Comment): boolean {
+  return expandedComments.value.has(comment.id)
+}
+
+function isLoading(comment: commentservicev1_Comment): boolean {
+  return loadingChildren.value.has(comment.id)
 }
 
 // --- 方法 ---
@@ -75,6 +87,32 @@ function handleShare(comment: commentservicev1_Comment) {
     message.error($t('comment.copy_failed'))
   })
 }
+
+// 切换展开/收起子评论
+async function toggleExpand(comment: commentservicev1_Comment) {
+  if (isExpanded(comment)) {
+    // 收起
+    expandedComments.value.delete(comment.id)
+  } else {
+    // 展开
+    if (!comment.children && comment.replyCount && comment.replyCount > 0) {
+      // 需要动态加载子评论
+      loadingChildren.value.add(comment.id)
+      try {
+        await emit('load-children', comment)
+        expandedComments.value.add(comment.id)
+      } catch (error) {
+        console.error('Load children failed:', error)
+        message.error('加载回复失败')
+      } finally {
+        loadingChildren.value.delete(comment.id)
+      }
+    } else {
+      // 已经有子评论数据，直接展开
+      expandedComments.value.add(comment.id)
+    }
+  }
+}
 </script>
 
 <template>
@@ -118,6 +156,17 @@ function handleShare(comment: commentservicev1_Comment) {
               <span class="i-carbon:share"/>
               {{ $t('comment.share') }}
             </span>
+            <!-- 查看回复按钮 -->
+            <span
+              v-if="comment.replyCount && comment.replyCount > 0"
+              class="action-item view-replies"
+              @click="toggleExpand(comment)"
+            >
+              <span :class="isExpanded(comment) ? 'i-carbon:chevron-up' : 'i-carbon:chevron-down'"/>
+              {{
+                isExpanded(comment) ? $t('comment.hide_replies') : $t('comment.view_replies', {count: comment.replyCount})
+              }}
+            </span>
           </div>
 
           <!-- 回复表单 -->
@@ -153,8 +202,16 @@ function handleShare(comment: commentservicev1_Comment) {
       </div>
 
       <!-- 递归渲染子评论 -->
-      <div v-if="hasChildren(comment)" class="comment-children">
-        <CommentTree :comments="comment.children!"/>
+      <div v-if="hasChildren(comment) && isExpanded(comment)" class="comment-children">
+        <!-- 加载中提示 -->
+        <div v-if="isLoading(comment)" class="loading-children">
+          <n-spin size="small"/>
+          <span>{{ $t('comment.loading') }}</span>
+        </div>
+        <!-- 子评论列表 -->
+        <template v-else-if="comment.children">
+          <CommentTree :comments="comment.children"/>
+        </template>
       </div>
     </div>
   </div>
@@ -355,6 +412,19 @@ function handleShare(comment: commentservicev1_Comment) {
           color: var(--color-brand);
           transform: translateY(-1px);
         }
+
+        &.view-replies {
+          color: var(--color-brand);
+          font-weight: 500;
+
+          span[class^="i-"] {
+            font-size: 18px;
+          }
+
+          &:hover {
+            color: var(--color-brand-dark);
+          }
+        }
       }
     }
 
@@ -378,6 +448,21 @@ function handleShare(comment: commentservicev1_Comment) {
         :deep(.n-button) {
           min-width: 80px;
         }
+      }
+    }
+
+    // 加载中提示
+    .loading-children {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      color: var(--color-text-secondary);
+      font-size: 14px;
+      justify-content: center;
+
+      :deep(.n-spin) {
+        color: var(--color-brand);
       }
     }
   }
