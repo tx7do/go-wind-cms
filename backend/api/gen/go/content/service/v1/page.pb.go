@@ -667,9 +667,14 @@ func (x *ListPageResponse) GetTotal() uint64 {
 
 // 请求 - 页面数据
 type GetPageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*GetPageRequest_Id
+	//	*GetPageRequest_Slug
+	QueryBy       isGetPageRequest_QueryBy `protobuf_oneof:"query_by"`
+	Locale        *string                  `protobuf:"bytes,10,opt,name=locale,proto3,oneof" json:"locale,omitempty"`                      // 语言代码，用于指定返回哪个语言版本的数据
+	ViewMask      *fieldmaskpb.FieldMask   `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -704,11 +709,36 @@ func (*GetPageRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{3}
 }
 
+func (x *GetPageRequest) GetQueryBy() isGetPageRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
 func (x *GetPageRequest) GetId() uint32 {
 	if x != nil {
-		return x.Id
+		if x, ok := x.QueryBy.(*GetPageRequest_Id); ok {
+			return x.Id
+		}
 	}
 	return 0
+}
+
+func (x *GetPageRequest) GetSlug() string {
+	if x != nil {
+		if x, ok := x.QueryBy.(*GetPageRequest_Slug); ok {
+			return x.Slug
+		}
+	}
+	return ""
+}
+
+func (x *GetPageRequest) GetLocale() string {
+	if x != nil && x.Locale != nil {
+		return *x.Locale
+	}
+	return ""
 }
 
 func (x *GetPageRequest) GetViewMask() *fieldmaskpb.FieldMask {
@@ -717,6 +747,22 @@ func (x *GetPageRequest) GetViewMask() *fieldmaskpb.FieldMask {
 	}
 	return nil
 }
+
+type isGetPageRequest_QueryBy interface {
+	isGetPageRequest_QueryBy()
+}
+
+type GetPageRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+}
+
+type GetPageRequest_Slug struct {
+	Slug string `protobuf:"bytes,2,opt,name=slug,proto3,oneof"` // Slug
+}
+
+func (*GetPageRequest_Id) isGetPageRequest_QueryBy() {}
+
+func (*GetPageRequest_Slug) isGetPageRequest_QueryBy() {}
 
 // 请求 - 创建页面
 type CreatePageRequest struct {
@@ -1030,10 +1076,17 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\v_deleted_at\"X\n" +
 	"\x10ListPageResponse\x12.\n" +
 	"\x05items\x18\x01 \x03(\v2\x18.content.service.v1.PageR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xa7\x01\n" +
-	"\x0eGetPageRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\x12w\n" +
-	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xd1\x02\n" +
+	"\x0eGetPageRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12\"\n" +
+	"\x04slug\x18\x02 \x01(\tB\f\xbaG\t\x18\x01\x92\x02\x04SlugH\x00R\x04slug\x12_\n" +
+	"\x06locale\x18\n" +
+	" \x01(\tBB\xbaG?\x92\x02<语言代码，用于指定返回哪个语言版本的数据H\x01R\x06locale\x88\x01\x01\x12w\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x02R\bviewMask\x88\x01\x01B\n" +
+	"\n" +
+	"\bquery_byB\t\n" +
+	"\a_localeB\f\n" +
 	"\n" +
 	"_view_mask\"A\n" +
 	"\x11CreatePageRequest\x12,\n" +
@@ -1129,7 +1182,10 @@ func file_content_service_v1_page_proto_init() {
 	file_content_service_v1_types_proto_init()
 	file_content_service_v1_page_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_page_proto_msgTypes[1].OneofWrappers = []any{}
-	file_content_service_v1_page_proto_msgTypes[3].OneofWrappers = []any{}
+	file_content_service_v1_page_proto_msgTypes[3].OneofWrappers = []any{
+		(*GetPageRequest_Id)(nil),
+		(*GetPageRequest_Slug)(nil),
+	}
 	file_content_service_v1_page_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

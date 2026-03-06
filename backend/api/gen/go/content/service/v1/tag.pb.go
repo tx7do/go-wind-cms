@@ -489,9 +489,14 @@ func (x *ListTagResponse) GetTotal() uint64 {
 
 // 请求 - 标签数据
 type GetTagRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*GetTagRequest_Id
+	//	*GetTagRequest_Slug
+	QueryBy       isGetTagRequest_QueryBy `protobuf_oneof:"query_by"`
+	Locale        *string                 `protobuf:"bytes,10,opt,name=locale,proto3,oneof" json:"locale,omitempty"`                      // 语言代码，用于指定返回哪个语言版本的数据
+	ViewMask      *fieldmaskpb.FieldMask  `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -526,11 +531,36 @@ func (*GetTagRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_tag_proto_rawDescGZIP(), []int{3}
 }
 
+func (x *GetTagRequest) GetQueryBy() isGetTagRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
 func (x *GetTagRequest) GetId() uint32 {
 	if x != nil {
-		return x.Id
+		if x, ok := x.QueryBy.(*GetTagRequest_Id); ok {
+			return x.Id
+		}
 	}
 	return 0
+}
+
+func (x *GetTagRequest) GetSlug() string {
+	if x != nil {
+		if x, ok := x.QueryBy.(*GetTagRequest_Slug); ok {
+			return x.Slug
+		}
+	}
+	return ""
+}
+
+func (x *GetTagRequest) GetLocale() string {
+	if x != nil && x.Locale != nil {
+		return *x.Locale
+	}
+	return ""
 }
 
 func (x *GetTagRequest) GetViewMask() *fieldmaskpb.FieldMask {
@@ -539,6 +569,22 @@ func (x *GetTagRequest) GetViewMask() *fieldmaskpb.FieldMask {
 	}
 	return nil
 }
+
+type isGetTagRequest_QueryBy interface {
+	isGetTagRequest_QueryBy()
+}
+
+type GetTagRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+}
+
+type GetTagRequest_Slug struct {
+	Slug string `protobuf:"bytes,2,opt,name=slug,proto3,oneof"` // Slug
+}
+
+func (*GetTagRequest_Id) isGetTagRequest_QueryBy() {}
+
+func (*GetTagRequest_Slug) isGetTagRequest_QueryBy() {}
 
 // 请求 - 创建标签
 type CreateTagRequest struct {
@@ -805,10 +851,17 @@ const file_content_service_v1_tag_proto_rawDesc = "" +
 	"\v_deleted_at\"V\n" +
 	"\x0fListTagResponse\x12-\n" +
 	"\x05items\x18\x01 \x03(\v2\x17.content.service.v1.TagR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xa6\x01\n" +
-	"\rGetTagRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\x12w\n" +
-	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xd0\x02\n" +
+	"\rGetTagRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12\"\n" +
+	"\x04slug\x18\x02 \x01(\tB\f\xbaG\t\x18\x01\x92\x02\x04SlugH\x00R\x04slug\x12_\n" +
+	"\x06locale\x18\n" +
+	" \x01(\tBB\xbaG?\x92\x02<语言代码，用于指定返回哪个语言版本的数据H\x01R\x06locale\x88\x01\x01\x12w\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x02R\bviewMask\x88\x01\x01B\n" +
+	"\n" +
+	"\bquery_byB\t\n" +
+	"\a_localeB\f\n" +
 	"\n" +
 	"_view_mask\"?\n" +
 	"\x10CreateTagRequest\x12+\n" +
@@ -897,7 +950,10 @@ func file_content_service_v1_tag_proto_init() {
 	}
 	file_content_service_v1_tag_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_tag_proto_msgTypes[1].OneofWrappers = []any{}
-	file_content_service_v1_tag_proto_msgTypes[3].OneofWrappers = []any{}
+	file_content_service_v1_tag_proto_msgTypes[3].OneofWrappers = []any{
+		(*GetTagRequest_Id)(nil),
+		(*GetTagRequest_Slug)(nil),
+	}
 	file_content_service_v1_tag_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

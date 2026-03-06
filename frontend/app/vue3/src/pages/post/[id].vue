@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { definePage } from 'unplugin-vue-router/runtime'
-import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { usePostStore, useCommentStore } from '@/stores/modules/app'
-import { useMessage } from 'naive-ui'
-import { $t } from '@/locales'
-import { ContentViewer } from '@/components/ContentViewer'
+import {definePage} from 'unplugin-vue-router/runtime'
+import {ref, onMounted, computed} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {usePostStore, useCommentStore} from '@/stores/modules/app'
+import {useMessage} from 'naive-ui'
+import {$t, currentLocaleLanguageCode} from '@/locales'
+import {ContentViewer} from '@/components/ContentViewer'
 
 definePage({
   name: 'post-detail',
@@ -59,8 +59,8 @@ async function loadComments() {
 
   try {
     const res = await commentStore.listComment(
-      { page: 1, pageSize: 50 },
-      { postId: postId.value, status: 'COMMENT_STATUS_APPROVED' }
+      {page: 1, pageSize: 50},
+      {postId: postId.value, status: 'COMMENT_STATUS_APPROVED'}
     )
     comments.value = res.items || []
   } catch (error) {
@@ -75,7 +75,7 @@ async function loadRelatedPosts() {
     const categoryIds = post.value.categoryIds || []
     if (categoryIds.length > 0) {
       const res = await postStore.listPost(
-        { page: 1, pageSize: 3 },
+        {page: 1, pageSize: 3},
         {
           status: 'POST_STATUS_PUBLISHED',
           categoryIds: categoryIds
@@ -88,16 +88,36 @@ async function loadRelatedPosts() {
   }
 }
 
+function getTranslation() {
+  const locale = currentLocaleLanguageCode();
+  return post.value?.translations?.find((t: any) => t.languageCode === locale) || post.value?.translations?.[0]
+}
+
 function getTitle() {
-  return post.value?.translations?.[0]?.title || $t('page.post_detail.untitled')
+  const translation = getTranslation();
+  if (translation) {
+    return translation.title || $t('page.post_detail.untitled')
+  }
+
+  return translation?.title || $t('page.post_detail.untitled')
 }
 
 function getContent() {
-  return post.value?.translations?.[0]?.content || ''
+  const translation = getTranslation();
+  if (translation) {
+    return translation.content || ''
+  }
+
+  return ''
 }
 
 function getThumbnail() {
-  return post.value?.translations?.[0]?.thumbnail || '/placeholder.jpg'
+  const translation = getTranslation();
+  if (translation && translation.thumbnail) {
+    return translation.thumbnail
+  }
+
+  return '/placeholder.jpg'
 }
 
 function formatDate(dateString: string) {
@@ -138,7 +158,7 @@ async function handleSubmitComment() {
 
 function handleViewRelatedPost(id: number) {
   router.push(`/post/${id}`)
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  window.scrollTo({top: 0, behavior: 'smooth'})
 }
 
 function handleBack() {
@@ -215,7 +235,7 @@ function copyToClipboard(text: string) {
 }
 
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  window.scrollTo({top: 0, behavior: 'smooth'})
 }
 
 function handleScroll() {
@@ -234,7 +254,8 @@ onMounted(async () => {
 })
 
 // 清理事件监听
-import { onBeforeUnmount } from 'vue'
+import {onBeforeUnmount} from 'vue'
+
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll)
 })
@@ -248,7 +269,7 @@ onBeforeUnmount(() => {
         <div class="back-navigation">
           <n-button text @click="handleBack()">
             <template #icon>
-              <span class="i-carbon:arrow-left" />
+              <span class="i-carbon:arrow-left"/>
             </template>
             {{ $t('page.post_detail.back') }}
           </n-button>
@@ -258,8 +279,8 @@ onBeforeUnmount(() => {
         <article class="post-article">
           <!-- Post Thumbnail Banner -->
           <div v-if="getThumbnail()" class="post-banner">
-            <img :src="getThumbnail()" :alt="getTitle()" />
-            <div class="banner-overlay" />
+            <img :src="getThumbnail()" :alt="getTitle()"/>
+            <div class="banner-overlay"/>
           </div>
 
           <div class="article-content">
@@ -268,19 +289,19 @@ onBeforeUnmount(() => {
               <h1 class="post-title">{{ getTitle() }}</h1>
               <div class="post-meta">
                 <div class="meta-item">
-                  <span class="i-carbon:user-avatar" />
+                  <span class="i-carbon:user-avatar"/>
                   <span>{{ post.authorName }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="i-carbon:calendar" />
+                  <span class="i-carbon:calendar"/>
                   <span>{{ formatDate(post.createdAt) }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="i-carbon:view" />
+                  <span class="i-carbon:view"/>
                   <span>{{ post.visits || 0 }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="i-carbon:thumbs-up" />
+                  <span class="i-carbon:thumbs-up"/>
                   <span>{{ post.likes || 0 }}</span>
                 </div>
               </div>
@@ -304,7 +325,7 @@ onBeforeUnmount(() => {
                   @click="handleLike"
                 >
                   <template #icon>
-                    <span :class="isLiked ? 'i-carbon:thumbs-up-filled' : 'i-carbon:thumbs-up'" />
+                    <span :class="isLiked ? 'i-carbon:thumbs-up-filled' : 'i-carbon:thumbs-up'"/>
                   </template>
                 </n-button>
                 <n-button
@@ -314,7 +335,7 @@ onBeforeUnmount(() => {
                   @click="handleBookmark"
                 >
                   <template #icon>
-                    <span :class="isBookmarked ? 'i-carbon:bookmark-filled' : 'i-carbon:bookmark'" />
+                    <span :class="isBookmarked ? 'i-carbon:bookmark-filled' : 'i-carbon:bookmark'"/>
                   </template>
                 </n-button>
                 <n-button
@@ -323,7 +344,7 @@ onBeforeUnmount(() => {
                   @click="handleShare"
                 >
                   <template #icon>
-                    <span class="i-carbon:share" />
+                    <span class="i-carbon:share"/>
                   </template>
                 </n-button>
               </n-space>
@@ -335,8 +356,8 @@ onBeforeUnmount(() => {
         <section v-if="!post.disallowComment" class="comments-section">
           <div class="section-header">
             <h2>
-              <span class="i-carbon:chat" />
-              {{ $t('page.post_detail.comments_count', { count: comments.length }) }}
+              <span class="i-carbon:chat"/>
+              {{ $t('page.post_detail.comments_count', {count: comments.length}) }}
             </h2>
           </div>
 
@@ -373,7 +394,7 @@ onBeforeUnmount(() => {
               <n-form-item>
                 <n-button type="primary" size="large" @click="handleSubmitComment">
                   <template #icon>
-                    <span class="i-carbon:send-alt" />
+                    <span class="i-carbon:send-alt"/>
                   </template>
                   {{ $t('page.post_detail.submit_comment') }}
                 </n-button>
@@ -403,14 +424,15 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </div>
-          <n-empty v-else :description="$t('page.post_detail.no_comments')" style="margin-top: 40px;" />
+          <n-empty v-else :description="$t('page.post_detail.no_comments')"
+                   style="margin-top: 40px;"/>
         </section>
 
         <!-- Related Posts -->
         <section v-if="relatedPosts.length > 0" class="related-section">
           <div class="section-header">
             <h2>
-              <span class="i-carbon:book" />
+              <span class="i-carbon:book"/>
               {{ $t('page.post_detail.related_posts') }}
             </h2>
           </div>
@@ -426,14 +448,14 @@ onBeforeUnmount(() => {
                   :src="relatedPost.translations?.[0]?.thumbnail || '/placeholder.jpg'"
                   :alt="relatedPost.translations?.[0]?.title"
                 />
-                <div class="image-overlay" />
+                <div class="image-overlay"/>
               </div>
               <div class="related-content">
                 <h3>{{ relatedPost.translations?.[0]?.title }}</h3>
                 <p>{{ relatedPost.translations?.[0]?.summary }}</p>
                 <div class="related-meta">
-                  <span><span class="i-carbon:view" /> {{ relatedPost.visits || 0 }}</span>
-                  <span><span class="i-carbon:thumbs-up" /> {{ relatedPost.likes || 0 }}</span>
+                  <span><span class="i-carbon:view"/> {{ relatedPost.visits || 0 }}</span>
+                  <span><span class="i-carbon:thumbs-up"/> {{ relatedPost.likes || 0 }}</span>
                 </div>
               </div>
             </div>
@@ -441,7 +463,7 @@ onBeforeUnmount(() => {
         </section>
       </div>
 
-      <n-empty v-else :description="$t('page.post_detail.post_not_found')" />
+      <n-empty v-else :description="$t('page.post_detail.post_not_found')"/>
     </n-spin>
 
     <!-- Back to Top Button -->
@@ -455,7 +477,7 @@ onBeforeUnmount(() => {
         @click="scrollToTop"
       >
         <template #icon>
-          <span class="i-carbon:arrow-up" />
+          <span class="i-carbon:arrow-up"/>
         </template>
       </n-button>
     </transition>
@@ -520,13 +542,11 @@ onBeforeUnmount(() => {
     left: 0;
     right: 0;
     height: 200px;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      rgba(0, 0, 0, 0.3) 40%,
-      rgba(0, 0, 0, 0.7) 80%,
-      rgba(0, 0, 0, 0.85) 100%
-    );
+    background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 40%,
+    rgba(0, 0, 0, 0.7) 80%,
+    rgba(0, 0, 0, 0.85) 100%);
     pointer-events: none;
   }
 }

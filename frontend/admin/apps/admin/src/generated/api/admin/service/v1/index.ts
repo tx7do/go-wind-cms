@@ -1156,6 +1156,12 @@ export function createCategoryServiceClient(
       const path = `admin/v1/categories/${request.id}`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
+      if (request.slug) {
+        queryParams.push(`slug=${encodeURIComponent(request.slug.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
+      }
       if (request.viewMask) {
         queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
       }
@@ -1292,7 +1298,9 @@ export type contentservicev1_CategoryTranslation = {
 
 // 请求 - 类别数据
 export type contentservicev1_GetCategoryRequest = {
-  id: number | undefined;
+  id?: number;
+  slug?: string;
+  locale?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -4814,7 +4822,7 @@ export type siteservicev1_NavigationItem_LinkType =
   | "LINK_TYPE_EXTERNAL";
 // 请求 - 导航数据
 export type siteservicev1_GetNavigationRequest = {
-  id: number | undefined;
+  id?: number;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -5373,6 +5381,12 @@ export function createPageServiceClient(
       const path = `admin/v1/pages/${request.id}`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
+      if (request.slug) {
+        queryParams.push(`slug=${encodeURIComponent(request.slug.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
+      }
       if (request.viewMask) {
         queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
       }
@@ -5538,7 +5552,9 @@ export type contentservicev1_PageTranslation = {
 
 // 请求 - 页面数据
 export type contentservicev1_GetPageRequest = {
-  id: number | undefined;
+  id?: number;
+  slug?: string;
+  locale?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -6736,8 +6752,11 @@ export function createPostServiceClient(
       const path = `admin/v1/posts/${request.id}`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
-      if (request.languageCode) {
-        queryParams.push(`languageCode=${encodeURIComponent(request.languageCode.toString())}`)
+      if (request.slug) {
+        queryParams.push(`slug=${encodeURIComponent(request.slug.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
       }
       if (request.viewMask) {
         queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
@@ -6908,8 +6927,9 @@ export type contentservicev1_PostTranslation = {
 
 // 请求 - 帖子数据
 export type contentservicev1_GetPostRequest = {
-  id: number | undefined;
-  languageCode?: string;
+  id?: number;
+  slug?: string;
+  locale?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7780,6 +7800,12 @@ export function createTagServiceClient(
       const path = `admin/v1/tags/${request.id}`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
+      if (request.slug) {
+        queryParams.push(`slug=${encodeURIComponent(request.slug.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
+      }
       if (request.viewMask) {
         queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
       }
@@ -7913,7 +7939,9 @@ export type contentservicev1_TagTranslation = {
 
 // 请求 - 标签数据
 export type contentservicev1_GetTagRequest = {
-  id: number | undefined;
+  id?: number;
+  slug?: string;
+  locale?: string;
   viewMask?: wellKnownFieldMask;
 };
 

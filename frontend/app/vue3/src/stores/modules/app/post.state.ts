@@ -45,12 +45,10 @@ export const usePostStore = defineStore('post', () => {
    */
   async function getPost(id: number) {
     if (!id) return null;
-    return await service.GetPost({id});
-  }
 
-  async function getPostWithLanguageCode(id: number, languageCode: string) {
-    if (!id) return null;
-    return await service.GetPost({id, languageCode});
+    const locale = currentLocaleLanguageCode();
+
+    return await service.GetPost({id, locale});
   }
 
   /**
@@ -93,7 +91,6 @@ export const usePostStore = defineStore('post', () => {
     $reset,
     listPost,
     getPost,
-    getPostWithLanguageCode,
     createPost,
     updatePost,
     deletePost,

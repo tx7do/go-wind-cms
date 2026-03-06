@@ -182,7 +182,7 @@ watch(() => route.query.category, (newVal) => {
         <n-spin :show="loading">
           <!-- Results Count -->
           <div v-if="posts.length > 0" class="results-info">
-            <span>找到 <strong>{{ total }}</strong> 篇文章</span>
+            <span>{{ $t('page.posts.found') }} <strong>{{ total }}</strong> {{ $t('page.posts.articles') }}</span>
           </div>
 
           <div v-if="posts.length > 0" class="posts-grid">

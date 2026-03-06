@@ -819,7 +819,38 @@ func (m *GetPageRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	switch v := m.QueryBy.(type) {
+	case *GetPageRequest_Id:
+		if v == nil {
+			err := GetPageRequestValidationError{
+				field:  "QueryBy",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Id
+	case *GetPageRequest_Slug:
+		if v == nil {
+			err := GetPageRequestValidationError{
+				field:  "QueryBy",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Slug
+	default:
+		_ = v // ensures v is used
+	}
+
+	if m.Locale != nil {
+		// no validation rules for Locale
+	}
 
 	if m.ViewMask != nil {
 

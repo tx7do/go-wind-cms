@@ -207,10 +207,29 @@ export default defineMock([
   {
     url: '/app/v1/pages/:id',
     method: 'GET',
-    body: ({ params }: any) => {
+    body: ({ params, query }: any) => {
       const id = parseInt(params.id)
-      const page = pages.find(p => p.id === id)
-      return page || { error: 'Page not found' }
+      let page = pages.find(p => p.id === id)
+
+      if (!page) {
+        return { error: 'Page not found' }
+      }
+
+      // ✅ 根据 languageCode 参数过滤翻译数据
+      if (query.languageCode) {
+        const filteredTranslations = page.translations.filter(
+          t => t.languageCode === query.languageCode
+        )
+
+        page = {
+          ...page,
+          translations: filteredTranslations.length > 0
+            ? filteredTranslations
+            : [page.translations[0]]
+        }
+      }
+
+      return page
     },
   },
 ])

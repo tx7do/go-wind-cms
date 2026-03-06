@@ -568,10 +568,29 @@ export default defineMock([
   {
     url: '/app/v1/posts/:id',
     method: 'GET',
-    body: ({ params }: any) => {
+    body: ({ params, query }: any) => {
       const id = parseInt(params.id)
-      const post = posts.find(p => p.id === id)
-      return post || { error: 'Post not found' }
+      let post = posts.find(p => p.id === id)
+
+      if (!post) {
+        return { error: 'Post not found' }
+      }
+
+      // ✅ 根据 languageCode 参数过滤翻译数据
+      if (query.languageCode) {
+        const filteredTranslations = post.translations.filter(
+          t => t.languageCode === query.languageCode
+        )
+
+        post = {
+          ...post,
+          translations: filteredTranslations.length > 0
+            ? filteredTranslations
+            : [post.translations[0]]
+        }
+      }
+
+      return post
     },
   },
 ])

@@ -265,12 +265,22 @@ message ListPostResponse {
 
 // 请求 - 帖子数据
 message GetPostRequest {
-  uint32 id = 1;
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
 
-  optional string language_code = 2 [
-    json_name = "languageCode",
-    (gnostic.openapi.v3.property) = {description: "语言代码"}
-  ]; // 语言代码
+    string slug = 2 [
+      (gnostic.openapi.v3.property) = {description: "Slug", read_only: true},
+      json_name = "slug"
+    ]; // Slug
+  }
+
+  optional string locale = 10 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {description: "语言代码，用于指定返回哪个语言版本的数据"}
+  ]; // 语言代码，用于指定返回哪个语言版本的数据
 
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",

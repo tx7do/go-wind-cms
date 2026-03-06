@@ -232,10 +232,29 @@ export default defineMock([
   {
     url: '/app/v1/categories/:id',
     method: 'GET',
-    body: ({params}: any) => {
+    body: ({params, query}: any) => {
       const id = parseInt(params.id)
-      const category = categories.find(c => c.id === id)
-      return category || {error: 'Category not found'}
+      let category = categories.find(c => c.id === id)
+
+      if (!category) {
+        return {error: 'Category not found'}
+      }
+
+      // ✅ 根据 languageCode 参数过滤翻译数据
+      if (query.languageCode) {
+        const filteredTranslations = category.translations.filter(
+          t => t.languageCode === query.languageCode
+        )
+
+        category = {
+          ...category,
+          translations: filteredTranslations.length > 0
+            ? filteredTranslations
+            : [category.translations[0]]
+        }
+      }
+
+      return category
     },
   },
 ])

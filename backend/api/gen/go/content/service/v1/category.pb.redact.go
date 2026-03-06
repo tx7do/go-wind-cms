@@ -215,6 +215,10 @@ func (x *GetCategoryRequest) Redact() string {
 
 	// Safe field: Id
 
+	// Safe field: Slug
+
+	// Safe field: Locale
+
 	// Safe field: ViewMask
 	return x.String()
 }

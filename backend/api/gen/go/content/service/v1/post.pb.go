@@ -647,10 +647,14 @@ func (x *ListPostResponse) GetTotal() uint64 {
 
 // 请求 - 帖子数据
 type GetPostRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	LanguageCode  *string                `protobuf:"bytes,2,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"` // 语言代码
-	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"`           // 视图字段过滤器，用于控制返回的字段
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*GetPostRequest_Id
+	//	*GetPostRequest_Slug
+	QueryBy       isGetPostRequest_QueryBy `protobuf_oneof:"query_by"`
+	Locale        *string                  `protobuf:"bytes,10,opt,name=locale,proto3,oneof" json:"locale,omitempty"`                      // 语言代码，用于指定返回哪个语言版本的数据
+	ViewMask      *fieldmaskpb.FieldMask   `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -685,16 +689,34 @@ func (*GetPostRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{4}
 }
 
+func (x *GetPostRequest) GetQueryBy() isGetPostRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
 func (x *GetPostRequest) GetId() uint32 {
 	if x != nil {
-		return x.Id
+		if x, ok := x.QueryBy.(*GetPostRequest_Id); ok {
+			return x.Id
+		}
 	}
 	return 0
 }
 
-func (x *GetPostRequest) GetLanguageCode() string {
-	if x != nil && x.LanguageCode != nil {
-		return *x.LanguageCode
+func (x *GetPostRequest) GetSlug() string {
+	if x != nil {
+		if x, ok := x.QueryBy.(*GetPostRequest_Slug); ok {
+			return x.Slug
+		}
+	}
+	return ""
+}
+
+func (x *GetPostRequest) GetLocale() string {
+	if x != nil && x.Locale != nil {
+		return *x.Locale
 	}
 	return ""
 }
@@ -705,6 +727,22 @@ func (x *GetPostRequest) GetViewMask() *fieldmaskpb.FieldMask {
 	}
 	return nil
 }
+
+type isGetPostRequest_QueryBy interface {
+	isGetPostRequest_QueryBy()
+}
+
+type GetPostRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+}
+
+type GetPostRequest_Slug struct {
+	Slug string `protobuf:"bytes,2,opt,name=slug,proto3,oneof"` // Slug
+}
+
+func (*GetPostRequest_Id) isGetPostRequest_QueryBy() {}
+
+func (*GetPostRequest_Slug) isGetPostRequest_QueryBy() {}
 
 // 请求 - 创建帖子
 type CreatePostRequest struct {
@@ -1106,12 +1144,17 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"categoryId\"X\n" +
 	"\x10ListPostResponse\x12.\n" +
 	"\x05items\x18\x01 \x03(\v2\x18.content.service.v1.PostR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xf7\x01\n" +
-	"\x0eGetPostRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\x12<\n" +
-	"\rlanguage_code\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码H\x00R\flanguageCode\x88\x01\x01\x12w\n" +
-	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x01R\bviewMask\x88\x01\x01B\x10\n" +
-	"\x0e_language_codeB\f\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xd1\x02\n" +
+	"\x0eGetPostRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12\"\n" +
+	"\x04slug\x18\x02 \x01(\tB\f\xbaG\t\x18\x01\x92\x02\x04SlugH\x00R\x04slug\x12_\n" +
+	"\x06locale\x18\n" +
+	" \x01(\tBB\xbaG?\x92\x02<语言代码，用于指定返回哪个语言版本的数据H\x01R\x06locale\x88\x01\x01\x12w\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x02R\bviewMask\x88\x01\x01B\n" +
+	"\n" +
+	"\bquery_byB\t\n" +
+	"\a_localeB\f\n" +
 	"\n" +
 	"_view_mask\"A\n" +
 	"\x11CreatePostRequest\x12,\n" +
@@ -1216,7 +1259,10 @@ func file_content_service_v1_post_proto_init() {
 	file_content_service_v1_types_proto_init()
 	file_content_service_v1_post_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_post_proto_msgTypes[1].OneofWrappers = []any{}
-	file_content_service_v1_post_proto_msgTypes[4].OneofWrappers = []any{}
+	file_content_service_v1_post_proto_msgTypes[4].OneofWrappers = []any{
+		(*GetPostRequest_Id)(nil),
+		(*GetPostRequest_Slug)(nil),
+	}
 	file_content_service_v1_post_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

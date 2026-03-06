@@ -520,9 +520,14 @@ func (x *ListCategoryResponse) GetTotal() uint64 {
 
 // 请求 - 类别数据
 type GetCategoryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*GetCategoryRequest_Id
+	//	*GetCategoryRequest_Slug
+	QueryBy       isGetCategoryRequest_QueryBy `protobuf_oneof:"query_by"`
+	Locale        *string                      `protobuf:"bytes,10,opt,name=locale,proto3,oneof" json:"locale,omitempty"`                      // 语言代码，用于指定返回哪个语言版本的数据
+	ViewMask      *fieldmaskpb.FieldMask       `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -557,11 +562,36 @@ func (*GetCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_category_proto_rawDescGZIP(), []int{3}
 }
 
+func (x *GetCategoryRequest) GetQueryBy() isGetCategoryRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
 func (x *GetCategoryRequest) GetId() uint32 {
 	if x != nil {
-		return x.Id
+		if x, ok := x.QueryBy.(*GetCategoryRequest_Id); ok {
+			return x.Id
+		}
 	}
 	return 0
+}
+
+func (x *GetCategoryRequest) GetSlug() string {
+	if x != nil {
+		if x, ok := x.QueryBy.(*GetCategoryRequest_Slug); ok {
+			return x.Slug
+		}
+	}
+	return ""
+}
+
+func (x *GetCategoryRequest) GetLocale() string {
+	if x != nil && x.Locale != nil {
+		return *x.Locale
+	}
+	return ""
 }
 
 func (x *GetCategoryRequest) GetViewMask() *fieldmaskpb.FieldMask {
@@ -570,6 +600,22 @@ func (x *GetCategoryRequest) GetViewMask() *fieldmaskpb.FieldMask {
 	}
 	return nil
 }
+
+type isGetCategoryRequest_QueryBy interface {
+	isGetCategoryRequest_QueryBy()
+}
+
+type GetCategoryRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+}
+
+type GetCategoryRequest_Slug struct {
+	Slug string `protobuf:"bytes,2,opt,name=slug,proto3,oneof"` // Slug
+}
+
+func (*GetCategoryRequest_Id) isGetCategoryRequest_QueryBy() {}
+
+func (*GetCategoryRequest_Slug) isGetCategoryRequest_QueryBy() {}
 
 // 请求 - 创建类别
 type CreateCategoryRequest struct {
@@ -847,10 +893,17 @@ const file_content_service_v1_category_proto_rawDesc = "" +
 	"\v_deleted_at\"`\n" +
 	"\x14ListCategoryResponse\x122\n" +
 	"\x05items\x18\x01 \x03(\v2\x1c.content.service.v1.CategoryR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xab\x01\n" +
-	"\x12GetCategoryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\x12w\n" +
-	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xd5\x02\n" +
+	"\x12GetCategoryRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12\"\n" +
+	"\x04slug\x18\x02 \x01(\tB\f\xbaG\t\x18\x01\x92\x02\x04SlugH\x00R\x04slug\x12_\n" +
+	"\x06locale\x18\n" +
+	" \x01(\tBB\xbaG?\x92\x02<语言代码，用于指定返回哪个语言版本的数据H\x01R\x06locale\x88\x01\x01\x12w\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x02R\bviewMask\x88\x01\x01B\n" +
+	"\n" +
+	"\bquery_byB\t\n" +
+	"\a_localeB\f\n" +
 	"\n" +
 	"_view_mask\"I\n" +
 	"\x15CreateCategoryRequest\x120\n" +
@@ -941,7 +994,10 @@ func file_content_service_v1_category_proto_init() {
 	}
 	file_content_service_v1_category_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_category_proto_msgTypes[1].OneofWrappers = []any{}
-	file_content_service_v1_category_proto_msgTypes[3].OneofWrappers = []any{}
+	file_content_service_v1_category_proto_msgTypes[3].OneofWrappers = []any{
+		(*GetCategoryRequest_Id)(nil),
+		(*GetCategoryRequest_Slug)(nil),
+	}
 	file_content_service_v1_category_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

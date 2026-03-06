@@ -123,6 +123,14 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+                - name: slug
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -846,6 +854,14 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+                - name: slug
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -1008,7 +1024,11 @@ paths:
                   schema:
                     type: integer
                     format: uint32
-                - name: languageCode
+                - name: slug
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
                   in: query
                   schema:
                     type: string
@@ -1193,6 +1213,14 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+                - name: slug
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
                 - name: viewMask
                   in: query
                   schema:

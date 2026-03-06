@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { definePage } from 'unplugin-vue-router/runtime'
-import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { usePostStore, useCategoryStore } from '@/stores/modules/app'
-import { useMessage } from 'naive-ui'
-import { $t } from '@/locales'
+import {definePage} from 'unplugin-vue-router/runtime'
+import {ref, onMounted, computed} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {usePostStore, useCategoryStore} from '@/stores/modules/app'
+import {useMessage} from 'naive-ui'
+import {$t, currentLocaleLanguageCode} from '@/locales'
+import type {contentservicev1_Post} from "@/api/generated/app/service/v1";
 
 definePage({
   name: 'category-detail',
@@ -73,24 +74,59 @@ async function loadPosts() {
   }
 }
 
+function getTranslation() {
+  const locale = currentLocaleLanguageCode();
+  return category.value?.translations?.find((t: any) => t.languageCode === locale) || category.value?.translations?.[0]
+}
+
 function getCategoryName() {
-  return category.value?.translations?.[0]?.name || $t('page.home.category_default')
+  const translation = getTranslation()
+  if (translation) {
+    return translation.name || $t('page.home.category_default')
+  }
+
+  return $t('page.home.category_default')
 }
 
 function getCategoryDescription() {
-  return category.value?.translations?.[0]?.description || ''
+  const translation = getTranslation()
+  if (translation) {
+    return translation.description || ''
+  }
+
+  return ''
 }
 
-function getPostTitle(post: any) {
-  return post.translations?.[0]?.title || $t('page.post_detail.untitled')
+function getPostTranslation(post: contentservicev1_Post) {
+  if (!post) return null;
+
+  const locale = currentLocaleLanguageCode();
+  return post?.translations?.find((t: any) => t.languageCode === locale) || post?.translations?.[0]
 }
 
-function getPostSummary(post: any) {
-  return post.translations?.[0]?.summary || ''
+function getPostTitle(post: contentservicev1_Post) {
+  const translation = getPostTranslation(post)
+  if (translation) {
+    return translation.title || $t('page.post_detail.untitled')
+  }
+  return $t('page.post_detail.untitled')
 }
 
-function getPostThumbnail(post: any) {
-  return post.translations?.[0]?.thumbnail || '/placeholder.jpg'
+function getPostSummary(post: contentservicev1_Post) {
+  const translation = getPostTranslation(post)
+  if (translation) {
+    return translation.summary || ''
+  }
+  return ''
+}
+
+function getPostThumbnail(post: contentservicev1_Post) {
+  const translation = getPostTranslation(post)
+  if (translation) {
+    return translation.thumbnail || '/placeholder.jpg'
+  }
+
+  return '/placeholder.jpg'
 }
 
 function formatDate(dateString: string) {
@@ -131,10 +167,12 @@ onMounted(async () => {
     <div class="hero-section">
       <div class="hero-content">
         <h1>{{ getCategoryName() }}</h1>
-        <p v-if="getCategoryDescription()" class="category-description">{{ getCategoryDescription() }}</p>
+        <p v-if="getCategoryDescription()" class="category-description">{{
+            getCategoryDescription()
+          }}</p>
         <div class="category-stats">
           <div class="stat-item">
-            <span class="i-carbon:document" />
+            <span class="i-carbon:document"/>
             <span>{{ pagination.itemCount }} {{ $t('page.posts.articles') }}</span>
           </div>
         </div>
@@ -146,7 +184,7 @@ onMounted(async () => {
       <n-spin :show="loading">
         <!-- Results Count -->
         <div v-if="posts.length > 0" class="results-info">
-          <span>找到 <strong>{{ pagination.itemCount }}</strong> 篇文章</span>
+          <span>{{ $t('page.posts.found') }} <strong>{{ pagination.itemCount }}</strong> {{ $t('page.posts.articles') }}</span>
         </div>
 
         <!-- Posts Grid -->
@@ -158,27 +196,27 @@ onMounted(async () => {
             @click="handleViewPost(post.id)"
           >
             <div class="post-image">
-              <img :src="getPostThumbnail(post)" :alt="getPostTitle(post)" />
-              <div class="image-overlay" />
+              <img :src="getPostThumbnail(post)" :alt="getPostTitle(post)"/>
+              <div class="image-overlay"/>
             </div>
             <div class="post-content">
               <h3 class="post-title">{{ getPostTitle(post) }}</h3>
               <p class="post-summary">{{ getPostSummary(post) }}</p>
               <div class="post-meta">
                 <div class="meta-item">
-                  <span class="i-carbon:user" />
+                  <span class="i-carbon:user"/>
                   <span>{{ post.authorName }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="i-carbon:calendar" />
+                  <span class="i-carbon:calendar"/>
                   <span>{{ formatDate(post.createdAt) }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="i-carbon:view" />
+                  <span class="i-carbon:view"/>
                   <span>{{ post.visits || 0 }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="i-carbon:thumbs-up" />
+                  <span class="i-carbon:thumbs-up"/>
                   <span>{{ post.likes || 0 }}</span>
                 </div>
               </div>
@@ -188,7 +226,7 @@ onMounted(async () => {
 
         <n-empty v-else :description="$t('page.posts.no_results')" style="margin: 80px 0;">
           <template #icon>
-            <span class="i-carbon:document-blank" style="font-size: 64px;" />
+            <span class="i-carbon:document-blank" style="font-size: 64px;"/>
           </template>
         </n-empty>
 
@@ -239,10 +277,9 @@ onMounted(async () => {
     left: 0;
     right: 0;
     bottom: 0;
-    background:
-      radial-gradient(ellipse at 20% 50%, rgba(100, 200, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(200, 100, 255, 0.12) 0%, transparent 50%),
-      linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    background: radial-gradient(ellipse at 20% 50%, rgba(100, 200, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(200, 100, 255, 0.12) 0%, transparent 50%),
+    linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
     animation: gradientShift 15s ease-in-out infinite;
     z-index: 0;
   }
@@ -255,9 +292,8 @@ onMounted(async () => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: 50px 50px;
     animation: gridMove 20s linear infinite;
     opacity: 0.6;
@@ -281,30 +317,24 @@ onMounted(async () => {
       line-height: 1.1;
 
       // 添加发光效果
-      background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #f0f0ff 25%,
-        #e0e0ff 50%,
-        #f0f0ff 75%,
-        #ffffff 100%
-      );
+      background: linear-gradient(135deg,
+      #ffffff 0%,
+      #f0f0ff 25%,
+      #e0e0ff 50%,
+      #f0f0ff 75%,
+      #ffffff 100%);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
 
-      text-shadow:
-        0 0 40px rgba(255, 255, 255, 0.9),
-        0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
-        0 0 120px rgba(99, 102, 241, 0.5),
-        0 6px 24px rgba(0, 0, 0, 0.5),
-        0 3px 12px rgba(0, 0, 0, 0.4);
+      text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
+      0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
+      0 0 120px rgba(99, 102, 241, 0.5),
+      0 6px 24px rgba(0, 0, 0, 0.5),
+      0 3px 12px rgba(0, 0, 0, 0.4);
 
-      filter:
-        drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6))
-        drop-shadow(0 0 60px rgba(99, 102, 241, 0.4))
-        drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
 
       animation-name: slideDown, glowPulseTitle, gradientShine;
       animation-duration: 0.8s, 3s, 6s;
@@ -796,14 +826,11 @@ onMounted(async () => {
         line-height: 1.3;
 
         // 移动端简化发光效果
-        text-shadow:
-          0 0 30px rgba(255, 255, 255, 0.8),
-          0 0 60px rgba(var(--color-primary-purple-rgb), 0.6),
-          0 4px 16px rgba(0, 0, 0, 0.4);
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
+        0 0 60px rgba(var(--color-primary-purple-rgb), 0.6),
+        0 4px 16px rgba(0, 0, 0, 0.4);
 
-        filter:
-          drop-shadow(0 0 20px rgba(var(--color-primary-purple-rgb), 0.5))
-          drop-shadow(0 3px 10px rgba(0, 0, 0, 0.3));
+        filter: drop-shadow(0 0 20px rgba(var(--color-primary-purple-rgb), 0.5)) drop-shadow(0 3px 10px rgba(0, 0, 0, 0.3));
       }
 
       .category-description {

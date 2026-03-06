@@ -476,10 +476,29 @@ export default defineMock([
   {
     url: '/app/v1/tags/:id',
     method: 'GET',
-    body: ({ params }: any) => {
+    body: ({ params, query }: any) => {
       const id = parseInt(params.id)
-      const tag = tags.find(t => t.id === id)
-      return tag || { error: 'Tag not found' }
+      let tag = tags.find(t => t.id === id)
+
+      if (!tag) {
+        return { error: 'Tag not found' }
+      }
+
+      // ✅ 根据 languageCode 参数过滤翻译数据
+      if (query.languageCode) {
+        const filteredTranslations = tag.translations.filter(
+          t => t.languageCode === query.languageCode
+        )
+
+        tag = {
+          ...tag,
+          translations: filteredTranslations.length > 0
+            ? filteredTranslations
+            : [tag.translations[0]]
+        }
+      }
+
+      return tag
     },
   },
 ])
