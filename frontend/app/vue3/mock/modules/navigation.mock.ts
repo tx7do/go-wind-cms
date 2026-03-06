@@ -280,6 +280,69 @@ const navigations = [
   },
 ]
 
+const navigationNameEnMap: Record<string, string> = {
+  'Main Navigation': 'Main Navigation',
+  'Footer Navigation': 'Footer Navigation',
+  'Sidebar Navigation': 'Sidebar Navigation',
+}
+
+const navigationItemTitleEnMap: Record<string, string> = {
+  '首页': 'Home',
+  '文章': 'Posts',
+  '分类': 'Categories',
+  '技术分享': 'Tech Sharing',
+  '生活随笔': 'Life Notes',
+  '关于': 'About',
+  '联系我们': 'Contact',
+  '隐私政策': 'Privacy Policy',
+  '服务条款': 'Terms of Service',
+  '热门标签': 'Popular Tags',
+  '归档': 'Archive',
+}
+
+const navigationItemDescEnMap: Record<string, string> = {
+  '返回首页': 'Back to homepage',
+  '浏览所有文章': 'Browse all posts',
+  '浏览所有分类': 'Browse all categories',
+  '技术文章分类': 'Tech article category',
+  '生活文章分类': 'Life article category',
+  '关于我们': 'About us',
+  '联系我们': 'Contact us',
+  '隐私政策': 'Privacy policy',
+  '服务条款': 'Terms of service',
+  '浏览热门标签': 'Browse popular tags',
+  '文章归档': 'Post archive',
+}
+
+const navigationItemDescEnById: Record<number, string> = {
+  10: 'Visit our GitHub',
+}
+
+function toEnglishItems(items: any[], navigationId: number): any[] {
+  return items.map(item => ({
+    ...item,
+    id: item.id + 100,
+    navigationId,
+    parentId: item.parentId === 0 ? 0 : item.parentId + 100,
+    title: navigationItemTitleEnMap[item.title] || item.title,
+    description: navigationItemDescEnById[item.id] || navigationItemDescEnMap[item.description] || item.description,
+    children: toEnglishItems(item.children || [], navigationId),
+  }))
+}
+
+const enNavigations = navigations.map(nav => {
+  const newNavigationId = nav.id + 100
+  return {
+    ...nav,
+    id: newNavigationId,
+    name: navigationNameEnMap[nav.name] || nav.name,
+    locale: 'en-US',
+    items: toEnglishItems(nav.items || [], newNavigationId),
+  }
+})
+
+navigations.push(...enNavigations)
+
 export default defineMock([
   {
     url: '/app/v1/navigations',
