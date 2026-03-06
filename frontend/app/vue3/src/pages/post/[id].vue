@@ -1,12 +1,33 @@
 <script setup lang="ts">
 import {definePage} from 'unplugin-vue-router/runtime'
-import {ref, onMounted, computed} from 'vue'
+import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {usePostStore, useCommentStore} from '@/stores/modules/app'
 import {useMessage} from 'naive-ui'
+import {useCommentStore, usePostStore} from '@/stores/modules/app'
 import {$t, currentLocaleLanguageCode} from '@/locales'
 import {ContentViewer} from '@/components/ContentViewer'
+import type {commentservicev1_Comment, contentservicev1_Post} from "@/api/generated/app/service/v1"
 
+// --- 常量定义 ---
+const SCROLL_THRESHOLD = 500
+const HEADING_OFFSET = 150
+const THROTTLE_DELAY = 200
+
+// --- 类型定义 ---
+interface TocItem {
+  id: string
+  level: number
+  text: string
+  element: HTMLElement
+}
+
+interface CommentForm {
+  content: string
+  authorName: string
+  email: string
+}
+
+// --- 路由定义 ---
 definePage({
   name: 'post-detail',
   meta: {
@@ -15,37 +36,75 @@ definePage({
   },
 })
 
+// --- 状态初始化 ---
 const route = useRoute()
 const router = useRouter()
 const postStore = usePostStore()
 const commentStore = useCommentStore()
 const message = useMessage()
 
+// 修复类型定义，允许 null
+const post = ref<contentservicev1_Post | null>(null)
+const comments = ref<commentservicev1_Comment[]>([])
+const relatedPosts = ref<contentservicev1_Post[]>([])
+const tableOfContents = ref<TocItem[]>([])
+const activeHeading = ref<string>('')
+const submitting = ref(false)
 const loading = ref(false)
-const post = ref<any>(null)
-const comments = ref<any[]>([])
-const relatedPosts = ref<any[]>([])
 const showBackToTop = ref(false)
 const isLiked = ref(false)
 const isBookmarked = ref(false)
 
-const newComment = ref({
+const newComment = ref<CommentForm>({
   content: '',
   authorName: '',
   email: '',
 })
 
+// --- 计算属性 ---
 const postId = computed(() => {
   const id = route.params.id
   return id ? parseInt(id as string) : null
 })
 
+const currentTranslation = computed(() => {
+  if (!post.value?.translations) return null
+  const locale = currentLocaleLanguageCode()
+  return post.value.translations.find((t) => t.languageCode === locale) || post.value.translations[0]
+})
+
+const displayTitle = computed(() => currentTranslation.value?.title || $t('page.post_detail.untitled'))
+const displayContent = computed(() => currentTranslation.value?.content || '')
+const displayThumbnail = computed(() => currentTranslation.value?.thumbnail || '/placeholder.jpg')
+
+// --- 工具函数 ---
+// 移到这里，避免 hoisting 依赖
+function throttle(fn: Function, delay: number) {
+  let timer: ReturnType<typeof setTimeout> | null = null
+  return function (this: any, ...args: any[]) {
+    if (!timer) {
+      timer = setTimeout(() => {
+        fn.apply(this, args)
+        timer = null
+      }, delay)
+    }
+  }
+}
+
+function formatDate(dateString: string) {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleString()
+}
+
+// --- 数据加载 ---
 async function loadPost() {
   if (!postId.value) return
-
   loading.value = true
   try {
     post.value = await postStore.getPost(postId.value)
+    // SEO 优化
+    document.title = `${displayTitle.value} - ${import.meta.env.VITE_APP_TITLE || 'GoWind CMS'}`
+    // 可以在 onBeforeUnmount 中恢复原标题，但通常单页应用不需要
   } catch (error) {
     console.error('Load post failed:', error)
     message.error($t('page.post_detail.load_failed'))
@@ -56,7 +115,6 @@ async function loadPost() {
 
 async function loadComments() {
   if (!postId.value) return
-
   try {
     const res = await commentStore.listComment(
       {page: 1, pageSize: 50},
@@ -70,7 +128,6 @@ async function loadComments() {
 
 async function loadRelatedPosts() {
   if (!post.value) return
-
   try {
     const categoryIds = post.value.categoryIds || []
     if (categoryIds.length > 0) {
@@ -81,58 +138,22 @@ async function loadRelatedPosts() {
           categoryIds: categoryIds
         }
       )
-      relatedPosts.value = (res.items || []).filter((p: any) => p.id !== postId.value)
+      relatedPosts.value = (res.items || []).filter((p) => p.id !== postId.value)
     }
   } catch (error) {
     console.error('Load related posts failed:', error)
   }
 }
 
-function getTranslation() {
-  const locale = currentLocaleLanguageCode();
-  return post.value?.translations?.find((t: any) => t.languageCode === locale) || post.value?.translations?.[0]
-}
-
-function getTitle() {
-  const translation = getTranslation();
-  if (translation) {
-    return translation.title || $t('page.post_detail.untitled')
-  }
-
-  return translation?.title || $t('page.post_detail.untitled')
-}
-
-function getContent() {
-  const translation = getTranslation();
-  if (translation) {
-    return translation.content || ''
-  }
-
-  return ''
-}
-
-function getThumbnail() {
-  const translation = getTranslation();
-  if (translation && translation.thumbnail) {
-    return translation.thumbnail
-  }
-
-  return '/placeholder.jpg'
-}
-
-function formatDate(dateString: string) {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleString()
-}
-
+// --- 交互逻辑 ---
 async function handleSubmitComment() {
   if (!newComment.value.content || !newComment.value.authorName || !newComment.value.email) {
     message.warning($t('page.post_detail.fill_form_info'))
     return
   }
+  if (!postId.value || submitting.value) return
 
-  if (!postId.value) return
-
+  submitting.value = true
   try {
     await commentStore.createComment({
       postId: postId.value,
@@ -141,18 +162,18 @@ async function handleSubmitComment() {
       email: newComment.value.email,
       status: 'COMMENT_STATUS_PENDING',
     })
-
     message.success($t('page.post_detail.comment_submitted'))
-
-    // 重置表单
-    newComment.value = {
-      content: '',
-      authorName: '',
-      email: '',
-    }
+    newComment.value = {content: '', authorName: '', email: ''}
+    await loadComments()
+    // 用户体验优化：提交后滚动到评论列表
+    setTimeout(() => {
+      document.querySelector('.comments-list')?.scrollIntoView({behavior: 'smooth'})
+    }, 100)
   } catch (error) {
     console.error('Submit comment failed:', error)
     message.error($t('page.post_detail.submit_comment_failed'))
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -162,61 +183,42 @@ function handleViewRelatedPost(id: number) {
 }
 
 function handleBack() {
-  // 检查是否有来源页面信息
   const from = route.query.from as string
   const categoryId = route.query.categoryId as string
-
   if (from === 'category' && categoryId) {
-    // 从分类页面进入，返回到分类页面
     router.push(`/category/${categoryId}`)
   } else if (from === 'user') {
-    // 从用户资料页面进入，返回到用户资料页面
     router.push('/user')
   } else if (from === 'post') {
-    // 从文章列表页面进入，返回到文章列表页面
     router.push('/post')
   } else if (from === 'home') {
-    // 从首页进入，返回到首页
     router.push('/')
   } else if (window.history.length > 2) {
-    // 有浏览历史，使用浏览器返回
     router.back()
   } else {
-    // 默认返回文章列表
     router.push('/post')
   }
 }
 
 function handleLike() {
   isLiked.value = !isLiked.value
-  if (isLiked.value) {
+  if (isLiked.value && post.value) {
+    post.value.likes = (post.value.likes || 0) + 1
     message.success($t('page.post_detail.liked'))
-    if (post.value) {
-      post.value.likes = (post.value.likes || 0) + 1
-    }
-  } else {
-    if (post.value && post.value.likes > 0) {
-      post.value.likes -= 1
-    }
+  } else if (post.value && post.value.likes > 0) {
+    post.value.likes -= 1
   }
 }
 
 function handleBookmark() {
   isBookmarked.value = !isBookmarked.value
-  if (isBookmarked.value) {
-    message.success($t('page.post_detail.bookmarked'))
-  } else {
-    message.info($t('page.post_detail.unbookmarked'))
-  }
+  message.success(isBookmarked.value ? $t('page.post_detail.bookmarked') : $t('page.post_detail.unbookmarked'))
 }
 
 function handleShare() {
   const url = window.location.href
   if (navigator.share) {
-    navigator.share({
-      title: getTitle(),
-      url: url
-    }).then(() => {
+    navigator.share({title: displayTitle.value, url}).then(() => {
       message.success($t('page.post_detail.shared'))
     }).catch(() => {
       copyToClipboard(url)
@@ -238,26 +240,95 @@ function scrollToTop() {
   window.scrollTo({top: 0, behavior: 'smooth'})
 }
 
-function handleScroll() {
-  showBackToTop.value = window.scrollY > 500
+// --- 目录与滚动 ---
+function generateTableOfContents() {
+  nextTick(() => {
+    const contentEl = document.querySelector('.post-content')
+    if (!contentEl) return
+
+    const headings = contentEl.querySelectorAll('h2, h3')
+    const toc: TocItem[] = []
+
+    headings.forEach((heading, index) => {
+      const level = heading.tagName === 'H2' ? 2 : 3
+      const id = `heading-${index}`
+      if (!heading.id) heading.id = id
+      heading.setAttribute('id', id)
+      toc.push({
+        id,
+        level,
+        text: heading.textContent || '',
+        element: heading as HTMLElement // 缓存元素引用
+      })
+    })
+    tableOfContents.value = toc
+  })
 }
 
+function scrollToHeading(id: string) {
+  const tocItem = tableOfContents.value.find(item => item.id === id)
+  const element = tocItem?.element || document.getElementById(id)
+
+  if (element) {
+    const offset = 100 // 根据实际导航栏高度调整
+    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+    window.scrollTo({
+      top: elementPosition - offset,
+      behavior: 'smooth'
+    })
+    activeHeading.value = id
+
+    if (history.pushState) {
+      history.pushState(null, '', `#${id}`)
+    } else {
+      window.location.hash = `#${id}`
+    }
+  }
+}
+
+function handleScroll() {
+  showBackToTop.value = window.scrollY > SCROLL_THRESHOLD
+
+  if (tableOfContents.value.length > 0) {
+    let currentActive = activeHeading.value
+    // 优化：直接使用缓存的 element，避免重复查询 DOM
+    for (const heading of tableOfContents.value) {
+      if (heading.element && heading.element.getBoundingClientRect().top < HEADING_OFFSET) {
+        currentActive = heading.id
+      }
+    }
+    activeHeading.value = currentActive
+  }
+}
+
+const throttledScroll = throttle(handleScroll, THROTTLE_DELAY)
+
+// --- 生命周期 ---
 onMounted(async () => {
   await loadPost()
-  await Promise.all([
-    loadComments(),
-    loadRelatedPosts(),
-  ])
+  await Promise.all([loadComments(), loadRelatedPosts()])
 
-  // 监听滚动事件
-  window.addEventListener('scroll', handleScroll)
+  // 等待内容完全加载后生成目录
+  setTimeout(() => {
+    generateTableOfContents()
+    // 页面加载时检查 URL hash，自动滚动到对应位置
+    if (window.location.hash) {
+      const id = window.location.hash.slice(1)
+      setTimeout(() => {
+        scrollToHeading(id)
+      }, 300)
+    }
+  }, 100)
+
+  window.addEventListener('scroll', throttledScroll)
 })
 
-// 清理事件监听
-import {onBeforeUnmount} from 'vue'
-
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('scroll', throttledScroll)
+})
+
+watch(() => displayContent.value, () => {
+  generateTableOfContents()
 })
 </script>
 
@@ -267,7 +338,7 @@ onBeforeUnmount(() => {
       <div v-if="post" class="post-container">
         <!-- Back Button -->
         <div class="back-navigation">
-          <n-button text @click="handleBack()">
+          <n-button text @click="handleBack()" aria-label="Back">
             <template #icon>
               <span class="i-carbon:arrow-left"/>
             </template>
@@ -275,80 +346,108 @@ onBeforeUnmount(() => {
           </n-button>
         </div>
 
-        <!-- Post Header with Thumbnail -->
+        <!-- Post Article -->
         <article class="post-article">
           <!-- Post Thumbnail Banner -->
-          <div v-if="getThumbnail()" class="post-banner">
-            <img :src="getThumbnail()" :alt="getTitle()"/>
+          <div v-if="displayThumbnail" class="post-banner">
+            <img
+              :src="displayThumbnail"
+              :alt="displayTitle"
+              loading="lazy"
+            />
             <div class="banner-overlay"/>
           </div>
 
-          <div class="article-content">
-            <!-- Post Header -->
-            <header class="post-header">
-              <h1 class="post-title">{{ getTitle() }}</h1>
-              <div class="post-meta">
-                <div class="meta-item">
-                  <span class="i-carbon:user-avatar"/>
-                  <span>{{ post.authorName }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="i-carbon:calendar"/>
-                  <span>{{ formatDate(post.createdAt) }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="i-carbon:view"/>
-                  <span>{{ post.visits || 0 }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="i-carbon:thumbs-up"/>
-                  <span>{{ post.likes || 0 }}</span>
-                </div>
+          <div class="post-wrapper">
+            <!-- Table of Contents Sidebar -->
+            <aside v-if="tableOfContents.length > 0" class="toc-sidebar">
+              <div class="toc-container">
+                <h3 class="toc-title">
+                  <span class="i-carbon:list"/>
+                  {{ $t('page.post_detail.table_of_contents') }}
+                </h3>
+                <nav class="toc-list">
+                  <a
+                    v-for="item in tableOfContents"
+                    :key="item.id"
+                    href="javascript:void(0)"
+                    :class="['toc-item', `level-${item.level}`, { active: activeHeading === item.id }]"
+                    @click.prevent="scrollToHeading(item.id)"
+                  >
+                    {{ item.text }}
+                  </a>
+                </nav>
               </div>
-            </header>
+            </aside>
 
-            <!-- Post Content -->
-            <div class="post-content">
-              <ContentViewer
-                :content="getContent()"
-                type="markdown"
-              />
+            <div class="article-content">
+              <!-- Post Header -->
+              <header class="post-header">
+                <h1 class="post-title">{{ displayTitle }}</h1>
+                <div class="post-meta">
+                  <div class="meta-item">
+                    <span class="i-carbon:user-avatar"/>
+                    <span>{{ post.authorName }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="i-carbon:calendar"/>
+                    <span>{{ formatDate(post.createdAt) }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="i-carbon:view"/>
+                    <span>{{ post.visits || 0 }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="i-carbon:thumbs-up"/>
+                    <span>{{ post.likes || 0 }}</span>
+                  </div>
+                </div>
+              </header>
+
+              <!-- Post Content -->
+              <div class="post-content">
+                <ContentViewer :content="displayContent" type="markdown"/>
+              </div>
+
+              <!-- Post Actions -->
+              <footer class="post-actions">
+                <n-space size="large">
+                  <n-button
+                    size="large"
+                    circle
+                    :type="isLiked ? 'primary' : 'default'"
+                    @click="handleLike"
+                    :aria-label="$t('page.post_detail.likes')"
+                  >
+                    <template #icon>
+                      <span :class="isLiked ? 'i-carbon:thumbs-up-filled' : 'i-carbon:thumbs-up'"/>
+                    </template>
+                  </n-button>
+                  <n-button
+                    size="large"
+                    circle
+                    :type="isBookmarked ? 'primary' : 'default'"
+                    @click="handleBookmark"
+                    :aria-label="$t('page.post_detail.bookmark')"
+                  >
+                    <template #icon>
+                      <span
+                        :class="isBookmarked ? 'i-carbon:bookmark-filled' : 'i-carbon:bookmark'"/>
+                    </template>
+                  </n-button>
+                  <n-button
+                    size="large"
+                    circle
+                    @click="handleShare"
+                    :aria-label="$t('page.post_detail.share')"
+                  >
+                    <template #icon>
+                      <span class="i-carbon:share"/>
+                    </template>
+                  </n-button>
+                </n-space>
+              </footer>
             </div>
-
-            <!-- Post Actions -->
-            <footer class="post-actions">
-              <n-space size="large">
-                <n-button
-                  size="large"
-                  circle
-                  :type="isLiked ? 'primary' : 'default'"
-                  @click="handleLike"
-                >
-                  <template #icon>
-                    <span :class="isLiked ? 'i-carbon:thumbs-up-filled' : 'i-carbon:thumbs-up'"/>
-                  </template>
-                </n-button>
-                <n-button
-                  size="large"
-                  circle
-                  :type="isBookmarked ? 'primary' : 'default'"
-                  @click="handleBookmark"
-                >
-                  <template #icon>
-                    <span :class="isBookmarked ? 'i-carbon:bookmark-filled' : 'i-carbon:bookmark'"/>
-                  </template>
-                </n-button>
-                <n-button
-                  size="large"
-                  circle
-                  @click="handleShare"
-                >
-                  <template #icon>
-                    <span class="i-carbon:share"/>
-                  </template>
-                </n-button>
-              </n-space>
-            </footer>
           </div>
         </article>
 
@@ -371,6 +470,7 @@ onBeforeUnmount(() => {
                     v-model:value="newComment.authorName"
                     :placeholder="$t('page.post_detail.enter_nickname')"
                     size="large"
+                    :disabled="submitting"
                   />
                 </n-form-item-gi>
                 <n-form-item-gi :label="$t('page.post_detail.email')">
@@ -379,6 +479,7 @@ onBeforeUnmount(() => {
                     :placeholder="$t('page.post_detail.enter_email')"
                     type="text"
                     size="large"
+                    :disabled="submitting"
                   />
                 </n-form-item-gi>
               </n-grid>
@@ -389,10 +490,16 @@ onBeforeUnmount(() => {
                   :rows="5"
                   :placeholder="$t('page.post_detail.write_comment')"
                   size="large"
+                  :disabled="submitting"
                 />
               </n-form-item>
               <n-form-item>
-                <n-button type="primary" size="large" @click="handleSubmitComment">
+                <n-button
+                  type="primary"
+                  size="large"
+                  @click="handleSubmitComment"
+                  :loading="submitting"
+                >
                   <template #icon>
                     <span class="i-carbon:send-alt"/>
                   </template>
@@ -416,10 +523,7 @@ onBeforeUnmount(() => {
                   <span class="comment-date">{{ formatDate(comment.createdAt) }}</span>
                 </div>
                 <div class="comment-content">
-                  <ContentViewer
-                    :content="comment.content"
-                    type="text"
-                  />
+                  <ContentViewer :content="comment.content" type="text"/>
                 </div>
               </div>
             </div>
@@ -442,11 +546,15 @@ onBeforeUnmount(() => {
               :key="relatedPost.id"
               class="related-card"
               @click="handleViewRelatedPost(relatedPost.id)"
+              role="button"
+              tabindex="0"
+              @keyup.enter="handleViewRelatedPost(relatedPost.id)"
             >
               <div class="related-image">
                 <img
                   :src="relatedPost.translations?.[0]?.thumbnail || '/placeholder.jpg'"
                   :alt="relatedPost.translations?.[0]?.title"
+                  loading="lazy"
                 />
                 <div class="image-overlay"/>
               </div>
@@ -462,7 +570,6 @@ onBeforeUnmount(() => {
           </div>
         </section>
       </div>
-
       <n-empty v-else :description="$t('page.post_detail.post_not_found')"/>
     </n-spin>
 
@@ -475,6 +582,7 @@ onBeforeUnmount(() => {
         size="large"
         type="primary"
         @click="scrollToTop"
+        aria-label="Back to top"
       >
         <template #icon>
           <span class="i-carbon:arrow-up"/>
@@ -519,13 +627,122 @@ onBeforeUnmount(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
+// Post Wrapper (包含 TOC 和内容)
+.post-wrapper {
+  display: flex;
+  gap: 32px;
+  background: var(--color-surface);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 240px; // TOC 宽度
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-border);
+  }
+}
+
+// Table of Contents Sidebar
+.toc-sidebar {
+  flex: 0 0 240px;
+  padding: 48px 24px;
+  background: var(--color-surface);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
+  max-height: calc(100vh - 120px);
+  position: sticky;
+  top: 60px;
+  overflow-y: auto;
+
+  .toc-container {
+    .toc-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 20px 0;
+      color: var(--color-text-primary);
+
+      span[class^="i-"] {
+        font-size: 18px;
+        color: var(--color-brand);
+      }
+    }
+
+    .toc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .toc-item {
+        padding: 10px 12px;
+        border-radius: 8px;
+        color: var(--color-text-secondary);
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+
+        &.level-2 {
+          padding-left: 12px;
+          font-weight: 500;
+        }
+
+        &.level-3 {
+          padding-left: 28px;
+          font-size: 13px;
+          color: var(--color-text-secondary);
+        }
+
+        &:hover {
+          background: rgba(168, 85, 247, 0.08);
+          color: var(--color-text-primary);
+          border-left-color: var(--color-brand);
+        }
+
+        &.active {
+          background: rgba(168, 85, 247, 0.12);
+          color: var(--color-brand);
+          border-left-color: var(--color-brand);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // 美化滚动条
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.3);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(168, 85, 247, 0.6);
+    }
+  }
+}
+
 // Post Banner
 .post-banner {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; // 16:9 比例
+  padding-top: 56.25%; // 16:9 比例（优化过的）
   overflow: hidden;
-  background: var(--color-bg);
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
 
   img {
     position: absolute;
@@ -534,20 +751,24 @@ onBeforeUnmount(() => {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
 
+  // ✅ 改进：多层过渡遮罩
   .banner-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 200px;
+    height: 280px;
     background: linear-gradient(to bottom,
     transparent 0%,
-    rgba(0, 0, 0, 0.3) 40%,
-    rgba(0, 0, 0, 0.7) 80%,
-    rgba(0, 0, 0, 0.85) 100%);
+    rgba(0, 0, 0, 0.15) 20%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.6) 80%,
+    rgba(0, 0, 0, 0.75) 100%);
     pointer-events: none;
+    backdrop-filter: blur(0.5px);
   }
 }
 
@@ -556,16 +777,21 @@ onBeforeUnmount(() => {
   padding: 56px 64px 48px;
   background: var(--color-surface);
   position: relative;
+  flex: 1;
 
-  // 顶部留白过渡区域
+  // ✅ 改进：增强过渡效果
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 8px;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.03), transparent);
+    height: 16px;
+    background: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0.08),
+    rgba(0, 0, 0, 0.04) 50%,
+    transparent);
+    pointer-events: none;
   }
 }
 
@@ -606,19 +832,22 @@ onBeforeUnmount(() => {
 // Post Content
 .post-content {
   font-size: 18px;
-  line-height: 2;
-  letter-spacing: 0.3px;
+  line-height: 2.1;
+  letter-spacing: 0.5px;
   color: var(--color-text-primary);
   margin-bottom: 48px;
+  text-rendering: optimizeLegibility;
 
   :deep(h2) {
     font-size: 32px;
     font-weight: 700;
-    margin: 56px 0 28px;
+    margin: 64px 0 32px;
     padding-bottom: 16px;
     border-bottom: 3px solid var(--color-brand);
     color: var(--color-text-primary);
     position: relative;
+    line-height: 1.4;
+    letter-spacing: -0.3px;
 
     &::after {
       content: '';
@@ -634,21 +863,33 @@ onBeforeUnmount(() => {
   :deep(h3) {
     font-size: 26px;
     font-weight: 600;
-    margin: 44px 0 24px;
+    margin: 48px 0 28px;
     color: var(--color-text-primary);
     padding-left: 16px;
     border-left: 4px solid var(--color-brand);
+    line-height: 1.4;
+    letter-spacing: -0.2px;
   }
 
   :deep(p) {
-    margin: 24px 0;
+    margin: 28px 0;
     text-align: justify;
     text-indent: 2em;
-    line-height: 2.2;
+    line-height: 2.15;
+    letter-spacing: 0.4px;
+    word-spacing: 0.1em;
 
-    // 段落间距
+    // ✅ 改进：段落间距
     & + p {
-      margin-top: 20px;
+      margin-top: 24px;
+    }
+
+    // 首字下沉效果（可选）
+    &:first-of-type::first-letter {
+      font-size: 2em;
+      font-weight: 700;
+      color: var(--color-brand);
+      margin-right: 4px;
     }
   }
 
@@ -659,6 +900,7 @@ onBeforeUnmount(() => {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     transition: all 0.3s;
     cursor: zoom-in;
+    display: block;
 
     &:hover {
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
@@ -674,6 +916,7 @@ onBeforeUnmount(() => {
     font-size: 0.9em;
     color: var(--color-brand);
     border: 1px solid rgba(168, 85, 247, 0.2);
+    letter-spacing: 0.2px;
   }
 
   :deep(pre) {
@@ -683,12 +926,15 @@ onBeforeUnmount(() => {
     overflow-x: auto;
     border: 1px solid var(--color-border);
     margin: 32px 0;
+    line-height: 1.7;
+    letter-spacing: 0.3px;
 
     code {
       background: none;
       padding: 0;
       color: var(--color-text-primary);
       border: none;
+      font-size: 0.95em;
     }
   }
 
@@ -701,6 +947,8 @@ onBeforeUnmount(() => {
     color: var(--color-text-secondary);
     font-style: italic;
     position: relative;
+    letter-spacing: 0.3px;
+    line-height: 2;
 
     &::before {
       content: '"';
@@ -720,7 +968,8 @@ onBeforeUnmount(() => {
 
     li {
       margin: 16px 0;
-      line-height: 2;
+      line-height: 2.1;
+      letter-spacing: 0.4px;
 
       &::marker {
         color: var(--color-brand);
@@ -735,6 +984,7 @@ onBeforeUnmount(() => {
     border-bottom: 2px solid rgba(168, 85, 247, 0.3);
     transition: all 0.3s;
     font-weight: 500;
+    letter-spacing: 0.2px;
 
     &:hover {
       border-bottom-color: var(--color-brand);
@@ -748,11 +998,13 @@ onBeforeUnmount(() => {
   :deep(strong) {
     color: var(--color-brand);
     font-weight: 700;
+    letter-spacing: 0.3px;
   }
 
   :deep(em) {
     color: var(--color-text-secondary);
     font-style: italic;
+    letter-spacing: 0.2px;
   }
 
   :deep(hr) {
@@ -769,6 +1021,8 @@ onBeforeUnmount(() => {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-size: 15px;
+    letter-spacing: 0.3px;
 
     th {
       background: var(--color-brand);
@@ -776,11 +1030,13 @@ onBeforeUnmount(() => {
       padding: 16px;
       text-align: left;
       font-weight: 600;
+      line-height: 1.6;
     }
 
     td {
       padding: 14px 16px;
       border-bottom: 1px solid var(--color-border);
+      line-height: 1.8;
     }
 
     tr:hover {
@@ -1141,6 +1397,19 @@ onBeforeUnmount(() => {
     padding-top: 50%; // 调整为 2:1 比例
   }
 
+  .post-wrapper {
+    gap: 24px;
+
+    &::after {
+      left: 200px;
+    }
+  }
+
+  .toc-sidebar {
+    flex: 0 0 200px;
+    padding: 40px 20px;
+  }
+
   .back-to-top {
     bottom: 32px;
     right: 32px;
@@ -1175,8 +1444,23 @@ onBeforeUnmount(() => {
     padding-top: 56.25%; // 16:9 比例
   }
 
+  .post-wrapper {
+    gap: 0;
+    flex-direction: column;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  // 只隐藏 TOC 侧边栏
+  .toc-sidebar {
+    display: none;
+  }
+
   .article-content {
     padding: 40px 32px 36px;
+    width: 100%;
   }
 
   .post-header {
@@ -1467,6 +1751,12 @@ onBeforeUnmount(() => {
     }
   }
 
+  .post-wrapper {
+    &::after {
+      display: none;
+    }
+  }
+
   .post-content {
     font-size: 15px;
     line-height: 1.85;
@@ -1733,6 +2023,12 @@ onBeforeUnmount(() => {
           font-size: 13px;
         }
       }
+    }
+  }
+
+  .post-wrapper {
+    &::after {
+      display: none;
     }
   }
 
