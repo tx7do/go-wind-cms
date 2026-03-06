@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import {$t} from '@/locales'
 import {useMessage} from 'naive-ui'
+import {ref} from 'vue'
+
+import {$t} from '@/locales'
 import {ContentViewer} from '@/components/ContentViewer'
 import type {commentservicev1_Comment} from "@/api/generated/app/service/v1"
+import {formatDate} from "@/utils/date";
 
 // --- Props ---
 defineProps<{
@@ -11,17 +14,14 @@ defineProps<{
 
 // --- Emits ---
 const emit = defineEmits<{
-  (e: 'reply', comment: commentservicev1_Comment): void
+  (e: 'reply', comment: commentservicev1_Comment, content: string): void
 }>()
 
 // --- 状态 ---
 const message = useMessage()
-
-// --- 计算属性 ---
-function formatDate(dateString: string) {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleString()
-}
+const replyingCommentId = ref<number | null>(null)
+const replyContent = ref('')
+const submitting = ref(false)
 
 function hasChildren(comment: commentservicev1_Comment): boolean {
   return !!comment.children && comment.children.length > 0
@@ -34,14 +34,41 @@ function isOwnerReply(comment: commentservicev1_Comment): boolean {
 
 // --- 方法 ---
 function handleReply(comment: commentservicev1_Comment) {
-  emit('reply', comment)
+  replyingCommentId.value = comment.id
+  replyContent.value = ''
+}
+
+function cancelReply() {
+  replyingCommentId.value = null
+  replyContent.value = ''
+}
+
+async function submitReply(comment: commentservicev1_Comment) {
+  if (!replyContent.value.trim()) {
+    message.warning($t('comment.empty_content'))
+    return
+  }
+
+  if (submitting.value) return
+
+  submitting.value = true
+  try {
+    emit('reply', comment, replyContent.value.trim())
+    cancelReply()
+    message.success($t('comment.comment_posted'))
+  } catch (error) {
+    console.error('Submit reply failed:', error)
+    message.error($t('comment.submit_comment_failed'))
+  } finally {
+    submitting.value = false
+  }
 }
 
 function handleShare(comment: commentservicev1_Comment) {
   // 复制链接到剪贴板
   const url = window.location.href.split('#')[0]
   const commentUrl = `${url}#comment-${comment.id}`
-  
+
   navigator.clipboard.writeText(commentUrl).then(() => {
     message.success($t('comment.link_copied'))
   }).catch(() => {
@@ -92,6 +119,36 @@ function handleShare(comment: commentservicev1_Comment) {
               {{ $t('comment.share') }}
             </span>
           </div>
+
+          <!-- 回复表单 -->
+          <div v-if="replyingCommentId === comment.id" class="reply-form">
+            <n-input
+              v-model:value="replyContent"
+              type="textarea"
+              :rows="3"
+              :placeholder="$t('comment.write_comment')"
+              size="small"
+              :disabled="submitting"
+              @keydown.ctrl.enter="submitReply(comment)"
+            />
+            <div class="reply-form-actions">
+              <n-button
+                size="small"
+                type="primary"
+                @click="submitReply(comment)"
+                :loading="submitting"
+              >
+                {{ $t('comment.submit_comment') }}
+              </n-button>
+              <n-button
+                size="small"
+                @click="cancelReply"
+                :disabled="submitting"
+              >
+                {{ $t('comment.cancel') }}
+              </n-button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -120,8 +177,8 @@ function handleShare(comment: commentservicev1_Comment) {
   gap: 20px;
   padding: 28px;
   background: linear-gradient(135deg,
-    var(--color-bg) 0%,
-    rgba(168, 85, 247, 0.02) 100%);
+  var(--color-bg) 0%,
+  rgba(168, 85, 247, 0.02) 100%);
   border-radius: 16px;
   border: 1px solid rgba(168, 85, 247, 0.08);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -136,17 +193,16 @@ function handleShare(comment: commentservicev1_Comment) {
     width: 4px;
     height: 100%;
     background: linear-gradient(180deg,
-      var(--color-brand) 0%,
-      #764ba2 100%);
+    var(--color-brand) 0%,
+    #764ba2 100%);
     opacity: 0;
     transition: opacity 0.3s;
   }
 
   &:hover {
     border-color: var(--color-brand);
-    box-shadow:
-      0 8px 24px rgba(168, 85, 247, 0.12),
-      0 4px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 24px rgba(168, 85, 247, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.04);
     transform: translateX(4px) translateY(-2px);
 
     &::before {
@@ -171,8 +227,8 @@ function handleShare(comment: commentservicev1_Comment) {
       transform: translate(-50%, -50%);
       border-radius: 50%;
       background: linear-gradient(135deg,
-        var(--color-brand) 0%,
-        #764ba2 100%);
+      var(--color-brand) 0%,
+      #764ba2 100%);
       opacity: 0.15;
       filter: blur(6px);
       z-index: 0;
@@ -182,8 +238,8 @@ function handleShare(comment: commentservicev1_Comment) {
       position: relative;
       z-index: 1;
       background: linear-gradient(135deg,
-        var(--color-brand) 0%,
-        #764ba2 100%);
+      var(--color-brand) 0%,
+      #764ba2 100%);
       color: #fff;
       font-weight: 600;
       box-shadow: 0 2px 8px rgba(168, 85, 247, 0.2);
@@ -221,8 +277,8 @@ function handleShare(comment: commentservicev1_Comment) {
 
           .owner-badge {
             background: linear-gradient(135deg,
-              var(--color-brand) 0%,
-              #764ba2 100%);
+            var(--color-brand) 0%,
+            #764ba2 100%);
             color: #fff;
             font-size: 11px;
             font-weight: 700;
@@ -301,6 +357,29 @@ function handleShare(comment: commentservicev1_Comment) {
         }
       }
     }
+
+    // 回复表单
+    .reply-form {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(168, 85, 247, 0.08);
+
+      :deep(.n-input) {
+        border-radius: 8px;
+        background: var(--color-bg);
+      }
+
+      .reply-form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+        justify-content: flex-end;
+
+        :deep(.n-button) {
+          min-width: 80px;
+        }
+      }
+    }
   }
 }
 
@@ -318,8 +397,8 @@ function handleShare(comment: commentservicev1_Comment) {
     width: 2px;
     height: 100%;
     background: linear-gradient(180deg,
-      rgba(168, 85, 247, 0.2) 0%,
-      rgba(168, 85, 247, 0.05) 100%);
+    rgba(168, 85, 247, 0.2) 0%,
+    rgba(168, 85, 247, 0.05) 100%);
   }
 
   .comment-node {

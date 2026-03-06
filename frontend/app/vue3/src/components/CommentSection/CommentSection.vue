@@ -13,7 +13,7 @@ import type {
 interface CommentForm {
   content: string
   authorName: string
-  email: string
+  authorEmail: string
 }
 
 // --- Props ---
@@ -39,7 +39,7 @@ const comments = ref<commentservicev1_Comment[]>([])
 const newComment = ref<CommentForm>({
   content: '',
   authorName: '',
-  email: '',
+  authorEmail: '',
 })
 
 // --- 计算属性 ---
@@ -74,7 +74,7 @@ async function loadComments() {
 }
 
 async function handleSubmitComment() {
-  if (!newComment.value.content || !newComment.value.authorName || !newComment.value.email) {
+  if (!newComment.value.content || !newComment.value.authorName || !newComment.value.authorEmail) {
     message.warning($t('comment.fill_form_info'))
     return
   }
@@ -86,11 +86,11 @@ async function handleSubmitComment() {
       postId: props.objectId,
       content: newComment.value.content,
       authorName: newComment.value.authorName,
-      email: newComment.value.email,
+      authorEmail: newComment.value.authorEmail,
       status: 'COMMENT_STATUS_PENDING',
     })
     message.success($t('comment.comment_submitted'))
-    newComment.value = {content: '', authorName: '', email: ''}
+    newComment.value = {content: '', authorName: '', authorEmail: ''}
     await loadComments()
     // 用户体验优化：提交后滚动到评论列表
     setTimeout(() => {
@@ -98,6 +98,36 @@ async function handleSubmitComment() {
     }, 100)
   } catch (error) {
     console.error('Submit comment failed:', error)
+    message.error($t('comment.submit_comment_failed'))
+  } finally {
+    submitting.value = false
+  }
+}
+
+// 处理回复
+async function handleReply(comment: commentservicev1_Comment, content: string) {
+  if (!content.trim()) {
+    message.warning($t('comment.empty_content'))
+    return
+  }
+
+  if (!props.objectId || submitting.value) return
+
+  submitting.value = true
+  try {
+    await commentStore.createComment({
+      postId: props.objectId,
+      content: content.trim(),
+      authorName: comment.authorName, // 使用被回复评论的作者名
+      authorEmail: comment.authorEmail, // 使用被回复评论的邮箱
+      parentId: comment.id, // 父评论 ID
+      replyToId: comment.id, // 回复的目标评论 ID
+      status: 'COMMENT_STATUS_PENDING',
+    })
+    message.success($t('comment.comment_posted'))
+    await loadComments()
+  } catch (error) {
+    console.error('Submit reply failed:', error)
     message.error($t('comment.submit_comment_failed'))
   } finally {
     submitting.value = false
@@ -134,7 +164,7 @@ onMounted(() => {
           </n-form-item-gi>
           <n-form-item-gi :label="$t('comment.email')">
             <n-input
-              v-model:value="newComment.email"
+              v-model:value="newComment.authorEmail"
               :placeholder="$t('comment.enter_email')"
               type="text"
               size="large"
@@ -170,7 +200,10 @@ onMounted(() => {
 
     <!-- Comments List -->
     <div v-if="hasComments" class="comments-list">
-      <CommentTree :comments="displayComments"/>
+      <CommentTree
+        :comments="displayComments"
+        @reply="handleReply"
+      />
     </div>
     <n-empty v-else :description="$t('comment.no_comments')"
              style="margin-top: 40px;"/>
@@ -208,10 +241,9 @@ onMounted(() => {
   background: var(--color-surface);
   border-radius: 20px;
   padding: 56px 72px;
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.06),
-    0 8px 48px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06),
+  0 8px 48px rgba(0, 0, 0, 0.04),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -219,15 +251,14 @@ onMounted(() => {
 // Comment Form
 .comment-form {
   background: linear-gradient(135deg,
-    var(--color-bg) 0%,
-    rgba(168, 85, 247, 0.03) 100%);
+  var(--color-bg) 0%,
+  rgba(168, 85, 247, 0.03) 100%);
   border-radius: 16px;
   padding: 40px;
   margin-bottom: 48px;
   border: 1px solid rgba(168, 85, 247, 0.15);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
 
@@ -239,9 +270,9 @@ onMounted(() => {
     right: 0;
     height: 3px;
     background: linear-gradient(90deg,
-      var(--color-brand) 0%,
-      #764ba2 50%,
-      var(--color-brand) 100%);
+    var(--color-brand) 0%,
+    #764ba2 50%,
+    var(--color-brand) 100%);
     opacity: 0.8;
   }
 
@@ -260,8 +291,8 @@ onMounted(() => {
       flex: 1;
       height: 1px;
       background: linear-gradient(90deg,
-        var(--color-border) 0%,
-        transparent 100%);
+      var(--color-border) 0%,
+      transparent 100%);
     }
   }
 
@@ -309,8 +340,8 @@ onMounted(() => {
     width: 2px;
     height: 100%;
     background: linear-gradient(180deg,
-      rgba(168, 85, 247, 0.2) 0%,
-      rgba(168, 85, 247, 0.05) 100%);
+    rgba(168, 85, 247, 0.2) 0%,
+    rgba(168, 85, 247, 0.05) 100%);
     z-index: 0;
   }
 }
@@ -320,8 +351,8 @@ onMounted(() => {
   gap: 20px;
   padding: 28px;
   background: linear-gradient(135deg,
-    var(--color-bg) 0%,
-    rgba(168, 85, 247, 0.02) 100%);
+  var(--color-bg) 0%,
+  rgba(168, 85, 247, 0.02) 100%);
   border-radius: 16px;
   border: 1px solid rgba(168, 85, 247, 0.08);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -336,17 +367,16 @@ onMounted(() => {
     width: 4px;
     height: 100%;
     background: linear-gradient(180deg,
-      var(--color-brand) 0%,
-      #764ba2 100%);
+    var(--color-brand) 0%,
+    #764ba2 100%);
     opacity: 0;
     transition: opacity 0.3s;
   }
 
   &:hover {
     border-color: var(--color-brand);
-    box-shadow:
-      0 8px 24px rgba(168, 85, 247, 0.12),
-      0 4px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 24px rgba(168, 85, 247, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.04);
     transform: translateX(4px) translateY(-2px);
 
     &::before {
@@ -371,8 +401,8 @@ onMounted(() => {
       transform: translate(-50%, -50%);
       border-radius: 50%;
       background: linear-gradient(135deg,
-        var(--color-brand) 0%,
-        #764ba2 100%);
+      var(--color-brand) 0%,
+      #764ba2 100%);
       opacity: 0.15;
       filter: blur(6px);
       z-index: 0;
@@ -382,8 +412,8 @@ onMounted(() => {
       position: relative;
       z-index: 1;
       background: linear-gradient(135deg,
-        var(--color-brand) 0%,
-        #764ba2 100%);
+      var(--color-brand) 0%,
+      #764ba2 100%);
       color: #fff;
       font-weight: 600;
       box-shadow: 0 2px 8px rgba(168, 85, 247, 0.2);
