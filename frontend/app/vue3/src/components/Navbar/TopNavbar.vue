@@ -66,11 +66,11 @@ onMounted(() => {
         :options="navigationItems.map(item => ({
           key: item.id,
           label: item.title,
-          icon: item.icon ? () => h(XIcon, { name: `carbon:${item.icon}`, size: 18 }) : undefined,
+          icon: item.icon ? () => h(XIcon, { name: `carbon:${item.icon}`, size: 22 }) : undefined,
           children: item.children && item.children.length > 0 ? item.children.map((child: any) => ({
             key: child.id,
             label: child.title,
-            icon: child.icon ? () => h(XIcon, { name: `carbon:${child.icon}`, size: 16 }) : undefined,
+            icon: child.icon ? () => h(XIcon, { name: `carbon:${child.icon}`, size: 18 }) : undefined,
           })) : undefined,
         }))"
         @update:value="(key: number) => {
@@ -220,7 +220,7 @@ onMounted(() => {
 
 :deep(.n-menu-item) {
   color: var(--color-text-primary) !important;
-  padding: 8px 12px !important;
+  padding: 8px 14px !important;
   border-radius: var(--radius-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 15px;
@@ -248,7 +248,7 @@ onMounted(() => {
 :deep(.n-menu-item-content) {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 :deep(.n-menu-item-content__icon) {
@@ -417,7 +417,7 @@ onMounted(() => {
   :deep(.n-menu-item),
   :deep(.n-submenu-title),
   :deep(.n-tabs-tab) {
-    padding: 8px 10px !important;
+    padding: 8px 12px !important;
     font-size: 13px;
     min-height: 32px;
     flex-shrink: 0;
@@ -429,7 +429,7 @@ onMounted(() => {
   }
 
   :deep(.n-menu-item-content) {
-    gap: 4px;
+    gap: 3px;
   }
 
   :deep(.n-tabs-bar) {
@@ -501,13 +501,13 @@ onMounted(() => {
   }
 
   :deep(.n-menu-item-content) {
-    gap: 6px;
+    gap: 3px;
   }
 
   :deep(.n-menu-item-content__icon) {
-    width: 16px;
-    height: 16px;
-    font-size: 16px;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
     flex-shrink: 0;
   }
 
@@ -600,7 +600,7 @@ onMounted(() => {
   }
 
   :deep(.n-menu-item-content) {
-    gap: 6px;
+    gap: 3px;
   }
 
   :deep(.n-menu-item-content__label) {
@@ -611,7 +611,7 @@ onMounted(() => {
   }
 
   :deep(.n-menu-item-content__icon) {
-    font-size: 16px;
+    font-size: 18px;
     flex-shrink: 0;
   }
 

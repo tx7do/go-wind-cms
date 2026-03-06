@@ -44,7 +44,7 @@ function handleClickTab(path: string) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 4px; // 进一步减小间距从6px到4px
   padding: 8px 16px;
   border-radius: var(--radius-sm);
   font-size: 14px;
@@ -69,7 +69,7 @@ function handleClickTab(path: string) {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px; // 增大图标尺寸从18px到20px
 }
 
 .tab-label {
