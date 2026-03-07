@@ -184,6 +184,39 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/categories/{id}/translation:
+        get:
+            tags:
+                - CategoryService
+            description: 获取翻译数据
+            operationId: CategoryService_GetTranslation
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: code
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CategoryTranslation'
     /app/v1/comments:
         get:
             tags:
@@ -919,6 +952,39 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/pages/{id}/translation:
+        get:
+            tags:
+                - PageService
+            description: 获取翻译数据
+            operationId: PageService_GetTranslation
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: slug
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PageTranslation'
     /app/v1/posts:
         get:
             tags:
@@ -1089,6 +1155,39 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/posts/{id}/translation:
+        get:
+            tags:
+                - PostService
+            description: 获取翻译数据
+            operationId: PostService_GetTranslation
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: code
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PostTranslation'
     /app/v1/refresh-token:
         post:
             tags:
@@ -1278,6 +1377,39 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/tags/{id}/translation:
+        get:
+            tags:
+                - TagService
+            description: 获取翻译数据
+            operationId: TagService_GetTranslation
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: code
+                  in: query
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TagTranslation'
     /app/v1/ueditor:
         put:
             tags:
@@ -2526,6 +2658,75 @@ components:
                     items:
                         $ref: '#/components/schemas/NamedAny'
             description: Adds metadata to a single tag that is used by the Operation Object. It is not mandatory to have a Tag Object per tag defined in the Operation Object instances.
+        TagTranslation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 翻译记录ID
+                    format: uint32
+                tagId:
+                    type: integer
+                    description: 关联的标签ID
+                    format: uint32
+                languageCode:
+                    type: string
+                    description: 语言代码
+                name:
+                    type: string
+                    description: 标签名称
+                slug:
+                    type: string
+                    description: 标签别名（同语言下唯一，不同语言可重复，如 zh-CN 的 'go' 与 en-US 的 'go' 允许共存）
+                description:
+                    type: string
+                    description: 标签描述
+                coverImage:
+                    type: string
+                    description: 封面图
+                template:
+                    type: string
+                    description: 模板名称
+                fullPath:
+                    type: string
+                    description: 完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）
+                metaKeywords:
+                    type: string
+                    description: SEO 关键词
+                metaDescription:
+                    type: string
+                    description: SEO 描述
+                seoTitle:
+                    type: string
+                    description: SEO 标题
+                canonicalUrl:
+                    type: string
+                    description: 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 标签翻译
         UEditorUploadRequest:
             type: object
             properties:

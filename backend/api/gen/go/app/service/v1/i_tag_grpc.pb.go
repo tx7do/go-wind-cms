@@ -22,11 +22,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TagService_ListTag_FullMethodName   = "/app.service.v1.TagService/ListTag"
-	TagService_GetTag_FullMethodName    = "/app.service.v1.TagService/GetTag"
-	TagService_CreateTag_FullMethodName = "/app.service.v1.TagService/CreateTag"
-	TagService_UpdateTag_FullMethodName = "/app.service.v1.TagService/UpdateTag"
-	TagService_DeleteTag_FullMethodName = "/app.service.v1.TagService/DeleteTag"
+	TagService_ListTag_FullMethodName        = "/app.service.v1.TagService/ListTag"
+	TagService_GetTag_FullMethodName         = "/app.service.v1.TagService/GetTag"
+	TagService_CreateTag_FullMethodName      = "/app.service.v1.TagService/CreateTag"
+	TagService_UpdateTag_FullMethodName      = "/app.service.v1.TagService/UpdateTag"
+	TagService_DeleteTag_FullMethodName      = "/app.service.v1.TagService/DeleteTag"
+	TagService_GetTranslation_FullMethodName = "/app.service.v1.TagService/GetTranslation"
 )
 
 // TagServiceClient is the client API for TagService service.
@@ -45,6 +46,8 @@ type TagServiceClient interface {
 	UpdateTag(ctx context.Context, in *v11.UpdateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error)
 	// 删除标签
 	DeleteTag(ctx context.Context, in *v11.DeleteTagRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取翻译数据
+	GetTranslation(ctx context.Context, in *v11.GetTagRequest, opts ...grpc.CallOption) (*v11.TagTranslation, error)
 }
 
 type tagServiceClient struct {
@@ -105,6 +108,16 @@ func (c *tagServiceClient) DeleteTag(ctx context.Context, in *v11.DeleteTagReque
 	return out, nil
 }
 
+func (c *tagServiceClient) GetTranslation(ctx context.Context, in *v11.GetTagRequest, opts ...grpc.CallOption) (*v11.TagTranslation, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.TagTranslation)
+	err := c.cc.Invoke(ctx, TagService_GetTranslation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TagServiceServer is the server API for TagService service.
 // All implementations must embed UnimplementedTagServiceServer
 // for forward compatibility.
@@ -121,6 +134,8 @@ type TagServiceServer interface {
 	UpdateTag(context.Context, *v11.UpdateTagRequest) (*v11.Tag, error)
 	// 删除标签
 	DeleteTag(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error)
+	// 获取翻译数据
+	GetTranslation(context.Context, *v11.GetTagRequest) (*v11.TagTranslation, error)
 	mustEmbedUnimplementedTagServiceServer()
 }
 
@@ -145,6 +160,9 @@ func (UnimplementedTagServiceServer) UpdateTag(context.Context, *v11.UpdateTagRe
 }
 func (UnimplementedTagServiceServer) DeleteTag(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteTag not implemented")
+}
+func (UnimplementedTagServiceServer) GetTranslation(context.Context, *v11.GetTagRequest) (*v11.TagTranslation, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
 }
 func (UnimplementedTagServiceServer) mustEmbedUnimplementedTagServiceServer() {}
 func (UnimplementedTagServiceServer) testEmbeddedByValue()                    {}
@@ -257,6 +275,24 @@ func _TagService_DeleteTag_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TagService_GetTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TagServiceServer).GetTranslation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TagService_GetTranslation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TagServiceServer).GetTranslation(ctx, req.(*v11.GetTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TagService_ServiceDesc is the grpc.ServiceDesc for TagService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,6 +319,10 @@ var TagService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteTag",
 			Handler:    _TagService_DeleteTag_Handler,
+		},
+		{
+			MethodName: "GetTranslation",
+			Handler:    _TagService_GetTranslation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -22,11 +22,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PostService_ListPost_FullMethodName   = "/app.service.v1.PostService/ListPost"
-	PostService_GetPost_FullMethodName    = "/app.service.v1.PostService/GetPost"
-	PostService_CreatePost_FullMethodName = "/app.service.v1.PostService/CreatePost"
-	PostService_UpdatePost_FullMethodName = "/app.service.v1.PostService/UpdatePost"
-	PostService_DeletePost_FullMethodName = "/app.service.v1.PostService/DeletePost"
+	PostService_ListPost_FullMethodName       = "/app.service.v1.PostService/ListPost"
+	PostService_GetPost_FullMethodName        = "/app.service.v1.PostService/GetPost"
+	PostService_CreatePost_FullMethodName     = "/app.service.v1.PostService/CreatePost"
+	PostService_UpdatePost_FullMethodName     = "/app.service.v1.PostService/UpdatePost"
+	PostService_DeletePost_FullMethodName     = "/app.service.v1.PostService/DeletePost"
+	PostService_GetTranslation_FullMethodName = "/app.service.v1.PostService/GetTranslation"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -45,6 +46,8 @@ type PostServiceClient interface {
 	UpdatePost(ctx context.Context, in *v11.UpdatePostRequest, opts ...grpc.CallOption) (*v11.Post, error)
 	// 删除帖子
 	DeletePost(ctx context.Context, in *v11.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取翻译数据
+	GetTranslation(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.PostTranslation, error)
 }
 
 type postServiceClient struct {
@@ -105,6 +108,16 @@ func (c *postServiceClient) DeletePost(ctx context.Context, in *v11.DeletePostRe
 	return out, nil
 }
 
+func (c *postServiceClient) GetTranslation(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.PostTranslation, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.PostTranslation)
+	err := c.cc.Invoke(ctx, PostService_GetTranslation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
@@ -121,6 +134,8 @@ type PostServiceServer interface {
 	UpdatePost(context.Context, *v11.UpdatePostRequest) (*v11.Post, error)
 	// 删除帖子
 	DeletePost(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
+	// 获取翻译数据
+	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -145,6 +160,9 @@ func (UnimplementedPostServiceServer) UpdatePost(context.Context, *v11.UpdatePos
 }
 func (UnimplementedPostServiceServer) DeletePost(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeletePost not implemented")
+}
+func (UnimplementedPostServiceServer) GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -257,6 +275,24 @@ func _PostService_DeletePost_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_GetTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetTranslation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_GetTranslation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetTranslation(ctx, req.(*v11.GetPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,6 +319,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePost",
 			Handler:    _PostService_DeletePost_Handler,
+		},
+		{
+			MethodName: "GetTranslation",
+			Handler:    _PostService_GetTranslation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

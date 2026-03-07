@@ -98,3 +98,14 @@ func (s *redactedPageServiceServer) Delete(ctx context.Context, in *contentpb.De
 	}
 	return res, err
 }
+
+// GetTranslation is the redacted wrapper for the actual PageServiceServer.GetTranslation method
+// Unary RPC
+func (s *redactedPageServiceServer) GetTranslation(ctx context.Context, in *contentpb.GetPageRequest) (*contentpb.PageTranslation, error) {
+	res, err := s.srv.GetTranslation(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}

@@ -98,3 +98,14 @@ func (s *redactedPostServiceServer) DeletePost(ctx context.Context, in *contentp
 	}
 	return res, err
 }
+
+// GetTranslation is the redacted wrapper for the actual PostServiceServer.GetTranslation method
+// Unary RPC
+func (s *redactedPostServiceServer) GetTranslation(ctx context.Context, in *contentpb.GetPostRequest) (*contentpb.PostTranslation, error) {
+	res, err := s.srv.GetTranslation(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}

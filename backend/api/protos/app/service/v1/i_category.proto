@@ -47,4 +47,11 @@ service CategoryService {
       delete: "/app/v1/categories/{id}"
     };
   }
+
+  // 获取翻译数据
+  rpc GetTranslation(content.service.v1.GetCategoryRequest) returns (content.service.v1.CategoryTranslation) {
+    option (google.api.http) = {
+      get: "/app/v1/categories/{id}/translation"
+    };
+  }
 }

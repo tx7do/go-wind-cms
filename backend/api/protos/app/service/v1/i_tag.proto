@@ -47,4 +47,11 @@ service TagService {
       delete: "/app/v1/tags/{id}"
     };
   }
+
+  // 获取翻译数据
+  rpc GetTranslation(content.service.v1.GetTagRequest) returns (content.service.v1.TagTranslation) {
+    option (google.api.http) = {
+      get: "/app/v1/tags/{id}/translation"
+    };
+  }
 }

@@ -45,3 +45,7 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageRequest) (*emptypb.Empty, error) {
 	return s.pageServiceClient.Delete(ctx, req)
 }
+
+func (s *PageService) GetTranslation(ctx context.Context, req *contentV1.GetPageRequest) (*contentV1.PageTranslation, error) {
+	return s.pageServiceClient.GetTranslation(ctx, req)
+}

@@ -29,14 +29,15 @@ var File_app_service_v1_i_tag_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_tag_proto_rawDesc = "" +
 	"\n" +
-	"\x1aapp/service/v1/i_tag.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ccontent/service/v1/tag.proto2\x83\x04\n" +
+	"\x1aapp/service/v1/i_tag.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ccontent/service/v1/tag.proto2\x83\x05\n" +
 	"\n" +
 	"TagService\x12_\n" +
 	"\aListTag\x12\x19.pagination.PagingRequest\x1a#.content.service.v1.ListTagResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/app/v1/tags\x12_\n" +
 	"\x06GetTag\x12!.content.service.v1.GetTagRequest\x1a\x17.content.service.v1.Tag\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/app/v1/tags/{id}\x12c\n" +
 	"\tCreateTag\x12$.content.service.v1.CreateTagRequest\x1a\x17.content.service.v1.Tag\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/app/v1/tags\x12h\n" +
 	"\tUpdateTag\x12$.content.service.v1.UpdateTagRequest\x1a\x17.content.service.v1.Tag\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\x1a\x11/app/v1/tags/{id}\x12d\n" +
-	"\tDeleteTag\x12$.content.service.v1.DeleteTagRequest\x1a\x16.google.protobuf.Empty\"\x19\x82\xd3\xe4\x93\x02\x13*\x11/app/v1/tags/{id}B\xaa\x01\n" +
+	"\tDeleteTag\x12$.content.service.v1.DeleteTagRequest\x1a\x16.google.protobuf.Empty\"\x19\x82\xd3\xe4\x93\x02\x13*\x11/app/v1/tags/{id}\x12~\n" +
+	"\x0eGetTranslation\x12!.content.service.v1.GetTagRequest\x1a\".content.service.v1.TagTranslation\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/app/v1/tags/{id}/translationB\xaa\x01\n" +
 	"\x12com.app.service.v1B\tITagProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_tag_proto_goTypes = []any{
@@ -48,6 +49,7 @@ var file_app_service_v1_i_tag_proto_goTypes = []any{
 	(*v11.ListTagResponse)(nil),  // 5: content.service.v1.ListTagResponse
 	(*v11.Tag)(nil),              // 6: content.service.v1.Tag
 	(*emptypb.Empty)(nil),        // 7: google.protobuf.Empty
+	(*v11.TagTranslation)(nil),   // 8: content.service.v1.TagTranslation
 }
 var file_app_service_v1_i_tag_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.TagService.ListTag:input_type -> pagination.PagingRequest
@@ -55,13 +57,15 @@ var file_app_service_v1_i_tag_proto_depIdxs = []int32{
 	2, // 2: app.service.v1.TagService.CreateTag:input_type -> content.service.v1.CreateTagRequest
 	3, // 3: app.service.v1.TagService.UpdateTag:input_type -> content.service.v1.UpdateTagRequest
 	4, // 4: app.service.v1.TagService.DeleteTag:input_type -> content.service.v1.DeleteTagRequest
-	5, // 5: app.service.v1.TagService.ListTag:output_type -> content.service.v1.ListTagResponse
-	6, // 6: app.service.v1.TagService.GetTag:output_type -> content.service.v1.Tag
-	6, // 7: app.service.v1.TagService.CreateTag:output_type -> content.service.v1.Tag
-	6, // 8: app.service.v1.TagService.UpdateTag:output_type -> content.service.v1.Tag
-	7, // 9: app.service.v1.TagService.DeleteTag:output_type -> google.protobuf.Empty
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	1, // 5: app.service.v1.TagService.GetTranslation:input_type -> content.service.v1.GetTagRequest
+	5, // 6: app.service.v1.TagService.ListTag:output_type -> content.service.v1.ListTagResponse
+	6, // 7: app.service.v1.TagService.GetTag:output_type -> content.service.v1.Tag
+	6, // 8: app.service.v1.TagService.CreateTag:output_type -> content.service.v1.Tag
+	6, // 9: app.service.v1.TagService.UpdateTag:output_type -> content.service.v1.Tag
+	7, // 10: app.service.v1.TagService.DeleteTag:output_type -> google.protobuf.Empty
+	8, // 11: app.service.v1.TagService.GetTranslation:output_type -> content.service.v1.TagTranslation
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

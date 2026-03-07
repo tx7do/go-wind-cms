@@ -25,6 +25,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationCategoryServiceCreateCategory = "/app.service.v1.CategoryService/CreateCategory"
 const OperationCategoryServiceDeleteCategory = "/app.service.v1.CategoryService/DeleteCategory"
 const OperationCategoryServiceGetCategory = "/app.service.v1.CategoryService/GetCategory"
+const OperationCategoryServiceGetTranslation = "/app.service.v1.CategoryService/GetTranslation"
 const OperationCategoryServiceListCategory = "/app.service.v1.CategoryService/ListCategory"
 const OperationCategoryServiceUpdateCategory = "/app.service.v1.CategoryService/UpdateCategory"
 
@@ -35,6 +36,8 @@ type CategoryServiceHTTPServer interface {
 	DeleteCategory(context.Context, *v11.DeleteCategoryRequest) (*emptypb.Empty, error)
 	// GetCategory 获取类别数据
 	GetCategory(context.Context, *v11.GetCategoryRequest) (*v11.Category, error)
+	// GetTranslation 获取翻译数据
+	GetTranslation(context.Context, *v11.GetCategoryRequest) (*v11.CategoryTranslation, error)
 	// ListCategory 获取类别列表
 	ListCategory(context.Context, *v1.PagingRequest) (*v11.ListCategoryResponse, error)
 	// UpdateCategory 更新类别
@@ -48,6 +51,7 @@ func RegisterCategoryServiceHTTPServer(s *http.Server, srv CategoryServiceHTTPSe
 	r.POST("/app/v1/categories", _CategoryService_CreateCategory0_HTTP_Handler(srv))
 	r.PUT("/app/v1/categories/{id}", _CategoryService_UpdateCategory0_HTTP_Handler(srv))
 	r.DELETE("/app/v1/categories/{id}", _CategoryService_DeleteCategory0_HTTP_Handler(srv))
+	r.GET("/app/v1/categories/{id}/translation", _CategoryService_GetTranslation0_HTTP_Handler(srv))
 }
 
 func _CategoryService_ListCategory0_HTTP_Handler(srv CategoryServiceHTTPServer) func(ctx http.Context) error {
@@ -160,6 +164,28 @@ func _CategoryService_DeleteCategory0_HTTP_Handler(srv CategoryServiceHTTPServer
 	}
 }
 
+func _CategoryService_GetTranslation0_HTTP_Handler(srv CategoryServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetCategoryRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCategoryServiceGetTranslation)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetTranslation(ctx, req.(*v11.GetCategoryRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.CategoryTranslation)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CategoryServiceHTTPClient interface {
 	// CreateCategory 创建类别
 	CreateCategory(ctx context.Context, req *v11.CreateCategoryRequest, opts ...http.CallOption) (rsp *v11.Category, err error)
@@ -167,6 +193,8 @@ type CategoryServiceHTTPClient interface {
 	DeleteCategory(ctx context.Context, req *v11.DeleteCategoryRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// GetCategory 获取类别数据
 	GetCategory(ctx context.Context, req *v11.GetCategoryRequest, opts ...http.CallOption) (rsp *v11.Category, err error)
+	// GetTranslation 获取翻译数据
+	GetTranslation(ctx context.Context, req *v11.GetCategoryRequest, opts ...http.CallOption) (rsp *v11.CategoryTranslation, err error)
 	// ListCategory 获取类别列表
 	ListCategory(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListCategoryResponse, err error)
 	// UpdateCategory 更新类别
@@ -215,6 +243,20 @@ func (c *CategoryServiceHTTPClientImpl) GetCategory(ctx context.Context, in *v11
 	pattern := "/app/v1/categories/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCategoryServiceGetCategory))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetTranslation 获取翻译数据
+func (c *CategoryServiceHTTPClientImpl) GetTranslation(ctx context.Context, in *v11.GetCategoryRequest, opts ...http.CallOption) (*v11.CategoryTranslation, error) {
+	var out v11.CategoryTranslation
+	pattern := "/app/v1/categories/{id}/translation"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationCategoryServiceGetTranslation))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

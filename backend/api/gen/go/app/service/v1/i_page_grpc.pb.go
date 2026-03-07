@@ -22,11 +22,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PageService_List_FullMethodName   = "/app.service.v1.PageService/List"
-	PageService_Get_FullMethodName    = "/app.service.v1.PageService/Get"
-	PageService_Create_FullMethodName = "/app.service.v1.PageService/Create"
-	PageService_Update_FullMethodName = "/app.service.v1.PageService/Update"
-	PageService_Delete_FullMethodName = "/app.service.v1.PageService/Delete"
+	PageService_List_FullMethodName           = "/app.service.v1.PageService/List"
+	PageService_Get_FullMethodName            = "/app.service.v1.PageService/Get"
+	PageService_Create_FullMethodName         = "/app.service.v1.PageService/Create"
+	PageService_Update_FullMethodName         = "/app.service.v1.PageService/Update"
+	PageService_Delete_FullMethodName         = "/app.service.v1.PageService/Delete"
+	PageService_GetTranslation_FullMethodName = "/app.service.v1.PageService/GetTranslation"
 )
 
 // PageServiceClient is the client API for PageService service.
@@ -45,6 +46,8 @@ type PageServiceClient interface {
 	Update(ctx context.Context, in *v11.UpdatePageRequest, opts ...grpc.CallOption) (*v11.Page, error)
 	// 删除页面
 	Delete(ctx context.Context, in *v11.DeletePageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取翻译数据
+	GetTranslation(ctx context.Context, in *v11.GetPageRequest, opts ...grpc.CallOption) (*v11.PageTranslation, error)
 }
 
 type pageServiceClient struct {
@@ -105,6 +108,16 @@ func (c *pageServiceClient) Delete(ctx context.Context, in *v11.DeletePageReques
 	return out, nil
 }
 
+func (c *pageServiceClient) GetTranslation(ctx context.Context, in *v11.GetPageRequest, opts ...grpc.CallOption) (*v11.PageTranslation, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.PageTranslation)
+	err := c.cc.Invoke(ctx, PageService_GetTranslation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PageServiceServer is the server API for PageService service.
 // All implementations must embed UnimplementedPageServiceServer
 // for forward compatibility.
@@ -121,6 +134,8 @@ type PageServiceServer interface {
 	Update(context.Context, *v11.UpdatePageRequest) (*v11.Page, error)
 	// 删除页面
 	Delete(context.Context, *v11.DeletePageRequest) (*emptypb.Empty, error)
+	// 获取翻译数据
+	GetTranslation(context.Context, *v11.GetPageRequest) (*v11.PageTranslation, error)
 	mustEmbedUnimplementedPageServiceServer()
 }
 
@@ -145,6 +160,9 @@ func (UnimplementedPageServiceServer) Update(context.Context, *v11.UpdatePageReq
 }
 func (UnimplementedPageServiceServer) Delete(context.Context, *v11.DeletePageRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedPageServiceServer) GetTranslation(context.Context, *v11.GetPageRequest) (*v11.PageTranslation, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
 }
 func (UnimplementedPageServiceServer) mustEmbedUnimplementedPageServiceServer() {}
 func (UnimplementedPageServiceServer) testEmbeddedByValue()                     {}
@@ -257,6 +275,24 @@ func _PageService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PageService_GetTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).GetTranslation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_GetTranslation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).GetTranslation(ctx, req.(*v11.GetPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PageService_ServiceDesc is the grpc.ServiceDesc for PageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,6 +319,10 @@ var PageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _PageService_Delete_Handler,
+		},
+		{
+			MethodName: "GetTranslation",
+			Handler:    _PageService_GetTranslation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

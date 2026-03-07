@@ -29,13 +29,14 @@ var File_app_service_v1_i_page_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapp/service/v1/i_page.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto2\x82\x04\n" +
+	"\x1bapp/service/v1/i_page.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto2\x86\x05\n" +
 	"\vPageService\x12^\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPageResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/app/v1/pages\x12_\n" +
 	"\x03Get\x12\".content.service.v1.GetPageRequest\x1a\x18.content.service.v1.Page\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/app/v1/pages/{id}\x12c\n" +
 	"\x06Create\x12%.content.service.v1.CreatePageRequest\x1a\x18.content.service.v1.Page\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/pages\x12h\n" +
 	"\x06Update\x12%.content.service.v1.UpdatePageRequest\x1a\x18.content.service.v1.Page\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/app/v1/pages/{id}\x12c\n" +
-	"\x06Delete\x12%.content.service.v1.DeletePageRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/app/v1/pages/{id}B\xab\x01\n" +
+	"\x06Delete\x12%.content.service.v1.DeletePageRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/app/v1/pages/{id}\x12\x81\x01\n" +
+	"\x0eGetTranslation\x12\".content.service.v1.GetPageRequest\x1a#.content.service.v1.PageTranslation\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/pages/{id}/translationB\xab\x01\n" +
 	"\x12com.app.service.v1B\n" +
 	"IPageProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
@@ -48,6 +49,7 @@ var file_app_service_v1_i_page_proto_goTypes = []any{
 	(*v11.ListPageResponse)(nil),  // 5: content.service.v1.ListPageResponse
 	(*v11.Page)(nil),              // 6: content.service.v1.Page
 	(*emptypb.Empty)(nil),         // 7: google.protobuf.Empty
+	(*v11.PageTranslation)(nil),   // 8: content.service.v1.PageTranslation
 }
 var file_app_service_v1_i_page_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.PageService.List:input_type -> pagination.PagingRequest
@@ -55,13 +57,15 @@ var file_app_service_v1_i_page_proto_depIdxs = []int32{
 	2, // 2: app.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
 	3, // 3: app.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
 	4, // 4: app.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
-	5, // 5: app.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
-	6, // 6: app.service.v1.PageService.Get:output_type -> content.service.v1.Page
-	6, // 7: app.service.v1.PageService.Create:output_type -> content.service.v1.Page
-	6, // 8: app.service.v1.PageService.Update:output_type -> content.service.v1.Page
-	7, // 9: app.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	1, // 5: app.service.v1.PageService.GetTranslation:input_type -> content.service.v1.GetPageRequest
+	5, // 6: app.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
+	6, // 7: app.service.v1.PageService.Get:output_type -> content.service.v1.Page
+	6, // 8: app.service.v1.PageService.Create:output_type -> content.service.v1.Page
+	6, // 9: app.service.v1.PageService.Update:output_type -> content.service.v1.Page
+	7, // 10: app.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
+	8, // 11: app.service.v1.PageService.GetTranslation:output_type -> content.service.v1.PageTranslation
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

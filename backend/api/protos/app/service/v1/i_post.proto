@@ -47,4 +47,11 @@ service PostService {
       delete: "/app/v1/posts/{id}"
     };
   }
+
+  // 获取翻译数据
+  rpc GetTranslation(content.service.v1.GetPostRequest) returns (content.service.v1.PostTranslation) {
+    option (google.api.http) = {
+      get: "/app/v1/posts/{id}/translation"
+    };
+  }
 }

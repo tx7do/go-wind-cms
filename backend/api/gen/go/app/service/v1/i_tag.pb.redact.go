@@ -98,3 +98,14 @@ func (s *redactedTagServiceServer) DeleteTag(ctx context.Context, in *contentpb.
 	}
 	return res, err
 }
+
+// GetTranslation is the redacted wrapper for the actual TagServiceServer.GetTranslation method
+// Unary RPC
+func (s *redactedTagServiceServer) GetTranslation(ctx context.Context, in *contentpb.GetTagRequest) (*contentpb.TagTranslation, error) {
+	res, err := s.srv.GetTranslation(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}

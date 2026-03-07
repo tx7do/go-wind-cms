@@ -25,6 +25,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationPageServiceCreate = "/app.service.v1.PageService/Create"
 const OperationPageServiceDelete = "/app.service.v1.PageService/Delete"
 const OperationPageServiceGet = "/app.service.v1.PageService/Get"
+const OperationPageServiceGetTranslation = "/app.service.v1.PageService/GetTranslation"
 const OperationPageServiceList = "/app.service.v1.PageService/List"
 const OperationPageServiceUpdate = "/app.service.v1.PageService/Update"
 
@@ -35,6 +36,8 @@ type PageServiceHTTPServer interface {
 	Delete(context.Context, *v11.DeletePageRequest) (*emptypb.Empty, error)
 	// Get 获取页面数据
 	Get(context.Context, *v11.GetPageRequest) (*v11.Page, error)
+	// GetTranslation 获取翻译数据
+	GetTranslation(context.Context, *v11.GetPageRequest) (*v11.PageTranslation, error)
 	// List 获取页面列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListPageResponse, error)
 	// Update 更新页面
@@ -48,6 +51,7 @@ func RegisterPageServiceHTTPServer(s *http.Server, srv PageServiceHTTPServer) {
 	r.POST("/app/v1/pages", _PageService_Create1_HTTP_Handler(srv))
 	r.PUT("/app/v1/pages/{id}", _PageService_Update1_HTTP_Handler(srv))
 	r.DELETE("/app/v1/pages/{id}", _PageService_Delete1_HTTP_Handler(srv))
+	r.GET("/app/v1/pages/{id}/translation", _PageService_GetTranslation1_HTTP_Handler(srv))
 }
 
 func _PageService_List1_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
@@ -160,6 +164,28 @@ func _PageService_Delete1_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.
 	}
 }
 
+func _PageService_GetTranslation1_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetPageRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPageServiceGetTranslation)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetTranslation(ctx, req.(*v11.GetPageRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.PageTranslation)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PageServiceHTTPClient interface {
 	// Create 创建页面
 	Create(ctx context.Context, req *v11.CreatePageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
@@ -167,6 +193,8 @@ type PageServiceHTTPClient interface {
 	Delete(ctx context.Context, req *v11.DeletePageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 获取页面数据
 	Get(ctx context.Context, req *v11.GetPageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
+	// GetTranslation 获取翻译数据
+	GetTranslation(ctx context.Context, req *v11.GetPageRequest, opts ...http.CallOption) (rsp *v11.PageTranslation, err error)
 	// List 获取页面列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPageResponse, err error)
 	// Update 更新页面
@@ -215,6 +243,20 @@ func (c *PageServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPageRequ
 	pattern := "/app/v1/pages/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPageServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetTranslation 获取翻译数据
+func (c *PageServiceHTTPClientImpl) GetTranslation(ctx context.Context, in *v11.GetPageRequest, opts ...http.CallOption) (*v11.PageTranslation, error) {
+	var out v11.PageTranslation
+	pattern := "/app/v1/pages/{id}/translation"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPageServiceGetTranslation))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

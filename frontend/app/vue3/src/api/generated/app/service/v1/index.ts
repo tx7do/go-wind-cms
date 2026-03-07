@@ -235,6 +235,8 @@ export interface CategoryService {
   UpdateCategory(request: contentservicev1_UpdateCategoryRequest): Promise<contentservicev1_Category>;
   // 删除类别
   DeleteCategory(request: contentservicev1_DeleteCategoryRequest): Promise<wellKnownEmpty>;
+  // 获取翻译数据
+  GetTranslation(request: contentservicev1_GetCategoryRequest): Promise<contentservicev1_CategoryTranslation>;
 }
 
 export function createCategoryServiceClient(
@@ -405,6 +407,35 @@ export function createCategoryServiceClient(
         service: "CategoryService",
         method: "DeleteCategory",
       }) as Promise<wellKnownEmpty>;
+    },
+    GetTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+      if (!request.id) {
+        throw new Error("missing required field request.id");
+      }
+      const path = `app/v1/categories/${request.id}/translation`; // eslint-disable-line quotes
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.code) {
+        queryParams.push(`code=${encodeURIComponent(request.code.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
+      }
+      if (request.viewMask) {
+        queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join("&")}`
+      }
+      return handler({
+        path: uri,
+        method: "GET",
+        body,
+      }, {
+        service: "CategoryService",
+        method: "GetTranslation",
+      }) as Promise<contentservicev1_CategoryTranslation>;
     },
   };
 }
@@ -1415,6 +1446,8 @@ export interface PageService {
   Update(request: contentservicev1_UpdatePageRequest): Promise<contentservicev1_Page>;
   // 删除页面
   Delete(request: contentservicev1_DeletePageRequest): Promise<wellKnownEmpty>;
+  // 获取翻译数据
+  GetTranslation(request: contentservicev1_GetPageRequest): Promise<contentservicev1_PageTranslation>;
 }
 
 export function createPageServiceClient(
@@ -1586,6 +1619,35 @@ export function createPageServiceClient(
         method: "Delete",
       }) as Promise<wellKnownEmpty>;
     },
+    GetTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+      if (!request.id) {
+        throw new Error("missing required field request.id");
+      }
+      const path = `app/v1/pages/${request.id}/translation`; // eslint-disable-line quotes
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.slug) {
+        queryParams.push(`slug=${encodeURIComponent(request.slug.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
+      }
+      if (request.viewMask) {
+        queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join("&")}`
+      }
+      return handler({
+        path: uri,
+        method: "GET",
+        body,
+      }, {
+        service: "PageService",
+        method: "GetTranslation",
+      }) as Promise<contentservicev1_PageTranslation>;
+    },
   };
 }
 // 回应 - 页面列表
@@ -1714,6 +1776,8 @@ export interface PostService {
   UpdatePost(request: contentservicev1_UpdatePostRequest): Promise<contentservicev1_Post>;
   // 删除帖子
   DeletePost(request: contentservicev1_DeletePostRequest): Promise<wellKnownEmpty>;
+  // 获取翻译数据
+  GetTranslation(request: contentservicev1_GetPostRequest): Promise<contentservicev1_PostTranslation>;
 }
 
 export function createPostServiceClient(
@@ -1885,6 +1949,35 @@ export function createPostServiceClient(
         method: "DeletePost",
       }) as Promise<wellKnownEmpty>;
     },
+    GetTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+      if (!request.id) {
+        throw new Error("missing required field request.id");
+      }
+      const path = `app/v1/posts/${request.id}/translation`; // eslint-disable-line quotes
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.code) {
+        queryParams.push(`code=${encodeURIComponent(request.code.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
+      }
+      if (request.viewMask) {
+        queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join("&")}`
+      }
+      return handler({
+        path: uri,
+        method: "GET",
+        body,
+      }, {
+        service: "PostService",
+        method: "GetTranslation",
+      }) as Promise<contentservicev1_PostTranslation>;
+    },
   };
 }
 // 回应 - 帖子列表
@@ -1994,6 +2087,8 @@ export interface TagService {
   UpdateTag(request: contentservicev1_UpdateTagRequest): Promise<contentservicev1_Tag>;
   // 删除标签
   DeleteTag(request: contentservicev1_DeleteTagRequest): Promise<wellKnownEmpty>;
+  // 获取翻译数据
+  GetTranslation(request: contentservicev1_GetTagRequest): Promise<contentservicev1_TagTranslation>;
 }
 
 export function createTagServiceClient(
@@ -2164,6 +2259,35 @@ export function createTagServiceClient(
         service: "TagService",
         method: "DeleteTag",
       }) as Promise<wellKnownEmpty>;
+    },
+    GetTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+      if (!request.id) {
+        throw new Error("missing required field request.id");
+      }
+      const path = `app/v1/tags/${request.id}/translation`; // eslint-disable-line quotes
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.code) {
+        queryParams.push(`code=${encodeURIComponent(request.code.toString())}`)
+      }
+      if (request.locale) {
+        queryParams.push(`locale=${encodeURIComponent(request.locale.toString())}`)
+      }
+      if (request.viewMask) {
+        queryParams.push(`viewMask=${encodeURIComponent(request.viewMask.toString())}`)
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join("&")}`
+      }
+      return handler({
+        path: uri,
+        method: "GET",
+        body,
+      }, {
+        service: "TagService",
+        method: "GetTranslation",
+      }) as Promise<contentservicev1_TagTranslation>;
     },
   };
 }

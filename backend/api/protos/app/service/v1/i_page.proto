@@ -47,4 +47,11 @@ service PageService {
       delete: "/app/v1/pages/{id}"
     };
   }
+
+  // 获取翻译数据
+  rpc GetTranslation(content.service.v1.GetPageRequest) returns (content.service.v1.PageTranslation) {
+    option (google.api.http) = {
+      get: "/app/v1/pages/{id}/translation"
+    };
+  }
 }

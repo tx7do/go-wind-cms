@@ -98,3 +98,14 @@ func (s *redactedCategoryServiceServer) DeleteCategory(ctx context.Context, in *
 	}
 	return res, err
 }
+
+// GetTranslation is the redacted wrapper for the actual CategoryServiceServer.GetTranslation method
+// Unary RPC
+func (s *redactedCategoryServiceServer) GetTranslation(ctx context.Context, in *contentpb.GetCategoryRequest) (*contentpb.CategoryTranslation, error) {
+	res, err := s.srv.GetTranslation(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}

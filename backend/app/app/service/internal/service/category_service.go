@@ -45,3 +45,7 @@ func (s *CategoryService) Update(ctx context.Context, req *contentV1.UpdateCateg
 func (s *CategoryService) Delete(ctx context.Context, req *contentV1.DeleteCategoryRequest) (*emptypb.Empty, error) {
 	return s.categoryClient.Delete(ctx, req)
 }
+
+func (s *CategoryService) GetTranslation(ctx context.Context, req *contentV1.GetCategoryRequest) (*contentV1.CategoryTranslation, error) {
+	return s.categoryClient.GetTranslation(ctx, req)
+}

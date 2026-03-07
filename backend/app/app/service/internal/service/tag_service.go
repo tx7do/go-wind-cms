@@ -45,3 +45,7 @@ func (s *TagService) Update(ctx context.Context, req *contentV1.UpdateTagRequest
 func (s *TagService) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (*emptypb.Empty, error) {
 	return s.tagClient.Delete(ctx, req)
 }
+
+func (s *TagService) GetTranslation(ctx context.Context, req *contentV1.GetTagRequest) (*contentV1.TagTranslation, error) {
+	return s.tagClient.GetTranslation(ctx, req)
+}

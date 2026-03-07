@@ -45,3 +45,7 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostRequest) (*emptypb.Empty, error) {
 	return s.postClient.Delete(ctx, req)
 }
+
+func (s *PostService) GetTranslation(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.PostTranslation, error) {
+	return s.postClient.GetTranslation(ctx, req)
+}
