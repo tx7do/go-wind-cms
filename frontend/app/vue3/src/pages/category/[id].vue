@@ -39,6 +39,12 @@ const categoryId = computed(() => {
   return id ? parseInt(id as string) : null
 })
 
+// 获取父分类 ID
+const parentCategoryId = computed(() => {
+  if (!category.value?.parentId) return null
+  return category.value.parentId
+})
+
 async function loadCategory() {
   if (!categoryId.value) return
 
@@ -65,7 +71,7 @@ async function loadPosts() {
     const queryParams: any = {
       status: 'POST_STATUS_PUBLISHED',
     }
-    
+
     // 根据筛选条件决定查询方式
     if (activeFilter.value === 'direct') {
       // 只看本级分类的文章
@@ -75,7 +81,7 @@ async function loadPosts() {
       // 后端 API 会自动包含子分类的文章
       queryParams.categoryIds = [categoryId.value]
     }
-    
+
     const res = await postStore.listPost(
       {
         page: pagination.value.page,
@@ -101,6 +107,15 @@ function handleFilterChange(filter: 'all' | 'direct') {
 
 function handleViewChildCategory(id: number) {
   router.push(`/category/${id}`)
+}
+
+function handleBackToParent() {
+  if (parentCategoryId.value) {
+    router.push(`/category/${parentCategoryId.value}`)
+  } else {
+    // 如果没有父分类，返回分类列表页
+    router.push('/category')
+  }
 }
 
 function getTranslation() {
@@ -234,6 +249,21 @@ useLanguageChangeEffect(async () => {
 
     <!-- Posts Section -->
     <div class="page-container">
+      <!-- Back to Parent Button -->
+      <div class="back-button-container">
+        <n-button
+          size="small"
+          @click="handleBackToParent"
+        >
+          <template #icon>
+            <span class="i-carbon:arrow-left"/>
+          </template>
+          {{
+            parentCategoryId ? $t('page.categories.back_to_parent') : $t('page.categories.back_to_list')
+          }}
+        </n-button>
+      </div>
+
       <!-- Sub Categories Navigation -->
       <section v-if="childCategories.length > 0" class="sub-categories-section">
         <div class="section-header">
@@ -250,8 +280,8 @@ useLanguageChangeEffect(async () => {
             @click="handleViewChildCategory(childCategory.id)"
           >
             <div class="sub-category-image">
-              <img 
-                :src="getChildCategoryThumbnail(childCategory)" 
+              <img
+                :src="getChildCategoryThumbnail(childCategory)"
                 :alt="getChildCategoryName(childCategory)"
               />
               <div class="image-overlay"/>
@@ -263,7 +293,9 @@ useLanguageChangeEffect(async () => {
                 <span class="meta-icon">
                   <span class="i-carbon:document"/>
                 </span>
-                <span class="meta-text">{{ childCategory.postCount || 0 }} {{ $t('page.posts.articles') }}</span>
+                <span class="meta-text">{{
+                    childCategory.postCount || 0
+                  }} {{ $t('page.posts.articles') }}</span>
               </div>
             </div>
           </div>
@@ -298,7 +330,7 @@ useLanguageChangeEffect(async () => {
       <!-- Loading Skeleton -->
       <div v-if="loading" class="posts-grid">
         <div v-for="i in 6" :key="i" class="post-card">
-          <n-skeleton height="400px" />
+          <n-skeleton height="400px"/>
         </div>
       </div>
       <!-- Loaded Content -->
@@ -657,7 +689,7 @@ useLanguageChangeEffect(async () => {
   :deep(.n-button-group) {
     display: flex;
     gap: 12px; // 按钮间间距
-    
+
     .n-button {
       min-width: 160px;
       font-weight: 500;
@@ -668,19 +700,59 @@ useLanguageChangeEffect(async () => {
       span[class^="i-"] {
         font-size: 16px;
       }
-      
+
       // 非激活状态按钮样式优化
       &:not(.n-button--primary) {
         background: var(--color-surface);
         border-color: var(--color-border);
         color: var(--color-text-secondary);
-        
+
         &:hover {
           border-color: var(--color-brand);
           color: var(--color-brand);
           background: rgba(102, 126, 234, 0.05);
         }
       }
+    }
+  }
+}
+
+// Back Button
+.back-button-container {
+  margin-bottom: 24px;
+  
+  :deep(.n-button) {
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    color: var(--color-text-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    
+    span[class^="i-"] {
+      font-size: 16px;
+      margin-right: 8px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    &:hover {
+      border-color: var(--color-brand);
+      color: var(--color-brand);
+      background: rgba(102, 126, 234, 0.08);
+      transform: translateX(-4px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      
+      span[class^="i-"] {
+        transform: translateX(-4px);
+      }
+    }
+    
+    &:active {
+      transform: translateX(-2px);
+      box-shadow: 0 2px 6px rgba(102, 126, 234, 0.1);
     }
   }
 }
@@ -719,6 +791,20 @@ useLanguageChangeEffect(async () => {
 }
 
 @media (max-width: 768px) {
+  .back-button-container {
+    margin-bottom: 20px;
+
+    :deep(.n-button) {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14px;
+
+      span[class^="i-"] {
+        margin-right: 8px;
+      }
+    }
+  }
+
   .sub-categories-section {
     padding: 20px;
     margin-bottom: 32px;
@@ -751,31 +837,31 @@ useLanguageChangeEffect(async () => {
         font-size: 14px;
         font-weight: 600;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        
+
         // 激活状态 - 渐变背景和阴影
         &.n-button--primary {
           background: linear-gradient(135deg, var(--color-brand) 0%, rgba(102, 126, 234, 0.9) 100%);
           box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
           border: none;
-          
+
           &:hover {
             box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
             transform: translateY(-1px);
           }
-          
+
           &:active {
             transform: translateY(0);
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
           }
         }
-        
+
         // 非激活状态 - 增强视觉效果
         &:not(.n-button--primary) {
           background: var(--color-surface);
           border: 1.5px solid var(--color-border);
           color: var(--color-text-primary);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-          
+
           &:hover {
             border-color: var(--color-brand);
             color: var(--color-brand);
@@ -783,7 +869,7 @@ useLanguageChangeEffect(async () => {
             box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
             transform: translateY(-2px);
           }
-          
+
           &:active {
             transform: translateY(0);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -844,6 +930,20 @@ useLanguageChangeEffect(async () => {
 }
 
 @media (max-width: 640px) {
+  .back-button-container {
+    margin-bottom: 18px;
+
+    :deep(.n-button) {
+      padding: 11px 14px;
+      font-size: 13px;
+
+      span[class^="i-"] {
+        font-size: 15px;
+        margin-right: 6px;
+      }
+    }
+  }
+
   .sub-categories-section {
     padding: 16px;
     margin-bottom: 28px;
@@ -866,7 +966,7 @@ useLanguageChangeEffect(async () => {
         width: 100%;
         padding: 12px 16px;
         font-size: 13px;
-        
+
         &.n-button--primary {
           box-shadow: 0 3px 10px rgba(102, 126, 234, 0.25);
         }
@@ -928,6 +1028,22 @@ useLanguageChangeEffect(async () => {
 }
 
 @media (max-width: 480px) {
+  .back-button-container {
+    margin-bottom: 16px;
+    
+    :deep(.n-button) {
+      padding: 12px 16px;
+      font-size: 13px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      
+      span[class^="i-"] {
+        font-size: 15px;
+        margin-right: 8px;
+      }
+    }
+  }
+
   .sub-categories-section {
     padding: 14px;
     margin-bottom: 24px;
@@ -950,7 +1066,7 @@ useLanguageChangeEffect(async () => {
         padding: 11px 14px;
         font-size: 12px;
         border-radius: 8px;
-        
+
         &.n-button--primary {
           box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
         }

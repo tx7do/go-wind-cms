@@ -54,7 +54,9 @@
     "no_categories": "No categories",
     "sub_categories": "Sub Categories",
     "all_posts": "All Posts",
-    "direct_posts": "Direct Only"
+    "direct_posts": "Direct Only",
+    "back_to_parent": "Back to Parent",
+    "back_to_list": "Back to List"
   },
   "post_detail": {
     "untitled": "Untitled",

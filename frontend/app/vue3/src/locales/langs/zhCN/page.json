@@ -54,7 +54,9 @@
     "no_categories": "暂无分类",
     "sub_categories": "子分类",
     "all_posts": "全部文章",
-    "direct_posts": "只看本级"
+    "direct_posts": "只看本级",
+    "back_to_parent": "返回上一级",
+    "back_to_list": "返回列表"
   },
   "post_detail": {
     "untitled": "未命名",
