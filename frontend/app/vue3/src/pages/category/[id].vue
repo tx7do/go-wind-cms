@@ -655,12 +655,31 @@ useLanguageChangeEffect(async () => {
   border-bottom: 1px solid var(--color-border);
 
   :deep(.n-button-group) {
+    display: flex;
+    gap: 12px; // 按钮间间距
+    
     .n-button {
       min-width: 160px;
       font-weight: 500;
+      border-radius: 8px;
+      padding: 12px 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
       span[class^="i-"] {
         font-size: 16px;
+      }
+      
+      // 非激活状态按钮样式优化
+      &:not(.n-button--primary) {
+        background: var(--color-surface);
+        border-color: var(--color-border);
+        color: var(--color-text-secondary);
+        
+        &:hover {
+          border-color: var(--color-brand);
+          color: var(--color-brand);
+          background: rgba(102, 126, 234, 0.05);
+        }
       }
     }
   }
@@ -722,10 +741,54 @@ useLanguageChangeEffect(async () => {
 
     :deep(.n-button-group) {
       width: 100%;
+      flex-direction: column;
+      gap: 12px;
 
       .n-button {
-        min-width: 100%;
-        font-size: 13px;
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        // 激活状态 - 渐变背景和阴影
+        &.n-button--primary {
+          background: linear-gradient(135deg, var(--color-brand) 0%, rgba(102, 126, 234, 0.9) 100%);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+          border: none;
+          
+          &:hover {
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+            transform: translateY(-1px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+          }
+        }
+        
+        // 非激活状态 - 增强视觉效果
+        &:not(.n-button--primary) {
+          background: var(--color-surface);
+          border: 1.5px solid var(--color-border);
+          color: var(--color-text-primary);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          
+          &:hover {
+            border-color: var(--color-brand);
+            color: var(--color-brand);
+            background: rgba(102, 126, 234, 0.08);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          }
+        }
       }
     }
   }
@@ -800,8 +863,13 @@ useLanguageChangeEffect(async () => {
   .filter-controls {
     :deep(.n-button-group) {
       .n-button {
-        min-width: 100%;
-        font-size: 12px;
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 13px;
+        
+        &.n-button--primary {
+          box-shadow: 0 3px 10px rgba(102, 126, 234, 0.25);
+        }
       }
     }
   }
@@ -878,9 +946,14 @@ useLanguageChangeEffect(async () => {
   .filter-controls {
     :deep(.n-button-group) {
       .n-button {
-        min-width: 100%;
+        width: 100%;
+        padding: 11px 14px;
         font-size: 12px;
-        padding: 12px 16px;
+        border-radius: 8px;
+        
+        &.n-button--primary {
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
       }
     }
   }

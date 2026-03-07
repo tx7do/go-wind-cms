@@ -315,13 +315,34 @@ function isExpanded(category: Category) {
       .category-info {
         flex-direction: column;
         padding: 16px;
-        gap: 16px;
-        width: 100%; // 确保内容占满宽度
+        gap: 12px;
+        width: 100%;
       }
 
       .category-image {
         width: 100%;
-        height: 180px;
+        height: 200px;
+        border-radius: 12px 12px 0 0; // 上圆角
+      }
+
+      .category-content {
+        width: 100%;
+        padding: 16px;
+        gap: 8px;
+
+        h3 {
+          font-size: 17px;
+          line-height: 1.3;
+        }
+
+        .description {
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .category-meta {
+          font-size: 12px;
+        }
       }
 
       .expand-btn {
@@ -359,16 +380,21 @@ function isExpanded(category: Category) {
     }
 
     &.level-1 {
-      margin-left: 24px;
+      margin-left: 16px;
     }
 
     &.level-2 {
-      margin-left: 48px;
+      margin-left: 32px;
     }
 
     &.level-3 {
-      margin-left: 72px;
+      margin-left: 48px;
     }
+  }
+
+  // 优化子分类的间距
+  .category-tree {
+    gap: 16px;
   }
 }
 </style>
