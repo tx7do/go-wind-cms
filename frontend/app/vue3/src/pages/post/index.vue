@@ -4,7 +4,7 @@ import {ref, onMounted, watch} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 
 import {usePostStore, useCategoryStore} from '@/stores/modules/app'
-import {$t, currentLocaleLanguageCode} from '@/locales'
+import {$t} from '@/locales'
 import {formatDate} from "@/utils/date";
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import type {
@@ -68,39 +68,23 @@ async function loadCategories() {
   }
 }
 
-function getCategoryTranslation(category: contentservicev1_Category) {
-  const locale = currentLocaleLanguageCode();
-  // 优先查找当前语言的翻译
-  const translation = category.translations?.find((t: any) => t.languageCode === locale);
-  // 如果找不到，回退到第一个翻译
-  return translation || category.translations?.[0];
-}
-
-function getPostTranslation(post: contentservicev1_Post) {
-  const locale = currentLocaleLanguageCode();
-  // 优先查找当前语言的翻译
-  const translation = post.translations?.find((t: any) => t.languageCode === locale);
-  // 如果找不到，回退到第一个翻译
-  return translation || post.translations?.[0];
-}
-
 function getPostTitle(post: contentservicev1_Post) {
-  const translation = getPostTranslation(post)
+  const translation = postStore.getTranslation(post)
   return translation?.title || $t('page.home.untitled')
 }
 
 function getPostSummary(post: contentservicev1_Post) {
-  const translation = getPostTranslation(post)
+  const translation = postStore.getTranslation(post)
   return translation?.summary || ''
 }
 
 function getPostThumbnail(post: contentservicev1_Post) {
-  const translation = getPostTranslation(post)
+  const translation = postStore.getTranslation(post)
   return translation?.thumbnail || '/placeholder.jpg'
 }
 
 function getCategoryName(category: contentservicev1_Category) {
-  const translation = getCategoryTranslation(category)
+  const translation = categoryStore.getTranslation(category)
   return translation?.name || $t('page.home.category_default')
 }
 

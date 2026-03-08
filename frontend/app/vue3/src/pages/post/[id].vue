@@ -5,7 +5,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {useMessage} from 'naive-ui'
 
 import {usePostStore} from '@/stores/modules/app'
-import {$t, currentLocaleLanguageCode} from '@/locales'
+import {$t} from '@/locales'
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 
 import {ContentViewer} from '@/components/ContentViewer'
@@ -61,9 +61,8 @@ const postId = computed(() => {
 })
 
 const currentTranslation = computed(() => {
-  if (!post.value?.translations) return null
-  const locale = currentLocaleLanguageCode()
-  return post.value.translations.find((t) => t.languageCode === locale) || post.value.translations[0]
+  if (!post.value) return null;
+  return postStore.getTranslation(post.value);
 })
 
 const displayTitle = computed(() => currentTranslation.value?.title || $t('page.post_detail.untitled'))
@@ -221,7 +220,7 @@ function generateTableOfContents() {
       })
     })
     tableOfContents.value = toc
-    
+
     // 调试输出
     console.log('Table of contents generated:', toc.length, 'items')
   })

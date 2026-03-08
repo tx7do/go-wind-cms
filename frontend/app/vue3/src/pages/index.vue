@@ -4,13 +4,14 @@ import {useRouter} from 'vue-router'
 import {ref, onMounted, computed, onUnmounted} from 'vue'
 
 import {usePostStore, useCategoryStore, useTagStore} from '@/stores/modules/app'
-import {$t, currentLocaleLanguageCode, i18n} from '@/locales'
+import {$t, i18n} from '@/locales'
 import {XIcon} from "@/plugins/xicon";
 import {formatDate} from "@/utils/date";
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import type {
   contentservicev1_Category,
-  contentservicev1_Post, contentservicev1_Tag
+  contentservicev1_Post,
+  contentservicev1_Tag
 } from "@/api/generated/app/service/v1";
 
 definePage({
@@ -125,39 +126,23 @@ async function loadPopularTags() {
   }
 }
 
-function getPostTranslation(post: contentservicev1_Post) {
-  const locale = currentLocaleLanguageCode();
-  // 优先查找当前语言的翻译
-  const translation = post.translations?.find((t: any) => t.languageCode === locale);
-  // 如果找不到，回退到第一个翻译
-  return translation || post.translations?.[0];
-}
-
-function getCategoryTranslation(category: contentservicev1_Category) {
-  const locale = currentLocaleLanguageCode();
-  // 优先查找当前语言的翻译
-  const translation = category.translations?.find((t: any) => t.languageCode === locale);
-  // 如果找不到，回退到第一个翻译
-  return translation || category.translations?.[0];
-}
-
-function getPostTitle(post: any) {
-  const translation = getPostTranslation(post)
+function getPostTitle(post: contentservicev1_Post) {
+  const translation = postStore.getTranslation(post)
   return translation?.title || $t('page.home.untitled')
 }
 
-function getPostSummary(post: any) {
-  const translation = getPostTranslation(post)
+function getPostSummary(post: contentservicev1_Post) {
+  const translation = postStore.getTranslation(post)
   return translation?.summary || ''
 }
 
-function getPostThumbnail(post: any) {
-  const translation = getPostTranslation(post)
+function getPostThumbnail(post: contentservicev1_Post) {
+  const translation = postStore.getTranslation(post)
   return translation?.thumbnail || '/placeholder.jpg'
 }
 
-function getCategoryName(category: any) {
-  const translation = getCategoryTranslation(category)
+function getCategoryName(category: contentservicev1_Category) {
+  const translation = categoryStore.getTranslation(category)
   return translation?.name || $t('page.home.category_default')
 }
 

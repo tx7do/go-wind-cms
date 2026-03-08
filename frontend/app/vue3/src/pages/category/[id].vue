@@ -2,9 +2,10 @@
 import {definePage} from 'unplugin-vue-router/runtime'
 import {ref, onMounted, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {usePostStore, useCategoryStore} from '@/stores/modules/app'
 import {useMessage} from 'naive-ui'
-import {$t, currentLocaleLanguageCode} from '@/locales'
+
+import {usePostStore, useCategoryStore} from '@/stores/modules/app'
+import {$t} from '@/locales'
 import type {
   contentservicev1_Category,
   contentservicev1_Post
@@ -125,59 +126,29 @@ function handleBackToParent() {
   }
 }
 
-function getTranslation() {
-  const locale = currentLocaleLanguageCode();
-  return category.value?.translations?.find((t: any) => t.languageCode === locale) || category.value?.translations?.[0]
-}
-
 function getCategoryName() {
-  const translation = getTranslation()
-  if (translation) {
-    return translation.name || $t('page.home.category_default')
-  }
-
-  return $t('page.home.category_default')
+  const translation = categoryStore.getTranslation(category.value)
+  return translation?.name || $t('page.home.category_default')
 }
 
 function getCategoryDescription() {
-  const translation = getTranslation()
-  if (translation) {
-    return translation.description || ''
-  }
-
-  return ''
-}
-
-function getPostTranslation(post: contentservicev1_Post) {
-  if (!post) return null;
-
-  const locale = currentLocaleLanguageCode();
-  return post?.translations?.find((t: any) => t.languageCode === locale) || post?.translations?.[0]
+  const translation = categoryStore.getTranslation(category.value)
+  return translation?.description || ''
 }
 
 function getPostTitle(post: contentservicev1_Post) {
-  const translation = getPostTranslation(post)
-  if (translation) {
-    return translation.title || $t('page.post_detail.untitled')
-  }
-  return $t('page.post_detail.untitled')
+  const translation = postStore.getTranslation(post)
+  return translation?.title || $t('page.post_detail.untitled')
 }
 
 function getPostSummary(post: contentservicev1_Post) {
-  const translation = getPostTranslation(post)
-  if (translation) {
-    return translation.summary || ''
-  }
-  return ''
+  const translation = postStore.getTranslation(post)
+  return translation?.summary || ''
 }
 
 function getPostThumbnail(post: contentservicev1_Post) {
-  const translation = getPostTranslation(post)
-  if (translation) {
-    return translation.thumbnail || '/placeholder.jpg'
-  }
-
-  return '/placeholder.jpg'
+  const translation = postStore.getTranslation(post)
+  return translation?.thumbnail || '/placeholder.jpg'
 }
 
 function handleViewPost(id: number) {
@@ -201,21 +172,18 @@ function handlePageSizeChange(pageSize: number) {
   loadPosts()
 }
 
-function getChildCategoryName(childCategory: any) {
-  const locale = currentLocaleLanguageCode();
-  const translation = childCategory.translations?.find((t: any) => t.languageCode === locale) || childCategory.translations?.[0]
+function getChildCategoryName(childCategory: contentservicev1_Category) {
+  const translation = categoryStore.getTranslation(childCategory)
   return translation?.name || $t('page.categories.category_untitled')
 }
 
-function getChildCategoryDescription(childCategory: any) {
-  const locale = currentLocaleLanguageCode();
-  const translation = childCategory.translations?.find((t: any) => t.languageCode === locale) || childCategory.translations?.[0]
+function getChildCategoryDescription(childCategory: contentservicev1_Category) {
+  const translation = categoryStore.getTranslation(childCategory)
   return translation?.description || ''
 }
 
-function getChildCategoryThumbnail(childCategory: any) {
-  const locale = currentLocaleLanguageCode();
-  const translation = childCategory.translations?.find((t: any) => t.languageCode === locale) || childCategory.translations?.[0]
+function getChildCategoryThumbnail(childCategory: contentservicev1_Category) {
+  const translation = categoryStore.getTranslation(childCategory)
   return translation?.thumbnail || '/placeholder.jpg'
 }
 

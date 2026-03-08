@@ -1,6 +1,8 @@
 import {defineStore} from 'pinia';
 
 import {
+  type contentservicev1_Tag,
+  type contentservicev1_TagTranslation,
   createTagServiceClient,
 } from '@/api/generated/app/service/v1';
 import {type Paging, requestClientRequestHandler,} from "@/transport/rpc/request";
@@ -80,6 +82,19 @@ export const useTagStore = defineStore('tag', () => {
     return await service.DeleteTag({id});
   }
 
+  /**
+   * 获取标签翻译
+   */
+  function getTranslation(tag: contentservicev1_Tag) {
+    if (!tag?.translations || tag.translations.length === 0) return null;
+
+    const locale = currentLocaleLanguageCode();
+    // 优先查找当前语言的翻译
+    const translation = tag.translations?.find((t: contentservicev1_TagTranslation) => t.languageCode === locale);
+    // 如果找不到，回退到第一个翻译
+    return translation || tag.translations?.[0];
+  }
+
   function $reset() {
   }
 
@@ -90,5 +105,6 @@ export const useTagStore = defineStore('tag', () => {
     createTag,
     updateTag,
     deleteTag,
+    getTranslation,
   };
 });

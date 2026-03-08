@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {$t, currentLocaleLanguageCode} from '@/locales'
+
+import {$t} from '@/locales'
 import type {Props} from "./types";
-import type {contentservicev1_Category} from "@/api/generated/app/service/v1";
+import type {
+  contentservicev1_Category,
+} from "@/api/generated/app/service/v1";
+import {useCategoryStore} from "@/stores";
 
 
 withDefaults(defineProps<Props>(), {
@@ -11,28 +15,21 @@ withDefaults(defineProps<Props>(), {
 })
 
 const router = useRouter()
+const categoryStore = useCategoryStore()
 const expandedCategories = ref<Set<number>>(new Set())
 
-function getTranslation(category: contentservicev1_Category) {
-  const locale = currentLocaleLanguageCode();
-  // 优先查找当前语言的翻译
-  const translation = category.translations?.find((t: any) => t.languageCode === locale);
-  // 如果找不到，回退到第一个翻译
-  return translation || category.translations?.[0];
-}
-
 function getCategoryName(category: contentservicev1_Category) {
-  const translation = getTranslation(category);
+  const translation = categoryStore.getTranslation(category);
   return translation?.name || $t('page.categories.category_untitled')
 }
 
 function getCategoryDescription(category: contentservicev1_Category) {
-  const translation = getTranslation(category);
+  const translation = categoryStore.getTranslation(category);
   return translation?.description || ''
 }
 
 function getCategoryThumbnail(category: contentservicev1_Category) {
-  const translation = getTranslation(category);
+  const translation = categoryStore.getTranslation(category);
   return translation?.thumbnail || '/placeholder.jpg'
 }
 

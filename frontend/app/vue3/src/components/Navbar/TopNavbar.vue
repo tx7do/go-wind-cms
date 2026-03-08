@@ -48,7 +48,7 @@ async function loadNavigation() {
 /**
  * 处理导航点击
  */
-function handleNavigate(item: any) {
+function handleNavigate(item: siteservicev1_NavigationItem) {
   if (item.isOpenNewTab) {
     window.open(item.url, '_blank');
   } else {

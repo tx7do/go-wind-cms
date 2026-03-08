@@ -1,6 +1,8 @@
 import {defineStore} from 'pinia';
 
 import {
+  type contentservicev1_Page,
+  type contentservicev1_PageTranslation,
   createPageServiceClient,
 } from '@/api/generated/app/service/v1';
 import {type Paging, requestClientRequestHandler} from "@/transport/rpc/request";
@@ -80,6 +82,19 @@ export const usePageStore = defineStore('page', () => {
     return await service.Delete({id});
   }
 
+  /**
+   * 获取页面的翻译
+   */
+  function getTranslation(page: contentservicev1_Page) {
+    if (!page?.translations || page.translations.length === 0) return null;
+
+    const locale = currentLocaleLanguageCode();
+    // 优先查找当前语言的翻译
+    const translation = page.translations?.find((t: contentservicev1_PageTranslation) => t.languageCode === locale);
+    // 如果找不到，回退到第一个翻译
+    return translation || page.translations?.[0];
+  }
+
   function $reset() {
   }
 
@@ -90,5 +105,6 @@ export const usePageStore = defineStore('page', () => {
     createPage,
     updatePage,
     deletePage,
+    getTranslation,
   };
 });

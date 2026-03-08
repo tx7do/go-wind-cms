@@ -8,10 +8,16 @@ import AccountRegisterPage from "./components/AccountRegisterPage.vue";
 import EmailRegisterPage from "./components/EmailRegisterPage.vue";
 import PhoneRegisterPage from "./components/PhoneRegisterPage.vue";
 import OtherRegisterPage from "./components/OtherRegisterPage.vue";
-import { MoonOutline, SunnyOutline, LanguageOutline } from '@vicons/ionicons5'
-import { isDark, toggleDark } from '@/composables/dark'
-import { languageColumns, languageShorts, i18n, loadLocaleMessages, type SupportedLanguagesType } from '@/locales'
-import { updatePreferences } from "@/preferences";
+import {MoonOutline, SunnyOutline, LanguageOutline} from '@vicons/ionicons5'
+import {isDark, toggleDark} from '@/composables/dark'
+import {
+  languageColumns,
+  languageShorts,
+  i18n,
+  loadLocaleMessages,
+  type SupportedLanguagesType
+} from '@/locales'
+import {updatePreferences} from "@/preferences";
 
 definePage({
   name: 'register',
@@ -73,7 +79,8 @@ const handlePrivacyClick = () => {
 <template>
   <div class="register-page" :class="{ 'force-light': forceLight }">
     <div class="register-controls">
-      <n-dropdown trigger="hover" size="huge" :options="languageColumns" @select="handleSelectLanguage">
+      <n-dropdown trigger="hover" size="huge" :options="languageColumns"
+                  @select="handleSelectLanguage">
         <n-button round class="control-btn" :aria-label="$t('navbar.top.language')">
           <template #icon>
             <n-icon>
@@ -83,7 +90,9 @@ const handlePrivacyClick = () => {
           <span class="lang-text">{{ getLanguageLabel() }}</span>
         </n-button>
       </n-dropdown>
-      <n-button round class="control-btn" :aria-label="isDark ? $t('navbar.top.light_mode') : $t('navbar.top.dark_mode')" @click="handleToggleTheme">
+      <n-button round class="control-btn"
+                :aria-label="isDark ? $t('navbar.top.light_mode') : $t('navbar.top.dark_mode')"
+                @click="handleToggleTheme">
         <template #icon>
           <n-icon>
             <component :is="isDark ? SunnyOutline : MoonOutline"/>
@@ -94,7 +103,7 @@ const handlePrivacyClick = () => {
 
     <div class="register-left">
       <div class="brand">
-        <img src="/logo.png" :alt="$t('authentication.login.logo_alt')" class="brand-logo" />
+        <img src="/logo.png" :alt="$t('authentication.login.logo_alt')" class="brand-logo"/>
         <h1 class="brand-title">{{ $t('authentication.login.brand_title') }}</h1>
         <p class="brand-subtitle">{{ $t('authentication.login.brand_subtitle') }}</p>
       </div>
@@ -163,9 +172,13 @@ const handlePrivacyClick = () => {
         <div class="terms">
           <small>
             {{ $t('authentication.login.terms_prefix') }}
-            <n-button text type="primary" @click="handleTermsClick">{{ $t('authentication.login.terms_of_service') }}</n-button>
+            <n-button text type="primary" @click="handleTermsClick">
+              {{ $t('authentication.login.terms_of_service') }}
+            </n-button>
             {{ $t('authentication.login.terms_and') }}
-            <n-button text type="primary" @click="handlePrivacyClick">{{ $t('authentication.login.privacy_policy') }}</n-button>
+            <n-button text type="primary" @click="handlePrivacyClick">
+              {{ $t('authentication.login.privacy_policy') }}
+            </n-button>
           </small>
         </div>
       </n-card>

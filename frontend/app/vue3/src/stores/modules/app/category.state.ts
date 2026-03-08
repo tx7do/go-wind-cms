@@ -1,6 +1,8 @@
 import {defineStore} from 'pinia';
 
 import {
+  type contentservicev1_Category,
+  type contentservicev1_CategoryTranslation,
   createCategoryServiceClient,
 } from '@/api/generated/app/service/v1';
 import {type Paging, requestClientRequestHandler} from "@/transport/rpc/request";
@@ -80,6 +82,19 @@ export const useCategoryStore = defineStore('category', () => {
     return await service.DeleteCategory({id});
   }
 
+  /**
+   * 获取分类的翻译
+   */
+  function getTranslation(category: contentservicev1_Category) {
+    if (!category?.translations || category.translations.length === 0) return null;
+
+    const locale = currentLocaleLanguageCode();
+    // 优先查找当前语言的翻译
+    const translation = category.translations?.find((t: contentservicev1_CategoryTranslation) => t.languageCode === locale);
+    // 如果找不到，回退到第一个翻译
+    return translation || category.translations?.[0];
+  }
+
   function $reset() {
   }
 
@@ -90,5 +105,6 @@ export const useCategoryStore = defineStore('category', () => {
     createCategory,
     updateCategory,
     deleteCategory,
+    getTranslation,
   };
 });
