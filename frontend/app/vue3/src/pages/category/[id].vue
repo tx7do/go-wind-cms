@@ -29,14 +29,7 @@ const message = useMessage()
 
 const loading = ref(false)
 const category = ref<contentservicev1_Category>(null)
-const posts = ref<contentservicev1_Post[]>([])
 const childCategories = ref<contentservicev1_Category[]>([])
-const activeFilter = ref<'all' | 'direct'>('all')
-const pagination = ref({
-  page: 1,
-  pageSize: 10,
-  itemCount: 0,
-})
 
 const categoryId = computed(() => {
   const id = route.params.id
@@ -71,48 +64,6 @@ async function loadCategory() {
   }
 }
 
-async function loadPosts() {
-  if (!categoryId.value) return
-
-  loading.value = true
-  try {
-    const queryParams: any = {
-      status: 'POST_STATUS_PUBLISHED',
-    }
-
-    // 根据筛选条件决定查询方式
-    if (activeFilter.value === 'direct') {
-      // 只看本级分类的文章
-      queryParams.categoryIds = [categoryId.value]
-    } else {
-      // 显示所有文章 (包含子分类)
-      // 后端 API 会自动包含子分类的文章
-      queryParams.categoryIds = [categoryId.value]
-    }
-
-    const res = await postStore.listPost(
-      {
-        page: pagination.value.page,
-        pageSize: pagination.value.pageSize,
-      },
-      queryParams
-    )
-    posts.value = res.items || []
-    pagination.value.itemCount = res.total || 0
-  } catch (error) {
-    console.error('Load posts failed:', error)
-    message.error($t('page.post_detail.load_failed'))
-  } finally {
-    loading.value = false
-  }
-}
-
-function handleFilterChange(filter: 'all' | 'direct') {
-  activeFilter.value = filter
-  pagination.value.page = 1
-  loadPosts()
-}
-
 function handleViewChildCategory(id: number) {
   router.push(`/category/${id}`)
 }
@@ -126,38 +77,13 @@ function handleBackToParent() {
   }
 }
 
-function handleViewPost(id: number) {
-  router.push({
-    path: `/post/${id}`,
-    query: {
-      from: 'category',
-      categoryId: categoryId.value?.toString()
-    }
-  })
-}
-
-function handlePageChange(page: number) {
-  pagination.value.page = page
-  loadPosts()
-}
-
-function handlePageSizeChange(pageSize: number) {
-  pagination.value.pageSize = pageSize
-  pagination.value.page = 1
-  loadPosts()
-}
-
 onMounted(async () => {
   await loadCategory()
-  await loadPosts()
 })
 
-// 监听语言切换，自动重新加载分类和帖子数据
+// 监听语言切换，自动重新加载分类数据
 useLanguageChangeEffect(async () => {
-  await Promise.all([
-    loadCategory(),
-    loadPosts(),
-  ]);
+  await loadCategory();
 }, {
   immediate: false,    // 已经在 onMounted 中加载，不需要立即执行
   autoCleanup: true,   // 组件卸载时自动取消订阅
@@ -237,103 +163,14 @@ useLanguageChangeEffect(async () => {
         </div>
       </section>
 
-      <!-- Filter Controls -->
-      <div v-if="posts.length > 0 || loading" class="filter-controls">
-        <n-button-group>
-          <n-button
-            :type="activeFilter === 'all' ? 'primary' : 'default'"
-            size="small"
-            @click="handleFilterChange('all')"
-          >
-            <template #icon>
-              <span class="i-carbon:folder-open"/>
-            </template>
-            {{ $t('page.categories.all_posts') }} ({{ category?.postCount || 0 }})
-          </n-button>
-          <n-button
-            :type="activeFilter === 'direct' ? 'primary' : 'default'"
-            size="small"
-            @click="handleFilterChange('direct')"
-          >
-            <template #icon>
-              <span class="i-carbon:document"/>
-            </template>
-            {{ $t('page.categories.direct_posts') }} ({{ category?.directPostCount || 0 }})
-          </n-button>
-        </n-button-group>
-      </div>
-      <!-- Loading Skeleton -->
-      <div v-if="loading" class="posts-grid">
-        <div v-for="i in 6" :key="i" class="post-card">
-          <n-skeleton height="400px"/>
-        </div>
-      </div>
-      <!-- Loaded Content -->
-      <div v-else>
-        <!-- Results Count -->
-        <div v-if="posts.length > 0" class="results-info">
-          <span>{{ $t('page.posts.found') }} <strong>{{
-              pagination.itemCount
-            }}</strong> {{ $t('page.posts.articles') }}</span>
-        </div>
-
-        <!-- Posts Grid -->
-        <div v-if="posts.length > 0" class="posts-grid">
-          <article
-            v-for="post in posts"
-            :key="post.id"
-            class="post-card"
-            @click="handleViewPost(post.id)"
-          >
-            <div class="post-image">
-              <img :src="postStore.getPostThumbnail(post)" :alt="postStore.getPostTitle(post)"/>
-              <div class="image-overlay"/>
-            </div>
-            <div class="post-content">
-              <h3 class="post-title">{{ postStore.getPostTitle(post) }}</h3>
-              <p class="post-summary">{{ postStore.getPostSummary(post) }}</p>
-              <div class="post-meta">
-                <div class="meta-item">
-                  <span class="i-carbon:user"/>
-                  <span>{{ post.authorName }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="i-carbon:calendar"/>
-                  <span>{{ formatDate(post.createdAt) }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="i-carbon:view"/>
-                  <span>{{ post.visits || 0 }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="i-carbon:thumbs-up"/>
-                  <span>{{ post.likes || 0 }}</span>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <n-empty v-else :description="$t('page.posts.no_results')" style="margin: 80px 0;">
-          <template #icon>
-            <span class="i-carbon:document-blank" style="font-size: 64px;"/>
-          </template>
-        </n-empty>
-
-        <!-- Pagination -->
-        <div v-if="posts.length > 0" class="pagination-wrapper">
-          <n-pagination
-            :page="pagination.page"
-            :page-size="pagination.pageSize"
-            :item-count="pagination.itemCount"
-            :page-slot="7"
-            show-size-picker
-            :page-sizes="[10, 20, 30, 40]"
-            @update:page="handlePageChange"
-            @update:page-size="handlePageSizeChange"
-          />
-        </div>
-      </div>
+      <!-- Posts List with Pagination -->
+      <PostListWithPagination
+        :key="categoryId"
+        :initial-page-size="10"
+        :page-sizes="[10, 20, 30, 40]"
+        :category-id="categoryId"
+        from="category"
+      />
     </div>
   </div>
 </template>

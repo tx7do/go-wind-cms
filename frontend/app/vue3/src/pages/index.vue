@@ -333,40 +333,12 @@ onUnmounted(() => {
       </div>
       <!-- Loaded Content -->
       <div v-else class="featured-grid">
-        <div
-          v-for="post in featuredPosts"
-          :key="post.id"
-          class="featured-card scroll-reveal-item"
-          @click="handleViewPost(post.id)"
-        >
-          <div class="featured-image">
-            <img :src="postStore.getPostThumbnail(post)" :alt="postStore.getPostTitle(post)"/>
-            <div class="featured-overlay">
-                <span class="featured-badge">
-                  <XIcon name="carbon:star-filled" :size="14"/>
-                  推荐
-                </span>
-            </div>
-          </div>
-          <div class="featured-content">
-            <h3>{{ postStore.getPostTitle(post) }}</h3>
-            <p>{{ postStore.getPostSummary(post) }}</p>
-            <div class="featured-meta">
-                <span>
-                  <XIcon name="carbon:user" :size="14"/>
-                  {{ post.authorName || '匿名' }}
-                </span>
-              <span>
-                  <XIcon name="carbon:time" :size="14"/>
-                  {{ formatDate(post.createdAt) }}
-                </span>
-              <span>
-                  <XIcon name="carbon:view" :size="14"/>
-                  {{ post.visits || 0 }}
-                </span>
-            </div>
-          </div>
-        </div>
+        <PostList
+          :posts="featuredPosts"
+          :loading="false"
+          :show-skeleton="false"
+          from="home"
+        />
       </div>
 
       <!-- Scroll Indicator -->
@@ -515,45 +487,12 @@ onUnmounted(() => {
           {{ $t('page.home.view_all') }} →
         </n-button>
       </div>
-      <!-- Loading Skeleton -->
-      <div v-if="loading" class="posts-grid">
-        <div v-for="i in 6" :key="i" class="post-card">
-          <n-skeleton height="220px"/>
-          <div style="padding: 24px;">
-            <n-skeleton :width="'80%'" size="medium" style="margin-bottom: 12px;"/>
-            <n-skeleton :width="'90%'" size="small" style="margin-bottom: 16px;"/>
-            <div style="display: flex; gap: 12px;">
-              <n-skeleton :width="60" size="small"/>
-              <n-skeleton :width="60" size="small"/>
-              <n-skeleton :width="60" size="small"/>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Loaded Content -->
-      <div v-else class="posts-grid">
-        <div
-          v-for="post in latestPosts"
-          :key="post.id"
-          class="post-card scroll-reveal-item"
-          @click="handleViewPost(post.id)"
-        >
-          <div class="post-image">
-            <img :src="postStore.getPostThumbnail(post)" :alt="postStore.getPostTitle(post)"/>
-          </div>
-          <div class="post-content">
-            <h3>{{ postStore.getPostTitle(post) }}</h3>
-            <p>{{ postStore.getPostSummary(post) }}</p>
-            <div class="post-meta">
-              <span class="author">{{ post.authorName }}</span>
-              <span class="date">{{ formatDate(post.createdAt) }}</span>
-              <span class="views">{{
-                  $t('page.home.views_count', {count: post.visits || 0})
-                }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PostList
+        :posts="latestPosts"
+        :loading="loading"
+        :show-skeleton="true"
+        from="home"
+      />
     </section>
 
     <!-- Features Section -->
@@ -2133,141 +2072,14 @@ onUnmounted(() => {
     padding: 0 2rem;
   }
 
-  .featured-card {
-    background: var(--color-card-bg, #ffffff);
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid var(--color-card-border, #e5e7eb);
-    box-shadow: 0 2px 8px var(--color-card-shadow, rgba(0, 0, 0, 0.08)), 0 1px 3px rgba(0, 0, 0, 0.06);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 16px 32px var(--color-hover-shadow, rgba(0, 0, 0, 0.15)), 0 8px 16px var(--color-hover-shadow, rgba(0, 0, 0, 0.08));
-      border-color: var(--color-brand);
-
-      .featured-image {
-        img {
-          transform: scale(1.08);
-        }
-
-        .featured-overlay {
-          opacity: 1;
-        }
-      }
-
-      .featured-content h3 {
-        color: var(--color-brand);
-      }
-    }
-
-    .featured-image {
-      position: relative;
-      width: 100%;
-      height: 220px;
-      overflow: hidden;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      .featured-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(180deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.3) 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-end;
-        padding: 12px;
-      }
-
-      .featured-badge {
-        background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
-        backdrop-filter: blur(8px);
-
-        :deep(svg) {
-          filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
-        }
-      }
-    }
-
-    .featured-content {
-      padding: 24px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-
-      h3 {
-        font-size: 20px;
-        font-weight: 600;
-        margin: 0 0 12px 0;
-        color: var(--color-text-primary);
-        line-height: 1.4;
-        transition: color 0.3s ease;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      p {
-        font-size: 15px;
-        line-height: 1.7;
-        color: var(--color-text-secondary);
-        margin: 0 0 16px 0;
-        flex: 1;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .featured-meta {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding-top: 16px;
-        border-top: 1px solid var(--color-border);
-        font-size: 13px;
-        color: var(--color-text-secondary);
-
-        span {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-
-          :deep(svg) {
-            opacity: 0.7;
-          }
-        }
-      }
-    }
+  // ✅ 新增：覆盖 PostList 组件的 posts-grid 样式
+  :deep(.posts-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
   }
 
   // Scroll Indicator
@@ -2374,123 +2186,14 @@ onUnmounted(() => {
   padding: 3rem 0;
   background: var(--color-surface);
 
-  .posts-grid {
+  // ✅ 新增：覆盖 PostList 组件的 posts-grid 样式
+  :deep(.posts-grid) {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
-  }
-
-  .post-card {
-    background: var(--color-card-bg, #ffffff);
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid var(--color-card-border, #e5e7eb);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 1px 3px var(--color-card-shadow, rgba(0, 0, 0, 0.08)), 0 1px 2px rgba(0, 0, 0, 0.06);
-
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 24px var(--color-hover-shadow, rgba(0, 0, 0, 0.12)), 0 4px 8px var(--color-hover-shadow, rgba(0, 0, 0, 0.08));
-      border-color: var(--color-brand);
-
-      .post-image {
-        &::before {
-          opacity: 1;
-        }
-
-        img {
-          transform: scale(1.08);
-        }
-      }
-
-      .post-content h3 {
-        color: var(--color-brand);
-      }
-    }
-
-    .post-image {
-      position: relative;
-      width: 100%;
-      height: 200px;
-      overflow: hidden;
-      background: var(--color-border);
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(ellipse at center, transparent 40%, rgba(255, 255, 255, 0.05) 100%);
-        opacity: 0;
-        transition: opacity 0.3s;
-        mix-blend-mode: multiply;
-      }
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-    }
-
-    .post-content {
-      padding: 1.5rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-
-      h3 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem 0;
-        color: var(--color-text-primary);
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        line-height: 1.4;
-        transition: color 0.3s;
-      }
-
-      p {
-        color: var(--color-text-secondary);
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin: 0 0 1rem 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        flex: 1;
-      }
-
-      .post-meta {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.85rem;
-        color: var(--color-text-secondary);
-        padding-top: 1rem;
-        border-top: 1px solid var(--color-border);
-        flex-wrap: wrap;
-
-        span {
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-          font-weight: 500;
-        }
-      }
-    }
   }
 }
 
@@ -2724,37 +2427,9 @@ html.dark {
       }
     }
 
-    .post-card {
-      background: linear-gradient(135deg, rgba(75, 90, 120, 0.9) 0%, rgba(55, 70, 100, 0.9) 100%);
-      border-color: rgba(150, 180, 255, 0.2);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(10px);
 
-      &:hover {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%),
-        linear-gradient(135deg, rgba(100, 120, 160, 0.95) 0%, rgba(80, 100, 140, 0.95) 100%);
-        border-color: rgba(var(--color-primary-purple-rgb), 0.6) !important;
-        box-shadow: 0 12px 32px rgba(99, 102, 241, 0.3),
-        0 0 0 1px rgba(var(--color-primary-purple-rgb), 0.5),
-        0 0 20px rgba(var(--color-primary-purple-rgb), 0.15);
-      }
-    }
 
-    .featured-card {
-      background: linear-gradient(135deg, rgba(75, 90, 120, 0.9) 0%, rgba(55, 70, 100, 0.9) 100%);
-      border-color: rgba(150, 180, 255, 0.2);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(10px);
 
-      &:hover {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%),
-        linear-gradient(135deg, rgba(100, 120, 160, 0.95) 0%, rgba(80, 100, 140, 0.95) 100%);
-        border-color: rgba(var(--color-primary-purple-rgb), 0.6) !important;
-        box-shadow: 0 12px 32px rgba(99, 102, 241, 0.3),
-        0 0 0 1px rgba(var(--color-primary-purple-rgb), 0.5),
-        0 0 20px rgba(var(--color-primary-purple-rgb), 0.15);
-      }
-    }
 
     // Section 背景交替：创造视觉节奏 - 优化配色更生动
     .categories-section {
@@ -2885,32 +2560,7 @@ html.dark {
     }
   }
 
-  // 文章卡片文字优化
-  .post-card,
-  .featured-card {
-    .post-content,
-    .featured-content {
-      h3 {
-        color: #e5e7eb !important;
-      }
 
-      p {
-        color: #9ca3af !important;
-      }
-
-      .post-meta,
-      .featured-meta {
-        color: #9ca3af !important;
-      }
-    }
-
-    &:hover {
-      .post-content h3,
-      .featured-content h3 {
-        color: #f9fafb !important;
-      }
-    }
-  }
 
   // 热门标签区域暗黑模式优化
   .popular-tags-container {
@@ -2960,24 +2610,7 @@ html.dark {
     gap: 1.5rem;
   }
 
-  .featured-card {
-    .featured-image {
-      height: 200px;
-    }
 
-    .featured-content {
-      padding: 20px;
-
-      h3 {
-        font-size: 18px;
-      }
-
-      p {
-        font-size: 14px;
-        -webkit-line-clamp: 3;
-      }
-    }
-  }
 
   .hero {
     padding: 3rem 1.5rem 2.5rem;
@@ -3129,39 +2762,7 @@ html.dark {
     padding: 0 1.5rem;
   }
 
-  .featured-card {
-    .featured-image {
-      height: 200px;
-    }
 
-    .featured-content {
-      padding: 20px;
-
-      h3 {
-        font-size: 18px;
-        margin-bottom: 10px;
-      }
-
-      p {
-        font-size: 14px;
-        -webkit-line-clamp: 2;
-        margin-bottom: 12px;
-      }
-
-      .featured-meta {
-        padding-top: 12px;
-        gap: 14px;
-        font-size: 12px;
-
-        span {
-          :deep(svg) {
-            width: 14px;
-            height: 14px;
-          }
-        }
-      }
-    }
-  }
 
   .popular-tags-container {
     padding: 0 1.5rem;
@@ -3204,41 +2805,7 @@ html.dark {
     }
   }
 
-  .featured-card,
-  .post-card {
-    .featured-image,
-    .post-image {
-      height: 160px;
-    }
 
-    .featured-content,
-    .post-content {
-      padding: 1rem;
-
-      h3 {
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        line-height: 1.4;
-      }
-
-      p {
-        font-size: 0.85rem;
-        line-height: 1.5;
-      }
-
-      .featured-meta,
-      .post-meta {
-        font-size: 0.75rem;
-        gap: 0.75rem;
-        margin-top: 0.75rem;
-      }
-
-      .category-badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.625rem;
-      }
-    }
-  }
 
 
   .features-grid {

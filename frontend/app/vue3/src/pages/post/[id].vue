@@ -495,34 +495,13 @@ useLanguageChangeEffect(loadAllData, {
               {{ $t('page.post_detail.related_posts') }}
             </h2>
           </div>
-          <div class="related-grid">
-            <div
-              v-for="relatedPost in relatedPosts"
-              :key="relatedPost.id"
-              class="related-card"
-              @click="handleViewRelatedPost(relatedPost.id)"
-              role="button"
-              tabindex="0"
-              @keyup.enter="handleViewRelatedPost(relatedPost.id)"
-            >
-              <div class="related-image">
-                <img
-                  :src="postStore.getPostThumbnail(relatedPost)"
-                  :alt="postStore.getPostTitle(relatedPost)"
-                  loading="lazy"
-                />
-                <div class="image-overlay"/>
-              </div>
-              <div class="related-content">
-                <h3>{{ postStore.getPostTitle(relatedPost) }}</h3>
-                <p>{{ postStore.getPostSummary(relatedPost) }}</p>
-                <div class="related-meta">
-                  <span><span class="i-carbon:view"/> {{ relatedPost.visits || 0 }}</span>
-                  <span><span class="i-carbon:thumbs-up"/> {{ relatedPost.likes || 0 }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <PostList
+            :posts="relatedPosts"
+            :loading="false"
+            :show-skeleton="false"
+            :from="'category'"
+            :category-id="post?.categoryIds?.[0]"
+          />
         </section>
       </div>
       <n-empty v-else :description="$t('page.post_detail.post_not_found')"/>
@@ -1255,6 +1234,13 @@ useLanguageChangeEffect(loadAllData, {
   padding: 48px 64px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
+  // 覆盖 PostList 组件的 posts-grid 样式
+  :deep(.posts-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 32px;
+  }
+
   .section-header {
     margin-bottom: 32px;
 
@@ -1518,6 +1504,27 @@ useLanguageChangeEffect(loadAllData, {
     margin-left: 20px;
     margin-right: 20px;
     border-radius: 14px;
+  }
+
+  // ✅ 新增：移动端相关文章列表适配
+  .related-section {
+    padding: 32px 24px !important; // 减小内边距
+    
+    :deep(.posts-grid) {
+      grid-template-columns: 1fr;
+      gap: 28px; // 调整卡片间距
+      
+      // 确保卡片在移动端宽度适中
+      > * {
+        max-width: 100%;
+      }
+    }
+    
+    .section-header {
+      h2 {
+        font-size: 24px; // 稍微减小标题字体
+      }
+    }
   }
 
   .post-banner {

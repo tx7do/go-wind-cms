@@ -11,12 +11,14 @@ interface Props {
   initialPageSize?: number
   pageSizes?: number[]
   categoryId?: number | null
+  from?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   initialPageSize: 12,
   pageSizes: () => [12, 24, 36, 48],
-  categoryId: null
+  categoryId: null,
+  from: 'category'
 })
 
 interface Emits {
@@ -122,6 +124,8 @@ defineExpose({
             v-for="post in posts"
             :key="post.id"
             :post="post"
+            :from="props.from"
+            :category-id="props.categoryId || undefined"
           />
         </div>
 

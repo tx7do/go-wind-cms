@@ -9,11 +9,15 @@ interface Props {
   posts: contentservicev1_Post[]
   loading?: boolean
   showSkeleton?: boolean
+  from?: string
+  categoryId?: number
 }
 
 withDefaults(defineProps<Props>(), {
   loading: false,
-  showSkeleton: true
+  showSkeleton: true,
+  from: 'post-list',
+  categoryId: undefined
 })
 </script>
 
@@ -41,7 +45,8 @@ withDefaults(defineProps<Props>(), {
         v-for="post in posts"
         :key="post.id"
         :post="post"
-        from="home"
+        :from="from"
+        :category-id="categoryId"
       />
     </div>
 
