@@ -240,16 +240,16 @@ func (_c *PermissionApiCreate) createSpec() (*PermissionApi, *sqlgraph.CreateSpe
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.PermissionApi.CreateTranslation().
+//	client.PermissionApi.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PermissionApiUpsert) {
+//		Update(func(u *ent.PermissionApiUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -263,7 +263,7 @@ func (_c *PermissionApiCreate) OnConflict(opts ...sql.ConflictOption) *Permissio
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PermissionApi.CreateTranslation().
+//	client.PermissionApi.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PermissionApiCreate) OnConflictColumns(columns ...string) *PermissionApiUpsertOne {
@@ -433,7 +433,7 @@ func (u *PermissionApiUpsert) AddAPIID(v uint32) *PermissionApiUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.PermissionApi.CreateTranslation().
+//	client.PermissionApi.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -457,7 +457,7 @@ func (u *PermissionApiUpsertOne) UpdateNewValues() *PermissionApiUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PermissionApi.CreateTranslation().
+//	client.PermissionApi.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *PermissionApiUpsertOne) Ignore() *PermissionApiUpsertOne {
@@ -776,13 +776,13 @@ func (_c *PermissionApiCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.PermissionApi.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PermissionApiUpsert) {
+//		Update(func(u *ent.PermissionApiUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -796,7 +796,7 @@ func (_c *PermissionApiCreateBulk) OnConflict(opts ...sql.ConflictOption) *Permi
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PermissionApi.CreateTranslation().
+//	client.PermissionApi.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PermissionApiCreateBulk) OnConflictColumns(columns ...string) *PermissionApiUpsertBulk {
@@ -815,7 +815,7 @@ type PermissionApiUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.PermissionApi.CreateTranslation().
+//	client.PermissionApi.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -841,7 +841,7 @@ func (u *PermissionApiUpsertBulk) UpdateNewValues() *PermissionApiUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PermissionApi.CreateTranslation().
+//	client.PermissionApi.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *PermissionApiUpsertBulk) Ignore() *PermissionApiUpsertBulk {

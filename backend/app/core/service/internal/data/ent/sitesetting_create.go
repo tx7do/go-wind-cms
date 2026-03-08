@@ -440,16 +440,16 @@ func (_c *SiteSettingCreate) createSpec() (*SiteSetting, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.SiteSetting.CreateTranslation().
+//	client.SiteSetting.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.SiteSettingUpsert) {
+//		Update(func(u *ent.SiteSettingUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -463,7 +463,7 @@ func (_c *SiteSettingCreate) OnConflict(opts ...sql.ConflictOption) *SiteSetting
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.SiteSetting.CreateTranslation().
+//	client.SiteSetting.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *SiteSettingCreate) OnConflictColumns(columns ...string) *SiteSettingUpsertOne {
@@ -819,7 +819,7 @@ func (u *SiteSettingUpsert) ClearValidationRegex() *SiteSettingUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.SiteSetting.CreateTranslation().
+//	client.SiteSetting.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -843,7 +843,7 @@ func (u *SiteSettingUpsertOne) UpdateNewValues() *SiteSettingUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.SiteSetting.CreateTranslation().
+//	client.SiteSetting.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *SiteSettingUpsertOne) Ignore() *SiteSettingUpsertOne {
@@ -1380,13 +1380,13 @@ func (_c *SiteSettingCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.SiteSetting.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.SiteSettingUpsert) {
+//		Update(func(u *ent.SiteSettingUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1400,7 +1400,7 @@ func (_c *SiteSettingCreateBulk) OnConflict(opts ...sql.ConflictOption) *SiteSet
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.SiteSetting.CreateTranslation().
+//	client.SiteSetting.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *SiteSettingCreateBulk) OnConflictColumns(columns ...string) *SiteSettingUpsertBulk {
@@ -1419,7 +1419,7 @@ type SiteSettingUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.SiteSetting.CreateTranslation().
+//	client.SiteSetting.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1445,7 +1445,7 @@ func (u *SiteSettingUpsertBulk) UpdateNewValues() *SiteSettingUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.SiteSetting.CreateTranslation().
+//	client.SiteSetting.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *SiteSettingUpsertBulk) Ignore() *SiteSettingUpsertBulk {

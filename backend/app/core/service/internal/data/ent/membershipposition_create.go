@@ -412,16 +412,16 @@ func (_c *MembershipPositionCreate) createSpec() (*MembershipPosition, *sqlgraph
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.MembershipPosition.CreateTranslation().
+//	client.MembershipPosition.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MembershipPositionUpsert) {
+//		Update(func(u *ent.MembershipPositionUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -435,7 +435,7 @@ func (_c *MembershipPositionCreate) OnConflict(opts ...sql.ConflictOption) *Memb
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MembershipPosition.CreateTranslation().
+//	client.MembershipPosition.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MembershipPositionCreate) OnConflictColumns(columns ...string) *MembershipPositionUpsertOne {
@@ -731,7 +731,7 @@ func (u *MembershipPositionUpsert) UpdateStatus() *MembershipPositionUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.MembershipPosition.CreateTranslation().
+//	client.MembershipPosition.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -758,7 +758,7 @@ func (u *MembershipPositionUpsertOne) UpdateNewValues() *MembershipPositionUpser
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MembershipPosition.CreateTranslation().
+//	client.MembershipPosition.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *MembershipPositionUpsertOne) Ignore() *MembershipPositionUpsertOne {
@@ -1225,13 +1225,13 @@ func (_c *MembershipPositionCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.MembershipPosition.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MembershipPositionUpsert) {
+//		Update(func(u *ent.MembershipPositionUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1245,7 +1245,7 @@ func (_c *MembershipPositionCreateBulk) OnConflict(opts ...sql.ConflictOption) *
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MembershipPosition.CreateTranslation().
+//	client.MembershipPosition.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MembershipPositionCreateBulk) OnConflictColumns(columns ...string) *MembershipPositionUpsertBulk {
@@ -1264,7 +1264,7 @@ type MembershipPositionUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.MembershipPosition.CreateTranslation().
+//	client.MembershipPosition.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1293,7 +1293,7 @@ func (u *MembershipPositionUpsertBulk) UpdateNewValues() *MembershipPositionUpse
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MembershipPosition.CreateTranslation().
+//	client.MembershipPosition.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *MembershipPositionUpsertBulk) Ignore() *MembershipPositionUpsertBulk {

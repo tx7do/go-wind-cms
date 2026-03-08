@@ -32,8 +32,8 @@ type Navigation struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 导航名称
 	Name *string `json:"name,omitempty"`
-	// 渲染位置标识
-	Location *string `json:"location,omitempty"`
+	// 渲染位置
+	Location *navigation.Location `json:"location,omitempty"`
 	// 关联的语言区域
 	Locale *string `json:"locale,omitempty"`
 	// 是否启用
@@ -128,8 +128,8 @@ func (_m *Navigation) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field location", values[i])
 			} else if value.Valid {
-				_m.Location = new(string)
-				*_m.Location = value.String
+				_m.Location = new(navigation.Location)
+				*_m.Location = navigation.Location(value.String)
 			}
 		case navigation.FieldLocale:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -218,7 +218,7 @@ func (_m *Navigation) String() string {
 	builder.WriteString(", ")
 	if v := _m.Location; v != nil {
 		builder.WriteString("location=")
-		builder.WriteString(*v)
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	if v := _m.Locale; v != nil {

@@ -599,16 +599,16 @@ func (_c *MediaAssetCreate) createSpec() (*MediaAsset, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.MediaAsset.CreateTranslation().
+//	client.MediaAsset.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MediaAssetUpsert) {
+//		Update(func(u *ent.MediaAssetUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -622,7 +622,7 @@ func (_c *MediaAssetCreate) OnConflict(opts ...sql.ConflictOption) *MediaAssetUp
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MediaAsset.CreateTranslation().
+//	client.MediaAsset.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MediaAssetCreate) OnConflictColumns(columns ...string) *MediaAssetUpsertOne {
@@ -1140,7 +1140,7 @@ func (u *MediaAssetUpsert) ClearIsPrivate() *MediaAssetUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.MediaAsset.CreateTranslation().
+//	client.MediaAsset.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1164,7 +1164,7 @@ func (u *MediaAssetUpsertOne) UpdateNewValues() *MediaAssetUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MediaAsset.CreateTranslation().
+//	client.MediaAsset.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *MediaAssetUpsertOne) Ignore() *MediaAssetUpsertOne {
@@ -1890,13 +1890,13 @@ func (_c *MediaAssetCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.MediaAsset.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MediaAssetUpsert) {
+//		Update(func(u *ent.MediaAssetUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1910,7 +1910,7 @@ func (_c *MediaAssetCreateBulk) OnConflict(opts ...sql.ConflictOption) *MediaAss
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MediaAsset.CreateTranslation().
+//	client.MediaAsset.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MediaAssetCreateBulk) OnConflictColumns(columns ...string) *MediaAssetUpsertBulk {
@@ -1929,7 +1929,7 @@ type MediaAssetUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.MediaAsset.CreateTranslation().
+//	client.MediaAsset.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1955,7 +1955,7 @@ func (u *MediaAssetUpsertBulk) UpdateNewValues() *MediaAssetUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MediaAsset.CreateTranslation().
+//	client.MediaAsset.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *MediaAssetUpsertBulk) Ignore() *MediaAssetUpsertBulk {

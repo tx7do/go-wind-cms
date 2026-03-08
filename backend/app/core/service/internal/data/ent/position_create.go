@@ -569,16 +569,16 @@ func (_c *PositionCreate) createSpec() (*Position, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Position.CreateTranslation().
+//	client.Position.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PositionUpsert) {
+//		Update(func(u *ent.PositionUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -592,7 +592,7 @@ func (_c *PositionCreate) OnConflict(opts ...sql.ConflictOption) *PositionUpsert
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Position.CreateTranslation().
+//	client.Position.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PositionCreate) OnConflictColumns(columns ...string) *PositionUpsertOne {
@@ -1002,7 +1002,7 @@ func (u *PositionUpsert) ClearEndAt() *PositionUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.Position.CreateTranslation().
+//	client.Position.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1029,7 +1029,7 @@ func (u *PositionUpsertOne) UpdateNewValues() *PositionUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Position.CreateTranslation().
+//	client.Position.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *PositionUpsertOne) Ignore() *PositionUpsertOne {
@@ -1629,13 +1629,13 @@ func (_c *PositionCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.Position.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PositionUpsert) {
+//		Update(func(u *ent.PositionUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1649,7 +1649,7 @@ func (_c *PositionCreateBulk) OnConflict(opts ...sql.ConflictOption) *PositionUp
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Position.CreateTranslation().
+//	client.Position.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PositionCreateBulk) OnConflictColumns(columns ...string) *PositionUpsertBulk {
@@ -1668,7 +1668,7 @@ type PositionUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Position.CreateTranslation().
+//	client.Position.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1697,7 +1697,7 @@ func (u *PositionUpsertBulk) UpdateNewValues() *PositionUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Position.CreateTranslation().
+//	client.Position.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *PositionUpsertBulk) Ignore() *PositionUpsertBulk {

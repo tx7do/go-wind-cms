@@ -384,16 +384,16 @@ func (_c *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Api.CreateTranslation().
+//	client.Api.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.ApiUpsert) {
+//		Update(func(u *ent.ApiUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -407,7 +407,7 @@ func (_c *APICreate) OnConflict(opts ...sql.ConflictOption) *ApiUpsertOne {
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Api.CreateTranslation().
+//	client.Api.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *APICreate) OnConflictColumns(columns ...string) *ApiUpsertOne {
@@ -679,7 +679,7 @@ func (u *ApiUpsert) ClearScope() *ApiUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.Api.CreateTranslation().
+//	client.Api.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -703,7 +703,7 @@ func (u *ApiUpsertOne) UpdateNewValues() *ApiUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Api.CreateTranslation().
+//	client.Api.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *ApiUpsertOne) Ignore() *ApiUpsertOne {
@@ -1142,13 +1142,13 @@ func (_c *APICreateBulk) ExecX(ctx context.Context) {
 //
 //	client.Api.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.ApiUpsert) {
+//		Update(func(u *ent.ApiUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1162,7 +1162,7 @@ func (_c *APICreateBulk) OnConflict(opts ...sql.ConflictOption) *ApiUpsertBulk {
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Api.CreateTranslation().
+//	client.Api.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *APICreateBulk) OnConflictColumns(columns ...string) *ApiUpsertBulk {
@@ -1181,7 +1181,7 @@ type ApiUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Api.CreateTranslation().
+//	client.Api.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1207,7 +1207,7 @@ func (u *ApiUpsertBulk) UpdateNewValues() *ApiUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Api.CreateTranslation().
+//	client.Api.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *ApiUpsertBulk) Ignore() *ApiUpsertBulk {

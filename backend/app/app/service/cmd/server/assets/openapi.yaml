@@ -2063,8 +2063,17 @@ components:
                     type: string
                     description: 导航名称（如'主导航'、'页脚'）
                 location:
+                    enum:
+                        - NAVIGATION_LOCATION_UNSPECIFIED
+                        - HEADER
+                        - FOOTER
+                        - SIDEBAR
+                        - MOBILE
+                        - TOP_BAR
+                        - OFFCANVAS
                     type: string
-                    description: 渲染位置标识（约定格式：{位置}-{语言}，如 'header', 'header-zh', 'header-en', 'footer-ja'；无语言后缀表示默认/通用导航）
+                    description: 渲染位置
+                    format: enum
                 locale:
                     type: string
                     description: 关联的语言区域（如 'zh-CN', 'en-US'），空值表示默认/通用导航；仅用于后台管理筛选，不影响前端渲染逻辑

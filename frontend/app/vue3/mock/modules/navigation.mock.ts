@@ -10,7 +10,7 @@ const navigations = [
   {
     id: 1,
     name: 'Main Navigation',
-    location: 'header',
+    location: 'HEADER',
     isActive: true,
     locale: 'zh-CN',
     items: [
@@ -159,7 +159,7 @@ const navigations = [
   {
     id: 2,
     name: 'Footer Navigation',
-    location: 'footer',
+    location: 'FOOTER',
     isActive: true,
     locale: 'zh-CN',
     items: [
@@ -250,7 +250,7 @@ const navigations = [
   {
     id: 3,
     name: 'Sidebar Navigation',
-    location: 'sidebar',
+    location: 'SIDEBAR',
     isActive: true,
     locale: 'zh-CN',
     items: [

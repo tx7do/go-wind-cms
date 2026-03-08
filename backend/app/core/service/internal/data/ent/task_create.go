@@ -381,16 +381,16 @@ func (_c *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Task.CreateTranslation().
+//	client.Task.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.TaskUpsert) {
+//		Update(func(u *ent.TaskUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -404,7 +404,7 @@ func (_c *TaskCreate) OnConflict(opts ...sql.ConflictOption) *TaskUpsertOne {
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Task.CreateTranslation().
+//	client.Task.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *TaskCreate) OnConflictColumns(columns ...string) *TaskUpsertOne {
@@ -664,7 +664,7 @@ func (u *TaskUpsert) ClearEnable() *TaskUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.Task.CreateTranslation().
+//	client.Task.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -691,7 +691,7 @@ func (u *TaskUpsertOne) UpdateNewValues() *TaskUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Task.CreateTranslation().
+//	client.Task.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *TaskUpsertOne) Ignore() *TaskUpsertOne {
@@ -1116,13 +1116,13 @@ func (_c *TaskCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.Task.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.TaskUpsert) {
+//		Update(func(u *ent.TaskUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1136,7 +1136,7 @@ func (_c *TaskCreateBulk) OnConflict(opts ...sql.ConflictOption) *TaskUpsertBulk
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Task.CreateTranslation().
+//	client.Task.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *TaskCreateBulk) OnConflictColumns(columns ...string) *TaskUpsertBulk {
@@ -1155,7 +1155,7 @@ type TaskUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Task.CreateTranslation().
+//	client.Task.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1184,7 +1184,7 @@ func (u *TaskUpsertBulk) UpdateNewValues() *TaskUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Task.CreateTranslation().
+//	client.Task.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *TaskUpsertBulk) Ignore() *TaskUpsertBulk {

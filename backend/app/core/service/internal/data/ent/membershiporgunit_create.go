@@ -448,16 +448,16 @@ func (_c *MembershipOrgUnitCreate) createSpec() (*MembershipOrgUnit, *sqlgraph.C
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.MembershipOrgUnit.CreateTranslation().
+//	client.MembershipOrgUnit.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MembershipOrgUnitUpsert) {
+//		Update(func(u *ent.MembershipOrgUnitUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -471,7 +471,7 @@ func (_c *MembershipOrgUnitCreate) OnConflict(opts ...sql.ConflictOption) *Membe
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MembershipOrgUnit.CreateTranslation().
+//	client.MembershipOrgUnit.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MembershipOrgUnitCreate) OnConflictColumns(columns ...string) *MembershipOrgUnitUpsertOne {
@@ -815,7 +815,7 @@ func (u *MembershipOrgUnitUpsert) ClearStatus() *MembershipOrgUnitUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.MembershipOrgUnit.CreateTranslation().
+//	client.MembershipOrgUnit.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -842,7 +842,7 @@ func (u *MembershipOrgUnitUpsertOne) UpdateNewValues() *MembershipOrgUnitUpsertO
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MembershipOrgUnit.CreateTranslation().
+//	client.MembershipOrgUnit.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *MembershipOrgUnitUpsertOne) Ignore() *MembershipOrgUnitUpsertOne {
@@ -1365,13 +1365,13 @@ func (_c *MembershipOrgUnitCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.MembershipOrgUnit.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MembershipOrgUnitUpsert) {
+//		Update(func(u *ent.MembershipOrgUnitUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1385,7 +1385,7 @@ func (_c *MembershipOrgUnitCreateBulk) OnConflict(opts ...sql.ConflictOption) *M
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MembershipOrgUnit.CreateTranslation().
+//	client.MembershipOrgUnit.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MembershipOrgUnitCreateBulk) OnConflictColumns(columns ...string) *MembershipOrgUnitUpsertBulk {
@@ -1404,7 +1404,7 @@ type MembershipOrgUnitUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.MembershipOrgUnit.CreateTranslation().
+//	client.MembershipOrgUnit.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1433,7 +1433,7 @@ func (u *MembershipOrgUnitUpsertBulk) UpdateNewValues() *MembershipOrgUnitUpsert
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MembershipOrgUnit.CreateTranslation().
+//	client.MembershipOrgUnit.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *MembershipOrgUnitUpsertBulk) Ignore() *MembershipOrgUnitUpsertBulk {

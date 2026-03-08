@@ -39750,7 +39750,7 @@ type NavigationMutation struct {
 	deleted_by    *uint32
 	adddeleted_by *int32
 	name          *string
-	location      *string
+	location      *navigation.Location
 	locale        *string
 	is_active     *bool
 	clearedFields map[string]struct{}
@@ -40270,12 +40270,12 @@ func (m *NavigationMutation) ResetName() {
 }
 
 // SetLocation sets the "location" field.
-func (m *NavigationMutation) SetLocation(s string) {
-	m.location = &s
+func (m *NavigationMutation) SetLocation(n navigation.Location) {
+	m.location = &n
 }
 
 // Location returns the value of the "location" field in the mutation.
-func (m *NavigationMutation) Location() (r string, exists bool) {
+func (m *NavigationMutation) Location() (r navigation.Location, exists bool) {
 	v := m.location
 	if v == nil {
 		return
@@ -40286,7 +40286,7 @@ func (m *NavigationMutation) Location() (r string, exists bool) {
 // OldLocation returns the old "location" field's value of the Navigation entity.
 // If the Navigation object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NavigationMutation) OldLocation(ctx context.Context) (v *string, err error) {
+func (m *NavigationMutation) OldLocation(ctx context.Context) (v *navigation.Location, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldLocation is only allowed on UpdateOne operations")
 	}
@@ -40597,7 +40597,7 @@ func (m *NavigationMutation) SetField(name string, value ent.Value) error {
 		m.SetName(v)
 		return nil
 	case navigation.FieldLocation:
-		v, ok := value.(string)
+		v, ok := value.(navigation.Location)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

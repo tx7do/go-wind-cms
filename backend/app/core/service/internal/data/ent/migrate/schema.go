@@ -1653,7 +1653,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "导航名称"},
-		{Name: "location", Type: field.TypeString, Nullable: true, Comment: "渲染位置标识"},
+		{Name: "location", Type: field.TypeEnum, Nullable: true, Comment: "渲染位置", Enums: []string{"HEADER", "FOOTER", "SIDEBAR", "MOBILE", "TOP_BAR", "OFFCANVAS"}, Default: "HEADER"},
 		{Name: "locale", Type: field.TypeString, Nullable: true, Comment: "关联的语言区域"},
 		{Name: "is_active", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
 	}

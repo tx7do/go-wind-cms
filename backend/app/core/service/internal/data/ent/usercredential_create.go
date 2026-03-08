@@ -529,16 +529,16 @@ func (_c *UserCredentialCreate) createSpec() (*UserCredential, *sqlgraph.CreateS
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.UserCredential.CreateTranslation().
+//	client.UserCredential.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.UserCredentialUpsert) {
+//		Update(func(u *ent.UserCredentialUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -552,7 +552,7 @@ func (_c *UserCredentialCreate) OnConflict(opts ...sql.ConflictOption) *UserCred
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.UserCredential.CreateTranslation().
+//	client.UserCredential.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *UserCredentialCreate) OnConflictColumns(columns ...string) *UserCredentialUpsertOne {
@@ -908,7 +908,7 @@ func (u *UserCredentialUpsert) ClearResetTokenUsedAt() *UserCredentialUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.UserCredential.CreateTranslation().
+//	client.UserCredential.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -935,7 +935,7 @@ func (u *UserCredentialUpsertOne) UpdateNewValues() *UserCredentialUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.UserCredential.CreateTranslation().
+//	client.UserCredential.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *UserCredentialUpsertOne) Ignore() *UserCredentialUpsertOne {
@@ -1472,13 +1472,13 @@ func (_c *UserCredentialCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.UserCredential.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.UserCredentialUpsert) {
+//		Update(func(u *ent.UserCredentialUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1492,7 +1492,7 @@ func (_c *UserCredentialCreateBulk) OnConflict(opts ...sql.ConflictOption) *User
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.UserCredential.CreateTranslation().
+//	client.UserCredential.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *UserCredentialCreateBulk) OnConflictColumns(columns ...string) *UserCredentialUpsertBulk {
@@ -1511,7 +1511,7 @@ type UserCredentialUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.UserCredential.CreateTranslation().
+//	client.UserCredential.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1540,7 +1540,7 @@ func (u *UserCredentialUpsertBulk) UpdateNewValues() *UserCredentialUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.UserCredential.CreateTranslation().
+//	client.UserCredential.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *UserCredentialUpsertBulk) Ignore() *UserCredentialUpsertBulk {

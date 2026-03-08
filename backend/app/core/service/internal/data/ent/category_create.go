@@ -488,16 +488,16 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Category.CreateTranslation().
+//	client.Category.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.CategoryUpsert) {
+//		Update(func(u *ent.CategoryUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -511,7 +511,7 @@ func (_c *CategoryCreate) OnConflict(opts ...sql.ConflictOption) *CategoryUpsert
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Category.CreateTranslation().
+//	client.Category.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *CategoryCreate) OnConflictColumns(columns ...string) *CategoryUpsertOne {
@@ -867,7 +867,7 @@ func (u *CategoryUpsert) ClearCustomFields() *CategoryUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.Category.CreateTranslation().
+//	client.Category.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -891,7 +891,7 @@ func (u *CategoryUpsertOne) UpdateNewValues() *CategoryUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Category.CreateTranslation().
+//	client.Category.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *CategoryUpsertOne) Ignore() *CategoryUpsertOne {
@@ -1428,13 +1428,13 @@ func (_c *CategoryCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.Category.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.CategoryUpsert) {
+//		Update(func(u *ent.CategoryUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1448,7 +1448,7 @@ func (_c *CategoryCreateBulk) OnConflict(opts ...sql.ConflictOption) *CategoryUp
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Category.CreateTranslation().
+//	client.Category.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *CategoryCreateBulk) OnConflictColumns(columns ...string) *CategoryUpsertBulk {
@@ -1467,7 +1467,7 @@ type CategoryUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Category.CreateTranslation().
+//	client.Category.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1493,7 +1493,7 @@ func (u *CategoryUpsertBulk) UpdateNewValues() *CategoryUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Category.CreateTranslation().
+//	client.Category.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *CategoryUpsertBulk) Ignore() *CategoryUpsertBulk {

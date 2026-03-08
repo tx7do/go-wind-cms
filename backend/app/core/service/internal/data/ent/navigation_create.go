@@ -121,13 +121,13 @@ func (_c *NavigationCreate) SetNillableName(v *string) *NavigationCreate {
 }
 
 // SetLocation sets the "location" field.
-func (_c *NavigationCreate) SetLocation(v string) *NavigationCreate {
+func (_c *NavigationCreate) SetLocation(v navigation.Location) *NavigationCreate {
 	_c.mutation.SetLocation(v)
 	return _c
 }
 
 // SetNillableLocation sets the "location" field if the given value is not nil.
-func (_c *NavigationCreate) SetNillableLocation(v *string) *NavigationCreate {
+func (_c *NavigationCreate) SetNillableLocation(v *navigation.Location) *NavigationCreate {
 	if v != nil {
 		_c.SetLocation(*v)
 	}
@@ -203,6 +203,10 @@ func (_c *NavigationCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *NavigationCreate) defaults() {
+	if _, ok := _c.mutation.Location(); !ok {
+		v := navigation.DefaultLocation
+		_c.mutation.SetLocation(v)
+	}
 	if _, ok := _c.mutation.IsActive(); !ok {
 		v := navigation.DefaultIsActive
 		_c.mutation.SetIsActive(v)
@@ -211,6 +215,11 @@ func (_c *NavigationCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *NavigationCreate) check() error {
+	if v, ok := _c.mutation.Location(); ok {
+		if err := navigation.LocationValidator(v); err != nil {
+			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Navigation.location": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := navigation.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Navigation.id": %w`, err)}
@@ -278,7 +287,7 @@ func (_c *NavigationCreate) createSpec() (*Navigation, *sqlgraph.CreateSpec) {
 		_node.Name = &value
 	}
 	if value, ok := _c.mutation.Location(); ok {
-		_spec.SetField(navigation.FieldLocation, field.TypeString, value)
+		_spec.SetField(navigation.FieldLocation, field.TypeEnum, value)
 		_node.Location = &value
 	}
 	if value, ok := _c.mutation.Locale(); ok {
@@ -295,16 +304,16 @@ func (_c *NavigationCreate) createSpec() (*Navigation, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Navigation.CreateTranslation().
+//	client.Navigation.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.NavigationUpsert) {
+//		Update(func(u *ent.NavigationUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -318,7 +327,7 @@ func (_c *NavigationCreate) OnConflict(opts ...sql.ConflictOption) *NavigationUp
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Navigation.CreateTranslation().
+//	client.Navigation.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *NavigationCreate) OnConflictColumns(columns ...string) *NavigationUpsertOne {
@@ -468,7 +477,7 @@ func (u *NavigationUpsert) ClearName() *NavigationUpsert {
 }
 
 // SetLocation sets the "location" field.
-func (u *NavigationUpsert) SetLocation(v string) *NavigationUpsert {
+func (u *NavigationUpsert) SetLocation(v navigation.Location) *NavigationUpsert {
 	u.Set(navigation.FieldLocation, v)
 	return u
 }
@@ -524,7 +533,7 @@ func (u *NavigationUpsert) ClearIsActive() *NavigationUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.Navigation.CreateTranslation().
+//	client.Navigation.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -548,7 +557,7 @@ func (u *NavigationUpsertOne) UpdateNewValues() *NavigationUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Navigation.CreateTranslation().
+//	client.Navigation.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *NavigationUpsertOne) Ignore() *NavigationUpsertOne {
@@ -720,7 +729,7 @@ func (u *NavigationUpsertOne) ClearName() *NavigationUpsertOne {
 }
 
 // SetLocation sets the "location" field.
-func (u *NavigationUpsertOne) SetLocation(v string) *NavigationUpsertOne {
+func (u *NavigationUpsertOne) SetLocation(v navigation.Location) *NavigationUpsertOne {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetLocation(v)
 	})
@@ -910,13 +919,13 @@ func (_c *NavigationCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.Navigation.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.NavigationUpsert) {
+//		Update(func(u *ent.NavigationUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -930,7 +939,7 @@ func (_c *NavigationCreateBulk) OnConflict(opts ...sql.ConflictOption) *Navigati
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Navigation.CreateTranslation().
+//	client.Navigation.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *NavigationCreateBulk) OnConflictColumns(columns ...string) *NavigationUpsertBulk {
@@ -949,7 +958,7 @@ type NavigationUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Navigation.CreateTranslation().
+//	client.Navigation.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -975,7 +984,7 @@ func (u *NavigationUpsertBulk) UpdateNewValues() *NavigationUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Navigation.CreateTranslation().
+//	client.Navigation.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *NavigationUpsertBulk) Ignore() *NavigationUpsertBulk {
@@ -1147,7 +1156,7 @@ func (u *NavigationUpsertBulk) ClearName() *NavigationUpsertBulk {
 }
 
 // SetLocation sets the "location" field.
-func (u *NavigationUpsertBulk) SetLocation(v string) *NavigationUpsertBulk {
+func (u *NavigationUpsertBulk) SetLocation(v navigation.Location) *NavigationUpsertBulk {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetLocation(v)
 	})

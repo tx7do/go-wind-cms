@@ -781,7 +781,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			navigation.FieldUpdatedBy: {Type: field.TypeUint32, Column: navigation.FieldUpdatedBy},
 			navigation.FieldDeletedBy: {Type: field.TypeUint32, Column: navigation.FieldDeletedBy},
 			navigation.FieldName:      {Type: field.TypeString, Column: navigation.FieldName},
-			navigation.FieldLocation:  {Type: field.TypeString, Column: navigation.FieldLocation},
+			navigation.FieldLocation:  {Type: field.TypeEnum, Column: navigation.FieldLocation},
 			navigation.FieldLocale:    {Type: field.TypeString, Column: navigation.FieldLocale},
 			navigation.FieldIsActive:  {Type: field.TypeBool, Column: navigation.FieldIsActive},
 		},

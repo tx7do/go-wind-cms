@@ -430,16 +430,16 @@ func (_c *TagTranslationCreate) createSpec() (*TagTranslation, *sqlgraph.CreateS
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.TagTranslation.CreateTranslation().
+//	client.TagTranslation.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.TagTranslationUpsert) {
+//		Update(func(u *ent.TagTranslationUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -453,7 +453,7 @@ func (_c *TagTranslationCreate) OnConflict(opts ...sql.ConflictOption) *TagTrans
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.TagTranslation.CreateTranslation().
+//	client.TagTranslation.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *TagTranslationCreate) OnConflictColumns(columns ...string) *TagTranslationUpsertOne {
@@ -809,7 +809,7 @@ func (u *TagTranslationUpsert) ClearSeoTitle() *TagTranslationUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.TagTranslation.CreateTranslation().
+//	client.TagTranslation.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -833,7 +833,7 @@ func (u *TagTranslationUpsertOne) UpdateNewValues() *TagTranslationUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.TagTranslation.CreateTranslation().
+//	client.TagTranslation.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *TagTranslationUpsertOne) Ignore() *TagTranslationUpsertOne {
@@ -1369,13 +1369,13 @@ func (_c *TagTranslationCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.TagTranslation.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.TagTranslationUpsert) {
+//		Update(func(u *ent.TagTranslationUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1389,7 +1389,7 @@ func (_c *TagTranslationCreateBulk) OnConflict(opts ...sql.ConflictOption) *TagT
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.TagTranslation.CreateTranslation().
+//	client.TagTranslation.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *TagTranslationCreateBulk) OnConflictColumns(columns ...string) *TagTranslationUpsertBulk {
@@ -1408,7 +1408,7 @@ type TagTranslationUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.TagTranslation.CreateTranslation().
+//	client.TagTranslation.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1434,7 +1434,7 @@ func (u *TagTranslationUpsertBulk) UpdateNewValues() *TagTranslationUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.TagTranslation.CreateTranslation().
+//	client.TagTranslation.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *TagTranslationUpsertBulk) Ignore() *TagTranslationUpsertBulk {

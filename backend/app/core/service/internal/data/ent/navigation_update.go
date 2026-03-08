@@ -171,13 +171,13 @@ func (_u *NavigationUpdate) ClearName() *NavigationUpdate {
 }
 
 // SetLocation sets the "location" field.
-func (_u *NavigationUpdate) SetLocation(v string) *NavigationUpdate {
+func (_u *NavigationUpdate) SetLocation(v navigation.Location) *NavigationUpdate {
 	_u.mutation.SetLocation(v)
 	return _u
 }
 
 // SetNillableLocation sets the "location" field if the given value is not nil.
-func (_u *NavigationUpdate) SetNillableLocation(v *string) *NavigationUpdate {
+func (_u *NavigationUpdate) SetNillableLocation(v *navigation.Location) *NavigationUpdate {
 	if v != nil {
 		_u.SetLocation(*v)
 	}
@@ -262,6 +262,16 @@ func (_u *NavigationUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *NavigationUpdate) check() error {
+	if v, ok := _u.mutation.Location(); ok {
+		if err := navigation.LocationValidator(v); err != nil {
+			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Navigation.location": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (_u *NavigationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *NavigationUpdate {
 	_u.modifiers = append(_u.modifiers, modifiers...)
@@ -269,6 +279,9 @@ func (_u *NavigationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Nav
 }
 
 func (_u *NavigationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(navigation.Table, navigation.Columns, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeUint32))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -326,10 +339,10 @@ func (_u *NavigationUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(navigation.FieldName, field.TypeString)
 	}
 	if value, ok := _u.mutation.Location(); ok {
-		_spec.SetField(navigation.FieldLocation, field.TypeString, value)
+		_spec.SetField(navigation.FieldLocation, field.TypeEnum, value)
 	}
 	if _u.mutation.LocationCleared() {
-		_spec.ClearField(navigation.FieldLocation, field.TypeString)
+		_spec.ClearField(navigation.FieldLocation, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(navigation.FieldLocale, field.TypeString, value)
@@ -507,13 +520,13 @@ func (_u *NavigationUpdateOne) ClearName() *NavigationUpdateOne {
 }
 
 // SetLocation sets the "location" field.
-func (_u *NavigationUpdateOne) SetLocation(v string) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetLocation(v navigation.Location) *NavigationUpdateOne {
 	_u.mutation.SetLocation(v)
 	return _u
 }
 
 // SetNillableLocation sets the "location" field if the given value is not nil.
-func (_u *NavigationUpdateOne) SetNillableLocation(v *string) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetNillableLocation(v *navigation.Location) *NavigationUpdateOne {
 	if v != nil {
 		_u.SetLocation(*v)
 	}
@@ -611,6 +624,16 @@ func (_u *NavigationUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *NavigationUpdateOne) check() error {
+	if v, ok := _u.mutation.Location(); ok {
+		if err := navigation.LocationValidator(v); err != nil {
+			return &ValidationError{Name: "location", err: fmt.Errorf(`ent: validator failed for field "Navigation.location": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (_u *NavigationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *NavigationUpdateOne {
 	_u.modifiers = append(_u.modifiers, modifiers...)
@@ -618,6 +641,9 @@ func (_u *NavigationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *
 }
 
 func (_u *NavigationUpdateOne) sqlSave(ctx context.Context) (_node *Navigation, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(navigation.Table, navigation.Columns, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeUint32))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -692,10 +718,10 @@ func (_u *NavigationUpdateOne) sqlSave(ctx context.Context) (_node *Navigation, 
 		_spec.ClearField(navigation.FieldName, field.TypeString)
 	}
 	if value, ok := _u.mutation.Location(); ok {
-		_spec.SetField(navigation.FieldLocation, field.TypeString, value)
+		_spec.SetField(navigation.FieldLocation, field.TypeEnum, value)
 	}
 	if _u.mutation.LocationCleared() {
-		_spec.ClearField(navigation.FieldLocation, field.TypeString)
+		_spec.ClearField(navigation.FieldLocation, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(navigation.FieldLocale, field.TypeString, value)

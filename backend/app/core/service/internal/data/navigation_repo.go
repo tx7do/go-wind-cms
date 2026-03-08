@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -35,6 +34,8 @@ type NavigationRepo struct {
 		siteV1.Navigation, ent.Navigation,
 	]
 
+	locationConverter *mapper.EnumTypeConverter[siteV1.NavigationLocation, navigation.Location]
+
 	navigationItemRepo *NavigationItemRepo
 }
 
@@ -48,6 +49,9 @@ func NewNavigationRepo(
 		log:                ctx.NewLoggerHelper("navigation/repo/core-service"),
 		mapper:             mapper.NewCopierMapper[siteV1.Navigation, ent.Navigation](),
 		navigationItemRepo: navigationItemRepo,
+		locationConverter: mapper.NewEnumTypeConverter[siteV1.NavigationLocation, navigation.Location](
+			siteV1.NavigationLocation_name, siteV1.NavigationLocation_value,
+		),
 	}
 
 	repo.init()
@@ -67,6 +71,8 @@ func (r *NavigationRepo) init() {
 
 	r.mapper.AppendConverters(copierutil.NewTimeStringConverterPair())
 	r.mapper.AppendConverters(copierutil.NewTimeTimestamppbConverterPair())
+
+	r.mapper.AppendConverters(r.locationConverter.NewConverterPair())
 }
 
 func (r *NavigationRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
@@ -191,7 +197,7 @@ func (r *NavigationRepo) Create(ctx context.Context, req *siteV1.CreateNavigatio
 
 	builder := tx.Navigation.Create().
 		SetNillableName(req.Data.Name).
-		SetNillableLocation(req.Data.Location).
+		SetNillableLocation(r.locationConverter.ToEntity(req.Data.Location)).
 		SetNillableIsActive(req.Data.IsActive).
 		SetNillableLocale(req.Data.Locale).
 		SetNillableCreatedBy(req.Data.CreatedBy).
@@ -271,7 +277,7 @@ func (r *NavigationRepo) Update(ctx context.Context, req *siteV1.UpdateNavigatio
 		func(dto *siteV1.Navigation) {
 			builder.
 				SetNillableName(req.Data.Name).
-				SetNillableLocation(req.Data.Location).
+				SetNillableLocation(r.locationConverter.ToEntity(req.Data.Location)).
 				SetNillableIsActive(req.Data.IsActive).
 				SetNillableLocale(req.Data.Locale).
 				SetNillableUpdatedBy(req.Data.UpdatedBy).

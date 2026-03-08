@@ -457,16 +457,16 @@ func (_c *OperationAuditLogCreate) createSpec() (*OperationAuditLog, *sqlgraph.C
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.OperationAuditLog.CreateTranslation().
+//	client.OperationAuditLog.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.OperationAuditLogUpsert) {
+//		Update(func(u *ent.OperationAuditLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -480,7 +480,7 @@ func (_c *OperationAuditLogCreate) OnConflict(opts ...sql.ConflictOption) *Opera
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.OperationAuditLog.CreateTranslation().
+//	client.OperationAuditLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *OperationAuditLogCreate) OnConflictColumns(columns ...string) *OperationAuditLogUpsertOne {
@@ -818,7 +818,7 @@ func (u *OperationAuditLogUpsert) ClearSignature() *OperationAuditLogUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.OperationAuditLog.CreateTranslation().
+//	client.OperationAuditLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -845,7 +845,7 @@ func (u *OperationAuditLogUpsertOne) UpdateNewValues() *OperationAuditLogUpsertO
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.OperationAuditLog.CreateTranslation().
+//	client.OperationAuditLog.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *OperationAuditLogUpsertOne) Ignore() *OperationAuditLogUpsertOne {
@@ -1361,13 +1361,13 @@ func (_c *OperationAuditLogCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.OperationAuditLog.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.OperationAuditLogUpsert) {
+//		Update(func(u *ent.OperationAuditLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1381,7 +1381,7 @@ func (_c *OperationAuditLogCreateBulk) OnConflict(opts ...sql.ConflictOption) *O
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.OperationAuditLog.CreateTranslation().
+//	client.OperationAuditLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *OperationAuditLogCreateBulk) OnConflictColumns(columns ...string) *OperationAuditLogUpsertBulk {
@@ -1400,7 +1400,7 @@ type OperationAuditLogUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.OperationAuditLog.CreateTranslation().
+//	client.OperationAuditLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1429,7 +1429,7 @@ func (u *OperationAuditLogUpsertBulk) UpdateNewValues() *OperationAuditLogUpsert
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.OperationAuditLog.CreateTranslation().
+//	client.OperationAuditLog.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *OperationAuditLogUpsertBulk) Ignore() *OperationAuditLogUpsertBulk {

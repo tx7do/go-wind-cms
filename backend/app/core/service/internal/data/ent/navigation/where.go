@@ -89,11 +89,6 @@ func Name(v string) predicate.Navigation {
 	return predicate.Navigation(sql.FieldEQ(FieldName, v))
 }
 
-// Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
-func Location(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldEQ(FieldLocation, v))
-}
-
 // Locale applies equality check predicate on the "locale" field. It's identical to LocaleEQ.
 func Locale(v string) predicate.Navigation {
 	return predicate.Navigation(sql.FieldEQ(FieldLocale, v))
@@ -480,58 +475,23 @@ func NameContainsFold(v string) predicate.Navigation {
 }
 
 // LocationEQ applies the EQ predicate on the "location" field.
-func LocationEQ(v string) predicate.Navigation {
+func LocationEQ(v Location) predicate.Navigation {
 	return predicate.Navigation(sql.FieldEQ(FieldLocation, v))
 }
 
 // LocationNEQ applies the NEQ predicate on the "location" field.
-func LocationNEQ(v string) predicate.Navigation {
+func LocationNEQ(v Location) predicate.Navigation {
 	return predicate.Navigation(sql.FieldNEQ(FieldLocation, v))
 }
 
 // LocationIn applies the In predicate on the "location" field.
-func LocationIn(vs ...string) predicate.Navigation {
+func LocationIn(vs ...Location) predicate.Navigation {
 	return predicate.Navigation(sql.FieldIn(FieldLocation, vs...))
 }
 
 // LocationNotIn applies the NotIn predicate on the "location" field.
-func LocationNotIn(vs ...string) predicate.Navigation {
+func LocationNotIn(vs ...Location) predicate.Navigation {
 	return predicate.Navigation(sql.FieldNotIn(FieldLocation, vs...))
-}
-
-// LocationGT applies the GT predicate on the "location" field.
-func LocationGT(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldGT(FieldLocation, v))
-}
-
-// LocationGTE applies the GTE predicate on the "location" field.
-func LocationGTE(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldGTE(FieldLocation, v))
-}
-
-// LocationLT applies the LT predicate on the "location" field.
-func LocationLT(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldLT(FieldLocation, v))
-}
-
-// LocationLTE applies the LTE predicate on the "location" field.
-func LocationLTE(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldLTE(FieldLocation, v))
-}
-
-// LocationContains applies the Contains predicate on the "location" field.
-func LocationContains(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldContains(FieldLocation, v))
-}
-
-// LocationHasPrefix applies the HasPrefix predicate on the "location" field.
-func LocationHasPrefix(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldHasPrefix(FieldLocation, v))
-}
-
-// LocationHasSuffix applies the HasSuffix predicate on the "location" field.
-func LocationHasSuffix(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldHasSuffix(FieldLocation, v))
 }
 
 // LocationIsNil applies the IsNil predicate on the "location" field.
@@ -542,16 +502,6 @@ func LocationIsNil() predicate.Navigation {
 // LocationNotNil applies the NotNil predicate on the "location" field.
 func LocationNotNil() predicate.Navigation {
 	return predicate.Navigation(sql.FieldNotNull(FieldLocation))
-}
-
-// LocationEqualFold applies the EqualFold predicate on the "location" field.
-func LocationEqualFold(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldEqualFold(FieldLocation, v))
-}
-
-// LocationContainsFold applies the ContainsFold predicate on the "location" field.
-func LocationContainsFold(v string) predicate.Navigation {
-	return predicate.Navigation(sql.FieldContainsFold(FieldLocation, v))
 }
 
 // LocaleEQ applies the EQ predicate on the "locale" field.

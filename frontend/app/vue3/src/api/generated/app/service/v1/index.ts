@@ -1364,7 +1364,7 @@ export type siteservicev1_ListNavigationResponse = {
 export type siteservicev1_Navigation = {
   id?: number;
   name?: string;
-  location?: string;
+  location?: siteservicev1_NavigationLocation;
   locale?: string;
   isActive?: boolean;
   items: siteservicev1_NavigationItem[] | undefined;
@@ -1376,6 +1376,17 @@ export type siteservicev1_Navigation = {
   deletedAt?: wellKnownTimestamp;
 };
 
+// 导航位置枚举
+export type siteservicev1_NavigationLocation =
+  | "NAVIGATION_LOCATION_UNSPECIFIED"
+  // 核心位置（必需）
+  | "HEADER"
+  | "FOOTER"
+  | "SIDEBAR"
+  | "MOBILE"
+  // 可选扩展（按需添加）
+  | "TOP_BAR"
+  | "OFFCANVAS";
 // 导航项
 export type siteservicev1_NavigationItem = {
   id?: number;

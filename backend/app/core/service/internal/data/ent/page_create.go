@@ -662,16 +662,16 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Page.CreateTranslation().
+//	client.Page.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PageUpsert) {
+//		Update(func(u *ent.PageUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -685,7 +685,7 @@ func (_c *PageCreate) OnConflict(opts ...sql.ConflictOption) *PageUpsertOne {
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Page.CreateTranslation().
+//	client.Page.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PageCreate) OnConflictColumns(columns ...string) *PageUpsertOne {
@@ -1185,7 +1185,7 @@ func (u *PageUpsert) ClearDepth() *PageUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.Page.CreateTranslation().
+//	client.Page.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1209,7 +1209,7 @@ func (u *PageUpsertOne) UpdateNewValues() *PageUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Page.CreateTranslation().
+//	client.Page.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *PageUpsertOne) Ignore() *PageUpsertOne {
@@ -1914,13 +1914,13 @@ func (_c *PageCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.Page.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PageUpsert) {
+//		Update(func(u *ent.PageUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1934,7 +1934,7 @@ func (_c *PageCreateBulk) OnConflict(opts ...sql.ConflictOption) *PageUpsertBulk
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Page.CreateTranslation().
+//	client.Page.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PageCreateBulk) OnConflictColumns(columns ...string) *PageUpsertBulk {
@@ -1953,7 +1953,7 @@ type PageUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Page.CreateTranslation().
+//	client.Page.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1979,7 +1979,7 @@ func (u *PageUpsertBulk) UpdateNewValues() *PageUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Page.CreateTranslation().
+//	client.Page.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *PageUpsertBulk) Ignore() *PageUpsertBulk {

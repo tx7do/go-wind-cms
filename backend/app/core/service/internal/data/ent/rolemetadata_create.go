@@ -437,16 +437,16 @@ func (_c *RoleMetadataCreate) createSpec() (*RoleMetadata, *sqlgraph.CreateSpec)
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.RoleMetadata.CreateTranslation().
+//	client.RoleMetadata.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.RoleMetadataUpsert) {
+//		Update(func(u *ent.RoleMetadataUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -460,7 +460,7 @@ func (_c *RoleMetadataCreate) OnConflict(opts ...sql.ConflictOption) *RoleMetada
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.RoleMetadata.CreateTranslation().
+//	client.RoleMetadata.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *RoleMetadataCreate) OnConflictColumns(columns ...string) *RoleMetadataUpsertOne {
@@ -768,7 +768,7 @@ func (u *RoleMetadataUpsert) UpdateCustomOverrides() *RoleMetadataUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.RoleMetadata.CreateTranslation().
+//	client.RoleMetadata.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -795,7 +795,7 @@ func (u *RoleMetadataUpsertOne) UpdateNewValues() *RoleMetadataUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.RoleMetadata.CreateTranslation().
+//	client.RoleMetadata.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *RoleMetadataUpsertOne) Ignore() *RoleMetadataUpsertOne {
@@ -1276,13 +1276,13 @@ func (_c *RoleMetadataCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.RoleMetadata.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.RoleMetadataUpsert) {
+//		Update(func(u *ent.RoleMetadataUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1296,7 +1296,7 @@ func (_c *RoleMetadataCreateBulk) OnConflict(opts ...sql.ConflictOption) *RoleMe
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.RoleMetadata.CreateTranslation().
+//	client.RoleMetadata.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *RoleMetadataCreateBulk) OnConflictColumns(columns ...string) *RoleMetadataUpsertBulk {
@@ -1315,7 +1315,7 @@ type RoleMetadataUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.RoleMetadata.CreateTranslation().
+//	client.RoleMetadata.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1344,7 +1344,7 @@ func (u *RoleMetadataUpsertBulk) UpdateNewValues() *RoleMetadataUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.RoleMetadata.CreateTranslation().
+//	client.RoleMetadata.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *RoleMetadataUpsertBulk) Ignore() *RoleMetadataUpsertBulk {

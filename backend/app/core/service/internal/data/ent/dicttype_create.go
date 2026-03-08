@@ -381,16 +381,16 @@ func (_c *DictTypeCreate) createSpec() (*DictType, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.DictType.CreateTranslation().
+//	client.DictType.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.DictTypeUpsert) {
+//		Update(func(u *ent.DictTypeUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -404,7 +404,7 @@ func (_c *DictTypeCreate) OnConflict(opts ...sql.ConflictOption) *DictTypeUpsert
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.DictType.CreateTranslation().
+//	client.DictType.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *DictTypeCreate) OnConflictColumns(columns ...string) *DictTypeUpsertOne {
@@ -580,7 +580,7 @@ func (u *DictTypeUpsert) ClearSortOrder() *DictTypeUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.DictType.CreateTranslation().
+//	client.DictType.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -610,7 +610,7 @@ func (u *DictTypeUpsertOne) UpdateNewValues() *DictTypeUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.DictType.CreateTranslation().
+//	client.DictType.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *DictTypeUpsertOne) Ignore() *DictTypeUpsertOne {
@@ -937,13 +937,13 @@ func (_c *DictTypeCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.DictType.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.DictTypeUpsert) {
+//		Update(func(u *ent.DictTypeUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -957,7 +957,7 @@ func (_c *DictTypeCreateBulk) OnConflict(opts ...sql.ConflictOption) *DictTypeUp
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.DictType.CreateTranslation().
+//	client.DictType.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *DictTypeCreateBulk) OnConflictColumns(columns ...string) *DictTypeUpsertBulk {
@@ -976,7 +976,7 @@ type DictTypeUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.DictType.CreateTranslation().
+//	client.DictType.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1008,7 +1008,7 @@ func (u *DictTypeUpsertBulk) UpdateNewValues() *DictTypeUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.DictType.CreateTranslation().
+//	client.DictType.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *DictTypeUpsertBulk) Ignore() *DictTypeUpsertBulk {

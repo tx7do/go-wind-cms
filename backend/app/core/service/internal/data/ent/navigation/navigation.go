@@ -3,6 +3,8 @@
 package navigation
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -66,6 +68,36 @@ var (
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
+
+// Location defines the type for the "location" enum field.
+type Location string
+
+// LocationHeader is the default value of the Location enum.
+const DefaultLocation = LocationHeader
+
+// Location values.
+const (
+	LocationHeader    Location = "HEADER"
+	LocationFooter    Location = "FOOTER"
+	LocationSidebar   Location = "SIDEBAR"
+	LocationMobile    Location = "MOBILE"
+	LocationTopBar    Location = "TOP_BAR"
+	LocationOffcanvas Location = "OFFCANVAS"
+)
+
+func (l Location) String() string {
+	return string(l)
+}
+
+// LocationValidator is a validator for the "location" field enum values. It is called by the builders before save.
+func LocationValidator(l Location) error {
+	switch l {
+	case LocationHeader, LocationFooter, LocationSidebar, LocationMobile, LocationTopBar, LocationOffcanvas:
+		return nil
+	default:
+		return fmt.Errorf("navigation: invalid enum value for location field: %q", l)
+	}
+}
 
 // OrderOption defines the ordering options for the Navigation queries.
 type OrderOption func(*sql.Selector)

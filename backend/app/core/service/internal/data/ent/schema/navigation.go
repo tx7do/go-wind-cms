@@ -34,8 +34,17 @@ func (Navigation) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.String("location").
-			Comment("渲染位置标识").
+		field.Enum("location").
+			Comment("渲染位置").
+			NamedValues(
+				"Header", "HEADER",
+				"Footer", "FOOTER",
+				"Sidebar", "SIDEBAR",
+				"Mobile", "MOBILE",
+				"TopBar", "TOP_BAR",
+				"Offcanvas", "OFFCANVAS",
+			).
+			Default("HEADER").
 			Optional().
 			Nillable(),
 

@@ -349,16 +349,16 @@ func (_c *RolePermissionCreate) createSpec() (*RolePermission, *sqlgraph.CreateS
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.RolePermission.CreateTranslation().
+//	client.RolePermission.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.RolePermissionUpsert) {
+//		Update(func(u *ent.RolePermissionUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -372,7 +372,7 @@ func (_c *RolePermissionCreate) OnConflict(opts ...sql.ConflictOption) *RolePerm
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.RolePermission.CreateTranslation().
+//	client.RolePermission.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *RolePermissionCreate) OnConflictColumns(columns ...string) *RolePermissionUpsertOne {
@@ -596,7 +596,7 @@ func (u *RolePermissionUpsert) ClearPriority() *RolePermissionUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.RolePermission.CreateTranslation().
+//	client.RolePermission.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -623,7 +623,7 @@ func (u *RolePermissionUpsertOne) UpdateNewValues() *RolePermissionUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.RolePermission.CreateTranslation().
+//	client.RolePermission.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *RolePermissionUpsertOne) Ignore() *RolePermissionUpsertOne {
@@ -1006,13 +1006,13 @@ func (_c *RolePermissionCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.RolePermission.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.RolePermissionUpsert) {
+//		Update(func(u *ent.RolePermissionUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1026,7 +1026,7 @@ func (_c *RolePermissionCreateBulk) OnConflict(opts ...sql.ConflictOption) *Role
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.RolePermission.CreateTranslation().
+//	client.RolePermission.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *RolePermissionCreateBulk) OnConflictColumns(columns ...string) *RolePermissionUpsertBulk {
@@ -1045,7 +1045,7 @@ type RolePermissionUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.RolePermission.CreateTranslation().
+//	client.RolePermission.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1074,7 +1074,7 @@ func (u *RolePermissionUpsertBulk) UpdateNewValues() *RolePermissionUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.RolePermission.CreateTranslation().
+//	client.RolePermission.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *RolePermissionUpsertBulk) Ignore() *RolePermissionUpsertBulk {

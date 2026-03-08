@@ -168,16 +168,16 @@ func (_c *MediaVariantCreate) createSpec() (*MediaVariant, *sqlgraph.CreateSpec)
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.MediaVariant.CreateTranslation().
+//	client.MediaVariant.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MediaVariantUpsert) {
+//		Update(func(u *ent.MediaVariantUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -191,7 +191,7 @@ func (_c *MediaVariantCreate) OnConflict(opts ...sql.ConflictOption) *MediaVaria
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MediaVariant.CreateTranslation().
+//	client.MediaVariant.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MediaVariantCreate) OnConflictColumns(columns ...string) *MediaVariantUpsertOne {
@@ -277,7 +277,7 @@ func (u *MediaVariantUpsert) ClearVariantName() *MediaVariantUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.MediaVariant.CreateTranslation().
+//	client.MediaVariant.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -301,7 +301,7 @@ func (u *MediaVariantUpsertOne) UpdateNewValues() *MediaVariantUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MediaVariant.CreateTranslation().
+//	client.MediaVariant.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *MediaVariantUpsertOne) Ignore() *MediaVariantUpsertOne {
@@ -522,13 +522,13 @@ func (_c *MediaVariantCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.MediaVariant.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.MediaVariantUpsert) {
+//		Update(func(u *ent.MediaVariantUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -542,7 +542,7 @@ func (_c *MediaVariantCreateBulk) OnConflict(opts ...sql.ConflictOption) *MediaV
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.MediaVariant.CreateTranslation().
+//	client.MediaVariant.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *MediaVariantCreateBulk) OnConflictColumns(columns ...string) *MediaVariantUpsertBulk {
@@ -561,7 +561,7 @@ type MediaVariantUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.MediaVariant.CreateTranslation().
+//	client.MediaVariant.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -587,7 +587,7 @@ func (u *MediaVariantUpsertBulk) UpdateNewValues() *MediaVariantUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.MediaVariant.CreateTranslation().
+//	client.MediaVariant.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *MediaVariantUpsertBulk) Ignore() *MediaVariantUpsertBulk {

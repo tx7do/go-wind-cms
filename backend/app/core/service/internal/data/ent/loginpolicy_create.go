@@ -352,16 +352,16 @@ func (_c *LoginPolicyCreate) createSpec() (*LoginPolicy, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.LoginPolicy.CreateTranslation().
+//	client.LoginPolicy.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.LoginPolicyUpsert) {
+//		Update(func(u *ent.LoginPolicyUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -375,7 +375,7 @@ func (_c *LoginPolicyCreate) OnConflict(opts ...sql.ConflictOption) *LoginPolicy
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.LoginPolicy.CreateTranslation().
+//	client.LoginPolicy.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *LoginPolicyCreate) OnConflictColumns(columns ...string) *LoginPolicyUpsertOne {
@@ -605,7 +605,7 @@ func (u *LoginPolicyUpsert) ClearMethod() *LoginPolicyUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.LoginPolicy.CreateTranslation().
+//	client.LoginPolicy.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -632,7 +632,7 @@ func (u *LoginPolicyUpsertOne) UpdateNewValues() *LoginPolicyUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.LoginPolicy.CreateTranslation().
+//	client.LoginPolicy.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *LoginPolicyUpsertOne) Ignore() *LoginPolicyUpsertOne {
@@ -1022,13 +1022,13 @@ func (_c *LoginPolicyCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.LoginPolicy.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.LoginPolicyUpsert) {
+//		Update(func(u *ent.LoginPolicyUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1042,7 +1042,7 @@ func (_c *LoginPolicyCreateBulk) OnConflict(opts ...sql.ConflictOption) *LoginPo
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.LoginPolicy.CreateTranslation().
+//	client.LoginPolicy.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *LoginPolicyCreateBulk) OnConflictColumns(columns ...string) *LoginPolicyUpsertBulk {
@@ -1061,7 +1061,7 @@ type LoginPolicyUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.LoginPolicy.CreateTranslation().
+//	client.LoginPolicy.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1090,7 +1090,7 @@ func (u *LoginPolicyUpsertBulk) UpdateNewValues() *LoginPolicyUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.LoginPolicy.CreateTranslation().
+//	client.LoginPolicy.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *LoginPolicyUpsertBulk) Ignore() *LoginPolicyUpsertBulk {

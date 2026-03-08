@@ -415,16 +415,16 @@ func (_c *PermissionGroupCreate) createSpec() (*PermissionGroup, *sqlgraph.Creat
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.PermissionGroup.CreateTranslation().
+//	client.PermissionGroup.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PermissionGroupUpsert) {
+//		Update(func(u *ent.PermissionGroupUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -438,7 +438,7 @@ func (_c *PermissionGroupCreate) OnConflict(opts ...sql.ConflictOption) *Permiss
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PermissionGroup.CreateTranslation().
+//	client.PermissionGroup.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PermissionGroupCreate) OnConflictColumns(columns ...string) *PermissionGroupUpsertOne {
@@ -692,7 +692,7 @@ func (u *PermissionGroupUpsert) ClearModule() *PermissionGroupUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.PermissionGroup.CreateTranslation().
+//	client.PermissionGroup.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -716,7 +716,7 @@ func (u *PermissionGroupUpsertOne) UpdateNewValues() *PermissionGroupUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PermissionGroup.CreateTranslation().
+//	client.PermissionGroup.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *PermissionGroupUpsertOne) Ignore() *PermissionGroupUpsertOne {
@@ -1134,13 +1134,13 @@ func (_c *PermissionGroupCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.PermissionGroup.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PermissionGroupUpsert) {
+//		Update(func(u *ent.PermissionGroupUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1154,7 +1154,7 @@ func (_c *PermissionGroupCreateBulk) OnConflict(opts ...sql.ConflictOption) *Per
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PermissionGroup.CreateTranslation().
+//	client.PermissionGroup.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PermissionGroupCreateBulk) OnConflictColumns(columns ...string) *PermissionGroupUpsertBulk {
@@ -1173,7 +1173,7 @@ type PermissionGroupUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.PermissionGroup.CreateTranslation().
+//	client.PermissionGroup.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1199,7 +1199,7 @@ func (u *PermissionGroupUpsertBulk) UpdateNewValues() *PermissionGroupUpsertBulk
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PermissionGroup.CreateTranslation().
+//	client.PermissionGroup.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *PermissionGroupUpsertBulk) Ignore() *PermissionGroupUpsertBulk {

@@ -390,16 +390,16 @@ func (_c *PolicyEvaluationLogCreate) createSpec() (*PolicyEvaluationLog, *sqlgra
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.PolicyEvaluationLog.CreateTranslation().
+//	client.PolicyEvaluationLog.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PolicyEvaluationLogUpsert) {
+//		Update(func(u *ent.PolicyEvaluationLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -413,7 +413,7 @@ func (_c *PolicyEvaluationLogCreate) OnConflict(opts ...sql.ConflictOption) *Pol
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PolicyEvaluationLog.CreateTranslation().
+//	client.PolicyEvaluationLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PolicyEvaluationLogCreate) OnConflictColumns(columns ...string) *PolicyEvaluationLogUpsertOne {
@@ -691,7 +691,7 @@ func (u *PolicyEvaluationLogUpsert) ClearSignature() *PolicyEvaluationLogUpsert 
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.PolicyEvaluationLog.CreateTranslation().
+//	client.PolicyEvaluationLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -718,7 +718,7 @@ func (u *PolicyEvaluationLogUpsertOne) UpdateNewValues() *PolicyEvaluationLogUps
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PolicyEvaluationLog.CreateTranslation().
+//	client.PolicyEvaluationLog.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *PolicyEvaluationLogUpsertOne) Ignore() *PolicyEvaluationLogUpsertOne {
@@ -1164,13 +1164,13 @@ func (_c *PolicyEvaluationLogCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.PolicyEvaluationLog.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PolicyEvaluationLogUpsert) {
+//		Update(func(u *ent.PolicyEvaluationLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1184,7 +1184,7 @@ func (_c *PolicyEvaluationLogCreateBulk) OnConflict(opts ...sql.ConflictOption) 
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PolicyEvaluationLog.CreateTranslation().
+//	client.PolicyEvaluationLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PolicyEvaluationLogCreateBulk) OnConflictColumns(columns ...string) *PolicyEvaluationLogUpsertBulk {
@@ -1203,7 +1203,7 @@ type PolicyEvaluationLogUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.PolicyEvaluationLog.CreateTranslation().
+//	client.PolicyEvaluationLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1232,7 +1232,7 @@ func (u *PolicyEvaluationLogUpsertBulk) UpdateNewValues() *PolicyEvaluationLogUp
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PolicyEvaluationLog.CreateTranslation().
+//	client.PolicyEvaluationLog.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *PolicyEvaluationLogUpsertBulk) Ignore() *PolicyEvaluationLogUpsertBulk {

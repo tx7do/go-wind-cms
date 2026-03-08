@@ -26,6 +26,21 @@ service NavigationService {
   rpc Delete (DeleteNavigationRequest) returns (google.protobuf.Empty) {}
 }
 
+// 导航位置枚举
+enum NavigationLocation {
+  NAVIGATION_LOCATION_UNSPECIFIED = 0;
+
+  // 核心位置（必需）
+  HEADER = 1;   // 页头主导航（桌面端）
+  FOOTER = 2;   // 页脚导航
+  SIDEBAR = 3;  // 侧边栏导航
+  MOBILE = 4;   // 移动端专属导航（汉堡菜单/抽屉式）
+
+  // 可选扩展（按需添加）
+  TOP_BAR = 5;      // 顶部通知栏（如"免费配送"横幅）
+  OFFCANVAS = 6;    // 抽屉式导航（部分框架单独区分
+}
+
 // 导航
 message Navigation {
   optional uint32 id = 1 [
@@ -38,12 +53,12 @@ message Navigation {
     (gnostic.openapi.v3.property) = {description: "导航名称（如'主导航'、'页脚'）"}
   ]; // 导航名称（如'主导航'、'页脚'）
 
-  optional string location = 3 [
+  optional NavigationLocation location = 3 [
     json_name = "location",
     (gnostic.openapi.v3.property) = {
-      description: "渲染位置标识（约定格式：{位置}-{语言}，如 'header', 'header-zh', 'header-en', 'footer-ja'；无语言后缀表示默认/通用导航）"
+      description: "渲染位置"
     }
-  ]; // 渲染位置标识（约定格式：{位置}-{语言}，如 'header', 'header-zh', 'header-en', 'footer-ja'；无语言后缀表示默认/通用导航）
+  ]; // 渲染位置
 
   optional string locale = 4 [
     json_name = "locale",

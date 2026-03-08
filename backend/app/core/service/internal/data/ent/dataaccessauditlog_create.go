@@ -583,16 +583,16 @@ func (_c *DataAccessAuditLogCreate) createSpec() (*DataAccessAuditLog, *sqlgraph
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.DataAccessAuditLog.CreateTranslation().
+//	client.DataAccessAuditLog.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.DataAccessAuditLogUpsert) {
+//		Update(func(u *ent.DataAccessAuditLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -606,7 +606,7 @@ func (_c *DataAccessAuditLogCreate) OnConflict(opts ...sql.ConflictOption) *Data
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.DataAccessAuditLog.CreateTranslation().
+//	client.DataAccessAuditLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *DataAccessAuditLogCreate) OnConflictColumns(columns ...string) *DataAccessAuditLogUpsertOne {
@@ -1082,7 +1082,7 @@ func (u *DataAccessAuditLogUpsert) ClearSignature() *DataAccessAuditLogUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.DataAccessAuditLog.CreateTranslation().
+//	client.DataAccessAuditLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1109,7 +1109,7 @@ func (u *DataAccessAuditLogUpsertOne) UpdateNewValues() *DataAccessAuditLogUpser
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.DataAccessAuditLog.CreateTranslation().
+//	client.DataAccessAuditLog.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *DataAccessAuditLogUpsertOne) Ignore() *DataAccessAuditLogUpsertOne {
@@ -1786,13 +1786,13 @@ func (_c *DataAccessAuditLogCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.DataAccessAuditLog.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.DataAccessAuditLogUpsert) {
+//		Update(func(u *ent.DataAccessAuditLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1806,7 +1806,7 @@ func (_c *DataAccessAuditLogCreateBulk) OnConflict(opts ...sql.ConflictOption) *
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.DataAccessAuditLog.CreateTranslation().
+//	client.DataAccessAuditLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *DataAccessAuditLogCreateBulk) OnConflictColumns(columns ...string) *DataAccessAuditLogUpsertBulk {
@@ -1825,7 +1825,7 @@ type DataAccessAuditLogUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.DataAccessAuditLog.CreateTranslation().
+//	client.DataAccessAuditLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1854,7 +1854,7 @@ func (u *DataAccessAuditLogUpsertBulk) UpdateNewValues() *DataAccessAuditLogUpse
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.DataAccessAuditLog.CreateTranslation().
+//	client.DataAccessAuditLog.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *DataAccessAuditLogUpsertBulk) Ignore() *DataAccessAuditLogUpsertBulk {

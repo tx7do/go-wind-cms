@@ -334,16 +334,16 @@ func (_c *PermissionAuditLogCreate) createSpec() (*PermissionAuditLog, *sqlgraph
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.PermissionAuditLog.CreateTranslation().
+//	client.PermissionAuditLog.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PermissionAuditLogUpsert) {
+//		Update(func(u *ent.PermissionAuditLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -357,7 +357,7 @@ func (_c *PermissionAuditLogCreate) OnConflict(opts ...sql.ConflictOption) *Perm
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PermissionAuditLog.CreateTranslation().
+//	client.PermissionAuditLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PermissionAuditLogCreate) OnConflictColumns(columns ...string) *PermissionAuditLogUpsertOne {
@@ -569,7 +569,7 @@ func (u *PermissionAuditLogUpsert) ClearSignature() *PermissionAuditLogUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.PermissionAuditLog.CreateTranslation().
+//	client.PermissionAuditLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -596,7 +596,7 @@ func (u *PermissionAuditLogUpsertOne) UpdateNewValues() *PermissionAuditLogUpser
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PermissionAuditLog.CreateTranslation().
+//	client.PermissionAuditLog.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *PermissionAuditLogUpsertOne) Ignore() *PermissionAuditLogUpsertOne {
@@ -965,13 +965,13 @@ func (_c *PermissionAuditLogCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.PermissionAuditLog.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.PermissionAuditLogUpsert) {
+//		Update(func(u *ent.PermissionAuditLogUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -985,7 +985,7 @@ func (_c *PermissionAuditLogCreateBulk) OnConflict(opts ...sql.ConflictOption) *
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.PermissionAuditLog.CreateTranslation().
+//	client.PermissionAuditLog.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *PermissionAuditLogCreateBulk) OnConflictColumns(columns ...string) *PermissionAuditLogUpsertBulk {
@@ -1004,7 +1004,7 @@ type PermissionAuditLogUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.PermissionAuditLog.CreateTranslation().
+//	client.PermissionAuditLog.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1033,7 +1033,7 @@ func (u *PermissionAuditLogUpsertBulk) UpdateNewValues() *PermissionAuditLogUpse
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.PermissionAuditLog.CreateTranslation().
+//	client.PermissionAuditLog.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *PermissionAuditLogUpsertBulk) Ignore() *PermissionAuditLogUpsertBulk {

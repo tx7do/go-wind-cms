@@ -397,16 +397,16 @@ func (_c *UserRoleCreate) createSpec() (*UserRole, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.UserRole.CreateTranslation().
+//	client.UserRole.Create().
 //		SetCreatedAt(v).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.UserRoleUpsert) {
+//		Update(func(u *ent.UserRoleUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -420,7 +420,7 @@ func (_c *UserRoleCreate) OnConflict(opts ...sql.ConflictOption) *UserRoleUpsert
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.UserRole.CreateTranslation().
+//	client.UserRole.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *UserRoleCreate) OnConflictColumns(columns ...string) *UserRoleUpsertOne {
@@ -692,7 +692,7 @@ func (u *UserRoleUpsert) UpdateStatus() *UserRoleUpsert {
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.UserRole.CreateTranslation().
+//	client.UserRole.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -719,7 +719,7 @@ func (u *UserRoleUpsertOne) UpdateNewValues() *UserRoleUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.UserRole.CreateTranslation().
+//	client.UserRole.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
 func (u *UserRoleUpsertOne) Ignore() *UserRoleUpsertOne {
@@ -1158,13 +1158,13 @@ func (_c *UserRoleCreateBulk) ExecX(ctx context.Context) {
 //
 //	client.UserRole.CreateBulk(builders...).
 //		OnConflict(
-//			// UpdateTranslation the row with the new values
+//			// Update the row with the new values
 //			// the was proposed for insertion.
 //			sql.ResolveWithNewValues(),
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		UpdateTranslation(func(u *ent.UserRoleUpsert) {
+//		Update(func(u *ent.UserRoleUpsert) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
@@ -1178,7 +1178,7 @@ func (_c *UserRoleCreateBulk) OnConflict(opts ...sql.ConflictOption) *UserRoleUp
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.UserRole.CreateTranslation().
+//	client.UserRole.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
 func (_c *UserRoleCreateBulk) OnConflictColumns(columns ...string) *UserRoleUpsertBulk {
@@ -1197,7 +1197,7 @@ type UserRoleUpsertBulk struct {
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.UserRole.CreateTranslation().
+//	client.UserRole.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
@@ -1226,7 +1226,7 @@ func (u *UserRoleUpsertBulk) UpdateNewValues() *UserRoleUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.UserRole.CreateTranslation().
+//	client.UserRole.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
 func (u *UserRoleUpsertBulk) Ignore() *UserRoleUpsertBulk {
