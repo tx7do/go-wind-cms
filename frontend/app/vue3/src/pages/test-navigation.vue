@@ -11,7 +11,7 @@ async function testNavigation() {
     console.log('Testing navigation API...')
     const res = await navigationStore.listNavigation(
       { page: 1, pageSize: 10 },
-      { location: 'header', isActive: true }
+      { location: 'HEADER', isActive: true }
     )
     console.log('Response:', res)
     result.value = res

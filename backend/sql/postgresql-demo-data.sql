@@ -766,309 +766,76 @@ INSERT INTO public.site_settings (
 );
 
 
--- ----------------------------
--- 插入 navigations 表（导航组）测试数据
--- ----------------------------
+-- ==================== 导航组（navigations）====================
+-- 中文导航组
 INSERT INTO public.navigations (
-    created_at, updated_at, name, location, locale, is_active
+    id, created_at, updated_at, name, location, locale, is_active, created_by, updated_by
 ) VALUES
--- 中文 - 顶部导航
-(
-    NOW(), NOW(),
-    '顶部导航',
-    'NAV_LOCATION_HEADER',
-    'zh-CN',
-    true
-),
--- 英文 - 顶部导航
-(
-    NOW(), NOW(),
-    'Header Navigation',
-    'NAV_LOCATION_HEADER',
-    'en-US',
-    true
-),
--- 中文 - 底部导航
-(
-    NOW(), NOW(),
-    '底部导航',
-    'NAV_LOCATION_FOOTER',
-    'zh-CN',
-    true
-),
--- 英文 - 底部导航
-(
-    NOW(), NOW(),
-    'Footer Navigation',
-    'NAV_LOCATION_FOOTER',
-    'en-US',
-    true
-),
--- 中文 - 侧边栏导航（文档中心）
-(
-    NOW(), NOW(),
-    '侧边栏导航',
-    'NAV_LOCATION_SIDEBAR',
-    'zh-CN',
-    true
-);
+-- Main Navigation (HEADER)
+(101, NOW(), NOW(), '主导航', 'HEADER', 'zh-CN', true, 1, 1),
+-- Footer Navigation (FOOTER)
+(102, NOW(), NOW(), '页脚导航', 'FOOTER', 'zh-CN', true, 1, 1),
+-- Sidebar Navigation (SIDEBAR)
+(103, NOW(), NOW(), '侧边栏导航', 'SIDEBAR', 'zh-CN', true, 1, 1),
 
--- ----------------------------
--- 插入 navigation_items 表（导航项）测试数据
--- 关联上述导航组，包含多级嵌套、不同链接类型
--- ----------------------------
+-- 英文导航组（对应中文组）
+(201, NOW(), NOW(), 'Main Navigation', 'HEADER', 'en-US', true, 1, 1),
+(202, NOW(), NOW(), 'Footer Navigation', 'FOOTER', 'en-US', true, 1, 1),
+(203, NOW(), NOW(), 'Sidebar Navigation', 'SIDEBAR', 'en-US', true, 1, 1);
+
+-- ==================== 导航项（navigation_items）====================
+-- 注意：按 parentId 顺序插入（先父后子），确保外键约束有效
 INSERT INTO public.navigation_items (
-    created_at, updated_at, sort_order, link_type, navigation_id,
+    id, created_at, updated_at, sort_order, link_type, navigation_id,
     title, url, object_id, icon, description, is_open_new_tab,
-    is_invalid, css_class, required_permission, parent_id
+    is_invalid, css_class, required_permission, parent_id, created_by, updated_by
 ) VALUES
--- ========== 导航组1（zh-CN 顶部导航） - 一级导航项 ==========
--- 首页
-(
-    NOW(), NOW(),
-    1, 'LINK_TYPE_PAGE', 1,
-    '首页',
-    '/',
-    1, -- 关联页面ID（示例值）
-    'icon-home',
-    '网站首页',
-    false, false,
-    'nav-item header-nav',
-    '',
-    NULL
-),
--- 博客
-(
-    NOW(), NOW(),
-    2, 'LINK_TYPE_POST', 1,
-    '博客',
-    '/posts',
-    0,
-    'icon-blog',
-    '最新文章列表',
-    false, false,
-    'nav-item header-nav',
-    '',
-    NULL
-),
--- 文档中心（有子菜单）
-(
-    NOW(), NOW(),
-    3, 'LINK_TYPE_CUSTOM', 1,
-    '文档中心',
-    '/docs',
-    0,
-    'icon-docs',
-    '使用文档与教程',
-    false, false,
-    'nav-item header-nav has-children',
-    '',
-    NULL
-),
--- 关于我们
-(
-    NOW(), NOW(),
-    4, 'LINK_TYPE_EXTERNAL', 1,
-    '关于我们',
-    'https://gowind.com/about',
-    0,
-    'icon-about',
-    'GoWind CMS 介绍',
-    true, false,
-    'nav-item header-nav',
-    '',
-    NULL
-),
+-- ========== 导航组 101（zh-CN 主导航） ==========
+-- 首页（顶级）
+(1001, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 101, '首页', '/', 0, 'home', '返回首页', false, false, 'nav-item header-nav', '', NULL, 1, 1),
+-- 文章（顶级）
+(1002, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 101, '文章', '/post', 0, 'document', '浏览所有文章', false, false, 'nav-item header-nav', '', NULL, 1, 1),
+-- 分类（顶级，有子菜单）
+(1003, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 101, '分类', '/category', 0, 'folder', '浏览所有分类', false, false, 'nav-item header-nav has-children', '', NULL, 1, 1),
+-- 标签（顶级）
+(1004, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 101, '标签', '/tag', 0, 'tag', '浏览所有标签', false, false, 'nav-item header-nav', '', NULL, 1, 1),
+-- 关于（顶级）
+(1005, NOW(), NOW(), 5, 'LINK_TYPE_PAGE', 101, '关于', '/about', 1, 'information', '关于我们', false, false, 'nav-item header-nav', '', NULL, 1, 1),
 
--- ========== 导航组1（zh-CN 顶部导航） - 文档中心子菜单（二级） ==========
--- 快速开始（父ID=3，即「文档中心」）
-(
-    NOW(), NOW(),
-    1, 'LINK_TYPE_POST', 1,
-    '快速开始',
-    '/docs/quick-start',
-    101, -- 关联帖子ID（示例值）
-    'icon-quickstart',
-    '5分钟快速搭建CMS',
-    false, false,
-    'nav-item child-nav',
-    '',
-    3
-),
--- 配置指南（父ID=3）
-(
-    NOW(), NOW(),
-    2, 'LINK_TYPE_POST', 1,
-    '配置指南',
-    '/docs/configuration',
-    102,
-    'icon-config',
-    '站点/导航/权限配置',
-    false, false,
-    'nav-item child-nav',
-    '',
-    3
-),
--- API 文档（父ID=3）
-(
-    NOW(), NOW(),
-    3, 'LINK_TYPE_EXTERNAL', 1,
-    'API 文档',
-    'https://gowind.com/api-docs',
-    0,
-    'icon-api',
-    '开发者API参考',
-    true, false,
-    'nav-item child-nav',
-    'admin', -- 需要管理员权限
-    3
-),
+-- 分类子菜单：技术分享（parentId = 1003）
+(1006, NOW(), NOW(), 1, 'LINK_TYPE_CATEGORY', 101, '技术分享', '/category/1', 1, 'code', '技术文章分类', false, false, 'nav-item child-nav', '', 1003, 1, 1),
+-- 分类子菜单：生活随笔（parentId = 1003）
+(1007, NOW(), NOW(), 2, 'LINK_TYPE_CATEGORY', 101, '生活随笔', '/category/2', 2, 'blog', '生活文章分类', false, false, 'nav-item child-nav', '', 1003, 1, 1),
 
--- ========== 导航组2（en-US 顶部导航） ==========
--- Home
-(
-    NOW(), NOW(),
-    1, 'LINK_TYPE_PAGE', 2,
-    'Home',
-    '/',
-    1,
-    'icon-home',
-    'Website Home Page',
-    false, false,
-    'nav-item header-nav',
-    '',
-    NULL
-),
--- Blog
-(
-    NOW(), NOW(),
-    2, 'LINK_TYPE_POST', 2,
-    'Blog',
-    '/posts',
-    0,
-    'icon-blog',
-    'Latest Articles',
-    false, false,
-    'nav-item header-nav',
-    '',
-    NULL
-),
--- Documentation
-(
-    NOW(), NOW(),
-    3, 'LINK_TYPE_CUSTOM', 2,
-    'Documentation',
-    '/docs',
-    0,
-    'icon-docs',
-    'User Guides & Tutorials',
-    false, false,
-    'nav-item header-nav has-children',
-    '',
-    NULL
-),
+-- ========== 导航组 102（zh-CN 页脚导航） ==========
+(1008, NOW(), NOW(), 1, 'LINK_TYPE_PAGE', 102, '联系我们', '/contact', 2, 'email', '联系我们', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(1009, NOW(), NOW(), 2, 'LINK_TYPE_PAGE', 102, '隐私政策', '/privacy', 3, 'shield-checkmark', '隐私政策', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(1010, NOW(), NOW(), 3, 'LINK_TYPE_PAGE', 102, '服务条款', '/terms', 4, 'document', '服务条款', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(1011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 102, 'GitHub', 'https://github.com', 0, 'logo-github', '访问我们的GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
 
--- ========== 导航组3（zh-CN 底部导航） ==========
--- 隐私政策
-(
-    NOW(), NOW(),
-    1, 'LINK_TYPE_PAGE', 3,
-    '隐私政策',
-    '/privacy',
-    201,
-    '',
-    '网站隐私政策',
-    false, false,
-    'nav-item footer-nav',
-    '',
-    NULL
-),
--- 用户协议
-(
-    NOW(), NOW(),
-    2, 'LINK_TYPE_PAGE', 3,
-    '用户协议',
-    '/terms',
-    202,
-    '',
-    '用户使用协议',
-    false, false,
-    'nav-item footer-nav',
-    '',
-    NULL
-),
--- 联系我们
-(
-    NOW(), NOW(),
-    3, 'LINK_TYPE_EXTERNAL', 3,
-    '联系我们',
-    'mailto:contact@gowind.com',
-    0,
-    '',
-    '发送邮件联系我们',
-    true, false,
-    'nav-item footer-nav',
-    '',
-    NULL
-),
+-- ========== 导航组 103（zh-CN 侧边栏导航） ==========
+(1012, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 103, '热门标签', '/tag', 0, 'pricetag', '浏览热门标签', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
+(1013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 103, '归档', '/archive', 0, 'archive', '文章归档', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
 
--- ========== 导航组5（zh-CN 侧边栏导航） - 多级嵌套示例 ==========
--- 基础功能（一级）
-(
-    NOW(), NOW(),
-    1, 'LINK_TYPE_CUSTOM', 5,
-    '基础功能',
-    '/docs/basic',
-    0,
-    'icon-basic',
-    'CMS基础操作',
-    false, false,
-    'nav-item sidebar-nav',
-    '',
-    NULL
-),
--- 文章管理（二级，父ID=11）
-(
-    NOW(), NOW(),
-    1, 'LINK_TYPE_POST', 5,
-    '文章管理',
-    '/docs/basic/post',
-    0,
-    'icon-post',
-    '创建/编辑/发布文章',
-    false, false,
-    'nav-item sidebar-nav child',
-    '',
-    11
-),
--- 标签管理（三级，父ID=12）
-(
-    NOW(), NOW(),
-    2, 'LINK_TYPE_CUSTOM', 5,
-    '标签管理',
-    '/docs/basic/post/tags',
-    0,
-    'icon-tag',
-    '标签的创建与关联',
-    false, false,
-    'nav-item sidebar-nav grandchild',
-    '',
-    12
-),
--- 站点配置（二级，父ID=11）
-(
-    NOW(), NOW(),
-    2, 'LINK_TYPE_CUSTOM', 5,
-    '站点配置',
-    '/docs/basic/site',
-    0,
-    'icon-site',
-    '站点基本信息配置',
-    false, false,
-    'nav-item sidebar-nav child',
-    'admin', -- 需要管理员权限
-    11
-);
+-- ========== 导航组 201（en-US Main Navigation） ==========
+(2001, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 201, 'Home', '/', 0, 'home', 'Back to homepage', false, false, 'nav-item header-nav', '', NULL, 1, 1),
+(2002, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 201, 'Posts', '/post', 0, 'document', 'Browse all posts', false, false, 'nav-item header-nav', '', NULL, 1, 1),
+(2003, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 201, 'Categories', '/category', 0, 'folder', 'Browse all categories', false, false, 'nav-item header-nav has-children', '', NULL, 1, 1),
+(2004, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 201, 'Tags', '/tag', 0, 'tag', 'Browse all tags', false, false, 'nav-item header-nav', '', NULL, 1, 1),
+(2005, NOW(), NOW(), 5, 'LINK_TYPE_PAGE', 201, 'About', '/about', 1, 'information', 'About us', false, false, 'nav-item header-nav', '', NULL, 1, 1),
+-- Categories 子菜单
+(2006, NOW(), NOW(), 1, 'LINK_TYPE_CATEGORY', 201, 'Tech Sharing', '/category/1', 1, 'code', 'Tech article category', false, false, 'nav-item child-nav', '', 2003, 1, 1),
+(2007, NOW(), NOW(), 2, 'LINK_TYPE_CATEGORY', 201, 'Life Notes', '/category/2', 2, 'blog', 'Life article category', false, false, 'nav-item child-nav', '', 2003, 1, 1),
+
+-- ========== 导航组 202（en-US Footer Navigation） ==========
+(2008, NOW(), NOW(), 1, 'LINK_TYPE_PAGE', 202, 'Contact', '/contact', 2, 'email', 'Contact us', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(2009, NOW(), NOW(), 2, 'LINK_TYPE_PAGE', 202, 'Privacy Policy', '/privacy', 3, 'shield-checkmark', 'Privacy policy', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(2010, NOW(), NOW(), 3, 'LINK_TYPE_PAGE', 202, 'Terms of Service', '/terms', 4, 'document', 'Terms of service', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(2011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 202, 'GitHub', 'https://github.com', 0, 'logo-github', 'Visit our GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
+
+-- ========== 导航组 203（en-US Sidebar Navigation） ==========
+(2012, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 203, 'Popular Tags', '/tag', 0, 'pricetag', 'Browse popular tags', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
+(2013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 203, 'Archive', '/archive', 0, 'archive', 'Post archive', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1);
 
 
 -- ----------------------------

@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -208,7 +209,7 @@ func (r *NavigationItemRepo) Upsert(ctx context.Context, data *siteV1.Navigation
 	return nil
 }
 
-func (r *NavigationItemRepo) ListItems(ctx context.Context, navigationID uint32) ([]*siteV1.NavigationItem, error) {
+func (r *NavigationItemRepo) ListItems(ctx context.Context, navigationID uint32, treeTravel bool) ([]*siteV1.NavigationItem, error) {
 	q := r.entClient.Client().NavigationItem.Query().
 		Where(
 			navigationitem.NavigationIDEQ(navigationID),
@@ -221,10 +222,47 @@ func (r *NavigationItemRepo) ListItems(ctx context.Context, navigationID uint32)
 		return nil, siteV1.ErrorInternalServerError("query navigation items by navigation ID failed")
 	}
 
-	var dtos []*siteV1.NavigationItem
-	for _, entity := range entities {
-		dtos = append(dtos, r.mapper.ToDTO(entity))
+	if !treeTravel {
+		dtos := make([]*siteV1.NavigationItem, 0, len(entities))
+		for _, entity := range entities {
+			dtos = append(dtos, r.mapper.ToDTO(entity))
+		}
+		return dtos, nil
 	}
 
-	return dtos, nil
+	grouped := make(map[uint32][]*siteV1.NavigationItem)
+	for _, entity := range entities {
+		pid := uint32(0)
+		if entity.ParentID != nil {
+			pid = *entity.ParentID
+		}
+		grouped[pid] = append(grouped[pid], r.mapper.ToDTO(entity))
+	}
+
+	sortByOrder := func(items []*siteV1.NavigationItem) {
+		sort.SliceStable(items, func(i, j int) bool {
+			if items[i].SortOrder == nil && items[j].SortOrder == nil {
+				return false
+			}
+			if items[i].SortOrder == nil {
+				return false
+			}
+			if items[j].SortOrder == nil {
+				return true
+			}
+			return *items[i].SortOrder < *items[j].SortOrder
+		})
+	}
+
+	var buildTree func(parentID uint32) []*siteV1.NavigationItem
+	buildTree = func(parentID uint32) []*siteV1.NavigationItem {
+		items := grouped[parentID]
+		sortByOrder(items)
+		for _, item := range items {
+			item.Children = buildTree(item.GetId())
+		}
+		return items
+	}
+
+	return buildTree(0), nil
 }

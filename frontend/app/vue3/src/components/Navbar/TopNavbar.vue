@@ -49,7 +49,7 @@ async function loadNavigation() {
   try {
     const res = await navigationStore.listNavigation(
       {page: 1, pageSize: 10},
-      {location: 'header', isActive: true}
+      {location: 'HEADER', isActive: true}
     );
     if (res.items && res.items.length > 0) {
       navigationItems.value = res.items[0].items || [];

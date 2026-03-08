@@ -34,7 +34,7 @@ type NavigationRepo struct {
 		siteV1.Navigation, ent.Navigation,
 	]
 
-	locationConverter *mapper.EnumTypeConverter[siteV1.NavigationLocation, navigation.Location]
+	locationConverter *mapper.EnumTypeConverter[siteV1.Navigation_Location, navigation.Location]
 
 	navigationItemRepo *NavigationItemRepo
 }
@@ -49,8 +49,8 @@ func NewNavigationRepo(
 		log:                ctx.NewLoggerHelper("navigation/repo/core-service"),
 		mapper:             mapper.NewCopierMapper[siteV1.Navigation, ent.Navigation](),
 		navigationItemRepo: navigationItemRepo,
-		locationConverter: mapper.NewEnumTypeConverter[siteV1.NavigationLocation, navigation.Location](
-			siteV1.NavigationLocation_name, siteV1.NavigationLocation_value,
+		locationConverter: mapper.NewEnumTypeConverter[siteV1.Navigation_Location, navigation.Location](
+			siteV1.Navigation_Location_name, siteV1.Navigation_Location_value,
 		),
 	}
 
@@ -116,7 +116,7 @@ func (r *NavigationRepo) List(ctx context.Context, req *paginationV1.PagingReque
 	}
 
 	for _, item := range ret.Items {
-		navigationItems, err := r.navigationItemRepo.ListItems(ctx, item.GetId())
+		navigationItems, err := r.navigationItemRepo.ListItems(ctx, item.GetId(), true)
 		if err != nil {
 			r.log.Errorf("query navigation items failed: %s", err.Error())
 			return nil, siteV1.ErrorInternalServerError("query navigation items failed")
@@ -161,7 +161,7 @@ func (r *NavigationRepo) Get(ctx context.Context, req *siteV1.GetNavigationReque
 
 	dto := r.mapper.ToDTO(entity)
 
-	navigationItems, err := r.navigationItemRepo.ListItems(ctx, dto.GetId())
+	navigationItems, err := r.navigationItemRepo.ListItems(ctx, dto.GetId(), true)
 	if err != nil {
 		r.log.Errorf("query navigation items failed: %s", err.Error())
 		return nil, siteV1.ErrorInternalServerError("query navigation items failed")
