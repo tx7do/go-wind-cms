@@ -4,13 +4,11 @@ import {ref, onMounted, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useMessage} from 'naive-ui'
 
-import {usePostStore, useCategoryStore} from '@/stores'
+import {useCategoryStore} from '@/stores'
 import {$t} from '@/locales'
 import type {
   contentservicev1_Category,
-  contentservicev1_Post
 } from "@/api/generated/app/service/v1";
-import {formatDate} from "@/utils/date";
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 
 definePage({
@@ -23,7 +21,6 @@ definePage({
 
 const route = useRoute()
 const router = useRouter()
-const postStore = usePostStore()
 const categoryStore = useCategoryStore()
 const message = useMessage()
 

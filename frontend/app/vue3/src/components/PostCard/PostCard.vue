@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {useRouter} from 'vue-router'
 
-import {formatDate} from "@/utils/date";
 import {usePostStore} from '@/stores';
 import type {contentservicev1_Post} from "@/api/generated/app/service/v1";
 import {scrollToTop} from "@/utils";
+import {formatDate} from "@/utils/date";
 
 interface Props {
   post: contentservicev1_Post

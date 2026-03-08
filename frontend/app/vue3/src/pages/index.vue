@@ -6,7 +6,6 @@ import {ref, onMounted, computed, onUnmounted} from 'vue'
 import {usePostStore, useCategoryStore, useTagStore} from '@/stores'
 import {$t, i18n} from '@/locales'
 import {XIcon} from "@/plugins/xicon";
-import {formatDate} from "@/utils/date";
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import type {
   contentservicev1_Category,
@@ -124,15 +123,6 @@ async function loadPopularTags() {
   } catch (error) {
     console.error('Load popular tags failed:', error)
   }
-}
-
-function handleViewPost(id: number) {
-  router.push({
-    path: `/post/${id}`,
-    query: {
-      from: 'home'
-    }
-  })
 }
 
 function handleViewCategory(id: number) {
@@ -2428,9 +2418,6 @@ html.dark {
     }
 
 
-
-
-
     // Section 背景交替：创造视觉节奏 - 优化配色更生动
     .categories-section {
       background: linear-gradient(180deg, #1a1d26 0%, #222836 100%);
@@ -2561,7 +2548,6 @@ html.dark {
   }
 
 
-
   // 热门标签区域暗黑模式优化
   .popular-tags-container {
     .tags-title {
@@ -2609,7 +2595,6 @@ html.dark {
     padding: 0 1.5rem;
     gap: 1.5rem;
   }
-
 
 
   .hero {
@@ -2763,7 +2748,6 @@ html.dark {
   }
 
 
-
   .popular-tags-container {
     padding: 0 1.5rem;
 
@@ -2804,8 +2788,6 @@ html.dark {
       padding: 0.3rem 0.7rem;
     }
   }
-
-
 
 
   .features-grid {

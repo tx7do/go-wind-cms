@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
-
 import {$t} from '@/locales'
 import PostCard from '@/components/PostCard';
 import type {contentservicev1_Post} from "@/api/generated/app/service/v1";
