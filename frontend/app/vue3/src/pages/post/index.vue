@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import {definePage} from 'unplugin-vue-router/runtime'
-import {ref, onMounted, watch} from 'vue'
-import {useRouter, useRoute} from 'vue-router'
+import {ref, onMounted} from 'vue'
 
-import {usePostStore, useCategoryStore} from '@/stores/modules/app'
+import {useCategoryStore} from '@/stores/modules/app'
 import {$t} from '@/locales'
-import {formatDate} from "@/utils/date";
-import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
-import type {
-  contentservicev1_Category,
-  contentservicev1_Post
-} from "@/api/generated/app/service/v1";
+import CategoryFilter from '@/components/CategoryFilter';
+import PostListWithPagination from '@/components/PostListWithPagination';
 
 definePage({
   name: 'post-list',
@@ -20,41 +15,11 @@ definePage({
   },
 })
 
-const router = useRouter()
-const route = useRoute()
-const postStore = usePostStore()
 const categoryStore = useCategoryStore()
 
-const loading = ref(false)
-const posts = ref<contentservicev1_Post[]>([])
-const categories = ref<contentservicev1_Category[]>([])
-const total = ref(0)
-const pagination = ref({
-  page: 1,
-  pageSize: 12,
-})
-
-const selectedCategory = ref<number | null>(null)
-
-async function loadPosts() {
-  loading.value = true
-  try {
-    const filters: any = {status: 'POST_STATUS_PUBLISHED'}
-
-    if (selectedCategory.value) {
-      filters.categoryIds = [selectedCategory.value]
-    }
-
-
-    const res = await postStore.listPost(pagination.value, filters)
-    posts.value = res.items || []
-    total.value = res.total || 0
-  } catch (error) {
-    console.error('Load posts failed:', error)
-  } finally {
-    loading.value = false
-  }
-}
+const postListRef = ref<InstanceType<typeof PostListWithPagination> | null>(null)
+const categories = ref<any[]>([])
+const selectedCategoryId = ref<number | null>(null)
 
 async function loadCategories() {
   try {
@@ -68,68 +33,12 @@ async function loadCategories() {
   }
 }
 
-function handleViewPost(postId: number) {
-  const query: any = {}
-
-  // 如果有选中的分类，传递分类信息
-  if (selectedCategory.value) {
-    query.from = 'post'
-    query.categoryId = selectedCategory.value
-  }
-
-  router.push({
-    path: `/post/${postId}`,
-    query
-  })
-}
-
 function handleCategoryChange(categoryId: number | null) {
-  selectedCategory.value = categoryId
-  pagination.value.page = 1
-  loadPosts()
+  selectedCategoryId.value = categoryId
 }
-
-function handlePageChange(page: number) {
-  pagination.value.page = page
-  loadPosts()
-  window.scrollTo({top: 0, behavior: 'smooth'})
-}
-
-function handlePageSizeChange(pageSize: number) {
-  pagination.value.pageSize = pageSize
-  pagination.value.page = 1
-  loadPosts()
-}
-
 
 onMounted(async () => {
   await loadCategories()
-
-  // 检查 URL 参数
-  const categoryId = route.query.category
-  if (categoryId) {
-    selectedCategory.value = parseInt(categoryId as string)
-  }
-
-  await loadPosts()
-})
-
-// 监听语言切换，自动重新加载数据
-useLanguageChangeEffect(async () => {
-  await Promise.all([
-    loadPosts(),
-    loadCategories(),
-  ]);
-}, {
-  immediate: false,    // 已经在 onMounted 中加载，不需要立即执行
-  autoCleanup: true,   // 组件卸载时自动取消订阅
-});
-
-watch(() => route.query.category, (newVal) => {
-  if (newVal) {
-    selectedCategory.value = parseInt(newVal as string)
-    loadPosts()
-  }
 })
 </script>
 
@@ -144,109 +53,17 @@ watch(() => route.query.category, (newVal) => {
     </div>
 
     <div class="page-container">
-      <!-- Category Tabs -->
-      <div class="category-section">
-        <div class="category-tabs">
-          <n-button
-            :type="selectedCategory === null ? 'primary' : 'default'"
-            :ghost="selectedCategory !== null"
-            size="large"
-            @click="handleCategoryChange(null)"
-          >
-            <template #icon>
-              <span class="i-carbon:grid"/>
-            </template>
-            {{ $t('page.posts.all_categories') }}
-          </n-button>
-          <n-button
-            v-for="cat in categories"
-            :key="cat.id"
-            :type="selectedCategory === cat.id ? 'primary' : 'default'"
-            :ghost="selectedCategory !== cat.id"
-            size="large"
-            @click="handleCategoryChange(cat.id)"
-          >
-            <template #icon>
-              <span class="i-carbon:folder"/>
-            </template>
-            {{ categoryStore.getCategoryName(cat) }}
-          </n-button>
-        </div>
-      </div>
-
-      <!-- Posts Grid -->
-      <main class="main-content">
-        <!-- Loading Skeleton -->
-        <div v-if="loading" class="posts-grid">
-          <div v-for="i in 12" :key="i" class="post-card">
-            <n-skeleton height="380px"/>
-          </div>
-        </div>
-        <!-- Loaded Content -->
-        <div v-else>
-          <!-- Results Count -->
-          <div v-if="posts.length > 0" class="results-info">
-            <span>{{ $t('page.posts.found') }} <strong>{{
-                total
-              }}</strong> {{ $t('page.posts.articles') }}</span>
-          </div>
-
-          <div v-if="posts.length > 0" class="posts-grid">
-            <article
-              v-for="post in posts"
-              :key="post.id"
-              class="post-card"
-              @click="handleViewPost(post.id)"
-            >
-              <div class="post-image">
-                <img :src="postStore.getPostThumbnail(post)" :alt="postStore.getPostTitle(post)"/>
-                <div class="image-overlay"/>
-              </div>
-              <div class="post-content">
-                <h3 class="post-title">{{ postStore.getPostTitle(post) }}</h3>
-                <p class="post-summary">{{ postStore.getPostSummary(post) }}</p>
-                <div class="post-meta">
-                  <div class="meta-item">
-                    <span class="i-carbon:user"/>
-                    <span>{{ post.authorName }}</span>
-                  </div>
-                  <div class="meta-item">
-                    <span class="i-carbon:calendar"/>
-                    <span>{{ formatDate(post.createdAt) }}</span>
-                  </div>
-                  <div class="meta-item">
-                    <span class="i-carbon:view"/>
-                    <span>{{ post.visits || 0 }}</span>
-                  </div>
-                  <div class="meta-item">
-                    <span class="i-carbon:thumbs-up"/>
-                    <span>{{ post.likes || 0 }}</span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <n-empty v-else :description="$t('page.posts.no_results')" style="margin: 80px 0;">
-            <template #icon>
-              <span class="i-carbon:document-blank" style="font-size: 64px;"/>
-            </template>
-          </n-empty>
-
-          <!-- Pagination -->
-          <div v-if="total > pagination.pageSize" class="pagination-wrapper">
-            <n-pagination
-              v-model:page="pagination.page"
-              :page-count="Math.ceil(total / pagination.pageSize)"
-              :page-slot="7"
-              show-size-picker
-              :page-sizes="[12, 24, 36, 48]"
-              @update:page="handlePageChange"
-              @update:page-size="handlePageSizeChange"
-            />
-          </div>
-        </div>
-      </main>
+      <CategoryFilter
+        :categories="categories"
+        :selected-category="selectedCategoryId"
+        @category-change="handleCategoryChange"
+      />
+      <PostListWithPagination
+        ref="postListRef"
+        :initial-page-size="12"
+        :page-sizes="[12, 24, 36, 48]"
+        :category-id="selectedCategoryId"
+      />
     </div>
   </div>
 </template>

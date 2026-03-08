@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ApplicationProvider: typeof import('./components/ApplicationProvider/ApplicationProvider.vue')['default']
+    CategoryFilter: typeof import('./components/CategoryFilter/CategoryFilter.vue')['default']
     CategoryTree: typeof import('./components/CategoryTree/CategoryTree.vue')['default']
     CodeEditor: typeof import('./components/ContentEditor/CodeEditor.vue')['default']
     CommentSection: typeof import('./components/CommentSection/CommentSection.vue')['default']
@@ -57,6 +58,9 @@ declare module 'vue' {
     NTag: typeof import('naive-ui')['NTag']
     NText: typeof import('naive-ui')['NText']
     PlainTextEditor: typeof import('./components/ContentEditor/PlainTextEditor.vue')['default']
+    PostCard: typeof import('./components/PostCard/PostCard.vue')['default']
+    PostList: typeof import('./components/PostList/PostList.vue')['default']
+    PostListWithPagination: typeof import('./components/PostListWithPagination/PostListWithPagination.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./components/SearchBar/SearchBar.vue')['default']
