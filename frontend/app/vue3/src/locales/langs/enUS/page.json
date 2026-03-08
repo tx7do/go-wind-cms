@@ -60,6 +60,13 @@
     "articles_count": "articles",
     "category_untitled": "Untitled Category"
   },
+  "tags": {
+    "tags_list": "Tags",
+    "explore_all": "Explore all tags",
+    "total_tags": "tags",
+    "no_tags": "No tags",
+    "tag_untitled": "Untitled Tag"
+  },
   "post_detail": {
     "untitled": "Untitled",
     "author": "Author",

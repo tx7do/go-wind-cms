@@ -32,6 +32,8 @@ declare module 'vue-router/auto-routes' {
     'privacy': RouteRecordInfo<'privacy', '/privacy', Record<never, never>, Record<never, never>>,
     'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
     'settings': RouteRecordInfo<'settings', '/settings', Record<never, never>, Record<never, never>>,
+    'tag-list': RouteRecordInfo<'tag-list', '/tag', Record<never, never>, Record<never, never>>,
+    'tag-detail': RouteRecordInfo<'tag-detail', '/tag/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'terms': RouteRecordInfo<'terms', '/terms', Record<never, never>, Record<never, never>>,
     '/test-navigation': RouteRecordInfo<'/test-navigation', '/test-navigation', Record<never, never>, Record<never, never>>,
     'user-profile': RouteRecordInfo<'user-profile', '/user', Record<never, never>, Record<never, never>>,

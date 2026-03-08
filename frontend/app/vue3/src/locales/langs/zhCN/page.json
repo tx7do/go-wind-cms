@@ -60,6 +60,13 @@
     "articles_count": "篇文章",
     "category_untitled": "未命名分类"
   },
+  "tags": {
+    "tags_list": "标签列表",
+    "explore_all": "探索所有标签",
+    "total_tags": "个标签",
+    "no_tags": "暂无标签",
+    "tag_untitled": "未命名标签"
+  },
   "post_detail": {
     "untitled": "未命名",
     "author": "作者",
