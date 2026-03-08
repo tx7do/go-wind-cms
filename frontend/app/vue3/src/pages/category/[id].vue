@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {definePage} from 'unplugin-vue-router/runtime'
-import {ref, onMounted, computed} from 'vue'
+import {ref, onMounted, computed, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useMessage} from 'naive-ui'
 
@@ -86,6 +86,17 @@ useLanguageChangeEffect(async () => {
   immediate: false,    // 已经在 onMounted 中加载，不需要立即执行
   autoCleanup: true,   // 组件卸载时自动取消订阅
 });
+
+// 监听路由参数变化（id 变化时重新加载）
+watch(
+  () => route.params.id,
+  async (newId, oldId) => {
+    if (newId !== oldId) {
+      console.log('[Category Detail] Route param changed, reloading...')
+      await loadCategory()
+    }
+  }
+)
 </script>
 
 <template>
