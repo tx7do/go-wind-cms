@@ -1,23 +1,101 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue'
+import {computed, ref, onMounted} from 'vue'
 
 import {$t} from '@/locales'
 import {useCategoryStore} from '@/stores'
 import {XIcon} from '@/plugins/xicon'
+import {useLanguageChangeEffect} from "@/hooks/useLanguageChangeEffect";
+import type {
+  contentservicev1_Category
+} from "@/api/generated/app/service/v1";
 
 interface Props {
-  categories: any[]
-  selectedCategory: number | null
+  categories?: any[] // 外部传入的分类数据（可选）
+  selectedCategory?: number | null
   treeMode?: boolean
+  parentId?: number | null // 支持根据 parentId 过滤
+  autoLoad?: boolean // 是否自动加载数据
 }
 
 interface Emits {
   (e: 'category-change', categoryId: number | null): void
+
+  (e: 'loaded', categories: any[]): void // 数据加载完成事件
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 const categoryStore = useCategoryStore()
+
+// 内部状态管理
+const categories = ref<any[]>(props.categories || [])
+const loading = ref(false)
+
+// 加载分类数据
+async function loadCategories() {
+  loading.value = true
+  try {
+    const query: any = {status: 'CATEGORY_STATUS_ACTIVE'}
+
+    // 如果指定了 parentId，添加过滤条件
+    if (props.parentId !== undefined && props.parentId !== null) {
+      query.parentId = props.parentId
+    }
+
+    const res = await categoryStore.listCategory(
+      undefined,
+      query
+    )
+
+    categories.value = res.items || []
+    emit('loaded', categories.value)
+    console.log('[CategoryFilter] Categories loaded:', categories.value.length)
+  } catch (error) {
+    console.error('[CategoryFilter] Load categories failed:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// 监听语言切换，自动重新加载数据
+useLanguageChangeEffect(loadCategories, {
+  immediate: true,      // 是否立即执行一次
+  autoCleanup: true,    // 是否自动清理
+});
+
+// 创建一个响应式的分类名称映射
+const categoryNamesMap = computed(() => {
+  const map = new Map()
+  const currentCategories = props.categories || categories.value
+
+  currentCategories.forEach(cat => {
+    if (cat?.id) {
+      map.set(cat.id, categoryStore.getCategoryName(cat))
+    }
+  })
+  // 处理子分类
+  currentCategories.forEach(cat => {
+    if (cat?.children) {
+      cat.children.forEach((child: contentservicev1_Category) => {
+        if (child?.id) {
+          map.set(child.id, categoryStore.getCategoryName(child))
+        }
+      })
+    }
+  })
+  return map
+})
+
+// 获取分类名称 - 使用响应式的 Map
+function getCategoryName(category: any) {
+  if (!category?.id) return ''
+  return categoryNamesMap.value.get(category.id) || categoryStore.getCategoryName(category)
+}
+
+// 使用外部传入的 categories 或内部加载的 categories
+const displayCategories = computed(() => {
+  return props.categories || categories.value
+})
 
 // 定时器管理
 const hideTimers = new Map<number, ReturnType<typeof setTimeout>>()
@@ -27,7 +105,8 @@ const expandedIds = ref<Set<number>>(new Set()) // 默认全部收起
 
 // 平铺模式：只显示根节点
 const rootCategories = computed(() => {
-  return props.categories.filter(cat => !cat.parentId)
+  const currentCategories = displayCategories.value
+  return currentCategories.filter(cat => !cat.parentId)
 })
 
 function handleCategoryChange(categoryId: number | null) {
@@ -86,9 +165,18 @@ function handleTouchToggle(nodeId: number) {
 }
 
 function hasChildren(categoryId: number): boolean {
-  const category = props.categories.find(cat => cat.id === categoryId)
+  const currentCategories = displayCategories.value
+  const category = currentCategories.find(cat => cat.id === categoryId)
   return !!(category && category.children && category.children.length > 0)
 }
+
+// 生命周期：自动加载数据
+onMounted(async () => {
+  // 如果没有外部传入 categories 且 autoLoad 未禁用，则自动加载
+  if (!props.categories && props.autoLoad !== false) {
+    await loadCategories()
+  }
+})
 </script>
 
 <template>
@@ -111,7 +199,7 @@ function hasChildren(categoryId: number): boolean {
       <template v-if="treeMode">
         <!-- 一级分类 (横向排列 + 悬浮菜单) -->
         <div
-          v-for="node in categories"
+          v-for="node in displayCategories"
           :key="node.id"
           class="category-item-wrapper"
           @mouseenter="showSubmenu(node.id)"
@@ -127,7 +215,7 @@ function hasChildren(categoryId: number): boolean {
             <template #icon>
               <XIcon :name="node.icon || 'carbon:folder'"/>
             </template>
-            {{ categoryStore.getCategoryName(node) }}
+            {{ getCategoryName(node) }}
           </n-button>
 
           <!-- 子分类菜单 -->
@@ -150,7 +238,7 @@ function hasChildren(categoryId: number): boolean {
               <template #icon>
                 <XIcon :name="child.icon || 'carbon:folder'"/>
               </template>
-              {{ categoryStore.getCategoryName(child) }}
+              {{ getCategoryName(child) }}
             </n-button>
           </div>
         </div>
@@ -169,7 +257,7 @@ function hasChildren(categoryId: number): boolean {
           <template #icon>
             <XIcon :name="cat.icon || 'carbon:folder'"/>
           </template>
-          {{ categoryStore.getCategoryName(cat) }}
+          {{ getCategoryName(cat) }}
         </n-button>
       </template>
     </div>

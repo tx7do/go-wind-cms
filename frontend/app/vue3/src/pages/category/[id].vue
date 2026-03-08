@@ -124,13 +124,14 @@ useLanguageChangeEffect(async () => {
       </div>
 
       <!-- Sub Categories List -->
-      <CategoryList
-        v-if="childCategories.length > 0"
-        :categories="childCategories"
-        :loading="false"
-        :show-skeleton="false"
-        @category-click="handleViewChildCategory"
-      />
+      <div class="sub-categories-wrapper" v-if="childCategories.length > 0">
+        <CategoryList
+          :categories="childCategories"
+          :loading="false"
+          :show-skeleton="false"
+          @category-click="handleViewChildCategory"
+        />
+      </div>
 
       <!-- Posts List with Pagination -->
       <PostListWithPagination
@@ -242,12 +243,10 @@ useLanguageChangeEffect(async () => {
     .category-description {
       font-size: 20px;
       color: rgba(255, 255, 255, 0.95);
-      margin: 0 0 24px 0;
       font-weight: 500;
       line-height: 1.5;
       max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 auto 24px;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
       animation: fadeInUp 0.8s ease-out 0.2s both;
     }
@@ -312,6 +311,11 @@ useLanguageChangeEffect(async () => {
       }
     }
   }
+}
+
+// Sub Categories Wrapper
+.sub-categories-wrapper {
+  margin-bottom: 48px;
 }
 
 // Filter Controls
@@ -406,6 +410,10 @@ useLanguageChangeEffect(async () => {
     }
   }
 
+  .sub-categories-wrapper {
+    margin-bottom: 40px;
+  }
+
   .filter-controls {
     :deep(.n-button-group) {
       .n-button {
@@ -445,6 +453,10 @@ useLanguageChangeEffect(async () => {
         font-size: 20px;
       }
     }
+  }
+
+  .sub-categories-wrapper {
+    margin-bottom: 32px;
   }
 
   .filter-controls {
@@ -581,6 +593,10 @@ useLanguageChangeEffect(async () => {
     }
   }
 
+  .sub-categories-wrapper {
+    margin-bottom: 28px;
+  }
+
   .filter-controls {
     :deep(.n-button-group) {
       .n-button {
@@ -674,6 +690,10 @@ useLanguageChangeEffect(async () => {
         font-size: 17px;
       }
     }
+  }
+
+  .sub-categories-wrapper {
+    margin-bottom: 24px;
   }
 
   .filter-controls {

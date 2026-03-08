@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {definePage} from 'unplugin-vue-router/runtime'
-import {ref, onMounted} from 'vue'
+import {ref} from 'vue'
 
-import {useCategoryStore} from '@/stores'
 import {$t} from '@/locales'
 import CategoryFilter from '@/components/CategoryFilter';
 import PostListWithPagination from '@/components/PostListWithPagination';
@@ -15,31 +14,12 @@ definePage({
   },
 })
 
-const categoryStore = useCategoryStore()
-
 const postListRef = ref<InstanceType<typeof PostListWithPagination> | null>(null)
-const categories = ref<any[]>([])
 const selectedCategoryId = ref<number | null>(null)
-
-async function loadCategories() {
-  try {
-    const res = await categoryStore.listCategory(
-      undefined,
-      {status: 'CATEGORY_STATUS_ACTIVE'}
-    )
-    categories.value = res.items || []
-  } catch (error) {
-    console.error('Load categories failed:', error)
-  }
-}
 
 function handleCategoryChange(categoryId: number | null) {
   selectedCategoryId.value = categoryId
 }
-
-onMounted(async () => {
-  await loadCategories()
-})
 </script>
 
 <template>
@@ -54,9 +34,9 @@ onMounted(async () => {
 
     <div class="page-container">
       <CategoryFilter
-        :categories="categories"
         :selected-category="selectedCategoryId"
         :tree-mode="true"
+        :auto-load="true"
         @category-change="handleCategoryChange"
       />
       <PostListWithPagination
