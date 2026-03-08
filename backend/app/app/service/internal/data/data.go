@@ -2,7 +2,6 @@ package data
 
 import (
 	"github.com/redis/go-redis/v9"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	authnEngine "github.com/tx7do/kratos-authn/engine"
 	"github.com/tx7do/kratos-authn/engine/jwt"
@@ -13,6 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
@@ -20,9 +20,13 @@ import (
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
+	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 
+	"go-wind-cms/pkg/oss"
 	"go-wind-cms/pkg/serviceid"
 )
 
@@ -65,6 +69,10 @@ func NewDiscovery(ctx *bootstrap.Context) registry.Discovery {
 	return discovery
 }
 
+func NewMinIoClient(ctx *bootstrap.Context) *oss.MinIOClient {
+	return oss.NewMinIoClient(ctx.GetConfig(), ctx.GetLogger())
+}
+
 // NewAuthenticator 创建认证器
 func NewAuthenticator(cfg *conf.Bootstrap) authnEngine.Authenticator {
 	authenticator, _ := jwt.NewAuthenticator(
@@ -86,6 +94,69 @@ func NewAuthenticationServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	}
 
 	return authenticationV1.NewAuthenticationServiceClient(cli)
+}
+
+func NewUserCredentialServiceClient(ctx *bootstrap.Context, r registry.Discovery) authenticationV1.UserCredentialServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return authenticationV1.NewUserCredentialServiceClient(cli)
+}
+
+func NewUserServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.UserServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewUserServiceClient(cli)
+}
+
+func NewTenantServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.TenantServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewTenantServiceClient(cli)
+}
+
+func NewRoleServiceClient(ctx *bootstrap.Context, r registry.Discovery) permissionV1.RoleServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return permissionV1.NewRoleServiceClient(cli)
+}
+
+func NewOrgUnitServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.OrgUnitServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewOrgUnitServiceClient(cli)
+}
+
+func NewPositionServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.PositionServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewPositionServiceClient(cli)
+}
+
+func NewFileServiceClient(ctx *bootstrap.Context, r registry.Discovery) storageV1.FileServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return storageV1.NewFileServiceClient(cli)
 }
 
 func NewCommentServiceClient(ctx *bootstrap.Context, r registry.Discovery) commentV1.CommentServiceClient {

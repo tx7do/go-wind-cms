@@ -32,7 +32,7 @@ export const useTagStore = defineStore('tag', () => {
     const noPaging =
       paging?.page === undefined && paging?.pageSize === undefined;
     // @ts-ignore proto generated code is error.
-    return await service.ListTag({
+    return await service.List({
       fieldMask,
       orderBy: makeOrderBy(orderBy),
       query: makeQueryString(formValues, userStore.isTenantUser()),
@@ -46,14 +46,14 @@ export const useTagStore = defineStore('tag', () => {
    * 获取标签
    */
   async function getTag(id: number) {
-    return await service.GetTag({id});
+    return await service.Get({id});
   }
 
   /**
    * 创建标签
    */
   async function createTag(values: Record<string, any> = {}) {
-    return await service.CreateTag({
+    return await service.Create({
       // @ts-ignore proto generated code is error.
       data: {
         ...values,
@@ -65,7 +65,7 @@ export const useTagStore = defineStore('tag', () => {
    * 更新标签
    */
   async function updateTag(id: number, values: Record<string, any> = {}) {
-    return await service.UpdateTag({
+    return await service.Update({
       id,
       // @ts-ignore proto generated code is error.
       data: {
@@ -79,7 +79,7 @@ export const useTagStore = defineStore('tag', () => {
    * 删除标签
    */
   async function deleteTag(id: number) {
-    return await service.DeleteTag({id});
+    return await service.Delete({id});
   }
 
   /**

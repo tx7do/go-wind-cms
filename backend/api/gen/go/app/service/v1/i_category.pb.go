@@ -29,13 +29,13 @@ var File_app_service_v1_i_category_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_category_proto_rawDesc = "" +
 	"\n" +
-	"\x1fapp/service/v1/i_category.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a!content/service/v1/category.proto2\xf8\x05\n" +
-	"\x0fCategoryService\x12o\n" +
-	"\fListCategory\x12\x19.pagination.PagingRequest\x1a(.content.service.v1.ListCategoryResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/app/v1/categories\x12t\n" +
-	"\vGetCategory\x12&.content.service.v1.GetCategoryRequest\x1a\x1c.content.service.v1.Category\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/app/v1/categories/{id}\x12x\n" +
-	"\x0eCreateCategory\x12).content.service.v1.CreateCategoryRequest\x1a\x1c.content.service.v1.Category\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/app/v1/categories\x12}\n" +
-	"\x0eUpdateCategory\x12).content.service.v1.UpdateCategoryRequest\x1a\x1c.content.service.v1.Category\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\x1a\x17/app/v1/categories/{id}\x12t\n" +
-	"\x0eDeleteCategory\x12).content.service.v1.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/app/v1/categories/{id}\x12\x8e\x01\n" +
+	"\x1fapp/service/v1/i_category.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a!content/service/v1/category.proto2\xd0\x05\n" +
+	"\x0fCategoryService\x12g\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a(.content.service.v1.ListCategoryResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/app/v1/categories\x12l\n" +
+	"\x03Get\x12&.content.service.v1.GetCategoryRequest\x1a\x1c.content.service.v1.Category\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/app/v1/categories/{id}\x12p\n" +
+	"\x06Create\x12).content.service.v1.CreateCategoryRequest\x1a\x1c.content.service.v1.Category\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/app/v1/categories\x12u\n" +
+	"\x06Update\x12).content.service.v1.UpdateCategoryRequest\x1a\x1c.content.service.v1.Category\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\x1a\x17/app/v1/categories/{id}\x12l\n" +
+	"\x06Delete\x12).content.service.v1.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/app/v1/categories/{id}\x12\x8e\x01\n" +
 	"\x0eGetTranslation\x12&.content.service.v1.GetCategoryRequest\x1a'.content.service.v1.CategoryTranslation\"+\x82\xd3\xe4\x93\x02%\x12#/app/v1/categories/{id}/translationB\xaf\x01\n" +
 	"\x12com.app.service.v1B\x0eICategoryProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
@@ -51,17 +51,17 @@ var file_app_service_v1_i_category_proto_goTypes = []any{
 	(*v11.CategoryTranslation)(nil),   // 8: content.service.v1.CategoryTranslation
 }
 var file_app_service_v1_i_category_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.CategoryService.ListCategory:input_type -> pagination.PagingRequest
-	1, // 1: app.service.v1.CategoryService.GetCategory:input_type -> content.service.v1.GetCategoryRequest
-	2, // 2: app.service.v1.CategoryService.CreateCategory:input_type -> content.service.v1.CreateCategoryRequest
-	3, // 3: app.service.v1.CategoryService.UpdateCategory:input_type -> content.service.v1.UpdateCategoryRequest
-	4, // 4: app.service.v1.CategoryService.DeleteCategory:input_type -> content.service.v1.DeleteCategoryRequest
+	0, // 0: app.service.v1.CategoryService.List:input_type -> pagination.PagingRequest
+	1, // 1: app.service.v1.CategoryService.Get:input_type -> content.service.v1.GetCategoryRequest
+	2, // 2: app.service.v1.CategoryService.Create:input_type -> content.service.v1.CreateCategoryRequest
+	3, // 3: app.service.v1.CategoryService.Update:input_type -> content.service.v1.UpdateCategoryRequest
+	4, // 4: app.service.v1.CategoryService.Delete:input_type -> content.service.v1.DeleteCategoryRequest
 	1, // 5: app.service.v1.CategoryService.GetTranslation:input_type -> content.service.v1.GetCategoryRequest
-	5, // 6: app.service.v1.CategoryService.ListCategory:output_type -> content.service.v1.ListCategoryResponse
-	6, // 7: app.service.v1.CategoryService.GetCategory:output_type -> content.service.v1.Category
-	6, // 8: app.service.v1.CategoryService.CreateCategory:output_type -> content.service.v1.Category
-	6, // 9: app.service.v1.CategoryService.UpdateCategory:output_type -> content.service.v1.Category
-	7, // 10: app.service.v1.CategoryService.DeleteCategory:output_type -> google.protobuf.Empty
+	5, // 6: app.service.v1.CategoryService.List:output_type -> content.service.v1.ListCategoryResponse
+	6, // 7: app.service.v1.CategoryService.Get:output_type -> content.service.v1.Category
+	6, // 8: app.service.v1.CategoryService.Create:output_type -> content.service.v1.Category
+	6, // 9: app.service.v1.CategoryService.Update:output_type -> content.service.v1.Category
+	7, // 10: app.service.v1.CategoryService.Delete:output_type -> google.protobuf.Empty
 	8, // 11: app.service.v1.CategoryService.GetTranslation:output_type -> content.service.v1.CategoryTranslation
 	6, // [6:12] is the sub-list for method output_type
 	0, // [0:6] is the sub-list for method input_type

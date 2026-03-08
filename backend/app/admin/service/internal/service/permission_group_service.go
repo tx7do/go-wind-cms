@@ -101,7 +101,7 @@ func (s *PermissionGroupService) Delete(ctx context.Context, req *permissionV1.D
 	}
 
 	if _, err = s.permissionServiceClient.Delete(ctx, &permissionV1.DeletePermissionRequest{
-		DeleteBy: &permissionV1.DeletePermissionRequest_GroupId{GroupId: req.GetId()},
+		QueryBy: &permissionV1.DeletePermissionRequest_GroupId{GroupId: req.GetId()},
 	}); err != nil {
 		return nil, err
 	}

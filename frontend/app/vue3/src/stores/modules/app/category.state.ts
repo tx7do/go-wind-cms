@@ -32,7 +32,7 @@ export const useCategoryStore = defineStore('category', () => {
     const noPaging =
       paging?.page === undefined && paging?.pageSize === undefined;
     // @ts-ignore proto generated code is error.
-    return await service.ListCategory({
+    return await service.List({
       fieldMask,
       orderBy: makeOrderBy(orderBy),
       query: makeQueryString(formValues, userStore.isTenantUser()),
@@ -46,14 +46,14 @@ export const useCategoryStore = defineStore('category', () => {
    * 获取分类
    */
   async function getCategory(id: number) {
-    return await service.GetCategory({id});
+    return await service.Get({id});
   }
 
   /**
    * 创建分类
    */
   async function createCategory(values: Record<string, any> = {}) {
-    return await service.CreateCategory({
+    return await service.Create({
       // @ts-ignore proto generated code is error.
       data: {
         ...values,
@@ -65,7 +65,7 @@ export const useCategoryStore = defineStore('category', () => {
    * 更新分类
    */
   async function updateCategory(id: number, values: Record<string, any> = {}) {
-    return await service.UpdateCategory({
+    return await service.Update({
       id,
       // @ts-ignore proto generated code is error.
       data: {
@@ -79,7 +79,7 @@ export const useCategoryStore = defineStore('category', () => {
    * 删除分类
    */
   async function deleteCategory(id: number) {
-    return await service.DeleteCategory({id});
+    return await service.Delete({id});
   }
 
   /**

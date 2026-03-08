@@ -44,10 +44,10 @@ type redactedTagServiceServer struct {
 	bypass redact.Bypass
 }
 
-// ListTag is the redacted wrapper for the actual TagServiceServer.ListTag method
+// List is the redacted wrapper for the actual TagServiceServer.List method
 // Unary RPC
-func (s *redactedTagServiceServer) ListTag(ctx context.Context, in *pagination.PagingRequest) (*contentpb.ListTagResponse, error) {
-	res, err := s.srv.ListTag(ctx, in)
+func (s *redactedTagServiceServer) List(ctx context.Context, in *pagination.PagingRequest) (*contentpb.ListTagResponse, error) {
+	res, err := s.srv.List(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -55,10 +55,10 @@ func (s *redactedTagServiceServer) ListTag(ctx context.Context, in *pagination.P
 	return res, err
 }
 
-// GetTag is the redacted wrapper for the actual TagServiceServer.GetTag method
+// Get is the redacted wrapper for the actual TagServiceServer.Get method
 // Unary RPC
-func (s *redactedTagServiceServer) GetTag(ctx context.Context, in *contentpb.GetTagRequest) (*contentpb.Tag, error) {
-	res, err := s.srv.GetTag(ctx, in)
+func (s *redactedTagServiceServer) Get(ctx context.Context, in *contentpb.GetTagRequest) (*contentpb.Tag, error) {
+	res, err := s.srv.Get(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -66,10 +66,10 @@ func (s *redactedTagServiceServer) GetTag(ctx context.Context, in *contentpb.Get
 	return res, err
 }
 
-// CreateTag is the redacted wrapper for the actual TagServiceServer.CreateTag method
+// Create is the redacted wrapper for the actual TagServiceServer.Create method
 // Unary RPC
-func (s *redactedTagServiceServer) CreateTag(ctx context.Context, in *contentpb.CreateTagRequest) (*contentpb.Tag, error) {
-	res, err := s.srv.CreateTag(ctx, in)
+func (s *redactedTagServiceServer) Create(ctx context.Context, in *contentpb.CreateTagRequest) (*contentpb.Tag, error) {
+	res, err := s.srv.Create(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -77,10 +77,10 @@ func (s *redactedTagServiceServer) CreateTag(ctx context.Context, in *contentpb.
 	return res, err
 }
 
-// UpdateTag is the redacted wrapper for the actual TagServiceServer.UpdateTag method
+// Update is the redacted wrapper for the actual TagServiceServer.Update method
 // Unary RPC
-func (s *redactedTagServiceServer) UpdateTag(ctx context.Context, in *contentpb.UpdateTagRequest) (*contentpb.Tag, error) {
-	res, err := s.srv.UpdateTag(ctx, in)
+func (s *redactedTagServiceServer) Update(ctx context.Context, in *contentpb.UpdateTagRequest) (*contentpb.Tag, error) {
+	res, err := s.srv.Update(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -88,10 +88,10 @@ func (s *redactedTagServiceServer) UpdateTag(ctx context.Context, in *contentpb.
 	return res, err
 }
 
-// DeleteTag is the redacted wrapper for the actual TagServiceServer.DeleteTag method
+// Delete is the redacted wrapper for the actual TagServiceServer.Delete method
 // Unary RPC
-func (s *redactedTagServiceServer) DeleteTag(ctx context.Context, in *contentpb.DeleteTagRequest) (*emptypb.Empty, error) {
-	res, err := s.srv.DeleteTag(ctx, in)
+func (s *redactedTagServiceServer) Delete(ctx context.Context, in *contentpb.DeleteTagRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.Delete(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)

@@ -43,14 +43,14 @@ type NavigationServiceHTTPServer interface {
 
 func RegisterNavigationServiceHTTPServer(s *http.Server, srv NavigationServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/navigations", _NavigationService_List0_HTTP_Handler(srv))
-	r.GET("/app/v1/navigations/{id}", _NavigationService_Get0_HTTP_Handler(srv))
-	r.POST("/app/v1/navigations", _NavigationService_Create0_HTTP_Handler(srv))
-	r.PUT("/app/v1/navigations/{id}", _NavigationService_Update0_HTTP_Handler(srv))
-	r.DELETE("/app/v1/navigations/{id}", _NavigationService_Delete0_HTTP_Handler(srv))
+	r.GET("/app/v1/navigations", _NavigationService_List2_HTTP_Handler(srv))
+	r.GET("/app/v1/navigations/{id}", _NavigationService_Get2_HTTP_Handler(srv))
+	r.POST("/app/v1/navigations", _NavigationService_Create2_HTTP_Handler(srv))
+	r.PUT("/app/v1/navigations/{id}", _NavigationService_Update2_HTTP_Handler(srv))
+	r.DELETE("/app/v1/navigations/{id}", _NavigationService_Delete2_HTTP_Handler(srv))
 }
 
-func _NavigationService_List0_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationService_List2_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _NavigationService_List0_HTTP_Handler(srv NavigationServiceHTTPServer) func
 	}
 }
 
-func _NavigationService_Get0_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationService_Get2_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetNavigationRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _NavigationService_Get0_HTTP_Handler(srv NavigationServiceHTTPServer) func(
 	}
 }
 
-func _NavigationService_Create0_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationService_Create2_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateNavigationRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _NavigationService_Create0_HTTP_Handler(srv NavigationServiceHTTPServer) fu
 	}
 }
 
-func _NavigationService_Update0_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationService_Update2_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateNavigationRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _NavigationService_Update0_HTTP_Handler(srv NavigationServiceHTTPServer) fu
 	}
 }
 
-func _NavigationService_Delete0_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationService_Delete2_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteNavigationRequest
 		if err := ctx.BindQuery(&in); err != nil {

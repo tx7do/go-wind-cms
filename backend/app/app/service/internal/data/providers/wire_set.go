@@ -21,7 +21,7 @@ import (
 // ProviderSet is the Wire provider set for data layer.
 var ProviderSet = wire.NewSet(
 	data.NewRedisClient,
-
+	data.NewMinIoClient,
 	data.NewDiscovery,
 
 	data.NewClientType,
@@ -30,13 +30,25 @@ var ProviderSet = wire.NewSet(
 	auth.NewTokenChecker,
 
 	data.NewAuthenticationServiceClient,
+	data.NewUserCredentialServiceClient,
+
+	data.NewFileServiceClient,
+
+	data.NewUserServiceClient,
+	data.NewTenantServiceClient,
+	data.NewRoleServiceClient,
+	data.NewOrgUnitServiceClient,
+	data.NewPositionServiceClient,
 
 	data.NewPageServiceClient,
 	data.NewCategoryServiceClient,
-	data.NewCommentServiceClient,
 	data.NewPostServiceClient,
 	data.NewTagServiceClient,
+
+	data.NewCommentServiceClient,
+
 	data.NewNavigationServiceClient,
 	data.NewSiteSettingServiceClient,
+
 	data.NewMediaAssetServiceClient,
 )

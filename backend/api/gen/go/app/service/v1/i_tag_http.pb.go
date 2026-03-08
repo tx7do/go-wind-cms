@@ -22,47 +22,47 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationTagServiceCreateTag = "/app.service.v1.TagService/CreateTag"
-const OperationTagServiceDeleteTag = "/app.service.v1.TagService/DeleteTag"
-const OperationTagServiceGetTag = "/app.service.v1.TagService/GetTag"
+const OperationTagServiceCreate = "/app.service.v1.TagService/Create"
+const OperationTagServiceDelete = "/app.service.v1.TagService/Delete"
+const OperationTagServiceGet = "/app.service.v1.TagService/Get"
 const OperationTagServiceGetTranslation = "/app.service.v1.TagService/GetTranslation"
-const OperationTagServiceListTag = "/app.service.v1.TagService/ListTag"
-const OperationTagServiceUpdateTag = "/app.service.v1.TagService/UpdateTag"
+const OperationTagServiceList = "/app.service.v1.TagService/List"
+const OperationTagServiceUpdate = "/app.service.v1.TagService/Update"
 
 type TagServiceHTTPServer interface {
-	// CreateTag 创建标签
-	CreateTag(context.Context, *v11.CreateTagRequest) (*v11.Tag, error)
-	// DeleteTag 删除标签
-	DeleteTag(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error)
-	// GetTag 获取标签数据
-	GetTag(context.Context, *v11.GetTagRequest) (*v11.Tag, error)
+	// Create 创建标签
+	Create(context.Context, *v11.CreateTagRequest) (*v11.Tag, error)
+	// Delete 删除标签
+	Delete(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error)
+	// Get 获取标签数据
+	Get(context.Context, *v11.GetTagRequest) (*v11.Tag, error)
 	// GetTranslation 获取翻译数据
 	GetTranslation(context.Context, *v11.GetTagRequest) (*v11.TagTranslation, error)
-	// ListTag 获取标签列表
-	ListTag(context.Context, *v1.PagingRequest) (*v11.ListTagResponse, error)
-	// UpdateTag 更新标签
-	UpdateTag(context.Context, *v11.UpdateTagRequest) (*v11.Tag, error)
+	// List 获取标签列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListTagResponse, error)
+	// Update 更新标签
+	Update(context.Context, *v11.UpdateTagRequest) (*v11.Tag, error)
 }
 
 func RegisterTagServiceHTTPServer(s *http.Server, srv TagServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/tags", _TagService_ListTag0_HTTP_Handler(srv))
-	r.GET("/app/v1/tags/{id}", _TagService_GetTag0_HTTP_Handler(srv))
-	r.POST("/app/v1/tags", _TagService_CreateTag0_HTTP_Handler(srv))
-	r.PUT("/app/v1/tags/{id}", _TagService_UpdateTag0_HTTP_Handler(srv))
-	r.DELETE("/app/v1/tags/{id}", _TagService_DeleteTag0_HTTP_Handler(srv))
+	r.GET("/app/v1/tags", _TagService_List5_HTTP_Handler(srv))
+	r.GET("/app/v1/tags/{id}", _TagService_Get5_HTTP_Handler(srv))
+	r.POST("/app/v1/tags", _TagService_Create5_HTTP_Handler(srv))
+	r.PUT("/app/v1/tags/{id}", _TagService_Update5_HTTP_Handler(srv))
+	r.DELETE("/app/v1/tags/{id}", _TagService_Delete5_HTTP_Handler(srv))
 	r.GET("/app/v1/tags/{id}/translation", _TagService_GetTranslation3_HTTP_Handler(srv))
 }
 
-func _TagService_ListTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
+func _TagService_List5_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationTagServiceListTag)
+		http.SetOperation(ctx, OperationTagServiceList)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListTag(ctx, req.(*v1.PagingRequest))
+			return srv.List(ctx, req.(*v1.PagingRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -73,7 +73,7 @@ func _TagService_ListTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _TagService_GetTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
+func _TagService_Get5_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetTagRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -82,9 +82,9 @@ func _TagService_GetTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Co
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationTagServiceGetTag)
+		http.SetOperation(ctx, OperationTagServiceGet)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetTag(ctx, req.(*v11.GetTagRequest))
+			return srv.Get(ctx, req.(*v11.GetTagRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -95,7 +95,7 @@ func _TagService_GetTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Co
 	}
 }
 
-func _TagService_CreateTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
+func _TagService_Create5_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateTagRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -104,9 +104,9 @@ func _TagService_CreateTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationTagServiceCreateTag)
+		http.SetOperation(ctx, OperationTagServiceCreate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreateTag(ctx, req.(*v11.CreateTagRequest))
+			return srv.Create(ctx, req.(*v11.CreateTagRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -117,7 +117,7 @@ func _TagService_CreateTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http
 	}
 }
 
-func _TagService_UpdateTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
+func _TagService_Update5_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateTagRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -129,9 +129,9 @@ func _TagService_UpdateTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationTagServiceUpdateTag)
+		http.SetOperation(ctx, OperationTagServiceUpdate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateTag(ctx, req.(*v11.UpdateTagRequest))
+			return srv.Update(ctx, req.(*v11.UpdateTagRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -142,7 +142,7 @@ func _TagService_UpdateTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http
 	}
 }
 
-func _TagService_DeleteTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
+func _TagService_Delete5_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteTagRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -151,9 +151,9 @@ func _TagService_DeleteTag0_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationTagServiceDeleteTag)
+		http.SetOperation(ctx, OperationTagServiceDelete)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeleteTag(ctx, req.(*v11.DeleteTagRequest))
+			return srv.Delete(ctx, req.(*v11.DeleteTagRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -187,18 +187,18 @@ func _TagService_GetTranslation3_HTTP_Handler(srv TagServiceHTTPServer) func(ctx
 }
 
 type TagServiceHTTPClient interface {
-	// CreateTag 创建标签
-	CreateTag(ctx context.Context, req *v11.CreateTagRequest, opts ...http.CallOption) (rsp *v11.Tag, err error)
-	// DeleteTag 删除标签
-	DeleteTag(ctx context.Context, req *v11.DeleteTagRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	// GetTag 获取标签数据
-	GetTag(ctx context.Context, req *v11.GetTagRequest, opts ...http.CallOption) (rsp *v11.Tag, err error)
+	// Create 创建标签
+	Create(ctx context.Context, req *v11.CreateTagRequest, opts ...http.CallOption) (rsp *v11.Tag, err error)
+	// Delete 删除标签
+	Delete(ctx context.Context, req *v11.DeleteTagRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Get 获取标签数据
+	Get(ctx context.Context, req *v11.GetTagRequest, opts ...http.CallOption) (rsp *v11.Tag, err error)
 	// GetTranslation 获取翻译数据
 	GetTranslation(ctx context.Context, req *v11.GetTagRequest, opts ...http.CallOption) (rsp *v11.TagTranslation, err error)
-	// ListTag 获取标签列表
-	ListTag(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListTagResponse, err error)
-	// UpdateTag 更新标签
-	UpdateTag(ctx context.Context, req *v11.UpdateTagRequest, opts ...http.CallOption) (rsp *v11.Tag, err error)
+	// List 获取标签列表
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListTagResponse, err error)
+	// Update 更新标签
+	Update(ctx context.Context, req *v11.UpdateTagRequest, opts ...http.CallOption) (rsp *v11.Tag, err error)
 }
 
 type TagServiceHTTPClientImpl struct {
@@ -209,12 +209,12 @@ func NewTagServiceHTTPClient(client *http.Client) TagServiceHTTPClient {
 	return &TagServiceHTTPClientImpl{client}
 }
 
-// CreateTag 创建标签
-func (c *TagServiceHTTPClientImpl) CreateTag(ctx context.Context, in *v11.CreateTagRequest, opts ...http.CallOption) (*v11.Tag, error) {
+// Create 创建标签
+func (c *TagServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateTagRequest, opts ...http.CallOption) (*v11.Tag, error) {
 	var out v11.Tag
 	pattern := "/app/v1/tags"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationTagServiceCreateTag))
+	opts = append(opts, http.Operation(OperationTagServiceCreate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -223,12 +223,12 @@ func (c *TagServiceHTTPClientImpl) CreateTag(ctx context.Context, in *v11.Create
 	return &out, nil
 }
 
-// DeleteTag 删除标签
-func (c *TagServiceHTTPClientImpl) DeleteTag(ctx context.Context, in *v11.DeleteTagRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+// Delete 删除标签
+func (c *TagServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeleteTagRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/app/v1/tags/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationTagServiceDeleteTag))
+	opts = append(opts, http.Operation(OperationTagServiceDelete))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
@@ -237,12 +237,12 @@ func (c *TagServiceHTTPClientImpl) DeleteTag(ctx context.Context, in *v11.Delete
 	return &out, nil
 }
 
-// GetTag 获取标签数据
-func (c *TagServiceHTTPClientImpl) GetTag(ctx context.Context, in *v11.GetTagRequest, opts ...http.CallOption) (*v11.Tag, error) {
+// Get 获取标签数据
+func (c *TagServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetTagRequest, opts ...http.CallOption) (*v11.Tag, error) {
 	var out v11.Tag
 	pattern := "/app/v1/tags/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationTagServiceGetTag))
+	opts = append(opts, http.Operation(OperationTagServiceGet))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -265,12 +265,12 @@ func (c *TagServiceHTTPClientImpl) GetTranslation(ctx context.Context, in *v11.G
 	return &out, nil
 }
 
-// ListTag 获取标签列表
-func (c *TagServiceHTTPClientImpl) ListTag(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListTagResponse, error) {
+// List 获取标签列表
+func (c *TagServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListTagResponse, error) {
 	var out v11.ListTagResponse
 	pattern := "/app/v1/tags"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationTagServiceListTag))
+	opts = append(opts, http.Operation(OperationTagServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -279,12 +279,12 @@ func (c *TagServiceHTTPClientImpl) ListTag(ctx context.Context, in *v1.PagingReq
 	return &out, nil
 }
 
-// UpdateTag 更新标签
-func (c *TagServiceHTTPClientImpl) UpdateTag(ctx context.Context, in *v11.UpdateTagRequest, opts ...http.CallOption) (*v11.Tag, error) {
+// Update 更新标签
+func (c *TagServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdateTagRequest, opts ...http.CallOption) (*v11.Tag, error) {
 	var out v11.Tag
 	pattern := "/app/v1/tags/{id}"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationTagServiceUpdateTag))
+	opts = append(opts, http.Operation(OperationTagServiceUpdate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

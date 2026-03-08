@@ -44,10 +44,10 @@ type redactedCommentServiceServer struct {
 	bypass redact.Bypass
 }
 
-// ListComment is the redacted wrapper for the actual CommentServiceServer.ListComment method
+// List is the redacted wrapper for the actual CommentServiceServer.List method
 // Unary RPC
-func (s *redactedCommentServiceServer) ListComment(ctx context.Context, in *pagination.PagingRequest) (*commentpb.ListCommentResponse, error) {
-	res, err := s.srv.ListComment(ctx, in)
+func (s *redactedCommentServiceServer) List(ctx context.Context, in *pagination.PagingRequest) (*commentpb.ListCommentResponse, error) {
+	res, err := s.srv.List(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -55,10 +55,10 @@ func (s *redactedCommentServiceServer) ListComment(ctx context.Context, in *pagi
 	return res, err
 }
 
-// GetComment is the redacted wrapper for the actual CommentServiceServer.GetComment method
+// Get is the redacted wrapper for the actual CommentServiceServer.Get method
 // Unary RPC
-func (s *redactedCommentServiceServer) GetComment(ctx context.Context, in *commentpb.GetCommentRequest) (*commentpb.Comment, error) {
-	res, err := s.srv.GetComment(ctx, in)
+func (s *redactedCommentServiceServer) Get(ctx context.Context, in *commentpb.GetCommentRequest) (*commentpb.Comment, error) {
+	res, err := s.srv.Get(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -66,10 +66,10 @@ func (s *redactedCommentServiceServer) GetComment(ctx context.Context, in *comme
 	return res, err
 }
 
-// CreateComment is the redacted wrapper for the actual CommentServiceServer.CreateComment method
+// Create is the redacted wrapper for the actual CommentServiceServer.Create method
 // Unary RPC
-func (s *redactedCommentServiceServer) CreateComment(ctx context.Context, in *commentpb.CreateCommentRequest) (*commentpb.Comment, error) {
-	res, err := s.srv.CreateComment(ctx, in)
+func (s *redactedCommentServiceServer) Create(ctx context.Context, in *commentpb.CreateCommentRequest) (*commentpb.Comment, error) {
+	res, err := s.srv.Create(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -77,10 +77,10 @@ func (s *redactedCommentServiceServer) CreateComment(ctx context.Context, in *co
 	return res, err
 }
 
-// UpdateComment is the redacted wrapper for the actual CommentServiceServer.UpdateComment method
+// Update is the redacted wrapper for the actual CommentServiceServer.Update method
 // Unary RPC
-func (s *redactedCommentServiceServer) UpdateComment(ctx context.Context, in *commentpb.UpdateCommentRequest) (*commentpb.Comment, error) {
-	res, err := s.srv.UpdateComment(ctx, in)
+func (s *redactedCommentServiceServer) Update(ctx context.Context, in *commentpb.UpdateCommentRequest) (*commentpb.Comment, error) {
+	res, err := s.srv.Update(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -88,10 +88,10 @@ func (s *redactedCommentServiceServer) UpdateComment(ctx context.Context, in *co
 	return res, err
 }
 
-// DeleteComment is the redacted wrapper for the actual CommentServiceServer.DeleteComment method
+// Delete is the redacted wrapper for the actual CommentServiceServer.Delete method
 // Unary RPC
-func (s *redactedCommentServiceServer) DeleteComment(ctx context.Context, in *commentpb.DeleteCommentRequest) (*emptypb.Empty, error) {
-	res, err := s.srv.DeleteComment(ctx, in)
+func (s *redactedCommentServiceServer) Delete(ctx context.Context, in *commentpb.DeleteCommentRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.Delete(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)

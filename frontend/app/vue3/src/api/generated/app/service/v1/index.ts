@@ -226,15 +226,15 @@ type wellKnownEmpty = Record<never, never>;
 // 类别服务
 export interface CategoryService {
   // 获取类别列表
-  ListCategory(request: pagination_PagingRequest): Promise<contentservicev1_ListCategoryResponse>;
+  List(request: pagination_PagingRequest): Promise<contentservicev1_ListCategoryResponse>;
   // 获取类别数据
-  GetCategory(request: contentservicev1_GetCategoryRequest): Promise<contentservicev1_Category>;
+  Get(request: contentservicev1_GetCategoryRequest): Promise<contentservicev1_Category>;
   // 创建类别
-  CreateCategory(request: contentservicev1_CreateCategoryRequest): Promise<contentservicev1_Category>;
+  Create(request: contentservicev1_CreateCategoryRequest): Promise<contentservicev1_Category>;
   // 更新类别
-  UpdateCategory(request: contentservicev1_UpdateCategoryRequest): Promise<contentservicev1_Category>;
+  Update(request: contentservicev1_UpdateCategoryRequest): Promise<contentservicev1_Category>;
   // 删除类别
-  DeleteCategory(request: contentservicev1_DeleteCategoryRequest): Promise<wellKnownEmpty>;
+  Delete(request: contentservicev1_DeleteCategoryRequest): Promise<wellKnownEmpty>;
   // 获取翻译数据
   GetTranslation(request: contentservicev1_GetCategoryRequest): Promise<contentservicev1_CategoryTranslation>;
 }
@@ -243,7 +243,7 @@ export function createCategoryServiceClient(
   handler: RequestHandler
 ): CategoryService {
   return {
-    ListCategory(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    List(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/categories`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
@@ -319,10 +319,10 @@ export function createCategoryServiceClient(
         body,
       }, {
         service: "CategoryService",
-        method: "ListCategory",
+        method: "List",
       }) as Promise<contentservicev1_ListCategoryResponse>;
     },
-    GetCategory(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Get(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -348,10 +348,10 @@ export function createCategoryServiceClient(
         body,
       }, {
         service: "CategoryService",
-        method: "GetCategory",
+        method: "Get",
       }) as Promise<contentservicev1_Category>;
     },
-    CreateCategory(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Create(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/categories`; // eslint-disable-line quotes
       const body = JSON.stringify(request);
       const queryParams: string[] = [];
@@ -365,10 +365,10 @@ export function createCategoryServiceClient(
         body,
       }, {
         service: "CategoryService",
-        method: "CreateCategory",
+        method: "Create",
       }) as Promise<contentservicev1_Category>;
     },
-    UpdateCategory(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Update(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -385,10 +385,10 @@ export function createCategoryServiceClient(
         body,
       }, {
         service: "CategoryService",
-        method: "UpdateCategory",
+        method: "Update",
       }) as Promise<contentservicev1_Category>;
     },
-    DeleteCategory(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Delete(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -405,7 +405,7 @@ export function createCategoryServiceClient(
         body,
       }, {
         service: "CategoryService",
-        method: "DeleteCategory",
+        method: "Delete",
       }) as Promise<wellKnownEmpty>;
     },
     GetTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -696,22 +696,22 @@ export type contentservicev1_DeleteCategoryRequest = {
 // 评论服务
 export interface CommentService {
   // 获取评论列表
-  ListComment(request: pagination_PagingRequest): Promise<commentservicev1_ListCommentResponse>;
+  List(request: pagination_PagingRequest): Promise<commentservicev1_ListCommentResponse>;
   // 获取评论数据
-  GetComment(request: commentservicev1_GetCommentRequest): Promise<commentservicev1_Comment>;
+  Get(request: commentservicev1_GetCommentRequest): Promise<commentservicev1_Comment>;
   // 创建评论
-  CreateComment(request: commentservicev1_CreateCommentRequest): Promise<commentservicev1_Comment>;
+  Create(request: commentservicev1_CreateCommentRequest): Promise<commentservicev1_Comment>;
   // 更新评论
-  UpdateComment(request: commentservicev1_UpdateCommentRequest): Promise<commentservicev1_Comment>;
+  Update(request: commentservicev1_UpdateCommentRequest): Promise<commentservicev1_Comment>;
   // 删除评论
-  DeleteComment(request: commentservicev1_DeleteCommentRequest): Promise<wellKnownEmpty>;
+  Delete(request: commentservicev1_DeleteCommentRequest): Promise<wellKnownEmpty>;
 }
 
 export function createCommentServiceClient(
   handler: RequestHandler
 ): CommentService {
   return {
-    ListComment(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    List(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/comments`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
@@ -787,10 +787,10 @@ export function createCommentServiceClient(
         body,
       }, {
         service: "CommentService",
-        method: "ListComment",
+        method: "List",
       }) as Promise<commentservicev1_ListCommentResponse>;
     },
-    GetComment(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Get(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -810,10 +810,10 @@ export function createCommentServiceClient(
         body,
       }, {
         service: "CommentService",
-        method: "GetComment",
+        method: "Get",
       }) as Promise<commentservicev1_Comment>;
     },
-    CreateComment(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Create(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/comments`; // eslint-disable-line quotes
       const body = JSON.stringify(request);
       const queryParams: string[] = [];
@@ -827,10 +827,10 @@ export function createCommentServiceClient(
         body,
       }, {
         service: "CommentService",
-        method: "CreateComment",
+        method: "Create",
       }) as Promise<commentservicev1_Comment>;
     },
-    UpdateComment(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Update(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -847,10 +847,10 @@ export function createCommentServiceClient(
         body,
       }, {
         service: "CommentService",
-        method: "UpdateComment",
+        method: "Update",
       }) as Promise<commentservicev1_Comment>;
     },
-    DeleteComment(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Delete(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -867,7 +867,7 @@ export function createCommentServiceClient(
         body,
       }, {
         service: "CommentService",
-        method: "DeleteComment",
+        method: "Delete",
       }) as Promise<wellKnownEmpty>;
     },
   };
@@ -1767,15 +1767,15 @@ export type contentservicev1_DeletePageRequest = {
 // 帖子服务
 export interface PostService {
   // 获取帖子列表
-  ListPost(request: pagination_PagingRequest): Promise<contentservicev1_ListPostResponse>;
+  List(request: pagination_PagingRequest): Promise<contentservicev1_ListPostResponse>;
   // 获取帖子数据
-  GetPost(request: contentservicev1_GetPostRequest): Promise<contentservicev1_Post>;
+  Get(request: contentservicev1_GetPostRequest): Promise<contentservicev1_Post>;
   // 创建帖子
-  CreatePost(request: contentservicev1_CreatePostRequest): Promise<contentservicev1_Post>;
+  Create(request: contentservicev1_CreatePostRequest): Promise<contentservicev1_Post>;
   // 更新帖子
-  UpdatePost(request: contentservicev1_UpdatePostRequest): Promise<contentservicev1_Post>;
+  Update(request: contentservicev1_UpdatePostRequest): Promise<contentservicev1_Post>;
   // 删除帖子
-  DeletePost(request: contentservicev1_DeletePostRequest): Promise<wellKnownEmpty>;
+  Delete(request: contentservicev1_DeletePostRequest): Promise<wellKnownEmpty>;
   // 获取翻译数据
   GetTranslation(request: contentservicev1_GetPostRequest): Promise<contentservicev1_PostTranslation>;
 }
@@ -1784,7 +1784,7 @@ export function createPostServiceClient(
   handler: RequestHandler
 ): PostService {
   return {
-    ListPost(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    List(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/posts`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
@@ -1860,10 +1860,10 @@ export function createPostServiceClient(
         body,
       }, {
         service: "PostService",
-        method: "ListPost",
+        method: "List",
       }) as Promise<contentservicev1_ListPostResponse>;
     },
-    GetPost(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Get(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -1889,10 +1889,10 @@ export function createPostServiceClient(
         body,
       }, {
         service: "PostService",
-        method: "GetPost",
+        method: "Get",
       }) as Promise<contentservicev1_Post>;
     },
-    CreatePost(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Create(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/posts`; // eslint-disable-line quotes
       const body = JSON.stringify(request);
       const queryParams: string[] = [];
@@ -1906,10 +1906,10 @@ export function createPostServiceClient(
         body,
       }, {
         service: "PostService",
-        method: "CreatePost",
+        method: "Create",
       }) as Promise<contentservicev1_Post>;
     },
-    UpdatePost(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Update(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -1926,10 +1926,10 @@ export function createPostServiceClient(
         body,
       }, {
         service: "PostService",
-        method: "UpdatePost",
+        method: "Update",
       }) as Promise<contentservicev1_Post>;
     },
-    DeletePost(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Delete(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -1946,7 +1946,7 @@ export function createPostServiceClient(
         body,
       }, {
         service: "PostService",
-        method: "DeletePost",
+        method: "Delete",
       }) as Promise<wellKnownEmpty>;
     },
     GetTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -2078,15 +2078,15 @@ export type contentservicev1_DeletePostRequest = {
 // 标签服务
 export interface TagService {
   // 获取标签列表
-  ListTag(request: pagination_PagingRequest): Promise<contentservicev1_ListTagResponse>;
+  List(request: pagination_PagingRequest): Promise<contentservicev1_ListTagResponse>;
   // 获取标签数据
-  GetTag(request: contentservicev1_GetTagRequest): Promise<contentservicev1_Tag>;
+  Get(request: contentservicev1_GetTagRequest): Promise<contentservicev1_Tag>;
   // 创建标签
-  CreateTag(request: contentservicev1_CreateTagRequest): Promise<contentservicev1_Tag>;
+  Create(request: contentservicev1_CreateTagRequest): Promise<contentservicev1_Tag>;
   // 更新标签
-  UpdateTag(request: contentservicev1_UpdateTagRequest): Promise<contentservicev1_Tag>;
+  Update(request: contentservicev1_UpdateTagRequest): Promise<contentservicev1_Tag>;
   // 删除标签
-  DeleteTag(request: contentservicev1_DeleteTagRequest): Promise<wellKnownEmpty>;
+  Delete(request: contentservicev1_DeleteTagRequest): Promise<wellKnownEmpty>;
   // 获取翻译数据
   GetTranslation(request: contentservicev1_GetTagRequest): Promise<contentservicev1_TagTranslation>;
 }
@@ -2095,7 +2095,7 @@ export function createTagServiceClient(
   handler: RequestHandler
 ): TagService {
   return {
-    ListTag(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    List(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/tags`; // eslint-disable-line quotes
       const body = null;
       const queryParams: string[] = [];
@@ -2171,10 +2171,10 @@ export function createTagServiceClient(
         body,
       }, {
         service: "TagService",
-        method: "ListTag",
+        method: "List",
       }) as Promise<contentservicev1_ListTagResponse>;
     },
-    GetTag(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Get(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -2200,10 +2200,10 @@ export function createTagServiceClient(
         body,
       }, {
         service: "TagService",
-        method: "GetTag",
+        method: "Get",
       }) as Promise<contentservicev1_Tag>;
     },
-    CreateTag(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Create(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `app/v1/tags`; // eslint-disable-line quotes
       const body = JSON.stringify(request);
       const queryParams: string[] = [];
@@ -2217,10 +2217,10 @@ export function createTagServiceClient(
         body,
       }, {
         service: "TagService",
-        method: "CreateTag",
+        method: "Create",
       }) as Promise<contentservicev1_Tag>;
     },
-    UpdateTag(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Update(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -2237,10 +2237,10 @@ export function createTagServiceClient(
         body,
       }, {
         service: "TagService",
-        method: "UpdateTag",
+        method: "Update",
       }) as Promise<contentservicev1_Tag>;
     },
-    DeleteTag(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    Delete(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
         throw new Error("missing required field request.id");
       }
@@ -2257,7 +2257,7 @@ export function createTagServiceClient(
         body,
       }, {
         service: "TagService",
-        method: "DeleteTag",
+        method: "Delete",
       }) as Promise<wellKnownEmpty>;
     },
     GetTranslation(request) { // eslint-disable-line @typescript-eslint/no-unused-vars

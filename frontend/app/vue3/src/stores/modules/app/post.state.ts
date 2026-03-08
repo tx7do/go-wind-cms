@@ -32,7 +32,7 @@ export const usePostStore = defineStore('post', () => {
     const noPaging =
       paging?.page === undefined && paging?.pageSize === undefined;
     // @ts-ignore proto generated code is error.
-    return await service.ListPost({
+    return await service.List({
       fieldMask,
       orderBy: makeOrderBy(orderBy),
       query: makeQueryString(formValues, userStore.isTenantUser()),
@@ -50,14 +50,14 @@ export const usePostStore = defineStore('post', () => {
 
     const locale = currentLocaleLanguageCode();
 
-    return await service.GetPost({id, locale});
+    return await service.Get({id, locale});
   }
 
   /**
    * 创建帖子
    */
   async function createPost(values: Record<string, any> = {}) {
-    return await service.CreatePost({
+    return await service.Create({
       // @ts-ignore proto generated code is error.
       data: {
         ...values,
@@ -69,7 +69,7 @@ export const usePostStore = defineStore('post', () => {
    * 更新帖子
    */
   async function updatePost(id: number, values: Record<string, any> = {}) {
-    return await service.UpdatePost({
+    return await service.Update({
       id,
       // @ts-ignore proto generated code is error.
       data: {
@@ -83,7 +83,7 @@ export const usePostStore = defineStore('post', () => {
    * 删除帖子
    */
   async function deletePost(id: number) {
-    return await service.DeletePost({id});
+    return await service.Delete({id});
   }
 
   /**

@@ -117,8 +117,9 @@ export const useAuthStore = defineStore('auth', () => {
       accessStore.isAccessChecked
     )
       accessStore.setLoginExpired(true)
-    else
-      await logout()
+    else {
+      // await logout()
+    }
   }
 
   /**

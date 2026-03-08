@@ -19,10 +19,13 @@ import (
 // ProviderSet is the Wire provider set for data layer.
 var ProviderSet = wire.NewSet(
 	service.NewAuthenticationService,
+	service.NewUserProfileService,
+	service.NewFileTransferService,
 
 	service.NewCategoryService,
 	service.NewTagService,
 	service.NewCommentService,
 	service.NewPageService,
 	service.NewPostService,
+	service.NewNavigationService,
 )

@@ -22,11 +22,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TagService_ListTag_FullMethodName        = "/app.service.v1.TagService/ListTag"
-	TagService_GetTag_FullMethodName         = "/app.service.v1.TagService/GetTag"
-	TagService_CreateTag_FullMethodName      = "/app.service.v1.TagService/CreateTag"
-	TagService_UpdateTag_FullMethodName      = "/app.service.v1.TagService/UpdateTag"
-	TagService_DeleteTag_FullMethodName      = "/app.service.v1.TagService/DeleteTag"
+	TagService_List_FullMethodName           = "/app.service.v1.TagService/List"
+	TagService_Get_FullMethodName            = "/app.service.v1.TagService/Get"
+	TagService_Create_FullMethodName         = "/app.service.v1.TagService/Create"
+	TagService_Update_FullMethodName         = "/app.service.v1.TagService/Update"
+	TagService_Delete_FullMethodName         = "/app.service.v1.TagService/Delete"
 	TagService_GetTranslation_FullMethodName = "/app.service.v1.TagService/GetTranslation"
 )
 
@@ -37,15 +37,15 @@ const (
 // 标签服务
 type TagServiceClient interface {
 	// 获取标签列表
-	ListTag(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListTagResponse, error)
+	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListTagResponse, error)
 	// 获取标签数据
-	GetTag(ctx context.Context, in *v11.GetTagRequest, opts ...grpc.CallOption) (*v11.Tag, error)
+	Get(ctx context.Context, in *v11.GetTagRequest, opts ...grpc.CallOption) (*v11.Tag, error)
 	// 创建标签
-	CreateTag(ctx context.Context, in *v11.CreateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error)
+	Create(ctx context.Context, in *v11.CreateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error)
 	// 更新标签
-	UpdateTag(ctx context.Context, in *v11.UpdateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error)
+	Update(ctx context.Context, in *v11.UpdateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error)
 	// 删除标签
-	DeleteTag(ctx context.Context, in *v11.DeleteTagRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Delete(ctx context.Context, in *v11.DeleteTagRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(ctx context.Context, in *v11.GetTagRequest, opts ...grpc.CallOption) (*v11.TagTranslation, error)
 }
@@ -58,50 +58,50 @@ func NewTagServiceClient(cc grpc.ClientConnInterface) TagServiceClient {
 	return &tagServiceClient{cc}
 }
 
-func (c *tagServiceClient) ListTag(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListTagResponse, error) {
+func (c *tagServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListTagResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.ListTagResponse)
-	err := c.cc.Invoke(ctx, TagService_ListTag_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, TagService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tagServiceClient) GetTag(ctx context.Context, in *v11.GetTagRequest, opts ...grpc.CallOption) (*v11.Tag, error) {
+func (c *tagServiceClient) Get(ctx context.Context, in *v11.GetTagRequest, opts ...grpc.CallOption) (*v11.Tag, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.Tag)
-	err := c.cc.Invoke(ctx, TagService_GetTag_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, TagService_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tagServiceClient) CreateTag(ctx context.Context, in *v11.CreateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error) {
+func (c *tagServiceClient) Create(ctx context.Context, in *v11.CreateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.Tag)
-	err := c.cc.Invoke(ctx, TagService_CreateTag_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, TagService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tagServiceClient) UpdateTag(ctx context.Context, in *v11.UpdateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error) {
+func (c *tagServiceClient) Update(ctx context.Context, in *v11.UpdateTagRequest, opts ...grpc.CallOption) (*v11.Tag, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.Tag)
-	err := c.cc.Invoke(ctx, TagService_UpdateTag_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, TagService_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tagServiceClient) DeleteTag(ctx context.Context, in *v11.DeleteTagRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *tagServiceClient) Delete(ctx context.Context, in *v11.DeleteTagRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, TagService_DeleteTag_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, TagService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,15 +125,15 @@ func (c *tagServiceClient) GetTranslation(ctx context.Context, in *v11.GetTagReq
 // 标签服务
 type TagServiceServer interface {
 	// 获取标签列表
-	ListTag(context.Context, *v1.PagingRequest) (*v11.ListTagResponse, error)
+	List(context.Context, *v1.PagingRequest) (*v11.ListTagResponse, error)
 	// 获取标签数据
-	GetTag(context.Context, *v11.GetTagRequest) (*v11.Tag, error)
+	Get(context.Context, *v11.GetTagRequest) (*v11.Tag, error)
 	// 创建标签
-	CreateTag(context.Context, *v11.CreateTagRequest) (*v11.Tag, error)
+	Create(context.Context, *v11.CreateTagRequest) (*v11.Tag, error)
 	// 更新标签
-	UpdateTag(context.Context, *v11.UpdateTagRequest) (*v11.Tag, error)
+	Update(context.Context, *v11.UpdateTagRequest) (*v11.Tag, error)
 	// 删除标签
-	DeleteTag(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(context.Context, *v11.GetTagRequest) (*v11.TagTranslation, error)
 	mustEmbedUnimplementedTagServiceServer()
@@ -146,20 +146,20 @@ type TagServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTagServiceServer struct{}
 
-func (UnimplementedTagServiceServer) ListTag(context.Context, *v1.PagingRequest) (*v11.ListTagResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListTag not implemented")
+func (UnimplementedTagServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListTagResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedTagServiceServer) GetTag(context.Context, *v11.GetTagRequest) (*v11.Tag, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetTag not implemented")
+func (UnimplementedTagServiceServer) Get(context.Context, *v11.GetTagRequest) (*v11.Tag, error) {
+	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedTagServiceServer) CreateTag(context.Context, *v11.CreateTagRequest) (*v11.Tag, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateTag not implemented")
+func (UnimplementedTagServiceServer) Create(context.Context, *v11.CreateTagRequest) (*v11.Tag, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedTagServiceServer) UpdateTag(context.Context, *v11.UpdateTagRequest) (*v11.Tag, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateTag not implemented")
+func (UnimplementedTagServiceServer) Update(context.Context, *v11.UpdateTagRequest) (*v11.Tag, error) {
+	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedTagServiceServer) DeleteTag(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeleteTag not implemented")
+func (UnimplementedTagServiceServer) Delete(context.Context, *v11.DeleteTagRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedTagServiceServer) GetTranslation(context.Context, *v11.GetTagRequest) (*v11.TagTranslation, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
@@ -185,92 +185,92 @@ func RegisterTagServiceServer(s grpc.ServiceRegistrar, srv TagServiceServer) {
 	s.RegisterService(&TagService_ServiceDesc, srv)
 }
 
-func _TagService_ListTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TagService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v1.PagingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TagServiceServer).ListTag(ctx, in)
+		return srv.(TagServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TagService_ListTag_FullMethodName,
+		FullMethod: TagService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TagServiceServer).ListTag(ctx, req.(*v1.PagingRequest))
+		return srv.(TagServiceServer).List(ctx, req.(*v1.PagingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TagService_GetTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TagService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.GetTagRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TagServiceServer).GetTag(ctx, in)
+		return srv.(TagServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TagService_GetTag_FullMethodName,
+		FullMethod: TagService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TagServiceServer).GetTag(ctx, req.(*v11.GetTagRequest))
+		return srv.(TagServiceServer).Get(ctx, req.(*v11.GetTagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TagService_CreateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TagService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.CreateTagRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TagServiceServer).CreateTag(ctx, in)
+		return srv.(TagServiceServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TagService_CreateTag_FullMethodName,
+		FullMethod: TagService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TagServiceServer).CreateTag(ctx, req.(*v11.CreateTagRequest))
+		return srv.(TagServiceServer).Create(ctx, req.(*v11.CreateTagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TagService_UpdateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TagService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.UpdateTagRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TagServiceServer).UpdateTag(ctx, in)
+		return srv.(TagServiceServer).Update(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TagService_UpdateTag_FullMethodName,
+		FullMethod: TagService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TagServiceServer).UpdateTag(ctx, req.(*v11.UpdateTagRequest))
+		return srv.(TagServiceServer).Update(ctx, req.(*v11.UpdateTagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TagService_DeleteTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TagService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.DeleteTagRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TagServiceServer).DeleteTag(ctx, in)
+		return srv.(TagServiceServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TagService_DeleteTag_FullMethodName,
+		FullMethod: TagService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TagServiceServer).DeleteTag(ctx, req.(*v11.DeleteTagRequest))
+		return srv.(TagServiceServer).Delete(ctx, req.(*v11.DeleteTagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -301,24 +301,24 @@ var TagService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TagServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListTag",
-			Handler:    _TagService_ListTag_Handler,
+			MethodName: "List",
+			Handler:    _TagService_List_Handler,
 		},
 		{
-			MethodName: "GetTag",
-			Handler:    _TagService_GetTag_Handler,
+			MethodName: "Get",
+			Handler:    _TagService_Get_Handler,
 		},
 		{
-			MethodName: "CreateTag",
-			Handler:    _TagService_CreateTag_Handler,
+			MethodName: "Create",
+			Handler:    _TagService_Create_Handler,
 		},
 		{
-			MethodName: "UpdateTag",
-			Handler:    _TagService_UpdateTag_Handler,
+			MethodName: "Update",
+			Handler:    _TagService_Update_Handler,
 		},
 		{
-			MethodName: "DeleteTag",
-			Handler:    _TagService_DeleteTag_Handler,
+			MethodName: "Delete",
+			Handler:    _TagService_Delete_Handler,
 		},
 		{
 			MethodName: "GetTranslation",

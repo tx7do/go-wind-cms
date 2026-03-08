@@ -10,6 +10,7 @@ import (
 
 	authzEngine "github.com/tx7do/kratos-authz/engine"
 	authz "github.com/tx7do/kratos-authz/middleware"
+
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
@@ -37,6 +38,13 @@ func NewRestMiddleware(
 	// add white list for authentication.
 	rpc.AddWhiteList(
 		appV1.OperationAuthenticationServiceLogin,
+
+		appV1.OperationNavigationServiceList,
+		appV1.OperationPageServiceList,
+		appV1.OperationPostServiceList,
+		appV1.OperationCategoryServiceList,
+		appV1.OperationCommentServiceList,
+		appV1.OperationTagServiceList,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -67,12 +75,15 @@ func NewRestServer(
 	middlewares []middleware.Middleware,
 
 	authenticationService *service.AuthenticationService,
+	fileTransferService *service.FileTransferService,
+	userProfileService *service.UserProfileService,
 
 	postService *service.PostService,
 	categoryService *service.CategoryService,
 	commentService *service.CommentService,
 	tagService *service.TagService,
 	pageService *service.PageService,
+	navigationService *service.NavigationService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -86,12 +97,17 @@ func NewRestServer(
 	}
 
 	appV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
+	appV1.RegisterFileTransferServiceHTTPServer(srv, fileTransferService)
+	appV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)
+
+	appV1.RegisterNavigationServiceHTTPServer(srv, navigationService)
 
 	appV1.RegisterPostServiceHTTPServer(srv, postService)
 	appV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
 	appV1.RegisterTagServiceHTTPServer(srv, tagService)
-	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	appV1.RegisterPageServiceHTTPServer(srv, pageService)
+
+	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

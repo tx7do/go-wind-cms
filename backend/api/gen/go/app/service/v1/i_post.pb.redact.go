@@ -44,10 +44,10 @@ type redactedPostServiceServer struct {
 	bypass redact.Bypass
 }
 
-// ListPost is the redacted wrapper for the actual PostServiceServer.ListPost method
+// List is the redacted wrapper for the actual PostServiceServer.List method
 // Unary RPC
-func (s *redactedPostServiceServer) ListPost(ctx context.Context, in *pagination.PagingRequest) (*contentpb.ListPostResponse, error) {
-	res, err := s.srv.ListPost(ctx, in)
+func (s *redactedPostServiceServer) List(ctx context.Context, in *pagination.PagingRequest) (*contentpb.ListPostResponse, error) {
+	res, err := s.srv.List(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -55,10 +55,10 @@ func (s *redactedPostServiceServer) ListPost(ctx context.Context, in *pagination
 	return res, err
 }
 
-// GetPost is the redacted wrapper for the actual PostServiceServer.GetPost method
+// Get is the redacted wrapper for the actual PostServiceServer.Get method
 // Unary RPC
-func (s *redactedPostServiceServer) GetPost(ctx context.Context, in *contentpb.GetPostRequest) (*contentpb.Post, error) {
-	res, err := s.srv.GetPost(ctx, in)
+func (s *redactedPostServiceServer) Get(ctx context.Context, in *contentpb.GetPostRequest) (*contentpb.Post, error) {
+	res, err := s.srv.Get(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -66,10 +66,10 @@ func (s *redactedPostServiceServer) GetPost(ctx context.Context, in *contentpb.G
 	return res, err
 }
 
-// CreatePost is the redacted wrapper for the actual PostServiceServer.CreatePost method
+// Create is the redacted wrapper for the actual PostServiceServer.Create method
 // Unary RPC
-func (s *redactedPostServiceServer) CreatePost(ctx context.Context, in *contentpb.CreatePostRequest) (*contentpb.Post, error) {
-	res, err := s.srv.CreatePost(ctx, in)
+func (s *redactedPostServiceServer) Create(ctx context.Context, in *contentpb.CreatePostRequest) (*contentpb.Post, error) {
+	res, err := s.srv.Create(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -77,10 +77,10 @@ func (s *redactedPostServiceServer) CreatePost(ctx context.Context, in *contentp
 	return res, err
 }
 
-// UpdatePost is the redacted wrapper for the actual PostServiceServer.UpdatePost method
+// Update is the redacted wrapper for the actual PostServiceServer.Update method
 // Unary RPC
-func (s *redactedPostServiceServer) UpdatePost(ctx context.Context, in *contentpb.UpdatePostRequest) (*contentpb.Post, error) {
-	res, err := s.srv.UpdatePost(ctx, in)
+func (s *redactedPostServiceServer) Update(ctx context.Context, in *contentpb.UpdatePostRequest) (*contentpb.Post, error) {
+	res, err := s.srv.Update(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -88,10 +88,10 @@ func (s *redactedPostServiceServer) UpdatePost(ctx context.Context, in *contentp
 	return res, err
 }
 
-// DeletePost is the redacted wrapper for the actual PostServiceServer.DeletePost method
+// Delete is the redacted wrapper for the actual PostServiceServer.Delete method
 // Unary RPC
-func (s *redactedPostServiceServer) DeletePost(ctx context.Context, in *contentpb.DeletePostRequest) (*emptypb.Empty, error) {
-	res, err := s.srv.DeletePost(ctx, in)
+func (s *redactedPostServiceServer) Delete(ctx context.Context, in *contentpb.DeletePostRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.Delete(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)

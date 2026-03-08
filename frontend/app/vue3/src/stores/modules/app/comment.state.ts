@@ -37,14 +37,14 @@ export const useCommentStore = defineStore('comment', () => {
    * 获取评论
    */
   async function getComment(id: number) {
-    return await service.GetComment({id});
+    return await service.Get({id});
   }
 
   /**
    * 创建评论
    */
   async function createComment(values: Record<string, any> = {}) {
-    return await service.CreateComment({
+    return await service.Create({
       // @ts-ignore proto generated code is error.
       data: {
         ...values,
@@ -56,7 +56,7 @@ export const useCommentStore = defineStore('comment', () => {
    * 更新评论
    */
   async function updateComment(id: number, values: Record<string, any> = {}) {
-    return await service.UpdateComment({
+    return await service.Update({
       id,
       // @ts-ignore proto generated code is error.
       data: {
@@ -70,7 +70,7 @@ export const useCommentStore = defineStore('comment', () => {
    * 删除评论
    */
   async function deleteComment(id: number) {
-    return await service.DeleteComment({id});
+    return await service.Delete({id});
   }
 
   function $reset() {

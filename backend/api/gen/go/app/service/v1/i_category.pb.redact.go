@@ -44,10 +44,10 @@ type redactedCategoryServiceServer struct {
 	bypass redact.Bypass
 }
 
-// ListCategory is the redacted wrapper for the actual CategoryServiceServer.ListCategory method
+// List is the redacted wrapper for the actual CategoryServiceServer.List method
 // Unary RPC
-func (s *redactedCategoryServiceServer) ListCategory(ctx context.Context, in *pagination.PagingRequest) (*contentpb.ListCategoryResponse, error) {
-	res, err := s.srv.ListCategory(ctx, in)
+func (s *redactedCategoryServiceServer) List(ctx context.Context, in *pagination.PagingRequest) (*contentpb.ListCategoryResponse, error) {
+	res, err := s.srv.List(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -55,10 +55,10 @@ func (s *redactedCategoryServiceServer) ListCategory(ctx context.Context, in *pa
 	return res, err
 }
 
-// GetCategory is the redacted wrapper for the actual CategoryServiceServer.GetCategory method
+// Get is the redacted wrapper for the actual CategoryServiceServer.Get method
 // Unary RPC
-func (s *redactedCategoryServiceServer) GetCategory(ctx context.Context, in *contentpb.GetCategoryRequest) (*contentpb.Category, error) {
-	res, err := s.srv.GetCategory(ctx, in)
+func (s *redactedCategoryServiceServer) Get(ctx context.Context, in *contentpb.GetCategoryRequest) (*contentpb.Category, error) {
+	res, err := s.srv.Get(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -66,10 +66,10 @@ func (s *redactedCategoryServiceServer) GetCategory(ctx context.Context, in *con
 	return res, err
 }
 
-// CreateCategory is the redacted wrapper for the actual CategoryServiceServer.CreateCategory method
+// Create is the redacted wrapper for the actual CategoryServiceServer.Create method
 // Unary RPC
-func (s *redactedCategoryServiceServer) CreateCategory(ctx context.Context, in *contentpb.CreateCategoryRequest) (*contentpb.Category, error) {
-	res, err := s.srv.CreateCategory(ctx, in)
+func (s *redactedCategoryServiceServer) Create(ctx context.Context, in *contentpb.CreateCategoryRequest) (*contentpb.Category, error) {
+	res, err := s.srv.Create(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -77,10 +77,10 @@ func (s *redactedCategoryServiceServer) CreateCategory(ctx context.Context, in *
 	return res, err
 }
 
-// UpdateCategory is the redacted wrapper for the actual CategoryServiceServer.UpdateCategory method
+// Update is the redacted wrapper for the actual CategoryServiceServer.Update method
 // Unary RPC
-func (s *redactedCategoryServiceServer) UpdateCategory(ctx context.Context, in *contentpb.UpdateCategoryRequest) (*contentpb.Category, error) {
-	res, err := s.srv.UpdateCategory(ctx, in)
+func (s *redactedCategoryServiceServer) Update(ctx context.Context, in *contentpb.UpdateCategoryRequest) (*contentpb.Category, error) {
+	res, err := s.srv.Update(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)
@@ -88,10 +88,10 @@ func (s *redactedCategoryServiceServer) UpdateCategory(ctx context.Context, in *
 	return res, err
 }
 
-// DeleteCategory is the redacted wrapper for the actual CategoryServiceServer.DeleteCategory method
+// Delete is the redacted wrapper for the actual CategoryServiceServer.Delete method
 // Unary RPC
-func (s *redactedCategoryServiceServer) DeleteCategory(ctx context.Context, in *contentpb.DeleteCategoryRequest) (*emptypb.Empty, error) {
-	res, err := s.srv.DeleteCategory(ctx, in)
+func (s *redactedCategoryServiceServer) Delete(ctx context.Context, in *contentpb.DeleteCategoryRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.Delete(ctx, in)
 	if !s.bypass.CheckInternal(ctx) {
 		// Apply redaction to the response
 		redact.Apply(res)

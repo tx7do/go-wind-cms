@@ -29,14 +29,13 @@ var File_app_service_v1_i_comment_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_comment_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/service/v1/i_comment.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto2\xcf\x04\n" +
-	"\x0eCommentService\x12k\n" +
-	"\vListComment\x12\x19.pagination.PagingRequest\x1a'.comment.service.v1.ListCommentResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/app/v1/comments\x12o\n" +
-	"\n" +
-	"GetComment\x12%.comment.service.v1.GetCommentRequest\x1a\x1b.comment.service.v1.Comment\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/comments/{id}\x12s\n" +
-	"\rCreateComment\x12(.comment.service.v1.CreateCommentRequest\x1a\x1b.comment.service.v1.Comment\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/app/v1/comments\x12x\n" +
-	"\rUpdateComment\x12(.comment.service.v1.UpdateCommentRequest\x1a\x1b.comment.service.v1.Comment\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/app/v1/comments/{id}\x12p\n" +
-	"\rDeleteComment\x12(.comment.service.v1.DeleteCommentRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/app/v1/comments/{id}B\xae\x01\n" +
+	"\x1eapp/service/v1/i_comment.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto2\xac\x04\n" +
+	"\x0eCommentService\x12d\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a'.comment.service.v1.ListCommentResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/app/v1/comments\x12h\n" +
+	"\x03Get\x12%.comment.service.v1.GetCommentRequest\x1a\x1b.comment.service.v1.Comment\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/comments/{id}\x12l\n" +
+	"\x06Create\x12(.comment.service.v1.CreateCommentRequest\x1a\x1b.comment.service.v1.Comment\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/app/v1/comments\x12q\n" +
+	"\x06Update\x12(.comment.service.v1.UpdateCommentRequest\x1a\x1b.comment.service.v1.Comment\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/app/v1/comments/{id}\x12i\n" +
+	"\x06Delete\x12(.comment.service.v1.DeleteCommentRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/app/v1/comments/{id}B\xae\x01\n" +
 	"\x12com.app.service.v1B\rICommentProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_comment_proto_goTypes = []any{
@@ -50,16 +49,16 @@ var file_app_service_v1_i_comment_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),            // 7: google.protobuf.Empty
 }
 var file_app_service_v1_i_comment_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.CommentService.ListComment:input_type -> pagination.PagingRequest
-	1, // 1: app.service.v1.CommentService.GetComment:input_type -> comment.service.v1.GetCommentRequest
-	2, // 2: app.service.v1.CommentService.CreateComment:input_type -> comment.service.v1.CreateCommentRequest
-	3, // 3: app.service.v1.CommentService.UpdateComment:input_type -> comment.service.v1.UpdateCommentRequest
-	4, // 4: app.service.v1.CommentService.DeleteComment:input_type -> comment.service.v1.DeleteCommentRequest
-	5, // 5: app.service.v1.CommentService.ListComment:output_type -> comment.service.v1.ListCommentResponse
-	6, // 6: app.service.v1.CommentService.GetComment:output_type -> comment.service.v1.Comment
-	6, // 7: app.service.v1.CommentService.CreateComment:output_type -> comment.service.v1.Comment
-	6, // 8: app.service.v1.CommentService.UpdateComment:output_type -> comment.service.v1.Comment
-	7, // 9: app.service.v1.CommentService.DeleteComment:output_type -> google.protobuf.Empty
+	0, // 0: app.service.v1.CommentService.List:input_type -> pagination.PagingRequest
+	1, // 1: app.service.v1.CommentService.Get:input_type -> comment.service.v1.GetCommentRequest
+	2, // 2: app.service.v1.CommentService.Create:input_type -> comment.service.v1.CreateCommentRequest
+	3, // 3: app.service.v1.CommentService.Update:input_type -> comment.service.v1.UpdateCommentRequest
+	4, // 4: app.service.v1.CommentService.Delete:input_type -> comment.service.v1.DeleteCommentRequest
+	5, // 5: app.service.v1.CommentService.List:output_type -> comment.service.v1.ListCommentResponse
+	6, // 6: app.service.v1.CommentService.Get:output_type -> comment.service.v1.Comment
+	6, // 7: app.service.v1.CommentService.Create:output_type -> comment.service.v1.Comment
+	6, // 8: app.service.v1.CommentService.Update:output_type -> comment.service.v1.Comment
+	7, // 9: app.service.v1.CommentService.Delete:output_type -> google.protobuf.Empty
 	5, // [5:10] is the sub-list for method output_type
 	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

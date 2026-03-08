@@ -19,7 +19,7 @@ paths:
             tags:
                 - CategoryService
             description: 获取类别列表
-            operationId: CategoryService_ListCategory
+            operationId: CategoryService_List
             parameters:
                 - name: page
                   in: query
@@ -96,7 +96,7 @@ paths:
             tags:
                 - CategoryService
             description: 创建类别
-            operationId: CategoryService_CreateCategory
+            operationId: CategoryService_Create
             requestBody:
                 content:
                     application/json:
@@ -115,7 +115,7 @@ paths:
             tags:
                 - CategoryService
             description: 获取类别数据
-            operationId: CategoryService_GetCategory
+            operationId: CategoryService_Get
             parameters:
                 - name: id
                   in: path
@@ -147,7 +147,7 @@ paths:
             tags:
                 - CategoryService
             description: 更新类别
-            operationId: CategoryService_UpdateCategory
+            operationId: CategoryService_Update
             parameters:
                 - name: id
                   in: path
@@ -172,7 +172,7 @@ paths:
             tags:
                 - CategoryService
             description: 删除类别
-            operationId: CategoryService_DeleteCategory
+            operationId: CategoryService_Delete
             parameters:
                 - name: id
                   in: path
@@ -222,7 +222,7 @@ paths:
             tags:
                 - CommentService
             description: 获取评论列表
-            operationId: CommentService_ListComment
+            operationId: CommentService_List
             parameters:
                 - name: page
                   in: query
@@ -299,7 +299,7 @@ paths:
             tags:
                 - CommentService
             description: 创建评论
-            operationId: CommentService_CreateComment
+            operationId: CommentService_Create
             requestBody:
                 content:
                     application/json:
@@ -318,7 +318,7 @@ paths:
             tags:
                 - CommentService
             description: 获取评论数据
-            operationId: CommentService_GetComment
+            operationId: CommentService_Get
             parameters:
                 - name: id
                   in: path
@@ -342,7 +342,7 @@ paths:
             tags:
                 - CommentService
             description: 更新评论
-            operationId: CommentService_UpdateComment
+            operationId: CommentService_Update
             parameters:
                 - name: id
                   in: path
@@ -367,7 +367,7 @@ paths:
             tags:
                 - CommentService
             description: 删除评论
-            operationId: CommentService_DeleteComment
+            operationId: CommentService_Delete
             parameters:
                 - name: id
                   in: path
@@ -990,7 +990,7 @@ paths:
             tags:
                 - PostService
             description: 获取帖子列表
-            operationId: PostService_ListPost
+            operationId: PostService_List
             parameters:
                 - name: page
                   in: query
@@ -1067,7 +1067,7 @@ paths:
             tags:
                 - PostService
             description: 创建帖子
-            operationId: PostService_CreatePost
+            operationId: PostService_Create
             requestBody:
                 content:
                     application/json:
@@ -1086,7 +1086,7 @@ paths:
             tags:
                 - PostService
             description: 获取帖子数据
-            operationId: PostService_GetPost
+            operationId: PostService_Get
             parameters:
                 - name: id
                   in: path
@@ -1118,7 +1118,7 @@ paths:
             tags:
                 - PostService
             description: 更新帖子
-            operationId: PostService_UpdatePost
+            operationId: PostService_Update
             parameters:
                 - name: id
                   in: path
@@ -1143,7 +1143,7 @@ paths:
             tags:
                 - PostService
             description: 删除帖子
-            operationId: PostService_DeletePost
+            operationId: PostService_Delete
             parameters:
                 - name: id
                   in: path
@@ -1212,7 +1212,7 @@ paths:
             tags:
                 - TagService
             description: 获取标签列表
-            operationId: TagService_ListTag
+            operationId: TagService_List
             parameters:
                 - name: page
                   in: query
@@ -1289,7 +1289,7 @@ paths:
             tags:
                 - TagService
             description: 创建标签
-            operationId: TagService_CreateTag
+            operationId: TagService_Create
             requestBody:
                 content:
                     application/json:
@@ -1308,7 +1308,7 @@ paths:
             tags:
                 - TagService
             description: 获取标签数据
-            operationId: TagService_GetTag
+            operationId: TagService_Get
             parameters:
                 - name: id
                   in: path
@@ -1340,7 +1340,7 @@ paths:
             tags:
                 - TagService
             description: 更新标签
-            operationId: TagService_UpdateTag
+            operationId: TagService_Update
             parameters:
                 - name: id
                   in: path
@@ -1365,7 +1365,7 @@ paths:
             tags:
                 - TagService
             description: 删除标签
-            operationId: TagService_DeleteTag
+            operationId: TagService_Delete
             parameters:
                 - name: id
                   in: path

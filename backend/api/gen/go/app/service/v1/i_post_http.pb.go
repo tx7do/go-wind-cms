@@ -22,47 +22,47 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationPostServiceCreatePost = "/app.service.v1.PostService/CreatePost"
-const OperationPostServiceDeletePost = "/app.service.v1.PostService/DeletePost"
-const OperationPostServiceGetPost = "/app.service.v1.PostService/GetPost"
+const OperationPostServiceCreate = "/app.service.v1.PostService/Create"
+const OperationPostServiceDelete = "/app.service.v1.PostService/Delete"
+const OperationPostServiceGet = "/app.service.v1.PostService/Get"
 const OperationPostServiceGetTranslation = "/app.service.v1.PostService/GetTranslation"
-const OperationPostServiceListPost = "/app.service.v1.PostService/ListPost"
-const OperationPostServiceUpdatePost = "/app.service.v1.PostService/UpdatePost"
+const OperationPostServiceList = "/app.service.v1.PostService/List"
+const OperationPostServiceUpdate = "/app.service.v1.PostService/Update"
 
 type PostServiceHTTPServer interface {
-	// CreatePost 创建帖子
-	CreatePost(context.Context, *v11.CreatePostRequest) (*v11.Post, error)
-	// DeletePost 删除帖子
-	DeletePost(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
-	// GetPost 获取帖子数据
-	GetPost(context.Context, *v11.GetPostRequest) (*v11.Post, error)
+	// Create 创建帖子
+	Create(context.Context, *v11.CreatePostRequest) (*v11.Post, error)
+	// Delete 删除帖子
+	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
+	// Get 获取帖子数据
+	Get(context.Context, *v11.GetPostRequest) (*v11.Post, error)
 	// GetTranslation 获取翻译数据
 	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
-	// ListPost 获取帖子列表
-	ListPost(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
-	// UpdatePost 更新帖子
-	UpdatePost(context.Context, *v11.UpdatePostRequest) (*v11.Post, error)
+	// List 获取帖子列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
+	// Update 更新帖子
+	Update(context.Context, *v11.UpdatePostRequest) (*v11.Post, error)
 }
 
 func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/posts", _PostService_ListPost0_HTTP_Handler(srv))
-	r.GET("/app/v1/posts/{id}", _PostService_GetPost0_HTTP_Handler(srv))
-	r.POST("/app/v1/posts", _PostService_CreatePost0_HTTP_Handler(srv))
-	r.PUT("/app/v1/posts/{id}", _PostService_UpdatePost0_HTTP_Handler(srv))
-	r.DELETE("/app/v1/posts/{id}", _PostService_DeletePost0_HTTP_Handler(srv))
+	r.GET("/app/v1/posts", _PostService_List4_HTTP_Handler(srv))
+	r.GET("/app/v1/posts/{id}", _PostService_Get4_HTTP_Handler(srv))
+	r.POST("/app/v1/posts", _PostService_Create4_HTTP_Handler(srv))
+	r.PUT("/app/v1/posts/{id}", _PostService_Update4_HTTP_Handler(srv))
+	r.DELETE("/app/v1/posts/{id}", _PostService_Delete4_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/{id}/translation", _PostService_GetTranslation2_HTTP_Handler(srv))
 }
 
-func _PostService_ListPost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_List4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationPostServiceListPost)
+		http.SetOperation(ctx, OperationPostServiceList)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListPost(ctx, req.(*v1.PagingRequest))
+			return srv.List(ctx, req.(*v1.PagingRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -73,7 +73,7 @@ func _PostService_ListPost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _PostService_GetPost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_Get4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPostRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -82,9 +82,9 @@ func _PostService_GetPost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationPostServiceGetPost)
+		http.SetOperation(ctx, OperationPostServiceGet)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetPost(ctx, req.(*v11.GetPostRequest))
+			return srv.Get(ctx, req.(*v11.GetPostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -95,7 +95,7 @@ func _PostService_GetPost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http
 	}
 }
 
-func _PostService_CreatePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_Create4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePostRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -104,9 +104,9 @@ func _PostService_CreatePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx h
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationPostServiceCreatePost)
+		http.SetOperation(ctx, OperationPostServiceCreate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreatePost(ctx, req.(*v11.CreatePostRequest))
+			return srv.Create(ctx, req.(*v11.CreatePostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -117,7 +117,7 @@ func _PostService_CreatePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx h
 	}
 }
 
-func _PostService_UpdatePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_Update4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePostRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -129,9 +129,9 @@ func _PostService_UpdatePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx h
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationPostServiceUpdatePost)
+		http.SetOperation(ctx, OperationPostServiceUpdate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdatePost(ctx, req.(*v11.UpdatePostRequest))
+			return srv.Update(ctx, req.(*v11.UpdatePostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -142,7 +142,7 @@ func _PostService_UpdatePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx h
 	}
 }
 
-func _PostService_DeletePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_Delete4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePostRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -151,9 +151,9 @@ func _PostService_DeletePost0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx h
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationPostServiceDeletePost)
+		http.SetOperation(ctx, OperationPostServiceDelete)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeletePost(ctx, req.(*v11.DeletePostRequest))
+			return srv.Delete(ctx, req.(*v11.DeletePostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -187,18 +187,18 @@ func _PostService_GetTranslation2_HTTP_Handler(srv PostServiceHTTPServer) func(c
 }
 
 type PostServiceHTTPClient interface {
-	// CreatePost 创建帖子
-	CreatePost(ctx context.Context, req *v11.CreatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
-	// DeletePost 删除帖子
-	DeletePost(ctx context.Context, req *v11.DeletePostRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	// GetPost 获取帖子数据
-	GetPost(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	// Create 创建帖子
+	Create(ctx context.Context, req *v11.CreatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	// Delete 删除帖子
+	Delete(ctx context.Context, req *v11.DeletePostRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Get 获取帖子数据
+	Get(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 	// GetTranslation 获取翻译数据
 	GetTranslation(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.PostTranslation, err error)
-	// ListPost 获取帖子列表
-	ListPost(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPostResponse, err error)
-	// UpdatePost 更新帖子
-	UpdatePost(ctx context.Context, req *v11.UpdatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	// List 获取帖子列表
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPostResponse, err error)
+	// Update 更新帖子
+	Update(ctx context.Context, req *v11.UpdatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 }
 
 type PostServiceHTTPClientImpl struct {
@@ -209,12 +209,12 @@ func NewPostServiceHTTPClient(client *http.Client) PostServiceHTTPClient {
 	return &PostServiceHTTPClientImpl{client}
 }
 
-// CreatePost 创建帖子
-func (c *PostServiceHTTPClientImpl) CreatePost(ctx context.Context, in *v11.CreatePostRequest, opts ...http.CallOption) (*v11.Post, error) {
+// Create 创建帖子
+func (c *PostServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreatePostRequest, opts ...http.CallOption) (*v11.Post, error) {
 	var out v11.Post
 	pattern := "/app/v1/posts"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationPostServiceCreatePost))
+	opts = append(opts, http.Operation(OperationPostServiceCreate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -223,12 +223,12 @@ func (c *PostServiceHTTPClientImpl) CreatePost(ctx context.Context, in *v11.Crea
 	return &out, nil
 }
 
-// DeletePost 删除帖子
-func (c *PostServiceHTTPClientImpl) DeletePost(ctx context.Context, in *v11.DeletePostRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+// Delete 删除帖子
+func (c *PostServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeletePostRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/app/v1/posts/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationPostServiceDeletePost))
+	opts = append(opts, http.Operation(OperationPostServiceDelete))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
@@ -237,12 +237,12 @@ func (c *PostServiceHTTPClientImpl) DeletePost(ctx context.Context, in *v11.Dele
 	return &out, nil
 }
 
-// GetPost 获取帖子数据
-func (c *PostServiceHTTPClientImpl) GetPost(ctx context.Context, in *v11.GetPostRequest, opts ...http.CallOption) (*v11.Post, error) {
+// Get 获取帖子数据
+func (c *PostServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPostRequest, opts ...http.CallOption) (*v11.Post, error) {
 	var out v11.Post
 	pattern := "/app/v1/posts/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationPostServiceGetPost))
+	opts = append(opts, http.Operation(OperationPostServiceGet))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -265,12 +265,12 @@ func (c *PostServiceHTTPClientImpl) GetTranslation(ctx context.Context, in *v11.
 	return &out, nil
 }
 
-// ListPost 获取帖子列表
-func (c *PostServiceHTTPClientImpl) ListPost(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListPostResponse, error) {
+// List 获取帖子列表
+func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListPostResponse, error) {
 	var out v11.ListPostResponse
 	pattern := "/app/v1/posts"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationPostServiceListPost))
+	opts = append(opts, http.Operation(OperationPostServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -279,12 +279,12 @@ func (c *PostServiceHTTPClientImpl) ListPost(ctx context.Context, in *v1.PagingR
 	return &out, nil
 }
 
-// UpdatePost 更新帖子
-func (c *PostServiceHTTPClientImpl) UpdatePost(ctx context.Context, in *v11.UpdatePostRequest, opts ...http.CallOption) (*v11.Post, error) {
+// Update 更新帖子
+func (c *PostServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdatePostRequest, opts ...http.CallOption) (*v11.Post, error) {
 	var out v11.Post
 	pattern := "/app/v1/posts/{id}"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationPostServiceUpdatePost))
+	opts = append(opts, http.Operation(OperationPostServiceUpdate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
