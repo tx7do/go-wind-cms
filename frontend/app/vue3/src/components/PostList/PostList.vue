@@ -58,12 +58,12 @@ async function fetchPosts() {
 }
 
 function reload() {
-  console.log('PostList reload...')
+  // console.log('PostList reload...')
   fetchPosts();
 }
 
 useLanguageChangeEffect(() => {
-  // 父页面负责调用 reload
+  fetchPosts();
 }, {
   immediate: false,
   autoCleanup: true,
