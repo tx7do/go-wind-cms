@@ -14,3 +14,9 @@ data:
     dial_timeout: 10s
     read_timeout: 0.4s
     write_timeout: 0.6s
+
+  elastic_search:
+    addresses:
+      - "http://elasticsearch:9200"
+    username: "elastic"
+    password: "*Abcd123456"

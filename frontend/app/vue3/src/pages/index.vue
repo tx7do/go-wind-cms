@@ -3,14 +3,14 @@ import {definePage} from 'unplugin-vue-router/runtime'
 import {useRouter} from 'vue-router'
 import {ref, onMounted, computed, onUnmounted} from 'vue'
 
-import {useCategoryStore, useTagStore} from '@/stores'
 import {$t, i18n} from '@/locales'
 import {XIcon} from "@/plugins/xicon";
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
-import type {
-  contentservicev1_Category,
-  contentservicev1_Tag
-} from "@/api/generated/app/service/v1";
+
+import FeaturesSection from '@/components/FeaturesSection.vue';
+import CategoryListSection from '@/components/CategoryListSection.vue';
+import PopularTagsSection from '@/components/PopularTagsSection.vue';
+
 
 definePage({
   name: 'home',
@@ -20,23 +20,13 @@ definePage({
 })
 
 const router = useRouter()
-const categoryStore = useCategoryStore()
-const tagStore = useTagStore()
 
-const categories = ref<contentservicev1_Category[]>([])
-const popularTags = ref<contentservicev1_Tag[]>([])
 const loading = ref(false)
 
 const featuredPostList = ref();
 const latestPostList = ref();
-
-const displayTags = computed(() => {
-  return popularTags.value.map((tag: contentservicev1_Tag, index: number) => ({
-    id: tag.id,
-    name: tag.translations?.[0]?.name || $t('page.tags.tag_untitled'),
-    color: tag.color || `hsl(${index * 60}, 100%, 50%)`,
-  }));
-});
+const categoryListSection = ref();
+const popularTags = ref();
 
 // 滚动动画相关
 const observerRef = ref<IntersectionObserver | null>(null)
@@ -72,42 +62,6 @@ function destroyScrollObserver() {
     observerRef.value.disconnect()
     observerRef.value = null
   }
-}
-
-// 加载分类
-async function loadCategories() {
-  try {
-    const res = await categoryStore.listCategory(
-      {page: 1, pageSize: 8},
-      {status: 'CATEGORY_STATUS_ACTIVE'},
-      'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,translations.id,translations.category_id,translations.name,translations.language_code,translations.description',
-      ['-sortOrder', '-postCount']
-    )
-    categories.value = res.items || []
-  } catch (error) {
-    console.error('Load categories failed:', error)
-  }
-}
-
-// 加载热门标签
-async function loadPopularTags() {
-  try {
-    const res = await tagStore.listTag(
-      {page: 1, pageSize: 6},
-      {status: 'TAG_STATUS_ACTIVE', isFeatured: true}
-    );
-    popularTags.value = res.items || [];
-  } catch (error) {
-    console.error('Load popular tags failed:', error);
-  }
-}
-
-function handleViewCategory(id: number) {
-  router.push(`/category/${id}`)
-}
-
-function getUpdatedDaysAgo(days: number = 3) {
-  return $t('page.home.updated_days_ago', {days})
 }
 
 // Smooth scroll to categories section
@@ -170,8 +124,8 @@ const featuredFieldMask = ref('id,status,sort_order,is_featured,visits,likes,com
 onMounted(async () => {
   loading.value = true
   await Promise.all([
-    loadCategories(),
-    loadPopularTags(),
+    categoryListSection.value?.reload(),
+    popularTags.value?.reload(),
     featuredPostList.value?.reload(),
     latestPostList.value?.reload(),
   ])
@@ -186,13 +140,6 @@ onMounted(async () => {
 
 // 监听语言切换，自动重新加载数据
 useLanguageChangeEffect(async () => {
-  loading.value = true
-  await Promise.all([
-    loadCategories(),
-    loadPopularTags(),
-  ])
-  loading.value = false
-
   // 数据更新后，需要重新初始化滚动观察器
   // 先销毁旧的观察器
   destroyScrollObserver()
@@ -217,25 +164,22 @@ onUnmounted(() => {
       <!-- Animated Background Elements -->
       <div class="hero-bg-wrapper">
         <div class="hero-gradient-bg"></div>
-
         <!-- Grid Background -->
         <div class="hero-grid-bg"></div>
-
         <!-- Animated Shapes -->
         <div class="hero-animated-shapes">
           <div class="shape shape-1"></div>
           <div class="shape shape-2"></div>
           <div class="shape shape-3"></div>
         </div>
-
         <!-- Code Snippet Decorations -->
         <div class="hero-code-snippets">
           <div class="code-snippet snippet-1">
             <div class="code-line"><span class="code-keyword">func</span> <span
-              class="code-function">GetPost</span>() {
+              class="code-function">GetPost</span>() {'{'}
             </div>
             <div class="code-line"><span class="code-keyword">return</span> post</div>
-            <div class="code-line">}</div>
+            <div class="code-line">{'}'}</div>
           </div>
           <div class="code-snippet snippet-2">
             <div class="code-line"><span class="code-tag">&lt;template&gt;</span></div>
@@ -249,7 +193,6 @@ onUnmounted(() => {
               class="code-string">'v1'</span></div>
           </div>
         </div>
-
         <svg class="hero-waves" viewBox="0 0 1440 320" preserveAspectRatio="none">
           <path fill="rgba(255,255,255,0.1)"
                 d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
@@ -281,9 +224,9 @@ onUnmounted(() => {
     <!-- Featured Posts Section (推荐阅读) - 上移到 Categories 之前 -->
     <section class="featured-section scroll-reveal">
       <div class="section-header">
-        <h2>
+        <h2 class="section-title">
           <XIcon name="carbon:star-filled" :size="28"
-                 style="color: var(--color-brand); margin-right: 8px;"/>
+                 style="color: #6366f1; margin-right: 8px;"/>
           {{ $t('page.home.featured_posts') }}
         </h2>
         <n-button text type="primary" @click="router.push('/post')">
@@ -299,6 +242,7 @@ onUnmounted(() => {
           :order-by="featuredOrderBy"
           :page="1"
           :page-size="3"
+          :columns="3"
           :show-skeleton="true"
           from="home"
         ></PostList>
@@ -315,175 +259,159 @@ onUnmounted(() => {
     </section>
 
     <!-- Categories Section -->
-    <section class="categories-section scroll-reveal">
+    <section class="categories-section-wrapper scroll-reveal">
+      <CategoryListSection
+        :title="$t('page.home.categories')"
+        :showViewAll="true"
+        :showCarousel="true"
+        :pageSize="8"
+      >
+      </CategoryListSection>
+    </section>
+
+    <!-- Popular Tags Section -->
+    <section class="popular-section scroll-reveal">
       <div class="section-header">
-        <h2>{{ $t('page.home.categories') }}</h2>
-        <n-button text type="primary" @click="router.push('/category')">
+        <h2 class="section-title">
+          <XIcon name="carbon:fire" :size="28"
+                 style="color: #6366f1; margin-right: 8px;"/>
+          {{ $t('page.home.popular_tags') }}
+        </h2>
+        <n-button text type="primary" @click="router.push('/tag')">
           {{ $t('page.home.view_all') }} →
         </n-button>
       </div>
-      <!-- Loading Skeleton -->
-      <div v-if="loading" class="categories-grid desktop-grid">
-        <div v-for="i in 8" :key="i" class="category-card">
-          <n-skeleton height="140px"/>
-        </div>
-      </div>
-      <!-- Loaded Content -->
-      <div v-else>
-        <!-- Desktop: Grid Layout (4 columns) -->
-        <div class="categories-grid desktop-grid">
-          <div
-            v-for="category in categories"
-            :key="category.id"
-            class="category-card scroll-reveal-item"
-            :style="{ '--card-hue': (category.id % 6) * 60 }"
-            @click="handleViewCategory(category.id)"
-          >
-            <!-- Card Background Gradient -->
-            <div class="category-card-bg"></div>
-
-            <!-- Content -->
-            <div class="category-card-content">
-              <div class="category-card-header">
-                <div class="category-icon">
-                  <XIcon
-                    :name="category.icon?.includes(':') ? category.icon : `carbon:${category.icon || 'folder'}`"
-                    :size="48"/>
-                </div>
-                <div class="category-info">
-                  <h3>{{ categoryStore.getCategoryName(category) }}</h3>
-                  <span class="post-count">
-                    {{ $t('page.home.article_count', {count: category.postCount || 0}) }}
-                  </span>
-                </div>
-              </div>
-
-              <!-- Updated Badge -->
-              <div class="category-badge">
-                <XIcon name="carbon:time" :size="14"/>
-                <span>{{ getUpdatedDaysAgo(3) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mobile: Carousel (走马灯) -->
-        <div class="categories-carousel mobile-carousel">
-          <n-carousel
-            :autoplay="true"
-            :interval="5000"
-            :show-arrow="true"
-            :mouse-wheel="true"
-            :touchable="true"
-            :slides-per-view="1.5"
-            :centered-slides="true"
-            :scroll-eventListener="false"
-            class="carousel-container"
-          >
-            <template
-              v-for="category in categories"
-              :key="category.id"
-            >
-              <div
-                class="carousel-item"
-                @click="handleViewCategory(category.id)"
-              >
-                <div
-                  class="category-card carousel-card"
-                  :style="{ '--card-hue': (category.id % 6) * 60 }"
-                >
-                  <!-- Card Background Gradient -->
-                  <div class="category-card-bg"></div>
-
-                  <!-- Content -->
-                  <div class="category-card-content">
-                    <div class="category-card-header">
-                      <div class="category-icon">
-                        <XIcon
-                          :name="category.icon?.includes(':') ? category.icon : `carbon:${category.icon || 'folder'}`"
-                          :size="48"/>
-                      </div>
-                      <div class="category-info">
-                        <h3>{{ categoryStore.getCategoryName(category) }}</h3>
-                        <span class="post-count">
-                          {{ $t('page.home.article_count', {count: category.postCount || 0}) }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <!-- Updated Badge -->
-                    <div class="category-badge">
-                      <XIcon name="carbon:time" :size="14"/>
-                      <span>{{ getUpdatedDaysAgo(3) }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </n-carousel>
-        </div>
-      </div>
-
-      <!-- Popular Tags Section -->
-      <div class="popular-tags-container">
-        <h3 class="tags-title">{{ $t('page.home.popular_tags') }}</h3>
-        <div class="tags-grid">
-          <div
-            v-for="tag in displayTags"
-            :key="tag.id"
-            class="tag-item"
-            :style="{ '--tag-color': tag.color }"
-          >
-            <span class="tag-label">{{ tag.name }}</span>
-          </div>
-        </div>
+      <div class="popular-grid">
+        <PopularTagsSection
+          :title="''"
+        />
       </div>
     </section>
-
 
     <!-- Latest Posts Section -->
     <section class="latest-section scroll-reveal">
       <div class="section-header">
-        <h2>{{ $t('page.home.latest_posts') }}</h2>
+        <h2 class="section-title">
+          <XIcon name="carbon:document" :size="28"
+                 style="color: #6366f1; margin-right: 8px;"/>
+          {{ $t('page.home.latest_posts') }}
+        </h2>
         <n-button text type="primary" @click="router.push('/post')">
           {{ $t('page.home.view_all') }} →
         </n-button>
       </div>
-      <PostList
-        ref="latestPostList"
-        :query-params="{status: 'POST_STATUS_PUBLISHED'}"
-        :field-mask="'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'"
-        :order-by="['-createdAt']"
-        :page="1"
-        :page-size="6"
-        :show-skeleton="true"
-        from="home"
-      ></PostList>
+      <div class="latest-grid">
+        <PostList
+          ref="latestPostList"
+          :query-params="{status: 'POST_STATUS_PUBLISHED'}"
+          :field-mask="'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'"
+          :order-by="['-createdAt']"
+          :page="1"
+          :page-size="6"
+          :columns="3"
+          :show-skeleton="true"
+          from="home"
+        ></PostList>
+      </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features">
-      <div class="section-header">
-        <h2>{{ $t('page.home.platform_features') }}</h2>
-      </div>
-      <div class="features-grid">
-        <div v-for="feature in features" :key="feature.title" class="feature-card">
-          <div class="feature-icon">
-            <XIcon :name="feature.icon" :size="48"/>
-          </div>
-          <h3>{{ feature.title }}</h3>
-          <p>{{ feature.description }}</p>
-        </div>
-      </div>
-    </section>
+    <FeaturesSection :title="$t('page.home.platform_features')" :features="features"/>
   </div>
 </template>
 
 <style scoped lang="less">
+// 主体样式
 .home-page {
   min-height: 100vh;
   width: 100%;
   background: var(--color-bg);
+}
+
+// 只保留一份核心样式定义，移除所有重复
+.hero {
+  padding: 3.5rem 2rem 2.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 4.5rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, #fff 0%, #f0f0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.95;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+.hero-description {
+  font-size: 1.15rem;
+  margin-bottom: 2.5rem;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.85;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 2rem;
+}
+
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 8px rgba(99, 102, 241, 0.08), 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 // ========== Scroll Reveal Animations ==========
@@ -571,13 +499,11 @@ onUnmounted(() => {
 .hero {
   padding: 3.5rem 2rem 2.5rem;
   text-align: center;
-  max-width: 100%;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
   color: white;
   position: relative;
   overflow: hidden;
   min-height: 280px;
-  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -780,7 +706,7 @@ onUnmounted(() => {
     opacity: 0.95;
     font-weight: 300;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.7);
     animation: fadeInUp 0.8s ease-out 0.2s both;
     line-height: 1.4;
   }
@@ -794,7 +720,7 @@ onUnmounted(() => {
     opacity: 0.85;
     font-weight: 300;
     letter-spacing: 0.3px;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 8px rgba(255, 255, 255, 0.6);
     animation: fadeInUp 0.8s ease-out 0.4s both;
     line-height: 1.6;
   }
@@ -921,2312 +847,516 @@ onUnmounted(() => {
     }
   }
 
-  .hero-content {
-    animation: fadeInUp 0.8s ease-out;
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-title {
-    font-size: 4.5rem;
-    font-weight: 900;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-    letter-spacing: -2px;
-    position: relative;
-
-    // 使用渐变文字效果
-    background: linear-gradient(135deg,
-    #ffffff 0%,
-    #f0f0ff 25%,
-    #e0e0ff 50%,
-    #f0f0ff 75%,
-    #ffffff 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-
-    // 多层外发光和阴影，创造强烈的视觉冲击
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
-    0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
-    0 0 120px rgba(99, 102, 241, 0.5),
-    0 6px 24px rgba(0, 0, 0, 0.5),
-    0 3px 12px rgba(0, 0, 0, 0.4);
-
-    // 添加多层滤镜外发光
-    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
-
-    // 添加渐变动画和发光脉冲动画
-    animation-name: slideDown, glowPulseTitle, gradientShine;
-    animation-duration: 0.8s, 3s, 6s;
-    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
-    animation-iteration-count: 1, infinite, infinite;
-    animation-delay: 0s, 0.5s, 0s;
-
-    // 在标题下方添加光晕效果
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 40px;
-      background: radial-gradient(ellipse at center,
-      rgba(var(--color-primary-purple-rgb), 0.3) 0%,
-      rgba(99, 102, 241, 0.2) 50%,
-      transparent 100%);
-      filter: blur(20px);
-      opacity: 0.8;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-  }
-
-  .hero-subtitle {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.95;
-    font-weight: 300;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-    line-height: 1.4;
-  }
-
-  .hero-description {
-    font-size: 1.15rem;
-    margin-bottom: 2.5rem;
-    max-width: 750px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.85;
-    font-weight: 300;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeInUp 0.8s ease-out 0.4s both;
-    line-height: 1.6;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
-    position: relative;
-    z-index: 100 !important; // 使用最高 z-index
-    pointer-events: auto !important; // 确保按钮区域可点击
-
-    :deep(.n-button) {
-      position: relative;
-      z-index: 100 !important; // 确保按钮在最上层
-      pointer-events: auto !important; // 确保按钮本身可点击
-    }
-
-    .btn-primary,
-    .btn-secondary {
-      pointer-events: auto !important; // 确保按钮可点击
-      position: relative;
-      z-index: 100 !important;
-    }
-
-    .btn-primary {
-      :deep(.n-button) {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 700;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: none !important;
-        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35),
-        0 4px 12px rgba(16, 185, 129, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45),
-          0 6px 16px rgba(16, 185, 129, 0.25),
-          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-          background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4),
-          0 2px 8px rgba(16, 185, 129, 0.2);
-        }
-      }
-    }
-
-    .btn-secondary {
-      :deep(.n-button) {
-        background: rgba(255, 255, 255, 0.12) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 600;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.2) !important;
-          border-color: rgba(255, 255, 255, 0.5) !important;
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
-          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          background: rgba(255, 255, 255, 0.15) !important;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-        }
-      }
-    }
-  }
-
-  .hero-content {
-    animation: fadeInUp 0.8s ease-out;
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-title {
-    font-size: 4.5rem;
-    font-weight: 900;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-    letter-spacing: -2px;
-    position: relative;
-
-    // 使用渐变文字效果
-    background: linear-gradient(135deg,
-    #ffffff 0%,
-    #f0f0ff 25%,
-    #e0e0ff 50%,
-    #f0f0ff 75%,
-    #ffffff 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-
-    // 多层外发光和阴影，创造强烈的视觉冲击
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
-    0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
-    0 0 120px rgba(99, 102, 241, 0.5),
-    0 6px 24px rgba(0, 0, 0, 0.5),
-    0 3px 12px rgba(0, 0, 0, 0.4);
-
-    // 添加多层滤镜外发光
-    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
-
-    // 添加渐变动画和发光脉冲动画
-    animation-name: slideDown, glowPulseTitle, gradientShine;
-    animation-duration: 0.8s, 3s, 6s;
-    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
-    animation-iteration-count: 1, infinite, infinite;
-    animation-delay: 0s, 0.5s, 0s;
-
-    // 在标题下方添加光晕效果
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 40px;
-      background: radial-gradient(ellipse at center,
-      rgba(var(--color-primary-purple-rgb), 0.3) 0%,
-      rgba(99, 102, 241, 0.2) 50%,
-      transparent 100%);
-      filter: blur(20px);
-      opacity: 0.8;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-  }
-
-  .hero-subtitle {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.95;
-    font-weight: 300;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-    line-height: 1.4;
-  }
-
-  .hero-description {
-    font-size: 1.15rem;
-    margin-bottom: 2.5rem;
-    max-width: 750px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.85;
-    font-weight: 300;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeInUp 0.8s ease-out 0.4s both;
-    line-height: 1.6;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
-    position: relative;
-    z-index: 100 !important; // 使用最高 z-index
-    pointer-events: auto !important; // 确保按钮区域可点击
-
-    :deep(.n-button) {
-      position: relative;
-      z-index: 100 !important; // 确保按钮在最上层
-      pointer-events: auto !important; // 确保按钮本身可点击
-    }
-
-    .btn-primary,
-    .btn-secondary {
-      pointer-events: auto !important; // 确保按钮可点击
-      position: relative;
-      z-index: 100 !important;
-    }
-
-    .btn-primary {
-      :deep(.n-button) {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 700;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: none !important;
-        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35),
-        0 4px 12px rgba(16, 185, 129, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45),
-          0 6px 16px rgba(16, 185, 129, 0.25),
-          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-          background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4),
-          0 2px 8px rgba(16, 185, 129, 0.2);
-        }
-      }
-    }
-
-    .btn-secondary {
-      :deep(.n-button) {
-        background: rgba(255, 255, 255, 0.12) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 600;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.2) !important;
-          border-color: rgba(255, 255, 255, 0.5) !important;
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
-          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          background: rgba(255, 255, 255, 0.15) !important;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-        }
-      }
-    }
-  }
-
-  .hero-content {
-    animation: fadeInUp 0.8s ease-out;
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-title {
-    font-size: 4.5rem;
-    font-weight: 900;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-    letter-spacing: -2px;
-    position: relative;
-
-    // 使用渐变文字效果
-    background: linear-gradient(135deg,
-    #ffffff 0%,
-    #f0f0ff 25%,
-    #e0e0ff 50%,
-    #f0f0ff 75%,
-    #ffffff 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-
-    // 多层外发光和阴影，创造强烈的视觉冲击
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
-    0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
-    0 0 120px rgba(99, 102, 241, 0.5),
-    0 6px 24px rgba(0, 0, 0, 0.5),
-    0 3px 12px rgba(0, 0, 0, 0.4);
-
-    // 添加多层滤镜外发光
-    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
-
-    // 添加渐变动画和发光脉冲动画
-    animation-name: slideDown, glowPulseTitle, gradientShine;
-    animation-duration: 0.8s, 3s, 6s;
-    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
-    animation-iteration-count: 1, infinite, infinite;
-    animation-delay: 0s, 0.5s, 0s;
-
-    // 在标题下方添加光晕效果
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 40px;
-      background: radial-gradient(ellipse at center,
-      rgba(var(--color-primary-purple-rgb), 0.3) 0%,
-      rgba(99, 102, 241, 0.2) 50%,
-      transparent 100%);
-      filter: blur(20px);
-      opacity: 0.8;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-  }
-
-  .hero-subtitle {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.95;
-    font-weight: 300;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-    line-height: 1.4;
-  }
-
-  .hero-description {
-    font-size: 1.15rem;
-    margin-bottom: 2.5rem;
-    max-width: 750px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.85;
-    font-weight: 300;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeInUp 0.8s ease-out 0.4s both;
-    line-height: 1.6;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
-    position: relative;
-    z-index: 100 !important; // 使用最高 z-index
-    pointer-events: auto !important; // 确保按钮区域可点击
-
-    :deep(.n-button) {
-      position: relative;
-      z-index: 100 !important; // 确保按钮在最上层
-      pointer-events: auto !important; // 确保按钮本身可点击
-    }
-
-    .btn-primary,
-    .btn-secondary {
-      pointer-events: auto !important; // 确保按钮可点击
-      position: relative;
-      z-index: 100 !important;
-    }
-
-    .btn-primary {
-      :deep(.n-button) {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 700;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: none !important;
-        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35),
-        0 4px 12px rgba(16, 185, 129, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45),
-          0 6px 16px rgba(16, 185, 129, 0.25),
-          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-          background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4),
-          0 2px 8px rgba(16, 185, 129, 0.2);
-        }
-      }
-    }
-
-    .btn-secondary {
-      :deep(.n-button) {
-        background: rgba(255, 255, 255, 0.12) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 600;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.2) !important;
-          border-color: rgba(255, 255, 255, 0.5) !important;
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
-          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          background: rgba(255, 255, 255, 0.15) !important;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-        }
-      }
-    }
-  }
-
-  .hero-content {
-    animation: fadeInUp 0.8s ease-out;
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-title {
-    font-size: 4.5rem;
-    font-weight: 900;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-    letter-spacing: -2px;
-    position: relative;
-
-    // 使用渐变文字效果
-    background: linear-gradient(135deg,
-    #ffffff 0%,
-    #f0f0ff 25%,
-    #e0e0ff 50%,
-    #f0f0ff 75%,
-    #ffffff 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-
-    // 多层外发光和阴影，创造强烈的视觉冲击
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
-    0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
-    0 0 120px rgba(99, 102, 241, 0.5),
-    0 6px 24px rgba(0, 0, 0, 0.5),
-    0 3px 12px rgba(0, 0, 0, 0.4);
-
-    // 添加多层滤镜外发光
-    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
-
-    // 添加渐变动画和发光脉冲动画
-    animation-name: slideDown, glowPulseTitle, gradientShine;
-    animation-duration: 0.8s, 3s, 6s;
-    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
-    animation-iteration-count: 1, infinite, infinite;
-    animation-delay: 0s, 0.5s, 0s;
-
-    // 在标题下方添加光晕效果
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 40px;
-      background: radial-gradient(ellipse at center,
-      rgba(var(--color-primary-purple-rgb), 0.3) 0%,
-      rgba(99, 102, 241, 0.2) 50%,
-      transparent 100%);
-      filter: blur(20px);
-      opacity: 0.8;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-  }
-
-  .hero-subtitle {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.95;
-    font-weight: 300;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-    line-height: 1.4;
-  }
-
-  .hero-description {
-    font-size: 1.15rem;
-    margin-bottom: 2.5rem;
-    max-width: 750px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.85;
-    font-weight: 300;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeInUp 0.8s ease-out 0.4s both;
-    line-height: 1.6;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
-    position: relative;
-    z-index: 100 !important; // 使用最高 z-index
-    pointer-events: auto !important; // 确保按钮区域可点击
-
-    :deep(.n-button) {
-      position: relative;
-      z-index: 100 !important; // 确保按钮在最上层
-      pointer-events: auto !important; // 确保按钮本身可点击
-    }
-
-    .btn-primary,
-    .btn-secondary {
-      pointer-events: auto !important; // 确保按钮可点击
-      position: relative;
-      z-index: 100 !important;
-    }
-
-    .btn-primary {
-      :deep(.n-button) {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 700;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: none !important;
-        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35),
-        0 4px 12px rgba(16, 185, 129, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45),
-          0 6px 16px rgba(16, 185, 129, 0.25),
-          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-          background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4),
-          0 2px 8px rgba(16, 185, 129, 0.2);
-        }
-      }
-    }
-
-    .btn-secondary {
-      :deep(.n-button) {
-        background: rgba(255, 255, 255, 0.12) !important;
-        color: white !important;
-        font-size: 1.05rem;
-        font-weight: 600;
-        padding: 16px 40px !important;
-        border-radius: 12px !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-          transition: left 0.5s;
-          pointer-events: none; // 防止伪元素阻挡点击
-        }
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.2) !important;
-          border-color: rgba(255, 255, 255, 0.5) !important;
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
-          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-
-          &::before {
-            left: 100%;
-          }
-        }
-
-        &:active {
-          transform: translateY(0) scale(0.98);
-          background: rgba(255, 255, 255, 0.15) !important;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-        }
-      }
-    }
-  }
-
-  .hero-content {
-    animation: fadeInUp 0.8s ease-out;
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-title {
-    font-size: 4.5rem;
-    font-weight: 900;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-    letter-spacing: -2px;
-    position: relative;
-
-    // 使用渐变文字效果
-    background: linear-gradient(135deg,
-    #ffffff 0%,
-    #f0f0ff 25%,
-    #e0e0ff 50%,
-    #f0f0ff 75%,
-    #ffffff 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-
-    // 多层外发光和阴影，创造强烈的视觉冲击
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
-    0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
-    0 0 120px rgba(99, 102, 241, 0.5),
-    0 6px 24px rgba(0, 0, 0, 0.5),
-    0 3px 12px rgba(0, 0, 0, 0.4);
-
-    // 添加多层滤镜外发光
-    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
-
-    // 添加渐变动画和发光脉冲动画
-    animation-name: slideDown, glowPulseTitle, gradientShine;
-    animation-duration: 0.8s, 3s, 6s;
-    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
-    animation-iteration-count: 1, infinite, infinite;
-    animation-delay: 0s, 0.5s, 0s;
-
-    // 在标题下方添加光晕效果
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 40px;
-      background: radial-gradient(ellipse at center,
-      rgba(var(--color-primary-purple-rgb), 0.3) 0%,
-      rgba(99, 102, 241, 0.2) 50%,
-      transparent 100%);
-      filter: blur(20px);
-      opacity: 0.8;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-  }
-
-  .hero-subtitle {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.95;
-    font-weight: 300;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-    line-height: 1.4;
-  }
-
-  .hero-description {
-    font-size: 1.15rem;
-    margin-bottom: 2.5rem;
-    max-width: 750px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.85;
-    font-weight: 300;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeInUp 0.8s ease-out 0.4s both;
-    line-height: 1.6;
-  }
-}
-
-@keyframes gradientShift {
-  0%, 100% {
-    background: radial-gradient(ellipse at 20% 50%, rgba(100, 200, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(200, 100, 255, 0.12) 0%, transparent 50%),
-    linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  }
-  50% {
-    background: radial-gradient(ellipse at 80% 50%, rgba(100, 200, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 20% 80%, rgba(200, 100, 255, 0.12) 0%, transparent 50%),
-    linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #6366f1 100%);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  25% {
-    transform: translate(30px, -20px) rotate(90deg);
-  }
-  50% {
-    transform: translate(0, -40px) rotate(180deg);
-  }
-  75% {
-    transform: translate(-30px, -20px) rotate(270deg);
-  }
-}
-
-@keyframes wave {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes gridMove {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(50px, 50px);
-  }
-}
-
-@keyframes fadeInOut {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes glowPulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 10px rgba(var(--color-primary-purple-rgb), 0.3));
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6),
-    0 0 40px rgba(var(--color-primary-purple-rgb), 0.4),
-    0 4px 15px rgba(0, 0, 0, 0.3),
-    0 2px 5px rgba(0, 0, 0, 0.2);
-  }
-  50% {
-    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.7));
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
-    0 0 70px rgba(var(--color-primary-purple-rgb), 0.8),
-    0 4px 20px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.3);
-  }
-}
-
-// 代码卡片 3D 旋转悬浮动画
-@keyframes floatRotate3D {
-  0%, 100% {
-    transform: translate(0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-  }
-  25% {
-    transform: translate(15px, -25px) rotateX(5deg) rotateY(-8deg) rotateZ(3deg);
-  }
-  50% {
-    transform: translate(0, -50px) rotateX(-5deg) rotateY(8deg) rotateZ(-3deg);
-  }
-  75% {
-    transform: translate(-15px, -25px) rotateX(5deg) rotateY(-5deg) rotateZ(5deg);
-  }
-}
-
-// 代码卡片发光脉冲动画
-@keyframes glowPulseSnippet {
-  0%, 100% {
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
-    0 0 15px rgba(var(--color-primary-purple-rgb), 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    opacity: 0.85;
-  }
-  50% {
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(var(--color-primary-purple-rgb), 0.4),
-    0 0 60px rgba(99, 102, 241, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    opacity: 1;
-  }
-}
-
-// 标题增强发光脉冲动画
-@keyframes glowPulseTitle {
-  0%, 100% {
-    filter: drop-shadow(0 0 25px rgba(var(--color-primary-purple-rgb), 0.5)) drop-shadow(0 0 50px rgba(99, 102, 241, 0.3)) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 0 40px rgba(var(--color-primary-purple-rgb), 0.8)) drop-shadow(0 0 80px rgba(99, 102, 241, 0.6)) drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
-  }
-}
-
-// 渐变光泽扫过动画
-@keyframes gradientShine {
-  0% {
-    background-position: 0 center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-// 底部光晕脉冲动画
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.6;
-    transform: translateX(-50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.1);
-  }
-}
-
-// 图标弹跳动画
-@keyframes iconBounce {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  30% {
-    transform: scale(1.25) rotate(15deg);
-  }
-  50% {
-    transform: scale(1.15) rotate(10deg);
-  }
-  70% {
-    transform: scale(1.22) rotate(13deg);
-  }
-  100% {
-    transform: scale(1.2) rotate(12deg);
-  }
-}
-
-// 卡片轻微呼吸动画
-@keyframes cardBreath {
-  0%, 100% {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06),
-    0 1px 3px rgba(0, 0, 0, 0.04);
-  }
-  50% {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
-    0 2px 5px rgba(0, 0, 0, 0.05);
-  }
-}
-
-// Bounce Down Animation for Scroll Indicator
-@keyframes bounceDown {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(8px);
-  }
-}
-
-// Fade In Scale Animation
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-// Section Common Styles
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 2rem;
-
-  h2 {
-    font-size: 2rem;
-    font-weight: 600;
+  .section-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -1px;
     color: var(--color-text-primary);
     margin: 0;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* text-fill-color: transparent; */
+    text-shadow: 0 2px 8px rgba(99, 102, 241, 0.08), 0 1px 2px rgba(0, 0, 0, 0.08);
   }
-}
-
-// Categories Section
-.categories-section {
-  padding: 3rem 0;
-  background: var(--color-surface);
 
   .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
     padding: 0 2rem;
-    margin-bottom: 2rem;
-  }
 
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    max-width: 1200px;
-    padding: 0 2rem;
-    margin: 0 auto 3rem;
-  }
-
-  // 走马灯轮播样式
-  .categories-carousel {
-    display: none; // 默认隐藏，手机端显示
-    margin-bottom: 3rem;
-
-    :deep(.n-carousel) {
-      .n-carousel__viewport {
-        border-radius: 16px;
-      }
-
-      .n-carousel__arrow {
-        color: var(--color-brand);
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 50%;
-        transition: all 0.3s;
-
-        &:hover {
-          background: var(--color-brand);
-          color: white;
-          transform: scale(1.1);
-        }
-      }
-
-      .n-carousel__dots {
-        bottom: -40px;
-      }
-
-      .n-carousel__dot {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 50%;
-        transition: all 0.3s;
-
-        &.n-carousel__dot--active {
-          background: var(--color-brand);
-        }
-
-        &:hover {
-          background: var(--color-brand);
-        }
-      }
-    }
-
-    .carousel-item {
-      width: calc(100vw - 2rem);
-      padding: 0 0.5rem;
-      display: flex;
-      align-items: center;
-    }
-
-    .carousel-card {
-      margin: 0;
-      width: 100%;
+    h2 {
+      // 移除原有 h2 的单独样式
     }
   }
 
-  // 桌面网格显示
-  .desktop-grid {
-    display: grid !important;
-  }
+  // Categories Section
+  .categories-section {
+    background: #f8fafc;
+    padding: 3rem 0;
 
-  .category-card {
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    background: var(--color-card-bg, linear-gradient(135deg, #ffffff 0%, #f9fafb 100%));
-    border: 1px solid var(--color-card-border, #e5e7eb);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: visible;
-    box-shadow: 0 2px 8px var(--color-card-shadow, rgba(0, 0, 0, 0.06)),
-    0 1px 3px rgba(0, 0, 0, 0.04);
-    min-height: 200px;
-    height: 100%;
-
-    // 添加轻微的呼吸动画
-    animation: cardBreath 4s ease-in-out infinite;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg,
-      hsl(var(--card-hue), 70%, 60%) 0%,
-      hsl(var(--card-hue), 60%, 70%) 100%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      z-index: 0;
-      border-radius: 16px;
-      pointer-events: none;
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.6s;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    &:hover {
-      transform: translateY(-12px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15),
-      0 8px 16px rgba(0, 0, 0, 0.1),
-      0 0 0 1px hsl(var(--card-hue), 70%, 60%);
-      border-color: hsl(var(--card-hue), 70%, 60%);
-
-      // 背景加深效果
-      background: linear-gradient(135deg,
-      rgba(250, 250, 255, 1) 0%,
-      rgba(248, 248, 253, 1) 100%);
-
-      &::before {
-        opacity: 0.2;
-      }
-
-      &::after {
-        left: 100%;
-      }
-
-      .category-icon {
-        transform: scale(1.2) rotate(12deg);
-        color: white;
-        background: linear-gradient(135deg,
-        hsl(var(--card-hue), 70%, 60%) 0%,
-        hsl(var(--card-hue), 60%, 70%) 100%);
-        box-shadow: 0 10px 20px hsl(var(--card-hue), 70%, 60%, 0.4),
-        0 0 30px hsl(var(--card-hue), 70%, 60%, 0.3);
-        animation: iconBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      }
-
-      .category-info h3 {
-        color: hsl(var(--card-hue), 70%, 45%);
-        transform: translateX(3px);
-      }
-
-      .post-count {
-        color: hsl(var(--card-hue), 60%, 50%);
-      }
-
-      .category-badge {
-        transform: scale(1.05);
-        box-shadow: 0 6px 12px hsla(var(--card-hue), 70%, 60%, 0.3);
-        background: linear-gradient(135deg,
-        hsla(var(--card-hue), 70%, 60%, 0.2) 0%,
-        hsla(var(--card-hue), 60%, 70%, 0.15) 100%);
-      }
-    }
-
-    .category-card-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg,
-      hsla(var(--card-hue), 70%, 60%, 0.05) 0%,
-      hsla(var(--card-hue), 60%, 70%, 0.05) 100%);
-      z-index: 0;
-      pointer-events: none;
-      border-radius: 16px;
-    }
-
-    .category-card-content {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.75rem;
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
-    }
-
-    .category-card-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      width: 100%;
-    }
-
-    .category-icon {
-      font-size: 2.5rem;
-      width: 70px;
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg,
-      hsla(var(--card-hue), 70%, 60%, 0.15) 0%,
-      hsla(var(--card-hue), 60%, 70%, 0.1) 100%);
-      border-radius: 14px;
-      color: hsl(var(--card-hue), 70%, 60%);
-      flex-shrink: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 8px hsla(var(--card-hue), 70%, 60%, 0.1);
-    }
-
-    .category-info {
-      flex: 1;
-      width: 100%;
-
-      h3 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem 0;
-        color: var(--color-text-primary);
-        letter-spacing: 0.3px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        word-break: break-word;
-
-        // 浅色模式下优化文字颜色，提高对比度
-        @media (prefers-color-scheme: light) {
-          color: #111827 !important;
-          font-weight: 800;
-        }
-      }
-
-      .post-count {
-        font-size: 0.95rem;
-        color: var(--color-text-secondary);
-        font-weight: 600;
-        letter-spacing: 0.2px;
-        transition: all 0.3s ease;
-
-        // 浅色模式下优化文字颜色
-        @media (prefers-color-scheme: light) {
-          color: #4b5563 !important;
-          font-weight: 700;
-        }
-      }
-    }
-
-    .category-badge {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: auto;
-      padding: 0.5rem 0.875rem;
-      background: linear-gradient(135deg,
-      hsla(var(--card-hue), 70%, 60%, 0.1) 0%,
-      hsla(var(--card-hue), 60%, 70%, 0.08) 100%);
-      border-radius: 8px;
-      border-left: 3px solid hsl(var(--card-hue), 70%, 60%);
-      color: hsl(var(--card-hue), 70%, 50%);
-      font-size: 0.8rem;
-
-      // 浅色模式下优化文字颜色和背景
-      @media (prefers-color-scheme: light) {
-        color: hsl(var(--card-hue), 70%, 40%) !important;
-        font-weight: 700;
-        background: linear-gradient(135deg,
-        hsla(var(--card-hue), 70%, 60%, 0.18) 0%,
-        hsla(var(--card-hue), 60%, 70%, 0.14) 100%) !important;
-        border-left-width: 4px;
-      }
-      font-weight: 600;
-      width: fit-content;
-      white-space: nowrap;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      opacity: 0.9;
-    }
-
-    &:hover .category-badge {
-      opacity: 1;
-    }
-  }
-}
-
-// Popular Tags Section
-.popular-tags-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-
-  .tags-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 1.5rem 0;
-    color: var(--color-text-primary);
-
-    @media (prefers-color-scheme: light) {
-      color: #1f2937 !important;
-    }
-  }
-
-  .tags-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .tag-item {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg,
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(255, 255, 255, 0.6) 100%);
-    border: 1.5px solid;
-    border-color: var(--tag-color);
-    border-radius: 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: var(--tag-color);
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-      .tag-label {
-        color: white !important;
-      }
-    }
-  }
-
-  .tag-label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--tag-color);
-    transition: color 0.3s ease;
-
-    @media (prefers-color-scheme: light) {
-      color: var(--tag-color);
-    }
-  }
-}
-
-// Featured Posts Section
-.featured-section {
-  padding: 2.5rem 0;
-  background: var(--color-bg);
-
-  .featured-grid {
-    // 容器本身不设置 grid，让内部的 posts-grid 生效
-  }
-
-  // ✅ 覆盖 PostList 组件的 posts-grid 样式
-  :deep(.posts-grid) {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-
-  // Scroll Indicator
-  .scroll-indicator {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 3rem 0 2rem 0;
-    margin: 0 auto;
-    max-width: 1200px;
-
-    .scroll-indicator-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      animation: fadeInScale 0.8s ease-out;
-    }
-
-    .scroll-indicator-text {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      text-align: center;
-      letter-spacing: 0.5px;
-      transition: color 0.3s ease;
-    }
-
-    .scroll-arrow {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg,
-      hsla(var(--color-primary-purple-hue), 85%, 65%, 0.15) 0%,
-      hsla(var(--color-primary-purple-hue), 85%, 65%, 0.08) 100%);
-      border: 2px solid hsla(var(--color-primary-purple-hue), 85%, 65%, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: bounceDown 2s ease-in-out infinite;
-
-      .arrow-icon {
-        color: var(--color-brand);
-        transition: transform 0.3s ease;
-      }
-
-      &:hover {
-        background: linear-gradient(135deg,
-        hsla(var(--color-primary-purple-hue), 85%, 65%, 0.25) 0%,
-        hsla(var(--color-primary-purple-hue), 85%, 65%, 0.15) 100%);
-        border-color: var(--color-brand);
-        transform: translateY(4px) scale(1.05);
-        box-shadow: 0 8px 20px hsla(var(--color-primary-purple-hue), 85%, 65%, 0.3);
-
-        .arrow-icon {
-          transform: translateY(3px);
-        }
-      }
-
-      &:active {
-        transform: translateY(6px) scale(0.98);
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .scroll-indicator-text {
-        color: var(--color-text-secondary);
-      }
-
-      .scroll-arrow {
-        background: linear-gradient(135deg,
-        hsla(var(--color-primary-purple-hue), 85%, 65%, 0.2) 0%,
-        hsla(var(--color-primary-purple-hue), 85%, 65%, 0.1) 100%);
-        border-color: hsla(var(--color-primary-purple-hue), 85%, 65%, 0.4);
-
-        &:hover {
-          background: linear-gradient(135deg,
-          hsla(var(--color-primary-purple-hue), 85%, 65%, 0.3) 0%,
-          hsla(var(--color-primary-purple-hue), 85%, 65%, 0.18) 100%);
-          box-shadow: 0 8px 20px hsla(var(--color-primary-purple-hue), 85%, 65%, 0.4);
-        }
-      }
-    }
-
-    @media (max-width: 768px) {
-      padding: 2rem 0 1.5rem 0;
-
-      .scroll-indicator-text {
-        font-size: 1rem;
-      }
-
-      .scroll-arrow {
-        width: 42px;
-        height: 42px;
-      }
-    }
-  }
-}
-
-// Latest Posts Section
-.latest-section {
-  padding: 3rem 0;
-  background: var(--color-surface);
-
-  // 覆盖 PostList 组件的 posts-grid 样式
-  :deep(.posts-grid) {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-}
-
-// Features Section
-.features {
-  padding: 4rem 2rem;
-  background: var(--color-bg);
-
-  .section-header {
-    text-align: center;
-    display: block;
-    margin-bottom: 3rem;
-    max-width: 100%;
-    padding: 0;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .feature-card {
-    padding: 2.5rem 2rem;
-    border-radius: 12px;
-    border: 1px solid var(--color-card-border, var(--color-border));
-    background: var(--color-surface);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 2px 8px var(--color-card-shadow, rgba(0, 0, 0, 0.06));
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: -100%;
-      left: 50%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
-      transform: translateX(-50%);
-      transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 32px var(--color-hover-shadow, rgba(0, 0, 0, 0.12));
-      border-color: var(--color-brand);
-
-      &::before {
-        top: 0;
-      }
-
-      .feature-icon {
-        transform: scale(1.15) rotate(-10deg);
-        color: #fff;
-        background: linear-gradient(135deg, var(--color-brand) 0%, #764ba2 100%);
-      }
-
-      h3 {
-        color: var(--color-brand);
-      }
-    }
-
-    .feature-icon {
-      font-size: 3rem;
-      color: var(--color-brand);
-      margin-bottom: 1.5rem;
-      width: 80px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .section-header {
+      max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
-      background: rgba(102, 126, 234, 0.12);
-      border-radius: 12px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 2rem;
+      margin-bottom: 2rem;
     }
 
-    h3 {
-      font-size: 1.25rem;
-      margin-bottom: 0.75rem;
-      color: var(--color-text-primary);
-      font-weight: 700;
-      transition: color 0.3s;
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      max-width: 1200px;
+      padding: 0 2rem;
+      margin: 0 auto 3rem;
+      background: transparent;
     }
 
-    p {
-      color: var(--color-text-secondary);
-      font-size: 0.95rem;
-      line-height: 1.7;
-    }
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// 图片加载状态优化
-.featured-image,
-.post-image {
-  background: linear-gradient(90deg, var(--color-border) 25%, transparent 25%, transparent 50%, var(--color-border) 50%, var(--color-border) 75%, transparent 75%);
-  background-size: 60px 60px;
-  animation: loading 1.5s infinite;
-
-  img {
-    &[loading="lazy"] {
-      background: var(--color-border);
-    }
-  }
-}
-
-@keyframes loading {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60px 60px;
-  }
-}
-
-// 暗黑模式优化 - 创造层次感和视觉节奏
-html.dark {
-  // 页面背景 - 优化配色更生动
-  background: linear-gradient(135deg, #0f1420 0%, #1a1f35 50%, #0f1420 100%) fixed;
-
-  // 页面背景装饰效果
-  &::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(ellipse at 20% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 70%, rgba(var(--color-primary-purple-rgb), 0.08) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  // 页面主要内容区域
-  .home-page {
-    background: transparent; // 取消默认背景
-
-    // Hero 区域暗黑模式优化
-    .hero {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-      box-shadow: 0 20px 60px rgba(99, 102, 241, 0.3);
-
-      .hero-grid-bg {
-        background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-        opacity: 0.5;
-      }
-
-      .hero-code-snippets .code-snippet {
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6),
-        0 0 30px rgba(var(--color-primary-purple-rgb), 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      }
-
-      .hero-title {
-        background: linear-gradient(135deg,
-        #ffffff 0%,
-        #f5f5ff 25%,
-        #ebebff 50%,
-        #f5f5ff 75%,
-        #ffffff 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-
-        text-shadow: 0 0 50px rgba(255, 255, 255, 1),
-        0 0 100px rgba(var(--color-primary-purple-rgb), 0.8),
-        0 0 150px rgba(99, 102, 241, 0.6),
-        0 8px 30px rgba(0, 0, 0, 0.6),
-        0 4px 15px rgba(0, 0, 0, 0.4);
-
-        filter: drop-shadow(0 0 35px rgba(var(--color-primary-purple-rgb), 0.7)) drop-shadow(0 0 70px rgba(99, 102, 241, 0.5)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
-      }
-
-      .hero-subtitle {
-        color: rgba(255, 255, 255, 0.95);
-        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-      }
-
-      .hero-description {
-        color: rgba(255, 255, 255, 0.85);
-        text-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
-      }
-    }
-
-    // 卡片基础样式
     .category-card {
-      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #fff 0%, #f3f4f6 100%);
+      border: 1.5px solid #e0e7ef;
+      box-shadow: 0 2px 8px #e0e7ff;
+      color: #3730a3;
+      border-radius: 16px;
+      cursor: pointer;
+      position: relative;
+      min-height: 200px;
+      height: 100%;
+      transition: box-shadow 0.3s, border-color 0.3s, background 0.3s;
+      overflow: visible;
 
-      // 增强背景遮罩在暗黑模式下的可见度
-      .category-card-bg {
-        background: linear-gradient(135deg,
-        hsla(var(--card-hue), 70%, 55%, 0.12) 0%,
-        hsla(var(--card-hue), 60%, 65%, 0.08) 100%) !important;
-        opacity: 1;
-      }
-
-      &:hover {
-        background: linear-gradient(135deg, rgba(80, 95, 120, 0.95) 0%, rgba(65, 75, 95, 0.95) 100%);
-        border-color: hsl(var(--card-hue), 70%, 60%);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px hsl(var(--card-hue), 70%, 60%);
-
-        .category-card-bg {
-          background: linear-gradient(135deg,
-          hsla(var(--card-hue), 70%, 60%, 0.18) 0%,
-          hsla(var(--card-hue), 60%, 70%, 0.12) 100%) !important;
-        }
-      }
-    }
-
-
-    // Section 背景交替：创造视觉节奏 - 优化配色更生动
-    .categories-section {
-      background: linear-gradient(180deg, #1a1d26 0%, #222836 100%);
-    }
-
-    .featured-section {
-      background: linear-gradient(180deg, #252b38 0%, #1f2633 100%);
-    }
-
-    .latest-section {
-      background: linear-gradient(180deg, #1a1d26 0%, #222836 100%);
-    }
-
-    .features {
-      background: linear-gradient(180deg, #252b38 0%, #1f2633 100%);
-    }
-
-    // Section header 文字优化
-    .section-header h2 {
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      color: #f0f1f3 !important;
-      font-weight: 700;
-    }
-
-    // 卡片内部元素优化
-    .category-card {
       .category-icon {
-        background: linear-gradient(135deg,
-        hsla(var(--card-hue), 70%, 60%, 0.25) 0%,
-        hsla(var(--card-hue), 60%, 70%, 0.15) 100%);
-        box-shadow: 0 2px 12px hsla(var(--card-hue), 70%, 60%, 0.2);
-        color: hsl(var(--card-hue), 75%, 70%) !important;
+        font-size: 2.5rem;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e0e7ff;
+        color: #6366f1;
+        border-radius: 14px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px #e0e7ff44;
+        transition: background 0.3s, color 0.3s, transform 0.3s;
       }
 
       .category-info {
+        flex: 1;
+        width: 100%;
+
         h3 {
-          color: #f3f4f6 !important;
-          font-weight: 600;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6),
-          0 1px 2px rgba(0, 0, 0, 0.4);
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin: 0 0 0.5rem 0;
+          color: #3730a3;
+          letter-spacing: 0.3px;
+          word-break: break-word;
         }
 
         .post-count {
-          color: #e5e7eb !important;
-          font-weight: 600;
-          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5),
-          0 1px 2px rgba(0, 0, 0, 0.3);
+          font-size: 0.95rem;
+          color: #6366f1;
+          font-weight: 700;
+          letter-spacing: 0.2px;
         }
       }
 
       .category-badge {
-        background: linear-gradient(135deg,
-        hsla(var(--card-hue), 70%, 50%, 0.4) 0%,
-        hsla(var(--card-hue), 60%, 55%, 0.3) 100%) !important;
-        border-left: 3px solid hsla(var(--card-hue), 75%, 70%, 0.9) !important;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 2px 8px hsla(var(--card-hue), 70%, 50%, 0.3),
-        inset 0 1px 0 hsla(var(--card-hue), 80%, 80%, 0.15);
-        opacity: 1 !important;
-
-        // 图标和文字使用纯白色
-        svg,
-        span {
-          color: #ffffff !important;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
+        margin-top: auto;
+        padding: 0.5rem 0.875rem;
+        background: #e0e7ff;
+        color: #6366f1;
+        border-radius: 8px;
+        border-left: 4px solid #6366f1;
+        font-size: 0.8rem;
+        font-weight: 700;
+        width: fit-content;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 8px #e0e7ff44;
       }
 
       &:hover {
+        background: #f1f5f9;
+        border-color: #6366f1;
+        box-shadow: 0 8px 24px #a5b4fc44;
+
         .category-icon {
-          color: hsl(var(--card-hue), 80%, 75%) !important;
+          background: #6366f1;
+          color: #fff;
+          transform: scale(1.1) rotate(8deg);
         }
 
-        .category-info {
-          h3 {
-            color: #ffffff !important;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7),
-            0 1px 3px rgba(0, 0, 0, 0.5);
-          }
+        .category-info h3 {
+          color: #4338ca;
+        }
 
-          .post-count {
-            color: #f3f4f6 !important;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6),
-            0 1px 2px rgba(0, 0, 0, 0.4);
-          }
+        .post-count {
+          color: #4338ca;
         }
 
         .category-badge {
-          background: linear-gradient(135deg,
-          hsla(var(--card-hue), 75%, 55%, 0.5) 0%,
-          hsla(var(--card-hue), 65%, 60%, 0.4) 100%) !important;
-          border-left-color: hsla(var(--card-hue), 80%, 75%, 1) !important;
-          box-shadow: 0 4px 12px hsla(var(--card-hue), 70%, 55%, 0.4),
-          inset 0 1px 0 hsla(var(--card-hue), 85%, 85%, 0.2);
-          transform: scale(1.05);
+          background: #6366f1;
+          color: #fff;
+          border-left-color: #4338ca;
+        }
+      }
+    }
+  }
+}
+
+html.dark {
+  .categories-section {
+    background: #181a20;
+    padding: 3rem 0;
+
+    .section-header {
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      max-width: 1200px;
+      padding: 0 2rem;
+      margin: 0 auto 3rem;
+      background: transparent;
+    }
+
+    .category-card {
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #23263a 0%, #181a20 100%);
+      border: 1.5px solid #23263a;
+      box-shadow: 0 2px 8px #23263a;
+      color: #e0e7ef;
+      border-radius: 16px;
+      cursor: pointer;
+      position: relative;
+      min-height: 200px;
+      height: 100%;
+      transition: box-shadow 0.3s, border-color 0.3s, background 0.3s;
+      overflow: visible;
+
+      .category-icon {
+        font-size: 2.5rem;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #23263a;
+        color: #a5b4fc;
+        border-radius: 14px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px #23263a44;
+        transition: background 0.3s, color 0.3s, transform 0.3s;
+      }
+
+      .category-info {
+        flex: 1;
+        width: 100%;
+
+        h3 {
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin: 0 0 0.5rem 0;
+          color: #e0e7ef;
+          letter-spacing: 0.3px;
+          word-break: break-word;
+        }
+
+        .post-count {
+          font-size: 0.95rem;
+          color: #a5b4fc;
+          font-weight: 700;
+          letter-spacing: 0.2px;
+        }
+      }
+
+      .category-badge {
+        margin-top: auto;
+        padding: 0.5rem 0.875rem;
+        background: #23263a;
+        color: #a5b4fc;
+        border-radius: 8px;
+        border-left: 4px solid #6366f1;
+        font-size: 0.8rem;
+        font-weight: 700;
+        width: fit-content;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 8px #23263a44;
+      }
+
+      &:hover {
+        background: #23263a;
+        border-color: #6366f1;
+        box-shadow: 0 8px 24px #6366f144;
+
+        .category-icon {
+          background: #6366f1;
+          color: #fff;
+          transform: scale(1.1) rotate(8deg);
+        }
+
+        .category-info h3 {
+          color: #a5b4fc;
+        }
+
+        .post-count {
+          color: #a5b4fc;
+        }
+
+        .category-badge {
+          background: #6366f1;
+          color: #fff;
+          border-left-color: #a5b4fc;
         }
       }
     }
   }
 
-  // Feature卡片在暗黑模式下的优化
-  .feature-card {
-    background: linear-gradient(135deg, rgba(75, 90, 120, 0.9) 0%, rgba(55, 70, 100, 0.9) 100%);
-    border-color: rgba(150, 180, 255, 0.2);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-
-    h3 {
-      color: #e5e7eb !important;
-    }
-
-    p {
-      color: #9ca3af !important;
-    }
-
-    &:hover {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%),
-      linear-gradient(135deg, rgba(100, 120, 160, 0.95) 0%, rgba(80, 100, 140, 0.95) 100%);
-      border-color: rgba(var(--color-primary-purple-rgb), 0.6) !important;
-      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.3),
-      0 0 0 1px rgba(var(--color-primary-purple-rgb), 0.5),
-      0 0 20px rgba(var(--color-primary-purple-rgb), 0.15);
-
-      h3 {
-        color: #f9fafb !important;
-      }
-    }
-  }
-
-
-  // 热门标签区域暗黑模式优化
   .popular-tags-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+
     .tags-title {
-      color: #f0f1f3 !important;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem 0;
+      color: #e0e7ef;
+    }
+
+    .tags-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .tag-item {
-      background: linear-gradient(135deg,
-      rgba(75, 90, 120, 0.5) 0%,
-      rgba(55, 70, 100, 0.5) 100%);
-      border-color: var(--tag-color);
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #23263a 0%, #181a20 100%);
+      border: 1.5px solid var(--tag-color, #a5b4fc);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--tag-color, #a5b4fc);
+      font-weight: 500;
+      box-shadow: 0 2px 8px #23263a44;
 
       &:hover {
-        background: var(--tag-color);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        background: var(--tag-color, #6366f1);
+        color: #fff;
+        box-shadow: 0 4px 12px #6366f144;
+
+        .tag-label {
+          color: #fff !important;
+        }
       }
     }
 
     .tag-label {
-      color: var(--tag-color);
-      filter: brightness(1.5);
-    }
-  }
-}
-
-// Responsive Design
-@media (max-width: 1024px) {
-  .section-header {
-    padding: 0 1.5rem;
-
-    h2 {
-      font-size: 1.875rem;
-    }
-  }
-
-  .categories-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    padding: 0 1.5rem;
-  }
-
-  // 平板端：featuredPosts 一行显示 2 个
-  .featured-section,
-  .latest-section {
-    :deep(.posts-grid) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-      padding: 0 1.5rem;
-    }
-  }
-
-  .features-grid {
-    grid-template-columns: repeat(2, 1fr);
-    padding: 0 1.5rem;
-    gap: 1.5rem;
-  }
-
-
-  .hero {
-    padding: 3rem 1.5rem 2.5rem;
-    min-height: 300px;
-
-    .hero-title {
-      font-size: 3rem;
-      letter-spacing: -1.2px;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-subtitle {
-      font-size: 1.35rem;
-      margin-bottom: 1rem;
-    }
-
-    .hero-description {
-      font-size: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .hero-actions {
-      gap: 1rem;
-
-      :deep(.n-button) {
-        padding: 12px 32px;
-        font-size: 15px;
-      }
-    }
-
-    // 隐藏代码片段在小屏幕上
-    .hero-code-snippets {
-      display: none;
-    }
-  }
-
-  .category-card {
-    padding: 1.5rem 1.25rem;
-    min-height: 180px;
-
-    .category-icon {
-      width: 56px;
-      height: 56px;
-    }
-  }
-
-  .popular-tags-container {
-    padding: 0 1.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  // 隐藏桌面网格，显示手机走马灯
-  .categories-grid.desktop-grid {
-    display: none !important;
-  }
-
-  .categories-carousel.mobile-carousel {
-    display: block !important;
-    padding: 0 1rem;
-  }
-
-  .hero {
-    padding: 2.5rem 1.5rem 2rem;
-    min-height: 280px;
-
-    .hero-title {
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
-      letter-spacing: -0.8px;
-    }
-
-    .hero-subtitle {
-      font-size: 1.15rem;
-      margin-bottom: 0.875rem;
-    }
-
-    .hero-description {
       font-size: 0.95rem;
-      margin-bottom: 1.75rem;
-      line-height: 1.6;
-    }
-
-    // 隐藏装饰元素在移动端
-    .hero-code-snippets,
-    .hero-grid-bg,
-    .hero-animated-shapes {
-      display: none;
-    }
-
-    .hero-actions {
-      flex-direction: column;
-      gap: 0.875rem;
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto;
-
-      :deep(.n-button) {
-        width: 100%;
-        padding: 12px 24px;
-        font-size: 15px;
-      }
+      color: var(--tag-color, #a5b4fc);
+      transition: color 0.3s;
+      font-weight: 600;
     }
   }
+}
 
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 0 1.5rem;
-
-    h2 {
-      font-size: 1.75rem;
-    }
-
-    :deep(.n-button) {
-      font-size: 14px;
-      padding: 8px 16px;
-    }
-  }
-
-  .categories-section {
-    padding: 3rem 0;
-  }
-
-  .featured-section,
-  .latest-section,
-  .features {
-    padding: 3rem 0;
-  }
-
-  // Scroll Indicator responsive - hide on mobile
-  .featured-section {
-    .scroll-indicator {
-      display: none; // 移动端隐藏滚动指示器
-    }
-  }
-
-  .categories-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    padding: 0 1.5rem;
-  }
-
-  // 移动端：featuredPosts 一行显示 1 个
-  .featured-section,
-  .latest-section {
-    :deep(.posts-grid) {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      padding: 0 1.5rem;
-    }
-  }
-
+@media (prefers-color-scheme: light) {
   .popular-tags-container {
-    padding: 0 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
 
     .tags-title {
-      font-size: 1.125rem;
-      margin-bottom: 1.25rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem 0;
+      color: #1f2937;
     }
 
     .tags-grid {
-      gap: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .tag-item {
-      padding: 0.4rem 0.875rem;
-      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #fff 0%, #f3f4f6 100%);
+      border: 1.5px solid var(--tag-color, #6366f1);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--tag-color, #6366f1);
+      font-weight: 500;
+      box-shadow: 0 2px 8px #e0e7ff44;
+
+      &:hover {
+        background: var(--tag-color, #6366f1);
+        color: #fff;
+        box-shadow: 0 4px 12px #a5b4fc44;
+
+        .tag-label {
+          color: #fff !important;
+        }
+      }
+    }
+
+    .tag-label {
+      font-size: 0.95rem;
+      color: var(--tag-color, #6366f1);
+      transition: color 0.3s;
+      font-weight: 600;
     }
   }
+}
 
-  .category-card {
-    padding: 1.5rem;
+// Scroll Indicator Styles
+.scroll-indicator {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 
-    .category-icon {
-      width: 50px;
-      height: 50px;
-      font-size: 1.75rem;
-    }
-
-    .category-info h3 {
-      font-size: 1rem;
-    }
-
-    .post-count {
-      font-size: 0.8rem;
-    }
-
-    .update-badge {
-      font-size: 0.7rem;
-      padding: 0.3rem 0.7rem;
-    }
-  }
-
-
-  .features-grid {
-    grid-template-columns: 1fr;
+  .scroll-indicator-content {
+    display: flex;
+    align-items: center;
     gap: 1rem;
+    background: none;
+    padding: 0;
+
+    .scroll-indicator-text {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 8px rgba(99, 102, 241, 0.08), 0 1px 2px rgba(0, 0, 0, 0.08);
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .scroll-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e0e7ff;
+      box-shadow: 0 2px 8px #e0e7ff44;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      .arrow-icon {
+        color: #6366f1;
+        transition: color 0.3s;
+      }
+
+      &:hover {
+        background: #6366f1;
+
+        .arrow-icon {
+          color: #fff;
+        }
+      }
+    }
   }
+}
 
-  .feature-card {
-    padding: 1.5rem 1rem;
+// 移动端隐藏滚动指示器
+@media (max-width: 900px) {
+  .scroll-indicator {
+    display: none;
+  }
+}
 
-    &:hover {
-      transform: translateY(-4px);
+html.dark .scroll-indicator-content .scroll-indicator-text {
+  background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 8px #23263a44;
+  color: #e0e7ef;
+}
+
+.featured-section,
+.latest-section,
+.popular-section {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 8px rgba(99, 102, 241, 0.08), 0 1px 2px rgba(0, 0, 0, 0.08);
+      margin: 0;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .feature-icon {
-      width: 60px;
-      height: 60px;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    h3 {
+    .n-button {
       font-size: 1rem;
-      margin-bottom: 0.625rem;
-    }
+      font-weight: 700;
+      color: #6366f1;
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
+      transition: color 0.3s;
 
-    p {
-      font-size: 0.875rem;
-      line-height: 1.5;
+      &:hover {
+        color: #a855f7;
+      }
     }
   }
+
+  .featured-grid,
+  .latest-grid,
+  .popular-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+}
+
+html.dark .featured-section .section-header .section-title,
+html.dark .latest-section .section-header .section-title,
+html.dark .popular-section .section-header .section-title {
+  background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 8px #23263a44;
+  color: #e0e7ef;
 }
 </style>

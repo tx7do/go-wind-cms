@@ -130,6 +130,10 @@ github.com/dtm-labs/logger v0.0.2 h1:UQQTjDHnZhSbAHwXO9ISva1/AGO+MW9MjztAIzqJ1Tw
 github.com/dtm-labs/logger v0.0.2/go.mod h1:WgJjaTSJ0WmITqMGEWDiaamrxgMkAH8TmwIhykuGugY=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
+github.com/elastic/elastic-transport-go/v8 v8.8.0 h1:7k1Ua+qluFr6p1jfJjGDl97ssJS/P7cHNInzfxgBQAo=
+github.com/elastic/elastic-transport-go/v8 v8.8.0/go.mod h1:YLHer5cj0csTzNFXoNQ8qhtGY1GTvSqPnKWKaqQE3Hk=
+github.com/elastic/go-elasticsearch/v9 v9.2.1 h1:/H8RKblXQbnVlFAkc0J5/FfSgVug60CU/DxlRcMdQf4=
+github.com/elastic/go-elasticsearch/v9 v9.2.1/go.mod h1:LvMSwNhRGZgkWWmErHS0IkT10wKzU+PRkOkQHGy3Wz0=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
@@ -541,6 +545,8 @@ github.com/tx7do/go-crud/api v0.0.7 h1:SDMo1rkQ+Ey9T9vDljaO/Q6Ty3UFiDi3PFJXqKUpc
 github.com/tx7do/go-crud/api v0.0.7/go.mod h1:++hrhWo1vnieqD7vn8Ft1Sg67PzM4lu9KDbeg+X6Cdc=
 github.com/tx7do/go-crud/audit v0.0.2 h1:fXoy2Bbqjow/fpK+0DESYt4vf7tswR4VVaKCA0UfYMU=
 github.com/tx7do/go-crud/audit v0.0.2/go.mod h1:cBcCo1uDvAjhCpRF29L4NmIUnEX7qDl2FF83a1xPeA4=
+github.com/tx7do/go-crud/elasticsearch v0.0.4 h1:LeQjgHX5UDd6ZjQ87/FYirzETMf+0LfRA1XVykVu56o=
+github.com/tx7do/go-crud/elasticsearch v0.0.4/go.mod h1:+84gYtWAvIiFpf05dnFyqVz+nSIXaSTU3go5mMxNq2M=
 github.com/tx7do/go-crud/entgo v0.0.47 h1:udb4QMhYDEkVDFIAXZGxq//N4ETJJ7q+6oIMrcoTDL0=
 github.com/tx7do/go-crud/entgo v0.0.47/go.mod h1:0nIkHC13Om5S6evqaRS5PsSeGmSLm5l+0wbXNsvv87I=
 github.com/tx7do/go-crud/pagination v0.0.13 h1:LPUkBPAj0WC9VzFKcTWHzk7ozl1gZVAN3tq5Oj8uBbQ=
@@ -587,6 +593,8 @@ github.com/tx7do/kratos-bootstrap/cache/redis v0.1.1 h1:RXlrxN12oaIoV6KAOKd9bvHg
 github.com/tx7do/kratos-bootstrap/cache/redis v0.1.1/go.mod h1:9beXEVRLI5kDufUd+OUydfHt7VNc3CuX0A/P2pyJOo8=
 github.com/tx7do/kratos-bootstrap/config v0.2.2 h1:GjLxNoB5IlyR9SwcreEkgMa/SAtckPxqb38HBVvZxrE=
 github.com/tx7do/kratos-bootstrap/config v0.2.2/go.mod h1:vTHu5gR2csxL2hUO8iW/x/yo3z0eJgKfY27p6BGNwjY=
+github.com/tx7do/kratos-bootstrap/database/elasticsearch v0.1.3 h1:6IPqn9IxfDzmhApJ+jc6nznXwWPLS1I+8v7NO1Uuvbc=
+github.com/tx7do/kratos-bootstrap/database/elasticsearch v0.1.3/go.mod h1:I/VaFwnWKT1H8JjZovhVXXAFJlK3lv0yjFHjLfAFtGI=
 github.com/tx7do/kratos-bootstrap/database/ent v0.1.4 h1:90ur4xr08LVrjuJmJvDCKOoLT7YAjb4zk0ewzqyJQa8=
 github.com/tx7do/kratos-bootstrap/database/ent v0.1.4/go.mod h1:u/PP03U+w5N97/F0VQBEby63ft58Vk4ezjDKYz69rTY=
 github.com/tx7do/kratos-bootstrap/logger v0.1.2 h1:LAJEzgAW2WDGfj0r+g2q/vtq8kwLLPLVjZXj9/bwJPg=

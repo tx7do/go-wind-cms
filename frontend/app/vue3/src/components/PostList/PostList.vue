@@ -16,6 +16,7 @@ interface Props {
   showSkeleton?: boolean;
   from?: string;
   categoryId?: number;
+  columns?: number; // 新增：控制列数
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -26,7 +27,8 @@ const props = withDefaults(defineProps<Props>(), {
   pageSize: 6,
   showSkeleton: true,
   from: 'post-list',
-  categoryId: undefined
+  categoryId: undefined,
+  columns: 3, // 默认 3 列
 });
 
 defineExpose({reload});
@@ -111,7 +113,7 @@ useLanguageChangeEffect(() => {
 
 .posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(v-bind('props.columns'), 1fr);
   gap: 24px;
 }
 

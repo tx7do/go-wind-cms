@@ -2,11 +2,15 @@ package data
 
 import (
 	"github.com/go-kratos/kratos/v2/registry"
+
 	"github.com/tx7do/go-utils/password"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
+	"github.com/tx7do/kratos-bootstrap/database/elasticsearch"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
+
+	elasticsearchCrud "github.com/tx7do/go-crud/elasticsearch"
 
 	"github.com/redis/go-redis/v9"
 
@@ -32,6 +36,21 @@ func NewRedisClient(ctx *bootstrap.Context) (*redis.Client, func(), error) {
 		if err := cli.Close(); err != nil {
 			l.Error(err)
 		}
+	}, nil
+}
+
+func NewElasticSearchClient(ctx *bootstrap.Context) (*elasticsearchCrud.Client, func(), error) {
+	cfg := ctx.GetConfig()
+	if cfg == nil {
+		return nil, func() {}, nil
+	}
+
+	cli, err := elasticsearch.NewClient(ctx.GetLogger(), cfg)
+	if err != nil {
+		return nil, func() {}, err
+	}
+
+	return cli, func() {
 	}, nil
 }
 
