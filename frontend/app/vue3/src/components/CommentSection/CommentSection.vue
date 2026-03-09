@@ -266,7 +266,6 @@ onMounted(() => {
         <n-form-item>
           <div class="form-actions">
             <n-button
-              type="primary"
               size="large"
               @click="handleSubmitComment"
               :loading="submitting"
@@ -508,6 +507,7 @@ onMounted(() => {
       border: none;
       box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #fff;
 
       &:hover {
         transform: translateY(-3px);
@@ -539,6 +539,22 @@ onMounted(() => {
         font-size: 16px;
         color: var(--color-brand);
       }
+    }
+  }
+}
+
+html.dark .comment-form .form-actions {
+  :deep(.n-button) {
+    background: linear-gradient(135deg,
+      rgba(99, 102, 241, 0.85) 0%,
+      rgba(168, 85, 247, 0.7) 100%);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
+      border-color: rgba(168, 85, 247, 0.5);
     }
   }
 }
@@ -824,10 +840,33 @@ onMounted(() => {
     #764ba2 100%);
     border: none;
     box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+    color: #fff;
 
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(168, 85, 247, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+html.dark .load-more-container {
+  border-top: 1px solid rgba(168, 85, 247, 0.15);
+
+  :deep(.n-button) {
+    background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.8) 0%,
+    rgba(139, 92, 246, 0.6) 100%);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+      border-color: rgba(168, 85, 247, 0.5);
     }
 
     &:active {

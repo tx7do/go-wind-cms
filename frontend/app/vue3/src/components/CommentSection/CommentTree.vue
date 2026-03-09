@@ -183,7 +183,6 @@ async function toggleExpand(comment: commentservicev1_Comment) {
             <div class="reply-form-actions">
               <n-button
                 size="small"
-                type="primary"
                 @click="submitReply(comment)"
                 :loading="submitting"
               >
@@ -447,6 +446,69 @@ async function toggleExpand(comment: commentservicev1_Comment) {
 
         :deep(.n-button) {
           min-width: 80px;
+          
+          // 提交按钮 - 主按钮
+          &:nth-child(1) {
+            background: linear-gradient(135deg,
+              var(--color-brand) 0%,
+              #a855f7 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.25);
+            color: #fff;
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+            }
+          }
+
+          // 取消按钮 - 次按钮
+          &:nth-child(2) {
+            background: transparent;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: var(--color-text-secondary);
+
+            &:hover {
+              border-color: rgba(168, 85, 247, 0.5);
+              color: var(--color-text-primary);
+              background: rgba(168, 85, 247, 0.05);
+            }
+          }
+        }
+      }
+    }
+
+    // 暗色模式适配
+    html.dark .reply-form {
+      border-top: 1px solid rgba(168, 85, 247, 0.15);
+
+      .reply-form-actions {
+        :deep(.n-button) {
+          // 提交按钮 - 暗色模式
+          &:nth-child(1) {
+            background: linear-gradient(135deg,
+              rgba(99, 102, 241, 0.85) 0%,
+              rgba(168, 85, 247, 0.7) 100%);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+              border-color: rgba(168, 85, 247, 0.5);
+            }
+          }
+
+          // 取消按钮 - 暗色模式
+          &:nth-child(2) {
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            color: var(--color-text-secondary);
+
+            &:hover {
+              border-color: rgba(168, 85, 247, 0.6);
+              background: rgba(168, 85, 247, 0.08);
+            }
+          }
         }
       }
     }
