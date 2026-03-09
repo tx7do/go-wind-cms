@@ -1,22 +1,72 @@
 <script setup lang="ts">
-import {$t} from '@/locales'
+import {ref, watch, defineProps, defineExpose} from 'vue';
+import {usePostStore} from '@/stores';
+import {$t} from '@/locales';
 import PostCard from '@/components/PostCard';
 import type {contentservicev1_Post} from "@/api/generated/app/service/v1";
+import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 
 interface Props {
-  posts: contentservicev1_Post[]
-  loading?: boolean
-  showSkeleton?: boolean
-  from?: string
-  categoryId?: number
+  queryParams?: object;
+  fieldMask?: string;
+  orderBy?: string[];
+  page?: number;
+  pageSize?: number;
+  showSkeleton?: boolean;
+  from?: string;
+  categoryId?: number;
 }
 
-withDefaults(defineProps<Props>(), {
-  loading: false,
+const props = withDefaults(defineProps<Props>(), {
+  queryParams: () => ({}),
+  fieldMask: undefined,
+  orderBy: undefined,
+  page: 1,
+  pageSize: 6,
   showSkeleton: true,
   from: 'post-list',
   categoryId: undefined
-})
+});
+
+const postStore = usePostStore();
+const posts = ref<contentservicev1_Post[]>([]);
+const loading = ref(false);
+
+async function fetchPosts() {
+  loading.value = true;
+  try {
+    const res = await postStore.listPost(
+      {page: props.page, pageSize: props.pageSize},
+      props.queryParams,
+      props.fieldMask,
+      props.orderBy
+    );
+    posts.value = res.items || [];
+  } catch (error) {
+    posts.value = [];
+    console.error('PostList fetch failed:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+function reload() {
+  fetchPosts();
+}
+
+defineExpose({ reload });
+
+watch(
+  () => [props.queryParams, props.fieldMask, props.orderBy, props.page, props.pageSize],
+  () => {
+    fetchPosts();
+  },
+  { deep: true, immediate: true }
+);
+
+useLanguageChangeEffect(() => {
+  fetchPosts();
+});
 </script>
 
 <template>

@@ -3,13 +3,12 @@ import {definePage} from 'unplugin-vue-router/runtime'
 import {useRouter} from 'vue-router'
 import {ref, onMounted, computed, onUnmounted} from 'vue'
 
-import {usePostStore, useCategoryStore, useTagStore} from '@/stores'
+import {useCategoryStore, useTagStore} from '@/stores'
 import {$t, i18n} from '@/locales'
 import {XIcon} from "@/plugins/xicon";
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import type {
   contentservicev1_Category,
-  contentservicev1_Post,
   contentservicev1_Tag
 } from "@/api/generated/app/service/v1";
 
@@ -21,15 +20,20 @@ definePage({
 })
 
 const router = useRouter()
-const postStore = usePostStore()
 const categoryStore = useCategoryStore()
 const tagStore = useTagStore()
 
-const latestPosts = ref<contentservicev1_Post[]>([])
-const featuredPosts = ref<contentservicev1_Post[]>([])
 const categories = ref<contentservicev1_Category[]>([])
 const popularTags = ref<contentservicev1_Tag[]>([])
 const loading = ref(false)
+
+const displayTags = computed(() => {
+  return popularTags.value.map((tag: contentservicev1_Tag, index: number) => ({
+    id: tag.id,
+    name: tag.translations?.[0]?.name || $t('page.tags.tag_untitled'),
+    color: tag.color || `hsl(${index * 60}, 100%, 50%)`,
+  }));
+});
 
 // 滚动动画相关
 const observerRef = ref<IntersectionObserver | null>(null)
@@ -67,36 +71,6 @@ function destroyScrollObserver() {
   }
 }
 
-// 加载最新文章
-async function loadLatestPosts() {
-  try {
-    const res = await postStore.listPost(
-      {page: 1, pageSize: 6},
-      {status: 'POST_STATUS_PUBLISHED'},
-      "id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail",
-      ['-createdAt']
-    )
-    latestPosts.value = res.items || []
-  } catch (error) {
-    console.error('Load latest posts failed:', error)
-  }
-}
-
-// 加载推荐文章
-async function loadFeaturedPosts() {
-  try {
-    const res = await postStore.listPost(
-      {page: 1, pageSize: 3},
-      {status: 'POST_STATUS_PUBLISHED', isFeatured: true},
-      "id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail",
-      ['-sortOrder']
-    )
-    featuredPosts.value = res.items || []
-  } catch (error) {
-    console.error('Load featured posts failed:', error)
-  }
-}
-
 // 加载分类
 async function loadCategories() {
   try {
@@ -118,16 +92,10 @@ async function loadPopularTags() {
     const res = await tagStore.listTag(
       {page: 1, pageSize: 6},
       {status: 'TAG_STATUS_ACTIVE', isFeatured: true}
-    )
-    // 将标签数据转换为显示格式
-    popularTags.value = res.items?.map((tag: contentservicev1_Tag, index: number) => ({
-      id: tag.id,
-      name: tag.translations?.[0]?.name || tag.name || $t('page.tags.tag_untitled'),
-      color: tag.color || `hsl(${index * 60}, 100%, 50%)`,
-      slug: tag.slug,
-    })) || []
+    );
+    popularTags.value = res.items || [];
   } catch (error) {
-    console.error('Load popular tags failed:', error)
+    console.error('Load popular tags failed:', error);
   }
 }
 
@@ -191,8 +159,6 @@ const features = computed(() => {
 onMounted(async () => {
   loading.value = true
   await Promise.all([
-    loadLatestPosts(),
-    loadFeaturedPosts(),
     loadCategories(),
     loadPopularTags(),
   ])
@@ -208,8 +174,6 @@ onMounted(async () => {
 useLanguageChangeEffect(async () => {
   loading.value = true
   await Promise.all([
-    loadLatestPosts(),
-    loadFeaturedPosts(),
     loadCategories(),
     loadPopularTags(),
   ])
@@ -301,7 +265,7 @@ onUnmounted(() => {
     </section>
 
     <!-- Featured Posts Section (推荐阅读) - 上移到 Categories 之前 -->
-    <section v-if="featuredPosts.length > 0 || loading" class="featured-section scroll-reveal">
+    <section class="featured-section scroll-reveal">
       <div class="section-header">
         <h2>
           <XIcon name="carbon:star-filled" :size="28"
@@ -330,11 +294,14 @@ onUnmounted(() => {
       <!-- Loaded Content -->
       <div v-else class="featured-grid">
         <PostList
-          :posts="featuredPosts"
-          :loading="false"
+          :query-params="{status: 'POST_STATUS_PUBLISHED', isFeatured: true}"
+          :field-mask="'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'"
+          :order-by="['-sortOrder']"
+          :page="1"
+          :page-size="3"
           :show-skeleton="false"
           from="home"
-        />
+        ></PostList>
       </div>
 
       <!-- Scroll Indicator -->
@@ -463,7 +430,7 @@ onUnmounted(() => {
         <h3 class="tags-title">{{ $t('page.home.popular_tags') }}</h3>
         <div class="tags-grid">
           <div
-            v-for="tag in popularTags"
+            v-for="tag in displayTags"
             :key="tag.id"
             class="tag-item"
             :style="{ '--tag-color': tag.color }"
@@ -484,11 +451,14 @@ onUnmounted(() => {
         </n-button>
       </div>
       <PostList
-        :posts="latestPosts"
-        :loading="loading"
+        :query-params="{status: 'POST_STATUS_PUBLISHED'}"
+        :field-mask="'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'"
+        :order-by="['-createdAt']"
+        :page="1"
+        :page-size="6"
         :show-skeleton="true"
         from="home"
-      />
+      ></PostList>
     </section>
 
     <!-- Features Section -->
@@ -987,7 +957,435 @@ onUnmounted(() => {
     0 3px 12px rgba(0, 0, 0, 0.4);
 
     // 添加多层滤镜外发光
-    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
+
+    // 添加渐变动画和发光脉冲动画
+    animation-name: slideDown, glowPulseTitle, gradientShine;
+    animation-duration: 0.8s, 3s, 6s;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
+    animation-iteration-count: 1, infinite, infinite;
+    animation-delay: 0s, 0.5s, 0s;
+
+    // 在标题下方添加光晕效果
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 40px;
+      background: radial-gradient(ellipse at center,
+      rgba(var(--color-primary-purple-rgb), 0.3) 0%,
+      rgba(99, 102, 241, 0.2) 50%,
+      transparent 100%);
+      filter: blur(20px);
+      opacity: 0.8;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+  }
+
+  .hero-subtitle {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.95;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+    line-height: 1.4;
+  }
+
+  .hero-description {
+    font-size: 1.15rem;
+    margin-bottom: 2.5rem;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.85;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+    position: relative;
+    z-index: 100 !important; // 使用最高 z-index
+    pointer-events: auto !important; // 确保按钮区域可点击
+
+    :deep(.n-button) {
+      position: relative;
+      z-index: 100 !important; // 确保按钮在最上层
+      pointer-events: auto !important; // 确保按钮本身可点击
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      pointer-events: auto !important; // 确保按钮可点击
+      position: relative;
+      z-index: 100 !important;
+    }
+
+    .btn-primary {
+      :deep(.n-button) {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+        font-size: 1.05rem;
+        font-weight: 700;
+        padding: 16px 40px !important;
+        border-radius: 12px !important;
+        border: none !important;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35),
+        0 4px 12px rgba(16, 185, 129, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s;
+          pointer-events: none; // 防止伪元素阻挡点击
+        }
+
+        &:hover {
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45),
+          0 6px 16px rgba(16, 185, 129, 0.25),
+          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+          background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+
+          &::before {
+            left: 100%;
+          }
+        }
+
+        &:active {
+          transform: translateY(0) scale(0.98);
+          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4),
+          0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+      }
+    }
+
+    .btn-secondary {
+      :deep(.n-button) {
+        background: rgba(255, 255, 255, 0.12) !important;
+        color: white !important;
+        font-size: 1.05rem;
+        font-weight: 600;
+        padding: 16px 40px !important;
+        border-radius: 12px !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          transition: left 0.5s;
+          pointer-events: none; // 防止伪元素阻挡点击
+        }
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2) !important;
+          border-color: rgba(255, 255, 255, 0.5) !important;
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
+          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+
+          &::before {
+            left: 100%;
+          }
+        }
+
+        &:active {
+          transform: translateY(0) scale(0.98);
+          background: rgba(255, 255, 255, 0.15) !important;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+      }
+    }
+  }
+
+  .hero-content {
+    animation: fadeInUp 0.8s ease-out;
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: 4.5rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    position: relative;
+
+    // 使用渐变文字效果
+    background: linear-gradient(135deg,
+    #ffffff 0%,
+    #f0f0ff 25%,
+    #e0e0ff 50%,
+    #f0f0ff 75%,
+    #ffffff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    // 多层外发光和阴影，创造强烈的视觉冲击
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
+    0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
+    0 0 120px rgba(99, 102, 241, 0.5),
+    0 6px 24px rgba(0, 0, 0, 0.5),
+    0 3px 12px rgba(0, 0, 0, 0.4);
+
+    // 添加多层滤镜外发光
+    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
+
+    // 添加渐变动画和发光脉冲动画
+    animation-name: slideDown, glowPulseTitle, gradientShine;
+    animation-duration: 0.8s, 3s, 6s;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out, linear;
+    animation-iteration-count: 1, infinite, infinite;
+    animation-delay: 0s, 0.5s, 0s;
+
+    // 在标题下方添加光晕效果
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 40px;
+      background: radial-gradient(ellipse at center,
+      rgba(var(--color-primary-purple-rgb), 0.3) 0%,
+      rgba(99, 102, 241, 0.2) 50%,
+      transparent 100%);
+      filter: blur(20px);
+      opacity: 0.8;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+  }
+
+  .hero-subtitle {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.95;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+    line-height: 1.4;
+  }
+
+  .hero-description {
+    font-size: 1.15rem;
+    margin-bottom: 2.5rem;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.85;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+    position: relative;
+    z-index: 100 !important; // 使用最高 z-index
+    pointer-events: auto !important; // 确保按钮区域可点击
+
+    :deep(.n-button) {
+      position: relative;
+      z-index: 100 !important; // 确保按钮在最上层
+      pointer-events: auto !important; // 确保按钮本身可点击
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      pointer-events: auto !important; // 确保按钮可点击
+      position: relative;
+      z-index: 100 !important;
+    }
+
+    .btn-primary {
+      :deep(.n-button) {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+        font-size: 1.05rem;
+        font-weight: 700;
+        padding: 16px 40px !important;
+        border-radius: 12px !important;
+        border: none !important;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35),
+        0 4px 12px rgba(16, 185, 129, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s;
+          pointer-events: none; // 防止伪元素阻挡点击
+        }
+
+        &:hover {
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45),
+          0 6px 16px rgba(16, 185, 129, 0.25),
+          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+          background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+
+          &::before {
+            left: 100%;
+          }
+        }
+
+        &:active {
+          transform: translateY(0) scale(0.98);
+          box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4),
+          0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+      }
+    }
+
+    .btn-secondary {
+      :deep(.n-button) {
+        background: rgba(255, 255, 255, 0.12) !important;
+        color: white !important;
+        font-size: 1.05rem;
+        font-weight: 600;
+        padding: 16px 40px !important;
+        border-radius: 12px !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          transition: left 0.5s;
+          pointer-events: none; // 防止伪元素阻挡点击
+        }
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2) !important;
+          border-color: rgba(255, 255, 255, 0.5) !important;
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
+          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+
+          &::before {
+            left: 100%;
+          }
+        }
+
+        &:active {
+          transform: translateY(0) scale(0.98);
+          background: rgba(255, 255, 255, 0.15) !important;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+      }
+    }
+  }
+
+  .hero-content {
+    animation: fadeInUp 0.8s ease-out;
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: 4.5rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    position: relative;
+
+    // 使用渐变文字效果
+    background: linear-gradient(135deg,
+    #ffffff 0%,
+    #f0f0ff 25%,
+    #e0e0ff 50%,
+    #f0f0ff 75%,
+    #ffffff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    // 多层外发光和阴影，创造强烈的视觉冲击
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
+    0 0 80px rgba(var(--color-primary-purple-rgb), 0.7),
+    0 0 120px rgba(99, 102, 241, 0.5),
+    0 6px 24px rgba(0, 0, 0, 0.5),
+    0 3px 12px rgba(0, 0, 0, 0.4);
+
+    // 添加多层滤镜外发光
+    filter: drop-shadow(0 0 30px rgba(var(--color-primary-purple-rgb), 0.6)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.4)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
 
     // 添加渐变动画和发光脉冲动画
     animation-name: slideDown, glowPulseTitle, gradientShine;
@@ -2321,8 +2719,7 @@ onUnmounted(() => {
 // 暗黑模式优化 - 创造层次感和视觉节奏
 html.dark {
   // 页面背景 - 优化配色更生动
-  background: linear-gradient(135deg, #0f1420 0%, #1a1f35 50%, #0f1420 100%);
-  background-attachment: fixed;
+  background: linear-gradient(135deg, #0f1420 0%, #1a1f35 50%, #0f1420 100%) fixed;
 
   // 页面背景装饰效果
   &::before {
@@ -2833,4 +3230,3 @@ html.dark {
   }
 }
 </style>
-

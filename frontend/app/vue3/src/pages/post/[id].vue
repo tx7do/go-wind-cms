@@ -45,7 +45,6 @@ const message = useMessage()
 
 // 修复类型定义，允许 null
 const post = ref<contentservicev1_Post | null>(null)
-const relatedPosts = ref<contentservicev1_Post[]>([])
 const tableOfContents = ref<TocItem[]>([])
 const activeHeading = ref<string>('')
 
@@ -99,30 +98,10 @@ async function loadPost() {
   }
 }
 
-async function loadRelatedPosts() {
-  if (!post.value) return
-  try {
-    const categoryIds = post.value.categoryIds || []
-    if (categoryIds.length > 0) {
-      const res = await postStore.listPost(
-        {page: 1, pageSize: 3},
-        {
-          status: 'POST_STATUS_PUBLISHED',
-          categoryIds: categoryIds
-        }
-      )
-      relatedPosts.value = (res.items || []).filter((p) => p.id !== postId.value)
-    }
-  } catch (error) {
-    console.error('Load related posts failed:', error)
-  }
-}
-
 // 加载所有数据
 async function loadAllData() {
   await Promise.all([
     loadPost(),
-    loadRelatedPosts(),
   ]);
 }
 
@@ -265,9 +244,6 @@ onMounted(async () => {
     }
   }, 500)
 
-  // 加载相关文章 (确保 post 已加载)
-  await loadRelatedPosts()
-
   window.addEventListener('scroll', throttledScroll)
 })
 
@@ -326,7 +302,7 @@ useLanguageChangeEffect(loadAllData, {
           </aside>
           <div class="article-content">
             <header class="post-header">
-              <n-skeleton :width="'80%'" size="huge" style="margin-bottom: 16px;"/>
+              <n-skeleton :width="'80%'" size="large" style="margin-bottom: 16px;"/>
               <n-skeleton :width="'60%'" size="large" style="margin-bottom: 24px;"/>
               <div class="post-meta">
                 <n-skeleton :width="100" size="medium"/>
@@ -494,7 +470,7 @@ useLanguageChangeEffect(loadAllData, {
       />
 
       <!-- Related Posts -->
-      <section v-if="relatedPosts.length > 0" class="related-section">
+      <section class="related-section">
         <div class="section-header">
           <h2>
             <span class="i-carbon:book"/>
@@ -502,11 +478,13 @@ useLanguageChangeEffect(loadAllData, {
           </h2>
         </div>
         <PostList
-          :posts="relatedPosts"
-          :loading="false"
+          :query-params="{status: 'POST_STATUS_PUBLISHED', categoryIds__in: post?.categoryIds}"
+          :field-mask="'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'"
+          :order-by="['-sortOrder']"
+          :page="1"
+          :page-size="3"
           :show-skeleton="false"
-          :from="'category'"
-          :category-id="post?.categoryIds?.[0]"
+          from="category"
         />
       </section>
     </div>
@@ -805,7 +783,7 @@ useLanguageChangeEffect(loadAllData, {
         }
 
         &.active {
-          background: linear-gradient(90deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.08)); // 渐变背景
+          background: linear-gradient(90deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.08)); // 渊变背景
           color: var(--color-brand);
           border-left-color: var(--color-brand);
           font-weight: 600;
