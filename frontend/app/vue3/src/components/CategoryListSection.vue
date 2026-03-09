@@ -131,7 +131,7 @@ function handleViewCategory(id: number) {
 
 function handleViewAll() {
   // 强制刷新路由，即使路径相同也会重新加载
-  router.push({ path: '/category', query: { t: Date.now() } })
+  router.push({path: '/category', query: {t: Date.now()}})
 }
 
 async function loadCategories() {
@@ -278,7 +278,6 @@ useLanguageChangeEffect(() => {
       background: #e0e7ff;
       color: #6366f1;
       border-radius: 10px;
-      border-left: 3px solid #6366f1;
       font-size: 0.825rem;
       font-weight: 600;
       width: fit-content;
@@ -395,7 +394,6 @@ html.dark .categories-section {
     .category-badge {
       background: #1e293b;
       color: #a5b4fc;
-      border-left: 3px solid rgba(99, 102, 241, 0.6);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       border: 1px solid rgba(51, 65, 85, 0.5);
     }
@@ -425,7 +423,6 @@ html.dark .categories-section {
       .category-badge {
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         color: #fff;
-        border-left-color: rgba(165, 180, 252, 0.8);
         box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         border-color: rgba(99, 102, 241, 0.5);
       }

@@ -446,12 +446,12 @@ async function toggleExpand(comment: commentservicev1_Comment) {
 
         :deep(.n-button) {
           min-width: 80px;
-          
+
           // 提交按钮 - 主按钮
           &:nth-child(1) {
             background: linear-gradient(135deg,
-              var(--color-brand) 0%,
-              #a855f7 100%);
+            var(--color-brand) 0%,
+            #a855f7 100%);
             border: none;
             box-shadow: 0 2px 8px rgba(168, 85, 247, 0.25);
             color: #fff;
@@ -487,8 +487,8 @@ async function toggleExpand(comment: commentservicev1_Comment) {
           // 提交按钮 - 暗色模式
           &:nth-child(1) {
             background: linear-gradient(135deg,
-              rgba(99, 102, 241, 0.85) 0%,
-              rgba(168, 85, 247, 0.7) 100%);
+            rgba(99, 102, 241, 0.85) 0%,
+            rgba(168, 85, 247, 0.7) 100%);
             box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
             border: 1px solid rgba(168, 85, 247, 0.3);
 

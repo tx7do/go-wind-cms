@@ -10,7 +10,7 @@
     <div class="features-grid">
       <div v-for="feature in features" :key="feature.title" class="feature-card">
         <div class="feature-icon">
-          <XIcon :name="feature.icon" :size="48" />
+          <XIcon :name="feature.icon" :size="48"/>
         </div>
         <h3>{{ feature.title }}</h3>
         <p>{{ feature.description }}</p>
@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { XIcon } from '@/plugins/xicon';
-import { defineProps } from 'vue';
+import {XIcon} from '@/plugins/xicon';
+import {defineProps} from 'vue';
 
 defineProps<{
   title: string;
@@ -55,7 +55,7 @@ defineProps<{
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-shadow: 0 2px 8px rgba(99,102,241,0.08), 0 1px 2px rgba(0,0,0,0.08);
+      text-shadow: 0 2px 8px rgba(99, 102, 241, 0.08), 0 1px 2px rgba(0, 0, 0, 0.08);
     }
   }
 

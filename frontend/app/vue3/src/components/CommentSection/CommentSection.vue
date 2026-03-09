@@ -317,13 +317,13 @@ onMounted(() => {
 <style scoped lang="less">
 @keyframes gradient-shift {
   0% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
   50% {
     background-position: 100% 50%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
 }
 
@@ -367,16 +367,15 @@ onMounted(() => {
 // Comment Form
 .comment-form {
   background: linear-gradient(135deg,
-    var(--color-surface) 0%,
-    rgba(168, 85, 247, 0.02) 100%);
+  var(--color-surface) 0%,
+  rgba(168, 85, 247, 0.02) 100%);
   border-radius: 20px;
   padding: 48px;
   margin-bottom: 48px;
   border: 1px solid rgba(168, 85, 247, 0.12);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    0 2px 16px rgba(168, 85, 247, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08),
+  0 2px 16px rgba(168, 85, 247, 0.06),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -389,11 +388,11 @@ onMounted(() => {
     right: 0;
     height: 4px;
     background: linear-gradient(90deg,
-      var(--color-brand) 0%,
-      #a855f7 25%,
-      #764ba2 50%,
-      #a855f7 75%,
-      var(--color-brand) 100%);
+    var(--color-brand) 0%,
+    #a855f7 25%,
+    #764ba2 50%,
+    #a855f7 75%,
+    var(--color-brand) 100%);
     background-size: 200% 100%;
     opacity: 0.9;
     animation: gradient-shift 3s ease infinite;
@@ -401,10 +400,9 @@ onMounted(() => {
 
   &:hover {
     border-color: var(--color-brand);
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.1),
-      0 4px 20px rgba(168, 85, 247, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1),
+    0 4px 20px rgba(168, 85, 247, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
   }
 
@@ -423,8 +421,8 @@ onMounted(() => {
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg,
-        var(--color-brand) 0%,
-        #a855f7 100%);
+      var(--color-brand) 0%,
+      #a855f7 100%);
       border-radius: 14px;
       box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
       color: #fff;
@@ -502,8 +500,8 @@ onMounted(() => {
       font-weight: 600;
       border-radius: 25px;
       background: linear-gradient(135deg,
-        var(--color-brand) 0%,
-        #a855f7 100%);
+      var(--color-brand) 0%,
+      #a855f7 100%);
       border: none;
       box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -546,8 +544,8 @@ onMounted(() => {
 html.dark .comment-form .form-actions {
   :deep(.n-button) {
     background: linear-gradient(135deg,
-      rgba(99, 102, 241, 0.85) 0%,
-      rgba(168, 85, 247, 0.7) 100%);
+    rgba(99, 102, 241, 0.85) 0%,
+    rgba(168, 85, 247, 0.7) 100%);
     box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
     border: 1px solid rgba(168, 85, 247, 0.35);
 

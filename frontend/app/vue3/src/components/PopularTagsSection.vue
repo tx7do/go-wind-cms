@@ -1,4 +1,3 @@
-
 <template>
   <section class="popular-tags-container">
     <div class="tags-content">
@@ -43,7 +42,7 @@ const loading = ref(false);
 
 const displayTags = ref<{ id: number; name: string; color: string }[]>([]);
 
-function handleViewTag(tag: contentservicev1_Tag) {
+function handleViewTag(tag: any) {
   router.push(`/tag/${tag.id}`)
 }
 
@@ -85,7 +84,7 @@ useLanguageChangeEffect(() => {
 <style scoped lang="less">
 .popular-tags-container {
   width: 100%;
-  
+
   .tags-content {
     width: 100%;
   }
@@ -100,7 +99,7 @@ useLanguageChangeEffect(() => {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 0 2px 8px rgba(99,102,241,0.08), 0 1px 2px rgba(0,0,0,0.08);
+    text-shadow: 0 2px 8px rgba(99, 102, 241, 0.08), 0 1px 2px rgba(0, 0, 0, 0.08);
   }
 
   .tags-grid {
