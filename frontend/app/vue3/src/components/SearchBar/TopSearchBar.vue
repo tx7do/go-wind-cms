@@ -172,12 +172,12 @@ function handleClickLogo() {
         <!-- User not logged in: show login/register buttons -->
         <template v-if="!isLogin">
           <n-divider :vertical="true"/>
-          <n-button type="info" class="header-login-btn"
+          <n-button text class="header-login-btn"
                     :aria-label="$t('navbar.top.login')"
                     @click="handleClickLogin">
             {{ $t('navbar.top.login') }}
           </n-button>
-          <n-button type="primary" class="header-register-btn"
+          <n-button text class="header-register-btn"
                     :aria-label="$t('navbar.top.register')"
                     @click="handleClickRegister">
             {{ $t('navbar.top.register') }}
@@ -355,8 +355,7 @@ function handleClickLogo() {
 
 .header-login-btn,
 .header-register-btn {
-  border: 1px solid transparent;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   transition: all 0.3s;
   display: flex !important;
@@ -364,45 +363,16 @@ function handleClickLogo() {
   justify-content: center !important;
   height: 40px !important;
   padding: 0 16px !important;
-}
-
-.header-login-btn {
-  --n-color: var(--header-login-bg);
-  --n-color-hover: rgba(102, 126, 234, 0.1);
-  --n-color-pressed: rgba(102, 126, 234, 0.15);
-  --n-border: 1px solid var(--header-login-border);
-  --n-border-hover: 1px solid var(--color-brand);
-  --n-border-pressed: 1px solid var(--color-brand);
-  --n-text-color: var(--header-login-text);
-  --n-text-color-hover: var(--color-brand);
-  --n-text-color-pressed: var(--color-brand);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  color: var(--color-brand);
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    border-color: var(--color-brand);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
   }
-}
-
-.header-register-btn {
-  --n-color: var(--header-register-bg);
-  --n-color-hover: var(--color-brand);
-  --n-color-pressed: var(--color-brand);
-  --n-border: 1px solid var(--header-register-border);
-  --n-border-hover: 1px solid var(--color-brand);
-  --n-border-pressed: 1px solid var(--color-brand);
-  --n-text-color: #fff;
-  --n-text-color-hover: #fff;
-  --n-text-color-pressed: #fff;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  }
-}
-
-:deep(.lang-btn .n-button__content),
-:deep(.theme-btn .n-button__content),
-:deep(.header-login-btn .n-button__content),
-:deep(.header-register-btn .n-button__content) {
-  color: inherit !important;
 }
 
 :deep(.lang-btn .n-icon),
