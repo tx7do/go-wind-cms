@@ -1,0 +1,10 @@
+{
+  "status": {
+    "ON": "Active",
+    "OFF": "Inactive"
+  },
+  "successStatus": {
+    "success": "Success",
+    "failed": "Failed"
+  }
+}

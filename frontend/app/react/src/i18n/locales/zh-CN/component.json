@@ -1,0 +1,18 @@
+{
+  "editor": {
+    "markdown": "Markdown",
+    "richtext": "富文本",
+    "richText": "富文本",
+    "html": "HTML",
+    "code": "代码",
+    "json": "JSON",
+    "text": "纯文本",
+    "edit": "编辑",
+    "preview": "预览"
+  },
+  "viewer": {
+    "title": "内容查看器"
+  }
+}
+
+

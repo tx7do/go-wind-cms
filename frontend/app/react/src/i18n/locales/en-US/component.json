@@ -1,0 +1,18 @@
+{
+  "editor": {
+    "markdown": "Markdown",
+    "richtext": "Rich Text",
+    "richText": "Rich Text",
+    "html": "HTML",
+    "code": "Code",
+    "json": "JSON",
+    "text": "Plain Text",
+    "edit": "Edit",
+    "preview": "Preview"
+  },
+  "viewer": {
+    "title": "Content Viewer"
+  }
+}
+
+
