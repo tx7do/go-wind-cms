@@ -123,7 +123,7 @@ export const useFileTransferStore = defineStore('file-transfer', () => {
     });
 
     await requestClient.upload(
-      'admin/v1/file/upload',
+      'app/v1/file/upload',
       {
         file: fileData,
         storageObject,

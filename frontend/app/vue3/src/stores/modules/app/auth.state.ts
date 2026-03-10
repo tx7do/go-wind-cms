@@ -72,7 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
             : await router.push(userInfo.homePath || DEFAULT_HOME_PATH)
         }
 
-        if (userInfo?.realName) {
+        if (userInfo?.realname) {
           window.$message.success($t('authentication.login.login_success'))
         }
       }
