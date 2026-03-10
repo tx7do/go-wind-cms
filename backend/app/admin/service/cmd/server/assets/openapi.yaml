@@ -3,8 +3,8 @@
 
 openapi: 3.0.3
 info:
-    title: GoWind CMS Admin API
-    description: GoWind CMS Admin API
+    title: GoWind Content Hub Admin API
+    description: GoWind Content Hub Admin API
     contact:
         name: tx7do
         url: https://github.com/tx7do/go-wind-cms

@@ -7911,7 +7911,6 @@ export type contentservicev1_Tag = {
   status?: contentservicev1_Tag_TagStatus;
   color?: string;
   icon?: string;
-  // 注：大多数 CMS 不需要标签分组，但某些场景（如多租户/大型站点）可能需要
   group?: string;
   sortOrder?: number;
   isFeatured?: boolean;

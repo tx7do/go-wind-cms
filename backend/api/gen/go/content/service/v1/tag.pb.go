@@ -81,17 +81,16 @@ func (Tag_TagStatus) EnumDescriptor() ([]byte, []int) {
 
 // 标签
 type Tag struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Id     *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                               // 标签ID
-	Status *Tag_TagStatus         `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Tag_TagStatus,oneof" json:"status,omitempty"` // 标签状态（启用/隐藏/归档）
-	Color  *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof" json:"color,omitempty"`                                          // 标签颜色（HEX 格式，如 '#3498db'，用于标签云/前端展示）
-	Icon   *string                `protobuf:"bytes,4,opt,name=icon,proto3,oneof" json:"icon,omitempty"`                                            // 标签图标（可选，支持图标名称如 'fas fa-code' 或 SVG URL）
-	// 注：大多数 CMS 不需要标签分组，但某些场景（如多租户/大型站点）可能需要
-	Group              *string                `protobuf:"bytes,5,opt,name=group,proto3,oneof" json:"group,omitempty"`                              // 标签分组（可选，如 '技术栈'、'行业'，用于后台分类管理，不影响前台展示）
-	SortOrder          *uint32                `protobuf:"varint,6,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`    // 排序优先级（数值越小越靠前，同组内排序）
-	IsFeatured         *bool                  `protobuf:"varint,7,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"` // 是否推荐（前台可用来突出显示，如标签云中加大字体或特殊标识）
-	Code               *string                `protobuf:"bytes,8,opt,name=code,proto3,oneof" json:"code,omitempty"`                                // 唯一代码（如 slug、编码等，便于唯一标识标签）
-	PostCount          *uint32                `protobuf:"varint,10,opt,name=post_count,json=postCount,proto3,oneof" json:"post_count,omitempty"`   // 使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                               // 标签ID
+	Status             *Tag_TagStatus         `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Tag_TagStatus,oneof" json:"status,omitempty"` // 标签状态（启用/隐藏/归档）
+	Color              *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof" json:"color,omitempty"`                                          // 标签颜色（HEX 格式，如 '#3498db'，用于标签云/前端展示）
+	Icon               *string                `protobuf:"bytes,4,opt,name=icon,proto3,oneof" json:"icon,omitempty"`                                            // 标签图标（可选，支持图标名称如 'fas fa-code' 或 SVG URL）
+	Group              *string                `protobuf:"bytes,5,opt,name=group,proto3,oneof" json:"group,omitempty"`                                          // 标签分组（可选，如 '技术栈'、'行业'，用于后台分类管理，不影响前台展示）
+	SortOrder          *uint32                `protobuf:"varint,6,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                // 排序优先级（数值越小越靠前，同组内排序）
+	IsFeatured         *bool                  `protobuf:"varint,7,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"`             // 是否推荐（前台可用来突出显示，如标签云中加大字体或特殊标识）
+	Code               *string                `protobuf:"bytes,8,opt,name=code,proto3,oneof" json:"code,omitempty"`                                            // 唯一代码（如 slug、编码等，便于唯一标识标签）
+	PostCount          *uint32                `protobuf:"varint,10,opt,name=post_count,json=postCount,proto3,oneof" json:"post_count,omitempty"`               // 使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）
 	Translations       []*TagTranslation      `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`
 	AvailableLanguages []string               `protobuf:"bytes,21,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"` // 可用的语言代码列表
 	CreatedBy          *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                    // 创建者用户ID

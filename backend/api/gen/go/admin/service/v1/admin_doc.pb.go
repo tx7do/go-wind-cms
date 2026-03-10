@@ -25,8 +25,8 @@ var File_admin_service_v1_admin_doc_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_admin_doc_proto_rawDesc = "" +
 	"\n" +
-	" admin/service/v1/admin_doc.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.protoB\xb2\x06\xbaG\xf6\x04\x12\xbe\x01\n" +
-	"\x14GoWind CMS Admin API\x12\x14GoWind CMS Admin API\"B\n" +
+	" admin/service/v1/admin_doc.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.protoB\xc2\x06\xbaG\x86\x05\x12\xce\x01\n" +
+	"\x1cGoWind Content Hub Admin API\x12\x1cGoWind Content Hub Admin API\"B\n" +
 	"\x05tx7do\x12$https://github.com/tx7do/go-wind-cms\x1a\x13yanglinbo@gmail.com*G\n" +
 	"\vMIT License\x128https://github.com/tx7do/go-wind-cms/blob/master/LICENSE2\x031.0*\x96\x03\n" +
 	"\xd4\x01\n" +

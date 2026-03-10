@@ -467,7 +467,7 @@ export type pagination_PagingRequest = {
   orderBy?: string;
   // 排序规则
   sorting: pagination_Sorting[] | undefined;
-  // 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realname,username。如果为空则选中所有字段，即SELECT *。
+  // 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
   fieldMask?: wellKnownFieldMask;
 };
 
@@ -2316,7 +2316,6 @@ export type contentservicev1_Tag = {
   status?: contentservicev1_Tag_TagStatus;
   color?: string;
   icon?: string;
-  // 注：大多数 CMS 不需要标签分组，但某些场景（如多租户/大型站点）可能需要
   group?: string;
   sortOrder?: number;
   isFeatured?: boolean;
