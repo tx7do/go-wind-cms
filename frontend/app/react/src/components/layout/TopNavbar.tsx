@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {Menu, Tabs} from 'antd';
 import {XIcon} from '@/plugins/xicon';
 
-import type {siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
+import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 import {useNavigationStore} from '@/store/slices/navigation/hooks';
 
 import type {TopNavBarTabItem} from './types';
@@ -64,7 +64,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                 // 调用 API 获取所有导航数据
                 const res = await navigationStore.listNavigation(
                     {page: 1, pageSize: 10}
-                );
+                ) as unknown as { items: siteservicev1_Navigation[]; total: number };
 
                 if (res.items && res.items.length > 0) {
                     res.items.forEach((nav, index) => {

@@ -1,4 +1,5 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+
 import {createNavigationServiceClient} from '@/api/generated/app/service/v1';
 import {requestClientRequestHandler} from '@/transport/rest';
 import {
