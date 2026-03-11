@@ -111,8 +111,18 @@ export default function TopSearchBar({brandTitle, logoSrc = '/logo.png', onLogoC
     };
 
     const toggleDarkMode = () => {
-        // 只在暗黑和亮色之间切换
-        const newMode: 'dark' | 'light' = themeStore.theme.mode === 'dark' ? 'light' : 'dark';
+        // 获取当前实际模式（如果是 system，则根据系统偏好判断）
+        let currentEffectiveMode: 'dark' | 'light';
+        
+        if (themeStore.theme.mode === 'system') {
+            // 跟随系统时，根据系统偏好确定当前模式
+            currentEffectiveMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        } else {
+            currentEffectiveMode = themeStore.theme.mode;
+        }
+        
+        // 切换到相反的模式
+        const newMode: 'dark' | 'light' = currentEffectiveMode === 'dark' ? 'light' : 'dark';
         themeStore.setMode(newMode);
         if (typeof window !== 'undefined') {
             localStorage.setItem('themeMode', newMode);
