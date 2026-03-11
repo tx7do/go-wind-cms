@@ -1,8 +1,6 @@
 import {RequestClient} from "@/transport/rest/request-client";
 import {HttpResponse} from "@/transport/rest/types";
 import {authenticateResponseInterceptor, errorMessageResponseInterceptor} from "@/transport/rest/preset-interceptors";
-import store from '@/store';
-import {reauthenticate, refreshToken} from "@/store/slices/authentication/slice";
 
 
 const apiURL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
@@ -13,34 +11,12 @@ const preferences = {
     },
 };
 
-function createRequestClient(baseURL: string) {
+function createRequestClient(baseURL: string, getToken?: () => string) {
     const client = new RequestClient({
         baseURL,
     });
 
-    /**
-     * 重新认证逻辑
-     */
-    async function doReAuthenticate() {
-        await reauthenticate();
-    }
-
-    /**
-     * 刷新token逻辑
-     */
-    async function doRefreshToken() {
-        const state = store.getState();
-        const token = typeof state.access.refreshToken === 'string' ? state.access.refreshToken : '';
-        // dispatch refreshToken action，等待结果
-        const result = await store.dispatch(refreshToken(token));
-        // 提取新 token
-        return result.payload as string;
-    }
-
-    /**
-     * 格式化令牌
-     * @param token
-     */
+    // 格式化令牌
     function formatToken(token: null | string) {
         return token ? `Bearer ${token}` : null;
     }
@@ -48,7 +24,9 @@ function createRequestClient(baseURL: string) {
     // 请求头处理
     client.addRequestInterceptor({
         fulfilled: (config) => {
-            config.headers.Authorization = formatToken(store.getState().access.accessToken);
+            if (getToken) {
+                config.headers.Authorization = formatToken(getToken());
+            }
             config.headers['Accept-Language'] = preferences.app.locale;
             return config as never;
         },
@@ -79,8 +57,8 @@ function createRequestClient(baseURL: string) {
     client.addResponseInterceptor(
         authenticateResponseInterceptor({
             client,
-            doReAuthenticate,
-            doRefreshToken,
+            doReAuthenticate: async () => {},
+            doRefreshToken: async () => '',
             enableRefreshToken: preferences.app.enableRefreshToken,
             formatToken,
         }),
@@ -89,7 +67,7 @@ function createRequestClient(baseURL: string) {
     // 通用的错误处理,如果没有进入上面的错误处理逻辑，就会进入这里
     client.addResponseInterceptor(
         errorMessageResponseInterceptor(async (msg: string, error) => {
-            const responseData = (error as unknown as { response?: { data?: any } })?.response?.data ?? {};
+            const responseData = (error as unknown as { response?: { data?: Record<string, unknown> } })?.response?.data ?? {};
             const errorMessage = responseData?.error ?? responseData?.message ?? '';
             window.alert(errorMessage || msg);
         }),
@@ -99,5 +77,4 @@ function createRequestClient(baseURL: string) {
 }
 
 export const requestClient = createRequestClient(apiURL);
-
 export const baseRequestClient = new RequestClient({baseURL: apiURL});

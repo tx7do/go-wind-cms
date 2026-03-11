@@ -1,20 +1,18 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
+
+import {env} from "@/config";
 
 export const metadata: Metadata = {
-  title: "Kratos CMS",
-  description: "A modern CMS built with Next.js",
+    title: env.appTitle,
+    description: env.appDescription,
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="zh-CN" suppressHydrationWarning>
-      <body>
+export default function RootLayout({children}: {children: React.ReactNode}) {
+    return (
+        <html lang="zh-CN" suppressHydrationWarning>
+        <body>
         {children}
-      </body>
-    </html>
-  );
+        </body>
+        </html>
+    );
 }

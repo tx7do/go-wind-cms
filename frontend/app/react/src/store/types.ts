@@ -159,3 +159,6 @@ export interface ILoadingState {
     isLoading: boolean;
     error: boolean | null;
 }
+
+export type RootState = IRootState;
+export type AppDispatch = (...args: any[]) => any;

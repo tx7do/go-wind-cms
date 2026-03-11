@@ -1,3 +1,5 @@
+'use client';
+
 import {useTranslations, useLocale} from 'next-intl';
 import {useRouter} from 'next/navigation';
 import {useLanguageStore} from '@/store/core/language/hooks';

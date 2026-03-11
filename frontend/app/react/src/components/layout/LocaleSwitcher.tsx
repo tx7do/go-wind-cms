@@ -1,6 +1,6 @@
 import React from 'react';
 import {useI18n} from '@/i18n';
-import {Select, Dropdown, Button} from 'antd';
+import {Dropdown, Button} from 'antd';
 import {GlobalOutlined} from '@ant-design/icons';
 import styles from './LocaleSwitcher.module.css';
 
@@ -22,11 +22,11 @@ import styles from './LocaleSwitcher.module.css';
  * ```
  */
 export const LocaleSwitcher: React.FC = () => {
-    const {t, locale, changeLocale} = useI18n('menu');
+    const {locale, changeLocale} = useI18n('menu');
 
-    const localeOptions = [
-        {value: 'zh-CN', label: '简体中文'},
-        {value: 'en-US', label: 'English'},
+    const localeOptions: { key: string; label: React.ReactNode }[] = [
+        {key: 'zh-CN', label: '简体中文'},
+        {key: 'en-US', label: 'English'},
     ];
 
     const handleLanguageChange = ({key}: {key: string}) => {
