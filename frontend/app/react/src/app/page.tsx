@@ -1,8 +1,11 @@
 "use client";
+
 import React, {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {env} from "@/config";
 import {Spin} from 'antd';
+
+import {env} from "@/config";
+
 
 const getDefaultLocale = () => {
     return env.defaultLocale; // 或根据浏览器、配置等动态获取
@@ -26,7 +29,7 @@ const HomePage: React.FC = () => {
         }}>
             <Spin size="large"/>
             <main>
-                <h1 style={{marginTop: 24}}>跳转中...</h1>
+                <h1 style={{marginTop: 24}}>Redirecting to home page...</h1>
             </main>
         </div>
     );
