@@ -4,53 +4,95 @@ import React from 'react';
 import {Button, Divider} from 'antd';
 import {Icon} from '@iconify/react';
 import {useTranslations} from 'next-intl';
+import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
 import styles from './Footer.module.css';
 
+type FooterLinkKey =
+    | 'about_us'
+    | 'contact_us'
+    | 'non_responsibility'
+    | 'privacy_agreement'
+    | 'terms_of_service';
+
+interface FooterLinkItem {
+    key: FooterLinkKey;
+    labelKey: string;
+}
+
+interface SocialItem {
+    key: 'twitter' | 'facebook' | 'instagram' | 'telegram' | 'wechat' | 'weibo' | 'qq';
+    name: string;
+    icon: string;
+}
+
 export default function Footer() {
     const t = useTranslations('ui');
+    const router = useI18nRouter();
 
-    const footerLinks = [
-        {key: 'about', label: t('button.about_us'), href: '/about'},
-        {key: 'contact', label: t('button.contact_us'), href: '/contact'},
-        {key: 'disclaimer', label: t('button.non_responsibility'), href: '/disclaimer'},
-        {key: 'privacy', label: t('button.privacy_agreement'), href: '/privacy'},
-        {key: 'terms', label: t('button.terms_of_service'), href: '/terms'},
+    const footerLinks: FooterLinkItem[] = [
+        {key: 'about_us', labelKey: 'button.about_us'},
+        {key: 'contact_us', labelKey: 'button.contact_us'},
+        {key: 'non_responsibility', labelKey: 'button.non_responsibility'},
+        {key: 'privacy_agreement', labelKey: 'button.privacy_agreement'},
+        {key: 'terms_of_service', labelKey: 'button.terms_of_service'},
     ];
 
-    const socialLinks = [
-        {key: 'github', icon: 'carbon:logo-github', href: 'https://github.com'},
-        {key: 'twitter', icon: 'carbon:logo-twitter', href: 'https://twitter.com'},
-        {key: 'wechat', icon: 'carbon:logo-wechat', href: '#'},
+    const footerRouteMap: Record<FooterLinkKey, string> = {
+        about_us: '/about',
+        contact_us: '/contact',
+        non_responsibility: '/disclaimer',
+        privacy_agreement: '/privacy',
+        terms_of_service: '/terms',
+    };
+
+    const socialLinks: SocialItem[] = [
+        {key: 'twitter', name: 'Twitter', icon: 'fa:twitter'},
+        {key: 'facebook', name: 'Facebook', icon: 'fa:facebook'},
+        {key: 'instagram', name: 'Instagram', icon: 'fa:instagram'},
+        {key: 'telegram', name: 'Telegram', icon: 'fa:telegram'},
+        {key: 'wechat', name: 'WeChat', icon: 'fa:wechat'},
+        {key: 'weibo', name: 'Weibo', icon: 'fa:weibo'},
+        {key: 'qq', name: 'QQ', icon: 'fa:qq'},
     ];
+
+    const handleFooterLinkClick = (key: FooterLinkKey) => {
+        router.push(footerRouteMap[key]);
+    };
+
+    const handleSocialClick = (name: string) => {
+        console.log(name);
+    };
 
     return (
         <footer className={styles.footerOuter}>
             <div className={styles.footerContainer}>
-                <div className={styles.footerLinks}>
+                <nav className={styles.footerLinks} aria-label="Footer links">
                     {footerLinks.map(link => (
-                        <div key={link.key} className={styles.footerLink}>
-                            <Button type="link" href={link.href} target="_blank" rel="noopener noreferrer">
-                                {link.label}
-                            </Button>
-                        </div>
+                        <Button
+                            key={link.key}
+                            type="text"
+                            className={styles.footerLink}
+                            onClick={() => handleFooterLinkClick(link.key)}
+                        >
+                            {t(link.labelKey)}
+                        </Button>
                     ))}
-                </div>
+                </nav>
 
                 <div className={styles.footerMeta}>
-                    <div className={styles.copyright}>
-                        © {new Date().getFullYear()} GoWind Team. All rights reserved.
-                    </div>
-                    <Divider orientation="vertical" className={styles.metaDivider}/>
-                    <div className={styles.socialList}>
+                    <span className={styles.copyright}>
+                        {t('copyright')}
+                    </span>
+                    <Divider vertical className={styles.metaDivider}/>
+                    <div className={styles.socialList} aria-label="Social links">
                         {socialLinks.map(social => (
                             <Button
                                 key={social.key}
                                 type="text"
                                 className={styles.socialBtn}
-                                href={social.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                aria-label={social.name}
+                                onClick={() => handleSocialClick(social.name)}
                                 icon={<Icon icon={social.icon}/>}
                             />
                         ))}

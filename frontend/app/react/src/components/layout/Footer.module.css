@@ -1,6 +1,6 @@
 .footerOuter {
     width: 100%;
-    background: #23262e;
+    background: var(--color-surface);
     display: flex;
     justify-content: center;
 }
@@ -8,8 +8,8 @@
 .footerContainer {
     min-height: 72px;
     padding: 16px 0;
-    color: rgba(255, 255, 255, 0.65);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text-secondary);
+    border-top: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -34,66 +34,78 @@
     flex-shrink: 0;
 }
 
-.footerLink :global(.ant-btn) {
-    color: rgba(255, 255, 255, 0.65);
+.footerLink {
     padding: 0 4px;
+    color: var(--color-text-secondary) !important;
     transition: all 0.2s;
 }
 
-.footerLink :global(.ant-btn:hover) {
-    color: rgba(255, 255, 255, 0.85);
+.footerLink:hover {
+    color: var(--color-text-primary) !important;
 }
 
-.footerLink a {
-    color: inherit;
-    text-decoration: none;
-    transition: all 0.2s;
+.footerLink:active {
+    color: var(--color-text-primary) !important;
 }
 
-.footerLink a:hover {
-    color: rgba(255, 255, 255, 0.85);
+/* 覆盖 Ant Design 按钮默认样式 */
+.footerLink > :global(.ant-btn) {
+    color: inherit !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0;
 }
 
-.socialList {
-    display: flex;
-    align-items: center;
-    gap: 2px;
+.footerLink > :global(.ant-btn) .anticon {
+    color: inherit !important;
 }
 
-.socialBtn :global(.ant-btn) {
+.socialBtn {
     font-size: 24px;
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--color-text-secondary) !important;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.socialBtn :global(.ant-btn:hover) {
-    color: #6366f1;
+.socialBtn:hover {
+    color: var(--color-brand) !important;
     transform: translateY(-1px);
 }
 
-/* Iconify 图标样式 */
-.socialBtn svg {
-    width: 24px;
-    height: 24px;
+.socialBtn:active {
+    color: var(--color-brand) !important;
 }
 
-/* Iconify 图标样式 */
-.socialBtn svg {
-    width: 24px;
-    height: 24px;
+/* 覆盖 Ant Design 按钮默认样式 */
+.socialBtn > :global(.ant-btn) {
+    color: inherit !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: inherit;
+}
+
+.socialBtn > :global(.ant-btn) .anticon {
+    font-size: inherit;
+    color: inherit !important;
+}
+
+.socialBtn > :global(.ant-btn) svg {
+    fill: currentColor !important;
+}
+
+.socialBtn:hover > :global(.ant-btn) svg {
+    fill: currentColor !important;
 }
 
 .copyright {
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--color-text-secondary);
     font-size: 14px;
     white-space: nowrap;
 }
 
 .metaDivider :global(.ant-divider-vertical) {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--color-border);
     height: 14px;
     margin: 0 8px;
 }
@@ -104,7 +116,7 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
-        padding: 16px 24px 20px;
+        padding: 16px 0 20px;
     }
 
     .footerMeta {
