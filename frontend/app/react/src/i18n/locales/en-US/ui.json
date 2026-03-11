@@ -120,7 +120,8 @@
     "importMarkdown": "Import Markdown",
     "words": "Words",
     "chars": "Characters",
-    "please_input_content": "Please enter content..."
+    "please_input_content": "Please enter content...",
+    "please_input_code": "Please enter verification code"
   },
   "form": {
     "name": "Name",

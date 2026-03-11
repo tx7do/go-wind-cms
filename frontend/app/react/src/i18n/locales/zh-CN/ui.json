@@ -117,10 +117,11 @@
     "allowFullscreen": "允许全屏",
     "allowFullscreenEnabled": "已启用全屏",
     "allowFullscreenDisabled": "已禁用全屏",
-    "importMarkdown": "导入Markdown",
+    "importMarkdown": "导入 Markdown",
     "words": "单词",
     "chars": "字符",
-    "please_input_content": "请输入内容..."
+    "please_input_content": "请输入内容...",
+    "please_input_code": "请输入验证码"
   },
   "form": {
     "name": "姓名",
