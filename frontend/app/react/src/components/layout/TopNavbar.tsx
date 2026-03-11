@@ -2,15 +2,16 @@
 
 import React, {useState, useEffect} from 'react';
 import {Menu, Tabs} from 'antd';
+
 import {XIcon} from '@/plugins/xicon';
 
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 import {useNavigationStore} from '@/store/slices/navigation/hooks';
 import {useLanguageStore} from '@/store/core/language/hooks';
+import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 
 import type {TopNavBarTabItem} from './types';
 import TopNavbarTab from './TopNavbarTab';
-
 import styles from './TopNavbar.module.css';
 
 export interface TopNavbarItem {
@@ -66,7 +67,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                 // 调用 API 获取所有导航数据
                 const res = await navigationStore.listNavigation(
                     {page: 1, pageSize: 10}
-                ) as unknown as {items: siteservicev1_Navigation[]; total: number};
+                ) as unknown as { items: siteservicev1_Navigation[]; total: number };
 
                 if (res.items && res.items.length > 0) {
                     res.items.forEach((nav, index) => {
@@ -92,9 +93,34 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
 
         loadNavigation();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [languageStore.language.locale]); // 当语言变化时重新加载导航数据
+    }, []); // 移除 languageStore.language.locale 依赖，改用 useLanguageChangeEffect
 
-    // TODO: 后续添加语言切换监听，自动重新加载导航数据
+    // 监听语言变化，自动重新加载导航数据
+    useLanguageChangeEffect(() => {
+        console.log('[TopNavbar] 语言变化，重新加载导航数据');
+        // 重新加载导航数据的逻辑已经在 useEffect 中，这里不需要额外操作
+        // 因为 useEffect 的依赖是空的，所以不会自动重新执行
+        // 我们需要手动触发重新加载
+        setIsLoading(true);
+        navigationStore.listNavigation({page: 1, pageSize: 10})
+            .then(res => {
+                const navRes = res as unknown as { items: siteservicev1_Navigation[]; total: number };
+                if (navRes.items && navRes.items.length > 0) {
+                    const headerNav = navRes.items.find(nav =>
+                        nav.location === 'HEADER' && nav.isActive === true
+                    );
+                    if (headerNav && headerNav.items && headerNav.items.length > 0) {
+                        setNavigationItems(headerNav.items);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('❌ 重新加载导航失败:', error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, {immediate: false, autoCleanup: true});
 
     // 处理导航点击
     const handleNavigate = (item: siteservicev1_NavigationItem) => {

@@ -8,14 +8,14 @@ import {useTranslations} from 'next-intl';
 import styles from './Footer.module.css';
 
 export default function Footer() {
-    const t = useTranslations('ui.button');
+    const t = useTranslations('ui');
 
     const footerLinks = [
-        {key: 'about', label: t('about_us'), href: '/about'},
-        {key: 'contact', label: t('contact_us'), href: '/contact'},
-        {key: 'disclaimer', label: t('non_responsibility'), href: '/disclaimer'},
-        {key: 'privacy', label: t('privacy_agreement'), href: '/privacy'},
-        {key: 'terms', label: t('terms_of_service'), href: '/terms'},
+        {key: 'about', label: t('button.about_us'), href: '/about'},
+        {key: 'contact', label: t('button.contact_us'), href: '/contact'},
+        {key: 'disclaimer', label: t('button.non_responsibility'), href: '/disclaimer'},
+        {key: 'privacy', label: t('button.privacy_agreement'), href: '/privacy'},
+        {key: 'terms', label: t('button.terms_of_service'), href: '/terms'},
     ];
 
     const socialLinks = [

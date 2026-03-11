@@ -26,6 +26,7 @@ import enUS_enum from './locales/en-US/enum.json';
 import enUS_component from './locales/en-US/component.json';
 import enUS_common from './locales/en-US/common.json';
 import enUS_settings from './locales/en-US/settings.json';
+import enUS_ui from './locales/en-US/ui.json';
 
 export const locales = ['zh-CN', 'en-US'] as const;
 export type Locale = (typeof locales)[number];
@@ -33,13 +34,13 @@ export const DEFAULT_LANGUAGE = 'zh-CN';
 export const defaultLocale: Locale = DEFAULT_LANGUAGE as Locale;
 
 export function validateLocale(locale?: string): Locale {
-    if (!locale || !locales.includes(locale)) {
+    if (!locale || !locales.includes(locale as Locale)) {
         return defaultLocale;
     }
     return locale as Locale;
 }
 
-const allMessages: Record<Locale, Record<string, any>> = {
+const allMessages: Record<Locale, Record<string, Record<string, unknown>>> = {
     'zh-CN': {
         authentication: zhCN_authentication,
         app: zhCN_app,
@@ -67,6 +68,7 @@ const allMessages: Record<Locale, Record<string, any>> = {
         component: enUS_component,
         common: enUS_common,
         settings: enUS_settings,
+        ui: enUS_ui,
     }
 };
 

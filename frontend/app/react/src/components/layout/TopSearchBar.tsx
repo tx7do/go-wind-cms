@@ -12,12 +12,15 @@ import {
 } from '@ant-design/icons';
 import {useTranslations} from 'next-intl';
 import {useRouter} from 'next/navigation';
+
 import styles from './TopSearchBar.module.css';
 
-import SearchBar from './SearchBar';
-import {useThemeStore} from '@/store/core/theme/hooks';
-import {useI18n} from '@/i18n';
 import {useLanguageStore} from "@/store/core/language/hooks";
+import {useThemeStore} from '@/store/core/theme/hooks';
+
+import {useI18n} from '@/i18n';
+
+import SearchBar from './SearchBar';
 
 interface TopSearchBarProps {
     brandTitle: string;

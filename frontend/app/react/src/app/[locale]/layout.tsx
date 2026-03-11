@@ -1,8 +1,8 @@
 import {notFound} from 'next/navigation';
-import {getMessages} from 'next-intl/server';
 
 import {routing} from './routing';
 import ClientLocaleLayout from './ClientLocaleLayout';
+import getRequestConfig from '@/i18n/config';
 
 export default async function LocaleLayout({children, params}: {
     children: React.ReactNode;
@@ -12,9 +12,10 @@ export default async function LocaleLayout({children, params}: {
     if (!routing.locales.includes(locale as 'zh-CN' | 'en-US')) {
         notFound();
     }
-    const messages = await getMessages();
+    // 获取 messages
+    const {messages} = await getRequestConfig({locale});
     return (
-        <ClientLocaleLayout messages={messages} locale={locale}>
+        <ClientLocaleLayout locale={locale} messages={messages}>
             {children}
         </ClientLocaleLayout>
     );

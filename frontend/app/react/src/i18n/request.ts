@@ -27,6 +27,7 @@ import enUS_enum from './locales/en-US/enum.json';
 import enUS_component from './locales/en-US/component.json';
 import enUS_common from './locales/en-US/common.json';
 import enUS_settings from './locales/en-US/settings.json';
+import enUS_ui from './locales/en-US/ui.json';
 
 export default getRequestConfig(async ({requestLocale}) => {
     let locale = await requestLocale;
@@ -63,6 +64,7 @@ export default getRequestConfig(async ({requestLocale}) => {
         component: enUS_component,
         common: enUS_common,
         settings: enUS_settings,
+        ui: enUS_ui,
     };
 
     return {

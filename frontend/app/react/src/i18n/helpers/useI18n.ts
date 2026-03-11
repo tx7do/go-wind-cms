@@ -15,21 +15,15 @@ export function useI18n(namespace: string = 'common') {
     const router = useRouter();
     const languageStore = useLanguageStore();
 
-    // 切换语言（保留当前路径）
+    // 同步 locale 到 Redux store
+    if (languageStore.language.locale !== locale) {
+        languageStore.setLocale(locale);
+    }
+
+    // 切换语言（使用 next-intl 的路由器）
     const changeLocale = (targetLocale: string) => {
-        if (typeof window !== 'undefined') {
-            const currentPath = window.location.pathname;
-
-            // 移除旧的 locale 前缀
-            const pathWithoutLocale = currentPath.replace(/^\/[a-zA-Z]+(-[a-zA-Z]+)?/, '');
-
-            // 更新 Redux store
-            languageStore.setLocale(targetLocale);
-
-            // 添加新的 locale 前缀并跳转
-            const newPath = `/${targetLocale}${pathWithoutLocale}`;
-            router.push(newPath);
-        }
+        // next-intl 会自动处理 locale 前缀和路由
+        router.push(`/${targetLocale}`);
     };
 
     return {t, locale, changeLocale};

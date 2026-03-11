@@ -1,7 +1,9 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 
 import {createAuthenticationServiceClient, createUserProfileServiceClient} from "@/api/generated/app/service/v1";
+
 import {requestClientRequestHandler} from "@/transport/rest";
+
 import {setAccessToken, setLoginExpired} from "@/store/core/access/slice";
 import {useAccessStore} from "@/store/core/access/hooks";
 
@@ -10,10 +12,14 @@ const userProfileService = createUserProfileServiceClient(requestClientRequestHa
 
 interface AuthState {
     loginLoading: boolean;
+    loading: boolean;
+    error: string | null;
 }
 
 const initialState: AuthState = {
     loginLoading: false,
+    loading: false,
+    error: null,
 };
 
 // 登录
@@ -82,9 +88,9 @@ export const reauthenticate = createAsyncThunk(
         setAccessToken(null)
 
         const accessStore = useAccessStore();
-        const refresh_token = accessStore.refreshToken;
-        if (refresh_token) {
-            const access_token = await dispatch(refreshToken(refresh_token));
+        const refresh_token = accessStore.access.refreshToken;
+        if (refresh_token && refresh_token.value) {
+            const access_token = await dispatch(refreshToken(refresh_token.value));
             if (access_token) {
                 // dispatch(setAccessToken(access_token));
                 dispatch(setLoginExpired(false));
@@ -100,8 +106,19 @@ const authenticationSlice = createSlice({
         setLoginLoading(state, action: PayloadAction<boolean>) {
             state.loginLoading = action.payload;
         },
+        setLoading(state, action: PayloadAction<boolean>) {
+            state.loading = action.payload;
+        },
+        setError(state, action: PayloadAction<string | null>) {
+            state.error = action.payload;
+        },
+        clearError(state) {
+            state.error = null;
+        },
         resetAuth(state) {
             state.loginLoading = false;
+            state.loading = false;
+            state.error = null;
         },
     },
     extraReducers: (builder) => {
