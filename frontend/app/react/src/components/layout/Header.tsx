@@ -130,19 +130,20 @@ export default function Header() {
         light: '☀️',
         system: '🖥️'
     };
-    
-    // ✅ 确保 currentMode 始终是有效的 ThemeMode 值
-    const validMode: ThemeMode = (currentMode && ['dark', 'light', 'system'].includes(currentMode)) 
-        ? currentMode 
+
+    // 确保 currentMode 始终是有效的 ThemeMode 值
+    const validMode: ThemeMode = (currentMode && ['dark', 'light', 'system'].includes(currentMode))
+        ? currentMode
         : 'system';
     const iconValue = themeIconMap[validMode];
-    
-    // ✅ SSR 兼容：只在客户端渲染图标，避免 hydration 不匹配
+
+    // SSR 兼容：只在客户端渲染图标，避免 hydration 不匹配
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
-    
+
     // SSR 期间显示占位符，客户端渲染后显示实际图标
     const displayIcon = mounted ? iconValue : '🖥️';
 
