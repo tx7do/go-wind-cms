@@ -173,30 +173,30 @@ export default function Header() {
                             )}
                             <Dropdown
                                 menu={{items: languageMenuItems, onClick: handleLanguageChange}}
-                                trigger={['hover']}
+                                trigger={['click']}
                             >
                                 <Button
-                                    type="primary"
+                                    type="text"
                                     className={styles.langBtn}
                                     aria-label="Language"
-                                    icon={
-                                        <span className={styles.langIcon}>
-                                            {'🌐'}
-                                        </span>
-                                    }
+                                    icon={<span className={styles.langIcon}>{'🌐'}</span>}
                                 />
                             </Dropdown>
-                            <Button
-                                type="primary"
-                                className={styles.themeBtn}
-                                aria-label="Toggle theme"
-                                onClick={toggleDarkMode}
-                                icon={
-                                    <span className={styles.themeIcon}>
-                                        {themeStore.theme.mode === 'dark' ? '🌙' : '☀️'}
-                                    </span>
-                                }
-                            />
+                            <Dropdown
+                                menu={{items: [
+                                        {key: 'dark', label: '暗色', icon: <span>🌙</span>, onClick: () => themeStore.setMode('dark')},
+                                        {key: 'light', label: '亮色', icon: <span>☀️</span>, onClick: () => themeStore.setMode('light')},
+                                        {key: 'system', label: '跟随系统', icon: <span>🖥️</span>, onClick: () => themeStore.setMode('system')},
+                                    ]}}
+                                trigger={['click']}
+                            >
+                                <Button
+                                    type="text"
+                                    className={styles.themeBtn}
+                                    aria-label="Toggle theme"
+                                    icon={<span className={styles.themeIcon}>{themeStore.theme.mode === 'dark' ? '🌙' : themeStore.theme.mode === 'light' ? '☀️' : '🖥️'}</span>}
+                                />
+                            </Dropdown>
                         </Space>
                     </div>
                 </div>
