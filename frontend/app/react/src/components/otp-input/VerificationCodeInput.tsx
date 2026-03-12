@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {Input} from 'antd';
-import {useTranslations} from 'next-intl';
 
 import styles from './VerificationCodeInput.module.css';
 
@@ -36,8 +35,6 @@ export const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({
                                                                                 className = '',
                                                                                 type = 'number',
                                                                             }) => {
-    const t = useTranslations('ui');
-
     const handleChange = (newValue: string) => {
         onChange?.(newValue);
 
@@ -55,7 +52,6 @@ export const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({
                 onChange={handleChange}
                 disabled={disabled}
                 type={type}
-                placeholder={t('please_input_code')}
                 className={styles.otpInput}
             />
         </div>

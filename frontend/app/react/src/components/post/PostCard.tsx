@@ -9,6 +9,7 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import type {contentservicev1_Post} from '@/api/generated/app/service/v1';
 
 import styles from './PostCard.module.css';
+import {formatDate} from "@/utils";
 
 interface PostCardProps {
     post: contentservicev1_Post;
@@ -55,7 +56,7 @@ const PostCard: React.FC<PostCardProps> = ({
                     </div>
                     <div className={styles.metaItem}>
                         <XIcon name="carbon:calendar" size={16}/>
-                        <span>{new Date(post.createdAt).toLocaleDateString('zh-CN')}</span>
+                        <span>{formatDate(post.createdAt)}</span>
                     </div>
                     <div className={styles.metaItem}>
                         <XIcon name="carbon:view" size={16}/>

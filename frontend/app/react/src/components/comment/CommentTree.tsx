@@ -29,7 +29,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     const [loadingChildren, setLoadingChildren] = useState<Set<number>>(new Set());
 
     function hasChildren(comment: commentservicev1_Comment): boolean {
-        return !!comment.children || (comment.replyCount && comment.replyCount > 0);
+        return !!comment.children || (comment.replyCount !== undefined && comment.replyCount > 0);
     }
 
     function isOwnerReply(comment: commentservicev1_Comment): boolean {
@@ -37,15 +37,15 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     }
 
     function isExpanded(comment: commentservicev1_Comment): boolean {
-        return expandedComments.has(comment.id);
+        return expandedComments.has(comment.id || 0);
     }
 
     function isLoading(comment: commentservicev1_Comment): boolean {
-        return loadingChildren.has(comment.id);
+        return loadingChildren.has(comment.id || 0);
     }
 
     function handleReply(comment: commentservicev1_Comment) {
-        setReplyingCommentId(comment.id);
+        setReplyingCommentId(comment.id || 0);
         setReplyContent('');
     }
 
@@ -92,29 +92,29 @@ const CommentTree: React.FC<CommentTreeProps> = ({
             // 收起
             setExpandedComments(prev => {
                 const next = new Set(prev);
-                next.delete(comment.id);
+                next.delete(comment.id || 0);
                 return next;
             });
         } else {
             // 展开
             if (!comment.children && comment.replyCount && comment.replyCount > 0) {
                 // 需要动态加载子评论
-                setLoadingChildren(prev => new Set(prev).add(comment.id));
+                setLoadingChildren(prev => new Set(prev).add(comment.id || 0));
                 try {
                     await onLoadChildren(comment);
-                    setExpandedComments(prev => new Set(prev).add(comment.id));
+                    setExpandedComments(prev => new Set(prev).add(comment.id || 0));
                 } catch (error) {
                     console.error('Load children failed:', error);
                 } finally {
                     setLoadingChildren(prev => {
                         const next = new Set(prev);
-                        next.delete(comment.id);
+                        next.delete(comment.id || 0);
                         return next;
                     });
                 }
             } else {
                 // 已经有子评论数据，直接展开
-                setExpandedComments(prev => new Set(prev).add(comment.id));
+                setExpandedComments(prev => new Set(prev).add(comment.id || 0));
             }
         }
     }
