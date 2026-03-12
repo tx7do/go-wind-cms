@@ -1,7 +1,7 @@
 "use client";
 
 import React, {useEffect} from 'react';
-import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
+import {useRouter} from 'next/navigation'; // 使用原始 Next.js router
 import {Spin} from 'antd';
 
 import {env} from "@/config";
@@ -12,11 +12,11 @@ const getDefaultLocale = () => {
 };
 
 const HomePage: React.FC = () => {
-    const router = useI18nRouter();
+    const router = useRouter(); // 使用原始 router，不自动添加 locale
 
     useEffect(() => {
         const locale = getDefaultLocale();
-        router.replace(`/${locale}`);
+        router.replace(`/${locale}`); // 直接替换到带 locale 的路径
     }, [router]);
 
     return (

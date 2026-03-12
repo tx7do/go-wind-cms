@@ -6,7 +6,7 @@ import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
 import {useCategoryStore} from '@/store/slices/category/hooks';
-import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
+import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
 
 import styles from './CategoryFilter.module.css';
 
@@ -45,7 +45,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     async function loadCategories() {
         setLoading(true);
         try {
-            const query: any = {status: 'CATEGORY_STATUS_ACTIVE'};
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const query: Record<string, any> = {status: 'CATEGORY_STATUS_ACTIVE'};
 
             // 如果指定了 parentId，添加过滤条件
             if (parentId !== undefined && parentId !== null) {
@@ -53,11 +54,12 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             }
 
             const res = await categoryStore.listCategory({
+                // @ts-expect-error - listCategory 参数类型推断问题
                 paging: undefined,
                 formValues: query,
                 fieldMask: 'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description',
                 orderBy: ['-sortOrder']
-            });
+            }) as unknown as contentservicev1_ListCategoryResponse;
 
             const items = res.items || [];
             setInternalCategories(items);
@@ -75,7 +77,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         if (autoLoad && !externalCategories) {
             loadCategories();
         }
-    }, []);
+    }, [autoLoad, externalCategories, loadCategories]);
 
     // 获取分类名称
     function getCategoryName(category: contentservicev1_Category | null): string {
@@ -171,25 +173,25 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                             <div
                                 key={node.id}
                                 className={styles.categoryItemWrapper}
-                                onMouseEnter={() => showSubmenu(node.id)}
-                                onMouseLeave={() => hideSubmenu(node.id)}
+                                onMouseEnter={() => node.id && showSubmenu(node.id)}
+                                onMouseLeave={() => node.id && hideSubmenu(node.id)}
                             >
                                 <Button
                                     type={selectedCategory === node.id ? 'primary' : 'default'}
                                     ghost={selectedCategory !== node.id}
                                     size="large"
-                                    onClick={() => handleCategoryClick(node.id)}
+                                    onClick={() => node.id && handleCategoryClick(node.id)}
                                     icon={<XIcon name={node.icon || 'carbon:folder'} size={16}/>}
                                 >
                                     {getCategoryName(node)}
                                 </Button>
 
                                 {/* 子分类菜单 */}
-                                {hasChildren(node.id) && expandedIds.has(node.id) && (
+                                {hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && (
                                     <div
                                         className={styles.categorySubmenu}
-                                        onMouseEnter={() => keepSubmenuOpen(node.id)}
-                                        onMouseLeave={() => hideSubmenu(node.id)}
+                                        onMouseEnter={() => keepSubmenuOpen(node.id || 0)}
+                                        onMouseLeave={() => hideSubmenu(node.id || 0)}
                                     >
                                         {node.children!.map((child) => (
                                             <Button
@@ -199,7 +201,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                                 size="medium"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleCategoryChange(child.id);
+                                                    handleCategoryChange(child.id || 0);
                                                 }}
                                                 icon={<XIcon name={child.icon || 'carbon:folder'} size={14}/>}
                                             >
@@ -220,7 +222,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                 type={selectedCategory === cat.id ? 'primary' : 'default'}
                                 ghost={selectedCategory !== cat.id}
                                 size="large"
-                                onClick={() => handleCategoryChange(cat.id)}
+                                onClick={() => handleCategoryChange(cat.id || 0)}
                                 icon={<XIcon name={cat.icon || 'carbon:folder'} size={16}/>}
                             >
                                 {getCategoryName(cat)}

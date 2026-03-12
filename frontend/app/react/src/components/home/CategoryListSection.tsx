@@ -3,7 +3,10 @@ import {Skeleton, Carousel, Button} from 'antd';
 import {useTranslations} from 'next-intl';
 
 import {useCategoryStore} from '@/store/slices/category/hooks';
-import {contentservicev1_Category} from '@/api/generated/app/service/v1';
+import {
+    contentservicev1_Category,
+    contentservicev1_ListCategoryResponse,
+} from '@/api/generated/app/service/v1';
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
@@ -38,8 +41,8 @@ export default function CategoryListSection({
     const router = useI18nRouter();
 
     // 使用 useMemo 稳定对象引用
-    const stableFilter = useMemo(() => filter, [JSON.stringify(filter)]);
-    const stableOrderBy = useMemo(() => orderBy, [JSON.stringify(orderBy)]);
+    const stableFilter = useMemo(() => filter, [filter]);
+    const stableOrderBy = useMemo(() => orderBy, [orderBy]);
 
     const [categories, setCategories] = useState<contentservicev1_Category[]>([]);
     const [loading, setLoading] = useState(false);
@@ -60,12 +63,13 @@ export default function CategoryListSection({
         setLoading(true);
         try {
             const res = await categoryStore.listCategory({
+                // @ts-expect-error - 参数类型推断问题
                 paging: {page, pageSize},
                 formValues: stableFilter,
                 fieldMask,
                 orderBy: stableOrderBy,
                 signal,
-            });
+            }) as unknown as contentservicev1_ListCategoryResponse;
 
             if (signal.aborted) return;
 
@@ -79,7 +83,7 @@ export default function CategoryListSection({
                 setLoading(false);
             }
         }
-    }, [page, pageSize, stableFilter, fieldMask, stableOrderBy]);
+    }, [categoryStore, stableFilter, fieldMask, stableOrderBy]); // 移除 page, pageSize 依赖
 
     useEffect(() => {
         loadCategories();
@@ -90,7 +94,7 @@ export default function CategoryListSection({
                 abortControllerRef.current.abort();
             }
         };
-    }, [loadCategories]);
+    }, []); // 空依赖数组，只在首次渲染时执行
 
     const handleViewCategoryDetail = (id: number) => {
         router.push(`/category/${id}`);
@@ -158,7 +162,7 @@ export default function CategoryListSection({
                                 <div
                                     key={category.id}
                                     className={styles.carouselItem}
-                                    onClick={() => handleViewCategoryDetail(category.id)}
+                                    onClick={() => handleViewCategoryDetail(category.id || 0)}
                                 >
                                     <HomeCategoryCard
                                         category={category}

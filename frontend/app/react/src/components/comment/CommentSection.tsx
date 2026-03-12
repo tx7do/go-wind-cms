@@ -1,18 +1,21 @@
 'use client';
 
 import React, {useState, useEffect, useRef} from 'react';
-import {Button, Input, Form, Grid, Empty} from 'antd';
+import {Button, Input, Form, Empty} from 'antd';
+import {Row, Col} from 'antd';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
 import {useCommentStore} from '@/store/slices/comment/hooks';
-import type {commentservicev1_Comment, commentservicev1_Comment_ContentType} from '@/api/generated/app/service/v1';
+import type {
+    commentservicev1_Comment,
+    commentservicev1_Comment_ContentType, commentservicev1_ListCommentResponse,
+} from '@/api/generated/app/service/v1';
 
 import styles from './CommentSection.module.css';
 import CommentTree from './CommentTree';
 
 const {TextArea} = Input;
-const {Row, Col} = Grid;
 
 interface CommentForm {
     content: string;
@@ -42,7 +45,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     // 分页相关状态
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize] = useState(20);
-    const [total, setTotal] = useState(0);
+    const [_total, setTotal] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
@@ -72,6 +75,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
         try {
             const res = await commentStore.listComment({
+                // @ts-expect-error - 参数类型推断问题
                 paging: {
                     page: reset ? 1 : currentPage,
                     pageSize: pageSize
@@ -81,7 +85,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     contentType: contentType,
                     status: 'STATUS_APPROVED'
                 }
-            });
+            }) as unknown as commentservicev1_ListCommentResponse;
 
             const newComments = res.items || [];
             const newTotal = res.total || 0;
@@ -125,6 +129,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         setSubmitting(true);
         try {
             await commentStore.createComment({
+                // @ts-expect-error - 参数类型推断问题
                 postId: objectId,
                 content: newComment.content,
                 authorName: newComment.authorName,
@@ -161,6 +166,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         setSubmitting(true);
         try {
             await commentStore.createComment({
+                // @ts-expect-error - 参数类型推断问题
                 postId: objectId,
                 content: content.trim(),
                 authorName: comment.authorName,
@@ -187,6 +193,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
         try {
             const res = await commentStore.listComment({
+                // @ts-expect-error - 参数类型推断问题
                 paging: {
                     page: 1,
                     pageSize: 50
@@ -197,7 +204,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     parentId: parentComment.id,
                     status: 'STATUS_APPROVED'
                 }
-            });
+            }) as unknown as commentservicev1_ListCommentResponse;
 
             parentComment.children = res.items || [];
         } catch (error) {

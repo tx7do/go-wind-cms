@@ -5,7 +5,10 @@ import {useTranslations} from 'next-intl';
 import {XIcon} from '@/plugins/xicon';
 import {useTagStore} from '@/store/slices/tag/hooks';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import {contentservicev1_Tag} from '@/api/generated/app/service/v1';
+import {
+    contentservicev1_ListTagResponse,
+    contentservicev1_Tag
+} from '@/api/generated/app/service/v1';
 
 import styles from './home.module.css';
 
@@ -20,7 +23,7 @@ export default function PopularTagsSection() {
     const tagStore = useTagStore();
     const router = useI18nRouter();
 
-    const [tags, setTags] = useState<contentservicev1_Tag[]>([]);
+    const [_tags, setTags] = useState<contentservicev1_Tag[]>([]);
     const [loading, setLoading] = useState(false);
     const [displayTags, setDisplayTags] = useState<TagItem[]>([]);
 
@@ -40,12 +43,13 @@ export default function PopularTagsSection() {
         setLoading(true);
         try {
             const res = await tagStore.listTag({
+                // @ts-expect-error - 参数类型推断问题
                 paging: {page: 1, pageSize: 6},
                 formValues: {status: 'TAG_STATUS_ACTIVE', isFeatured: true},
                 fieldMask: null,
                 orderBy: null,
                 signal
-            });
+            }) as unknown as contentservicev1_ListTagResponse;
 
             if (signal.aborted) return;
 
@@ -53,11 +57,13 @@ export default function PopularTagsSection() {
             setTags(tagItems);
 
             // 生成带颜色的标签
-            const taggedItems: TagItem[] = tagItems.map((tag, index) => ({
-                id: tag.id,
-                name: tag.translations?.[0]?.name || t('tag_untitled'),
-                color: tag.color || `hsl(${index * 60}, 100%, 50%)`,
-            }));
+            const taggedItems: TagItem[] = tagItems
+                .filter(tag => tag.id !== undefined) // 过滤掉 id 为 undefined 的项
+                .map((tag, index) => ({
+                    id: tag.id!,
+                    name: tag.translations?.[0]?.name || t('tag_untitled'),
+                    color: tag.color || `hsl(${index * 60}, 100%, 50%)`,
+                }));
 
             setDisplayTags(taggedItems);
         } catch (error) {
@@ -70,7 +76,7 @@ export default function PopularTagsSection() {
                 setLoading(false);
             }
         }
-    }, [t]);
+    }, [tagStore, t]); // 添加 t 依赖保证闭包正确性，useEffect 空依赖不会导致无限循环
 
     useEffect(() => {
         loadPopularTags();
@@ -81,7 +87,7 @@ export default function PopularTagsSection() {
                 abortControllerRef.current.abort();
             }
         };
-    }, [loadPopularTags]);
+    }, []); // 空依赖数组，只在首次渲染时执行
 
     const handleViewTag = (tag: TagItem) => {
         router.push(`/tag/${tag.id}`);

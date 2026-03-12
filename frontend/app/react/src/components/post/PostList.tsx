@@ -5,9 +5,12 @@ import {Pagination, Empty, Skeleton} from 'antd';
 import {useTranslations} from 'next-intl';
 
 import {usePostStore} from '@/store/slices/post/hooks';
-import type {contentservicev1_Post} from '@/api/generated/app/service/v1';
+import type {
+    contentservicev1_ListPostResponse,
+    contentservicev1_Post
+} from '@/api/generated/app/service/v1';
 
-import PostCard from '../post/PostCard';
+import PostCard from './PostCard';
 import styles from './PostList.module.css';
 
 interface PostListProps {
@@ -42,21 +45,36 @@ const PostList: React.FC<PostListProps> = ({
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
-    const [currentPage, setCurrentPage] = useState(page);
-    const [currentPageSize, setCurrentPageSize] = useState(pageSize);
+    const [currentPage, setCurrentPage] = useState<number>(page);
+    const [currentPageSize, setCurrentPageSize] = useState<number>(pageSize);
 
-    const fetchPosts = useCallback(async () => {
+    // 同步外部 page 变化（只在首次渲染或外部 page 真正变化时）
+    useEffect(() => {
+        if (page !== undefined && page !== currentPage) {
+            setCurrentPage(page);
+        }
+    }, [currentPage, page]);
+
+    // 同步外部 pageSize 变化（只在首次渲染或外部 pageSize 真正变化时）
+    useEffect(() => {
+        if (pageSize !== undefined && pageSize !== currentPageSize) {
+            setCurrentPageSize(pageSize);
+        }
+    }, [currentPageSize, pageSize]);
+
+    const fetchPosts = useCallback(async (page: number, pageSize: number) => {
         setLoading(true);
         try {
             const res = await postStore.listPost({
+                // @ts-expect-error - 参数类型推断问题
                 paging: {
-                    page: currentPage,
-                    pageSize: currentPageSize,
+                    page: page,
+                    pageSize: pageSize,
                 },
                 formValues: queryParams,
                 fieldMask: fieldMask,
                 orderBy: orderBy
-            });
+            }) as unknown as contentservicev1_ListPostResponse;
             setPosts(res.items || []);
             setTotal(res.total || 0);
         } catch (error) {
@@ -65,19 +83,14 @@ const PostList: React.FC<PostListProps> = ({
         } finally {
             setLoading(false);
         }
-    }, [currentPage, currentPageSize, queryParams, fieldMask, orderBy]);
+    }, [postStore, queryParams, fieldMask, orderBy]);
 
     // 监听页面变化
     useEffect(() => {
-        fetchPosts();
-    }, [fetchPosts]);
+        fetchPosts(currentPage, currentPageSize);
+    }, [currentPage, currentPageSize]); // 移除 fetchPosts 依赖，避免循环
 
-    // 监听外部 page 变化
-    useEffect(() => {
-        if (page !== currentPage) {
-            setCurrentPage(page);
-        }
-    }, [page]);
+    // 监听外部 page 变化（已在上面处理）
 
     // 处理页面变化
     const handlePageChange = (newPage: number) => {

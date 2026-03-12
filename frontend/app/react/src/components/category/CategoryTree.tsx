@@ -32,17 +32,17 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
         e.stopPropagation();
         if (category.children && category.children.length > 0) {
             const newExpanded = new Set(expandedCategories);
-            if (newExpanded.has(category.id)) {
-                newExpanded.delete(category.id);
+            if (newExpanded.has(category.id || 0)) {
+                newExpanded.delete(category.id || 0);
             } else {
-                newExpanded.add(category.id);
+                newExpanded.add(category.id || 0);
             }
             setExpandedCategories(newExpanded);
         }
     };
 
     const isExpanded = (category: contentservicev1_Category) => {
-        return expandedCategories.has(category.id);
+        return expandedCategories.has(category.id || 0);
     };
 
     if (!categories || categories.length === 0) return null;
@@ -56,7 +56,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                 >
                     <div
                         className={styles.categoryItem}
-                        onClick={() => handleViewCategory(category.id)}
+                        onClick={() => handleViewCategory(category.id || 0)}
                     >
                         <div className={styles.categoryInfo}>
                             <div className={styles.categoryImage}>
