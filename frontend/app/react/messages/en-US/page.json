@@ -181,6 +181,7 @@
   },
   "legal": {
     "contact": {
+      "title": "Contact Us",
       "description": "For support and business inquiries, please contact us via the channels below.",
       "item_1": "Support Email: support@gowind.cloud",
       "item_2": "Business Email: business@gowind.cloud",
@@ -194,12 +195,14 @@
       "item_3": "We are not liable for losses resulting from use of this site."
     },
     "privacy": {
+      "title": "Privacy Policy",
       "description": "This page explains how we collect, use, and protect your personal data.",
       "item_1": "We only collect data required for core product functionality.",
       "item_2": "We do not sell personal information to third parties.",
       "item_3": "You may request data export or deletion through support."
     },
     "terms": {
+      "title": "Terms of Service",
       "description": "By using this site, you agree to the following terms of service.",
       "item_1": "Use the product in compliance with applicable laws and regulations.",
       "item_2": "Do not abuse services, disrupt systems, or violate others' rights.",
