@@ -116,7 +116,16 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
     const menuItems = getMenuOptions(navigationItems) || [];
 
     // 根据主题设置 Menu 的 theme
-    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    const [isDark, setIsDark] = useState(false);
+    useEffect(() => {
+        const updateTheme = () => {
+            setIsDark(document.documentElement.classList.contains('dark'));
+        };
+        updateTheme();
+        const observer = new MutationObserver(updateTheme);
+        observer.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <div className={styles.navbarWrapper} style={{width: '100%', minWidth: 0, flex: 1}}>
