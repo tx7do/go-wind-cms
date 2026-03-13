@@ -2,6 +2,7 @@
 
 import {useState, useMemo} from 'react';
 import {useTranslations} from 'next-intl';
+import {useRouter, usePathname} from 'next/navigation';
 import XIcon from '@/plugins/xicon';
 
 import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
@@ -22,8 +23,13 @@ function getInitialTheme(): boolean {
 
 export default function RegisterPage() {
     const t = useTranslations('authentication');
+    const router = useRouter();
+    const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<'account' | 'email' | 'phone' | 'other'>('account');
     const [isDark, setIsDark] = useState<boolean>(getInitialTheme);
+
+    // 从 URL 中获取当前语言
+    const currentLocale = pathname?.split('/')[1] || 'zh-CN';
 
     // 语言选项
     const languageOptions = useMemo(() => [
@@ -33,8 +39,9 @@ export default function RegisterPage() {
 
     // 切换语言
     const handleSelectLanguage = (key: string) => {
-        console.log('Switch language to:', key);
-        // TODO: 实现语言切换逻辑
+        // 替换 URL 中的 locale 部分
+        const newPath = pathname?.replace(`/${currentLocale}`, `/${key}`) || `/${key}/register`;
+        router.push(newPath);
     };
 
     // 切换主题
@@ -74,7 +81,7 @@ export default function RegisterPage() {
             <div className={styles['register-controls']}>
                 <select
                     className={styles['language-select']}
-                    value="zh-CN"
+                    value={currentLocale}
                     onChange={(e) => handleSelectLanguage(e.target.value)}
                 >
                     {languageOptions.map((option) => (
