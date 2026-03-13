@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useMemo} from 'react';
+import {useState, useMemo, useEffect} from 'react';
 import {useTranslations} from 'next-intl';
 import XIcon from '@/plugins/xicon';
 
@@ -24,6 +24,23 @@ export default function RegisterPage() {
     const t = useTranslations('authentication');
     const [activeTab, setActiveTab] = useState<'account' | 'email' | 'phone' | 'other'>('account');
     const [isDark, setIsDark] = useState<boolean>(getInitialTheme);
+
+    // 强制移除顶部间距
+    useEffect(() => {
+        // 移除 body 和 html 的所有间距
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        document.documentElement.style.margin = '0';
+        document.documentElement.style.padding = '0';
+        
+        // 确保没有顶部偏移
+        document.body.style.marginTop = '0';
+        document.body.style.paddingTop = '0';
+        
+        return () => {
+            // 清理（如果需要）
+        };
+    }, []);
 
     // 语言选项
     const languageOptions = useMemo(() => [

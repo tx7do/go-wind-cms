@@ -16,7 +16,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
     return (
-        <html lang={DEFAULT_LANGUAGE} suppressHydrationWarning>
+        <html 
+            lang={DEFAULT_LANGUAGE} 
+            suppressHydrationWarning
+            style={{margin: 0, padding: 0}}
+        >
             <head>
                 <script
                     dangerouslySetInnerHTML={{
@@ -24,7 +28,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
                     }}
                 />
             </head>
-            <body>
+            <body style={{margin: 0, padding: 0}}>
                 <ReduxProvider>
                     <ThemeClientProvider>{children}</ThemeClientProvider>
                 </ReduxProvider>

@@ -6,6 +6,8 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow-x: hidden;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 .register-page {
