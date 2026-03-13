@@ -120,8 +120,22 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     // 提交评论
     async function handleSubmitComment() {
-        if (!newComment.content || !newComment.authorName || !newComment.authorEmail) {
-            alert(t('fill_form_info'));
+        if (!newComment.content.trim()) {
+            alert(t('empty_content'));
+            return;
+        }
+        if (!newComment.authorName.trim()) {
+            alert(t('invalid_nickname'));
+            return;
+        }
+        if (!newComment.authorEmail.trim()) {
+            alert(t('invalid_email'));
+            return;
+        }
+        // 邮箱格式验证
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(newComment.authorEmail)) {
+            alert(t('invalid_email'));
             return;
         }
         if (!objectId || submitting) return;
@@ -248,6 +262,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                                 disabled={submitting}
                                 allowClear
                                 prefix={<XIcon name="carbon:user" size={18}/>}
+                                onPressEnter={(e) => {
+                                    if (!e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSubmitComment();
+                                    }
+                                }}
                             />
                         </Col>
                         <Col span={12}>
@@ -259,6 +279,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                                 disabled={submitting}
                                 allowClear
                                 prefix={<XIcon name="carbon:email" size={18}/>}
+                                type="email"
                             />
                         </Col>
                     </Row>
@@ -272,6 +293,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                             disabled={submitting}
                             showCount
                             maxLength={1000}
+                            onKeyDown={(e) => {
+                                // Ctrl/Cmd + Enter 提交
+                                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleSubmitComment();
+                                }
+                            }}
                         />
                     </Form.Item>
                     <Form.Item>
@@ -289,6 +317,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                             <span className={styles.formTip}>
                                 <XIcon name="carbon:information" size={16}/>
                                 {t('fill_form_info')}
+                            </span>
+                            <span className={styles.formShortcut}>
+                                <XIcon name="carbon:keyboard" size={16}/>
+                                Ctrl + Enter {t('submit_comment')}
                             </span>
                         </div>
                     </Form.Item>

@@ -27,6 +27,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     const [submitting, setSubmitting] = useState(false);
     const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
     const [loadingChildren, setLoadingChildren] = useState<Set<number>>(new Set());
+    const [likedComments, setLikedComments] = useState<Set<number>>(new Set());
 
     function hasChildren(comment: commentservicev1_Comment): boolean {
         return !!comment.children || (comment.replyCount !== undefined && comment.replyCount > 0);
@@ -64,13 +65,32 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
         setSubmitting(true);
         try {
-            onReply(comment, replyContent.trim());
+            await onReply(comment, replyContent.trim());
             cancelReply();
         } catch (error) {
             console.error('Submit reply failed:', error);
             alert(t('submit_comment_failed'));
         } finally {
             setSubmitting(false);
+        }
+    }
+
+    // 处理点赞
+    function handleLike(comment: commentservicev1_Comment) {
+        const commentId = comment.id || 0;
+        
+        if (likedComments.has(commentId)) {
+            // 取消点赞
+            setLikedComments(prev => {
+                const next = new Set(prev);
+                next.delete(commentId);
+                return next;
+            });
+        } else {
+            // 点赞
+            setLikedComments(prev => new Set(prev).add(commentId));
+            // 这里可以调用 API 更新点赞数
+            // comment.likeCount = (comment.likeCount || 0) + 1;
         }
     }
 
@@ -154,13 +174,18 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                 {comment.content}
                             </div>
                             <div className={styles.commentActions}>
-                                <span className={styles.actionItem}>
+                                <span 
+                                    className={`${styles.actionItem} ${likedComments.has(comment.id || 0) ? styles.liked : ''}`}
+                                    onClick={() => handleLike(comment)}
+                                    title={likedComments.has(comment.id || 0) ? t('unlike') : t('like')}
+                                >
                                     <XIcon name="carbon:thumbs-up" size={16}/>
                                     {comment.likeCount || 0}
                                 </span>
                                 <span
                                     className={styles.actionItem}
                                     onClick={() => handleReply(comment)}
+                                    title={t('reply')}
                                 >
                                     <XIcon name="carbon:chat" size={16}/>
                                     {t('reply')}
@@ -168,6 +193,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                 <span
                                     className={styles.actionItem}
                                     onClick={() => handleShare(comment)}
+                                    title={t('share')}
                                 >
                                     <XIcon name="carbon:share" size={16}/>
                                     {t('share')}
@@ -177,6 +203,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     <span
                                         className={`${styles.actionItem} ${styles.viewReplies}`}
                                         onClick={() => toggleExpand(comment)}
+                                        title={isExpanded(comment) ? t('hide_replies') : t('view_replies', {count: comment.replyCount})}
                                     >
                                         <XIcon
                                             name={isExpanded(comment) ? 'carbon:chevron-up' : 'carbon:chevron-down'}
