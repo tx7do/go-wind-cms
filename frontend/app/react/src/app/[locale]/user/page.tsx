@@ -2,20 +2,35 @@
 
 import {useState, useEffect, useMemo} from 'react';
 import {useTranslations} from 'next-intl';
+
 import XIcon from '@/plugins/xicon';
+
+import {
+    type contentservicev1_ListPostResponse,
+    type contentservicev1_Post,
+    identityservicev1_User
+} from "@/api/generated/app/service/v1";
+import {usePostStore} from "@/store/slices/post/hooks";
+import {useUserProfileStore} from "@/store/slices/userProfile/hooks";
 
 import '../../globals.css';
 import styles from './user.module.css';
+import {formatDateTime} from "@/utils";
 
 export default function UserProfilePage() {
     const t = useTranslations('page.user');
-    
+
     const [loading, setLoading] = useState(false);
     const [postsLoading, setPostsLoading] = useState(false);
-    const [user, setUser] = useState<any>(null);
+
     const [activeTab, setActiveTab] = useState<'posts' | 'activities' | 'collections'>('posts');
-    const [posts, setPosts] = useState<any[]>([]);
+
+    const [user, setUser] = useState<identityservicev1_User | null>(null);
+    const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [postsTotal, setPostsTotal] = useState(0);
+
+    const postStore = usePostStore();
+    const userProfileStore = useUserProfileStore();
 
     // 统计数据
     const stats = useMemo(() => ({
@@ -50,61 +65,12 @@ export default function UserProfilePage() {
         return statusMap[status] || status;
     };
 
-    // 格式化日期时间
-    const formatDateTime = (timestamp?: any) => {
-        if (!timestamp) return '-';
-        try {
-            let date: Date;
-            if (timestamp.seconds) {
-                date = new Date(timestamp.seconds * 1000);
-            } else if (typeof timestamp === 'string') {
-                date = new Date(timestamp);
-            } else {
-                return '-';
-            }
-            return date.toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-            });
-        } catch (error) {
-            return '-';
-        }
-    };
-
     // 获取用户信息
     async function loadUserProfile() {
         setLoading(true);
         try {
-            // TODO: 调用实际 API 获取用户信息
-            // const result = await userProfileStore.getMe();
-            // setUser(result || null);
-            
-            // Mock data for demo
-            setUser({
-                id: 1,
-                username: 'testuser',
-                nickname: '测试用户',
-                realname: '张三',
-                gender: 'MALE',
-                email: 'test@example.com',
-                mobile: '138****8888',
-                region: '北京市朝阳区',
-                tenantName: '示例公司',
-                positionNames: ['产品经理'],
-                description: '这是一个测试用户的个人简介',
-                status: 'NORMAL',
-                roleNames: ['user', 'author'],
-                createdAt: {seconds: Date.now() / 1000 - 86400 * 30},
-                lastLoginAt: {seconds: Date.now() / 1000 - 3600},
-                followers: 128,
-                following: 56,
-                postCount: 12,
-                likeCount: 340,
-                avatar: undefined,
-            });
+            const result = await userProfileStore.fetchUserProfile({}) as identityservicev1_User;
+            setUser(result || null);
 
             if (activeTab === 'posts') {
                 await loadUserPosts();
@@ -123,36 +89,16 @@ export default function UserProfilePage() {
 
         setPostsLoading(true);
         try {
-            // TODO: 调用实际 API 获取帖子列表
-            // const result = await postStore.listPost(
-            //     {page: 1, pageSize: 10},
-            //     {author_id: user.id},
-            //     null,
-            //     ['-createdAt']
-            // );
-            
-            // Mock data for demo
-            setPosts([
-                {
-                    id: 1,
-                    title: 'React Hooks 最佳实践',
-                    summary: '本文介绍了 React Hooks 的使用技巧和最佳实践...',
-                    visits: 1234,
-                    likes: 56,
-                    commentCount: 23,
-                    createdAt: {seconds: Date.now() / 1000 - 86400 * 7},
-                },
-                {
-                    id: 2,
-                    title: 'TypeScript 高级类型技巧',
-                    summary: '深入理解 TypeScript 的类型系统，掌握高级类型技巧...',
-                    visits: 890,
-                    likes: 42,
-                    commentCount: 15,
-                    createdAt: {seconds: Date.now() / 1000 - 86400 * 3},
-                },
-            ]);
-            setPostsTotal(2);
+            const result = await postStore.listPost({
+                // @ts-expect-error - 参数类型推断问题
+                paging: {page: 1, pageSize: 10},
+                formValues: {author_id: user.id},
+                fieldMask: null,
+                orderBy: ['-createdAt']
+            }) as unknown as contentservicev1_ListPostResponse;
+
+            setPosts(result.items || []);
+            setPostsTotal(result.total || 0);
         } catch (error) {
             console.error('Load user posts failed:', error);
         } finally {
@@ -382,8 +328,8 @@ export default function UserProfilePage() {
                                             {posts.map((post) => (
                                                 <div key={post.id} className={styles.postItem}>
                                                     <div className={styles.postContent}>
-                                                        <h3 className={styles.postTitle}>{post.title}</h3>
-                                                        <p className={styles.postSummary}>{post.summary}</p>
+                                                        <h3 className={styles.postTitle}>{postStore.getPostTitle(post)}</h3>
+                                                        <p className={styles.postSummary}>{postStore.getPostSummary(post)}</p>
                                                         <div className={styles.postMeta}>
                                                             <span className={styles.metaInfo}>
                                                                 <XIcon name="carbon:view" size={16}/>
