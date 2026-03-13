@@ -164,82 +164,79 @@
 }
 
 /* Override Ant Design Input Styles */
-.commentForm {
-    /* Input 输入框样式 */
-    :global(.ant-input) {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(168, 85, 247, 0.15) !important;
-        border-radius: 8px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        color: var(--color-text-primary) !important;
-        backdrop-filter: blur(10px) !important;
+.commentForm :global(.ant-input) {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(168, 85, 247, 0.15) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: var(--color-text-primary) !important;
+    backdrop-filter: blur(10px) !important;
+}
 
-        &:hover {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border-color: rgba(168, 85, 247, 0.3) !important;
-            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1) !important;
-        }
+.commentForm :global(.ant-input:hover) {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(168, 85, 247, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1) !important;
+}
 
-        &:focus {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border-color: var(--color-brand) !important;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15) !important;
-        }
+.commentForm :global(.ant-input:focus) {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--color-brand) !important;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15) !important;
+}
 
-        &::placeholder {
-            color: var(--color-text-secondary) !important;
-        }
+.commentForm :global(.ant-input::placeholder) {
+    color: var(--color-text-secondary) !important;
+}
 
-        .ant-input-prefix {
-            color: var(--color-brand) !important;
-            font-size: 18px !important;
-            margin-right: 8px !important;
-        }
+.commentForm :global(.ant-input-prefix) {
+    color: var(--color-brand) !important;
+    font-size: 18px !important;
+    margin-right: 8px !important;
+}
 
-        .ant-input-count-suffix {
-            color: var(--color-text-secondary) !important;
-            font-size: 12px !important;
-            background: rgba(168, 85, 247, 0.08) !important;
-            padding: 2px 8px !important;
-            border-radius: 6px !important;
-            border: 1px solid rgba(168, 85, 247, 0.15) !important;
-        }
-    }
+.commentForm :global(.ant-input-count-suffix) {
+    color: var(--color-text-secondary) !important;
+    font-size: 12px !important;
+    background: rgba(168, 85, 247, 0.08) !important;
+    padding: 2px 8px !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(168, 85, 247, 0.15) !important;
+}
 
-    /* Textarea 多行输入框 */
-    :global(.ant-input-textarea) {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border-radius: 8px !important;
-        border: 1px solid rgba(168, 85, 247, 0.15) !important;
-        
-        textarea {
-            background: transparent !important;
-        }
-    }
+/* Textarea 多行输入框 */
+.commentForm :global(.ant-input-textarea) {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(168, 85, 247, 0.15) !important;
+}
 
-    /* 提交按钮 */
-    :global(.ant-btn-primary) {
-        background: linear-gradient(135deg,
-        var(--color-brand) 0%,
-        #a855f7 100%) !important;
-        border: none !important;
-        box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3) !important;
-        border-radius: 25px !important;
-        min-width: 180px !important;
-        height: 50px !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+.commentForm :global(.ant-input-textarea textarea) {
+    background: transparent !important;
+}
 
-        &:hover {
-            transform: translateY(-3px) !important;
-            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4) !important;
-        }
+/* 提交按钮 */
+.commentForm :global(.ant-btn-primary) {
+    background: linear-gradient(135deg,
+    var(--color-brand) 0%,
+    #a855f7 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3) !important;
+    border-radius: 25px !important;
+    min-width: 180px !important;
+    height: 50px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
 
-        &:active {
-            transform: translateY(-1px) !important;
-        }
-    }
+.commentForm :global(.ant-btn-primary:hover) {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4) !important;
+}
+
+.commentForm :global(.ant-btn-primary:active) {
+    transform: translateY(-1px) !important;
 }
 
 /* Comments List */
@@ -491,68 +488,63 @@ html.dark .loadMoreContainer {
     }
 }
 
-/* Dark Mode - Comment Form */
-html.dark .commentForm {
-    :global(.ant-input) {
-        background: rgba(0, 0, 0, 0.2) !important;
-        border-color: rgba(168, 85, 247, 0.2) !important;
+/* Dark Mode - Input Styles */
+html.dark .commentForm :global(.ant-input) {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(168, 85, 247, 0.2) !important;
+}
 
-        &:hover {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-color: rgba(168, 85, 247, 0.4) !important;
-        }
+html.dark .commentForm :global(.ant-input:hover) {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-color: rgba(168, 85, 247, 0.4) !important;
+}
 
-        &:focus {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-color: var(--color-brand) !important;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2) !important;
-        }
+html.dark .commentForm :global(.ant-input:focus) {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-color: var(--color-brand) !important;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2) !important;
+}
 
-        .ant-input-prefix {
-            color: var(--color-brand) !important;
-        }
+html.dark .commentForm :global(.ant-input-prefix) {
+    color: var(--color-brand) !important;
+}
 
-        .ant-input-count-suffix {
-            background: rgba(168, 85, 247, 0.15) !important;
-            border-color: rgba(168, 85, 247, 0.25) !important;
-            color: var(--color-text-secondary) !important;
-        }
-    }
+html.dark .commentForm :global(.ant-input-count-suffix) {
+    background: rgba(168, 85, 247, 0.15) !important;
+    border-color: rgba(168, 85, 247, 0.25) !important;
+    color: var(--color-text-secondary) !important;
+}
 
-    :global(.ant-input-textarea) {
-        background: rgba(0, 0, 0, 0.2) !important;
-        border-color: rgba(168, 85, 247, 0.2) !important;
+html.dark .commentForm :global(.ant-input-textarea) {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(168, 85, 247, 0.2) !important;
+}
 
-        &:hover {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-color: rgba(168, 85, 247, 0.4) !important;
-        }
+html.dark .commentForm :global(.ant-input-textarea:hover) {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-color: rgba(168, 85, 247, 0.4) !important;
+}
 
-        &:focus {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-color: var(--color-brand) !important;
-        }
+html.dark .commentForm :global(.ant-input-textarea:focus) {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-color: var(--color-brand) !important;
+}
 
-        textarea {
-            background: transparent !important;
-        }
-    }
+/* Dark Mode - Button Styles */
+html.dark .commentForm :global(.ant-btn-primary) {
+    background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.85) 0%,
+    rgba(168, 85, 247, 0.7) 100%) !important;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35) !important;
+    border: 1px solid rgba(168, 85, 247, 0.35) !important;
+}
 
-    :global(.ant-btn-primary) {
-        background: linear-gradient(135deg,
-        rgba(99, 102, 241, 0.85) 0%,
-        rgba(168, 85, 247, 0.7) 100%) !important;
-        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35) !important;
-        border: 1px solid rgba(168, 85, 247, 0.35) !important;
+html.dark .commentForm :global(.ant-btn-primary:hover) {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45) !important;
+    border-color: rgba(168, 85, 247, 0.5) !important;
+}
 
-        &:hover {
-            transform: translateY(-3px) !important;
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45) !important;
-            border-color: rgba(168, 85, 247, 0.5) !important;
-        }
-
-        &:active {
-            transform: translateY(-1px) !important;
-        }
-    }
+html.dark .commentForm :global(.ant-btn-primary:active) {
+    transform: translateY(-1px) !important;
 }
