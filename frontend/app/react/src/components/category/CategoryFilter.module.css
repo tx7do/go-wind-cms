@@ -10,6 +10,45 @@
         background: var(--color-surface);
         border-radius: 16px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+        /* Ant Design Button 样式覆盖 */
+        :global(.ant-btn) {
+            border-radius: 50px;
+            padding: 0 24px;
+            font-weight: 500;
+            transition: all 0.3s;
+            height: 40px;
+            background: transparent;
+            border: none;
+            color: var(--color-text-primary);
+
+            &:hover {
+                color: var(--color-brand);
+            }
+        }
+
+        /* Primary 按钮 - 选中状态 */
+        :global(.ant-btn-primary) {
+            background: linear-gradient(135deg, var(--color-brand) 0%, #764ba2 100%) !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            color: #fff !important;
+
+            &:hover {
+                box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+            }
+        }
+
+        /* Ghost 按钮 - 未选中状态 (无边框，hover 时显示) */
+        :global(.ant-btn[ghost='true']) {
+            background: transparent !important;
+            border: none !important;
+            color: var(--color-text-primary) !important;
+
+            &:hover {
+                color: var(--color-brand) !important;
+            }
+        }
     }
 
     .loading {
@@ -41,6 +80,45 @@
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
         backdrop-filter: blur(10px);
         animation: slideDown 0.2s ease-out;
+
+        /* Ant Design Button 样式覆盖 */
+        :global(.ant-btn) {
+            padding: 0 12px;
+            font-size: 13px;
+            height: 32px;
+            flex-shrink: 0;
+            border-radius: 50px;
+            background: transparent;
+            border: none;
+            color: var(--color-text-primary);
+
+            &:hover {
+                color: var(--color-brand);
+            }
+        }
+
+        /* Primary 按钮 - 选中状态 */
+        :global(.ant-btn-primary) {
+            background: linear-gradient(135deg, var(--color-brand) 0%, #764ba2 100%) !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            color: #fff !important;
+
+            &:hover {
+                box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+            }
+        }
+
+        /* Ghost 按钮 - 未选中状态 (无边框，hover 时显示) */
+        :global(.ant-btn[ghost='true']) {
+            background: transparent !important;
+            border: none !important;
+            color: var(--color-text-primary) !important;
+
+            &:hover {
+                color: var(--color-brand) !important;
+            }
+        }
     }
 }
 
@@ -83,6 +161,13 @@
                 background: rgba(102, 126, 234, 0.2);
                 border-radius: 10px;
             }
+
+            :global(.ant-btn) {
+                flex-shrink: 0;
+                white-space: nowrap;
+                font-size: 14px;
+                padding: 0 18px;
+            }
         }
     }
 }
@@ -94,6 +179,16 @@
             gap: 8px;
             flex-wrap: nowrap;
             justify-content: flex-start;
+
+            :global(.ant-btn) {
+                font-size: 13px;
+                padding: 0 16px;
+                height: 36px;
+
+                .ant-btn-icon {
+                    font-size: 16px;
+                }
+            }
         }
     }
 }
@@ -105,6 +200,17 @@
         .categoryTabs {
             padding: 10px;
             gap: 6px;
+
+            :global(.ant-btn) {
+                font-size: 12px;
+                padding: 0 14px;
+                height: 34px;
+
+                .ant-btn-icon {
+                    font-size: 14px;
+                    margin-right: 4px;
+                }
+            }
         }
     }
 }
