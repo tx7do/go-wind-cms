@@ -11,6 +11,17 @@
     }
 }
 
+@keyframes avatarGlow {
+    0%, 100% {
+        opacity: 0.25;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.35;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
 .commentTree {
     display: flex;
     flex-direction: column;
@@ -74,16 +85,18 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: calc(100% + 6px);
-            height: calc(100% + 6px);
+            width: calc(100% + 8px);
+            height: calc(100% + 8px);
             transform: translate(-50%, -50%);
             border-radius: 50%;
             background: linear-gradient(135deg,
             var(--color-brand) 0%,
+            #a855f7 50%,
             #764ba2 100%);
-            opacity: 0.15;
-            filter: blur(6px);
+            opacity: 0.25;
+            filter: blur(8px);
             z-index: 0;
+            animation: avatarGlow 3s ease-in-out infinite;
         }
 
         :global(.ant-avatar) {
@@ -91,11 +104,12 @@
             z-index: 1;
             background: linear-gradient(135deg,
             var(--color-brand) 0%,
-            #764ba2 100%);
+            #a855f7 100%);
             color: #fff;
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 12px rgba(168, 85, 247, 0.3),
+                        0 0 0 2px rgba(255, 255, 255, 0.15);
+            border: none;
         }
     }
 
