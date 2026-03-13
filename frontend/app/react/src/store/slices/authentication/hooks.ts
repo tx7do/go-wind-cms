@@ -9,6 +9,7 @@ import {
     createUserProfileServiceClient,
 } from '@/api/generated/app/service/v1';
 import {requestClientRequestHandler} from '@/transport/rest';
+import {encryptByAES} from "@/utils";
 
 export interface LoginParams {
     username?: string;
@@ -23,13 +24,8 @@ export interface LoginParams {
  * @param password 明文密码
  */
 function encryptPassword(password: string): string {
-    // TODO: 实现 AES 加密逻辑
-    // const key = import.meta.env.VITE_AES_KEY;
-    // return encryptData(password, key, key);
-
-    // 暂时返回明文，后续需要实现加密
-    console.warn('密码未加密，需要实现 AES 加密逻辑');
-    return password;
+    const key = process.env.NEXT_PUBLIC_AES_KEY || '';
+    return encryptByAES(password, key);
 }
 
 export function useAuthenticationStore() {

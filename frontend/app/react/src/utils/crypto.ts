@@ -18,8 +18,11 @@ const CONFIG = {
  */
 export function encryptByAES(data: string, key: string): string {
     try {
-        const encrypted = CryptoJS.AES.encrypt(data, CryptoJS.enc.Utf8.parse(key), {
-            mode: CryptoJS.mode.ECB,
+        const keyHex = CryptoJS.enc.Utf8.parse(key);
+        const ivHex = CryptoJS.enc.Utf8.parse(key);
+        const encrypted = CryptoJS.AES.encrypt(data, keyHex, {
+            iv: ivHex,
+            mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7,
         });
         return encrypted.toString();
