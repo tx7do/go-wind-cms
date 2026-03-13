@@ -103,6 +103,8 @@ export interface IUser {
      * 用户角色
      */
     roles?: string[];
+
+    homePage: string;
 }
 
 export interface IUserState {

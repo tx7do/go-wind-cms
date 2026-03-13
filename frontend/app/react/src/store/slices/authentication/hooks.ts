@@ -1,8 +1,8 @@
 import {useSelector, useDispatch} from 'react-redux';
 
-import type {IAuthenticationState} from '../../types';
+import type {IAuthenticationState, IUser} from '../../types';
 import type {AppDispatch, RootState} from '@/store';
-import {authenticationservicev1_GrantType, identityservicev1_User} from '@/api/generated/app/service/v1';
+import {authenticationservicev1_GrantType} from '@/api/generated/app/service/v1';
 import {setLoginLoading} from './slice';
 import {
     createAuthenticationServiceClient,
@@ -10,6 +10,9 @@ import {
 } from '@/api/generated/app/service/v1';
 import {requestClientRequestHandler} from '@/transport/rest';
 import {encryptByAES} from "@/utils";
+import {useAccessStore} from "@/store/core/access/hooks";
+import {useUserStore} from "@/store/core/user/hooks";
+import {useI18nRouter} from "@/i18n/helpers";
 
 export interface LoginParams {
     username?: string;
@@ -18,6 +21,8 @@ export interface LoginParams {
     password: string;
     grant_type?: string;
 }
+
+export const DEFAULT_HOME_PATH = '/'
 
 /**
  * 加密密码（需要实现 AES 加密）
@@ -42,6 +47,11 @@ export function useAuthenticationStore() {
         requestClientRequestHandler,
     );
 
+    const accessStore = useAccessStore();
+    const userStore = useUserStore();
+
+    const router = useI18nRouter();
+
     /**
      * 异步处理用户登录操作并获取 accessToken
      */
@@ -49,10 +59,11 @@ export function useAuthenticationStore() {
         params: LoginParams,
         onSuccess?: () => Promise<void> | void,
     ) {
-        let userInfo: identityservicev1_User | null = null;
+        let userInfo: IUser | null = null;
 
         try {
             dispatch(setLoginLoading(true));
+
             // 调用登录 API
             const response = await authService.Login({
                 username: params.username,
@@ -62,13 +73,21 @@ export function useAuthenticationStore() {
                 grant_type: (params.grant_type || "password") as authenticationservicev1_GrantType,
             });
             if (response.access_token) {
+
+                accessStore.setAccessToken({value: response.access_token, expiresAt: response.expires_in});
+                accessStore.setRefreshToken({
+                    value: response.refresh_token || '',
+                    expiresAt: response.refresh_expires_in
+                });
+                accessStore.setLoginExpired(false)
+
                 userInfo = await fetchUserInfo();
                 // TODO: 更新 user store
-                // userStore.setUserInfo(userInfo);
-                // dispatch(setUserInfo(userInfo));
-                if (onSuccess) {
-                    await onSuccess();
-                }
+                userStore.setUser(userInfo);
+
+                onSuccess
+                    ? await onSuccess?.()
+                    : router.push(userInfo.homePage || DEFAULT_HOME_PATH)
             }
         } catch (error) {
             throw error;
@@ -83,8 +102,8 @@ export function useAuthenticationStore() {
     /**
      * 拉取用户信息
      */
-    async function fetchUserInfo(): Promise<identityservicev1_User> {
-        return await userProfileService.GetUser({});
+    async function fetchUserInfo(): Promise<IUser> {
+        return (await userProfileService.GetUser({})) as unknown as IUser;
     }
 
     return {

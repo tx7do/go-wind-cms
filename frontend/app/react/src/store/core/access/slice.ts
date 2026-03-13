@@ -2,11 +2,15 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 
 import type {IAccessState, TokenPayload} from '../../types';
+import {StorageManager} from '@/caches/storage-manager';
+import {appNamespace} from "@/caches";
+
+const storage = new StorageManager({prefix: appNamespace, storageType: 'localStorage'});
 
 const initialState: IAccessState = {
     permissions: [],
-    accessToken: null,
-    refreshToken: null,
+    accessToken: (typeof window !== 'undefined') ? storage.getItem<TokenPayload>('accessToken', null) : null,
+    refreshToken: (typeof window !== 'undefined') ? storage.getItem<TokenPayload>('refreshToken', null) : null,
     isAccessChecked: false,
     loginExpired: false,
 };
@@ -16,6 +20,13 @@ const initialState: IAccessState = {
  */
 function setTokenWithExpiry(state: IAccessState, token: TokenPayload | null) {
     state.accessToken = token;
+    if (typeof window !== 'undefined') {
+        if (token) {
+            storage.setItem('accessToken', token, token.expiresAt ? token.expiresAt - Date.now() : undefined);
+        } else {
+            storage.removeItem('accessToken');
+        }
+    }
 }
 
 /**
@@ -44,6 +55,13 @@ const accessSlice = createSlice({
          */
         setRefreshToken(state, action: PayloadAction<TokenPayload | null>) {
             state.refreshToken = action.payload;
+            if (typeof window !== 'undefined') {
+                if (action.payload) {
+                    storage.setItem('refreshToken', action.payload, action.payload.expiresAt ? action.payload.expiresAt - Date.now() : undefined);
+                } else {
+                    storage.removeItem('refreshToken');
+                }
+            }
         },
 
         /**
@@ -56,6 +74,13 @@ const accessSlice = createSlice({
             const {accessToken, refreshToken} = action.payload;
             setTokenWithExpiry(state, accessToken);
             state.refreshToken = refreshToken;
+            if (typeof window !== 'undefined') {
+                if (refreshToken) {
+                    storage.setItem('refreshToken', refreshToken, refreshToken.expiresAt ? refreshToken.expiresAt - Date.now() : undefined);
+                } else {
+                    storage.removeItem('refreshToken');
+                }
+            }
         },
 
         /**
@@ -102,12 +127,20 @@ const accessSlice = createSlice({
             state.accessToken = null;
             state.refreshToken = null;
             state.loginExpired = false;
+            if (typeof window !== 'undefined') {
+                storage.removeItem('accessToken');
+                storage.removeItem('refreshToken');
+            }
         },
 
         /**
          * 重置所有访问状态
          */
         resetAccess() {
+            if (typeof window !== 'undefined') {
+                storage.removeItem('accessToken');
+                storage.removeItem('refreshToken');
+            }
             return initialState;
         },
 
@@ -115,6 +148,14 @@ const accessSlice = createSlice({
          * 从持久化存储恢复状态（用于 SSR 或页面刷新）
          */
         restoreAccess(state, action: PayloadAction<Partial<IAccessState>>) {
+            if (typeof window !== 'undefined') {
+                if (action.payload.accessToken) {
+                    storage.setItem('accessToken', action.payload.accessToken, action.payload.accessToken.expiresAt ? action.payload.accessToken.expiresAt - Date.now() : undefined);
+                }
+                if (action.payload.refreshToken) {
+                    storage.setItem('refreshToken', action.payload.refreshToken, action.payload.refreshToken.expiresAt ? action.payload.refreshToken.expiresAt - Date.now() : undefined);
+                }
+            }
             return {...initialState, ...action.payload};
         },
     },
