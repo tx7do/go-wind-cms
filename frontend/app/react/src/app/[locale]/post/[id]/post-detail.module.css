@@ -491,6 +491,117 @@
         }
     }
 
+    :global(code) {
+        background: rgba(150, 150, 150, 0.15);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: 'Fira Code', 'Courier New', monospace;
+        font-size: 0.88em;
+        color: var(--color-brand);
+        border: 1px solid rgba(168, 85, 247, 0.2);
+        letter-spacing: 0.1px;
+
+        &:not(:global(pre code)) {
+            white-space: nowrap;
+        }
+    }
+
+    :global(pre) {
+        background: #282c34;
+        padding: 24px;
+        border-radius: 12px;
+        overflow-x: auto;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        margin: 40px 0;
+        line-height: 1.65;
+        letter-spacing: 0.18px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: relative;
+        white-space: pre;
+        word-wrap: normal;
+        overflow-wrap: normal;
+
+        &::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        :global(code) {
+            background: none;
+            padding: 0;
+            color: inherit;
+            border: none;
+            font-size: 13.5px;
+            font-family: inherit;
+            line-height: inherit;
+            white-space: inherit;
+            word-wrap: inherit;
+            overflow-wrap: inherit;
+        }
+    }
+
+    :global(blockquote) {
+        border-left: 5px solid var(--color-brand);
+        padding: 26px 30px;
+        margin: 40px 0;
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(168, 85, 247, 0.05));
+        border-radius: 0 10px 10px 0;
+        color: var(--color-text-secondary);
+        font-style: italic;
+        position: relative;
+        letter-spacing: 0.25px;
+        line-height: 2.0;
+        box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1);
+
+        &::before {
+            content: '"';
+            position: absolute;
+            top: -8px;
+            left: 14px;
+            font-size: 64px;
+            color: var(--color-brand);
+            opacity: 0.18;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        :global(p) {
+            margin: 18px 0;
+            text-indent: 0;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        &:last-child {
+            margin-bottom: 40px;
+        }
+    }
+
+    :global(ul), :global(ol) {
+        padding-left: 32px;
+        margin: 32px 0;
+
+        :global(li) {
+            margin: 14px 0;
+            line-height: 2.0;
+            letter-spacing: 0.25px;
+            position: relative;
+
+            &::marker {
+                color: var(--color-brand);
+                font-weight: 600;
+            }
+        }
+    }
+
     :global(a) {
         color: var(--color-brand);
         text-decoration: none;
@@ -505,6 +616,56 @@
             padding: 2px 4px;
             margin: -2px -4px;
             border-radius: 4px;
+        }
+    }
+
+    :global(strong) {
+        color: var(--color-brand);
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+
+    :global(em) {
+        color: var(--color-text-secondary);
+        font-style: italic;
+        letter-spacing: 0.15px;
+    }
+
+    :global(hr) {
+        border: none;
+        height: 2px;
+        background: linear-gradient(to right, transparent, var(--color-brand), transparent);
+        margin: 48px 0;
+    }
+
+    :global(table) {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 32px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        font-size: 15px;
+        letter-spacing: 0.15px;
+
+        :global(th) {
+            background: var(--color-brand);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+        }
+
+        :global(td) {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            line-height: 1.7;
+        }
+
+        :global(tr:hover) {
+            background: rgba(168, 85, 247, 0.05);
         }
     }
 }
@@ -525,29 +686,34 @@
 
         .action-btn {
             background: none;
-            border: 1px solid var(--color-border);
-            border-radius: 50px;
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: 600;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            padding: 0;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
             color: var(--color-text-primary);
+            font-size: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-                border-color: var(--color-brand);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
             }
 
             &.liked,
             &.bookmarked {
                 background: var(--color-brand);
                 color: white;
-                border-color: var(--color-brand);
+                box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+
+                &:hover {
+                    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+                }
             }
         }
     }
@@ -574,6 +740,13 @@
             margin: 0;
             color: var(--color-text-primary);
         }
+    }
+
+    /* 覆盖 PostList 组件的 posts-grid 样式 */
+    :global(.posts-grid) {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 32px;
     }
 }
 
@@ -611,6 +784,10 @@
 
     .article-content {
         padding: 40px 40px 36px;
+
+        &::before {
+            height: 6px;
+        }
     }
 
     .post-wrapper {
@@ -625,11 +802,87 @@
         flex: 0 0 180px;
         width: 180px;
         padding: 36px 16px;
+
+        .toc-container {
+            .toc-header {
+                .toc-title {
+                    font-size: 14px;
+                }
+            }
+
+            .toc-list {
+                gap: 5px;
+
+                .toc-item {
+                    padding: 7px 9px;
+                    font-size: 12px;
+                }
+            }
+        }
     }
 
     .post-header {
+        margin-bottom: 36px;
+
         .post-title {
             font-size: 36px;
+            margin-bottom: 20px;
+            letter-spacing: -0.4px;
+        }
+
+        .post-meta {
+            gap: 20px;
+
+            .meta-item {
+                font-size: 14px;
+
+                span[class^="i-"] {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+    .post-content {
+        font-size: 16px;
+        line-height: 1.95;
+        margin-bottom: 36px;
+
+        :global(h2) {
+            font-size: 26px;
+            margin: 44px 0 22px;
+            padding-bottom: 12px;
+
+            &::after {
+                width: 45px;
+            }
+        }
+
+        :global(h3) {
+            font-size: 21px;
+            margin: 32px 0 18px;
+            padding-left: 12px;
+        }
+
+        :global(p) {
+            margin: 18px 0;
+            line-height: 2.05;
+        }
+
+        :global(img) {
+            margin: 28px 0;
+        }
+    }
+
+    .post-banner {
+        padding-top: 50%; /* Adjust to 2:1 ratio */
+    }
+
+    .post-wrapper {
+        gap: 24px;
+
+        &::after {
+            left: 200px;
         }
     }
 }
@@ -650,8 +903,29 @@
         border-radius: 14px;
     }
 
+    /* 移动端相关文章列表适配 */
     .related-section {
         padding: 32px 24px !important;
+
+        :global(.posts-grid) {
+            grid-template-columns: 1fr;
+            gap: 28px;
+
+            /* 确保卡片在移动端宽度适中 */
+            > * {
+                max-width: 100%;
+            }
+        }
+
+        .section-header {
+            h2 {
+                font-size: 24px;
+            }
+        }
+    }
+
+    .post-banner {
+        padding-top: 56.25%; /* 16:9 ratio */
     }
 
     .post-wrapper {
@@ -663,6 +937,7 @@
         }
     }
 
+    /* Only hide TOC sidebar */
     .toc-sidebar {
         display: none;
     }
@@ -677,17 +952,127 @@
     }
 
     .post-header {
+        margin-bottom: 32px;
+
         .post-title {
             font-size: 30px;
+            margin-bottom: 18px;
+            letter-spacing: -0.3px;
+            line-height: 1.35;
+        }
+
+        .post-meta {
+            gap: 16px;
+
+            .meta-item {
+                font-size: 13px;
+
+                span[class^="i-"] {
+                    font-size: 15px;
+                }
+            }
         }
     }
 
     .post-content {
         font-size: 16px;
         line-height: 1.9;
+        margin-bottom: 36px;
+
+        :global(h2) {
+            font-size: 26px;
+            margin: 40px 0 20px;
+            padding-bottom: 12px;
+            border-bottom-width: 2px;
+
+            &::after {
+                width: 45px;
+                height: 2px;
+                bottom: -2px;
+            }
+        }
+
+        :global(h3) {
+            font-size: 21px;
+            margin: 32px 0 18px;
+            padding-left: 12px;
+            border-left-width: 3px;
+        }
 
         :global(p) {
+            margin: 18px 0;
+            line-height: 2;
             text-indent: 1.5em;
+
+            & + p {
+                margin-top: 16px;
+            }
+        }
+
+        :global(img) {
+            margin: 32px 0;
+            border-radius: 10px;
+        }
+
+        :global(code) {
+            padding: 3px 8px;
+            font-size: 0.88em;
+        }
+
+        :global(pre) {
+            padding: 20px;
+            margin: 28px 0;
+            border-radius: 10px;
+        }
+
+        :global(blockquote) {
+            padding: 16px 20px;
+            margin: 28px 0;
+            border-left-width: 4px;
+
+            &::before {
+                font-size: 50px;
+                top: -8px;
+            }
+        }
+
+        :global(ul), :global(ol) {
+            padding-left: 24px;
+            margin: 18px 0;
+
+            :global(li) {
+                margin: 14px 0;
+                line-height: 1.9;
+            }
+        }
+
+        :global(a) {
+            border-bottom-width: 1px;
+
+            &:hover {
+                padding: 1px 3px;
+                margin: -1px -3px;
+            }
+        }
+
+        :global(hr) {
+            margin: 32px 0;
+        }
+
+        :global(table) {
+            font-size: 12px;
+            margin: 20px -4px; /* Make table wider */
+            border-radius: 6px;
+
+            :global(th) {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            :global(td) {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
         }
     }
 }

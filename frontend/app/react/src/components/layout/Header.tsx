@@ -88,12 +88,12 @@ export default function Header() {
     // 占位语言菜单
     const languageMenuItems = [
         {
-            key: 'zh',
+            key: 'zh-CN',
             label: '简体中文',
             onClick: () => changeLocale('zh-CN')
         },
         {
-            key: 'en',
+            key: 'en-US',
             label: 'English',
             onClick: () => changeLocale('en-US')
         }

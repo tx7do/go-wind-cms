@@ -11,6 +11,7 @@ import PostList from '@/components/post/PostList';
 import {usePostStore} from '@/store/slices/post/hooks';
 import {formatDate} from "@/utils";
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
+import XIcon from '@/plugins/xicon';
 
 import '../../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
 import styles from './post-detail.module.css';
@@ -372,7 +373,8 @@ export default function PostDetailPage() {
             {/* Back Navigation */}
             <div className={styles['back-navigation']}>
                 <button onClick={handleBack} className={styles['back-btn']}>
-                    ← Back
+                    <XIcon name="carbon:arrow-left" />
+                    <span>Back</span>
                 </button>
             </div>
 
@@ -393,13 +395,14 @@ export default function PostDetailPage() {
                             <div className={styles['toc-container']}>
                                 <div className={styles['toc-header']}>
                                     <h3 className={styles['toc-title']}>
-                                        📋 {t('post_detail.table_of_contents')}
+                                        <XIcon name="carbon:list" />
+                                        <span>{t('post_detail.table_of_contents')}</span>
                                     </h3>
                                     <button
                                         onClick={() => setIsTocExpanded(false)}
                                         className={styles['toc-collapse-btn']}
                                     >
-                                        ←
+                                        <XIcon name="carbon:chevron-left" />
                                     </button>
                                 </div>
                                 <nav className={styles['toc-list']}>
@@ -425,7 +428,9 @@ export default function PostDetailPage() {
                     {tableOfContents.length > 0 && !isTocExpanded && (
                         <div className={styles['toc-expand-trigger']}>
                             <button onClick={() => setIsTocExpanded(true)}>
-                                📋 {t('post_detail.table_of_contents')} →
+                                <XIcon name="carbon:list" />
+                                <span>{t('post_detail.table_of_contents')}</span>
+                                <XIcon name="carbon:chevron-right" />
                             </button>
                         </div>
                     )}
@@ -436,16 +441,20 @@ export default function PostDetailPage() {
                             <h1 className={styles['post-title']}>{displayTitle}</h1>
                             <div className={styles['post-meta']}>
                                 <div className={styles['meta-item']}>
-                                    👤 <span>{post.authorName}</span>
+                                    <XIcon name="carbon:user-avatar" />
+                                    <span>{post.authorName}</span>
                                 </div>
                                 <div className={styles['meta-item']}>
-                                    📅 <span>{formatDate(post.createdAt)}</span>
+                                    <XIcon name="carbon:calendar" />
+                                    <span>{formatDate(post.createdAt)}</span>
                                 </div>
                                 <div className={styles['meta-item']}>
-                                    👁️ <span>{post.visits || 0}</span>
+                                    <XIcon name="carbon:view" />
+                                    <span>{post.visits || 0}</span>
                                 </div>
                                 <div className={styles['meta-item']}>
-                                    👍 <span>{post.likes || 0}</span>
+                                    <XIcon name="carbon:thumbs-up" />
+                                    <span>{post.likes || 0}</span>
                                 </div>
                             </div>
                         </header>
@@ -461,17 +470,23 @@ export default function PostDetailPage() {
                                 <button
                                     onClick={handleLike}
                                     className={`${styles['action-btn']} ${isLiked ? styles['liked'] : ''}`}
+                                    aria-label={t('post_detail.likes')}
                                 >
-                                    {isLiked ? '👍' : '👎'} Like
+                                    <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} />
                                 </button>
                                 <button
                                     onClick={handleBookmark}
                                     className={`${styles['action-btn']} ${isBookmarked ? styles['bookmarked'] : ''}`}
+                                    aria-label={t('post_detail.bookmark')}
                                 >
-                                    {isBookmarked ? '🔖' : '📑'} Bookmark
+                                    <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} />
                                 </button>
-                                <button onClick={handleShare} className={styles['action-btn']}>
-                                    🔗 Share
+                                <button
+                                    onClick={handleShare}
+                                    className={styles['action-btn']}
+                                    aria-label={t('post_detail.share')}
+                                >
+                                    <XIcon name="carbon:share" />
                                 </button>
                             </div>
                         </footer>
@@ -490,7 +505,10 @@ export default function PostDetailPage() {
             {/* Related Posts */}
             <section className={styles['related-section']}>
                 <div className={styles['section-header']}>
-                    <h2>📚 {t('post_detail.related_posts')}</h2>
+                    <h2>
+                        <XIcon name="carbon:book" />
+                        <span>{t('post_detail.related_posts')}</span>
+                    </h2>
                 </div>
                 {relatedPostsQuery && (
                     <PostList
@@ -508,7 +526,7 @@ export default function PostDetailPage() {
             {/* Back to Top Button */}
             {showBackToTop && (
                 <button onClick={scrollToTop} className={styles['back-to-top']}>
-                    ⬆️
+                    <XIcon name="carbon:arrow-up" />
                 </button>
             )}
         </div>
