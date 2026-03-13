@@ -41,8 +41,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     // 定时器管理
     const hideTimers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
-    // 加载分类数据
-    async function loadCategories() {
+    // 加载分类数据 - 移到 useEffect 内部，避免依赖项问题
+    const loadCategories = async () => {
         setLoading(true);
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,14 +70,17 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     // 监听语言切换，自动重新加载数据
     useEffect(() => {
-        if (autoLoad && !externalCategories) {
-            loadCategories();
+        if (!autoLoad || externalCategories) {
+            return;
         }
-    }, [autoLoad, externalCategories, loadCategories]);
+        
+        loadCategories();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoLoad, externalCategories, parentId]); // 只依赖稳定的 props
 
     // 获取分类名称
     function getCategoryName(category: contentservicev1_Category | null): string {

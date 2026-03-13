@@ -2,7 +2,7 @@
 
 import {useTranslations} from 'next-intl';
 
-import '../../globals.css'; // ✅ 导入全局 CSS，确保 CSS 变量可用
+import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
 import styles from './privacy.module.css';
 
 export default function PrivacyPage() {

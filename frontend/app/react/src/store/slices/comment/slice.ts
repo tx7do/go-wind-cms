@@ -4,7 +4,6 @@ import {requestClientRequestHandler} from '@/transport/rest';
 import {
     commentservicev1_Comment,
 } from '@/api/generated/app/service/v1';
-import {currentLocaleLanguageCode} from "@/i18n";
 import {makeOrderBy, makeQueryString} from "@/transport/rest/utils";
 
 const commentService = createCommentServiceClient(requestClientRequestHandler);
@@ -35,8 +34,7 @@ export const listComment = createAsyncThunk(
         {rejectWithValue}
     ) => {
         try {
-            const locale = currentLocaleLanguageCode();
-            const formValues = {...(params.formValues || {}), locale};
+            const formValues = {...(params.formValues || {})};
             const noPaging =
                 params.paging?.page === undefined && params.paging?.pageSize === undefined;
             return await commentService.List({
