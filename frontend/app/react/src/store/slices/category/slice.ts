@@ -5,11 +5,9 @@ import {
     contentservicev1_CategoryTranslation,
     createCategoryServiceClient,
 } from '@/api/generated/app/service/v1';
-import {requestClientRequestHandler} from '@/transport/rest';
+import {requestApi} from '@/transport/rest';
 import {makeOrderBy, makeQueryString, makeUpdateMask} from "@/transport/rest/utils";
 import {currentLocaleLanguageCode} from "@/i18n";
-
-const categoryService = createCategoryServiceClient(requestClientRequestHandler);
 
 export interface CategoryState {
     list: contentservicev1_Category[];
@@ -36,6 +34,8 @@ export const listCategory = createAsyncThunk(
         },
         {rejectWithValue}
     ) => {
+        const categoryService = createCategoryServiceClient(requestApi);
+
         try {
             const locale = currentLocaleLanguageCode();
             const formValues = {...(params.formValues || {}), locale};
@@ -65,6 +65,8 @@ export const getCategory = createAsyncThunk(
         params: { id: number; fieldMask?: string | undefined },
         {rejectWithValue}
     ) => {
+        const categoryService = createCategoryServiceClient(requestApi);
+
         try {
             const locale = currentLocaleLanguageCode();
             return await categoryService.Get({
@@ -81,6 +83,8 @@ export const getCategory = createAsyncThunk(
 export const createCategory = createAsyncThunk(
     'category/createCategory',
     async (values: Partial<contentservicev1_Category>, {rejectWithValue}) => {
+        const categoryService = createCategoryServiceClient(requestApi);
+
         try {
             return await categoryService.Create({
                 data: {
@@ -102,6 +106,8 @@ export const updateCategory = createAsyncThunk(
         params: { id: number; values: Partial<contentservicev1_Category> },
         {rejectWithValue}
     ) => {
+        const categoryService = createCategoryServiceClient(requestApi);
+
         try {
             return await categoryService.Update({
                 id: params.id,
@@ -123,6 +129,8 @@ export const updateCategory = createAsyncThunk(
 export const deleteCategory = createAsyncThunk(
     'category/deleteCategory',
     async (id: number, {rejectWithValue}) => {
+        const categoryService = createCategoryServiceClient(requestApi);
+
         try {
             return await categoryService.Delete({id});
         } catch (error) {

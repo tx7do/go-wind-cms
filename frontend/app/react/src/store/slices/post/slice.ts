@@ -1,14 +1,12 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {createPostServiceClient} from "@/api/generated/app/service/v1";
-import {requestClientRequestHandler} from "@/transport/rest";
+import {requestApi} from "@/transport/rest";
 import {
     contentservicev1_Post,
     contentservicev1_PostTranslation,
 } from '@/api/generated/app/service/v1';
 import {currentLocaleLanguageCode} from "@/i18n";
 import {makeOrderBy, makeQueryString} from "@/transport/rest/utils";
-
-const postService = createPostServiceClient(requestClientRequestHandler);
 
 export interface PostState {
     list: contentservicev1_Post[];
@@ -37,6 +35,8 @@ export const listPost = createAsyncThunk(
         },
         {rejectWithValue}
     ) => {
+        const postService = createPostServiceClient(requestApi);
+
         try {
             const locale = currentLocaleLanguageCode();
             const formValues = {...(params.formValues || {}), locale};
@@ -67,6 +67,8 @@ export const getPost = createAsyncThunk(
         params: { id: number },
         {rejectWithValue}
     ) => {
+        const postService = createPostServiceClient(requestApi);
+
         try {
             return await postService.Get({id: params.id});
         } catch (error) {
@@ -79,6 +81,8 @@ export const getPost = createAsyncThunk(
 export const createPost = createAsyncThunk(
     'post/createPost',
     async (values: Partial<contentservicev1_Post>, {rejectWithValue}) => {
+        const postService = createPostServiceClient(requestApi);
+
         try {
             return await postService.Create({data: values as contentservicev1_Post});
         } catch (error) {
@@ -94,6 +98,8 @@ export const updatePost = createAsyncThunk(
         params: { id: number; values: Partial<contentservicev1_Post> },
         {rejectWithValue}
     ) => {
+        const postService = createPostServiceClient(requestApi);
+
         try {
             return await postService.Update({
                 id: params.id,
@@ -110,6 +116,8 @@ export const updatePost = createAsyncThunk(
 export const deletePost = createAsyncThunk(
     'post/deletePost',
     async (id: number, {rejectWithValue}) => {
+        const postService = createPostServiceClient(requestApi);
+
         try {
             return await postService.Delete({id});
         } catch (error) {

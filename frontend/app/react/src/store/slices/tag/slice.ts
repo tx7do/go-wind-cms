@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {createTagServiceClient} from '@/api/generated/app/service/v1';
-import {requestClientRequestHandler} from '@/transport/rest';
+import {requestApi} from '@/transport/rest';
 import {
     contentservicev1_Tag,
     contentservicev1_TagTranslation,
@@ -8,7 +8,6 @@ import {
 import {currentLocaleLanguageCode} from '@/i18n';
 import {makeOrderBy, makeQueryString} from "@/transport/rest/utils";
 
-const tagService = createTagServiceClient(requestClientRequestHandler);
 
 export interface TagState {
     list: contentservicev1_Tag[];
@@ -35,6 +34,8 @@ export const listTag = createAsyncThunk(
         },
         {rejectWithValue}
     ) => {
+        const tagService = createTagServiceClient(requestApi);
+
         try {
             const locale = currentLocaleLanguageCode();
             const formValues = {...(params.formValues || {}), locale};
@@ -64,6 +65,8 @@ export const getTag = createAsyncThunk(
         params: { id: number },
         {rejectWithValue}
     ) => {
+        const tagService = createTagServiceClient(requestApi);
+
         try {
             return await tagService.Get({id: params.id});
         } catch (error) {
@@ -75,6 +78,7 @@ export const getTag = createAsyncThunk(
 export const createTag = createAsyncThunk(
     'tag/createTag',
     async (values: Partial<contentservicev1_Tag>, {rejectWithValue}) => {
+        const tagService = createTagServiceClient(requestApi);
         try {
             return await tagService.Create({data: values as contentservicev1_Tag});
         } catch (error) {
@@ -89,6 +93,7 @@ export const updateTag = createAsyncThunk(
         params: { id: number; values: Partial<contentservicev1_Tag> },
         {rejectWithValue}
     ) => {
+        const tagService = createTagServiceClient(requestApi);
         try {
             return await tagService.Update({
                 id: params.id,
@@ -104,6 +109,7 @@ export const updateTag = createAsyncThunk(
 export const deleteTag = createAsyncThunk(
     'tag/deleteTag',
     async (id: number, {rejectWithValue}) => {
+        const tagService = createTagServiceClient(requestApi);
         try {
             return await tagService.Delete({id});
         } catch (error) {

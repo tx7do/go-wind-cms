@@ -2,13 +2,10 @@ import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 
 import {createAuthenticationServiceClient, createUserProfileServiceClient} from "@/api/generated/app/service/v1";
 
-import {requestClientRequestHandler} from "@/transport/rest";
+import {requestApi} from "@/transport/rest";
 
 import {setAccessToken, setLoginExpired} from "@/store/core/access/slice";
 import {useAccessStore} from "@/store/core/access/hooks";
-
-const authnService = createAuthenticationServiceClient(requestClientRequestHandler);
-const userProfileService = createUserProfileServiceClient(requestClientRequestHandler);
 
 interface AuthState {
     loginLoading: boolean;
@@ -29,6 +26,9 @@ export const login = createAsyncThunk(
         params: { username?: string; email?: string; mobile?: string; password: string },
         {dispatch}
     ) => {
+        const authnService = createAuthenticationServiceClient(requestApi);
+        const userProfileService = createUserProfileServiceClient(requestApi);
+
         dispatch(setLoginLoading(true));
         try {
             const {access_token} = await authnService.Login({
@@ -56,6 +56,8 @@ export const login = createAsyncThunk(
 
 // 登出
 export const logout = createAsyncThunk('authentication/logout', async (_, {dispatch}) => {
+    const authnService = createAuthenticationServiceClient(requestApi);
+
     try {
         await authnService.Logout({});
     } catch {
@@ -71,6 +73,8 @@ export const logout = createAsyncThunk('authentication/logout', async (_, {dispa
 export const refreshToken = createAsyncThunk(
     'authentication/refreshToken',
     async (refresh_token: string, {dispatch}) => {
+        const authnService = createAuthenticationServiceClient(requestApi);
+
         const resp = await authnService.RefreshToken({
             grant_type: 'password',
             refresh_token,

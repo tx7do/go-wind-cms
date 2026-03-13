@@ -1,15 +1,13 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 
 import {createNavigationServiceClient} from '@/api/generated/app/service/v1';
-import {requestClientRequestHandler} from '@/transport/rest';
+import {requestApi} from '@/transport/rest';
 import {
     siteservicev1_Navigation,
     siteservicev1_NavigationItem,
 } from '@/api/generated/app/service/v1';
 import {currentLocaleLanguageCode} from "@/i18n";
 import {makeOrderBy, makeQueryString} from "@/transport/rest/utils";
-
-const navigationService = createNavigationServiceClient(requestClientRequestHandler);
 
 export interface NavigationState {
     list: siteservicev1_Navigation[];
@@ -36,6 +34,8 @@ export const listNavigation = createAsyncThunk(
         },
         {rejectWithValue}
     ) => {
+        const navigationService = createNavigationServiceClient(requestApi);
+
         try {
             const locale = currentLocaleLanguageCode();
             const formValues = {...(params.formValues || {}), locale};
@@ -54,6 +54,7 @@ export const listNavigation = createAsyncThunk(
                 noPaging,
             });
         } catch (error) {
+            console.error('xxxxxxxxxxxxxxxxxxxxxxxx', error);
             return rejectWithValue(error);
         }
     }
@@ -65,6 +66,8 @@ export const getNavigation = createAsyncThunk(
         params: { id: number },
         {rejectWithValue}
     ) => {
+        const navigationService = createNavigationServiceClient(requestApi);
+
         try {
             return await navigationService.Get({id: params.id});
         } catch (error) {
@@ -76,6 +79,8 @@ export const getNavigation = createAsyncThunk(
 export const createNavigation = createAsyncThunk(
     'navigation/createNavigation',
     async (values: Partial<siteservicev1_Navigation>, {rejectWithValue}) => {
+        const navigationService = createNavigationServiceClient(requestApi);
+
         try {
             return await navigationService.Create({data: values as siteservicev1_Navigation});
         } catch (error) {
@@ -90,6 +95,8 @@ export const updateNavigation = createAsyncThunk(
         params: { id: number; values: Partial<siteservicev1_Navigation> },
         {rejectWithValue}
     ) => {
+        const navigationService = createNavigationServiceClient(requestApi);
+
         try {
             return await navigationService.Update({
                 id: params.id,
@@ -105,6 +112,8 @@ export const updateNavigation = createAsyncThunk(
 export const deleteNavigation = createAsyncThunk(
     'navigation/deleteNavigation',
     async (id: number, {rejectWithValue}) => {
+        const navigationService = createNavigationServiceClient(requestApi);
+
         try {
             return await navigationService.Delete({id});
         } catch (error) {

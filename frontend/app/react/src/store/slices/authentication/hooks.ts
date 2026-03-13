@@ -8,7 +8,7 @@ import {
     createAuthenticationServiceClient,
     createUserProfileServiceClient,
 } from '@/api/generated/app/service/v1';
-import {requestClientRequestHandler} from '@/transport/rest';
+import {requestApi} from '@/transport/rest';
 import {encryptByAES} from "@/utils";
 import {useAccessStore} from "@/store/core/access/hooks";
 import {useUserStore} from "@/store/core/user/hooks";
@@ -41,10 +41,10 @@ export function useAuthenticationStore() {
 
     // 创建服务客户端
     const authService = createAuthenticationServiceClient(
-        requestClientRequestHandler,
+        requestApi,
     );
     const userProfileService = createUserProfileServiceClient(
-        requestClientRequestHandler,
+        requestApi,
     );
 
     const accessStore = useAccessStore();

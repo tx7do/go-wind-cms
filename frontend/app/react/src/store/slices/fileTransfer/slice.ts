@@ -1,15 +1,14 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import type {AxiosProgressEvent} from 'axios';
 
-import {createFileTransferServiceClient} from '@/api/generated/app/service/v1';
-import {requestClientRequestHandler} from '@/transport/rest';
+import {requestApi} from '@/transport/rest';
 import {
     storageservicev1_UploadFileResponse,
     storageservicev1_DownloadFileResponse,
+    createFileTransferServiceClient,
 } from '@/api/generated/app/service/v1';
-import {requestClient} from '@/transport/rest/rest-client';
+import {requestClient} from "@/transport/rest/rest-client";
 
-const fileTransferService = createFileTransferServiceClient(requestClientRequestHandler);
 
 export interface FileTransferState {
     list: storageservicev1_UploadFileResponse[];
@@ -31,6 +30,8 @@ export const downloadFileThunk = createAsyncThunk(
         params: { bucketName: string; objectName: string; preferPresignedUrl: boolean },
         {rejectWithValue}
     ) => {
+        const fileTransferService = createFileTransferServiceClient(requestApi);
+
         try {
             const {bucketName, objectName, preferPresignedUrl} = params;
             return await fileTransferService.DownloadFile({

@@ -2,16 +2,10 @@ import {RequestClient} from "@/transport/rest/request-client";
 import {HttpResponse} from "@/transport/rest/types";
 import {authenticateResponseInterceptor, errorMessageResponseInterceptor} from "@/transport/rest/preset-interceptors";
 
+import store from "@/store";
 
-const apiURL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-const preferences = {
-    app: {
-        locale: 'zh-CN',
-        enableRefreshToken: true,
-    },
-};
 
-function createRequestClient(baseURL: string, getToken?: () => string) {
+export function createRequestClient(baseURL: string, getLocale?: () => string, getToken?: () => string) {
     const client = new RequestClient({
         baseURL,
     });
@@ -27,7 +21,9 @@ function createRequestClient(baseURL: string, getToken?: () => string) {
             if (getToken) {
                 config.headers.Authorization = formatToken(getToken());
             }
-            config.headers['Accept-Language'] = preferences.app.locale;
+            if (getLocale) {
+                config.headers['Accept-Language'] = getLocale();
+            }
             return config as never;
         },
     });
@@ -57,9 +53,10 @@ function createRequestClient(baseURL: string, getToken?: () => string) {
     client.addResponseInterceptor(
         authenticateResponseInterceptor({
             client,
-            doReAuthenticate: async () => {},
+            doReAuthenticate: async () => {
+            },
             doRefreshToken: async () => '',
-            enableRefreshToken: preferences.app.enableRefreshToken,
+            enableRefreshToken: true,
             formatToken,
         }),
     );
@@ -67,7 +64,9 @@ function createRequestClient(baseURL: string, getToken?: () => string) {
     // 通用的错误处理,如果没有进入上面的错误处理逻辑，就会进入这里
     client.addResponseInterceptor(
         errorMessageResponseInterceptor(async (msg: string, error) => {
-            const responseData = (error as unknown as { response?: { data?: Record<string, unknown> } })?.response?.data ?? {};
+            const responseData = (error as unknown as {
+                response?: { data?: Record<string, unknown> }
+            })?.response?.data ?? {};
             const errorMessage = responseData?.error ?? responseData?.message ?? '';
             window.alert(errorMessage || msg);
         }),
@@ -76,5 +75,18 @@ function createRequestClient(baseURL: string, getToken?: () => string) {
     return client;
 }
 
-export const requestClient = createRequestClient(apiURL);
-export const baseRequestClient = new RequestClient({baseURL: apiURL});
+export const apiURL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+
+function getAccessToken() {
+    return store.getState().access.accessToken?.value || '';
+}
+
+function getLocale() {
+    return store.getState().language.locale || 'zh-CN';
+}
+
+export const requestClient = createRequestClient(
+    apiURL,
+    getLocale,
+    getAccessToken
+);

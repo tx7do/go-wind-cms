@@ -1,9 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 
 import {createUserProfileServiceClient, type identityservicev1_User} from "@/api/generated/app/service/v1";
-import {requestClientRequestHandler} from "@/transport/rest";
-
-const userProfileService = createUserProfileServiceClient(requestClientRequestHandler);
+import {requestApi} from "@/transport/rest";
 
 export interface UserProfileState {
     detail: identityservicev1_User | null;
@@ -18,6 +16,8 @@ const initialState: UserProfileState = {
 export const fetchUserProfile = createAsyncThunk(
     'userProfile/fetchUserProfile',
     async (_, {rejectWithValue}) => {
+        const userProfileService = createUserProfileServiceClient(requestApi);
+
         try {
             return await userProfileService.GetUser({});
         } catch (error) {

@@ -1,12 +1,10 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {createCommentServiceClient} from '@/api/generated/app/service/v1';
-import {requestClientRequestHandler} from '@/transport/rest';
+import {requestApi} from '@/transport/rest';
 import {
     commentservicev1_Comment,
 } from '@/api/generated/app/service/v1';
 import {makeOrderBy, makeQueryString} from "@/transport/rest/utils";
-
-const commentService = createCommentServiceClient(requestClientRequestHandler);
 
 export interface CommentState {
     list: commentservicev1_Comment[];
@@ -33,6 +31,8 @@ export const listComment = createAsyncThunk(
         },
         {rejectWithValue}
     ) => {
+        const commentService = createCommentServiceClient(requestApi);
+
         try {
             const formValues = {...(params.formValues || {})};
             const noPaging =
@@ -61,6 +61,8 @@ export const getComment = createAsyncThunk(
         params: { id: number },
         {rejectWithValue}
     ) => {
+        const commentService = createCommentServiceClient(requestApi);
+
         try {
             return await commentService.Get({id: params.id});
         } catch (error) {
@@ -72,6 +74,8 @@ export const getComment = createAsyncThunk(
 export const createComment = createAsyncThunk(
     'comment/createComment',
     async (values: Partial<commentservicev1_Comment>, {rejectWithValue}) => {
+        const commentService = createCommentServiceClient(requestApi);
+
         try {
             return await commentService.Create({data: values as commentservicev1_Comment});
         } catch (error) {
@@ -86,6 +90,8 @@ export const updateComment = createAsyncThunk(
         params: { id: number; values: Partial<commentservicev1_Comment> },
         {rejectWithValue}
     ) => {
+        const commentService = createCommentServiceClient(requestApi);
+
         try {
             return await commentService.Update({
                 id: params.id,
@@ -101,6 +107,8 @@ export const updateComment = createAsyncThunk(
 export const deleteComment = createAsyncThunk(
     'comment/deleteComment',
     async (id: number, {rejectWithValue}) => {
+        const commentService = createCommentServiceClient(requestApi);
+
         try {
             return await commentService.Delete({id});
         } catch (error) {

@@ -1,14 +1,12 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {createPageServiceClient} from '@/api/generated/app/service/v1';
-import {requestClientRequestHandler} from '@/transport/rest';
+import {requestApi} from '@/transport/rest';
 import {
     contentservicev1_Page,
     contentservicev1_PageTranslation,
 } from '@/api/generated/app/service/v1';
 import {currentLocaleLanguageCode} from '@/i18n';
 import {makeOrderBy, makeQueryString} from "@/transport/rest/utils";
-
-const pageService = createPageServiceClient(requestClientRequestHandler);
 
 export interface PageState {
     list: contentservicev1_Page[];
@@ -35,6 +33,8 @@ export const listPage = createAsyncThunk(
         },
         {rejectWithValue}
     ) => {
+        const pageService = createPageServiceClient(requestApi);
+
         try {
             const locale = currentLocaleLanguageCode();
             const formValues = {...(params.formValues || {}), locale};
@@ -64,6 +64,8 @@ export const getPage = createAsyncThunk(
         params: { id: number },
         {rejectWithValue}
     ) => {
+        const pageService = createPageServiceClient(requestApi);
+
         try {
             return await pageService.Get({id: params.id});
         } catch (error) {
@@ -75,6 +77,8 @@ export const getPage = createAsyncThunk(
 export const createPage = createAsyncThunk(
     'page/createPage',
     async (values: Partial<contentservicev1_Page>, {rejectWithValue}) => {
+        const pageService = createPageServiceClient(requestApi);
+
         try {
             return await pageService.Create({data: values as contentservicev1_Page});
         } catch (error) {
@@ -89,6 +93,8 @@ export const updatePage = createAsyncThunk(
         params: { id: number; values: Partial<contentservicev1_Page> },
         {rejectWithValue}
     ) => {
+        const pageService = createPageServiceClient(requestApi);
+
         try {
             return await pageService.Update({
                 id: params.id,
@@ -104,6 +110,8 @@ export const updatePage = createAsyncThunk(
 export const deletePage = createAsyncThunk(
     'page/deletePage',
     async (id: number, {rejectWithValue}) => {
+        const pageService = createPageServiceClient(requestApi);
+
         try {
             return await pageService.Delete({id});
         } catch (error) {
