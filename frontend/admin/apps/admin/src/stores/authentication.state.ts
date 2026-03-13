@@ -337,51 +337,81 @@ export const useAuthStore = defineStore('auth', () => {
    * @param cb 刷新回调函数
    */
   function _startRefreshTimer(cb?: RefreshTokenFunc): void {
-    // 先停止已存在的调度
     _stopRefreshTimer();
 
-    if (cb) {
-      refreshCallback = cb;
-    }
+    if (cb) refreshCallback = cb;
+    if (!refreshCallback) return;
 
-    if (refreshCallback === null) {
-      return;
-    }
+    const SAFETY_BUFFER_MS = 5 * 60 * 1000; // 在 access 到期前 5 分钟开始刷新
+    const MIN_INTERVAL_MS = 3 * 1000; // 最小 3s（避免立即重试风暴）
+    const MAX_INTERVAL_MS = ACCESS_TOKEN_REFRESH_INTERVAL; // 上限
 
-    let refreshInterval = ACCESS_TOKEN_REFRESH_INTERVAL;
-    // 如果有 refresh token 过期时间，则调整刷新间隔为过期时间的 80%
-    if (accessStore.refreshTokenExpireTime) {
+    const computeNextInterval = (): number => {
       const now = Date.now();
-      const timeToExpire =
-        accessStore.refreshTokenExpireTime - now - 5 * 60 * 1000; // 提前 5 分钟刷新
-      if (timeToExpire > 0) {
-        refreshInterval = Math.floor(timeToExpire * 0.8);
-      }
-    }
 
-    // 使用 self-scheduling 的 setTimeout，避免并发刷新
+      const accessExpire = accessStore.accessTokenExpireTime ?? 0;
+      const refreshExpire = accessStore.refreshTokenExpireTime ?? 0;
+
+      // 如果 refresh token 已过期或快到期，优先走 reauthenticate（尽快处理）
+      const refreshRemaining = refreshExpire - now;
+      if (refreshExpire && refreshRemaining <= SAFETY_BUFFER_MS) {
+        // 让 schedule 触发短延迟以处理 reauthenticate（或直接 reauthenticate）
+        return MIN_INTERVAL_MS;
+      }
+
+      // 基于 access token 计算下一次刷新
+      const accessRemaining = accessExpire - now;
+      if (!accessExpire || accessRemaining <= 0) {
+        // access 已过期或缺失 -> 立刻重认证
+        return MIN_INTERVAL_MS;
+      }
+
+      // 如果 access 在安全缓冲内 (<= SAFETY_BUFFER_MS)，尽快刷新
+      if (accessRemaining <= SAFETY_BUFFER_MS) {
+        return MIN_INTERVAL_MS;
+      }
+
+      // 否则，选择在剩余时间的某个比例处触发（例如剩余时间去掉缓冲后 80% 的时间）
+      return Math.floor(
+        Math.max(
+          MIN_INTERVAL_MS,
+          Math.min(MAX_INTERVAL_MS, (accessRemaining - SAFETY_BUFFER_MS) * 0.8),
+        ),
+      );
+    };
+
     const schedule = async () => {
       try {
-        // 在每次触发前校验是否仍有 refresh token
+        // 在每次触发前再做两个检查：
+        // 1) 是否还有 refresh token（没有则 reauthenticate）
+        // 2) 如果 refresh token 快过期，直接 reauthenticate
+        const now = Date.now();
+        const refreshExpire = accessStore.refreshTokenExpireTime ?? 0;
         if (!accessStore.refreshToken) {
-          // 若无 refresh token，触发重认证并停止后续调度
           await reauthenticate();
           return;
         }
+        if (refreshExpire && refreshExpire - now <= SAFETY_BUFFER_MS) {
+          // refresh token 在缓冲期内或过期 -> 重新认证处理
+          await reauthenticate();
+          return;
+        }
+
+        // 尝试刷新 access token
         await refreshCallback?.();
       } catch (error) {
         console.error('refreshToken 定时刷新失败', error);
-        // 刷新失败通常会触发 reauthenticate()，无需额外处理
+        // refresh 失败后，refreshToken() 内通常会调用 reauthenticate()
       } finally {
-        // 只有在回调仍然存在时才继续调度
         if (refreshCallback) {
-          refreshTimer = globalThis.setTimeout(schedule, refreshInterval);
+          const next = computeNextInterval();
+          refreshTimer = globalThis.setTimeout(schedule, next);
         }
       }
     };
 
-    // 首次在间隔后执行（不立即执行）
-    refreshTimer = globalThis.setTimeout(schedule, refreshInterval);
+    // 首次 schedule（基于当前 access 到期时间）
+    refreshTimer = globalThis.setTimeout(schedule, computeNextInterval());
   }
 
   /**

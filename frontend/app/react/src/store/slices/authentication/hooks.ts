@@ -74,10 +74,13 @@ export function useAuthenticationStore() {
             });
             if (response.access_token) {
 
-                accessStore.setAccessToken({value: response.access_token, expiresAt: response.expires_in});
+                accessStore.setAccessToken({
+                    value: response.access_token,
+                    expiresAt: response.expires_in ? Date.now() + response.expires_in * 1000 : undefined,
+                });
                 accessStore.setRefreshToken({
                     value: response.refresh_token || '',
-                    expiresAt: response.refresh_expires_in
+                    expiresAt: response.refresh_expires_in ? Date.now() + response.refresh_expires_in * 1000 : undefined,
                 });
                 accessStore.setLoginExpired(false)
 

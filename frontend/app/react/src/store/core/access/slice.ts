@@ -22,6 +22,8 @@ const initialState: IAccessState = {
  * 设置 Token 的辅助函数
  */
 function setTokenWithExpiry(state: IAccessState, token: TokenPayload | null) {
+    console.log('setTokenWithExpiry', token)
+
     state.accessToken = token;
     if (typeof window !== 'undefined') {
         if (token) {
@@ -57,6 +59,8 @@ const accessSlice = createSlice({
          * 设置刷新令牌
          */
         setRefreshToken(state, action: PayloadAction<TokenPayload | null>) {
+            console.log('setRefreshToken', action.payload)
+
             state.refreshToken = action.payload;
             if (typeof window !== 'undefined') {
                 if (action.payload) {
@@ -74,6 +78,8 @@ const accessSlice = createSlice({
             accessToken: TokenPayload | null;
             refreshToken: TokenPayload | null
         }>) {
+            console.log('setTokens', action.payload)
+
             const {accessToken, refreshToken} = action.payload;
             setTokenWithExpiry(state, accessToken);
             state.refreshToken = refreshToken;
@@ -127,6 +133,8 @@ const accessSlice = createSlice({
          * 清除访问令牌（但保留权限信息）
          */
         clearTokens(state) {
+            console.log('clearTokens')
+
             state.accessToken = null;
             state.refreshToken = null;
             state.loginExpired = false;
@@ -140,6 +148,8 @@ const accessSlice = createSlice({
          * 重置所有访问状态
          */
         resetAccess() {
+            console.log('resetAccess')
+
             if (typeof window !== 'undefined') {
                 storage.removeItem(ACCESS_TOKEN_KEY);
                 storage.removeItem(REFRESH_TOKEN_KEY);
@@ -151,6 +161,8 @@ const accessSlice = createSlice({
          * 从持久化存储恢复状态（用于 SSR 或页面刷新）
          */
         restoreAccess(state, action: PayloadAction<Partial<IAccessState>>) {
+            console.log('restoreAccess', action.payload)
+
             if (typeof window !== 'undefined') {
                 if (action.payload.accessToken) {
                     storage.setItem(ACCESS_TOKEN_KEY, action.payload.accessToken, action.payload.accessToken.expiresAt ? action.payload.accessToken.expiresAt - Date.now() : undefined);
