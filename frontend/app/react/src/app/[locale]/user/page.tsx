@@ -191,11 +191,12 @@ export default function UserProfilePage() {
                             )}
 
                             <div className={styles.userMeta}>
-                                {user?.region && <span className={styles.metaItem}>{user.region}</span>}
-                                {user?.tenantName && <span className={styles.metaItem}>{user.tenantName}</span>}
-                                {user?.positionNames?.length && (
-                                    <span className={styles.metaItem}>{user.positionNames.join(', ')}</span>
+                                {user?.region && (
+                                    <span className={styles.metaItem}>
+                                        {user.region.replace(/\d+/g, '').trim()}
+                                    </span>
                                 )}
+                                {user?.tenantName && <span className={styles.metaItem}>{user.tenantName}</span>}
                             </div>
                         </div>
                     </div>
