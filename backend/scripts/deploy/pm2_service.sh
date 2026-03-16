@@ -86,6 +86,7 @@ for app_dir in "${apps[@]}"; do
 
   # 拷贝配置文件（如果存在）
   if [ -d "$configs_src_dir" ]; then
+    rm -f "$configs_dest"/*.yaml
     cp -rf "$configs_src_dir"/*.yaml "$configs_dest/" 2>/dev/null || true
   else
     err "configs dir not found: $configs_src_dir"
@@ -95,11 +96,12 @@ done
 # 启动/注册到 PM2
 for app_dir in "${apps[@]}"; do
   app="$(basename "$app_dir")"
+  full_app_name="${project_name}-${app}"
   echo "Starting service: $app"
 
   app_install_root="$install_root/$app"
   bin_path="$app_install_root/service/bin/server"
-  configs_rel="../configs/"
+  configs_rel="$app_install_root/service/configs/"
 
   if [ ! -x "$bin_path" ]; then
     err "executable not found or not executable: $bin_path (skipping)"
@@ -115,24 +117,20 @@ for app_dir in "${apps[@]}"; do
 
   pushd "$app_install_root/service/bin" >/dev/null
 
-  # If a process with the same name exists in the given namespace, remove it first
-  # to avoid: [PM2][ERROR] Script already launched, add -f option to force re-execution
-  if pm2 info "$app" --namespace "$project_name" >/dev/null 2>&1; then
-    echo "PM2 process '$app' already exists in namespace '$project_name', deleting before start"
-    if ! pm2 delete "$app" --namespace "$project_name" >/dev/null 2>&1; then
-      echo "warning: failed to delete existing pm2 process '$app'; attempting force start (-f)"
-      pm2 start -f "$bin_path" --name "$app" --namespace "$project_name" -- -c "$configs_rel"
-      popd >/dev/null
-      continue
-    fi
-  fi
+  pm2 delete "$full_app_name" --namespace "$project_name" >/dev/null 2>&1 || true
 
-  pm2 start "$bin_path" --name "$app" --namespace "$project_name" -- -c "$configs_rel"
+  pm2 start "$bin_path" \
+    --name "$full_app_name" \
+    --namespace "$project_name" \
+    --cwd "$app_install_root/service/bin" \
+    --output "$app_install_root/service/bin/stdout.log" \
+    --error "$app_install_root/service/bin/stderr.log" \
+    --update-env \
+    -- -c "$configs_rel"
+
   popd >/dev/null
 done
 
 pm2 save
-# 重启同一 namespace 下的所有进程，确保更新生效
-pm2 restart all --namespace "$project_name" || true
 
 echo "install and pm2 setup complete for namespace: $project_name"
