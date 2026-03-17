@@ -42,12 +42,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-dist
-dist-ssr
-dist.zip
-dist.tar
-dist.war
-
 # Editor directories and files
 .idea
 # .vscode
@@ -57,3 +51,15 @@ dist.war
 *.sln
 *.sw?
 .history
+
+dist
+dist-ssr
+dist.zip
+dist.tar
+dist.war
+
+deploy_versions/
+.temp/
+.rn_temp/
+.swc
+*.local
