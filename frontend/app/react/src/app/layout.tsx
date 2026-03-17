@@ -1,6 +1,5 @@
 import React from "react";
 import type {Metadata} from "next";
-import Script from "next/script";
 
 import {env} from "@/config";
 import {DEFAULT_LANGUAGE} from "@/i18n";
@@ -14,25 +13,25 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
-        <html 
-            lang={DEFAULT_LANGUAGE} 
+        <html
+            lang={DEFAULT_LANGUAGE}
             suppressHydrationWarning
             style={{margin: 0, padding: 0}}
         >
-            <head>
-                <script
-                    dangerouslySetInnerHTML={{
-                        __html: `(${initThemeScript.toString()})()`,
-                    }}
-                />
-            </head>
-            <body style={{margin: 0, padding: 0}}>
-                <ReduxProvider>
-                    <ThemeClientProvider>{children}</ThemeClientProvider>
-                </ReduxProvider>
-            </body>
+        <head>
+            <script
+                dangerouslySetInnerHTML={{
+                    __html: `(${initThemeScript.toString()})()`,
+                }}
+            />
+        </head>
+        <body style={{margin: 0, padding: 0}}>
+        <ReduxProvider>
+            <ThemeClientProvider>{children}</ThemeClientProvider>
+        </ReduxProvider>
+        </body>
         </html>
     );
 }

@@ -1,0 +1,108 @@
+/* 全局样式 */
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html,
+body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* ========== CSS Variables ========== */
+:root {
+    /* 布局尺寸 */
+    --layout-header-height: 64px;
+    --layout-navbar-height: 50px;
+    --layout-footer-height: 200px;
+    --layout-topbar-height: 75px;
+    
+    /* 内容区域顶部偏移（用于固定 Header） */
+    --layout-content-offset: calc(var(--layout-topbar-height) + var(--layout-navbar-height));
+
+    /* 颜色系统 - 亮色模式 */
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-text-primary: #1f2937;
+    --color-text-secondary: #6b7280;
+    --color-border: #e5e7eb;
+    --color-card-border: #e2e8f0;
+    --color-card-shadow: rgba(0, 0, 0, 0.06);
+    --color-hover-shadow: rgba(0, 0, 0, 0.12);
+
+    /* 品牌色 */
+    --color-brand: #6366f1;
+    --color-brand-light: #8b5cf6;
+    --color-brand-dark: #a855f7;
+
+    /* Header 颜色 */
+    --header-color: rgba(255, 255, 255, 0.95);
+    --header-bg: #ffffff;
+    
+    /* Header 控件颜色 - 亮色模式 */
+    --header-control-bg: rgba(0, 0, 0, 0.02);
+    --header-control-hover-bg: rgba(102, 126, 234, 0.08);
+    --header-control-text: rgba(0, 0, 0, 0.85);
+    --header-control-text-muted: rgba(0, 0, 0, 0.45);
+    --header-control-border: rgba(0, 0, 0, 0.06);
+    
+    /* 布局辅助变量 */
+    --layout-max-width: 1200px;
+    
+    /* 间距变量 */
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    
+    /* 圆角变量 */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+}
+
+/* 暗黑模式 */
+html.dark {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-text-primary: #e0e7ef;
+    --color-text-secondary: #9ca3af;
+    --color-border: #334155;
+    --color-card-border: #334155;
+    --color-card-shadow: rgba(0, 0, 0, 0.2);
+    --color-hover-shadow: rgba(0, 0, 0, 0.3);
+    --header-color: rgba(30, 41, 59, 0.95);
+    --header-bg: #0f172a;
+    
+    /* Header 控件颜色 - 暗黑模式 */
+    --header-control-bg: rgba(255, 255, 255, 0.05);
+    --header-control-hover-bg: rgba(102, 126, 234, 0.15);
+    --header-control-text: rgba(255, 255, 255, 0.85);
+    --header-control-text-muted: rgba(255, 255, 255, 0.45);
+    --header-control-border: rgba(255, 255, 255, 0.1);
+}
+
+/* ========== 全局过渡动画 ========== */
+/* fade transition */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+/* 平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 禁用选中（可选） */
+.no-select {
+    user-select: none;
+}

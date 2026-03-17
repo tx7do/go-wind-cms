@@ -1,32 +1,20 @@
 .index {
-  padding: 40px 20px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  .title {
-    font-size: 32px;
-    font-weight: bold;
-    text-align: center;
-    display: block;
-    margin-bottom: 40px;
-    color: #333;
-  }
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
 
-  .section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-
-    .label {
+    .loading-text {
       font-size: 28px;
       color: #666;
-      display: block;
-      margin-bottom: 16px;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
+      text-align: center;
     }
   }
 }

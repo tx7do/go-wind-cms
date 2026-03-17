@@ -1,0 +1,174 @@
+import React, {useState, useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
+import {View, Text} from '@tarojs/components';
+
+import {useCategoryStore} from '@/store/slices/category/hooks';
+import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
+
+import './index.scss';
+
+interface CategoryFilterProps {
+  categories?: contentservicev1_Category[];
+  selectedCategory?: number | null;
+  treeMode?: boolean;
+  parentId?: number | null;
+  autoLoad?: boolean;
+  onCategoryChange?: (categoryId: number | null) => void;
+  onLoaded?: (categories: contentservicev1_Category[]) => void;
+}
+
+const CategoryFilter: React.FC<CategoryFilterProps> = ({
+                                                         categories: externalCategories,
+                                                         selectedCategory = null,
+                                                         treeMode = false,
+                                                         parentId = null,
+                                                         autoLoad = true,
+                                                         onCategoryChange,
+                                                         onLoaded
+                                                       }) => {
+  const {t} = useTranslation('page.posts');
+  const categoryStore = useCategoryStore();
+  const {t: categoryT} = useTranslation('page.categories');
+
+  const [internalCategories, setInternalCategories] = useState<contentservicev1_Category[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+
+  const loadCategories = async () => {
+    setLoading(true);
+    try {
+    const query: Record<string, any> = { status: 'CATEGORY_STATUS_ACTIVE' };
+
+    if (parentId !== undefined && parentId !== null) {
+    query.parentId = parentId;
+    }
+
+    // fieldMask and orderBy should use backend-expected snake_case
+    const res = await categoryStore.listCategory({
+    paging: undefined,
+    formValues: query,
+    fieldMask: 'id,status,sortOrder,icon,code,postCount,directPostCount,parentId,createdAt,children,translations.id,translations.categoryId,translations.name,translations.languageCode,translations.description',
+    orderBy: ['-sortOrder']
+    }) as unknown as contentservicev1_ListCategoryResponse;
+
+      const items = res.items || [];
+      setInternalCategories(items);
+      onLoaded?.(items);
+      console.log('[CategoryFilter] Categories loaded:', items.length);
+    } catch (error) {
+      console.error('[CategoryFilter] Load categories failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!autoLoad || externalCategories) {
+      return;
+    }
+
+    loadCategories();
+  }, [autoLoad, externalCategories, parentId]);
+
+  function getCategoryName(category: contentservicev1_Category | null): string {
+    if (!category?.id) return '';
+    return categoryStore.getCategoryName(category, categoryT);
+  }
+
+  const displayCategories = externalCategories || internalCategories;
+  const rootCategories = displayCategories.filter(cat => !cat.parentId);
+
+  const handleCategoryChange = (categoryId: number | null) => {
+    onCategoryChange?.(categoryId);
+  };
+
+  const handleCategoryClick = (nodeId: number) => {
+    handleCategoryChange(nodeId);
+  };
+
+  const hasChildren = (categoryId: number): boolean => {
+    const category = displayCategories.find(cat => cat.id === categoryId);
+    return !!(category && category.children && category.children.length > 0);
+  };
+
+  const toggleExpanded = (nodeId: number) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(nodeId)) {
+        next.delete(nodeId);
+      } else {
+        next.add(nodeId);
+      }
+      return next;
+    });
+  };
+
+  if (loading && autoLoad) {
+    return <View className='loading'>加载中...</View>;
+  }
+
+  return (
+    <View className='category-filter'>
+      <View className='category-tabs'>
+        {/* 所有分类按钮 */}
+        <View
+          className={`category-tab ${selectedCategory === null ? 'active' : ''}`}
+          onClick={() => handleCategoryChange(null)}
+        >
+          <Text>📁</Text>
+          <Text>{t('all_categories')}</Text>
+        </View>
+
+        {/* 树形模式 */}
+        {treeMode && displayCategories.map((node) => {
+          return (
+            <View key={node.id} className='category-item-wrapper'>
+              <View
+                className={`category-tab ${selectedCategory === node.id ? 'active' : ''}`}
+                onClick={() => node.id && handleCategoryClick(node.id)}
+              >
+                <Text>{node.icon ? node.icon : '📁'}</Text>
+                <Text>{getCategoryName(node)}</Text>
+              </View>
+
+              {/* 子分类菜单 */}
+              {hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && node.children && (
+                <View className='category-submenu'>
+                  {node.children.map((child) => (
+                    <View
+                      key={child.id}
+                      className={`category-subitem ${selectedCategory === child.id ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCategoryChange(child.id || 0);
+                      }}
+                    >
+                      <Text>{child.icon ? child.icon : '📁'}</Text>
+                      <Text>{getCategoryName(child)}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          );
+        })}
+
+        {/* 平铺模式 */}
+        {!treeMode && rootCategories.map((cat) => {
+          return (
+            <View
+              key={cat.id}
+              className={`category-tab ${selectedCategory === cat.id ? 'active' : ''}`}
+              onClick={() => handleCategoryChange(cat.id || 0)}
+            >
+              <Text>{cat.icon ? cat.icon : '📁'}</Text>
+              <Text>{getCategoryName(cat)}</Text>
+            </View>
+          );
+        })}
+      </View>
+    </View>
+  );
+};
+
+export default CategoryFilter;

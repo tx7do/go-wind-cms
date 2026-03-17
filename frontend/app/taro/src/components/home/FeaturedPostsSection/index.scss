@@ -1,0 +1,39 @@
+.featured-section {
+  padding: var(--space-12) 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .view-all-btn {
+    padding: 8px 16px;
+    background: var(--color-brand-light);
+    color: var(--color-brand);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      background: var(--color-brand);
+      color: #ffffff;
+    }
+  }
+}
+
+.featured-grid {
+  margin-bottom: var(--space-6);
+}

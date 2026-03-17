@@ -1,5 +1,5 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {createTagServiceClient} from '@/api/generated/app/service/v1';
+import {createTagServiceClient} from '../../../api/generated/app/service/v1';
 import {requestApi} from '@/transport/rest';
 import {
     contentservicev1_Tag,
@@ -23,8 +23,8 @@ export const listTag = createAsyncThunk(
         params: {
             paging?: { page?: number; pageSize?: number };
             formValues?: object | undefined;
-            fieldMask?: string | undefined;
-            orderBy?: string[] | undefined;
+            fieldMask?: string | undefined | null;
+            orderBy?: string[] | undefined | null;
         },
         {rejectWithValue}
     ) => {
@@ -36,7 +36,7 @@ export const listTag = createAsyncThunk(
             const noPaging =
                 params.paging?.page === undefined && params.paging?.pageSize === undefined;
             return await tagService.List({
-                fieldMask: params.fieldMask,
+                fieldMask: params.fieldMask ?? undefined,
                 orderBy: makeOrderBy(params.orderBy),
                 sorting: Array.isArray(params.orderBy) ? params.orderBy.map(o => ({
                     field: o,

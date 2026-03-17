@@ -1,0 +1,48 @@
+/* App Container - 最外层布局 */
+.appContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Content Area - 内容区域 */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  padding-top: var(--layout-header-height, 64px);
+  background: var(--color-bg, #f8fafc);
+
+  &.noHeader {
+    padding-top: 0;
+  }
+}
+
+/* 暗黑模式适配 */
+html.dark .content {
+  background: var(--color-bg, #0f172a);
+}
+
+/* 页面过渡动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.content > * {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .content {
+    min-height: calc(100vh - 56px - 150px); /* 移动端 Header 和 Footer 较矮 */
+  }
+}

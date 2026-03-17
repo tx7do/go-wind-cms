@@ -1,0 +1,44 @@
+.verification-code-input {
+    width: 100%;
+}
+
+.otp-slots {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+}
+
+.otp-slot {
+    width: 48px;
+    height: 56px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &.focused {
+        border-color: var(--color-brand);
+        box-shadow: 0 0 0 3px var(--color-brand-light);
+    }
+
+    &.filled {
+        background: var(--color-brand-light);
+        border-color: var(--color-brand);
+        color: var(--color-brand);
+    }
+}
+
+.hidden-otp-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}

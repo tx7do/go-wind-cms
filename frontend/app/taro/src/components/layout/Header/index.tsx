@@ -1,0 +1,206 @@
+import {useState, useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
+import {View, Text, Image} from '@tarojs/components';
+
+import {useI18n} from '@/i18n';
+import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
+import {useThemeStore, useThemeMode} from '@/store/core/theme/hooks';
+import {ThemeMode} from "@/store/types";
+
+import TopNavbar from '../TopNavbar';
+
+import './index.scss';
+import {useAccessStore} from "@/store/core/access/hooks";
+import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
+
+export default function Header() {
+  const {t: navbarT} = useTranslation('navbar');
+  const {t: appT} = useTranslation('app');
+  const {t: menuT} = useTranslation('menu');
+  const brandTitle = appT('title');
+
+  const themeStore = useThemeStore();
+  const currentMode = useThemeMode();
+  const {changeLocale} = useI18n();
+  const router = useI18nRouter();
+  const accessStore = useAccessStore();
+  const authenticationStore = useAuthenticationStore();
+
+  const accessToken = accessStore.access.accessToken;
+  const isLogin = !!accessToken && !accessStore.access.loginExpired;
+
+  const handleClickLogo = () => {
+    router.push('/');
+  };
+  const handleClickSettings = () => {
+    router.push('/settings');
+  };
+  const handleClickUserHomepage = () => {
+    router.push('/user');
+  };
+  const handleClickLogin = () => {
+    router.push('/login');
+  };
+  const handleClickRegister = () => {
+    router.push('/register');
+  };
+  const handleClickLogout = async () => {
+    console.log('Logout');
+
+    if (isLogin) {
+      await authenticationStore.logout();
+    }
+  };
+
+  // 根据登录状态动态生成用户菜单项
+  const userMenuItems = isLogin
+    ? [
+      {
+        key: 'homepage',
+        label: menuT('homepage'),
+        icon: '🏠',
+        onClick: handleClickUserHomepage
+      },
+      {
+        key: 'profile',
+        label: menuT('my_profile'),
+        icon: '👤',
+        onClick: handleClickSettings
+      },
+      {
+        type: 'divider' as const
+      },
+      {
+        key: 'logout',
+        label: menuT('logout'),
+        icon: '🚪',
+        danger: true,
+        onClick: handleClickLogout
+      },
+    ]
+    : [
+      {
+        key: 'login',
+        label: navbarT('user.login'),
+        icon: '👤',
+        onClick: handleClickLogin
+      },
+      {
+        key: 'register',
+        label: navbarT('user.register'),
+        icon: '👤',
+        onClick: handleClickRegister
+      }
+    ];
+
+  // 语言菜单
+  const languageMenuItems = [
+    {
+      key: 'zh-CN',
+      label: '简体中文',
+      onClick: () => changeLocale('zh-CN')
+    },
+    {
+      key: 'en-US',
+      label: 'English',
+      onClick: () => changeLocale('en-US')
+    }
+  ];
+
+  const themeMenuItems = [
+    {
+      key: 'dark',
+      label: navbarT('theme.dark'),
+      icon: '🌙',
+      onClick: () => themeStore.setMode('dark')
+    },
+    {
+      key: 'light',
+      label: navbarT('theme.light'),
+      icon: '☀️',
+      onClick: () => themeStore.setMode('light')
+    },
+    {
+      key: 'system',
+      label: navbarT('theme.system'),
+      icon: '🖥️',
+      onClick: () => themeStore.setMode('system')
+    },
+  ];
+
+  const themeIconMap: Record<ThemeMode, string> = {
+    dark: '🌙',
+    light: '☀️',
+    system: '🖥️'
+  };
+
+  const validMode: ThemeMode = (currentMode && ['dark', 'light', 'system'].includes(currentMode))
+    ? currentMode
+    : 'system';
+  const iconValue = themeIconMap[validMode];
+
+  // SSR 兼容
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const displayIcon = mounted ? iconValue : '🖥️';
+
+  return (
+    <View className='fixed-top'>
+      <View className='header-inner'>
+        <View className='top-bar'>
+          {/* Logo + 导航区 */}
+          <View className='logo-nav-section'>
+            <View
+              className='logo-section'
+              onClick={handleClickLogo}
+            >
+              <Image
+                src='/logo.png'
+                style={{width: 55, height: 55}}
+                className='logo'
+              />
+              <Text className='site-name'>{brandTitle}</Text>
+            </View>
+            {/* 主导航菜单 */}
+            <View className='navbar-menu-wrap'>
+              <TopNavbar/>
+            </View>
+          </View>
+          {/* 功能按钮区 */}
+          <View className='actions'>
+            <View className='space'>
+              <View className='dropdown-wrapper'>
+                <View
+                  className='icon-btn'
+                  onClick={() => console.log('User menu clicked')}
+                >
+                  <Text>👤</Text>
+                </View>
+                {/* TODO: 实现 Dropdown 组件 */}
+              </View>
+              <View className='dropdown-wrapper'>
+                <View
+                  className='icon-btn'
+                  onClick={() => console.log('Language clicked')}
+                >
+                  <Text className='lang-icon'>🌐</Text>
+                </View>
+              </View>
+              <View className='dropdown-wrapper'>
+                <View
+                  className='icon-btn'
+                  onClick={() => console.log('Theme clicked')}
+                >
+                  <Text className='theme-icon'>{displayIcon}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+}

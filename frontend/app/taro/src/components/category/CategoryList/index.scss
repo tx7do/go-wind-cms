@@ -1,0 +1,85 @@
+.category-list-container {
+  width: 100%;
+}
+
+.category-grid {
+  display: grid;
+  gap: 20px;
+  margin-bottom: var(--space-4);
+}
+
+.category-card-skeleton {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-surface);
+  padding: var(--space-4);
+}
+
+.skeleton-image-placeholder {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(90deg,
+    var(--color-bg) 25%,
+    var(--color-border) 50%,
+    var(--color-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+  margin-bottom: var(--space-3);
+}
+
+.skeleton-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeleton-title-placeholder {
+  height: 24px;
+  width: 80%;
+  background: linear-gradient(90deg,
+    var(--color-bg) 25%,
+    var(--color-border) 50%,
+    var(--color-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-paragraph-placeholder {
+  height: 40px;
+  width: 100%;
+  background: linear-gradient(90deg,
+    var(--color-bg) 25%,
+    var(--color-border) 50%,
+    var(--color-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-btn-small {
+  width: 60px;
+  height: 24px;
+  background: linear-gradient(90deg,
+    var(--color-bg) 25%,
+    var(--color-border) 50%,
+    var(--color-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-top: var(--space-2);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

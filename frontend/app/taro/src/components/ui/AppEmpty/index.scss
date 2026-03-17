@@ -1,0 +1,34 @@
+.empty-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  text-align: center;
+
+  &.in-container {
+    margin: var(--space-6) 0;
+  }
+}
+
+.app-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.empty-image {
+  font-size: 4rem;
+  opacity: 0.5;
+}
+
+.empty-description {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+/* Dark mode adjustments */
+html.dark .empty-image {
+  opacity: 0.3;
+}

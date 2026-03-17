@@ -1,0 +1,109 @@
+.navbar-wrapper {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+}
+
+.navbar-content {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    height: 100%;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+
+    &:hover {
+        background: var(--color-bg);
+        color: var(--color-brand);
+    }
+
+    &.active {
+        color: var(--color-brand);
+        background: rgba(102, 126, 234, 0.08);
+    }
+
+    .menu-icon {
+        font-size: 1.1rem;
+    }
+}
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    min-width: 160px;
+    padding: var(--space-2);
+    margin-top: var(--space-2);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--color-card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.submenu-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+        background: var(--color-bg);
+        color: var(--color-brand);
+    }
+
+    .submenu-icon {
+        font-size: 1rem;
+    }
+}
+
+.loading-state {
+    text-align: center;
+    padding: var(--space-4);
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-menu {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .menu-item {
+        white-space: nowrap;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+}
