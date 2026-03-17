@@ -23,7 +23,14 @@ declare namespace NodeJS {
      * @see https://taro-docs.jd.com/docs/next/env-mode-config#特殊环境变量-taro_app_id
      */
     TARO_APP_ID: string
+    TARO_APP_NAMESPACE: string
+    TARO_APP_PUBLIC_PATH: string
+    TARO_AES_KEY: string
+    TARO_API_BASE_URL: string
+    TARO_ENABLE_MOCK: 'true' | 'false'
+    TARO_APP_TITLE: string
+    TARO_APP_DESCRIPTION: string
+    TARO_DEFAULT_LOCALE: string
+    TARO_DEFAULT_TIMEZONE: string
   }
 }
-
-

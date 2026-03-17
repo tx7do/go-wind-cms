@@ -1,5 +1,3 @@
-'use client';
-
 import {useEffect} from 'react';
 import {useLocale} from 'next-intl';
 
@@ -7,7 +5,7 @@ import {useLanguageStore} from '@/store/core/language/hooks';
 
 /**
  * 语言切换监听器 Hook - 类似 Vue3 的 useLanguageChangeEffect
- * 
+ *
  * @param callback 语言变化时执行的回调函数
  * @param options 配置选项
  *   - immediate: 是否在首次渲染时立即执行（默认 false）
@@ -23,7 +21,7 @@ export function useLanguageChangeEffect(
     options: UseLanguageChangeEffectOptions = {}
 ) {
     const {immediate = false, autoCleanup = true} = options;
-    
+
     const locale = useLocale();
     const languageStore = useLanguageStore();
 
@@ -35,7 +33,7 @@ export function useLanguageChangeEffect(
 
         // 执行回调
         let cleanupFn: (() => void) | undefined;
-        
+
         const executeCallback = async () => {
             try {
                 const result = callback();

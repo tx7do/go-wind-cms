@@ -1,8 +1,8 @@
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 
-import { useLanguageStore } from '../../store/core/language/hooks';
-import { startLoading, finishLoading } from '../../store/core/loading/slice';
+import { useLanguageStore } from '@/store/core/language/hooks';
+import { startLoading, finishLoading } from '@/store/core/loading/slice';
 
 
 /**

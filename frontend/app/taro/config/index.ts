@@ -21,7 +21,17 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     plugins: [
       "@tarojs/plugin-generator"
     ],
-    defineConstants: {},
+    defineConstants: {
+      // 注入环境变量到客户端代码
+      API_BASE_URL: JSON.stringify(process.env.TARO_API_BASE_URL || 'http://localhost:6700'),
+      APP_TITLE: JSON.stringify(process.env.TARO_APP_TITLE || 'GoWind Content Hub'),
+      ENABLE_MOCK: JSON.stringify(process.env.TARO_ENABLE_MOCK || 'false'),
+      DEFAULT_LOCALE: JSON.stringify(process.env.TARO_DEFAULT_LOCALE || 'zh-CN'),
+      TOKEN_KEY: JSON.stringify(process.env.TARO_TOKEN_KEY || 'access_token'),
+      REFRESH_TOKEN_KEY: JSON.stringify(process.env.TARO_REFRESH_TOKEN_KEY || 'refresh_token'),
+      APP_NAMESPACE: JSON.stringify(process.env.TARO_APP_NAMESPACE || 'gowind-cms-app'),
+      AES_KEY: JSON.stringify(process.env.TARO_AES_KEY || ''),
+    },
     copy: {
       patterns: [],
       options: {}
@@ -49,6 +59,22 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
+
+      // 路由器配置
+      router: {
+        mode: 'browser', // 可选：'hash' | 'browser' | 'multi'
+        customRoutes: { // 自定义路由映射
+          'pages/index/index': '/',
+          'pages/about/index': '/about',
+          'pages/post/index': '/post',
+          'pages/post/detail': '/post/:id',
+          'pages/tag/index': '/tag',
+          'pages/category/index': '/category',
+          'pages/page/index': '/page',
+          'pages/search/index': '/search',
+          'pages/404/index': '/404'
+        }
+      },
 
       miniCssExtractPluginOption: {
         ignoreOrder: true,

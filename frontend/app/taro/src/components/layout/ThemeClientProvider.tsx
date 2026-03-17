@@ -1,5 +1,3 @@
-'use client';
-
 import React, {useEffect, useRef} from 'react';
 import {useThemeMode} from '@/store/core/theme/hooks';
 
@@ -24,7 +22,7 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
 
             //  立即应用当前系统主题
             const currentTheme = mq.matches ? 'dark' : 'light';
-            
+
             // 只有当当前类名与系统主题不一致时才更新
             if (!html.classList.contains(currentTheme)) {
                 console.log('[Theme Provider] Applying system theme:', currentTheme);

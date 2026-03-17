@@ -1,4 +1,4 @@
-import {apiURL, createRequestClient, requestClient} from "@/transport/rest/rest-client";
+import {createRequestClient, requestClient} from "@/transport/rest/rest-client";
 import {useAccessStore} from "@/store/core/access/hooks";
 import {useLanguageStore} from "@/store/core/language/hooks";
 
@@ -12,7 +12,7 @@ export function useRequest() {
     const languageStore = useLanguageStore();
 
     const requestClient = createRequestClient(
-        apiURL,
+        API_BASE_URL,
         () => languageStore.language.locale,
         () => accessStore.access.accessToken?.value || ''
     );

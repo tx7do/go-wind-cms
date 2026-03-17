@@ -10,6 +10,8 @@ export default function HeroSection() {
   const {t: brandT} = useTranslation('authentication.login');
   const router = useI18nRouter();
 
+  console.log('[HeroSection] Rendering...', { t, brandT });
+
   return (
     <View className='hero'>
       {/* Animated Background Elements */}
