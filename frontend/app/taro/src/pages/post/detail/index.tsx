@@ -30,7 +30,6 @@ export default function PostDetailPage() {
   const {t} = useTranslation();
   const postStore = usePostStore();
 
-  // 直接使用 store 中的数据，而不是本�?state
   const post = postStore.detail as contentservicev1_Post | null;
 
   const [localLoading, setLocalLoading] = useState(true);
@@ -44,10 +43,8 @@ export default function PostDetailPage() {
 
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // 优化 postId 获取逻辑，兼�?Taro 路由参数
   const postId = useMemo(() => {
     let id: string | null | undefined = null;
-    // 优先�?Taro 路由参数获取
     if (typeof Taro.getCurrentInstance === 'function') {
       const instance = Taro.getCurrentInstance();
       const routeId = instance?.router?.params?.id;

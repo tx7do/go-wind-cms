@@ -142,23 +142,27 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             </View>
                         </View>
                         <View className='comment-body'>
-                            <View className='comment-header'>
-                                <View className='author-info'>
-                                    <Text className='comment-author'>
-                                        {isOwnerReply(comment) && (
-                                            <Text className='owner-badge'>
-                                                <XIcon name='carbon:user' size={12} />
-                                                <Text> {t('comment.owner_reply')}</Text>
-                                            </Text>
-                                        )}
-                                        {comment.authorName}
+                    <View className='comment-header'>
+                        <View className='author-info'>
+                            <Text className='comment-author'>
+                                <Text className='author-at'>@</Text>
+                                {isOwnerReply(comment) && (
+                                    <Text className='owner-badge'>
+                                        <XIcon name='carbon:user' size={12} />
+                                        <Text> {t('comment.owner_reply')}</Text>
                                     </Text>
-                                    {comment.location && !isOwnerReply(comment) && (
-                                        <Text className='comment-location'>{comment.location}</Text>
-                                    )}
-                                </View>
-                                <Text className='comment-date'>{formatDate(comment.createdAt)}</Text>
-                            </View>
+                                )}
+                                {comment.authorName}
+                            </Text>
+                            {comment.location && !isOwnerReply(comment) && (
+                                <Text className='comment-location'>
+                                    <Text className='location-dot'>•</Text>
+                                    {comment.location}
+                                </Text>
+                            )}
+                        </View>
+                        <Text className='comment-date'>{formatDate(comment.createdAt)}</Text>
+                    </View>
                             <View className='comment-content'>
                                 {comment.content}
                             </View>
@@ -168,21 +172,21 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     onClick={() => handleLike(comment)}
                                 >
                                     <XIcon name={likedComments.has(comment.id || 0) ? 'carbon:thumb-up' : 'carbon:thumb-up-outline'} size={16} />
-                                    <Text> {comment.likeCount || 0}</Text>
+                                    <Text>{comment.likeCount || 0}</Text>
                                 </View>
                                 <View
                                     className='action-item'
                                     onClick={() => handleReply(comment)}
                                 >
                                     <XIcon name='carbon:chat' size={16} />
-                                    <Text> {t('comment.reply')}</Text>
+                                    <Text>{t('comment.reply')}</Text>
                                 </View>
                                 <View
                                     className='action-item'
                                     onClick={() => handleShare(comment)}
                                 >
                                     <XIcon name='carbon:share' size={16} />
-                                    <Text> {t('share')}</Text>
+                                    <Text>{t('comment.share')}</Text>
                                 </View>
 
                                 {/* 查看回复按钮 */}

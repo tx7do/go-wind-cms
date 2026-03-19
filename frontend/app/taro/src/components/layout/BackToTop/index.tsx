@@ -36,24 +36,44 @@ const BackToTop: React.FC<BackToTopProps> = ({
       Taro.createSelectorQuery()
         .selectViewport()
         .scrollOffset((res) => {
-          setShowBackToTop(res.scrollTop > scrollThreshold);
+          if (res && res.scrollTop !== undefined) {
+            setShowBackToTop(res.scrollTop > scrollThreshold);
+          }
         })
         .exec();
     };
 
-    // Taro 中添加滚动监听
-    const onPageScroll = () => {
-      handleScroll();
-    };
-
-    Taro.getCurrentPages().forEach((page) => {
-      if (page && page.onPageScroll) {
-        page.onPageScroll(onPageScroll);
-      }
-    });
-
-    // 初始化时检查一次
+    // 立即执行一次
     handleScroll();
+
+    // 使用定时器定期检查滚动位置（兼容方案）
+    const timer = setInterval(handleScroll, 300);
+
+    // 尝试添加页面滚动监听
+    const pages = Taro.getCurrentPages();
+    const currentPage = pages[pages.length - 1];
+    if (currentPage) {
+      // 保存原始的 onPageScroll
+      const originalOnPageScroll = (currentPage as any).onPageScroll;
+      
+      (currentPage as any).onPageScroll = function(e: { scrollTop: number }) {
+        if (originalOnPageScroll) {
+          originalOnPageScroll.call(this, e);
+        }
+        setShowBackToTop(e.scrollTop > scrollThreshold);
+      };
+
+      return () => {
+        // 清理定时器
+        clearInterval(timer);
+        // 恢复原始 onPageScroll
+        (currentPage as any).onPageScroll = originalOnPageScroll;
+      };
+    }
+
+    return () => {
+      clearInterval(timer);
+    };
   }, [scrollThreshold]);
 
   // 如果传入了 controlledVisible，使用受控模式
