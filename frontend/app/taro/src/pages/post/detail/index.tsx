@@ -40,6 +40,7 @@ export default function PostDetailPage() {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isTocExpanded, setIsTocExpanded] = useState(true);
+  const [isNarrowScreen, setIsNarrowScreen] = useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -124,6 +125,26 @@ export default function PostDetailPage() {
     loadPost();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]); // 只依�?postId
+
+  // 检测屏幕宽度，决定是否显示 TOC
+  useEffect(() => {
+    const checkScreenWidth = () => {
+      // 小于 768px 认为是窄屏幕（平板和手机）
+      const narrow = window.innerWidth < 768;
+      setIsNarrowScreen(narrow);
+      // 窄屏幕时自动收起 TOC
+      if (narrow) {
+        setIsTocExpanded(false);
+      }
+    };
+
+    // 初始检査
+    checkScreenWidth();
+
+    // 监听窗口大小变化
+    window.addEventListener('resize', checkScreenWidth);
+    return () => window.removeEventListener('resize', checkScreenWidth);
+  }, []);
 
   // Generate table of contents - 在内容渲染后生成目录
   useEffect(() => {
@@ -373,8 +394,8 @@ export default function PostDetailPage() {
 
           {/* Content with TOC */}
           <View className="content-with-toc">
-            {/* Left: Table of Contents */}
-            {tableOfContents.length > 0 && isTocExpanded && (
+            {/* Left: Table of Contents - 窄屏幕不显示 */}
+            {!isNarrowScreen && tableOfContents.length > 0 && isTocExpanded && (
               <View className="toc-sidebar">
                 <View className="toc-container">
                   <View className="toc-header">
