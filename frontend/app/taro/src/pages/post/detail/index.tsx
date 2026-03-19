@@ -59,7 +59,6 @@ export default function PostDetailPage() {
     return id ? parseInt(id) : null;
   }, []);
 
-  // 计算属�?- 使用 postStore 提供的工具函�?
   const displayTitle = useMemo(() => {
     if (!post) return '';
     return postStore.getPostTitle(post);
@@ -109,7 +108,7 @@ export default function PostDetailPage() {
         });
 
         if (fetchedPost) {
-          // TODO: Taro 中设置页面标�?
+          // TODO: Taro 中设置页面
           // document.title = `${postStore.getPostTitle(fetchedPost)} - GoWind Content Hub`;
         }
       } catch (error) {
@@ -121,7 +120,7 @@ export default function PostDetailPage() {
 
     loadPost();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postId]); // 只依�?postId
+  }, [postId]);
 
   // 检测屏幕宽度，决定是否显示 TOC
   useEffect(() => {
@@ -166,7 +165,6 @@ export default function PostDetailPage() {
 
         headings.forEach((heading, index) => {
           const level = heading.tagName === 'H2' ? 2 : 3;
-          // 保证 id 唯一，使�?tagName + index
           const id = `${heading.tagName.toLowerCase()}-${index}`;
           if (!heading.id) heading.setAttribute('id', id);
 
@@ -186,10 +184,8 @@ export default function PostDetailPage() {
     return () => clearTimeout(timeoutId);
   }, [displayContent]); // 依赖计算后的内容
 
-  // 监听内容变化，重新生成目�?
   useEffect(() => {
     if (displayContent && tableOfContents.length === 0) {
-      // 如果还没有生成目录，立即生成一�?
       generateTableOfContents();
     }
   }, [displayContent, tableOfContents.length]);
@@ -209,7 +205,7 @@ export default function PostDetailPage() {
 
         headings?.forEach((heading, index) => {
           const level = heading.tagName === 'H2' ? 2 : 3;
-          // 保证 id 唯一，使�?tagName + index
+          // 保证 id 唯一，使用tagName + index
           const id = `${heading.tagName.toLowerCase()}-${index}`;
 
           // 确保 ID 存在
@@ -270,7 +266,7 @@ export default function PostDetailPage() {
 
   // Handlers
   const handleBack = () => {
-    // TODO: �?Taro.getCurrentPages() 获取参数
+    // TODO: Taro.getCurrentPages() 获取参数
     Taro.navigateBack();
   };
 
@@ -285,7 +281,7 @@ export default function PostDetailPage() {
   };
 
   const handleShare = () => {
-    // TODO: Taro 中使�?onShareAppMessage 配置分享
+    // TODO: Taro 中使用onShareAppMessage 配置分享
     console.log('Share:', displayTitle);
   };
 
@@ -299,7 +295,7 @@ export default function PostDetailPage() {
         '| Element:', element.textContent?.trim()
       );
 
-      // Taro 中使�?pageScrollTo
+      // Taro 中使用pageScrollTo
       Taro.pageScrollTo({
         selector: `#${id}`,
         duration: 300
