@@ -9,38 +9,44 @@
   flex-direction: column;
 }
 
-/* 返回导航 */
+/* 返回导航 - 悬浮在左上角 */
 .back-navigation {
-  padding: 12px 16px;
-  background: #fff;
-  border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
   
   @media (min-width: 768px) {
-    padding: 16px 24px;
+    top: 24px;
+    left: 24px;
   }
 }
 
 .back-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  font-size: 15px;
-  color: #555;
-  transition: color 0.2s;
+  font-size: 14px;
+  color: #333;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px 16px;
+  border-radius: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s;
   
   &:active {
-    color: #007aff;
+    background: #f5f5f5;
+    transform: scale(0.98);
   }
   
   @media (min-width: 768px) {
-    font-size: 16px;
+    font-size: 15px;
+    padding: 12px 20px;
     
     &:hover {
-      color: #007aff;
+      background: #f5f5f5;
     }
   }
 }
@@ -49,31 +55,29 @@
 .post-article {
   flex: 1;
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 20px 16px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0;
   
   @media (min-width: 768px) {
-    padding: 32px 24px;
-    gap: 32px;
+    max-width: 1200px;
+    padding: 0 24px;
   }
 }
 
 /* 封面图 */
 .post-banner {
   width: 100%;
-  height: 200px;
+  height: 240px;
   position: relative;
-  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   
   @media (min-width: 768px) {
-    height: 300px;
-    border-radius: 16px;
+    height: 400px;
+    border-radius: 0;
   }
   
   image {
@@ -88,7 +92,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
   }
 }
 
@@ -96,11 +100,12 @@
 .post-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
   
   @media (min-width: 900px) {
     flex-direction: row;
-    gap: 32px;
+    gap: 0;
+    position: relative;
   }
   
   &.toc-collapsed {
@@ -110,23 +115,30 @@
   }
 }
 
-/* 目录侧边栏 */
+/* 目录侧边栏 - 悬浮白色卡片 */
 .toc-sidebar {
   width: 100%;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+  border-radius: 0;
+  box-shadow: none;
   padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
   
   @media (min-width: 900px) {
-    width: 240px;
-    min-width: 240px;
-    padding: 20px;
+    width: 280px;
+    min-width: 280px;
+    padding: 24px;
     position: sticky;
     top: 80px;
     height: fit-content;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+    margin: 24px;
+    margin-left: 0;
   }
 }
 
@@ -138,9 +150,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .toc-title {
@@ -149,7 +161,7 @@
   color: #333;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   
   @media (min-width: 900px) {
     font-size: 16px;
@@ -180,25 +192,27 @@
 .toc-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .toc-item {
-  padding: 8px 12px;
-  font-size: 14px;
-  color: #555;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: #666;
   border-left: 2px solid transparent;
   cursor: pointer;
   transition: all 0.2s;
-  border-radius: 4px;
+  border-radius: 8px;
+  margin-bottom: 8px;
   
   &:active {
     background: #f5f5f5;
   }
   
   @media (min-width: 900px) {
-    padding: 8px 16px;
-    font-size: 15px;
+    padding: 10px 16px;
+    font-size: 14px;
     
     &:hover {
       background: #f5f5f5;
@@ -207,18 +221,19 @@
   
   &.level-2 {
     font-weight: 500;
+    color: #333;
   }
   
   &.level-3 {
-    font-size: 13px;
+    font-size: 14px;
     color: #888;
     padding-left: 28px;
   }
   
   &.active {
-    color: #007aff;
-    border-left-color: #007aff;
-    background: #f0f6ff;
+    color: #6466f1;
+    border-left-color: #6466f1;
+    background: rgba(100, 102, 241, 0.08);
   }
 }
 
@@ -260,52 +275,73 @@
   flex: 1;
   min-width: 0;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 20px;
+  padding: 24px 16px;
   
   @media (min-width: 768px) {
-    padding: 32px;
+    padding: 40px;
+    margin: 24px;
     border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* Content Viewer 样式 */
+.content-viewer {
+  width: 100%;
+  
+  :global {
+    .content-viewer {
+      width: 100%;
+    }
   }
 }
 
 .post-header {
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .post-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: #222;
   line-height: 1.4;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   
   @media (min-width: 768px) {
-    font-size: 32px;
-    margin-bottom: 16px;
+    font-size: 42px;
+    margin-bottom: 24px;
   }
 }
 
 .post-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  font-size: 13px;
+  gap: 20px;
+  font-size: 14px;
   color: #888;
   
   @media (min-width: 768px) {
-    font-size: 14px;
-    gap: 20px;
+    font-size: 15px;
+    gap: 24px;
   }
 }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  color: #666;
+  
+  .meta-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: #888;
+  }
 }
 
 /* 文章正文 */
@@ -313,25 +349,33 @@
   font-size: 16px;
   line-height: 1.8;
   color: #333;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
   word-break: break-word;
   
   :global {
     h1, h2, h3, h4, h5, h6 {
-      margin-top: 24px;
-      margin-bottom: 16px;
+      margin-top: 32px;
+      margin-bottom: 20px;
       font-weight: 600;
       color: #222;
     }
     
     h2 {
-      font-size: 24px;
-      border-bottom: 2px solid #f0f0f0;
-      padding-bottom: 8px;
+      font-size: 28px;
+      border-bottom: 2px solid #6466f1;
+      padding-bottom: 12px;
+      
+      @media (min-width: 768px) {
+        font-size: 32px;
+      }
     }
     
     h3 {
-      font-size: 20px;
+      font-size: 22px;
+      
+      @media (min-width: 768px) {
+        font-size: 26px;
+      }
     }
     
     p {
@@ -407,9 +451,9 @@
 
 /* 操作按钮 */
 .post-actions {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid #eee;
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid #f0f0f0;
   display: flex;
   justify-content: flex-end;
 }
@@ -424,32 +468,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 20px;
-  background: #f0f6ff;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #007aff;
+  width: 44px;
+  height: 44px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  color: #666;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
   
   &:active {
-    background: #e6f0ff;
-    transform: scale(0.98);
+    background: #e8e8e8;
+    transform: scale(0.95);
   }
   
   @media (min-width: 768px) {
-    padding: 12px 24px;
-    font-size: 15px;
+    width: 48px;
+    height: 48px;
     
     &:hover {
-      background: #e6f0ff;
+      background: #e8e8e8;
     }
   }
   
-  &.liked,
-  &.bookmarked {
+  &.liked {
     background: #fff0f0;
     color: #e74c3c;
     
@@ -460,6 +502,21 @@
     @media (min-width: 768px) {
       &:hover {
         background: #ffe0e0;
+      }
+    }
+  }
+  
+  &.bookmarked {
+    background: #fff8e0;
+    color: #f39c12;
+    
+    &:active {
+      background: #ffe0a0;
+    }
+    
+    @media (min-width: 768px) {
+      &:hover {
+        background: #ffe0a0;
       }
     }
   }
@@ -513,7 +570,7 @@
   color: #222;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   
   @media (min-width: 768px) {
     font-size: 22px;

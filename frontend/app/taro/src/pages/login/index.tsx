@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 
 import {useI18nRouter} from '@/i18n/helpers';
+import XIcon from '@/plugins/xicon';
 
 import ControlPanel from '@/components/layout/ControlPanel';
 
@@ -34,19 +35,19 @@ export default function LoginPage() {
 
         <View className='features-list'>
           <View className='feature-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
             <Text>{t('login.feature_projects')}</Text>
           </View>
           <View className='feature-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
             <Text>{t('login.feature_isolation')}</Text>
           </View>
           <View className='feature-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
             <Text>{t('login.feature_permissions')}</Text>
           </View>
           <View className='feature-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
             <Text>{t('login.feature_analytics')}</Text>
           </View>
         </View>

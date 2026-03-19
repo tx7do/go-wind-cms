@@ -1,6 +1,6 @@
 {
   "comments": "评论",
-  "comments_count": "评论 ({count})",
+  "comments_count": "评论 ({{count}})",
   "no_comments": "暂无评论",
   "comment_content": "评论内容",
   "write_comment": "写下你的评论...",
@@ -34,8 +34,8 @@
   "published_at": "发布于",
   "location": "位置",
   "reply_to": "回复",
-  "reply_count": "{count} 条回复",
-  "view_replies": "查看 {count} 条回复",
+  "reply_count": "{{count}} 条回复",
+  "view_replies": "查看 {{count}} 条回复",
   "hide_replies": "收起回复",
   "edit_comment": "编辑评论",
   "delete_comment": "删除评论",

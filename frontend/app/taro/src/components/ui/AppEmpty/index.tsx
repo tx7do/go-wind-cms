@@ -1,6 +1,8 @@
 import React from 'react';
 import {View, Text} from '@tarojs/components';
 
+import XIcon from '@/plugins/xicon';
+
 import './index.scss';
 
 interface AppEmptyProps {
@@ -53,10 +55,10 @@ export const AppEmpty: React.FC<AppEmptyProps> = ({
   // 根据 variant 设置默认图标
   const defaultImage = image || (
     variant === 'error'
-      ? '⚠️'
+      ? <XIcon name='carbon:warning' size={48} className='empty-icon-svg' />
       : variant === 'noData'
-        ? '📊'
-        : '📄'
+        ? <XIcon name='carbon:chart-line' size={48} className='empty-icon-svg' />
+        : <XIcon name='carbon:document' size={48} className='empty-icon-svg' />
   );
 
   return (
@@ -65,7 +67,9 @@ export const AppEmpty: React.FC<AppEmptyProps> = ({
       style={style}
     >
       <View className='app-empty'>
-        <View className='empty-image'>{defaultImage}</View>
+        <View className='empty-image'>
+          {defaultImage}
+        </View>
         {description && (
           <Text className='empty-description'>{description}</Text>
         )}

@@ -4,6 +4,7 @@ import {View, Text, Textarea} from '@tarojs/components';
 
 import type {commentservicev1_Comment} from "@/api/generated/app/service/v1";
 import {formatDate} from "@/utils/date";
+import XIcon from '@/plugins/xicon';
 
 import './index.scss';
 
@@ -18,7 +19,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     onReply,
     onLoadChildren
 }) => {
-    const {t} = useTranslation('comment');
+    const {t} = useTranslation();
     const [replyingCommentId, setReplyingCommentId] = useState<number | null>(null);
     const [replyContent, setReplyContent] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -54,7 +55,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
     async function submitReply(comment: commentservicev1_Comment) {
         if (!replyContent.trim()) {
-            alert(t('empty_content'));
+            alert(t('comment.empty_content'));
             return;
         }
 
@@ -66,7 +67,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
             cancelReply();
         } catch (error) {
             console.error('Submit reply failed:', error);
-            alert(t('submit_comment_failed'));
+            alert(t('comment.submit_comment_failed'));
         } finally {
             setSubmitting(false);
         }
@@ -146,7 +147,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     <Text className='comment-author'>
                                         {isOwnerReply(comment) && (
                                             <Text className='owner-badge'>
-                                                👤 {t('owner_reply')}
+                                                <XIcon name='carbon:user' size={12} />
+                                                <Text> {t('comment.owner_reply')}</Text>
                                             </Text>
                                         )}
                                         {comment.authorName}
@@ -165,19 +167,22 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     className={`action-item ${likedComments.has(comment.id || 0) ? 'liked' : ''}`}
                                     onClick={() => handleLike(comment)}
                                 >
-                                    <Text>👍 {comment.likeCount || 0}</Text>
+                                    <XIcon name={likedComments.has(comment.id || 0) ? 'carbon:thumb-up' : 'carbon:thumb-up-outline'} size={16} />
+                                    <Text> {comment.likeCount || 0}</Text>
                                 </View>
                                 <View
                                     className='action-item'
                                     onClick={() => handleReply(comment)}
                                 >
-                                    <Text>💬 {t('reply')}</Text>
+                                    <XIcon name='carbon:chat' size={16} />
+                                    <Text> {t('comment.reply')}</Text>
                                 </View>
                                 <View
                                     className='action-item'
                                     onClick={() => handleShare(comment)}
                                 >
-                                    <Text>🔗 {t('share')}</Text>
+                                    <XIcon name='carbon:share' size={16} />
+                                    <Text> {t('share')}</Text>
                                 </View>
 
                                 {/* 查看回复按钮 */}
@@ -186,10 +191,10 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                         className={`action-item view-replies ${isExpanded(comment) ? 'expanded' : ''}`}
                                         onClick={() => toggleExpand(comment)}
                                     >
-                                        <Text>
-                                            {isExpanded(comment) ? '🔼' : '🔽'} {isExpanded(comment)
-                                            ? t('hide_replies')
-                                            : t('view_replies', {count: comment.replyCount})
+                                        <XIcon name={isExpanded(comment) ? 'carbon:chevron-up' : 'carbon:chevron-down'} size={16} />
+                                        <Text> {isExpanded(comment)
+                                            ? t('comment.hide_replies')
+                                            : t('comment.view_replies', {count: comment.replyCount})
                                         }
                                         </Text>
                                     </View>
@@ -202,7 +207,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     <Textarea
                                         value={replyContent}
                                         onInput={(e) => setReplyContent(e.detail.value)}
-                                        placeholder={t('write_comment')}
+                                        placeholder={t('comment.write_comment')}
                                         className='reply-textarea'
                                         disabled={submitting}
                                         maxlength={1000}
@@ -211,17 +216,17 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                         {replyContent.length} / 1000
                                     </View>
                                     <View className='reply-form-actions'>
-                                        <View 
+                                        <View
                                             className='submit-btn-small'
                                             onClick={() => submitReply(comment)}
                                         >
-                                            <Text>{submitting ? t('loading') : t('submit_comment')}</Text>
+                                            <Text>{submitting ? t('comment.loading') : t('comment.submit_comment')}</Text>
                                         </View>
-                                        <View 
+                                        <View
                                             className='cancel-btn-small'
                                             onClick={cancelReply}
                                         >
-                                            <Text>{t('cancel')}</Text>
+                                            <Text>{t('comment.cancel')}</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -235,7 +240,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             {/* 加载中提示 */}
                             {isLoading(comment) && (
                                 <View className='loading-children'>
-                                    <Text>⏳ {t('loading')}</Text>
+                                    <XIcon name='carbon:time' size={16} className='loading-icon' />
+                                    <Text> {t('comment.loading')}</Text>
                                 </View>
                             )}
                             {/* 子评论列表 */}

@@ -4,6 +4,7 @@ import {View, Text} from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import {AppEmpty} from '@/components/ui';
 import {useCategoryStore} from '@/store/slices/category/hooks';
+import XIcon from '@/plugins/xicon';
 
 import CategoryList from '@/components/category/CategoryList';
 import PostListWithPagination from '@/components/post/PostList';
@@ -82,7 +83,7 @@ export default function CategoryDetailPage() {
           )}
           <View className={styles['category-stats']}>
             <View className={styles['stat-item']}>
-              <Text>📄</Text>
+              <XIcon name='carbon:document' size={20} />
               <Text>{categoryStore.detail?.postCount || 0} {t('page.posts.articles')}</Text>
             </View>
           </View>

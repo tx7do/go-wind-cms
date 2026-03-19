@@ -139,31 +139,31 @@ export default function PostDetailPage() {
         return;
       }
 
-      const headings = contentEl.querySelectorAll('h2, h3');
-      const toc: TocItem[] = [];
+      // 等待 RichText 渲染完成
+      setTimeout(() => {
+        const headings = contentEl.querySelectorAll('h2, h3');
+        const toc: TocItem[] = [];
 
-      console.log('[TOC] Found headings:', headings.length);
+        console.log('[TOC] Found headings:', headings.length);
 
-      headings.forEach((heading, index) => {
-        const level = heading.tagName === 'H2' ? 2 : 3;
-        // 保证 id 唯一，使用 tagName + index
-        const id = `${heading.tagName.toLowerCase()}-${index}`;
-        if (!heading.id) heading.setAttribute('id', id);
+        headings.forEach((heading, index) => {
+          const level = heading.tagName === 'H2' ? 2 : 3;
+          // 保证 id 唯一，使用 tagName + index
+          const id = `${heading.tagName.toLowerCase()}-${index}`;
+          if (!heading.id) heading.setAttribute('id', id);
 
-        toc.push({
-          id,
-          level,
-          text: heading.textContent || '',
-          element: heading
+          toc.push({
+            id,
+            level,
+            text: heading.textContent || '',
+            element: heading
+          });
         });
-      });
 
-      setTableOfContents(toc);
-      console.log('[TOC] Generated:', toc.length, 'items');
-
-      // 页面加载时检查 URL hash，自动滚动到对应位置
-      // TODO: Taro 中使用 pageScrollTo API
-    }, 100); // 等待内容完全渲染
+        setTableOfContents(toc);
+        console.log('[TOC] Generated:', toc.length, 'items');
+      }, 100);
+    }, 200); // 等待内容完全渲染
 
     return () => clearTimeout(timeoutId);
   }, [displayContent]); // 依赖计算后的内容
@@ -181,34 +181,37 @@ export default function PostDetailPage() {
     setTimeout(() => {
       if (!contentRef.current) return;
 
-      const contentEl = contentRef.current;
-      const headings = contentEl.querySelectorAll('h2, h3');
-      const toc: TocItem[] = [];
+      // 等待 RichText 渲染
+      setTimeout(() => {
+        const contentEl = contentRef.current;
+        const headings = contentEl.querySelectorAll('h2, h3');
+        const toc: TocItem[] = [];
 
-      console.log('[GenerateTOC] Found headings:', headings.length);
+        console.log('[GenerateTOC] Found headings:', headings.length);
 
-      headings.forEach((heading, index) => {
-        const level = heading.tagName === 'H2' ? 2 : 3;
-        // 保证 id 唯一，使用 tagName + index
-        const id = `${heading.tagName.toLowerCase()}-${index}`;
+        headings.forEach((heading, index) => {
+          const level = heading.tagName === 'H2' ? 2 : 3;
+          // 保证 id 唯一，使用 tagName + index
+          const id = `${heading.tagName.toLowerCase()}-${index}`;
 
-        // 确保 ID 存在
-        if (!heading.id) {
-          heading.setAttribute('id', id);
-          console.log(`[GenerateTOC] Set ID "${id}" on ${heading.tagName}:`, heading.textContent);
-        }
+          // 确保 ID 存在
+          if (!heading.id) {
+            heading.setAttribute('id', id);
+            console.log(`[GenerateTOC] Set ID "${id}" on ${heading.tagName}:`, heading.textContent);
+          }
 
-        toc.push({
-          id,
-          level,
-          text: heading.textContent || '',
-          element: heading
+          toc.push({
+            id,
+            level,
+            text: heading.textContent || '',
+            element: heading
+          });
         });
-      });
 
-      setTableOfContents(toc);
-      console.log('[GenerateTOC] Generated TOC:', toc);
-    }, 500);
+        setTableOfContents(toc);
+        console.log('[GenerateTOC] Generated TOC:', toc);
+      }, 100);
+    }, 300);
   }, []);
 
   // 防抖函数
@@ -357,7 +360,7 @@ export default function PostDetailPage() {
       {/* Back Navigation */}
       <View className={styles['back-navigation']}>
         <View onClick={handleBack} className={styles['back-btn']} aria-label={t('page.post_detail.back')}>
-          <Text>← </Text>
+          <XIcon name='carbon:arrow-left' size={18} />
           <Text>{t('page.post_detail.back')}</Text>
         </View>
       </View>
@@ -379,14 +382,14 @@ export default function PostDetailPage() {
               <View className={styles['toc-container']}>
                 <View className={styles['toc-header']}>
                   <Text className={styles['toc-title']}>
-                    <Text>📑</Text>
+                    <XIcon name='carbon:list' size={20} />
                     <Text>{t('page.post_detail.table_of_contents')}</Text>
                   </Text>
                   <View
                     onClick={() => setIsTocExpanded(false)}
                     className={styles['toc-collapse-btn']}
                   >
-                    <Text>◀</Text>
+                    <XIcon name='carbon:chevron-left' size={20} />
                   </View>
                 </View>
                 <View className={styles['toc-list']}>
@@ -410,9 +413,9 @@ export default function PostDetailPage() {
           {tableOfContents.length > 0 && !isTocExpanded && (
             <View className={styles['toc-expand-trigger']}>
               <View onClick={() => setIsTocExpanded(true)}>
-                <Text>📑 </Text>
+                <XIcon name='carbon:list' size={20} />
                 <Text>{t('page.post_detail.table_of_contents')}</Text>
-                <Text> ▶</Text>
+                <XIcon name='carbon:chevron-right' size={20} />
               </View>
             </View>
           )}
@@ -423,19 +426,27 @@ export default function PostDetailPage() {
               <Text className={styles['post-title']}>{displayTitle}</Text>
               <View className={styles['post-meta']}>
                 <View className={styles['meta-item']}>
-                  <Text>👤 </Text>
+                  <View className={styles['meta-icon']}>
+                    <XIcon name='carbon:user' size={16} />
+                  </View>
                   <Text>{post.authorName}</Text>
                 </View>
                 <View className={styles['meta-item']}>
-                  <Text>📅 </Text>
+                  <View className={styles['meta-icon']}>
+                    <XIcon name='carbon:calendar' size={16} />
+                  </View>
                   <Text>{formatDate(post.createdAt)}</Text>
                 </View>
                 <View className={styles['meta-item']}>
-                  <Text>👁️ </Text>
+                  <View className={styles['meta-icon']}>
+                    <XIcon name='carbon:view' size={16} />
+                  </View>
                   <Text>{post.visits || 0}</Text>
                 </View>
                 <View className={styles['meta-item']}>
-                  <Text>👍 </Text>
+                  <View className={styles['meta-icon']}>
+                    <XIcon name='carbon:thumb-up' size={16} />
+                  </View>
                   <Text>{post.likes || 0}</Text>
                 </View>
               </View>
@@ -454,21 +465,21 @@ export default function PostDetailPage() {
                   className={`${styles['action-btn']} ${isLiked ? styles['liked'] : ''}`}
                   aria-label={t('page.post_detail.likes')}
                 >
-                  <Text>{isLiked ? '👍' : '👎'}</Text>
+                  <XIcon name={isLiked ? 'carbon:thumb-up' : 'carbon:thumb-up-outline'} size={20} />
                 </View>
                 <View
                   onClick={handleBookmark}
                   className={`${styles['action-btn']} ${isBookmarked ? styles['bookmarked'] : ''}`}
                   aria-label={t('page.post_detail.bookmark')}
                 >
-                  <Text>{isBookmarked ? '🔖' : '📑'}</Text>
+                  <XIcon name={isBookmarked ? 'carbon:bookmark' : 'carbon:bookmark-outline'} size={20} />
                 </View>
                 <View
                   onClick={handleShare}
                   className={styles['action-btn']}
                   aria-label={t('page.post_detail.share')}
                 >
-                  <Text>📤</Text>
+                  <XIcon name='carbon:share' size={20} />
                 </View>
               </View>
             </View>
@@ -488,7 +499,7 @@ export default function PostDetailPage() {
       <View className={styles['related-section']}>
         <View className={styles['section-header']}>
           <Text className={styles['section-title']}>
-            <Text>📚 </Text>
+            <XIcon name='carbon:document' size={24} />
             <Text>{t('page.post_detail.related_posts')}</Text>
           </Text>
         </View>

@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {View, Text} from '@tarojs/components';
 import Taro from '@tarojs/taro';
 
+import XIcon from '@/plugins/xicon';
+
 import './index.scss';
 
 export interface BackToTopProps {
@@ -71,7 +73,7 @@ const BackToTop: React.FC<BackToTopProps> = ({
             onClick={scrollToTop}
             aria-label='Back to top'
         >
-            <Text className='icon'>↑</Text>
+            <XIcon name='carbon:arrow-up' size={20} className='icon' />
         </View>
     );
 };

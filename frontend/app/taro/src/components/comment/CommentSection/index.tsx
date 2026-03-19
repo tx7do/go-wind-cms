@@ -8,6 +8,7 @@ import type {
   commentservicev1_Comment,
   commentservicev1_Comment_ContentType, commentservicev1_ListCommentResponse,
 } from '@/api/generated/app/service/v1';
+import XIcon from '@/plugins/xicon';
 
 import CommentTree from '../CommentTree';
 
@@ -30,7 +31,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                                                          contentType,
                                                          onUpdateComments
                                                        }) => {
-  const {t} = useTranslation('comment');
+  const {t} = useTranslation();
   const commentStore = useCommentStore();
 
   // 状态
@@ -114,21 +115,21 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   // 提交评论
   async function handleSubmitComment() {
     if (!newComment.content.trim()) {
-      alert(t('empty_content'));
+      alert(t('comment.empty_content'));
       return;
     }
     if (!newComment.authorName.trim()) {
-      alert(t('invalid_nickname'));
+      alert(t('comment.invalid_nickname'));
       return;
     }
     if (!newComment.authorEmail.trim()) {
-      alert(t('invalid_email'));
+      alert(t('comment.invalid_email'));
       return;
     }
     // 邮箱格式验证
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newComment.authorEmail)) {
-      alert(t('invalid_email'));
+      alert(t('comment.invalid_email'));
       return;
     }
     if (!objectId || submitting) return;
@@ -143,13 +144,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         status: 'STATUS_PENDING',
       });
 
-      alert(t('comment_submitted'));
+      alert(t('comment.comment_submitted'));
       setNewComment({content: '', authorName: '', authorEmail: ''});
       setCurrentPage(1);
       await loadComments(true);
     } catch (error) {
       console.error('Submit comment failed:', error);
-      alert(t('submit_comment_failed'));
+      alert(t('comment.submit_comment_failed'));
     } finally {
       setSubmitting(false);
     }
@@ -158,7 +159,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   // 处理回复
   async function handleReply(comment: commentservicev1_Comment, content: string) {
     if (!content.trim()) {
-      alert(t('empty_content'));
+      alert(t('comment.empty_content'));
       return;
     }
 
@@ -176,12 +177,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         status: 'STATUS_PENDING',
       });
 
-      alert(t('comment_posted'));
+      alert(t('comment.comment_posted'));
       setCurrentPage(1);
       await loadComments(true);
     } catch (error) {
       console.error('Submit reply failed:', error);
-      alert(t('submit_comment_failed'));
+      alert(t('comment.submit_comment_failed'));
     } finally {
       setSubmitting(false);
     }
@@ -223,15 +224,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     <View className='comments-section'>
       <View className='section-header'>
         <Text className='section-title'>
-          💬 {t('comments_count', {count: displayComments.length})}
+          <XIcon name='carbon:chat' size={20} />
+          <Text> {t('comment.comments_count', {count: displayComments.length})}</Text>
         </Text>
       </View>
 
       {/* Comment Form */}
       <View className='comment-form'>
         <View className='form-header'>
-          <View className='form-icon'>✏️</View>
-          <Text className='form-title'>{t('write_comment')}</Text>
+          <View className='form-icon'>
+            <XIcon name='carbon:edit' size={20} />
+          </View>
+          <Text className='form-title'>{t('comment.write_comment')}</Text>
         </View>
         <View className='comment-form-wrapper'>
           <View className='form-row'>
@@ -239,7 +243,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               <Input
                 value={newComment.authorName}
                 onInput={(e) => setNewComment({...newComment, authorName: e.detail.value})}
-                placeholder={t('nickname') + ' *'}
+                placeholder={t('comment.nickname') + ' *'}
                 className='input-field'
                 disabled={submitting}
               />
@@ -248,7 +252,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               <Input
                 value={newComment.authorEmail}
                 onInput={(e) => setNewComment({...newComment, authorEmail: e.detail.value})}
-                placeholder={t('email') + ' *'}
+                placeholder={t('comment.email') + ' *'}
                 className='input-field'
                 disabled={submitting}
               />
@@ -258,7 +262,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             <Textarea
               value={newComment.content}
               onInput={(e) => setNewComment({...newComment, content: e.detail.value})}
-              placeholder={t('write_comment')}
+              placeholder={t('comment.write_comment')}
               className='textarea-field'
               disabled={submitting}
               maxlength={1000}
@@ -272,10 +276,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               className={`submit-btn ${submitting ? 'disabled' : ''}`}
               onClick={handleSubmitComment}
             >
-              <Text>{submitting ? t('submitting') : t('submit_comment')}</Text>
+              <Text>{submitting ? t('comment.submitting') : t('comment.submit_comment')}</Text>
             </View>
             <View className='form-tip'>
-              <Text>ℹ️ {t('fill_form_info')}</Text>
+              <XIcon name='carbon:information' size={16} />
+              <Text> {t('comment.fill_form_info')}</Text>
             </View>
           </View>
         </View>
@@ -297,7 +302,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 className='load-more-btn'
                 onClick={loadMoreComments}
               >
-                <Text>{loadingMore ? t('loading') : t('load_more')}</Text>
+                <Text>{loadingMore ? t('comment.loading') : t('comment.load_more')}</Text>
               </View>
             </View>
           )}
@@ -305,13 +310,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
           {/* 没有更多提示 */}
           {!hasMore && hasComments && (
             <View className='no-more-text'>
-              <Text>{t('no_more')}</Text>
+              <Text>{t('comment.no_more')}</Text>
             </View>
           )}
         </View>
       ) : (
         <AppEmpty
-          description={t('no_comments')}
+          description={t('comment.no_comments')}
           inContainer
         />
       )}

@@ -4,6 +4,7 @@ import {View, Text, Image} from '@tarojs/components';
 
 import {useCategoryStore} from '@/store/slices/category/hooks';
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
+import XIcon from '@/plugins/xicon';
 
 import './index.scss';
 
@@ -45,9 +46,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         <Text className='category-title'>{categoryStore.getCategoryName(category, t)}</Text>
         <Text className='category-description'>{categoryStore.getCategoryDescription(category)}</Text>
         <View className='category-card-meta'>
-          <Text className='meta-icon'>
-            📄
-          </Text>
+          <XIcon name='carbon:document' size={16} className='meta-icon' />
           <Text className='meta-text'>
             {category.postCount || 0} {t('categories.articles_count')}
           </Text>

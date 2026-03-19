@@ -2,6 +2,7 @@ import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
+import XIcon from '@/plugins/xicon';
 
 import './index.scss';
 
@@ -44,13 +45,13 @@ export default function Footer() {
     };
 
     const socialLinks: SocialItem[] = [
-        {key: 'twitter', name: 'Twitter', icon: '🐦'},
-        {key: 'facebook', name: 'Facebook', icon: '📘'},
-        {key: 'instagram', name: 'Instagram', icon: '📷'},
-        {key: 'telegram', name: 'Telegram', icon: '✈️'},
-        {key: 'wechat', name: 'WeChat', icon: '💬'},
-        {key: 'weibo', name: 'Weibo', icon: '🌐'},
-        {key: 'qq', name: 'QQ', icon: '🐧'},
+        {key: 'twitter', name: 'Twitter', icon: 'carbon:logo-twitter'},
+        {key: 'facebook', name: 'Facebook', icon: 'carbon:logo-facebook'},
+        {key: 'instagram', name: 'Instagram', icon: 'carbon:logo-instagram'},
+        {key: 'telegram', name: 'Telegram', icon: 'carbon:send-alt'},
+        {key: 'wechat', name: 'WeChat', icon: 'carbon:chat'},
+        {key: 'weibo', name: 'Weibo', icon: 'carbon:logo-weibo'},
+        {key: 'qq', name: 'QQ', icon: 'carbon:chat-bot'},
     ];
 
     const handleFooterLinkClick = (key: FooterLinkKey) => {
@@ -88,7 +89,7 @@ export default function Footer() {
                                 aria-label={social.name}
                                 onClick={() => handleSocialClick(social.name)}
                             >
-                                <Text>{social.icon}</Text>
+                                <XIcon name={social.icon} size={20} />
                             </View>
                         ))}
                     </View>

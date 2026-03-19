@@ -1,6 +1,6 @@
 {
   "comments": "Comments",
-  "comments_count": "Comments ({count})",
+  "comments_count": "Comments ({{count}})",
   "no_comments": "No comments",
   "comment_content": "Comment Content",
   "write_comment": "Write your comment...",
@@ -34,8 +34,8 @@
   "published_at": "Published at",
   "location": "Location",
   "reply_to": "Reply to",
-  "reply_count": "{count} replies",
-  "view_replies": "View {count} replies",
+  "reply_count": "{{count}} replies",
+  "view_replies": "View {{count}} replies",
   "hide_replies": "Hide replies",
   "edit_comment": "Edit comment",
   "delete_comment": "Delete comment",

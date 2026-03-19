@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 
 import {useI18nRouter} from '@/i18n/helpers';
+import XIcon from '@/plugins/xicon';
 
 import AccountRegisterPage from './components/AccountRegisterPage';
 import EmailRegisterPage from './components/EmailRegisterPage';
@@ -53,19 +54,19 @@ export default function RegisterPage() {
 
         <View className='benefits-list'>
           <View className='benefit-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='benefit-icon' />
             <Text>{t('login.feature_projects')}</Text>
           </View>
           <View className='benefit-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='benefit-icon' />
             <Text>{t('login.feature_isolation')}</Text>
           </View>
           <View className='benefit-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='benefit-icon' />
             <Text>{t('login.feature_permissions')}</Text>
           </View>
           <View className='benefit-item'>
-            <Text>✓</Text>
+            <XIcon name='carbon:checkmark' size={20} className='benefit-icon' />
             <Text>{t('login.feature_analytics')}</Text>
           </View>
         </View>

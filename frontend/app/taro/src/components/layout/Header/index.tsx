@@ -6,6 +6,7 @@ import {useI18n} from '@/i18n';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {useThemeStore, useThemeMode} from '@/store/core/theme/hooks';
 import {ThemeMode} from "@/store/types";
+import XIcon from '@/plugins/xicon';
 
 import TopNavbar from '../TopNavbar';
 
@@ -58,13 +59,13 @@ export default function Header() {
       {
         key: 'homepage',
         label: menuT('homepage'),
-        icon: '🏠',
+        icon: 'carbon:home',
         onClick: handleClickUserHomepage
       },
       {
         key: 'profile',
         label: menuT('my_profile'),
-        icon: '👤',
+        icon: 'carbon:user',
         onClick: handleClickSettings
       },
       {
@@ -73,7 +74,7 @@ export default function Header() {
       {
         key: 'logout',
         label: menuT('logout'),
-        icon: '🚪',
+        icon: 'carbon:logout',
         danger: true,
         onClick: handleClickLogout
       },
@@ -82,13 +83,13 @@ export default function Header() {
       {
         key: 'login',
         label: navbarT('user.login'),
-        icon: '👤',
+        icon: 'carbon:login',
         onClick: handleClickLogin
       },
       {
         key: 'register',
         label: navbarT('user.register'),
-        icon: '👤',
+        icon: 'carbon:register',
         onClick: handleClickRegister
       }
     ];
@@ -111,27 +112,27 @@ export default function Header() {
     {
       key: 'dark',
       label: navbarT('theme.dark'),
-      icon: '🌙',
+      icon: 'carbon:moon',
       onClick: () => themeStore.setMode('dark')
     },
     {
       key: 'light',
       label: navbarT('theme.light'),
-      icon: '☀️',
+      icon: 'carbon:sun',
       onClick: () => themeStore.setMode('light')
     },
     {
       key: 'system',
       label: navbarT('theme.system'),
-      icon: '🖥️',
+      icon: 'carbon:ibm-watsonx-orchestrate',
       onClick: () => themeStore.setMode('system')
     },
   ];
 
   const themeIconMap: Record<ThemeMode, string> = {
-    dark: '🌙',
-    light: '☀️',
-    system: '🖥️'
+    dark: 'carbon:moon',
+    light: 'carbon:sun',
+    system: 'carbon:ibm-watsonx-orchestrate'
   };
 
   const validMode: ThemeMode = (currentMode && ['dark', 'light', 'system'].includes(currentMode))
@@ -145,7 +146,7 @@ export default function Header() {
     setMounted(true);
   }, []);
 
-  const displayIcon = mounted ? iconValue : '🖥️';
+  const displayIcon = mounted ? iconValue : 'carbon:ibm-watsonx-orchestrate';
 
   return (
     <View className='fixed-top'>
@@ -177,7 +178,7 @@ export default function Header() {
                   className='icon-btn'
                   onClick={() => console.log('User menu clicked')}
                 >
-                  <Text>👤</Text>
+                  <XIcon name='carbon:user' size={20} />
                 </View>
                 {/* TODO: 实现 Dropdown 组件 */}
               </View>
@@ -186,7 +187,7 @@ export default function Header() {
                   className='icon-btn'
                   onClick={() => console.log('Language clicked')}
                 >
-                  <Text className='lang-icon'>🌐</Text>
+                  <XIcon name='carbon:language' size={20} className='lang-icon' />
                 </View>
               </View>
               <View className='dropdown-wrapper'>
@@ -194,7 +195,7 @@ export default function Header() {
                   className='icon-btn'
                   onClick={() => console.log('Theme clicked')}
                 >
-                  <Text className='theme-icon'>{displayIcon}</Text>
+                  <XIcon name={displayIcon} size={20} className='theme-icon' />
                 </View>
               </View>
             </View>

@@ -2,6 +2,7 @@ import {useState, useMemo} from 'react';
 import {View, Text, Picker} from '@tarojs/components';
 
 import {useI18n} from '@/i18n';
+import XIcon from '@/plugins/xicon';
 
 import './index.scss';
 
@@ -49,7 +50,7 @@ export default function ControlPanel() {
         onChange={(e) => handleSelectLanguage(languageOptions[e.detail.value].key)}
       >
         <View className='language-select'>
-          <Text>🌐</Text>
+          <XIcon name='carbon:language' size={20} />
           <Text>{languageOptions.find(opt => opt.key === (typeof window !== 'undefined' && document.documentElement.lang) || 'zh-CN')?.label}</Text>
         </View>
       </Picker>
@@ -58,7 +59,7 @@ export default function ControlPanel() {
         onClick={handleToggleTheme}
         aria-label='Toggle theme'
       >
-        <Text>{isDark ? '☀️' : '🌙'}</Text>
+        <XIcon name={isDark ? 'carbon:sun' : 'carbon:moon'} size={20} />
       </View>
     </View>
   );
