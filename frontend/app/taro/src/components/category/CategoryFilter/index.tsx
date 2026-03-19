@@ -32,7 +32,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   const [internalCategories, setInternalCategories] = useState<contentservicev1_Category[]>([]);
   const [loading, setLoading] = useState(false);
-  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+  const [expandedIds] = useState<Set<number>>(new Set());
 
   const loadCategories = async () => {
     setLoading(true);
@@ -91,17 +91,17 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     return !!(category && category.children && category.children.length > 0);
   };
 
-  const toggleExpanded = (nodeId: number) => {
-    setExpandedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(nodeId)) {
-        next.delete(nodeId);
-      } else {
-        next.add(nodeId);
-      }
-      return next;
-    });
-  };
+  // const toggleExpanded = (nodeId: number) => {
+  //   setExpandedIds(prev => {
+  //     const next = new Set(prev);
+  //     if (next.has(nodeId)) {
+  //       next.delete(nodeId);
+  //     } else {
+  //       next.add(nodeId);
+  //     }
+  //     return next;
+  //   });
+  // };
 
   if (loading && autoLoad) {
     return <View className='loading'>{t('page.common.loading')}</View>;

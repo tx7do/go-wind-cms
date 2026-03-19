@@ -1,8 +1,11 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
-import PostList from '@/components/post/PostList';
 import {useMemo} from 'react';
+
+import PostList from '@/components/post/PostList';
+
 import './index.scss';
+import {useI18nRouter} from "@/i18n/helpers";
 
 export default function FeaturedPostsSection() {
   const {t} = useTranslation();
@@ -10,14 +13,16 @@ export default function FeaturedPostsSection() {
   const queryParams = useMemo(() => ({status: 'POST_STATUS_PUBLISHED', isFeatured: true}), []);
   const orderBy = useMemo(() => ['-sortOrder'], []);
 
+  const router = useI18nRouter();
+
   return (
     <View className='featured-section scroll-reveal'>
       <View className='section-header'>
         <Text className='section-title'>
-           ⭐ {t('page.home.featured_posts')}
+          ⭐ {t('page.home.featured_posts')}
         </Text>
-        <View className='view-all-btn' onClick={() => console.log('Navigate to /post')}>
-           <Text>{t('page.home.view_all')} →</Text>
+        <View className='view-all-btn' onClick={() => router.push('/post')}>
+          <Text>{t('page.home.view_all')} →</Text>
         </View>
       </View>
       <View className='featured-grid'>

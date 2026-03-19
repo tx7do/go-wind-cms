@@ -8,6 +8,7 @@ import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} f
 import HomeCategoryCard from '../HomeCategoryCard';
 
 import './index.scss';
+import {useI18nRouter} from "@/i18n/helpers";
 
 interface CategoryListSectionProps {
   skeletonCount?: number;
@@ -65,7 +66,7 @@ export default function CategoryListSection(props: CategoryListSectionProps) {
     loadCategories();
   }, [loadCategories]);
 
-  const router = {push: (path: string) => console.log('Navigate to:', path)}; // TODO: 使用真实 router
+  const router = useI18nRouter();
 
   const handleViewCategoryDetail = (id: number) => {
     router.push(`/category/${id}`);

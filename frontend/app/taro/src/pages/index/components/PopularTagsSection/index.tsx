@@ -6,6 +6,7 @@ import {useTagStore} from '@/store/slices/tag/hooks';
 import type {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
 
 import './index.scss';
+import {useI18nRouter} from "@/i18n/helpers";
 
 interface TagItem {
   id: number;
@@ -57,7 +58,7 @@ export default function PopularTagsSection() {
     loadPopularTags();
   }, []); // 空依赖数组，只在首次渲染时执行
 
-  const router = {push: (path: string) => console.log('Navigate to:', path)}; // TODO: 使用真实 router
+  const router = useI18nRouter();
 
   const handleViewTag = (tag: TagItem) => {
     router.push(`/tag/${tag.id}`);
@@ -71,7 +72,7 @@ export default function PopularTagsSection() {
         </Text>
         <View
           className='view-all-btn'
-          onClick={() => console.log('Navigate to /tag')}
+          onClick={() => router.push('/tag')}
         >
           <Text>{t('page.tags.view_all')} →</Text>
         </View>

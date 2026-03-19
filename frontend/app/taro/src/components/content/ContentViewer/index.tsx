@@ -25,7 +25,7 @@ const parseMarkdown = (md: string): string => {
   let html = md;
 
   // 处理 URL 后跟中文描述的情况
-  html = html.replace(/(https?:\/\/[^\s，]+)(，[^ \n]+)/g, (match, url, desc) => {
+  html = html.replace(/(https?:\/\/[^\s，]+)(，[^ \n]+)/g, (_match, url, desc) => {
     return `[${url}](${url})${desc}`;
   });
 
@@ -44,7 +44,7 @@ const parseMarkdown = (md: string): string => {
   html = html.replace(/~~(.*?)~~/gim, '<del>$1</del>');
 
   // 代码块
-  html = html.replace(/```([\s\S]*?)```/gim, (match, code) => {
+  html = html.replace(/```([\s\S]*?)```/gim, (_match, code) => {
     return `<pre class="code-block" data-lang="plaintext"><code>${escapeHtml(code)}</code></pre>`;
   });
 
@@ -55,25 +55,25 @@ const parseMarkdown = (md: string): string => {
   html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
 
   // 列表
-  html = html.replace(/^[\*\-] (.*$)/gim, '<li>$1</li>');
+  html = html.replace(/^[*\-] (.*$)/gim, '<li>$1</li>');
   html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
 
   // 链接
-  html = html.replace(/\[(.*?)\]\((.*?)\)/gim, (match, text, href) => {
+  html = html.replace(/\[(.*?)]\((.*?)\)/gim, (_match, text, href) => {
     const isExternal = href.startsWith('http') || href.startsWith('//');
     return `<a href="${href}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="markdown-link">${text}</a>`;
   });
 
   // 图片
-  html = html.replace(/!\[(.*?)\]\((.*?)\)/gim, (match, alt, src) => {
+  html = html.replace(/!\[(.*?)]\((.*?)\)/gim, (_match, alt, src) => {
     const figcaption = alt ? `<figcaption>${alt}</figcaption>` : '';
     return `<figure class="markdown-image"><img src="${src}" alt="${alt}" class="md-img" />${figcaption}</figure>`;
   });
 
   // 表格 - 简化处理
-  html = html.replace(/\|(.+)\|/gim, (match, content) => {
-    const cells = content.split('|').map(cell => cell.trim());
-    return `<tr>${cells.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
+  html = html.replace(/\|(.+)\|/gim, (_match, content) => {
+    const cells = content.split('|').map((cell: string) => cell.trim());
+    return `<tr>${cells.map((cell: any) => `<td>${cell}</td>`).join('')}</tr>`;
   });
 
   // 段落

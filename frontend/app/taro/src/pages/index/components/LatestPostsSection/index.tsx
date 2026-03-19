@@ -2,11 +2,14 @@ import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
 import PostList from '@/components/post/PostList';
+import {useI18nRouter} from "@/i18n/helpers";
 
 import './index.scss';
 
 export default function LatestPostsSection() {
   const {t} = useTranslation();
+
+  const router = useI18nRouter();
 
   return (
     <View className='latest-section scroll-reveal'>
@@ -14,7 +17,7 @@ export default function LatestPostsSection() {
         <Text className='section-title'>
           📄 {t('page.home.latest_posts')}
         </Text>
-        <View className='view-all-btn' onClick={() => console.log('Navigate to /post')}>
+        <View className='view-all-btn' onClick={() => router.push('/post')}>
           <Text>{t('page.home.view_all')} →</Text>
         </View>
       </View>
