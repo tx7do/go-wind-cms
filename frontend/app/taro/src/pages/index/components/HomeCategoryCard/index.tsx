@@ -4,6 +4,7 @@ import {View, Text} from '@tarojs/components';
 
 import {useCategoryStore} from '@/store/slices/category/hooks';
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';
+import XIcon from '@/plugins/xicon';
 
 import './index.scss';
 
@@ -30,7 +31,7 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick}) 
       <View className='home-category-card-content'>
         <View className='home-category-card-header'>
           <View className='home-category-icon'>
-            <Text className='icon-placeholder'>{category.icon || '📁'}</Text>
+            <XIcon name={category.icon || 'carbon:folder'} size={32} className='icon-placeholder' />
           </View>
           <View className='home-category-info'>
             <Text className='category-name'>{categoryStore.getCategoryName(category)}</Text>
