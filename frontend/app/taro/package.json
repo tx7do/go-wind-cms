@@ -45,7 +45,8 @@
   "author": "",
   "dependencies": {
     "@babel/runtime": "^7.29.2",
-    "@iconify/react": "^6.0.2",
+    "@iconify/iconify": "^3.1.1",
+    "@nutui/nutui-taro": "^4.3.14",
     "@react-native/metro-config": "^0.73.5",
     "@reduxjs/toolkit": "^2.11.2",
     "@tarojs/components": "4.1.11",
@@ -73,6 +74,7 @@
     "defu": "^6.1.4",
     "expo": "~50.0.21",
     "i18next": "^25.8.18",
+    "iconify-icon": "^3.0.2",
     "nprogress": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -86,6 +88,7 @@
     "@babel/preset-react": "^7.28.5",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@iconify/json": "^2.2.451",
     "@tarojs/cli": "4.1.11",
     "@tarojs/plugin-generator": "4.1.11",
     "@tarojs/vite-runner": "4.1.11",
@@ -93,6 +96,7 @@
     "@types/minimatch": "^5.1.2",
     "@types/nprogress": "^0.2.3",
     "@types/react": "^18.3.28",
+    "@unocss/preset-icons": "^66.6.7",
     "@vitejs/plugin-react": "^4.7.0",
     "babel-preset-taro": "4.1.11",
     "eslint": "^8.57.1",
@@ -108,6 +112,8 @@
     "stylelint-config-standard": "^38.0.0",
     "terser": "^5.46.1",
     "typescript": "^5.9.3",
+    "unocss": "^66.6.7",
+    "unocss-preset-weapp": "^66.0.2",
     "vite": "^4.5.14"
   }
 }
