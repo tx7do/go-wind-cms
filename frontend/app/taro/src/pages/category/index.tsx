@@ -49,8 +49,8 @@ export default function CategoryListPage() {
       {/* Hero Section */}
       <View className="hero-section">
         <View className="hero-content">
-          <Text>{t('page.categories.categories')}</Text>
-          <Text>{t('page.categories.browse_all')}</Text>
+          <Text className="hero-title">内容分类</Text>
+          <Text className="hero-subtitle">浏览所有内容分类</Text>
         </View>
       </View>
 
