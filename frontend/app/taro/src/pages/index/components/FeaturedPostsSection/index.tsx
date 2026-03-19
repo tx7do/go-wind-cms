@@ -1,6 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 import {useMemo} from 'react';
+import XIcon from '@/plugins/xicon';
 
 import PostList from '@/components/post/PostList';
 
@@ -19,7 +20,7 @@ export default function FeaturedPostsSection() {
     <View className='featured-section scroll-reveal'>
       <View className='section-header'>
         <Text className='section-title'>
-          ⭐ {t('page.home.featured_posts')}
+          <XIcon name='carbon:star' size={24} /> {t('page.home.featured_posts')}
         </Text>
         <View className='view-all-btn' onClick={() => router.push('/post')}>
           <Text>{t('page.home.view_all')} →</Text>
@@ -32,7 +33,7 @@ export default function FeaturedPostsSection() {
           orderBy={orderBy}
           page={1}
           pageSize={3}
-          columns={1}
+          columns={3}
           showSkeleton={true}
           from='home'
           showPagination={false}

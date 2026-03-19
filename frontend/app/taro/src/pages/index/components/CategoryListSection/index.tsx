@@ -1,6 +1,7 @@
 import {useState, useEffect, useCallback, useMemo, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
+import XIcon from '@/plugins/xicon';
 
 import {useCategoryStore} from '@/store/slices/category/hooks';
 import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
@@ -30,7 +31,7 @@ export default function CategoryListSection(props: CategoryListSectionProps) {
     fieldMask: fieldMaskProp,
     showHeader = true
   } = props;
-  const {t} = useTranslation(); // 使用 t('page.home.xxx') 作为 key
+  const {t} = useTranslation();
   const categoryStore = useCategoryStore();
   // 用 useRef 缓存 listCategory 方法，确保依赖稳定
   const listCategoryRef = useRef(categoryStore.listCategory);
@@ -82,7 +83,7 @@ export default function CategoryListSection(props: CategoryListSectionProps) {
       {showHeader && (
         <View className='section-header'>
           <Text className='section-title'>
-            📁 {t('page.home.categories')}
+            <XIcon name='carbon:folder' size={24} /> {t('page.home.categories')}
           </Text>
           <View
             className='view-all-btn'
@@ -95,13 +96,13 @@ export default function CategoryListSection(props: CategoryListSectionProps) {
 
       {/* Loading Skeleton */}
       {loading ? (
-        <View className='categories-grid mobile-grid'>
+        <View className='categories-grid'>
           {Array.from({length: skeletonCount}).map((_, i) => (
             <View key={i} className='category-card-skeleton'/>
           ))}
         </View>
       ) : (
-        <View className='categories-grid mobile-grid'>
+        <View className='categories-grid'>
           {categories.map((category) => (
             <HomeCategoryCard
               key={category.id}

@@ -1,6 +1,7 @@
 import {useState, useEffect, useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
+import XIcon from '@/plugins/xicon';
 
 import {useTagStore} from '@/store/slices/tag/hooks';
 import type {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
@@ -68,7 +69,7 @@ export default function PopularTagsSection() {
     <View className='popular-section'>
       <View className='section-header'>
         <Text className='section-title'>
-          🔥 {t('page.tags.popular_tags')}
+          <XIcon name='carbon:fire' size={24} /> {t('page.tags.popular_tags')}
         </Text>
         <View
           className='view-all-btn'
@@ -92,7 +93,6 @@ export default function PopularTagsSection() {
               <View
                 key={tag.id}
                 className='tag-item'
-                style={{'--tag-color': tag.color} as any}
                 onClick={() => handleViewTag(tag)}
               >
                 <Text className='tag-label'>{tag.name}</Text>

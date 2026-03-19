@@ -1,5 +1,6 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
+import XIcon from '@/plugins/xicon';
 
 import PostList from '@/components/post/PostList';
 import {useI18nRouter} from "@/i18n/helpers";
@@ -15,7 +16,7 @@ export default function LatestPostsSection() {
     <View className='latest-section scroll-reveal'>
       <View className='section-header'>
         <Text className='section-title'>
-          📄 {t('page.home.latest_posts')}
+          <XIcon name='carbon:document' size={24} /> {t('page.home.latest_posts')}
         </Text>
         <View className='view-all-btn' onClick={() => router.push('/post')}>
           <Text>{t('page.home.view_all')} →</Text>
@@ -28,7 +29,7 @@ export default function LatestPostsSection() {
           orderBy={['-createdAt']}
           page={1}
           pageSize={6}
-          columns={1}
+          columns={3}
           showSkeleton={true}
           from='home'
           showPagination={false}

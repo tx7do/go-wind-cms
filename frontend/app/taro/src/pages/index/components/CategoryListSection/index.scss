@@ -1,52 +1,65 @@
 .categories-section {
-  padding: 0;
+  padding: 40px 16px;
+  background: #f8fafc;
+  
+  @media (min-width: 768px) {
+    padding: 60px 24px;
+  }
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
   
   @media (min-width: 768px) {
-    margin-bottom: 32px;
+    margin-bottom: 48px;
   }
 
   .section-title {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
-    color: var(--color-text-primary, #222);
+    color: #8b5cf6;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     
     @media (min-width: 768px) {
-      font-size: 24px;
+      font-size: 28px;
+      color: #8b5cf6;
+      gap: 12px;
     }
   }
 
   .view-all-btn {
-    padding: 6px 12px;
-    background: rgba(99, 102, 241, 0.1);
-    color: var(--color-brand, #6366f1);
-    border-radius: 6px;
-    font-size: 13px;
+    padding: 8px 16px;
+    background: transparent;
+    color: #8b5cf6;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    border: 1px solid transparent;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
     
     &:active {
-      opacity: 0.6;
+      background: rgba(139, 92, 246, 0.1);
+      transform: scale(0.98);
+      border-color: rgba(139, 92, 246, 0.4);
     }
 
     @media (min-width: 768px) {
-      padding: 8px 16px;
+      padding: 10px 20px;
       font-size: 15px;
       
       &:hover {
-        background: var(--color-brand, #6366f1);
-        color: #ffffff;
+        background: rgba(139, 92, 246, 0.08);
+        color: #7c3aed;
+        border-color: rgba(139, 92, 246, 0.3);
       }
     }
   }
@@ -55,29 +68,28 @@
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 16px;
   
   @media (min-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
   }
   
   @media (min-width: 1200px) {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
+    gap: 32px;
   }
 }
 
 .category-card-skeleton {
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  background: var(--color-surface, #fff);
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  aspect-ratio: 4/3;
+  background: #ffffff;
+  padding: 24px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  aspect-ratio: auto;
+  height: 160px;
   
   @media (min-width: 768px) {
-    aspect-ratio: auto;
-    height: 140px;
+    height: 180px;
   }
 }
