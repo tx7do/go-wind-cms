@@ -2,15 +2,11 @@
 // https://docs.taro.zone/docs/next/babel-config
 module.exports = {
   presets: [
-    [
-      'taro',
-      {
-        framework: 'react',
-        ts: true,
-        compiler: 'vite',
-        useBuiltIns: false
-      }
-    ],
-    'module:metro-react-native-babel-preset'
+    ['taro', {
+      framework: 'react',
+      ts: true,
+      compiler: 'vite',
+      useBuiltIns: false
+    }]
   ]
 }
