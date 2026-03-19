@@ -1,68 +1,85 @@
 .features-section {
-  padding: var(--space-12) 0;
-  background: var(--color-bg);
+  padding: 48px 0;
+  background: var(--color-bg, #f8fafc);
+  
+  @media (max-width: 768px) {
+    padding: 32px 0;
+  }
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: var(--space-8);
+  margin-bottom: 32px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 24px;
+  }
 
   .section-title {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--color-text-primary);
+    color: var(--color-text-primary, #222);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
   }
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-6);
+  gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 .feature-card {
-  padding: var(--space-6);
-  background: var(--color-surface);
+  padding: 24px;
+  background: var(--color-surface, #fff);
   border-radius: 12px;
   text-align: center;
   transition: all 0.3s;
-  box-shadow: 0 2px 8px var(--color-card-shadow);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--color-hover-shadow);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 }
 
 .feature-icon {
   font-size: 3rem;
-  margin-bottom: var(--space-4);
+  margin-bottom: 16px;
 }
 
 .feature-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
+  color: var(--color-text-primary, #222);
+  margin-bottom: 8px;
   display: block;
 }
 
 .feature-description {
   font-size: 0.95rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #666);
   line-height: 1.6;
   display: block;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .features-grid {
-    grid-template-columns: 1fr;
+  .features-section {
+    padding: 32px 0;
   }
 }

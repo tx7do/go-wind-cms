@@ -1,8 +1,6 @@
 import {useEffect} from "react";
 import {View} from '@tarojs/components';
 
-import styles from './page.scss';
-
 import HeroSection from './components/HeroSection';
 import FeaturedPostsSection from './components/FeaturedPostsSection';
 import CategoryListSection from './components/CategoryListSection';
@@ -19,13 +17,23 @@ export default function Home() {
   }, []);
 
   return (
-    <View className={styles.page}>
+    <View className='page'>
       <HeroSection/>
-      <FeaturedPostsSection/>
-      <CategoryListSection/>
-      <PopularTagsSection/>
-      <LatestPostsSection/>
-      <FeaturesSection/>
+      <View className='section-container'>
+        <FeaturedPostsSection/>
+      </View>
+      <View className='section-container'>
+        <CategoryListSection/>
+      </View>
+      <View className='section-container'>
+        <PopularTagsSection/>
+      </View>
+      <View className='section-container'>
+        <LatestPostsSection/>
+      </View>
+      <View className='section-container'>
+        <FeaturesSection/>
+      </View>
     </View>
   );
 }
