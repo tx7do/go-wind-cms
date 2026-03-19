@@ -1,7 +1,11 @@
+import Taro from '@tarojs/taro';
+
 import {RequestClient} from "@/transport/rest/request-client";
 import {HttpResponse} from "@/transport/rest/types";
-import {authenticateResponseInterceptor, errorMessageResponseInterceptor} from "@/transport/rest/preset-interceptors";
-import Taro from '@tarojs/taro';
+import {
+  authenticateResponseInterceptor,
+  errorMessageResponseInterceptor
+} from "@/transport/rest/preset-interceptors";
 
 import store from "@/store";
 
@@ -90,6 +94,8 @@ function getAccessToken() {
 function getLocale() {
   return store.getState().language.locale || 'zh-CN';
 }
+
+console.log('[API_BASE_URL]', API_BASE_URL, process.env)
 
 export const requestClient = createRequestClient(
   API_BASE_URL,

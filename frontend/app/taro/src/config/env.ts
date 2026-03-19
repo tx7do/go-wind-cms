@@ -25,7 +25,7 @@ export const env = {
     /**
      * API 基础地址
      */
-    apiBaseUrl: typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'http://localhost:6700',
+    apiBaseUrl: typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : '',
 
     /**
      * 是否启用 Mock 数据

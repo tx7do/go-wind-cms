@@ -23,14 +23,14 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     ],
     defineConstants: {
       // 注入环境变量到客户端代码
-      API_BASE_URL: JSON.stringify(process.env.TARO_API_BASE_URL || 'http://localhost:6700'),
-      APP_TITLE: JSON.stringify(process.env.TARO_APP_TITLE || 'GoWind Content Hub'),
+      API_BASE_URL: JSON.stringify(process.env.TARO_APP_API_BASE_URL || ''),
+      APP_TITLE: JSON.stringify(process.env.TARO_APP_TITLE || ''),
       ENABLE_MOCK: JSON.stringify(process.env.TARO_ENABLE_MOCK || 'false'),
       DEFAULT_LOCALE: JSON.stringify(process.env.TARO_DEFAULT_LOCALE || 'zh-CN'),
-      TOKEN_KEY: JSON.stringify(process.env.TARO_TOKEN_KEY || 'access_token'),
-      REFRESH_TOKEN_KEY: JSON.stringify(process.env.TARO_REFRESH_TOKEN_KEY || 'refresh_token'),
+      TOKEN_KEY: JSON.stringify(process.env.TARO_TOKEN_KEY || ''),
+      REFRESH_TOKEN_KEY: JSON.stringify(process.env.TARO_REFRESH_TOKEN_KEY || ''),
       APP_NAMESPACE: JSON.stringify(process.env.TARO_APP_NAMESPACE || 'gowind-cms-app'),
-      AES_KEY: JSON.stringify(process.env.TARO_AES_KEY || ''),
+      AES_KEY: JSON.stringify(process.env.TARO_APP_AES_KEY || ''),
     },
     copy: {
       patterns: [],
