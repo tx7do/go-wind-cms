@@ -102,38 +102,43 @@
   padding: var(--space-4) 0;
   margin-top: var(--space-4);
   border-top: 1px solid var(--color-border);
-}
-
-.pagination-simple {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.page-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  background: var(--color-brand);
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.3s;
-  user-select: none;
-
-  &:hover:not(.disabled) {
-    opacity: 0.9;
-    transform: translateY(-2px);
+  
+  /* NutUI Pagination 样式覆盖 */
+  :deep(.nut-pagination) {
+    justify-content: center;
+    
+    .nut-pagination__item {
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      color: var(--color-text-primary);
+      
+      &.nut-pagination__item--active {
+        background: var(--color-brand);
+        border-color: var(--color-brand);
+        color: #fff;
+      }
+      
+      &:hover:not(.nut-pagination__item--active):not(.nut-pagination__item--disabled) {
+        opacity: 0.9;
+      }
+    }
+    
+    .nut-pagination__prev,
+    .nut-pagination__next {
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      color: var(--color-text-primary);
+      
+      &:hover:not(.nut-pagination__item--disabled) {
+        opacity: 0.9;
+      }
+      
+      &.nut-pagination__item--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
   }
-
-  &.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.page-info {
-  padding: 8px 16px;
-  color: var(--color-text-primary);
-  font-weight: 600;
 }
 
 /* Responsive */
@@ -141,5 +146,17 @@
   .posts-grid {
     grid-template-columns: 1fr !important;
     gap: var(--space-3);
+  }
+  
+  .pagination-wrapper {
+    padding: var(--space-3) 0;
+    
+    :deep(.nut-pagination) {
+      .nut-pagination__item {
+        min-width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+    }
   }
 }

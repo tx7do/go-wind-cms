@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
 import {AppEmpty} from '@/components/ui';
+import Pagination from '@/components/Pagination';
 
 import {usePostStore} from '@/store/slices/post/hooks';
 import type {
@@ -108,11 +109,11 @@ const PostList: React.FC<PostListProps> = ({
     setCurrentPage(newPage);
   };
 
-  // 处理每页条数变化
-  const handlePageSizeChange = (size: number, newPage: number) => {
-    setCurrentPageSize(size);
-    setCurrentPage(newPage);
-  };
+  // // 处理每页条数变化
+  // const handlePageSizeChange = (size: number, newPage: number) => {
+  //   setCurrentPageSize(size);
+  //   setCurrentPage(newPage);
+  // };
 
   return (
     <View className='post-list-container'>
@@ -164,22 +165,13 @@ const PostList: React.FC<PostListProps> = ({
 
           {showPagination && total > currentPageSize && (
             <View className='pagination-wrapper'>
-              {/* TODO: 实现 Taro 兼容的分页组件 */}
-              <View className='pagination-simple'>
-                <Text
-                  className={`page-btn ${currentPage === 1 ? 'disabled' : ''}`}
-                  onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                >
-                  上一页
-                </Text>
-                <Text className='page-info'>{currentPage}</Text>
-                <Text
-                  className={`page-btn ${currentPage * currentPageSize >= total ? 'disabled' : ''}`}
-                  onClick={() => currentPage * currentPageSize < total && handlePageChange(currentPage + 1)}
-                >
-                  下一页
-                </Text>
-              </View>
+              <Pagination
+                current={currentPage}
+                total={total}
+                pageSize={currentPageSize}
+                onChange={handlePageChange}
+                showSizeChanger
+              />
             </View>
           )}
         </>

@@ -64,7 +64,7 @@ export default defineConfig<'vite'>(async (merge, {}) => {
       router: {
         mode: 'browser', // 可选：'hash' | 'browser' | 'multi'
         customRoutes: { // 自定义路由映射
-          'pages/index': '/',
+          'pages/index/index': '/',
           'pages/about/index': '/about',
           'pages/contact/index': '/contact',
           'pages/disclaimer/index': '/disclaimer',
