@@ -15,10 +15,7 @@ import {useAccessStore} from "@/store/core/access/hooks";
 import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
 
 export default function Header() {
-  const {t: navbarT} = useTranslation('navbar');
-  const {t: appT} = useTranslation('app');
-  const {t: menuT} = useTranslation('menu');
-  const brandTitle = appT('title');
+  const {t} = useTranslation();
 
   const themeStore = useThemeStore();
   const currentMode = useThemeMode();
@@ -58,13 +55,13 @@ export default function Header() {
     ? [
       {
         key: 'homepage',
-        label: menuT('homepage'),
+        label: t('menu.homepage'),
         icon: 'carbon:home',
         onClick: handleClickUserHomepage
       },
       {
         key: 'profile',
-        label: menuT('my_profile'),
+        label: t('menu.my_profile'),
         icon: 'carbon:user',
         onClick: handleClickSettings
       },
@@ -73,7 +70,7 @@ export default function Header() {
       },
       {
         key: 'logout',
-        label: menuT('logout'),
+        label: t('menu.logout'),
         icon: 'carbon:logout',
         danger: true,
         onClick: handleClickLogout
@@ -82,14 +79,14 @@ export default function Header() {
     : [
       {
         key: 'login',
-        label: navbarT('user.login'),
-        icon: 'carbon:login',
+        label: t('navbar.user.login'),
+        icon: 'carbon:user',
         onClick: handleClickLogin
       },
       {
         key: 'register',
-        label: navbarT('user.register'),
-        icon: 'carbon:register',
+        label: t('navbar.user.register'),
+        icon: 'carbon:user',
         onClick: handleClickRegister
       }
     ];
@@ -111,19 +108,19 @@ export default function Header() {
   const themeMenuItems = [
     {
       key: 'dark',
-      label: navbarT('theme.dark'),
+      label: t('navbar.theme.dark'),
       icon: 'carbon:moon',
       onClick: () => themeStore.setMode('dark')
     },
     {
       key: 'light',
-      label: navbarT('theme.light'),
+      label: t('navbar.theme.light'),
       icon: 'carbon:sun',
       onClick: () => themeStore.setMode('light')
     },
     {
       key: 'system',
-      label: navbarT('theme.system'),
+      label: t('navbar.theme.system'),
       icon: 'carbon:ibm-watsonx-orchestrate',
       onClick: () => themeStore.setMode('system')
     },
@@ -156,14 +153,17 @@ export default function Header() {
           <View className='logo-nav-section'>
             <View
               className='logo-section'
+              role='button'
+              tabIndex={0}
+              aria-label='Go to homepage'
               onClick={handleClickLogo}
             >
               <Image
-                src='/logo.png'
+                src='/assets/images/logo.png'
                 style={{width: 55, height: 55}}
                 className='logo'
               />
-              <Text className='site-name'>{brandTitle}</Text>
+              <Text className='site-name'>{t('app.title')}</Text>
             </View>
             {/* 主导航菜单 */}
             <View className='navbar-menu-wrap'>
@@ -176,26 +176,32 @@ export default function Header() {
               <View className='dropdown-wrapper'>
                 <View
                   className='icon-btn'
+                  role='button'
+                  aria-label='User menu'
                   onClick={() => console.log('User menu clicked')}
                 >
-                  <XIcon name='carbon:user' size={20} />
+                  <XIcon name='carbon:user' size={20}/>
                 </View>
                 {/* TODO: 实现 Dropdown 组件 */}
               </View>
               <View className='dropdown-wrapper'>
                 <View
                   className='icon-btn'
+                  role='button'
+                  aria-label='Language'
                   onClick={() => console.log('Language clicked')}
                 >
-                  <XIcon name='carbon:language' size={20} className='lang-icon' />
+                  <XIcon name='carbon:language' size={20} className='lang-icon'/>
                 </View>
               </View>
               <View className='dropdown-wrapper'>
                 <View
                   className='icon-btn'
+                  role='button'
+                  aria-label='Toggle theme'
                   onClick={() => console.log('Theme clicked')}
                 >
-                  <XIcon name={displayIcon} size={20} className='theme-icon' />
+                  <XIcon name={displayIcon} size={20} className='theme-icon'/>
                 </View>
               </View>
             </View>

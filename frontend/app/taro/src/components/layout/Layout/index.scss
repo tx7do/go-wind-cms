@@ -1,0 +1,19 @@
+.global-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  // 确保内容区域在 Header 下方
+  // Header 高度通常为 70px 左右
+  padding-top: 70px;
+}
+
+// 为 Header 固定高度设置 CSS 变量
+:root {
+  --header-height: 70px;
+}

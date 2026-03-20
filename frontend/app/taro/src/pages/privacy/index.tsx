@@ -4,24 +4,24 @@ import {View, Text} from '@tarojs/components';
 import './privacy.scss';
 
 export default function PrivacyPage() {
-  const {t} = useTranslation('page.legal.privacy');
+  const {t} = useTranslation();
 
   return (
     <View className="info-page">
       {/* Hero Section */}
       <View className="hero">
         <View className="hero-content">
-          <Text className="hero-title">{t('title')}</Text>
-          <Text className="hero-subtitle">{t('description')}</Text>
+          <Text className="hero-title">{t('page.legal.privacy.title')}</Text>
+          <Text className="hero-subtitle">{t('page.legal.privacy.description')}</Text>
         </View>
       </View>
 
       {/* Content Section */}
       <View className="info-card">
         <View className="list">
-          <Text>{t('item_1')}</Text>
-          <Text>{t('item_2')}</Text>
-          <Text>{t('item_3')}</Text>
+          <Text>{t('page.legal.privacy.item_1')}</Text>
+          <Text>{t('page.legal.privacy.item_2')}</Text>
+          <Text>{t('page.legal.privacy.item_3')}</Text>
         </View>
       </View>
     </View>

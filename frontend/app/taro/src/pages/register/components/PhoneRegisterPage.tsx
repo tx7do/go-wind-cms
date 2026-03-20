@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 import '../register.scss';
 
 export default function PhoneRegisterPage() {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
 
   const [phone, setPhone] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -60,14 +60,14 @@ export default function PhoneRegisterPage() {
       {/* Phone Number Group */}
       <div className="form-group">
         <label htmlFor="register-phone-number">
-          {t('register.phone')}
+          {t('authentication.register.phone')}
         </label>
         <input
           id="register-phone-number"
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder={t('register.input_phone')}
+          placeholder={t('authentication.register.input_phone')}
           autoComplete="tel"
           className="input-field"
         />
@@ -76,7 +76,7 @@ export default function PhoneRegisterPage() {
       {/* Verification Code Group */}
       <div className="form-group">
         <label htmlFor="register-phone-code">
-          {t('register.code')}
+          {t('authentication.register.code')}
         </label>
         <div className="code-input-row">
           <input
@@ -84,7 +84,7 @@ export default function PhoneRegisterPage() {
             type="text"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
-            placeholder={t('register.input_code')}
+            placeholder={t('authentication.register.input_code')}
             maxLength={6}
             autoComplete="one-time-code"
             className="input-field"
@@ -95,7 +95,7 @@ export default function PhoneRegisterPage() {
             className={`send-code-btn ${codeSent ? 'disabled' : ''}`}
             onClick={handleButtonSendVerifyCode}
           >
-            {codeSent ? `${codeCountdown}s` : t('register.send_code')}
+            {codeSent ? `${codeCountdown}s` : t('authentication.register.send_code')}
           </button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function PhoneRegisterPage() {
         className="register-button"
         onClick={handleButtonRegisterOrLogin}
       >
-        {t('register.register_or_login')}
+        {t('authentication.register.register_or_login')}
       </button>
     </div>
   );

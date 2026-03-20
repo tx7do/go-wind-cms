@@ -5,7 +5,7 @@ import XIcon from '@/plugins/xicon';
 import '../register.scss';
 
 export default function OtherRegisterPage() {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
 
   const handleButtonGoogleRegister = () => {
     // TODO: 实现 Google 登录逻辑
@@ -26,7 +26,7 @@ export default function OtherRegisterPage() {
         onClick={handleButtonGoogleRegister}
       >
         <XIcon name="logos:google-icon" size={18}/>
-        {t('login.social_google')}
+        {t('authentication.login.social_google')}
       </button>
 
       <button
@@ -35,7 +35,7 @@ export default function OtherRegisterPage() {
         onClick={handleButtonGithubRegister}
       >
         <XIcon name="logos:github-icon" size={18}/>
-        {t('login.social_github')}
+        {t('authentication.login.social_github')}
       </button>
     </div>
   );

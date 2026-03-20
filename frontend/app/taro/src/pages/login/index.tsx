@@ -15,7 +15,7 @@ import OtherLoginPage from './components/OtherLoginPage';
 import './index.scss';
 
 export default function LoginPage() {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
   const [activeTab, setActiveTab] = useState<'account' | 'email' | 'phone' | 'other'>('account');
 
   const router = useI18nRouter();
@@ -29,26 +29,26 @@ export default function LoginPage() {
       <View className='login-left'>
         <View className='brand'>
           <Image src='/logo.png' className='brand-logo'/>
-          <Text className='brand-title'>{t('login.brand_title')}</Text>
-          <Text className='brand-subtitle'>{t('login.brand_subtitle')}</Text>
+          <Text className='brand-title'>{t('authentication.login.brand_title')}</Text>
+          <Text className='brand-subtitle'>{t('authentication.login.brand_subtitle')}</Text>
         </View>
 
         <View className='features-list'>
           <View className='feature-item'>
-            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
-            <Text>{t('login.feature_projects')}</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon'/>
+            <Text>{t('authentication.login.feature_projects')}</Text>
           </View>
           <View className='feature-item'>
-            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
-            <Text>{t('login.feature_isolation')}</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon'/>
+            <Text>{t('authentication.login.feature_isolation')}</Text>
           </View>
           <View className='feature-item'>
-            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
-            <Text>{t('login.feature_permissions')}</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon'/>
+            <Text>{t('authentication.login.feature_permissions')}</Text>
           </View>
           <View className='feature-item'>
-            <XIcon name='carbon:checkmark' size={20} className='feature-icon' />
-            <Text>{t('login.feature_analytics')}</Text>
+            <XIcon name='carbon:checkmark' size={20} className='feature-icon'/>
+            <Text>{t('authentication.login.feature_analytics')}</Text>
           </View>
         </View>
       </View>
@@ -57,8 +57,8 @@ export default function LoginPage() {
       <View className='login-right'>
         <View className='login-card'>
           <View className='card-header'>
-            <Text className='card-title'>{t('login.title')}</Text>
-            <Text className='card-subtitle'>{t('login.login_with')}</Text>
+            <Text className='card-title'>{t('authentication.login.title')}</Text>
+            <Text className='card-subtitle'>{t('authentication.login.login_with')}</Text>
           </View>
 
           {/* Tab 切换 */}
@@ -67,25 +67,25 @@ export default function LoginPage() {
               className={`tab ${activeTab === 'account' ? 'active' : ''}`}
               onClick={() => setActiveTab('account')}
             >
-              {t('login.tab_account')}
+              {t('authentication.login.tab_account')}
             </button>
             <button
               className={`tab ${activeTab === 'email' ? 'active' : ''}`}
               onClick={() => setActiveTab('email')}
             >
-              {t('login.tab_email')}
+              {t('authentication.login.tab_email')}
             </button>
             <button
               className={`tab ${activeTab === 'phone' ? 'active' : ''}`}
               onClick={() => setActiveTab('phone')}
             >
-              {t('login.tab_phone')}
+              {t('authentication.login.tab_phone')}
             </button>
             <button
               className={`tab ${activeTab === 'other' ? 'active' : ''}`}
               onClick={() => setActiveTab('other')}
             >
-              {t('login.tab_other')}
+              {t('authentication.login.tab_other')}
             </button>
           </View>
 
@@ -100,9 +100,9 @@ export default function LoginPage() {
           {/* 注册链接 */}
           <View className='register-section'>
             <Text>
-              {t('login.no_account')}
+              {t('authentication.login.no_account')}
               <button className='text-btn' onClick={() => router.push('/register')}>
-                {t('login.register_now')}
+                {t('authentication.login.register_now')}
               </button>
             </Text>
           </View>
@@ -110,20 +110,20 @@ export default function LoginPage() {
           {/* 返回首页 */}
           <View className='back-home'>
             <button className='text-btn' onClick={() => router.push('/')}>
-              ← {t('login.back_home')}
+              ← {t('authentication.login.back_home')}
             </button>
           </View>
 
           {/* 服务条款 */}
           <View className='terms'>
             <Text>
-              {t('login.terms_prefix')}
+              {t('authentication.login.terms_prefix')}
               <button className='text-btn' onClick={() => router.push('/terms')}>
-                {t('login.terms_of_service')}
+                {t('authentication.login.terms_of_service')}
               </button>
-              {t('login.terms_and')}
+              {t('authentication.login.terms_and')}
               <button className='text-btn' onClick={() => router.push('/privacy')}>
-                {t('login.privacy_policy')}
+                {t('authentication.login.privacy_policy')}
               </button>
             </Text>
           </View>

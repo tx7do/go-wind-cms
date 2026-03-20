@@ -31,33 +31,33 @@ interface SettingsData {
 }
 
 export default function SettingsPage() {
-  const {t} = useTranslation('settings');
+  const {t} = useTranslation();
 
   const [activeMenu, setActiveMenu] = useState<'account' | 'message' | 'preference'>('account');
 
   // 菜单项
   const menuItems: MenuItem[] = useMemo(() => [
-    {key: 'account', icon: 'carbon:user', label: t('menu.account')},
-    {key: 'message', icon: 'carbon:email', label: t('menu.message')},
-    {key: 'preference', icon: 'carbon:settings', label: t('menu.preference')}
+    {key: 'account', icon: 'carbon:user', label: t('settings.menu.account')},
+    {key: 'message', icon: 'carbon:email', label: t('settings.menu.message')},
+    {key: 'preference', icon: 'carbon:settings', label: t('settings.menu.preference')}
   ], [t]);
 
   // 账号设置数据
   const accountSettings: SettingsData = useMemo(() => ({
-    title: t('account.title'),
-    subtitle: t('account.subtitle'),
+    title: t('settings.account.title'),
+    subtitle: t('settings.account.subtitle'),
     sections: [
       {
-        title: t('account.section_title'),
-        description: t('account.section_desc'),
+        title: t('settings.account.section_title'),
+        description: t('settings.account.section_desc'),
         items: [
-          {label: t('account.password'), status: t('account.password_not_set'), type: 'button'},
-          {label: t('account.bind_phone'), status: t('account.password_not_set'), type: 'button'},
-          {label: t('account.bind_email'), status: t('account.email_not_bound'), type: 'button'}
+          {label: t('settings.account.password'), status: t('settings.account.password_not_set'), type: 'button'},
+          {label: t('settings.account.bind_phone'), status: t('settings.account.password_not_set'), type: 'button'},
+          {label: t('settings.account.bind_email'), status: t('settings.account.email_not_bound'), type: 'button'}
         ]
       },
       {
-        title: t('account.third_party_title'),
+        title: t('settings.account.third_party_title'),
         items: []
       }
     ]
@@ -65,23 +65,23 @@ export default function SettingsPage() {
 
   // 消息设置数据
   const messageSettings: SettingsData = useMemo(() => ({
-    title: t('message.title'),
-    subtitle: t('message.subtitle'),
+    title: t('settings.message.title'),
+    subtitle: t('settings.message.subtitle'),
     sections: [
       {
-        title: t('message.email_notifications'),
-        description: t('message.email_notifications_desc'),
+        title: t('settings.message.email_notifications'),
+        description: t('settings.message.email_notifications_desc'),
         items: [
-          {label: t('message.system_messages'), status: t('message.enabled'), type: 'toggle'},
-          {label: t('message.comment_notifications'), status: t('message.enabled'), type: 'toggle'},
-          {label: t('message.activity_updates'), status: t('message.enabled'), type: 'toggle'},
-          {label: t('message.recommended_content'), status: t('message.enabled'), type: 'toggle'}
+          {label: t('settings.message.system_messages'), status: t('settings.message.enabled'), type: 'toggle'},
+          {label: t('settings.message.comment_notifications'), status: t('settings.message.enabled'), type: 'toggle'},
+          {label: t('settings.message.activity_updates'), status: t('settings.message.enabled'), type: 'toggle'},
+          {label: t('settings.message.recommended_content'), status: t('settings.message.enabled'), type: 'toggle'}
         ]
       },
       {
-        title: t('message.email_frequency'),
+        title: t('settings.message.email_frequency'),
         items: [
-          {label: t('message.frequency_desc'), type: 'select'}
+          {label: t('settings.message.frequency_desc'), type: 'select'}
         ]
       }
     ]
@@ -89,30 +89,30 @@ export default function SettingsPage() {
 
   // 偏好设置数据
   const preferenceSettings: SettingsData = useMemo(() => ({
-    title: t('preference.title'),
-    subtitle: t('preference.subtitle'),
+    title: t('settings.preference.title'),
+    subtitle: t('settings.preference.subtitle'),
     sections: [
       {
-        title: t('preference.theme_settings'),
-        description: t('preference.theme_desc'),
+        title: t('settings.preference.theme_settings'),
+        description: t('settings.preference.theme_desc'),
         items: [
-          {label: t('preference.theme'), type: 'select'}
+          {label: t('settings.preference.theme'), type: 'select'}
         ]
       },
       {
-        title: t('preference.language_settings'),
-        description: t('preference.language_desc'),
+        title: t('settings.preference.language_settings'),
+        description: t('settings.preference.language_desc'),
         items: [
-          {label: t('preference.language'), type: 'select'}
+          {label: t('settings.preference.language'), type: 'select'}
         ]
       },
       {
-        title: t('preference.content_preferences'),
-        description: t('preference.content_desc'),
+        title: t('settings.preference.content_preferences'),
+        description: t('settings.preference.content_desc'),
         items: [
-          {label: t('preference.hide_sensitive_content'), type: 'toggle'},
-          {label: t('preference.compact_mode'), type: 'toggle'},
-          {label: t('preference.show_recommendations'), type: 'toggle'}
+          {label: t('settings.preference.hide_sensitive_content'), type: 'toggle'},
+          {label: t('settings.preference.compact_mode'), type: 'toggle'},
+          {label: t('settings.preference.show_recommendations'), type: 'toggle'}
         ]
       }
     ]
@@ -170,14 +170,14 @@ export default function SettingsPage() {
               )}
 
               {/* 账户特殊处理 - 第三方账号 */}
-              {section.title === t('account.third_party_title') && (
+              {section.title === t('settings.account.third_party_title') && (
                 <div className="third-party-list">
                   <div className="third-party-item">
                     <div className={`platform-icon wechat`}>
                       <XIcon name="fa:wechat" size={24} color="white"/>
                     </div>
                     <Text className="platform-link">
-                      {t('account.bind_wechat')}
+                      {t('settings.account.bind_wechat')}
                     </Text>
                   </div>
                   <div className="third-party-item">
@@ -185,7 +185,7 @@ export default function SettingsPage() {
                       <XIcon name="fa:weibo" size={24} color="white"/>
                     </div>
                     <Text className="platform-link">
-                      {t('account.bind_weibo')}
+                      {t('settings.account.bind_weibo')}
                     </Text>
                   </div>
                   <div className="third-party-item">
@@ -193,14 +193,14 @@ export default function SettingsPage() {
                       <XIcon name="fa:qq" size={24} color="white"/>
                     </div>
                     <Text className="platform-link">
-                      {t('account.bind_qq')}
+                      {t('settings.account.bind_qq')}
                     </Text>
                   </div>
                 </div>
               )}
 
               {/* 设置项列表 */}
-              {section.title !== t('account.third_party_title') && section.items.map((item, itemIndex) => (
+              {section.title !== t('settings.account.third_party_title') && section.items.map((item, itemIndex) => (
                 <View key={itemIndex} className="setting-item">
                   <View className="setting-label">
                     <Text className="label-text">{item.label}</Text>
@@ -214,7 +214,7 @@ export default function SettingsPage() {
                     {/* 编辑按钮 */}
                     {item.type === 'button' && (
                       <View className="edit-btn">
-                        <Text>{t('account.edit')}</Text>
+                        <Text>{t('settings.account.edit')}</Text>
                       </View>
                     )}
 
@@ -241,19 +241,19 @@ export default function SettingsPage() {
         {/* 右侧帮助区 */}
         <View className="help-sidebar">
           <View className="help-section">
-            <Text className="help-title">{t('help.title')}</Text>
-            <Text className="help-subtitle">{t('help.account_password')}</Text>
+            <Text className="help-title">{t('settings.help.title')}</Text>
+            <Text className="help-subtitle">{t('settings.help.account_password')}</Text>
             <View className="help-list">
-              <Text>1. {t('help.q1')}</Text>
-              <Text>2. {t('help.q2')}</Text>
-              <Text>3. {t('help.q3')}</Text>
-              <Text>4. {t('help.q4')}</Text>
-              <Text>5. {t('help.q5')}</Text>
+              <Text>1. {t('settings.help.q1')}</Text>
+              <Text>2. {t('settings.help.q2')}</Text>
+              <Text>3. {t('settings.help.q3')}</Text>
+              <Text>4. {t('settings.help.q4')}</Text>
+              <Text>5. {t('settings.help.q5')}</Text>
             </View>
-            <Text className="help-subtitle">{t('help.other_issues')}</Text>
+            <Text className="help-subtitle">{t('settings.help.other_issues')}</Text>
             <View className="help-list">
-              <Text>6. <Text>{t('help.q6')} {t('help.q6_link')}</Text></Text>
-              <Text>7. <Text>{t('help.q7')} {t('help.q7_link')}</Text></Text>
+              <Text>6. <Text>{t('settings.help.q6')} {t('settings.help.q6_link')}</Text></Text>
+              <Text>7. <Text>{t('settings.help.q7')} {t('settings.help.q7_link')}</Text></Text>
             </View>
           </View>
         </View>

@@ -4,6 +4,7 @@ import {View, Text} from '@tarojs/components';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {useNavigationStore} from '@/store/slices/navigation/hooks';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
+import XIcon from '@/plugins/xicon';
 
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 
@@ -27,6 +28,34 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
   const [navigationItems, setNavigationItems] = useState<siteservicev1_NavigationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeKey, setActiveKey] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // 移动端菜单开关
+  const [expandedSubMenus, setExpandedSubMenus] = useState<Set<string>>(new Set()); // 展开的子菜单
+  const [submenuPosition, setSubmenuPosition] = useState<{top: number; left: number} | null>(null); // 子菜单位置
+
+  // 切换菜单显示
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // 切换子菜单展开/收起
+  const toggleSubMenu = (parentId: string, event: any) => {
+    const newExpanded = new Set(expandedSubMenus);
+    if (newExpanded.has(parentId)) {
+      newExpanded.delete(parentId);
+      setSubmenuPosition(null);
+    } else {
+      newExpanded.add(parentId);
+      // 计算子菜单位置
+      if (event && event.currentTarget) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setSubmenuPosition({
+          top: rect.bottom + window.scrollY + 8, // 在菜单项下方，留 8px 间隙
+          left: rect.left + window.scrollX, // 与菜单项左对齐
+        });
+      }
+    }
+    setExpandedSubMenus(newExpanded);
+  };
 
   // 加载导航数据
   useEffect(() => {
@@ -94,15 +123,31 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
   };
 
   // 处理菜单点击
-  const handleMenuClick = (item: siteservicev1_NavigationItem, key: string) => {
-    setActiveKey(key);
-    handleNavigate(item);
-    onClick?.(Number(key));
+  const handleMenuClick = (item: siteservicev1_NavigationItem, key: string, event?: any) => {
+    // 如果有子菜单，切换展开状态，不跳转
+    if (item.children && item.children.length > 0) {
+      toggleSubMenu(key, event);
+    } else {
+      setActiveKey(key);
+      handleNavigate(item);
+      onClick?.(Number(key));
+      setIsMenuOpen(false); // 移动端点击后关闭菜单
+    }
   };
 
   return (
     <View className='navbar-wrapper'>
-      <View className='navbar-content'>
+      {/* 移动端菜单按钮 */}
+      <View className='mobile-menu-toggle' onClick={toggleMenu}>
+        <View className={`hamburger ${isMenuOpen ? 'active' : ''}`}>
+          <View className='hamburger-line' />
+          <View className='hamburger-line' />
+          <View className='hamburger-line' />
+        </View>
+      </View>
+
+      {/* PC 端导航菜单 */}
+      <View className={`navbar-content ${isMenuOpen ? 'menu-open' : ''}`}>
         {/* 导航菜单 */}
         {isLoading ? (
           <View className='loading-state'>
@@ -115,22 +160,49 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                 {/* 一级菜单 */}
                 <View
                   className={`menu-item ${activeKey === item.id?.toString() ? 'active' : ''}`}
-                  onClick={() => handleMenuClick(item, item.id?.toString() || `nav-${index}`)}
+                  onClick={(event: any) => handleMenuClick(item, item.id?.toString() || `nav-${index}`, event)}
                 >
-                  {item.icon && <Text className='menu-icon'>{item.icon}</Text>}
+                  {item.icon && (
+                    <View className='menu-icon'>
+                      <XIcon name={`carbon:${item.icon}`} size={18} />
+                    </View>
+                  )}
                   <Text>{item.title}</Text>
+                  {/* 子菜单箭头指示器 */}
+                  {item.children && item.children.length > 0 && (
+                    <View className='submenu-arrow'>
+                      <XIcon 
+                        name={`carbon:chevron-${expandedSubMenus.has(item.id?.toString() || '') ? 'up' : 'down'}`} 
+                        size={16} 
+                      />
+                    </View>
+                  )}
                 </View>
 
                 {/* 子菜单 */}
                 {item.children && item.children.length > 0 && (
-                  <View className='submenu'>
+                  <View 
+                    className={`submenu ${expandedSubMenus.has(item.id?.toString() || '') ? 'submenu-open' : ''}`}
+                    style={
+                      submenuPosition && expandedSubMenus.has(item.id?.toString() || '')
+                        ? {
+                            top: `${submenuPosition.top}px`,
+                            left: `${submenuPosition.left}px`,
+                          }
+                        : undefined
+                    }
+                  >
                     {item.children.map((child, childIndex) => (
                       <View
                         key={child.id}
                         className='submenu-item'
                         onClick={() => handleMenuClick(child, child.id?.toString() || `nav-child-${childIndex}`)}
                       >
-                        {child.icon && <Text className='submenu-icon'>{child.icon}</Text>}
+                        {child.icon && (
+                          <View className='submenu-icon'>
+                            <XIcon name={`carbon:${child.icon}`} size={16} />
+                          </View>
+                        )}
                         <Text>{child.title}</Text>
                       </View>
                     ))}

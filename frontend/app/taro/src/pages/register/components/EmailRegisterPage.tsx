@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 import '../register.scss';
 
 export default function EmailRegisterPage() {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
 
   const [email, setEmail] = useState('');
   const [visibleEnter, setVisibleEnter] = useState(false);
@@ -30,19 +30,19 @@ export default function EmailRegisterPage() {
           {/* Email Input Group */}
           <div className="form-group">
             <label htmlFor="register-email-address">
-              {t('register.email')}
+              {t('authentication.register.email')}
             </label>
             <input
               id="register-email-address"
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={t('register.input_email')}
+              placeholder={t('authentication.register.input_email')}
               autoComplete="email"
               className={`input-field ${email && !isValidEmail() ? 'error' : ''}`}
             />
             {email && !isValidEmail() && (
-              <span className="error-hint">{t('register.invalid_email')}</span>
+              <span className="error-hint">{t('authentication.register.invalid_email')}</span>
             )}
           </div>
 
@@ -53,7 +53,7 @@ export default function EmailRegisterPage() {
             disabled={!isValidEmail()}
             onClick={handleButtonNext}
           >
-            {t('register.next_step')}
+            {t('authentication.register.next_step')}
           </button>
         </div>
       ) : (
@@ -64,7 +64,8 @@ export default function EmailRegisterPage() {
 }
 
 function EmailRegisterEnterCodePage({email}: { email: string }) {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
+
   const [code, setCode] = useState(Array(6).fill(''));
   const [isCodeComplete, setIsCodeComplete] = useState(false);
   const [codeSent, setCodeSent] = useState(true);
@@ -106,9 +107,9 @@ function EmailRegisterEnterCodePage({email}: { email: string }) {
     <div className="code-container">
       {/* Email Hint */}
       <div className="email-sent-info">
-        <p className="hint-title">{t('register.code_sent_title')}</p>
+        <p className="hint-title">{t('authentication.register.code_sent_title')}</p>
         <p className="email-display">{email}</p>
-        <p className="hint-subtitle">{t('register.code_sent_subtitle')}</p>
+        <p className="hint-subtitle">{t('authentication.register.code_sent_subtitle')}</p>
       </div>
 
       {/* Verification Code Input */}
@@ -136,7 +137,7 @@ function EmailRegisterEnterCodePage({email}: { email: string }) {
           disabled={codeSent}
           onClick={handleButtonResend}
         >
-          {codeSent ? `${codeCountdown}s ${t('register.resend_after')}` : t('register.resend')}
+          {codeSent ? `${codeCountdown}s ${t('authentication.register.resend_after')}` : t('authentication.register.resend')}
         </button>
       </div>
 
@@ -147,7 +148,7 @@ function EmailRegisterEnterCodePage({email}: { email: string }) {
         disabled={!isCodeComplete}
         onClick={handleButtonConfirm}
       >
-        {t('register.confirm')}
+        {t('authentication.register.confirm')}
       </button>
     </div>
   );

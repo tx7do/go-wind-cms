@@ -4,7 +4,8 @@ import {useTranslation} from 'react-i18next';
 import '../index.scss';
 
 export default function PhoneLoginPage() {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
+
   const [phone, setPhone] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [codeSent, setCodeSent] = useState(false);
@@ -35,20 +36,20 @@ export default function PhoneLoginPage() {
   return (
     <div className="login-form">
       <div className="form-group">
-        <label htmlFor="login-phone">{t('register.phone')}</label>
+        <label htmlFor="login-phone">{t('authentication.register.phone')}</label>
         <input
           id="login-phone"
           type="tel"
           className="input-field"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder={t('login.placeholder_phone')}
+          placeholder={t('authentication.login.placeholder_phone')}
           autoComplete="tel"
         />
       </div>
 
       <div className="form-group">
-        <label htmlFor="login-code">{t('register.code')}</label>
+        <label htmlFor="login-code">{t('authentication.register.code')}</label>
         <div className="code-input-row">
           <input
             id="login-code"
@@ -56,7 +57,7 @@ export default function PhoneLoginPage() {
             className="input-field"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
-            placeholder={t('login.placeholder_code')}
+            placeholder={t('authentication.login.placeholder_code')}
             maxLength={6}
             autoComplete="one-time-code"
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
@@ -66,13 +67,13 @@ export default function PhoneLoginPage() {
             onClick={handleSendCode}
             disabled={codeSent}
           >
-            {codeSent ? `${countdown}s` : t('register.send_code')}
+            {codeSent ? `${countdown}s` : t('authentication.register.send_code')}
           </button>
         </div>
       </div>
 
       <button className="login-button" onClick={handleLogin}>
-        {t('login.login')}
+        {t('authentication.login.login')}
       </button>
     </div>
   );

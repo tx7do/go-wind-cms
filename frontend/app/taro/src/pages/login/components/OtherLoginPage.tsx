@@ -5,7 +5,7 @@ import XIcon from '@/plugins/xicon';
 import '../index.scss';
 
 export default function OtherLoginPage() {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
 
   const handleGoogleLogin = () => {
     console.log('Google 登录');
@@ -19,12 +19,12 @@ export default function OtherLoginPage() {
     <div className="other-login">
       <button className="social-button" onClick={handleGithubLogin}>
         <XIcon name="mdi:github" size={20}/>
-        <span>{t('login.social_github')}</span>
+        <span>{t('authentication.login.social_github')}</span>
       </button>
 
       <button className="social-button" onClick={handleGoogleLogin}>
         <XIcon name="mdi:google" size={20}/>
-        <span>{t('login.social_google')}</span>
+        <span>{t('authentication.login.social_google')}</span>
       </button>
     </div>
   );

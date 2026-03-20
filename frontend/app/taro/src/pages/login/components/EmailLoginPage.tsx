@@ -6,7 +6,8 @@ import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
 import '../index.scss';
 
 export default function EmailLoginPage() {
-  const {t} = useTranslation('authentication');
+  const {t} = useTranslation();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -32,27 +33,27 @@ export default function EmailLoginPage() {
   return (
     <div className="login-form">
       <div className="form-group">
-        <label htmlFor="login-email">{t('register.email')}</label>
+        <label htmlFor="login-email">{t('authentication.register.email')}</label>
         <input
           id="login-email"
           type="email"
           className="input-field"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder={t('login.placeholder_email')}
+          placeholder={t('authentication.login.placeholder_email')}
           autoComplete="email"
         />
       </div>
 
       <div className="form-group">
-        <label htmlFor="login-password-email">{t('login.password')}</label>
+        <label htmlFor="login-password-email">{t('authentication.login.password')}</label>
         <input
           id="login-password-email"
           type="password"
           className="input-field"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder={t('login.placeholder_password')}
+          placeholder={t('authentication.login.placeholder_password')}
           autoComplete="current-password"
           onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
         />
@@ -65,15 +66,15 @@ export default function EmailLoginPage() {
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
           />
-          <span>{t('login.remember_me')}</span>
+          <span>{t('authentication.login.remember_me')}</span>
         </label>
         <button className="text-btn" onClick={handleForgotPassword}>
-          {t('login.forgot_password')}
+          {t('authentication.login.forgot_password')}
         </button>
       </div>
 
       <button className="login-button" onClick={handleLogin}>
-        {t('login.login')}
+        {t('authentication.login.login')}
       </button>
     </div>
   );
