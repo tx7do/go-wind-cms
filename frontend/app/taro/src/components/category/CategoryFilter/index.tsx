@@ -135,9 +135,9 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           <XIcon name={node.icon || 'carbon:folder'} size={24} className='category-icon' />
           <Text>{getCategoryName(node)}</Text>
           {hasChildNodes && treeMode && (
-            <XIcon 
-              name={isExpanded ? 'carbon:chevron-up' : 'carbon:chevron-down'} 
-              size={16} 
+            <XIcon
+              name={isExpanded ? 'carbon:chevron-up' : 'carbon:chevron-down'}
+              size={16}
               style={{marginLeft: 'auto', flexShrink: 0}}
             />
           )}
@@ -154,7 +154,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   };
 
   if (loading && autoLoad) {
-    return <View className='loading'>{t('page.common.loading')}</View>;
+    return <View className='loading'>{t('common.loading')}</View>;
   }
 
   return (

@@ -59,7 +59,7 @@ export default function CategoryListPage() {
         {/* Loading Skeleton - TODO: 实现 Taro 的加载骨架屏 */}
         {loading ? (
           <View className="categories-loading">
-            <Text>{t('page.common.loading')}</Text>
+            <Text>{t('common.loading')}</Text>
           </View>
         ) : (
           <>

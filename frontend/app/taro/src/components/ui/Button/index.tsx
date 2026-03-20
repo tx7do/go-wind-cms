@@ -32,7 +32,7 @@ export function Button({
             className={`taro-button taro-button--${type} taro-button--${size} ${disabled ? 'taro-button--disabled' : ''} ${loading ? 'taro-button--loading' : ''} ${className}`}
             onClick={handleClick}
         >
-            {loading && <Text className="taro-button__loading">{t('page.common.loading')}</Text>}
+            {loading && <Text className="taro-button__loading">{t('common.loading')}</Text>}
             <Text>{children}</Text>
         </View>
     );
