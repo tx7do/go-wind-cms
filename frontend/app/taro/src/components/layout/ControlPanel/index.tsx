@@ -1,5 +1,5 @@
 import {useState, useMemo} from 'react';
-import {View, Text, Picker} from '@tarojs/components';
+import {View, Picker} from '@tarojs/components';
 
 import {useI18n} from '@/i18n';
 import XIcon from '@/plugins/xicon';
@@ -51,7 +51,6 @@ export default function ControlPanel() {
       >
         <View className='language-select'>
           <XIcon name='carbon:language' size={20} />
-          <Text>{languageOptions.find(opt => opt.key === (typeof window !== 'undefined' && document.documentElement.lang) || 'zh-CN')?.label}</Text>
         </View>
       </Picker>
       <View

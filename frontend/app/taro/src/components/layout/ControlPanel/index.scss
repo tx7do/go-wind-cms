@@ -1,63 +1,142 @@
-.control-panel {
-    position: fixed;
-    bottom: var(--space-4);
-    right: var(--space-4);
-    z-index: 999;
-    display: flex;
-    gap: var(--space-2);
-    padding: var(--space-3);
-    background: var(--color-surface);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px var(--color-card-shadow);
-    border: 1px solid var(--color-border);
-}
+/* Control Panel Styles */
 
-.language-select {
+.control-panel {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  display: flex;
+  gap: 12px;
+  z-index: 100;
+  background: var(--color-surface);
+  padding: 10px 14px;
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--color-border);
+
+  &:hover {
+    background: var(--color-surface);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .language-select {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background: var(--color-bg);
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 0.9rem;
-    color: var(--color-text-primary);
 
     &:hover {
-        background: var(--color-brand-light);
+      border-color: var(--color-brand);
+      background: var(--color-surface);
     }
-}
+  }
 
-.control-btn {
+  .control-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    gap: 6px;
+    border-radius: 10px;
     background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
     cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1.2rem;
 
     &:hover {
-        background: var(--color-brand);
-        color: #ffffff;
-        transform: scale(1.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      border-color: var(--color-brand);
+      background: var(--color-surface);
     }
 
     &.theme-toggle.dark {
-        background: var(--color-brand);
-        color: #ffffff;
+      background: var(--color-brand);
+      color: #ffffff;
+      border-color: var(--color-brand);
+
+      &:hover {
+        background: var(--color-brand-dark);
+        border-color: var(--color-brand-dark);
+      }
     }
+  }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .control-panel {
-        bottom: var(--space-2);
-        right: var(--space-2);
-        padding: var(--space-2);
+/* Dark Mode Styles */
+html.dark .control-panel {
+  background: rgba(27, 31, 39, 0.95);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    background: rgba(27, 31, 39, 0.98);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .language-select,
+  .control-btn {
+    color: #aab3c2;
+    border-color: rgba(102, 126, 234, 0.2);
+
+    &:hover {
+      color: #b8c5ff;
+      border-color: rgba(102, 126, 234, 0.4);
     }
+  }
+
+  .control-btn.theme-toggle.dark {
+    background: var(--color-brand);
+    color: #ffffff;
+    border-color: var(--color-brand);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .control-panel {
+    top: 16px;
+    right: 16px;
+    padding: 6px;
+    gap: 6px;
+
+    .control-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .control-panel {
+    top: 12px;
+    right: 12px;
+    padding: 4px;
+    gap: 4px;
+
+    .language-select {
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+
+    .control-btn {
+      min-width: 32px;
+      height: 32px;
+      font-size: 14px;
+    }
+  }
 }
