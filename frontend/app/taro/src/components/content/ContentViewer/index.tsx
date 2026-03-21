@@ -126,7 +126,7 @@ const ContentViewer: React.FC<ContentViewerProps> = ({
 
   return (
     <View ref={containerRef} className={`content-viewer ${className}`}>
-      <RichText nodes={getRenderedContent}/>
+      <RichText nodes={getRenderedContent} />
     </View>
   );
 };

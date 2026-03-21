@@ -125,14 +125,14 @@ const PostList: React.FC<PostListProps> = ({
         >
           {Array.from({length: currentPageSize}).map((_, index) => (
             <View key={index} className='post-card-skeleton'>
-              <View className='skeleton-image-placeholder'/>
+              <View className='skeleton-image-placeholder' />
               <View className='skeleton-content'>
-                <View className='skeleton-title-placeholder'/>
-                <View className='skeleton-paragraph-placeholder'/>
+                <View className='skeleton-title-placeholder' />
+                <View className='skeleton-paragraph-placeholder' />
                 <View className='skeleton-meta'>
-                  <View className='skeleton-btn-small'/>
-                  <View className='skeleton-btn-small'/>
-                  <View className='skeleton-btn-small'/>
+                  <View className='skeleton-btn-small' />
+                  <View className='skeleton-btn-small' />
+                  <View className='skeleton-btn-small' />
                 </View>
               </View>
             </View>
@@ -179,7 +179,7 @@ const PostList: React.FC<PostListProps> = ({
 
       {/* Empty State */}
       {!loading && posts.length === 0 && (
-        <AppEmpty description={t('no_results')}/>
+        <AppEmpty description={t('no_results')} />
       )}
     </View>
   );

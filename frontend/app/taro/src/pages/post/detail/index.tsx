@@ -9,9 +9,11 @@ import PostList from '@/components/post/PostList';
 import BackToTop from '@/components/layout/BackToTop';
 import XIcon from '@/plugins/xicon';
 
-import {usePostStore} from '@/store/slices/post/hooks';
 import {formatDate} from "@/utils";
+import {useI18nRouter} from "@/i18n/helpers";
+
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
+import {usePostStore} from '@/store/slices/post/hooks';
 
 import './post-detail.scss';
 
@@ -28,8 +30,10 @@ interface TocItem {
 
 export default function PostDetailPage() {
   const {t} = useTranslation();
-  const postStore = usePostStore();
 
+  const router = useI18nRouter();
+
+  const postStore = usePostStore();
   const post = postStore.detail as contentservicev1_Post | null;
 
   const [localLoading, setLocalLoading] = useState(true);
@@ -267,7 +271,7 @@ export default function PostDetailPage() {
   // Handlers
   const handleBack = () => {
     // TODO: Taro.getCurrentPages() 获取参数
-    Taro.navigateBack();
+    router.back();
   };
 
   const handleLike = () => {

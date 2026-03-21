@@ -40,7 +40,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           mode='aspectFill'
           className='category-image-img'
         />
-        <View className='image-overlay'/>
+        <View className='image-overlay' />
       </View>
       <View className='category-card-content'>
         <Text className='category-title'>{categoryStore.getCategoryName(category, t)}</Text>

@@ -165,7 +165,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           className={`category-tab ${selectedCategory === null ? 'active' : ''}`}
           onClick={() => handleCategoryChange(null)}
         >
-          <XIcon name={'carbon:folder'} size={24} className='category-icon' />
+          <XIcon name='carbon:folder' size={24} className='category-icon' />
           <Text>{t('page.posts.all_categories')}</Text>
         </View>
 

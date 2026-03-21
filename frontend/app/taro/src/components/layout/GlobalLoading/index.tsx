@@ -1,8 +1,9 @@
 import {useEffect} from 'react';
 import {View, Text} from '@tarojs/components';
+import {useDispatch} from 'react-redux';
+
 import {useLoading} from '@/store/core/loading/hooks';
 import {finishLoading} from '@/store/core/loading/slice';
-import {useDispatch} from 'react-redux';
 
 import './index.scss';
 
@@ -27,7 +28,7 @@ export default function GlobalLoading() {
   return (
     <View className='loading-overlay'>
       <View className='loading-content'>
-        <View className='spinner'/>
+        <View className='spinner' />
         <Text className='loading-text'>加载中...</Text>
       </View>
     </View>

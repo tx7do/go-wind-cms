@@ -44,7 +44,7 @@ const PostCard: React.FC<PostCardProps> = ({
           mode='aspectFill'
           className='post-image-img'
         />
-        <View className='image-overlay'/>
+        <View className='image-overlay' />
       </View>
       <View className='post-content'>
         <Text className='post-title'>{postStore.getPostTitle(post)}</Text>

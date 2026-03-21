@@ -63,7 +63,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
         setSubmitting(true);
         try {
-            await onReply(comment, replyContent.trim());
+            onReply(comment, replyContent.trim());
             cancelReply();
         } catch (error) {
             console.error('Submit reply failed:', error);
@@ -168,22 +168,22 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             </View>
                             <View className='comment-actions'>
                                 <View
-                                    className={`action-item ${likedComments.has(comment.id || 0) ? 'liked' : ''}`}
-                                    onClick={() => handleLike(comment)}
+                                  className={`action-item ${likedComments.has(comment.id || 0) ? 'liked' : ''}`}
+                                  onClick={() => handleLike(comment)}
                                 >
                                     <XIcon name={likedComments.has(comment.id || 0) ? 'carbon:thumb-up' : 'carbon:thumb-up-outline'} size={16} />
                                     <Text>{comment.likeCount || 0}</Text>
                                 </View>
                                 <View
-                                    className='action-item'
-                                    onClick={() => handleReply(comment)}
+                                  className='action-item'
+                                  onClick={() => handleReply(comment)}
                                 >
                                     <XIcon name='carbon:chat' size={16} />
                                     <Text>{t('comment.reply')}</Text>
                                 </View>
                                 <View
-                                    className='action-item'
-                                    onClick={() => handleShare(comment)}
+                                  className='action-item'
+                                  onClick={() => handleShare(comment)}
                                 >
                                     <XIcon name='carbon:share' size={16} />
                                     <Text>{t('comment.share')}</Text>
@@ -192,8 +192,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                 {/* 查看回复按钮 */}
                                 {comment.replyCount && comment.replyCount > 0 ? (
                                     <View
-                                        className={`action-item view-replies ${isExpanded(comment) ? 'expanded' : ''}`}
-                                        onClick={() => toggleExpand(comment)}
+                                      className={`action-item view-replies ${isExpanded(comment) ? 'expanded' : ''}`}
+                                      onClick={() => toggleExpand(comment)}
                                     >
                                         <XIcon name={isExpanded(comment) ? 'carbon:chevron-up' : 'carbon:chevron-down'} size={16} />
                                         <Text> {isExpanded(comment)
@@ -209,26 +209,26 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             {replyingCommentId === comment.id && (
                                 <View className='reply-form'>
                                     <Textarea
-                                        value={replyContent}
-                                        onInput={(e) => setReplyContent(e.detail.value)}
-                                        placeholder={t('comment.write_comment')}
-                                        className='reply-textarea'
-                                        disabled={submitting}
-                                        maxlength={1000}
+                                      value={replyContent}
+                                      onInput={(e) => setReplyContent(e.detail.value)}
+                                      placeholder={t('comment.write_comment')}
+                                      className='reply-textarea'
+                                      disabled={submitting}
+                                      maxlength={1000}
                                     />
                                     <View className='char-count'>
                                         {replyContent.length} / 1000
                                     </View>
                                     <View className='reply-form-actions'>
                                         <View
-                                            className='submit-btn-small'
-                                            onClick={() => submitReply(comment)}
+                                          className='submit-btn-small'
+                                          onClick={() => submitReply(comment)}
                                         >
                                             <Text>{submitting ? t('comment.loading') : t('comment.submit_comment')}</Text>
                                         </View>
                                         <View
-                                            className='cancel-btn-small'
-                                            onClick={cancelReply}
+                                          className='cancel-btn-small'
+                                          onClick={cancelReply}
                                         >
                                             <Text>{t('comment.cancel')}</Text>
                                         </View>
@@ -251,9 +251,9 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             {/* 子评论列表 */}
                             {!isLoading(comment) && comment.children && (
                                 <CommentTree
-                                    comments={comment.children}
-                                    onReply={onReply}
-                                    onLoadChildren={onLoadChildren}
+                                  comments={comment.children}
+                                  onReply={onReply}
+                                  onLoadChildren={onLoadChildren}
                                 />
                             )}
                         </View>

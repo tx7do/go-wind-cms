@@ -42,7 +42,7 @@ export default function Pagination({
   }
 
   return (
-    <View className="pagination">
+    <View className='pagination'>
       <View
         className={`pagination-btn ${current === 1 ? 'disabled' : ''}`}
         onClick={handlePrev}
@@ -68,7 +68,7 @@ export default function Pagination({
       </View>
 
       {showSizeChanger && (
-        <View className="pagination-total">
+        <View className='pagination-total'>
           共 {total} 条
         </View>
       )}

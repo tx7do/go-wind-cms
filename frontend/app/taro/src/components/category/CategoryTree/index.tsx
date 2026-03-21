@@ -63,18 +63,19 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                   mode='aspectFill'
                   className='category-img'
                 />
-                <View className='image-overlay'/>
+                <View className='image-overlay' />
               </View>
               <View className='category-content'>
                 <Text
-                  className={`category-title ${category.children && category.children.length > 0 ? 'has-children' : ''}`}>
+                  className={`category-title ${category.children && category.children.length > 0 ? 'has-children' : ''}`}
+                >
                   {categoryStore.getCategoryName(category, t)}
                 </Text>
                 <Text className='description'>
                   {categoryStore.getCategoryDescription(category)}
                 </Text>
                 <View className='category-meta'>
-                  <XIcon name='carbon:document' size={16} className='meta-icon'/>
+                  <XIcon name='carbon:document' size={16} className='meta-icon' />
                   <Text className='meta-text'>
                     {category.postCount || 0} {t('page.categories.articles_count')}
                   </Text>
@@ -91,7 +92,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                   toggleExpand(category);
                 }}
               >
-                <XIcon name={isExpanded(category) ? 'carbon:chevron-down' : 'carbon:chevron-right'} size={20}/>
+                <XIcon name={isExpanded(category) ? 'carbon:chevron-down' : 'carbon:chevron-right'} size={20} />
               </View>
             )}
           </View>

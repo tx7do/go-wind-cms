@@ -89,7 +89,7 @@ export default function Footer() {
                 aria-label={social.name}
                 onClick={() => handleSocialClick(social.name)}
               >
-                <XIcon name={social.icon} size={20}/>
+                <XIcon name={social.icon} size={20} />
               </View>
             ))}
           </View>

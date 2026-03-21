@@ -4,15 +4,17 @@ import {View, Text, Image} from '@tarojs/components';
 
 import {useI18n} from '@/i18n';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import {useThemeStore, useThemeMode} from '@/store/core/theme/hooks';
-import {ThemeMode} from "@/store/types";
 import XIcon from '@/plugins/xicon';
+
+import {useAccessStore} from "@/store/core/access/hooks";
+import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
+import {ThemeMode} from "@/store/types";
+import {useThemeStore, useThemeMode} from '@/store/core/theme/hooks';
 
 import TopNavbar from '../TopNavbar';
 
 import './index.scss';
-import {useAccessStore} from "@/store/core/access/hooks";
-import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
+
 
 export default function Header() {
   const {t} = useTranslation();
@@ -28,7 +30,7 @@ export default function Header() {
   const isLogin = !!accessToken && !accessStore.access.loginExpired;
 
   const handleClickLogo = () => {
-    router.push('/');
+    router.push('/pages/index/index');
   };
   const handleClickSettings = () => {
     router.push('/settings');
@@ -154,7 +156,6 @@ export default function Header() {
             <View
               className='logo-section'
               role='button'
-              tabIndex={0}
               aria-label='Go to homepage'
               onClick={handleClickLogo}
             >
@@ -166,7 +167,7 @@ export default function Header() {
             </View>
             {/* 主导航菜单 */}
             <View className='navbar-menu-wrap'>
-              <TopNavbar/>
+              <TopNavbar />
             </View>
           </View>
           {/* 功能按钮区 */}
@@ -179,7 +180,7 @@ export default function Header() {
                   aria-label='User menu'
                   onClick={() => console.log('User menu clicked')}
                 >
-                  <XIcon name='carbon:user' size={24}/>
+                  <XIcon name='carbon:user' size={24} />
                 </View>
                 {/* TODO: 实现 Dropdown 组件 */}
               </View>
@@ -190,7 +191,7 @@ export default function Header() {
                   aria-label='Language'
                   onClick={() => console.log('Language clicked')}
                 >
-                  <XIcon name='carbon:language' size={24} className='lang-icon'/>
+                  <XIcon name='carbon:language' size={24} className='lang-icon' />
                 </View>
               </View>
               <View className='dropdown-wrapper'>
@@ -200,7 +201,7 @@ export default function Header() {
                   aria-label='Toggle theme'
                   onClick={() => console.log('Theme clicked')}
                 >
-                  <XIcon name={displayIcon} size={24} className='theme-icon'/>
+                  <XIcon name={displayIcon} size={24} className='theme-icon' />
                 </View>
               </View>
             </View>

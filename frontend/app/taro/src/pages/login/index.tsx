@@ -109,7 +109,7 @@ export default function LoginPage() {
 
           {/* 返回首页 */}
           <View className='back-home'>
-            <button className='text-btn' onClick={() => router.push('/')}>
+            <button className='text-btn' onClick={() => router.push('/pages/index/index')}>
               ← {t('authentication.login.back_home')}
             </button>
           </View>

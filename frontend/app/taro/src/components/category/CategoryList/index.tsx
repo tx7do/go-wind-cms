@@ -47,11 +47,11 @@ const CategoryList: React.FC<CategoryListProps> = ({
         >
           {Array.from({length: columns}).map((_, index) => (
             <View key={index} className='category-card-skeleton'>
-              <View className='skeleton-image-placeholder'/>
+              <View className='skeleton-image-placeholder' />
               <View className='skeleton-content'>
-                <View className='skeleton-title-placeholder'/>
-                <View className='skeleton-paragraph-placeholder'/>
-                <View className='skeleton-btn-small'/>
+                <View className='skeleton-title-placeholder' />
+                <View className='skeleton-paragraph-placeholder' />
+                <View className='skeleton-btn-small' />
               </View>
             </View>
           ))}
@@ -79,7 +79,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
 
       {/* Empty State */}
       {!loading && categories.length === 0 && (
-        <AppEmpty description={t('page.categories.no_categories')}/>
+        <AppEmpty description={t('page.categories.no_categories')} />
       )}
     </View>
   );

@@ -6,6 +6,7 @@ import Taro from '@tarojs/taro';
 import {AppEmpty} from '@/components/ui';
 import XIcon from '@/plugins/xicon';
 import PostListWithPagination from '@/components/post/PostList';
+import {useI18nRouter} from "@/i18n/helpers";
 
 import {useTagStore} from '@/store/slices/tag/hooks';
 import type {contentservicev1_Tag} from "@/api/generated/app/service/v1";
@@ -14,8 +15,11 @@ import './tag-detail.scss';
 
 export default function TagDetailPage() {
   const {t} = useTranslation();
+  const router = useI18nRouter();
+
   const tagStore = useTagStore();
   const [tag, setTag] = useState<contentservicev1_Tag | null>(null);
+
   const [_loading, setLoading] = useState(false);
   const tagId = useMemo(() => {
     const pages = Taro.getCurrentPages();
@@ -41,7 +45,7 @@ export default function TagDetailPage() {
   }
 
   function handleBack() {
-    Taro.navigateTo({url: `/tag`});
+    router.push(`/tag`);
   }
 
   useEffect(() => {

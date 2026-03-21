@@ -55,7 +55,7 @@ const BackToTop: React.FC<BackToTopProps> = ({
     if (currentPage) {
       // 保存原始的 onPageScroll
       const originalOnPageScroll = (currentPage as any).onPageScroll;
-      
+
       (currentPage as any).onPageScroll = function(e: { scrollTop: number }) {
         if (originalOnPageScroll) {
           originalOnPageScroll.call(this, e);
@@ -93,7 +93,7 @@ const BackToTop: React.FC<BackToTopProps> = ({
       onClick={scrollToTop}
       aria-label='Back to top'
     >
-      <XIcon name='carbon:arrow-up' size={20} className='icon'/>
+      <XIcon name='carbon:arrow-up' size={20} className='icon' />
     </View>
   );
 };

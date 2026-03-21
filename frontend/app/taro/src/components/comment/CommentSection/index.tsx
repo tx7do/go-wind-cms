@@ -226,7 +226,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     <View className='comments-section'>
       <View className='section-header'>
         <Text className='section-title'>
-          <XIcon name='carbon:chat' size={20}/>
+          <XIcon name='carbon:chat' size={20} />
           <Text> {t('comment.comments_count', {count: displayComments.length})}</Text>
         </Text>
       </View>
@@ -235,7 +235,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       <View className='comment-form'>
         <View className='form-header'>
           <View className='form-icon'>
-            <XIcon name='carbon:edit' size={20}/>
+            <XIcon name='carbon:edit' size={20} />
           </View>
           <Text className='form-title'>{t('comment.write_comment')}</Text>
         </View>
@@ -284,7 +284,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               <Text>{submitting ? t('comment.submitting') : t('comment.submit_comment')}</Text>
             </View>
             <View className='form-tip'>
-              <XIcon name='carbon:information' size={16}/>
+              <XIcon name='carbon:information' size={16} />
               <Text> {t('comment.fill_form_info')}</Text>
             </View>
           </View>
