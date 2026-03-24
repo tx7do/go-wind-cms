@@ -459,6 +459,9 @@
     "directPostCount": "直接帖子数量",
     "customFields": "自定义字段",
     "name": "分类名称",
+    "thumbnail": "缩略图",
+    "coverImage": "封面图片",
+    "description": "分类描述",
     "button": {
       "create": "创建分类",
       "saveDraft": "保存草稿",

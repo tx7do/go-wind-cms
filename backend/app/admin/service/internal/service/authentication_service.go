@@ -79,6 +79,7 @@ func (s *AuthenticationService) RefreshToken(ctx context.Context, req *authentic
 
 	req.ClientType = trans.Ptr(authenticationV1.ClientType_admin)
 	req.UserId = trans.Ptr(operator.GetUserId())
+	req.Jti = operator.Jti
 
 	return s.authenticationServiceClient.RefreshToken(ctx, req)
 }

@@ -4,10 +4,10 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { h } from 'vue';
 
 import { Page, type VbenFormProps } from '@vben/common-ui';
-import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
+import { IconifyIcon, LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { i18n } from '@vben/locales';
 
-import { notification } from 'ant-design-vue';
+import { Image, notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { type contentservicev1_Category as Category } from '#/generated/api/admin/service/v1';
@@ -59,11 +59,10 @@ const gridOptions: VxeGridProps<Category> = {
     isHover: true,
   },
   height: 'auto',
-  stripe: true,
   treeConfig: {
-    transform: true,
     rowField: 'id',
-    parentField: 'parentId',
+    childrenField: 'children',
+    expandAll: true,
   },
 
   proxyConfig: {
@@ -77,6 +76,7 @@ const gridOptions: VxeGridProps<Category> = {
             pageSize: page.pageSize,
           },
           formValues,
+          'id,status,sort_order,is_nav,icon,code,post_count,direct_post_count,available_languages,parent_id,children,created_by,created_at,translations,translations.id,translations.language_code,translations.name,translations.slug,translations.description,translations.thumbnail,translations.cover_image',
         );
       },
     },
@@ -87,58 +87,74 @@ const gridOptions: VxeGridProps<Category> = {
       title: $t('page.category.name'),
       field: 'translations',
       treeNode: true,
-      formatter: ({ cellValue }) => {
-        if (cellValue && cellValue.length > 0) {
-          return cellValue[0]?.name || '';
-        }
-        return '';
-      },
+      fixed: 'left',
+      slots: { default: 'categoryName' },
+      minWidth: 150,
     },
     {
       title: $t('page.category.icon'),
       field: 'icon',
-      width: 80,
+      slots: { default: 'icon' },
+      minWidth: 80,
+    },
+    {
+      title: $t('page.category.thumbnail'),
+      field: 'thumbnail',
+      slots: { default: 'thumbnail' },
+      minWidth: 80,
+    },
+    {
+      title: $t('page.category.coverImage'),
+      field: 'coverImage',
+      slots: { default: 'coverImage' },
+      minWidth: 80,
+    },
+    {
+      title: $t('page.category.description'),
+      field: 'description',
+      slots: { default: 'description' },
+      minWidth: 200,
     },
     {
       title: $t('page.category.isNav'),
       field: 'isNav',
-      width: 100,
+      minWidth: 100,
       formatter: ({ cellValue }) =>
         cellValue ? $t('ui.button.yes') : $t('ui.button.no'),
     },
     {
       title: $t('page.category.postCount'),
       field: 'postCount',
-      width: 100,
+      minWidth: 100,
     },
     {
       title: $t('page.category.directPostCount'),
       field: 'directPostCount',
-      width: 120,
+      minWidth: 120,
     },
     {
       title: $t('page.category.status'),
       field: 'status',
       slots: { default: 'status' },
-      width: 100,
+      minWidth: 100,
     },
     {
       title: $t('ui.table.sortOrder'),
       field: 'sortOrder',
-      width: 80,
+      minWidth: 80,
     },
     {
       title: $t('ui.table.createdAt'),
       field: 'createdAt',
       formatter: 'formatDateTime',
-      width: 150,
+      minWidth: 150,
     },
     {
       title: $t('ui.table.action'),
       field: 'action',
       fixed: 'right',
       slots: { default: 'action' },
-      width: 100,
+      minWidth: 100,
     },
   ],
 };
@@ -182,6 +198,42 @@ async function handleDelete(row: any) {
     });
   }
 }
+
+function getCategoryTranslation(row: any) {
+  const currentLang = i18n.global.locale.value;
+  const translation = row.translations?.find(
+    (t: any) => t.languageCode === currentLang,
+  );
+  return translation || row.translations?.[0] || undefined;
+}
+
+function getCategoryName(row: any) {
+  const translation = getCategoryTranslation(row);
+  return translation?.name || row.translations?.[0]?.name || '';
+}
+
+function getCategoryDescription(row: any) {
+  const translation = getCategoryTranslation(row);
+  return translation?.description || row.translations?.[0]?.description || '';
+}
+
+function getCategoryThumbnail(row: any) {
+  const translation = getCategoryTranslation(row);
+  return translation?.thumbnail || row.translations?.[0]?.thumbnail || '';
+}
+
+function getCategoryCoverImage(row: any) {
+  const translation = getCategoryTranslation(row);
+  return translation?.coverImage || row.translations?.[0]?.coverImage || '';
+}
+
+const expandAll = () => {
+  gridApi.grid?.setAllTreeExpand(true);
+};
+
+const collapseAll = () => {
+  gridApi.grid?.setAllTreeExpand(false);
+};
 </script>
 
 <template>
@@ -191,11 +243,40 @@ async function handleDelete(row: any) {
         <a-button class="mr-2" type="primary" @click="handleCreate">
           {{ $t('ui.button.create') }}
         </a-button>
+        <a-button class="mr-2" @click="expandAll">
+          {{ $t('ui.tree.expand_all') }}
+        </a-button>
+        <a-button class="mr-2" @click="collapseAll">
+          {{ $t('ui.tree.collapse_all') }}
+        </a-button>
       </template>
       <template #status="{ row }">
         <a-tag :color="categoryStatusToColor(row.status)">
           {{ categoryStatusToName(row.status) }}
         </a-tag>
+      </template>
+      <template #categoryName="{ row }">
+        {{ getCategoryName(row) }}
+      </template>
+      <template #description="{ row }">
+        {{ getCategoryDescription(row) }}
+      </template>
+      <template #icon="{ row }">
+        <IconifyIcon v-if="row.icon" :icon="row.icon" class="size-6" />
+      </template>
+      <template #thumbnail="{ row }">
+        <Image
+          v-if="getCategoryThumbnail(row)"
+          :src="getCategoryThumbnail(row)"
+          width="50"
+        />
+      </template>
+      <template #coverImage="{ row }">
+        <Image
+          v-if="getCategoryCoverImage(row)"
+          :src="getCategoryCoverImage(row)"
+          width="50"
+        />
       </template>
       <template #action="{ row }">
         <a-button
