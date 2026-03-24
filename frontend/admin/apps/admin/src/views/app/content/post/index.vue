@@ -178,7 +178,7 @@ function handleEdit(row: any) {
   router.push({
     name: 'EditPost',
     params: { id: row.id },
-    query: { lang: 'zh-CN' },
+    query: { lang: i18n.global.locale.value },
   });
 }
 
