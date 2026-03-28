@@ -99,7 +99,7 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
           undefined,
           {},
           undefined,
-          ['id'],
+          ['sortOrder'],
         );
         this.languageOptions =
           resp.items?.map((lang) => ({

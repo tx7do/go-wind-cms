@@ -24,8 +24,8 @@ const getTitle = computed(() =>
 onMounted(async () => {
   try {
     const resp = await languageStore.listLanguage(undefined, {}, undefined, [
-      'id',
-    ] as any);
+      'sortOrder',
+    ]);
     languageOptions.value =
       resp.items?.map((lang) => ({
         label: lang.nativeName || lang.languageCode || '',

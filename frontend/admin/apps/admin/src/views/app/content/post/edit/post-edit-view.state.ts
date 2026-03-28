@@ -102,7 +102,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
           undefined,
           {},
           undefined,
-          ['id'],
+          ['sortOrder'],
         );
         this.languageOptions =
           resp.items?.map((lang) => ({

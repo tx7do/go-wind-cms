@@ -100,7 +100,7 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
           undefined,
           {},
           undefined,
-          ['id'],
+          ['sortOrder'],
         );
         this.languageOptions =
           resp.items?.map((lang) => ({

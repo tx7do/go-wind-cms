@@ -206,7 +206,7 @@ watch(
 onMounted(async () => {
   try {
     const resp = await languageStore.listLanguage(undefined, {}, undefined, [
-      'id',
+      'sortOrder',
     ] as any);
     languageOptions.value =
       resp.items?.map((lang) => ({

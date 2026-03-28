@@ -449,6 +449,18 @@
       "create": "创建限制"
     }
   },
+  "language": {
+    "moduleName": "语言管理",
+    "languageName": "语言名称",
+    "languageCode": "语言代码",
+    "nativeName": "本地名称",
+    "isEnabled": "是否启用",
+    "isDefault": "是否默认",
+    "button": {
+      "create": "创建语言",
+      "update": "更新语言"
+    }
+  },
   "category": {
     "moduleName": "分类管理",
     "status": "分类状态",

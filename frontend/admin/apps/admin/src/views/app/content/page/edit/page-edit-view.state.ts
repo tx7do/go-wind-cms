@@ -103,7 +103,7 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
           undefined,
           {},
           undefined,
-          ['id'],
+          ['sortOrder'],
         );
         this.languageOptions =
           resp.items?.map((lang) => ({
