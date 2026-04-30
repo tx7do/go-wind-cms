@@ -100,12 +100,7 @@ message NavigationItem {
     (gnostic.openapi.v3.property) = {description: "是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项目项）"}
   ]; // 是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项目项）
 
-  optional string css_class = 12 [
-    json_name = "cssClass",
-    (gnostic.openapi.v3.property) = {description: "额外的 CSS 类（前端可选地将此字段添加到导航项目项的 HTML class 属性中，便于自定义样式）"}
-  ]; // 额外的 CSS 类（前端可选地将此字段添加到导航项目项的 HTML class 属性中，便于自定义样式）
-
-  optional string required_permission = 13 [
+  optional string required_permission = 12 [
     json_name = "requiredPermission",
     (gnostic.openapi.v3.property) = {description: "访问权限标识（如 view_admin_panel，前端可根据用户权限决定是否显示该导航项目项）"}
   ]; // 访问权限标识（如 "view_admin_panel"，前端可根据用户权限决定是否显示该导航项目项）

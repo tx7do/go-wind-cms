@@ -129,8 +129,6 @@ func (x *NavigationItem) Redact() string {
 
 	// Safe field: IsInvalid
 
-	// Safe field: CssClass
-
 	// Safe field: RequiredPermission
 
 	// Safe field: ParentId

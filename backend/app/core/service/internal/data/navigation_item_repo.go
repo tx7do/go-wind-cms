@@ -159,7 +159,6 @@ func (r *NavigationItemRepo) newCreateBuilder(tx *ent.Tx, data *siteV1.Navigatio
 		SetNillableSortOrder(data.SortOrder).
 		SetNillableIsOpenNewTab(data.IsOpenNewTab).
 		SetNillableIsInvalid(data.IsInvalid).
-		SetNillableCSSClass(data.CssClass).
 		SetNillableRequiredPermission(data.RequiredPermission).
 		SetNillableParentID(data.ParentId).
 		SetNillableCreatedBy(data.CreatedBy).
@@ -236,7 +235,6 @@ func (r *NavigationItemRepo) newUpdateOneBuilder(tx *ent.Tx, data *siteV1.Naviga
 		SetNillableSortOrder(data.SortOrder).
 		SetNillableIsOpenNewTab(data.IsOpenNewTab).
 		SetNillableIsInvalid(data.IsInvalid).
-		SetNillableCSSClass(data.CssClass).
 		SetNillableRequiredPermission(data.RequiredPermission).
 		SetNillableParentID(data.ParentId).
 		SetNillableUpdatedBy(data.CreatedBy).
@@ -334,7 +332,6 @@ func (r *NavigationItemRepo) Upsert(ctx context.Context, data *siteV1.Navigation
 		SetNillableSortOrder(data.SortOrder).
 		SetNillableIsOpenNewTab(data.IsOpenNewTab).
 		SetNillableIsInvalid(data.IsInvalid).
-		SetNillableCSSClass(data.CssClass).
 		SetNillableRequiredPermission(data.RequiredPermission).
 		SetNillableParentID(data.ParentId).
 		SetNillableCreatedBy(operatorID).

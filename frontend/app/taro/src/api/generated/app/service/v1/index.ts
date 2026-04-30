@@ -1348,7 +1348,6 @@ export type siteservicev1_NavigationItem = {
   sortOrder?: number;
   isOpenNewTab?: boolean;
   isInvalid?: boolean;
-  cssClass?: string;
   requiredPermission?: string;
   parentId?: number;
   children: siteservicev1_NavigationItem[] | undefined;

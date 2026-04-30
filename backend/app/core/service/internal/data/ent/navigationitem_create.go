@@ -260,20 +260,6 @@ func (_c *NavigationItemCreate) SetNillableIsInvalid(v *bool) *NavigationItemCre
 	return _c
 }
 
-// SetCSSClass sets the "css_class" field.
-func (_c *NavigationItemCreate) SetCSSClass(v string) *NavigationItemCreate {
-	_c.mutation.SetCSSClass(v)
-	return _c
-}
-
-// SetNillableCSSClass sets the "css_class" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableCSSClass(v *string) *NavigationItemCreate {
-	if v != nil {
-		_c.SetCSSClass(*v)
-	}
-	return _c
-}
-
 // SetRequiredPermission sets the "required_permission" field.
 func (_c *NavigationItemCreate) SetRequiredPermission(v string) *NavigationItemCreate {
 	_c.mutation.SetRequiredPermission(v)
@@ -475,10 +461,6 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 	if value, ok := _c.mutation.IsInvalid(); ok {
 		_spec.SetField(navigationitem.FieldIsInvalid, field.TypeBool, value)
 		_node.IsInvalid = &value
-	}
-	if value, ok := _c.mutation.CSSClass(); ok {
-		_spec.SetField(navigationitem.FieldCSSClass, field.TypeString, value)
-		_node.CSSClass = &value
 	}
 	if value, ok := _c.mutation.RequiredPermission(); ok {
 		_spec.SetField(navigationitem.FieldRequiredPermission, field.TypeString, value)
@@ -890,24 +872,6 @@ func (u *NavigationItemUpsert) UpdateIsInvalid() *NavigationItemUpsert {
 // ClearIsInvalid clears the value of the "is_invalid" field.
 func (u *NavigationItemUpsert) ClearIsInvalid() *NavigationItemUpsert {
 	u.SetNull(navigationitem.FieldIsInvalid)
-	return u
-}
-
-// SetCSSClass sets the "css_class" field.
-func (u *NavigationItemUpsert) SetCSSClass(v string) *NavigationItemUpsert {
-	u.Set(navigationitem.FieldCSSClass, v)
-	return u
-}
-
-// UpdateCSSClass sets the "css_class" field to the value that was provided on create.
-func (u *NavigationItemUpsert) UpdateCSSClass() *NavigationItemUpsert {
-	u.SetExcluded(navigationitem.FieldCSSClass)
-	return u
-}
-
-// ClearCSSClass clears the value of the "css_class" field.
-func (u *NavigationItemUpsert) ClearCSSClass() *NavigationItemUpsert {
-	u.SetNull(navigationitem.FieldCSSClass)
 	return u
 }
 
@@ -1355,27 +1319,6 @@ func (u *NavigationItemUpsertOne) UpdateIsInvalid() *NavigationItemUpsertOne {
 func (u *NavigationItemUpsertOne) ClearIsInvalid() *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.ClearIsInvalid()
-	})
-}
-
-// SetCSSClass sets the "css_class" field.
-func (u *NavigationItemUpsertOne) SetCSSClass(v string) *NavigationItemUpsertOne {
-	return u.Update(func(s *NavigationItemUpsert) {
-		s.SetCSSClass(v)
-	})
-}
-
-// UpdateCSSClass sets the "css_class" field to the value that was provided on create.
-func (u *NavigationItemUpsertOne) UpdateCSSClass() *NavigationItemUpsertOne {
-	return u.Update(func(s *NavigationItemUpsert) {
-		s.UpdateCSSClass()
-	})
-}
-
-// ClearCSSClass clears the value of the "css_class" field.
-func (u *NavigationItemUpsertOne) ClearCSSClass() *NavigationItemUpsertOne {
-	return u.Update(func(s *NavigationItemUpsert) {
-		s.ClearCSSClass()
 	})
 }
 
@@ -1992,27 +1935,6 @@ func (u *NavigationItemUpsertBulk) UpdateIsInvalid() *NavigationItemUpsertBulk {
 func (u *NavigationItemUpsertBulk) ClearIsInvalid() *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.ClearIsInvalid()
-	})
-}
-
-// SetCSSClass sets the "css_class" field.
-func (u *NavigationItemUpsertBulk) SetCSSClass(v string) *NavigationItemUpsertBulk {
-	return u.Update(func(s *NavigationItemUpsert) {
-		s.SetCSSClass(v)
-	})
-}
-
-// UpdateCSSClass sets the "css_class" field to the value that was provided on create.
-func (u *NavigationItemUpsertBulk) UpdateCSSClass() *NavigationItemUpsertBulk {
-	return u.Update(func(s *NavigationItemUpsert) {
-		s.UpdateCSSClass()
-	})
-}
-
-// ClearCSSClass clears the value of the "css_class" field.
-func (u *NavigationItemUpsertBulk) ClearCSSClass() *NavigationItemUpsertBulk {
-	return u.Update(func(s *NavigationItemUpsert) {
-		s.ClearCSSClass()
 	})
 }
 

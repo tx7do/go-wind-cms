@@ -788,7 +788,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			navigationitem.FieldDescription:        {Type: field.TypeString, Column: navigationitem.FieldDescription},
 			navigationitem.FieldIsOpenNewTab:       {Type: field.TypeBool, Column: navigationitem.FieldIsOpenNewTab},
 			navigationitem.FieldIsInvalid:          {Type: field.TypeBool, Column: navigationitem.FieldIsInvalid},
-			navigationitem.FieldCSSClass:           {Type: field.TypeString, Column: navigationitem.FieldCSSClass},
 			navigationitem.FieldRequiredPermission: {Type: field.TypeString, Column: navigationitem.FieldRequiredPermission},
 		},
 	}
@@ -4997,11 +4996,6 @@ func (f *NavigationItemFilter) WhereIsOpenNewTab(p entql.BoolP) {
 // WhereIsInvalid applies the entql bool predicate on the is_invalid field.
 func (f *NavigationItemFilter) WhereIsInvalid(p entql.BoolP) {
 	f.Where(p.Field(navigationitem.FieldIsInvalid))
-}
-
-// WhereCSSClass applies the entql string predicate on the css_class field.
-func (f *NavigationItemFilter) WhereCSSClass(p entql.StringP) {
-	f.Where(p.Field(navigationitem.FieldCSSClass))
 }
 
 // WhereRequiredPermission applies the entql string predicate on the required_permission field.

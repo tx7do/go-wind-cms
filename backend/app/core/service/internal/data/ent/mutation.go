@@ -39431,7 +39431,6 @@ type NavigationItemMutation struct {
 	description         *string
 	is_open_new_tab     *bool
 	is_invalid          *bool
-	css_class           *string
 	required_permission *string
 	clearedFields       map[string]struct{}
 	parent              *uint32
@@ -40507,55 +40506,6 @@ func (m *NavigationItemMutation) ResetIsInvalid() {
 	delete(m.clearedFields, navigationitem.FieldIsInvalid)
 }
 
-// SetCSSClass sets the "css_class" field.
-func (m *NavigationItemMutation) SetCSSClass(s string) {
-	m.css_class = &s
-}
-
-// CSSClass returns the value of the "css_class" field in the mutation.
-func (m *NavigationItemMutation) CSSClass() (r string, exists bool) {
-	v := m.css_class
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCSSClass returns the old "css_class" field's value of the NavigationItem entity.
-// If the NavigationItem object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NavigationItemMutation) OldCSSClass(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCSSClass is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCSSClass requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCSSClass: %w", err)
-	}
-	return oldValue.CSSClass, nil
-}
-
-// ClearCSSClass clears the value of the "css_class" field.
-func (m *NavigationItemMutation) ClearCSSClass() {
-	m.css_class = nil
-	m.clearedFields[navigationitem.FieldCSSClass] = struct{}{}
-}
-
-// CSSClassCleared returns if the "css_class" field was cleared in this mutation.
-func (m *NavigationItemMutation) CSSClassCleared() bool {
-	_, ok := m.clearedFields[navigationitem.FieldCSSClass]
-	return ok
-}
-
-// ResetCSSClass resets all changes to the "css_class" field.
-func (m *NavigationItemMutation) ResetCSSClass() {
-	m.css_class = nil
-	delete(m.clearedFields, navigationitem.FieldCSSClass)
-}
-
 // SetRequiredPermission sets the "required_permission" field.
 func (m *NavigationItemMutation) SetRequiredPermission(s string) {
 	m.required_permission = &s
@@ -40720,7 +40670,7 @@ func (m *NavigationItemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NavigationItemMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, navigationitem.FieldCreatedAt)
 	}
@@ -40772,9 +40722,6 @@ func (m *NavigationItemMutation) Fields() []string {
 	if m.is_invalid != nil {
 		fields = append(fields, navigationitem.FieldIsInvalid)
 	}
-	if m.css_class != nil {
-		fields = append(fields, navigationitem.FieldCSSClass)
-	}
 	if m.required_permission != nil {
 		fields = append(fields, navigationitem.FieldRequiredPermission)
 	}
@@ -40820,8 +40767,6 @@ func (m *NavigationItemMutation) Field(name string) (ent.Value, bool) {
 		return m.IsOpenNewTab()
 	case navigationitem.FieldIsInvalid:
 		return m.IsInvalid()
-	case navigationitem.FieldCSSClass:
-		return m.CSSClass()
 	case navigationitem.FieldRequiredPermission:
 		return m.RequiredPermission()
 	}
@@ -40867,8 +40812,6 @@ func (m *NavigationItemMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldIsOpenNewTab(ctx)
 	case navigationitem.FieldIsInvalid:
 		return m.OldIsInvalid(ctx)
-	case navigationitem.FieldCSSClass:
-		return m.OldCSSClass(ctx)
 	case navigationitem.FieldRequiredPermission:
 		return m.OldRequiredPermission(ctx)
 	}
@@ -40998,13 +40941,6 @@ func (m *NavigationItemMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsInvalid(v)
-		return nil
-	case navigationitem.FieldCSSClass:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCSSClass(v)
 		return nil
 	case navigationitem.FieldRequiredPermission:
 		v, ok := value.(string)
@@ -41169,9 +41105,6 @@ func (m *NavigationItemMutation) ClearedFields() []string {
 	if m.FieldCleared(navigationitem.FieldIsInvalid) {
 		fields = append(fields, navigationitem.FieldIsInvalid)
 	}
-	if m.FieldCleared(navigationitem.FieldCSSClass) {
-		fields = append(fields, navigationitem.FieldCSSClass)
-	}
 	if m.FieldCleared(navigationitem.FieldRequiredPermission) {
 		fields = append(fields, navigationitem.FieldRequiredPermission)
 	}
@@ -41240,9 +41173,6 @@ func (m *NavigationItemMutation) ClearField(name string) error {
 	case navigationitem.FieldIsInvalid:
 		m.ClearIsInvalid()
 		return nil
-	case navigationitem.FieldCSSClass:
-		m.ClearCSSClass()
-		return nil
 	case navigationitem.FieldRequiredPermission:
 		m.ClearRequiredPermission()
 		return nil
@@ -41304,9 +41234,6 @@ func (m *NavigationItemMutation) ResetField(name string) error {
 		return nil
 	case navigationitem.FieldIsInvalid:
 		m.ResetIsInvalid()
-		return nil
-	case navigationitem.FieldCSSClass:
-		m.ResetCSSClass()
 		return nil
 	case navigationitem.FieldRequiredPermission:
 		m.ResetRequiredPermission()

@@ -391,26 +391,6 @@ func (_u *NavigationItemUpdate) ClearIsInvalid() *NavigationItemUpdate {
 	return _u
 }
 
-// SetCSSClass sets the "css_class" field.
-func (_u *NavigationItemUpdate) SetCSSClass(v string) *NavigationItemUpdate {
-	_u.mutation.SetCSSClass(v)
-	return _u
-}
-
-// SetNillableCSSClass sets the "css_class" field if the given value is not nil.
-func (_u *NavigationItemUpdate) SetNillableCSSClass(v *string) *NavigationItemUpdate {
-	if v != nil {
-		_u.SetCSSClass(*v)
-	}
-	return _u
-}
-
-// ClearCSSClass clears the value of the "css_class" field.
-func (_u *NavigationItemUpdate) ClearCSSClass() *NavigationItemUpdate {
-	_u.mutation.ClearCSSClass()
-	return _u
-}
-
 // SetRequiredPermission sets the "required_permission" field.
 func (_u *NavigationItemUpdate) SetRequiredPermission(v string) *NavigationItemUpdate {
 	_u.mutation.SetRequiredPermission(v)
@@ -648,12 +628,6 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 	}
 	if _u.mutation.IsInvalidCleared() {
 		_spec.ClearField(navigationitem.FieldIsInvalid, field.TypeBool)
-	}
-	if value, ok := _u.mutation.CSSClass(); ok {
-		_spec.SetField(navigationitem.FieldCSSClass, field.TypeString, value)
-	}
-	if _u.mutation.CSSClassCleared() {
-		_spec.ClearField(navigationitem.FieldCSSClass, field.TypeString)
 	}
 	if value, ok := _u.mutation.RequiredPermission(); ok {
 		_spec.SetField(navigationitem.FieldRequiredPermission, field.TypeString, value)
@@ -1119,26 +1093,6 @@ func (_u *NavigationItemUpdateOne) ClearIsInvalid() *NavigationItemUpdateOne {
 	return _u
 }
 
-// SetCSSClass sets the "css_class" field.
-func (_u *NavigationItemUpdateOne) SetCSSClass(v string) *NavigationItemUpdateOne {
-	_u.mutation.SetCSSClass(v)
-	return _u
-}
-
-// SetNillableCSSClass sets the "css_class" field if the given value is not nil.
-func (_u *NavigationItemUpdateOne) SetNillableCSSClass(v *string) *NavigationItemUpdateOne {
-	if v != nil {
-		_u.SetCSSClass(*v)
-	}
-	return _u
-}
-
-// ClearCSSClass clears the value of the "css_class" field.
-func (_u *NavigationItemUpdateOne) ClearCSSClass() *NavigationItemUpdateOne {
-	_u.mutation.ClearCSSClass()
-	return _u
-}
-
 // SetRequiredPermission sets the "required_permission" field.
 func (_u *NavigationItemUpdateOne) SetRequiredPermission(v string) *NavigationItemUpdateOne {
 	_u.mutation.SetRequiredPermission(v)
@@ -1406,12 +1360,6 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 	}
 	if _u.mutation.IsInvalidCleared() {
 		_spec.ClearField(navigationitem.FieldIsInvalid, field.TypeBool)
-	}
-	if value, ok := _u.mutation.CSSClass(); ok {
-		_spec.SetField(navigationitem.FieldCSSClass, field.TypeString, value)
-	}
-	if _u.mutation.CSSClassCleared() {
-		_spec.ClearField(navigationitem.FieldCSSClass, field.TypeString)
 	}
 	if value, ok := _u.mutation.RequiredPermission(); ok {
 		_spec.SetField(navigationitem.FieldRequiredPermission, field.TypeString, value)

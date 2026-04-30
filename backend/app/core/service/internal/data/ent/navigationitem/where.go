@@ -135,11 +135,6 @@ func IsInvalid(v bool) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldIsInvalid, v))
 }
 
-// CSSClass applies equality check predicate on the "css_class" field. It's identical to CSSClassEQ.
-func CSSClass(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldEQ(FieldCSSClass, v))
-}
-
 // RequiredPermission applies equality check predicate on the "required_permission" field. It's identical to RequiredPermissionEQ.
 func RequiredPermission(v string) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldRequiredPermission, v))
@@ -993,81 +988,6 @@ func IsInvalidIsNil() predicate.NavigationItem {
 // IsInvalidNotNil applies the NotNil predicate on the "is_invalid" field.
 func IsInvalidNotNil() predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotNull(FieldIsInvalid))
-}
-
-// CSSClassEQ applies the EQ predicate on the "css_class" field.
-func CSSClassEQ(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldEQ(FieldCSSClass, v))
-}
-
-// CSSClassNEQ applies the NEQ predicate on the "css_class" field.
-func CSSClassNEQ(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldNEQ(FieldCSSClass, v))
-}
-
-// CSSClassIn applies the In predicate on the "css_class" field.
-func CSSClassIn(vs ...string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldIn(FieldCSSClass, vs...))
-}
-
-// CSSClassNotIn applies the NotIn predicate on the "css_class" field.
-func CSSClassNotIn(vs ...string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldNotIn(FieldCSSClass, vs...))
-}
-
-// CSSClassGT applies the GT predicate on the "css_class" field.
-func CSSClassGT(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldGT(FieldCSSClass, v))
-}
-
-// CSSClassGTE applies the GTE predicate on the "css_class" field.
-func CSSClassGTE(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldGTE(FieldCSSClass, v))
-}
-
-// CSSClassLT applies the LT predicate on the "css_class" field.
-func CSSClassLT(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldLT(FieldCSSClass, v))
-}
-
-// CSSClassLTE applies the LTE predicate on the "css_class" field.
-func CSSClassLTE(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldLTE(FieldCSSClass, v))
-}
-
-// CSSClassContains applies the Contains predicate on the "css_class" field.
-func CSSClassContains(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldContains(FieldCSSClass, v))
-}
-
-// CSSClassHasPrefix applies the HasPrefix predicate on the "css_class" field.
-func CSSClassHasPrefix(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldHasPrefix(FieldCSSClass, v))
-}
-
-// CSSClassHasSuffix applies the HasSuffix predicate on the "css_class" field.
-func CSSClassHasSuffix(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldHasSuffix(FieldCSSClass, v))
-}
-
-// CSSClassIsNil applies the IsNil predicate on the "css_class" field.
-func CSSClassIsNil() predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldIsNull(FieldCSSClass))
-}
-
-// CSSClassNotNil applies the NotNil predicate on the "css_class" field.
-func CSSClassNotNil() predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldNotNull(FieldCSSClass))
-}
-
-// CSSClassEqualFold applies the EqualFold predicate on the "css_class" field.
-func CSSClassEqualFold(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldEqualFold(FieldCSSClass, v))
-}
-
-// CSSClassContainsFold applies the ContainsFold predicate on the "css_class" field.
-func CSSClassContainsFold(v string) predicate.NavigationItem {
-	return predicate.NavigationItem(sql.FieldContainsFold(FieldCSSClass, v))
 }
 
 // RequiredPermissionEQ applies the EQ predicate on the "required_permission" field.

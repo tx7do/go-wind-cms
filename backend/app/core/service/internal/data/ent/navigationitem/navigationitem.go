@@ -48,8 +48,6 @@ const (
 	FieldIsOpenNewTab = "is_open_new_tab"
 	// FieldIsInvalid holds the string denoting the is_invalid field in the database.
 	FieldIsInvalid = "is_invalid"
-	// FieldCSSClass holds the string denoting the css_class field in the database.
-	FieldCSSClass = "css_class"
 	// FieldRequiredPermission holds the string denoting the required_permission field in the database.
 	FieldRequiredPermission = "required_permission"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
@@ -88,7 +86,6 @@ var Columns = []string{
 	FieldDescription,
 	FieldIsOpenNewTab,
 	FieldIsInvalid,
-	FieldCSSClass,
 	FieldRequiredPermission,
 }
 
@@ -233,11 +230,6 @@ func ByIsOpenNewTab(opts ...sql.OrderTermOption) OrderOption {
 // ByIsInvalid orders the results by the is_invalid field.
 func ByIsInvalid(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsInvalid, opts...).ToFunc()
-}
-
-// ByCSSClass orders the results by the css_class field.
-func ByCSSClass(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCSSClass, opts...).ToFunc()
 }
 
 // ByRequiredPermission orders the results by the required_permission field.

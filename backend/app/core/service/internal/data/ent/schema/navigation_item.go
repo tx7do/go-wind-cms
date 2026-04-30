@@ -85,11 +85,6 @@ func (NavigationItem) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.String("css_class").
-			Comment("额外的 CSS 类").
-			Optional().
-			Nillable(),
-
 		field.String("required_permission").
 			Comment("访问权限标识").
 			Optional().

@@ -1666,7 +1666,6 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述文本"},
 		{Name: "is_open_new_tab", Type: field.TypeBool, Nullable: true, Comment: "是否在新标签页打开", Default: false},
 		{Name: "is_invalid", Type: field.TypeBool, Nullable: true, Comment: "是否无效", Default: false},
-		{Name: "css_class", Type: field.TypeString, Nullable: true, Comment: "额外的 CSS 类"},
 		{Name: "required_permission", Type: field.TypeString, Nullable: true, Comment: "访问权限标识"},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
 	}
@@ -1679,7 +1678,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "navigation_items_navigation_items_children",
-				Columns:    []*schema.Column{NavigationItemsColumns[19]},
+				Columns:    []*schema.Column{NavigationItemsColumns[18]},
 				RefColumns: []*schema.Column{NavigationItemsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1698,7 +1697,7 @@ var (
 			{
 				Name:    "navigationitem_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[19]},
+				Columns: []*schema.Column{NavigationItemsColumns[18]},
 			},
 			{
 				Name:    "navigationitem_object_id",

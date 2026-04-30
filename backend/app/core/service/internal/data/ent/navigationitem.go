@@ -52,8 +52,6 @@ type NavigationItem struct {
 	IsOpenNewTab *bool `json:"is_open_new_tab,omitempty"`
 	// 是否无效
 	IsInvalid *bool `json:"is_invalid,omitempty"`
-	// 额外的 CSS 类
-	CSSClass *string `json:"css_class,omitempty"`
 	// 访问权限标识
 	RequiredPermission *string `json:"required_permission,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -102,7 +100,7 @@ func (*NavigationItem) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case navigationitem.FieldID, navigationitem.FieldCreatedBy, navigationitem.FieldUpdatedBy, navigationitem.FieldDeletedBy, navigationitem.FieldSortOrder, navigationitem.FieldParentID, navigationitem.FieldNavigationID, navigationitem.FieldObjectID:
 			values[i] = new(sql.NullInt64)
-		case navigationitem.FieldLinkType, navigationitem.FieldTitle, navigationitem.FieldURL, navigationitem.FieldIcon, navigationitem.FieldDescription, navigationitem.FieldCSSClass, navigationitem.FieldRequiredPermission:
+		case navigationitem.FieldLinkType, navigationitem.FieldTitle, navigationitem.FieldURL, navigationitem.FieldIcon, navigationitem.FieldDescription, navigationitem.FieldRequiredPermission:
 			values[i] = new(sql.NullString)
 		case navigationitem.FieldCreatedAt, navigationitem.FieldUpdatedAt, navigationitem.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -246,13 +244,6 @@ func (_m *NavigationItem) assignValues(columns []string, values []any) error {
 				_m.IsInvalid = new(bool)
 				*_m.IsInvalid = value.Bool
 			}
-		case navigationitem.FieldCSSClass:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field css_class", values[i])
-			} else if value.Valid {
-				_m.CSSClass = new(string)
-				*_m.CSSClass = value.String
-			}
 		case navigationitem.FieldRequiredPermission:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field required_permission", values[i])
@@ -389,11 +380,6 @@ func (_m *NavigationItem) String() string {
 	if v := _m.IsInvalid; v != nil {
 		builder.WriteString("is_invalid=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.CSSClass; v != nil {
-		builder.WriteString("css_class=")
-		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	if v := _m.RequiredPermission; v != nil {

@@ -135,10 +135,6 @@ func (m *NavigationItem) validate(all bool) error {
 		// no validation rules for IsInvalid
 	}
 
-	if m.CssClass != nil {
-		// no validation rules for CssClass
-	}
-
 	if m.RequiredPermission != nil {
 		// no validation rules for RequiredPermission
 	}

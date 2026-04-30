@@ -99,8 +99,7 @@ type NavigationItem struct {
 	SortOrder          *uint32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                           // 排序优先级（数值越小越靠前）
 	IsOpenNewTab       *bool                    `protobuf:"varint,10,opt,name=is_open_new_tab,json=isOpenNewTab,proto3,oneof" json:"is_open_new_tab,omitempty"`                             // 是否在新标签页打开
 	IsInvalid          *bool                    `protobuf:"varint,11,opt,name=is_invalid,json=isInvalid,proto3,oneof" json:"is_invalid,omitempty"`                                          // 是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项目项）
-	CssClass           *string                  `protobuf:"bytes,12,opt,name=css_class,json=cssClass,proto3,oneof" json:"css_class,omitempty"`                                              // 额外的 CSS 类（前端可选地将此字段添加到导航项目项的 HTML class 属性中，便于自定义样式）
-	RequiredPermission *string                  `protobuf:"bytes,13,opt,name=required_permission,json=requiredPermission,proto3,oneof" json:"required_permission,omitempty"`                // 访问权限标识（如 "view_admin_panel"，前端可根据用户权限决定是否显示该导航项目项）
+	RequiredPermission *string                  `protobuf:"bytes,12,opt,name=required_permission,json=requiredPermission,proto3,oneof" json:"required_permission,omitempty"`                // 访问权限标识（如 "view_admin_panel"，前端可根据用户权限决定是否显示该导航项目项）
 	ParentId           *uint32                  `protobuf:"varint,50,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                             // 父菜单项ID（0 表示顶级项）
 	Children           []*NavigationItem        `protobuf:"bytes,51,rep,name=children,proto3" json:"children,omitempty"`                                                                    // 子节点树
 	CreatedBy          *uint32                  `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                         // 创建者用户ID
@@ -218,13 +217,6 @@ func (x *NavigationItem) GetIsInvalid() bool {
 		return *x.IsInvalid
 	}
 	return false
-}
-
-func (x *NavigationItem) GetCssClass() string {
-	if x != nil && x.CssClass != nil {
-		return *x.CssClass
-	}
-	return ""
 }
 
 func (x *NavigationItem) GetRequiredPermission() string {
@@ -619,7 +611,7 @@ var File_site_service_v1_navigation_item_proto protoreflect.FileDescriptor
 
 const file_site_service_v1_navigation_item_proto_rawDesc = "" +
 	"\n" +
-	"%site/service/v1/navigation_item.proto\x12\x0fsite.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa7\x13\n" +
+	"%site/service/v1/navigation_item.proto\x12\x0fsite.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xf3\x11\n" +
 	"\x0eNavigationItem\x12,\n" +
 	"\x02id\x18\x01 \x01(\rB\x17\xbaG\x14\x92\x02\x11导航项目项IDH\x00R\x02id\x88\x01\x01\x12J\n" +
 	"\rnavigation_id\x18\x02 \x01(\rB \xbaG\x1d\x92\x02\x1a所属导航项目菜单IDH\x01R\fnavigationId\x88\x01\x01\x12f\n" +
@@ -635,23 +627,22 @@ const file_site_service_v1_navigation_item_proto_rawDesc = "" +
 	" \x01(\bB!\xbaG\x1e\x92\x02\x1b是否在新标签页打开H\tR\fisOpenNewTab\x88\x01\x01\x12\xb5\x01\n" +
 	"\n" +
 	"is_invalid\x18\v \x01(\bB\x90\x01\xbaG\x8c\x01\x92\x02\x88\x01是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项目项）H\n" +
-	"R\tisInvalid\x88\x01\x01\x12\xa3\x01\n" +
-	"\tcss_class\x18\f \x01(\tB\x80\x01\xbaG}\x92\x02z额外的 CSS 类（前端可选地将此字段添加到导航项目项的 HTML class 属性中，便于自定义样式）H\vR\bcssClass\x88\x01\x01\x12\xaa\x01\n" +
-	"\x13required_permission\x18\r \x01(\tBt\xbaGq\x92\x02n访问权限标识（如 view_admin_panel，前端可根据用户权限决定是否显示该导航项目项）H\fR\x12requiredPermission\x88\x01\x01\x12M\n" +
-	"\tparent_id\x182 \x01(\rB+\xbaG(\x92\x02%父菜单项ID（0 表示顶级项）H\rR\bparentId\x88\x01\x01\x12O\n" +
+	"R\tisInvalid\x88\x01\x01\x12\xaa\x01\n" +
+	"\x13required_permission\x18\f \x01(\tBt\xbaGq\x92\x02n访问权限标识（如 view_admin_panel，前端可根据用户权限决定是否显示该导航项目项）H\vR\x12requiredPermission\x88\x01\x01\x12M\n" +
+	"\tparent_id\x182 \x01(\rB+\xbaG(\x92\x02%父菜单项ID（0 表示顶级项）H\fR\bparentId\x88\x01\x01\x12O\n" +
 	"\bchildren\x183 \x03(\v2\x1f.site.service.v1.NavigationItemB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x0eR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\rR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0eR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x10R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x11R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x10R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x12R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x11R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x13R\tdeletedAt\x88\x01\x01\"\x93\x01\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x12R\tdeletedAt\x88\x01\x01\"\x93\x01\n" +
 	"\bLinkType\x12\x19\n" +
 	"\x15LINK_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10LINK_TYPE_CUSTOM\x10\x01\x12\x12\n" +
@@ -671,9 +662,7 @@ const file_site_service_v1_navigation_item_proto_rawDesc = "" +
 	"_object_idB\r\n" +
 	"\v_sort_orderB\x12\n" +
 	"\x10_is_open_new_tabB\r\n" +
-	"\v_is_invalidB\f\n" +
-	"\n" +
-	"_css_classB\x16\n" +
+	"\v_is_invalidB\x16\n" +
 	"\x14_required_permissionB\f\n" +
 	"\n" +
 	"_parent_idB\r\n" +
