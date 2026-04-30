@@ -483,46 +483,6 @@ func (_u *PageUpdate) ClearCustomFields() *PageUpdate {
 	return _u
 }
 
-// SetCustomHead sets the "custom_head" field.
-func (_u *PageUpdate) SetCustomHead(v string) *PageUpdate {
-	_u.mutation.SetCustomHead(v)
-	return _u
-}
-
-// SetNillableCustomHead sets the "custom_head" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableCustomHead(v *string) *PageUpdate {
-	if v != nil {
-		_u.SetCustomHead(*v)
-	}
-	return _u
-}
-
-// ClearCustomHead clears the value of the "custom_head" field.
-func (_u *PageUpdate) ClearCustomHead() *PageUpdate {
-	_u.mutation.ClearCustomHead()
-	return _u
-}
-
-// SetCustomFoot sets the "custom_foot" field.
-func (_u *PageUpdate) SetCustomFoot(v string) *PageUpdate {
-	_u.mutation.SetCustomFoot(v)
-	return _u
-}
-
-// SetNillableCustomFoot sets the "custom_foot" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableCustomFoot(v *string) *PageUpdate {
-	if v != nil {
-		_u.SetCustomFoot(*v)
-	}
-	return _u
-}
-
-// ClearCustomFoot clears the value of the "custom_foot" field.
-func (_u *PageUpdate) ClearCustomFoot() *PageUpdate {
-	_u.mutation.ClearCustomFoot()
-	return _u
-}
-
 // SetDepth sets the "depth" field.
 func (_u *PageUpdate) SetDepth(v int32) *PageUpdate {
 	_u.mutation.ResetDepth()
@@ -812,18 +772,6 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.CustomFieldsCleared() {
 		_spec.ClearField(page.FieldCustomFields, field.TypeJSON)
-	}
-	if value, ok := _u.mutation.CustomHead(); ok {
-		_spec.SetField(page.FieldCustomHead, field.TypeString, value)
-	}
-	if _u.mutation.CustomHeadCleared() {
-		_spec.ClearField(page.FieldCustomHead, field.TypeString)
-	}
-	if value, ok := _u.mutation.CustomFoot(); ok {
-		_spec.SetField(page.FieldCustomFoot, field.TypeString, value)
-	}
-	if _u.mutation.CustomFootCleared() {
-		_spec.ClearField(page.FieldCustomFoot, field.TypeString)
 	}
 	if value, ok := _u.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)
@@ -1384,46 +1332,6 @@ func (_u *PageUpdateOne) ClearCustomFields() *PageUpdateOne {
 	return _u
 }
 
-// SetCustomHead sets the "custom_head" field.
-func (_u *PageUpdateOne) SetCustomHead(v string) *PageUpdateOne {
-	_u.mutation.SetCustomHead(v)
-	return _u
-}
-
-// SetNillableCustomHead sets the "custom_head" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableCustomHead(v *string) *PageUpdateOne {
-	if v != nil {
-		_u.SetCustomHead(*v)
-	}
-	return _u
-}
-
-// ClearCustomHead clears the value of the "custom_head" field.
-func (_u *PageUpdateOne) ClearCustomHead() *PageUpdateOne {
-	_u.mutation.ClearCustomHead()
-	return _u
-}
-
-// SetCustomFoot sets the "custom_foot" field.
-func (_u *PageUpdateOne) SetCustomFoot(v string) *PageUpdateOne {
-	_u.mutation.SetCustomFoot(v)
-	return _u
-}
-
-// SetNillableCustomFoot sets the "custom_foot" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableCustomFoot(v *string) *PageUpdateOne {
-	if v != nil {
-		_u.SetCustomFoot(*v)
-	}
-	return _u
-}
-
-// ClearCustomFoot clears the value of the "custom_foot" field.
-func (_u *PageUpdateOne) ClearCustomFoot() *PageUpdateOne {
-	_u.mutation.ClearCustomFoot()
-	return _u
-}
-
 // SetDepth sets the "depth" field.
 func (_u *PageUpdateOne) SetDepth(v int32) *PageUpdateOne {
 	_u.mutation.ResetDepth()
@@ -1743,18 +1651,6 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 	}
 	if _u.mutation.CustomFieldsCleared() {
 		_spec.ClearField(page.FieldCustomFields, field.TypeJSON)
-	}
-	if value, ok := _u.mutation.CustomHead(); ok {
-		_spec.SetField(page.FieldCustomHead, field.TypeString, value)
-	}
-	if _u.mutation.CustomHeadCleared() {
-		_spec.ClearField(page.FieldCustomHead, field.TypeString)
-	}
-	if value, ok := _u.mutation.CustomFoot(); ok {
-		_spec.SetField(page.FieldCustomFoot, field.TypeString, value)
-	}
-	if _u.mutation.CustomFootCleared() {
-		_spec.ClearField(page.FieldCustomFoot, field.TypeString)
 	}
 	if value, ok := _u.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)

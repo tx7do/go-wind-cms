@@ -110,16 +110,6 @@ func (Page) Fields() []ent.Field {
 			Comment("自定义字段").
 			Optional(),
 
-		field.String("custom_head").
-			Comment("自定义 head 代码").
-			Optional().
-			Nillable(),
-
-		field.String("custom_foot").
-			Comment("自定义 foot 代码").
-			Optional().
-			Nillable(),
-
 		field.Int32("depth").
 			Comment("页面层级深度").
 			Default(0).

@@ -129,13 +129,13 @@ func (r *CategoryTranslationRepo) newCreateBuilder(data *contentV1.CategoryTrans
 		SetNillableDescription(data.Description).
 		SetNillableThumbnail(data.Thumbnail).
 		SetNillableCoverImage(data.CoverImage).
-		SetNillableTemplate(data.Template).
 		SetNillableFullPath(data.FullPath).
-		SetNillableMetaKeywords(data.MetaKeywords).
-		SetNillableMetaDescription(data.MetaDescription).
-		SetNillableSeoTitle(data.SeoTitle).
 		SetNillableCreatedBy(data.CreatedBy).
 		SetCreatedAt(now)
+
+	if data.Seo != nil {
+		builder.SetSeo(data.Seo)
+	}
 
 	return builder
 }
@@ -194,13 +194,13 @@ func (r *CategoryTranslationRepo) UpdateTranslation(ctx context.Context, id uint
 				SetNillableDescription(dto.Description).
 				SetNillableThumbnail(dto.Thumbnail).
 				SetNillableCoverImage(dto.CoverImage).
-				SetNillableTemplate(dto.Template).
 				SetNillableFullPath(dto.FullPath).
-				SetNillableMetaKeywords(dto.MetaKeywords).
-				SetNillableMetaDescription(dto.MetaDescription).
-				SetNillableSeoTitle(dto.SeoTitle).
 				SetNillableUpdatedBy(dto.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			if data.Seo != nil {
+				builder.SetSeo(data.Seo)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(categorytranslation.FieldID, id))

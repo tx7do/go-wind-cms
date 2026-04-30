@@ -1567,21 +1567,11 @@ components:
                 coverImage:
                     type: string
                     description: 封面图
-                template:
-                    type: string
-                    description: 模板名称
                 fullPath:
                     type: string
                     description: 完整路径（如 /zh-CN/category/tech）
-                metaKeywords:
-                    type: string
-                    description: SEO 关键词
-                metaDescription:
-                    type: string
-                    description: SEO 描述
-                seoTitle:
-                    type: string
-                    description: SEO 标题
+                seo:
+                    $ref: '#/components/schemas/SeoMeta'
                 createdBy:
                     type: integer
                     description: 创建者用户ID
@@ -2244,12 +2234,6 @@ components:
                     additionalProperties:
                         type: string
                     description: 自定义字段，键值对形式，便于扩展
-                customHead:
-                    type: string
-                    description: 自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）
-                customFoot:
-                    type: string
-                    description: 自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）
                 translations:
                     type: array
                     items:
@@ -2322,37 +2306,22 @@ components:
                 slug:
                     type: string
                     description: 语言特定的 slug（覆盖主表 slug，用于多语言路由，如中文用拼音）
-                summary:
-                    type: string
-                    description: 页面摘要（用于 meta description）
-                content:
-                    type: string
-                    description: 页面内容
-                originalContent:
-                    type: string
-                    description: 原始内容（未渲染前）
+                sections:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Section'
+                    description: 页面内容区块（模块化）
                 thumbnail:
                     type: string
                     description: 缩略图
                 coverImage:
                     type: string
                     description: 封面图
-                wordCount:
-                    type: integer
-                    description: 当前语言版本的字数（中文按字符数，英文按单词数）
-                    format: uint32
                 fullPath:
                     type: string
                     description: 完整路径（如 /zh-CN/about-us），首页应为 '/' 或 '/zh-CN/'
-                metaKeywords:
-                    type: string
-                    description: SEO 关键词
-                metaDescription:
-                    type: string
-                    description: SEO 描述
-                seoTitle:
-                    type: string
-                    description: SEO 标题（覆盖默认 title）
+                seo:
+                    $ref: '#/components/schemas/SeoMeta'
                 createdBy:
                     type: integer
                     description: 创建者用户ID
@@ -2549,9 +2518,6 @@ components:
                 thumbnail:
                     type: string
                     description: 缩略图（某些语言可能需要不同图片）
-                template:
-                    type: string
-                    description: 模板名称（某些语言可能使用不同模板）
                 fullPath:
                     type: string
                     description: 完整路径（如 /zh-CN/blog/post-slug）
@@ -2559,15 +2525,8 @@ components:
                     type: integer
                     description: 当前语言版本的字数（中文按字符数，英文按单词数）
                     format: uint32
-                metaKeywords:
-                    type: string
-                    description: SEO 关键词
-                metaDescription:
-                    type: string
-                    description: SEO 描述
-                seoTitle:
-                    type: string
-                    description: SEO 标题
+                seo:
+                    $ref: '#/components/schemas/SeoMeta'
                 createdBy:
                     type: integer
                     description: 创建者用户ID
@@ -2607,6 +2566,72 @@ components:
                     type: string
                     description: 预签名约束的 Content-Type（可选）
             description: 预签名选项
+        Section:
+            type: object
+            properties:
+                type:
+                    enum:
+                        - SECTION_TYPE_UNSPECIFIED
+                        - SECTION_TYPE_RICH_TEXT
+                        - SECTION_TYPE_MARKDOWN
+                        - SECTION_TYPE_TITLE
+                        - SECTION_TYPE_IMAGE
+                        - SECTION_TYPE_GALLERY
+                        - SECTION_TYPE_VIDEO
+                        - SECTION_TYPE_BUTTON
+                        - SECTION_TYPE_DIVIDER
+                        - SECTION_TYPE_SPACER
+                        - SECTION_TYPE_CODE
+                        - SECTION_TYPE_HTML
+                        - SECTION_TYPE_FORM
+                        - SECTION_TYPE_CAROUSEL
+                        - SECTION_TYPE_CUSTOM
+                    type: string
+                    description: 区块类型
+                    format: enum
+                name:
+                    type: string
+                    description: 区块名称（后台标识用）
+                sortOrder:
+                    type: integer
+                    description: 排序（越小越靠前）
+                    format: uint32
+                config:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 区块通用配置（边距、样式、类名等）
+                content:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 区块内容（键值对，适配不同类型区块）
+            description: 页面区块（内容构建模块）
+        SeoMeta:
+            type: object
+            properties:
+                seoTitle:
+                    type: string
+                    description: SEO 标题（覆盖页面默认标题）
+                metaKeywords:
+                    type: string
+                    description: SEO 关键词
+                metaDescription:
+                    type: string
+                    description: SEO 描述
+                ogTitle:
+                    type: string
+                    description: OG 标题（覆盖页面默认标题）
+                ogDescription:
+                    type: string
+                    description: OG 描述
+                ogImage:
+                    type: string
+                    description: OG 图片 URL
+                canonicalUrl:
+                    type: string
+                    description: 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
+            description: SEO 元信息结构设计
         StorageObject:
             type: object
             properties:
@@ -2662,24 +2687,11 @@ components:
                 coverImage:
                     type: string
                     description: 封面图
-                template:
-                    type: string
-                    description: 模板名称
                 fullPath:
                     type: string
                     description: 完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）
-                metaKeywords:
-                    type: string
-                    description: SEO 关键词
-                metaDescription:
-                    type: string
-                    description: SEO 描述
-                seoTitle:
-                    type: string
-                    description: SEO 标题
-                canonicalUrl:
-                    type: string
-                    description: 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
+                seo:
+                    $ref: '#/components/schemas/SeoMeta'
                 createdBy:
                     type: integer
                     description: 创建者用户ID

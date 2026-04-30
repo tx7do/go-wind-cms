@@ -63,10 +63,6 @@ type Page struct {
 	Visits *uint32 `json:"visits,omitempty"`
 	// 自定义字段
 	CustomFields *map[string]string `json:"custom_fields,omitempty"`
-	// 自定义 head 代码
-	CustomHead *string `json:"custom_head,omitempty"`
-	// 自定义 foot 代码
-	CustomFoot *string `json:"custom_foot,omitempty"`
 	// 页面层级深度
 	Depth *int32 `json:"depth,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -117,7 +113,7 @@ func (*Page) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldAuthorID, page.FieldVisits, page.FieldDepth:
 			values[i] = new(sql.NullInt64)
-		case page.FieldPath, page.FieldEditorType, page.FieldStatus, page.FieldType, page.FieldSlug, page.FieldAuthorName, page.FieldRedirectURL, page.FieldTemplate, page.FieldCustomHead, page.FieldCustomFoot:
+		case page.FieldPath, page.FieldEditorType, page.FieldStatus, page.FieldType, page.FieldSlug, page.FieldAuthorName, page.FieldRedirectURL, page.FieldTemplate:
 			values[i] = new(sql.NullString)
 		case page.FieldCreatedAt, page.FieldUpdatedAt, page.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -297,20 +293,6 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field custom_fields: %w", err)
 				}
 			}
-		case page.FieldCustomHead:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field custom_head", values[i])
-			} else if value.Valid {
-				_m.CustomHead = new(string)
-				*_m.CustomHead = value.String
-			}
-		case page.FieldCustomFoot:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field custom_foot", values[i])
-			} else if value.Valid {
-				_m.CustomFoot = new(string)
-				*_m.CustomFoot = value.String
-			}
 		case page.FieldDepth:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field depth", values[i])
@@ -471,16 +453,6 @@ func (_m *Page) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("custom_fields=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CustomFields))
-	builder.WriteString(", ")
-	if v := _m.CustomHead; v != nil {
-		builder.WriteString("custom_head=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := _m.CustomFoot; v != nil {
-		builder.WriteString("custom_foot=")
-		builder.WriteString(*v)
-	}
 	builder.WriteString(", ")
 	if v := _m.Depth; v != nil {
 		builder.WriteString("depth=")

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"time"
@@ -150,6 +151,18 @@ func (_u *TagTranslationUpdate) ClearDeletedBy() *TagTranslationUpdate {
 	return _u
 }
 
+// SetSeo sets the "seo" field.
+func (_u *TagTranslationUpdate) SetSeo(v *contentpb.SeoMeta) *TagTranslationUpdate {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *TagTranslationUpdate) ClearSeo() *TagTranslationUpdate {
+	_u.mutation.ClearSeo()
+	return _u
+}
+
 // SetTagID sets the "tag_id" field.
 func (_u *TagTranslationUpdate) SetTagID(v uint32) *TagTranslationUpdate {
 	_u.mutation.ResetTagID()
@@ -277,26 +290,6 @@ func (_u *TagTranslationUpdate) ClearCoverImage() *TagTranslationUpdate {
 	return _u
 }
 
-// SetTemplate sets the "template" field.
-func (_u *TagTranslationUpdate) SetTemplate(v string) *TagTranslationUpdate {
-	_u.mutation.SetTemplate(v)
-	return _u
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableTemplate(v *string) *TagTranslationUpdate {
-	if v != nil {
-		_u.SetTemplate(*v)
-	}
-	return _u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (_u *TagTranslationUpdate) ClearTemplate() *TagTranslationUpdate {
-	_u.mutation.ClearTemplate()
-	return _u
-}
-
 // SetFullPath sets the "full_path" field.
 func (_u *TagTranslationUpdate) SetFullPath(v string) *TagTranslationUpdate {
 	_u.mutation.SetFullPath(v)
@@ -314,86 +307,6 @@ func (_u *TagTranslationUpdate) SetNillableFullPath(v *string) *TagTranslationUp
 // ClearFullPath clears the value of the "full_path" field.
 func (_u *TagTranslationUpdate) ClearFullPath() *TagTranslationUpdate {
 	_u.mutation.ClearFullPath()
-	return _u
-}
-
-// SetCanonicalURL sets the "canonical_url" field.
-func (_u *TagTranslationUpdate) SetCanonicalURL(v string) *TagTranslationUpdate {
-	_u.mutation.SetCanonicalURL(v)
-	return _u
-}
-
-// SetNillableCanonicalURL sets the "canonical_url" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableCanonicalURL(v *string) *TagTranslationUpdate {
-	if v != nil {
-		_u.SetCanonicalURL(*v)
-	}
-	return _u
-}
-
-// ClearCanonicalURL clears the value of the "canonical_url" field.
-func (_u *TagTranslationUpdate) ClearCanonicalURL() *TagTranslationUpdate {
-	_u.mutation.ClearCanonicalURL()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *TagTranslationUpdate) SetMetaKeywords(v string) *TagTranslationUpdate {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableMetaKeywords(v *string) *TagTranslationUpdate {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *TagTranslationUpdate) ClearMetaKeywords() *TagTranslationUpdate {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *TagTranslationUpdate) SetMetaDescription(v string) *TagTranslationUpdate {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableMetaDescription(v *string) *TagTranslationUpdate {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *TagTranslationUpdate) ClearMetaDescription() *TagTranslationUpdate {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *TagTranslationUpdate) SetSeoTitle(v string) *TagTranslationUpdate {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableSeoTitle(v *string) *TagTranslationUpdate {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *TagTranslationUpdate) ClearSeoTitle() *TagTranslationUpdate {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -486,6 +399,12 @@ func (_u *TagTranslationUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(tagtranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(tagtranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(tagtranslation.FieldSeo, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.TagID(); ok {
 		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint32, value)
 	}
@@ -525,41 +444,11 @@ func (_u *TagTranslationUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if _u.mutation.CoverImageCleared() {
 		_spec.ClearField(tagtranslation.FieldCoverImage, field.TypeString)
 	}
-	if value, ok := _u.mutation.Template(); ok {
-		_spec.SetField(tagtranslation.FieldTemplate, field.TypeString, value)
-	}
-	if _u.mutation.TemplateCleared() {
-		_spec.ClearField(tagtranslation.FieldTemplate, field.TypeString)
-	}
 	if value, ok := _u.mutation.FullPath(); ok {
 		_spec.SetField(tagtranslation.FieldFullPath, field.TypeString, value)
 	}
 	if _u.mutation.FullPathCleared() {
 		_spec.ClearField(tagtranslation.FieldFullPath, field.TypeString)
-	}
-	if value, ok := _u.mutation.CanonicalURL(); ok {
-		_spec.SetField(tagtranslation.FieldCanonicalURL, field.TypeString, value)
-	}
-	if _u.mutation.CanonicalURLCleared() {
-		_spec.ClearField(tagtranslation.FieldCanonicalURL, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(tagtranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(tagtranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(tagtranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(tagtranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(tagtranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(tagtranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -704,6 +593,18 @@ func (_u *TagTranslationUpdateOne) ClearDeletedBy() *TagTranslationUpdateOne {
 	return _u
 }
 
+// SetSeo sets the "seo" field.
+func (_u *TagTranslationUpdateOne) SetSeo(v *contentpb.SeoMeta) *TagTranslationUpdateOne {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *TagTranslationUpdateOne) ClearSeo() *TagTranslationUpdateOne {
+	_u.mutation.ClearSeo()
+	return _u
+}
+
 // SetTagID sets the "tag_id" field.
 func (_u *TagTranslationUpdateOne) SetTagID(v uint32) *TagTranslationUpdateOne {
 	_u.mutation.ResetTagID()
@@ -831,26 +732,6 @@ func (_u *TagTranslationUpdateOne) ClearCoverImage() *TagTranslationUpdateOne {
 	return _u
 }
 
-// SetTemplate sets the "template" field.
-func (_u *TagTranslationUpdateOne) SetTemplate(v string) *TagTranslationUpdateOne {
-	_u.mutation.SetTemplate(v)
-	return _u
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableTemplate(v *string) *TagTranslationUpdateOne {
-	if v != nil {
-		_u.SetTemplate(*v)
-	}
-	return _u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (_u *TagTranslationUpdateOne) ClearTemplate() *TagTranslationUpdateOne {
-	_u.mutation.ClearTemplate()
-	return _u
-}
-
 // SetFullPath sets the "full_path" field.
 func (_u *TagTranslationUpdateOne) SetFullPath(v string) *TagTranslationUpdateOne {
 	_u.mutation.SetFullPath(v)
@@ -868,86 +749,6 @@ func (_u *TagTranslationUpdateOne) SetNillableFullPath(v *string) *TagTranslatio
 // ClearFullPath clears the value of the "full_path" field.
 func (_u *TagTranslationUpdateOne) ClearFullPath() *TagTranslationUpdateOne {
 	_u.mutation.ClearFullPath()
-	return _u
-}
-
-// SetCanonicalURL sets the "canonical_url" field.
-func (_u *TagTranslationUpdateOne) SetCanonicalURL(v string) *TagTranslationUpdateOne {
-	_u.mutation.SetCanonicalURL(v)
-	return _u
-}
-
-// SetNillableCanonicalURL sets the "canonical_url" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableCanonicalURL(v *string) *TagTranslationUpdateOne {
-	if v != nil {
-		_u.SetCanonicalURL(*v)
-	}
-	return _u
-}
-
-// ClearCanonicalURL clears the value of the "canonical_url" field.
-func (_u *TagTranslationUpdateOne) ClearCanonicalURL() *TagTranslationUpdateOne {
-	_u.mutation.ClearCanonicalURL()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *TagTranslationUpdateOne) SetMetaKeywords(v string) *TagTranslationUpdateOne {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableMetaKeywords(v *string) *TagTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *TagTranslationUpdateOne) ClearMetaKeywords() *TagTranslationUpdateOne {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *TagTranslationUpdateOne) SetMetaDescription(v string) *TagTranslationUpdateOne {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableMetaDescription(v *string) *TagTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *TagTranslationUpdateOne) ClearMetaDescription() *TagTranslationUpdateOne {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *TagTranslationUpdateOne) SetSeoTitle(v string) *TagTranslationUpdateOne {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableSeoTitle(v *string) *TagTranslationUpdateOne {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *TagTranslationUpdateOne) ClearSeoTitle() *TagTranslationUpdateOne {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -1070,6 +871,12 @@ func (_u *TagTranslationUpdateOne) sqlSave(ctx context.Context) (_node *TagTrans
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(tagtranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(tagtranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(tagtranslation.FieldSeo, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.TagID(); ok {
 		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint32, value)
 	}
@@ -1109,41 +916,11 @@ func (_u *TagTranslationUpdateOne) sqlSave(ctx context.Context) (_node *TagTrans
 	if _u.mutation.CoverImageCleared() {
 		_spec.ClearField(tagtranslation.FieldCoverImage, field.TypeString)
 	}
-	if value, ok := _u.mutation.Template(); ok {
-		_spec.SetField(tagtranslation.FieldTemplate, field.TypeString, value)
-	}
-	if _u.mutation.TemplateCleared() {
-		_spec.ClearField(tagtranslation.FieldTemplate, field.TypeString)
-	}
 	if value, ok := _u.mutation.FullPath(); ok {
 		_spec.SetField(tagtranslation.FieldFullPath, field.TypeString, value)
 	}
 	if _u.mutation.FullPathCleared() {
 		_spec.ClearField(tagtranslation.FieldFullPath, field.TypeString)
-	}
-	if value, ok := _u.mutation.CanonicalURL(); ok {
-		_spec.SetField(tagtranslation.FieldCanonicalURL, field.TypeString, value)
-	}
-	if _u.mutation.CanonicalURLCleared() {
-		_spec.ClearField(tagtranslation.FieldCanonicalURL, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(tagtranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(tagtranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(tagtranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(tagtranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(tagtranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(tagtranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &TagTranslation{config: _u.config}

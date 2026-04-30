@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"time"
 
@@ -103,6 +104,12 @@ func (_c *CategoryTranslationCreate) SetNillableDeletedBy(v *uint32) *CategoryTr
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
+	return _c
+}
+
+// SetSeo sets the "seo" field.
+func (_c *CategoryTranslationCreate) SetSeo(v *contentpb.SeoMeta) *CategoryTranslationCreate {
+	_c.mutation.SetSeo(v)
 	return _c
 }
 
@@ -204,20 +211,6 @@ func (_c *CategoryTranslationCreate) SetNillableCoverImage(v *string) *CategoryT
 	return _c
 }
 
-// SetTemplate sets the "template" field.
-func (_c *CategoryTranslationCreate) SetTemplate(v string) *CategoryTranslationCreate {
-	_c.mutation.SetTemplate(v)
-	return _c
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_c *CategoryTranslationCreate) SetNillableTemplate(v *string) *CategoryTranslationCreate {
-	if v != nil {
-		_c.SetTemplate(*v)
-	}
-	return _c
-}
-
 // SetFullPath sets the "full_path" field.
 func (_c *CategoryTranslationCreate) SetFullPath(v string) *CategoryTranslationCreate {
 	_c.mutation.SetFullPath(v)
@@ -228,48 +221,6 @@ func (_c *CategoryTranslationCreate) SetFullPath(v string) *CategoryTranslationC
 func (_c *CategoryTranslationCreate) SetNillableFullPath(v *string) *CategoryTranslationCreate {
 	if v != nil {
 		_c.SetFullPath(*v)
-	}
-	return _c
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_c *CategoryTranslationCreate) SetMetaKeywords(v string) *CategoryTranslationCreate {
-	_c.mutation.SetMetaKeywords(v)
-	return _c
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_c *CategoryTranslationCreate) SetNillableMetaKeywords(v *string) *CategoryTranslationCreate {
-	if v != nil {
-		_c.SetMetaKeywords(*v)
-	}
-	return _c
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_c *CategoryTranslationCreate) SetMetaDescription(v string) *CategoryTranslationCreate {
-	_c.mutation.SetMetaDescription(v)
-	return _c
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_c *CategoryTranslationCreate) SetNillableMetaDescription(v *string) *CategoryTranslationCreate {
-	if v != nil {
-		_c.SetMetaDescription(*v)
-	}
-	return _c
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_c *CategoryTranslationCreate) SetSeoTitle(v string) *CategoryTranslationCreate {
-	_c.mutation.SetSeoTitle(v)
-	return _c
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_c *CategoryTranslationCreate) SetNillableSeoTitle(v *string) *CategoryTranslationCreate {
-	if v != nil {
-		_c.SetSeoTitle(*v)
 	}
 	return _c
 }
@@ -314,6 +265,11 @@ func (_c *CategoryTranslationCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *CategoryTranslationCreate) check() error {
+	if v, ok := _c.mutation.Seo(); ok {
+		if err := v.Validate(); err != nil {
+			return &ValidationError{Name: "seo", err: fmt.Errorf(`ent: validator failed for field "CategoryTranslation.seo": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := categorytranslation.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "CategoryTranslation.id": %w`, err)}
@@ -376,6 +332,10 @@ func (_c *CategoryTranslationCreate) createSpec() (*CategoryTranslation, *sqlgra
 		_spec.SetField(categorytranslation.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
 	}
+	if value, ok := _c.mutation.Seo(); ok {
+		_spec.SetField(categorytranslation.FieldSeo, field.TypeJSON, value)
+		_node.Seo = value
+	}
 	if value, ok := _c.mutation.CategoryID(); ok {
 		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint32, value)
 		_node.CategoryID = &value
@@ -404,25 +364,9 @@ func (_c *CategoryTranslationCreate) createSpec() (*CategoryTranslation, *sqlgra
 		_spec.SetField(categorytranslation.FieldCoverImage, field.TypeString, value)
 		_node.CoverImage = &value
 	}
-	if value, ok := _c.mutation.Template(); ok {
-		_spec.SetField(categorytranslation.FieldTemplate, field.TypeString, value)
-		_node.Template = &value
-	}
 	if value, ok := _c.mutation.FullPath(); ok {
 		_spec.SetField(categorytranslation.FieldFullPath, field.TypeString, value)
 		_node.FullPath = &value
-	}
-	if value, ok := _c.mutation.MetaKeywords(); ok {
-		_spec.SetField(categorytranslation.FieldMetaKeywords, field.TypeString, value)
-		_node.MetaKeywords = &value
-	}
-	if value, ok := _c.mutation.MetaDescription(); ok {
-		_spec.SetField(categorytranslation.FieldMetaDescription, field.TypeString, value)
-		_node.MetaDescription = &value
-	}
-	if value, ok := _c.mutation.SeoTitle(); ok {
-		_spec.SetField(categorytranslation.FieldSeoTitle, field.TypeString, value)
-		_node.SeoTitle = &value
 	}
 	return _node, _spec
 }
@@ -584,6 +528,24 @@ func (u *CategoryTranslationUpsert) ClearDeletedBy() *CategoryTranslationUpsert 
 	return u
 }
 
+// SetSeo sets the "seo" field.
+func (u *CategoryTranslationUpsert) SetSeo(v *contentpb.SeoMeta) *CategoryTranslationUpsert {
+	u.Set(categorytranslation.FieldSeo, v)
+	return u
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *CategoryTranslationUpsert) UpdateSeo() *CategoryTranslationUpsert {
+	u.SetExcluded(categorytranslation.FieldSeo)
+	return u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *CategoryTranslationUpsert) ClearSeo() *CategoryTranslationUpsert {
+	u.SetNull(categorytranslation.FieldSeo)
+	return u
+}
+
 // SetCategoryID sets the "category_id" field.
 func (u *CategoryTranslationUpsert) SetCategoryID(v uint32) *CategoryTranslationUpsert {
 	u.Set(categorytranslation.FieldCategoryID, v)
@@ -716,24 +678,6 @@ func (u *CategoryTranslationUpsert) ClearCoverImage() *CategoryTranslationUpsert
 	return u
 }
 
-// SetTemplate sets the "template" field.
-func (u *CategoryTranslationUpsert) SetTemplate(v string) *CategoryTranslationUpsert {
-	u.Set(categorytranslation.FieldTemplate, v)
-	return u
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *CategoryTranslationUpsert) UpdateTemplate() *CategoryTranslationUpsert {
-	u.SetExcluded(categorytranslation.FieldTemplate)
-	return u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *CategoryTranslationUpsert) ClearTemplate() *CategoryTranslationUpsert {
-	u.SetNull(categorytranslation.FieldTemplate)
-	return u
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *CategoryTranslationUpsert) SetFullPath(v string) *CategoryTranslationUpsert {
 	u.Set(categorytranslation.FieldFullPath, v)
@@ -749,60 +693,6 @@ func (u *CategoryTranslationUpsert) UpdateFullPath() *CategoryTranslationUpsert 
 // ClearFullPath clears the value of the "full_path" field.
 func (u *CategoryTranslationUpsert) ClearFullPath() *CategoryTranslationUpsert {
 	u.SetNull(categorytranslation.FieldFullPath)
-	return u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *CategoryTranslationUpsert) SetMetaKeywords(v string) *CategoryTranslationUpsert {
-	u.Set(categorytranslation.FieldMetaKeywords, v)
-	return u
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *CategoryTranslationUpsert) UpdateMetaKeywords() *CategoryTranslationUpsert {
-	u.SetExcluded(categorytranslation.FieldMetaKeywords)
-	return u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *CategoryTranslationUpsert) ClearMetaKeywords() *CategoryTranslationUpsert {
-	u.SetNull(categorytranslation.FieldMetaKeywords)
-	return u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *CategoryTranslationUpsert) SetMetaDescription(v string) *CategoryTranslationUpsert {
-	u.Set(categorytranslation.FieldMetaDescription, v)
-	return u
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *CategoryTranslationUpsert) UpdateMetaDescription() *CategoryTranslationUpsert {
-	u.SetExcluded(categorytranslation.FieldMetaDescription)
-	return u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *CategoryTranslationUpsert) ClearMetaDescription() *CategoryTranslationUpsert {
-	u.SetNull(categorytranslation.FieldMetaDescription)
-	return u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *CategoryTranslationUpsert) SetSeoTitle(v string) *CategoryTranslationUpsert {
-	u.Set(categorytranslation.FieldSeoTitle, v)
-	return u
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *CategoryTranslationUpsert) UpdateSeoTitle() *CategoryTranslationUpsert {
-	u.SetExcluded(categorytranslation.FieldSeoTitle)
-	return u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *CategoryTranslationUpsert) ClearSeoTitle() *CategoryTranslationUpsert {
-	u.SetNull(categorytranslation.FieldSeoTitle)
 	return u
 }
 
@@ -983,6 +873,27 @@ func (u *CategoryTranslationUpsertOne) ClearDeletedBy() *CategoryTranslationUpse
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *CategoryTranslationUpsertOne) SetSeo(v *contentpb.SeoMeta) *CategoryTranslationUpsertOne {
+	return u.Update(func(s *CategoryTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *CategoryTranslationUpsertOne) UpdateSeo() *CategoryTranslationUpsertOne {
+	return u.Update(func(s *CategoryTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *CategoryTranslationUpsertOne) ClearSeo() *CategoryTranslationUpsertOne {
+	return u.Update(func(s *CategoryTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
 // SetCategoryID sets the "category_id" field.
 func (u *CategoryTranslationUpsertOne) SetCategoryID(v uint32) *CategoryTranslationUpsertOne {
 	return u.Update(func(s *CategoryTranslationUpsert) {
@@ -1137,27 +1048,6 @@ func (u *CategoryTranslationUpsertOne) ClearCoverImage() *CategoryTranslationUps
 	})
 }
 
-// SetTemplate sets the "template" field.
-func (u *CategoryTranslationUpsertOne) SetTemplate(v string) *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetTemplate(v)
-	})
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertOne) UpdateTemplate() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateTemplate()
-	})
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *CategoryTranslationUpsertOne) ClearTemplate() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearTemplate()
-	})
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *CategoryTranslationUpsertOne) SetFullPath(v string) *CategoryTranslationUpsertOne {
 	return u.Update(func(s *CategoryTranslationUpsert) {
@@ -1176,69 +1066,6 @@ func (u *CategoryTranslationUpsertOne) UpdateFullPath() *CategoryTranslationUpse
 func (u *CategoryTranslationUpsertOne) ClearFullPath() *CategoryTranslationUpsertOne {
 	return u.Update(func(s *CategoryTranslationUpsert) {
 		s.ClearFullPath()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *CategoryTranslationUpsertOne) SetMetaKeywords(v string) *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertOne) UpdateMetaKeywords() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *CategoryTranslationUpsertOne) ClearMetaKeywords() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *CategoryTranslationUpsertOne) SetMetaDescription(v string) *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertOne) UpdateMetaDescription() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *CategoryTranslationUpsertOne) ClearMetaDescription() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *CategoryTranslationUpsertOne) SetSeoTitle(v string) *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertOne) UpdateSeoTitle() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *CategoryTranslationUpsertOne) ClearSeoTitle() *CategoryTranslationUpsertOne {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearSeoTitle()
 	})
 }
 
@@ -1584,6 +1411,27 @@ func (u *CategoryTranslationUpsertBulk) ClearDeletedBy() *CategoryTranslationUps
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *CategoryTranslationUpsertBulk) SetSeo(v *contentpb.SeoMeta) *CategoryTranslationUpsertBulk {
+	return u.Update(func(s *CategoryTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *CategoryTranslationUpsertBulk) UpdateSeo() *CategoryTranslationUpsertBulk {
+	return u.Update(func(s *CategoryTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *CategoryTranslationUpsertBulk) ClearSeo() *CategoryTranslationUpsertBulk {
+	return u.Update(func(s *CategoryTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
 // SetCategoryID sets the "category_id" field.
 func (u *CategoryTranslationUpsertBulk) SetCategoryID(v uint32) *CategoryTranslationUpsertBulk {
 	return u.Update(func(s *CategoryTranslationUpsert) {
@@ -1738,27 +1586,6 @@ func (u *CategoryTranslationUpsertBulk) ClearCoverImage() *CategoryTranslationUp
 	})
 }
 
-// SetTemplate sets the "template" field.
-func (u *CategoryTranslationUpsertBulk) SetTemplate(v string) *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetTemplate(v)
-	})
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertBulk) UpdateTemplate() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateTemplate()
-	})
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *CategoryTranslationUpsertBulk) ClearTemplate() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearTemplate()
-	})
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *CategoryTranslationUpsertBulk) SetFullPath(v string) *CategoryTranslationUpsertBulk {
 	return u.Update(func(s *CategoryTranslationUpsert) {
@@ -1777,69 +1604,6 @@ func (u *CategoryTranslationUpsertBulk) UpdateFullPath() *CategoryTranslationUps
 func (u *CategoryTranslationUpsertBulk) ClearFullPath() *CategoryTranslationUpsertBulk {
 	return u.Update(func(s *CategoryTranslationUpsert) {
 		s.ClearFullPath()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *CategoryTranslationUpsertBulk) SetMetaKeywords(v string) *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertBulk) UpdateMetaKeywords() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *CategoryTranslationUpsertBulk) ClearMetaKeywords() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *CategoryTranslationUpsertBulk) SetMetaDescription(v string) *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertBulk) UpdateMetaDescription() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *CategoryTranslationUpsertBulk) ClearMetaDescription() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *CategoryTranslationUpsertBulk) SetSeoTitle(v string) *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *CategoryTranslationUpsertBulk) UpdateSeoTitle() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *CategoryTranslationUpsertBulk) ClearSeoTitle() *CategoryTranslationUpsertBulk {
-	return u.Update(func(s *CategoryTranslationUpsert) {
-		s.ClearSeoTitle()
 	})
 }
 

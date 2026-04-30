@@ -651,17 +651,25 @@ export type contentservicev1_CategoryTranslation = {
   description?: string;
   thumbnail?: string;
   coverImage?: string;
-  template?: string;
   fullPath?: string;
-  metaKeywords?: string;
-  metaDescription?: string;
-  seoTitle?: string;
+  seo?: contentservicev1_SeoMeta;
   createdBy?: number;
   updatedBy?: number;
   deletedBy?: number;
   createdAt?: wellKnownTimestamp;
   updatedAt?: wellKnownTimestamp;
   deletedAt?: wellKnownTimestamp;
+};
+
+// SEO 元信息结构设计
+export type contentservicev1_SeoMeta = {
+  seoTitle?: string;
+  metaKeywords?: string;
+  metaDescription?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
 };
 
 // Encoded using RFC 3339, where generated output will always be Z-normalized
@@ -1624,8 +1632,6 @@ export type contentservicev1_Page = {
   isCustomTemplate?: boolean;
   visits?: number;
   customFields: { [key: string]: string } | undefined;
-  customHead?: string;
-  customFoot?: string;
   translations: contentservicev1_PageTranslation[] | undefined;
   availableLanguages: string[] | undefined;
   parentId?: number;
@@ -1671,16 +1677,11 @@ export type contentservicev1_PageTranslation = {
   languageCode?: string;
   title?: string;
   slug?: string;
-  summary?: string;
-  content?: string;
-  originalContent?: string;
+  sections: contentservicev1_Section[] | undefined;
   thumbnail?: string;
   coverImage?: string;
-  wordCount?: number;
   fullPath?: string;
-  metaKeywords?: string;
-  metaDescription?: string;
-  seoTitle?: string;
+  seo?: contentservicev1_SeoMeta;
   createdBy?: number;
   updatedBy?: number;
   deletedBy?: number;
@@ -1689,6 +1690,32 @@ export type contentservicev1_PageTranslation = {
   deletedAt?: wellKnownTimestamp;
 };
 
+// 页面区块（内容构建模块）
+export type contentservicev1_Section = {
+  type?: contentservicev1_SectionType;
+  name?: string;
+  sortOrder?: number;
+  config: { [key: string]: string } | undefined;
+  content: { [key: string]: string } | undefined;
+};
+
+// 区块类型
+export type contentservicev1_SectionType =
+  | "SECTION_TYPE_UNSPECIFIED"
+  | "SECTION_TYPE_RICH_TEXT"
+  | "SECTION_TYPE_MARKDOWN"
+  | "SECTION_TYPE_TITLE"
+  | "SECTION_TYPE_IMAGE"
+  | "SECTION_TYPE_GALLERY"
+  | "SECTION_TYPE_VIDEO"
+  | "SECTION_TYPE_BUTTON"
+  | "SECTION_TYPE_DIVIDER"
+  | "SECTION_TYPE_SPACER"
+  | "SECTION_TYPE_CODE"
+  | "SECTION_TYPE_HTML"
+  | "SECTION_TYPE_FORM"
+  | "SECTION_TYPE_CAROUSEL"
+  | "SECTION_TYPE_CUSTOM";
 // 请求 - 页面数据
 export type contentservicev1_GetPageRequest = {
   id?: number;
@@ -1986,12 +2013,9 @@ export type contentservicev1_PostTranslation = {
   content?: string;
   originalContent?: string;
   thumbnail?: string;
-  template?: string;
   fullPath?: string;
   wordCount?: number;
-  metaKeywords?: string;
-  metaDescription?: string;
-  seoTitle?: string;
+  seo?: contentservicev1_SeoMeta;
   createdBy?: number;
   updatedBy?: number;
   deletedBy?: number;
@@ -2284,12 +2308,8 @@ export type contentservicev1_TagTranslation = {
   slug?: string;
   description?: string;
   coverImage?: string;
-  template?: string;
   fullPath?: string;
-  metaKeywords?: string;
-  metaDescription?: string;
-  seoTitle?: string;
-  canonicalUrl?: string;
+  seo?: contentservicev1_SeoMeta;
   createdBy?: number;
   updatedBy?: number;
   deletedBy?: number;

@@ -156,8 +156,6 @@ type Page struct {
 	IsCustomTemplate   *bool                  `protobuf:"varint,13,opt,name=is_custom_template,json=isCustomTemplate,proto3,oneof" json:"is_custom_template,omitempty"`                                                      // 是否使用自定义模板代码
 	Visits             *uint32                `protobuf:"varint,20,opt,name=visits,proto3,oneof" json:"visits,omitempty"`                                                                                                    // 页面访问次数
 	CustomFields       map[string]string      `protobuf:"bytes,21,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
-	CustomHead         *string                `protobuf:"bytes,23,opt,name=custom_head,json=customHead,proto3,oneof" json:"custom_head,omitempty"`                                                                           // 自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）
-	CustomFoot         *string                `protobuf:"bytes,24,opt,name=custom_foot,json=customFoot,proto3,oneof" json:"custom_foot,omitempty"`                                                                           // 自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）
 	Translations       []*PageTranslation     `protobuf:"bytes,30,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
 	AvailableLanguages []string               `protobuf:"bytes,31,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
 	ParentId           *uint32                `protobuf:"varint,50,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                                                                // 父页面ID
@@ -309,20 +307,6 @@ func (x *Page) GetCustomFields() map[string]string {
 	return nil
 }
 
-func (x *Page) GetCustomHead() string {
-	if x != nil && x.CustomHead != nil {
-		return *x.CustomHead
-	}
-	return ""
-}
-
-func (x *Page) GetCustomFoot() string {
-	if x != nil && x.CustomFoot != nil {
-		return *x.CustomFoot
-	}
-	return ""
-}
-
 func (x *Page) GetTranslations() []*PageTranslation {
 	if x != nil {
 		return x.Translations
@@ -409,30 +393,25 @@ func (x *Page) GetDeletedAt() *timestamppb.Timestamp {
 
 // 页面翻译
 type PageTranslation struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                  // 翻译记录ID
-	PageId          *uint32                `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                            // 关联的页面ID
-	LanguageCode    *string                `protobuf:"bytes,3,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"`           // 语言代码
-	Title           *string                `protobuf:"bytes,10,opt,name=title,proto3,oneof" json:"title,omitempty"`                                            // 页面标题
-	Slug            *string                `protobuf:"bytes,11,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                              // 语言特定的 slug
-	Summary         *string                `protobuf:"bytes,12,opt,name=summary,proto3,oneof" json:"summary,omitempty"`                                        // 页面摘要
-	Content         *string                `protobuf:"bytes,13,opt,name=content,proto3,oneof" json:"content,omitempty"`                                        // 页面内容
-	OriginalContent *string                `protobuf:"bytes,14,opt,name=original_content,json=originalContent,proto3,oneof" json:"original_content,omitempty"` // 原始内容（未渲染前）
-	Thumbnail       *string                `protobuf:"bytes,15,opt,name=thumbnail,proto3,oneof" json:"thumbnail,omitempty"`                                    // 缩略图
-	CoverImage      *string                `protobuf:"bytes,16,opt,name=cover_image,json=coverImage,proto3,oneof" json:"cover_image,omitempty"`                // 封面图
-	WordCount       *uint32                `protobuf:"varint,17,opt,name=word_count,json=wordCount,proto3,oneof" json:"word_count,omitempty"`                  // 当前语言版本的字数（中文按字符数，英文按单词数）
-	FullPath        *string                `protobuf:"bytes,20,opt,name=full_path,json=fullPath,proto3,oneof" json:"full_path,omitempty"`                      // 完整路径
-	MetaKeywords    *string                `protobuf:"bytes,30,opt,name=meta_keywords,json=metaKeywords,proto3,oneof" json:"meta_keywords,omitempty"`          // SEO 关键词
-	MetaDescription *string                `protobuf:"bytes,31,opt,name=meta_description,json=metaDescription,proto3,oneof" json:"meta_description,omitempty"` // SEO 描述
-	SeoTitle        *string                `protobuf:"bytes,32,opt,name=seo_title,json=seoTitle,proto3,oneof" json:"seo_title,omitempty"`                      // SEO 标题
-	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                 // 创建者用户ID
-	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                 // 更新者用户ID
-	DeletedBy       *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                 // 删除者用户ID
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                  // 创建时间
-	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                  // 更新时间
-	DeletedAt       *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                  // 删除时间
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                        // 翻译记录ID
+	PageId        *uint32                `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                  // 关联的页面ID
+	LanguageCode  *string                `protobuf:"bytes,3,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"` // 语言代码
+	Title         *string                `protobuf:"bytes,10,opt,name=title,proto3,oneof" json:"title,omitempty"`                                  // 页面标题
+	Slug          *string                `protobuf:"bytes,11,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                    // 语言特定的 slug
+	Sections      []*Section             `protobuf:"bytes,12,rep,name=sections,proto3" json:"sections,omitempty"`                                  // 页面内容区块（模块化）
+	Thumbnail     *string                `protobuf:"bytes,13,opt,name=thumbnail,proto3,oneof" json:"thumbnail,omitempty"`                          // 缩略图
+	CoverImage    *string                `protobuf:"bytes,14,opt,name=cover_image,json=coverImage,proto3,oneof" json:"cover_image,omitempty"`      // 封面图
+	FullPath      *string                `protobuf:"bytes,20,opt,name=full_path,json=fullPath,proto3,oneof" json:"full_path,omitempty"`            // 完整路径
+	Seo           *SeoMeta               `protobuf:"bytes,30,opt,name=seo,proto3,oneof" json:"seo,omitempty"`                                      // SEO 结构化元数据
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`       // 创建者用户ID
+	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`       // 更新者用户ID
+	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`       // 删除者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`        // 创建时间
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`        // 更新时间
+	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`        // 删除时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PageTranslation) Reset() {
@@ -500,25 +479,11 @@ func (x *PageTranslation) GetSlug() string {
 	return ""
 }
 
-func (x *PageTranslation) GetSummary() string {
-	if x != nil && x.Summary != nil {
-		return *x.Summary
+func (x *PageTranslation) GetSections() []*Section {
+	if x != nil {
+		return x.Sections
 	}
-	return ""
-}
-
-func (x *PageTranslation) GetContent() string {
-	if x != nil && x.Content != nil {
-		return *x.Content
-	}
-	return ""
-}
-
-func (x *PageTranslation) GetOriginalContent() string {
-	if x != nil && x.OriginalContent != nil {
-		return *x.OriginalContent
-	}
-	return ""
+	return nil
 }
 
 func (x *PageTranslation) GetThumbnail() string {
@@ -535,13 +500,6 @@ func (x *PageTranslation) GetCoverImage() string {
 	return ""
 }
 
-func (x *PageTranslation) GetWordCount() uint32 {
-	if x != nil && x.WordCount != nil {
-		return *x.WordCount
-	}
-	return 0
-}
-
 func (x *PageTranslation) GetFullPath() string {
 	if x != nil && x.FullPath != nil {
 		return *x.FullPath
@@ -549,25 +507,11 @@ func (x *PageTranslation) GetFullPath() string {
 	return ""
 }
 
-func (x *PageTranslation) GetMetaKeywords() string {
-	if x != nil && x.MetaKeywords != nil {
-		return *x.MetaKeywords
+func (x *PageTranslation) GetSeo() *SeoMeta {
+	if x != nil {
+		return x.Seo
 	}
-	return ""
-}
-
-func (x *PageTranslation) GetMetaDescription() string {
-	if x != nil && x.MetaDescription != nil {
-		return *x.MetaDescription
-	}
-	return ""
-}
-
-func (x *PageTranslation) GetSeoTitle() string {
-	if x != nil && x.SeoTitle != nil {
-		return *x.SeoTitle
-	}
-	return ""
+	return nil
 }
 
 func (x *PageTranslation) GetCreatedBy() uint32 {
@@ -1299,7 +1243,7 @@ var File_content_service_v1_page_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xdb\x1a\n" +
+	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xba\x18\n" +
 	"\x04Page\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b页面IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Page.PageStatusB\x12\xbaG\x0f\x92\x02\f页面状态H\x01R\x06status\x88\x01\x01\x12\x8c\x01\n" +
@@ -1320,29 +1264,25 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\btemplate\x18\f \x01(\tBR\xbaGO\x92\x02L页面模板名称（如 'about-us', 'contact'，覆盖全局默认模板）H\vR\btemplate\x88\x01\x01\x12r\n" +
 	"\x12is_custom_template\x18\r \x01(\bB?\xbaG<\x92\x029是否使用自定义模板代码（而非预设模板）H\fR\x10isCustomTemplate\x88\x01\x01\x125\n" +
 	"\x06visits\x18\x14 \x01(\rB\x18\xbaG\x15\x92\x02\x12页面访问次数H\rR\x06visits\x88\x01\x01\x12\x87\x01\n" +
-	"\rcustom_fields\x18\x15 \x03(\v2*.content.service.v1.Page.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12\x85\x01\n" +
-	"\vcustom_head\x18\x17 \x01(\tB_\xbaG\\\x92\x02Y自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）H\x0eR\n" +
-	"customHead\x88\x01\x01\x12w\n" +
-	"\vcustom_foot\x18\x18 \x01(\tBQ\xbaGN\x92\x02K自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）H\x0fR\n" +
-	"customFoot\x88\x01\x01\x12d\n" +
+	"\rcustom_fields\x18\x15 \x03(\v2*.content.service.v1.Page.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12d\n" +
 	"\ftranslations\x18\x1e \x03(\v2#.content.service.v1.PageTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
 	"\x13available_languages\x18\x1f \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12n\n" +
-	"\tparent_id\x182 \x01(\rBL\xbaGI\x92\x02F父页面ID（0 表示顶级页面，用于构建站点树形结构）H\x10R\bparentId\x88\x01\x01\x12H\n" +
+	"\tparent_id\x182 \x01(\rBL\xbaGI\x92\x02F父页面ID（0 表示顶级页面，用于构建站点树形结构）H\x0eR\bparentId\x88\x01\x01\x12H\n" +
 	"\bchildren\x18= \x03(\v2\x18.content.service.v1.PageB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12d\n" +
-	"\x05depth\x184 \x01(\x05BI\xbaGF\x92\x02C页面层级深度（0=顶级，1=二级，用于面包屑导航）H\x11R\x05depth\x88\x01\x01\x12R\n" +
-	"\x04path\x185 \x01(\tB9\xbaG6\x92\x023物化路径（如 '1/5/23'，便于层级查询）H\x12R\x04path\x88\x01\x01\x12;\n" +
+	"\x05depth\x184 \x01(\x05BI\xbaGF\x92\x02C页面层级深度（0=顶级，1=二级，用于面包屑导航）H\x0fR\x05depth\x88\x01\x01\x12R\n" +
+	"\x04path\x185 \x01(\tB9\xbaG6\x92\x023物化路径（如 '1/5/23'，便于层级查询）H\x10R\x04path\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x13R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x11R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x14R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x12R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x15R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x13R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x16R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x14R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x17R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x15R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x18R\tdeletedAt\x88\x01\x01\x1a?\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x16R\tdeletedAt\x88\x01\x01\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"u\n" +
@@ -1373,9 +1313,7 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\v_sort_orderB\v\n" +
 	"\t_templateB\x15\n" +
 	"\x13_is_custom_templateB\t\n" +
-	"\a_visitsB\x0e\n" +
-	"\f_custom_headB\x0e\n" +
-	"\f_custom_footB\f\n" +
+	"\a_visitsB\f\n" +
 	"\n" +
 	"_parent_idB\b\n" +
 	"\x06_depthB\a\n" +
@@ -1385,61 +1323,46 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xc9\x0e\n" +
+	"\v_deleted_at\"\xfa\n" +
+	"\n" +
 	"\x0fPageTranslation\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e翻译记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
 	"\apage_id\x18\x02 \x01(\rB\x17\xbaG\x14\x92\x02\x11关联的页面IDH\x01R\x06pageId\x88\x01\x01\x12R\n" +
 	"\rlanguage_code\x18\x03 \x01(\tB(\xbaG%\x92\x02\"语言代码（ISO 639-1 标准）H\x02R\flanguageCode\x88\x01\x01\x12-\n" +
 	"\x05title\x18\n" +
 	" \x01(\tB\x12\xbaG\x0f\x92\x02\f页面标题H\x03R\x05title\x88\x01\x01\x12w\n" +
-	"\x04slug\x18\v \x01(\tB^\xbaG[\x92\x02X语言特定的 slug（覆盖主表 slug，用于多语言路由，如中文用拼音）H\x04R\x04slug\x88\x01\x01\x12N\n" +
-	"\asummary\x18\f \x01(\tB/\xbaG,\x92\x02)页面摘要（用于 meta description）H\x05R\asummary\x88\x01\x01\x121\n" +
-	"\acontent\x18\r \x01(\tB\x12\xbaG\x0f\x92\x02\f页面内容H\x06R\acontent\x88\x01\x01\x12T\n" +
-	"\x10original_content\x18\x0e \x01(\tB$\xbaG!\x92\x02\x1e原始内容（未渲染前）H\aR\x0foriginalContent\x88\x01\x01\x122\n" +
-	"\tthumbnail\x18\x0f \x01(\tB\x0f\xbaG\f\x92\x02\t缩略图H\bR\tthumbnail\x88\x01\x01\x125\n" +
-	"\vcover_image\x18\x10 \x01(\tB\x0f\xbaG\f\x92\x02\t封面图H\tR\n" +
-	"coverImage\x88\x01\x01\x12r\n" +
+	"\x04slug\x18\v \x01(\tB^\xbaG[\x92\x02X语言特定的 slug（覆盖主表 slug，用于多语言路由，如中文用拼音）H\x04R\x04slug\x88\x01\x01\x12`\n" +
+	"\bsections\x18\f \x03(\v2\x1b.content.service.v1.SectionB'\xbaG$\x92\x02!页面内容区块（模块化）R\bsections\x122\n" +
+	"\tthumbnail\x18\r \x01(\tB\x0f\xbaG\f\x92\x02\t缩略图H\x05R\tthumbnail\x88\x01\x01\x125\n" +
+	"\vcover_image\x18\x0e \x01(\tB\x0f\xbaG\f\x92\x02\t封面图H\x06R\n" +
+	"coverImage\x88\x01\x01\x12n\n" +
+	"\tfull_path\x18\x14 \x01(\tBL\xbaGI\x92\x02F完整路径（如 /zh-CN/about-us），首页应为 '/' 或 '/zh-CN/'H\aR\bfullPath\x88\x01\x01\x12P\n" +
+	"\x03seo\x18\x1e \x01(\v2\x1b.content.service.v1.SeoMetaB\x1c\xbaG\x19\x92\x02\x16SEO 结构化元数据H\bR\x03seo\x88\x01\x01\x12;\n" +
 	"\n" +
-	"word_count\x18\x11 \x01(\rBN\xbaGK\x92\x02H当前语言版本的字数（中文按字符数，英文按单词数）H\n" +
-	"R\twordCount\x88\x01\x01\x12n\n" +
-	"\tfull_path\x18\x14 \x01(\tBL\xbaGI\x92\x02F完整路径（如 /zh-CN/about-us），首页应为 '/' 或 '/zh-CN/'H\vR\bfullPath\x88\x01\x01\x12=\n" +
-	"\rmeta_keywords\x18\x1e \x01(\tB\x13\xbaG\x10\x92\x02\rSEO 关键词H\fR\fmetaKeywords\x88\x01\x01\x12@\n" +
-	"\x10meta_description\x18\x1f \x01(\tB\x10\xbaG\r\x92\x02\n" +
-	"SEO 描述H\rR\x0fmetaDescription\x88\x01\x01\x12J\n" +
-	"\tseo_title\x18  \x01(\tB(\xbaG%\x92\x02\"SEO 标题（覆盖默认 title）H\x0eR\bseoTitle\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\tR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x0fR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\n" +
+	"R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x10R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\vR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x11R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x12R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\rR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x13R\tupdatedAt\x88\x01\x01\x12S\n" +
-	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x14R\tdeletedAt\x88\x01\x01B\x05\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0eR\tdeletedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\n" +
 	"\n" +
 	"\b_page_idB\x10\n" +
 	"\x0e_language_codeB\b\n" +
 	"\x06_titleB\a\n" +
-	"\x05_slugB\n" +
-	"\n" +
-	"\b_summaryB\n" +
-	"\n" +
-	"\b_contentB\x13\n" +
-	"\x11_original_contentB\f\n" +
+	"\x05_slugB\f\n" +
 	"\n" +
 	"_thumbnailB\x0e\n" +
-	"\f_cover_imageB\r\n" +
-	"\v_word_countB\f\n" +
+	"\f_cover_imageB\f\n" +
 	"\n" +
-	"_full_pathB\x10\n" +
-	"\x0e_meta_keywordsB\x13\n" +
-	"\x11_meta_descriptionB\f\n" +
-	"\n" +
-	"_seo_titleB\r\n" +
+	"_full_pathB\x06\n" +
+	"\x04_seoB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
 	"\v_deleted_byB\r\n" +
@@ -1547,9 +1470,11 @@ var file_content_service_v1_page_proto_goTypes = []any{
 	nil,                                   // 15: content.service.v1.Page.CustomFieldsEntry
 	(EditorType)(0),                       // 16: content.service.v1.EditorType
 	(*timestamppb.Timestamp)(nil),         // 17: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),         // 18: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),              // 19: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                 // 20: google.protobuf.Empty
+	(*Section)(nil),                       // 18: content.service.v1.Section
+	(*SeoMeta)(nil),                       // 19: content.service.v1.SeoMeta
+	(*fieldmaskpb.FieldMask)(nil),         // 20: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),              // 21: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                 // 22: google.protobuf.Empty
 }
 var file_content_service_v1_page_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Page.status:type_name -> content.service.v1.Page.PageStatus
@@ -1561,43 +1486,45 @@ var file_content_service_v1_page_proto_depIdxs = []int32{
 	17, // 6: content.service.v1.Page.created_at:type_name -> google.protobuf.Timestamp
 	17, // 7: content.service.v1.Page.updated_at:type_name -> google.protobuf.Timestamp
 	17, // 8: content.service.v1.Page.deleted_at:type_name -> google.protobuf.Timestamp
-	17, // 9: content.service.v1.PageTranslation.created_at:type_name -> google.protobuf.Timestamp
-	17, // 10: content.service.v1.PageTranslation.updated_at:type_name -> google.protobuf.Timestamp
-	17, // 11: content.service.v1.PageTranslation.deleted_at:type_name -> google.protobuf.Timestamp
-	2,  // 12: content.service.v1.ListPageResponse.items:type_name -> content.service.v1.Page
-	18, // 13: content.service.v1.GetPageRequest.view_mask:type_name -> google.protobuf.FieldMask
-	2,  // 14: content.service.v1.CreatePageRequest.data:type_name -> content.service.v1.Page
-	2,  // 15: content.service.v1.UpdatePageRequest.data:type_name -> content.service.v1.Page
-	18, // 16: content.service.v1.UpdatePageRequest.update_mask:type_name -> google.protobuf.FieldMask
-	3,  // 17: content.service.v1.CreatePageTranslationRequest.data:type_name -> content.service.v1.PageTranslation
-	3,  // 18: content.service.v1.UpdatePageTranslationRequest.data:type_name -> content.service.v1.PageTranslation
-	18, // 19: content.service.v1.UpdatePageTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
-	13, // 20: content.service.v1.DeletePageTranslationRequest.identifier:type_name -> content.service.v1.PageTranslationIdentifier
-	19, // 21: content.service.v1.PageService.List:input_type -> pagination.PagingRequest
-	5,  // 22: content.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
-	6,  // 23: content.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
-	7,  // 24: content.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
-	8,  // 25: content.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
-	9,  // 26: content.service.v1.PageService.TranslationExists:input_type -> content.service.v1.PageTranslationExistsRequest
-	5,  // 27: content.service.v1.PageService.GetTranslation:input_type -> content.service.v1.GetPageRequest
-	11, // 28: content.service.v1.PageService.CreateTranslation:input_type -> content.service.v1.CreatePageTranslationRequest
-	12, // 29: content.service.v1.PageService.UpdateTranslation:input_type -> content.service.v1.UpdatePageTranslationRequest
-	14, // 30: content.service.v1.PageService.DeleteTranslation:input_type -> content.service.v1.DeletePageTranslationRequest
-	4,  // 31: content.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
-	2,  // 32: content.service.v1.PageService.Get:output_type -> content.service.v1.Page
-	2,  // 33: content.service.v1.PageService.Create:output_type -> content.service.v1.Page
-	2,  // 34: content.service.v1.PageService.Update:output_type -> content.service.v1.Page
-	20, // 35: content.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
-	10, // 36: content.service.v1.PageService.TranslationExists:output_type -> content.service.v1.PageTranslationExistsResponse
-	3,  // 37: content.service.v1.PageService.GetTranslation:output_type -> content.service.v1.PageTranslation
-	3,  // 38: content.service.v1.PageService.CreateTranslation:output_type -> content.service.v1.PageTranslation
-	3,  // 39: content.service.v1.PageService.UpdateTranslation:output_type -> content.service.v1.PageTranslation
-	20, // 40: content.service.v1.PageService.DeleteTranslation:output_type -> google.protobuf.Empty
-	31, // [31:41] is the sub-list for method output_type
-	21, // [21:31] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	18, // 9: content.service.v1.PageTranslation.sections:type_name -> content.service.v1.Section
+	19, // 10: content.service.v1.PageTranslation.seo:type_name -> content.service.v1.SeoMeta
+	17, // 11: content.service.v1.PageTranslation.created_at:type_name -> google.protobuf.Timestamp
+	17, // 12: content.service.v1.PageTranslation.updated_at:type_name -> google.protobuf.Timestamp
+	17, // 13: content.service.v1.PageTranslation.deleted_at:type_name -> google.protobuf.Timestamp
+	2,  // 14: content.service.v1.ListPageResponse.items:type_name -> content.service.v1.Page
+	20, // 15: content.service.v1.GetPageRequest.view_mask:type_name -> google.protobuf.FieldMask
+	2,  // 16: content.service.v1.CreatePageRequest.data:type_name -> content.service.v1.Page
+	2,  // 17: content.service.v1.UpdatePageRequest.data:type_name -> content.service.v1.Page
+	20, // 18: content.service.v1.UpdatePageRequest.update_mask:type_name -> google.protobuf.FieldMask
+	3,  // 19: content.service.v1.CreatePageTranslationRequest.data:type_name -> content.service.v1.PageTranslation
+	3,  // 20: content.service.v1.UpdatePageTranslationRequest.data:type_name -> content.service.v1.PageTranslation
+	20, // 21: content.service.v1.UpdatePageTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	13, // 22: content.service.v1.DeletePageTranslationRequest.identifier:type_name -> content.service.v1.PageTranslationIdentifier
+	21, // 23: content.service.v1.PageService.List:input_type -> pagination.PagingRequest
+	5,  // 24: content.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
+	6,  // 25: content.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
+	7,  // 26: content.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
+	8,  // 27: content.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
+	9,  // 28: content.service.v1.PageService.TranslationExists:input_type -> content.service.v1.PageTranslationExistsRequest
+	5,  // 29: content.service.v1.PageService.GetTranslation:input_type -> content.service.v1.GetPageRequest
+	11, // 30: content.service.v1.PageService.CreateTranslation:input_type -> content.service.v1.CreatePageTranslationRequest
+	12, // 31: content.service.v1.PageService.UpdateTranslation:input_type -> content.service.v1.UpdatePageTranslationRequest
+	14, // 32: content.service.v1.PageService.DeleteTranslation:input_type -> content.service.v1.DeletePageTranslationRequest
+	4,  // 33: content.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
+	2,  // 34: content.service.v1.PageService.Get:output_type -> content.service.v1.Page
+	2,  // 35: content.service.v1.PageService.Create:output_type -> content.service.v1.Page
+	2,  // 36: content.service.v1.PageService.Update:output_type -> content.service.v1.Page
+	22, // 37: content.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
+	10, // 38: content.service.v1.PageService.TranslationExists:output_type -> content.service.v1.PageTranslationExistsResponse
+	3,  // 39: content.service.v1.PageService.GetTranslation:output_type -> content.service.v1.PageTranslation
+	3,  // 40: content.service.v1.PageService.CreateTranslation:output_type -> content.service.v1.PageTranslation
+	3,  // 41: content.service.v1.PageService.UpdateTranslation:output_type -> content.service.v1.PageTranslation
+	22, // 42: content.service.v1.PageService.DeleteTranslation:output_type -> google.protobuf.Empty
+	33, // [33:43] is the sub-list for method output_type
+	23, // [23:33] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_page_proto_init() }

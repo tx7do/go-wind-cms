@@ -8,6 +8,8 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 import "pagination/v1/pagination.proto";
 
+import "content/service/v1/types.proto";
+
 // 类别服务
 service CategoryService {
   // 获取类别列表
@@ -183,11 +185,6 @@ message CategoryTranslation {
     (gnostic.openapi.v3.property) = {description: "封面图"}
   ]; // 封面图
 
-  optional string template = 15 [
-    json_name = "template",
-    (gnostic.openapi.v3.property) = {description: "模板名称"}
-  ]; // 模板名称
-
 
   optional string full_path = 20 [
     json_name = "fullPath",
@@ -197,18 +194,10 @@ message CategoryTranslation {
   ]; // 完整路径
 
 
-  optional string meta_keywords = 30 [
-    json_name = "metaKeywords",
-    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
-  ]; // SEO 关键词
-  optional string meta_description = 31 [
-    json_name = "metaDescription",
-    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
-  ]; // SEO 描述
-  optional string seo_title = 32 [
-    json_name = "seoTitle",
-    (gnostic.openapi.v3.property) = {description: "SEO 标题"}
-  ]; // SEO 标题
+  optional SeoMeta seo = 30 [
+    json_name = "seo",
+    (gnostic.openapi.v3.property) = {description: "SEO 结构化元数据"}
+  ];
 
 
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID

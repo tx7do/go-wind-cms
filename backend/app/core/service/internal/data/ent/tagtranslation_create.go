@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"time"
 
@@ -106,6 +107,12 @@ func (_c *TagTranslationCreate) SetNillableDeletedBy(v *uint32) *TagTranslationC
 	return _c
 }
 
+// SetSeo sets the "seo" field.
+func (_c *TagTranslationCreate) SetSeo(v *contentpb.SeoMeta) *TagTranslationCreate {
+	_c.mutation.SetSeo(v)
+	return _c
+}
+
 // SetTagID sets the "tag_id" field.
 func (_c *TagTranslationCreate) SetTagID(v uint32) *TagTranslationCreate {
 	_c.mutation.SetTagID(v)
@@ -190,20 +197,6 @@ func (_c *TagTranslationCreate) SetNillableCoverImage(v *string) *TagTranslation
 	return _c
 }
 
-// SetTemplate sets the "template" field.
-func (_c *TagTranslationCreate) SetTemplate(v string) *TagTranslationCreate {
-	_c.mutation.SetTemplate(v)
-	return _c
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableTemplate(v *string) *TagTranslationCreate {
-	if v != nil {
-		_c.SetTemplate(*v)
-	}
-	return _c
-}
-
 // SetFullPath sets the "full_path" field.
 func (_c *TagTranslationCreate) SetFullPath(v string) *TagTranslationCreate {
 	_c.mutation.SetFullPath(v)
@@ -214,62 +207,6 @@ func (_c *TagTranslationCreate) SetFullPath(v string) *TagTranslationCreate {
 func (_c *TagTranslationCreate) SetNillableFullPath(v *string) *TagTranslationCreate {
 	if v != nil {
 		_c.SetFullPath(*v)
-	}
-	return _c
-}
-
-// SetCanonicalURL sets the "canonical_url" field.
-func (_c *TagTranslationCreate) SetCanonicalURL(v string) *TagTranslationCreate {
-	_c.mutation.SetCanonicalURL(v)
-	return _c
-}
-
-// SetNillableCanonicalURL sets the "canonical_url" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableCanonicalURL(v *string) *TagTranslationCreate {
-	if v != nil {
-		_c.SetCanonicalURL(*v)
-	}
-	return _c
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_c *TagTranslationCreate) SetMetaKeywords(v string) *TagTranslationCreate {
-	_c.mutation.SetMetaKeywords(v)
-	return _c
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableMetaKeywords(v *string) *TagTranslationCreate {
-	if v != nil {
-		_c.SetMetaKeywords(*v)
-	}
-	return _c
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_c *TagTranslationCreate) SetMetaDescription(v string) *TagTranslationCreate {
-	_c.mutation.SetMetaDescription(v)
-	return _c
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableMetaDescription(v *string) *TagTranslationCreate {
-	if v != nil {
-		_c.SetMetaDescription(*v)
-	}
-	return _c
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_c *TagTranslationCreate) SetSeoTitle(v string) *TagTranslationCreate {
-	_c.mutation.SetSeoTitle(v)
-	return _c
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableSeoTitle(v *string) *TagTranslationCreate {
-	if v != nil {
-		_c.SetSeoTitle(*v)
 	}
 	return _c
 }
@@ -314,6 +251,11 @@ func (_c *TagTranslationCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *TagTranslationCreate) check() error {
+	if v, ok := _c.mutation.Seo(); ok {
+		if err := v.Validate(); err != nil {
+			return &ValidationError{Name: "seo", err: fmt.Errorf(`ent: validator failed for field "TagTranslation.seo": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := tagtranslation.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "TagTranslation.id": %w`, err)}
@@ -376,6 +318,10 @@ func (_c *TagTranslationCreate) createSpec() (*TagTranslation, *sqlgraph.CreateS
 		_spec.SetField(tagtranslation.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
 	}
+	if value, ok := _c.mutation.Seo(); ok {
+		_spec.SetField(tagtranslation.FieldSeo, field.TypeJSON, value)
+		_node.Seo = value
+	}
 	if value, ok := _c.mutation.TagID(); ok {
 		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint32, value)
 		_node.TagID = &value
@@ -400,29 +346,9 @@ func (_c *TagTranslationCreate) createSpec() (*TagTranslation, *sqlgraph.CreateS
 		_spec.SetField(tagtranslation.FieldCoverImage, field.TypeString, value)
 		_node.CoverImage = &value
 	}
-	if value, ok := _c.mutation.Template(); ok {
-		_spec.SetField(tagtranslation.FieldTemplate, field.TypeString, value)
-		_node.Template = &value
-	}
 	if value, ok := _c.mutation.FullPath(); ok {
 		_spec.SetField(tagtranslation.FieldFullPath, field.TypeString, value)
 		_node.FullPath = &value
-	}
-	if value, ok := _c.mutation.CanonicalURL(); ok {
-		_spec.SetField(tagtranslation.FieldCanonicalURL, field.TypeString, value)
-		_node.CanonicalURL = &value
-	}
-	if value, ok := _c.mutation.MetaKeywords(); ok {
-		_spec.SetField(tagtranslation.FieldMetaKeywords, field.TypeString, value)
-		_node.MetaKeywords = &value
-	}
-	if value, ok := _c.mutation.MetaDescription(); ok {
-		_spec.SetField(tagtranslation.FieldMetaDescription, field.TypeString, value)
-		_node.MetaDescription = &value
-	}
-	if value, ok := _c.mutation.SeoTitle(); ok {
-		_spec.SetField(tagtranslation.FieldSeoTitle, field.TypeString, value)
-		_node.SeoTitle = &value
 	}
 	return _node, _spec
 }
@@ -584,6 +510,24 @@ func (u *TagTranslationUpsert) ClearDeletedBy() *TagTranslationUpsert {
 	return u
 }
 
+// SetSeo sets the "seo" field.
+func (u *TagTranslationUpsert) SetSeo(v *contentpb.SeoMeta) *TagTranslationUpsert {
+	u.Set(tagtranslation.FieldSeo, v)
+	return u
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *TagTranslationUpsert) UpdateSeo() *TagTranslationUpsert {
+	u.SetExcluded(tagtranslation.FieldSeo)
+	return u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *TagTranslationUpsert) ClearSeo() *TagTranslationUpsert {
+	u.SetNull(tagtranslation.FieldSeo)
+	return u
+}
+
 // SetTagID sets the "tag_id" field.
 func (u *TagTranslationUpsert) SetTagID(v uint32) *TagTranslationUpsert {
 	u.Set(tagtranslation.FieldTagID, v)
@@ -698,24 +642,6 @@ func (u *TagTranslationUpsert) ClearCoverImage() *TagTranslationUpsert {
 	return u
 }
 
-// SetTemplate sets the "template" field.
-func (u *TagTranslationUpsert) SetTemplate(v string) *TagTranslationUpsert {
-	u.Set(tagtranslation.FieldTemplate, v)
-	return u
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *TagTranslationUpsert) UpdateTemplate() *TagTranslationUpsert {
-	u.SetExcluded(tagtranslation.FieldTemplate)
-	return u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *TagTranslationUpsert) ClearTemplate() *TagTranslationUpsert {
-	u.SetNull(tagtranslation.FieldTemplate)
-	return u
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *TagTranslationUpsert) SetFullPath(v string) *TagTranslationUpsert {
 	u.Set(tagtranslation.FieldFullPath, v)
@@ -731,78 +657,6 @@ func (u *TagTranslationUpsert) UpdateFullPath() *TagTranslationUpsert {
 // ClearFullPath clears the value of the "full_path" field.
 func (u *TagTranslationUpsert) ClearFullPath() *TagTranslationUpsert {
 	u.SetNull(tagtranslation.FieldFullPath)
-	return u
-}
-
-// SetCanonicalURL sets the "canonical_url" field.
-func (u *TagTranslationUpsert) SetCanonicalURL(v string) *TagTranslationUpsert {
-	u.Set(tagtranslation.FieldCanonicalURL, v)
-	return u
-}
-
-// UpdateCanonicalURL sets the "canonical_url" field to the value that was provided on create.
-func (u *TagTranslationUpsert) UpdateCanonicalURL() *TagTranslationUpsert {
-	u.SetExcluded(tagtranslation.FieldCanonicalURL)
-	return u
-}
-
-// ClearCanonicalURL clears the value of the "canonical_url" field.
-func (u *TagTranslationUpsert) ClearCanonicalURL() *TagTranslationUpsert {
-	u.SetNull(tagtranslation.FieldCanonicalURL)
-	return u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *TagTranslationUpsert) SetMetaKeywords(v string) *TagTranslationUpsert {
-	u.Set(tagtranslation.FieldMetaKeywords, v)
-	return u
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *TagTranslationUpsert) UpdateMetaKeywords() *TagTranslationUpsert {
-	u.SetExcluded(tagtranslation.FieldMetaKeywords)
-	return u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *TagTranslationUpsert) ClearMetaKeywords() *TagTranslationUpsert {
-	u.SetNull(tagtranslation.FieldMetaKeywords)
-	return u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *TagTranslationUpsert) SetMetaDescription(v string) *TagTranslationUpsert {
-	u.Set(tagtranslation.FieldMetaDescription, v)
-	return u
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *TagTranslationUpsert) UpdateMetaDescription() *TagTranslationUpsert {
-	u.SetExcluded(tagtranslation.FieldMetaDescription)
-	return u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *TagTranslationUpsert) ClearMetaDescription() *TagTranslationUpsert {
-	u.SetNull(tagtranslation.FieldMetaDescription)
-	return u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *TagTranslationUpsert) SetSeoTitle(v string) *TagTranslationUpsert {
-	u.Set(tagtranslation.FieldSeoTitle, v)
-	return u
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *TagTranslationUpsert) UpdateSeoTitle() *TagTranslationUpsert {
-	u.SetExcluded(tagtranslation.FieldSeoTitle)
-	return u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *TagTranslationUpsert) ClearSeoTitle() *TagTranslationUpsert {
-	u.SetNull(tagtranslation.FieldSeoTitle)
 	return u
 }
 
@@ -983,6 +837,27 @@ func (u *TagTranslationUpsertOne) ClearDeletedBy() *TagTranslationUpsertOne {
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *TagTranslationUpsertOne) SetSeo(v *contentpb.SeoMeta) *TagTranslationUpsertOne {
+	return u.Update(func(s *TagTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *TagTranslationUpsertOne) UpdateSeo() *TagTranslationUpsertOne {
+	return u.Update(func(s *TagTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *TagTranslationUpsertOne) ClearSeo() *TagTranslationUpsertOne {
+	return u.Update(func(s *TagTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
 // SetTagID sets the "tag_id" field.
 func (u *TagTranslationUpsertOne) SetTagID(v uint32) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
@@ -1116,27 +991,6 @@ func (u *TagTranslationUpsertOne) ClearCoverImage() *TagTranslationUpsertOne {
 	})
 }
 
-// SetTemplate sets the "template" field.
-func (u *TagTranslationUpsertOne) SetTemplate(v string) *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetTemplate(v)
-	})
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *TagTranslationUpsertOne) UpdateTemplate() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateTemplate()
-	})
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *TagTranslationUpsertOne) ClearTemplate() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearTemplate()
-	})
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *TagTranslationUpsertOne) SetFullPath(v string) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
@@ -1155,90 +1009,6 @@ func (u *TagTranslationUpsertOne) UpdateFullPath() *TagTranslationUpsertOne {
 func (u *TagTranslationUpsertOne) ClearFullPath() *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.ClearFullPath()
-	})
-}
-
-// SetCanonicalURL sets the "canonical_url" field.
-func (u *TagTranslationUpsertOne) SetCanonicalURL(v string) *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetCanonicalURL(v)
-	})
-}
-
-// UpdateCanonicalURL sets the "canonical_url" field to the value that was provided on create.
-func (u *TagTranslationUpsertOne) UpdateCanonicalURL() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateCanonicalURL()
-	})
-}
-
-// ClearCanonicalURL clears the value of the "canonical_url" field.
-func (u *TagTranslationUpsertOne) ClearCanonicalURL() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearCanonicalURL()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *TagTranslationUpsertOne) SetMetaKeywords(v string) *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *TagTranslationUpsertOne) UpdateMetaKeywords() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *TagTranslationUpsertOne) ClearMetaKeywords() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *TagTranslationUpsertOne) SetMetaDescription(v string) *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *TagTranslationUpsertOne) UpdateMetaDescription() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *TagTranslationUpsertOne) ClearMetaDescription() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *TagTranslationUpsertOne) SetSeoTitle(v string) *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *TagTranslationUpsertOne) UpdateSeoTitle() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *TagTranslationUpsertOne) ClearSeoTitle() *TagTranslationUpsertOne {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearSeoTitle()
 	})
 }
 
@@ -1584,6 +1354,27 @@ func (u *TagTranslationUpsertBulk) ClearDeletedBy() *TagTranslationUpsertBulk {
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *TagTranslationUpsertBulk) SetSeo(v *contentpb.SeoMeta) *TagTranslationUpsertBulk {
+	return u.Update(func(s *TagTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *TagTranslationUpsertBulk) UpdateSeo() *TagTranslationUpsertBulk {
+	return u.Update(func(s *TagTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *TagTranslationUpsertBulk) ClearSeo() *TagTranslationUpsertBulk {
+	return u.Update(func(s *TagTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
 // SetTagID sets the "tag_id" field.
 func (u *TagTranslationUpsertBulk) SetTagID(v uint32) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
@@ -1717,27 +1508,6 @@ func (u *TagTranslationUpsertBulk) ClearCoverImage() *TagTranslationUpsertBulk {
 	})
 }
 
-// SetTemplate sets the "template" field.
-func (u *TagTranslationUpsertBulk) SetTemplate(v string) *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetTemplate(v)
-	})
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *TagTranslationUpsertBulk) UpdateTemplate() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateTemplate()
-	})
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *TagTranslationUpsertBulk) ClearTemplate() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearTemplate()
-	})
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *TagTranslationUpsertBulk) SetFullPath(v string) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
@@ -1756,90 +1526,6 @@ func (u *TagTranslationUpsertBulk) UpdateFullPath() *TagTranslationUpsertBulk {
 func (u *TagTranslationUpsertBulk) ClearFullPath() *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.ClearFullPath()
-	})
-}
-
-// SetCanonicalURL sets the "canonical_url" field.
-func (u *TagTranslationUpsertBulk) SetCanonicalURL(v string) *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetCanonicalURL(v)
-	})
-}
-
-// UpdateCanonicalURL sets the "canonical_url" field to the value that was provided on create.
-func (u *TagTranslationUpsertBulk) UpdateCanonicalURL() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateCanonicalURL()
-	})
-}
-
-// ClearCanonicalURL clears the value of the "canonical_url" field.
-func (u *TagTranslationUpsertBulk) ClearCanonicalURL() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearCanonicalURL()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *TagTranslationUpsertBulk) SetMetaKeywords(v string) *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *TagTranslationUpsertBulk) UpdateMetaKeywords() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *TagTranslationUpsertBulk) ClearMetaKeywords() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *TagTranslationUpsertBulk) SetMetaDescription(v string) *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *TagTranslationUpsertBulk) UpdateMetaDescription() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *TagTranslationUpsertBulk) ClearMetaDescription() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *TagTranslationUpsertBulk) SetSeoTitle(v string) *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *TagTranslationUpsertBulk) UpdateSeoTitle() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *TagTranslationUpsertBulk) ClearSeoTitle() *TagTranslationUpsertBulk {
-	return u.Update(func(s *TagTranslationUpsert) {
-		s.ClearSeoTitle()
 	})
 }
 

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package content.service.v1;
 
+import "gnostic/openapi/v3/annotations.proto";
+
 // 编辑器类型
 enum EditorType {
   EDITOR_TYPE_UNSPECIFIED = 0;
@@ -14,4 +16,86 @@ enum EditorType {
   // 扩展类型（预留，默认不展示，供高级功能扩展）
   EDITOR_TYPE_JSON_BLOCK = 10; // JSON 块编辑器（Notion风格）
   EDITOR_TYPE_VISUAL_BUILDER = 11;  // 可视化构建器
+}
+
+// 区块类型
+enum SectionType {
+  SECTION_TYPE_UNSPECIFIED = 0;
+
+  SECTION_TYPE_RICH_TEXT = 1;   // 富文本区块
+  SECTION_TYPE_MARKDOWN = 2;    // Markdown 区块
+  SECTION_TYPE_TITLE = 3;       // 标题区块
+  SECTION_TYPE_IMAGE = 4;       // 图片区块
+  SECTION_TYPE_GALLERY = 5;     // 图集区块
+  SECTION_TYPE_VIDEO = 6;       // 视频区块
+  SECTION_TYPE_BUTTON = 7;      // 按钮区块
+  SECTION_TYPE_DIVIDER = 8;     // 分割线区块
+  SECTION_TYPE_SPACER = 9;      // 间距区块
+  SECTION_TYPE_CODE = 10;       // 代码区块
+  SECTION_TYPE_HTML = 11;       // 自定义HTML区块
+  SECTION_TYPE_FORM = 12;       // 表单区块
+  SECTION_TYPE_CAROUSEL = 13;   // 轮播图区块
+  SECTION_TYPE_CUSTOM = 99;     // 自定义区块
+}
+
+// SEO 元信息结构设计
+message SeoMeta {
+  optional string seo_title = 1 [
+    json_name = "seoTitle",
+    (gnostic.openapi.v3.property) = {description: "SEO 标题（覆盖页面默认标题）"}
+  ]; // SEO 标题，覆盖页面默认标题
+  optional string meta_keywords = 2 [
+    json_name = "metaKeywords",
+    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
+  ]; // SEO 关键词，覆盖页面默认关键词
+  optional string meta_description = 3 [
+    json_name = "metaDescription",
+    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
+  ]; // SEO 描述，覆盖页面默认描述
+
+  optional string og_title = 4 [
+    json_name = "ogTitle",
+    (gnostic.openapi.v3.property) = {description: "OG 标题（覆盖页面默认标题）"}
+  ]; // OG（Open Graph）标题，覆盖页面默认标题
+  optional string og_description = 5 [
+    json_name = "ogDescription",
+    (gnostic.openapi.v3.property) = {description: "OG 描述"}
+  ]; // OG（Open Graph）描述，覆盖页面默认描述
+  optional string og_image = 6 [
+    json_name = "ogImage",
+    (gnostic.openapi.v3.property) = {description: "OG 图片 URL"}
+  ]; // OG（Open Graph）图片 URL，用于社交媒体分享时的预览图
+
+  optional string canonical_url = 33 [
+    json_name = "canonicalUrl",
+    (gnostic.openapi.v3.property) = {description: "规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）"}
+  ]; // 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
+}
+
+
+// 页面区块（内容构建模块）
+message Section {
+  optional SectionType type = 1 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {description: "区块类型"}
+  ]; // 区块类型
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "区块名称（后台标识用）"}
+  ]; // 区块名称（后台标识用）
+
+  optional uint32 sort_order = 3 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序（越小越靠前）"}
+  ]; // 排序（越小越靠前）
+
+  map<string, string> config = 4 [
+    json_name = "config",
+    (gnostic.openapi.v3.property) = {description: "区块通用配置（边距、样式、类名等）"}
+  ]; // 区块通用配置（边距、样式、类名等）
+  map<string, string> content = 5 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "区块内容（键值对，适配不同类型区块）"}
+  ]; // 区块内容（键值对，适配不同类型区块）
 }

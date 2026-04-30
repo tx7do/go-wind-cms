@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"time"
@@ -147,6 +148,18 @@ func (_u *PostTranslationUpdate) AddDeletedBy(v int32) *PostTranslationUpdate {
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (_u *PostTranslationUpdate) ClearDeletedBy() *PostTranslationUpdate {
 	_u.mutation.ClearDeletedBy()
+	return _u
+}
+
+// SetSeo sets the "seo" field.
+func (_u *PostTranslationUpdate) SetSeo(v *contentpb.SeoMeta) *PostTranslationUpdate {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *PostTranslationUpdate) ClearSeo() *PostTranslationUpdate {
+	_u.mutation.ClearSeo()
 	return _u
 }
 
@@ -317,26 +330,6 @@ func (_u *PostTranslationUpdate) ClearThumbnail() *PostTranslationUpdate {
 	return _u
 }
 
-// SetTemplate sets the "template" field.
-func (_u *PostTranslationUpdate) SetTemplate(v string) *PostTranslationUpdate {
-	_u.mutation.SetTemplate(v)
-	return _u
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillableTemplate(v *string) *PostTranslationUpdate {
-	if v != nil {
-		_u.SetTemplate(*v)
-	}
-	return _u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (_u *PostTranslationUpdate) ClearTemplate() *PostTranslationUpdate {
-	_u.mutation.ClearTemplate()
-	return _u
-}
-
 // SetFullPath sets the "full_path" field.
 func (_u *PostTranslationUpdate) SetFullPath(v string) *PostTranslationUpdate {
 	_u.mutation.SetFullPath(v)
@@ -381,66 +374,6 @@ func (_u *PostTranslationUpdate) AddWordCount(v int32) *PostTranslationUpdate {
 // ClearWordCount clears the value of the "word_count" field.
 func (_u *PostTranslationUpdate) ClearWordCount() *PostTranslationUpdate {
 	_u.mutation.ClearWordCount()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *PostTranslationUpdate) SetMetaKeywords(v string) *PostTranslationUpdate {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillableMetaKeywords(v *string) *PostTranslationUpdate {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *PostTranslationUpdate) ClearMetaKeywords() *PostTranslationUpdate {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *PostTranslationUpdate) SetMetaDescription(v string) *PostTranslationUpdate {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillableMetaDescription(v *string) *PostTranslationUpdate {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *PostTranslationUpdate) ClearMetaDescription() *PostTranslationUpdate {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *PostTranslationUpdate) SetSeoTitle(v string) *PostTranslationUpdate {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillableSeoTitle(v *string) *PostTranslationUpdate {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *PostTranslationUpdate) ClearSeoTitle() *PostTranslationUpdate {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -533,6 +466,12 @@ func (_u *PostTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(posttranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(posttranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(posttranslation.FieldSeo, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(posttranslation.FieldPostID, field.TypeUint32, value)
 	}
@@ -584,12 +523,6 @@ func (_u *PostTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.ThumbnailCleared() {
 		_spec.ClearField(posttranslation.FieldThumbnail, field.TypeString)
 	}
-	if value, ok := _u.mutation.Template(); ok {
-		_spec.SetField(posttranslation.FieldTemplate, field.TypeString, value)
-	}
-	if _u.mutation.TemplateCleared() {
-		_spec.ClearField(posttranslation.FieldTemplate, field.TypeString)
-	}
 	if value, ok := _u.mutation.FullPath(); ok {
 		_spec.SetField(posttranslation.FieldFullPath, field.TypeString, value)
 	}
@@ -604,24 +537,6 @@ func (_u *PostTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	}
 	if _u.mutation.WordCountCleared() {
 		_spec.ClearField(posttranslation.FieldWordCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(posttranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(posttranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(posttranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(posttranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(posttranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(posttranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -763,6 +678,18 @@ func (_u *PostTranslationUpdateOne) AddDeletedBy(v int32) *PostTranslationUpdate
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (_u *PostTranslationUpdateOne) ClearDeletedBy() *PostTranslationUpdateOne {
 	_u.mutation.ClearDeletedBy()
+	return _u
+}
+
+// SetSeo sets the "seo" field.
+func (_u *PostTranslationUpdateOne) SetSeo(v *contentpb.SeoMeta) *PostTranslationUpdateOne {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *PostTranslationUpdateOne) ClearSeo() *PostTranslationUpdateOne {
+	_u.mutation.ClearSeo()
 	return _u
 }
 
@@ -933,26 +860,6 @@ func (_u *PostTranslationUpdateOne) ClearThumbnail() *PostTranslationUpdateOne {
 	return _u
 }
 
-// SetTemplate sets the "template" field.
-func (_u *PostTranslationUpdateOne) SetTemplate(v string) *PostTranslationUpdateOne {
-	_u.mutation.SetTemplate(v)
-	return _u
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillableTemplate(v *string) *PostTranslationUpdateOne {
-	if v != nil {
-		_u.SetTemplate(*v)
-	}
-	return _u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (_u *PostTranslationUpdateOne) ClearTemplate() *PostTranslationUpdateOne {
-	_u.mutation.ClearTemplate()
-	return _u
-}
-
 // SetFullPath sets the "full_path" field.
 func (_u *PostTranslationUpdateOne) SetFullPath(v string) *PostTranslationUpdateOne {
 	_u.mutation.SetFullPath(v)
@@ -997,66 +904,6 @@ func (_u *PostTranslationUpdateOne) AddWordCount(v int32) *PostTranslationUpdate
 // ClearWordCount clears the value of the "word_count" field.
 func (_u *PostTranslationUpdateOne) ClearWordCount() *PostTranslationUpdateOne {
 	_u.mutation.ClearWordCount()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *PostTranslationUpdateOne) SetMetaKeywords(v string) *PostTranslationUpdateOne {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillableMetaKeywords(v *string) *PostTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *PostTranslationUpdateOne) ClearMetaKeywords() *PostTranslationUpdateOne {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *PostTranslationUpdateOne) SetMetaDescription(v string) *PostTranslationUpdateOne {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillableMetaDescription(v *string) *PostTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *PostTranslationUpdateOne) ClearMetaDescription() *PostTranslationUpdateOne {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *PostTranslationUpdateOne) SetSeoTitle(v string) *PostTranslationUpdateOne {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillableSeoTitle(v *string) *PostTranslationUpdateOne {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *PostTranslationUpdateOne) ClearSeoTitle() *PostTranslationUpdateOne {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -1179,6 +1026,12 @@ func (_u *PostTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PostTra
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(posttranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(posttranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(posttranslation.FieldSeo, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(posttranslation.FieldPostID, field.TypeUint32, value)
 	}
@@ -1230,12 +1083,6 @@ func (_u *PostTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PostTra
 	if _u.mutation.ThumbnailCleared() {
 		_spec.ClearField(posttranslation.FieldThumbnail, field.TypeString)
 	}
-	if value, ok := _u.mutation.Template(); ok {
-		_spec.SetField(posttranslation.FieldTemplate, field.TypeString, value)
-	}
-	if _u.mutation.TemplateCleared() {
-		_spec.ClearField(posttranslation.FieldTemplate, field.TypeString)
-	}
 	if value, ok := _u.mutation.FullPath(); ok {
 		_spec.SetField(posttranslation.FieldFullPath, field.TypeString, value)
 	}
@@ -1250,24 +1097,6 @@ func (_u *PostTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PostTra
 	}
 	if _u.mutation.WordCountCleared() {
 		_spec.ClearField(posttranslation.FieldWordCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(posttranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(posttranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(posttranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(posttranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(posttranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(posttranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PostTranslation{config: _u.config}

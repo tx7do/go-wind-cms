@@ -413,24 +413,41 @@ func (m *CategoryTranslation) validate(all bool) error {
 		// no validation rules for CoverImage
 	}
 
-	if m.Template != nil {
-		// no validation rules for Template
-	}
-
 	if m.FullPath != nil {
 		// no validation rules for FullPath
 	}
 
-	if m.MetaKeywords != nil {
-		// no validation rules for MetaKeywords
-	}
+	if m.Seo != nil {
 
-	if m.MetaDescription != nil {
-		// no validation rules for MetaDescription
-	}
+		if all {
+			switch v := interface{}(m.GetSeo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CategoryTranslationValidationError{
+						field:  "Seo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CategoryTranslationValidationError{
+						field:  "Seo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSeo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CategoryTranslationValidationError{
+					field:  "Seo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
 
-	if m.SeoTitle != nil {
-		// no validation rules for SeoTitle
 	}
 
 	if m.CreatedBy != nil {

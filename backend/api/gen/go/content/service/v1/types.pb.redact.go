@@ -19,3 +19,43 @@ var (
 	_ codes.Code
 	_ status.Status
 )
+
+// Redact method implementation for SeoMeta
+func (x *SeoMeta) Redact() string {
+	if x == nil {
+		return ""
+	}
+
+	// Safe field: SeoTitle
+
+	// Safe field: MetaKeywords
+
+	// Safe field: MetaDescription
+
+	// Safe field: OgTitle
+
+	// Safe field: OgDescription
+
+	// Safe field: OgImage
+
+	// Safe field: CanonicalUrl
+	return x.String()
+}
+
+// Redact method implementation for Section
+func (x *Section) Redact() string {
+	if x == nil {
+		return ""
+	}
+
+	// Safe field: Type
+
+	// Safe field: Name
+
+	// Safe field: SortOrder
+
+	// Safe field: Config
+
+	// Safe field: Content
+	return x.String()
+}

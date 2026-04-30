@@ -7,6 +7,7 @@
 package contentpb
 
 import (
+	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -84,11 +85,300 @@ func (EditorType) EnumDescriptor() ([]byte, []int) {
 	return file_content_service_v1_types_proto_rawDescGZIP(), []int{0}
 }
 
+// 区块类型
+type SectionType int32
+
+const (
+	SectionType_SECTION_TYPE_UNSPECIFIED SectionType = 0
+	SectionType_SECTION_TYPE_RICH_TEXT   SectionType = 1  // 富文本区块
+	SectionType_SECTION_TYPE_MARKDOWN    SectionType = 2  // Markdown 区块
+	SectionType_SECTION_TYPE_TITLE       SectionType = 3  // 标题区块
+	SectionType_SECTION_TYPE_IMAGE       SectionType = 4  // 图片区块
+	SectionType_SECTION_TYPE_GALLERY     SectionType = 5  // 图集区块
+	SectionType_SECTION_TYPE_VIDEO       SectionType = 6  // 视频区块
+	SectionType_SECTION_TYPE_BUTTON      SectionType = 7  // 按钮区块
+	SectionType_SECTION_TYPE_DIVIDER     SectionType = 8  // 分割线区块
+	SectionType_SECTION_TYPE_SPACER      SectionType = 9  // 间距区块
+	SectionType_SECTION_TYPE_CODE        SectionType = 10 // 代码区块
+	SectionType_SECTION_TYPE_HTML        SectionType = 11 // 自定义HTML区块
+	SectionType_SECTION_TYPE_FORM        SectionType = 12 // 表单区块
+	SectionType_SECTION_TYPE_CAROUSEL    SectionType = 13 // 轮播图区块
+	SectionType_SECTION_TYPE_CUSTOM      SectionType = 99 // 自定义区块
+)
+
+// Enum value maps for SectionType.
+var (
+	SectionType_name = map[int32]string{
+		0:  "SECTION_TYPE_UNSPECIFIED",
+		1:  "SECTION_TYPE_RICH_TEXT",
+		2:  "SECTION_TYPE_MARKDOWN",
+		3:  "SECTION_TYPE_TITLE",
+		4:  "SECTION_TYPE_IMAGE",
+		5:  "SECTION_TYPE_GALLERY",
+		6:  "SECTION_TYPE_VIDEO",
+		7:  "SECTION_TYPE_BUTTON",
+		8:  "SECTION_TYPE_DIVIDER",
+		9:  "SECTION_TYPE_SPACER",
+		10: "SECTION_TYPE_CODE",
+		11: "SECTION_TYPE_HTML",
+		12: "SECTION_TYPE_FORM",
+		13: "SECTION_TYPE_CAROUSEL",
+		99: "SECTION_TYPE_CUSTOM",
+	}
+	SectionType_value = map[string]int32{
+		"SECTION_TYPE_UNSPECIFIED": 0,
+		"SECTION_TYPE_RICH_TEXT":   1,
+		"SECTION_TYPE_MARKDOWN":    2,
+		"SECTION_TYPE_TITLE":       3,
+		"SECTION_TYPE_IMAGE":       4,
+		"SECTION_TYPE_GALLERY":     5,
+		"SECTION_TYPE_VIDEO":       6,
+		"SECTION_TYPE_BUTTON":      7,
+		"SECTION_TYPE_DIVIDER":     8,
+		"SECTION_TYPE_SPACER":      9,
+		"SECTION_TYPE_CODE":        10,
+		"SECTION_TYPE_HTML":        11,
+		"SECTION_TYPE_FORM":        12,
+		"SECTION_TYPE_CAROUSEL":    13,
+		"SECTION_TYPE_CUSTOM":      99,
+	}
+)
+
+func (x SectionType) Enum() *SectionType {
+	p := new(SectionType)
+	*p = x
+	return p
+}
+
+func (x SectionType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SectionType) Descriptor() protoreflect.EnumDescriptor {
+	return file_content_service_v1_types_proto_enumTypes[1].Descriptor()
+}
+
+func (SectionType) Type() protoreflect.EnumType {
+	return &file_content_service_v1_types_proto_enumTypes[1]
+}
+
+func (x SectionType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SectionType.Descriptor instead.
+func (SectionType) EnumDescriptor() ([]byte, []int) {
+	return file_content_service_v1_types_proto_rawDescGZIP(), []int{1}
+}
+
+// SEO 元信息结构设计
+type SeoMeta struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	SeoTitle        *string                `protobuf:"bytes,1,opt,name=seo_title,json=seoTitle,proto3,oneof" json:"seo_title,omitempty"`                      // SEO 标题，覆盖页面默认标题
+	MetaKeywords    *string                `protobuf:"bytes,2,opt,name=meta_keywords,json=metaKeywords,proto3,oneof" json:"meta_keywords,omitempty"`          // SEO 关键词，覆盖页面默认关键词
+	MetaDescription *string                `protobuf:"bytes,3,opt,name=meta_description,json=metaDescription,proto3,oneof" json:"meta_description,omitempty"` // SEO 描述，覆盖页面默认描述
+	OgTitle         *string                `protobuf:"bytes,4,opt,name=og_title,json=ogTitle,proto3,oneof" json:"og_title,omitempty"`                         // OG（Open Graph）标题，覆盖页面默认标题
+	OgDescription   *string                `protobuf:"bytes,5,opt,name=og_description,json=ogDescription,proto3,oneof" json:"og_description,omitempty"`       // OG（Open Graph）描述，覆盖页面默认描述
+	OgImage         *string                `protobuf:"bytes,6,opt,name=og_image,json=ogImage,proto3,oneof" json:"og_image,omitempty"`                         // OG（Open Graph）图片 URL，用于社交媒体分享时的预览图
+	CanonicalUrl    *string                `protobuf:"bytes,33,opt,name=canonical_url,json=canonicalUrl,proto3,oneof" json:"canonical_url,omitempty"`         // 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *SeoMeta) Reset() {
+	*x = SeoMeta{}
+	mi := &file_content_service_v1_types_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeoMeta) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeoMeta) ProtoMessage() {}
+
+func (x *SeoMeta) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_types_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SeoMeta.ProtoReflect.Descriptor instead.
+func (*SeoMeta) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_types_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SeoMeta) GetSeoTitle() string {
+	if x != nil && x.SeoTitle != nil {
+		return *x.SeoTitle
+	}
+	return ""
+}
+
+func (x *SeoMeta) GetMetaKeywords() string {
+	if x != nil && x.MetaKeywords != nil {
+		return *x.MetaKeywords
+	}
+	return ""
+}
+
+func (x *SeoMeta) GetMetaDescription() string {
+	if x != nil && x.MetaDescription != nil {
+		return *x.MetaDescription
+	}
+	return ""
+}
+
+func (x *SeoMeta) GetOgTitle() string {
+	if x != nil && x.OgTitle != nil {
+		return *x.OgTitle
+	}
+	return ""
+}
+
+func (x *SeoMeta) GetOgDescription() string {
+	if x != nil && x.OgDescription != nil {
+		return *x.OgDescription
+	}
+	return ""
+}
+
+func (x *SeoMeta) GetOgImage() string {
+	if x != nil && x.OgImage != nil {
+		return *x.OgImage
+	}
+	return ""
+}
+
+func (x *SeoMeta) GetCanonicalUrl() string {
+	if x != nil && x.CanonicalUrl != nil {
+		return *x.CanonicalUrl
+	}
+	return ""
+}
+
+// 页面区块（内容构建模块）
+type Section struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          *SectionType           `protobuf:"varint,1,opt,name=type,proto3,enum=content.service.v1.SectionType,oneof" json:"type,omitempty"`                                      // 区块类型
+	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                           // 区块名称（后台标识用）
+	SortOrder     *uint32                `protobuf:"varint,3,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                               // 排序（越小越靠前）
+	Config        map[string]string      `protobuf:"bytes,4,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`   // 区块通用配置（边距、样式、类名等）
+	Content       map[string]string      `protobuf:"bytes,5,rep,name=content,proto3" json:"content,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 区块内容（键值对，适配不同类型区块）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Section) Reset() {
+	*x = Section{}
+	mi := &file_content_service_v1_types_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Section) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Section) ProtoMessage() {}
+
+func (x *Section) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_types_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Section.ProtoReflect.Descriptor instead.
+func (*Section) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_types_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Section) GetType() SectionType {
+	if x != nil && x.Type != nil {
+		return *x.Type
+	}
+	return SectionType_SECTION_TYPE_UNSPECIFIED
+}
+
+func (x *Section) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *Section) GetSortOrder() uint32 {
+	if x != nil && x.SortOrder != nil {
+		return *x.SortOrder
+	}
+	return 0
+}
+
+func (x *Section) GetConfig() map[string]string {
+	if x != nil {
+		return x.Config
+	}
+	return nil
+}
+
+func (x *Section) GetContent() map[string]string {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
 var File_content_service_v1_types_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_types_proto_rawDesc = "" +
 	"\n" +
-	"\x1econtent/service/v1/types.proto\x12\x12content.service.v1*\xcc\x01\n" +
+	"\x1econtent/service/v1/types.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\"\xc3\x05\n" +
+	"\aSeoMeta\x12P\n" +
+	"\tseo_title\x18\x01 \x01(\tB.\xbaG+\x92\x02(SEO 标题（覆盖页面默认标题）H\x00R\bseoTitle\x88\x01\x01\x12=\n" +
+	"\rmeta_keywords\x18\x02 \x01(\tB\x13\xbaG\x10\x92\x02\rSEO 关键词H\x01R\fmetaKeywords\x88\x01\x01\x12@\n" +
+	"\x10meta_description\x18\x03 \x01(\tB\x10\xbaG\r\x92\x02\n" +
+	"SEO 描述H\x02R\x0fmetaDescription\x88\x01\x01\x12M\n" +
+	"\bog_title\x18\x04 \x01(\tB-\xbaG*\x92\x02'OG 标题（覆盖页面默认标题）H\x03R\aogTitle\x88\x01\x01\x12;\n" +
+	"\x0eog_description\x18\x05 \x01(\tB\x0f\xbaG\f\x92\x02\tOG 描述H\x04R\rogDescription\x88\x01\x01\x123\n" +
+	"\bog_image\x18\x06 \x01(\tB\x13\xbaG\x10\x92\x02\rOG 图片 URLH\x05R\aogImage\x88\x01\x01\x12\xaf\x01\n" +
+	"\rcanonical_url\x18! \x01(\tB\x84\x01\xbaG\x80\x01\x92\x02}规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）H\x06R\fcanonicalUrl\x88\x01\x01B\f\n" +
+	"\n" +
+	"_seo_titleB\x10\n" +
+	"\x0e_meta_keywordsB\x13\n" +
+	"\x11_meta_descriptionB\v\n" +
+	"\t_og_titleB\x11\n" +
+	"\x0f_og_descriptionB\v\n" +
+	"\t_og_imageB\x10\n" +
+	"\x0e_canonical_url\"\xf7\x04\n" +
+	"\aSection\x12L\n" +
+	"\x04type\x18\x01 \x01(\x0e2\x1f.content.service.v1.SectionTypeB\x12\xbaG\x0f\x92\x02\f区块类型H\x00R\x04type\x88\x01\x01\x12@\n" +
+	"\x04name\x18\x02 \x01(\tB'\xbaG$\x92\x02!区块名称（后台标识用）H\x01R\x04name\x88\x01\x01\x12E\n" +
+	"\n" +
+	"sort_order\x18\x03 \x01(\rB!\xbaG\x1e\x92\x02\x1b排序（越小越靠前）H\x02R\tsortOrder\x88\x01\x01\x12z\n" +
+	"\x06config\x18\x04 \x03(\v2'.content.service.v1.Section.ConfigEntryB9\xbaG6\x92\x023区块通用配置（边距、样式、类名等）R\x06config\x12\x80\x01\n" +
+	"\acontent\x18\x05 \x03(\v2(.content.service.v1.Section.ContentEntryB<\xbaG9\x92\x026区块内容（键值对，适配不同类型区块）R\acontent\x1a9\n" +
+	"\vConfigEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1a:\n" +
+	"\fContentEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\a\n" +
+	"\x05_typeB\a\n" +
+	"\x05_nameB\r\n" +
+	"\v_sort_order*\xcc\x01\n" +
 	"\n" +
 	"EditorType\x12\x1b\n" +
 	"\x17EDITOR_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
@@ -98,7 +388,24 @@ const file_content_service_v1_types_proto_rawDesc = "" +
 	"\x10EDITOR_TYPE_CODE\x10\x04\x12\x1a\n" +
 	"\x16EDITOR_TYPE_JSON_BLOCK\x10\n" +
 	"\x12\x1e\n" +
-	"\x1aEDITOR_TYPE_VISUAL_BUILDER\x10\vB\xc3\x01\n" +
+	"\x1aEDITOR_TYPE_VISUAL_BUILDER\x10\v*\x89\x03\n" +
+	"\vSectionType\x12\x1c\n" +
+	"\x18SECTION_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16SECTION_TYPE_RICH_TEXT\x10\x01\x12\x19\n" +
+	"\x15SECTION_TYPE_MARKDOWN\x10\x02\x12\x16\n" +
+	"\x12SECTION_TYPE_TITLE\x10\x03\x12\x16\n" +
+	"\x12SECTION_TYPE_IMAGE\x10\x04\x12\x18\n" +
+	"\x14SECTION_TYPE_GALLERY\x10\x05\x12\x16\n" +
+	"\x12SECTION_TYPE_VIDEO\x10\x06\x12\x17\n" +
+	"\x13SECTION_TYPE_BUTTON\x10\a\x12\x18\n" +
+	"\x14SECTION_TYPE_DIVIDER\x10\b\x12\x17\n" +
+	"\x13SECTION_TYPE_SPACER\x10\t\x12\x15\n" +
+	"\x11SECTION_TYPE_CODE\x10\n" +
+	"\x12\x15\n" +
+	"\x11SECTION_TYPE_HTML\x10\v\x12\x15\n" +
+	"\x11SECTION_TYPE_FORM\x10\f\x12\x19\n" +
+	"\x15SECTION_TYPE_CAROUSEL\x10\r\x12\x17\n" +
+	"\x13SECTION_TYPE_CUSTOM\x10cB\xc3\x01\n" +
 	"\x16com.content.service.v1B\n" +
 	"TypesProtoP\x01Z3go-wind-cms/api/gen/go/content/service/v1;contentpb\xa2\x02\x03CSX\xaa\x02\x12Content.Service.V1\xca\x02\x12Content\\Service\\V1\xe2\x02\x1eContent\\Service\\V1\\GPBMetadata\xea\x02\x14Content::Service::V1b\x06proto3"
 
@@ -114,16 +421,25 @@ func file_content_service_v1_types_proto_rawDescGZIP() []byte {
 	return file_content_service_v1_types_proto_rawDescData
 }
 
-var file_content_service_v1_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_content_service_v1_types_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_content_service_v1_types_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_content_service_v1_types_proto_goTypes = []any{
-	(EditorType)(0), // 0: content.service.v1.EditorType
+	(EditorType)(0),  // 0: content.service.v1.EditorType
+	(SectionType)(0), // 1: content.service.v1.SectionType
+	(*SeoMeta)(nil),  // 2: content.service.v1.SeoMeta
+	(*Section)(nil),  // 3: content.service.v1.Section
+	nil,              // 4: content.service.v1.Section.ConfigEntry
+	nil,              // 5: content.service.v1.Section.ContentEntry
 }
 var file_content_service_v1_types_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: content.service.v1.Section.type:type_name -> content.service.v1.SectionType
+	4, // 1: content.service.v1.Section.config:type_name -> content.service.v1.Section.ConfigEntry
+	5, // 2: content.service.v1.Section.content:type_name -> content.service.v1.Section.ContentEntry
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_types_proto_init() }
@@ -131,19 +447,22 @@ func file_content_service_v1_types_proto_init() {
 	if File_content_service_v1_types_proto != nil {
 		return
 	}
+	file_content_service_v1_types_proto_msgTypes[0].OneofWrappers = []any{}
+	file_content_service_v1_types_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_types_proto_rawDesc), len(file_content_service_v1_types_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   0,
+			NumEnums:      2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_content_service_v1_types_proto_goTypes,
 		DependencyIndexes: file_content_service_v1_types_proto_depIdxs,
 		EnumInfos:         file_content_service_v1_types_proto_enumTypes,
+		MessageInfos:      file_content_service_v1_types_proto_msgTypes,
 	}.Build()
 	File_content_service_v1_types_proto = out.File
 	file_content_service_v1_types_proto_goTypes = nil

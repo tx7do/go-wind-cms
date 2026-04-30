@@ -235,8 +235,6 @@ func (r *PageRepo) Create(ctx context.Context, req *contentV1.CreatePageRequest)
 		SetNillableTemplate(req.Data.Template).
 		SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
 		SetNillableVisits(req.Data.Visits).
-		SetNillableCustomHead(req.Data.CustomHead).
-		SetNillableCustomFoot(req.Data.CustomFoot).
 		SetNillableParentID(req.Data.ParentId).
 		SetNillableDepth(req.Data.Depth).
 		SetNillablePath(req.Data.Path).
@@ -345,8 +343,6 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 				SetNillableTemplate(req.Data.Template).
 				SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
 				SetNillableVisits(req.Data.Visits).
-				SetNillableCustomHead(req.Data.CustomHead).
-				SetNillableCustomFoot(req.Data.CustomFoot).
 				SetNillableParentID(req.Data.ParentId).
 				SetNillableDepth(req.Data.Depth).
 				SetNillablePath(req.Data.Path).

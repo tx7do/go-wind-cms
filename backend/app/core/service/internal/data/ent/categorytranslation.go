@@ -3,7 +3,9 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"strings"
 	"time"
@@ -30,6 +32,8 @@ type CategoryTranslation struct {
 	UpdatedBy *uint32 `json:"updated_by,omitempty"`
 	// 删除者ID
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// SEO 结构化元数据
+	Seo *contentpb.SeoMeta `json:"seo,omitempty"`
 	// 关联的分类ID
 	CategoryID *uint32 `json:"category_id,omitempty"`
 	// 语言代码
@@ -44,16 +48,8 @@ type CategoryTranslation struct {
 	Thumbnail *string `json:"thumbnail,omitempty"`
 	// 封面图
 	CoverImage *string `json:"cover_image,omitempty"`
-	// 模板名称
-	Template *string `json:"template,omitempty"`
 	// 完整路径
-	FullPath *string `json:"full_path,omitempty"`
-	// SEO 关键词
-	MetaKeywords *string `json:"meta_keywords,omitempty"`
-	// SEO 描述
-	MetaDescription *string `json:"meta_description,omitempty"`
-	// SEO 标题
-	SeoTitle     *string `json:"seo_title,omitempty"`
+	FullPath     *string `json:"full_path,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -62,9 +58,11 @@ func (*CategoryTranslation) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case categorytranslation.FieldSeo:
+			values[i] = new([]byte)
 		case categorytranslation.FieldID, categorytranslation.FieldCreatedBy, categorytranslation.FieldUpdatedBy, categorytranslation.FieldDeletedBy, categorytranslation.FieldCategoryID:
 			values[i] = new(sql.NullInt64)
-		case categorytranslation.FieldLanguageCode, categorytranslation.FieldName, categorytranslation.FieldSlug, categorytranslation.FieldDescription, categorytranslation.FieldThumbnail, categorytranslation.FieldCoverImage, categorytranslation.FieldTemplate, categorytranslation.FieldFullPath, categorytranslation.FieldMetaKeywords, categorytranslation.FieldMetaDescription, categorytranslation.FieldSeoTitle:
+		case categorytranslation.FieldLanguageCode, categorytranslation.FieldName, categorytranslation.FieldSlug, categorytranslation.FieldDescription, categorytranslation.FieldThumbnail, categorytranslation.FieldCoverImage, categorytranslation.FieldFullPath:
 			values[i] = new(sql.NullString)
 		case categorytranslation.FieldCreatedAt, categorytranslation.FieldUpdatedAt, categorytranslation.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -131,6 +129,14 @@ func (_m *CategoryTranslation) assignValues(columns []string, values []any) erro
 				_m.DeletedBy = new(uint32)
 				*_m.DeletedBy = uint32(value.Int64)
 			}
+		case categorytranslation.FieldSeo:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field seo", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Seo); err != nil {
+					return fmt.Errorf("unmarshal field seo: %w", err)
+				}
+			}
 		case categorytranslation.FieldCategoryID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field category_id", values[i])
@@ -180,40 +186,12 @@ func (_m *CategoryTranslation) assignValues(columns []string, values []any) erro
 				_m.CoverImage = new(string)
 				*_m.CoverImage = value.String
 			}
-		case categorytranslation.FieldTemplate:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field template", values[i])
-			} else if value.Valid {
-				_m.Template = new(string)
-				*_m.Template = value.String
-			}
 		case categorytranslation.FieldFullPath:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field full_path", values[i])
 			} else if value.Valid {
 				_m.FullPath = new(string)
 				*_m.FullPath = value.String
-			}
-		case categorytranslation.FieldMetaKeywords:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_keywords", values[i])
-			} else if value.Valid {
-				_m.MetaKeywords = new(string)
-				*_m.MetaKeywords = value.String
-			}
-		case categorytranslation.FieldMetaDescription:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_description", values[i])
-			} else if value.Valid {
-				_m.MetaDescription = new(string)
-				*_m.MetaDescription = value.String
-			}
-		case categorytranslation.FieldSeoTitle:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field seo_title", values[i])
-			} else if value.Valid {
-				_m.SeoTitle = new(string)
-				*_m.SeoTitle = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -281,6 +259,9 @@ func (_m *CategoryTranslation) String() string {
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
+	builder.WriteString("seo=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Seo))
+	builder.WriteString(", ")
 	if v := _m.CategoryID; v != nil {
 		builder.WriteString("category_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
@@ -316,28 +297,8 @@ func (_m *CategoryTranslation) String() string {
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := _m.Template; v != nil {
-		builder.WriteString("template=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
 	if v := _m.FullPath; v != nil {
 		builder.WriteString("full_path=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := _m.MetaKeywords; v != nil {
-		builder.WriteString("meta_keywords=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := _m.MetaDescription; v != nil {
-		builder.WriteString("meta_description=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := _m.SeoTitle; v != nil {
-		builder.WriteString("seo_title=")
 		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')

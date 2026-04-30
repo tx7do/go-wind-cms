@@ -128,14 +128,14 @@ func (r *TagTranslationRepo) newCreateBuilder(tt *ent.TagTranslationClient, data
 		SetNillableSlug(data.Slug).
 		SetNillableDescription(data.Description).
 		SetNillableCoverImage(data.CoverImage).
-		SetNillableTemplate(data.Template).
 		SetNillableFullPath(data.FullPath).
-		SetNillableMetaKeywords(data.MetaKeywords).
-		SetNillableMetaDescription(data.MetaDescription).
-		SetNillableSeoTitle(data.SeoTitle).
-		SetNillableCanonicalURL(data.CanonicalUrl).
 		SetNillableCreatedBy(data.CreatedBy).
 		SetCreatedAt(time.Now())
+
+	if data.Seo != nil {
+		builder.SetSeo(data.Seo)
+	}
+
 	return builder
 }
 
@@ -193,14 +193,13 @@ func (r *TagTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, d
 				SetNillableSlug(data.Slug).
 				SetNillableDescription(data.Description).
 				SetNillableCoverImage(data.CoverImage).
-				SetNillableTemplate(data.Template).
 				SetNillableFullPath(data.FullPath).
-				SetNillableMetaKeywords(data.MetaKeywords).
-				SetNillableMetaDescription(data.MetaDescription).
-				SetNillableSeoTitle(data.SeoTitle).
-				SetNillableCanonicalURL(data.CanonicalUrl).
 				SetNillableUpdatedBy(data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			if data.Seo != nil {
+				builder.SetSeo(data.Seo)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(tagtranslation.FieldID, id))

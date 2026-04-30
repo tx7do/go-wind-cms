@@ -1,6 +1,8 @@
 package schema
 
 import (
+	appMixin "go-wind-cms/pkg/entgo/mixin"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -50,21 +52,6 @@ func (PageTranslation) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.String("summary").
-			Comment("页面摘要").
-			Optional().
-			Nillable(),
-
-		field.String("content").
-			Comment("页面内容").
-			Optional().
-			Nillable(),
-
-		field.String("original_content").
-			Comment("原始内容").
-			Optional().
-			Nillable(),
-
 		field.String("thumbnail").
 			Comment("缩略图").
 			Optional().
@@ -79,27 +66,6 @@ func (PageTranslation) Fields() []ent.Field {
 			Comment("完整路径").
 			Optional().
 			Nillable(),
-
-		field.Uint32("word_count").
-			Comment("当前语言版本的字数").
-			Default(0).
-			Optional().
-			Nillable(),
-
-		field.String("meta_keywords").
-			Comment("SEO 关键词").
-			Optional().
-			Nillable(),
-
-		field.String("meta_description").
-			Comment("SEO 描述").
-			Optional().
-			Nillable(),
-
-		field.String("seo_title").
-			Comment("SEO 标题").
-			Optional().
-			Nillable(),
 	}
 }
 
@@ -109,6 +75,8 @@ func (PageTranslation) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
+		appMixin.Seo{},
+		appMixin.Sections{},
 	}
 }
 
@@ -124,7 +92,5 @@ func (PageTranslation) Indexes() []ent.Index {
 		index.Fields("page_id", "language_code"),
 		// 复合索引，优化按语言代码和slug查询
 		index.Fields("language_code", "slug"),
-		// 单字段索引，优化SEO关键词搜索
-		index.Fields("meta_keywords"),
 	}
 }

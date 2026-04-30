@@ -182,14 +182,6 @@ func (m *Page) validate(all bool) error {
 		// no validation rules for Visits
 	}
 
-	if m.CustomHead != nil {
-		// no validation rules for CustomHead
-	}
-
-	if m.CustomFoot != nil {
-		// no validation rules for CustomFoot
-	}
-
 	if m.ParentId != nil {
 		// no validation rules for ParentId
 	}
@@ -412,6 +404,40 @@ func (m *PageTranslation) validate(all bool) error {
 
 	var errors []error
 
+	for idx, item := range m.GetSections() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageTranslationValidationError{
+						field:  fmt.Sprintf("Sections[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageTranslationValidationError{
+						field:  fmt.Sprintf("Sections[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageTranslationValidationError{
+					field:  fmt.Sprintf("Sections[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Id != nil {
 		// no validation rules for Id
 	}
@@ -432,18 +458,6 @@ func (m *PageTranslation) validate(all bool) error {
 		// no validation rules for Slug
 	}
 
-	if m.Summary != nil {
-		// no validation rules for Summary
-	}
-
-	if m.Content != nil {
-		// no validation rules for Content
-	}
-
-	if m.OriginalContent != nil {
-		// no validation rules for OriginalContent
-	}
-
 	if m.Thumbnail != nil {
 		// no validation rules for Thumbnail
 	}
@@ -452,24 +466,41 @@ func (m *PageTranslation) validate(all bool) error {
 		// no validation rules for CoverImage
 	}
 
-	if m.WordCount != nil {
-		// no validation rules for WordCount
-	}
-
 	if m.FullPath != nil {
 		// no validation rules for FullPath
 	}
 
-	if m.MetaKeywords != nil {
-		// no validation rules for MetaKeywords
-	}
+	if m.Seo != nil {
 
-	if m.MetaDescription != nil {
-		// no validation rules for MetaDescription
-	}
+		if all {
+			switch v := interface{}(m.GetSeo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageTranslationValidationError{
+						field:  "Seo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageTranslationValidationError{
+						field:  "Seo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSeo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageTranslationValidationError{
+					field:  "Seo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
 
-	if m.SeoTitle != nil {
-		// no validation rules for SeoTitle
 	}
 
 	if m.CreatedBy != nil {

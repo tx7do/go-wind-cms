@@ -254,28 +254,24 @@ func (x *Tag) GetDeletedAt() *timestamppb.Timestamp {
 
 // 标签翻译
 type TagTranslation struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                  // 翻译记录ID
-	TagId           *uint32                `protobuf:"varint,2,opt,name=tag_id,json=tagId,proto3,oneof" json:"tag_id,omitempty"`                               // 关联的标签ID
-	LanguageCode    *string                `protobuf:"bytes,3,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"`           // 语言代码
-	Name            *string                `protobuf:"bytes,10,opt,name=name,proto3,oneof" json:"name,omitempty"`                                              // 标签名称
-	Slug            *string                `protobuf:"bytes,11,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                              // 标签别名（同语言下唯一，不同语言可重复，如 zh-CN 的 'go' 与 en-US 的 'go' 允许共存）
-	Description     *string                `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`                                // 标签描述
-	CoverImage      *string                `protobuf:"bytes,13,opt,name=cover_image,json=coverImage,proto3,oneof" json:"cover_image,omitempty"`                // 封面图
-	Template        *string                `protobuf:"bytes,14,opt,name=template,proto3,oneof" json:"template,omitempty"`                                      // 模板名称
-	FullPath        *string                `protobuf:"bytes,20,opt,name=full_path,json=fullPath,proto3,oneof" json:"full_path,omitempty"`                      // 完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）
-	MetaKeywords    *string                `protobuf:"bytes,30,opt,name=meta_keywords,json=metaKeywords,proto3,oneof" json:"meta_keywords,omitempty"`          // SEO 关键词
-	MetaDescription *string                `protobuf:"bytes,31,opt,name=meta_description,json=metaDescription,proto3,oneof" json:"meta_description,omitempty"` // SEO 描述
-	SeoTitle        *string                `protobuf:"bytes,32,opt,name=seo_title,json=seoTitle,proto3,oneof" json:"seo_title,omitempty"`                      // SEO 标题
-	CanonicalUrl    *string                `protobuf:"bytes,33,opt,name=canonical_url,json=canonicalUrl,proto3,oneof" json:"canonical_url,omitempty"`          // 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
-	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                 // 创建者用户ID
-	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                 // 更新者用户ID
-	DeletedBy       *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                 // 删除者用户ID
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                  // 创建时间
-	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                  // 更新时间
-	DeletedAt       *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                  // 删除时间
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                        // 翻译记录ID
+	TagId         *uint32                `protobuf:"varint,2,opt,name=tag_id,json=tagId,proto3,oneof" json:"tag_id,omitempty"`                     // 关联的标签ID
+	LanguageCode  *string                `protobuf:"bytes,3,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"` // 语言代码
+	Name          *string                `protobuf:"bytes,10,opt,name=name,proto3,oneof" json:"name,omitempty"`                                    // 标签名称
+	Slug          *string                `protobuf:"bytes,11,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                    // 标签别名（同语言下唯一，不同语言可重复，如 zh-CN 的 'go' 与 en-US 的 'go' 允许共存）
+	Description   *string                `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`                      // 标签描述
+	CoverImage    *string                `protobuf:"bytes,13,opt,name=cover_image,json=coverImage,proto3,oneof" json:"cover_image,omitempty"`      // 封面图
+	FullPath      *string                `protobuf:"bytes,20,opt,name=full_path,json=fullPath,proto3,oneof" json:"full_path,omitempty"`            // 完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）
+	Seo           *SeoMeta               `protobuf:"bytes,30,opt,name=seo,proto3,oneof" json:"seo,omitempty"`
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
+	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
+	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
+	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`  // 删除时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *TagTranslation) Reset() {
@@ -357,13 +353,6 @@ func (x *TagTranslation) GetCoverImage() string {
 	return ""
 }
 
-func (x *TagTranslation) GetTemplate() string {
-	if x != nil && x.Template != nil {
-		return *x.Template
-	}
-	return ""
-}
-
 func (x *TagTranslation) GetFullPath() string {
 	if x != nil && x.FullPath != nil {
 		return *x.FullPath
@@ -371,32 +360,11 @@ func (x *TagTranslation) GetFullPath() string {
 	return ""
 }
 
-func (x *TagTranslation) GetMetaKeywords() string {
-	if x != nil && x.MetaKeywords != nil {
-		return *x.MetaKeywords
+func (x *TagTranslation) GetSeo() *SeoMeta {
+	if x != nil {
+		return x.Seo
 	}
-	return ""
-}
-
-func (x *TagTranslation) GetMetaDescription() string {
-	if x != nil && x.MetaDescription != nil {
-		return *x.MetaDescription
-	}
-	return ""
-}
-
-func (x *TagTranslation) GetSeoTitle() string {
-	if x != nil && x.SeoTitle != nil {
-		return *x.SeoTitle
-	}
-	return ""
-}
-
-func (x *TagTranslation) GetCanonicalUrl() string {
-	if x != nil && x.CanonicalUrl != nil {
-		return *x.CanonicalUrl
-	}
-	return ""
+	return nil
 }
 
 func (x *TagTranslation) GetCreatedBy() uint32 {
@@ -1128,7 +1096,7 @@ var File_content_service_v1_tag_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_tag_proto_rawDesc = "" +
 	"\n" +
-	"\x1ccontent/service/v1/tag.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xd8\x0e\n" +
+	"\x1ccontent/service/v1/tag.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xd8\x0e\n" +
 	"\x03Tag\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b标签IDH\x00R\x02id\x88\x01\x01\x12R\n" +
 	"\x06status\x18\x02 \x01(\x0e2!.content.service.v1.Tag.TagStatusB\x12\xbaG\x0f\x92\x02\f标签状态H\x01R\x06status\x88\x01\x01\x12l\n" +
@@ -1177,7 +1145,8 @@ const file_content_service_v1_tag_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xb5\r\n" +
+	"\v_deleted_at\"\x9f\n" +
+	"\n" +
 	"\x0eTagTranslation\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e翻译记录IDH\x00R\x02id\x88\x01\x01\x123\n" +
 	"\x06tag_id\x18\x02 \x01(\rB\x17\xbaG\x14\x92\x02\x11关联的标签IDH\x01R\x05tagId\x88\x01\x01\x12<\n" +
@@ -1187,43 +1156,32 @@ const file_content_service_v1_tag_proto_rawDesc = "" +
 	"\x04slug\x18\v \x01(\tBw\xbaGt\x92\x02q标签别名（同语言下唯一，不同语言可重复，如 zh-CN 的 'go' 与 en-US 的 'go' 允许共存）H\x04R\x04slug\x88\x01\x01\x129\n" +
 	"\vdescription\x18\f \x01(\tB\x12\xbaG\x0f\x92\x02\f标签描述H\x05R\vdescription\x88\x01\x01\x125\n" +
 	"\vcover_image\x18\r \x01(\tB\x0f\xbaG\f\x92\x02\t封面图H\x06R\n" +
-	"coverImage\x88\x01\x01\x123\n" +
-	"\btemplate\x18\x0e \x01(\tB\x12\xbaG\x0f\x92\x02\f模板名称H\aR\btemplate\x88\x01\x01\x12o\n" +
-	"\tfull_path\x18\x14 \x01(\tBM\xbaGJ\x92\x02G完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）H\bR\bfullPath\x88\x01\x01\x12=\n" +
-	"\rmeta_keywords\x18\x1e \x01(\tB\x13\xbaG\x10\x92\x02\rSEO 关键词H\tR\fmetaKeywords\x88\x01\x01\x12@\n" +
-	"\x10meta_description\x18\x1f \x01(\tB\x10\xbaG\r\x92\x02\n" +
-	"SEO 描述H\n" +
-	"R\x0fmetaDescription\x88\x01\x01\x122\n" +
-	"\tseo_title\x18  \x01(\tB\x10\xbaG\r\x92\x02\n" +
-	"SEO 标题H\vR\bseoTitle\x88\x01\x01\x12\xaf\x01\n" +
-	"\rcanonical_url\x18! \x01(\tB\x84\x01\xbaG\x80\x01\x92\x02}规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）H\fR\fcanonicalUrl\x88\x01\x01\x12;\n" +
+	"coverImage\x88\x01\x01\x12o\n" +
+	"\tfull_path\x18\x14 \x01(\tBM\xbaGJ\x92\x02G完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）H\aR\bfullPath\x88\x01\x01\x12P\n" +
+	"\x03seo\x18\x1e \x01(\v2\x1b.content.service.v1.SeoMetaB\x1c\xbaG\x19\x92\x02\x16SEO 结构化元数据H\bR\x03seo\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\rR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\tR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0eR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\n" +
+	"R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\vR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x10R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x11R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\rR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x12R\tdeletedAt\x88\x01\x01B\x05\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0eR\tdeletedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\t\n" +
 	"\a_tag_idB\x10\n" +
 	"\x0e_language_codeB\a\n" +
 	"\x05_nameB\a\n" +
 	"\x05_slugB\x0e\n" +
 	"\f_descriptionB\x0e\n" +
-	"\f_cover_imageB\v\n" +
-	"\t_templateB\f\n" +
+	"\f_cover_imageB\f\n" +
 	"\n" +
-	"_full_pathB\x10\n" +
-	"\x0e_meta_keywordsB\x13\n" +
-	"\x11_meta_descriptionB\f\n" +
-	"\n" +
-	"_seo_titleB\x10\n" +
-	"\x0e_canonical_urlB\r\n" +
+	"_full_pathB\x06\n" +
+	"\x04_seoB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
 	"\v_deleted_byB\r\n" +
@@ -1329,9 +1287,10 @@ var file_content_service_v1_tag_proto_goTypes = []any{
 	(*TagTranslationIdentifier)(nil),     // 12: content.service.v1.TagTranslationIdentifier
 	(*DeleteTagTranslationRequest)(nil),  // 13: content.service.v1.DeleteTagTranslationRequest
 	(*timestamppb.Timestamp)(nil),        // 14: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),        // 15: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),             // 16: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                // 17: google.protobuf.Empty
+	(*SeoMeta)(nil),                      // 15: content.service.v1.SeoMeta
+	(*fieldmaskpb.FieldMask)(nil),        // 16: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),             // 17: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                // 18: google.protobuf.Empty
 }
 var file_content_service_v1_tag_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Tag.status:type_name -> content.service.v1.Tag.TagStatus
@@ -1339,43 +1298,44 @@ var file_content_service_v1_tag_proto_depIdxs = []int32{
 	14, // 2: content.service.v1.Tag.created_at:type_name -> google.protobuf.Timestamp
 	14, // 3: content.service.v1.Tag.updated_at:type_name -> google.protobuf.Timestamp
 	14, // 4: content.service.v1.Tag.deleted_at:type_name -> google.protobuf.Timestamp
-	14, // 5: content.service.v1.TagTranslation.created_at:type_name -> google.protobuf.Timestamp
-	14, // 6: content.service.v1.TagTranslation.updated_at:type_name -> google.protobuf.Timestamp
-	14, // 7: content.service.v1.TagTranslation.deleted_at:type_name -> google.protobuf.Timestamp
-	1,  // 8: content.service.v1.ListTagResponse.items:type_name -> content.service.v1.Tag
-	15, // 9: content.service.v1.GetTagRequest.view_mask:type_name -> google.protobuf.FieldMask
-	1,  // 10: content.service.v1.CreateTagRequest.data:type_name -> content.service.v1.Tag
-	1,  // 11: content.service.v1.UpdateTagRequest.data:type_name -> content.service.v1.Tag
-	15, // 12: content.service.v1.UpdateTagRequest.update_mask:type_name -> google.protobuf.FieldMask
-	2,  // 13: content.service.v1.CreateTagTranslationRequest.data:type_name -> content.service.v1.TagTranslation
-	2,  // 14: content.service.v1.UpdateTagTranslationRequest.data:type_name -> content.service.v1.TagTranslation
-	15, // 15: content.service.v1.UpdateTagTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
-	12, // 16: content.service.v1.DeleteTagTranslationRequest.identifier:type_name -> content.service.v1.TagTranslationIdentifier
-	16, // 17: content.service.v1.TagService.List:input_type -> pagination.PagingRequest
-	4,  // 18: content.service.v1.TagService.Get:input_type -> content.service.v1.GetTagRequest
-	5,  // 19: content.service.v1.TagService.Create:input_type -> content.service.v1.CreateTagRequest
-	6,  // 20: content.service.v1.TagService.Update:input_type -> content.service.v1.UpdateTagRequest
-	7,  // 21: content.service.v1.TagService.Delete:input_type -> content.service.v1.DeleteTagRequest
-	8,  // 22: content.service.v1.TagService.TranslationExists:input_type -> content.service.v1.TagTranslationExistsRequest
-	4,  // 23: content.service.v1.TagService.GetTranslation:input_type -> content.service.v1.GetTagRequest
-	10, // 24: content.service.v1.TagService.CreateTranslation:input_type -> content.service.v1.CreateTagTranslationRequest
-	11, // 25: content.service.v1.TagService.UpdateTranslation:input_type -> content.service.v1.UpdateTagTranslationRequest
-	13, // 26: content.service.v1.TagService.DeleteTranslation:input_type -> content.service.v1.DeleteTagTranslationRequest
-	3,  // 27: content.service.v1.TagService.List:output_type -> content.service.v1.ListTagResponse
-	1,  // 28: content.service.v1.TagService.Get:output_type -> content.service.v1.Tag
-	1,  // 29: content.service.v1.TagService.Create:output_type -> content.service.v1.Tag
-	1,  // 30: content.service.v1.TagService.Update:output_type -> content.service.v1.Tag
-	17, // 31: content.service.v1.TagService.Delete:output_type -> google.protobuf.Empty
-	9,  // 32: content.service.v1.TagService.TranslationExists:output_type -> content.service.v1.TagTranslationExistsResponse
-	2,  // 33: content.service.v1.TagService.GetTranslation:output_type -> content.service.v1.TagTranslation
-	2,  // 34: content.service.v1.TagService.CreateTranslation:output_type -> content.service.v1.TagTranslation
-	2,  // 35: content.service.v1.TagService.UpdateTranslation:output_type -> content.service.v1.TagTranslation
-	17, // 36: content.service.v1.TagService.DeleteTranslation:output_type -> google.protobuf.Empty
-	27, // [27:37] is the sub-list for method output_type
-	17, // [17:27] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	15, // 5: content.service.v1.TagTranslation.seo:type_name -> content.service.v1.SeoMeta
+	14, // 6: content.service.v1.TagTranslation.created_at:type_name -> google.protobuf.Timestamp
+	14, // 7: content.service.v1.TagTranslation.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 8: content.service.v1.TagTranslation.deleted_at:type_name -> google.protobuf.Timestamp
+	1,  // 9: content.service.v1.ListTagResponse.items:type_name -> content.service.v1.Tag
+	16, // 10: content.service.v1.GetTagRequest.view_mask:type_name -> google.protobuf.FieldMask
+	1,  // 11: content.service.v1.CreateTagRequest.data:type_name -> content.service.v1.Tag
+	1,  // 12: content.service.v1.UpdateTagRequest.data:type_name -> content.service.v1.Tag
+	16, // 13: content.service.v1.UpdateTagRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 14: content.service.v1.CreateTagTranslationRequest.data:type_name -> content.service.v1.TagTranslation
+	2,  // 15: content.service.v1.UpdateTagTranslationRequest.data:type_name -> content.service.v1.TagTranslation
+	16, // 16: content.service.v1.UpdateTagTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	12, // 17: content.service.v1.DeleteTagTranslationRequest.identifier:type_name -> content.service.v1.TagTranslationIdentifier
+	17, // 18: content.service.v1.TagService.List:input_type -> pagination.PagingRequest
+	4,  // 19: content.service.v1.TagService.Get:input_type -> content.service.v1.GetTagRequest
+	5,  // 20: content.service.v1.TagService.Create:input_type -> content.service.v1.CreateTagRequest
+	6,  // 21: content.service.v1.TagService.Update:input_type -> content.service.v1.UpdateTagRequest
+	7,  // 22: content.service.v1.TagService.Delete:input_type -> content.service.v1.DeleteTagRequest
+	8,  // 23: content.service.v1.TagService.TranslationExists:input_type -> content.service.v1.TagTranslationExistsRequest
+	4,  // 24: content.service.v1.TagService.GetTranslation:input_type -> content.service.v1.GetTagRequest
+	10, // 25: content.service.v1.TagService.CreateTranslation:input_type -> content.service.v1.CreateTagTranslationRequest
+	11, // 26: content.service.v1.TagService.UpdateTranslation:input_type -> content.service.v1.UpdateTagTranslationRequest
+	13, // 27: content.service.v1.TagService.DeleteTranslation:input_type -> content.service.v1.DeleteTagTranslationRequest
+	3,  // 28: content.service.v1.TagService.List:output_type -> content.service.v1.ListTagResponse
+	1,  // 29: content.service.v1.TagService.Get:output_type -> content.service.v1.Tag
+	1,  // 30: content.service.v1.TagService.Create:output_type -> content.service.v1.Tag
+	1,  // 31: content.service.v1.TagService.Update:output_type -> content.service.v1.Tag
+	18, // 32: content.service.v1.TagService.Delete:output_type -> google.protobuf.Empty
+	9,  // 33: content.service.v1.TagService.TranslationExists:output_type -> content.service.v1.TagTranslationExistsResponse
+	2,  // 34: content.service.v1.TagService.GetTranslation:output_type -> content.service.v1.TagTranslation
+	2,  // 35: content.service.v1.TagService.CreateTranslation:output_type -> content.service.v1.TagTranslation
+	2,  // 36: content.service.v1.TagService.UpdateTranslation:output_type -> content.service.v1.TagTranslation
+	18, // 37: content.service.v1.TagService.DeleteTranslation:output_type -> google.protobuf.Empty
+	28, // [28:38] is the sub-list for method output_type
+	18, // [18:28] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_tag_proto_init() }
@@ -1383,6 +1343,7 @@ func file_content_service_v1_tag_proto_init() {
 	if File_content_service_v1_tag_proto != nil {
 		return
 	}
+	file_content_service_v1_types_proto_init()
 	file_content_service_v1_tag_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_tag_proto_msgTypes[1].OneofWrappers = []any{}
 	file_content_service_v1_tag_proto_msgTypes[3].OneofWrappers = []any{

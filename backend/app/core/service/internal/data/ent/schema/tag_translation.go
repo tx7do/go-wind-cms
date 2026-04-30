@@ -1,6 +1,8 @@
 package schema
 
 import (
+	appMixin "go-wind-cms/pkg/entgo/mixin"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -60,33 +62,8 @@ func (TagTranslation) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.String("template").
-			Comment("模板名称").
-			Optional().
-			Nillable(),
-
 		field.String("full_path").
 			Comment("完整路径").
-			Optional().
-			Nillable(),
-
-		field.String("canonical_url").
-			Comment("规范 URL").
-			Optional().
-			Nillable(),
-
-		field.String("meta_keywords").
-			Comment("SEO 关键词").
-			Optional().
-			Nillable(),
-
-		field.String("meta_description").
-			Comment("SEO 描述").
-			Optional().
-			Nillable(),
-
-		field.String("seo_title").
-			Comment("SEO 标题").
 			Optional().
 			Nillable(),
 	}
@@ -98,6 +75,7 @@ func (TagTranslation) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
+		appMixin.Seo{},
 	}
 }
 
@@ -111,8 +89,6 @@ func (TagTranslation) Indexes() []ent.Index {
 		index.Fields("slug"),
 		// 单字段索引，优化完整路径的查询
 		index.Fields("full_path"),
-		// 单字段索引，优化SEO关键词搜索
-		index.Fields("meta_keywords"),
 		// 复合索引，优化按标签和语言查询特定翻译版本
 		index.Fields("tag_id", "language_code"),
 		// 复合索引，优化按语言代码和slug查询

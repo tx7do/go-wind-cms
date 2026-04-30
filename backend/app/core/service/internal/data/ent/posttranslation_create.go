@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"time"
 
@@ -103,6 +104,12 @@ func (_c *PostTranslationCreate) SetNillableDeletedBy(v *uint32) *PostTranslatio
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
+	return _c
+}
+
+// SetSeo sets the "seo" field.
+func (_c *PostTranslationCreate) SetSeo(v *contentpb.SeoMeta) *PostTranslationCreate {
+	_c.mutation.SetSeo(v)
 	return _c
 }
 
@@ -218,20 +225,6 @@ func (_c *PostTranslationCreate) SetNillableThumbnail(v *string) *PostTranslatio
 	return _c
 }
 
-// SetTemplate sets the "template" field.
-func (_c *PostTranslationCreate) SetTemplate(v string) *PostTranslationCreate {
-	_c.mutation.SetTemplate(v)
-	return _c
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableTemplate(v *string) *PostTranslationCreate {
-	if v != nil {
-		_c.SetTemplate(*v)
-	}
-	return _c
-}
-
 // SetFullPath sets the "full_path" field.
 func (_c *PostTranslationCreate) SetFullPath(v string) *PostTranslationCreate {
 	_c.mutation.SetFullPath(v)
@@ -256,48 +249,6 @@ func (_c *PostTranslationCreate) SetWordCount(v uint32) *PostTranslationCreate {
 func (_c *PostTranslationCreate) SetNillableWordCount(v *uint32) *PostTranslationCreate {
 	if v != nil {
 		_c.SetWordCount(*v)
-	}
-	return _c
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_c *PostTranslationCreate) SetMetaKeywords(v string) *PostTranslationCreate {
-	_c.mutation.SetMetaKeywords(v)
-	return _c
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableMetaKeywords(v *string) *PostTranslationCreate {
-	if v != nil {
-		_c.SetMetaKeywords(*v)
-	}
-	return _c
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_c *PostTranslationCreate) SetMetaDescription(v string) *PostTranslationCreate {
-	_c.mutation.SetMetaDescription(v)
-	return _c
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableMetaDescription(v *string) *PostTranslationCreate {
-	if v != nil {
-		_c.SetMetaDescription(*v)
-	}
-	return _c
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_c *PostTranslationCreate) SetSeoTitle(v string) *PostTranslationCreate {
-	_c.mutation.SetSeoTitle(v)
-	return _c
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableSeoTitle(v *string) *PostTranslationCreate {
-	if v != nil {
-		_c.SetSeoTitle(*v)
 	}
 	return _c
 }
@@ -351,6 +302,11 @@ func (_c *PostTranslationCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *PostTranslationCreate) check() error {
+	if v, ok := _c.mutation.Seo(); ok {
+		if err := v.Validate(); err != nil {
+			return &ValidationError{Name: "seo", err: fmt.Errorf(`ent: validator failed for field "PostTranslation.seo": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := posttranslation.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "PostTranslation.id": %w`, err)}
@@ -413,6 +369,10 @@ func (_c *PostTranslationCreate) createSpec() (*PostTranslation, *sqlgraph.Creat
 		_spec.SetField(posttranslation.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
 	}
+	if value, ok := _c.mutation.Seo(); ok {
+		_spec.SetField(posttranslation.FieldSeo, field.TypeJSON, value)
+		_node.Seo = value
+	}
 	if value, ok := _c.mutation.PostID(); ok {
 		_spec.SetField(posttranslation.FieldPostID, field.TypeUint32, value)
 		_node.PostID = &value
@@ -445,10 +405,6 @@ func (_c *PostTranslationCreate) createSpec() (*PostTranslation, *sqlgraph.Creat
 		_spec.SetField(posttranslation.FieldThumbnail, field.TypeString, value)
 		_node.Thumbnail = &value
 	}
-	if value, ok := _c.mutation.Template(); ok {
-		_spec.SetField(posttranslation.FieldTemplate, field.TypeString, value)
-		_node.Template = &value
-	}
 	if value, ok := _c.mutation.FullPath(); ok {
 		_spec.SetField(posttranslation.FieldFullPath, field.TypeString, value)
 		_node.FullPath = &value
@@ -456,18 +412,6 @@ func (_c *PostTranslationCreate) createSpec() (*PostTranslation, *sqlgraph.Creat
 	if value, ok := _c.mutation.WordCount(); ok {
 		_spec.SetField(posttranslation.FieldWordCount, field.TypeUint32, value)
 		_node.WordCount = &value
-	}
-	if value, ok := _c.mutation.MetaKeywords(); ok {
-		_spec.SetField(posttranslation.FieldMetaKeywords, field.TypeString, value)
-		_node.MetaKeywords = &value
-	}
-	if value, ok := _c.mutation.MetaDescription(); ok {
-		_spec.SetField(posttranslation.FieldMetaDescription, field.TypeString, value)
-		_node.MetaDescription = &value
-	}
-	if value, ok := _c.mutation.SeoTitle(); ok {
-		_spec.SetField(posttranslation.FieldSeoTitle, field.TypeString, value)
-		_node.SeoTitle = &value
 	}
 	return _node, _spec
 }
@@ -629,6 +573,24 @@ func (u *PostTranslationUpsert) ClearDeletedBy() *PostTranslationUpsert {
 	return u
 }
 
+// SetSeo sets the "seo" field.
+func (u *PostTranslationUpsert) SetSeo(v *contentpb.SeoMeta) *PostTranslationUpsert {
+	u.Set(posttranslation.FieldSeo, v)
+	return u
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *PostTranslationUpsert) UpdateSeo() *PostTranslationUpsert {
+	u.SetExcluded(posttranslation.FieldSeo)
+	return u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *PostTranslationUpsert) ClearSeo() *PostTranslationUpsert {
+	u.SetNull(posttranslation.FieldSeo)
+	return u
+}
+
 // SetPostID sets the "post_id" field.
 func (u *PostTranslationUpsert) SetPostID(v uint32) *PostTranslationUpsert {
 	u.Set(posttranslation.FieldPostID, v)
@@ -779,24 +741,6 @@ func (u *PostTranslationUpsert) ClearThumbnail() *PostTranslationUpsert {
 	return u
 }
 
-// SetTemplate sets the "template" field.
-func (u *PostTranslationUpsert) SetTemplate(v string) *PostTranslationUpsert {
-	u.Set(posttranslation.FieldTemplate, v)
-	return u
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *PostTranslationUpsert) UpdateTemplate() *PostTranslationUpsert {
-	u.SetExcluded(posttranslation.FieldTemplate)
-	return u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *PostTranslationUpsert) ClearTemplate() *PostTranslationUpsert {
-	u.SetNull(posttranslation.FieldTemplate)
-	return u
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *PostTranslationUpsert) SetFullPath(v string) *PostTranslationUpsert {
 	u.Set(posttranslation.FieldFullPath, v)
@@ -836,60 +780,6 @@ func (u *PostTranslationUpsert) AddWordCount(v uint32) *PostTranslationUpsert {
 // ClearWordCount clears the value of the "word_count" field.
 func (u *PostTranslationUpsert) ClearWordCount() *PostTranslationUpsert {
 	u.SetNull(posttranslation.FieldWordCount)
-	return u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *PostTranslationUpsert) SetMetaKeywords(v string) *PostTranslationUpsert {
-	u.Set(posttranslation.FieldMetaKeywords, v)
-	return u
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *PostTranslationUpsert) UpdateMetaKeywords() *PostTranslationUpsert {
-	u.SetExcluded(posttranslation.FieldMetaKeywords)
-	return u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *PostTranslationUpsert) ClearMetaKeywords() *PostTranslationUpsert {
-	u.SetNull(posttranslation.FieldMetaKeywords)
-	return u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *PostTranslationUpsert) SetMetaDescription(v string) *PostTranslationUpsert {
-	u.Set(posttranslation.FieldMetaDescription, v)
-	return u
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *PostTranslationUpsert) UpdateMetaDescription() *PostTranslationUpsert {
-	u.SetExcluded(posttranslation.FieldMetaDescription)
-	return u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *PostTranslationUpsert) ClearMetaDescription() *PostTranslationUpsert {
-	u.SetNull(posttranslation.FieldMetaDescription)
-	return u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *PostTranslationUpsert) SetSeoTitle(v string) *PostTranslationUpsert {
-	u.Set(posttranslation.FieldSeoTitle, v)
-	return u
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *PostTranslationUpsert) UpdateSeoTitle() *PostTranslationUpsert {
-	u.SetExcluded(posttranslation.FieldSeoTitle)
-	return u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *PostTranslationUpsert) ClearSeoTitle() *PostTranslationUpsert {
-	u.SetNull(posttranslation.FieldSeoTitle)
 	return u
 }
 
@@ -1070,6 +960,27 @@ func (u *PostTranslationUpsertOne) ClearDeletedBy() *PostTranslationUpsertOne {
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *PostTranslationUpsertOne) SetSeo(v *contentpb.SeoMeta) *PostTranslationUpsertOne {
+	return u.Update(func(s *PostTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *PostTranslationUpsertOne) UpdateSeo() *PostTranslationUpsertOne {
+	return u.Update(func(s *PostTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *PostTranslationUpsertOne) ClearSeo() *PostTranslationUpsertOne {
+	return u.Update(func(s *PostTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
 // SetPostID sets the "post_id" field.
 func (u *PostTranslationUpsertOne) SetPostID(v uint32) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
@@ -1245,27 +1156,6 @@ func (u *PostTranslationUpsertOne) ClearThumbnail() *PostTranslationUpsertOne {
 	})
 }
 
-// SetTemplate sets the "template" field.
-func (u *PostTranslationUpsertOne) SetTemplate(v string) *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetTemplate(v)
-	})
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *PostTranslationUpsertOne) UpdateTemplate() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateTemplate()
-	})
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *PostTranslationUpsertOne) ClearTemplate() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearTemplate()
-	})
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *PostTranslationUpsertOne) SetFullPath(v string) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
@@ -1312,69 +1202,6 @@ func (u *PostTranslationUpsertOne) UpdateWordCount() *PostTranslationUpsertOne {
 func (u *PostTranslationUpsertOne) ClearWordCount() *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.ClearWordCount()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *PostTranslationUpsertOne) SetMetaKeywords(v string) *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *PostTranslationUpsertOne) UpdateMetaKeywords() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *PostTranslationUpsertOne) ClearMetaKeywords() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *PostTranslationUpsertOne) SetMetaDescription(v string) *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *PostTranslationUpsertOne) UpdateMetaDescription() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *PostTranslationUpsertOne) ClearMetaDescription() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *PostTranslationUpsertOne) SetSeoTitle(v string) *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *PostTranslationUpsertOne) UpdateSeoTitle() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *PostTranslationUpsertOne) ClearSeoTitle() *PostTranslationUpsertOne {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearSeoTitle()
 	})
 }
 
@@ -1721,6 +1548,27 @@ func (u *PostTranslationUpsertBulk) ClearDeletedBy() *PostTranslationUpsertBulk 
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *PostTranslationUpsertBulk) SetSeo(v *contentpb.SeoMeta) *PostTranslationUpsertBulk {
+	return u.Update(func(s *PostTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *PostTranslationUpsertBulk) UpdateSeo() *PostTranslationUpsertBulk {
+	return u.Update(func(s *PostTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *PostTranslationUpsertBulk) ClearSeo() *PostTranslationUpsertBulk {
+	return u.Update(func(s *PostTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
 // SetPostID sets the "post_id" field.
 func (u *PostTranslationUpsertBulk) SetPostID(v uint32) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
@@ -1896,27 +1744,6 @@ func (u *PostTranslationUpsertBulk) ClearThumbnail() *PostTranslationUpsertBulk 
 	})
 }
 
-// SetTemplate sets the "template" field.
-func (u *PostTranslationUpsertBulk) SetTemplate(v string) *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetTemplate(v)
-	})
-}
-
-// UpdateTemplate sets the "template" field to the value that was provided on create.
-func (u *PostTranslationUpsertBulk) UpdateTemplate() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateTemplate()
-	})
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (u *PostTranslationUpsertBulk) ClearTemplate() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearTemplate()
-	})
-}
-
 // SetFullPath sets the "full_path" field.
 func (u *PostTranslationUpsertBulk) SetFullPath(v string) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
@@ -1963,69 +1790,6 @@ func (u *PostTranslationUpsertBulk) UpdateWordCount() *PostTranslationUpsertBulk
 func (u *PostTranslationUpsertBulk) ClearWordCount() *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.ClearWordCount()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *PostTranslationUpsertBulk) SetMetaKeywords(v string) *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *PostTranslationUpsertBulk) UpdateMetaKeywords() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *PostTranslationUpsertBulk) ClearMetaKeywords() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *PostTranslationUpsertBulk) SetMetaDescription(v string) *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *PostTranslationUpsertBulk) UpdateMetaDescription() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *PostTranslationUpsertBulk) ClearMetaDescription() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *PostTranslationUpsertBulk) SetSeoTitle(v string) *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *PostTranslationUpsertBulk) UpdateSeoTitle() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *PostTranslationUpsertBulk) ClearSeoTitle() *PostTranslationUpsertBulk {
-	return u.Update(func(s *PostTranslationUpsert) {
-		s.ClearSeoTitle()
 	})
 }
 

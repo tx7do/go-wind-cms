@@ -58,10 +58,6 @@ const (
 	FieldVisits = "visits"
 	// FieldCustomFields holds the string denoting the custom_fields field in the database.
 	FieldCustomFields = "custom_fields"
-	// FieldCustomHead holds the string denoting the custom_head field in the database.
-	FieldCustomHead = "custom_head"
-	// FieldCustomFoot holds the string denoting the custom_foot field in the database.
-	FieldCustomFoot = "custom_foot"
 	// FieldDepth holds the string denoting the depth field in the database.
 	FieldDepth = "depth"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
@@ -105,8 +101,6 @@ var Columns = []string{
 	FieldIsCustomTemplate,
 	FieldVisits,
 	FieldCustomFields,
-	FieldCustomHead,
-	FieldCustomFoot,
 	FieldDepth,
 }
 
@@ -338,16 +332,6 @@ func ByIsCustomTemplate(opts ...sql.OrderTermOption) OrderOption {
 // ByVisits orders the results by the visits field.
 func ByVisits(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVisits, opts...).ToFunc()
-}
-
-// ByCustomHead orders the results by the custom_head field.
-func ByCustomHead(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCustomHead, opts...).ToFunc()
-}
-
-// ByCustomFoot orders the results by the custom_foot field.
-func ByCustomFoot(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCustomFoot, opts...).ToFunc()
 }
 
 // ByDepth orders the results by the depth field.

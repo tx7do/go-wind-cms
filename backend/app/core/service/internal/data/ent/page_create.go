@@ -322,34 +322,6 @@ func (_c *PageCreate) SetCustomFields(v *map[string]string) *PageCreate {
 	return _c
 }
 
-// SetCustomHead sets the "custom_head" field.
-func (_c *PageCreate) SetCustomHead(v string) *PageCreate {
-	_c.mutation.SetCustomHead(v)
-	return _c
-}
-
-// SetNillableCustomHead sets the "custom_head" field if the given value is not nil.
-func (_c *PageCreate) SetNillableCustomHead(v *string) *PageCreate {
-	if v != nil {
-		_c.SetCustomHead(*v)
-	}
-	return _c
-}
-
-// SetCustomFoot sets the "custom_foot" field.
-func (_c *PageCreate) SetCustomFoot(v string) *PageCreate {
-	_c.mutation.SetCustomFoot(v)
-	return _c
-}
-
-// SetNillableCustomFoot sets the "custom_foot" field if the given value is not nil.
-func (_c *PageCreate) SetNillableCustomFoot(v *string) *PageCreate {
-	if v != nil {
-		_c.SetCustomFoot(*v)
-	}
-	return _c
-}
-
 // SetDepth sets the "depth" field.
 func (_c *PageCreate) SetDepth(v int32) *PageCreate {
 	_c.mutation.SetDepth(v)
@@ -610,14 +582,6 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.CustomFields(); ok {
 		_spec.SetField(page.FieldCustomFields, field.TypeJSON, value)
 		_node.CustomFields = value
-	}
-	if value, ok := _c.mutation.CustomHead(); ok {
-		_spec.SetField(page.FieldCustomHead, field.TypeString, value)
-		_node.CustomHead = &value
-	}
-	if value, ok := _c.mutation.CustomFoot(); ok {
-		_spec.SetField(page.FieldCustomFoot, field.TypeString, value)
-		_node.CustomFoot = &value
 	}
 	if value, ok := _c.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)
@@ -1119,42 +1083,6 @@ func (u *PageUpsert) UpdateCustomFields() *PageUpsert {
 // ClearCustomFields clears the value of the "custom_fields" field.
 func (u *PageUpsert) ClearCustomFields() *PageUpsert {
 	u.SetNull(page.FieldCustomFields)
-	return u
-}
-
-// SetCustomHead sets the "custom_head" field.
-func (u *PageUpsert) SetCustomHead(v string) *PageUpsert {
-	u.Set(page.FieldCustomHead, v)
-	return u
-}
-
-// UpdateCustomHead sets the "custom_head" field to the value that was provided on create.
-func (u *PageUpsert) UpdateCustomHead() *PageUpsert {
-	u.SetExcluded(page.FieldCustomHead)
-	return u
-}
-
-// ClearCustomHead clears the value of the "custom_head" field.
-func (u *PageUpsert) ClearCustomHead() *PageUpsert {
-	u.SetNull(page.FieldCustomHead)
-	return u
-}
-
-// SetCustomFoot sets the "custom_foot" field.
-func (u *PageUpsert) SetCustomFoot(v string) *PageUpsert {
-	u.Set(page.FieldCustomFoot, v)
-	return u
-}
-
-// UpdateCustomFoot sets the "custom_foot" field to the value that was provided on create.
-func (u *PageUpsert) UpdateCustomFoot() *PageUpsert {
-	u.SetExcluded(page.FieldCustomFoot)
-	return u
-}
-
-// ClearCustomFoot clears the value of the "custom_foot" field.
-func (u *PageUpsert) ClearCustomFoot() *PageUpsert {
-	u.SetNull(page.FieldCustomFoot)
 	return u
 }
 
@@ -1713,48 +1641,6 @@ func (u *PageUpsertOne) UpdateCustomFields() *PageUpsertOne {
 func (u *PageUpsertOne) ClearCustomFields() *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearCustomFields()
-	})
-}
-
-// SetCustomHead sets the "custom_head" field.
-func (u *PageUpsertOne) SetCustomHead(v string) *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.SetCustomHead(v)
-	})
-}
-
-// UpdateCustomHead sets the "custom_head" field to the value that was provided on create.
-func (u *PageUpsertOne) UpdateCustomHead() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateCustomHead()
-	})
-}
-
-// ClearCustomHead clears the value of the "custom_head" field.
-func (u *PageUpsertOne) ClearCustomHead() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearCustomHead()
-	})
-}
-
-// SetCustomFoot sets the "custom_foot" field.
-func (u *PageUpsertOne) SetCustomFoot(v string) *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.SetCustomFoot(v)
-	})
-}
-
-// UpdateCustomFoot sets the "custom_foot" field to the value that was provided on create.
-func (u *PageUpsertOne) UpdateCustomFoot() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateCustomFoot()
-	})
-}
-
-// ClearCustomFoot clears the value of the "custom_foot" field.
-func (u *PageUpsertOne) ClearCustomFoot() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearCustomFoot()
 	})
 }
 
@@ -2483,48 +2369,6 @@ func (u *PageUpsertBulk) UpdateCustomFields() *PageUpsertBulk {
 func (u *PageUpsertBulk) ClearCustomFields() *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearCustomFields()
-	})
-}
-
-// SetCustomHead sets the "custom_head" field.
-func (u *PageUpsertBulk) SetCustomHead(v string) *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.SetCustomHead(v)
-	})
-}
-
-// UpdateCustomHead sets the "custom_head" field to the value that was provided on create.
-func (u *PageUpsertBulk) UpdateCustomHead() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateCustomHead()
-	})
-}
-
-// ClearCustomHead clears the value of the "custom_head" field.
-func (u *PageUpsertBulk) ClearCustomHead() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearCustomHead()
-	})
-}
-
-// SetCustomFoot sets the "custom_foot" field.
-func (u *PageUpsertBulk) SetCustomFoot(v string) *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.SetCustomFoot(v)
-	})
-}
-
-// UpdateCustomFoot sets the "custom_foot" field to the value that was provided on create.
-func (u *PageUpsertBulk) UpdateCustomFoot() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateCustomFoot()
-	})
-}
-
-// ClearCustomFoot clears the value of the "custom_foot" field.
-func (u *PageUpsertBulk) ClearCustomFoot() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearCustomFoot()
 	})
 }
 

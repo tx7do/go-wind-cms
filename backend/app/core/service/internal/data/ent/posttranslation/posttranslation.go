@@ -23,6 +23,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
+	// FieldSeo holds the string denoting the seo field in the database.
+	FieldSeo = "seo"
 	// FieldPostID holds the string denoting the post_id field in the database.
 	FieldPostID = "post_id"
 	// FieldLanguageCode holds the string denoting the language_code field in the database.
@@ -39,18 +41,10 @@ const (
 	FieldOriginalContent = "original_content"
 	// FieldThumbnail holds the string denoting the thumbnail field in the database.
 	FieldThumbnail = "thumbnail"
-	// FieldTemplate holds the string denoting the template field in the database.
-	FieldTemplate = "template"
 	// FieldFullPath holds the string denoting the full_path field in the database.
 	FieldFullPath = "full_path"
 	// FieldWordCount holds the string denoting the word_count field in the database.
 	FieldWordCount = "word_count"
-	// FieldMetaKeywords holds the string denoting the meta_keywords field in the database.
-	FieldMetaKeywords = "meta_keywords"
-	// FieldMetaDescription holds the string denoting the meta_description field in the database.
-	FieldMetaDescription = "meta_description"
-	// FieldSeoTitle holds the string denoting the seo_title field in the database.
-	FieldSeoTitle = "seo_title"
 	// Table holds the table name of the posttranslation in the database.
 	Table = "post_translations"
 )
@@ -64,6 +58,7 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldDeletedBy,
+	FieldSeo,
 	FieldPostID,
 	FieldLanguageCode,
 	FieldTitle,
@@ -72,12 +67,8 @@ var Columns = []string{
 	FieldContent,
 	FieldOriginalContent,
 	FieldThumbnail,
-	FieldTemplate,
 	FieldFullPath,
 	FieldWordCount,
-	FieldMetaKeywords,
-	FieldMetaDescription,
-	FieldSeoTitle,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -175,11 +166,6 @@ func ByThumbnail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldThumbnail, opts...).ToFunc()
 }
 
-// ByTemplate orders the results by the template field.
-func ByTemplate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTemplate, opts...).ToFunc()
-}
-
 // ByFullPath orders the results by the full_path field.
 func ByFullPath(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFullPath, opts...).ToFunc()
@@ -188,19 +174,4 @@ func ByFullPath(opts ...sql.OrderTermOption) OrderOption {
 // ByWordCount orders the results by the word_count field.
 func ByWordCount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWordCount, opts...).ToFunc()
-}
-
-// ByMetaKeywords orders the results by the meta_keywords field.
-func ByMetaKeywords(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMetaKeywords, opts...).ToFunc()
-}
-
-// ByMetaDescription orders the results by the meta_description field.
-func ByMetaDescription(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMetaDescription, opts...).ToFunc()
-}
-
-// BySeoTitle orders the results by the seo_title field.
-func BySeoTitle(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSeoTitle, opts...).ToFunc()
 }

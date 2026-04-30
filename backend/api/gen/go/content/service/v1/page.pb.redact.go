@@ -192,10 +192,6 @@ func (x *Page) Redact() string {
 
 	// Safe field: CustomFields
 
-	// Safe field: CustomHead
-
-	// Safe field: CustomFoot
-
 	// Safe field: Translations
 
 	// Safe field: AvailableLanguages
@@ -238,25 +234,15 @@ func (x *PageTranslation) Redact() string {
 
 	// Safe field: Slug
 
-	// Safe field: Summary
-
-	// Safe field: Content
-
-	// Safe field: OriginalContent
+	// Safe field: Sections
 
 	// Safe field: Thumbnail
 
 	// Safe field: CoverImage
 
-	// Safe field: WordCount
-
 	// Safe field: FullPath
 
-	// Safe field: MetaKeywords
-
-	// Safe field: MetaDescription
-
-	// Safe field: SeoTitle
+	// Safe field: Seo
 
 	// Safe field: CreatedBy
 

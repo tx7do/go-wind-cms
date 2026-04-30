@@ -220,13 +220,6 @@ message PostTranslation {
     }
   ]; // 缩略图
 
-  optional string template = 16 [
-    json_name = "template",
-    (gnostic.openapi.v3.property) = {
-      description: "模板名称（某些语言可能使用不同模板）"
-    }
-  ]; // 模板名称
-
   optional string full_path = 17 [
     json_name = "fullPath",
     (gnostic.openapi.v3.property) = {
@@ -242,18 +235,10 @@ message PostTranslation {
   ]; // 当前语言版本的字数（中文按字符数，英文按单词数）
 
 
-  optional string meta_keywords = 20 [
-    json_name = "metaKeywords",
-    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
-  ]; // SEO 关键词
-  optional string meta_description = 21 [
-    json_name = "metaDescription",
-    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
-  ]; // SEO 描述
-  optional string seo_title = 22 [
-    json_name = "seoTitle",
-    (gnostic.openapi.v3.property) = {description: "SEO 标题"}
-  ]; // SEO 标题（覆盖默认的 title）
+  optional SeoMeta seo = 20 [
+    json_name = "seo",
+    (gnostic.openapi.v3.property) = {description: "SEO 结构化元数据"}
+  ];
 
 
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID

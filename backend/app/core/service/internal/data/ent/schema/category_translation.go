@@ -1,6 +1,8 @@
 package schema
 
 import (
+	appMixin "go-wind-cms/pkg/entgo/mixin"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -65,28 +67,8 @@ func (CategoryTranslation) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.String("template").
-			Comment("模板名称").
-			Optional().
-			Nillable(),
-
 		field.String("full_path").
 			Comment("完整路径").
-			Optional().
-			Nillable(),
-
-		field.String("meta_keywords").
-			Comment("SEO 关键词").
-			Optional().
-			Nillable(),
-
-		field.String("meta_description").
-			Comment("SEO 描述").
-			Optional().
-			Nillable(),
-
-		field.String("seo_title").
-			Comment("SEO 标题").
 			Optional().
 			Nillable(),
 	}
@@ -98,6 +80,7 @@ func (CategoryTranslation) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
+		appMixin.Seo{},
 	}
 }
 

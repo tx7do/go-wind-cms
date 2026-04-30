@@ -242,17 +242,11 @@ func (x *PostTranslation) Redact() string {
 
 	// Safe field: Thumbnail
 
-	// Safe field: Template
-
 	// Safe field: FullPath
 
 	// Safe field: WordCount
 
-	// Safe field: MetaKeywords
-
-	// Safe field: MetaDescription
-
-	// Safe field: SeoTitle
+	// Safe field: Seo
 
 	// Safe field: CreatedBy
 

@@ -3,7 +3,9 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"strings"
 	"time"
@@ -30,6 +32,8 @@ type PostTranslation struct {
 	UpdatedBy *uint32 `json:"updated_by,omitempty"`
 	// 删除者ID
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// SEO 结构化元数据
+	Seo *contentpb.SeoMeta `json:"seo,omitempty"`
 	// 关联的帖子ID
 	PostID *uint32 `json:"post_id,omitempty"`
 	// 语言代码
@@ -46,18 +50,10 @@ type PostTranslation struct {
 	OriginalContent *string `json:"original_content,omitempty"`
 	// 缩略图
 	Thumbnail *string `json:"thumbnail,omitempty"`
-	// 模板名称
-	Template *string `json:"template,omitempty"`
 	// 完整路径
 	FullPath *string `json:"full_path,omitempty"`
 	// 当前语言版本的字数
-	WordCount *uint32 `json:"word_count,omitempty"`
-	// SEO 关键词
-	MetaKeywords *string `json:"meta_keywords,omitempty"`
-	// SEO 描述
-	MetaDescription *string `json:"meta_description,omitempty"`
-	// SEO 标题
-	SeoTitle     *string `json:"seo_title,omitempty"`
+	WordCount    *uint32 `json:"word_count,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -66,9 +62,11 @@ func (*PostTranslation) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case posttranslation.FieldSeo:
+			values[i] = new([]byte)
 		case posttranslation.FieldID, posttranslation.FieldCreatedBy, posttranslation.FieldUpdatedBy, posttranslation.FieldDeletedBy, posttranslation.FieldPostID, posttranslation.FieldWordCount:
 			values[i] = new(sql.NullInt64)
-		case posttranslation.FieldLanguageCode, posttranslation.FieldTitle, posttranslation.FieldSlug, posttranslation.FieldSummary, posttranslation.FieldContent, posttranslation.FieldOriginalContent, posttranslation.FieldThumbnail, posttranslation.FieldTemplate, posttranslation.FieldFullPath, posttranslation.FieldMetaKeywords, posttranslation.FieldMetaDescription, posttranslation.FieldSeoTitle:
+		case posttranslation.FieldLanguageCode, posttranslation.FieldTitle, posttranslation.FieldSlug, posttranslation.FieldSummary, posttranslation.FieldContent, posttranslation.FieldOriginalContent, posttranslation.FieldThumbnail, posttranslation.FieldFullPath:
 			values[i] = new(sql.NullString)
 		case posttranslation.FieldCreatedAt, posttranslation.FieldUpdatedAt, posttranslation.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -135,6 +133,14 @@ func (_m *PostTranslation) assignValues(columns []string, values []any) error {
 				_m.DeletedBy = new(uint32)
 				*_m.DeletedBy = uint32(value.Int64)
 			}
+		case posttranslation.FieldSeo:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field seo", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Seo); err != nil {
+					return fmt.Errorf("unmarshal field seo: %w", err)
+				}
+			}
 		case posttranslation.FieldPostID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field post_id", values[i])
@@ -191,13 +197,6 @@ func (_m *PostTranslation) assignValues(columns []string, values []any) error {
 				_m.Thumbnail = new(string)
 				*_m.Thumbnail = value.String
 			}
-		case posttranslation.FieldTemplate:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field template", values[i])
-			} else if value.Valid {
-				_m.Template = new(string)
-				*_m.Template = value.String
-			}
 		case posttranslation.FieldFullPath:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field full_path", values[i])
@@ -211,27 +210,6 @@ func (_m *PostTranslation) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.WordCount = new(uint32)
 				*_m.WordCount = uint32(value.Int64)
-			}
-		case posttranslation.FieldMetaKeywords:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_keywords", values[i])
-			} else if value.Valid {
-				_m.MetaKeywords = new(string)
-				*_m.MetaKeywords = value.String
-			}
-		case posttranslation.FieldMetaDescription:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_description", values[i])
-			} else if value.Valid {
-				_m.MetaDescription = new(string)
-				*_m.MetaDescription = value.String
-			}
-		case posttranslation.FieldSeoTitle:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field seo_title", values[i])
-			} else if value.Valid {
-				_m.SeoTitle = new(string)
-				*_m.SeoTitle = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -299,6 +277,9 @@ func (_m *PostTranslation) String() string {
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
+	builder.WriteString("seo=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Seo))
+	builder.WriteString(", ")
 	if v := _m.PostID; v != nil {
 		builder.WriteString("post_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
@@ -339,11 +320,6 @@ func (_m *PostTranslation) String() string {
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	if v := _m.Template; v != nil {
-		builder.WriteString("template=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
 	if v := _m.FullPath; v != nil {
 		builder.WriteString("full_path=")
 		builder.WriteString(*v)
@@ -352,21 +328,6 @@ func (_m *PostTranslation) String() string {
 	if v := _m.WordCount; v != nil {
 		builder.WriteString("word_count=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.MetaKeywords; v != nil {
-		builder.WriteString("meta_keywords=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := _m.MetaDescription; v != nil {
-		builder.WriteString("meta_description=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := _m.SeoTitle; v != nil {
-		builder.WriteString("seo_title=")
-		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')
 	return builder.String()

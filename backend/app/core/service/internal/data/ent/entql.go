@@ -177,24 +177,21 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "CategoryTranslation",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			categorytranslation.FieldCreatedAt:       {Type: field.TypeTime, Column: categorytranslation.FieldCreatedAt},
-			categorytranslation.FieldUpdatedAt:       {Type: field.TypeTime, Column: categorytranslation.FieldUpdatedAt},
-			categorytranslation.FieldDeletedAt:       {Type: field.TypeTime, Column: categorytranslation.FieldDeletedAt},
-			categorytranslation.FieldCreatedBy:       {Type: field.TypeUint32, Column: categorytranslation.FieldCreatedBy},
-			categorytranslation.FieldUpdatedBy:       {Type: field.TypeUint32, Column: categorytranslation.FieldUpdatedBy},
-			categorytranslation.FieldDeletedBy:       {Type: field.TypeUint32, Column: categorytranslation.FieldDeletedBy},
-			categorytranslation.FieldCategoryID:      {Type: field.TypeUint32, Column: categorytranslation.FieldCategoryID},
-			categorytranslation.FieldLanguageCode:    {Type: field.TypeString, Column: categorytranslation.FieldLanguageCode},
-			categorytranslation.FieldName:            {Type: field.TypeString, Column: categorytranslation.FieldName},
-			categorytranslation.FieldSlug:            {Type: field.TypeString, Column: categorytranslation.FieldSlug},
-			categorytranslation.FieldDescription:     {Type: field.TypeString, Column: categorytranslation.FieldDescription},
-			categorytranslation.FieldThumbnail:       {Type: field.TypeString, Column: categorytranslation.FieldThumbnail},
-			categorytranslation.FieldCoverImage:      {Type: field.TypeString, Column: categorytranslation.FieldCoverImage},
-			categorytranslation.FieldTemplate:        {Type: field.TypeString, Column: categorytranslation.FieldTemplate},
-			categorytranslation.FieldFullPath:        {Type: field.TypeString, Column: categorytranslation.FieldFullPath},
-			categorytranslation.FieldMetaKeywords:    {Type: field.TypeString, Column: categorytranslation.FieldMetaKeywords},
-			categorytranslation.FieldMetaDescription: {Type: field.TypeString, Column: categorytranslation.FieldMetaDescription},
-			categorytranslation.FieldSeoTitle:        {Type: field.TypeString, Column: categorytranslation.FieldSeoTitle},
+			categorytranslation.FieldCreatedAt:    {Type: field.TypeTime, Column: categorytranslation.FieldCreatedAt},
+			categorytranslation.FieldUpdatedAt:    {Type: field.TypeTime, Column: categorytranslation.FieldUpdatedAt},
+			categorytranslation.FieldDeletedAt:    {Type: field.TypeTime, Column: categorytranslation.FieldDeletedAt},
+			categorytranslation.FieldCreatedBy:    {Type: field.TypeUint32, Column: categorytranslation.FieldCreatedBy},
+			categorytranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: categorytranslation.FieldUpdatedBy},
+			categorytranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: categorytranslation.FieldDeletedBy},
+			categorytranslation.FieldSeo:          {Type: field.TypeJSON, Column: categorytranslation.FieldSeo},
+			categorytranslation.FieldCategoryID:   {Type: field.TypeUint32, Column: categorytranslation.FieldCategoryID},
+			categorytranslation.FieldLanguageCode: {Type: field.TypeString, Column: categorytranslation.FieldLanguageCode},
+			categorytranslation.FieldName:         {Type: field.TypeString, Column: categorytranslation.FieldName},
+			categorytranslation.FieldSlug:         {Type: field.TypeString, Column: categorytranslation.FieldSlug},
+			categorytranslation.FieldDescription:  {Type: field.TypeString, Column: categorytranslation.FieldDescription},
+			categorytranslation.FieldThumbnail:    {Type: field.TypeString, Column: categorytranslation.FieldThumbnail},
+			categorytranslation.FieldCoverImage:   {Type: field.TypeString, Column: categorytranslation.FieldCoverImage},
+			categorytranslation.FieldFullPath:     {Type: field.TypeString, Column: categorytranslation.FieldFullPath},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -907,8 +904,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			page.FieldIsCustomTemplate: {Type: field.TypeBool, Column: page.FieldIsCustomTemplate},
 			page.FieldVisits:           {Type: field.TypeUint32, Column: page.FieldVisits},
 			page.FieldCustomFields:     {Type: field.TypeJSON, Column: page.FieldCustomFields},
-			page.FieldCustomHead:       {Type: field.TypeString, Column: page.FieldCustomHead},
-			page.FieldCustomFoot:       {Type: field.TypeString, Column: page.FieldCustomFoot},
 			page.FieldDepth:            {Type: field.TypeInt32, Column: page.FieldDepth},
 		},
 	}
@@ -923,26 +918,21 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "PageTranslation",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			pagetranslation.FieldCreatedAt:       {Type: field.TypeTime, Column: pagetranslation.FieldCreatedAt},
-			pagetranslation.FieldUpdatedAt:       {Type: field.TypeTime, Column: pagetranslation.FieldUpdatedAt},
-			pagetranslation.FieldDeletedAt:       {Type: field.TypeTime, Column: pagetranslation.FieldDeletedAt},
-			pagetranslation.FieldCreatedBy:       {Type: field.TypeUint32, Column: pagetranslation.FieldCreatedBy},
-			pagetranslation.FieldUpdatedBy:       {Type: field.TypeUint32, Column: pagetranslation.FieldUpdatedBy},
-			pagetranslation.FieldDeletedBy:       {Type: field.TypeUint32, Column: pagetranslation.FieldDeletedBy},
-			pagetranslation.FieldPageID:          {Type: field.TypeUint32, Column: pagetranslation.FieldPageID},
-			pagetranslation.FieldLanguageCode:    {Type: field.TypeString, Column: pagetranslation.FieldLanguageCode},
-			pagetranslation.FieldTitle:           {Type: field.TypeString, Column: pagetranslation.FieldTitle},
-			pagetranslation.FieldSlug:            {Type: field.TypeString, Column: pagetranslation.FieldSlug},
-			pagetranslation.FieldSummary:         {Type: field.TypeString, Column: pagetranslation.FieldSummary},
-			pagetranslation.FieldContent:         {Type: field.TypeString, Column: pagetranslation.FieldContent},
-			pagetranslation.FieldOriginalContent: {Type: field.TypeString, Column: pagetranslation.FieldOriginalContent},
-			pagetranslation.FieldThumbnail:       {Type: field.TypeString, Column: pagetranslation.FieldThumbnail},
-			pagetranslation.FieldCoverImage:      {Type: field.TypeString, Column: pagetranslation.FieldCoverImage},
-			pagetranslation.FieldFullPath:        {Type: field.TypeString, Column: pagetranslation.FieldFullPath},
-			pagetranslation.FieldWordCount:       {Type: field.TypeUint32, Column: pagetranslation.FieldWordCount},
-			pagetranslation.FieldMetaKeywords:    {Type: field.TypeString, Column: pagetranslation.FieldMetaKeywords},
-			pagetranslation.FieldMetaDescription: {Type: field.TypeString, Column: pagetranslation.FieldMetaDescription},
-			pagetranslation.FieldSeoTitle:        {Type: field.TypeString, Column: pagetranslation.FieldSeoTitle},
+			pagetranslation.FieldCreatedAt:    {Type: field.TypeTime, Column: pagetranslation.FieldCreatedAt},
+			pagetranslation.FieldUpdatedAt:    {Type: field.TypeTime, Column: pagetranslation.FieldUpdatedAt},
+			pagetranslation.FieldDeletedAt:    {Type: field.TypeTime, Column: pagetranslation.FieldDeletedAt},
+			pagetranslation.FieldCreatedBy:    {Type: field.TypeUint32, Column: pagetranslation.FieldCreatedBy},
+			pagetranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: pagetranslation.FieldUpdatedBy},
+			pagetranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: pagetranslation.FieldDeletedBy},
+			pagetranslation.FieldSeo:          {Type: field.TypeJSON, Column: pagetranslation.FieldSeo},
+			pagetranslation.FieldSections:     {Type: field.TypeJSON, Column: pagetranslation.FieldSections},
+			pagetranslation.FieldPageID:       {Type: field.TypeUint32, Column: pagetranslation.FieldPageID},
+			pagetranslation.FieldLanguageCode: {Type: field.TypeString, Column: pagetranslation.FieldLanguageCode},
+			pagetranslation.FieldTitle:        {Type: field.TypeString, Column: pagetranslation.FieldTitle},
+			pagetranslation.FieldSlug:         {Type: field.TypeString, Column: pagetranslation.FieldSlug},
+			pagetranslation.FieldThumbnail:    {Type: field.TypeString, Column: pagetranslation.FieldThumbnail},
+			pagetranslation.FieldCoverImage:   {Type: field.TypeString, Column: pagetranslation.FieldCoverImage},
+			pagetranslation.FieldFullPath:     {Type: field.TypeString, Column: pagetranslation.FieldFullPath},
 		},
 	}
 	graph.Nodes[29] = &sqlgraph.Node{
@@ -1238,6 +1228,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			posttranslation.FieldCreatedBy:       {Type: field.TypeUint32, Column: posttranslation.FieldCreatedBy},
 			posttranslation.FieldUpdatedBy:       {Type: field.TypeUint32, Column: posttranslation.FieldUpdatedBy},
 			posttranslation.FieldDeletedBy:       {Type: field.TypeUint32, Column: posttranslation.FieldDeletedBy},
+			posttranslation.FieldSeo:             {Type: field.TypeJSON, Column: posttranslation.FieldSeo},
 			posttranslation.FieldPostID:          {Type: field.TypeUint32, Column: posttranslation.FieldPostID},
 			posttranslation.FieldLanguageCode:    {Type: field.TypeString, Column: posttranslation.FieldLanguageCode},
 			posttranslation.FieldTitle:           {Type: field.TypeString, Column: posttranslation.FieldTitle},
@@ -1246,12 +1237,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			posttranslation.FieldContent:         {Type: field.TypeString, Column: posttranslation.FieldContent},
 			posttranslation.FieldOriginalContent: {Type: field.TypeString, Column: posttranslation.FieldOriginalContent},
 			posttranslation.FieldThumbnail:       {Type: field.TypeString, Column: posttranslation.FieldThumbnail},
-			posttranslation.FieldTemplate:        {Type: field.TypeString, Column: posttranslation.FieldTemplate},
 			posttranslation.FieldFullPath:        {Type: field.TypeString, Column: posttranslation.FieldFullPath},
 			posttranslation.FieldWordCount:       {Type: field.TypeUint32, Column: posttranslation.FieldWordCount},
-			posttranslation.FieldMetaKeywords:    {Type: field.TypeString, Column: posttranslation.FieldMetaKeywords},
-			posttranslation.FieldMetaDescription: {Type: field.TypeString, Column: posttranslation.FieldMetaDescription},
-			posttranslation.FieldSeoTitle:        {Type: field.TypeString, Column: posttranslation.FieldSeoTitle},
 		},
 	}
 	graph.Nodes[41] = &sqlgraph.Node{
@@ -1435,24 +1422,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "TagTranslation",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			tagtranslation.FieldCreatedAt:       {Type: field.TypeTime, Column: tagtranslation.FieldCreatedAt},
-			tagtranslation.FieldUpdatedAt:       {Type: field.TypeTime, Column: tagtranslation.FieldUpdatedAt},
-			tagtranslation.FieldDeletedAt:       {Type: field.TypeTime, Column: tagtranslation.FieldDeletedAt},
-			tagtranslation.FieldCreatedBy:       {Type: field.TypeUint32, Column: tagtranslation.FieldCreatedBy},
-			tagtranslation.FieldUpdatedBy:       {Type: field.TypeUint32, Column: tagtranslation.FieldUpdatedBy},
-			tagtranslation.FieldDeletedBy:       {Type: field.TypeUint32, Column: tagtranslation.FieldDeletedBy},
-			tagtranslation.FieldTagID:           {Type: field.TypeUint32, Column: tagtranslation.FieldTagID},
-			tagtranslation.FieldLanguageCode:    {Type: field.TypeString, Column: tagtranslation.FieldLanguageCode},
-			tagtranslation.FieldName:            {Type: field.TypeString, Column: tagtranslation.FieldName},
-			tagtranslation.FieldSlug:            {Type: field.TypeString, Column: tagtranslation.FieldSlug},
-			tagtranslation.FieldDescription:     {Type: field.TypeString, Column: tagtranslation.FieldDescription},
-			tagtranslation.FieldCoverImage:      {Type: field.TypeString, Column: tagtranslation.FieldCoverImage},
-			tagtranslation.FieldTemplate:        {Type: field.TypeString, Column: tagtranslation.FieldTemplate},
-			tagtranslation.FieldFullPath:        {Type: field.TypeString, Column: tagtranslation.FieldFullPath},
-			tagtranslation.FieldCanonicalURL:    {Type: field.TypeString, Column: tagtranslation.FieldCanonicalURL},
-			tagtranslation.FieldMetaKeywords:    {Type: field.TypeString, Column: tagtranslation.FieldMetaKeywords},
-			tagtranslation.FieldMetaDescription: {Type: field.TypeString, Column: tagtranslation.FieldMetaDescription},
-			tagtranslation.FieldSeoTitle:        {Type: field.TypeString, Column: tagtranslation.FieldSeoTitle},
+			tagtranslation.FieldCreatedAt:    {Type: field.TypeTime, Column: tagtranslation.FieldCreatedAt},
+			tagtranslation.FieldUpdatedAt:    {Type: field.TypeTime, Column: tagtranslation.FieldUpdatedAt},
+			tagtranslation.FieldDeletedAt:    {Type: field.TypeTime, Column: tagtranslation.FieldDeletedAt},
+			tagtranslation.FieldCreatedBy:    {Type: field.TypeUint32, Column: tagtranslation.FieldCreatedBy},
+			tagtranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: tagtranslation.FieldUpdatedBy},
+			tagtranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: tagtranslation.FieldDeletedBy},
+			tagtranslation.FieldSeo:          {Type: field.TypeJSON, Column: tagtranslation.FieldSeo},
+			tagtranslation.FieldTagID:        {Type: field.TypeUint32, Column: tagtranslation.FieldTagID},
+			tagtranslation.FieldLanguageCode: {Type: field.TypeString, Column: tagtranslation.FieldLanguageCode},
+			tagtranslation.FieldName:         {Type: field.TypeString, Column: tagtranslation.FieldName},
+			tagtranslation.FieldSlug:         {Type: field.TypeString, Column: tagtranslation.FieldSlug},
+			tagtranslation.FieldDescription:  {Type: field.TypeString, Column: tagtranslation.FieldDescription},
+			tagtranslation.FieldCoverImage:   {Type: field.TypeString, Column: tagtranslation.FieldCoverImage},
+			tagtranslation.FieldFullPath:     {Type: field.TypeString, Column: tagtranslation.FieldFullPath},
 		},
 	}
 	graph.Nodes[48] = &sqlgraph.Node{
@@ -2404,6 +2387,11 @@ func (f *CategoryTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(categorytranslation.FieldDeletedBy))
 }
 
+// WhereSeo applies the entql json.RawMessage predicate on the seo field.
+func (f *CategoryTranslationFilter) WhereSeo(p entql.BytesP) {
+	f.Where(p.Field(categorytranslation.FieldSeo))
+}
+
 // WhereCategoryID applies the entql uint32 predicate on the category_id field.
 func (f *CategoryTranslationFilter) WhereCategoryID(p entql.Uint32P) {
 	f.Where(p.Field(categorytranslation.FieldCategoryID))
@@ -2439,29 +2427,9 @@ func (f *CategoryTranslationFilter) WhereCoverImage(p entql.StringP) {
 	f.Where(p.Field(categorytranslation.FieldCoverImage))
 }
 
-// WhereTemplate applies the entql string predicate on the template field.
-func (f *CategoryTranslationFilter) WhereTemplate(p entql.StringP) {
-	f.Where(p.Field(categorytranslation.FieldTemplate))
-}
-
 // WhereFullPath applies the entql string predicate on the full_path field.
 func (f *CategoryTranslationFilter) WhereFullPath(p entql.StringP) {
 	f.Where(p.Field(categorytranslation.FieldFullPath))
-}
-
-// WhereMetaKeywords applies the entql string predicate on the meta_keywords field.
-func (f *CategoryTranslationFilter) WhereMetaKeywords(p entql.StringP) {
-	f.Where(p.Field(categorytranslation.FieldMetaKeywords))
-}
-
-// WhereMetaDescription applies the entql string predicate on the meta_description field.
-func (f *CategoryTranslationFilter) WhereMetaDescription(p entql.StringP) {
-	f.Where(p.Field(categorytranslation.FieldMetaDescription))
-}
-
-// WhereSeoTitle applies the entql string predicate on the seo_title field.
-func (f *CategoryTranslationFilter) WhereSeoTitle(p entql.StringP) {
-	f.Where(p.Field(categorytranslation.FieldSeoTitle))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -5592,16 +5560,6 @@ func (f *PageFilter) WhereCustomFields(p entql.BytesP) {
 	f.Where(p.Field(page.FieldCustomFields))
 }
 
-// WhereCustomHead applies the entql string predicate on the custom_head field.
-func (f *PageFilter) WhereCustomHead(p entql.StringP) {
-	f.Where(p.Field(page.FieldCustomHead))
-}
-
-// WhereCustomFoot applies the entql string predicate on the custom_foot field.
-func (f *PageFilter) WhereCustomFoot(p entql.StringP) {
-	f.Where(p.Field(page.FieldCustomFoot))
-}
-
 // WhereDepth applies the entql int32 predicate on the depth field.
 func (f *PageFilter) WhereDepth(p entql.Int32P) {
 	f.Where(p.Field(page.FieldDepth))
@@ -5705,6 +5663,16 @@ func (f *PageTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(pagetranslation.FieldDeletedBy))
 }
 
+// WhereSeo applies the entql json.RawMessage predicate on the seo field.
+func (f *PageTranslationFilter) WhereSeo(p entql.BytesP) {
+	f.Where(p.Field(pagetranslation.FieldSeo))
+}
+
+// WhereSections applies the entql json.RawMessage predicate on the sections field.
+func (f *PageTranslationFilter) WhereSections(p entql.BytesP) {
+	f.Where(p.Field(pagetranslation.FieldSections))
+}
+
 // WherePageID applies the entql uint32 predicate on the page_id field.
 func (f *PageTranslationFilter) WherePageID(p entql.Uint32P) {
 	f.Where(p.Field(pagetranslation.FieldPageID))
@@ -5725,21 +5693,6 @@ func (f *PageTranslationFilter) WhereSlug(p entql.StringP) {
 	f.Where(p.Field(pagetranslation.FieldSlug))
 }
 
-// WhereSummary applies the entql string predicate on the summary field.
-func (f *PageTranslationFilter) WhereSummary(p entql.StringP) {
-	f.Where(p.Field(pagetranslation.FieldSummary))
-}
-
-// WhereContent applies the entql string predicate on the content field.
-func (f *PageTranslationFilter) WhereContent(p entql.StringP) {
-	f.Where(p.Field(pagetranslation.FieldContent))
-}
-
-// WhereOriginalContent applies the entql string predicate on the original_content field.
-func (f *PageTranslationFilter) WhereOriginalContent(p entql.StringP) {
-	f.Where(p.Field(pagetranslation.FieldOriginalContent))
-}
-
 // WhereThumbnail applies the entql string predicate on the thumbnail field.
 func (f *PageTranslationFilter) WhereThumbnail(p entql.StringP) {
 	f.Where(p.Field(pagetranslation.FieldThumbnail))
@@ -5753,26 +5706,6 @@ func (f *PageTranslationFilter) WhereCoverImage(p entql.StringP) {
 // WhereFullPath applies the entql string predicate on the full_path field.
 func (f *PageTranslationFilter) WhereFullPath(p entql.StringP) {
 	f.Where(p.Field(pagetranslation.FieldFullPath))
-}
-
-// WhereWordCount applies the entql uint32 predicate on the word_count field.
-func (f *PageTranslationFilter) WhereWordCount(p entql.Uint32P) {
-	f.Where(p.Field(pagetranslation.FieldWordCount))
-}
-
-// WhereMetaKeywords applies the entql string predicate on the meta_keywords field.
-func (f *PageTranslationFilter) WhereMetaKeywords(p entql.StringP) {
-	f.Where(p.Field(pagetranslation.FieldMetaKeywords))
-}
-
-// WhereMetaDescription applies the entql string predicate on the meta_description field.
-func (f *PageTranslationFilter) WhereMetaDescription(p entql.StringP) {
-	f.Where(p.Field(pagetranslation.FieldMetaDescription))
-}
-
-// WhereSeoTitle applies the entql string predicate on the seo_title field.
-func (f *PageTranslationFilter) WhereSeoTitle(p entql.StringP) {
-	f.Where(p.Field(pagetranslation.FieldSeoTitle))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -6978,6 +6911,11 @@ func (f *PostTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(posttranslation.FieldDeletedBy))
 }
 
+// WhereSeo applies the entql json.RawMessage predicate on the seo field.
+func (f *PostTranslationFilter) WhereSeo(p entql.BytesP) {
+	f.Where(p.Field(posttranslation.FieldSeo))
+}
+
 // WherePostID applies the entql uint32 predicate on the post_id field.
 func (f *PostTranslationFilter) WherePostID(p entql.Uint32P) {
 	f.Where(p.Field(posttranslation.FieldPostID))
@@ -7018,11 +6956,6 @@ func (f *PostTranslationFilter) WhereThumbnail(p entql.StringP) {
 	f.Where(p.Field(posttranslation.FieldThumbnail))
 }
 
-// WhereTemplate applies the entql string predicate on the template field.
-func (f *PostTranslationFilter) WhereTemplate(p entql.StringP) {
-	f.Where(p.Field(posttranslation.FieldTemplate))
-}
-
 // WhereFullPath applies the entql string predicate on the full_path field.
 func (f *PostTranslationFilter) WhereFullPath(p entql.StringP) {
 	f.Where(p.Field(posttranslation.FieldFullPath))
@@ -7031,21 +6964,6 @@ func (f *PostTranslationFilter) WhereFullPath(p entql.StringP) {
 // WhereWordCount applies the entql uint32 predicate on the word_count field.
 func (f *PostTranslationFilter) WhereWordCount(p entql.Uint32P) {
 	f.Where(p.Field(posttranslation.FieldWordCount))
-}
-
-// WhereMetaKeywords applies the entql string predicate on the meta_keywords field.
-func (f *PostTranslationFilter) WhereMetaKeywords(p entql.StringP) {
-	f.Where(p.Field(posttranslation.FieldMetaKeywords))
-}
-
-// WhereMetaDescription applies the entql string predicate on the meta_description field.
-func (f *PostTranslationFilter) WhereMetaDescription(p entql.StringP) {
-	f.Where(p.Field(posttranslation.FieldMetaDescription))
-}
-
-// WhereSeoTitle applies the entql string predicate on the seo_title field.
-func (f *PostTranslationFilter) WhereSeoTitle(p entql.StringP) {
-	f.Where(p.Field(posttranslation.FieldSeoTitle))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -7818,6 +7736,11 @@ func (f *TagTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(tagtranslation.FieldDeletedBy))
 }
 
+// WhereSeo applies the entql json.RawMessage predicate on the seo field.
+func (f *TagTranslationFilter) WhereSeo(p entql.BytesP) {
+	f.Where(p.Field(tagtranslation.FieldSeo))
+}
+
 // WhereTagID applies the entql uint32 predicate on the tag_id field.
 func (f *TagTranslationFilter) WhereTagID(p entql.Uint32P) {
 	f.Where(p.Field(tagtranslation.FieldTagID))
@@ -7848,34 +7771,9 @@ func (f *TagTranslationFilter) WhereCoverImage(p entql.StringP) {
 	f.Where(p.Field(tagtranslation.FieldCoverImage))
 }
 
-// WhereTemplate applies the entql string predicate on the template field.
-func (f *TagTranslationFilter) WhereTemplate(p entql.StringP) {
-	f.Where(p.Field(tagtranslation.FieldTemplate))
-}
-
 // WhereFullPath applies the entql string predicate on the full_path field.
 func (f *TagTranslationFilter) WhereFullPath(p entql.StringP) {
 	f.Where(p.Field(tagtranslation.FieldFullPath))
-}
-
-// WhereCanonicalURL applies the entql string predicate on the canonical_url field.
-func (f *TagTranslationFilter) WhereCanonicalURL(p entql.StringP) {
-	f.Where(p.Field(tagtranslation.FieldCanonicalURL))
-}
-
-// WhereMetaKeywords applies the entql string predicate on the meta_keywords field.
-func (f *TagTranslationFilter) WhereMetaKeywords(p entql.StringP) {
-	f.Where(p.Field(tagtranslation.FieldMetaKeywords))
-}
-
-// WhereMetaDescription applies the entql string predicate on the meta_description field.
-func (f *TagTranslationFilter) WhereMetaDescription(p entql.StringP) {
-	f.Where(p.Field(tagtranslation.FieldMetaDescription))
-}
-
-// WhereSeoTitle applies the entql string predicate on the seo_title field.
-func (f *TagTranslationFilter) WhereSeoTitle(p entql.StringP) {
-	f.Where(p.Field(tagtranslation.FieldSeoTitle))
 }
 
 // addPredicate implements the predicateAdder interface.

@@ -34,3 +34,243 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on SeoMeta with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SeoMeta) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SeoMeta with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in SeoMetaMultiError, or nil if none found.
+func (m *SeoMeta) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SeoMeta) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.SeoTitle != nil {
+		// no validation rules for SeoTitle
+	}
+
+	if m.MetaKeywords != nil {
+		// no validation rules for MetaKeywords
+	}
+
+	if m.MetaDescription != nil {
+		// no validation rules for MetaDescription
+	}
+
+	if m.OgTitle != nil {
+		// no validation rules for OgTitle
+	}
+
+	if m.OgDescription != nil {
+		// no validation rules for OgDescription
+	}
+
+	if m.OgImage != nil {
+		// no validation rules for OgImage
+	}
+
+	if m.CanonicalUrl != nil {
+		// no validation rules for CanonicalUrl
+	}
+
+	if len(errors) > 0 {
+		return SeoMetaMultiError(errors)
+	}
+
+	return nil
+}
+
+// SeoMetaMultiError is an error wrapping multiple validation errors returned
+// by SeoMeta.ValidateAll() if the designated constraints aren't met.
+type SeoMetaMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SeoMetaMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SeoMetaMultiError) AllErrors() []error { return m }
+
+// SeoMetaValidationError is the validation error returned by SeoMeta.Validate
+// if the designated constraints aren't met.
+type SeoMetaValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SeoMetaValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SeoMetaValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SeoMetaValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SeoMetaValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SeoMetaValidationError) ErrorName() string { return "SeoMetaValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SeoMetaValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSeoMeta.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SeoMetaValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SeoMetaValidationError{}
+
+// Validate checks the field values on Section with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Section) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Section with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in SectionMultiError, or nil if none found.
+func (m *Section) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Section) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Config
+
+	// no validation rules for Content
+
+	if m.Type != nil {
+		// no validation rules for Type
+	}
+
+	if m.Name != nil {
+		// no validation rules for Name
+	}
+
+	if m.SortOrder != nil {
+		// no validation rules for SortOrder
+	}
+
+	if len(errors) > 0 {
+		return SectionMultiError(errors)
+	}
+
+	return nil
+}
+
+// SectionMultiError is an error wrapping multiple validation errors returned
+// by Section.ValidateAll() if the designated constraints aren't met.
+type SectionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SectionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SectionMultiError) AllErrors() []error { return m }
+
+// SectionValidationError is the validation error returned by Section.Validate
+// if the designated constraints aren't met.
+type SectionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SectionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SectionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SectionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SectionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SectionValidationError) ErrorName() string { return "SectionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SectionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSection.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SectionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SectionValidationError{}

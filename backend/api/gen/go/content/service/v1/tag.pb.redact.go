@@ -218,17 +218,9 @@ func (x *TagTranslation) Redact() string {
 
 	// Safe field: CoverImage
 
-	// Safe field: Template
-
 	// Safe field: FullPath
 
-	// Safe field: MetaKeywords
-
-	// Safe field: MetaDescription
-
-	// Safe field: SeoTitle
-
-	// Safe field: CanonicalUrl
+	// Safe field: Seo
 
 	// Safe field: CreatedBy
 

@@ -347,18 +347,15 @@ type PostTranslation struct {
 	Content         *string                `protobuf:"bytes,13,opt,name=content,proto3,oneof" json:"content,omitempty"`                                        // 帖子内容
 	OriginalContent *string                `protobuf:"bytes,14,opt,name=original_content,json=originalContent,proto3,oneof" json:"original_content,omitempty"` // 原始内容
 	Thumbnail       *string                `protobuf:"bytes,15,opt,name=thumbnail,proto3,oneof" json:"thumbnail,omitempty"`                                    // 缩略图
-	Template        *string                `protobuf:"bytes,16,opt,name=template,proto3,oneof" json:"template,omitempty"`                                      // 模板名称
 	FullPath        *string                `protobuf:"bytes,17,opt,name=full_path,json=fullPath,proto3,oneof" json:"full_path,omitempty"`                      // 完整路径（如 /zh-CN/blog/post-slug）
 	WordCount       *uint32                `protobuf:"varint,18,opt,name=word_count,json=wordCount,proto3,oneof" json:"word_count,omitempty"`                  // 当前语言版本的字数（中文按字符数，英文按单词数）
-	MetaKeywords    *string                `protobuf:"bytes,20,opt,name=meta_keywords,json=metaKeywords,proto3,oneof" json:"meta_keywords,omitempty"`          // SEO 关键词
-	MetaDescription *string                `protobuf:"bytes,21,opt,name=meta_description,json=metaDescription,proto3,oneof" json:"meta_description,omitempty"` // SEO 描述
-	SeoTitle        *string                `protobuf:"bytes,22,opt,name=seo_title,json=seoTitle,proto3,oneof" json:"seo_title,omitempty"`                      // SEO 标题（覆盖默认的 title）
-	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                 // 创建者用户ID
-	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                 // 更新者用户ID
-	DeletedBy       *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                 // 删除者用户ID
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                  // 创建时间
-	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                  // 更新时间
-	DeletedAt       *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                  // 删除时间
+	Seo             *SeoMeta               `protobuf:"bytes,20,opt,name=seo,proto3,oneof" json:"seo,omitempty"`
+	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
+	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
+	DeletedBy       *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
+	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
+	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
+	DeletedAt       *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`  // 删除时间
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -456,13 +453,6 @@ func (x *PostTranslation) GetThumbnail() string {
 	return ""
 }
 
-func (x *PostTranslation) GetTemplate() string {
-	if x != nil && x.Template != nil {
-		return *x.Template
-	}
-	return ""
-}
-
 func (x *PostTranslation) GetFullPath() string {
 	if x != nil && x.FullPath != nil {
 		return *x.FullPath
@@ -477,25 +467,11 @@ func (x *PostTranslation) GetWordCount() uint32 {
 	return 0
 }
 
-func (x *PostTranslation) GetMetaKeywords() string {
-	if x != nil && x.MetaKeywords != nil {
-		return *x.MetaKeywords
+func (x *PostTranslation) GetSeo() *SeoMeta {
+	if x != nil {
+		return x.Seo
 	}
-	return ""
-}
-
-func (x *PostTranslation) GetMetaDescription() string {
-	if x != nil && x.MetaDescription != nil {
-		return *x.MetaDescription
-	}
-	return ""
-}
-
-func (x *PostTranslation) GetSeoTitle() string {
-	if x != nil && x.SeoTitle != nil {
-		return *x.SeoTitle
-	}
-	return ""
+	return nil
 }
 
 func (x *PostTranslation) GetCreatedBy() uint32 {
@@ -1301,7 +1277,7 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0f\n" +
-	"\r_publish_time\"\x94\x0e\n" +
+	"\r_publish_time\"\x98\f\n" +
 	"\x0fPostTranslation\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e帖子翻译IDH\x00R\x02id\x88\x01\x01\x125\n" +
 	"\apost_id\x18\x02 \x01(\rB\x17\xbaG\x14\x92\x02\x11关联的帖子IDH\x01R\x06postId\x88\x01\x01\x12<\n" +
@@ -1312,29 +1288,24 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\asummary\x18\f \x01(\tB\x12\xbaG\x0f\x92\x02\f帖子摘要H\x05R\asummary\x88\x01\x01\x121\n" +
 	"\acontent\x18\r \x01(\tB\x12\xbaG\x0f\x92\x02\f帖子内容H\x06R\acontent\x88\x01\x01\x12B\n" +
 	"\x10original_content\x18\x0e \x01(\tB\x12\xbaG\x0f\x92\x02\f原始内容H\aR\x0foriginalContent\x88\x01\x01\x12\\\n" +
-	"\tthumbnail\x18\x0f \x01(\tB9\xbaG6\x92\x023缩略图（某些语言可能需要不同图片）H\bR\tthumbnail\x88\x01\x01\x12]\n" +
-	"\btemplate\x18\x10 \x01(\tB<\xbaG9\x92\x026模板名称（某些语言可能使用不同模板）H\tR\btemplate\x88\x01\x01\x12S\n" +
-	"\tfull_path\x18\x11 \x01(\tB1\xbaG.\x92\x02+完整路径（如 /zh-CN/blog/post-slug）H\n" +
-	"R\bfullPath\x88\x01\x01\x12r\n" +
+	"\tthumbnail\x18\x0f \x01(\tB9\xbaG6\x92\x023缩略图（某些语言可能需要不同图片）H\bR\tthumbnail\x88\x01\x01\x12S\n" +
+	"\tfull_path\x18\x11 \x01(\tB1\xbaG.\x92\x02+完整路径（如 /zh-CN/blog/post-slug）H\tR\bfullPath\x88\x01\x01\x12r\n" +
 	"\n" +
-	"word_count\x18\x12 \x01(\rBN\xbaGK\x92\x02H当前语言版本的字数（中文按字符数，英文按单词数）H\vR\twordCount\x88\x01\x01\x12=\n" +
-	"\rmeta_keywords\x18\x14 \x01(\tB\x13\xbaG\x10\x92\x02\rSEO 关键词H\fR\fmetaKeywords\x88\x01\x01\x12@\n" +
-	"\x10meta_description\x18\x15 \x01(\tB\x10\xbaG\r\x92\x02\n" +
-	"SEO 描述H\rR\x0fmetaDescription\x88\x01\x01\x122\n" +
-	"\tseo_title\x18\x16 \x01(\tB\x10\xbaG\r\x92\x02\n" +
-	"SEO 标题H\x0eR\bseoTitle\x88\x01\x01\x12;\n" +
+	"word_count\x18\x12 \x01(\rBN\xbaGK\x92\x02H当前语言版本的字数（中文按字符数，英文按单词数）H\n" +
+	"R\twordCount\x88\x01\x01\x12P\n" +
+	"\x03seo\x18\x14 \x01(\v2\x1b.content.service.v1.SeoMetaB\x1c\xbaG\x19\x92\x02\x16SEO 结构化元数据H\vR\x03seo\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x0fR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x10R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x11R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x12R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x13R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x14R\tdeletedAt\x88\x01\x01B\x05\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\n" +
 	"\n" +
 	"\b_post_idB\x10\n" +
@@ -1347,15 +1318,11 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\b_contentB\x13\n" +
 	"\x11_original_contentB\f\n" +
 	"\n" +
-	"_thumbnailB\v\n" +
-	"\t_templateB\f\n" +
+	"_thumbnailB\f\n" +
 	"\n" +
 	"_full_pathB\r\n" +
-	"\v_word_countB\x10\n" +
-	"\x0e_meta_keywordsB\x13\n" +
-	"\x11_meta_descriptionB\f\n" +
-	"\n" +
-	"_seo_titleB\r\n" +
+	"\v_word_countB\x06\n" +
+	"\x04_seoB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
 	"\v_deleted_byB\r\n" +
@@ -1462,9 +1429,10 @@ var file_content_service_v1_post_proto_goTypes = []any{
 	nil,                                   // 14: content.service.v1.Post.CustomFieldsEntry
 	(EditorType)(0),                       // 15: content.service.v1.EditorType
 	(*timestamppb.Timestamp)(nil),         // 16: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),         // 17: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),              // 18: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                 // 19: google.protobuf.Empty
+	(*SeoMeta)(nil),                       // 17: content.service.v1.SeoMeta
+	(*fieldmaskpb.FieldMask)(nil),         // 18: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),              // 19: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                 // 20: google.protobuf.Empty
 }
 var file_content_service_v1_post_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Post.status:type_name -> content.service.v1.Post.PostStatus
@@ -1475,43 +1443,44 @@ var file_content_service_v1_post_proto_depIdxs = []int32{
 	16, // 5: content.service.v1.Post.updated_at:type_name -> google.protobuf.Timestamp
 	16, // 6: content.service.v1.Post.deleted_at:type_name -> google.protobuf.Timestamp
 	16, // 7: content.service.v1.Post.publish_time:type_name -> google.protobuf.Timestamp
-	16, // 8: content.service.v1.PostTranslation.created_at:type_name -> google.protobuf.Timestamp
-	16, // 9: content.service.v1.PostTranslation.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 10: content.service.v1.PostTranslation.deleted_at:type_name -> google.protobuf.Timestamp
-	1,  // 11: content.service.v1.ListPostResponse.items:type_name -> content.service.v1.Post
-	17, // 12: content.service.v1.GetPostRequest.view_mask:type_name -> google.protobuf.FieldMask
-	1,  // 13: content.service.v1.CreatePostRequest.data:type_name -> content.service.v1.Post
-	1,  // 14: content.service.v1.UpdatePostRequest.data:type_name -> content.service.v1.Post
-	17, // 15: content.service.v1.UpdatePostRequest.update_mask:type_name -> google.protobuf.FieldMask
-	2,  // 16: content.service.v1.CreatePostTranslationRequest.data:type_name -> content.service.v1.PostTranslation
-	2,  // 17: content.service.v1.UpdatePostTranslationRequest.data:type_name -> content.service.v1.PostTranslation
-	17, // 18: content.service.v1.UpdatePostTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
-	12, // 19: content.service.v1.DeletePostTranslationRequest.identifier:type_name -> content.service.v1.PostTranslationIdentifier
-	18, // 20: content.service.v1.PostService.List:input_type -> pagination.PagingRequest
-	4,  // 21: content.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
-	5,  // 22: content.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
-	6,  // 23: content.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
-	7,  // 24: content.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
-	8,  // 25: content.service.v1.PostService.TranslationExists:input_type -> content.service.v1.PostTranslationExistsRequest
-	4,  // 26: content.service.v1.PostService.GetTranslation:input_type -> content.service.v1.GetPostRequest
-	10, // 27: content.service.v1.PostService.CreateTranslation:input_type -> content.service.v1.CreatePostTranslationRequest
-	11, // 28: content.service.v1.PostService.UpdateTranslation:input_type -> content.service.v1.UpdatePostTranslationRequest
-	13, // 29: content.service.v1.PostService.DeleteTranslation:input_type -> content.service.v1.DeletePostTranslationRequest
-	3,  // 30: content.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
-	1,  // 31: content.service.v1.PostService.Get:output_type -> content.service.v1.Post
-	1,  // 32: content.service.v1.PostService.Create:output_type -> content.service.v1.Post
-	1,  // 33: content.service.v1.PostService.Update:output_type -> content.service.v1.Post
-	19, // 34: content.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
-	9,  // 35: content.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
-	2,  // 36: content.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
-	2,  // 37: content.service.v1.PostService.CreateTranslation:output_type -> content.service.v1.PostTranslation
-	2,  // 38: content.service.v1.PostService.UpdateTranslation:output_type -> content.service.v1.PostTranslation
-	19, // 39: content.service.v1.PostService.DeleteTranslation:output_type -> google.protobuf.Empty
-	30, // [30:40] is the sub-list for method output_type
-	20, // [20:30] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	17, // 8: content.service.v1.PostTranslation.seo:type_name -> content.service.v1.SeoMeta
+	16, // 9: content.service.v1.PostTranslation.created_at:type_name -> google.protobuf.Timestamp
+	16, // 10: content.service.v1.PostTranslation.updated_at:type_name -> google.protobuf.Timestamp
+	16, // 11: content.service.v1.PostTranslation.deleted_at:type_name -> google.protobuf.Timestamp
+	1,  // 12: content.service.v1.ListPostResponse.items:type_name -> content.service.v1.Post
+	18, // 13: content.service.v1.GetPostRequest.view_mask:type_name -> google.protobuf.FieldMask
+	1,  // 14: content.service.v1.CreatePostRequest.data:type_name -> content.service.v1.Post
+	1,  // 15: content.service.v1.UpdatePostRequest.data:type_name -> content.service.v1.Post
+	18, // 16: content.service.v1.UpdatePostRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 17: content.service.v1.CreatePostTranslationRequest.data:type_name -> content.service.v1.PostTranslation
+	2,  // 18: content.service.v1.UpdatePostTranslationRequest.data:type_name -> content.service.v1.PostTranslation
+	18, // 19: content.service.v1.UpdatePostTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	12, // 20: content.service.v1.DeletePostTranslationRequest.identifier:type_name -> content.service.v1.PostTranslationIdentifier
+	19, // 21: content.service.v1.PostService.List:input_type -> pagination.PagingRequest
+	4,  // 22: content.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
+	5,  // 23: content.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
+	6,  // 24: content.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
+	7,  // 25: content.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
+	8,  // 26: content.service.v1.PostService.TranslationExists:input_type -> content.service.v1.PostTranslationExistsRequest
+	4,  // 27: content.service.v1.PostService.GetTranslation:input_type -> content.service.v1.GetPostRequest
+	10, // 28: content.service.v1.PostService.CreateTranslation:input_type -> content.service.v1.CreatePostTranslationRequest
+	11, // 29: content.service.v1.PostService.UpdateTranslation:input_type -> content.service.v1.UpdatePostTranslationRequest
+	13, // 30: content.service.v1.PostService.DeleteTranslation:input_type -> content.service.v1.DeletePostTranslationRequest
+	3,  // 31: content.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
+	1,  // 32: content.service.v1.PostService.Get:output_type -> content.service.v1.Post
+	1,  // 33: content.service.v1.PostService.Create:output_type -> content.service.v1.Post
+	1,  // 34: content.service.v1.PostService.Update:output_type -> content.service.v1.Post
+	20, // 35: content.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
+	9,  // 36: content.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
+	2,  // 37: content.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
+	2,  // 38: content.service.v1.PostService.CreateTranslation:output_type -> content.service.v1.PostTranslation
+	2,  // 39: content.service.v1.PostService.UpdateTranslation:output_type -> content.service.v1.PostTranslation
+	20, // 40: content.service.v1.PostService.DeleteTranslation:output_type -> google.protobuf.Empty
+	31, // [31:41] is the sub-list for method output_type
+	21, // [21:31] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_post_proto_init() }

@@ -151,14 +151,14 @@ func (r *PostTranslationRepo) newCreateBuilder(pt *ent.PostTranslationClient, da
 		SetNillableContent(data.Content).
 		SetNillableOriginalContent(data.OriginalContent).
 		SetNillableThumbnail(data.Thumbnail).
-		SetNillableTemplate(data.Template).
 		SetNillableWordCount(data.WordCount).
 		SetNillableFullPath(data.FullPath).
-		SetNillableMetaKeywords(data.MetaKeywords).
-		SetNillableMetaDescription(data.MetaDescription).
-		SetNillableSeoTitle(data.SeoTitle).
 		SetNillableCreatedBy(data.CreatedBy).
 		SetCreatedAt(now)
+
+	if data.Seo != nil {
+		builder.SetSeo(data.Seo)
+	}
 
 	return builder
 }
@@ -246,14 +246,14 @@ func (r *PostTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 				SetNillableContent(data.Content).
 				SetNillableOriginalContent(data.OriginalContent).
 				SetNillableThumbnail(data.Thumbnail).
-				SetNillableTemplate(data.Template).
 				SetNillableWordCount(data.WordCount).
 				SetNillableFullPath(data.FullPath).
-				SetNillableMetaKeywords(data.MetaKeywords).
-				SetNillableMetaDescription(data.MetaDescription).
-				SetNillableSeoTitle(data.SeoTitle).
 				SetNillableUpdatedBy(data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			if data.Seo != nil {
+				builder.SetSeo(data.Seo)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(posttranslation.FieldID, id))

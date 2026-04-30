@@ -155,15 +155,6 @@ message Page {
     (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}
   ]; // 自定义字段，键值对形式，便于扩展
 
-  optional string custom_head = 23 [
-    json_name = "customHead",
-    (gnostic.openapi.v3.property) = {description: "自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）"}
-  ]; // 自定义 head 代码（如额外的 meta 标签或样式，直接插入到 <head> 中）
-  optional string custom_foot = 24 [
-    json_name = "customFoot",
-    (gnostic.openapi.v3.property) = {description: "自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）"}
-  ]; // 自定义 foot 代码（如额外的脚本，直接插入到 </body> 前）
-
 
   repeated PageTranslation translations = 30 [
     json_name = "translations",
@@ -242,35 +233,20 @@ message PageTranslation {
     }
   ]; // 语言特定的 slug
 
-  optional string summary = 12 [
-    json_name = "summary",
-    (gnostic.openapi.v3.property) = {description: "页面摘要（用于 meta description）"}
-  ]; // 页面摘要
+  repeated Section sections = 12 [
+    json_name = "sections",
+    (gnostic.openapi.v3.property) = {description: "页面内容区块（模块化）"}
+  ]; // 页面内容区块（模块化）
 
-  optional string content = 13 [
-    json_name = "content",
-    (gnostic.openapi.v3.property) = {description: "页面内容"}
-  ]; // 页面内容
-
-  optional string original_content = 14 [
-    json_name = "originalContent",
-    (gnostic.openapi.v3.property) = {description: "原始内容（未渲染前）"}
-  ]; // 原始内容（未渲染前）
-
-  optional string thumbnail = 15 [
+  optional string thumbnail = 13 [
     json_name = "thumbnail",
     (gnostic.openapi.v3.property) = {description: "缩略图"}
   ]; // 缩略图
 
-  optional string cover_image = 16 [
+  optional string cover_image = 14 [
     json_name = "coverImage",
     (gnostic.openapi.v3.property) = {description: "封面图"}
   ]; // 封面图
-
-  optional uint32 word_count = 17 [
-    json_name = "wordCount",
-    (gnostic.openapi.v3.property) = {description: "当前语言版本的字数（中文按字符数，英文按单词数）"}
-  ]; // 当前语言版本的字数（中文按字符数，英文按单词数）
 
 
   optional string full_path = 20 [
@@ -281,18 +257,10 @@ message PageTranslation {
   ]; // 完整路径
 
 
-  optional string meta_keywords = 30 [
-    json_name = "metaKeywords",
-    (gnostic.openapi.v3.property) = {description: "SEO 关键词"}
-  ]; // SEO 关键词
-  optional string meta_description = 31 [
-    json_name = "metaDescription",
-    (gnostic.openapi.v3.property) = {description: "SEO 描述"}
-  ]; // SEO 描述
-  optional string seo_title = 32 [
-    json_name = "seoTitle",
-    (gnostic.openapi.v3.property) = {description: "SEO 标题（覆盖默认 title）"}
-  ]; // SEO 标题
+  optional SeoMeta seo = 30 [
+    json_name = "seo",
+    (gnostic.openapi.v3.property) = {description: "SEO 结构化元数据"}
+  ]; // SEO 结构化元数据
 
 
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
@@ -303,6 +271,7 @@ message PageTranslation {
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
 }
+
 
 // 回应 - 页面列表
 message ListPageResponse {

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"time"
@@ -147,6 +148,18 @@ func (_u *CategoryTranslationUpdate) AddDeletedBy(v int32) *CategoryTranslationU
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (_u *CategoryTranslationUpdate) ClearDeletedBy() *CategoryTranslationUpdate {
 	_u.mutation.ClearDeletedBy()
+	return _u
+}
+
+// SetSeo sets the "seo" field.
+func (_u *CategoryTranslationUpdate) SetSeo(v *contentpb.SeoMeta) *CategoryTranslationUpdate {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *CategoryTranslationUpdate) ClearSeo() *CategoryTranslationUpdate {
+	_u.mutation.ClearSeo()
 	return _u
 }
 
@@ -297,26 +310,6 @@ func (_u *CategoryTranslationUpdate) ClearCoverImage() *CategoryTranslationUpdat
 	return _u
 }
 
-// SetTemplate sets the "template" field.
-func (_u *CategoryTranslationUpdate) SetTemplate(v string) *CategoryTranslationUpdate {
-	_u.mutation.SetTemplate(v)
-	return _u
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableTemplate(v *string) *CategoryTranslationUpdate {
-	if v != nil {
-		_u.SetTemplate(*v)
-	}
-	return _u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (_u *CategoryTranslationUpdate) ClearTemplate() *CategoryTranslationUpdate {
-	_u.mutation.ClearTemplate()
-	return _u
-}
-
 // SetFullPath sets the "full_path" field.
 func (_u *CategoryTranslationUpdate) SetFullPath(v string) *CategoryTranslationUpdate {
 	_u.mutation.SetFullPath(v)
@@ -334,66 +327,6 @@ func (_u *CategoryTranslationUpdate) SetNillableFullPath(v *string) *CategoryTra
 // ClearFullPath clears the value of the "full_path" field.
 func (_u *CategoryTranslationUpdate) ClearFullPath() *CategoryTranslationUpdate {
 	_u.mutation.ClearFullPath()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *CategoryTranslationUpdate) SetMetaKeywords(v string) *CategoryTranslationUpdate {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableMetaKeywords(v *string) *CategoryTranslationUpdate {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *CategoryTranslationUpdate) ClearMetaKeywords() *CategoryTranslationUpdate {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *CategoryTranslationUpdate) SetMetaDescription(v string) *CategoryTranslationUpdate {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableMetaDescription(v *string) *CategoryTranslationUpdate {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *CategoryTranslationUpdate) ClearMetaDescription() *CategoryTranslationUpdate {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *CategoryTranslationUpdate) SetSeoTitle(v string) *CategoryTranslationUpdate {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableSeoTitle(v *string) *CategoryTranslationUpdate {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *CategoryTranslationUpdate) ClearSeoTitle() *CategoryTranslationUpdate {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -486,6 +419,12 @@ func (_u *CategoryTranslationUpdate) sqlSave(ctx context.Context) (_node int, er
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(categorytranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(categorytranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(categorytranslation.FieldSeo, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.CategoryID(); ok {
 		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint32, value)
 	}
@@ -531,35 +470,11 @@ func (_u *CategoryTranslationUpdate) sqlSave(ctx context.Context) (_node int, er
 	if _u.mutation.CoverImageCleared() {
 		_spec.ClearField(categorytranslation.FieldCoverImage, field.TypeString)
 	}
-	if value, ok := _u.mutation.Template(); ok {
-		_spec.SetField(categorytranslation.FieldTemplate, field.TypeString, value)
-	}
-	if _u.mutation.TemplateCleared() {
-		_spec.ClearField(categorytranslation.FieldTemplate, field.TypeString)
-	}
 	if value, ok := _u.mutation.FullPath(); ok {
 		_spec.SetField(categorytranslation.FieldFullPath, field.TypeString, value)
 	}
 	if _u.mutation.FullPathCleared() {
 		_spec.ClearField(categorytranslation.FieldFullPath, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(categorytranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(categorytranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(categorytranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(categorytranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(categorytranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(categorytranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -701,6 +616,18 @@ func (_u *CategoryTranslationUpdateOne) AddDeletedBy(v int32) *CategoryTranslati
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (_u *CategoryTranslationUpdateOne) ClearDeletedBy() *CategoryTranslationUpdateOne {
 	_u.mutation.ClearDeletedBy()
+	return _u
+}
+
+// SetSeo sets the "seo" field.
+func (_u *CategoryTranslationUpdateOne) SetSeo(v *contentpb.SeoMeta) *CategoryTranslationUpdateOne {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *CategoryTranslationUpdateOne) ClearSeo() *CategoryTranslationUpdateOne {
+	_u.mutation.ClearSeo()
 	return _u
 }
 
@@ -851,26 +778,6 @@ func (_u *CategoryTranslationUpdateOne) ClearCoverImage() *CategoryTranslationUp
 	return _u
 }
 
-// SetTemplate sets the "template" field.
-func (_u *CategoryTranslationUpdateOne) SetTemplate(v string) *CategoryTranslationUpdateOne {
-	_u.mutation.SetTemplate(v)
-	return _u
-}
-
-// SetNillableTemplate sets the "template" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableTemplate(v *string) *CategoryTranslationUpdateOne {
-	if v != nil {
-		_u.SetTemplate(*v)
-	}
-	return _u
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (_u *CategoryTranslationUpdateOne) ClearTemplate() *CategoryTranslationUpdateOne {
-	_u.mutation.ClearTemplate()
-	return _u
-}
-
 // SetFullPath sets the "full_path" field.
 func (_u *CategoryTranslationUpdateOne) SetFullPath(v string) *CategoryTranslationUpdateOne {
 	_u.mutation.SetFullPath(v)
@@ -888,66 +795,6 @@ func (_u *CategoryTranslationUpdateOne) SetNillableFullPath(v *string) *Category
 // ClearFullPath clears the value of the "full_path" field.
 func (_u *CategoryTranslationUpdateOne) ClearFullPath() *CategoryTranslationUpdateOne {
 	_u.mutation.ClearFullPath()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *CategoryTranslationUpdateOne) SetMetaKeywords(v string) *CategoryTranslationUpdateOne {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableMetaKeywords(v *string) *CategoryTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *CategoryTranslationUpdateOne) ClearMetaKeywords() *CategoryTranslationUpdateOne {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *CategoryTranslationUpdateOne) SetMetaDescription(v string) *CategoryTranslationUpdateOne {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableMetaDescription(v *string) *CategoryTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *CategoryTranslationUpdateOne) ClearMetaDescription() *CategoryTranslationUpdateOne {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *CategoryTranslationUpdateOne) SetSeoTitle(v string) *CategoryTranslationUpdateOne {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableSeoTitle(v *string) *CategoryTranslationUpdateOne {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *CategoryTranslationUpdateOne) ClearSeoTitle() *CategoryTranslationUpdateOne {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -1070,6 +917,12 @@ func (_u *CategoryTranslationUpdateOne) sqlSave(ctx context.Context) (_node *Cat
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(categorytranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(categorytranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(categorytranslation.FieldSeo, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.CategoryID(); ok {
 		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint32, value)
 	}
@@ -1115,35 +968,11 @@ func (_u *CategoryTranslationUpdateOne) sqlSave(ctx context.Context) (_node *Cat
 	if _u.mutation.CoverImageCleared() {
 		_spec.ClearField(categorytranslation.FieldCoverImage, field.TypeString)
 	}
-	if value, ok := _u.mutation.Template(); ok {
-		_spec.SetField(categorytranslation.FieldTemplate, field.TypeString, value)
-	}
-	if _u.mutation.TemplateCleared() {
-		_spec.ClearField(categorytranslation.FieldTemplate, field.TypeString)
-	}
 	if value, ok := _u.mutation.FullPath(); ok {
 		_spec.SetField(categorytranslation.FieldFullPath, field.TypeString, value)
 	}
 	if _u.mutation.FullPathCleared() {
 		_spec.ClearField(categorytranslation.FieldFullPath, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(categorytranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(categorytranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(categorytranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(categorytranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(categorytranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(categorytranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &CategoryTranslation{config: _u.config}

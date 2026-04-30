@@ -6,12 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -150,6 +152,36 @@ func (_u *PageTranslationUpdate) ClearDeletedBy() *PageTranslationUpdate {
 	return _u
 }
 
+// SetSeo sets the "seo" field.
+func (_u *PageTranslationUpdate) SetSeo(v *contentpb.SeoMeta) *PageTranslationUpdate {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *PageTranslationUpdate) ClearSeo() *PageTranslationUpdate {
+	_u.mutation.ClearSeo()
+	return _u
+}
+
+// SetSections sets the "sections" field.
+func (_u *PageTranslationUpdate) SetSections(v []*contentpb.Section) *PageTranslationUpdate {
+	_u.mutation.SetSections(v)
+	return _u
+}
+
+// AppendSections appends value to the "sections" field.
+func (_u *PageTranslationUpdate) AppendSections(v []*contentpb.Section) *PageTranslationUpdate {
+	_u.mutation.AppendSections(v)
+	return _u
+}
+
+// ClearSections clears the value of the "sections" field.
+func (_u *PageTranslationUpdate) ClearSections() *PageTranslationUpdate {
+	_u.mutation.ClearSections()
+	return _u
+}
+
 // SetPageID sets the "page_id" field.
 func (_u *PageTranslationUpdate) SetPageID(v uint32) *PageTranslationUpdate {
 	_u.mutation.ResetPageID()
@@ -237,66 +269,6 @@ func (_u *PageTranslationUpdate) ClearSlug() *PageTranslationUpdate {
 	return _u
 }
 
-// SetSummary sets the "summary" field.
-func (_u *PageTranslationUpdate) SetSummary(v string) *PageTranslationUpdate {
-	_u.mutation.SetSummary(v)
-	return _u
-}
-
-// SetNillableSummary sets the "summary" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableSummary(v *string) *PageTranslationUpdate {
-	if v != nil {
-		_u.SetSummary(*v)
-	}
-	return _u
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (_u *PageTranslationUpdate) ClearSummary() *PageTranslationUpdate {
-	_u.mutation.ClearSummary()
-	return _u
-}
-
-// SetContent sets the "content" field.
-func (_u *PageTranslationUpdate) SetContent(v string) *PageTranslationUpdate {
-	_u.mutation.SetContent(v)
-	return _u
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableContent(v *string) *PageTranslationUpdate {
-	if v != nil {
-		_u.SetContent(*v)
-	}
-	return _u
-}
-
-// ClearContent clears the value of the "content" field.
-func (_u *PageTranslationUpdate) ClearContent() *PageTranslationUpdate {
-	_u.mutation.ClearContent()
-	return _u
-}
-
-// SetOriginalContent sets the "original_content" field.
-func (_u *PageTranslationUpdate) SetOriginalContent(v string) *PageTranslationUpdate {
-	_u.mutation.SetOriginalContent(v)
-	return _u
-}
-
-// SetNillableOriginalContent sets the "original_content" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableOriginalContent(v *string) *PageTranslationUpdate {
-	if v != nil {
-		_u.SetOriginalContent(*v)
-	}
-	return _u
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (_u *PageTranslationUpdate) ClearOriginalContent() *PageTranslationUpdate {
-	_u.mutation.ClearOriginalContent()
-	return _u
-}
-
 // SetThumbnail sets the "thumbnail" field.
 func (_u *PageTranslationUpdate) SetThumbnail(v string) *PageTranslationUpdate {
 	_u.mutation.SetThumbnail(v)
@@ -354,93 +326,6 @@ func (_u *PageTranslationUpdate) SetNillableFullPath(v *string) *PageTranslation
 // ClearFullPath clears the value of the "full_path" field.
 func (_u *PageTranslationUpdate) ClearFullPath() *PageTranslationUpdate {
 	_u.mutation.ClearFullPath()
-	return _u
-}
-
-// SetWordCount sets the "word_count" field.
-func (_u *PageTranslationUpdate) SetWordCount(v uint32) *PageTranslationUpdate {
-	_u.mutation.ResetWordCount()
-	_u.mutation.SetWordCount(v)
-	return _u
-}
-
-// SetNillableWordCount sets the "word_count" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableWordCount(v *uint32) *PageTranslationUpdate {
-	if v != nil {
-		_u.SetWordCount(*v)
-	}
-	return _u
-}
-
-// AddWordCount adds value to the "word_count" field.
-func (_u *PageTranslationUpdate) AddWordCount(v int32) *PageTranslationUpdate {
-	_u.mutation.AddWordCount(v)
-	return _u
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (_u *PageTranslationUpdate) ClearWordCount() *PageTranslationUpdate {
-	_u.mutation.ClearWordCount()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *PageTranslationUpdate) SetMetaKeywords(v string) *PageTranslationUpdate {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableMetaKeywords(v *string) *PageTranslationUpdate {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *PageTranslationUpdate) ClearMetaKeywords() *PageTranslationUpdate {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *PageTranslationUpdate) SetMetaDescription(v string) *PageTranslationUpdate {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableMetaDescription(v *string) *PageTranslationUpdate {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *PageTranslationUpdate) ClearMetaDescription() *PageTranslationUpdate {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *PageTranslationUpdate) SetSeoTitle(v string) *PageTranslationUpdate {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableSeoTitle(v *string) *PageTranslationUpdate {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *PageTranslationUpdate) ClearSeoTitle() *PageTranslationUpdate {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -533,6 +418,23 @@ func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(pagetranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(pagetranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.Sections(); ok {
+		_spec.SetField(pagetranslation.FieldSections, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedSections(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, pagetranslation.FieldSections, value)
+		})
+	}
+	if _u.mutation.SectionsCleared() {
+		_spec.ClearField(pagetranslation.FieldSections, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
 	}
@@ -560,24 +462,6 @@ func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.SlugCleared() {
 		_spec.ClearField(pagetranslation.FieldSlug, field.TypeString)
 	}
-	if value, ok := _u.mutation.Summary(); ok {
-		_spec.SetField(pagetranslation.FieldSummary, field.TypeString, value)
-	}
-	if _u.mutation.SummaryCleared() {
-		_spec.ClearField(pagetranslation.FieldSummary, field.TypeString)
-	}
-	if value, ok := _u.mutation.Content(); ok {
-		_spec.SetField(pagetranslation.FieldContent, field.TypeString, value)
-	}
-	if _u.mutation.ContentCleared() {
-		_spec.ClearField(pagetranslation.FieldContent, field.TypeString)
-	}
-	if value, ok := _u.mutation.OriginalContent(); ok {
-		_spec.SetField(pagetranslation.FieldOriginalContent, field.TypeString, value)
-	}
-	if _u.mutation.OriginalContentCleared() {
-		_spec.ClearField(pagetranslation.FieldOriginalContent, field.TypeString)
-	}
 	if value, ok := _u.mutation.Thumbnail(); ok {
 		_spec.SetField(pagetranslation.FieldThumbnail, field.TypeString, value)
 	}
@@ -595,33 +479,6 @@ func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	}
 	if _u.mutation.FullPathCleared() {
 		_spec.ClearField(pagetranslation.FieldFullPath, field.TypeString)
-	}
-	if value, ok := _u.mutation.WordCount(); ok {
-		_spec.SetField(pagetranslation.FieldWordCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedWordCount(); ok {
-		_spec.AddField(pagetranslation.FieldWordCount, field.TypeUint32, value)
-	}
-	if _u.mutation.WordCountCleared() {
-		_spec.ClearField(pagetranslation.FieldWordCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(pagetranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(pagetranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(pagetranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(pagetranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(pagetranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(pagetranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -766,6 +623,36 @@ func (_u *PageTranslationUpdateOne) ClearDeletedBy() *PageTranslationUpdateOne {
 	return _u
 }
 
+// SetSeo sets the "seo" field.
+func (_u *PageTranslationUpdateOne) SetSeo(v *contentpb.SeoMeta) *PageTranslationUpdateOne {
+	_u.mutation.SetSeo(v)
+	return _u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (_u *PageTranslationUpdateOne) ClearSeo() *PageTranslationUpdateOne {
+	_u.mutation.ClearSeo()
+	return _u
+}
+
+// SetSections sets the "sections" field.
+func (_u *PageTranslationUpdateOne) SetSections(v []*contentpb.Section) *PageTranslationUpdateOne {
+	_u.mutation.SetSections(v)
+	return _u
+}
+
+// AppendSections appends value to the "sections" field.
+func (_u *PageTranslationUpdateOne) AppendSections(v []*contentpb.Section) *PageTranslationUpdateOne {
+	_u.mutation.AppendSections(v)
+	return _u
+}
+
+// ClearSections clears the value of the "sections" field.
+func (_u *PageTranslationUpdateOne) ClearSections() *PageTranslationUpdateOne {
+	_u.mutation.ClearSections()
+	return _u
+}
+
 // SetPageID sets the "page_id" field.
 func (_u *PageTranslationUpdateOne) SetPageID(v uint32) *PageTranslationUpdateOne {
 	_u.mutation.ResetPageID()
@@ -853,66 +740,6 @@ func (_u *PageTranslationUpdateOne) ClearSlug() *PageTranslationUpdateOne {
 	return _u
 }
 
-// SetSummary sets the "summary" field.
-func (_u *PageTranslationUpdateOne) SetSummary(v string) *PageTranslationUpdateOne {
-	_u.mutation.SetSummary(v)
-	return _u
-}
-
-// SetNillableSummary sets the "summary" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableSummary(v *string) *PageTranslationUpdateOne {
-	if v != nil {
-		_u.SetSummary(*v)
-	}
-	return _u
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (_u *PageTranslationUpdateOne) ClearSummary() *PageTranslationUpdateOne {
-	_u.mutation.ClearSummary()
-	return _u
-}
-
-// SetContent sets the "content" field.
-func (_u *PageTranslationUpdateOne) SetContent(v string) *PageTranslationUpdateOne {
-	_u.mutation.SetContent(v)
-	return _u
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableContent(v *string) *PageTranslationUpdateOne {
-	if v != nil {
-		_u.SetContent(*v)
-	}
-	return _u
-}
-
-// ClearContent clears the value of the "content" field.
-func (_u *PageTranslationUpdateOne) ClearContent() *PageTranslationUpdateOne {
-	_u.mutation.ClearContent()
-	return _u
-}
-
-// SetOriginalContent sets the "original_content" field.
-func (_u *PageTranslationUpdateOne) SetOriginalContent(v string) *PageTranslationUpdateOne {
-	_u.mutation.SetOriginalContent(v)
-	return _u
-}
-
-// SetNillableOriginalContent sets the "original_content" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableOriginalContent(v *string) *PageTranslationUpdateOne {
-	if v != nil {
-		_u.SetOriginalContent(*v)
-	}
-	return _u
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (_u *PageTranslationUpdateOne) ClearOriginalContent() *PageTranslationUpdateOne {
-	_u.mutation.ClearOriginalContent()
-	return _u
-}
-
 // SetThumbnail sets the "thumbnail" field.
 func (_u *PageTranslationUpdateOne) SetThumbnail(v string) *PageTranslationUpdateOne {
 	_u.mutation.SetThumbnail(v)
@@ -970,93 +797,6 @@ func (_u *PageTranslationUpdateOne) SetNillableFullPath(v *string) *PageTranslat
 // ClearFullPath clears the value of the "full_path" field.
 func (_u *PageTranslationUpdateOne) ClearFullPath() *PageTranslationUpdateOne {
 	_u.mutation.ClearFullPath()
-	return _u
-}
-
-// SetWordCount sets the "word_count" field.
-func (_u *PageTranslationUpdateOne) SetWordCount(v uint32) *PageTranslationUpdateOne {
-	_u.mutation.ResetWordCount()
-	_u.mutation.SetWordCount(v)
-	return _u
-}
-
-// SetNillableWordCount sets the "word_count" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableWordCount(v *uint32) *PageTranslationUpdateOne {
-	if v != nil {
-		_u.SetWordCount(*v)
-	}
-	return _u
-}
-
-// AddWordCount adds value to the "word_count" field.
-func (_u *PageTranslationUpdateOne) AddWordCount(v int32) *PageTranslationUpdateOne {
-	_u.mutation.AddWordCount(v)
-	return _u
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (_u *PageTranslationUpdateOne) ClearWordCount() *PageTranslationUpdateOne {
-	_u.mutation.ClearWordCount()
-	return _u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_u *PageTranslationUpdateOne) SetMetaKeywords(v string) *PageTranslationUpdateOne {
-	_u.mutation.SetMetaKeywords(v)
-	return _u
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableMetaKeywords(v *string) *PageTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaKeywords(*v)
-	}
-	return _u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (_u *PageTranslationUpdateOne) ClearMetaKeywords() *PageTranslationUpdateOne {
-	_u.mutation.ClearMetaKeywords()
-	return _u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_u *PageTranslationUpdateOne) SetMetaDescription(v string) *PageTranslationUpdateOne {
-	_u.mutation.SetMetaDescription(v)
-	return _u
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableMetaDescription(v *string) *PageTranslationUpdateOne {
-	if v != nil {
-		_u.SetMetaDescription(*v)
-	}
-	return _u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (_u *PageTranslationUpdateOne) ClearMetaDescription() *PageTranslationUpdateOne {
-	_u.mutation.ClearMetaDescription()
-	return _u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_u *PageTranslationUpdateOne) SetSeoTitle(v string) *PageTranslationUpdateOne {
-	_u.mutation.SetSeoTitle(v)
-	return _u
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableSeoTitle(v *string) *PageTranslationUpdateOne {
-	if v != nil {
-		_u.SetSeoTitle(*v)
-	}
-	return _u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (_u *PageTranslationUpdateOne) ClearSeoTitle() *PageTranslationUpdateOne {
-	_u.mutation.ClearSeoTitle()
 	return _u
 }
 
@@ -1179,6 +919,23 @@ func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTra
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(pagetranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Seo(); ok {
+		_spec.SetField(pagetranslation.FieldSeo, field.TypeJSON, value)
+	}
+	if _u.mutation.SeoCleared() {
+		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.Sections(); ok {
+		_spec.SetField(pagetranslation.FieldSections, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedSections(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, pagetranslation.FieldSections, value)
+		})
+	}
+	if _u.mutation.SectionsCleared() {
+		_spec.ClearField(pagetranslation.FieldSections, field.TypeJSON)
+	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
 	}
@@ -1206,24 +963,6 @@ func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTra
 	if _u.mutation.SlugCleared() {
 		_spec.ClearField(pagetranslation.FieldSlug, field.TypeString)
 	}
-	if value, ok := _u.mutation.Summary(); ok {
-		_spec.SetField(pagetranslation.FieldSummary, field.TypeString, value)
-	}
-	if _u.mutation.SummaryCleared() {
-		_spec.ClearField(pagetranslation.FieldSummary, field.TypeString)
-	}
-	if value, ok := _u.mutation.Content(); ok {
-		_spec.SetField(pagetranslation.FieldContent, field.TypeString, value)
-	}
-	if _u.mutation.ContentCleared() {
-		_spec.ClearField(pagetranslation.FieldContent, field.TypeString)
-	}
-	if value, ok := _u.mutation.OriginalContent(); ok {
-		_spec.SetField(pagetranslation.FieldOriginalContent, field.TypeString, value)
-	}
-	if _u.mutation.OriginalContentCleared() {
-		_spec.ClearField(pagetranslation.FieldOriginalContent, field.TypeString)
-	}
 	if value, ok := _u.mutation.Thumbnail(); ok {
 		_spec.SetField(pagetranslation.FieldThumbnail, field.TypeString, value)
 	}
@@ -1241,33 +980,6 @@ func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTra
 	}
 	if _u.mutation.FullPathCleared() {
 		_spec.ClearField(pagetranslation.FieldFullPath, field.TypeString)
-	}
-	if value, ok := _u.mutation.WordCount(); ok {
-		_spec.SetField(pagetranslation.FieldWordCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedWordCount(); ok {
-		_spec.AddField(pagetranslation.FieldWordCount, field.TypeUint32, value)
-	}
-	if _u.mutation.WordCountCleared() {
-		_spec.ClearField(pagetranslation.FieldWordCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.MetaKeywords(); ok {
-		_spec.SetField(pagetranslation.FieldMetaKeywords, field.TypeString, value)
-	}
-	if _u.mutation.MetaKeywordsCleared() {
-		_spec.ClearField(pagetranslation.FieldMetaKeywords, field.TypeString)
-	}
-	if value, ok := _u.mutation.MetaDescription(); ok {
-		_spec.SetField(pagetranslation.FieldMetaDescription, field.TypeString, value)
-	}
-	if _u.mutation.MetaDescriptionCleared() {
-		_spec.ClearField(pagetranslation.FieldMetaDescription, field.TypeString)
-	}
-	if value, ok := _u.mutation.SeoTitle(); ok {
-		_spec.SetField(pagetranslation.FieldSeoTitle, field.TypeString, value)
-	}
-	if _u.mutation.SeoTitleCleared() {
-		_spec.ClearField(pagetranslation.FieldSeoTitle, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PageTranslation{config: _u.config}

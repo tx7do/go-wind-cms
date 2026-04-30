@@ -223,6 +223,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
 		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的分类ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "分类名称"},
@@ -230,11 +231,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "分类描述"},
 		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
 		{Name: "cover_image", Type: field.TypeString, Nullable: true, Comment: "封面图"},
-		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "模板名称"},
 		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
-		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
-		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
-		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
 	}
 	// CategoryTranslationsTable holds the schema information for the "category_translations" table.
 	CategoryTranslationsTable = &schema.Table{
@@ -246,22 +243,22 @@ var (
 			{
 				Name:    "categorytranslation_category_id_language_code",
 				Unique:  true,
-				Columns: []*schema.Column{CategoryTranslationsColumns[7], CategoryTranslationsColumns[8]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[8], CategoryTranslationsColumns[9]},
 			},
 			{
 				Name:    "categorytranslation_category_id",
 				Unique:  false,
-				Columns: []*schema.Column{CategoryTranslationsColumns[7]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[8]},
 			},
 			{
 				Name:    "categorytranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{CategoryTranslationsColumns[8]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[9]},
 			},
 			{
 				Name:    "categorytranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{CategoryTranslationsColumns[10]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[11]},
 			},
 		},
 	}
@@ -1996,8 +1993,6 @@ var (
 		{Name: "is_custom_template", Type: field.TypeBool, Nullable: true, Comment: "是否使用自定义模板代码", Default: false},
 		{Name: "visits", Type: field.TypeUint32, Nullable: true, Comment: "页面访问次数", Default: 0},
 		{Name: "custom_fields", Type: field.TypeJSON, Nullable: true, Comment: "自定义字段"},
-		{Name: "custom_head", Type: field.TypeString, Nullable: true, Comment: "自定义 head 代码"},
-		{Name: "custom_foot", Type: field.TypeString, Nullable: true, Comment: "自定义 foot 代码"},
 		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "页面层级深度", Default: 0},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
 	}
@@ -2010,7 +2005,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pages_pages_children",
-				Columns:    []*schema.Column{PagesColumns[25]},
+				Columns:    []*schema.Column{PagesColumns[23]},
 				RefColumns: []*schema.Column{PagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2044,7 +2039,7 @@ var (
 			{
 				Name:    "page_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[25]},
+				Columns: []*schema.Column{PagesColumns[23]},
 			},
 			{
 				Name:    "page_disallow_comment",
@@ -2072,20 +2067,15 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
+		{Name: "sections", Type: field.TypeJSON, Nullable: true, Comment: "页面内容区块（模块化）"},
 		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的页面ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "页面标题"},
 		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "语言特定 slug"},
-		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "页面摘要"},
-		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "页面内容"},
-		{Name: "original_content", Type: field.TypeString, Nullable: true, Comment: "原始内容"},
 		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
 		{Name: "cover_image", Type: field.TypeString, Nullable: true, Comment: "封面图"},
 		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
-		{Name: "word_count", Type: field.TypeUint32, Nullable: true, Comment: "当前语言版本的字数", Default: 0},
-		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
-		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
-		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
 	}
 	// PageTranslationsTable holds the schema information for the "page_translations" table.
 	PageTranslationsTable = &schema.Table{
@@ -2097,32 +2087,27 @@ var (
 			{
 				Name:    "pagetranslation_page_id",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[7]},
+				Columns: []*schema.Column{PageTranslationsColumns[9]},
 			},
 			{
 				Name:    "pagetranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[8]},
+				Columns: []*schema.Column{PageTranslationsColumns[10]},
 			},
 			{
 				Name:    "pagetranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[10]},
+				Columns: []*schema.Column{PageTranslationsColumns[12]},
 			},
 			{
 				Name:    "pagetranslation_page_id_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[7], PageTranslationsColumns[8]},
+				Columns: []*schema.Column{PageTranslationsColumns[9], PageTranslationsColumns[10]},
 			},
 			{
 				Name:    "pagetranslation_language_code_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[8], PageTranslationsColumns[10]},
-			},
-			{
-				Name:    "pagetranslation_meta_keywords",
-				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[18]},
+				Columns: []*schema.Column{PageTranslationsColumns[10], PageTranslationsColumns[12]},
 			},
 		},
 	}
@@ -2759,6 +2744,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
 		{Name: "post_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的帖子ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "帖子标题"},
@@ -2767,12 +2753,8 @@ var (
 		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "帖子内容"},
 		{Name: "original_content", Type: field.TypeString, Nullable: true, Comment: "原始内容"},
 		{Name: "thumbnail", Type: field.TypeString, Nullable: true, Comment: "缩略图"},
-		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "模板名称"},
 		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
 		{Name: "word_count", Type: field.TypeUint32, Nullable: true, Comment: "当前语言版本的字数", Default: 0},
-		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
-		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
-		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
 	}
 	// PostTranslationsTable holds the schema information for the "post_translations" table.
 	PostTranslationsTable = &schema.Table{
@@ -2784,17 +2766,17 @@ var (
 			{
 				Name:    "posttranslation_post_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[7]},
+				Columns: []*schema.Column{PostTranslationsColumns[8]},
 			},
 			{
 				Name:    "posttranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[8]},
+				Columns: []*schema.Column{PostTranslationsColumns[9]},
 			},
 			{
 				Name:    "posttranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[10]},
+				Columns: []*schema.Column{PostTranslationsColumns[11]},
 			},
 			{
 				Name:    "posttranslation_full_path",
@@ -2802,24 +2784,19 @@ var (
 				Columns: []*schema.Column{PostTranslationsColumns[16]},
 			},
 			{
-				Name:    "posttranslation_meta_keywords",
-				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[18]},
-			},
-			{
 				Name:    "posttranslation_post_id_language_code_slug",
 				Unique:  true,
-				Columns: []*schema.Column{PostTranslationsColumns[7], PostTranslationsColumns[8], PostTranslationsColumns[10]},
+				Columns: []*schema.Column{PostTranslationsColumns[8], PostTranslationsColumns[9], PostTranslationsColumns[11]},
 			},
 			{
 				Name:    "posttranslation_post_id_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[7], PostTranslationsColumns[8]},
+				Columns: []*schema.Column{PostTranslationsColumns[8], PostTranslationsColumns[9]},
 			},
 			{
 				Name:    "posttranslation_language_code_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[8], PostTranslationsColumns[10]},
+				Columns: []*schema.Column{PostTranslationsColumns[9], PostTranslationsColumns[11]},
 			},
 		},
 	}
@@ -3207,18 +3184,14 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
 		{Name: "tag_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的标签ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "标签名称"},
 		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "语言特定 slug"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "标签描述"},
 		{Name: "cover_image", Type: field.TypeString, Nullable: true, Comment: "封面图"},
-		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "模板名称"},
 		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
-		{Name: "canonical_url", Type: field.TypeString, Nullable: true, Comment: "规范 URL"},
-		{Name: "meta_keywords", Type: field.TypeString, Nullable: true, Comment: "SEO 关键词"},
-		{Name: "meta_description", Type: field.TypeString, Nullable: true, Comment: "SEO 描述"},
-		{Name: "seo_title", Type: field.TypeString, Nullable: true, Comment: "SEO 标题"},
 	}
 	// TagTranslationsTable holds the schema information for the "tag_translations" table.
 	TagTranslationsTable = &schema.Table{
@@ -3230,17 +3203,17 @@ var (
 			{
 				Name:    "tagtranslation_tag_id",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[7]},
+				Columns: []*schema.Column{TagTranslationsColumns[8]},
 			},
 			{
 				Name:    "tagtranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[8]},
+				Columns: []*schema.Column{TagTranslationsColumns[9]},
 			},
 			{
 				Name:    "tagtranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[10]},
+				Columns: []*schema.Column{TagTranslationsColumns[11]},
 			},
 			{
 				Name:    "tagtranslation_full_path",
@@ -3248,19 +3221,14 @@ var (
 				Columns: []*schema.Column{TagTranslationsColumns[14]},
 			},
 			{
-				Name:    "tagtranslation_meta_keywords",
-				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[16]},
-			},
-			{
 				Name:    "tagtranslation_tag_id_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[7], TagTranslationsColumns[8]},
+				Columns: []*schema.Column{TagTranslationsColumns[8], TagTranslationsColumns[9]},
 			},
 			{
 				Name:    "tagtranslation_language_code_slug",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[8], TagTranslationsColumns[10]},
+				Columns: []*schema.Column{TagTranslationsColumns[9], TagTranslationsColumns[11]},
 			},
 		},
 	}

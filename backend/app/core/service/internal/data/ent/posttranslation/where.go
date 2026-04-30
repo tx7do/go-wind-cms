@@ -124,11 +124,6 @@ func Thumbnail(v string) predicate.PostTranslation {
 	return predicate.PostTranslation(sql.FieldEQ(FieldThumbnail, v))
 }
 
-// Template applies equality check predicate on the "template" field. It's identical to TemplateEQ.
-func Template(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldTemplate, v))
-}
-
 // FullPath applies equality check predicate on the "full_path" field. It's identical to FullPathEQ.
 func FullPath(v string) predicate.PostTranslation {
 	return predicate.PostTranslation(sql.FieldEQ(FieldFullPath, v))
@@ -137,21 +132,6 @@ func FullPath(v string) predicate.PostTranslation {
 // WordCount applies equality check predicate on the "word_count" field. It's identical to WordCountEQ.
 func WordCount(v uint32) predicate.PostTranslation {
 	return predicate.PostTranslation(sql.FieldEQ(FieldWordCount, v))
-}
-
-// MetaKeywords applies equality check predicate on the "meta_keywords" field. It's identical to MetaKeywordsEQ.
-func MetaKeywords(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldMetaKeywords, v))
-}
-
-// MetaDescription applies equality check predicate on the "meta_description" field. It's identical to MetaDescriptionEQ.
-func MetaDescription(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldMetaDescription, v))
-}
-
-// SeoTitle applies equality check predicate on the "seo_title" field. It's identical to SeoTitleEQ.
-func SeoTitle(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldSeoTitle, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -452,6 +432,16 @@ func DeletedByIsNil() predicate.PostTranslation {
 // DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
 func DeletedByNotNil() predicate.PostTranslation {
 	return predicate.PostTranslation(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// SeoIsNil applies the IsNil predicate on the "seo" field.
+func SeoIsNil() predicate.PostTranslation {
+	return predicate.PostTranslation(sql.FieldIsNull(FieldSeo))
+}
+
+// SeoNotNil applies the NotNil predicate on the "seo" field.
+func SeoNotNil() predicate.PostTranslation {
+	return predicate.PostTranslation(sql.FieldNotNull(FieldSeo))
 }
 
 // PostIDEQ applies the EQ predicate on the "post_id" field.
@@ -1029,81 +1019,6 @@ func ThumbnailContainsFold(v string) predicate.PostTranslation {
 	return predicate.PostTranslation(sql.FieldContainsFold(FieldThumbnail, v))
 }
 
-// TemplateEQ applies the EQ predicate on the "template" field.
-func TemplateEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldTemplate, v))
-}
-
-// TemplateNEQ applies the NEQ predicate on the "template" field.
-func TemplateNEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNEQ(FieldTemplate, v))
-}
-
-// TemplateIn applies the In predicate on the "template" field.
-func TemplateIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIn(FieldTemplate, vs...))
-}
-
-// TemplateNotIn applies the NotIn predicate on the "template" field.
-func TemplateNotIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotIn(FieldTemplate, vs...))
-}
-
-// TemplateGT applies the GT predicate on the "template" field.
-func TemplateGT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGT(FieldTemplate, v))
-}
-
-// TemplateGTE applies the GTE predicate on the "template" field.
-func TemplateGTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGTE(FieldTemplate, v))
-}
-
-// TemplateLT applies the LT predicate on the "template" field.
-func TemplateLT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLT(FieldTemplate, v))
-}
-
-// TemplateLTE applies the LTE predicate on the "template" field.
-func TemplateLTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLTE(FieldTemplate, v))
-}
-
-// TemplateContains applies the Contains predicate on the "template" field.
-func TemplateContains(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContains(FieldTemplate, v))
-}
-
-// TemplateHasPrefix applies the HasPrefix predicate on the "template" field.
-func TemplateHasPrefix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasPrefix(FieldTemplate, v))
-}
-
-// TemplateHasSuffix applies the HasSuffix predicate on the "template" field.
-func TemplateHasSuffix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasSuffix(FieldTemplate, v))
-}
-
-// TemplateIsNil applies the IsNil predicate on the "template" field.
-func TemplateIsNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIsNull(FieldTemplate))
-}
-
-// TemplateNotNil applies the NotNil predicate on the "template" field.
-func TemplateNotNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotNull(FieldTemplate))
-}
-
-// TemplateEqualFold applies the EqualFold predicate on the "template" field.
-func TemplateEqualFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEqualFold(FieldTemplate, v))
-}
-
-// TemplateContainsFold applies the ContainsFold predicate on the "template" field.
-func TemplateContainsFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContainsFold(FieldTemplate, v))
-}
-
 // FullPathEQ applies the EQ predicate on the "full_path" field.
 func FullPathEQ(v string) predicate.PostTranslation {
 	return predicate.PostTranslation(sql.FieldEQ(FieldFullPath, v))
@@ -1227,231 +1142,6 @@ func WordCountIsNil() predicate.PostTranslation {
 // WordCountNotNil applies the NotNil predicate on the "word_count" field.
 func WordCountNotNil() predicate.PostTranslation {
 	return predicate.PostTranslation(sql.FieldNotNull(FieldWordCount))
-}
-
-// MetaKeywordsEQ applies the EQ predicate on the "meta_keywords" field.
-func MetaKeywordsEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsNEQ applies the NEQ predicate on the "meta_keywords" field.
-func MetaKeywordsNEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNEQ(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsIn applies the In predicate on the "meta_keywords" field.
-func MetaKeywordsIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIn(FieldMetaKeywords, vs...))
-}
-
-// MetaKeywordsNotIn applies the NotIn predicate on the "meta_keywords" field.
-func MetaKeywordsNotIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotIn(FieldMetaKeywords, vs...))
-}
-
-// MetaKeywordsGT applies the GT predicate on the "meta_keywords" field.
-func MetaKeywordsGT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGT(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsGTE applies the GTE predicate on the "meta_keywords" field.
-func MetaKeywordsGTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGTE(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsLT applies the LT predicate on the "meta_keywords" field.
-func MetaKeywordsLT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLT(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsLTE applies the LTE predicate on the "meta_keywords" field.
-func MetaKeywordsLTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLTE(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsContains applies the Contains predicate on the "meta_keywords" field.
-func MetaKeywordsContains(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContains(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsHasPrefix applies the HasPrefix predicate on the "meta_keywords" field.
-func MetaKeywordsHasPrefix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasPrefix(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsHasSuffix applies the HasSuffix predicate on the "meta_keywords" field.
-func MetaKeywordsHasSuffix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasSuffix(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsIsNil applies the IsNil predicate on the "meta_keywords" field.
-func MetaKeywordsIsNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIsNull(FieldMetaKeywords))
-}
-
-// MetaKeywordsNotNil applies the NotNil predicate on the "meta_keywords" field.
-func MetaKeywordsNotNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotNull(FieldMetaKeywords))
-}
-
-// MetaKeywordsEqualFold applies the EqualFold predicate on the "meta_keywords" field.
-func MetaKeywordsEqualFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEqualFold(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsContainsFold applies the ContainsFold predicate on the "meta_keywords" field.
-func MetaKeywordsContainsFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContainsFold(FieldMetaKeywords, v))
-}
-
-// MetaDescriptionEQ applies the EQ predicate on the "meta_description" field.
-func MetaDescriptionEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldMetaDescription, v))
-}
-
-// MetaDescriptionNEQ applies the NEQ predicate on the "meta_description" field.
-func MetaDescriptionNEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNEQ(FieldMetaDescription, v))
-}
-
-// MetaDescriptionIn applies the In predicate on the "meta_description" field.
-func MetaDescriptionIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIn(FieldMetaDescription, vs...))
-}
-
-// MetaDescriptionNotIn applies the NotIn predicate on the "meta_description" field.
-func MetaDescriptionNotIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotIn(FieldMetaDescription, vs...))
-}
-
-// MetaDescriptionGT applies the GT predicate on the "meta_description" field.
-func MetaDescriptionGT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGT(FieldMetaDescription, v))
-}
-
-// MetaDescriptionGTE applies the GTE predicate on the "meta_description" field.
-func MetaDescriptionGTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGTE(FieldMetaDescription, v))
-}
-
-// MetaDescriptionLT applies the LT predicate on the "meta_description" field.
-func MetaDescriptionLT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLT(FieldMetaDescription, v))
-}
-
-// MetaDescriptionLTE applies the LTE predicate on the "meta_description" field.
-func MetaDescriptionLTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLTE(FieldMetaDescription, v))
-}
-
-// MetaDescriptionContains applies the Contains predicate on the "meta_description" field.
-func MetaDescriptionContains(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContains(FieldMetaDescription, v))
-}
-
-// MetaDescriptionHasPrefix applies the HasPrefix predicate on the "meta_description" field.
-func MetaDescriptionHasPrefix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasPrefix(FieldMetaDescription, v))
-}
-
-// MetaDescriptionHasSuffix applies the HasSuffix predicate on the "meta_description" field.
-func MetaDescriptionHasSuffix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasSuffix(FieldMetaDescription, v))
-}
-
-// MetaDescriptionIsNil applies the IsNil predicate on the "meta_description" field.
-func MetaDescriptionIsNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIsNull(FieldMetaDescription))
-}
-
-// MetaDescriptionNotNil applies the NotNil predicate on the "meta_description" field.
-func MetaDescriptionNotNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotNull(FieldMetaDescription))
-}
-
-// MetaDescriptionEqualFold applies the EqualFold predicate on the "meta_description" field.
-func MetaDescriptionEqualFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEqualFold(FieldMetaDescription, v))
-}
-
-// MetaDescriptionContainsFold applies the ContainsFold predicate on the "meta_description" field.
-func MetaDescriptionContainsFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContainsFold(FieldMetaDescription, v))
-}
-
-// SeoTitleEQ applies the EQ predicate on the "seo_title" field.
-func SeoTitleEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEQ(FieldSeoTitle, v))
-}
-
-// SeoTitleNEQ applies the NEQ predicate on the "seo_title" field.
-func SeoTitleNEQ(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNEQ(FieldSeoTitle, v))
-}
-
-// SeoTitleIn applies the In predicate on the "seo_title" field.
-func SeoTitleIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIn(FieldSeoTitle, vs...))
-}
-
-// SeoTitleNotIn applies the NotIn predicate on the "seo_title" field.
-func SeoTitleNotIn(vs ...string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotIn(FieldSeoTitle, vs...))
-}
-
-// SeoTitleGT applies the GT predicate on the "seo_title" field.
-func SeoTitleGT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGT(FieldSeoTitle, v))
-}
-
-// SeoTitleGTE applies the GTE predicate on the "seo_title" field.
-func SeoTitleGTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldGTE(FieldSeoTitle, v))
-}
-
-// SeoTitleLT applies the LT predicate on the "seo_title" field.
-func SeoTitleLT(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLT(FieldSeoTitle, v))
-}
-
-// SeoTitleLTE applies the LTE predicate on the "seo_title" field.
-func SeoTitleLTE(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldLTE(FieldSeoTitle, v))
-}
-
-// SeoTitleContains applies the Contains predicate on the "seo_title" field.
-func SeoTitleContains(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContains(FieldSeoTitle, v))
-}
-
-// SeoTitleHasPrefix applies the HasPrefix predicate on the "seo_title" field.
-func SeoTitleHasPrefix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasPrefix(FieldSeoTitle, v))
-}
-
-// SeoTitleHasSuffix applies the HasSuffix predicate on the "seo_title" field.
-func SeoTitleHasSuffix(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldHasSuffix(FieldSeoTitle, v))
-}
-
-// SeoTitleIsNil applies the IsNil predicate on the "seo_title" field.
-func SeoTitleIsNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldIsNull(FieldSeoTitle))
-}
-
-// SeoTitleNotNil applies the NotNil predicate on the "seo_title" field.
-func SeoTitleNotNil() predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldNotNull(FieldSeoTitle))
-}
-
-// SeoTitleEqualFold applies the EqualFold predicate on the "seo_title" field.
-func SeoTitleEqualFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldEqualFold(FieldSeoTitle, v))
-}
-
-// SeoTitleContainsFold applies the ContainsFold predicate on the "seo_title" field.
-func SeoTitleContainsFold(v string) predicate.PostTranslation {
-	return predicate.PostTranslation(sql.FieldContainsFold(FieldSeoTitle, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	auditpb "go-wind-cms/api/gen/go/audit/service/v1"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
 	resourcepb "go-wind-cms/api/gen/go/resource/service/v1"
 	taskpb "go-wind-cms/api/gen/go/task/service/v1"
@@ -5824,35 +5825,32 @@ func (m *CategoryMutation) ResetEdge(name string) error {
 // CategoryTranslationMutation represents an operation that mutates the CategoryTranslation nodes in the graph.
 type CategoryTranslationMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *uint32
-	created_at       *time.Time
-	updated_at       *time.Time
-	deleted_at       *time.Time
-	created_by       *uint32
-	addcreated_by    *int32
-	updated_by       *uint32
-	addupdated_by    *int32
-	deleted_by       *uint32
-	adddeleted_by    *int32
-	category_id      *uint32
-	addcategory_id   *int32
-	language_code    *string
-	name             *string
-	slug             *string
-	description      *string
-	thumbnail        *string
-	cover_image      *string
-	template         *string
-	full_path        *string
-	meta_keywords    *string
-	meta_description *string
-	seo_title        *string
-	clearedFields    map[string]struct{}
-	done             bool
-	oldValue         func(context.Context) (*CategoryTranslation, error)
-	predicates       []predicate.CategoryTranslation
+	op             Op
+	typ            string
+	id             *uint32
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	created_by     *uint32
+	addcreated_by  *int32
+	updated_by     *uint32
+	addupdated_by  *int32
+	deleted_by     *uint32
+	adddeleted_by  *int32
+	seo            **contentpb.SeoMeta
+	category_id    *uint32
+	addcategory_id *int32
+	language_code  *string
+	name           *string
+	slug           *string
+	description    *string
+	thumbnail      *string
+	cover_image    *string
+	full_path      *string
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*CategoryTranslation, error)
+	predicates     []predicate.CategoryTranslation
 }
 
 var _ ent.Mutation = (*CategoryTranslationMutation)(nil)
@@ -6316,6 +6314,55 @@ func (m *CategoryTranslationMutation) ResetDeletedBy() {
 	delete(m.clearedFields, categorytranslation.FieldDeletedBy)
 }
 
+// SetSeo sets the "seo" field.
+func (m *CategoryTranslationMutation) SetSeo(cm *contentpb.SeoMeta) {
+	m.seo = &cm
+}
+
+// Seo returns the value of the "seo" field in the mutation.
+func (m *CategoryTranslationMutation) Seo() (r *contentpb.SeoMeta, exists bool) {
+	v := m.seo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeo returns the old "seo" field's value of the CategoryTranslation entity.
+// If the CategoryTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CategoryTranslationMutation) OldSeo(ctx context.Context) (v *contentpb.SeoMeta, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSeo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSeo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeo: %w", err)
+	}
+	return oldValue.Seo, nil
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (m *CategoryTranslationMutation) ClearSeo() {
+	m.seo = nil
+	m.clearedFields[categorytranslation.FieldSeo] = struct{}{}
+}
+
+// SeoCleared returns if the "seo" field was cleared in this mutation.
+func (m *CategoryTranslationMutation) SeoCleared() bool {
+	_, ok := m.clearedFields[categorytranslation.FieldSeo]
+	return ok
+}
+
+// ResetSeo resets all changes to the "seo" field.
+func (m *CategoryTranslationMutation) ResetSeo() {
+	m.seo = nil
+	delete(m.clearedFields, categorytranslation.FieldSeo)
+}
+
 // SetCategoryID sets the "category_id" field.
 func (m *CategoryTranslationMutation) SetCategoryID(u uint32) {
 	m.category_id = &u
@@ -6680,55 +6727,6 @@ func (m *CategoryTranslationMutation) ResetCoverImage() {
 	delete(m.clearedFields, categorytranslation.FieldCoverImage)
 }
 
-// SetTemplate sets the "template" field.
-func (m *CategoryTranslationMutation) SetTemplate(s string) {
-	m.template = &s
-}
-
-// Template returns the value of the "template" field in the mutation.
-func (m *CategoryTranslationMutation) Template() (r string, exists bool) {
-	v := m.template
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTemplate returns the old "template" field's value of the CategoryTranslation entity.
-// If the CategoryTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CategoryTranslationMutation) OldTemplate(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTemplate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTemplate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTemplate: %w", err)
-	}
-	return oldValue.Template, nil
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (m *CategoryTranslationMutation) ClearTemplate() {
-	m.template = nil
-	m.clearedFields[categorytranslation.FieldTemplate] = struct{}{}
-}
-
-// TemplateCleared returns if the "template" field was cleared in this mutation.
-func (m *CategoryTranslationMutation) TemplateCleared() bool {
-	_, ok := m.clearedFields[categorytranslation.FieldTemplate]
-	return ok
-}
-
-// ResetTemplate resets all changes to the "template" field.
-func (m *CategoryTranslationMutation) ResetTemplate() {
-	m.template = nil
-	delete(m.clearedFields, categorytranslation.FieldTemplate)
-}
-
 // SetFullPath sets the "full_path" field.
 func (m *CategoryTranslationMutation) SetFullPath(s string) {
 	m.full_path = &s
@@ -6778,153 +6776,6 @@ func (m *CategoryTranslationMutation) ResetFullPath() {
 	delete(m.clearedFields, categorytranslation.FieldFullPath)
 }
 
-// SetMetaKeywords sets the "meta_keywords" field.
-func (m *CategoryTranslationMutation) SetMetaKeywords(s string) {
-	m.meta_keywords = &s
-}
-
-// MetaKeywords returns the value of the "meta_keywords" field in the mutation.
-func (m *CategoryTranslationMutation) MetaKeywords() (r string, exists bool) {
-	v := m.meta_keywords
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaKeywords returns the old "meta_keywords" field's value of the CategoryTranslation entity.
-// If the CategoryTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CategoryTranslationMutation) OldMetaKeywords(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaKeywords is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaKeywords requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaKeywords: %w", err)
-	}
-	return oldValue.MetaKeywords, nil
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (m *CategoryTranslationMutation) ClearMetaKeywords() {
-	m.meta_keywords = nil
-	m.clearedFields[categorytranslation.FieldMetaKeywords] = struct{}{}
-}
-
-// MetaKeywordsCleared returns if the "meta_keywords" field was cleared in this mutation.
-func (m *CategoryTranslationMutation) MetaKeywordsCleared() bool {
-	_, ok := m.clearedFields[categorytranslation.FieldMetaKeywords]
-	return ok
-}
-
-// ResetMetaKeywords resets all changes to the "meta_keywords" field.
-func (m *CategoryTranslationMutation) ResetMetaKeywords() {
-	m.meta_keywords = nil
-	delete(m.clearedFields, categorytranslation.FieldMetaKeywords)
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (m *CategoryTranslationMutation) SetMetaDescription(s string) {
-	m.meta_description = &s
-}
-
-// MetaDescription returns the value of the "meta_description" field in the mutation.
-func (m *CategoryTranslationMutation) MetaDescription() (r string, exists bool) {
-	v := m.meta_description
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaDescription returns the old "meta_description" field's value of the CategoryTranslation entity.
-// If the CategoryTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CategoryTranslationMutation) OldMetaDescription(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaDescription is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaDescription requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaDescription: %w", err)
-	}
-	return oldValue.MetaDescription, nil
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (m *CategoryTranslationMutation) ClearMetaDescription() {
-	m.meta_description = nil
-	m.clearedFields[categorytranslation.FieldMetaDescription] = struct{}{}
-}
-
-// MetaDescriptionCleared returns if the "meta_description" field was cleared in this mutation.
-func (m *CategoryTranslationMutation) MetaDescriptionCleared() bool {
-	_, ok := m.clearedFields[categorytranslation.FieldMetaDescription]
-	return ok
-}
-
-// ResetMetaDescription resets all changes to the "meta_description" field.
-func (m *CategoryTranslationMutation) ResetMetaDescription() {
-	m.meta_description = nil
-	delete(m.clearedFields, categorytranslation.FieldMetaDescription)
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (m *CategoryTranslationMutation) SetSeoTitle(s string) {
-	m.seo_title = &s
-}
-
-// SeoTitle returns the value of the "seo_title" field in the mutation.
-func (m *CategoryTranslationMutation) SeoTitle() (r string, exists bool) {
-	v := m.seo_title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSeoTitle returns the old "seo_title" field's value of the CategoryTranslation entity.
-// If the CategoryTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CategoryTranslationMutation) OldSeoTitle(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSeoTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSeoTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSeoTitle: %w", err)
-	}
-	return oldValue.SeoTitle, nil
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (m *CategoryTranslationMutation) ClearSeoTitle() {
-	m.seo_title = nil
-	m.clearedFields[categorytranslation.FieldSeoTitle] = struct{}{}
-}
-
-// SeoTitleCleared returns if the "seo_title" field was cleared in this mutation.
-func (m *CategoryTranslationMutation) SeoTitleCleared() bool {
-	_, ok := m.clearedFields[categorytranslation.FieldSeoTitle]
-	return ok
-}
-
-// ResetSeoTitle resets all changes to the "seo_title" field.
-func (m *CategoryTranslationMutation) ResetSeoTitle() {
-	m.seo_title = nil
-	delete(m.clearedFields, categorytranslation.FieldSeoTitle)
-}
-
 // Where appends a list predicates to the CategoryTranslationMutation builder.
 func (m *CategoryTranslationMutation) Where(ps ...predicate.CategoryTranslation) {
 	m.predicates = append(m.predicates, ps...)
@@ -6959,7 +6810,7 @@ func (m *CategoryTranslationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CategoryTranslationMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, categorytranslation.FieldCreatedAt)
 	}
@@ -6977,6 +6828,9 @@ func (m *CategoryTranslationMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, categorytranslation.FieldDeletedBy)
+	}
+	if m.seo != nil {
+		fields = append(fields, categorytranslation.FieldSeo)
 	}
 	if m.category_id != nil {
 		fields = append(fields, categorytranslation.FieldCategoryID)
@@ -6999,20 +6853,8 @@ func (m *CategoryTranslationMutation) Fields() []string {
 	if m.cover_image != nil {
 		fields = append(fields, categorytranslation.FieldCoverImage)
 	}
-	if m.template != nil {
-		fields = append(fields, categorytranslation.FieldTemplate)
-	}
 	if m.full_path != nil {
 		fields = append(fields, categorytranslation.FieldFullPath)
-	}
-	if m.meta_keywords != nil {
-		fields = append(fields, categorytranslation.FieldMetaKeywords)
-	}
-	if m.meta_description != nil {
-		fields = append(fields, categorytranslation.FieldMetaDescription)
-	}
-	if m.seo_title != nil {
-		fields = append(fields, categorytranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -7034,6 +6876,8 @@ func (m *CategoryTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case categorytranslation.FieldDeletedBy:
 		return m.DeletedBy()
+	case categorytranslation.FieldSeo:
+		return m.Seo()
 	case categorytranslation.FieldCategoryID:
 		return m.CategoryID()
 	case categorytranslation.FieldLanguageCode:
@@ -7048,16 +6892,8 @@ func (m *CategoryTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.Thumbnail()
 	case categorytranslation.FieldCoverImage:
 		return m.CoverImage()
-	case categorytranslation.FieldTemplate:
-		return m.Template()
 	case categorytranslation.FieldFullPath:
 		return m.FullPath()
-	case categorytranslation.FieldMetaKeywords:
-		return m.MetaKeywords()
-	case categorytranslation.FieldMetaDescription:
-		return m.MetaDescription()
-	case categorytranslation.FieldSeoTitle:
-		return m.SeoTitle()
 	}
 	return nil, false
 }
@@ -7079,6 +6915,8 @@ func (m *CategoryTranslationMutation) OldField(ctx context.Context, name string)
 		return m.OldUpdatedBy(ctx)
 	case categorytranslation.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case categorytranslation.FieldSeo:
+		return m.OldSeo(ctx)
 	case categorytranslation.FieldCategoryID:
 		return m.OldCategoryID(ctx)
 	case categorytranslation.FieldLanguageCode:
@@ -7093,16 +6931,8 @@ func (m *CategoryTranslationMutation) OldField(ctx context.Context, name string)
 		return m.OldThumbnail(ctx)
 	case categorytranslation.FieldCoverImage:
 		return m.OldCoverImage(ctx)
-	case categorytranslation.FieldTemplate:
-		return m.OldTemplate(ctx)
 	case categorytranslation.FieldFullPath:
 		return m.OldFullPath(ctx)
-	case categorytranslation.FieldMetaKeywords:
-		return m.OldMetaKeywords(ctx)
-	case categorytranslation.FieldMetaDescription:
-		return m.OldMetaDescription(ctx)
-	case categorytranslation.FieldSeoTitle:
-		return m.OldSeoTitle(ctx)
 	}
 	return nil, fmt.Errorf("unknown CategoryTranslation field %s", name)
 }
@@ -7154,6 +6984,13 @@ func (m *CategoryTranslationMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetDeletedBy(v)
 		return nil
+	case categorytranslation.FieldSeo:
+		v, ok := value.(*contentpb.SeoMeta)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeo(v)
+		return nil
 	case categorytranslation.FieldCategoryID:
 		v, ok := value.(uint32)
 		if !ok {
@@ -7203,40 +7040,12 @@ func (m *CategoryTranslationMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetCoverImage(v)
 		return nil
-	case categorytranslation.FieldTemplate:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTemplate(v)
-		return nil
 	case categorytranslation.FieldFullPath:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFullPath(v)
-		return nil
-	case categorytranslation.FieldMetaKeywords:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaKeywords(v)
-		return nil
-	case categorytranslation.FieldMetaDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaDescription(v)
-		return nil
-	case categorytranslation.FieldSeoTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSeoTitle(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CategoryTranslation field %s", name)
@@ -7337,6 +7146,9 @@ func (m *CategoryTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(categorytranslation.FieldDeletedBy) {
 		fields = append(fields, categorytranslation.FieldDeletedBy)
 	}
+	if m.FieldCleared(categorytranslation.FieldSeo) {
+		fields = append(fields, categorytranslation.FieldSeo)
+	}
 	if m.FieldCleared(categorytranslation.FieldCategoryID) {
 		fields = append(fields, categorytranslation.FieldCategoryID)
 	}
@@ -7358,20 +7170,8 @@ func (m *CategoryTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(categorytranslation.FieldCoverImage) {
 		fields = append(fields, categorytranslation.FieldCoverImage)
 	}
-	if m.FieldCleared(categorytranslation.FieldTemplate) {
-		fields = append(fields, categorytranslation.FieldTemplate)
-	}
 	if m.FieldCleared(categorytranslation.FieldFullPath) {
 		fields = append(fields, categorytranslation.FieldFullPath)
-	}
-	if m.FieldCleared(categorytranslation.FieldMetaKeywords) {
-		fields = append(fields, categorytranslation.FieldMetaKeywords)
-	}
-	if m.FieldCleared(categorytranslation.FieldMetaDescription) {
-		fields = append(fields, categorytranslation.FieldMetaDescription)
-	}
-	if m.FieldCleared(categorytranslation.FieldSeoTitle) {
-		fields = append(fields, categorytranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -7405,6 +7205,9 @@ func (m *CategoryTranslationMutation) ClearField(name string) error {
 	case categorytranslation.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case categorytranslation.FieldSeo:
+		m.ClearSeo()
+		return nil
 	case categorytranslation.FieldCategoryID:
 		m.ClearCategoryID()
 		return nil
@@ -7426,20 +7229,8 @@ func (m *CategoryTranslationMutation) ClearField(name string) error {
 	case categorytranslation.FieldCoverImage:
 		m.ClearCoverImage()
 		return nil
-	case categorytranslation.FieldTemplate:
-		m.ClearTemplate()
-		return nil
 	case categorytranslation.FieldFullPath:
 		m.ClearFullPath()
-		return nil
-	case categorytranslation.FieldMetaKeywords:
-		m.ClearMetaKeywords()
-		return nil
-	case categorytranslation.FieldMetaDescription:
-		m.ClearMetaDescription()
-		return nil
-	case categorytranslation.FieldSeoTitle:
-		m.ClearSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown CategoryTranslation nullable field %s", name)
@@ -7467,6 +7258,9 @@ func (m *CategoryTranslationMutation) ResetField(name string) error {
 	case categorytranslation.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case categorytranslation.FieldSeo:
+		m.ResetSeo()
+		return nil
 	case categorytranslation.FieldCategoryID:
 		m.ResetCategoryID()
 		return nil
@@ -7488,20 +7282,8 @@ func (m *CategoryTranslationMutation) ResetField(name string) error {
 	case categorytranslation.FieldCoverImage:
 		m.ResetCoverImage()
 		return nil
-	case categorytranslation.FieldTemplate:
-		m.ResetTemplate()
-		return nil
 	case categorytranslation.FieldFullPath:
 		m.ResetFullPath()
-		return nil
-	case categorytranslation.FieldMetaKeywords:
-		m.ResetMetaKeywords()
-		return nil
-	case categorytranslation.FieldMetaDescription:
-		m.ResetMetaDescription()
-		return nil
-	case categorytranslation.FieldSeoTitle:
-		m.ResetSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown CategoryTranslation field %s", name)
@@ -46629,8 +46411,6 @@ type PageMutation struct {
 	visits             *uint32
 	addvisits          *int32
 	custom_fields      **map[string]string
-	custom_head        *string
-	custom_foot        *string
 	depth              *int32
 	adddepth           *int32
 	clearedFields      map[string]struct{}
@@ -47952,104 +47732,6 @@ func (m *PageMutation) ResetCustomFields() {
 	delete(m.clearedFields, page.FieldCustomFields)
 }
 
-// SetCustomHead sets the "custom_head" field.
-func (m *PageMutation) SetCustomHead(s string) {
-	m.custom_head = &s
-}
-
-// CustomHead returns the value of the "custom_head" field in the mutation.
-func (m *PageMutation) CustomHead() (r string, exists bool) {
-	v := m.custom_head
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCustomHead returns the old "custom_head" field's value of the Page entity.
-// If the Page object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageMutation) OldCustomHead(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCustomHead is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCustomHead requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCustomHead: %w", err)
-	}
-	return oldValue.CustomHead, nil
-}
-
-// ClearCustomHead clears the value of the "custom_head" field.
-func (m *PageMutation) ClearCustomHead() {
-	m.custom_head = nil
-	m.clearedFields[page.FieldCustomHead] = struct{}{}
-}
-
-// CustomHeadCleared returns if the "custom_head" field was cleared in this mutation.
-func (m *PageMutation) CustomHeadCleared() bool {
-	_, ok := m.clearedFields[page.FieldCustomHead]
-	return ok
-}
-
-// ResetCustomHead resets all changes to the "custom_head" field.
-func (m *PageMutation) ResetCustomHead() {
-	m.custom_head = nil
-	delete(m.clearedFields, page.FieldCustomHead)
-}
-
-// SetCustomFoot sets the "custom_foot" field.
-func (m *PageMutation) SetCustomFoot(s string) {
-	m.custom_foot = &s
-}
-
-// CustomFoot returns the value of the "custom_foot" field in the mutation.
-func (m *PageMutation) CustomFoot() (r string, exists bool) {
-	v := m.custom_foot
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCustomFoot returns the old "custom_foot" field's value of the Page entity.
-// If the Page object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageMutation) OldCustomFoot(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCustomFoot is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCustomFoot requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCustomFoot: %w", err)
-	}
-	return oldValue.CustomFoot, nil
-}
-
-// ClearCustomFoot clears the value of the "custom_foot" field.
-func (m *PageMutation) ClearCustomFoot() {
-	m.custom_foot = nil
-	m.clearedFields[page.FieldCustomFoot] = struct{}{}
-}
-
-// CustomFootCleared returns if the "custom_foot" field was cleared in this mutation.
-func (m *PageMutation) CustomFootCleared() bool {
-	_, ok := m.clearedFields[page.FieldCustomFoot]
-	return ok
-}
-
-// ResetCustomFoot resets all changes to the "custom_foot" field.
-func (m *PageMutation) ResetCustomFoot() {
-	m.custom_foot = nil
-	delete(m.clearedFields, page.FieldCustomFoot)
-}
-
 // SetDepth sets the "depth" field.
 func (m *PageMutation) SetDepth(i int32) {
 	m.depth = &i
@@ -48235,7 +47917,7 @@ func (m *PageMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PageMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, page.FieldCreatedAt)
 	}
@@ -48302,12 +47984,6 @@ func (m *PageMutation) Fields() []string {
 	if m.custom_fields != nil {
 		fields = append(fields, page.FieldCustomFields)
 	}
-	if m.custom_head != nil {
-		fields = append(fields, page.FieldCustomHead)
-	}
-	if m.custom_foot != nil {
-		fields = append(fields, page.FieldCustomFoot)
-	}
 	if m.depth != nil {
 		fields = append(fields, page.FieldDepth)
 	}
@@ -48363,10 +48039,6 @@ func (m *PageMutation) Field(name string) (ent.Value, bool) {
 		return m.Visits()
 	case page.FieldCustomFields:
 		return m.CustomFields()
-	case page.FieldCustomHead:
-		return m.CustomHead()
-	case page.FieldCustomFoot:
-		return m.CustomFoot()
 	case page.FieldDepth:
 		return m.Depth()
 	}
@@ -48422,10 +48094,6 @@ func (m *PageMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldVisits(ctx)
 	case page.FieldCustomFields:
 		return m.OldCustomFields(ctx)
-	case page.FieldCustomHead:
-		return m.OldCustomHead(ctx)
-	case page.FieldCustomFoot:
-		return m.OldCustomFoot(ctx)
 	case page.FieldDepth:
 		return m.OldDepth(ctx)
 	}
@@ -48590,20 +48258,6 @@ func (m *PageMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCustomFields(v)
-		return nil
-	case page.FieldCustomHead:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCustomHead(v)
-		return nil
-	case page.FieldCustomFoot:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCustomFoot(v)
 		return nil
 	case page.FieldDepth:
 		v, ok := value.(int32)
@@ -48795,12 +48449,6 @@ func (m *PageMutation) ClearedFields() []string {
 	if m.FieldCleared(page.FieldCustomFields) {
 		fields = append(fields, page.FieldCustomFields)
 	}
-	if m.FieldCleared(page.FieldCustomHead) {
-		fields = append(fields, page.FieldCustomHead)
-	}
-	if m.FieldCleared(page.FieldCustomFoot) {
-		fields = append(fields, page.FieldCustomFoot)
-	}
 	if m.FieldCleared(page.FieldDepth) {
 		fields = append(fields, page.FieldDepth)
 	}
@@ -48884,12 +48532,6 @@ func (m *PageMutation) ClearField(name string) error {
 	case page.FieldCustomFields:
 		m.ClearCustomFields()
 		return nil
-	case page.FieldCustomHead:
-		m.ClearCustomHead()
-		return nil
-	case page.FieldCustomFoot:
-		m.ClearCustomFoot()
-		return nil
 	case page.FieldDepth:
 		m.ClearDepth()
 		return nil
@@ -48966,12 +48608,6 @@ func (m *PageMutation) ResetField(name string) error {
 		return nil
 	case page.FieldCustomFields:
 		m.ResetCustomFields()
-		return nil
-	case page.FieldCustomHead:
-		m.ResetCustomHead()
-		return nil
-	case page.FieldCustomFoot:
-		m.ResetCustomFoot()
 		return nil
 	case page.FieldDepth:
 		m.ResetDepth()
@@ -49085,38 +48721,33 @@ func (m *PageMutation) ResetEdge(name string) error {
 // PageTranslationMutation represents an operation that mutates the PageTranslation nodes in the graph.
 type PageTranslationMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *uint32
-	created_at       *time.Time
-	updated_at       *time.Time
-	deleted_at       *time.Time
-	created_by       *uint32
-	addcreated_by    *int32
-	updated_by       *uint32
-	addupdated_by    *int32
-	deleted_by       *uint32
-	adddeleted_by    *int32
-	page_id          *uint32
-	addpage_id       *int32
-	language_code    *string
-	title            *string
-	slug             *string
-	summary          *string
-	content          *string
-	original_content *string
-	thumbnail        *string
-	cover_image      *string
-	full_path        *string
-	word_count       *uint32
-	addword_count    *int32
-	meta_keywords    *string
-	meta_description *string
-	seo_title        *string
-	clearedFields    map[string]struct{}
-	done             bool
-	oldValue         func(context.Context) (*PageTranslation, error)
-	predicates       []predicate.PageTranslation
+	op             Op
+	typ            string
+	id             *uint32
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	created_by     *uint32
+	addcreated_by  *int32
+	updated_by     *uint32
+	addupdated_by  *int32
+	deleted_by     *uint32
+	adddeleted_by  *int32
+	seo            **contentpb.SeoMeta
+	sections       *[]*contentpb.Section
+	appendsections []*contentpb.Section
+	page_id        *uint32
+	addpage_id     *int32
+	language_code  *string
+	title          *string
+	slug           *string
+	thumbnail      *string
+	cover_image    *string
+	full_path      *string
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*PageTranslation, error)
+	predicates     []predicate.PageTranslation
 }
 
 var _ ent.Mutation = (*PageTranslationMutation)(nil)
@@ -49580,6 +49211,120 @@ func (m *PageTranslationMutation) ResetDeletedBy() {
 	delete(m.clearedFields, pagetranslation.FieldDeletedBy)
 }
 
+// SetSeo sets the "seo" field.
+func (m *PageTranslationMutation) SetSeo(cm *contentpb.SeoMeta) {
+	m.seo = &cm
+}
+
+// Seo returns the value of the "seo" field in the mutation.
+func (m *PageTranslationMutation) Seo() (r *contentpb.SeoMeta, exists bool) {
+	v := m.seo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeo returns the old "seo" field's value of the PageTranslation entity.
+// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageTranslationMutation) OldSeo(ctx context.Context) (v *contentpb.SeoMeta, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSeo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSeo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeo: %w", err)
+	}
+	return oldValue.Seo, nil
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (m *PageTranslationMutation) ClearSeo() {
+	m.seo = nil
+	m.clearedFields[pagetranslation.FieldSeo] = struct{}{}
+}
+
+// SeoCleared returns if the "seo" field was cleared in this mutation.
+func (m *PageTranslationMutation) SeoCleared() bool {
+	_, ok := m.clearedFields[pagetranslation.FieldSeo]
+	return ok
+}
+
+// ResetSeo resets all changes to the "seo" field.
+func (m *PageTranslationMutation) ResetSeo() {
+	m.seo = nil
+	delete(m.clearedFields, pagetranslation.FieldSeo)
+}
+
+// SetSections sets the "sections" field.
+func (m *PageTranslationMutation) SetSections(c []*contentpb.Section) {
+	m.sections = &c
+	m.appendsections = nil
+}
+
+// Sections returns the value of the "sections" field in the mutation.
+func (m *PageTranslationMutation) Sections() (r []*contentpb.Section, exists bool) {
+	v := m.sections
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSections returns the old "sections" field's value of the PageTranslation entity.
+// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageTranslationMutation) OldSections(ctx context.Context) (v []*contentpb.Section, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSections is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSections requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSections: %w", err)
+	}
+	return oldValue.Sections, nil
+}
+
+// AppendSections adds c to the "sections" field.
+func (m *PageTranslationMutation) AppendSections(c []*contentpb.Section) {
+	m.appendsections = append(m.appendsections, c...)
+}
+
+// AppendedSections returns the list of values that were appended to the "sections" field in this mutation.
+func (m *PageTranslationMutation) AppendedSections() ([]*contentpb.Section, bool) {
+	if len(m.appendsections) == 0 {
+		return nil, false
+	}
+	return m.appendsections, true
+}
+
+// ClearSections clears the value of the "sections" field.
+func (m *PageTranslationMutation) ClearSections() {
+	m.sections = nil
+	m.appendsections = nil
+	m.clearedFields[pagetranslation.FieldSections] = struct{}{}
+}
+
+// SectionsCleared returns if the "sections" field was cleared in this mutation.
+func (m *PageTranslationMutation) SectionsCleared() bool {
+	_, ok := m.clearedFields[pagetranslation.FieldSections]
+	return ok
+}
+
+// ResetSections resets all changes to the "sections" field.
+func (m *PageTranslationMutation) ResetSections() {
+	m.sections = nil
+	m.appendsections = nil
+	delete(m.clearedFields, pagetranslation.FieldSections)
+}
+
 // SetPageID sets the "page_id" field.
 func (m *PageTranslationMutation) SetPageID(u uint32) {
 	m.page_id = &u
@@ -49797,153 +49542,6 @@ func (m *PageTranslationMutation) ResetSlug() {
 	delete(m.clearedFields, pagetranslation.FieldSlug)
 }
 
-// SetSummary sets the "summary" field.
-func (m *PageTranslationMutation) SetSummary(s string) {
-	m.summary = &s
-}
-
-// Summary returns the value of the "summary" field in the mutation.
-func (m *PageTranslationMutation) Summary() (r string, exists bool) {
-	v := m.summary
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSummary returns the old "summary" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldSummary(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSummary is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSummary requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSummary: %w", err)
-	}
-	return oldValue.Summary, nil
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (m *PageTranslationMutation) ClearSummary() {
-	m.summary = nil
-	m.clearedFields[pagetranslation.FieldSummary] = struct{}{}
-}
-
-// SummaryCleared returns if the "summary" field was cleared in this mutation.
-func (m *PageTranslationMutation) SummaryCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldSummary]
-	return ok
-}
-
-// ResetSummary resets all changes to the "summary" field.
-func (m *PageTranslationMutation) ResetSummary() {
-	m.summary = nil
-	delete(m.clearedFields, pagetranslation.FieldSummary)
-}
-
-// SetContent sets the "content" field.
-func (m *PageTranslationMutation) SetContent(s string) {
-	m.content = &s
-}
-
-// Content returns the value of the "content" field in the mutation.
-func (m *PageTranslationMutation) Content() (r string, exists bool) {
-	v := m.content
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldContent returns the old "content" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldContent(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldContent is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldContent requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldContent: %w", err)
-	}
-	return oldValue.Content, nil
-}
-
-// ClearContent clears the value of the "content" field.
-func (m *PageTranslationMutation) ClearContent() {
-	m.content = nil
-	m.clearedFields[pagetranslation.FieldContent] = struct{}{}
-}
-
-// ContentCleared returns if the "content" field was cleared in this mutation.
-func (m *PageTranslationMutation) ContentCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldContent]
-	return ok
-}
-
-// ResetContent resets all changes to the "content" field.
-func (m *PageTranslationMutation) ResetContent() {
-	m.content = nil
-	delete(m.clearedFields, pagetranslation.FieldContent)
-}
-
-// SetOriginalContent sets the "original_content" field.
-func (m *PageTranslationMutation) SetOriginalContent(s string) {
-	m.original_content = &s
-}
-
-// OriginalContent returns the value of the "original_content" field in the mutation.
-func (m *PageTranslationMutation) OriginalContent() (r string, exists bool) {
-	v := m.original_content
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOriginalContent returns the old "original_content" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldOriginalContent(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOriginalContent is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOriginalContent requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOriginalContent: %w", err)
-	}
-	return oldValue.OriginalContent, nil
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (m *PageTranslationMutation) ClearOriginalContent() {
-	m.original_content = nil
-	m.clearedFields[pagetranslation.FieldOriginalContent] = struct{}{}
-}
-
-// OriginalContentCleared returns if the "original_content" field was cleared in this mutation.
-func (m *PageTranslationMutation) OriginalContentCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldOriginalContent]
-	return ok
-}
-
-// ResetOriginalContent resets all changes to the "original_content" field.
-func (m *PageTranslationMutation) ResetOriginalContent() {
-	m.original_content = nil
-	delete(m.clearedFields, pagetranslation.FieldOriginalContent)
-}
-
 // SetThumbnail sets the "thumbnail" field.
 func (m *PageTranslationMutation) SetThumbnail(s string) {
 	m.thumbnail = &s
@@ -50091,223 +49689,6 @@ func (m *PageTranslationMutation) ResetFullPath() {
 	delete(m.clearedFields, pagetranslation.FieldFullPath)
 }
 
-// SetWordCount sets the "word_count" field.
-func (m *PageTranslationMutation) SetWordCount(u uint32) {
-	m.word_count = &u
-	m.addword_count = nil
-}
-
-// WordCount returns the value of the "word_count" field in the mutation.
-func (m *PageTranslationMutation) WordCount() (r uint32, exists bool) {
-	v := m.word_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldWordCount returns the old "word_count" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldWordCount(ctx context.Context) (v *uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldWordCount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldWordCount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldWordCount: %w", err)
-	}
-	return oldValue.WordCount, nil
-}
-
-// AddWordCount adds u to the "word_count" field.
-func (m *PageTranslationMutation) AddWordCount(u int32) {
-	if m.addword_count != nil {
-		*m.addword_count += u
-	} else {
-		m.addword_count = &u
-	}
-}
-
-// AddedWordCount returns the value that was added to the "word_count" field in this mutation.
-func (m *PageTranslationMutation) AddedWordCount() (r int32, exists bool) {
-	v := m.addword_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (m *PageTranslationMutation) ClearWordCount() {
-	m.word_count = nil
-	m.addword_count = nil
-	m.clearedFields[pagetranslation.FieldWordCount] = struct{}{}
-}
-
-// WordCountCleared returns if the "word_count" field was cleared in this mutation.
-func (m *PageTranslationMutation) WordCountCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldWordCount]
-	return ok
-}
-
-// ResetWordCount resets all changes to the "word_count" field.
-func (m *PageTranslationMutation) ResetWordCount() {
-	m.word_count = nil
-	m.addword_count = nil
-	delete(m.clearedFields, pagetranslation.FieldWordCount)
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (m *PageTranslationMutation) SetMetaKeywords(s string) {
-	m.meta_keywords = &s
-}
-
-// MetaKeywords returns the value of the "meta_keywords" field in the mutation.
-func (m *PageTranslationMutation) MetaKeywords() (r string, exists bool) {
-	v := m.meta_keywords
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaKeywords returns the old "meta_keywords" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldMetaKeywords(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaKeywords is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaKeywords requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaKeywords: %w", err)
-	}
-	return oldValue.MetaKeywords, nil
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (m *PageTranslationMutation) ClearMetaKeywords() {
-	m.meta_keywords = nil
-	m.clearedFields[pagetranslation.FieldMetaKeywords] = struct{}{}
-}
-
-// MetaKeywordsCleared returns if the "meta_keywords" field was cleared in this mutation.
-func (m *PageTranslationMutation) MetaKeywordsCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldMetaKeywords]
-	return ok
-}
-
-// ResetMetaKeywords resets all changes to the "meta_keywords" field.
-func (m *PageTranslationMutation) ResetMetaKeywords() {
-	m.meta_keywords = nil
-	delete(m.clearedFields, pagetranslation.FieldMetaKeywords)
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (m *PageTranslationMutation) SetMetaDescription(s string) {
-	m.meta_description = &s
-}
-
-// MetaDescription returns the value of the "meta_description" field in the mutation.
-func (m *PageTranslationMutation) MetaDescription() (r string, exists bool) {
-	v := m.meta_description
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaDescription returns the old "meta_description" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldMetaDescription(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaDescription is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaDescription requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaDescription: %w", err)
-	}
-	return oldValue.MetaDescription, nil
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (m *PageTranslationMutation) ClearMetaDescription() {
-	m.meta_description = nil
-	m.clearedFields[pagetranslation.FieldMetaDescription] = struct{}{}
-}
-
-// MetaDescriptionCleared returns if the "meta_description" field was cleared in this mutation.
-func (m *PageTranslationMutation) MetaDescriptionCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldMetaDescription]
-	return ok
-}
-
-// ResetMetaDescription resets all changes to the "meta_description" field.
-func (m *PageTranslationMutation) ResetMetaDescription() {
-	m.meta_description = nil
-	delete(m.clearedFields, pagetranslation.FieldMetaDescription)
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (m *PageTranslationMutation) SetSeoTitle(s string) {
-	m.seo_title = &s
-}
-
-// SeoTitle returns the value of the "seo_title" field in the mutation.
-func (m *PageTranslationMutation) SeoTitle() (r string, exists bool) {
-	v := m.seo_title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSeoTitle returns the old "seo_title" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldSeoTitle(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSeoTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSeoTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSeoTitle: %w", err)
-	}
-	return oldValue.SeoTitle, nil
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (m *PageTranslationMutation) ClearSeoTitle() {
-	m.seo_title = nil
-	m.clearedFields[pagetranslation.FieldSeoTitle] = struct{}{}
-}
-
-// SeoTitleCleared returns if the "seo_title" field was cleared in this mutation.
-func (m *PageTranslationMutation) SeoTitleCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldSeoTitle]
-	return ok
-}
-
-// ResetSeoTitle resets all changes to the "seo_title" field.
-func (m *PageTranslationMutation) ResetSeoTitle() {
-	m.seo_title = nil
-	delete(m.clearedFields, pagetranslation.FieldSeoTitle)
-}
-
 // Where appends a list predicates to the PageTranslationMutation builder.
 func (m *PageTranslationMutation) Where(ps ...predicate.PageTranslation) {
 	m.predicates = append(m.predicates, ps...)
@@ -50342,7 +49723,7 @@ func (m *PageTranslationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PageTranslationMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, pagetranslation.FieldCreatedAt)
 	}
@@ -50361,6 +49742,12 @@ func (m *PageTranslationMutation) Fields() []string {
 	if m.deleted_by != nil {
 		fields = append(fields, pagetranslation.FieldDeletedBy)
 	}
+	if m.seo != nil {
+		fields = append(fields, pagetranslation.FieldSeo)
+	}
+	if m.sections != nil {
+		fields = append(fields, pagetranslation.FieldSections)
+	}
 	if m.page_id != nil {
 		fields = append(fields, pagetranslation.FieldPageID)
 	}
@@ -50373,15 +49760,6 @@ func (m *PageTranslationMutation) Fields() []string {
 	if m.slug != nil {
 		fields = append(fields, pagetranslation.FieldSlug)
 	}
-	if m.summary != nil {
-		fields = append(fields, pagetranslation.FieldSummary)
-	}
-	if m.content != nil {
-		fields = append(fields, pagetranslation.FieldContent)
-	}
-	if m.original_content != nil {
-		fields = append(fields, pagetranslation.FieldOriginalContent)
-	}
 	if m.thumbnail != nil {
 		fields = append(fields, pagetranslation.FieldThumbnail)
 	}
@@ -50390,18 +49768,6 @@ func (m *PageTranslationMutation) Fields() []string {
 	}
 	if m.full_path != nil {
 		fields = append(fields, pagetranslation.FieldFullPath)
-	}
-	if m.word_count != nil {
-		fields = append(fields, pagetranslation.FieldWordCount)
-	}
-	if m.meta_keywords != nil {
-		fields = append(fields, pagetranslation.FieldMetaKeywords)
-	}
-	if m.meta_description != nil {
-		fields = append(fields, pagetranslation.FieldMetaDescription)
-	}
-	if m.seo_title != nil {
-		fields = append(fields, pagetranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -50423,6 +49789,10 @@ func (m *PageTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case pagetranslation.FieldDeletedBy:
 		return m.DeletedBy()
+	case pagetranslation.FieldSeo:
+		return m.Seo()
+	case pagetranslation.FieldSections:
+		return m.Sections()
 	case pagetranslation.FieldPageID:
 		return m.PageID()
 	case pagetranslation.FieldLanguageCode:
@@ -50431,26 +49801,12 @@ func (m *PageTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case pagetranslation.FieldSlug:
 		return m.Slug()
-	case pagetranslation.FieldSummary:
-		return m.Summary()
-	case pagetranslation.FieldContent:
-		return m.Content()
-	case pagetranslation.FieldOriginalContent:
-		return m.OriginalContent()
 	case pagetranslation.FieldThumbnail:
 		return m.Thumbnail()
 	case pagetranslation.FieldCoverImage:
 		return m.CoverImage()
 	case pagetranslation.FieldFullPath:
 		return m.FullPath()
-	case pagetranslation.FieldWordCount:
-		return m.WordCount()
-	case pagetranslation.FieldMetaKeywords:
-		return m.MetaKeywords()
-	case pagetranslation.FieldMetaDescription:
-		return m.MetaDescription()
-	case pagetranslation.FieldSeoTitle:
-		return m.SeoTitle()
 	}
 	return nil, false
 }
@@ -50472,6 +49828,10 @@ func (m *PageTranslationMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUpdatedBy(ctx)
 	case pagetranslation.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case pagetranslation.FieldSeo:
+		return m.OldSeo(ctx)
+	case pagetranslation.FieldSections:
+		return m.OldSections(ctx)
 	case pagetranslation.FieldPageID:
 		return m.OldPageID(ctx)
 	case pagetranslation.FieldLanguageCode:
@@ -50480,26 +49840,12 @@ func (m *PageTranslationMutation) OldField(ctx context.Context, name string) (en
 		return m.OldTitle(ctx)
 	case pagetranslation.FieldSlug:
 		return m.OldSlug(ctx)
-	case pagetranslation.FieldSummary:
-		return m.OldSummary(ctx)
-	case pagetranslation.FieldContent:
-		return m.OldContent(ctx)
-	case pagetranslation.FieldOriginalContent:
-		return m.OldOriginalContent(ctx)
 	case pagetranslation.FieldThumbnail:
 		return m.OldThumbnail(ctx)
 	case pagetranslation.FieldCoverImage:
 		return m.OldCoverImage(ctx)
 	case pagetranslation.FieldFullPath:
 		return m.OldFullPath(ctx)
-	case pagetranslation.FieldWordCount:
-		return m.OldWordCount(ctx)
-	case pagetranslation.FieldMetaKeywords:
-		return m.OldMetaKeywords(ctx)
-	case pagetranslation.FieldMetaDescription:
-		return m.OldMetaDescription(ctx)
-	case pagetranslation.FieldSeoTitle:
-		return m.OldSeoTitle(ctx)
 	}
 	return nil, fmt.Errorf("unknown PageTranslation field %s", name)
 }
@@ -50551,6 +49897,20 @@ func (m *PageTranslationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedBy(v)
 		return nil
+	case pagetranslation.FieldSeo:
+		v, ok := value.(*contentpb.SeoMeta)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeo(v)
+		return nil
+	case pagetranslation.FieldSections:
+		v, ok := value.([]*contentpb.Section)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSections(v)
+		return nil
 	case pagetranslation.FieldPageID:
 		v, ok := value.(uint32)
 		if !ok {
@@ -50579,27 +49939,6 @@ func (m *PageTranslationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSlug(v)
 		return nil
-	case pagetranslation.FieldSummary:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSummary(v)
-		return nil
-	case pagetranslation.FieldContent:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetContent(v)
-		return nil
-	case pagetranslation.FieldOriginalContent:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOriginalContent(v)
-		return nil
 	case pagetranslation.FieldThumbnail:
 		v, ok := value.(string)
 		if !ok {
@@ -50621,34 +49960,6 @@ func (m *PageTranslationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetFullPath(v)
 		return nil
-	case pagetranslation.FieldWordCount:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetWordCount(v)
-		return nil
-	case pagetranslation.FieldMetaKeywords:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaKeywords(v)
-		return nil
-	case pagetranslation.FieldMetaDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaDescription(v)
-		return nil
-	case pagetranslation.FieldSeoTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSeoTitle(v)
-		return nil
 	}
 	return fmt.Errorf("unknown PageTranslation field %s", name)
 }
@@ -50669,9 +49980,6 @@ func (m *PageTranslationMutation) AddedFields() []string {
 	if m.addpage_id != nil {
 		fields = append(fields, pagetranslation.FieldPageID)
 	}
-	if m.addword_count != nil {
-		fields = append(fields, pagetranslation.FieldWordCount)
-	}
 	return fields
 }
 
@@ -50688,8 +49996,6 @@ func (m *PageTranslationMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeletedBy()
 	case pagetranslation.FieldPageID:
 		return m.AddedPageID()
-	case pagetranslation.FieldWordCount:
-		return m.AddedWordCount()
 	}
 	return nil, false
 }
@@ -50727,13 +50033,6 @@ func (m *PageTranslationMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddPageID(v)
 		return nil
-	case pagetranslation.FieldWordCount:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddWordCount(v)
-		return nil
 	}
 	return fmt.Errorf("unknown PageTranslation numeric field %s", name)
 }
@@ -50760,6 +50059,12 @@ func (m *PageTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(pagetranslation.FieldDeletedBy) {
 		fields = append(fields, pagetranslation.FieldDeletedBy)
 	}
+	if m.FieldCleared(pagetranslation.FieldSeo) {
+		fields = append(fields, pagetranslation.FieldSeo)
+	}
+	if m.FieldCleared(pagetranslation.FieldSections) {
+		fields = append(fields, pagetranslation.FieldSections)
+	}
 	if m.FieldCleared(pagetranslation.FieldPageID) {
 		fields = append(fields, pagetranslation.FieldPageID)
 	}
@@ -50772,15 +50077,6 @@ func (m *PageTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(pagetranslation.FieldSlug) {
 		fields = append(fields, pagetranslation.FieldSlug)
 	}
-	if m.FieldCleared(pagetranslation.FieldSummary) {
-		fields = append(fields, pagetranslation.FieldSummary)
-	}
-	if m.FieldCleared(pagetranslation.FieldContent) {
-		fields = append(fields, pagetranslation.FieldContent)
-	}
-	if m.FieldCleared(pagetranslation.FieldOriginalContent) {
-		fields = append(fields, pagetranslation.FieldOriginalContent)
-	}
 	if m.FieldCleared(pagetranslation.FieldThumbnail) {
 		fields = append(fields, pagetranslation.FieldThumbnail)
 	}
@@ -50789,18 +50085,6 @@ func (m *PageTranslationMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(pagetranslation.FieldFullPath) {
 		fields = append(fields, pagetranslation.FieldFullPath)
-	}
-	if m.FieldCleared(pagetranslation.FieldWordCount) {
-		fields = append(fields, pagetranslation.FieldWordCount)
-	}
-	if m.FieldCleared(pagetranslation.FieldMetaKeywords) {
-		fields = append(fields, pagetranslation.FieldMetaKeywords)
-	}
-	if m.FieldCleared(pagetranslation.FieldMetaDescription) {
-		fields = append(fields, pagetranslation.FieldMetaDescription)
-	}
-	if m.FieldCleared(pagetranslation.FieldSeoTitle) {
-		fields = append(fields, pagetranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -50834,6 +50118,12 @@ func (m *PageTranslationMutation) ClearField(name string) error {
 	case pagetranslation.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case pagetranslation.FieldSeo:
+		m.ClearSeo()
+		return nil
+	case pagetranslation.FieldSections:
+		m.ClearSections()
+		return nil
 	case pagetranslation.FieldPageID:
 		m.ClearPageID()
 		return nil
@@ -50846,15 +50136,6 @@ func (m *PageTranslationMutation) ClearField(name string) error {
 	case pagetranslation.FieldSlug:
 		m.ClearSlug()
 		return nil
-	case pagetranslation.FieldSummary:
-		m.ClearSummary()
-		return nil
-	case pagetranslation.FieldContent:
-		m.ClearContent()
-		return nil
-	case pagetranslation.FieldOriginalContent:
-		m.ClearOriginalContent()
-		return nil
 	case pagetranslation.FieldThumbnail:
 		m.ClearThumbnail()
 		return nil
@@ -50863,18 +50144,6 @@ func (m *PageTranslationMutation) ClearField(name string) error {
 		return nil
 	case pagetranslation.FieldFullPath:
 		m.ClearFullPath()
-		return nil
-	case pagetranslation.FieldWordCount:
-		m.ClearWordCount()
-		return nil
-	case pagetranslation.FieldMetaKeywords:
-		m.ClearMetaKeywords()
-		return nil
-	case pagetranslation.FieldMetaDescription:
-		m.ClearMetaDescription()
-		return nil
-	case pagetranslation.FieldSeoTitle:
-		m.ClearSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown PageTranslation nullable field %s", name)
@@ -50902,6 +50171,12 @@ func (m *PageTranslationMutation) ResetField(name string) error {
 	case pagetranslation.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case pagetranslation.FieldSeo:
+		m.ResetSeo()
+		return nil
+	case pagetranslation.FieldSections:
+		m.ResetSections()
+		return nil
 	case pagetranslation.FieldPageID:
 		m.ResetPageID()
 		return nil
@@ -50914,15 +50189,6 @@ func (m *PageTranslationMutation) ResetField(name string) error {
 	case pagetranslation.FieldSlug:
 		m.ResetSlug()
 		return nil
-	case pagetranslation.FieldSummary:
-		m.ResetSummary()
-		return nil
-	case pagetranslation.FieldContent:
-		m.ResetContent()
-		return nil
-	case pagetranslation.FieldOriginalContent:
-		m.ResetOriginalContent()
-		return nil
 	case pagetranslation.FieldThumbnail:
 		m.ResetThumbnail()
 		return nil
@@ -50931,18 +50197,6 @@ func (m *PageTranslationMutation) ResetField(name string) error {
 		return nil
 	case pagetranslation.FieldFullPath:
 		m.ResetFullPath()
-		return nil
-	case pagetranslation.FieldWordCount:
-		m.ResetWordCount()
-		return nil
-	case pagetranslation.FieldMetaKeywords:
-		m.ResetMetaKeywords()
-		return nil
-	case pagetranslation.FieldMetaDescription:
-		m.ResetMetaDescription()
-		return nil
-	case pagetranslation.FieldSeoTitle:
-		m.ResetSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown PageTranslation field %s", name)
@@ -65141,6 +64395,7 @@ type PostTranslationMutation struct {
 	addupdated_by    *int32
 	deleted_by       *uint32
 	adddeleted_by    *int32
+	seo              **contentpb.SeoMeta
 	post_id          *uint32
 	addpost_id       *int32
 	language_code    *string
@@ -65150,13 +64405,9 @@ type PostTranslationMutation struct {
 	content          *string
 	original_content *string
 	thumbnail        *string
-	template         *string
 	full_path        *string
 	word_count       *uint32
 	addword_count    *int32
-	meta_keywords    *string
-	meta_description *string
-	seo_title        *string
 	clearedFields    map[string]struct{}
 	done             bool
 	oldValue         func(context.Context) (*PostTranslation, error)
@@ -65624,6 +64875,55 @@ func (m *PostTranslationMutation) ResetDeletedBy() {
 	delete(m.clearedFields, posttranslation.FieldDeletedBy)
 }
 
+// SetSeo sets the "seo" field.
+func (m *PostTranslationMutation) SetSeo(cm *contentpb.SeoMeta) {
+	m.seo = &cm
+}
+
+// Seo returns the value of the "seo" field in the mutation.
+func (m *PostTranslationMutation) Seo() (r *contentpb.SeoMeta, exists bool) {
+	v := m.seo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeo returns the old "seo" field's value of the PostTranslation entity.
+// If the PostTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTranslationMutation) OldSeo(ctx context.Context) (v *contentpb.SeoMeta, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSeo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSeo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeo: %w", err)
+	}
+	return oldValue.Seo, nil
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (m *PostTranslationMutation) ClearSeo() {
+	m.seo = nil
+	m.clearedFields[posttranslation.FieldSeo] = struct{}{}
+}
+
+// SeoCleared returns if the "seo" field was cleared in this mutation.
+func (m *PostTranslationMutation) SeoCleared() bool {
+	_, ok := m.clearedFields[posttranslation.FieldSeo]
+	return ok
+}
+
+// ResetSeo resets all changes to the "seo" field.
+func (m *PostTranslationMutation) ResetSeo() {
+	m.seo = nil
+	delete(m.clearedFields, posttranslation.FieldSeo)
+}
+
 // SetPostID sets the "post_id" field.
 func (m *PostTranslationMutation) SetPostID(u uint32) {
 	m.post_id = &u
@@ -66037,55 +65337,6 @@ func (m *PostTranslationMutation) ResetThumbnail() {
 	delete(m.clearedFields, posttranslation.FieldThumbnail)
 }
 
-// SetTemplate sets the "template" field.
-func (m *PostTranslationMutation) SetTemplate(s string) {
-	m.template = &s
-}
-
-// Template returns the value of the "template" field in the mutation.
-func (m *PostTranslationMutation) Template() (r string, exists bool) {
-	v := m.template
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTemplate returns the old "template" field's value of the PostTranslation entity.
-// If the PostTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostTranslationMutation) OldTemplate(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTemplate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTemplate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTemplate: %w", err)
-	}
-	return oldValue.Template, nil
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (m *PostTranslationMutation) ClearTemplate() {
-	m.template = nil
-	m.clearedFields[posttranslation.FieldTemplate] = struct{}{}
-}
-
-// TemplateCleared returns if the "template" field was cleared in this mutation.
-func (m *PostTranslationMutation) TemplateCleared() bool {
-	_, ok := m.clearedFields[posttranslation.FieldTemplate]
-	return ok
-}
-
-// ResetTemplate resets all changes to the "template" field.
-func (m *PostTranslationMutation) ResetTemplate() {
-	m.template = nil
-	delete(m.clearedFields, posttranslation.FieldTemplate)
-}
-
 // SetFullPath sets the "full_path" field.
 func (m *PostTranslationMutation) SetFullPath(s string) {
 	m.full_path = &s
@@ -66205,153 +65456,6 @@ func (m *PostTranslationMutation) ResetWordCount() {
 	delete(m.clearedFields, posttranslation.FieldWordCount)
 }
 
-// SetMetaKeywords sets the "meta_keywords" field.
-func (m *PostTranslationMutation) SetMetaKeywords(s string) {
-	m.meta_keywords = &s
-}
-
-// MetaKeywords returns the value of the "meta_keywords" field in the mutation.
-func (m *PostTranslationMutation) MetaKeywords() (r string, exists bool) {
-	v := m.meta_keywords
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaKeywords returns the old "meta_keywords" field's value of the PostTranslation entity.
-// If the PostTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostTranslationMutation) OldMetaKeywords(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaKeywords is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaKeywords requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaKeywords: %w", err)
-	}
-	return oldValue.MetaKeywords, nil
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (m *PostTranslationMutation) ClearMetaKeywords() {
-	m.meta_keywords = nil
-	m.clearedFields[posttranslation.FieldMetaKeywords] = struct{}{}
-}
-
-// MetaKeywordsCleared returns if the "meta_keywords" field was cleared in this mutation.
-func (m *PostTranslationMutation) MetaKeywordsCleared() bool {
-	_, ok := m.clearedFields[posttranslation.FieldMetaKeywords]
-	return ok
-}
-
-// ResetMetaKeywords resets all changes to the "meta_keywords" field.
-func (m *PostTranslationMutation) ResetMetaKeywords() {
-	m.meta_keywords = nil
-	delete(m.clearedFields, posttranslation.FieldMetaKeywords)
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (m *PostTranslationMutation) SetMetaDescription(s string) {
-	m.meta_description = &s
-}
-
-// MetaDescription returns the value of the "meta_description" field in the mutation.
-func (m *PostTranslationMutation) MetaDescription() (r string, exists bool) {
-	v := m.meta_description
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaDescription returns the old "meta_description" field's value of the PostTranslation entity.
-// If the PostTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostTranslationMutation) OldMetaDescription(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaDescription is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaDescription requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaDescription: %w", err)
-	}
-	return oldValue.MetaDescription, nil
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (m *PostTranslationMutation) ClearMetaDescription() {
-	m.meta_description = nil
-	m.clearedFields[posttranslation.FieldMetaDescription] = struct{}{}
-}
-
-// MetaDescriptionCleared returns if the "meta_description" field was cleared in this mutation.
-func (m *PostTranslationMutation) MetaDescriptionCleared() bool {
-	_, ok := m.clearedFields[posttranslation.FieldMetaDescription]
-	return ok
-}
-
-// ResetMetaDescription resets all changes to the "meta_description" field.
-func (m *PostTranslationMutation) ResetMetaDescription() {
-	m.meta_description = nil
-	delete(m.clearedFields, posttranslation.FieldMetaDescription)
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (m *PostTranslationMutation) SetSeoTitle(s string) {
-	m.seo_title = &s
-}
-
-// SeoTitle returns the value of the "seo_title" field in the mutation.
-func (m *PostTranslationMutation) SeoTitle() (r string, exists bool) {
-	v := m.seo_title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSeoTitle returns the old "seo_title" field's value of the PostTranslation entity.
-// If the PostTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostTranslationMutation) OldSeoTitle(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSeoTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSeoTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSeoTitle: %w", err)
-	}
-	return oldValue.SeoTitle, nil
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (m *PostTranslationMutation) ClearSeoTitle() {
-	m.seo_title = nil
-	m.clearedFields[posttranslation.FieldSeoTitle] = struct{}{}
-}
-
-// SeoTitleCleared returns if the "seo_title" field was cleared in this mutation.
-func (m *PostTranslationMutation) SeoTitleCleared() bool {
-	_, ok := m.clearedFields[posttranslation.FieldSeoTitle]
-	return ok
-}
-
-// ResetSeoTitle resets all changes to the "seo_title" field.
-func (m *PostTranslationMutation) ResetSeoTitle() {
-	m.seo_title = nil
-	delete(m.clearedFields, posttranslation.FieldSeoTitle)
-}
-
 // Where appends a list predicates to the PostTranslationMutation builder.
 func (m *PostTranslationMutation) Where(ps ...predicate.PostTranslation) {
 	m.predicates = append(m.predicates, ps...)
@@ -66386,7 +65490,7 @@ func (m *PostTranslationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostTranslationMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, posttranslation.FieldCreatedAt)
 	}
@@ -66404,6 +65508,9 @@ func (m *PostTranslationMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, posttranslation.FieldDeletedBy)
+	}
+	if m.seo != nil {
+		fields = append(fields, posttranslation.FieldSeo)
 	}
 	if m.post_id != nil {
 		fields = append(fields, posttranslation.FieldPostID)
@@ -66429,23 +65536,11 @@ func (m *PostTranslationMutation) Fields() []string {
 	if m.thumbnail != nil {
 		fields = append(fields, posttranslation.FieldThumbnail)
 	}
-	if m.template != nil {
-		fields = append(fields, posttranslation.FieldTemplate)
-	}
 	if m.full_path != nil {
 		fields = append(fields, posttranslation.FieldFullPath)
 	}
 	if m.word_count != nil {
 		fields = append(fields, posttranslation.FieldWordCount)
-	}
-	if m.meta_keywords != nil {
-		fields = append(fields, posttranslation.FieldMetaKeywords)
-	}
-	if m.meta_description != nil {
-		fields = append(fields, posttranslation.FieldMetaDescription)
-	}
-	if m.seo_title != nil {
-		fields = append(fields, posttranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -66467,6 +65562,8 @@ func (m *PostTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case posttranslation.FieldDeletedBy:
 		return m.DeletedBy()
+	case posttranslation.FieldSeo:
+		return m.Seo()
 	case posttranslation.FieldPostID:
 		return m.PostID()
 	case posttranslation.FieldLanguageCode:
@@ -66483,18 +65580,10 @@ func (m *PostTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.OriginalContent()
 	case posttranslation.FieldThumbnail:
 		return m.Thumbnail()
-	case posttranslation.FieldTemplate:
-		return m.Template()
 	case posttranslation.FieldFullPath:
 		return m.FullPath()
 	case posttranslation.FieldWordCount:
 		return m.WordCount()
-	case posttranslation.FieldMetaKeywords:
-		return m.MetaKeywords()
-	case posttranslation.FieldMetaDescription:
-		return m.MetaDescription()
-	case posttranslation.FieldSeoTitle:
-		return m.SeoTitle()
 	}
 	return nil, false
 }
@@ -66516,6 +65605,8 @@ func (m *PostTranslationMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUpdatedBy(ctx)
 	case posttranslation.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case posttranslation.FieldSeo:
+		return m.OldSeo(ctx)
 	case posttranslation.FieldPostID:
 		return m.OldPostID(ctx)
 	case posttranslation.FieldLanguageCode:
@@ -66532,18 +65623,10 @@ func (m *PostTranslationMutation) OldField(ctx context.Context, name string) (en
 		return m.OldOriginalContent(ctx)
 	case posttranslation.FieldThumbnail:
 		return m.OldThumbnail(ctx)
-	case posttranslation.FieldTemplate:
-		return m.OldTemplate(ctx)
 	case posttranslation.FieldFullPath:
 		return m.OldFullPath(ctx)
 	case posttranslation.FieldWordCount:
 		return m.OldWordCount(ctx)
-	case posttranslation.FieldMetaKeywords:
-		return m.OldMetaKeywords(ctx)
-	case posttranslation.FieldMetaDescription:
-		return m.OldMetaDescription(ctx)
-	case posttranslation.FieldSeoTitle:
-		return m.OldSeoTitle(ctx)
 	}
 	return nil, fmt.Errorf("unknown PostTranslation field %s", name)
 }
@@ -66594,6 +65677,13 @@ func (m *PostTranslationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case posttranslation.FieldSeo:
+		v, ok := value.(*contentpb.SeoMeta)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeo(v)
 		return nil
 	case posttranslation.FieldPostID:
 		v, ok := value.(uint32)
@@ -66651,13 +65741,6 @@ func (m *PostTranslationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetThumbnail(v)
 		return nil
-	case posttranslation.FieldTemplate:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTemplate(v)
-		return nil
 	case posttranslation.FieldFullPath:
 		v, ok := value.(string)
 		if !ok {
@@ -66671,27 +65754,6 @@ func (m *PostTranslationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWordCount(v)
-		return nil
-	case posttranslation.FieldMetaKeywords:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaKeywords(v)
-		return nil
-	case posttranslation.FieldMetaDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaDescription(v)
-		return nil
-	case posttranslation.FieldSeoTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSeoTitle(v)
 		return nil
 	}
 	return fmt.Errorf("unknown PostTranslation field %s", name)
@@ -66804,6 +65866,9 @@ func (m *PostTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(posttranslation.FieldDeletedBy) {
 		fields = append(fields, posttranslation.FieldDeletedBy)
 	}
+	if m.FieldCleared(posttranslation.FieldSeo) {
+		fields = append(fields, posttranslation.FieldSeo)
+	}
 	if m.FieldCleared(posttranslation.FieldPostID) {
 		fields = append(fields, posttranslation.FieldPostID)
 	}
@@ -66828,23 +65893,11 @@ func (m *PostTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(posttranslation.FieldThumbnail) {
 		fields = append(fields, posttranslation.FieldThumbnail)
 	}
-	if m.FieldCleared(posttranslation.FieldTemplate) {
-		fields = append(fields, posttranslation.FieldTemplate)
-	}
 	if m.FieldCleared(posttranslation.FieldFullPath) {
 		fields = append(fields, posttranslation.FieldFullPath)
 	}
 	if m.FieldCleared(posttranslation.FieldWordCount) {
 		fields = append(fields, posttranslation.FieldWordCount)
-	}
-	if m.FieldCleared(posttranslation.FieldMetaKeywords) {
-		fields = append(fields, posttranslation.FieldMetaKeywords)
-	}
-	if m.FieldCleared(posttranslation.FieldMetaDescription) {
-		fields = append(fields, posttranslation.FieldMetaDescription)
-	}
-	if m.FieldCleared(posttranslation.FieldSeoTitle) {
-		fields = append(fields, posttranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -66878,6 +65931,9 @@ func (m *PostTranslationMutation) ClearField(name string) error {
 	case posttranslation.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case posttranslation.FieldSeo:
+		m.ClearSeo()
+		return nil
 	case posttranslation.FieldPostID:
 		m.ClearPostID()
 		return nil
@@ -66902,23 +65958,11 @@ func (m *PostTranslationMutation) ClearField(name string) error {
 	case posttranslation.FieldThumbnail:
 		m.ClearThumbnail()
 		return nil
-	case posttranslation.FieldTemplate:
-		m.ClearTemplate()
-		return nil
 	case posttranslation.FieldFullPath:
 		m.ClearFullPath()
 		return nil
 	case posttranslation.FieldWordCount:
 		m.ClearWordCount()
-		return nil
-	case posttranslation.FieldMetaKeywords:
-		m.ClearMetaKeywords()
-		return nil
-	case posttranslation.FieldMetaDescription:
-		m.ClearMetaDescription()
-		return nil
-	case posttranslation.FieldSeoTitle:
-		m.ClearSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown PostTranslation nullable field %s", name)
@@ -66946,6 +65990,9 @@ func (m *PostTranslationMutation) ResetField(name string) error {
 	case posttranslation.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case posttranslation.FieldSeo:
+		m.ResetSeo()
+		return nil
 	case posttranslation.FieldPostID:
 		m.ResetPostID()
 		return nil
@@ -66970,23 +66017,11 @@ func (m *PostTranslationMutation) ResetField(name string) error {
 	case posttranslation.FieldThumbnail:
 		m.ResetThumbnail()
 		return nil
-	case posttranslation.FieldTemplate:
-		m.ResetTemplate()
-		return nil
 	case posttranslation.FieldFullPath:
 		m.ResetFullPath()
 		return nil
 	case posttranslation.FieldWordCount:
 		m.ResetWordCount()
-		return nil
-	case posttranslation.FieldMetaKeywords:
-		m.ResetMetaKeywords()
-		return nil
-	case posttranslation.FieldMetaDescription:
-		m.ResetMetaDescription()
-		return nil
-	case posttranslation.FieldSeoTitle:
-		m.ResetSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown PostTranslation field %s", name)
@@ -76467,35 +75502,31 @@ func (m *TagMutation) ResetEdge(name string) error {
 // TagTranslationMutation represents an operation that mutates the TagTranslation nodes in the graph.
 type TagTranslationMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *uint32
-	created_at       *time.Time
-	updated_at       *time.Time
-	deleted_at       *time.Time
-	created_by       *uint32
-	addcreated_by    *int32
-	updated_by       *uint32
-	addupdated_by    *int32
-	deleted_by       *uint32
-	adddeleted_by    *int32
-	tag_id           *uint32
-	addtag_id        *int32
-	language_code    *string
-	name             *string
-	slug             *string
-	description      *string
-	cover_image      *string
-	template         *string
-	full_path        *string
-	canonical_url    *string
-	meta_keywords    *string
-	meta_description *string
-	seo_title        *string
-	clearedFields    map[string]struct{}
-	done             bool
-	oldValue         func(context.Context) (*TagTranslation, error)
-	predicates       []predicate.TagTranslation
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	seo           **contentpb.SeoMeta
+	tag_id        *uint32
+	addtag_id     *int32
+	language_code *string
+	name          *string
+	slug          *string
+	description   *string
+	cover_image   *string
+	full_path     *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*TagTranslation, error)
+	predicates    []predicate.TagTranslation
 }
 
 var _ ent.Mutation = (*TagTranslationMutation)(nil)
@@ -76959,6 +75990,55 @@ func (m *TagTranslationMutation) ResetDeletedBy() {
 	delete(m.clearedFields, tagtranslation.FieldDeletedBy)
 }
 
+// SetSeo sets the "seo" field.
+func (m *TagTranslationMutation) SetSeo(cm *contentpb.SeoMeta) {
+	m.seo = &cm
+}
+
+// Seo returns the value of the "seo" field in the mutation.
+func (m *TagTranslationMutation) Seo() (r *contentpb.SeoMeta, exists bool) {
+	v := m.seo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeo returns the old "seo" field's value of the TagTranslation entity.
+// If the TagTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagTranslationMutation) OldSeo(ctx context.Context) (v *contentpb.SeoMeta, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSeo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSeo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeo: %w", err)
+	}
+	return oldValue.Seo, nil
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (m *TagTranslationMutation) ClearSeo() {
+	m.seo = nil
+	m.clearedFields[tagtranslation.FieldSeo] = struct{}{}
+}
+
+// SeoCleared returns if the "seo" field was cleared in this mutation.
+func (m *TagTranslationMutation) SeoCleared() bool {
+	_, ok := m.clearedFields[tagtranslation.FieldSeo]
+	return ok
+}
+
+// ResetSeo resets all changes to the "seo" field.
+func (m *TagTranslationMutation) ResetSeo() {
+	m.seo = nil
+	delete(m.clearedFields, tagtranslation.FieldSeo)
+}
+
 // SetTagID sets the "tag_id" field.
 func (m *TagTranslationMutation) SetTagID(u uint32) {
 	m.tag_id = &u
@@ -77274,55 +76354,6 @@ func (m *TagTranslationMutation) ResetCoverImage() {
 	delete(m.clearedFields, tagtranslation.FieldCoverImage)
 }
 
-// SetTemplate sets the "template" field.
-func (m *TagTranslationMutation) SetTemplate(s string) {
-	m.template = &s
-}
-
-// Template returns the value of the "template" field in the mutation.
-func (m *TagTranslationMutation) Template() (r string, exists bool) {
-	v := m.template
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTemplate returns the old "template" field's value of the TagTranslation entity.
-// If the TagTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TagTranslationMutation) OldTemplate(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTemplate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTemplate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTemplate: %w", err)
-	}
-	return oldValue.Template, nil
-}
-
-// ClearTemplate clears the value of the "template" field.
-func (m *TagTranslationMutation) ClearTemplate() {
-	m.template = nil
-	m.clearedFields[tagtranslation.FieldTemplate] = struct{}{}
-}
-
-// TemplateCleared returns if the "template" field was cleared in this mutation.
-func (m *TagTranslationMutation) TemplateCleared() bool {
-	_, ok := m.clearedFields[tagtranslation.FieldTemplate]
-	return ok
-}
-
-// ResetTemplate resets all changes to the "template" field.
-func (m *TagTranslationMutation) ResetTemplate() {
-	m.template = nil
-	delete(m.clearedFields, tagtranslation.FieldTemplate)
-}
-
 // SetFullPath sets the "full_path" field.
 func (m *TagTranslationMutation) SetFullPath(s string) {
 	m.full_path = &s
@@ -77372,202 +76403,6 @@ func (m *TagTranslationMutation) ResetFullPath() {
 	delete(m.clearedFields, tagtranslation.FieldFullPath)
 }
 
-// SetCanonicalURL sets the "canonical_url" field.
-func (m *TagTranslationMutation) SetCanonicalURL(s string) {
-	m.canonical_url = &s
-}
-
-// CanonicalURL returns the value of the "canonical_url" field in the mutation.
-func (m *TagTranslationMutation) CanonicalURL() (r string, exists bool) {
-	v := m.canonical_url
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCanonicalURL returns the old "canonical_url" field's value of the TagTranslation entity.
-// If the TagTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TagTranslationMutation) OldCanonicalURL(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCanonicalURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCanonicalURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCanonicalURL: %w", err)
-	}
-	return oldValue.CanonicalURL, nil
-}
-
-// ClearCanonicalURL clears the value of the "canonical_url" field.
-func (m *TagTranslationMutation) ClearCanonicalURL() {
-	m.canonical_url = nil
-	m.clearedFields[tagtranslation.FieldCanonicalURL] = struct{}{}
-}
-
-// CanonicalURLCleared returns if the "canonical_url" field was cleared in this mutation.
-func (m *TagTranslationMutation) CanonicalURLCleared() bool {
-	_, ok := m.clearedFields[tagtranslation.FieldCanonicalURL]
-	return ok
-}
-
-// ResetCanonicalURL resets all changes to the "canonical_url" field.
-func (m *TagTranslationMutation) ResetCanonicalURL() {
-	m.canonical_url = nil
-	delete(m.clearedFields, tagtranslation.FieldCanonicalURL)
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (m *TagTranslationMutation) SetMetaKeywords(s string) {
-	m.meta_keywords = &s
-}
-
-// MetaKeywords returns the value of the "meta_keywords" field in the mutation.
-func (m *TagTranslationMutation) MetaKeywords() (r string, exists bool) {
-	v := m.meta_keywords
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaKeywords returns the old "meta_keywords" field's value of the TagTranslation entity.
-// If the TagTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TagTranslationMutation) OldMetaKeywords(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaKeywords is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaKeywords requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaKeywords: %w", err)
-	}
-	return oldValue.MetaKeywords, nil
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (m *TagTranslationMutation) ClearMetaKeywords() {
-	m.meta_keywords = nil
-	m.clearedFields[tagtranslation.FieldMetaKeywords] = struct{}{}
-}
-
-// MetaKeywordsCleared returns if the "meta_keywords" field was cleared in this mutation.
-func (m *TagTranslationMutation) MetaKeywordsCleared() bool {
-	_, ok := m.clearedFields[tagtranslation.FieldMetaKeywords]
-	return ok
-}
-
-// ResetMetaKeywords resets all changes to the "meta_keywords" field.
-func (m *TagTranslationMutation) ResetMetaKeywords() {
-	m.meta_keywords = nil
-	delete(m.clearedFields, tagtranslation.FieldMetaKeywords)
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (m *TagTranslationMutation) SetMetaDescription(s string) {
-	m.meta_description = &s
-}
-
-// MetaDescription returns the value of the "meta_description" field in the mutation.
-func (m *TagTranslationMutation) MetaDescription() (r string, exists bool) {
-	v := m.meta_description
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMetaDescription returns the old "meta_description" field's value of the TagTranslation entity.
-// If the TagTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TagTranslationMutation) OldMetaDescription(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetaDescription is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetaDescription requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetaDescription: %w", err)
-	}
-	return oldValue.MetaDescription, nil
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (m *TagTranslationMutation) ClearMetaDescription() {
-	m.meta_description = nil
-	m.clearedFields[tagtranslation.FieldMetaDescription] = struct{}{}
-}
-
-// MetaDescriptionCleared returns if the "meta_description" field was cleared in this mutation.
-func (m *TagTranslationMutation) MetaDescriptionCleared() bool {
-	_, ok := m.clearedFields[tagtranslation.FieldMetaDescription]
-	return ok
-}
-
-// ResetMetaDescription resets all changes to the "meta_description" field.
-func (m *TagTranslationMutation) ResetMetaDescription() {
-	m.meta_description = nil
-	delete(m.clearedFields, tagtranslation.FieldMetaDescription)
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (m *TagTranslationMutation) SetSeoTitle(s string) {
-	m.seo_title = &s
-}
-
-// SeoTitle returns the value of the "seo_title" field in the mutation.
-func (m *TagTranslationMutation) SeoTitle() (r string, exists bool) {
-	v := m.seo_title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSeoTitle returns the old "seo_title" field's value of the TagTranslation entity.
-// If the TagTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TagTranslationMutation) OldSeoTitle(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSeoTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSeoTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSeoTitle: %w", err)
-	}
-	return oldValue.SeoTitle, nil
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (m *TagTranslationMutation) ClearSeoTitle() {
-	m.seo_title = nil
-	m.clearedFields[tagtranslation.FieldSeoTitle] = struct{}{}
-}
-
-// SeoTitleCleared returns if the "seo_title" field was cleared in this mutation.
-func (m *TagTranslationMutation) SeoTitleCleared() bool {
-	_, ok := m.clearedFields[tagtranslation.FieldSeoTitle]
-	return ok
-}
-
-// ResetSeoTitle resets all changes to the "seo_title" field.
-func (m *TagTranslationMutation) ResetSeoTitle() {
-	m.seo_title = nil
-	delete(m.clearedFields, tagtranslation.FieldSeoTitle)
-}
-
 // Where appends a list predicates to the TagTranslationMutation builder.
 func (m *TagTranslationMutation) Where(ps ...predicate.TagTranslation) {
 	m.predicates = append(m.predicates, ps...)
@@ -77602,7 +76437,7 @@ func (m *TagTranslationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TagTranslationMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, tagtranslation.FieldCreatedAt)
 	}
@@ -77620,6 +76455,9 @@ func (m *TagTranslationMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, tagtranslation.FieldDeletedBy)
+	}
+	if m.seo != nil {
+		fields = append(fields, tagtranslation.FieldSeo)
 	}
 	if m.tag_id != nil {
 		fields = append(fields, tagtranslation.FieldTagID)
@@ -77639,23 +76477,8 @@ func (m *TagTranslationMutation) Fields() []string {
 	if m.cover_image != nil {
 		fields = append(fields, tagtranslation.FieldCoverImage)
 	}
-	if m.template != nil {
-		fields = append(fields, tagtranslation.FieldTemplate)
-	}
 	if m.full_path != nil {
 		fields = append(fields, tagtranslation.FieldFullPath)
-	}
-	if m.canonical_url != nil {
-		fields = append(fields, tagtranslation.FieldCanonicalURL)
-	}
-	if m.meta_keywords != nil {
-		fields = append(fields, tagtranslation.FieldMetaKeywords)
-	}
-	if m.meta_description != nil {
-		fields = append(fields, tagtranslation.FieldMetaDescription)
-	}
-	if m.seo_title != nil {
-		fields = append(fields, tagtranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -77677,6 +76500,8 @@ func (m *TagTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case tagtranslation.FieldDeletedBy:
 		return m.DeletedBy()
+	case tagtranslation.FieldSeo:
+		return m.Seo()
 	case tagtranslation.FieldTagID:
 		return m.TagID()
 	case tagtranslation.FieldLanguageCode:
@@ -77689,18 +76514,8 @@ func (m *TagTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case tagtranslation.FieldCoverImage:
 		return m.CoverImage()
-	case tagtranslation.FieldTemplate:
-		return m.Template()
 	case tagtranslation.FieldFullPath:
 		return m.FullPath()
-	case tagtranslation.FieldCanonicalURL:
-		return m.CanonicalURL()
-	case tagtranslation.FieldMetaKeywords:
-		return m.MetaKeywords()
-	case tagtranslation.FieldMetaDescription:
-		return m.MetaDescription()
-	case tagtranslation.FieldSeoTitle:
-		return m.SeoTitle()
 	}
 	return nil, false
 }
@@ -77722,6 +76537,8 @@ func (m *TagTranslationMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldUpdatedBy(ctx)
 	case tagtranslation.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case tagtranslation.FieldSeo:
+		return m.OldSeo(ctx)
 	case tagtranslation.FieldTagID:
 		return m.OldTagID(ctx)
 	case tagtranslation.FieldLanguageCode:
@@ -77734,18 +76551,8 @@ func (m *TagTranslationMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldDescription(ctx)
 	case tagtranslation.FieldCoverImage:
 		return m.OldCoverImage(ctx)
-	case tagtranslation.FieldTemplate:
-		return m.OldTemplate(ctx)
 	case tagtranslation.FieldFullPath:
 		return m.OldFullPath(ctx)
-	case tagtranslation.FieldCanonicalURL:
-		return m.OldCanonicalURL(ctx)
-	case tagtranslation.FieldMetaKeywords:
-		return m.OldMetaKeywords(ctx)
-	case tagtranslation.FieldMetaDescription:
-		return m.OldMetaDescription(ctx)
-	case tagtranslation.FieldSeoTitle:
-		return m.OldSeoTitle(ctx)
 	}
 	return nil, fmt.Errorf("unknown TagTranslation field %s", name)
 }
@@ -77797,6 +76604,13 @@ func (m *TagTranslationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedBy(v)
 		return nil
+	case tagtranslation.FieldSeo:
+		v, ok := value.(*contentpb.SeoMeta)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeo(v)
+		return nil
 	case tagtranslation.FieldTagID:
 		v, ok := value.(uint32)
 		if !ok {
@@ -77839,47 +76653,12 @@ func (m *TagTranslationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCoverImage(v)
 		return nil
-	case tagtranslation.FieldTemplate:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTemplate(v)
-		return nil
 	case tagtranslation.FieldFullPath:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFullPath(v)
-		return nil
-	case tagtranslation.FieldCanonicalURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCanonicalURL(v)
-		return nil
-	case tagtranslation.FieldMetaKeywords:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaKeywords(v)
-		return nil
-	case tagtranslation.FieldMetaDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMetaDescription(v)
-		return nil
-	case tagtranslation.FieldSeoTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSeoTitle(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TagTranslation field %s", name)
@@ -77980,6 +76759,9 @@ func (m *TagTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(tagtranslation.FieldDeletedBy) {
 		fields = append(fields, tagtranslation.FieldDeletedBy)
 	}
+	if m.FieldCleared(tagtranslation.FieldSeo) {
+		fields = append(fields, tagtranslation.FieldSeo)
+	}
 	if m.FieldCleared(tagtranslation.FieldTagID) {
 		fields = append(fields, tagtranslation.FieldTagID)
 	}
@@ -77998,23 +76780,8 @@ func (m *TagTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(tagtranslation.FieldCoverImage) {
 		fields = append(fields, tagtranslation.FieldCoverImage)
 	}
-	if m.FieldCleared(tagtranslation.FieldTemplate) {
-		fields = append(fields, tagtranslation.FieldTemplate)
-	}
 	if m.FieldCleared(tagtranslation.FieldFullPath) {
 		fields = append(fields, tagtranslation.FieldFullPath)
-	}
-	if m.FieldCleared(tagtranslation.FieldCanonicalURL) {
-		fields = append(fields, tagtranslation.FieldCanonicalURL)
-	}
-	if m.FieldCleared(tagtranslation.FieldMetaKeywords) {
-		fields = append(fields, tagtranslation.FieldMetaKeywords)
-	}
-	if m.FieldCleared(tagtranslation.FieldMetaDescription) {
-		fields = append(fields, tagtranslation.FieldMetaDescription)
-	}
-	if m.FieldCleared(tagtranslation.FieldSeoTitle) {
-		fields = append(fields, tagtranslation.FieldSeoTitle)
 	}
 	return fields
 }
@@ -78048,6 +76815,9 @@ func (m *TagTranslationMutation) ClearField(name string) error {
 	case tagtranslation.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case tagtranslation.FieldSeo:
+		m.ClearSeo()
+		return nil
 	case tagtranslation.FieldTagID:
 		m.ClearTagID()
 		return nil
@@ -78066,23 +76836,8 @@ func (m *TagTranslationMutation) ClearField(name string) error {
 	case tagtranslation.FieldCoverImage:
 		m.ClearCoverImage()
 		return nil
-	case tagtranslation.FieldTemplate:
-		m.ClearTemplate()
-		return nil
 	case tagtranslation.FieldFullPath:
 		m.ClearFullPath()
-		return nil
-	case tagtranslation.FieldCanonicalURL:
-		m.ClearCanonicalURL()
-		return nil
-	case tagtranslation.FieldMetaKeywords:
-		m.ClearMetaKeywords()
-		return nil
-	case tagtranslation.FieldMetaDescription:
-		m.ClearMetaDescription()
-		return nil
-	case tagtranslation.FieldSeoTitle:
-		m.ClearSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown TagTranslation nullable field %s", name)
@@ -78110,6 +76865,9 @@ func (m *TagTranslationMutation) ResetField(name string) error {
 	case tagtranslation.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case tagtranslation.FieldSeo:
+		m.ResetSeo()
+		return nil
 	case tagtranslation.FieldTagID:
 		m.ResetTagID()
 		return nil
@@ -78128,23 +76886,8 @@ func (m *TagTranslationMutation) ResetField(name string) error {
 	case tagtranslation.FieldCoverImage:
 		m.ResetCoverImage()
 		return nil
-	case tagtranslation.FieldTemplate:
-		m.ResetTemplate()
-		return nil
 	case tagtranslation.FieldFullPath:
 		m.ResetFullPath()
-		return nil
-	case tagtranslation.FieldCanonicalURL:
-		m.ResetCanonicalURL()
-		return nil
-	case tagtranslation.FieldMetaKeywords:
-		m.ResetMetaKeywords()
-		return nil
-	case tagtranslation.FieldMetaDescription:
-		m.ResetMetaDescription()
-		return nil
-	case tagtranslation.FieldSeoTitle:
-		m.ResetSeoTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown TagTranslation field %s", name)

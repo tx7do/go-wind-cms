@@ -854,7 +854,7 @@ func init() {
 	// page.DefaultVisits holds the default value on creation for the visits field.
 	page.DefaultVisits = pageDescVisits.Default.(uint32)
 	// pageDescDepth is the schema descriptor for depth field.
-	pageDescDepth := pageFields[14].Descriptor()
+	pageDescDepth := pageFields[12].Descriptor()
 	// page.DefaultDepth holds the default value on creation for the depth field.
 	page.DefaultDepth = pageDescDepth.Default.(int32)
 	// pageDescID is the schema descriptor for id field.
@@ -866,10 +866,6 @@ func init() {
 	_ = pagetranslationMixinFields0
 	pagetranslationFields := schema.PageTranslation{}.Fields()
 	_ = pagetranslationFields
-	// pagetranslationDescWordCount is the schema descriptor for word_count field.
-	pagetranslationDescWordCount := pagetranslationFields[10].Descriptor()
-	// pagetranslation.DefaultWordCount holds the default value on creation for the word_count field.
-	pagetranslation.DefaultWordCount = pagetranslationDescWordCount.Default.(uint32)
 	// pagetranslationDescID is the schema descriptor for id field.
 	pagetranslationDescID := pagetranslationMixinFields0[0].Descriptor()
 	// pagetranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1130,7 +1126,7 @@ func init() {
 	posttranslationFields := schema.PostTranslation{}.Fields()
 	_ = posttranslationFields
 	// posttranslationDescWordCount is the schema descriptor for word_count field.
-	posttranslationDescWordCount := posttranslationFields[10].Descriptor()
+	posttranslationDescWordCount := posttranslationFields[9].Descriptor()
 	// posttranslation.DefaultWordCount holds the default value on creation for the word_count field.
 	posttranslation.DefaultWordCount = posttranslationDescWordCount.Default.(uint32)
 	// posttranslationDescID is the schema descriptor for id field.
@@ -1556,6 +1552,6 @@ func init() {
 }
 
 const (
-	Version = "v0.14.5"                                         // Version of ent codegen.
-	Sum     = "h1:Rj2WOYJtCkWyFo6a+5wB3EfBRP0rnx1fMk6gGA0UUe4=" // Sum of ent codegen.
+	Version = "v0.14.6"                                         // Version of ent codegen.
+	Sum     = "h1:/f2696BpwuWAEEG6PVGWflg6+Inrpq4pRWuNlWz/Skk=" // Sum of ent codegen.
 )

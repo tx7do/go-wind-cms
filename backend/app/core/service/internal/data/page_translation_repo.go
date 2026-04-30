@@ -23,9 +23,6 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
-
-	"go-wind-cms/pkg/content/count"
-	"go-wind-cms/pkg/content/summary"
 )
 
 type PageTranslationRepo struct {
@@ -107,7 +104,7 @@ func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID uint3
 	return dtos, nil
 }
 
-func (r *PageTranslationRepo) newCreateBuilder(ctx context.Context, data *contentV1.PageTranslation) *ent.PageTranslationCreate {
+func (r *PageTranslationRepo) newCreateBuilder(data *contentV1.PageTranslation) *ent.PageTranslationCreate {
 	now := time.Now()
 
 	builder := r.entClient.Client().PageTranslation.Create().
@@ -115,18 +112,18 @@ func (r *PageTranslationRepo) newCreateBuilder(ctx context.Context, data *conten
 		SetNillableLanguageCode(data.LanguageCode).
 		SetNillableTitle(data.Title).
 		SetNillableSlug(data.Slug).
-		SetNillableSummary(data.Summary).
-		SetNillableContent(data.Content).
-		SetNillableOriginalContent(data.OriginalContent).
 		SetNillableThumbnail(data.Thumbnail).
 		SetNillableCoverImage(data.CoverImage).
-		SetNillableWordCount(data.WordCount).
 		SetNillableFullPath(data.FullPath).
-		SetNillableMetaKeywords(data.MetaKeywords).
-		SetNillableMetaDescription(data.MetaDescription).
-		SetNillableSeoTitle(data.SeoTitle).
 		SetNillableCreatedBy(data.CreatedBy).
 		SetCreatedAt(now)
+
+	if data.Seo != nil {
+		builder.SetSeo(data.Seo)
+	}
+	if data.Sections != nil {
+		builder.SetSections(data.Sections)
+	}
 
 	return builder
 }
@@ -140,7 +137,7 @@ func (r *PageTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 	for _, data := range items {
 		_ = r.PrepareTranslation(ctx, data)
 
-		builder := r.newCreateBuilder(ctx, data)
+		builder := r.newCreateBuilder(data)
 
 		builders = append(builders, builder)
 	}
@@ -159,7 +156,7 @@ func (r *PageTranslationRepo) CreateTranslation(ctx context.Context, data *conte
 		return nil, err
 	}
 
-	builder := r.newCreateBuilder(ctx, data)
+	builder := r.newCreateBuilder(data)
 
 	entity, err := builder.Save(ctx)
 	if err != nil {
@@ -183,18 +180,19 @@ func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 		func(dto *contentV1.PageTranslation) {
 			builder.
 				SetNillableTitle(data.Title).
-				SetNillableSummary(data.Summary).
-				SetNillableContent(data.Content).
-				SetNillableOriginalContent(data.OriginalContent).
 				SetNillableThumbnail(data.Thumbnail).
 				SetNillableCoverImage(data.CoverImage).
-				SetNillableWordCount(data.WordCount).
 				SetNillableFullPath(data.FullPath).
-				SetNillableMetaKeywords(data.MetaKeywords).
-				SetNillableMetaDescription(data.MetaDescription).
-				SetNillableSeoTitle(data.SeoTitle).
 				SetNillableUpdatedBy(data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			if data.Seo != nil {
+				builder.SetSeo(data.Seo)
+			}
+
+			if data.Sections != nil {
+				builder.SetSections(data.Sections)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(pagetranslation.FieldID, id))
@@ -266,14 +264,6 @@ func (r *PageTranslationRepo) PrepareTranslation(ctx context.Context, data *cont
 		baseSlug = slug.Generate(data.GetTitle()) + "-" + strconv.Itoa(int(slugCount))
 	}
 	data.Slug = trans.Ptr(baseSlug)
-
-	if len(data.GetSummary()) == 0 {
-		sm := summary.GenerateSummaryByRule(data.GetContent(), 100, true)
-		data.Summary = trans.Ptr(sm)
-	}
-
-	counter := count.NewContentCounter(data.GetContent())
-	data.WordCount = trans.Ptr(uint32(counter.RawChars()))
 
 	return nil
 }

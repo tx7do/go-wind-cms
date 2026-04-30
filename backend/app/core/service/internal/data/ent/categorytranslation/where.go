@@ -119,29 +119,9 @@ func CoverImage(v string) predicate.CategoryTranslation {
 	return predicate.CategoryTranslation(sql.FieldEQ(FieldCoverImage, v))
 }
 
-// Template applies equality check predicate on the "template" field. It's identical to TemplateEQ.
-func Template(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldTemplate, v))
-}
-
 // FullPath applies equality check predicate on the "full_path" field. It's identical to FullPathEQ.
 func FullPath(v string) predicate.CategoryTranslation {
 	return predicate.CategoryTranslation(sql.FieldEQ(FieldFullPath, v))
-}
-
-// MetaKeywords applies equality check predicate on the "meta_keywords" field. It's identical to MetaKeywordsEQ.
-func MetaKeywords(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldMetaKeywords, v))
-}
-
-// MetaDescription applies equality check predicate on the "meta_description" field. It's identical to MetaDescriptionEQ.
-func MetaDescription(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldMetaDescription, v))
-}
-
-// SeoTitle applies equality check predicate on the "seo_title" field. It's identical to SeoTitleEQ.
-func SeoTitle(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldSeoTitle, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -442,6 +422,16 @@ func DeletedByIsNil() predicate.CategoryTranslation {
 // DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
 func DeletedByNotNil() predicate.CategoryTranslation {
 	return predicate.CategoryTranslation(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// SeoIsNil applies the IsNil predicate on the "seo" field.
+func SeoIsNil() predicate.CategoryTranslation {
+	return predicate.CategoryTranslation(sql.FieldIsNull(FieldSeo))
+}
+
+// SeoNotNil applies the NotNil predicate on the "seo" field.
+func SeoNotNil() predicate.CategoryTranslation {
+	return predicate.CategoryTranslation(sql.FieldNotNull(FieldSeo))
 }
 
 // CategoryIDEQ applies the EQ predicate on the "category_id" field.
@@ -944,81 +934,6 @@ func CoverImageContainsFold(v string) predicate.CategoryTranslation {
 	return predicate.CategoryTranslation(sql.FieldContainsFold(FieldCoverImage, v))
 }
 
-// TemplateEQ applies the EQ predicate on the "template" field.
-func TemplateEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldTemplate, v))
-}
-
-// TemplateNEQ applies the NEQ predicate on the "template" field.
-func TemplateNEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNEQ(FieldTemplate, v))
-}
-
-// TemplateIn applies the In predicate on the "template" field.
-func TemplateIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIn(FieldTemplate, vs...))
-}
-
-// TemplateNotIn applies the NotIn predicate on the "template" field.
-func TemplateNotIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotIn(FieldTemplate, vs...))
-}
-
-// TemplateGT applies the GT predicate on the "template" field.
-func TemplateGT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGT(FieldTemplate, v))
-}
-
-// TemplateGTE applies the GTE predicate on the "template" field.
-func TemplateGTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGTE(FieldTemplate, v))
-}
-
-// TemplateLT applies the LT predicate on the "template" field.
-func TemplateLT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLT(FieldTemplate, v))
-}
-
-// TemplateLTE applies the LTE predicate on the "template" field.
-func TemplateLTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLTE(FieldTemplate, v))
-}
-
-// TemplateContains applies the Contains predicate on the "template" field.
-func TemplateContains(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContains(FieldTemplate, v))
-}
-
-// TemplateHasPrefix applies the HasPrefix predicate on the "template" field.
-func TemplateHasPrefix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasPrefix(FieldTemplate, v))
-}
-
-// TemplateHasSuffix applies the HasSuffix predicate on the "template" field.
-func TemplateHasSuffix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasSuffix(FieldTemplate, v))
-}
-
-// TemplateIsNil applies the IsNil predicate on the "template" field.
-func TemplateIsNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIsNull(FieldTemplate))
-}
-
-// TemplateNotNil applies the NotNil predicate on the "template" field.
-func TemplateNotNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotNull(FieldTemplate))
-}
-
-// TemplateEqualFold applies the EqualFold predicate on the "template" field.
-func TemplateEqualFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEqualFold(FieldTemplate, v))
-}
-
-// TemplateContainsFold applies the ContainsFold predicate on the "template" field.
-func TemplateContainsFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContainsFold(FieldTemplate, v))
-}
-
 // FullPathEQ applies the EQ predicate on the "full_path" field.
 func FullPathEQ(v string) predicate.CategoryTranslation {
 	return predicate.CategoryTranslation(sql.FieldEQ(FieldFullPath, v))
@@ -1092,231 +1007,6 @@ func FullPathEqualFold(v string) predicate.CategoryTranslation {
 // FullPathContainsFold applies the ContainsFold predicate on the "full_path" field.
 func FullPathContainsFold(v string) predicate.CategoryTranslation {
 	return predicate.CategoryTranslation(sql.FieldContainsFold(FieldFullPath, v))
-}
-
-// MetaKeywordsEQ applies the EQ predicate on the "meta_keywords" field.
-func MetaKeywordsEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsNEQ applies the NEQ predicate on the "meta_keywords" field.
-func MetaKeywordsNEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNEQ(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsIn applies the In predicate on the "meta_keywords" field.
-func MetaKeywordsIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIn(FieldMetaKeywords, vs...))
-}
-
-// MetaKeywordsNotIn applies the NotIn predicate on the "meta_keywords" field.
-func MetaKeywordsNotIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotIn(FieldMetaKeywords, vs...))
-}
-
-// MetaKeywordsGT applies the GT predicate on the "meta_keywords" field.
-func MetaKeywordsGT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGT(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsGTE applies the GTE predicate on the "meta_keywords" field.
-func MetaKeywordsGTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGTE(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsLT applies the LT predicate on the "meta_keywords" field.
-func MetaKeywordsLT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLT(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsLTE applies the LTE predicate on the "meta_keywords" field.
-func MetaKeywordsLTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLTE(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsContains applies the Contains predicate on the "meta_keywords" field.
-func MetaKeywordsContains(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContains(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsHasPrefix applies the HasPrefix predicate on the "meta_keywords" field.
-func MetaKeywordsHasPrefix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasPrefix(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsHasSuffix applies the HasSuffix predicate on the "meta_keywords" field.
-func MetaKeywordsHasSuffix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasSuffix(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsIsNil applies the IsNil predicate on the "meta_keywords" field.
-func MetaKeywordsIsNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIsNull(FieldMetaKeywords))
-}
-
-// MetaKeywordsNotNil applies the NotNil predicate on the "meta_keywords" field.
-func MetaKeywordsNotNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotNull(FieldMetaKeywords))
-}
-
-// MetaKeywordsEqualFold applies the EqualFold predicate on the "meta_keywords" field.
-func MetaKeywordsEqualFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEqualFold(FieldMetaKeywords, v))
-}
-
-// MetaKeywordsContainsFold applies the ContainsFold predicate on the "meta_keywords" field.
-func MetaKeywordsContainsFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContainsFold(FieldMetaKeywords, v))
-}
-
-// MetaDescriptionEQ applies the EQ predicate on the "meta_description" field.
-func MetaDescriptionEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldMetaDescription, v))
-}
-
-// MetaDescriptionNEQ applies the NEQ predicate on the "meta_description" field.
-func MetaDescriptionNEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNEQ(FieldMetaDescription, v))
-}
-
-// MetaDescriptionIn applies the In predicate on the "meta_description" field.
-func MetaDescriptionIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIn(FieldMetaDescription, vs...))
-}
-
-// MetaDescriptionNotIn applies the NotIn predicate on the "meta_description" field.
-func MetaDescriptionNotIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotIn(FieldMetaDescription, vs...))
-}
-
-// MetaDescriptionGT applies the GT predicate on the "meta_description" field.
-func MetaDescriptionGT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGT(FieldMetaDescription, v))
-}
-
-// MetaDescriptionGTE applies the GTE predicate on the "meta_description" field.
-func MetaDescriptionGTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGTE(FieldMetaDescription, v))
-}
-
-// MetaDescriptionLT applies the LT predicate on the "meta_description" field.
-func MetaDescriptionLT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLT(FieldMetaDescription, v))
-}
-
-// MetaDescriptionLTE applies the LTE predicate on the "meta_description" field.
-func MetaDescriptionLTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLTE(FieldMetaDescription, v))
-}
-
-// MetaDescriptionContains applies the Contains predicate on the "meta_description" field.
-func MetaDescriptionContains(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContains(FieldMetaDescription, v))
-}
-
-// MetaDescriptionHasPrefix applies the HasPrefix predicate on the "meta_description" field.
-func MetaDescriptionHasPrefix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasPrefix(FieldMetaDescription, v))
-}
-
-// MetaDescriptionHasSuffix applies the HasSuffix predicate on the "meta_description" field.
-func MetaDescriptionHasSuffix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasSuffix(FieldMetaDescription, v))
-}
-
-// MetaDescriptionIsNil applies the IsNil predicate on the "meta_description" field.
-func MetaDescriptionIsNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIsNull(FieldMetaDescription))
-}
-
-// MetaDescriptionNotNil applies the NotNil predicate on the "meta_description" field.
-func MetaDescriptionNotNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotNull(FieldMetaDescription))
-}
-
-// MetaDescriptionEqualFold applies the EqualFold predicate on the "meta_description" field.
-func MetaDescriptionEqualFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEqualFold(FieldMetaDescription, v))
-}
-
-// MetaDescriptionContainsFold applies the ContainsFold predicate on the "meta_description" field.
-func MetaDescriptionContainsFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContainsFold(FieldMetaDescription, v))
-}
-
-// SeoTitleEQ applies the EQ predicate on the "seo_title" field.
-func SeoTitleEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEQ(FieldSeoTitle, v))
-}
-
-// SeoTitleNEQ applies the NEQ predicate on the "seo_title" field.
-func SeoTitleNEQ(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNEQ(FieldSeoTitle, v))
-}
-
-// SeoTitleIn applies the In predicate on the "seo_title" field.
-func SeoTitleIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIn(FieldSeoTitle, vs...))
-}
-
-// SeoTitleNotIn applies the NotIn predicate on the "seo_title" field.
-func SeoTitleNotIn(vs ...string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotIn(FieldSeoTitle, vs...))
-}
-
-// SeoTitleGT applies the GT predicate on the "seo_title" field.
-func SeoTitleGT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGT(FieldSeoTitle, v))
-}
-
-// SeoTitleGTE applies the GTE predicate on the "seo_title" field.
-func SeoTitleGTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldGTE(FieldSeoTitle, v))
-}
-
-// SeoTitleLT applies the LT predicate on the "seo_title" field.
-func SeoTitleLT(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLT(FieldSeoTitle, v))
-}
-
-// SeoTitleLTE applies the LTE predicate on the "seo_title" field.
-func SeoTitleLTE(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldLTE(FieldSeoTitle, v))
-}
-
-// SeoTitleContains applies the Contains predicate on the "seo_title" field.
-func SeoTitleContains(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContains(FieldSeoTitle, v))
-}
-
-// SeoTitleHasPrefix applies the HasPrefix predicate on the "seo_title" field.
-func SeoTitleHasPrefix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasPrefix(FieldSeoTitle, v))
-}
-
-// SeoTitleHasSuffix applies the HasSuffix predicate on the "seo_title" field.
-func SeoTitleHasSuffix(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldHasSuffix(FieldSeoTitle, v))
-}
-
-// SeoTitleIsNil applies the IsNil predicate on the "seo_title" field.
-func SeoTitleIsNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldIsNull(FieldSeoTitle))
-}
-
-// SeoTitleNotNil applies the NotNil predicate on the "seo_title" field.
-func SeoTitleNotNil() predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldNotNull(FieldSeoTitle))
-}
-
-// SeoTitleEqualFold applies the EqualFold predicate on the "seo_title" field.
-func SeoTitleEqualFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldEqualFold(FieldSeoTitle, v))
-}
-
-// SeoTitleContainsFold applies the ContainsFold predicate on the "seo_title" field.
-func SeoTitleContainsFold(v string) predicate.CategoryTranslation {
-	return predicate.CategoryTranslation(sql.FieldContainsFold(FieldSeoTitle, v))
 }
 
 // And groups predicates with the AND operator between them.

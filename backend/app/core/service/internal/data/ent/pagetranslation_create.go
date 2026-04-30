@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
 	"time"
 
@@ -106,6 +107,18 @@ func (_c *PageTranslationCreate) SetNillableDeletedBy(v *uint32) *PageTranslatio
 	return _c
 }
 
+// SetSeo sets the "seo" field.
+func (_c *PageTranslationCreate) SetSeo(v *contentpb.SeoMeta) *PageTranslationCreate {
+	_c.mutation.SetSeo(v)
+	return _c
+}
+
+// SetSections sets the "sections" field.
+func (_c *PageTranslationCreate) SetSections(v []*contentpb.Section) *PageTranslationCreate {
+	_c.mutation.SetSections(v)
+	return _c
+}
+
 // SetPageID sets the "page_id" field.
 func (_c *PageTranslationCreate) SetPageID(v uint32) *PageTranslationCreate {
 	_c.mutation.SetPageID(v)
@@ -162,48 +175,6 @@ func (_c *PageTranslationCreate) SetNillableSlug(v *string) *PageTranslationCrea
 	return _c
 }
 
-// SetSummary sets the "summary" field.
-func (_c *PageTranslationCreate) SetSummary(v string) *PageTranslationCreate {
-	_c.mutation.SetSummary(v)
-	return _c
-}
-
-// SetNillableSummary sets the "summary" field if the given value is not nil.
-func (_c *PageTranslationCreate) SetNillableSummary(v *string) *PageTranslationCreate {
-	if v != nil {
-		_c.SetSummary(*v)
-	}
-	return _c
-}
-
-// SetContent sets the "content" field.
-func (_c *PageTranslationCreate) SetContent(v string) *PageTranslationCreate {
-	_c.mutation.SetContent(v)
-	return _c
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (_c *PageTranslationCreate) SetNillableContent(v *string) *PageTranslationCreate {
-	if v != nil {
-		_c.SetContent(*v)
-	}
-	return _c
-}
-
-// SetOriginalContent sets the "original_content" field.
-func (_c *PageTranslationCreate) SetOriginalContent(v string) *PageTranslationCreate {
-	_c.mutation.SetOriginalContent(v)
-	return _c
-}
-
-// SetNillableOriginalContent sets the "original_content" field if the given value is not nil.
-func (_c *PageTranslationCreate) SetNillableOriginalContent(v *string) *PageTranslationCreate {
-	if v != nil {
-		_c.SetOriginalContent(*v)
-	}
-	return _c
-}
-
 // SetThumbnail sets the "thumbnail" field.
 func (_c *PageTranslationCreate) SetThumbnail(v string) *PageTranslationCreate {
 	_c.mutation.SetThumbnail(v)
@@ -246,62 +217,6 @@ func (_c *PageTranslationCreate) SetNillableFullPath(v *string) *PageTranslation
 	return _c
 }
 
-// SetWordCount sets the "word_count" field.
-func (_c *PageTranslationCreate) SetWordCount(v uint32) *PageTranslationCreate {
-	_c.mutation.SetWordCount(v)
-	return _c
-}
-
-// SetNillableWordCount sets the "word_count" field if the given value is not nil.
-func (_c *PageTranslationCreate) SetNillableWordCount(v *uint32) *PageTranslationCreate {
-	if v != nil {
-		_c.SetWordCount(*v)
-	}
-	return _c
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (_c *PageTranslationCreate) SetMetaKeywords(v string) *PageTranslationCreate {
-	_c.mutation.SetMetaKeywords(v)
-	return _c
-}
-
-// SetNillableMetaKeywords sets the "meta_keywords" field if the given value is not nil.
-func (_c *PageTranslationCreate) SetNillableMetaKeywords(v *string) *PageTranslationCreate {
-	if v != nil {
-		_c.SetMetaKeywords(*v)
-	}
-	return _c
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (_c *PageTranslationCreate) SetMetaDescription(v string) *PageTranslationCreate {
-	_c.mutation.SetMetaDescription(v)
-	return _c
-}
-
-// SetNillableMetaDescription sets the "meta_description" field if the given value is not nil.
-func (_c *PageTranslationCreate) SetNillableMetaDescription(v *string) *PageTranslationCreate {
-	if v != nil {
-		_c.SetMetaDescription(*v)
-	}
-	return _c
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (_c *PageTranslationCreate) SetSeoTitle(v string) *PageTranslationCreate {
-	_c.mutation.SetSeoTitle(v)
-	return _c
-}
-
-// SetNillableSeoTitle sets the "seo_title" field if the given value is not nil.
-func (_c *PageTranslationCreate) SetNillableSeoTitle(v *string) *PageTranslationCreate {
-	if v != nil {
-		_c.SetSeoTitle(*v)
-	}
-	return _c
-}
-
 // SetID sets the "id" field.
 func (_c *PageTranslationCreate) SetID(v uint32) *PageTranslationCreate {
 	_c.mutation.SetID(v)
@@ -315,7 +230,6 @@ func (_c *PageTranslationCreate) Mutation() *PageTranslationMutation {
 
 // Save creates the PageTranslation in the database.
 func (_c *PageTranslationCreate) Save(ctx context.Context) (*PageTranslation, error) {
-	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -341,16 +255,13 @@ func (_c *PageTranslationCreate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_c *PageTranslationCreate) defaults() {
-	if _, ok := _c.mutation.WordCount(); !ok {
-		v := pagetranslation.DefaultWordCount
-		_c.mutation.SetWordCount(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (_c *PageTranslationCreate) check() error {
+	if v, ok := _c.mutation.Seo(); ok {
+		if err := v.Validate(); err != nil {
+			return &ValidationError{Name: "seo", err: fmt.Errorf(`ent: validator failed for field "PageTranslation.seo": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := pagetranslation.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "PageTranslation.id": %w`, err)}
@@ -413,6 +324,14 @@ func (_c *PageTranslationCreate) createSpec() (*PageTranslation, *sqlgraph.Creat
 		_spec.SetField(pagetranslation.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
 	}
+	if value, ok := _c.mutation.Seo(); ok {
+		_spec.SetField(pagetranslation.FieldSeo, field.TypeJSON, value)
+		_node.Seo = value
+	}
+	if value, ok := _c.mutation.Sections(); ok {
+		_spec.SetField(pagetranslation.FieldSections, field.TypeJSON, value)
+		_node.Sections = value
+	}
 	if value, ok := _c.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
 		_node.PageID = &value
@@ -429,18 +348,6 @@ func (_c *PageTranslationCreate) createSpec() (*PageTranslation, *sqlgraph.Creat
 		_spec.SetField(pagetranslation.FieldSlug, field.TypeString, value)
 		_node.Slug = &value
 	}
-	if value, ok := _c.mutation.Summary(); ok {
-		_spec.SetField(pagetranslation.FieldSummary, field.TypeString, value)
-		_node.Summary = &value
-	}
-	if value, ok := _c.mutation.Content(); ok {
-		_spec.SetField(pagetranslation.FieldContent, field.TypeString, value)
-		_node.Content = &value
-	}
-	if value, ok := _c.mutation.OriginalContent(); ok {
-		_spec.SetField(pagetranslation.FieldOriginalContent, field.TypeString, value)
-		_node.OriginalContent = &value
-	}
 	if value, ok := _c.mutation.Thumbnail(); ok {
 		_spec.SetField(pagetranslation.FieldThumbnail, field.TypeString, value)
 		_node.Thumbnail = &value
@@ -452,22 +359,6 @@ func (_c *PageTranslationCreate) createSpec() (*PageTranslation, *sqlgraph.Creat
 	if value, ok := _c.mutation.FullPath(); ok {
 		_spec.SetField(pagetranslation.FieldFullPath, field.TypeString, value)
 		_node.FullPath = &value
-	}
-	if value, ok := _c.mutation.WordCount(); ok {
-		_spec.SetField(pagetranslation.FieldWordCount, field.TypeUint32, value)
-		_node.WordCount = &value
-	}
-	if value, ok := _c.mutation.MetaKeywords(); ok {
-		_spec.SetField(pagetranslation.FieldMetaKeywords, field.TypeString, value)
-		_node.MetaKeywords = &value
-	}
-	if value, ok := _c.mutation.MetaDescription(); ok {
-		_spec.SetField(pagetranslation.FieldMetaDescription, field.TypeString, value)
-		_node.MetaDescription = &value
-	}
-	if value, ok := _c.mutation.SeoTitle(); ok {
-		_spec.SetField(pagetranslation.FieldSeoTitle, field.TypeString, value)
-		_node.SeoTitle = &value
 	}
 	return _node, _spec
 }
@@ -629,6 +520,42 @@ func (u *PageTranslationUpsert) ClearDeletedBy() *PageTranslationUpsert {
 	return u
 }
 
+// SetSeo sets the "seo" field.
+func (u *PageTranslationUpsert) SetSeo(v *contentpb.SeoMeta) *PageTranslationUpsert {
+	u.Set(pagetranslation.FieldSeo, v)
+	return u
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *PageTranslationUpsert) UpdateSeo() *PageTranslationUpsert {
+	u.SetExcluded(pagetranslation.FieldSeo)
+	return u
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *PageTranslationUpsert) ClearSeo() *PageTranslationUpsert {
+	u.SetNull(pagetranslation.FieldSeo)
+	return u
+}
+
+// SetSections sets the "sections" field.
+func (u *PageTranslationUpsert) SetSections(v []*contentpb.Section) *PageTranslationUpsert {
+	u.Set(pagetranslation.FieldSections, v)
+	return u
+}
+
+// UpdateSections sets the "sections" field to the value that was provided on create.
+func (u *PageTranslationUpsert) UpdateSections() *PageTranslationUpsert {
+	u.SetExcluded(pagetranslation.FieldSections)
+	return u
+}
+
+// ClearSections clears the value of the "sections" field.
+func (u *PageTranslationUpsert) ClearSections() *PageTranslationUpsert {
+	u.SetNull(pagetranslation.FieldSections)
+	return u
+}
+
 // SetPageID sets the "page_id" field.
 func (u *PageTranslationUpsert) SetPageID(v uint32) *PageTranslationUpsert {
 	u.Set(pagetranslation.FieldPageID, v)
@@ -707,60 +634,6 @@ func (u *PageTranslationUpsert) ClearSlug() *PageTranslationUpsert {
 	return u
 }
 
-// SetSummary sets the "summary" field.
-func (u *PageTranslationUpsert) SetSummary(v string) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldSummary, v)
-	return u
-}
-
-// UpdateSummary sets the "summary" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateSummary() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldSummary)
-	return u
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (u *PageTranslationUpsert) ClearSummary() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldSummary)
-	return u
-}
-
-// SetContent sets the "content" field.
-func (u *PageTranslationUpsert) SetContent(v string) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldContent, v)
-	return u
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateContent() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldContent)
-	return u
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PageTranslationUpsert) ClearContent() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldContent)
-	return u
-}
-
-// SetOriginalContent sets the "original_content" field.
-func (u *PageTranslationUpsert) SetOriginalContent(v string) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldOriginalContent, v)
-	return u
-}
-
-// UpdateOriginalContent sets the "original_content" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateOriginalContent() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldOriginalContent)
-	return u
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (u *PageTranslationUpsert) ClearOriginalContent() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldOriginalContent)
-	return u
-}
-
 // SetThumbnail sets the "thumbnail" field.
 func (u *PageTranslationUpsert) SetThumbnail(v string) *PageTranslationUpsert {
 	u.Set(pagetranslation.FieldThumbnail, v)
@@ -812,84 +685,6 @@ func (u *PageTranslationUpsert) UpdateFullPath() *PageTranslationUpsert {
 // ClearFullPath clears the value of the "full_path" field.
 func (u *PageTranslationUpsert) ClearFullPath() *PageTranslationUpsert {
 	u.SetNull(pagetranslation.FieldFullPath)
-	return u
-}
-
-// SetWordCount sets the "word_count" field.
-func (u *PageTranslationUpsert) SetWordCount(v uint32) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldWordCount, v)
-	return u
-}
-
-// UpdateWordCount sets the "word_count" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateWordCount() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldWordCount)
-	return u
-}
-
-// AddWordCount adds v to the "word_count" field.
-func (u *PageTranslationUpsert) AddWordCount(v uint32) *PageTranslationUpsert {
-	u.Add(pagetranslation.FieldWordCount, v)
-	return u
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (u *PageTranslationUpsert) ClearWordCount() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldWordCount)
-	return u
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *PageTranslationUpsert) SetMetaKeywords(v string) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldMetaKeywords, v)
-	return u
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateMetaKeywords() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldMetaKeywords)
-	return u
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *PageTranslationUpsert) ClearMetaKeywords() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldMetaKeywords)
-	return u
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *PageTranslationUpsert) SetMetaDescription(v string) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldMetaDescription, v)
-	return u
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateMetaDescription() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldMetaDescription)
-	return u
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *PageTranslationUpsert) ClearMetaDescription() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldMetaDescription)
-	return u
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *PageTranslationUpsert) SetSeoTitle(v string) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldSeoTitle, v)
-	return u
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateSeoTitle() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldSeoTitle)
-	return u
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *PageTranslationUpsert) ClearSeoTitle() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldSeoTitle)
 	return u
 }
 
@@ -1070,6 +865,48 @@ func (u *PageTranslationUpsertOne) ClearDeletedBy() *PageTranslationUpsertOne {
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *PageTranslationUpsertOne) SetSeo(v *contentpb.SeoMeta) *PageTranslationUpsertOne {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *PageTranslationUpsertOne) UpdateSeo() *PageTranslationUpsertOne {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *PageTranslationUpsertOne) ClearSeo() *PageTranslationUpsertOne {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
+// SetSections sets the "sections" field.
+func (u *PageTranslationUpsertOne) SetSections(v []*contentpb.Section) *PageTranslationUpsertOne {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.SetSections(v)
+	})
+}
+
+// UpdateSections sets the "sections" field to the value that was provided on create.
+func (u *PageTranslationUpsertOne) UpdateSections() *PageTranslationUpsertOne {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.UpdateSections()
+	})
+}
+
+// ClearSections clears the value of the "sections" field.
+func (u *PageTranslationUpsertOne) ClearSections() *PageTranslationUpsertOne {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.ClearSections()
+	})
+}
+
 // SetPageID sets the "page_id" field.
 func (u *PageTranslationUpsertOne) SetPageID(v uint32) *PageTranslationUpsertOne {
 	return u.Update(func(s *PageTranslationUpsert) {
@@ -1161,69 +998,6 @@ func (u *PageTranslationUpsertOne) ClearSlug() *PageTranslationUpsertOne {
 	})
 }
 
-// SetSummary sets the "summary" field.
-func (u *PageTranslationUpsertOne) SetSummary(v string) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetSummary(v)
-	})
-}
-
-// UpdateSummary sets the "summary" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateSummary() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateSummary()
-	})
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (u *PageTranslationUpsertOne) ClearSummary() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearSummary()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *PageTranslationUpsertOne) SetContent(v string) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateContent() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateContent()
-	})
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PageTranslationUpsertOne) ClearContent() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearContent()
-	})
-}
-
-// SetOriginalContent sets the "original_content" field.
-func (u *PageTranslationUpsertOne) SetOriginalContent(v string) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetOriginalContent(v)
-	})
-}
-
-// UpdateOriginalContent sets the "original_content" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateOriginalContent() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateOriginalContent()
-	})
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (u *PageTranslationUpsertOne) ClearOriginalContent() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearOriginalContent()
-	})
-}
-
 // SetThumbnail sets the "thumbnail" field.
 func (u *PageTranslationUpsertOne) SetThumbnail(v string) *PageTranslationUpsertOne {
 	return u.Update(func(s *PageTranslationUpsert) {
@@ -1287,97 +1061,6 @@ func (u *PageTranslationUpsertOne) ClearFullPath() *PageTranslationUpsertOne {
 	})
 }
 
-// SetWordCount sets the "word_count" field.
-func (u *PageTranslationUpsertOne) SetWordCount(v uint32) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetWordCount(v)
-	})
-}
-
-// AddWordCount adds v to the "word_count" field.
-func (u *PageTranslationUpsertOne) AddWordCount(v uint32) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.AddWordCount(v)
-	})
-}
-
-// UpdateWordCount sets the "word_count" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateWordCount() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateWordCount()
-	})
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (u *PageTranslationUpsertOne) ClearWordCount() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearWordCount()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *PageTranslationUpsertOne) SetMetaKeywords(v string) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateMetaKeywords() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *PageTranslationUpsertOne) ClearMetaKeywords() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *PageTranslationUpsertOne) SetMetaDescription(v string) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateMetaDescription() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *PageTranslationUpsertOne) ClearMetaDescription() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *PageTranslationUpsertOne) SetSeoTitle(v string) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateSeoTitle() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *PageTranslationUpsertOne) ClearSeoTitle() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearSeoTitle()
-	})
-}
-
 // Exec executes the query.
 func (u *PageTranslationUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -1430,7 +1113,6 @@ func (_c *PageTranslationCreateBulk) Save(ctx context.Context) ([]*PageTranslati
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PageTranslationMutation)
 				if !ok {
@@ -1721,6 +1403,48 @@ func (u *PageTranslationUpsertBulk) ClearDeletedBy() *PageTranslationUpsertBulk 
 	})
 }
 
+// SetSeo sets the "seo" field.
+func (u *PageTranslationUpsertBulk) SetSeo(v *contentpb.SeoMeta) *PageTranslationUpsertBulk {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.SetSeo(v)
+	})
+}
+
+// UpdateSeo sets the "seo" field to the value that was provided on create.
+func (u *PageTranslationUpsertBulk) UpdateSeo() *PageTranslationUpsertBulk {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.UpdateSeo()
+	})
+}
+
+// ClearSeo clears the value of the "seo" field.
+func (u *PageTranslationUpsertBulk) ClearSeo() *PageTranslationUpsertBulk {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.ClearSeo()
+	})
+}
+
+// SetSections sets the "sections" field.
+func (u *PageTranslationUpsertBulk) SetSections(v []*contentpb.Section) *PageTranslationUpsertBulk {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.SetSections(v)
+	})
+}
+
+// UpdateSections sets the "sections" field to the value that was provided on create.
+func (u *PageTranslationUpsertBulk) UpdateSections() *PageTranslationUpsertBulk {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.UpdateSections()
+	})
+}
+
+// ClearSections clears the value of the "sections" field.
+func (u *PageTranslationUpsertBulk) ClearSections() *PageTranslationUpsertBulk {
+	return u.Update(func(s *PageTranslationUpsert) {
+		s.ClearSections()
+	})
+}
+
 // SetPageID sets the "page_id" field.
 func (u *PageTranslationUpsertBulk) SetPageID(v uint32) *PageTranslationUpsertBulk {
 	return u.Update(func(s *PageTranslationUpsert) {
@@ -1812,69 +1536,6 @@ func (u *PageTranslationUpsertBulk) ClearSlug() *PageTranslationUpsertBulk {
 	})
 }
 
-// SetSummary sets the "summary" field.
-func (u *PageTranslationUpsertBulk) SetSummary(v string) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetSummary(v)
-	})
-}
-
-// UpdateSummary sets the "summary" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateSummary() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateSummary()
-	})
-}
-
-// ClearSummary clears the value of the "summary" field.
-func (u *PageTranslationUpsertBulk) ClearSummary() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearSummary()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *PageTranslationUpsertBulk) SetContent(v string) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateContent() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateContent()
-	})
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PageTranslationUpsertBulk) ClearContent() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearContent()
-	})
-}
-
-// SetOriginalContent sets the "original_content" field.
-func (u *PageTranslationUpsertBulk) SetOriginalContent(v string) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetOriginalContent(v)
-	})
-}
-
-// UpdateOriginalContent sets the "original_content" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateOriginalContent() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateOriginalContent()
-	})
-}
-
-// ClearOriginalContent clears the value of the "original_content" field.
-func (u *PageTranslationUpsertBulk) ClearOriginalContent() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearOriginalContent()
-	})
-}
-
 // SetThumbnail sets the "thumbnail" field.
 func (u *PageTranslationUpsertBulk) SetThumbnail(v string) *PageTranslationUpsertBulk {
 	return u.Update(func(s *PageTranslationUpsert) {
@@ -1935,97 +1596,6 @@ func (u *PageTranslationUpsertBulk) UpdateFullPath() *PageTranslationUpsertBulk 
 func (u *PageTranslationUpsertBulk) ClearFullPath() *PageTranslationUpsertBulk {
 	return u.Update(func(s *PageTranslationUpsert) {
 		s.ClearFullPath()
-	})
-}
-
-// SetWordCount sets the "word_count" field.
-func (u *PageTranslationUpsertBulk) SetWordCount(v uint32) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetWordCount(v)
-	})
-}
-
-// AddWordCount adds v to the "word_count" field.
-func (u *PageTranslationUpsertBulk) AddWordCount(v uint32) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.AddWordCount(v)
-	})
-}
-
-// UpdateWordCount sets the "word_count" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateWordCount() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateWordCount()
-	})
-}
-
-// ClearWordCount clears the value of the "word_count" field.
-func (u *PageTranslationUpsertBulk) ClearWordCount() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearWordCount()
-	})
-}
-
-// SetMetaKeywords sets the "meta_keywords" field.
-func (u *PageTranslationUpsertBulk) SetMetaKeywords(v string) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetMetaKeywords(v)
-	})
-}
-
-// UpdateMetaKeywords sets the "meta_keywords" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateMetaKeywords() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateMetaKeywords()
-	})
-}
-
-// ClearMetaKeywords clears the value of the "meta_keywords" field.
-func (u *PageTranslationUpsertBulk) ClearMetaKeywords() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearMetaKeywords()
-	})
-}
-
-// SetMetaDescription sets the "meta_description" field.
-func (u *PageTranslationUpsertBulk) SetMetaDescription(v string) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetMetaDescription(v)
-	})
-}
-
-// UpdateMetaDescription sets the "meta_description" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateMetaDescription() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateMetaDescription()
-	})
-}
-
-// ClearMetaDescription clears the value of the "meta_description" field.
-func (u *PageTranslationUpsertBulk) ClearMetaDescription() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearMetaDescription()
-	})
-}
-
-// SetSeoTitle sets the "seo_title" field.
-func (u *PageTranslationUpsertBulk) SetSeoTitle(v string) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetSeoTitle(v)
-	})
-}
-
-// UpdateSeoTitle sets the "seo_title" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateSeoTitle() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateSeoTitle()
-	})
-}
-
-// ClearSeoTitle clears the value of the "seo_title" field.
-func (u *PageTranslationUpsertBulk) ClearSeoTitle() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearSeoTitle()
 	})
 }
 
