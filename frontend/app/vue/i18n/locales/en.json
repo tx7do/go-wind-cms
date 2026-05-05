@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "home": "Home",
+    "posts": "Posts",
+    "about": "About"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Failed to load"
+  }
+}

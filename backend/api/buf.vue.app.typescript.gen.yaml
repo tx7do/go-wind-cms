@@ -21,4 +21,4 @@ inputs:
 
 plugins:
   - local: protoc-gen-typescript-http
-    out: ../../frontend/app/vue3/src/api/generated
+    out: ../../frontend/app/vue/app/api/generated
