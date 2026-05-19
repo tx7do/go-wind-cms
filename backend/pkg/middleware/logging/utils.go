@@ -20,6 +20,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/tx7do/go-utils/geoip"
+	"github.com/tx7do/go-utils/id"
 	"github.com/tx7do/go-utils/trans"
 
 	"github.com/mileusna/useragent"
@@ -147,7 +148,7 @@ func getRequestId(request *http.Request) string {
 		return xfcri
 	}
 
-	return ""
+	return id.NewGUIDv4(false)
 }
 
 // getClientID 获取客户端ID
