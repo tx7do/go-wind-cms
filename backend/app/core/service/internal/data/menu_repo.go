@@ -15,6 +15,7 @@ import (
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	entgoUpdate "github.com/tx7do/go-crud/entgo/update"
+	"github.com/tx7do/go-crud/pagination"
 
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
@@ -119,32 +120,21 @@ func (r *MenuRepo) List(ctx context.Context, req *paginationV1.PagingRequest, tr
 		return nil, resourceV1.ErrorInternalServerError("query menu list failed")
 	}
 
+	// 转换所有实体为 DTO
 	dtos := make([]*resourceV1.Menu, 0, len(entities))
+	for _, entity := range entities {
+		dto := r.mapper.ToDTO(entity)
+		dtos = append(dtos, dto)
+	}
+
+	// 构建树形结构
 	if treeTravel {
-		for _, entity := range entities {
-			if entity.ParentID == nil {
-				dto := r.mapper.ToDTO(entity)
-				dtos = append(dtos, dto)
-			}
-		}
-		for _, entity := range entities {
-			if entity.ParentID != nil {
-				dto := r.mapper.ToDTO(entity)
-
-				if entCrud.TravelChild(&dtos, dto, func(parent *resourceV1.Menu, node *resourceV1.Menu) {
-					parent.Children = append(parent.Children, node)
-				}) {
-					continue
-				}
-
-				dtos = append(dtos, dto)
-			}
-		}
-	} else {
-		for _, entity := range entities {
-			dto := r.mapper.ToDTO(entity)
-			dtos = append(dtos, dto)
-		}
+		dtos = pagination.BuildTree(
+			dtos,
+			func(node *resourceV1.Menu) *uint32 { return node.Id },
+			func(node *resourceV1.Menu) *uint32 { return node.ParentId },
+			func(node *resourceV1.Menu) *[]*resourceV1.Menu { return &node.Children },
+		)
 	}
 
 	count, err := r.Count(ctx, whereSelectors)

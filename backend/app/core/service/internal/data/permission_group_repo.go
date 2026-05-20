@@ -6,14 +6,14 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-crud/pagination"
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
-
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/permissiongroup"
@@ -122,32 +122,21 @@ func (r *PermissionGroupRepo) List(ctx context.Context, req *paginationV1.Paging
 		return nil, permissionV1.ErrorInternalServerError("query permission group list failed")
 	}
 
+	// 转换所有实体为 DTO
 	dtos := make([]*permissionV1.PermissionGroup, 0, len(entities))
+	for _, entity := range entities {
+		dto := r.mapper.ToDTO(entity)
+		dtos = append(dtos, dto)
+	}
+
+	// 构建树形结构
 	if treeTravel {
-		for _, entity := range entities {
-			if entity.ParentID == nil {
-				dto := r.mapper.ToDTO(entity)
-				dtos = append(dtos, dto)
-			}
-		}
-		for _, entity := range entities {
-			if entity.ParentID != nil {
-				dto := r.mapper.ToDTO(entity)
-
-				if entCrud.TravelChild(&dtos, dto, func(parent *permissionV1.PermissionGroup, node *permissionV1.PermissionGroup) {
-					parent.Children = append(parent.Children, node)
-				}) {
-					continue
-				}
-
-				dtos = append(dtos, dto)
-			}
-		}
-	} else {
-		for _, entity := range entities {
-			dto := r.mapper.ToDTO(entity)
-			dtos = append(dtos, dto)
-		}
+		dtos = pagination.BuildTree(
+			dtos,
+			func(node *permissionV1.PermissionGroup) *uint32 { return node.Id },
+			func(node *permissionV1.PermissionGroup) *uint32 { return node.ParentId },
+			func(node *permissionV1.PermissionGroup) *[]*permissionV1.PermissionGroup { return &node.Children },
+		)
 	}
 
 	count, err := r.Count(ctx, whereSelectors)

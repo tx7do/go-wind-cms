@@ -11,6 +11,7 @@ import (
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-crud/pagination"
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -134,26 +135,20 @@ func (r *OrgUnitRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 		return sortI < sortJ
 	})
 
+	// 转换所有实体为 DTO
 	dtos := make([]*identityV1.OrgUnit, 0, len(entities))
 	for _, entity := range entities {
-		if entity.ParentID == nil {
-			dto := r.mapper.ToDTO(entity)
-			dtos = append(dtos, dto)
-		}
+		dto := r.mapper.ToDTO(entity)
+		dtos = append(dtos, dto)
 	}
-	for _, entity := range entities {
-		if entity.ParentID != nil {
-			dto := r.mapper.ToDTO(entity)
 
-			if entCrud.TravelChild(&dtos, dto, func(parent *identityV1.OrgUnit, node *identityV1.OrgUnit) {
-				parent.Children = append(parent.Children, node)
-			}) {
-				continue
-			}
-
-			dtos = append(dtos, dto)
-		}
-	}
+	// 构建树形结构
+	dtos = pagination.BuildTree(
+		dtos,
+		func(node *identityV1.OrgUnit) *uint32 { return node.Id },
+		func(node *identityV1.OrgUnit) *uint32 { return node.ParentId },
+		func(node *identityV1.OrgUnit) *[]*identityV1.OrgUnit { return &node.Children },
+	)
 
 	count, err := r.count(ctx, whereSelectors)
 	if err != nil {
