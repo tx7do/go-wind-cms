@@ -109,20 +109,6 @@ func ErrorUserFreeze(format string, args ...interface{}) *errors.Error {
 	return errors.New(401, AppErrorReason_USER_FREEZE.String(), fmt.Sprintf(format, args...))
 }
 
-// 密码错误
-func IsIncorrectPassword(err error) bool {
-	if err == nil {
-		return false
-	}
-	e := errors.FromError(err)
-	return e.Reason == AppErrorReason_INCORRECT_PASSWORD.String() && e.Code == 401
-}
-
-// 密码错误
-func ErrorIncorrectPassword(format string, args ...interface{}) *errors.Error {
-	return errors.New(401, AppErrorReason_INCORRECT_PASSWORD.String(), fmt.Sprintf(format, args...))
-}
-
 // 密钥错误
 func IsIncorrectAppSecret(err error) bool {
 	if err == nil {

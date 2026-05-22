@@ -31,9 +31,8 @@ const (
 	IdentityErrorReason_INVALID_USERID   IdentityErrorReason = 1 // 用户ID无效
 	IdentityErrorReason_INVALID_PASSWORD IdentityErrorReason = 2 // 密码无效
 	// 401
-	IdentityErrorReason_UNAUTHORIZED       IdentityErrorReason = 100 // 未授权
-	IdentityErrorReason_USER_FREEZE        IdentityErrorReason = 101 // 用户被冻结
-	IdentityErrorReason_INCORRECT_PASSWORD IdentityErrorReason = 102 // 密码错误
+	IdentityErrorReason_UNAUTHORIZED IdentityErrorReason = 100 // 未授权
+	IdentityErrorReason_USER_FREEZE  IdentityErrorReason = 101 // 用户被冻结
 	// 402
 	IdentityErrorReason_PAYMENT_REQUIRED IdentityErrorReason = 200 // 需要支付
 	// 403
@@ -130,7 +129,6 @@ var (
 		2:    "INVALID_PASSWORD",
 		100:  "UNAUTHORIZED",
 		101:  "USER_FREEZE",
-		102:  "INCORRECT_PASSWORD",
 		200:  "PAYMENT_REQUIRED",
 		300:  "FORBIDDEN",
 		400:  "NOT_FOUND",
@@ -184,7 +182,6 @@ var (
 		"INVALID_PASSWORD":                2,
 		"UNAUTHORIZED":                    100,
 		"USER_FREEZE":                     101,
-		"INCORRECT_PASSWORD":              102,
 		"PAYMENT_REQUIRED":                200,
 		"FORBIDDEN":                       300,
 		"NOT_FOUND":                       400,
@@ -265,14 +262,13 @@ var File_identity_service_v1_user_error_proto protoreflect.FileDescriptor
 
 const file_identity_service_v1_user_error_proto_rawDesc = "" +
 	"\n" +
-	"$identity/service/v1/user_error.proto\x12\x13identity.service.v1\x1a\x13errors/errors.proto*\xb2\f\n" +
+	"$identity/service/v1/user_error.proto\x12\x13identity.service.v1\x1a\x13errors/errors.proto*\x94\f\n" +
 	"\x13IdentityErrorReason\x12\x15\n" +
 	"\vBAD_REQUEST\x10\x00\x1a\x04\xa8E\x90\x03\x12\x18\n" +
 	"\x0eINVALID_USERID\x10\x01\x1a\x04\xa8E\x90\x03\x12\x1a\n" +
 	"\x10INVALID_PASSWORD\x10\x02\x1a\x04\xa8E\x90\x03\x12\x16\n" +
 	"\fUNAUTHORIZED\x10d\x1a\x04\xa8E\x91\x03\x12\x15\n" +
-	"\vUSER_FREEZE\x10e\x1a\x04\xa8E\x91\x03\x12\x1c\n" +
-	"\x12INCORRECT_PASSWORD\x10f\x1a\x04\xa8E\x91\x03\x12\x1b\n" +
+	"\vUSER_FREEZE\x10e\x1a\x04\xa8E\x91\x03\x12\x1b\n" +
 	"\x10PAYMENT_REQUIRED\x10\xc8\x01\x1a\x04\xa8E\x92\x03\x12\x14\n" +
 	"\tFORBIDDEN\x10\xac\x02\x1a\x04\xa8E\x93\x03\x12\x14\n" +
 	"\tNOT_FOUND\x10\x90\x03\x1a\x04\xa8E\x94\x03\x12\x19\n" +

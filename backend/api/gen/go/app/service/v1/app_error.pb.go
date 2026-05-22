@@ -35,7 +35,6 @@ const (
 	// 401
 	AppErrorReason_UNAUTHORIZED            AppErrorReason = 100 // 未授权
 	AppErrorReason_USER_FREEZE             AppErrorReason = 101 // 用户被冻结
-	AppErrorReason_INCORRECT_PASSWORD      AppErrorReason = 102 // 密码错误
 	AppErrorReason_INCORRECT_APP_SECRET    AppErrorReason = 103 // 密钥错误
 	AppErrorReason_INCORRECT_ACCESS_TOKEN  AppErrorReason = 104 // 访问令牌错误
 	AppErrorReason_INCORRECT_REFRESH_TOKEN AppErrorReason = 105 // 刷新令牌错误
@@ -134,7 +133,6 @@ var (
 		4:    "INVALID_PASSWORD",
 		100:  "UNAUTHORIZED",
 		101:  "USER_FREEZE",
-		102:  "INCORRECT_PASSWORD",
 		103:  "INCORRECT_APP_SECRET",
 		104:  "INCORRECT_ACCESS_TOKEN",
 		105:  "INCORRECT_REFRESH_TOKEN",
@@ -190,7 +188,6 @@ var (
 		"INVALID_PASSWORD":                4,
 		"UNAUTHORIZED":                    100,
 		"USER_FREEZE":                     101,
-		"INCORRECT_PASSWORD":              102,
 		"INCORRECT_APP_SECRET":            103,
 		"INCORRECT_ACCESS_TOKEN":          104,
 		"INCORRECT_REFRESH_TOKEN":         105,
@@ -271,7 +268,7 @@ var File_app_service_v1_app_error_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_app_error_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/service/v1/app_error.proto\x12\x0eapp.service.v1\x1a\x13errors/errors.proto*\xe2\f\n" +
+	"\x1eapp/service/v1/app_error.proto\x12\x0eapp.service.v1\x1a\x13errors/errors.proto*\xc4\f\n" +
 	"\x0eAppErrorReason\x12\x15\n" +
 	"\vBAD_REQUEST\x10\x00\x1a\x04\xa8E\x90\x03\x12\x1c\n" +
 	"\x12INVALID_GRANT_TYPE\x10\x01\x1a\x04\xa8E\x90\x03\x12\x18\n" +
@@ -279,8 +276,7 @@ const file_app_service_v1_app_error_proto_rawDesc = "" +
 	"\rINVALID_TOKEN\x10\x03\x1a\x04\xa8E\x90\x03\x12\x1a\n" +
 	"\x10INVALID_PASSWORD\x10\x04\x1a\x04\xa8E\x90\x03\x12\x16\n" +
 	"\fUNAUTHORIZED\x10d\x1a\x04\xa8E\x91\x03\x12\x15\n" +
-	"\vUSER_FREEZE\x10e\x1a\x04\xa8E\x91\x03\x12\x1c\n" +
-	"\x12INCORRECT_PASSWORD\x10f\x1a\x04\xa8E\x91\x03\x12\x1e\n" +
+	"\vUSER_FREEZE\x10e\x1a\x04\xa8E\x91\x03\x12\x1e\n" +
 	"\x14INCORRECT_APP_SECRET\x10g\x1a\x04\xa8E\x91\x03\x12 \n" +
 	"\x16INCORRECT_ACCESS_TOKEN\x10h\x1a\x04\xa8E\x91\x03\x12!\n" +
 	"\x17INCORRECT_REFRESH_TOKEN\x10i\x1a\x04\xa8E\x91\x03\x12\x17\n" +

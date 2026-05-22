@@ -393,7 +393,7 @@ func (r *UserCredentialRepo) VerifyCredential(ctx context.Context, req *authenti
 	}
 
 	if !r.verifyCredential(entity.CredentialType, req.GetCredential(), *entity.Credential) {
-		return nil, authenticationV1.ErrorIncorrectPassword("incorrect password")
+		return nil, authenticationV1.ErrorInvalidPassword("incorrect password")
 	}
 
 	return &authenticationV1.VerifyCredentialResponse{

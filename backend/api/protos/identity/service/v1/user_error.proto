@@ -16,7 +16,6 @@ enum IdentityErrorReason {
   // 401
   UNAUTHORIZED = 100 [(errors.code) = 401]; // 未授权
   USER_FREEZE = 101 [(errors.code) = 401]; // 用户被冻结
-  INCORRECT_PASSWORD = 102 [(errors.code) = 401]; // 密码错误
 
   // 402
   PAYMENT_REQUIRED = 200 [(errors.code) = 402]; // 需要支付
