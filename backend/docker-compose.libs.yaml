@@ -14,21 +14,40 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=*Abcd123456
       - POSTGRES_DB=gwc
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
 
-#  mysql:
-#    image: docker.io/bitnami/mariadb:latest
-#    restart: always
-#    ports:
-#      - "3306:3306"
-#    networks:
-#      - app-tier
-#    environment:
-#      - MARIADB_ROOT_PASSWORD=*Abcd123456
-#      - MARIADB_USER=admin
-#      - MARIADB_PASSWORD=*Abcd123456
-#      - MARIADB_DATABASE=gwc
-#      - ALLOW_EMPTY_PASSWORD=yes
-#      - TZ=Asia/Shanghai
+  #  mysql:
+  #    image: docker.io/mariadb:latest
+  #    container_name: mysql
+  #    hostname: mysql
+  #    restart: always
+  #    ports:
+  #      - "3306:3306"
+  #    networks:
+  #      - app-tier
+  #    environment:
+  #      - MARIADB_ROOT_PASSWORD=*Abcd123456
+  #      - MARIADB_USER=admin
+  #      - MARIADB_PASSWORD=*Abcd123456
+  #      - MARIADB_DATABASE=gwc
+  #      - ALLOW_EMPTY_PASSWORD=yes
+  #      - TZ=Asia/Shanghai
+  #    command:
+  #      --max_connections=5000
+  #      --max_allowed_packet=64M
+  #      --wait_timeout=600
+  #      --interactive_timeout=600
+  #      --net_read_timeout=120
+  #      --net_write_timeout=120
+  #      --skip-name-resolve
+  #      --back_log=2048
+  #    ulimits:
+  #      nofile:
+  #        soft: 65535
+  #        hard: 65535
 
   redis:
     image: docker.io/bitnami/redis:latest
@@ -46,32 +65,29 @@ services:
 #    volumes:
 #      - ${APP_ROOT:-/root/app}/redis/data:/bitnami/redis/data
 
-  elasticsearch:
-    image: docker.io/bitnami/elasticsearch:latest
+  opensearch:
+    image: docker.io/opensearchproject/opensearch:latest
+    container_name: opensearch
+    hostname: opensearch
     restart: always
     ports:
       - "9200:9200"
-      - "9300:9300"
+      - "9600:9600"
     networks:
       - app-tier
     environment:
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=*Abcd123456
-      - ELASTICSEARCH_ENABLE_SECURITY=true
-      - ELASTICSEARCH_CLUSTER_NAME=gwc-cluster
-      - ELASTICSEARCH_NODE_NAME=gwc-node-1
-      - ELASTICSEARCH_CLUSTER_INITIAL_MASTER_NODES=gwc-node-1
-      - ELASTICSEARCH_DISCOVERY_TYPE=single-node
-      - ELASTICSEARCH_NETWORK_HOST=0.0.0.0
-      - ELASTICSEARCH_HEAP_SIZE=1g  # 根据服务器配置调整，建议不超过物理内存的50%
-      - ELASTICSEARCH_ACTION_DESTRUCTIVE_REQUIRES_NAME=true # 禁止执行没有指定索引名称的删除操作，增加安全性
+      - cluster.name=opensearch-cluster
+      - discovery.type=single-node
+      - plugins.security.disabled=false
+      - plugins.security.ssl.http.enabled=false
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=@Abcd#123456
     ulimits:
       memlock:
         soft: -1
         hard: -1
-      nofile:
-        soft: 65535
-        hard: 65535
+#    volumes:
+#      - /data/opensearch/data:/usr/share/opensearch/data
+#      - /data/opensearch/logs:/usr/share/opensearch/logs
 
   minio:
     image: docker.io/minio/minio:latest
