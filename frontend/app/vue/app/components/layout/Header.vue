@@ -33,7 +33,7 @@ const handleClickLogout = async () => {
 </script>
 
 <template>
-  <header class="fixed top-0 left-0 right-0 z-1000 flex justify-center bg-background/80 backdrop-blur-md border-b border-border/40">
+  <header class="fixed top-0 left-0 right-0 z-1000 flex justify-center bg-background/80 backdrop-blur-md border-b border-border/50 dark:border-border/30 dark:bg-background/60">
     <div class="flex h-(--layout-header-height) w-full max-w-300 items-center gap-6 px-4 max-md:gap-3 max-md:px-3">
       <!-- Logo -->
       <button

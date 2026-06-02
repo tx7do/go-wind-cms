@@ -36,7 +36,7 @@ function handleClick() {
     <div class="relative h-[160px] w-full overflow-hidden bg-background">
       <img
         :src="getCategoryThumbnail(category)"
-        :alt="getCategoryName(category, t('common.uncategorized'))"
+        :alt="getCategoryName(category, t('page.categories.category_untitled'))"
         :class="cn(
           'h-full w-full object-cover transition-transform duration-700 ease-out',
           clickable && 'group-hover:scale-[1.12]',
@@ -52,7 +52,7 @@ function handleClick() {
         'mb-2 line-clamp-2 text-base font-bold leading-tight text-foreground transition-colors',
         clickable && 'group-hover:text-primary',
       )">
-        {{ getCategoryName(category, t('common.uncategorized')) }}
+        {{ getCategoryName(category, t('page.categories.category_untitled')) }}
       </h3>
       <p class="mb-3 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
         {{ getCategoryDescription(category) }}

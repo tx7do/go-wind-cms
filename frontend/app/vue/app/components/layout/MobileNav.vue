@@ -13,6 +13,7 @@ import type { siteservicev1_NavigationItem } from '@/api/generated/app/service/v
 
 const { t } = useI18n()
 const localePath = useLocalePath()
+const switchLocalePath = useSwitchLocalePath()
 const { locale } = useI18n()
 const { themePreferences: themePref, setTheme: setThemeMode } = usePreferences()
 const currentMode = computed(() => themePref.value.mode)
@@ -217,7 +218,7 @@ const handleAction = (action: () => void) => {
               'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
               locale === 'zh-CN' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
-            @click="handleAction(() => navigateTo(localePath('zh-CN')))"
+            @click="handleAction(() => navigateTo(switchLocalePath('zh-CN')))"
           >
             <span>简体中文</span>
           </button>
@@ -227,7 +228,7 @@ const handleAction = (action: () => void) => {
               'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
               locale === 'en-US' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
-            @click="handleAction(() => navigateTo(localePath('en-US')))"
+            @click="handleAction(() => navigateTo(switchLocalePath('en-US')))"
           >
             <span>English</span>
           </button>
