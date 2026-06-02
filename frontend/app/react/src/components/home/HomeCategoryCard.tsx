@@ -29,10 +29,10 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick}) 
             className={cn(
                 'group scroll-reveal-item relative flex min-h-[200px] h-full cursor-pointer flex-col',
                 'rounded-2xl border border-primary/10 bg-card p-6 shadow-sm',
-                /* 空气动力学悬浮：与 PostCard / FeaturesSection 统一 */
+                /* 空气动力学悬浮：纯 primary 辉光 */
                 'transition-all duration-500 ease-out',
-                'hover:-translate-y-2 hover:border-primary/30',
-                'hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.12),0_0_24px_-6px_hsl(var(--primary)/0.2)]',
+                'hover:-translate-y-1.5 hover:border-primary/30',
+                'hover:shadow-[0_20px_40px_-8px_hsl(var(--primary)/0.15)]',
             )}
             onClick={handleClick}
             style={{ willChange: 'transform, box-shadow' }}

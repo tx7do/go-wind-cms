@@ -37,8 +37,9 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         <div
             className={cn(
                 'group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background',
-                'transition-all duration-300',
-                clickable && 'cursor-pointer hover:-translate-y-1.5 hover:border-primary hover:shadow-lg',
+                /* 空气动力学悬浮：纯 primary 辉光 */
+                'transition-all duration-500 ease-out',
+                clickable && 'cursor-pointer hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_40px_-8px_hsl(var(--primary)/0.15)]',
                 !clickable && 'cursor-default',
             )}
             onClick={handleClick}
@@ -48,13 +49,14 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                     src={getCategoryThumbnail(category)}
                     alt={getCategoryName(category, t)}
                     className={cn(
-                        'h-full w-full object-cover transition-transform duration-500',
-                        clickable && 'group-hover:scale-110',
+                        'h-full w-full object-cover transition-transform duration-700 ease-out',
+                        clickable && 'group-hover:scale-[1.12]',
                     )}
                 />
+                {/* hover 风迹渐变蒙层 */}
                 <div className={cn(
-                    'absolute inset-0 bg-black/15 transition-opacity duration-300',
-                    clickable ? 'opacity-0 group-hover:opacity-50' : 'opacity-0',
+                    'absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-sky-400/20 transition-opacity duration-500',
+                    clickable ? 'opacity-0 group-hover:opacity-100' : 'opacity-0',
                 )}/>
             </div>
             <div className="p-4">

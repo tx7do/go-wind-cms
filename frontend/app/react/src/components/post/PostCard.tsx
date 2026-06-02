@@ -45,10 +45,10 @@ const PostCard: React.FC<PostCardProps> = ({
             className={cn(
                 'group flex h-full cursor-pointer flex-col overflow-hidden',
                 'rounded-2xl border border-border bg-card shadow-sm',
-                /* 空气动力学悬浮 3D：长持续 + ease-out + 大幅抬起 + 深阴影 */
+                /* 空气动力学悬浮：纯 primary 辉光（无暗影底），更空灵 */
                 'transition-all duration-500 ease-out',
-                'hover:-translate-y-2 hover:border-primary/50',
-                'hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.15),0_0_24px_-4px_hsl(var(--primary)/0.2)]',
+                'hover:-translate-y-1.5 hover:border-primary/40',
+                'hover:shadow-[0_20px_40px_-8px_hsl(var(--primary)/0.15)]',
             )}
             onClick={handleViewPost}
             style={{ willChange: 'transform, box-shadow' }}

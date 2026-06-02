@@ -64,10 +64,10 @@ export default function FeaturesSection() {
                             className={cn(
                                 'group relative overflow-hidden rounded-xl border border-border bg-card p-10 text-center',
                                 'shadow-sm',
-                                /* 空气动力学悬浮：duration-500 ease-out + hover 风迹渐变蒙层 */
+                                /* 空气动力学悬浮：纯 primary 辉光 */
                                 'transition-all duration-500 ease-out',
-                                'hover:-translate-y-2 hover:border-primary/40',
-                                'hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.12),0_0_24px_-6px_hsl(var(--primary)/0.2)]',
+                                'hover:-translate-y-1.5 hover:border-primary/40',
+                                'hover:shadow-[0_20px_40px_-8px_hsl(var(--primary)/0.15)]',
                             )}
                         >
                             {/* hover 风迹渐变蒙层 */}
