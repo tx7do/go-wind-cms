@@ -33,8 +33,8 @@ const UserInfoSidebar: React.FC<UserInfoSidebarProps> = ({sections}) => {
                             <div className="space-y-2">
                                 {section.rows.map((row, rIndex) => (
                                     <div key={rIndex} className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{row.label}:</span>
-                                        <span className="text-foreground">{row.value}</span>
+                                        <span className="text-muted-foreground/70">{row.label}:</span>
+                                        <span className="font-medium text-foreground">{row.value}</span>
                                     </div>
                                 ))}
                             </div>

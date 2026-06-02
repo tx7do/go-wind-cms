@@ -12,12 +12,14 @@ import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
 import {fetchUserProfile} from "@/api/hooks/user-profile";
 
 import {formatDateTime} from "@/utils";
+import {useI18nRouter} from "@/i18n/helpers";
 import UserStatGrid from '@/components/user/UserStatGrid';
 import UserInfoSidebar, {type InfoSection, type InfoRow} from '@/components/user/UserInfoSidebar';
 import MetaDataItem from '@/components/ui/meta-data-item';
 
 export default function UserProfilePage() {
     const t = useTranslations('page.user');
+    const router = useI18nRouter();
 
     const [loading, setLoading] = useState(false);
     const [postsLoading, setPostsLoading] = useState(false);
@@ -60,12 +62,12 @@ export default function UserProfilePage() {
     };
 
     const statusColor: Record<string, string> = {
-        'NORMAL': 'bg-green-500/10 text-green-600',
-        'DISABLED': 'bg-red-500/10 text-red-600',
-        'PENDING': 'bg-yellow-500/10 text-yellow-600',
-        'LOCKED': 'bg-orange-500/10 text-orange-600',
-        'EXPIRED': 'bg-gray-500/10 text-gray-600',
-        'CLOSED': 'bg-red-500/10 text-red-600',
+        'NORMAL': 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20',
+        'DISABLED': 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20',
+        'PENDING': 'bg-yellow-50 text-yellow-700 border border-yellow-200/60 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20',
+        'LOCKED': 'bg-orange-50 text-orange-700 border border-orange-200/60 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20',
+        'EXPIRED': 'bg-gray-100 text-gray-600 border border-gray-200/60 dark:bg-gray-500/10 dark:text-gray-400 dark:border-gray-500/20',
+        'CLOSED': 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20',
     };
 
     // 侧栏信息分区
@@ -186,12 +188,12 @@ export default function UserProfilePage() {
     }
 
     const genderColor: Record<string, string> = {
-        'MALE': 'bg-blue-500/10 text-blue-600',
-        'FEMALE': 'bg-pink-500/10 text-pink-600',
-        'SECRET': 'bg-muted text-muted-foreground',
+        'MALE': 'bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20',
+        'FEMALE': 'bg-pink-50 text-pink-700 border border-pink-200/60 dark:bg-pink-500/10 dark:text-pink-400 dark:border-pink-500/20',
+        'SECRET': 'bg-muted text-muted-foreground border border-border',
     };
 
-    const tabBase = 'cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors border-transparent text-muted-foreground hover:text-foreground';
+    const tabBase = 'cursor-pointer border-b-2 px-3 py-2 text-sm font-medium transition-colors border-transparent text-muted-foreground hover:text-foreground';
     const tabActive = 'border-primary text-primary';
 
     return (
@@ -237,7 +239,10 @@ export default function UserProfilePage() {
                         </div>
 
                         <div className="ml-auto py-2 max-md:ml-0">
-                            <button className="cursor-pointer rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5">
+                            <button
+                                className="cursor-pointer rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5"
+                                onClick={() => router.push('/settings')}
+                            >
                                 {t('edit_profile')}
                             </button>
                         </div>

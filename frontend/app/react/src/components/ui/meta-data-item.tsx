@@ -22,9 +22,9 @@ export interface MetaDataItemProps {
  */
 const MetaDataItem: React.FC<MetaDataItemProps> = ({icon, iconSize = 16, text, className}) => {
     return (
-        <span className={cn('flex items-center gap-1.5', className)}>
+        <span className={cn('flex items-center gap-1.5 text-muted-foreground', className)}>
             {icon && (
-                <XIcon name={icon} size={iconSize}/>
+                <XIcon name={icon} size={iconSize} className="text-muted-foreground"/>
             )}
             {text}
         </span>
