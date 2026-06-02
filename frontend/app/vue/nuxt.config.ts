@@ -23,12 +23,6 @@ export default defineNuxtConfig({
         plugins: [
             tailwindcss(),
         ],
-        optimizeDeps: {
-            include: [
-                'date-fns-tz',
-                'highlight.js/lib/core'
-            ],
-        },
     },
     i18n: {
         langDir: '../locales',
