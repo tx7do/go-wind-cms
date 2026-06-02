@@ -18,7 +18,9 @@
   "permission": {
     "moduleName": "Access Control",
     "role": "Roles",
-    "permission": "Permissions"
+    "permission": "Permissions",
+    "menu": "Menu Management",
+    "api": "API Management"
   },
   "opm": {
     "moduleName": "Org & People",
@@ -37,8 +39,6 @@
     "task": "Task Scheduler",
     "file": "File Management",
     "loginPolicy": "Login Policy",
-    "menu": "Menu Management",
-    "api": "API Management"
   },
   "log": {
     "moduleName": "Audit Logs",

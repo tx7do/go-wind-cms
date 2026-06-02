@@ -18,7 +18,9 @@
   "permission": {
     "moduleName": "权限管理",
     "role": "角色管理",
-    "permission": "权限管理"
+    "permission": "权限管理",
+    "menu": "菜单管理",
+    "api": "API管理"
   },
   "opm": {
     "moduleName": "组织人员",
@@ -37,8 +39,6 @@
     "task": "任务调度",
     "file": "文件管理",
     "loginPolicy": "登录策略",
-    "menu": "菜单管理",
-    "api": "API管理",
     "language": "语言管理"
   },
   "log": {
