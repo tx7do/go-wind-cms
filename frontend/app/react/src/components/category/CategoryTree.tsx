@@ -4,7 +4,11 @@ import React, {useState} from 'react';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {
+    getCategoryName,
+    getCategoryDescription,
+    getCategoryThumbnail,
+} from '@/api/hooks/category';
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
 import styles from './CategoryTree.module.css';
@@ -21,7 +25,6 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                                        onCategoryClick
                                                    }) => {
     const t = useTranslations('page.categories');
-    const categoryStore = useCategoryStore();
     const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
 
     const handleViewCategory = (id: number) => {
@@ -61,17 +64,17 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                         <div className={styles.categoryInfo}>
                             <div className={styles.categoryImage}>
                                 <img
-                                    src={categoryStore.getCategoryThumbnail(category)}
-                                    alt={categoryStore.getCategoryName(category, t)}
+                                    src={getCategoryThumbnail(category)}
+                                    alt={getCategoryName(category, t)}
                                 />
                                 <div className={styles.imageOverlay}/>
                             </div>
                             <div className={styles.categoryContent}>
                                 <h3 className={category.children && category.children.length > 0 ? styles.hasChildren : ''}>
-                                    {categoryStore.getCategoryName(category, t)}
+                                    {getCategoryName(category, t)}
                                 </h3>
                                 <p className={styles.description}>
-                                    {categoryStore.getCategoryDescription(category)}
+                                    {getCategoryDescription(category)}
                                 </p>
                                 <div className={styles.categoryMeta}>
                                     <span className={styles.metaIcon}>

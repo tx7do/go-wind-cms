@@ -1,10 +1,15 @@
 'use client';
 
 import {useState, useMemo} from 'react';
-import {useTranslations} from 'next-intl';
+import {useTranslations, useLocale} from 'next-intl';
+import {Switch, Select, Button} from 'antd';
 import XIcon from '@/plugins/xicon';
 
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
+import {usePreferences} from '@/core/preferences';
+import {useI18n} from '@/i18n';
+import type {ThemeModeType, SupportedLanguagesType} from '@/core/preferences';
+
+import '../../globals.css';
 import styles from './settings.module.css';
 
 interface MenuItem {
@@ -13,125 +18,49 @@ interface MenuItem {
     label: string;
 }
 
-interface SettingItem {
-    label: string;
-    status?: string;
-    type: 'button' | 'toggle' | 'select';
-}
-
-interface Section {
-    title: string;
-    description?: string;
-    items: SettingItem[];
-}
-
-interface SettingsData {
-    title: string;
-    subtitle: string;
-    sections: Section[];
-}
-
 export default function SettingsPage() {
     const t = useTranslations('settings');
+    const locale = useLocale();
+
+    const {
+        theme: themePref,
+        content: contentPref,
+        setThemeMode,
+        updateContent,
+        setLanguage,
+        resetPreferences,
+    } = usePreferences();
+    const {changeLocale} = useI18n();
 
     const [activeMenu, setActiveMenu] = useState<'account' | 'message' | 'preference'>('account');
 
-    // 菜单项
     const menuItems: MenuItem[] = useMemo(() => [
         {key: 'account', icon: 'carbon:user', label: t('menu.account')},
         {key: 'message', icon: 'carbon:email', label: t('menu.message')},
         {key: 'preference', icon: 'carbon:settings', label: t('menu.preference')}
     ], [t]);
 
-    // 账号设置数据
-    const accountSettings: SettingsData = useMemo(() => ({
-        title: t('account.title'),
-        subtitle: t('account.subtitle'),
-        sections: [
-            {
-                title: t('account.section_title'),
-                description: t('account.section_desc'),
-                items: [
-                    {label: t('account.password'), status: t('account.password_not_set'), type: 'button'},
-                    {label: t('account.bind_phone'), status: t('account.password_not_set'), type: 'button'},
-                    {label: t('account.bind_email'), status: t('account.email_not_bound'), type: 'button'}
-                ]
-            },
-            {
-                title: t('account.third_party_title'),
-                items: []
-            }
-        ]
-    }), [t]);
+    const themeOptions = useMemo(() => [
+        {value: 'light' as ThemeModeType, label: t('preference.theme_light')},
+        {value: 'dark' as ThemeModeType, label: t('preference.theme_dark')},
+        {value: 'auto' as ThemeModeType, label: t('preference.theme_auto')},
+    ], [t]);
 
-    // 消息设置数据
-    const messageSettings: SettingsData = useMemo(() => ({
-        title: t('message.title'),
-        subtitle: t('message.subtitle'),
-        sections: [
-            {
-                title: t('message.email_notifications'),
-                description: t('message.email_notifications_desc'),
-                items: [
-                    {label: t('message.system_messages'), status: t('message.enabled'), type: 'toggle'},
-                    {label: t('message.comment_notifications'), status: t('message.enabled'), type: 'toggle'},
-                    {label: t('message.activity_updates'), status: t('message.enabled'), type: 'toggle'},
-                    {label: t('message.recommended_content'), status: t('message.enabled'), type: 'toggle'}
-                ]
-            },
-            {
-                title: t('message.email_frequency'),
-                items: [
-                    {label: t('message.frequency_desc'), type: 'select'}
-                ]
-            }
-        ]
-    }), [t]);
+    const languageOptions = useMemo(() => [
+        {value: 'zh-CN' as SupportedLanguagesType, label: t('preference.language_chinese')},
+        {value: 'en-US' as SupportedLanguagesType, label: t('preference.language_english')},
+    ], [t]);
 
-    // 偏好设置数据
-    const preferenceSettings: SettingsData = useMemo(() => ({
-        title: t('preference.title'),
-        subtitle: t('preference.subtitle'),
-        sections: [
-            {
-                title: t('preference.theme_settings'),
-                description: t('preference.theme_desc'),
-                items: [
-                    {label: t('preference.theme'), type: 'select'}
-                ]
-            },
-            {
-                title: t('preference.language_settings'),
-                description: t('preference.language_desc'),
-                items: [
-                    {label: t('preference.language'), type: 'select'}
-                ]
-            },
-            {
-                title: t('preference.content_preferences'),
-                description: t('preference.content_desc'),
-                items: [
-                    {label: t('preference.hide_sensitive_content'), type: 'toggle'},
-                    {label: t('preference.compact_mode'), type: 'toggle'},
-                    {label: t('preference.show_recommendations'), type: 'toggle'}
-                ]
-            }
-        ]
-    }), [t]);
+    const handleThemeChange = (mode: ThemeModeType) => {
+        setThemeMode(mode);
+    };
 
-    // 当前设置数据
-    const currentSettings: SettingsData = useMemo(() => {
-        switch (activeMenu) {
-            case 'account':
-                return accountSettings;
-            case 'message':
-                return messageSettings;
-            case 'preference':
-                return preferenceSettings;
-            default:
-                return accountSettings;
+    const handleLanguageChange = (newLocale: SupportedLanguagesType) => {
+        setLanguage(newLocale);
+        if (newLocale !== locale) {
+            changeLocale(newLocale);
         }
-    }, [activeMenu, accountSettings, messageSettings, preferenceSettings]);
+    };
 
     return (
         <div className={styles.settingsPage}>
@@ -156,22 +85,46 @@ export default function SettingsPage() {
 
                 {/* 中间内容区 */}
                 <main className={styles.content}>
-                    {/* 页面头部 */}
-                    <div className={styles.contentHeader}>
-                        <h1 className={styles.title}>{currentSettings.title}</h1>
-                        <p className={styles.subtitle}>{currentSettings.subtitle}</p>
-                    </div>
-
-                    {/* 动态渲染各 section */}
-                    {currentSettings.sections.map((section, sectionIndex) => (
-                        <div key={sectionIndex} className={styles.section}>
-                            <h2 className={styles.sectionTitle}>{section.title}</h2>
-                            {section.description && (
-                                <p className={styles.sectionDesc}>{section.description}</p>
-                            )}
-
-                            {/* 账户特殊处理 - 第三方账号 */}
-                            {section.title === t('account.third_party_title') ? (
+                    {/* 账号设置 */}
+                    {activeMenu === 'account' && (
+                        <>
+                            <div className={styles.contentHeader}>
+                                <h1 className={styles.title}>{t('account.title')}</h1>
+                                <p className={styles.subtitle}>{t('account.subtitle')}</p>
+                            </div>
+                            <div className={styles.section}>
+                                <h2 className={styles.sectionTitle}>{t('account.section_title')}</h2>
+                                <p className={styles.sectionDesc}>{t('account.section_desc')}</p>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('account.password')}</span>
+                                        <span className={styles.labelStatus}>{t('account.password_not_set')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Button type="primary" ghost size="small">{t('account.edit')}</Button>
+                                    </div>
+                                </div>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('account.bind_phone')}</span>
+                                        <span className={styles.labelStatus}>{t('account.password_not_set')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Button type="primary" ghost size="small">{t('account.edit')}</Button>
+                                    </div>
+                                </div>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('account.bind_email')}</span>
+                                        <span className={styles.labelStatus}>{t('account.email_not_bound')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Button type="primary" ghost size="small">{t('account.edit')}</Button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.section}>
+                                <h2 className={styles.sectionTitle}>{t('account.third_party_title')}</h2>
                                 <div className={styles.thirdPartyList}>
                                     <div className={styles.thirdPartyItem}>
                                         <div className={`${styles.platformIcon} ${styles.wechat}`}>
@@ -198,66 +151,171 @@ export default function SettingsPage() {
                                         </span>
                                     </div>
                                 </div>
-                            ) : (
-                                /* 设置项列表 */
-                                section.items.map((item, itemIndex) => (
-                                    <div key={itemIndex} className={styles.settingItem}>
-                                        <div className={styles.settingLabel}>
-                                            <span className={styles.labelText}>{item.label}</span>
-                                            {item.status && (
-                                                <span className={styles.labelStatus}>{item.status}</span>
-                                            )}
-                                        </div>
+                            </div>
+                        </>
+                    )}
 
-                                        {/* 根据 type 渲染不同的控件 */}
-                                        <div className={styles.settingControl}>
-                                            {/* 编辑按钮 */}
-                                            {item.type === 'button' && (
-                                                <button className={styles.editBtn}>
-                                                    {t('account.edit')}
-                                                </button>
-                                            )}
-
-                                            {/* 切换开关 */}
-                                            {item.type === 'toggle' && (
-                                                <label className={styles.toggleSwitch}>
-                                                    <input type="checkbox"/>
-                                                    <span className={styles.slider}></span>
-                                                </label>
-                                            )}
-
-                                            {/* 选择框 */}
-                                            {item.type === 'select' && (
-                                                <select className={styles.selectControl}>
-                                                    {section.title === t('preference.theme') && (
-                                                        <>
-                                                            <option>{t('preference.theme_light')}</option>
-                                                            <option>{t('preference.theme_dark')}</option>
-                                                            <option>{t('preference.theme_auto')}</option>
-                                                        </>
-                                                    )}
-                                                    {section.title === t('preference.language') && (
-                                                        <>
-                                                            <option>{t('preference.language_chinese')}</option>
-                                                            <option>{t('preference.language_english')}</option>
-                                                        </>
-                                                    )}
-                                                    {section.title === t('message.email_frequency') && (
-                                                        <>
-                                                            <option>{t('message.frequency_immediately')}</option>
-                                                            <option>{t('message.frequency_daily')}</option>
-                                                            <option>{t('message.frequency_weekly')}</option>
-                                                            <option>{t('message.frequency_monthly')}</option>
-                                                        </>
-                                                    )}
-                                                </select>
-                                            )}
-                                        </div>
+                    {/* 消息设置 */}
+                    {activeMenu === 'message' && (
+                        <>
+                            <div className={styles.contentHeader}>
+                                <h1 className={styles.title}>{t('message.title')}</h1>
+                                <p className={styles.subtitle}>{t('message.subtitle')}</p>
+                            </div>
+                            <div className={styles.section}>
+                                <h2 className={styles.sectionTitle}>{t('message.email_notifications')}</h2>
+                                <p className={styles.sectionDesc}>{t('message.email_notifications_desc')}</p>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('message.system_messages')}</span>
                                     </div>
-                                ))
-                            )}
-                        </div>
-                    ))}
+                                    <div className={styles.settingControl}>
+                                        <Switch defaultChecked/>
+                                    </div>
+                                </div>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('message.comment_notifications')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Switch defaultChecked/>
+                                    </div>
+                                </div>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('message.activity_updates')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Switch defaultChecked/>
+                                    </div>
+                                </div>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('message.recommended_content')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Switch defaultChecked/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.section}>
+                                <h2 className={styles.sectionTitle}>{t('message.email_frequency')}</h2>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('message.frequency_desc')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Select
+                                            defaultValue="immediately"
+                                            size="small"
+                                            style={{minWidth: 180}}
+                                            options={[
+                                                {value: 'immediately', label: t('message.frequency_immediately')},
+                                                {value: 'daily', label: t('message.frequency_daily')},
+                                                {value: 'weekly', label: t('message.frequency_weekly')},
+                                                {value: 'monthly', label: t('message.frequency_monthly')},
+                                            ]}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* 偏好设置 - 连接 usePreferences */}
+                    {activeMenu === 'preference' && (
+                        <>
+                            <div className={styles.contentHeader}>
+                                <h1 className={styles.title}>{t('preference.title')}</h1>
+                                <p className={styles.subtitle}>{t('preference.subtitle')}</p>
+                            </div>
+                            <div className={styles.section}>
+                                <h2 className={styles.sectionTitle}>{t('preference.theme_settings')}</h2>
+                                <p className={styles.sectionDesc}>{t('preference.theme_desc')}</p>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('preference.theme')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Select
+                                            value={themePref.mode}
+                                            size="small"
+                                            style={{minWidth: 180}}
+                                            options={themeOptions}
+                                            onChange={handleThemeChange}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.section}>
+                                <h2 className={styles.sectionTitle}>{t('preference.language_settings')}</h2>
+                                <p className={styles.sectionDesc}>{t('preference.language_desc')}</p>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('preference.language')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Select
+                                            value={locale as SupportedLanguagesType}
+                                            size="small"
+                                            style={{minWidth: 180}}
+                                            options={languageOptions}
+                                            onChange={handleLanguageChange}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.section}>
+                                <h2 className={styles.sectionTitle}>{t('preference.content_preferences')}</h2>
+                                <p className={styles.sectionDesc}>{t('preference.content_desc')}</p>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('preference.hide_sensitive_content')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Switch
+                                            checked={contentPref.hideSensitiveContent}
+                                            onChange={(checked) => updateContent({hideSensitiveContent: checked})}
+                                        />
+                                    </div>
+                                </div>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('preference.compact_mode')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Switch
+                                            checked={contentPref.compactMode}
+                                            onChange={(checked) => updateContent({compactMode: checked})}
+                                        />
+                                    </div>
+                                </div>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>{t('preference.show_recommendations')}</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Switch
+                                            checked={contentPref.showRecommendations}
+                                            onChange={(checked) => updateContent({showRecommendations: checked})}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.section}>
+                                <div className={styles.settingItem}>
+                                    <div className={styles.settingLabel}>
+                                        <span className={styles.labelText}>恢复默认设置</span>
+                                    </div>
+                                    <div className={styles.settingControl}>
+                                        <Button danger size="small" onClick={() => resetPreferences()}>
+                                            重置
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </main>
 
                 {/* 右侧帮助区 */}

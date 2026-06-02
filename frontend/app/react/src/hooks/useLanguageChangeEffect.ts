@@ -1,12 +1,11 @@
 'use client';
 
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {useLocale} from 'next-intl';
-
-import {useLanguageStore} from '@/store/core/language/hooks';
 
 /**
  * 语言切换监听器 Hook - 类似 Vue3 的 useLanguageChangeEffect
+ * 基于 next-intl 的 locale 变化触发回调
  * 
  * @param callback 语言变化时执行的回调函数
  * @param options 配置选项
@@ -25,14 +24,9 @@ export function useLanguageChangeEffect(
     const {immediate = false, autoCleanup = true} = options;
     
     const locale = useLocale();
-    const languageStore = useLanguageStore();
+    const prevLocaleRef = useRef(locale);
 
     useEffect(() => {
-        // 同步 next-intl 的 locale 到 Redux store
-        if (languageStore.language.locale !== locale) {
-            languageStore.setLocale(locale);
-        }
-
         // 执行回调
         let cleanupFn: (() => void) | undefined;
         
@@ -47,14 +41,11 @@ export function useLanguageChangeEffect(
             }
         };
 
-        if (immediate) {
+        const localeChanged = prevLocaleRef.current !== locale;
+
+        if (immediate || localeChanged) {
             void executeCallback();
-        } else {
-            // 非立即执行时，只在语言变化时触发
-            const previousLocale = languageStore.language.locale;
-            if (previousLocale !== locale) {
-                void executeCallback();
-            }
+            prevLocaleRef.current = locale;
         }
 
         // 清理函数

@@ -10,8 +10,8 @@ import {
     type contentservicev1_Post,
     identityservicev1_User
 } from "@/api/generated/app/service/v1";
-import {usePostStore} from "@/store/slices/post/hooks";
-import {useUserProfileStore} from "@/store/slices/userProfile/hooks";
+import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
+import {fetchUserProfile} from "@/api/hooks/user-profile";
 
 import '../../globals.css';
 import styles from './user.module.css';
@@ -28,9 +28,6 @@ export default function UserProfilePage() {
     const [user, setUser] = useState<identityservicev1_User | null>(null);
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [postsTotal, setPostsTotal] = useState(0);
-
-    const postStore = usePostStore();
-    const userProfileStore = useUserProfileStore();
 
     // 统计数据
     const stats = useMemo(() => ({
@@ -69,7 +66,7 @@ export default function UserProfilePage() {
     async function loadUserProfile() {
         setLoading(true);
         try {
-            const result = await userProfileStore.fetchUserProfile({}) as identityservicev1_User;
+            const result = await fetchUserProfile() as identityservicev1_User;
             setUser(result || null);
 
             if (activeTab === 'posts') {
@@ -89,11 +86,10 @@ export default function UserProfilePage() {
 
         setPostsLoading(true);
         try {
-            const result = await postStore.listPost({
-                // @ts-expect-error - 参数类型推断问题
+            const result = await fetchListPosts({
                 paging: {page: 1, pageSize: 10},
                 formValues: {author_id: user.id},
-                fieldMask: null,
+                fieldMask: undefined,
                 orderBy: ['-createdAt']
             }) as unknown as contentservicev1_ListPostResponse;
 
@@ -329,8 +325,8 @@ export default function UserProfilePage() {
                                             {posts.map((post) => (
                                                 <div key={post.id} className={styles.postItem}>
                                                     <div className={styles.postContent}>
-                                                        <h3 className={styles.postTitle}>{postStore.getPostTitle(post)}</h3>
-                                                        <p className={styles.postSummary}>{postStore.getPostSummary(post)}</p>
+                                                        <h3 className={styles.postTitle}>{getPostTitle(post)}</h3>
+                                                        <p className={styles.postSummary}>{getPostSummary(post)}</p>
                                                         <div className={styles.postMeta}>
                                                             <span className={styles.metaInfo}>
                                                                 <XIcon name="carbon:view" size={16}/>

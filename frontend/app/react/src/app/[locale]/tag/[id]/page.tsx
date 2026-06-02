@@ -10,7 +10,7 @@ import {AppEmpty} from '@/components/ui';
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {useTagStore} from '@/store/slices/tag/hooks';
+import {fetchTag, getTranslation as getTagTranslation} from '@/api/hooks/tag';
 import PostListWithPagination from '@/components/post/PostList';
 import type {contentservicev1_Tag} from "@/api/generated/app/service/v1";
 
@@ -21,7 +21,6 @@ export default function TagDetailPage() {
     const t = useTranslations('page');
     const params = useParams();
     const router = useI18nRouter();
-    const tagStore = useTagStore();
 
     const [loading, setLoading] = useState(false);
     const [tag, setTag] = useState<contentservicev1_Tag | null>(null);
@@ -36,10 +35,7 @@ export default function TagDetailPage() {
 
         setLoading(true);
         try {
-            const tagData = await tagStore.getTag({
-                // @ts-expect-error - 参数类型推断问题
-                id: tagId
-            }) as unknown as contentservicev1_Tag;
+            const tagData = await fetchTag(tagId!) as unknown as contentservicev1_Tag;
             setTag(tagData);
         } catch (error) {
             console.error('Load tag failed:', error);
@@ -78,10 +74,10 @@ export default function TagDetailPage() {
                     >
                         <XIcon name={`carbon:${tag?.icon || 'tag'}`} size={64}/>
                     </div>
-                    <h1>{tagStore.getTranslation(tag)?.name || t('tags.tag_untitled')}</h1>
-                    {tagStore.getTranslation(tag)?.description && (
+                    <h1>{getTagTranslation(tag)?.name || t('tags.tag_untitled')}</h1>
+                    {getTagTranslation(tag)?.description && (
                         <p className={styles['tag-description']}>
-                            {tagStore.getTranslation(tag)?.description}
+                            {getTagTranslation(tag)?.description}
                         </p>
                     )}
                     <div className={styles['tag-stats']}>

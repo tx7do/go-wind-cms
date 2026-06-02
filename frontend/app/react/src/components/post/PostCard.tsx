@@ -3,7 +3,11 @@
 import React from 'react';
 
 import {XIcon} from '@/plugins/xicon';
-import {usePostStore} from '@/store/slices/post/hooks';
+import {
+    getPostTitle,
+    getPostSummary,
+    getPostThumbnail,
+} from '@/api/hooks/post';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
 import type {contentservicev1_Post} from '@/api/generated/app/service/v1';
@@ -23,7 +27,6 @@ const PostCard: React.FC<PostCardProps> = ({
                                                categoryId
                                            }) => {
     const router = useI18nRouter();
-    const postStore = usePostStore();
 
     const handleViewPost = () => {
         const query: string[] = [`from=${from}`];
@@ -41,14 +44,14 @@ const PostCard: React.FC<PostCardProps> = ({
         <article className={styles.postCard} onClick={handleViewPost}>
             <div className={styles.postImage}>
                 <img
-                    src={postStore.getPostThumbnail(post)}
-                    alt={postStore.getPostTitle(post)}
+                    src={getPostThumbnail(post)}
+                    alt={getPostTitle(post)}
                 />
                 <div className={styles.imageOverlay}/>
             </div>
             <div className={styles.postContent}>
-                <h3 className={styles.postTitle}>{postStore.getPostTitle(post)}</h3>
-                <p className={styles.postSummary}>{postStore.getPostSummary(post)}</p>
+                <h3 className={styles.postTitle}>{getPostTitle(post)}</h3>
+                <p className={styles.postSummary}>{getPostSummary(post)}</p>
                 <div className={styles.postMeta}>
                     <div className={styles.metaItem}>
                         <XIcon name="carbon:user" size={16}/>

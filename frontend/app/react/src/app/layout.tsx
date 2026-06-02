@@ -3,8 +3,8 @@ import type {Metadata} from "next";
 
 import {env} from "@/config";
 import {DEFAULT_LANGUAGE} from "@/i18n";
+import StoreProvider from '@/store/StoreProvider';
 import ThemeClientProvider from '@/components/layout/ThemeClientProvider';
-import ReduxProvider from '@/store/ReduxProvider';
 import initThemeScript from '@/utils/init-theme-script';
 
 export const metadata: Metadata = {
@@ -28,9 +28,9 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
             />
         </head>
         <body style={{margin: 0, padding: 0}}>
-        <ReduxProvider>
-            <ThemeClientProvider>{children}</ThemeClientProvider>
-        </ReduxProvider>
+            <StoreProvider>
+                <ThemeClientProvider>{children}</ThemeClientProvider>
+            </StoreProvider>
         </body>
         </html>
     );

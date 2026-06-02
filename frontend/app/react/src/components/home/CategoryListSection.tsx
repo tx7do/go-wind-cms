@@ -2,7 +2,7 @@ import React, {useState, useEffect, useCallback, useRef, useMemo} from 'react';
 import {Skeleton, Carousel, Button} from 'antd';
 import {useTranslations} from 'next-intl';
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {fetchListCategories} from '@/api/hooks/category';
 import {
     contentservicev1_Category,
     contentservicev1_ListCategoryResponse,
@@ -37,7 +37,6 @@ export default function CategoryListSection({
                                                 showHeader = true
                                             }: CategoryListSectionProps) {
     const t = useTranslations('page.home');
-    const categoryStore = useCategoryStore();
     const router = useI18nRouter();
 
     // 使用 useMemo 稳定对象引用
@@ -62,13 +61,11 @@ export default function CategoryListSection({
 
         setLoading(true);
         try {
-            const res = await categoryStore.listCategory({
-                // @ts-expect-error - 参数类型推断问题
+            const res = await fetchListCategories({
                 paging: {page, pageSize},
                 formValues: stableFilter,
                 fieldMask,
                 orderBy: stableOrderBy,
-                signal,
             }) as unknown as contentservicev1_ListCategoryResponse;
 
             if (signal.aborted) return;
@@ -83,7 +80,7 @@ export default function CategoryListSection({
                 setLoading(false);
             }
         }
-    }, [categoryStore, stableFilter, fieldMask, stableOrderBy]); // 移除 page, pageSize 依赖
+    }, [stableFilter, fieldMask, stableOrderBy]); // 移除 page, pageSize 依赖
 
     useEffect(() => {
         loadCategories();

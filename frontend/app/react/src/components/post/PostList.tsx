@@ -5,7 +5,7 @@ import {Pagination, Skeleton} from 'antd';
 import {useTranslations} from 'next-intl';
 import {AppEmpty} from '@/components/ui';
 
-import {usePostStore} from '@/store/slices/post/hooks';
+import {fetchListPosts} from '@/api/hooks/post';
 import type {
     contentservicev1_ListPostResponse,
     contentservicev1_Post
@@ -46,7 +46,6 @@ const PostList: React.FC<PostListProps> = ({
                                                pageSizes = [10, 20, 30, 40]
                                            }) => {
     const t = useTranslations('page.posts');
-    const postStore = usePostStore();
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
@@ -77,8 +76,7 @@ const PostList: React.FC<PostListProps> = ({
     const fetchPosts = useCallback(async (page: number, pageSize: number) => {
         setLoading(true);
         try {
-            const res = await postStore.listPost({
-                // @ts-expect-error - 参数类型推断问题
+            const res = await fetchListPosts({
                 paging: {
                     page: page,
                     pageSize: pageSize,
@@ -99,7 +97,7 @@ const PostList: React.FC<PostListProps> = ({
         } finally {
             setLoading(false);
         }
-    }, [postStore, queryParams, categoryId, tagId, fieldMask, orderBy]);
+    }, [queryParams, categoryId, tagId, fieldMask, orderBy]);
 
     // 监听页面变化
     useEffect(() => {

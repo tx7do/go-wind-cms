@@ -6,8 +6,9 @@ import type {MenuProps} from 'antd';
 
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import {useNavigationStore} from '@/store/slices/navigation/hooks';
+import {fetchListNavigations, findNavItem} from '@/api/hooks/navigation';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
+import {usePreferences} from '@/core/preferences';
 
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 import styles from './TopNavbar.module.css';
@@ -25,7 +26,6 @@ interface TopNavbarProps {
 }
 
 export default function TopNavbar({onClick}: TopNavbarProps) {
-    const navigationStore = useNavigationStore();
     const router = useI18nRouter();
     const [navigationItems, setNavigationItems] = useState<siteservicev1_NavigationItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -51,8 +51,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
         async function loadNavigation() {
             try {
                 setIsLoading(true);
-                const res = await navigationStore.listNavigation({
-                    // @ts-expect-error - listNavigation 参数类型推断问题
+                const res = await fetchListNavigations({
                     paging: {page: 1, pageSize: 10}
                 }) as unknown as { items: siteservicev1_Navigation[]; total: number };
 
@@ -79,8 +78,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
     // 监听语言变化，自动重新加载导航数据
     useLanguageChangeEffect(() => {
         setIsLoading(true);
-        navigationStore.listNavigation({
-            // @ts-expect-error - listNavigation 参数类型推断问题
+        fetchListNavigations({
             paging: {page: 1, pageSize: 10}
         })
             .then(res => {
@@ -115,17 +113,8 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
 
     const menuItems = getMenuOptions(navigationItems) || [];
 
-    // 根据主题设置 Menu 的 theme
-    const [isDark, setIsDark] = useState(false);
-    useEffect(() => {
-        const updateTheme = () => {
-            setIsDark(document.documentElement.classList.contains('dark'));
-        };
-        updateTheme();
-        const observer = new MutationObserver(updateTheme);
-        observer.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
-        return () => observer.disconnect();
-    }, []);
+    // 从 preferences 获取主题状态
+    const {isDark} = usePreferences();
 
     return (
         <div className={styles.navbarWrapper} style={{width: '100%', minWidth: 0, flex: 1}}>
@@ -147,9 +136,9 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                             let item: siteservicev1_NavigationItem | null;
                             if (keyPath.length > 1) {
                                 // 子菜单项
-                                item = navigationStore.findNavItem(navigationItems, Number(keyPath[0]));
+                                item = findNavItem(navigationItems, Number(keyPath[0]));
                             } else {
-                                item = navigationStore.findNavItem(navigationItems, Number(key));
+                                item = findNavItem(navigationItems, Number(key));
                             }
                             if (item) handleNavigate(item);
                             onClick?.(Number(key));

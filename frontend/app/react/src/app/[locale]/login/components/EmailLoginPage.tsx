@@ -3,7 +3,7 @@
 import {useState} from 'react';
 import {useTranslations} from 'next-intl';
 import styles from '../login.module.css';
-import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
+import {useAuth} from "@/api/hooks/auth";
 
 export default function EmailLoginPage() {
     const t = useTranslations('authentication');
@@ -11,7 +11,7 @@ export default function EmailLoginPage() {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
-    const authenticationStore = useAuthenticationStore();
+    const auth = useAuth();
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -19,7 +19,7 @@ export default function EmailLoginPage() {
         }
         console.log('登录信息:', {email, password, rememberMe});
 
-        await authenticationStore.login({
+        await auth.login({
             email: email,
             password: password,
         });

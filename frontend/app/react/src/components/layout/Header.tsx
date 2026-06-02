@@ -11,14 +11,14 @@ import {
 
 import {useI18n} from '@/i18n';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import {useThemeStore, useThemeMode} from '@/store/core/theme/hooks';
-import {ThemeMode} from "@/store/types";
+import {usePreferences} from '@/core/preferences';
+import type {ThemeModeType} from '@/core/preferences';
 
 import TopNavbar from './TopNavbar';
 
 import styles from './Header.module.css';
-import {useAccessStore} from "@/store/core/access/hooks";
-import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
+import {useAccessStore} from "@/store/core/access/store";
+import {useAuth} from "@/api/hooks/auth";
 
 export default function Header() {
     const t = useTranslations('navbar');
@@ -26,15 +26,15 @@ export default function Header() {
     const menuT = useTranslations('menu');
     const brandTitle = appT('title');
 
-    const themeStore = useThemeStore();
-    const currentMode = useThemeMode(); //  直接从 Redux store 获取，保证 SSR/CSR 一致
+    const {theme: themePref, setThemeMode} = usePreferences();
+    const currentMode = themePref.mode;
     const {changeLocale} = useI18n();
     const router = useI18nRouter();
     const accessStore = useAccessStore();
-    const authenticationStore = useAuthenticationStore();
+    const auth = useAuth();
 
-    const accessToken = accessStore.access.accessToken;
-    const isLogin = !!accessToken && !accessStore.access.loginExpired;
+    const accessToken = accessStore.accessToken;
+    const isLogin = !!accessToken && !accessStore.loginExpired;
 
     const handleClickLogo = () => {
         router.push('/');
@@ -55,7 +55,7 @@ export default function Header() {
         console.log('Logout');
 
         if (isLogin) {
-            await authenticationStore.logout();
+            await auth.logout();
         }
     };
 
@@ -122,34 +122,32 @@ export default function Header() {
             key: 'dark',
             label: t('theme.dark'),
             icon: <span>🌙</span>,
-            onClick: () => themeStore.setMode('dark')
+            onClick: () => setThemeMode('dark')
         },
         {
             key: 'light',
             label: t('theme.light'),
             icon: <span>☀️</span>,
-            onClick: () => themeStore.setMode('light')
+            onClick: () => setThemeMode('light')
         },
         {
-            key: 'system',
+            key: 'auto',
             label: t('theme.system'),
             icon: <span>🖥️</span>,
-            onClick: () => themeStore.setMode('system')
+            onClick: () => setThemeMode('auto')
         },
     ];
 
-    // 直接使用 currentMode，不需要 mounted 状态
-    const themeIconMap: Record<ThemeMode, string> = {
+    // 主题图标映射
+    const themeIconMap: Record<ThemeModeType, string> = {
         dark: '🌙',
         light: '☀️',
-        system: '🖥️'
+        auto: '🖥️'
     };
 
-    // 确保 currentMode 始终是有效的 ThemeMode 值
-    const validMode: ThemeMode = (currentMode && ['dark', 'light', 'system'].includes(currentMode))
-        ? currentMode
-        : 'system';
-    const iconValue = themeIconMap[validMode];
+    const validMode: ThemeModeType = (currentMode && ['dark', 'light', 'auto'].includes(currentMode))
+        ? currentMode as ThemeModeType
+        : 'auto';
 
     // SSR 兼容：只在客户端渲染图标，避免 hydration 不匹配
     const [mounted, setMounted] = useState(false);
@@ -158,8 +156,7 @@ export default function Header() {
         setMounted(true);
     }, []);
 
-    // SSR 期间显示占位符，客户端渲染后显示实际图标
-    const displayIcon = mounted ? iconValue : '🖥️';
+    const displayIcon = mounted ? themeIconMap[validMode] : '🖥️';
 
     return (
         <div className={styles.fixedTop}>

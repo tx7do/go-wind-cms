@@ -5,7 +5,7 @@ import {useTranslations} from 'next-intl';
 import {Skeleton} from 'antd';
 import {AppEmpty} from '@/components/ui';
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {fetchListCategories} from '@/api/hooks/category';
 import CategoryTree from '@/components/category/CategoryTree';
 
 import {contentservicev1_Category, contentservicev1_ListCategoryResponse} from "@/api/generated/app/service/v1";
@@ -17,7 +17,6 @@ import styles from './page.module.css';
 export default function CategoryListPage() {
     const t = useTranslations('page');
     const router = useI18nRouter();
-    const categoryStore = useCategoryStore();
 
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<contentservicev1_Category[]>([]);
@@ -25,8 +24,7 @@ export default function CategoryListPage() {
     async function loadCategories() {
         setLoading(true);
         try {
-            const res = (await categoryStore.listCategory({
-                // @ts-expect-error - listCategory 参数类型推断问题
+            const res = (await fetchListCategories({
                 paging: undefined,
                 formValues: {status: 'CATEGORY_STATUS_ACTIVE'},
                 fieldMask: 'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description,translations.thumbnail,translations.cover_image',

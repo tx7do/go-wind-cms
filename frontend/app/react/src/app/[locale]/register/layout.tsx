@@ -1,7 +1,6 @@
 import React from "react";
 import {notFound} from 'next/navigation';
 import {NextIntlClientProvider} from 'next-intl';
-import ReduxProvider from '@/store/ReduxProvider';
 import GlobalLoading from '@/components/layout/GlobalLoading';
 import {DEFAULT_TIME_ZONE} from '@/i18n';
 import {isSupportedLocale, routing} from '../routing';
@@ -33,15 +32,12 @@ export default async function RegisterLayout({
 
     const {messages} = await getRequestConfig({requestLocale});
 
-    // 直接返回包装后的内容，不包含父 layout 的 Header 和 Footer
     return (
         <NextIntlClientProvider timeZone={DEFAULT_TIME_ZONE} locale={validLocale} messages={messages ?? {}}>
-            <ReduxProvider>
-                <GlobalLoading/>
-                <div className={styles.registerPageWrapper}>
-                    {children}
-                </div>
-            </ReduxProvider>
+            <GlobalLoading/>
+            <div className={styles.registerPageWrapper}>
+                {children}
+            </div>
         </NextIntlClientProvider>
     );
 }

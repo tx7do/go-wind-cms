@@ -3,7 +3,7 @@ import {Skeleton, Button} from 'antd';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
-import {useTagStore} from '@/store/slices/tag/hooks';
+import {fetchListTags} from '@/api/hooks/tag';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {
     contentservicev1_ListTagResponse,
@@ -20,7 +20,6 @@ interface TagItem {
 
 export default function PopularTagsSection() {
     const t = useTranslations('page.tags');
-    const tagStore = useTagStore();
     const router = useI18nRouter();
 
     const [_tags, setTags] = useState<contentservicev1_Tag[]>([]);
@@ -42,13 +41,11 @@ export default function PopularTagsSection() {
 
         setLoading(true);
         try {
-            const res = await tagStore.listTag({
-                // @ts-expect-error - 参数类型推断问题
+            const res = await fetchListTags({
                 paging: {page: 1, pageSize: 6},
                 formValues: {status: 'TAG_STATUS_ACTIVE', isFeatured: true},
-                fieldMask: null,
-                orderBy: null,
-                signal
+                fieldMask: undefined,
+                orderBy: undefined,
             }) as unknown as contentservicev1_ListTagResponse;
 
             if (signal.aborted) return;
@@ -76,7 +73,7 @@ export default function PopularTagsSection() {
                 setLoading(false);
             }
         }
-    }, [tagStore, t]); // 添加 t 依赖保证闭包正确性，useEffect 空依赖不会导致无限循环
+    }, [t]); // 添加 t 依赖保证闭包正确性，useEffect 空依赖不会导致无限循环
 
     useEffect(() => {
         loadPopularTags();

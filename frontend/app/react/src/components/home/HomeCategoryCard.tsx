@@ -1,6 +1,6 @@
 import React from 'react';
 import {XIcon} from '@/plugins/xicon';
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {getCategoryName} from '@/api/hooks/category';
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';
 import {useTranslations} from 'next-intl';
 import styles from './HomeCategoryCard.module.css';
@@ -12,7 +12,6 @@ interface HomeCategoryCardProps {
 
 const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick}) => {
     const t = useTranslations('page.home');
-    const categoryStore = useCategoryStore();
 
     const handleClick = () => {
         if (!category?.id) return;
@@ -39,7 +38,7 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick}) 
                         />
                     </div>
                     <div className={styles.homeCategoryInfo}>
-                        <h3>{categoryStore.getCategoryName(category)}</h3>
+                        <h3>{getCategoryName(category)}</h3>
                         <span className={styles.homePostCount}>
                             {t('article_count', {count: category.postCount || 0})}
                         </span>

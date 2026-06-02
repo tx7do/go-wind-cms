@@ -4,7 +4,11 @@ import React from 'react';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {
+    getCategoryName,
+    getCategoryDescription,
+    getCategoryThumbnail,
+} from '@/api/hooks/category';
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
 import styles from './CategoryCard.module.css';
@@ -21,7 +25,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                                                        onClick
                                                    }) => {
     const t = useTranslations('page.categories');
-    const categoryStore = useCategoryStore();
 
     const handleClick = () => {
         if (!category?.id || !clickable) return;
@@ -37,14 +40,14 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         >
             <div className={styles.categoryCardImage}>
                 <img
-                    src={categoryStore.getCategoryThumbnail(category)}
-                    alt={categoryStore.getCategoryName(category, t)}
+                    src={getCategoryThumbnail(category)}
+                    alt={getCategoryName(category, t)}
                 />
                 <div className={styles.imageOverlay}/>
             </div>
             <div className={styles.categoryCardContent}>
-                <h3>{categoryStore.getCategoryName(category, t)}</h3>
-                <p>{categoryStore.getCategoryDescription(category)}</p>
+                <h3>{getCategoryName(category, t)}</h3>
+                <p>{getCategoryDescription(category)}</p>
                 <div className={styles.categoryCardMeta}>
                     <span className={styles.metaIcon}>
                         <XIcon name="carbon:document" size={14}/>

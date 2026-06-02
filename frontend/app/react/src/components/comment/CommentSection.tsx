@@ -6,7 +6,8 @@ import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
 import {AppEmpty} from '@/components/ui';
-import {useCommentStore} from '@/store/slices/comment/hooks';
+import {fetchListComments} from '@/api/hooks/comment';
+import {createComment as createCommentApi} from '@/api/service/comment';
 import type {
     commentservicev1_Comment,
     commentservicev1_Comment_ContentType, commentservicev1_ListCommentResponse,
@@ -33,7 +34,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                                                            onUpdateComments
                                                        }) => {
     const t = useTranslations('comment');
-    const commentStore = useCommentStore();
 
     // 状态
     const [submitting, setSubmitting] = useState(false);
@@ -72,8 +72,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         }
 
         try {
-            const res = await commentStore.listComment({
-                // @ts-expect-error - 参数类型推断问题
+            const res = await fetchListComments({
                 paging: {
                     page: reset ? 1 : currentPage,
                     pageSize: pageSize
@@ -140,13 +139,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
         setSubmitting(true);
         try {
-            await commentStore.createComment({
-                // @ts-expect-error - 参数类型推断问题
-                postId: objectId,
+            await createCommentApi({
+                objectId: objectId,
+                contentType: contentType ?? undefined,
                 content: newComment.content,
                 authorName: newComment.authorName,
                 authorEmail: newComment.authorEmail,
-                status: 'COMMENT_STATUS_PENDING',
+                status: 'STATUS_PENDING',
             });
 
             alert(t('comment_submitted'));
@@ -177,15 +176,15 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
         setSubmitting(true);
         try {
-            await commentStore.createComment({
-                // @ts-expect-error - 参数类型推断问题
-                postId: objectId,
+            await createCommentApi({
+                objectId: objectId,
+                contentType: contentType ?? undefined,
                 content: content.trim(),
                 authorName: comment.authorName,
                 authorEmail: comment.authorEmail,
                 parentId: comment.id,
                 replyToId: comment.id,
-                status: 'COMMENT_STATUS_PENDING',
+                status: 'STATUS_PENDING',
             });
 
             alert(t('comment_posted'));
@@ -204,8 +203,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         if (!objectId || !contentType) return;
 
         try {
-            const res = await commentStore.listComment({
-                // @ts-expect-error - 参数类型推断问题
+            const res = await fetchListComments({
                 paging: {
                     page: 1,
                     pageSize: 50

@@ -3,5 +3,12 @@
     "light": "亮色模式",
     "dark": "暗黑模式",
     "auto": "跟随系统"
-  }
+  },
+  "content": {
+    "hide_sensitive": "隐藏敏感内容",
+    "compact_mode": "紧凑模式",
+    "show_recommendations": "显示推荐内容"
+  },
+  "reset": "恢复默认设置",
+  "reset_btn": "重置"
 }

@@ -3,6 +3,12 @@
     "light": "Light Mode",
     "dark": "Dark Mode",
     "auto": "Auto"
-  }
+  },
+  "content": {
+    "hide_sensitive": "Hide Sensitive Content",
+    "compact_mode": "Compact Mode",
+    "show_recommendations": "Show Recommendations"
+  },
+  "reset": "Reset to Default",
+  "reset_btn": "Reset"
 }
-

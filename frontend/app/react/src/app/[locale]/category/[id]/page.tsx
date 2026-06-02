@@ -9,7 +9,11 @@ import {AppEmpty} from '@/components/ui';
 
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {
+    fetchCategory,
+    getCategoryName,
+    getCategoryDescription,
+} from '@/api/hooks/category';
 import CategoryList from '@/components/category/CategoryList';
 import PostListWithPagination from '@/components/post/PostList';
 import {contentservicev1_Category} from "@/api/generated/app/service/v1";
@@ -21,7 +25,6 @@ export default function CategoryDetailPage() {
     const t = useTranslations('page');
     const params = useParams();
     const router = useI18nRouter();
-    const categoryStore = useCategoryStore();
 
     const [_loading, setLoading] = useState(false);
     const [category, setCategory] = useState<contentservicev1_Category | null>(null);
@@ -43,9 +46,8 @@ export default function CategoryDetailPage() {
 
         setLoading(true);
         try {
-            const categoryData = (await categoryStore.getCategory({
-                // @ts-expect-error - 参数类型推断问题
-                id: categoryId,
+            const categoryData = (await fetchCategory({
+                id: categoryId!,
                 fieldMask: 'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description,translations.thumbnail,translations.cover_image'
             })) as contentservicev1_Category;
             setCategory(categoryData);
@@ -88,10 +90,10 @@ export default function CategoryDetailPage() {
             {/* Hero Section */}
             <div className={styles['hero-section']}>
                 <div className={styles['hero-content']}>
-                    <h1>{categoryStore.getCategoryName(category)}</h1>
-                    {categoryStore.getCategoryDescription(category) && (
+                    <h1>{getCategoryName(category)}</h1>
+                    {getCategoryDescription(category) && (
                         <p className={styles['category-description']}>
-                            {categoryStore.getCategoryDescription(category)}
+                            {getCategoryDescription(category)}
                         </p>
                     )}
                     <div className={styles['category-stats']}>

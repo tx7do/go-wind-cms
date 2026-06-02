@@ -9,7 +9,12 @@ import ContentViewer from '@/components/content/ContentViewer';
 import PostList from '@/components/post/PostList';
 import BackToTop from '@/components/layout/BackToTop';
 
-import {usePostStore} from '@/store/slices/post/hooks';
+import {
+    fetchPost,
+    getPostTitle,
+    getPostContent,
+    getPostThumbnail,
+} from '@/api/hooks/post';
 import {formatDate} from "@/utils";
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
 import XIcon from '@/plugins/xicon';
@@ -34,13 +39,13 @@ export default function PostDetailPage() {
     const params = useParams();
     const router = useI18nRouter();
     const searchParams = useSearchParams();
-    const postStore = usePostStore();
 
-    // 直接使用 store 中的数据，而不是本地 state
-    const post = postStore.detail as contentservicev1_Post | null;
+    // 本地 state 管理 post 数据（不再使用 Redux store）
+    const [post, setPost] = useState<contentservicev1_Post | null>(null);
+    const [postLoading, setPostLoading] = useState(false);
 
     const [localLoading, setLocalLoading] = useState(true);
-    const isLoading = localLoading || (postStore.loading && !post);
+    const isLoading = localLoading || (postLoading && !post);
     const [tableOfContents, setTableOfContents] = useState<TocItem[]>([]);
     const [activeHeading, setActiveHeading] = useState('');
     const [isLiked, setIsLiked] = useState(false);
@@ -54,21 +59,21 @@ export default function PostDetailPage() {
         return id ? parseInt(id) : null;
     }, [params?.id]);
 
-    // 计算属性 - 使用 postStore 提供的工具函数
+    // 计算属性 - 使用纯工具函数
     const displayTitle = useMemo(() => {
         if (!post) return '';
-        return postStore.getPostTitle(post);
-    }, [post, postStore]);
+        return getPostTitle(post);
+    }, [post]);
 
     const displayContent = useMemo(() => {
         if (!post) return '';
-        return postStore.getPostContent(post);
-    }, [post, postStore]);
+        return getPostContent(post);
+    }, [post]);
 
     const displayThumbnail = useMemo(() => {
         if (!post) return '';
-        return postStore.getPostThumbnail(post);
-    }, [post, postStore]);
+        return getPostThumbnail(post);
+    }, [post]);
 
     // 相关文章数据
     const relatedPostsQuery = useMemo(() => {
@@ -86,16 +91,13 @@ export default function PostDetailPage() {
             if (!postId) return;
 
             setLocalLoading(true);
+            setPostLoading(true);
             try {
-                console.log('[PostDetail] Before getPost call:', {
+                console.log('[PostDetail] Before fetchPost call:', {
                     postId,
-                    currentDetail: postStore.detail
                 });
 
-                const fetchedPost = (await postStore.getPost({
-                    // @ts-expect-error - listNavigation 参数类型推断问题
-                    id: postId
-                })) as contentservicev1_Post;
+                const fetchedPost = (await fetchPost(postId!)) as contentservicev1_Post;
 
                 console.log('[PostDetail] API returned:', {
                     hasFetchedPost: !!fetchedPost,
@@ -104,14 +106,17 @@ export default function PostDetailPage() {
                     firstTranslationContentLength: fetchedPost?.translations?.[0]?.content?.length
                 });
 
+                setPost(fetchedPost);
+
                 if (fetchedPost) {
                     // SEO
-                    document.title = `${postStore.getPostTitle(fetchedPost)} - GoWind Content Hub`;
+                    document.title = `${getPostTitle(fetchedPost)} - GoWind Content Hub`;
                 }
             } catch (error) {
                 console.error('Load post failed:', error);
             } finally {
                 setLocalLoading(false);
+                setPostLoading(false);
             }
         }
 

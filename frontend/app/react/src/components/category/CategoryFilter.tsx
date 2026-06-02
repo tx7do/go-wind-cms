@@ -5,7 +5,7 @@ import {Button} from 'antd';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {fetchListCategories, getCategoryName as getCategoryNameHelper} from '@/api/hooks/category';
 import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
 
 import styles from './CategoryFilter.module.css';
@@ -30,7 +30,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                                            onLoaded
                                                        }) => {
     const t = useTranslations('page.posts');
-    const categoryStore = useCategoryStore();
     const categoryT = useTranslations('page.categories');
 
     // 内部状态管理
@@ -53,8 +52,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 query.parentId = parentId;
             }
 
-            const res = await categoryStore.listCategory({
-                // @ts-expect-error - listCategory 参数类型推断问题
+            const res = await fetchListCategories({
                 paging: undefined,
                 formValues: query,
                 fieldMask: 'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description',
@@ -85,7 +83,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     // 获取分类名称
     function getCategoryName(category: contentservicev1_Category | null): string {
         if (!category?.id) return '';
-        return categoryStore.getCategoryName(category, categoryT);
+        return getCategoryNameHelper(category, categoryT);
     }
 
     // 使用外部传入的 categories 或内部加载的 categories

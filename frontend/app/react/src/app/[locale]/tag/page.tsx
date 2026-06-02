@@ -8,7 +8,7 @@ import {AppEmpty} from '@/components/ui';
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {useTagStore} from '@/store/slices/tag/hooks';
+import {fetchListTags, getTranslation as getTagTranslation} from '@/api/hooks/tag';
 import {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
 
 import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
@@ -17,7 +17,6 @@ import styles from './tag-list.module.css';
 export default function TagListPage() {
     const t = useTranslations('page');
     const router = useI18nRouter();
-    const tagStore = useTagStore();
 
     const [loading, setLoading] = useState(false);
     const [tags, setTags] = useState<contentservicev1_Tag[]>([]);
@@ -28,8 +27,7 @@ export default function TagListPage() {
     async function loadTags() {
         setLoading(true);
         try {
-            const res = await tagStore.listTag({
-                // @ts-expect-error - 参数类型推断问题
+            const res = await fetchListTags({
                 paging: {
                     page: page,
                     pageSize: pageSize,
@@ -37,8 +35,8 @@ export default function TagListPage() {
                 formValues: {
                     status: 'TAG_STATUS_ACTIVE'
                 },
-                fieldMask: null,
-                orderBy: null,
+                fieldMask: undefined,
+                orderBy: undefined,
             }) as unknown as contentservicev1_ListTagResponse;
             setTags(res.items || []);
             setTotal(res.total || 0);
@@ -116,9 +114,9 @@ export default function TagListPage() {
                                             <XIcon name={`carbon:${tag.icon || 'tag'}`} size={48}/>
                                         </div>
                                         <div className={styles['tag-content']}>
-                                            <h3>{tagStore.getTranslation(tag)?.name || t('tags.tag_untitled')}</h3>
+                                            <h3>{getTagTranslation(tag)?.name || t('tags.tag_untitled')}</h3>
                                             <p className={styles['tag-description']}>
-                                                {tagStore.getTranslation(tag)?.description || ''}
+                                                {getTagTranslation(tag)?.description || ''}
                                             </p>
                                             <div className={styles['tag-meta']}>
                                                 <span className={styles['meta-icon']}>
