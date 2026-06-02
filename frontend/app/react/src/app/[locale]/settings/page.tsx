@@ -116,7 +116,7 @@ export default function SettingsPage() {
                                 <div className="grid grid-cols-3 gap-3 max-md:grid-cols-1">
                                     <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500">
-                                            <XIcon name="fa:wechat" size={24} color="white"/>
+                                            <XIcon name="fa:wechat" size={24} className="text-white"/>
                                         </div>
                                         <span className="text-sm font-medium text-foreground">
                                             {t('account.bind_wechat')}
@@ -124,7 +124,7 @@ export default function SettingsPage() {
                                     </div>
                                     <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500">
-                                            <XIcon name="fa:weibo" size={24} color="white"/>
+                                            <XIcon name="fa:weibo" size={24} className="text-white"/>
                                         </div>
                                         <span className="text-sm font-medium text-foreground">
                                             {t('account.bind_weibo')}
@@ -132,7 +132,7 @@ export default function SettingsPage() {
                                     </div>
                                     <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500">
-                                            <XIcon name="fa:qq" size={24} color="white"/>
+                                            <XIcon name="fa:qq" size={24} className="text-white"/>
                                         </div>
                                         <span className="text-sm font-medium text-foreground">
                                             {t('account.bind_qq')}
@@ -264,17 +264,17 @@ export default function SettingsPage() {
                     <div className="sticky top-24 rounded-lg border border-border bg-card p-5">
                         <h3 className="mb-3 text-base font-bold text-foreground">{t('help.title')}</h3>
                         <h4 className="mb-2 text-sm font-semibold text-foreground">{t('help.account_password')}</h4>
-                        <ul className="mb-4 space-y-1.5 text-xs text-muted-foreground">
-                            <li>1. {t('help.q1')}</li>
-                            <li>2. {t('help.q2')}</li>
-                            <li>3. {t('help.q3')}</li>
-                            <li>4. {t('help.q4')}</li>
-                            <li>5. {t('help.q5')}</li>
+                        <ul className="mb-4 space-y-2 text-xs">
+                            <li className="text-muted-foreground transition-colors hover:text-foreground">1. {t('help.q1')}</li>
+                            <li className="text-muted-foreground transition-colors hover:text-foreground">2. {t('help.q2')}</li>
+                            <li className="text-muted-foreground transition-colors hover:text-foreground">3. {t('help.q3')}</li>
+                            <li className="text-muted-foreground transition-colors hover:text-foreground">4. {t('help.q4')}</li>
+                            <li className="text-muted-foreground transition-colors hover:text-foreground">5. {t('help.q5')}</li>
                         </ul>
                         <h4 className="mb-2 text-sm font-semibold text-foreground">{t('help.other_issues')}</h4>
-                        <ul className="space-y-1.5 text-xs text-muted-foreground">
-                            <li>6. <a href="#" className="text-primary hover:underline">{t('help.q6')} {t('help.q6_link')}</a></li>
-                            <li>7. <a href="#" className="text-primary hover:underline">{t('help.q7')} {t('help.q7_link')}</a></li>
+                        <ul className="space-y-2 text-xs">
+                            <li className="text-muted-foreground transition-colors hover:text-foreground">6. <a href="#" className="text-primary hover:underline">{t('help.q6')} {t('help.q6_link')}</a></li>
+                            <li className="text-muted-foreground transition-colors hover:text-foreground">7. <a href="#" className="text-primary hover:underline">{t('help.q7')} {t('help.q7_link')}</a></li>
                         </ul>
                     </div>
                 </aside>
