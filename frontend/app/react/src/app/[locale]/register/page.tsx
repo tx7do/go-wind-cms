@@ -5,8 +5,6 @@ import {useTranslations} from 'next-intl';
 
 import {useI18nRouter} from "@/i18n/helpers";
 
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-
 import AccountRegisterPage from './components/AccountRegisterPage';
 import EmailRegisterPage from './components/EmailRegisterPage';
 import PhoneRegisterPage from './components/PhoneRegisterPage';

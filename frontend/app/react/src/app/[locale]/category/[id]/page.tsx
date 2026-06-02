@@ -16,9 +16,9 @@ import {
 } from '@/api/hooks/category';
 import CategoryList from '@/components/category/CategoryList';
 import PostListWithPagination from '@/components/post/PostList';
+import PageHero from '@/components/layout/PageHero';
+import {XIcon} from '@/plugins/xicon';
 import {contentservicev1_Category} from "@/api/generated/app/service/v1";
-
-import '../../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
 
 export default function CategoryDetailPage() {
     const t = useTranslations('page');
@@ -85,25 +85,26 @@ export default function CategoryDetailPage() {
 
     return (
         <div className="w-full">
-            {/* Hero Section */}
-            <section className="w-full flex min-h-[300px] items-center justify-center overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
-                <div className="w-full max-w-3xl px-8 text-center">
-                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
-                        {getCategoryName(category)}
-                    </h1>
-                    {getCategoryDescription(category) && (
-                        <p className="mb-6 text-lg text-muted-foreground max-md:text-base">
-                            {getCategoryDescription(category)}
-                        </p>
-                    )}
-                    <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            <PageHero
+                title={getCategoryName(category) || ''}
+                description={getCategoryDescription(category) || undefined}
+                icon={category?.icon || 'carbon:folder'}
+                size="lg"
+                meta={
+                    <>
                         <div className="flex items-center gap-2">
-                            <span className="iconfont icon-document"/>
+                            <XIcon name="carbon:document" size={16}/>
                             <span>{category?.postCount || 0} {t('posts.articles')}</span>
                         </div>
-                    </div>
-                </div>
-            </section>
+                        {childCategories.length > 0 && (
+                            <div className="flex items-center gap-2">
+                                <XIcon name="carbon:folder" size={16}/>
+                                <span>{childCategories.length} {t('categories.categories')}</span>
+                            </div>
+                        )}
+                    </>
+                }
+            />
 
             {/* Posts Section */}
             <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">

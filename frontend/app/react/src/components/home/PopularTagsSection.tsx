@@ -15,6 +15,7 @@ interface TagItem {
     id: number;
     name: string;
     color: string;
+    postCount: number;
 }
 
 export default function PopularTagsSection() {
@@ -24,6 +25,7 @@ export default function PopularTagsSection() {
     const [_tags, setTags] = useState<contentservicev1_Tag[]>([]);
     const [loading, setLoading] = useState(false);
     const [displayTags, setDisplayTags] = useState<TagItem[]>([]);
+    const [hoveredId, setHoveredId] = useState<number | null>(null);
 
     // 用于取消异步操作
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -54,11 +56,12 @@ export default function PopularTagsSection() {
 
             // 生成带颜色的标签
             const taggedItems: TagItem[] = tagItems
-                .filter(tag => tag.id !== undefined) // 过滤掉 id 为 undefined 的项
+                .filter(tag => tag.id !== undefined)
                 .map((tag, index) => ({
                     id: tag.id!,
                     name: tag.translations?.[0]?.name || t('tag_untitled'),
-                    color: tag.color || `hsl(${index * 60}, 100%, 50%)`,
+                    color: tag.color || `hsl(${(index * 67) % 360}, 70%, 55%)`,
+                    postCount: tag.postCount || 0,
                 }));
 
             setDisplayTags(taggedItems);
@@ -72,18 +75,17 @@ export default function PopularTagsSection() {
                 setLoading(false);
             }
         }
-    }, [t]); // 添加 t 依赖保证闭包正确性，useEffect 空依赖不会导致无限循环
+    }, [t]);
 
     useEffect(() => {
         loadPopularTags();
 
-        // 组件卸载时取消请求
         return () => {
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
             }
         };
-    }, []); // 空依赖数组，只在首次渲染时执行
+    }, []);
 
     const handleViewTag = (tag: TagItem) => {
         router.push(`/tag/${tag.id}`);
@@ -102,27 +104,60 @@ export default function PopularTagsSection() {
             </div>
             <div className="w-full">
                 {loading ? (
-                    <div className="flex flex-wrap justify-center gap-6">
+                    <div className="flex flex-wrap justify-center gap-3">
                         {Array.from({length: 6}).map((_, i) => (
-                            <div key={i} className="flex min-w-[90px] items-center rounded-2xl border-[1.5px] border-primary/20 bg-primary/5 px-6 py-4 shadow-sm">
-                                <Skeleton className="h-11 w-full"/>
+                            <div key={i} className="h-10 w-28">
+                                <Skeleton className="h-full w-full rounded-full"/>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="flex flex-wrap justify-center gap-6 max-md:gap-2">
-                        {displayTags.map((tag) => (
-                            <div
-                                key={tag.id}
-                                className="group flex min-w-[90px] cursor-pointer items-center rounded-2xl border-[1.5px] border-primary/20 bg-primary/5 px-6 py-4 font-bold text-primary shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:bg-primary hover:text-white hover:shadow-lg max-md:rounded-xl max-md:px-4 max-md:py-2.5 max-md:text-sm"
-                                style={{'--tag-color': tag.color} as React.CSSProperties}
-                                onClick={() => handleViewTag(tag)}
-                            >
-                                <span className="truncate text-base font-bold tracking-tight transition-colors group-hover:text-white max-md:text-sm">
-                                    {tag.name}
-                                </span>
-                            </div>
-                        ))}
+                    <div className="flex flex-wrap justify-center gap-3 max-md:gap-2">
+                        {displayTags.map((tag) => {
+                            const isHovered = hoveredId === tag.id;
+                            return (
+                                <button
+                                    key={tag.id}
+                                    className="group flex cursor-pointer items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg max-md:px-4 max-md:py-2 max-md:text-xs"
+                                    style={isHovered ? {
+                                        backgroundColor: tag.color,
+                                        color: '#ffffff',
+                                        borderColor: tag.color,
+                                        boxShadow: `0 8px 24px -8px ${tag.color}80`,
+                                    } : {
+                                        backgroundColor: `${tag.color}12`,
+                                        color: tag.color,
+                                        borderColor: `${tag.color}40`,
+                                    }}
+                                    onMouseEnter={() => setHoveredId(tag.id)}
+                                    onMouseLeave={() => setHoveredId(null)}
+                                    onClick={() => handleViewTag(tag)}
+                                >
+                                    {/* 左侧圆点指示器 */}
+                                    <span
+                                        className="h-2 w-2 rounded-full transition-all duration-300"
+                                        style={{backgroundColor: isHovered ? '#fff' : tag.color}}
+                                    />
+                                    <span className="truncate tracking-tight">
+                                        {tag.name}
+                                    </span>
+                                    {/* 文章数 */}
+                                    {tag.postCount > 0 && (
+                                        <span
+                                            className="rounded-full px-2 py-0.5 text-[10px] font-bold leading-none transition-colors duration-300"
+                                            style={isHovered ? {
+                                                backgroundColor: 'rgba(255,255,255,0.25)',
+                                                color: '#fff',
+                                            } : {
+                                                backgroundColor: `${tag.color}25`,
+                                            }}
+                                        >
+                                            {tag.postCount}
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
                 )}
             </div>

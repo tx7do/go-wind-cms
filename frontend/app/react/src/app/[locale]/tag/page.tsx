@@ -6,13 +6,12 @@ import {Skeleton} from '@/components/ui/skeleton';
 import {Button} from '@/components/ui/button';
 import {AppEmpty} from '@/components/ui';
 
-import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
+import PageHero from '@/components/layout/PageHero';
+import {XIcon} from '@/plugins/xicon';
 
 import {fetchListTags, getTranslation as getTagTranslation} from '@/api/hooks/tag';
 import {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
-
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
 
 export default function TagListPage() {
     const t = useTranslations('page');
@@ -68,23 +67,17 @@ export default function TagListPage() {
 
     return (
         <div className="w-full">
-            {/* Hero Section */}
-            <section className="w-full flex min-h-[300px] items-center justify-center border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
-                <div className="w-full max-w-3xl px-8 text-center">
-                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
-                        {t('tags.tags_list')}
-                    </h1>
-                    <p className="mb-6 text-lg text-muted-foreground max-md:text-base">
-                        {t('tags.explore_all')}
-                    </p>
-                    <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                            <XIcon name="carbon:tag" size={20}/>
-                            <span>{tags.length} {t('tags.total_tags')}</span>
-                        </div>
+            <PageHero
+                title={t('tags.tags_list')}
+                description={t('tags.explore_all')}
+                icon="carbon:tag"
+                size="md"
+                meta={
+                    <div className="flex items-center gap-2">
+                        <span>{total || tags.length} {t('tags.total_tags')}</span>
                     </div>
-                </div>
-            </section>
+                }
+            />
 
             {/* Tags Grid */}
             <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">

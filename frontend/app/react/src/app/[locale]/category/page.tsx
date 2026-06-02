@@ -7,11 +7,10 @@ import {AppEmpty} from '@/components/ui';
 
 import {fetchListCategories} from '@/api/hooks/category';
 import CategoryTree from '@/components/category/CategoryTree';
+import PageHero from '@/components/layout/PageHero';
 
 import {contentservicev1_Category, contentservicev1_ListCategoryResponse} from "@/api/generated/app/service/v1";
 import {useI18nRouter} from "@/i18n/helpers";
-
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
 
 export default function CategoryListPage() {
     const t = useTranslations('page');
@@ -47,17 +46,12 @@ export default function CategoryListPage() {
 
     return (
         <div className="w-full">
-            {/* Hero Section */}
-            <section className="w-full flex min-h-[300px] items-center justify-center border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
-                <div className="w-full max-w-3xl px-8 text-center">
-                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
-                        {t('categories.categories')}
-                    </h1>
-                    <p className="text-lg text-muted-foreground max-md:text-base">
-                        {t('categories.browse_all')}
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                title={t('categories.categories')}
+                description={t('categories.browse_all')}
+                icon="carbon:folder"
+                size="md"
+            />
 
             {/* Content Section */}
             <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">

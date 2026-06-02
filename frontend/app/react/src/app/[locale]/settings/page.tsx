@@ -11,8 +11,6 @@ import {usePreferences} from '@/core/preferences';
 import {useI18n} from '@/i18n';
 import type {ThemeModeType, SupportedLanguagesType} from '@/core/preferences';
 
-import '../../globals.css';
-
 interface MenuItem {
     key: string;
     icon: string;

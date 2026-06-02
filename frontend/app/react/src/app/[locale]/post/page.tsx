@@ -3,10 +3,9 @@
 import {useState, useMemo} from 'react';
 import {useTranslations} from 'next-intl';
 
+import PageHero from '@/components/layout/PageHero';
 import CategoryFilter from '@/components/category/CategoryFilter';
 import PostList from '@/components/post/PostList';
-
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
 
 export default function PostListPage() {
     const t = useTranslations('page');
@@ -27,17 +26,12 @@ export default function PostListPage() {
 
     return (
         <div className="w-full">
-            {/* Hero Section */}
-            <section className="w-full flex min-h-[300px] items-center justify-center border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
-                <div className="w-full max-w-3xl px-8 text-center">
-                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
-                        {t('posts.posts_list')}
-                    </h1>
-                    <p className="text-lg text-muted-foreground max-md:text-base">
-                        {t('posts.explore_latest')}
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                title={t('posts.posts_list')}
+                description={t('posts.explore_latest')}
+                icon="carbon:document"
+                size="md"
+            />
 
             <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
                 <CategoryFilter

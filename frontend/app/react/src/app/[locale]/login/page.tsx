@@ -7,8 +7,6 @@ import {useI18nRouter} from "@/i18n/helpers";
 
 import ControlPanel from '@/components/layout/ControlPanel';
 
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-
 import AccountLoginPage from './components/AccountLoginPage';
 import EmailLoginPage from './components/EmailLoginPage';
 import PhoneLoginPage from './components/PhoneLoginPage';

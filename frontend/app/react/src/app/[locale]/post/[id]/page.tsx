@@ -20,8 +20,6 @@ import {contentservicev1_Post} from "@/api/generated/app/service/v1";
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import '../../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-
 // 常量定义
 const HEADING_OFFSET = 150;
 const THROTTLE_DELAY = 200;

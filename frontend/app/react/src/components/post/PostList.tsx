@@ -155,9 +155,9 @@ const PostList: React.FC<PostListProps> = ({
                         className="grid gap-6 max-md:!grid-cols-1 max-md:gap-4"
                         style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}
                     >
-                        {posts.map((post) => (
+                        {posts.map((post, index) => (
                             <PostCard
-                                key={post.id}
+                                key={`${post.id}-${index}`}
                                 post={post}
                                 from={from}
                                 categoryId={categoryId}

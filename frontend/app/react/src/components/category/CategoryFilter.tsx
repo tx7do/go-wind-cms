@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useState, useEffect, useRef} from 'react';
-import {Button} from '@/components/ui/button';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
@@ -152,23 +151,42 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         return <div className="py-10 text-center text-muted-foreground">加载中...</div>;
     }
 
+    // 通用按钮样式
+    const btnBase = cn(
+        'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium',
+        'transition-all duration-200 cursor-pointer select-none',
+        'border border-transparent',
+    );
+    const btnInactive = cn(
+        'bg-muted/50 text-foreground/70',
+        'hover:bg-primary/10 hover:text-primary hover:border-primary/30',
+    );
+    const btnActive = cn(
+        'bg-primary text-primary-foreground shadow-sm',
+        'hover:bg-primary/90',
+    );
+
     return (
-        <div className="mb-12 max-md:mb-8">
+        <div className="relative z-20 mb-10 max-md:mb-6">
             <div className={cn(
-                'flex flex-wrap gap-3 rounded-2xl border border-border bg-card p-6 shadow-sm',
-                'max-md:overflow-x-auto max-md:gap-2 max-md:p-4',
+                'flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card/50 p-3 backdrop-blur-sm',
+                'max-md:overflow-x-auto max-md:p-2.5',
                 'max-sm:flex-nowrap max-sm:justify-start',
             )}>
                 {/* 所有分类按钮 */}
-                <Button
-                    variant={selectedCategory === null ? 'default' : 'outline'}
-                    size="lg"
+                <button
+                    type="button"
                     onClick={() => handleCategoryChange(null)}
-                    className="gap-2"
+                    className={cn(btnBase, selectedCategory === null ? btnActive : btnInactive)}
                 >
-                    <XIcon name="carbon:grid" size={16}/>
+                    <XIcon name="carbon:grid" size={15}/>
                     {t('all_categories')}
-                </Button>
+                </button>
+
+                {/* 分隔线 */}
+                {displayCategories.length > 0 && (
+                    <div className="mx-1 h-5 w-px bg-border max-md:hidden"/>
+                )}
 
                 {/* 树形模式 */}
                 {treeMode ? (
@@ -177,41 +195,63 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                         {displayCategories.map((node) => (
                             <div
                                 key={node.id}
-                                className="relative inline-block"
+                                className="relative"
                                 onMouseEnter={() => node.id && showSubmenu(node.id)}
                                 onMouseLeave={() => node.id && hideSubmenu(node.id)}
                             >
-                                <Button
-                                    variant={selectedCategory === node.id ? 'default' : 'outline'}
-                                    size="lg"
+                                <button
+                                    type="button"
                                     onClick={() => node.id && handleCategoryClick(node.id)}
-                                    className="gap-2"
+                                    className={cn(
+                                        btnBase,
+                                        selectedCategory === node.id ? btnActive : btnInactive,
+                                        'whitespace-nowrap',
+                                    )}
                                 >
-                                    <XIcon name={node.icon || 'carbon:folder'} size={16}/>
+                                    <XIcon name={node.icon || 'carbon:folder'} size={15}/>
                                     {getCategoryName(node)}
-                                </Button>
+                                    {hasChildren(node.id || 0) && (
+                                        <XIcon name="carbon:chevron-down" size={12} className="ml-0.5 opacity-60"/>
+                                    )}
+                                </button>
 
                                 {/* 子分类菜单 */}
                                 {hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && (
                                     <div
-                                        className="absolute left-0 top-full z-[1001] mt-2 flex min-w-fit max-w-[280px] flex-wrap gap-1.5 rounded-xl border border-border bg-card p-2 shadow-xl backdrop-blur-sm"
+                                        className={cn(
+                                            'absolute left-0 top-full z-50 mt-1.5',
+                                            'min-w-[200px] max-w-[320px]',
+                                            'rounded-lg border border-border bg-popover p-1.5',
+                                            'shadow-lg shadow-black/5',
+                                            'animate-in fade-in-0 zoom-in-95 duration-150',
+                                        )}
                                         onMouseEnter={() => keepSubmenuOpen(node.id || 0)}
                                         onMouseLeave={() => hideSubmenu(node.id || 0)}
                                     >
                                         {node.children!.map((child) => (
-                                            <Button
+                                            <button
                                                 key={child.id}
-                                                variant={selectedCategory === child.id ? 'default' : 'outline'}
-                                                size="sm"
+                                                type="button"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleCategoryChange(child.id || 0);
                                                 }}
-                                                className="gap-2"
+                                                className={cn(
+                                                    'flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm',
+                                                    'transition-colors duration-150 cursor-pointer',
+                                                    selectedCategory === child.id
+                                                        ? 'bg-primary/10 text-primary font-medium'
+                                                        : 'text-foreground/80 hover:bg-muted hover:text-foreground',
+                                                )}
                                             >
                                                 <XIcon name={child.icon || 'carbon:folder'} size={14}/>
-                                                {getCategoryName(child)}
-                                            </Button>
+                                                <span className="truncate">{getCategoryName(child)}</span>
+                                                {child.postCount !== undefined && child.postCount > 0 && (
+                                                    <span className="ml-auto text-xs text-muted-foreground">
+                                                        {child.postCount}
+                                                    </span>
+                                                )}
+                                            </button>
                                         ))}
                                     </div>
                                 )}
@@ -222,16 +262,15 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                     /* 平铺模式 (默认) */
                     <>
                         {rootCategories.map((cat) => (
-                            <Button
+                            <button
                                 key={cat.id}
-                                variant={selectedCategory === cat.id ? 'default' : 'outline'}
-                                size="lg"
+                                type="button"
                                 onClick={() => handleCategoryChange(cat.id || 0)}
-                                className="gap-2"
+                                className={cn(btnBase, selectedCategory === cat.id ? btnActive : btnInactive)}
                             >
-                                <XIcon name={cat.icon || 'carbon:folder'} size={16}/>
+                                <XIcon name={cat.icon || 'carbon:folder'} size={15}/>
                                 {getCategoryName(cat)}
-                            </Button>
+                            </button>
                         ))}
                     </>
                 )}

@@ -13,7 +13,6 @@ import {
 import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
 import {fetchUserProfile} from "@/api/hooks/user-profile";
 
-import '../../globals.css';
 import {formatDateTime} from "@/utils";
 
 export default function UserProfilePage() {

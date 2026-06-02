@@ -63,15 +63,21 @@ export default function FeaturesSection() {
                             key={index}
                             className={cn(
                                 'group relative overflow-hidden rounded-xl border border-border bg-card p-10 text-center',
-                                'shadow-sm transition-all duration-400',
-                                'hover:-translate-y-2 hover:border-primary/40 hover:shadow-lg',
+                                'shadow-sm',
+                                /* 空气动力学悬浮：duration-500 ease-out + hover 风迹渐变蒙层 */
+                                'transition-all duration-500 ease-out',
+                                'hover:-translate-y-2 hover:border-primary/40',
+                                'hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.12),0_0_24px_-6px_hsl(var(--primary)/0.2)]',
                             )}
                         >
+                            {/* hover 风迹渐变蒙层 */}
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
                             <div className={cn(
-                                'mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl',
+                                'relative mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl',
                                 'bg-primary/10 text-3xl text-primary',
-                                'transition-all duration-300',
-                                'group-hover:scale-110 group-hover:-rotate-10 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg',
+                                'transition-all duration-500 ease-out',
+                                'group-hover:scale-110 group-hover:-rotate-6 group-hover:bg-primary group-hover:text-white',
+                                'group-hover:shadow-[0_8px_24px_-4px_hsl(var(--primary)/0.4)]',
                             )}>
                                 <XIcon name={feature.icon || ''} size={48}/>
                             </div>

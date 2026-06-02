@@ -92,7 +92,7 @@ export default function Header() {
                 {/* 功能按钮区 */}
                 <div className="flex shrink-0 items-center gap-1">
                     {/* 用户菜单 */}
-                    <DropdownMenu>
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" aria-label="User menu">
                                 <User className="h-4 w-4"/>
@@ -134,7 +134,7 @@ export default function Header() {
                     </DropdownMenu>
 
                     {/* 语言菜单 */}
-                    <DropdownMenu>
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" aria-label="Language">
                                 <Globe className="h-4 w-4"/>
@@ -151,7 +151,7 @@ export default function Header() {
                     </DropdownMenu>
 
                     {/* 主题菜单 */}
-                    <DropdownMenu>
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" aria-label="Toggle theme">
                                 {themeIcon}

@@ -1,6 +1,8 @@
 import React from "react";
 import type {Metadata} from "next";
 
+import './globals.css';
+
 import {env} from "@/config";
 import {DEFAULT_LANGUAGE} from "@/i18n";
 import StoreProvider from '@/store/StoreProvider';
@@ -18,7 +20,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <html
             lang={DEFAULT_LANGUAGE}
             suppressHydrationWarning
-            className="m-0 p-0"
+            data-scroll-behavior="smooth"
         >
         <head>
             <script
@@ -27,7 +29,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
                 }}
             />
         </head>
-        <body className="m-0 p-0">
+        <body>
             <StoreProvider>
                 <ThemeClientProvider>{children}</ThemeClientProvider>
             </StoreProvider>

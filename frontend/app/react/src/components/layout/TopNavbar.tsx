@@ -7,6 +7,7 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {fetchListNavigations} from '@/api/hooks/navigation';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import {usePreferences} from '@/core/preferences';
+import {cn} from '@/lib/utils';
 
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 
@@ -133,7 +134,13 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                     >
                         <button
                             type="button"
-                            className="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-accent/10 hover:text-accent max-md:px-2"
+                            className={cn(
+                                'inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-medium',
+                                'text-foreground/80 transition-all duration-200',
+                                'hover:bg-primary/10 hover:text-primary',
+                                hasChildren && isOpen && 'bg-primary/10 text-primary',
+                                'max-md:px-2',
+                            )}
                             onClick={() => {
                                 if (!hasChildren) {
                                     handleNavigate(item);
@@ -143,11 +150,19 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                         >
                             {item.icon && <XIcon name={`carbon:${item.icon}`} size={16}/>}
                             <span className="whitespace-nowrap">{item.title}</span>
+                            {hasChildren && (
+                                <XIcon name="carbon:chevron-down" size={12} className={cn('transition-transform duration-200', isOpen && 'rotate-180')}/>
+                            )}
                         </button>
 
                         {hasChildren && isOpen && (
                             <div
-                                className="absolute left-0 top-full z-[1001] mt-1 min-w-[10rem] rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-lg"
+                                className={cn(
+                                    'absolute left-0 top-full z-[1001] mt-1.5',
+                                    'min-w-[200px] rounded-lg border border-border bg-popover p-1.5',
+                                    'shadow-lg shadow-black/5',
+                                    'animate-in fade-in-0 zoom-in-95 duration-150',
+                                )}
                                 onMouseEnter={() => handleMouseEnter(itemId)}
                                 onMouseLeave={handleMouseLeave}
                             >
@@ -155,7 +170,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                                     <button
                                         key={child.id?.toString()}
                                         type="button"
-                                        className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-left text-sm transition-colors hover:bg-accent/10 hover:text-accent"
+                                        className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm text-foreground/80 transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
                                         onClick={() => {
                                             handleNavigate(child);
                                             onClick?.(Number(child.id));
@@ -163,7 +178,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                                         }}
                                     >
                                         {child.icon && <XIcon name={`carbon:${child.icon}`} size={14}/>}
-                                        <span>{child.title}</span>
+                                        <span className="truncate">{child.title}</span>
                                     </button>
                                 ))}
                             </div>

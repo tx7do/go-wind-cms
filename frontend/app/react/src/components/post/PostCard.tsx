@@ -45,22 +45,26 @@ const PostCard: React.FC<PostCardProps> = ({
             className={cn(
                 'group flex h-full cursor-pointer flex-col overflow-hidden',
                 'rounded-2xl border border-border bg-card shadow-sm',
-                'transition-all duration-400',
-                'hover:-translate-y-1.5 hover:border-primary hover:shadow-xl',
+                /* 空气动力学悬浮 3D：长持续 + ease-out + 大幅抬起 + 深阴影 */
+                'transition-all duration-500 ease-out',
+                'hover:-translate-y-2 hover:border-primary/50',
+                'hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.15),0_0_24px_-4px_hsl(var(--primary)/0.2)]',
             )}
             onClick={handleViewPost}
+            style={{ willChange: 'transform, box-shadow' }}
         >
             <div className="relative h-[240px] w-full flex-shrink-0 overflow-hidden bg-background max-md:h-[200px]">
                 <img
                     src={getPostThumbnail(post)}
                     alt={getPostTitle(post)}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]"
                 />
-                <div className="absolute inset-0 bg-black/15 opacity-0 transition-opacity duration-300 group-hover:opacity-50"/>
+                {/* hover 风迹渐变蒙层 */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-sky-400/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
             </div>
             <div className="flex flex-1 flex-col gap-3 p-6 max-md:p-4 max-md:gap-2.5">
                 <h3 className={cn(
-                    'line-clamp-2 text-lg font-bold leading-tight text-foreground transition-colors',
+                    'line-clamp-2 text-lg font-bold leading-tight text-foreground transition-colors duration-300',
                     'group-hover:text-primary',
                     'max-md:text-[17px]',
                 )}>

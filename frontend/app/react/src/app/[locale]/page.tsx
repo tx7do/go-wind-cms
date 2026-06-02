@@ -4,8 +4,6 @@ import React, {useEffect} from "react";
 import {XIcon} from '@/plugins/xicon';
 import {useTranslations} from 'next-intl';
 
-import '../globals.css';
-
 import HeroSection from '../../components/home/HeroSection';
 import FeaturedPostsSection from '../../components/home/FeaturedPostsSection';
 import CategoryListSection from '../../components/home/CategoryListSection';

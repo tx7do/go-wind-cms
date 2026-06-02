@@ -7,14 +7,13 @@ import {Button} from '@/components/ui/button';
 import {ArrowLeft} from 'lucide-react';
 import {AppEmpty} from '@/components/ui';
 
-import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
+import PageHero from '@/components/layout/PageHero';
+import {XIcon} from '@/plugins/xicon';
 
 import {fetchTag, getTranslation as getTagTranslation} from '@/api/hooks/tag';
 import PostListWithPagination from '@/components/post/PostList';
 import type {contentservicev1_Tag} from "@/api/generated/app/service/v1";
-
-import '../../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
 
 export default function TagDetailPage() {
     const t = useTranslations('page');
@@ -57,38 +56,20 @@ export default function TagDetailPage() {
 
     return (
         <div className="w-full">
-            {/* Hero Section */}
-            <section
-                className="w-full flex min-h-[300px] items-center justify-center overflow-hidden border-b border-border py-20"
-                style={{
-                    background: tag?.color
-                        ? `linear-gradient(135deg, ${tag.color} 0%, ${tag.color}dd 50%, ${tag.color}aa 100%)`
-                        : 'linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--background)) 100%)'
-                }}
-            >
-                <div className="w-full max-w-3xl px-8 text-center">
-                    <div
-                        className="mb-4 flex items-center justify-center"
-                        style={{color: tag?.color || 'hsl(var(--primary))'}}
-                    >
-                        <XIcon name={`carbon:${tag?.icon || 'tag'}`} size={64}/>
+            <PageHero
+                title={getTagTranslation(tag)?.name || t('tags.tag_untitled')}
+                description={getTagTranslation(tag)?.description || undefined}
+                icon={`carbon:${tag?.icon || 'tag'}`}
+                iconSize={56}
+                size="lg"
+                accentColor={tag?.color || undefined}
+                meta={
+                    <div className="flex items-center gap-2">
+                        <XIcon name="carbon:document" size={16}/>
+                        <span>{tag?.postCount || 0} {t('posts.articles')}</span>
                     </div>
-                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
-                        {getTagTranslation(tag)?.name || t('tags.tag_untitled')}
-                    </h1>
-                    {getTagTranslation(tag)?.description && (
-                        <p className="mb-6 text-lg text-muted-foreground max-md:text-base">
-                            {getTagTranslation(tag)?.description}
-                        </p>
-                    )}
-                    <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                            <XIcon name="carbon:document" size={20}/>
-                            <span>{tag?.postCount || 0} {t('posts.articles')}</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                }
+            />
 
             {/* Posts Section */}
             <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">

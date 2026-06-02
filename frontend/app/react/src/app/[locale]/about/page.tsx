@@ -4,8 +4,7 @@ import {useTranslations} from 'next-intl';
 import {Button} from '@/components/ui/button';
 
 import XIcon from '@/plugins/xicon';
-
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
+import PageHero from '@/components/layout/PageHero';
 
 export default function AboutPage() {
     const t = useTranslations('page.about');
@@ -63,20 +62,14 @@ export default function AboutPage() {
 
     return (
         <div className="w-full">
-            {/* Hero Section */}
-            <section className="relative w-full flex min-h-[400px] items-center justify-center overflow-hidden bg-background py-28 text-center">
-                <div className="relative z-10 w-full max-w-[900px] px-8 max-md:px-4">
-                    <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground max-md:text-3xl">
-                        {t('title')}
-                    </h1>
-                    <p className="mb-4 text-2xl font-light text-primary max-md:text-xl">
-                        {t('subtitle')}
-                    </p>
-                    <p className="w-full max-w-[700px] mx-auto text-lg text-muted-foreground max-md:text-base">
-                        {t('description')}
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                title={t('title')}
+                subtitle={t('subtitle')}
+                description={t('description')}
+                icon="carbon:information"
+                iconSize={56}
+                size="lg"
+            />
 
             {/* About Section */}
             <section className="w-full bg-background py-20">

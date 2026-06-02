@@ -4,18 +4,27 @@
  * 这些在 Tailwind 中难以表达，因此保留 CSS Module。
  */
 
-/* Hero Container */
+/* Hero Container
+ * 风的轨迹渐变：浅色模式用深科技横幅制造强反差，
+ * 深色模式用夜空 + 暗极光绿营造神秘流体感。
+ */
 .hero {
     position: relative;
     padding: 7rem 2rem 2.5rem;
     text-align: center;
-    background: hsl(var(--background));
+    /* 浅色模式：slate-900 → slate-800 → indigo-950，135° 倾斜风的轨迹 */
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #1e1b4b 100%);
     color: hsl(0 0% 98%);
     overflow: hidden;
     min-height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* 深色模式：夜空黑 → slate-900 → 暗翡翠极光（风行 + 中台科技感）*/
+:global(.dark) .hero {
+    background: linear-gradient(45deg, #000000 0%, #0f172a 50%, rgba(6, 78, 59, 0.35) 100%);
 }
 
 .heroBgWrapper {
@@ -29,7 +38,7 @@
     pointer-events: none;
 }
 
-/* 多层径向渐变 */
+/* 风的流体光晕：带倾斜角度的多层径向渐变 */
 .heroGradientBg {
     position: absolute;
     top: 0;
@@ -37,10 +46,9 @@
     right: 0;
     bottom: 0;
     background:
-        radial-gradient(ellipse at 20% 30%, hsl(var(--primary) / 0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, hsl(var(--primary) / 0.10) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 100%, hsl(var(--primary) / 0.08) 0%, transparent 60%),
-        hsl(var(--background));
+        radial-gradient(ellipse at 20% 30%, hsl(var(--primary) / 0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 70%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, hsl(var(--primary) / 0.15) 0%, transparent 60%);
     animation: gradientShift 15s ease-in-out infinite;
 }
 
@@ -263,17 +271,34 @@
     pointer-events: auto !important;
 }
 
+/* 速度感渐变流光文字：白 → primary翡翠 → 天空蓝
+ * bg-clip-text 的 CSS Module 表达，打造风行疾速视觉
+ */
 .heroTitle {
     font-size: 4.5rem;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 1.5rem;
     line-height: 1.1;
-    letter-spacing: 2px;
-    text-shadow:
-        0 4px 16px hsl(0 0% 0% / 0.5),
-        0 0 40px hsl(var(--primary) / 0.15);
-    animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    color: hsl(0 0% 98%);
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, #ffffff 0%, hsl(var(--primary)) 50%, #38bdf8 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    /* 备用阴影：仅作用于透明文字的边缘辉光 */
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 30px hsl(var(--primary) / 0.2));
+    animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), windShimmer 6s ease-in-out infinite;
+    background-size: 200% 100%;
+}
+
+/* 标题流光动画：渐变位置左右滑动，模拟风的吹拂 */
+@keyframes windShimmer {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 @keyframes slideDown {
@@ -287,6 +312,7 @@
     }
 }
 
+/* 副标题：弱化版本的速度感渐变（emerald → sky）*/
 .heroSubtitle {
     font-size: 1.75rem;
     margin-bottom: 1rem;
@@ -296,8 +322,12 @@
     opacity: 0.95;
     font-weight: 300;
     letter-spacing: 0.5px;
-    color: hsl(var(--primary));
-    text-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, #38bdf8 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 16px hsl(var(--primary) / 0.25));
     animation: fadeInUp 0.8s ease-out 0.2s both;
     line-height: 1.4;
 }
@@ -338,14 +368,16 @@
     }
 }
 
-/* ========== Hero Buttons（适配 shadcn Button） ========== */
+/* ========== Hero Buttons（适配 shadcn Button） ==========
+ * CTA 疾风掠过特效：hover 时右移 + 翡翠辉光 + 流光带
+ */
 .btnPrimary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%) !important;
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.85) 100%) !important;
     color: hsl(0 0% 98%) !important;
     font-size: 1.05rem !important;
     font-weight: 700;
     padding: 16px 40px !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     border: none !important;
     box-shadow:
         0 8px 24px hsl(var(--primary) / 0.35),
@@ -355,6 +387,9 @@
     text-shadow: 0 1px 2px hsl(0 0% 0% / 0.3);
     position: relative;
     overflow: hidden;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .btnPrimary::before {
@@ -370,12 +405,14 @@
 }
 
 .btnPrimary:hover {
-    transform: translateY(-2px) scale(1.02);
+    /* 疾风掠过：右移 + 抬升 + 翡翠辉光（wind speed 物理反馈）*/
+    transform: translateY(-2px) translateX(4px) scale(1.02);
     box-shadow:
-        0 12px 32px hsl(var(--primary) / 0.45),
-        0 6px 16px hsl(var(--primary) / 0.25),
+        0 12px 32px hsl(var(--primary) / 0.5),
+        0 0 24px hsl(var(--primary) / 0.4),
+        0 6px 16px hsl(var(--primary) / 0.3),
         inset 0 0 0 1px hsl(0 0% 100% / 0.15);
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%) !important;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.95) 0%, hsl(var(--primary)) 100%) !important;
 }
 
 .btnPrimary:hover::before {
@@ -388,8 +425,8 @@
     font-size: 1.05rem !important;
     font-weight: 600;
     padding: 16px 40px !important;
-    border-radius: 8px !important;
-    border: 1px solid hsl(var(--primary) / 0.3) !important;
+    border-radius: 10px !important;
+    border: 1px solid hsl(var(--primary) / 0.35) !important;
     backdrop-filter: blur(12px);
     box-shadow:
         0 4px 16px hsl(0 0% 0% / 0.2),
@@ -398,6 +435,9 @@
     text-shadow: 0 1px 3px hsl(0 0% 0% / 0.5);
     position: relative;
     overflow: hidden;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .btnSecondary::before {
@@ -413,12 +453,13 @@
 }
 
 .btnSecondary:hover {
-    background: hsl(var(--primary) / 0.1) !important;
-    border-color: hsl(var(--primary) / 0.5) !important;
-    transform: translateY(-2px) scale(1.02);
+    /* 同步主按钮的风行右移（统一视觉语言）*/
+    background: hsl(var(--primary) / 0.12) !important;
+    border-color: hsl(var(--primary) / 0.6) !important;
+    transform: translateY(-2px) translateX(4px) scale(1.02);
     box-shadow:
         0 8px 24px hsl(0 0% 0% / 0.3),
-        0 0 20px hsl(var(--primary) / 0.15),
+        0 0 20px hsl(var(--primary) / 0.25),
         inset 0 0 0 1px hsl(0 0% 100% / 0.08);
 }
 

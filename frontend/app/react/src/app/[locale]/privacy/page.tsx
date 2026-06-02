@@ -1,25 +1,19 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-
-import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
+import PageHero from '@/components/layout/PageHero';
 
 export default function PrivacyPage() {
     const t = useTranslations('page.legal.privacy');
 
     return (
         <div className="w-full">
-            {/* Hero Section */}
-            <section className="flex min-h-[300px] items-center justify-center border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
-                <div className="w-full max-w-3xl px-8 text-center">
-                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
-                        {t('title')}
-                    </h1>
-                    <p className="text-lg text-muted-foreground max-md:text-base">
-                        {t('description')}
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                title={t('title')}
+                description={t('description')}
+                icon="carbon:locked"
+                size="sm"
+            />
 
             {/* Content Section */}
             <div className="w-full my-12 max-w-3xl rounded-xl border border-border bg-card p-8 shadow-sm max-md:mx-4 max-md:p-6">
