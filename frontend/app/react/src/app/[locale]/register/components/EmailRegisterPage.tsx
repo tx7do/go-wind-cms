@@ -41,6 +41,9 @@ export default function EmailRegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder={t('register.input_email')}
                             autoComplete="email"
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            spellCheck="false"
                             className={`${inputBase} ${email && !isValidEmail() ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : ''}`}
                         />
                         {email && !isValidEmail() && (
@@ -126,6 +129,9 @@ function EmailRegisterEnterCodePage({email}: { email: string }) {
                             handleInputComplete(value.join(''));
                         }
                     }}
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
                     className="w-full rounded-lg border border-border bg-background px-4 py-3 text-center text-lg tracking-widest text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
                     placeholder="请输入验证码"
                 />

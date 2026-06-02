@@ -45,6 +45,9 @@ export default function PhoneLoginPage() {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={t('login.placeholder_phone')}
                     autoComplete="tel"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
                 />
             </div>
 
@@ -62,6 +65,9 @@ export default function PhoneLoginPage() {
                         placeholder={t('login.placeholder_code')}
                         maxLength={6}
                         autoComplete="one-time-code"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck="false"
                         onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                     />
                     <button

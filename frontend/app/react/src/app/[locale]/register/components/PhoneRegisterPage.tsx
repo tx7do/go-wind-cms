@@ -71,6 +71,9 @@ export default function PhoneRegisterPage() {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={t('register.input_phone')}
                     autoComplete="tel"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
                     className={inputBase}
                 />
             </div>
@@ -89,6 +92,9 @@ export default function PhoneRegisterPage() {
                         placeholder={t('register.input_code')}
                         maxLength={6}
                         autoComplete="one-time-code"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck="false"
                         className="flex-1 rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
                     />
                     <button

@@ -59,6 +59,9 @@ export default function AccountRegisterPage() {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder={t('register.input_username')}
                     autoComplete="username"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
                     className={`${inputBase} ${username && !isValidUsername ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : ''}`}
                 />
                 {username && !isValidUsername && (

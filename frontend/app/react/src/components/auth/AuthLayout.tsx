@@ -47,11 +47,11 @@ export default function AuthLayout({
     const tabBase = 'flex-1 cursor-pointer border-b-2 px-2 py-3 text-center text-sm font-medium transition-colors bg-transparent border-border text-muted-foreground hover:text-foreground';
     const tabActive = 'border-b-primary text-primary';
 
-    // 底部条款链接：使用 primary 色 + 下划线，确保暗色背景下的可读性
-    const linkBtn = 'text-sm text-primary transition-colors hover:text-primary/80 hover:underline cursor-pointer bg-transparent border-none';
+    // 底部条款链接：primary 色 + 加粗 + 下划线，行动手持端点击热区
+    const linkBtn = 'text-sm text-primary font-medium underline underline-offset-4 tracking-wide transition-colors hover:text-primary/80 cursor-pointer bg-transparent border-none';
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-background">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-background pb-12 max-md:pb-16">
             <ControlPanel/>
 
             {/* 中央居中的最大宽度容器 */}
@@ -133,8 +133,8 @@ export default function AuthLayout({
                                 </button>
                             </div>
 
-                            {/* 服务条款 — 提升链接对比度 */}
-                            <div className="text-center">
+                            {/* 服务条款 — 加粗 + 下划线 + tracking-wide 优化手持端点击热区 */}
+                            <div className="text-center leading-relaxed">
                                 <small className="text-xs text-muted-foreground/80">
                                     {t('login.terms_prefix')}
                                     <button className={`${linkBtn} mx-1 text-xs`} onClick={() => router.push('/terms')}>

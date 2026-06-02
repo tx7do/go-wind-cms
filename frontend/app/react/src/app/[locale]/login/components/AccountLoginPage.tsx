@@ -42,6 +42,9 @@ export default function AccountLoginPage() {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder={t('register.input_username')}
                     autoComplete="username"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
                 />
             </div>
 
@@ -61,7 +64,7 @@ export default function AccountLoginPage() {
                 />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex w-full items-center justify-between">
                 <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
                     <input
                         type="checkbox"
