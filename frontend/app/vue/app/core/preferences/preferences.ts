@@ -192,9 +192,8 @@ class PreferenceManager {
     try {
       const nuxtApp = (window as any).__NUXT__;
       if (nuxtApp?.locale?.locale) {
-        const code = nuxtApp.locale.locale.value as string; // e.g. "zh" or "en"
-        const iso = code === "zh" ? "zh-CN" : code === "en" ? "en-US" : prefs.app.locale;
-        prefs.app.locale = iso as SupportedLanguagesType;
+        const code = nuxtApp.locale.locale.value as string; // e.g. "zh-CN" or "en-US"
+        prefs.app.locale = code as SupportedLanguagesType;
       }
     } catch {
       // i18n 尚未就绪

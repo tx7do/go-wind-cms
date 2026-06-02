@@ -1,0 +1,10 @@
+{
+  "status": {
+    "ON": "正常",
+    "OFF": "停用"
+  },
+  "successStatus": {
+    "success": "成功",
+    "failed": "失败"
+  }
+}

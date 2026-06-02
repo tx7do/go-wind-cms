@@ -29,11 +29,12 @@ export default defineNuxtConfig({
         },
     },
     i18n: {
+        langDir: '../locales',
         locales: [
-            {code: 'zh', iso: 'zh-CN', name: '中文', file: 'zh.json'},
-            {code: 'en', iso: 'en-US', name: 'English', file: 'en.json'}
+            {code: 'zh-CN', iso: 'zh-CN', name: '中文', file: 'zh-CN/index.ts'},
+            {code: 'en-US', iso: 'en-US', name: 'English', file: 'en-US/index.ts'}
         ],
-        defaultLocale: 'zh',
+        defaultLocale: 'zh-CN',
         strategy: 'prefix',
         detectBrowserLanguage: false,
     },

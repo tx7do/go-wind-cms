@@ -22,7 +22,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     },
 
     getLocale: () => {
-      return i18n?.locale?.value || 'zh'
+      return i18n?.locale?.value || 'zh-CN'
     },
 
     refreshToken: async () => {
@@ -58,7 +58,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
       if (redirect && typeof window !== 'undefined') {
         const currentPath = window.location.pathname
-        const loginPath = `/${i18n?.locale?.value || 'zh'}/login?redirect=${encodeURIComponent(currentPath)}`
+        const loginPath = `/${i18n?.locale?.value || 'zh-CN'}/login?redirect=${encodeURIComponent(currentPath)}`
         window.location.href = loginPath
       }
     },

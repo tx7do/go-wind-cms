@@ -7,8 +7,8 @@ const { locale } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 
 const languageOptions = [
-  { key: 'zh', label: '中文' },
-  { key: 'en', label: 'English' },
+  { key: 'zh-CN', label: '中文' },
+  { key: 'en-US', label: 'English' },
 ]
 </script>
 

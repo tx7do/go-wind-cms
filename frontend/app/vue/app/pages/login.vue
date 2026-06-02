@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'auth' })
+const localePath = useLocalePath()
 </script>
 
 <template>
@@ -17,11 +18,11 @@ definePageMeta({ layout: 'auth' })
       <form @submit.prevent class="space-y-4">
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.login.username') }}</UiLabel>
-          <UiInput type="text" :placeholder="$t('authentication.login.username_placeholder')" />
+          <UiInput type="text" :placeholder="$t('authentication.login.placeholder_email')" />
         </div>
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.login.password') }}</UiLabel>
-          <UiInput type="password" :placeholder="$t('authentication.login.password_placeholder')" />
+          <UiInput type="password" :placeholder="$t('authentication.login.placeholder_password')" />
         </div>
         <div class="flex items-center justify-between text-sm">
           <label class="flex items-center gap-2 text-muted-foreground">
@@ -30,7 +31,7 @@ definePageMeta({ layout: 'auth' })
           </label>
           <NuxtLink :to="localePath('/')" class="text-primary hover:underline">{{ $t('authentication.login.forgot_password') }}</NuxtLink>
         </div>
-        <UiButton class="w-full" type="submit">{{ $t('authentication.login.login_button') }}</UiButton>
+        <UiButton class="w-full" type="submit">{{ $t('authentication.login.login') }}</UiButton>
       </form>
 
       <div class="mt-6 text-center text-sm text-muted-foreground">

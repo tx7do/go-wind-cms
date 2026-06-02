@@ -215,9 +215,9 @@ const handleAction = (action: () => void) => {
             type="button"
             :class="cn(
               'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
-              locale === 'zh' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
+              locale === 'zh-CN' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
-            @click="handleAction(() => navigateTo(switchLocalePath('zh')))"
+            @click="handleAction(() => navigateTo(switchLocalePath('zh-CN')))"
           >
             <span>简体中文</span>
           </button>
@@ -225,9 +225,9 @@ const handleAction = (action: () => void) => {
             type="button"
             :class="cn(
               'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
-              locale === 'en' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
+              locale === 'en-US' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
-            @click="handleAction(() => navigateTo(switchLocalePath('en')))"
+            @click="handleAction(() => navigateTo(switchLocalePath('en-US')))"
           >
             <span>English</span>
           </button>

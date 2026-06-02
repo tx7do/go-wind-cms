@@ -95,10 +95,10 @@ const handleClickLogout = async () => {
             </UiButton>
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent align="end">
-            <UiDropdownMenuItem @click="switchLocalePath('zh')">
+            <UiDropdownMenuItem @click="switchLocalePath('zh-CN')">
               简体中文
             </UiDropdownMenuItem>
-            <UiDropdownMenuItem @click="switchLocalePath('en')">
+            <UiDropdownMenuItem @click="switchLocalePath('en-US')">
               English
             </UiDropdownMenuItem>
           </UiDropdownMenuContent>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'auth' })
+const localePath = useLocalePath()
 </script>
 
 <template>
@@ -17,25 +18,25 @@ definePageMeta({ layout: 'auth' })
       <form @submit.prevent class="space-y-4">
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.username') }}</UiLabel>
-          <UiInput type="text" :placeholder="$t('authentication.register.username_placeholder')" />
+          <UiInput type="text" :placeholder="$t('authentication.register.input_username')" />
         </div>
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.email') }}</UiLabel>
-          <UiInput type="email" :placeholder="$t('authentication.register.email_placeholder')" />
+          <UiInput type="email" :placeholder="$t('authentication.register.input_email')" />
         </div>
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.password') }}</UiLabel>
-          <UiInput type="password" :placeholder="$t('authentication.register.password_placeholder')" />
+          <UiInput type="password" :placeholder="$t('authentication.register.input_password')" />
         </div>
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.confirm_password') }}</UiLabel>
-          <UiInput type="password" :placeholder="$t('authentication.register.confirm_password_placeholder')" />
+          <UiInput type="password" :placeholder="$t('authentication.register.input_confirm_password')" />
         </div>
-        <UiButton class="w-full" type="submit">{{ $t('authentication.register.register_button') }}</UiButton>
+        <UiButton class="w-full" type="submit">{{ $t('authentication.register.register') }}</UiButton>
       </form>
 
       <div class="mt-6 text-center text-sm text-muted-foreground">
-        {{ $t('authentication.register.has_account') }}
+        {{ $t('authentication.register.already_have_account') }}
         <NuxtLink :to="localePath('/login')" class="text-primary hover:underline">{{ $t('authentication.register.login_now') }}</NuxtLink>
       </div>
     </div>
