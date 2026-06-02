@@ -110,204 +110,118 @@
         white-space: nowrap;
     }
 
-    /* Code blocks with syntax highlighting */
+    /* ========== Code blocks (Shiki 高亮 + 纯文本回退) ========== */
+
+    /* 共享容器样式 */
     :global(pre.code-block) {
-        background: #282c34;
-        color: #abb2bf;
-        padding: 20px;
-        border-radius: 10px;
+        padding: 32px 24px 20px;
+        border-radius: 12px;
         overflow-x: auto;
         margin: 32px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
         position: relative;
         font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
-        line-height: 1.65;
+        font-size: 13.5px;
+        line-height: 1.7;
         letter-spacing: 0.15px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
         white-space: pre;
         word-wrap: normal;
         overflow-wrap: normal;
+        tab-size: 2;
+        -moz-tab-size: 2;
 
+        /* 语言标签（右上角） */
         &::before {
             content: attr(data-lang);
             position: absolute;
-            top: 8px;
-            right: 12px;
-            font-size: 12px;
+            top: 10px;
+            right: 14px;
+            font-size: 11px;
+            font-weight: 600;
             color: rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            pointer-events: none;
+            z-index: 1;
         }
 
         :global(code) {
             background: none;
             padding: 0;
             border-radius: 0;
-            font-size: 13.5px;
-            line-height: 1.65;
+            font-size: inherit;
+            line-height: inherit;
             color: inherit;
             font-family: inherit;
             white-space: inherit;
             word-wrap: inherit;
             overflow-wrap: inherit;
-
-            /* Syntax highlighting colors (One Dark theme) */
-            :global(.hljs-attr) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-attr-value) {
-                color: #98c379;
-            }
-
-            :global(.hljs-number) {
-                color: #d19a66;
-            }
-
-            :global(.hljs-literal) {
-                color: #56b6c2;
-            }
-
-            :global(.hljs-string) {
-                color: #98c379;
-            }
-
-            :global(.hljs-string .hljs-emphasis) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-section) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-link) {
-                color: #d19a66;
-            }
-
-            :global(.hljs-operator) {
-                color: #56b6c2;
-            }
-
-            :global(.hljs-keyword) {
-                color: #c678dd;
-            }
-
-            :global(.hljs-type) {
-                color: #56b6c2;
-            }
-
-            :global(.hljs-name) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-selector-class) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-selector-id) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-variable) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-template-variable) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-title) {
-                color: #61afef;
-            }
-
-            :global(.hljs-title.class_) {
-                color: #e5c07b;
-            }
-
-            :global(.hljs-title.class_.inherited__) {
-                color: #98c379;
-            }
-
-            :global(.hljs-title.function_) {
-                color: #61afef;
-            }
-
-            :global(.hljs-params) {
-                color: #abb2bf;
-            }
-
-            :global(.hljs-class) {
-                color: #e5c07b;
-            }
-
-            :global(.hljs-function) {
-                color: #61afef;
-            }
-
-            :global(.hljs-comment) {
-                color: #5c6370;
-            }
-
-            :global(.hljs-doctag) {
-                color: #5c6370;
-            }
-
-            :global(.hljs-meta) {
-                color: #5c6370;
-            }
-
-            :global(.hljs-meta .hljs-keyword) {
-                color: #5c6370;
-            }
-
-            :global(.hljs-meta .hljs-string) {
-                color: #98c379;
-            }
-
-            :global(.hljs-builtin-name) {
-                color: #e5c07b;
-            }
-
-            :global(.hljs-code) {
-                color: #98c379;
-            }
-
-            :global(.hljs-tag) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-tag .hljs-attr) {
-                color: #e5c07b;
-            }
-
-            :global(.hljs-tag .hljs-title) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-tag .hljs-literal) {
-                color: #abb2bf;
-            }
-
-            :global(.hljs-name) {
-                color: #e06c75;
-            }
-
-            :global(.hljs-attr) {
-                color: #e5c07b;
-            }
-
-            :global(.hljs-bullet) {
-                color: #56b6c2;
-            }
-
-            :global(.hljs-quote) {
-                color: #5c6370;
-            }
-
-            :global(.hljs-punctuation) {
-                color: #abb2bf;
-            }
         }
+    }
+
+    /* 纯文本/未高亮回退块：沿用 One Dark 风格 */
+    :global(pre.code-block.shiki-pending),
+    :global(pre.code-block.shiki-container) {
+        background: #282c34;
+        color: #abb2bf;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Shiki 高亮块：背景与文字颜色交给 Shiki 内联样式控制 */
+    :global(pre.shiki.code-block) {
+        border: 1px solid hsl(var(--border));
+
+        /* Shiki 可能会加上 padding，确保统一 */
+        padding: 32px 24px 20px;
+        margin: 32px 0;
+
+        :global(code) {
+            display: block;
+            background: transparent !important;
+        }
+
+        /* 行号容器：Shiki 默认输出 <span class="line"> */
+        :global(.line) {
+            display: block;
+        }
+
+        /* 语言标签颜色随主题适配 */
+        &::before {
+            color: rgba(0, 0, 0, 0.35);
+        }
+    }
+
+    /* Dark mode：切换到 Shiki 的 dark 主题变量 */
+    :global(.dark) :global(pre.shiki.code-block),
+    :global(.dark) :global(pre.shiki.code-block) :global(span) {
+        color: var(--shiki-dark) !important;
+        background-color: var(--shiki-dark-bg) !important;
+        font-style: var(--shiki-dark-font-style) !important;
+        font-weight: var(--shiki-dark-font-weight) !important;
+        text-decoration: var(--shiki-dark-text-decoration) !important;
+    }
+
+    /* Dark mode 下语言标签颜色调亮 */
+    :global(.dark) :global(pre.shiki.code-block)::before {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Dark mode 下 Shiki <pre> 背景手动覆盖（inline style 会被 !important 覆盖） */
+    :global(.dark) :global(pre.shiki.code-block) {
+        background-color: #0d1117 !important;
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Dark mode 下纯文本回退块 */
+    :global(.dark) :global(pre.code-block.shiki-pending),
+    :global(.dark) :global(pre.code-block.shiki-container) {
+        background: #0d1117;
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Light mode 下 Shiki <pre> 背景手动覆盖（保持与 GitHub-light 一致） */
+    :global(pre.shiki.code-block) {
+        background-color: #ffffff;
     }
 
     /* Plain text blocks */

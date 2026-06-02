@@ -1,8 +1,8 @@
 'use client';
 
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {marked} from 'marked';
-import hljs from 'highlight.js';
+import {createHighlighter, type Highlighter} from 'shiki';
 import DOMPurify from 'dompurify';
 import katex from 'katex';
 import mermaid from 'mermaid';
@@ -17,6 +17,47 @@ mermaid.initialize({
     securityLevel: 'loose',
 });
 
+/* ========== Shiki 单例（双主题 light / dark）========== */
+const BUNDLED_LANGUAGES = [
+    'javascript', 'typescript', 'jsx', 'tsx',
+    'go', 'python', 'bash', 'shell',
+    'json', 'yaml', 'html', 'css',
+    'sql', 'markdown', 'diff', 'xml',
+] as const;
+
+const BUNDLED_THEMES = ['github-light', 'github-dark'] as const;
+
+let highlighterPromise: Promise<Highlighter> | null = null;
+let cachedHighlighter: Highlighter | null = null;
+
+function getHighlighter(): Promise<Highlighter> {
+    if (!highlighterPromise) {
+        highlighterPromise = createHighlighter({
+            themes: [...BUNDLED_THEMES],
+            langs: [...BUNDLED_LANGUAGES],
+        }).then((h) => {
+            cachedHighlighter = h;
+            return h;
+        }).catch((err) => {
+            console.warn('Failed to initialize Shiki:', err);
+            highlighterPromise = null;
+            throw err;
+        });
+    }
+    return highlighterPromise;
+}
+
+// 语言别名映射（用户输入 → Shiki 接受的语言名）
+const LANG_ALIAS: Record<string, string> = {
+    js: 'javascript',
+    ts: 'typescript',
+    py: 'python',
+    sh: 'bash',
+    shell: 'bash',
+    yml: 'yaml',
+    md: 'markdown',
+};
+
 // Configure marked with custom renderer
 const renderer = new marked.Renderer();
 
@@ -26,8 +67,8 @@ renderer.codespan = (code) => {
 };
 
 renderer.code = (code) => {
-    const lang = code.lang || 'plaintext';
-    let highlighted: string;
+    const rawLang = (code.lang || 'plaintext').toLowerCase();
+    const lang = LANG_ALIAS[rawLang] || rawLang;
 
     // Check if it's a mermaid diagram
     if (lang === 'mermaid') {
@@ -39,19 +80,39 @@ renderer.code = (code) => {
         }
     }
 
-    // Try to highlight the code
-    try {
-        if (hljs.getLanguage(lang)) {
-            highlighted = hljs.highlight(code.text, {language: lang, ignoreIllegals: true}).value;
-        } else {
-            highlighted = escapeHtml(code.text);
+    // Shiki 同步高亮（如果 highlighter 已就绪）
+    if (cachedHighlighter) {
+        try {
+            const loaded = cachedHighlighter.getLoadedLanguages();
+            const actualLang = loaded.includes(lang) ? lang : 'plaintext';
+
+            if (actualLang === 'plaintext' || actualLang === 'text') {
+                // 纯文本：返回自定义结构以便保留容器样式
+                return `<pre class="code-block shiki-container" data-lang="${rawLang || 'text'}"><code>${escapeHtml(code.text)}</code></pre>`;
+            }
+
+            // 使用双主题：light 为默认，dark 通过 CSS .dark 类切换
+            // Shiki 会输出 --shiki-dark 等 CSS 变量到每个 <span>
+            const html = cachedHighlighter.codeToHtml(code.text, {
+                lang: actualLang,
+                themes: {
+                    light: 'github-light',
+                    dark: 'github-dark',
+                },
+            });
+
+            // 在 <pre> 上注入 data-lang 标签和 code-block 类名，以便 CSS 控制容器样式
+            return html.replace(
+                /<pre class="shiki([^"]*)"/,
+                `<pre class="shiki$1 code-block" data-lang="${rawLang || actualLang}"`,
+            );
+        } catch (error) {
+            console.warn(`Shiki highlight failed for ${lang}:`, error);
         }
-    } catch (error) {
-        console.warn(`Failed to highlight code with language ${lang}:`, error);
-        highlighted = escapeHtml(code.text);
     }
 
-    return `<pre class="code-block" data-lang="${lang}"><code class="hljs language-${lang}">${highlighted}</code></pre>`;
+    // Fallback：未加载 Shiki 时显示纯文本（保留结构以便后续 hydrate）
+    return `<pre class="code-block shiki-pending" data-lang="${rawLang || 'text'}"><code>${escapeHtml(code.text)}</code></pre>`;
 };
 
 // Override heading rendering
@@ -177,6 +238,7 @@ function sanitizeHtml(html: string): string {
             'src', 'alt', 'width', 'height',
             'class', 'id', 'style', 'data-lang',
             'data-*',
+            'tabindex',
             'viewBox', 'xmlns', 'x', 'y', 'cx', 'cy', 'r', 'x1', 'y1', 'x2', 'y2',
             'd', 'fill', 'stroke', 'stroke-width', 'points', 'transform',
         ],
@@ -199,9 +261,27 @@ const ContentViewer: React.FC<ContentViewerProps> = ({
                                                          className = ''
                                                      }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    // Shiki 加载状态：首次加载后触发 re-render 以应用高亮
+    const [shikiReady, setShikiReady] = useState<boolean>(() => cachedHighlighter !== null);
+
+    useEffect(() => {
+        if (!shikiReady) {
+            let cancelled = false;
+            getHighlighter().then(() => {
+                if (!cancelled) setShikiReady(true);
+            }).catch(() => {
+                // Shiki 加载失败，静默处理（代码块保持纯文本回退）
+            });
+            return () => {
+                cancelled = true;
+            };
+        }
+    }, [shikiReady]);
 
     // Render content based on type
+    // shikiReady 作为隐式依赖：当 Shiki 加载完成后，renderer.code 会使用同步高亮
     const getRenderedContent = () => {
+        void shikiReady; // 触发依赖追踪
         if (!content) return '';
 
         try {
@@ -235,7 +315,7 @@ const ContentViewer: React.FC<ContentViewerProps> = ({
                 console.warn('Failed to initialize mermaid:', error);
             }
         }
-    }, []);
+    }, [shikiReady, content, type]);
 
     return (
         <div
