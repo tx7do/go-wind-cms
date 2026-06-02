@@ -170,10 +170,17 @@ export default function AboutPage() {
                         <h2 className="mb-4 text-3xl font-bold text-foreground">{t('cta_title')}</h2>
                         <p className="mb-8 text-lg text-muted-foreground">{t('cta_desc')}</p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Button size="lg">
+                            <Button
+                                size="lg"
+                                className="rounded-lg px-6 py-2.5 font-medium"
+                            >
                                 {t('cta_explore')}
                             </Button>
-                            <Button variant="outline" size="lg">
+                            <Button
+                                variant="outline"
+                                size="lg"
+                                className="rounded-lg px-6 py-2.5 font-medium"
+                            >
                                 {t('cta_contact')}
                             </Button>
                         </div>
