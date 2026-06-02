@@ -1,6 +1,7 @@
 allowBuilds:
   '@parcel/watcher': false
   '@swc/core': false
+  msw: set this to true or false
   sharp: false
   unrs-resolver: false
 ignoredBuiltDependencies:

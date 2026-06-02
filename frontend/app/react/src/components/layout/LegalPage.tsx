@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PageHero from './PageHero';
+import {cn} from '@/lib/utils';
 
 interface LegalPageProps {
     icon: string;
@@ -12,7 +13,10 @@ interface LegalPageProps {
 
 /**
  * 法定/静态信息页面通用模板
- * 用于 privacy / terms / disclaimer / contact 等结构一致的页面
+ * 用于 privacy / terms / disclaimer 等结构一致的页面
+ *
+ * 居中单栏文档流布局，消除宽屏右侧视觉死角
+ * 序号采用电能绿，悬浮时卡片边框亮起
  */
 export default function LegalPage({icon, title, description, items}: LegalPageProps) {
     return (
@@ -23,16 +27,41 @@ export default function LegalPage({icon, title, description, items}: LegalPagePr
                 icon={icon}
                 size="sm"
             />
-            <div className="w-full my-12 max-w-3xl rounded-xl border border-border bg-card p-8 shadow-sm max-md:mx-4 max-md:p-6">
-                <ul className="space-y-4 text-foreground">
-                    {items.map((item, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"/>
-                            <span>{item}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+
+            {/* 居中单栏文档流容器 */}
+            <section className="w-full py-12 max-md:py-8">
+                <div className="mx-auto max-w-4xl px-4">
+                    <div
+                        className={cn(
+                            'rounded-2xl border border-border bg-card p-8 md:p-10',
+                            'shadow-[0_20px_50px_rgba(0,0,0,0.15)]',
+                            'transition-all duration-300',
+                            'hover:border-primary/20',
+                        )}
+                    >
+                        <ul className="space-y-5">
+                            {items.map((item, index) => (
+                                <li
+                                    key={index}
+                                    className="flex items-start gap-4 text-base leading-relaxed text-foreground max-md:text-sm"
+                                >
+                                    {/* 绿色数字序号 */}
+                                    <span
+                                        className={cn(
+                                            'shrink-0 font-mono text-sm font-bold tabular-nums',
+                                            'text-primary',
+                                            'mt-0.5 min-w-[2rem]',
+                                        )}
+                                    >
+                                        {String(index + 1).padStart(2, '0')}.
+                                    </span>
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }

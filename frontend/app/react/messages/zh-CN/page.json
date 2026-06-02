@@ -184,9 +184,16 @@
     "contact": {
       "title": "联系我们",
       "description": "如需技术支持或商务合作，请通过以下方式联系我们。",
-      "item_1": "支持邮箱：support@gowind.cloud",
-      "item_2": "商务邮箱：business@gowind.cloud",
-      "item_3": "服务时间：周一至周五 09:00-18:00（UTC+8）"
+      "support_title": "技术支持",
+      "support_desc": "遇到产品使用问题？随时联系我们的工程师团队。",
+      "support_email": "support@gowind.cloud",
+      "business_title": "商务合作",
+      "business_desc": "寻求企业方案、定制集成或媒体合作？欢迎洽谈。",
+      "business_email": "business@gowind.cloud",
+      "hours_title": "服务时间",
+      "hours_weekday": "周一至周五  09:00 - 18:00",
+      "hours_timezone": "(UTC +8)",
+      "hours_desc": "非工作时间请发送邮件，我们会在下一工作日回复。"
     },
     "disclaimer": {
       "title": "免责声明",

@@ -184,9 +184,16 @@
     "contact": {
       "title": "Contact Us",
       "description": "For support and business inquiries, please contact us via the channels below.",
-      "item_1": "Support Email: support@gowind.cloud",
-      "item_2": "Business Email: business@gowind.cloud",
-      "item_3": "Hours: Mon-Fri 09:00-18:00 (UTC+8)"
+      "support_title": "Technical Support",
+      "support_desc": "Experiencing a product issue? Reach our engineering team anytime.",
+      "support_email": "support@gowind.cloud",
+      "business_title": "Business Partnership",
+      "business_desc": "Enterprise solutions, custom integrations, or media partnerships welcome.",
+      "business_email": "business@gowind.cloud",
+      "hours_title": "Service Hours",
+      "hours_weekday": "Mon - Fri  09:00 - 18:00",
+      "hours_timezone": "(UTC +8)",
+      "hours_desc": "Email us outside hours and we'll reply on the next business day."
     },
     "disclaimer": {
       "title": "Disclaimer",

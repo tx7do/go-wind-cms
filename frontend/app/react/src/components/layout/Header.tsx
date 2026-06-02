@@ -18,6 +18,7 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {usePreferences} from '@/core/preferences';
 
 import TopNavbar from './TopNavbar';
+import MobileNav from './MobileNav';
 
 import {useAccessStore} from '@/store/core/access/store';
 import {useAuth} from '@/api/hooks/auth';
@@ -84,13 +85,13 @@ export default function Header() {
                     </span>
                 </button>
 
-                {/* 导航区 */}
-                <div className="min-w-0 flex-1">
+                {/* 桌面端导航区 */}
+                <div className="min-w-0 flex-1 max-md:hidden">
                     <TopNavbar/>
                 </div>
 
-                {/* 功能按钮区 */}
-                <div className="flex shrink-0 items-center gap-1">
+                {/* 桌面端功能按钮区 */}
+                <div className="flex shrink-0 items-center gap-1 max-md:hidden">
                     {/* 用户菜单 */}
                     <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
@@ -172,6 +173,34 @@ export default function Header() {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                </div>
+
+                {/* 手机端：主题切换 + 汉堡选单 */}
+                <div className="flex shrink-0 items-center gap-1 md:hidden">
+                    <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" aria-label="Toggle theme">
+                                {themeIcon}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setThemeMode('dark')}>
+                                <Moon className="h-4 w-4"/>
+                                {t('theme.dark')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setThemeMode('light')}>
+                                <Sun className="h-4 w-4"/>
+                                {t('theme.light')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setThemeMode('auto')}>
+                                <Monitor className="h-4 w-4"/>
+                                {t('theme.system')}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* 汉堡选单 */}
+                    <MobileNav/>
                 </div>
             </div>
         </header>
