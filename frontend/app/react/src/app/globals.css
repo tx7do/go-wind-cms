@@ -165,6 +165,15 @@ html {
     user-select: none;
 }
 
+/* ========== 隐藏滚动条（用于横向流滚动容器） ========== */
+@utility no-scrollbar {
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
 /* ========== Scroll Reveal Animation ========== */
 .scroll-reveal-item {
     opacity: 0;

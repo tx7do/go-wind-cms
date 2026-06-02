@@ -73,8 +73,8 @@ const PostCard: React.FC<PostCardProps> = ({
                 </h3>
                 {/* 摘要：固定 min-h 确保三行高度，底部的数据列永退贴底 */}
                 <p className={cn(
-                    'line-clamp-3 min-h-[4.4em] flex-1 text-sm leading-[1.55] text-muted-foreground',
-                    'max-md:min-h-[4em] max-md:text-[13px]',
+                    'line-clamp-3 min-h-[4.4em] flex-1 text-sm leading-relaxed text-muted-foreground',
+                    'max-md:min-h-[4em] max-md:text-xs max-md:leading-relaxed',
                 )}>
                     {getPostSummary(post)}
                 </p>

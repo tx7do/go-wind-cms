@@ -182,16 +182,17 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
     return (
         <div className="relative z-20 mb-10 max-md:mb-6">
+            {/* 移动端：横向流滚动容器，禁用换行 */}
             <div className={cn(
-                'flex flex-wrap items-center gap-2.5 rounded-xl border border-border bg-card/50 p-3.5 backdrop-blur-sm',
-                'max-md:overflow-x-auto max-md:p-3',
-                'max-sm:flex-nowrap max-sm:justify-start',
+                'flex items-center gap-3 overflow-x-auto no-scrollbar scroll-smooth whitespace-nowrap',
+                'rounded-xl border border-border bg-card/50 px-4 py-2.5 backdrop-blur-sm',
+                'max-md:px-3',
             )}>
                 {/* 所有分类按钮 */}
                 <button
                     type="button"
                     onClick={() => handleCategoryChange(null)}
-                    className={cn(btnBase, selectedCategory === null ? btnActive : btnInactive)}
+                    className={cn(btnBase, selectedCategory === null ? btnActive : btnInactive, 'shrink-0')}
                 >
                     <XIcon name="carbon:grid" size={15}/>
                     {t('all_categories')}
@@ -199,7 +200,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
                 {/* 分隔线 */}
                 {displayCategories.length > 0 && (
-                    <div className="mx-1 h-5 w-px bg-border max-md:hidden"/>
+                    <div className="mx-0.5 h-5 w-px bg-border shrink-0 max-md:hidden"/>
                 )}
 
                 {/* 树形模式 */}
@@ -219,7 +220,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                     className={cn(
                                         btnBase,
                                         selectedCategory === node.id ? btnActive : btnInactive,
-                                        'whitespace-nowrap',
+                                        'shrink-0',
                                     )}
                                 >
                                     <XIcon name={node.icon || 'carbon:folder'} size={15}/>
@@ -280,7 +281,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                 key={cat.id}
                                 type="button"
                                 onClick={() => handleCategoryChange(cat.id || 0)}
-                                className={cn(btnBase, selectedCategory === cat.id ? btnActive : btnInactive)}
+                                className={cn(btnBase, selectedCategory === cat.id ? btnActive : btnInactive, 'shrink-0')}
                             >
                                 <XIcon name={cat.icon || 'carbon:folder'} size={15}/>
                                 {getCategoryName(cat)}
