@@ -29,6 +29,7 @@ onMounted(async () => {
   <div class="w-full">
     <LayoutPageHero
       :title="t('page.posts.posts_list')"
+      :description="t('page.posts.explore_latest')"
       icon="carbon:document"
       size="md"
     />

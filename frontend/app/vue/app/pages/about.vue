@@ -68,6 +68,57 @@ const { t } = useI18n()
       </div>
     </section>
 
+    <!-- Team -->
+    <section class="w-full bg-background py-20">
+      <div class="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+        <div class="mb-12 text-center">
+          <h2 class="mb-4 text-3xl font-bold text-foreground">{{ t('page.about.team') }}</h2>
+          <p class="text-muted-foreground">{{ t('page.about.team_desc') }}</p>
+        </div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6">
+          <div
+            v-for="member in [
+              { name: t('page.about.team_member_1'), role: t('page.about.team_role_1'), avatar: '/logo.png' },
+              { name: t('page.about.team_member_2'), role: t('page.about.team_role_2'), avatar: '/logo.png' },
+              { name: t('page.about.team_member_3'), role: t('page.about.team_role_3'), avatar: '/logo.png' },
+            ]"
+            :key="member.name"
+            class="rounded-xl border border-border bg-card p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+          >
+            <div class="mx-auto mb-4 h-[120px] w-[120px] overflow-hidden rounded-full ring-2 ring-primary/20">
+              <img :src="member.avatar" :alt="member.name" width="120" height="120" />
+            </div>
+            <h3 class="mb-2 text-lg font-bold text-foreground">{{ member.name }}</h3>
+            <p class="text-xs text-muted-foreground/80">{{ member.role }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Values -->
+    <section class="w-full bg-muted/30 py-20">
+      <div class="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+        <div class="mb-12 text-center">
+          <h2 class="mb-4 text-3xl font-bold text-foreground">{{ t('page.about.values') }}</h2>
+          <p class="text-muted-foreground">{{ t('page.about.values_desc') }}</p>
+        </div>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div
+            v-for="value in [
+              { title: t('page.about.value_innovation'), desc: t('page.about.value_innovation_desc') },
+              { title: t('page.about.value_reliability'), desc: t('page.about.value_reliability_desc') },
+              { title: t('page.about.value_customer'), desc: t('page.about.value_customer_desc') },
+            ]"
+            :key="value.title"
+            class="rounded-xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+          >
+            <h3 class="mb-3 text-xl font-bold text-primary">{{ value.title }}</h3>
+            <p class="text-sm leading-relaxed text-muted-foreground mt-2">{{ value.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section class="w-full bg-primary/5 py-20">
       <div class="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">

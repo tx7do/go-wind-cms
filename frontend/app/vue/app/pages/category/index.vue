@@ -33,7 +33,8 @@ onMounted(async () => {
   <div class="w-full">
     <LayoutPageHero
       :title="t('page.categories.categories')"
-      icon="carbon:folder-details"
+      :description="t('page.categories.browse_all')"
+      icon="carbon:folder"
       size="md"
     />
 

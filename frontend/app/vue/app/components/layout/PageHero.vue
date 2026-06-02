@@ -81,7 +81,12 @@ const padding = computed(() =>
       </p>
 
       <!-- 自定义内容 slot -->
-      <slot />
+      <div v-if="$slots.default" :class="cn(
+        'mt-5 flex flex-wrap items-center justify-center gap-4',
+        'text-sm text-muted-foreground',
+      )">
+        <slot />
+      </div>
     </div>
   </section>
 </template>

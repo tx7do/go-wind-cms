@@ -91,6 +91,10 @@ const getCategoryName = (category: any): string => {
                 </p>
               </div>
             </div>
+            <div class="mt-auto w-fit inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 bg-muted border border-border text-xs text-muted-foreground transition-colors duration-300 group-hover:text-foreground/70 group-hover:border-primary/20">
+              <XIcon icon="carbon:time" :size="14" />
+              <span>{{ t('page.home.updated_days_ago', { days: 3 }) }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -115,6 +119,10 @@ const getCategoryName = (category: any): string => {
                 <span class="mr-1 font-medium text-primary">{{ category.postCount || 0 }}</span>
                 {{ t('page.home.articles_unit') }}
               </p>
+            </div>
+            <div class="mt-auto inline-flex w-fit items-center gap-1.5 rounded-md px-2.5 py-1 bg-muted border border-border text-xs text-muted-foreground transition-colors duration-300 group-hover:text-foreground/70 group-hover:border-primary/20">
+              <XIcon icon="carbon:time" :size="14" />
+              <span>{{ t('page.home.updated_days_ago', { days: 3 }) }}</span>
             </div>
           </div>
         </div>
