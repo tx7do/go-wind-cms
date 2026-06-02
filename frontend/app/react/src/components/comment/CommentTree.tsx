@@ -67,7 +67,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
         setSubmitting(true);
         try {
-            await onReply(comment, replyContent.trim());
+            onReply(comment, replyContent.trim());
             cancelReply();
         } catch (error) {
             console.error('Submit reply failed:', error);
@@ -149,7 +149,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                 <div key={comment.id} className="flex flex-col">
                     {/* 评论主体 */}
                     <div className={cn(
-                        'group relative flex gap-5 overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card to-primary/[0.02] p-7',
+                        'group relative flex gap-5 overflow-hidden rounded-2xl border border-border bg-linear-to-br from-card to-primary/2 p-7',
                         'shadow-sm transition-all duration-400',
                         'hover:border-primary hover:shadow-md hover:translate-x-1 hover:-translate-y-0.5',
                         'max-md:p-6 max-md:gap-4',
@@ -158,7 +158,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                         {/* Left accent bar on hover */}
                         <div className="absolute top-0 left-0 h-full w-1 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100"/>
 
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                             <Avatar className="h-12 w-12 ring-2 ring-border/30 shadow-md">
                                 <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                                     {comment.authorName?.charAt(0) || 'U'}
@@ -261,7 +261,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                         rows={3}
                                         placeholder={t('write_comment')}
                                         className={cn(
-                                            'w-full min-h-[80px] resize-y rounded-lg border border-border bg-muted px-4 py-3 text-sm text-foreground',
+                                            'w-full min-h-20 resize-y rounded-lg border border-border bg-muted px-4 py-3 text-sm text-foreground',
                                             'transition-all duration-300',
                                             'hover:border-primary',
                                             'focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15',
@@ -308,7 +308,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             'max-sm:pl-9 max-sm:mt-3',
                         )}>
                             {/* Vertical line */}
-                            <div className="absolute top-0 left-8 h-full w-0.5 bg-gradient-to-b from-primary/20 to-primary/5 max-md:left-6 max-sm:left-[18px] max-sm:w-[1.5px]"/>
+                            <div className="absolute top-0 left-8 h-full w-0.5 bg-linear-to-b from-primary/20 to-primary/5 max-md:left-6 max-sm:left-4.5 max-sm:w-[1.5px]"/>
 
                             {/* 加载中提示 */}
                             {isLoading(comment) && (

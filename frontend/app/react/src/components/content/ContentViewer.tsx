@@ -221,7 +221,7 @@ function escapeHtml(text: string): string {
 
 // Sanitize HTML
 function sanitizeHtml(html: string): string {
-    const config: any = {
+    const config: Parameters<typeof DOMPurify.sanitize>[1] = {
         ALLOWED_TAGS: [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'p', 'br', 'hr', 'pre', 'code',
@@ -246,7 +246,6 @@ function sanitizeHtml(html: string): string {
         ALLOW_UNKNOWN_PROTOCOLS: true,
         RETURN_DOM: false,
         RETURN_DOM_FRAGMENT: false,
-        RETURN_DOM_IMPORT: false,
         FORCE_BODY: false,
         SANITIZE_DOM: true,
         IN_PLACE: false,

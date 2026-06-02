@@ -65,7 +65,7 @@ export default function Footer() {
 
     return (
         <footer className="w-full bg-card flex justify-center">
-            <div className="flex w-full max-w-[1200px] items-center justify-between gap-4 border-t border-border px-6 py-4 text-muted-foreground min-h-[72px] max-md:flex-col max-md:items-start max-md:gap-3 max-md:py-4 max-md:pb-5">
+            <div className="flex w-full max-w-300 items-center justify-between gap-4 border-t border-border px-6 py-4 text-muted-foreground min-h-18 max-md:flex-col max-md:items-start max-md:gap-3 max-md:py-4 max-md:pb-5">
                 <nav className="flex flex-wrap items-center gap-1" aria-label="Footer links">
                     {footerLinks.map(link => (
                         <Button

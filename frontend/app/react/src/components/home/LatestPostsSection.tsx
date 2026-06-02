@@ -11,7 +11,7 @@ export default function LatestPostsSection() {
     const t = useTranslations('page.home');
     const router = useI18nRouter();
     return (
-        <section className="w-full max-w-[1200px] mx-auto scroll-reveal px-8 py-12 max-md:px-4">
+        <section className="w-full max-w-300 mx-auto scroll-reveal px-8 py-12 max-md:px-4">
             <div className="mb-8 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl">
                     <XIcon name="carbon:document" size={28} className="mr-2 text-primary"/>

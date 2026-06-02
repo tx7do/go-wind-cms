@@ -106,7 +106,7 @@ export default function CategoryListSection({
     };
 
     return (
-        <section className="categories-section w-full max-w-[1200px] mx-auto scroll-reveal px-8 py-12 max-md:px-4">
+        <section className="categories-section w-full max-w-300 mx-auto scroll-reveal px-8 py-12 max-md:px-4">
             {/* Section Header */}
             {showHeader && (
                 <div className="mb-8 flex items-center justify-between">
@@ -124,8 +124,8 @@ export default function CategoryListSection({
             {loading ? (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6">
                     {Array.from({length: skeletonCount}).map((_, i) => (
-                        <div key={i} className="flex min-h-[200px] flex-col rounded-2xl border border-border bg-card p-6">
-                            <Skeleton className="h-[140px] w-full"/>
+                        <div key={i} className="flex min-h-50 flex-col rounded-2xl border border-border bg-card p-6">
+                            <Skeleton className="h-35 w-full"/>
                         </div>
                     ))}
                 </div>

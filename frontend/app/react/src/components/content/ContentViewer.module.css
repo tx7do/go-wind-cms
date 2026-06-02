@@ -194,11 +194,11 @@
     /* Dark mode：切换到 Shiki 的 dark 主题变量 */
     :global(.dark) :global(pre.shiki.code-block),
     :global(.dark) :global(pre.shiki.code-block) :global(span) {
-        color: var(--shiki-dark) !important;
-        background-color: var(--shiki-dark-bg) !important;
-        font-style: var(--shiki-dark-font-style) !important;
-        font-weight: var(--shiki-dark-font-weight) !important;
-        text-decoration: var(--shiki-dark-text-decoration) !important;
+        color: var(--shiki-dark, inherit) !important;
+        background-color: var(--shiki-dark-bg, transparent) !important;
+        font-style: var(--shiki-dark-font-style, normal) !important;
+        font-weight: var(--shiki-dark-font-weight, normal) !important;
+        text-decoration: var(--shiki-dark-text-decoration, none) !important;
     }
 
     /* Dark mode 下语言标签颜色调亮 */

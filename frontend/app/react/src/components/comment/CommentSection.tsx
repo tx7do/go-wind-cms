@@ -237,7 +237,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     return (
         <section className={cn(
-            'mx-auto mb-10 max-w-[1200px] rounded-2xl border border-border bg-card p-14 shadow-sm backdrop-blur-sm',
+            'mx-auto mb-10 max-w-300 rounded-2xl border border-border bg-card p-14 shadow-sm backdrop-blur-sm',
             'max-md:rounded-xl max-md:p-10',
             'max-sm:rounded-xl max-sm:p-8',
         )}>
@@ -252,7 +252,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             {/* Comment Form */}
             <div className={cn(
                 'relative mb-12 overflow-hidden rounded-2xl border border-primary/10 p-12',
-                'bg-gradient-to-br from-card to-primary/[0.02] shadow-sm',
+                'bg-linear-to-br from-card to-primary/2 shadow-sm',
                 'transition-all duration-400 hover:border-primary hover:shadow-md',
                 'max-md:rounded-xl max-md:p-8 max-md:mb-9',
                 'max-sm:p-7 max-sm:mb-8',

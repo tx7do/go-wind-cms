@@ -94,7 +94,7 @@ const PageHero: React.FC<PageHeroProps> = ({
 
                 {/* 底部风迹光带：变宽为渐变带，更流体 */}
                 <div
-                    className="absolute bottom-0 left-0 right-0 h-[2px] opacity-40"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 opacity-40"
                     style={{
                         background: `linear-gradient(90deg, transparent, ${accentColor || 'hsl(var(--primary))'} 30%, #38bdf8 70%, transparent)`,
                     }}

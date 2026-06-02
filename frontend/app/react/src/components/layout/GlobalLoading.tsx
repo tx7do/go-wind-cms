@@ -33,7 +33,7 @@ export default function GlobalLoading() {
     if (!isLoading) return null;
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-black/70">
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-black/70">
             <div className="flex flex-col items-center gap-4">
                 <Spinner size="lg"/>
                 <p className="mt-2 text-base font-medium text-foreground">加载中...</p>

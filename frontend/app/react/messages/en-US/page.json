@@ -11,6 +11,7 @@
     "latest_posts": "Latest Posts",
     "views": "Views",
     "article_count": "{count} posts",
+    "articles_unit": "posts",
     "views_count": "{count} views",
     "platform_features": "Platform Features",
     "hero_description": "High-performance, Multilingual Content Platform Based on Go + React",

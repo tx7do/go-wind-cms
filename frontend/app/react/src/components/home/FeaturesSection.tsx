@@ -50,7 +50,7 @@ export default function FeaturesSection() {
 
     return (
         <section className="w-full bg-background py-16">
-            <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+            <div className="w-full max-w-300 mx-auto px-8 max-md:px-4">
                 <div className="mb-12 text-center">
                     <h2 className="inline-flex items-center gap-2 text-[2.25rem] font-extrabold leading-tight tracking-tight text-foreground">
                         <XIcon name="carbon:rocket" size={28} className="mr-2 text-primary"/>
@@ -71,7 +71,7 @@ export default function FeaturesSection() {
                             )}
                         >
                             {/* hover 风迹渐变蒙层 */}
-                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
+                            <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
                             <div className={cn(
                                 'relative mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl',
                                 'bg-primary/10 text-3xl text-primary',

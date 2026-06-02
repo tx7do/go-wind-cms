@@ -294,7 +294,7 @@
 /* 标题流光动画：渐变位置左右滑动，模拟风的吹拂 */
 @keyframes windShimmer {
     0%, 100% {
-        background-position: 0% 50%;
+        background-position: 0 50%;
     }
     50% {
         background-position: 100% 50%;

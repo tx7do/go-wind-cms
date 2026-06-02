@@ -11,6 +11,7 @@
     "latest_posts": "最新文章",
     "views": "阅读",
     "article_count": "{count} 篇文章",
+    "articles_unit": "篇文章",
     "views_count": "{count} 阅读",
     "platform_features": "平台特性",
     "hero_description": "基于 Go + React 的高性能、多语言内容平台",
