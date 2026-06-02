@@ -18,6 +18,7 @@ import (
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
