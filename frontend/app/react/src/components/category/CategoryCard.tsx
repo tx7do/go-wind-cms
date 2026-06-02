@@ -70,7 +70,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                     {getCategoryDescription(category)}
                 </p>
                 <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                    <span className="flex items-center opacity-80">
+                    <span className="flex items-center">
                         <XIcon name="carbon:document" size={14}/>
                     </span>
                     <span>

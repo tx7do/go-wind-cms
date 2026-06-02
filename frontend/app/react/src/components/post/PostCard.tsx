@@ -74,7 +74,7 @@ const PostCard: React.FC<PostCardProps> = ({
                     {getPostSummary(post)}
                 </p>
                 <div className={cn(
-                    'flex flex-wrap gap-4 border-t border-border pt-3 text-[13px] text-muted-foreground',
+                    'flex flex-wrap gap-4 border-t border-border pt-3 text-[13px] font-medium text-muted-foreground',
                     'max-md:text-xs max-md:gap-3',
                 )}>
                     <div className="flex items-center gap-1.5 whitespace-nowrap">
