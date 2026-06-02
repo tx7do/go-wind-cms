@@ -20,7 +20,7 @@ export function useI18n(namespace: string = 'common') {
     const pathname = usePathname();
     const router = useI18nRouter();
     const {setLanguage} = usePreferences();
-    const {start: startLoading} = useLoading();
+    const {start: startLoading, finish: finishLoading} = useLoading();
 
     // 切换语言（使用 next-intl 的路由器）
     const changeLocale = (targetLocale: string) => {
@@ -40,6 +40,9 @@ export function useI18n(namespace: string = 'common') {
         startLoading();
 
         router.replaceWithoutLocale(newPath);
+
+        // 路由替换后完成 loading（Next.js 客户端导航 + 重挂载通常在 300-800ms 内完成）
+        setTimeout(() => finishLoading(), 800);
     };
 
     return {t, locale, changeLocale};
