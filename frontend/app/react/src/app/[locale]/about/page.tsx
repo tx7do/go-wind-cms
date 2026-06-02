@@ -6,7 +6,6 @@ import {Button} from '@/components/ui/button';
 import XIcon from '@/plugins/xicon';
 
 import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-import styles from './about.module.css';
 
 export default function AboutPage() {
     const t = useTranslations('page.about');
@@ -63,61 +62,64 @@ export default function AboutPage() {
     ];
 
     return (
-        <div className={styles.aboutPage}>
+        <div className="w-full">
             {/* Hero Section */}
-            <section className={styles.hero}>
-                <div className={styles.heroContent}>
-                    <h1 className={styles.heroTitle}>{t('title')}</h1>
-                    <p className={styles.heroSubtitle}>{t('subtitle')}</p>
-                    <p className={styles.heroDescription}>{t('description')}</p>
+            <section className="relative w-full flex min-h-[400px] items-center justify-center overflow-hidden bg-background py-28 text-center">
+                <div className="relative z-10 w-full max-w-[900px] px-8 max-md:px-4">
+                    <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground max-md:text-3xl">
+                        {t('title')}
+                    </h1>
+                    <p className="mb-4 text-2xl font-light text-primary max-md:text-xl">
+                        {t('subtitle')}
+                    </p>
+                    <p className="w-full max-w-[700px] mx-auto text-lg text-muted-foreground max-md:text-base">
+                        {t('description')}
+                    </p>
                 </div>
             </section>
 
             {/* About Section */}
-            <section className={styles.aboutSection}>
-                <div className={styles.sectionContainer}>
-                    <div className={styles.aboutContent}>
-                        <h2>{t('about_us')}</h2>
-                        <p>{t('about_us_desc_1')}</p>
-                        <p>{t('about_us_desc_2')}</p>
-                        <p>{t('about_us_desc_3')}</p>
-                    </div>
-                    <div className={styles.aboutStats}>
-                        <div className={styles.statCard}>
-                            <div className={styles.statNumber}>10K+</div>
-                            <div className={styles.statLabel}>{t('stat_users')}</div>
+            <section className="w-full bg-background py-20">
+                <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+                    <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
+                        <div>
+                            <h2 className="mb-6 text-3xl font-bold text-foreground">{t('about_us')}</h2>
+                            <p className="mb-4 leading-relaxed text-muted-foreground">{t('about_us_desc_1')}</p>
+                            <p className="mb-4 leading-relaxed text-muted-foreground">{t('about_us_desc_2')}</p>
+                            <p className="leading-relaxed text-muted-foreground">{t('about_us_desc_3')}</p>
                         </div>
-                        <div className={styles.statCard}>
-                            <div className={styles.statNumber}>500+</div>
-                            <div className={styles.statLabel}>{t('stat_projects')}</div>
-                        </div>
-                        <div className={styles.statCard}>
-                            <div className={styles.statNumber}>99.9%</div>
-                            <div className={styles.statLabel}>{t('stat_uptime')}</div>
-                        </div>
-                        <div className={styles.statCard}>
-                            <div className={styles.statNumber}>24/7</div>
-                            <div className={styles.statLabel}>{t('stat_support')}</div>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                {num: '10K+', label: t('stat_users')},
+                                {num: '500+', label: t('stat_projects')},
+                                {num: '99.9%', label: t('stat_uptime')},
+                                {num: '24/7', label: t('stat_support')},
+                            ].map((stat) => (
+                                <div key={stat.label} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
+                                    <div className="mb-2 text-3xl font-bold text-primary">{stat.num}</div>
+                                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Features Section */}
-            <section className={styles.featuresSection}>
-                <div className={styles.sectionContainer}>
-                    <div className={styles.sectionHeader}>
-                        <h2>{t('features')}</h2>
-                        <p>{t('features_desc')}</p>
+            <section className="w-full bg-muted/30 py-20">
+                <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-foreground">{t('features')}</h2>
+                        <p className="text-muted-foreground">{t('features_desc')}</p>
                     </div>
-                    <div className={styles.featuresGrid}>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
                         {features.map((feature) => (
-                            <div key={feature.title} className={styles.featureCard}>
-                                <div className={styles.featureIcon}>
+                            <div key={feature.title} className="group rounded-xl border border-border bg-card p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:shadow-md">
                                     <XIcon name={feature.icon} size={32}/>
                                 </div>
-                                <h3>{feature.title}</h3>
-                                <p>{feature.description}</p>
+                                <h3 className="mb-2 text-lg font-bold text-foreground transition-colors group-hover:text-primary">{feature.title}</h3>
+                                <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
                             </div>
                         ))}
                     </div>
@@ -125,27 +127,21 @@ export default function AboutPage() {
             </section>
 
             {/* Team Section */}
-            <section className={styles.teamSection}>
-                <div className={styles.sectionContainer}>
-                    <div className={styles.sectionHeader}>
-                        <h2>{t('team')}</h2>
-                        <p>{t('team_desc')}</p>
+            <section className="w-full bg-background py-20">
+                <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-foreground">{t('team')}</h2>
+                        <p className="text-muted-foreground">{t('team_desc')}</p>
                     </div>
-                    <div className={styles.teamGrid}>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6">
                         {teamMembers.map((member) => (
-                            <div key={member.name} className={styles.teamCard}>
-                                <div className={styles.teamAvatar}>
+                            <div key={member.name} className="rounded-xl border border-border bg-card p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                                <div className="mx-auto mb-4 h-[120px] w-[120px] overflow-hidden rounded-full ring-2 ring-primary/20">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={member.avatar}
-                                        alt={member.name}
-                                        width={120}
-                                        height={120}
-                                        style={{borderRadius: '50%'}}
-                                    />
+                                    <img src={member.avatar} alt={member.name} width={120} height={120}/>
                                 </div>
-                                <h3>{member.name}</h3>
-                                <p>{member.role}</p>
+                                <h3 className="mb-1 text-lg font-bold text-foreground">{member.name}</h3>
+                                <p className="text-sm text-muted-foreground">{member.role}</p>
                             </div>
                         ))}
                     </div>
@@ -153,45 +149,44 @@ export default function AboutPage() {
             </section>
 
             {/* Values Section */}
-            <section className={styles.valuesSection}>
-                <div className={styles.sectionContainer}>
-                    <div className={styles.sectionHeader}>
-                        <h2>{t('values')}</h2>
-                        <p>{t('values_desc')}</p>
+            <section className="w-full bg-muted/30 py-20">
+                <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-foreground">{t('values')}</h2>
+                        <p className="text-muted-foreground">{t('values_desc')}</p>
                     </div>
-                    <div className={styles.valuesGrid}>
-                        <div className={styles.valueCard}>
-                            <h3>{t('value_innovation')}</h3>
-                            <p>{t('value_innovation_desc')}</p>
-                        </div>
-                        <div className={styles.valueCard}>
-                            <h3>{t('value_reliability')}</h3>
-                            <p>{t('value_reliability_desc')}</p>
-                        </div>
-                        <div className={styles.valueCard}>
-                            <h3>{t('value_customer')}</h3>
-                            <p>{t('value_customer_desc')}</p>
-                        </div>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        {[
+                            {title: t('value_innovation'), desc: t('value_innovation_desc')},
+                            {title: t('value_reliability'), desc: t('value_reliability_desc')},
+                            {title: t('value_customer'), desc: t('value_customer_desc')},
+                        ].map((value) => (
+                            <div key={value.title} className="rounded-xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                                <h3 className="mb-3 text-xl font-bold text-primary">{value.title}</h3>
+                                <p className="leading-relaxed text-muted-foreground">{value.desc}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
             {/* CTA Section */}
-            <section className={styles.ctaSection}>
-                <div className={styles.sectionContainer}>
-                    <h2>{t('cta_title')}</h2>
-                    <p>{t('cta_desc')}</p>
-                    <div className={styles.ctaButtons}>
-                        <Button size="lg">
-                            {t('cta_explore')}
-                        </Button>
-                        <Button variant="outline" size="lg">
-                            {t('cta_contact')}
-                        </Button>
+            <section className="w-full bg-primary/5 py-20">
+                <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+                    <div className="mx-auto max-w-[800px] text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-foreground">{t('cta_title')}</h2>
+                        <p className="mb-8 text-lg text-muted-foreground">{t('cta_desc')}</p>
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <Button size="lg">
+                                {t('cta_explore')}
+                            </Button>
+                            <Button variant="outline" size="lg">
+                                {t('cta_contact')}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
     );
 }
-

@@ -5,8 +5,6 @@ import {Inbox} from 'lucide-react';
 
 import {cn} from '@/lib/utils';
 
-import styles from './AppEmpty.module.css';
-
 interface AppEmptyProps {
     /**
      * 空状态类型
@@ -59,9 +57,8 @@ export const AppEmpty: React.FC<AppEmptyProps> = ({
     return (
         <div
             className={cn(
-                styles.emptyWrapper,
-                inContainer && styles.inContainer,
-                'flex flex-col items-center justify-center gap-4 py-12',
+                'flex w-full items-center justify-center gap-4 py-12 px-5',
+                inContainer && 'my-20',
                 className,
             )}
             style={style}

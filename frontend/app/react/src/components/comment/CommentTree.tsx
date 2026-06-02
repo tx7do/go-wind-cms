@@ -10,7 +10,7 @@ import {XIcon} from '@/plugins/xicon';
 import type {commentservicev1_Comment} from "@/api/generated/app/service/v1";
 import {formatDate} from "@/utils/date";
 
-import styles from './CommentTree.module.css';
+import {cn} from '@/lib/utils';
 
 interface CommentTreeProps {
     comments: commentservicev1_Comment[];
@@ -144,22 +144,39 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     if (!comments || comments.length === 0) return null;
 
     return (
-        <div className={styles.commentTree}>
+        <div className="flex flex-col gap-7">
             {comments.map((comment) => (
-                <div key={comment.id} className={styles.commentNode}>
+                <div key={comment.id} className="flex flex-col">
                     {/* 评论主体 */}
-                    <div className={styles.commentItem}>
-                        <div className={styles.commentAvatar}>
-                            <Avatar className="h-12 w-12">
-                                <AvatarFallback>{comment.authorName?.charAt(0) || 'U'}</AvatarFallback>
+                    <div className={cn(
+                        'group relative flex gap-5 overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card to-primary/[0.02] p-7',
+                        'shadow-sm transition-all duration-400',
+                        'hover:border-primary hover:shadow-md hover:translate-x-1 hover:-translate-y-0.5',
+                        'max-md:p-6 max-md:gap-4',
+                        'max-sm:p-4 max-sm:gap-3',
+                    )}>
+                        {/* Left accent bar on hover */}
+                        <div className="absolute top-0 left-0 h-full w-1 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100"/>
+
+                        <div className="flex-shrink-0">
+                            <Avatar className="h-12 w-12 ring-2 ring-border/30 shadow-md">
+                                <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                                    {comment.authorName?.charAt(0) || 'U'}
+                                </AvatarFallback>
                             </Avatar>
                         </div>
-                        <div className={styles.commentBody}>
-                            <div className={styles.commentHeader}>
-                                <div className={styles.authorInfo}>
-                                    <strong className={styles.commentAuthor}>
+                        <div className="min-w-0 flex-1">
+                            {/* Header */}
+                            <div className={cn(
+                                'mb-4 flex items-center justify-between border-b border-primary/8 pb-3',
+                                'max-md:flex-col max-md:items-start max-md:gap-2 max-md:mb-3 max-md:pb-2.5',
+                                'max-sm:gap-1.5 max-sm:mb-2 max-sm:pb-1.5',
+                            )}>
+                                <div className="flex flex-wrap items-center gap-3 max-md:flex-col max-md:items-start max-md:gap-1.5">
+                                    <strong className="flex items-center gap-2 text-[17px] font-semibold tracking-tight text-foreground max-md:text-base max-sm:text-[15px]">
+                                        <span className="text-sm font-bold text-primary">@</span>
                                         {isOwnerReply(comment) && (
-                                            <span className={styles.ownerBadge}>
+                                            <span className="inline-flex items-center gap-1 rounded-lg bg-primary px-2.5 py-0.5 text-[11px] font-bold text-primary-foreground shadow-sm max-sm:text-[10px] max-sm:px-1.5 max-sm:py-0.5">
                                                 <XIcon name="carbon:badge" size={13}/>
                                                 {t('owner_reply')}
                                             </span>
@@ -167,17 +184,33 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                         {comment.authorName}
                                     </strong>
                                     {comment.location && !isOwnerReply(comment) && (
-                                        <span className={styles.commentLocation}>{comment.location}</span>
+                                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                            {comment.location}
+                                        </span>
                                     )}
                                 </div>
-                                <span className={styles.commentDate}>{formatDate(comment.createdAt)}</span>
+                                <span className="flex items-center gap-1.5 text-[13px] text-muted-foreground max-md:text-xs max-sm:text-[11px]">
+                                    {formatDate(comment.createdAt)}
+                                </span>
                             </div>
-                            <div className={styles.commentContent}>
+
+                            {/* Content */}
+                            <div className="mb-4 pl-1 text-[15px] leading-relaxed text-foreground max-md:text-sm max-sm:text-[13px]">
                                 {comment.content}
                             </div>
-                            <div className={styles.commentActions}>
+
+                            {/* Actions */}
+                            <div className={cn(
+                                'flex gap-5 border-t border-primary/5 pt-3',
+                                'max-md:flex-wrap max-md:gap-4',
+                                'max-sm:gap-2.5',
+                            )}>
                                 <span
-                                    className={`${styles.actionItem} ${likedComments.has(comment.id || 0) ? styles.liked : ''}`}
+                                    className={cn(
+                                        'flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5',
+                                        'max-md:text-xs max-sm:text-[11px]',
+                                        likedComments.has(comment.id || 0) && 'text-primary font-semibold',
+                                    )}
                                     onClick={() => handleLike(comment)}
                                     title={likedComments.has(comment.id || 0) ? t('unlike') : t('like')}
                                 >
@@ -185,7 +218,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     {comment.likeCount || 0}
                                 </span>
                                 <span
-                                    className={styles.actionItem}
+                                    className="flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5 max-md:text-xs max-sm:text-[11px]"
                                     onClick={() => handleReply(comment)}
                                     title={t('reply')}
                                 >
@@ -193,7 +226,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     {t('reply')}
                                 </span>
                                 <span
-                                    className={styles.actionItem}
+                                    className="flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5 max-md:text-xs max-sm:text-[11px]"
                                     onClick={() => handleShare(comment)}
                                     title={t('share')}
                                 >
@@ -203,7 +236,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                 {/* 查看回复按钮 */}
                                 {comment.replyCount && comment.replyCount > 0 ? (
                                     <span
-                                        className={`${styles.actionItem} ${styles.viewReplies}`}
+                                        className="flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-primary transition-all duration-200 select-none hover:text-primary max-md:text-xs max-sm:text-[11px]"
                                         onClick={() => toggleExpand(comment)}
                                         title={isExpanded(comment) ? t('hide_replies') : t('view_replies', {count: comment.replyCount})}
                                     >
@@ -221,13 +254,19 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                             {/* 回复表单 */}
                             {replyingCommentId === comment.id && (
-                                <div className={styles.replyForm}>
+                                <div className="mt-4 border-t border-primary/8 pt-4 max-md:mt-3 max-md:pt-3">
                                     <textarea
                                         value={replyContent}
                                         onChange={(e) => setReplyContent(e.target.value)}
                                         rows={3}
                                         placeholder={t('write_comment')}
-                                        className={styles.replyTextarea}
+                                        className={cn(
+                                            'w-full min-h-[80px] resize-y rounded-lg border border-border bg-muted px-4 py-3 text-sm text-foreground',
+                                            'transition-all duration-300',
+                                            'hover:border-primary',
+                                            'focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15',
+                                            'disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-background',
+                                        )}
                                         disabled={submitting}
                                         onKeyDown={(e) => {
                                             if (e.ctrlKey || e.metaKey) {
@@ -236,10 +275,10 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                             }
                                         }}
                                     />
-                                    <div className={styles.charCount}>
+                                    <div className="mt-2 mb-3 text-right text-xs text-muted-foreground">
                                         {replyContent.length} / 1000
                                     </div>
-                                    <div className={styles.replyFormActions}>
+                                    <div className="flex justify-end gap-3 max-md:flex-col max-md:gap-2">
                                         <Button
                                             size="sm"
                                             onClick={() => submitReply(comment)}
@@ -263,11 +302,18 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                     {/* 递归渲染子评论 */}
                     {hasChildren(comment) && isExpanded(comment) && (
-                        <div className={styles.commentChildren}>
+                        <div className={cn(
+                            'relative mt-5 pl-16',
+                            'max-md:pl-12 max-md:mt-4',
+                            'max-sm:pl-9 max-sm:mt-3',
+                        )}>
+                            {/* Vertical line */}
+                            <div className="absolute top-0 left-8 h-full w-0.5 bg-gradient-to-b from-primary/20 to-primary/5 max-md:left-6 max-sm:left-[18px] max-sm:w-[1.5px]"/>
+
                             {/* 加载中提示 */}
                             {isLoading(comment) && (
-                                <div className={styles.loadingChildren}>
-                                    <Spinner size="sm"/>
+                                <div className="flex items-center justify-center gap-3 py-5 text-sm text-muted-foreground">
+                                    <Spinner size="sm" className="text-primary"/>
                                     <span>{t('loading')}</span>
                                 </div>
                             )}

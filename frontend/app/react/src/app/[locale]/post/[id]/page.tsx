@@ -21,7 +21,6 @@ import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 
 import '../../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-import styles from './post-detail.module.css';
 
 // 常量定义
 const HEADING_OFFSET = 150;
@@ -174,7 +173,6 @@ export default function PostDetailPage() {
     // 监听内容变化，重新生成目录
     useEffect(() => {
         if (displayContent && tableOfContents.length === 0) {
-            // 如果还没有生成目录，立即生成一次
             generateTableOfContents();
         }
     }, [displayContent, tableOfContents.length]);
@@ -194,7 +192,6 @@ export default function PostDetailPage() {
                 const level = heading.tagName === 'H2' ? 2 : 3;
                 const id = `heading-${index}`;
 
-                // 确保 ID 存在
                 if (!heading.id) {
                     heading.setAttribute('id', id);
                     console.log(`[GenerateTOC] Set ID "${id}" on ${heading.tagName}:`, heading.textContent);
@@ -271,12 +268,10 @@ export default function PostDetailPage() {
 
     const handleLike = () => {
         setIsLiked(!isLiked);
-        // TODO: Add toast message
     };
 
     const handleBookmark = () => {
         setIsBookmarked(!isBookmarked);
-        // TODO: Add toast message
     };
 
     const handleShare = () => {
@@ -310,14 +305,11 @@ export default function PostDetailPage() {
                 '| Element:', element.textContent?.trim()
             );
 
-            // 直接使用 scrollIntoView，让浏览器处理滚动
-            // 然后通过计算调整到正确的位置
             element.scrollIntoView({behavior: 'auto', block: 'start'});
 
-            // 等待浏览器完成滚动后，再向下调整 headerOffset 的距离
             setTimeout(() => {
                 const currentScroll = window.pageYOffset;
-                const headerOffset = 100; // 导航栏高度
+                const headerOffset = 100;
                 const targetPosition = currentScroll - headerOffset;
 
                 console.log('[TOC Scroll] Adjusting:',
@@ -332,7 +324,6 @@ export default function PostDetailPage() {
 
                 setActiveHeading(id);
 
-                // 更新 URL hash
                 if (window.history.pushState) {
                     const currentState = window.history.state || {};
                     window.history.pushState(currentState, '', `#${id}`);
@@ -347,107 +338,102 @@ export default function PostDetailPage() {
 
     if (isLoading) {
         return (
-            <div className={styles['post-detail-page']}>
+            <div className="w-full">
                 {/* Loading skeleton */}
-                <div className={styles['back-navigation']}>
-                    <div className={styles['skeleton-btn']}></div>
-                </div>
-                <article className={styles['post-article']}>
-                    <div className={styles['post-banner']}>
-                        <div className={styles['skeleton-image']}></div>
-                    </div>
-                    <div className={styles['post-wrapper']}>
-                        <aside className={styles['toc-sidebar']}>
-                            <div className={styles['toc-container']}>
-                                <div className={styles['skeleton-line']} style={{width: '200px', height: '24px'}}></div>
-                                <div className={styles['skeleton-line']}
-                                     style={{width: '180px', height: '20px', marginTop: '16px'}}></div>
-                                <div className={styles['skeleton-line']}
-                                     style={{width: '160px', height: '20px', marginTop: '8px'}}></div>
-                                <div className={styles['skeleton-line']}
-                                     style={{width: '140px', height: '20px', marginTop: '8px'}}></div>
-                            </div>
-                        </aside>
-                        <div className={styles['article-content']}>
-                            <header className={styles['post-header']}>
-                                <div className={styles['skeleton-title']} style={{width: '80%', height: '48px'}}></div>
-                                <div className={styles['skeleton-subtitle']}
-                                     style={{width: '60%', height: '32px', marginTop: '16px'}}></div>
-                                <div className={styles['post-meta']}>
-                                    <div className={styles['skeleton-meta']}
-                                         style={{width: '100px', height: '20px'}}></div>
-                                    <div className={styles['skeleton-meta']}
-                                         style={{width: '100px', height: '20px'}}></div>
-                                    <div className={styles['skeleton-meta']}
-                                         style={{width: '100px', height: '20px'}}></div>
-                                    <div className={styles['skeleton-meta']}
-                                         style={{width: '100px', height: '20px'}}></div>
+                <div className="w-full max-w-[1200px] mx-auto px-8 py-8 max-md:px-4">
+                    <div className="mb-6 h-9 w-32 animate-pulse rounded bg-muted"/>
+                    <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+                        <div className="h-[300px] animate-pulse bg-muted max-md:h-[200px]"/>
+                        <div className="flex gap-6 p-8 max-md:flex-col max-md:p-4">
+                            <aside className="w-[240px] shrink-0 max-md:hidden">
+                                <div className="sticky top-24 space-y-3 rounded-lg border border-border bg-background p-4">
+                                    <div className="h-6 w-[200px] animate-pulse rounded bg-muted"/>
+                                    <div className="mt-4 h-5 w-[180px] animate-pulse rounded bg-muted"/>
+                                    <div className="mt-2 h-5 w-[160px] animate-pulse rounded bg-muted"/>
+                                    <div className="mt-2 h-5 w-[140px] animate-pulse rounded bg-muted"/>
                                 </div>
-                            </header>
-                            <div className={styles['post-content']}>
-                                <div className={styles['skeleton-paragraph']}></div>
+                            </aside>
+                            <div className="flex-1">
+                                <div className="mb-4 h-12 w-[80%] animate-pulse rounded bg-muted"/>
+                                <div className="mb-4 h-8 w-[60%] animate-pulse rounded bg-muted"/>
+                                <div className="mb-6 flex gap-4">
+                                    <div className="h-5 w-[100px] animate-pulse rounded bg-muted"/>
+                                    <div className="h-5 w-[100px] animate-pulse rounded bg-muted"/>
+                                    <div className="h-5 w-[100px] animate-pulse rounded bg-muted"/>
+                                    <div className="h-5 w-[100px] animate-pulse rounded bg-muted"/>
+                                </div>
+                                <div className="space-y-3">
+                                    <div className="h-4 w-full animate-pulse rounded bg-muted"/>
+                                    <div className="h-4 w-[90%] animate-pulse rounded bg-muted"/>
+                                    <div className="h-4 w-[95%] animate-pulse rounded bg-muted"/>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </article>
+                    </article>
+                </div>
             </div>
         );
     }
 
     if (!post) {
         return (
-            <div className={styles['post-detail-page']}>
-                <div className={styles['empty-state']}>Post not found</div>
+            <div className="flex w-full items-center justify-center py-20">
+                <div className="text-lg text-muted-foreground">Post not found</div>
             </div>
         );
     }
 
     return (
-        <div className={styles['post-detail-page']}>
+        <div className="w-full">
             {/* Back Navigation */}
-            <div className={styles['back-navigation']}>
-                <button onClick={handleBack} className={styles['back-btn']} aria-label={t('post_detail.back')}>
+            <div className="w-full max-w-[1200px] mx-auto px-8 py-6 max-md:px-4">
+                <button
+                    onClick={handleBack}
+                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-foreground transition-all hover:border-primary hover:bg-primary/5"
+                    aria-label={t('post_detail.back')}
+                >
                     <XIcon name="carbon:arrow-left"/>
                     <span>{t('post_detail.back')}</span>
                 </button>
             </div>
 
             {/* Post Article */}
-            <article className={styles['post-article']}>
+            <article className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
                 {/* Post Thumbnail Banner */}
                 {displayThumbnail && (
-                    <div className={styles['post-banner']}>
-                        <img src={displayThumbnail} alt={displayTitle}/>
-                        <div className={styles['banner-overlay']}/>
+                    <div className="relative mb-8 h-[300px] overflow-hidden rounded-xl max-md:h-[200px]">
+                        <img src={displayThumbnail} alt={displayTitle} className="h-full w-full object-cover"/>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"/>
                     </div>
                 )}
 
-                <div className={`${styles['post-wrapper']} ${!isTocExpanded ? styles['toc-collapsed'] : ''}`}>
+                <div className={`flex gap-6 max-md:flex-col ${!isTocExpanded ? 'lg:pl-12' : ''}`}>
                     {/* Table of Contents Sidebar */}
                     {tableOfContents.length > 0 && isTocExpanded && (
-                        <aside className={styles['toc-sidebar']}>
-                            <div className={styles['toc-container']}>
-                                <div className={styles['toc-header']}>
-                                    <h3 className={styles['toc-title']}>
+                        <aside className="w-[240px] shrink-0 max-md:hidden">
+                            <div className="sticky top-24 rounded-lg border border-border bg-card p-4">
+                                <div className="mb-3 flex items-center justify-between">
+                                    <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
                                         <XIcon name="carbon:list"/>
                                         <span>{t('post_detail.table_of_contents')}</span>
                                     </h3>
                                     <button
                                         onClick={() => setIsTocExpanded(false)}
-                                        className={styles['toc-collapse-btn']}
+                                        className="cursor-pointer rounded p-1 text-muted-foreground transition-colors hover:bg-primary/5 hover:text-primary"
                                     >
                                         <XIcon name="carbon:chevron-left"/>
                                     </button>
                                 </div>
-                                <nav className={styles['toc-list']}>
+                                <nav className="space-y-1">
                                     {tableOfContents.map(item => (
                                         <a
                                             key={item.id}
                                             href={`#${item.id}`}
-                                            className={`${styles['toc-item']} ${styles[`level-${item.level}`]} ${activeHeading === item.id ? styles['active'] : ''}`}
+                                            className={`block truncate rounded px-2 py-1.5 text-sm transition-colors hover:bg-primary/5 hover:text-primary ${
+                                                item.level === 3 ? 'pl-6 text-muted-foreground' : 'text-foreground'
+                                            } ${activeHeading === item.id ? 'bg-primary/10 font-medium text-primary' : ''}`}
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                // 延迟一小段时间再滚动，确保浏览器已经处理了 hash
                                                 setTimeout(() => scrollToHeading(item.id), 10);
                                             }}
                                         >
@@ -461,33 +447,38 @@ export default function PostDetailPage() {
 
                     {/* TOC Expand Button */}
                     {tableOfContents.length > 0 && !isTocExpanded && (
-                        <div className={styles['toc-expand-trigger']}>
-                            <button onClick={() => setIsTocExpanded(true)}>
+                        <div className="fixed top-1/2 left-4 z-10 -translate-y-1/2">
+                            <button
+                                onClick={() => setIsTocExpanded(true)}
+                                className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-md transition-all hover:border-primary hover:bg-primary/5"
+                            >
                                 <XIcon name="carbon:list"/>
-                                <span>{t('post_detail.table_of_contents')}</span>
+                                <span className="max-md:hidden">{t('post_detail.table_of_contents')}</span>
                                 <XIcon name="carbon:chevron-right"/>
                             </button>
                         </div>
                     )}
 
-                    <div className={styles['article-content']}>
+                    <div className="flex-1 min-w-0">
                         {/* Post Header */}
-                        <header className={styles['post-header']}>
-                            <h1 className={styles['post-title']}>{displayTitle}</h1>
-                            <div className={styles['post-meta']}>
-                                <div className={styles['meta-item']}>
+                        <header className="mb-8">
+                            <h1 className="mb-4 text-3xl font-bold text-foreground max-md:text-2xl">
+                                {displayTitle}
+                            </h1>
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-1.5">
                                     <XIcon name="carbon:user-avatar"/>
                                     <span>{post.authorName}</span>
                                 </div>
-                                <div className={styles['meta-item']}>
+                                <div className="flex items-center gap-1.5">
                                     <XIcon name="carbon:calendar"/>
                                     <span>{formatDate(post.createdAt)}</span>
                                 </div>
-                                <div className={styles['meta-item']}>
+                                <div className="flex items-center gap-1.5">
                                     <XIcon name="carbon:view"/>
                                     <span>{post.visits || 0}</span>
                                 </div>
-                                <div className={styles['meta-item']}>
+                                <div className="flex items-center gap-1.5">
                                     <XIcon name="carbon:thumbs-up"/>
                                     <span>{post.likes || 0}</span>
                                 </div>
@@ -495,30 +486,30 @@ export default function PostDetailPage() {
                         </header>
 
                         {/* Post Content */}
-                        <div className={styles['post-content']} ref={contentRef}>
+                        <div className="mb-8" ref={contentRef}>
                             <ContentViewer content={displayContent} type="markdown"/>
                         </div>
 
                         {/* Post Actions */}
-                        <footer className={styles['post-actions']}>
-                            <div className={styles['action-buttons']}>
+                        <footer className="mb-8 border-t border-border pt-6">
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={handleLike}
-                                    className={`${styles['action-btn']} ${isLiked ? styles['liked'] : ''}`}
+                                    className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card transition-all hover:border-primary hover:bg-primary/5 ${isLiked ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground'}`}
                                     aria-label={t('post_detail.likes')}
                                 >
                                     <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'}/>
                                 </button>
                                 <button
                                     onClick={handleBookmark}
-                                    className={`${styles['action-btn']} ${isBookmarked ? styles['bookmarked'] : ''}`}
+                                    className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card transition-all hover:border-primary hover:bg-primary/5 ${isBookmarked ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground'}`}
                                     aria-label={t('post_detail.bookmark')}
                                 >
                                     <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'}/>
                                 </button>
                                 <button
                                     onClick={handleShare}
-                                    className={styles['action-btn']}
+                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-all hover:border-primary hover:bg-primary/5 hover:text-primary"
                                     aria-label={t('post_detail.share')}
                                 >
                                     <XIcon name="carbon:share"/>
@@ -530,17 +521,19 @@ export default function PostDetailPage() {
             </article>
 
             {/* Comments Section */}
-            <CommentSection
+            <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
+                <CommentSection
                 objectId={postId}
                 contentType="CONTENT_TYPE_POST"
                 onUpdateComments={() => {
                 }}
-            />
+                />
+            </div>
 
             {/* Related Posts */}
-            <section className={styles['related-section']}>
-                <div className={styles['section-header']}>
-                    <h2>
+            <section className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
+                <div className="mb-6">
+                    <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
                         <XIcon name="carbon:book"/>
                         <span>{t('post_detail.related_posts')}</span>
                     </h2>

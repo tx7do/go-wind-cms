@@ -1,8 +1,13 @@
-import axios from 'axios';
+import axios, {type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig} from 'axios';
 
-import type { RequestClient } from './request-client';
-import type { MakeErrorMessageFn, ResponseInterceptorConfig } from './types';
-import { getDefaultErrorMsg } from './utils';
+import type {RequestClient} from './request-client';
+import type {MakeErrorMessageFn, ResponseInterceptorConfig} from './types';
+import {getDefaultErrorMsg} from './utils';
+
+/** 扩展 axios config 以携带自定义标记 */
+interface RetryableRequestConfig extends InternalAxiosRequestConfig {
+  __isRetryRequest?: boolean;
+}
 
 /**
  * 认证响应拦截器：处理 401 错误，支持自动刷新 token 和重新认证
@@ -27,8 +32,10 @@ export const authenticateResponseInterceptor = ({
   formatToken: (token: string) => null | string;
 }): ResponseInterceptorConfig => {
   return {
-    rejected: async (error) => {
-      const { config, response } = error;
+    rejected: async (error: unknown) => {
+      const axiosError = error as AxiosError;
+      const config = axiosError.config as RetryableRequestConfig | undefined;
+      const {response} = axiosError;
 
       /// 不是 401 → 直接抛错，交给错误拦截器处理
       if (response?.status !== 401) {
@@ -37,30 +44,36 @@ export const authenticateResponseInterceptor = ({
 
       // refresh-token 请求自身返回 401，说明 refresh token 已失效
       // 必须直接走重新认证，否则会死锁（刷新请求进入队列等待自己完成）
-      if (config.url?.includes('/refresh-token')) {
+      if (config?.url?.includes('/refresh-token')) {
         await doReAuthenticate();
-        throw Object.assign(error, {
+        throw Object.assign(new Error(axiosError.message), {
           __handledByAuthInterceptor: true,
         });
       }
 
       // 判断是否启用了 refreshToken 功能
       // 如果没有启用或者已经是重试请求了，直接跳转到重新登录
-      if (!enableRefreshToken || config.__isRetryRequest) {
+      if (!enableRefreshToken || config?.__isRetryRequest) {
         await doReAuthenticate();
         // 标记错误已由认证拦截器处理
 
-        throw Object.assign(error, {
+        throw Object.assign(new Error(axiosError.message), {
           __handledByAuthInterceptor: true,
         });
       }
 
+      // config 不存在时无法重试，直接走重新认证
+      if (!config) {
+        await doReAuthenticate();
+        throw Object.assign(new Error(axiosError.message), {__handledByAuthInterceptor: true});
+      }
+
       // 如果正在刷新 token，则将请求加入队列，等待刷新完成
       if (client.isRefreshing) {
-        return new Promise((resolve) => {
+        return new Promise<AxiosResponse>((resolve) => {
           client.refreshTokenQueue.push((newToken: string) => {
             config.headers.Authorization = formatToken(newToken);
-            resolve(client.request(config.url, { ...config }));
+            resolve(client.request(config.url!, {...config}));
           });
         });
       }
@@ -89,7 +102,7 @@ export const authenticateResponseInterceptor = ({
         // 清空队列
         client.refreshTokenQueue = [];
 
-        return client.request(error.config.url, { ...error.config });
+        return client.request(axiosError.config!.url!, {...axiosError.config});
       } catch (refreshError) {
         // 如果刷新 token 失败，处理错误（如强制登出或跳转登录页面）
         client.refreshTokenQueue.forEach((callback) => callback(''));

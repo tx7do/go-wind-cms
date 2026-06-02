@@ -2,7 +2,6 @@
 
 import {useState, useEffect} from 'react';
 import {useTranslations} from 'next-intl';
-import styles from '../login.module.css';
 
 export default function PhoneLoginPage() {
     const t = useTranslations('authentication');
@@ -16,7 +15,6 @@ export default function PhoneLoginPage() {
         if (countdown > 0) {
             timer = window.setTimeout(() => setCountdown(countdown - 1), 1000);
         } else if (codeSent && countdown === 0) {
-            // 使用 setTimeout 延迟执行，避免在 effect 中同步调用 setState
             setTimeout(() => setCodeSent(false));
         }
         return () => clearTimeout(timer);
@@ -34,13 +32,15 @@ export default function PhoneLoginPage() {
     };
 
     return (
-        <div className={styles['login-form']}>
-            <div className={styles['form-group']}>
-                <label htmlFor="login-phone">{t('register.phone')}</label>
+        <div className="space-y-4">
+            <div className="space-y-2">
+                <label htmlFor="login-phone" className="block text-sm font-medium text-foreground">
+                    {t('register.phone')}
+                </label>
                 <input
                     id="login-phone"
                     type="tel"
-                    className={styles['input-field']}
+                    className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={t('login.placeholder_phone')}
@@ -48,13 +48,15 @@ export default function PhoneLoginPage() {
                 />
             </div>
 
-            <div className={styles['form-group']}>
-                <label htmlFor="login-code">{t('register.code')}</label>
-                <div className={styles['code-input-row']}>
+            <div className="space-y-2">
+                <label htmlFor="login-code" className="block text-sm font-medium text-foreground">
+                    {t('register.code')}
+                </label>
+                <div className="flex gap-2">
                     <input
                         id="login-code"
                         type="text"
-                        className={styles['input-field']}
+                        className="flex-1 rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
                         value={verificationCode}
                         onChange={(e) => setVerificationCode(e.target.value)}
                         placeholder={t('login.placeholder_code')}
@@ -63,7 +65,7 @@ export default function PhoneLoginPage() {
                         onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                     />
                     <button
-                        className={`${styles['send-code-btn']} ${codeSent ? styles.disabled : ''}`}
+                        className={`shrink-0 cursor-pointer rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${codeSent ? 'cursor-not-allowed opacity-60' : ''}`}
                         onClick={handleSendCode}
                         disabled={codeSent}
                     >
@@ -72,7 +74,10 @@ export default function PhoneLoginPage() {
                 </div>
             </div>
 
-            <button className={styles['login-button']} onClick={handleLogin}>
+            <button
+                className="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
+                onClick={handleLogin}
+            >
                 {t('login.login')}
             </button>
         </div>

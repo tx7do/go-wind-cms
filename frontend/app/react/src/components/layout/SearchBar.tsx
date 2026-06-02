@@ -5,8 +5,6 @@ import {Input} from '@/components/ui/input';
 import {Search} from 'lucide-react';
 import {useTranslations} from 'next-intl';
 
-import styles from './SearchBar.module.css';
-
 export default function SearchBar() {
     const t = useTranslations('navbar.top');
     const [searchQuery, setSearchQuery] = useState('');
@@ -16,11 +14,11 @@ export default function SearchBar() {
     };
 
     return (
-        <div className={styles.searchBarWrapper}>
+        <div className="mx-2 hidden h-11 max-w-80 flex-1 items-center md:flex lg:max-w-80">
             <div className="relative w-full">
                 <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"/>
                 <Input
-                    className={`${styles.searchBar} pl-8`}
+                    className="h-full w-full pl-8"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyUp={handleSearch}

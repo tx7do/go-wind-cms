@@ -20,16 +20,10 @@ const HomePage: React.FC = () => {
     }, [router]);
 
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh'
-        }}>
+        <div className="flex h-screen flex-col items-center justify-center">
             <Spinner size="lg"/>
-            <main>
-                <h1 style={{marginTop: 24}}>Redirecting to home page...</h1>
+            <main className="mt-6">
+                <h1 className="text-lg text-muted-foreground">Redirecting to home page...</h1>
             </main>
         </div>
     );

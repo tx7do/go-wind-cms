@@ -10,7 +10,7 @@ import GlobalLoading from "@/components/layout/GlobalLoading";
 
 import {DEFAULT_TIME_ZONE} from "@/i18n";
 
-import styles from './layout.module.css';
+import {cn} from "@/lib/utils";
 
 interface ClientLocaleLayoutProps {
     locale: string;
@@ -26,9 +26,12 @@ const ClientLocaleLayout: React.FC<ClientLocaleLayoutProps> = ({locale, messages
     
     return (
         <NextIntlClientProvider timeZone={DEFAULT_TIME_ZONE} locale={locale} messages={messages}>
-            <div className={styles.appContainer}>
+            <div className="flex min-h-screen w-full flex-col">
                 {!isAuthPage && <Header/>}
-                <main className={`${styles.content} ${isAuthPage ? styles.noHeader : ''}`}>
+                <main className={cn(
+                    'flex w-full flex-1 flex-col bg-background',
+                    !isAuthPage && 'pt-[var(--layout-header-height)] min-h-screen',
+                )}>
                     {children}
                 </main>
                 {!isAuthPage && <Footer/>}

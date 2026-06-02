@@ -11,8 +11,6 @@ import {
     contentservicev1_Tag
 } from '@/api/generated/app/service/v1';
 
-import styles from './home.module.css';
-
 interface TagItem {
     id: number;
     name: string;
@@ -92,35 +90,37 @@ export default function PopularTagsSection() {
     };
 
     return (
-        <section className={styles.popularSection}>
-            <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                    <XIcon name="carbon:fire" size={28} style={{color: '#6366f1', marginRight: '8px'}}/>
+        <section className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
+            <div className="mb-8 flex items-center justify-between">
+                <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl">
+                    <XIcon name="carbon:fire" size={28} className="mr-2 text-primary"/>
                     {t('popular_tags')}
                 </h2>
                 <Button variant="ghost" onClick={() => router.push('/tag')}>
                     {t('view_all')} →
                 </Button>
             </div>
-            <div className={styles.tagsContent}>
+            <div className="w-full">
                 {loading ? (
-                    <div className={styles.tagsGrid}>
+                    <div className="flex flex-wrap justify-center gap-6">
                         {Array.from({length: 6}).map((_, i) => (
-                            <div key={i} className={styles.tagItem}>
-                                <Skeleton className="w-full h-11"/>
+                            <div key={i} className="flex min-w-[90px] items-center rounded-2xl border-[1.5px] border-primary/20 bg-primary/5 px-6 py-4 shadow-sm">
+                                <Skeleton className="h-11 w-full"/>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className={styles.tagsGrid}>
+                    <div className="flex flex-wrap justify-center gap-6 max-md:gap-2">
                         {displayTags.map((tag) => (
                             <div
                                 key={tag.id}
-                                className={styles.tagItem}
+                                className="group flex min-w-[90px] cursor-pointer items-center rounded-2xl border-[1.5px] border-primary/20 bg-primary/5 px-6 py-4 font-bold text-primary shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:bg-primary hover:text-white hover:shadow-lg max-md:rounded-xl max-md:px-4 max-md:py-2.5 max-md:text-sm"
                                 style={{'--tag-color': tag.color} as React.CSSProperties}
                                 onClick={() => handleViewTag(tag)}
                             >
-                                <span className={styles.tagLabel}>{tag.name}</span>
+                                <span className="truncate text-base font-bold tracking-tight transition-colors group-hover:text-white max-md:text-sm">
+                                    {tag.name}
+                                </span>
                             </div>
                         ))}
                     </div>

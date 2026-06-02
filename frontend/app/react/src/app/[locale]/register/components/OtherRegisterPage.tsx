@@ -3,7 +3,6 @@
 import {useTranslations} from 'next-intl';
 
 import XIcon from '@/plugins/xicon';
-import styles from '../register.module.css';
 
 export default function OtherRegisterPage() {
     const t = useTranslations('authentication');
@@ -19,11 +18,11 @@ export default function OtherRegisterPage() {
     };
 
     return (
-        <div className={styles['other-register']}>
+        <div className="space-y-3">
             {/* Social Buttons */}
             <button
                 type="button"
-                className={styles['social-button']}
+                className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]"
                 onClick={handleButtonGoogleRegister}
             >
                 <XIcon name="logos:google-icon" size={18}/>
@@ -32,7 +31,7 @@ export default function OtherRegisterPage() {
 
             <button
                 type="button"
-                className={styles['social-button']}
+                className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]"
                 onClick={handleButtonGithubRegister}
             >
                 <XIcon name="logos:github-icon" size={18}/>

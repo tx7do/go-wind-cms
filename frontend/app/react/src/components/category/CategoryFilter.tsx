@@ -8,7 +8,7 @@ import {XIcon} from '@/plugins/xicon';
 import {fetchListCategories, getCategoryName as getCategoryNameHelper} from '@/api/hooks/category';
 import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
 
-import styles from './CategoryFilter.module.css';
+import {cn} from '@/lib/utils';
 
 interface CategoryFilterProps {
     categories?: contentservicev1_Category[]; // 外部传入的分类数据（可选）
@@ -149,12 +149,16 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     }
 
     if (loading && autoLoad) {
-        return <div className={styles.loading}>加载中...</div>;
+        return <div className="py-10 text-center text-muted-foreground">加载中...</div>;
     }
 
     return (
-        <div className={styles.categoryFilter}>
-            <div className={styles.categoryTabs}>
+        <div className="mb-12 max-md:mb-8">
+            <div className={cn(
+                'flex flex-wrap gap-3 rounded-2xl border border-border bg-card p-6 shadow-sm',
+                'max-md:overflow-x-auto max-md:gap-2 max-md:p-4',
+                'max-sm:flex-nowrap max-sm:justify-start',
+            )}>
                 {/* 所有分类按钮 */}
                 <Button
                     variant={selectedCategory === null ? 'default' : 'outline'}
@@ -173,7 +177,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                         {displayCategories.map((node) => (
                             <div
                                 key={node.id}
-                                className={styles.categoryItemWrapper}
+                                className="relative inline-block"
                                 onMouseEnter={() => node.id && showSubmenu(node.id)}
                                 onMouseLeave={() => node.id && hideSubmenu(node.id)}
                             >
@@ -190,7 +194,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                 {/* 子分类菜单 */}
                                 {hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && (
                                     <div
-                                        className={styles.categorySubmenu}
+                                        className="absolute left-0 top-full z-[1001] mt-2 flex min-w-fit max-w-[280px] flex-wrap gap-1.5 rounded-xl border border-border bg-card p-2 shadow-xl backdrop-blur-sm"
                                         onMouseEnter={() => keepSubmenuOpen(node.id || 0)}
                                         onMouseLeave={() => hideSubmenu(node.id || 0)}
                                     >

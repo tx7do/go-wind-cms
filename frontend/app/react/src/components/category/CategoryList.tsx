@@ -7,7 +7,6 @@ import {AppEmpty} from '@/components/ui';
 
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
-import styles from './CategoryList.module.css';
 import CategoryCard from './CategoryCard';
 
 
@@ -35,23 +34,23 @@ const CategoryList: React.FC<CategoryListProps> = ({
     };
 
     return (
-        <div className={styles.categoryListContainer}>
+        <div className="w-full">
             {/* Loading Skeleton */}
             {loading && showSkeleton && (
                 <div
-                    className={styles.categoryGrid}
+                    className="grid max-md:grid-cols-1"
                     style={{
                         gridTemplateColumns: `repeat(${columns}, 1fr)`,
                         gap: `${gap}px`
                     }}
                 >
                     {Array.from({length: columns}).map((_, index) => (
-                        <div key={index} className={styles.categoryCardSkeleton}>
-                            <Skeleton className="w-full" style={{height: 160}}/>
-                            <div className={styles.skeletonContent}>
+                        <div key={index} className="overflow-hidden rounded-xl border border-border bg-background">
+                            <Skeleton className="h-40 w-full"/>
+                            <div className="p-4">
                                 <Skeleton className="h-4 w-full"/>
                                 <Skeleton className="h-4 w-3/4"/>
-                                <Skeleton className="h-6 w-15" style={{width: 60}}/>
+                                <Skeleton className="h-6 w-[60px]"/>
                             </div>
                         </div>
                     ))}
@@ -61,11 +60,8 @@ const CategoryList: React.FC<CategoryListProps> = ({
             {/* Loaded Content */}
             {!loading && categories.length > 0 && (
                 <div
-                    className={styles.categoryGrid}
-                    style={{
-                        gridTemplateColumns: `repeat(auto-fill, minmax(280px, 1fr))`,
-                        gap: `${gap}px`
-                    }}
+                    className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] max-md:grid-cols-1"
+                    style={{gap: `${gap}px`}}
                 >
                     {categories.map((category) => (
                         <CategoryCard

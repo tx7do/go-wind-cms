@@ -12,7 +12,6 @@ import {contentservicev1_Category, contentservicev1_ListCategoryResponse} from "
 import {useI18nRouter} from "@/i18n/helpers";
 
 import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-import styles from './page.module.css';
 
 export default function CategoryListPage() {
     const t = useTranslations('page');
@@ -47,23 +46,27 @@ export default function CategoryListPage() {
     };
 
     return (
-        <div className={styles['category-page']}>
+        <div className="w-full">
             {/* Hero Section */}
-            <div className={styles['hero-section']}>
-                <div className={styles['hero-content']}>
-                    <h1>{t('categories.categories')}</h1>
-                    <p>{t('categories.browse_all')}</p>
+            <section className="w-full flex min-h-[300px] items-center justify-center border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
+                <div className="w-full max-w-3xl px-8 text-center">
+                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
+                        {t('categories.categories')}
+                    </h1>
+                    <p className="text-lg text-muted-foreground max-md:text-base">
+                        {t('categories.browse_all')}
+                    </p>
                 </div>
-            </div>
+            </section>
 
             {/* Content Section */}
-            <div className={styles['page-container']}>
+            <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
                 {/* Loading Skeleton */}
                 {loading ? (
-                    <div className={styles['categories-loading']}>
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
                         {[...Array(6)].map((_, i) => (
-                            <div key={i} className={styles['category-loading-card']}>
-                                <Skeleton className="w-full" style={{height: 160}}/>
+                            <div key={i}>
+                                <Skeleton className="h-40 w-full"/>
                             </div>
                         ))}
                     </div>
@@ -78,7 +81,7 @@ export default function CategoryListPage() {
                             <AppEmpty
                                 description={t('categories.no_categories')}
                                 inContainer
-                                image={<span className="i-carbon:folder-blank" style={{fontSize: '64px'}}/>}
+                                image={<span className="i-carbon:folder-blank text-[64px]"/>}
                             />
                         )}
                     </>

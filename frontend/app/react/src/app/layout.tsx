@@ -18,7 +18,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <html
             lang={DEFAULT_LANGUAGE}
             suppressHydrationWarning
-            style={{margin: 0, padding: 0}}
+            className="m-0 p-0"
         >
         <head>
             <script
@@ -27,7 +27,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
                 }}
             />
         </head>
-        <body style={{margin: 0, padding: 0}}>
+        <body className="m-0 p-0">
             <StoreProvider>
                 <ThemeClientProvider>{children}</ThemeClientProvider>
             </StoreProvider>

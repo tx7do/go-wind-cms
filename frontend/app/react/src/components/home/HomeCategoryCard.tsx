@@ -3,7 +3,8 @@ import {XIcon} from '@/plugins/xicon';
 import {getCategoryName} from '@/api/hooks/category';
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';
 import {useTranslations} from 'next-intl';
-import styles from './HomeCategoryCard.module.css';
+
+import {cn} from '@/lib/utils';
 
 interface HomeCategoryCardProps {
     category: contentservicev1_Category;
@@ -25,26 +26,45 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick}) 
 
     return (
         <div
-            className={`${styles.homeCategoryCard} scroll-reveal-item`}
+            className={cn(
+                'group scroll-reveal-item relative flex min-h-[200px] h-full cursor-pointer flex-col',
+                'rounded-2xl border border-primary/10 bg-card p-6 shadow-sm',
+                'transition-all duration-300',
+                'hover:border-primary/20 hover:shadow-lg hover:shadow-primary/10',
+            )}
             onClick={handleClick}
         >
-            <div className={styles.homeCategoryCardBg}/>
-            <div className={styles.homeCategoryCardContent}>
-                <div className={styles.homeCategoryCardHeader}>
-                    <div className={styles.homeCategoryIcon}>
+            <div className="relative z-1 flex h-full flex-col">
+                <div className="mb-5 flex gap-5">
+                    <div className={cn(
+                        'mb-4 flex h-[70px] w-[70px] items-center justify-center',
+                        'rounded-xl bg-primary/10 text-primary text-3xl',
+                        'transition-all duration-300',
+                        'group-hover:bg-primary group-hover:text-white',
+                    )}>
                         <XIcon
                             name={getIconName(category.icon)}
                             size={48}
                         />
                     </div>
-                    <div className={styles.homeCategoryInfo}>
-                        <h3>{getCategoryName(category)}</h3>
-                        <span className={styles.homePostCount}>
+                    <div className="flex-1 w-full">
+                        <h3 className="mb-2 text-lg font-extrabold leading-tight tracking-wide text-foreground transition-colors">
+                            {getCategoryName(category)}
+                        </h3>
+                        <span className={cn(
+                            'mb-3 inline-block rounded-lg bg-primary/10 px-3 py-1.5',
+                            'text-sm font-semibold text-primary transition-all duration-300',
+                            'group-hover:bg-primary/15',
+                        )}>
                             {t('article_count', {count: category.postCount || 0})}
                         </span>
                     </div>
                 </div>
-                <div className={styles.homeCategoryBadge}>
+                <div className={cn(
+                    'mt-auto w-fit flex items-center gap-2 rounded-lg bg-primary/10 px-3.5 py-2',
+                    'text-xs font-semibold text-primary transition-all duration-300',
+                    'group-hover:bg-primary/15',
+                )}>
                     <XIcon name="carbon:time" size={14}/>
                     <span>{t('updated_days_ago', {days: 3})}</span>
                 </div>

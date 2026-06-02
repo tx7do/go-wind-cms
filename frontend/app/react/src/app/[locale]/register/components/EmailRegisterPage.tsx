@@ -2,7 +2,6 @@
 
 import {useState} from 'react';
 import {useTranslations} from 'next-intl';
-import styles from '../register.module.css';
 
 export default function EmailRegisterPage() {
     const t = useTranslations('authentication');
@@ -24,13 +23,15 @@ export default function EmailRegisterPage() {
         setVisibleEnter(true);
     };
 
+    const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15';
+
     return (
         <div>
             {!visibleEnter ? (
-                <div className={styles['register-form']}>
+                <div className="space-y-4">
                     {/* Email Input Group */}
-                    <div className={styles['form-group']}>
-                        <label htmlFor="register-email-address">
+                    <div className="space-y-2">
+                        <label htmlFor="register-email-address" className="block text-sm font-medium text-foreground">
                             {t('register.email')}
                         </label>
                         <input
@@ -40,17 +41,17 @@ export default function EmailRegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder={t('register.input_email')}
                             autoComplete="email"
-                            className={`${styles['input-field']} ${email && !isValidEmail() ? styles.error : ''}`}
+                            className={`${inputBase} ${email && !isValidEmail() ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : ''}`}
                         />
                         {email && !isValidEmail() && (
-                            <span className={styles['error-hint']}>{t('register.invalid_email')}</span>
+                            <span className="text-xs text-destructive">{t('register.invalid_email')}</span>
                         )}
                     </div>
 
                     {/* Next Button */}
                     <button
                         type="button"
-                        className={styles['register-button']}
+                        className="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                         disabled={!isValidEmail()}
                         onClick={handleButtonNext}
                     >
@@ -104,16 +105,16 @@ function EmailRegisterEnterCodePage({email}: { email: string }) {
     };
 
     return (
-        <div className={styles['code-container']}>
+        <div className="space-y-4">
             {/* Email Hint */}
-            <div className={styles['email-sent-info']}>
-                <p className={styles['hint-title']}>{t('register.code_sent_title')}</p>
-                <p className={styles['email-display']}>{email}</p>
-                <p className={styles['hint-subtitle']}>{t('register.code_sent_subtitle')}</p>
+            <div className="rounded-lg bg-primary/5 p-4 text-center">
+                <p className="text-sm font-medium text-foreground">{t('register.code_sent_title')}</p>
+                <p className="mt-1 text-base font-semibold text-primary">{email}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('register.code_sent_subtitle')}</p>
             </div>
 
             {/* Verification Code Input */}
-            <div className={styles['code-input-wrapper']}>
+            <div>
                 <input
                     type="text"
                     maxLength={6}
@@ -125,15 +126,15 @@ function EmailRegisterEnterCodePage({email}: { email: string }) {
                             handleInputComplete(value.join(''));
                         }
                     }}
-                    className={styles['verification-code-input']}
+                    className="w-full rounded-lg border border-border bg-background px-4 py-3 text-center text-lg tracking-widest text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
                     placeholder="请输入验证码"
                 />
             </div>
 
             {/* Resend Button */}
-            <div className={styles['resend-section']}>
+            <div className="text-center">
                 <button
-                    className={styles['text-btn']}
+                    className="text-sm text-primary transition-colors hover:text-primary/80 hover:underline cursor-pointer bg-transparent border-none disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
                     disabled={codeSent}
                     onClick={handleButtonResend}
                 >
@@ -144,7 +145,7 @@ function EmailRegisterEnterCodePage({email}: { email: string }) {
             {/* Confirm Button */}
             <button
                 type="button"
-                className={styles['register-button']}
+                className="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={!isCodeComplete}
                 onClick={handleButtonConfirm}
             >

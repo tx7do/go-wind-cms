@@ -6,8 +6,6 @@ import {usePathname} from 'next/navigation';
 
 import {useLoading} from '@/store/core/loading/store';
 
-import styles from './GlobalLoading.module.css';
-
 export default function GlobalLoading() {
     const {isLoading, finish} = useLoading();
     const pathname = usePathname();
@@ -35,10 +33,10 @@ export default function GlobalLoading() {
     if (!isLoading) return null;
 
     return (
-        <div className={styles.loadingOverlay}>
-            <div className={styles.loadingContent}>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-black/70">
+            <div className="flex flex-col items-center gap-4">
                 <Spinner size="lg"/>
-                <p className={styles.loadingText}>加载中...</p>
+                <p className="mt-2 text-base font-medium text-foreground">加载中...</p>
             </div>
         </div>
     );

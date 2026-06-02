@@ -1,4 +1,4 @@
-import type { AxiosError, AxiosResponse, CreateAxiosDefaults, InternalAxiosRequestConfig } from 'axios';
+import type {AxiosResponse, CreateAxiosDefaults, InternalAxiosRequestConfig} from 'axios';
 
 type RequestResponse<T = never> = AxiosResponse<T>;
 
@@ -14,12 +14,12 @@ interface RequestInterceptorConfig {
   fulfilled?: (
     config: InternalAxiosRequestConfig,
   ) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
-  rejected?: (error: AxiosError) => void | Promise<void>;
+  rejected?: (error: unknown) => unknown | Promise<unknown>;
 }
 
 interface ResponseInterceptorConfig<T = never> {
   fulfilled?: (response: AxiosResponse<T>) => AxiosResponse | Promise<AxiosResponse>;
-  rejected?: (error: AxiosError) => void | Promise<void>;
+  rejected?: (error: unknown) => unknown | Promise<unknown>;
 }
 
 type MakeErrorMessageFn = (message: string, error: unknown) => void;

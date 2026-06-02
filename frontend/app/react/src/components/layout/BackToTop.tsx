@@ -2,7 +2,8 @@
 
 import React, {useEffect, useState} from 'react';
 import XIcon from '@/plugins/xicon';
-import styles from './BackToTop.module.css';
+
+import {cn} from '@/lib/utils';
 
 export interface BackToTopProps {
     /** 滚动超过多少像素后显示，默认 500px */
@@ -54,7 +55,14 @@ const BackToTop: React.FC<BackToTopProps> = ({
     return (
         <button
             onClick={scrollToTop}
-            className={`${styles['back-to-top']} ${className}`}
+            className={cn(
+                'fixed bottom-10 right-10 z-[999] flex h-14 w-14 items-center justify-center',
+                'rounded-full border-none bg-primary text-white cursor-pointer',
+                'text-2xl shadow-lg transition-all duration-300',
+                'hover:-translate-y-1 hover:shadow-xl hover:bg-primary/80',
+                'active:translate-y-[-2px]',
+                className,
+            )}
             aria-label="Back to top"
         >
             <XIcon name="carbon:arrow-up"/>

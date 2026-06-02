@@ -12,8 +12,6 @@ import {
 
 import {useI18n} from '@/i18n';
 
-import styles from './LocaleSwitcher.module.css';
-
 export const LocaleSwitcher: React.FC = () => {
     const {locale, changeLocale} = useI18n('menu');
 
@@ -28,7 +26,7 @@ export const LocaleSwitcher: React.FC = () => {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className={styles.langSwitcher}
+                    className="h-10 min-w-10 rounded-lg"
                     aria-label="Language switcher"
                 >
                     <Globe className="h-4 w-4"/>

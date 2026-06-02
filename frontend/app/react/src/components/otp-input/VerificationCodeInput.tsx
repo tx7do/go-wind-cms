@@ -3,8 +3,6 @@
 import React from 'react';
 import {OtpInput} from '@/components/ui/otp-input';
 
-import styles from './VerificationCodeInput.module.css';
-
 interface VerificationCodeInputProps {
     /** 验证码长度，默认为 6 */
     length?: number;
@@ -45,14 +43,14 @@ export const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({
     };
 
     return (
-        <div className={`${styles.verificationCodeInput} ${className}`}>
+        <div className={`flex items-center justify-center gap-3 py-2 ${className}`}>
             <OtpInput
                 length={length}
                 value={value}
                 onChange={handleChange}
                 disabled={disabled}
                 type={type}
-                className={styles.otpInput}
+                className="gap-3"
             />
         </div>
     );

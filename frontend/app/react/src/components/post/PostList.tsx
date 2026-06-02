@@ -13,7 +13,6 @@ import type {
 } from '@/api/generated/app/service/v1';
 
 import PostCard from './PostCard';
-import styles from './PostList.module.css';
 
 interface PostListProps {
     queryParams?: object;
@@ -119,20 +118,23 @@ const PostList: React.FC<PostListProps> = ({
     };
 
     return (
-        <div className={styles.postListContainer}>
+        <div className="w-full">
             {/* Loading Skeleton */}
             {loading && showSkeleton && (
-                <div className={styles.postsGrid} style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}>
+                <div
+                    className="grid gap-6 max-md:!grid-cols-1 max-md:gap-4"
+                    style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}
+                >
                     {Array.from({length: currentPageSize}).map((_, index) => (
-                        <div key={index} className={styles.postCardSkeleton}>
-                            <Skeleton className="w-full" style={{height: 240}}/>
-                            <div className={styles.skeletonContent}>
+                        <div key={index} className="overflow-hidden rounded-2xl border border-border bg-card">
+                            <Skeleton className="h-60 w-full"/>
+                            <div className="p-6">
                                 <Skeleton className="h-4 w-full"/>
                                 <Skeleton className="h-4 w-3/4"/>
-                                <div className={styles.skeletonMeta}>
-                                    <Skeleton className="h-6" style={{width: 60}}/>
-                                    <Skeleton className="h-6" style={{width: 60}}/>
-                                    <Skeleton className="h-6" style={{width: 60}}/>
+                                <div className="mt-4 flex gap-3 border-t border-border pt-4">
+                                    <Skeleton className="h-6 w-[60px]"/>
+                                    <Skeleton className="h-6 w-[60px]"/>
+                                    <Skeleton className="h-6 w-[60px]"/>
                                 </div>
                             </div>
                         </div>
@@ -144,12 +146,15 @@ const PostList: React.FC<PostListProps> = ({
             {!loading && posts.length > 0 && (
                 <>
                     {showPagination && total > currentPageSize && (
-                        <div className={styles.resultsInfo}>
+                        <div className="mb-6 rounded-xl border border-border bg-card px-5 py-4 text-sm text-muted-foreground">
                             <span>{t('total_articles', {total})}</span>
                         </div>
                     )}
 
-                    <div className={styles.postsGrid} style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}>
+                    <div
+                        className="grid gap-6 max-md:!grid-cols-1 max-md:gap-4"
+                        style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}
+                    >
                         {posts.map((post) => (
                             <PostCard
                                 key={post.id}
@@ -161,7 +166,7 @@ const PostList: React.FC<PostListProps> = ({
                     </div>
 
                     {showPagination && total > currentPageSize && (
-                        <div className={styles.paginationWrapper}>
+                        <div className="flex justify-center py-10">
                             <div className="flex items-center justify-center gap-2">
                                 <Button
                                     variant="outline"
@@ -171,7 +176,7 @@ const PostList: React.FC<PostListProps> = ({
                                 >
                                     Previous
                                 </Button>
-                                <span className="text-sm text-muted-foreground px-2">
+                                <span className="px-2 text-sm text-muted-foreground">
                                     {currentPage} / {Math.ceil(total / currentPageSize)}
                                 </span>
                                 <Button

@@ -19,7 +19,6 @@ import PostListWithPagination from '@/components/post/PostList';
 import {contentservicev1_Category} from "@/api/generated/app/service/v1";
 
 import '../../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-import styles from './category-detail.module.css';
 
 export default function CategoryDetailPage() {
     const t = useTranslations('page');
@@ -72,7 +71,6 @@ export default function CategoryDetailPage() {
         if (parentCategoryId) {
             router.push(`/category/${parentCategoryId}`);
         } else {
-            // If no parent category, go back to category list
             router.push('/category');
         }
     }
@@ -86,29 +84,31 @@ export default function CategoryDetailPage() {
     }
 
     return (
-        <div className={styles['category-detail-page']}>
+        <div className="w-full">
             {/* Hero Section */}
-            <div className={styles['hero-section']}>
-                <div className={styles['hero-content']}>
-                    <h1>{getCategoryName(category)}</h1>
+            <section className="w-full flex min-h-[300px] items-center justify-center overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
+                <div className="w-full max-w-3xl px-8 text-center">
+                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
+                        {getCategoryName(category)}
+                    </h1>
                     {getCategoryDescription(category) && (
-                        <p className={styles['category-description']}>
+                        <p className="mb-6 text-lg text-muted-foreground max-md:text-base">
                             {getCategoryDescription(category)}
                         </p>
                     )}
-                    <div className={styles['category-stats']}>
-                        <div className={styles['stat-item']}>
-                            <span className={`${styles['icon']} iconfont icon-document`}/>
+                    <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                            <span className="iconfont icon-document"/>
                             <span>{category?.postCount || 0} {t('posts.articles')}</span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             {/* Posts Section */}
-            <div className={styles['page-container']}>
+            <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
                 {/* Back to Parent Button */}
-                <div className={styles['back-button-container']}>
+                <div className="mb-8">
                     <Button
                         variant="outline"
                         size="sm"
@@ -122,7 +122,7 @@ export default function CategoryDetailPage() {
 
                 {/* Sub Categories List */}
                 {childCategories.length > 0 && (
-                    <div className={styles['sub-categories-wrapper']}>
+                    <div className="mb-8">
                         <CategoryList
                             categories={childCategories}
                             loading={false}

@@ -19,8 +19,6 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
 import HomeCategoryCard from './HomeCategoryCard';
 
-import styles from './home.module.css';
-
 interface CategoryListSectionProps {
     skeletonCount?: number;
     showCarousel?: boolean;
@@ -107,18 +105,13 @@ export default function CategoryListSection({
         router.push(`/category`);
     };
 
-    const getIconName = (icon?: string): string => {
-        if (!icon) return 'carbon:folder';
-        return icon.includes(':') ? icon : `carbon:${icon}`;
-    };
-
     return (
-        <section className={`${styles.categoriesSection} scroll-reveal`}>
+        <section className="categories-section w-full max-w-[1200px] mx-auto scroll-reveal px-8 py-12 max-md:px-4">
             {/* Section Header */}
             {showHeader && (
-                <div className={styles.sectionHeader}>
-                    <h2 className={styles.sectionTitle}>
-                        <XIcon name="carbon:folder-details" size={28} style={{color: '#6366f1', marginRight: '8px'}}/>
+                <div className="mb-8 flex items-center justify-between">
+                    <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl">
+                        <XIcon name="carbon:folder-details" size={28} className="mr-2 text-primary"/>
                         {t('categories')}
                     </h2>
                     <Button variant="ghost" onClick={handleViewCategory}>
@@ -129,17 +122,17 @@ export default function CategoryListSection({
 
             {/* Loading Skeleton */}
             {loading ? (
-                <div className={`${styles.categoriesGrid} desktop-grid`}>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6">
                     {Array.from({length: skeletonCount}).map((_, i) => (
-                        <div key={i} className={styles.categoryCardSkeleton}>
-                            <Skeleton className="w-full" style={{height: '140px'}}/>
+                        <div key={i} className="flex min-h-[200px] flex-col rounded-2xl border border-border bg-card p-6">
+                            <Skeleton className="h-[140px] w-full"/>
                         </div>
                     ))}
                 </div>
             ) : (
                 <>
-                    {/* Desktop Grid - 始终渲染，由 CSS 控制显示 */}
-                    <div className={`${styles.categoriesGrid} desktop-grid`}>
+                    {/* Desktop Grid */}
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 max-md:hidden">
                         {categories.map((category) => (
                             <HomeCategoryCard
                                 key={category.id}
@@ -149,20 +142,20 @@ export default function CategoryListSection({
                         ))}
                     </div>
 
-                    {/* Mobile Carousel - 始终渲染，由 CSS 控制显示 */}
-                    <div className={`${styles.categoriesCarousel} mobile-carousel`}>
+                    {/* Mobile Carousel */}
+                    <div className="hidden max-md:block w-full px-2 pb-8">
                         <Carousel
                             opts={{
                                 align: 'center',
                                 loop: false,
                             }}
-                            className={styles.carouselContainer}
+                            className="w-full py-6"
                         >
                             <CarouselContent>
                                 {categories.map((category) => (
                                     <CarouselItem
                                         key={category.id}
-                                        className={styles.carouselItem}
+                                        className="flex items-stretch justify-center px-2 py-3"
                                         onClick={() => handleViewCategoryDetail(category.id || 0)}
                                     >
                                         <HomeCategoryCard

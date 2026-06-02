@@ -12,7 +12,6 @@ import {useI18n} from '@/i18n';
 import type {ThemeModeType, SupportedLanguagesType} from '@/core/preferences';
 
 import '../../globals.css';
-import styles from './settings.module.css';
 
 interface MenuItem {
     key: string;
@@ -65,90 +64,90 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className={styles.settingsPage}>
-            <div className={styles.settingsContainer}>
+        <div className="w-full py-8 max-md:py-4">
+            <div className="w-full max-w-[1200px] mx-auto grid grid-cols-[220px_1fr_280px] gap-6 px-8 max-md:grid-cols-1 max-md:px-4">
                 {/* 左侧导航 */}
-                <aside className={styles.sidebar}>
-                    <nav className={styles.menu}>
+                <aside className="max-md:hidden">
+                    <nav className="space-y-1">
                         {menuItems.map((item) => (
                             <div
                                 key={item.key}
-                                className={`${styles.menuItem} ${activeMenu === item.key ? styles.active : ''}`}
+                                className={`flex cursor-pointer items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium transition-all ${
+                                    activeMenu === item.key
+                                        ? 'border-primary/20 bg-primary/5 text-primary'
+                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                }`}
                                 onClick={() => setActiveMenu(item.key as 'account' | 'message' | 'preference')}
                             >
-                                <div className={styles.menuIcon}>
+                                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
                                     <XIcon name={item.icon} size={18}/>
                                 </div>
-                                <span className={styles.menuLabel}>{item.label}</span>
+                                <span>{item.label}</span>
                             </div>
                         ))}
                     </nav>
                 </aside>
 
                 {/* 中间内容区 */}
-                <main className={styles.content}>
+                <main className="min-w-0">
                     {/* 账号设置 */}
                     {activeMenu === 'account' && (
                         <>
-                            <div className={styles.contentHeader}>
-                                <h1 className={styles.title}>{t('account.title')}</h1>
-                                <p className={styles.subtitle}>{t('account.subtitle')}</p>
+                            <div className="mb-8">
+                                <h1 className="mb-2 text-2xl font-bold text-foreground">{t('account.title')}</h1>
+                                <p className="text-sm text-muted-foreground">{t('account.subtitle')}</p>
                             </div>
-                            <div className={styles.section}>
-                                <h2 className={styles.sectionTitle}>{t('account.section_title')}</h2>
-                                <p className={styles.sectionDesc}>{t('account.section_desc')}</p>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('account.password')}</span>
-                                        <span className={styles.labelStatus}>{t('account.password_not_set')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                            <div className="mb-8">
+                                <h2 className="mb-2 text-lg font-semibold text-foreground">{t('account.section_title')}</h2>
+                                <p className="mb-4 text-sm text-muted-foreground">{t('account.section_desc')}</p>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div>
+                                            <div className="text-sm font-medium text-foreground">{t('account.password')}</div>
+                                            <div className="mt-1 text-xs text-muted-foreground">{t('account.password_not_set')}</div>
+                                        </div>
                                         <Button variant="outline" size="sm">{t('account.edit')}</Button>
                                     </div>
-                                </div>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('account.bind_phone')}</span>
-                                        <span className={styles.labelStatus}>{t('account.password_not_set')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div>
+                                            <div className="text-sm font-medium text-foreground">{t('account.bind_phone')}</div>
+                                            <div className="mt-1 text-xs text-muted-foreground">{t('account.password_not_set')}</div>
+                                        </div>
                                         <Button variant="outline" size="sm">{t('account.edit')}</Button>
                                     </div>
-                                </div>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('account.bind_email')}</span>
-                                        <span className={styles.labelStatus}>{t('account.email_not_bound')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div>
+                                            <div className="text-sm font-medium text-foreground">{t('account.bind_email')}</div>
+                                            <div className="mt-1 text-xs text-muted-foreground">{t('account.email_not_bound')}</div>
+                                        </div>
                                         <Button variant="outline" size="sm">{t('account.edit')}</Button>
                                     </div>
                                 </div>
                             </div>
-                            <div className={styles.section}>
-                                <h2 className={styles.sectionTitle}>{t('account.third_party_title')}</h2>
-                                <div className={styles.thirdPartyList}>
-                                    <div className={styles.thirdPartyItem}>
-                                        <div className={`${styles.platformIcon} ${styles.wechat}`}>
+                            <div>
+                                <h2 className="mb-4 text-lg font-semibold text-foreground">{t('account.third_party_title')}</h2>
+                                <div className="grid grid-cols-3 gap-3 max-md:grid-cols-1">
+                                    <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500">
                                             <XIcon name="fa:wechat" size={24} color="white"/>
                                         </div>
-                                        <span className={styles.platformLink}>
+                                        <span className="text-sm font-medium text-foreground">
                                             {t('account.bind_wechat')}
                                         </span>
                                     </div>
-                                    <div className={styles.thirdPartyItem}>
-                                        <div className={`${styles.platformIcon} ${styles.weibo}`}>
+                                    <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500">
                                             <XIcon name="fa:weibo" size={24} color="white"/>
                                         </div>
-                                        <span className={styles.platformLink}>
+                                        <span className="text-sm font-medium text-foreground">
                                             {t('account.bind_weibo')}
                                         </span>
                                     </div>
-                                    <div className={styles.thirdPartyItem}>
-                                        <div className={`${styles.platformIcon} ${styles.qq}`}>
+                                    <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500">
                                             <XIcon name="fa:qq" size={24} color="white"/>
                                         </div>
-                                        <span className={styles.platformLink}>
+                                        <span className="text-sm font-medium text-foreground">
                                             {t('account.bind_qq')}
                                         </span>
                                     </div>
@@ -160,65 +159,47 @@ export default function SettingsPage() {
                     {/* 消息设置 */}
                     {activeMenu === 'message' && (
                         <>
-                            <div className={styles.contentHeader}>
-                                <h1 className={styles.title}>{t('message.title')}</h1>
-                                <p className={styles.subtitle}>{t('message.subtitle')}</p>
+                            <div className="mb-8">
+                                <h1 className="mb-2 text-2xl font-bold text-foreground">{t('message.title')}</h1>
+                                <p className="text-sm text-muted-foreground">{t('message.subtitle')}</p>
                             </div>
-                            <div className={styles.section}>
-                                <h2 className={styles.sectionTitle}>{t('message.email_notifications')}</h2>
-                                <p className={styles.sectionDesc}>{t('message.email_notifications_desc')}</p>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('message.system_messages')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                            <div className="mb-8">
+                                <h2 className="mb-2 text-lg font-semibold text-foreground">{t('message.email_notifications')}</h2>
+                                <p className="mb-4 text-sm text-muted-foreground">{t('message.email_notifications_desc')}</p>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div className="text-sm font-medium text-foreground">{t('message.system_messages')}</div>
                                         <Switch defaultChecked/>
                                     </div>
-                                </div>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('message.comment_notifications')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div className="text-sm font-medium text-foreground">{t('message.comment_notifications')}</div>
                                         <Switch defaultChecked/>
                                     </div>
-                                </div>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('message.activity_updates')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div className="text-sm font-medium text-foreground">{t('message.activity_updates')}</div>
                                         <Switch defaultChecked/>
                                     </div>
-                                </div>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('message.recommended_content')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div className="text-sm font-medium text-foreground">{t('message.recommended_content')}</div>
                                         <Switch defaultChecked/>
                                     </div>
                                 </div>
                             </div>
-                            <div className={styles.section}>
-                                <h2 className={styles.sectionTitle}>{t('message.email_frequency')}</h2>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('message.frequency_desc')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
-                                        <Select defaultValue="immediately">
-                                            <SelectTrigger className="w-[180px] h-8">
-                                                <SelectValue/>
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="immediately">{t('message.frequency_immediately')}</SelectItem>
-                                                <SelectItem value="daily">{t('message.frequency_daily')}</SelectItem>
-                                                <SelectItem value="weekly">{t('message.frequency_weekly')}</SelectItem>
-                                                <SelectItem value="monthly">{t('message.frequency_monthly')}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
+                            <div>
+                                <h2 className="mb-4 text-lg font-semibold text-foreground">{t('message.email_frequency')}</h2>
+                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                    <div className="text-sm font-medium text-foreground">{t('message.frequency_desc')}</div>
+                                    <Select defaultValue="immediately">
+                                        <SelectTrigger className="w-[180px] h-8">
+                                            <SelectValue/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="immediately">{t('message.frequency_immediately')}</SelectItem>
+                                            <SelectItem value="daily">{t('message.frequency_daily')}</SelectItem>
+                                            <SelectItem value="weekly">{t('message.frequency_weekly')}</SelectItem>
+                                            <SelectItem value="monthly">{t('message.frequency_monthly')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                         </>
@@ -227,82 +208,64 @@ export default function SettingsPage() {
                     {/* 偏好设置 - 连接 usePreferences */}
                     {activeMenu === 'preference' && (
                         <>
-                            <div className={styles.contentHeader}>
-                                <h1 className={styles.title}>{t('preference.title')}</h1>
-                                <p className={styles.subtitle}>{t('preference.subtitle')}</p>
+                            <div className="mb-8">
+                                <h1 className="mb-2 text-2xl font-bold text-foreground">{t('preference.title')}</h1>
+                                <p className="text-sm text-muted-foreground">{t('preference.subtitle')}</p>
                             </div>
-                            <div className={styles.section}>
-                                <h2 className={styles.sectionTitle}>{t('preference.theme_settings')}</h2>
-                                <p className={styles.sectionDesc}>{t('preference.theme_desc')}</p>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('preference.theme')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
-                                        <Select value={themePref.mode} onValueChange={(v) => handleThemeChange(v as ThemeModeType)}>
-                                            <SelectTrigger className="w-[180px] h-8">
-                                                <SelectValue/>
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {themeOptions.map(opt => (
-                                                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
+                            <div className="mb-8">
+                                <h2 className="mb-2 text-lg font-semibold text-foreground">{t('preference.theme_settings')}</h2>
+                                <p className="mb-4 text-sm text-muted-foreground">{t('preference.theme_desc')}</p>
+                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                    <div className="text-sm font-medium text-foreground">{t('preference.theme')}</div>
+                                    <Select value={themePref.mode} onValueChange={(v) => handleThemeChange(v as ThemeModeType)}>
+                                        <SelectTrigger className="w-[180px] h-8">
+                                            <SelectValue/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {themeOptions.map(opt => (
+                                                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
-                            <div className={styles.section}>
-                                <h2 className={styles.sectionTitle}>{t('preference.language_settings')}</h2>
-                                <p className={styles.sectionDesc}>{t('preference.language_desc')}</p>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('preference.language')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
-                                        <Select value={locale as SupportedLanguagesType} onValueChange={(v) => handleLanguageChange(v as SupportedLanguagesType)}>
-                                            <SelectTrigger className="w-[180px] h-8">
-                                                <SelectValue/>
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {languageOptions.map(opt => (
-                                                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
+                            <div className="mb-8">
+                                <h2 className="mb-2 text-lg font-semibold text-foreground">{t('preference.language_settings')}</h2>
+                                <p className="mb-4 text-sm text-muted-foreground">{t('preference.language_desc')}</p>
+                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                    <div className="text-sm font-medium text-foreground">{t('preference.language')}</div>
+                                    <Select value={locale as SupportedLanguagesType} onValueChange={(v) => handleLanguageChange(v as SupportedLanguagesType)}>
+                                        <SelectTrigger className="w-[180px] h-8">
+                                            <SelectValue/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {languageOptions.map(opt => (
+                                                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
-                            <div className={styles.section}>
-                                <h2 className={styles.sectionTitle}>{t('preference.content_preferences')}</h2>
-                                <p className={styles.sectionDesc}>{t('preference.content_desc')}</p>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('preference.hide_sensitive_content')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                            <div className="mb-8">
+                                <h2 className="mb-2 text-lg font-semibold text-foreground">{t('preference.content_preferences')}</h2>
+                                <p className="mb-4 text-sm text-muted-foreground">{t('preference.content_desc')}</p>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div className="text-sm font-medium text-foreground">{t('preference.hide_sensitive_content')}</div>
                                         <Switch
                                             checked={contentPref.hideSensitiveContent}
                                             onCheckedChange={(checked) => updateContent({hideSensitiveContent: checked})}
                                         />
                                     </div>
-                                </div>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('preference.compact_mode')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div className="text-sm font-medium text-foreground">{t('preference.compact_mode')}</div>
                                         <Switch
                                             checked={contentPref.compactMode}
                                             onCheckedChange={(checked) => updateContent({compactMode: checked})}
                                         />
                                     </div>
-                                </div>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>{t('preference.show_recommendations')}</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                        <div className="text-sm font-medium text-foreground">{t('preference.show_recommendations')}</div>
                                         <Switch
                                             checked={contentPref.showRecommendations}
                                             onCheckedChange={(checked) => updateContent({showRecommendations: checked})}
@@ -310,16 +273,12 @@ export default function SettingsPage() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={styles.section}>
-                                <div className={styles.settingItem}>
-                                    <div className={styles.settingLabel}>
-                                        <span className={styles.labelText}>恢复默认设置</span>
-                                    </div>
-                                    <div className={styles.settingControl}>
-                                        <Button variant="destructive" size="sm" onClick={() => resetPreferences()}>
-                                            重置
-                                        </Button>
-                                    </div>
+                            <div>
+                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+                                    <div className="text-sm font-medium text-foreground">恢复默认设置</div>
+                                    <Button variant="destructive" size="sm" onClick={() => resetPreferences()}>
+                                        重置
+                                    </Button>
                                 </div>
                             </div>
                         </>
@@ -327,21 +286,21 @@ export default function SettingsPage() {
                 </main>
 
                 {/* 右侧帮助区 */}
-                <aside className={styles.helpSidebar}>
-                    <div className={styles.helpSection}>
-                        <h3 className={styles.helpTitle}>{t('help.title')}</h3>
-                        <h4 className={styles.helpSubtitle}>{t('help.account_password')}</h4>
-                        <ul className={styles.helpList}>
+                <aside className="max-md:hidden">
+                    <div className="sticky top-24 rounded-lg border border-border bg-card p-5">
+                        <h3 className="mb-3 text-base font-bold text-foreground">{t('help.title')}</h3>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">{t('help.account_password')}</h4>
+                        <ul className="mb-4 space-y-1.5 text-xs text-muted-foreground">
                             <li>1. {t('help.q1')}</li>
                             <li>2. {t('help.q2')}</li>
                             <li>3. {t('help.q3')}</li>
                             <li>4. {t('help.q4')}</li>
                             <li>5. {t('help.q5')}</li>
                         </ul>
-                        <h4 className={styles.helpSubtitle}>{t('help.other_issues')}</h4>
-                        <ul className={styles.helpList}>
-                            <li>6. <a href="#">{t('help.q6')} {t('help.q6_link')}</a></li>
-                            <li>7. <a href="#">{t('help.q7')} {t('help.q7_link')}</a></li>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">{t('help.other_issues')}</h4>
+                        <ul className="space-y-1.5 text-xs text-muted-foreground">
+                            <li>6. <a href="#" className="text-primary hover:underline">{t('help.q6')} {t('help.q6_link')}</a></li>
+                            <li>7. <a href="#" className="text-primary hover:underline">{t('help.q7')} {t('help.q7_link')}</a></li>
                         </ul>
                     </div>
                 </aside>

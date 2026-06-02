@@ -2,7 +2,6 @@
 
 import {useState, useMemo} from 'react';
 import {useTranslations} from 'next-intl';
-import styles from '../register.module.css';
 
 export default function AccountRegisterPage() {
     const t = useTranslations('authentication');
@@ -44,11 +43,13 @@ export default function AccountRegisterPage() {
         });
     };
 
+    const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15';
+
     return (
-        <div className={styles['register-form']}>
+        <div className="space-y-4">
             {/* Username */}
-            <div className={styles['form-group']}>
-                <label htmlFor="register-account-username">
+            <div className="space-y-2">
+                <label htmlFor="register-account-username" className="block text-sm font-medium text-foreground">
                     {t('register.username')}
                 </label>
                 <input
@@ -58,16 +59,16 @@ export default function AccountRegisterPage() {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder={t('register.input_username')}
                     autoComplete="username"
-                    className={`${styles['input-field']} ${username && !isValidUsername ? styles.error : ''}`}
+                    className={`${inputBase} ${username && !isValidUsername ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : ''}`}
                 />
                 {username && !isValidUsername && (
-                    <span className={styles['error-hint']}>{t('register.invalid_username')}</span>
+                    <span className="text-xs text-destructive">{t('register.invalid_username')}</span>
                 )}
             </div>
 
             {/* Password */}
-            <div className={styles['form-group']}>
-                <label htmlFor="register-account-password">
+            <div className="space-y-2">
+                <label htmlFor="register-account-password" className="block text-sm font-medium text-foreground">
                     {t('register.password')}
                 </label>
                 <input
@@ -77,16 +78,16 @@ export default function AccountRegisterPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={t('register.input_password')}
                     autoComplete="new-password"
-                    className={`${styles['input-field']} ${password && !isValidPassword ? styles.error : ''}`}
+                    className={`${inputBase} ${password && !isValidPassword ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : ''}`}
                 />
                 {password && !isValidPassword && (
-                    <span className={styles['error-hint']}>{t('register.invalid_password')}</span>
+                    <span className="text-xs text-destructive">{t('register.invalid_password')}</span>
                 )}
             </div>
 
             {/* Confirm Password */}
-            <div className={styles['form-group']}>
-                <label htmlFor="register-account-confirm-password">
+            <div className="space-y-2">
+                <label htmlFor="register-account-confirm-password" className="block text-sm font-medium text-foreground">
                     {t('register.confirm_password')}
                 </label>
                 <input
@@ -96,17 +97,17 @@ export default function AccountRegisterPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder={t('register.input_confirm_password')}
                     autoComplete="new-password"
-                    className={`${styles['input-field']} ${confirmPassword && !isPasswordMatch ? styles.error : ''}`}
+                    className={`${inputBase} ${confirmPassword && !isPasswordMatch ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : ''}`}
                 />
                 {confirmPassword && !isPasswordMatch && (
-                    <span className={styles['error-hint']}>{t('register.password_not_match')}</span>
+                    <span className="text-xs text-destructive">{t('register.password_not_match')}</span>
                 )}
             </div>
 
             {/* Register Button */}
             <button
                 type="button"
-                className={styles['register-button']}
+                className="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={!isFormValid}
                 onClick={handleButtonRegister}
             >

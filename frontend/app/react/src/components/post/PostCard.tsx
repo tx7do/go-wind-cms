@@ -12,8 +12,8 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
 import type {contentservicev1_Post} from '@/api/generated/app/service/v1';
 
-import styles from './PostCard.module.css';
 import {formatDate} from "@/utils";
+import {cn} from '@/lib/utils';
 
 interface PostCardProps {
     post: contentservicev1_Post;
@@ -41,31 +41,51 @@ const PostCard: React.FC<PostCardProps> = ({
     };
 
     return (
-        <article className={styles.postCard} onClick={handleViewPost}>
-            <div className={styles.postImage}>
+        <article
+            className={cn(
+                'group flex h-full cursor-pointer flex-col overflow-hidden',
+                'rounded-2xl border border-border bg-card shadow-sm',
+                'transition-all duration-400',
+                'hover:-translate-y-1.5 hover:border-primary hover:shadow-xl',
+            )}
+            onClick={handleViewPost}
+        >
+            <div className="relative h-[240px] w-full flex-shrink-0 overflow-hidden bg-background max-md:h-[200px]">
                 <img
                     src={getPostThumbnail(post)}
                     alt={getPostTitle(post)}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className={styles.imageOverlay}/>
+                <div className="absolute inset-0 bg-black/15 opacity-0 transition-opacity duration-300 group-hover:opacity-50"/>
             </div>
-            <div className={styles.postContent}>
-                <h3 className={styles.postTitle}>{getPostTitle(post)}</h3>
-                <p className={styles.postSummary}>{getPostSummary(post)}</p>
-                <div className={styles.postMeta}>
-                    <div className={styles.metaItem}>
+            <div className="flex flex-1 flex-col gap-3 p-6 max-md:p-4 max-md:gap-2.5">
+                <h3 className={cn(
+                    'line-clamp-2 text-lg font-bold leading-tight text-foreground transition-colors',
+                    'group-hover:text-primary',
+                    'max-md:text-[17px]',
+                )}>
+                    {getPostTitle(post)}
+                </h3>
+                <p className="line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground max-md:text-[13px]">
+                    {getPostSummary(post)}
+                </p>
+                <div className={cn(
+                    'flex flex-wrap gap-4 border-t border-border pt-3 text-[13px] text-muted-foreground',
+                    'max-md:text-xs max-md:gap-3',
+                )}>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <XIcon name="carbon:user" size={16}/>
                         <span>{post.authorName}</span>
                     </div>
-                    <div className={styles.metaItem}>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <XIcon name="carbon:calendar" size={16}/>
                         <span>{formatDate(post.createdAt)}</span>
                     </div>
-                    <div className={styles.metaItem}>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <XIcon name="carbon:view" size={16}/>
                         <span>{post.visits || 0}</span>
                     </div>
-                    <div className={styles.metaItem}>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <XIcon name="carbon:thumbs-up" size={16}/>
                         <span>{post.likes || 0}</span>
                     </div>

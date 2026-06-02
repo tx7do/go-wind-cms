@@ -7,8 +7,6 @@ import {Icon} from '@iconify/react';
 import {useTranslations} from 'next-intl';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
-import styles from './Footer.module.css';
-
 type FooterLinkKey =
     | 'about_us'
     | 'contact_us'
@@ -66,14 +64,14 @@ export default function Footer() {
     };
 
     return (
-        <footer className={styles.footerOuter}>
-            <div className={styles.footerContainer}>
-                <nav className={styles.footerLinks} aria-label="Footer links">
+        <footer className="w-full bg-card flex justify-center">
+            <div className="flex w-full max-w-[1200px] items-center justify-between gap-4 border-t border-border px-6 py-4 text-muted-foreground min-h-[72px] max-md:flex-col max-md:items-start max-md:gap-3 max-md:py-4 max-md:pb-5">
+                <nav className="flex flex-wrap items-center gap-1" aria-label="Footer links">
                     {footerLinks.map(link => (
                         <Button
                             key={link.key}
                             variant="ghost"
-                            className={styles.footerLink}
+                            className="px-1 text-muted-foreground hover:text-foreground transition-colors"
                             onClick={() => handleFooterLinkClick(link.key)}
                         >
                             {t(link.labelKey)}
@@ -81,18 +79,18 @@ export default function Footer() {
                     ))}
                 </nav>
 
-                <div className={styles.footerMeta}>
-                    <span className={styles.copyright}>
+                <div className="flex shrink-0 items-center gap-3 max-md:w-full max-md:justify-between">
+                    <span className="text-sm whitespace-nowrap">
                         {t('copyright')}
                     </span>
-                    <Separator orientation="vertical" className={styles.metaDivider}/>
-                    <div className={styles.socialList} aria-label="Social links">
+                    <Separator orientation="vertical" className="h-3.5 w-px bg-border max-md:hidden"/>
+                    <div className="flex items-center gap-1" aria-label="Social links">
                         {socialLinks.map(social => (
                             <Button
                                 key={social.key}
                                 variant="ghost"
                                 size="icon"
-                                className={styles.socialBtn}
+                                className="text-2xl text-muted-foreground hover:text-primary transition-all hover:-translate-y-0.5"
                                 aria-label={social.name}
                                 onClick={() => handleSocialClick(social.name)}
                             >

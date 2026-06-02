@@ -1,106 +1,150 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ========== Tailwind v4 主题变量（shadcn/ui 兼容） ========== */
 @theme inline {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-card: var(--card);
-    --color-card-foreground: var(--card-foreground);
-    --color-popover: var(--popover);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-accent: var(--accent);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-destructive: var(--destructive);
-    --color-destructive-foreground: var(--destructive-foreground);
-    --color-border: var(--border);
-    --color-input: var(--input);
-    --color-ring: var(--ring);
+    --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
+    --color-card: hsl(var(--card));
+    --color-card-foreground: hsl(var(--card-foreground));
+    --color-popover: hsl(var(--popover));
+    --color-popover-foreground: hsl(var(--popover-foreground));
+    --color-primary: hsl(var(--primary));
+    --color-primary-foreground: hsl(var(--primary-foreground));
+    --color-secondary: hsl(var(--secondary));
+    --color-secondary-foreground: hsl(var(--secondary-foreground));
+    --color-muted: hsl(var(--muted));
+    --color-muted-foreground: hsl(var(--muted-foreground));
+    --color-accent: hsl(var(--accent));
+    --color-accent-foreground: hsl(var(--accent-foreground));
+    --color-destructive: hsl(var(--destructive));
+    --color-destructive-foreground: hsl(var(--destructive-foreground));
+    --color-success: hsl(var(--success));
+    --color-success-foreground: hsl(var(--success-foreground));
+    --color-warning: hsl(var(--warning));
+    --color-warning-foreground: hsl(var(--warning-foreground));
+    --color-border: hsl(var(--border));
+    --color-input: hsl(var(--input));
+    --color-ring: hsl(var(--ring));
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
 }
 
+/* ==========================================
+ * 浅色模式 (Light Mode) — 疾風掠影
+ * ========================================== */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.55 0.25 265);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.985 0 0);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.55 0.25 265);
-    --radius: 0.625rem;
+    /* 核心背景：帶有微弱微風動感的淺冷灰藍 */
+    --background: 210 40% 98%;      /* #F4F7F9 */
+    --foreground: 224 71.4% 4.1%;   /* #020617 */
+
+    /* 卡片：純白浮空感 */
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+
+    /* 核心主色：極光電能綠 (Voltage Green) */
+    --primary: 142.1 76.2% 36.3%;   /* #16A34A */
+    --primary-foreground: 144 96.6% 11.4%;
+
+    --secondary: 210 40% 93.1%;
+    --secondary-foreground: 224 71.4% 4.1%;
+
+    --muted: 210 40% 93.1%;         /* #E5EDF2 */
+    --muted-foreground: 215.4 16.3% 46.9%; /* #64748B */
+
+    /* 點綴與懸停狀態：賽博科技藍 */
+    --accent: 217.2 91.2% 59.8%;    /* #3B82F6 */
+    --accent-foreground: 224 71.4% 4.1%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --border: 214.3 32% 88%;        /* #E2E8F0 */
+    --input: 214.3 32% 88%;
+    --ring: 142.1 76.2% 36.3%;
+
+    --radius: 0.6rem;
 
     /* 布局尺寸 */
     --layout-header-height: 64px;
-    --layout-navbar-height: 50px;
     --layout-footer-height: 200px;
-    --layout-topbar-height: 75px;
-    --layout-content-offset: calc(var(--layout-topbar-height) + var(--layout-navbar-height));
     --layout-max-width: 1200px;
 }
 
+/* ==========================================
+ * 深色模式 (Dark Mode) — 暗夜疾行
+ * ========================================== */
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.65 0.25 265);
-    --primary-foreground: oklch(0.145 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: oklch(0.985 0 0);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.65 0.25 265);
+    /* 核心背景：深空黑與極深板岩灰交織 */
+    --background: 224 71.4% 4.1%;   /* #020617 */
+    --foreground: 210 20% 98%;      /* #F8FAFC */
+
+    /* 卡片：帶有半透明磨砂玻璃感的深科技灰 */
+    --card: 222.2 47.4% 7%;        /* #0F172A */
+    --card-foreground: 210 20% 98%;
+
+    --popover: 222.2 47.4% 7%;
+    --popover-foreground: 210 20% 98%;
+
+    /* 核心主色：霓虹電能綠 (Neon Voltage) */
+    --primary: 142.1 86.2% 50.3%;   /* #22C55E */
+    --primary-foreground: 144.4 96.6% 11.4%;
+
+    --secondary: 217.2 32.6% 13.5%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 217.2 32.6% 13.5%;     /* #1E293B */
+    --muted-foreground: 215 20.2% 65.1%; /* #94A3B8 */
+
+    /* 點綴：深海電光藍 */
+    --accent: 217.2 91.2% 59.8%;    /* #3B82F6 */
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142.1 86.2% 50.3%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 98%;
+
+    --border: 217.2 32.6% 17.5%;    /* #334155 */
+    --input: 217.2 32.6% 17.5%;
+    --ring: 142.1 86.2% 50.3%;
 }
 
 /* ========== 基础重置 ========== */
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
-
-html,
-body {
-    max-width: 100vw;
-    overflow-x: hidden;
-    margin: 0 !important;
-    padding: 0 !important;
-    background-color: var(--background);
-    color: var(--foreground);
-}
-
-/* 平滑滚动 */
+/* overflow-y: scroll 放在 unlayered CSS 中以确保最高优先级，
+   防止 Tailwind v4 preflight 在 @layer base 中覆盖它导致滚动条消失 */
 html {
+    overflow-y: scroll;
+    overflow-x: hidden;
     scroll-behavior: smooth;
+}
+
+@layer base {
+    *, ::before, ::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        overflow-x: hidden;
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+    }
 }
 
 /* ========== 全局过渡动画 ========== */
@@ -114,19 +158,57 @@ html {
     opacity: 0;
 }
 
-/* 禁用选中 */
 .no-select {
     user-select: none;
 }
 
-/* ========== Tailwind v4 基础层 ========== */
+/* ========== Scroll Reveal Animation ========== */
+.scroll-reveal-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal-item.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-reveal-item:nth-child(1) { transition-delay: 0.08s; }
+.scroll-reveal-item:nth-child(2) { transition-delay: 0.16s; }
+.scroll-reveal-item:nth-child(3) { transition-delay: 0.24s; }
+.scroll-reveal-item:nth-child(4) { transition-delay: 0.32s; }
+.scroll-reveal-item:nth-child(5) { transition-delay: 0.4s; }
+.scroll-reveal-item:nth-child(6) { transition-delay: 0.48s; }
+.scroll-reveal-item:nth-child(7) { transition-delay: 0.56s; }
+.scroll-reveal-item:nth-child(8) { transition-delay: 0.64s; }
+
+/* ========== Categories Grid / Carousel Visibility ========== */
+.desktop-grid { display: grid; }
+.mobile-carousel { display: none; }
+@media (max-width: 900px) {
+    .desktop-grid { display: none; }
+    .mobile-carousel { display: block; }
+}
+
+/* ========== Scroll Reveal Section ========== */
+.scroll-reveal .section-header {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUpSection 0.6s ease-out 0.2s forwards;
+}
+
+@keyframes fadeInUpSection {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== Tailwind v4 基础层补充 ========== */
 @layer base {
     * {
-        border-color: var(--border);
+        border-color: hsl(var(--border));
     }
     body {
-        background-color: var(--background);
-        color: var(--foreground);
         font-feature-settings: 'rlig' 1, 'calt' 1;
     }
 }

@@ -2,7 +2,6 @@
 
 import {useState, useEffect} from 'react';
 import {useTranslations} from 'next-intl';
-import styles from '../register.module.css';
 
 export default function PhoneRegisterPage() {
     const t = useTranslations('authentication');
@@ -56,11 +55,13 @@ export default function PhoneRegisterPage() {
         console.log('手机号注册/登录:', {phone, verificationCode});
     };
 
+    const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15';
+
     return (
-        <div className={styles['register-form']}>
+        <div className="space-y-4">
             {/* Phone Number Group */}
-            <div className={styles['form-group']}>
-                <label htmlFor="register-phone-number">
+            <div className="space-y-2">
+                <label htmlFor="register-phone-number" className="block text-sm font-medium text-foreground">
                     {t('register.phone')}
                 </label>
                 <input
@@ -70,16 +71,16 @@ export default function PhoneRegisterPage() {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={t('register.input_phone')}
                     autoComplete="tel"
-                    className={styles['input-field']}
+                    className={inputBase}
                 />
             </div>
 
             {/* Verification Code Group */}
-            <div className={styles['form-group']}>
-                <label htmlFor="register-phone-code">
+            <div className="space-y-2">
+                <label htmlFor="register-phone-code" className="block text-sm font-medium text-foreground">
                     {t('register.code')}
                 </label>
-                <div className={styles['code-input-row']}>
+                <div className="flex gap-2">
                     <input
                         id="register-phone-code"
                         type="text"
@@ -88,12 +89,12 @@ export default function PhoneRegisterPage() {
                         placeholder={t('register.input_code')}
                         maxLength={6}
                         autoComplete="one-time-code"
-                        className={styles['input-field']}
+                        className="flex-1 rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
                     />
                     <button
                         type="button"
                         disabled={codeSent}
-                        className={`${styles['send-code-btn']} ${codeSent ? styles.disabled : ''}`}
+                        className={`shrink-0 cursor-pointer rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] ${codeSent ? 'cursor-not-allowed opacity-60' : ''}`}
                         onClick={handleButtonSendVerifyCode}
                     >
                         {codeSent ? `${codeCountdown}s` : t('register.send_code')}
@@ -104,7 +105,7 @@ export default function PhoneRegisterPage() {
             {/* Register Button */}
             <button
                 type="button"
-                className={styles['register-button']}
+                className="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
                 onClick={handleButtonRegisterOrLogin}
             >
                 {t('register.register_or_login')}

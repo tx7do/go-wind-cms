@@ -13,7 +13,6 @@ import {fetchListTags, getTranslation as getTagTranslation} from '@/api/hooks/ta
 import {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
 
 import '../../globals.css'; // 导入全局 CSS，确保 CSS 变量可用
-import styles from './tag-list.module.css';
 
 export default function TagListPage() {
     const t = useTranslations('page');
@@ -68,64 +67,66 @@ export default function TagListPage() {
     }, [page, pageSize]);
 
     return (
-        <div className={styles['tag-list-page']}>
+        <div className="w-full">
             {/* Hero Section */}
-            <div className={styles['hero-section']}>
-                <div className={styles['hero-content']}>
-                    <h1>{t('tags.tags_list')}</h1>
-                    <p>{t('tags.explore_all')}</p>
-                    <div className={styles['tag-stats']}>
-                        <div className={styles['stat-item']}>
+            <section className="w-full flex min-h-[300px] items-center justify-center border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-20">
+                <div className="w-full max-w-3xl px-8 text-center">
+                    <h1 className="mb-4 text-4xl font-bold text-foreground max-md:text-3xl">
+                        {t('tags.tags_list')}
+                    </h1>
+                    <p className="mb-6 text-lg text-muted-foreground max-md:text-base">
+                        {t('tags.explore_all')}
+                    </p>
+                    <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
                             <XIcon name="carbon:tag" size={20}/>
                             <span>{tags.length} {t('tags.total_tags')}</span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             {/* Tags Grid */}
-            <div className={styles['page-container']}>
+            <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
                 {/* Loading Skeleton */}
                 {loading ? (
-                    <div className={styles['tags-grid']}>
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6">
                         {Array.from({length: 12}).map((_, i) => (
-                            <div key={i} className={styles['tag-card-skeleton']}>
-                                <Skeleton className="w-full" style={{height: 120}}/>
+                            <div key={i}>
+                                <Skeleton className="h-[120px] w-full"/>
                             </div>
                         ))}
                     </div>
                 ) : (
                     <>
                         {(tags.length > 0 || total > 0) && (
-                            <div className={styles['tags-grid']}>
+                            <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6">
                                 {tags.map((tag) => (
                                     <div
                                         key={tag.id}
-                                        className={styles['tag-card']}
+                                        className="group flex cursor-pointer flex-col items-center gap-3 rounded-xl border bg-card p-6 transition-all hover:-translate-y-1 hover:shadow-lg"
                                         style={{
-                                            borderColor: tag.color || 'var(--color-border)',
-                                            background: `linear-gradient(135deg, ${tag.color}10 0%, var(--color-surface) 100%)`
+                                            borderColor: tag.color || 'hsl(var(--border))',
+                                            background: `linear-gradient(135deg, ${tag.color}10 0%, hsl(var(--card)) 100%)`
                                         }}
                                         onClick={() => handleTagClick(tag.id || 0)}
                                     >
                                         <div
-                                            className={styles['tag-icon']}
-                                            style={{color: tag.color || 'var(--color-brand)'}}
+                                            className="flex h-12 w-12 items-center justify-center rounded-lg transition-transform group-hover:scale-110"
+                                            style={{color: tag.color || 'hsl(var(--primary))'}}
                                         >
                                             <XIcon name={`carbon:${tag.icon || 'tag'}`} size={48}/>
                                         </div>
-                                        <div className={styles['tag-content']}>
-                                            <h3>{getTagTranslation(tag)?.name || t('tags.tag_untitled')}</h3>
-                                            <p className={styles['tag-description']}>
+                                        <div className="flex flex-1 flex-col items-center gap-2 text-center">
+                                            <h3 className="font-semibold text-foreground">
+                                                {getTagTranslation(tag)?.name || t('tags.tag_untitled')}
+                                            </h3>
+                                            <p className="line-clamp-2 text-sm text-muted-foreground">
                                                 {getTagTranslation(tag)?.description || ''}
                                             </p>
-                                            <div className={styles['tag-meta']}>
-                                                <span className={styles['meta-icon']}>
-                                                    <XIcon name="carbon:document" size={14}/>
-                                                </span>
-                                                <span className={styles['meta-text']}>
-                                                    {tag.postCount || 0} {t('posts.articles')}
-                                                </span>
+                                            <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+                                                <XIcon name="carbon:document" size={14}/>
+                                                <span>{tag.postCount || 0} {t('posts.articles')}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -142,7 +143,7 @@ export default function TagListPage() {
 
                         {/* Simple pagination */}
                         {total > pageSize && (
-                            <div className="flex items-center justify-center gap-2 mt-8">
+                            <div className="mt-8 flex items-center justify-center gap-2">
                                 <Button
                                     variant="outline"
                                     size="sm"

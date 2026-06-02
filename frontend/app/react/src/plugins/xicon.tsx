@@ -20,13 +20,8 @@ export const XIcon: React.FC<XIconProps> = ({name, size = 24, color, className, 
             width={typeof size === 'string' ? size : size}
             height={typeof size === 'string' ? size : size}
             color={color}
-            className={className}
-            style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                ...style,
-            }}
+            className={`inline-flex items-center justify-center ${className || ''}`}
+            style={style}
         />
     );
 };

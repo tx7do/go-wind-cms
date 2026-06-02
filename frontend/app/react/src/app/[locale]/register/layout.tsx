@@ -5,7 +5,6 @@ import GlobalLoading from '@/components/layout/GlobalLoading';
 import {DEFAULT_TIME_ZONE} from '@/i18n';
 import {isSupportedLocale, routing} from '../routing';
 import getRequestConfig from '@/i18n/request';
-import styles from './register.module.css';
 
 type SupportedLocale = (typeof routing.locales)[number];
 
@@ -35,7 +34,7 @@ export default async function RegisterLayout({
     return (
         <NextIntlClientProvider timeZone={DEFAULT_TIME_ZONE} locale={validLocale} messages={messages ?? {}}>
             <GlobalLoading/>
-            <div className={styles.registerPageWrapper}>
+            <div className="min-h-screen">
                 {children}
             </div>
         </NextIntlClientProvider>
