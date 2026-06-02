@@ -63,14 +63,19 @@ const PostCard: React.FC<PostCardProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-sky-400/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
             </div>
             <div className="flex flex-1 flex-col gap-3 p-6 max-md:p-4 max-md:gap-2.5">
+                {/* 标题：固定 min-h 确保两行高度 */}
                 <h3 className={cn(
-                    'line-clamp-2 text-lg font-bold leading-tight text-foreground transition-colors duration-300',
+                    'line-clamp-2 min-h-[3.4em] text-lg font-bold leading-[1.7] text-foreground transition-colors duration-300',
                     'group-hover:text-primary',
-                    'max-md:text-[17px]',
+                    'max-md:min-h-[3em] max-md:text-[17px]',
                 )}>
                     {getPostTitle(post)}
                 </h3>
-                <p className="line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground max-md:text-[13px]">
+                {/* 摘要：固定 min-h 确保三行高度，底部的数据列永退贴底 */}
+                <p className={cn(
+                    'line-clamp-3 min-h-[4.4em] flex-1 text-sm leading-[1.55] text-muted-foreground',
+                    'max-md:min-h-[4em] max-md:text-[13px]',
+                )}>
                     {getPostSummary(post)}
                 </p>
                 <div className={cn(

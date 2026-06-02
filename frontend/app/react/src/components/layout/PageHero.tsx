@@ -78,6 +78,20 @@ const PageHero: React.FC<PageHeroProps> = ({
                     }}
                 />
 
+                {/* 点阵装饰背景：科技门户层次感 */}
+                <div
+                    className={cn(
+                        'absolute inset-0 opacity-[0.08]',
+                        'dark:opacity-[0.12]',
+                    )}
+                    style={{
+                        backgroundImage: `radial-gradient(${accentColor || 'hsl(var(--primary))'} 1px, transparent 1px)`,
+                        backgroundSize: '24px 24px',
+                        maskImage: 'radial-gradient(ellipse at center, black 10%, transparent 65%)',
+                        WebkitMaskImage: 'radial-gradient(ellipse at center, black 10%, transparent 65%)',
+                    }}
+                />
+
                 {/* 底部风迹光带：变宽为渐变带，更流体 */}
                 <div
                     className="absolute bottom-0 left-0 right-0 h-[2px] opacity-40"
@@ -114,17 +128,17 @@ const PageHero: React.FC<PageHeroProps> = ({
 
                 {/* 主标题 */}
                 <h1 className={cn(
-                    'mb-3 font-bold leading-tight text-foreground',
+                    'mb-4 font-bold leading-tight text-foreground',
                     size === 'lg' ? 'text-4xl max-md:text-2xl' : 'text-3xl max-md:text-2xl',
                     size === 'sm' && 'text-2xl max-md:text-xl',
                 )}>
                     {title}
                 </h1>
 
-                {/* 描述 */}
+                {/* 描述：弱化一阶，拉开与主标题的字重对比 */}
                 {description && (
                     <p className={cn(
-                        'mx-auto text-muted-foreground',
+                        'mx-auto text-muted-foreground/80 font-light',
                         size === 'lg' ? 'max-w-2xl text-lg max-md:text-base' : 'max-w-xl text-base max-md:text-sm',
                         size === 'sm' && 'text-sm max-md:text-xs',
                     )}>

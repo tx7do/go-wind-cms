@@ -153,24 +153,25 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
     // 通用按钮样式
     const btnBase = cn(
-        'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium',
+        'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium',
         'transition-all duration-200 cursor-pointer select-none',
         'border border-transparent',
     );
     const btnInactive = cn(
-        'bg-muted/50 text-foreground/70',
-        'hover:bg-primary/10 hover:text-primary hover:border-primary/30',
+        'bg-muted/40 text-foreground/70',
+        'hover:bg-primary/8 hover:text-primary hover:border-primary/25',
     );
     const btnActive = cn(
-        'bg-primary text-primary-foreground shadow-sm',
-        'hover:bg-primary/90',
+        /* 选中态柔化：半透明绿底 + primary 文字（取代高饱和实心绿）*/
+        'bg-primary/12 text-primary border-primary/30',
+        'hover:bg-primary/18',
     );
 
     return (
         <div className="relative z-20 mb-10 max-md:mb-6">
             <div className={cn(
-                'flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card/50 p-3 backdrop-blur-sm',
-                'max-md:overflow-x-auto max-md:p-2.5',
+                'flex flex-wrap items-center gap-2.5 rounded-xl border border-border bg-card/50 p-3.5 backdrop-blur-sm',
+                'max-md:overflow-x-auto max-md:p-3',
                 'max-sm:flex-nowrap max-sm:justify-start',
             )}>
                 {/* 所有分类按钮 */}
