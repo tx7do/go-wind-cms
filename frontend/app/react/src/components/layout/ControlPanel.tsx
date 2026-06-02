@@ -58,7 +58,7 @@ export default function ControlPanel() {
                 onClick={toggleTheme}
                 aria-label="Toggle theme"
             >
-                <XIcon name={isDark ? 'carbon:sun' : 'carbon:moon'} size={18}/>
+                <XIcon key={isDark ? 'sun' : 'moon'} name={isDark ? 'carbon:sun' : 'carbon:moon'} size={18} className="theme-icon-animate"/>
             </button>
         </div>
     );

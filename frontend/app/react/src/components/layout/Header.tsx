@@ -56,10 +56,11 @@ export default function Header() {
     }, []);
 
     const themeIcon = (() => {
-        if (!mounted) return <Monitor className="h-4 w-4"/>;
-        if (currentMode === 'dark') return <Moon className="h-4 w-4"/>;
-        if (currentMode === 'light') return <Sun className="h-4 w-4"/>;
-        return <Monitor className="h-4 w-4"/>;
+        const animClass = 'h-4 w-4 theme-icon-animate';
+        if (!mounted) return <Monitor key="monitor" className={animClass}/>;
+        if (currentMode === 'dark') return <Moon key="moon" className={animClass}/>;
+        if (currentMode === 'light') return <Sun key="sun" className={animClass}/>;
+        return <Monitor key="monitor" className={animClass}/>;
     })();
 
     return (

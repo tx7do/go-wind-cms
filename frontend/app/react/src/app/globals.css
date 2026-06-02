@@ -215,6 +215,26 @@ html {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ========== 主题切换图标「空气动力学」微动效 ========== */
+@keyframes theme-icon-spin {
+    0% {
+        transform: rotate(-90deg) scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: rotate(10deg) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+.theme-icon-animate {
+    animation: theme-icon-spin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 /* ========== Tailwind v4 基础层补充 ========== */
 @layer base {
     * {
