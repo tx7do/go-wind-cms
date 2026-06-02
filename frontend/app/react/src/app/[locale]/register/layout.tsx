@@ -1,5 +1,6 @@
 import React from "react";
 import {notFound} from 'next/navigation';
+import {setRequestLocale} from 'next-intl/server';
 import {NextIntlClientProvider} from 'next-intl';
 import GlobalLoading from '@/components/layout/GlobalLoading';
 import {DEFAULT_TIME_ZONE} from '@/i18n';
@@ -7,6 +8,11 @@ import {isSupportedLocale, routing} from '../routing';
 import getRequestConfig from '@/i18n/request';
 
 type SupportedLocale = (typeof routing.locales)[number];
+
+// 告诉 Next.js 在构建时为每个语言预生成注册页面
+export function generateStaticParams() {
+    return routing.locales.map((locale) => ({locale}));
+}
 
 export default async function RegisterLayout({
     children,
@@ -27,8 +33,11 @@ export default async function RegisterLayout({
     }
 
     const validLocale = locale as SupportedLocale;
-    const requestLocale = Promise.resolve(validLocale);
 
+    // 告诉 next-intl 当前 locale，避免内部调用 headers()（静态导出必需）
+    setRequestLocale(validLocale);
+
+    const requestLocale = Promise.resolve(validLocale);
     const {messages} = await getRequestConfig({requestLocale});
 
     return (

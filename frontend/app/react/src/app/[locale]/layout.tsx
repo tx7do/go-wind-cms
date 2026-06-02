@@ -1,5 +1,6 @@
 import React from "react";
 import {notFound} from 'next/navigation';
+import {setRequestLocale} from 'next-intl/server';
 
 import {isSupportedLocale, routing} from './routing';
 import ClientLocaleLayout from './ClientLocaleLayout';
@@ -28,8 +29,11 @@ export default async function LocaleLayout({children, params}: {
     }
 
     const validLocale = locale as SupportedLocale;
-    const requestLocale = Promise.resolve(validLocale);
 
+    // 告诉 next-intl 当前 locale，避免内部调用 headers()（静态导出必需）
+    setRequestLocale(validLocale);
+
+    const requestLocale = Promise.resolve(validLocale);
     const {messages} = await getRequestConfig({requestLocale});
     return (
         <ClientLocaleLayout locale={validLocale} messages={messages ?? {}}>

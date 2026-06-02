@@ -1,11 +1,4 @@
-// Server component layout for [id] dynamic segment
-// ID 来自 CMS API，构建时无法预知，返回空数组允许运行时按需生成
-export const dynamicParams = true;
-
-export function generateStaticParams() {
-    return [];
-}
-
+// Passthrough layout — [id] 动态路由由 page.tsx 的 generateStaticParams 处理
 export default function TagDetailLayout({children}: { children: React.ReactNode }) {
     return children;
 }
