@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {Skeleton} from 'antd';
+import {Skeleton} from '@/components/ui/skeleton';
 import {useTranslations} from 'next-intl';
 import {AppEmpty} from '@/components/ui';
 
@@ -47,10 +47,11 @@ const CategoryList: React.FC<CategoryListProps> = ({
                 >
                     {Array.from({length: columns}).map((_, index) => (
                         <div key={index} className={styles.categoryCardSkeleton}>
-                            <Skeleton.Image style={{height: 160}}/>
+                            <Skeleton className="w-full" style={{height: 160}}/>
                             <div className={styles.skeletonContent}>
-                                <Skeleton paragraph={{rows: 2}} title={false}/>
-                                <Skeleton.Button size="small" style={{width: 60}}/>
+                                <Skeleton className="h-4 w-full"/>
+                                <Skeleton className="h-4 w-3/4"/>
+                                <Skeleton className="h-6 w-15" style={{width: 60}}/>
                             </div>
                         </div>
                     ))}

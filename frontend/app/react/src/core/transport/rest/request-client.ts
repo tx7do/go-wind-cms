@@ -119,7 +119,7 @@ class RequestClient {
           const token = callbacks.getToken();
           config.headers.Authorization = this.formatToken(token);
         }
-        return config as never;
+        return config;
       },
     });
   }
@@ -134,7 +134,7 @@ class RequestClient {
         (config as AxiosRequestConfig & {_requestId: string})._requestId = requestId;
         config.headers['X-Request-ID'] = requestId;
         config.headers['X-Requested-With'] = 'XMLHttpRequest';
-        return config as never;
+        return config;
       },
     });
   }
@@ -148,7 +148,7 @@ class RequestClient {
         if (callbacks.getLocale) {
           config.headers['Accept-Language'] = callbacks.getLocale();
         }
-        return config as never;
+        return config;
       },
     });
   }

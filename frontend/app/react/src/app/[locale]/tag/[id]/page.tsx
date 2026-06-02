@@ -3,8 +3,8 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
-import {Button} from 'antd';
-import {ArrowLeftOutlined} from '@ant-design/icons';
+import {Button} from '@/components/ui/button';
+import {ArrowLeft} from 'lucide-react';
 import {AppEmpty} from '@/components/ui';
 
 import {XIcon} from '@/plugins/xicon';
@@ -94,10 +94,12 @@ export default function TagDetailPage() {
                 {/* Back Button */}
                 <div className={styles['back-button-container']}>
                     <Button
-                        size="small"
+                        variant="outline"
+                        size="sm"
                         onClick={handleBack}
-                        icon={<ArrowLeftOutlined/>}
+                        className="gap-2"
                     >
+                        <ArrowLeft className="h-4 w-4"/>
                         {t('categories.back_to_list')}
                     </Button>
                 </div>

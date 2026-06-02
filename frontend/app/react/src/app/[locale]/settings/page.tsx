@@ -2,7 +2,9 @@
 
 import {useState, useMemo} from 'react';
 import {useTranslations, useLocale} from 'next-intl';
-import {Switch, Select, Button} from 'antd';
+import {Switch} from '@/components/ui/switch';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Button} from '@/components/ui/button';
 import XIcon from '@/plugins/xicon';
 
 import {usePreferences} from '@/core/preferences';
@@ -101,7 +103,7 @@ export default function SettingsPage() {
                                         <span className={styles.labelStatus}>{t('account.password_not_set')}</span>
                                     </div>
                                     <div className={styles.settingControl}>
-                                        <Button type="primary" ghost size="small">{t('account.edit')}</Button>
+                                        <Button variant="outline" size="sm">{t('account.edit')}</Button>
                                     </div>
                                 </div>
                                 <div className={styles.settingItem}>
@@ -110,7 +112,7 @@ export default function SettingsPage() {
                                         <span className={styles.labelStatus}>{t('account.password_not_set')}</span>
                                     </div>
                                     <div className={styles.settingControl}>
-                                        <Button type="primary" ghost size="small">{t('account.edit')}</Button>
+                                        <Button variant="outline" size="sm">{t('account.edit')}</Button>
                                     </div>
                                 </div>
                                 <div className={styles.settingItem}>
@@ -119,7 +121,7 @@ export default function SettingsPage() {
                                         <span className={styles.labelStatus}>{t('account.email_not_bound')}</span>
                                     </div>
                                     <div className={styles.settingControl}>
-                                        <Button type="primary" ghost size="small">{t('account.edit')}</Button>
+                                        <Button variant="outline" size="sm">{t('account.edit')}</Button>
                                     </div>
                                 </div>
                             </div>
@@ -205,17 +207,17 @@ export default function SettingsPage() {
                                         <span className={styles.labelText}>{t('message.frequency_desc')}</span>
                                     </div>
                                     <div className={styles.settingControl}>
-                                        <Select
-                                            defaultValue="immediately"
-                                            size="small"
-                                            style={{minWidth: 180}}
-                                            options={[
-                                                {value: 'immediately', label: t('message.frequency_immediately')},
-                                                {value: 'daily', label: t('message.frequency_daily')},
-                                                {value: 'weekly', label: t('message.frequency_weekly')},
-                                                {value: 'monthly', label: t('message.frequency_monthly')},
-                                            ]}
-                                        />
+                                        <Select defaultValue="immediately">
+                                            <SelectTrigger className="w-[180px] h-8">
+                                                <SelectValue/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="immediately">{t('message.frequency_immediately')}</SelectItem>
+                                                <SelectItem value="daily">{t('message.frequency_daily')}</SelectItem>
+                                                <SelectItem value="weekly">{t('message.frequency_weekly')}</SelectItem>
+                                                <SelectItem value="monthly">{t('message.frequency_monthly')}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
                             </div>
@@ -237,13 +239,16 @@ export default function SettingsPage() {
                                         <span className={styles.labelText}>{t('preference.theme')}</span>
                                     </div>
                                     <div className={styles.settingControl}>
-                                        <Select
-                                            value={themePref.mode}
-                                            size="small"
-                                            style={{minWidth: 180}}
-                                            options={themeOptions}
-                                            onChange={handleThemeChange}
-                                        />
+                                        <Select value={themePref.mode} onValueChange={(v) => handleThemeChange(v as ThemeModeType)}>
+                                            <SelectTrigger className="w-[180px] h-8">
+                                                <SelectValue/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {themeOptions.map(opt => (
+                                                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
                             </div>
@@ -255,13 +260,16 @@ export default function SettingsPage() {
                                         <span className={styles.labelText}>{t('preference.language')}</span>
                                     </div>
                                     <div className={styles.settingControl}>
-                                        <Select
-                                            value={locale as SupportedLanguagesType}
-                                            size="small"
-                                            style={{minWidth: 180}}
-                                            options={languageOptions}
-                                            onChange={handleLanguageChange}
-                                        />
+                                        <Select value={locale as SupportedLanguagesType} onValueChange={(v) => handleLanguageChange(v as SupportedLanguagesType)}>
+                                            <SelectTrigger className="w-[180px] h-8">
+                                                <SelectValue/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {languageOptions.map(opt => (
+                                                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
                             </div>
@@ -275,7 +283,7 @@ export default function SettingsPage() {
                                     <div className={styles.settingControl}>
                                         <Switch
                                             checked={contentPref.hideSensitiveContent}
-                                            onChange={(checked) => updateContent({hideSensitiveContent: checked})}
+                                            onCheckedChange={(checked) => updateContent({hideSensitiveContent: checked})}
                                         />
                                     </div>
                                 </div>
@@ -286,7 +294,7 @@ export default function SettingsPage() {
                                     <div className={styles.settingControl}>
                                         <Switch
                                             checked={contentPref.compactMode}
-                                            onChange={(checked) => updateContent({compactMode: checked})}
+                                            onCheckedChange={(checked) => updateContent({compactMode: checked})}
                                         />
                                     </div>
                                 </div>
@@ -297,7 +305,7 @@ export default function SettingsPage() {
                                     <div className={styles.settingControl}>
                                         <Switch
                                             checked={contentPref.showRecommendations}
-                                            onChange={(checked) => updateContent({showRecommendations: checked})}
+                                            onCheckedChange={(checked) => updateContent({showRecommendations: checked})}
                                         />
                                     </div>
                                 </div>
@@ -308,7 +316,7 @@ export default function SettingsPage() {
                                         <span className={styles.labelText}>恢复默认设置</span>
                                     </div>
                                     <div className={styles.settingControl}>
-                                        <Button danger size="small" onClick={() => resetPreferences()}>
+                                        <Button variant="destructive" size="sm" onClick={() => resetPreferences()}>
                                             重置
                                         </Button>
                                     </div>

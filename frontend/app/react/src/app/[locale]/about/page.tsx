@@ -1,7 +1,7 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import {Image, Button} from 'antd';
+import {Button} from '@/components/ui/button';
 
 import XIcon from '@/plugins/xicon';
 
@@ -135,12 +135,13 @@ export default function AboutPage() {
                         {teamMembers.map((member) => (
                             <div key={member.name} className={styles.teamCard}>
                                 <div className={styles.teamAvatar}>
-                                    <Image
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
                                         src={member.avatar}
                                         alt={member.name}
                                         width={120}
                                         height={120}
-                                        preview={false}
+                                        style={{borderRadius: '50%'}}
                                     />
                                 </div>
                                 <h3>{member.name}</h3>
@@ -181,10 +182,10 @@ export default function AboutPage() {
                     <h2>{t('cta_title')}</h2>
                     <p>{t('cta_desc')}</p>
                     <div className={styles.ctaButtons}>
-                        <Button type="primary" size="large">
+                        <Button size="lg">
                             {t('cta_explore')}
                         </Button>
-                        <Button size="large">
+                        <Button variant="outline" size="lg">
                             {t('cta_contact')}
                         </Button>
                     </div>

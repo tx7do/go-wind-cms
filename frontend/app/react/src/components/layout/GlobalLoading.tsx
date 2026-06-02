@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect} from 'react';
-import {Spin} from 'antd';
+import {Spinner} from '@/components/ui/spinner';
 import {usePathname} from 'next/navigation';
 
 import {useLoading} from '@/store/core/loading/store';
@@ -12,7 +12,6 @@ export default function GlobalLoading() {
     const {isLoading, finish} = useLoading();
     const pathname = usePathname();
 
-    // 超时保护 - 如果 loading 超过 5 秒，自动隐藏
     useEffect(() => {
         if (isLoading) {
             const timer = setTimeout(() => {
@@ -23,7 +22,6 @@ export default function GlobalLoading() {
         }
     }, [isLoading, finish]);
 
-    // 监听路由变化（Next.js 页面渲染完成）
     useEffect(() => {
         if (isLoading) {
             const timer = setTimeout(() => {
@@ -39,7 +37,7 @@ export default function GlobalLoading() {
     return (
         <div className={styles.loadingOverlay}>
             <div className={styles.loadingContent}>
-                <Spin size="large"/>
+                <Spinner size="lg"/>
                 <p className={styles.loadingText}>加载中...</p>
             </div>
         </div>

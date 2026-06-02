@@ -2,7 +2,7 @@
 
 import {useState, useEffect} from 'react';
 import {useTranslations} from 'next-intl';
-import {Skeleton} from 'antd';
+import {Skeleton} from '@/components/ui/skeleton';
 import {AppEmpty} from '@/components/ui';
 
 import {fetchListCategories} from '@/api/hooks/category';
@@ -63,7 +63,7 @@ export default function CategoryListPage() {
                     <div className={styles['categories-loading']}>
                         {[...Array(6)].map((_, i) => (
                             <div key={i} className={styles['category-loading-card']}>
-                                <Skeleton.Image style={{height: 160}} active/>
+                                <Skeleton className="w-full" style={{height: 160}}/>
                             </div>
                         ))}
                     </div>

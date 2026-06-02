@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import {Empty} from 'antd';
-import type {EmptyProps} from 'antd';
+import {Inbox} from 'lucide-react';
+
+import {cn} from '@/lib/utils';
 
 import styles from './AppEmpty.module.css';
 
-interface AppEmptyProps extends EmptyProps {
+interface AppEmptyProps {
     /**
      * 空状态类型
      * - default: 默认空状态
@@ -22,32 +23,22 @@ interface AppEmptyProps extends EmptyProps {
      * 自定义图标
      */
     image?: React.ReactNode;
+    /**
+     * 描述文本
+     */
+    description?: React.ReactNode;
+    /**
+     * 自定义类名
+     */
+    className?: string;
+    /**
+     * 自定义样式
+     */
+    style?: React.CSSProperties;
 }
 
 /**
- * App 级别的 Empty 组件
- * 
- * 特性:
- * - 统一的暗色模式适配
- * - 预设的样式变体
- * - 一致的视觉风格
- * - 支持自定义图标和样式
- * 
- * @example
- * // 基本使用
- * <AppEmpty description="暂无数据" />
- * 
- * // 错误状态
- * <AppEmpty variant="error" description="无效的 ID" />
- * 
- * // 自定义图标
- * <AppEmpty 
- *   image={<span className="i-carbon:folder-blank" style={{fontSize: '64px'}}/>}
- *   description="暂无分类"
- * />
- * 
- * // 在容器中
- * <AppEmpty inContainer description="暂无评论" />
+ * App 级别的 Empty 组件（shadcn/ui 风格，无 antd 依赖）
  */
 export const AppEmpty: React.FC<AppEmptyProps> = ({
     variant = 'default',
@@ -56,28 +47,29 @@ export const AppEmpty: React.FC<AppEmptyProps> = ({
     description,
     className,
     style,
-    ...restProps
 }) => {
-    // 根据 variant 设置默认图标
-    const defaultImage = image || (
-        variant === 'error' 
-            ? <span className="i-carbon:warning-alt" style={{fontSize: '64px'}}/>
+    const defaultIcon = image || (
+        variant === 'error'
+            ? <Inbox className="h-16 w-16 text-muted-foreground" strokeWidth={1}/>
             : variant === 'noData'
-                ? <span className="i-carbon:database" style={{fontSize: '64px'}}/>
-                : <span className="i-carbon:document-blank" style={{fontSize: '64px'}}/>
+                ? <Inbox className="h-16 w-16 text-muted-foreground" strokeWidth={1}/>
+                : <Inbox className="h-16 w-16 text-muted-foreground" strokeWidth={1}/>
     );
 
     return (
-        <div 
-            className={`${styles.emptyWrapper} ${inContainer ? styles.inContainer : ''} ${className || ''}`}
+        <div
+            className={cn(
+                styles.emptyWrapper,
+                inContainer && styles.inContainer,
+                'flex flex-col items-center justify-center gap-4 py-12',
+                className,
+            )}
             style={style}
         >
-            <Empty
-                {...restProps}
-                description={description}
-                image={defaultImage}
-                className={styles.appEmpty}
-            />
+            <div className="opacity-50">{defaultIcon}</div>
+            {description && (
+                <p className="text-sm text-muted-foreground">{description}</p>
+            )}
         </div>
     );
 };

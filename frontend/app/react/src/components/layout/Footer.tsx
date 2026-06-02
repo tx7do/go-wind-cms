@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import {Button, Divider} from 'antd';
+import {Button} from '@/components/ui/button';
+import {Separator} from '@/components/ui/separator';
 import {Icon} from '@iconify/react';
 import {useTranslations} from 'next-intl';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
@@ -71,7 +72,7 @@ export default function Footer() {
                     {footerLinks.map(link => (
                         <Button
                             key={link.key}
-                            type="text"
+                            variant="ghost"
                             className={styles.footerLink}
                             onClick={() => handleFooterLinkClick(link.key)}
                         >
@@ -84,17 +85,19 @@ export default function Footer() {
                     <span className={styles.copyright}>
                         {t('copyright')}
                     </span>
-                    <Divider vertical className={styles.metaDivider}/>
+                    <Separator orientation="vertical" className={styles.metaDivider}/>
                     <div className={styles.socialList} aria-label="Social links">
                         {socialLinks.map(social => (
                             <Button
                                 key={social.key}
-                                type="text"
+                                variant="ghost"
+                                size="icon"
                                 className={styles.socialBtn}
                                 aria-label={social.name}
                                 onClick={() => handleSocialClick(social.name)}
-                                icon={<Icon icon={social.icon}/>}
-                            />
+                            >
+                                <Icon icon={social.icon}/>
+                            </Button>
                         ))}
                     </div>
                 </div>

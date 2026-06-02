@@ -1,15 +1,15 @@
-import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type { AxiosInstance, AxiosResponse } from 'axios';
 
 import type { RequestInterceptorConfig, ResponseInterceptorConfig } from '../types';
 
 const defaultRequestInterceptorConfig: RequestInterceptorConfig = {
-  fulfilled: (config) => config as InternalAxiosRequestConfig<never>,
-  rejected: (error) => Promise.reject(error) as never,
+  fulfilled: (config) => config,
+  rejected: (error) => Promise.reject(error),
 };
 
 const defaultResponseInterceptorConfig: ResponseInterceptorConfig = {
   fulfilled: (response: AxiosResponse) => response,
-  rejected: (error) => Promise.reject(error) as never,
+  rejected: (error) => Promise.reject(error),
 };
 
 class InterceptorManager {
@@ -23,20 +23,14 @@ class InterceptorManager {
     fulfilled,
     rejected,
   }: RequestInterceptorConfig = defaultRequestInterceptorConfig) {
-    this.axiosInstance.interceptors.request.use(
-      fulfilled as never,
-      rejected as never,
-    );
+    this.axiosInstance.interceptors.request.use(fulfilled, rejected);
   }
 
-  addResponseInterceptor<T = never>(
-    config: ResponseInterceptorConfig<T> = defaultResponseInterceptorConfig as ResponseInterceptorConfig<T>,
-  ) {
-    const {fulfilled, rejected} = config;
-    this.axiosInstance.interceptors.response.use(
-      fulfilled as never,
-      rejected as never,
-    );
+  addResponseInterceptor<T = never>({
+    fulfilled,
+    rejected,
+  }: ResponseInterceptorConfig<T> = defaultResponseInterceptorConfig as ResponseInterceptorConfig<T>) {
+    this.axiosInstance.interceptors.response.use(fulfilled, rejected);
   }
 }
 

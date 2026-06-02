@@ -2,7 +2,8 @@
 
 import {useState, useEffect} from 'react';
 import {useTranslations} from 'next-intl';
-import {Skeleton, Pagination} from 'antd';
+import {Skeleton} from '@/components/ui/skeleton';
+import {Button} from '@/components/ui/button';
 import {AppEmpty} from '@/components/ui';
 
 import {XIcon} from '@/plugins/xicon';
@@ -89,7 +90,7 @@ export default function TagListPage() {
                     <div className={styles['tags-grid']}>
                         {Array.from({length: 12}).map((_, i) => (
                             <div key={i} className={styles['tag-card-skeleton']}>
-                                <Skeleton.Image style={{height: 120}} active/>
+                                <Skeleton className="w-full" style={{height: 120}}/>
                             </div>
                         ))}
                     </div>
@@ -139,18 +140,29 @@ export default function TagListPage() {
                             <AppEmpty inContainer description={t('tags.no_tags')}/>
                         )}
 
+                        {/* Simple pagination */}
                         {total > pageSize && (
-                            <Pagination
-                                current={page}
-                                pageSize={pageSize}
-                                total={total}
-                                showSizeChanger
-                                showQuickJumper
-                                pageSizeOptions={['10', '20', '50', '100']}
-                                onChange={handlePageChange}
-                                onShowSizeChange={handlePageSizeChange}
-                                style={{margin: '32px auto 0', display: 'flex', justifyContent: 'center'}}
-                            />
+                            <div className="flex items-center justify-center gap-2 mt-8">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={page <= 1}
+                                    onClick={() => handlePageChange(page - 1)}
+                                >
+                                    {t('previous') || 'Previous'}
+                                </Button>
+                                <span className="text-sm text-muted-foreground">
+                                    {page} / {Math.ceil(total / pageSize)}
+                                </span>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={page >= Math.ceil(total / pageSize)}
+                                    onClick={() => handlePageChange(page + 1)}
+                                >
+                                    {t('next') || 'Next'}
+                                </Button>
+                            </div>
                         )}
                     </>
                 )}

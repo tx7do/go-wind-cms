@@ -2,7 +2,7 @@
 
 import React, {useEffect} from 'react';
 import {useRouter} from 'next/navigation'; // 使用原始 Next.js router
-import {Spin} from 'antd';
+import {Spinner} from '@/components/ui/spinner';
 
 import {env} from "@/config";
 
@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
             alignItems: 'center',
             height: '100vh'
         }}>
-            <Spin size="large"/>
+            <Spinner size="lg"/>
             <main>
                 <h1 style={{marginTop: 24}}>Redirecting to home page...</h1>
             </main>

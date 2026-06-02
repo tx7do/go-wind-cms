@@ -1,7 +1,9 @@
 'use client';
 
 import React, {useState} from 'react';
-import {Button, Avatar, Spin} from 'antd';
+import {Button} from '@/components/ui/button';
+import {Avatar, AvatarFallback} from '@/components/ui/avatar';
+import {Spinner} from '@/components/ui/spinner';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
@@ -148,8 +150,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                     {/* 评论主体 */}
                     <div className={styles.commentItem}>
                         <div className={styles.commentAvatar}>
-                            <Avatar size={48}>
-                                {comment.authorName?.charAt(0) || 'U'}
+                            <Avatar className="h-12 w-12">
+                                <AvatarFallback>{comment.authorName?.charAt(0) || 'U'}</AvatarFallback>
                             </Avatar>
                         </div>
                         <div className={styles.commentBody}>
@@ -239,15 +241,15 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     </div>
                                     <div className={styles.replyFormActions}>
                                         <Button
-                                            size="small"
-                                            type="primary"
+                                            size="sm"
                                             onClick={() => submitReply(comment)}
-                                            loading={submitting}
+                                            disabled={submitting}
                                         >
-                                            {t('submit_comment')}
+                                            {submitting ? '...' : t('submit_comment')}
                                         </Button>
                                         <Button
-                                            size="small"
+                                            variant="outline"
+                                            size="sm"
                                             onClick={cancelReply}
                                             disabled={submitting}
                                         >
@@ -265,7 +267,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             {/* 加载中提示 */}
                             {isLoading(comment) && (
                                 <div className={styles.loadingChildren}>
-                                    <Spin size="small"/>
+                                    <Spinner size="sm"/>
                                     <span>{t('loading')}</span>
                                 </div>
                             )}

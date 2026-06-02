@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
-import {Skeleton, Button} from 'antd';
+import {Skeleton} from '@/components/ui/skeleton';
+import {Button} from '@/components/ui/button';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
@@ -97,7 +98,7 @@ export default function PopularTagsSection() {
                     <XIcon name="carbon:fire" size={28} style={{color: '#6366f1', marginRight: '8px'}}/>
                     {t('popular_tags')}
                 </h2>
-                <Button type="text" onClick={() => router.push('/tag')}>
+                <Button variant="ghost" onClick={() => router.push('/tag')}>
                     {t('view_all')} →
                 </Button>
             </div>
@@ -106,7 +107,7 @@ export default function PopularTagsSection() {
                     <div className={styles.tagsGrid}>
                         {Array.from({length: 6}).map((_, i) => (
                             <div key={i} className={styles.tagItem}>
-                                <Skeleton.Button style={{width: '100%', height: '44px'}} active/>
+                                <Skeleton className="w-full h-11"/>
                             </div>
                         ))}
                     </div>

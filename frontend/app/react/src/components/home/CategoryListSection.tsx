@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useCallback, useRef, useMemo} from 'react';
-import {Skeleton, Carousel, Button} from 'antd';
+import {Skeleton} from '@/components/ui/skeleton';
+import {Button} from '@/components/ui/button';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+} from '@/components/ui/carousel';
 import {useTranslations} from 'next-intl';
 
 import {fetchListCategories} from '@/api/hooks/category';
@@ -115,7 +121,7 @@ export default function CategoryListSection({
                         <XIcon name="carbon:folder-details" size={28} style={{color: '#6366f1', marginRight: '8px'}}/>
                         {t('categories')}
                     </h2>
-                    <Button type="text" onClick={handleViewCategory}>
+                    <Button variant="ghost" onClick={handleViewCategory}>
                         {t('view_all')} →
                     </Button>
                 </div>
@@ -126,7 +132,7 @@ export default function CategoryListSection({
                 <div className={`${styles.categoriesGrid} desktop-grid`}>
                     {Array.from({length: skeletonCount}).map((_, i) => (
                         <div key={i} className={styles.categoryCardSkeleton}>
-                            <Skeleton.Button style={{width: '100%', height: '140px'}}/>
+                            <Skeleton className="w-full" style={{height: '140px'}}/>
                         </div>
                     ))}
                 </div>
@@ -146,27 +152,26 @@ export default function CategoryListSection({
                     {/* Mobile Carousel - 始终渲染，由 CSS 控制显示 */}
                     <div className={`${styles.categoriesCarousel} mobile-carousel`}>
                         <Carousel
-                            autoplay
-                            autoplaySpeed={5000}
-                            arrows={false}
-                            draggable
-                            slidesToShow={1.5}
-                            centerMode
-                            dots={false}
+                            opts={{
+                                align: 'center',
+                                loop: false,
+                            }}
                             className={styles.carouselContainer}
                         >
-                            {categories.map((category) => (
-                                <div
-                                    key={category.id}
-                                    className={styles.carouselItem}
-                                    onClick={() => handleViewCategoryDetail(category.id || 0)}
-                                >
-                                    <HomeCategoryCard
-                                        category={category}
-                                        onClick={handleViewCategoryDetail}
-                                    />
-                                </div>
-                            ))}
+                            <CarouselContent>
+                                {categories.map((category) => (
+                                    <CarouselItem
+                                        key={category.id}
+                                        className={styles.carouselItem}
+                                        onClick={() => handleViewCategoryDetail(category.id || 0)}
+                                    >
+                                        <HomeCategoryCard
+                                            category={category}
+                                            onClick={handleViewCategoryDetail}
+                                        />
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
                         </Carousel>
                     </div>
                 </>

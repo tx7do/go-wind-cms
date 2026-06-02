@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useEffect} from "react";
-import {Button} from 'antd';
 import {XIcon} from '@/plugins/xicon';
 import {useTranslations} from 'next-intl';
 

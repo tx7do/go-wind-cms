@@ -1,7 +1,8 @@
 'use client';
 
 import React, {useState, useEffect, useRef} from 'react';
-import {Button} from 'antd';
+import {Button} from '@/components/ui/button';
+import {Spinner} from '@/components/ui/spinner';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
@@ -291,13 +292,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     </div>
                     <div className={styles.formActions}>
                         <Button
-                            type="primary"
-                            size="large"
+                            size="lg"
                             onClick={handleSubmitComment}
-                            loading={submitting}
-                            shape="round"
-                            icon={<XIcon name="carbon:send-alt" size={18}/>}
+                            disabled={submitting}
+                            className="gap-2"
                         >
+                            {submitting ? <Spinner size="sm"/> : <XIcon name="carbon:send-alt" size={18}/>}
                             {t('submit_comment')}
                         </Button>
                         <span className={styles.formTip}>
@@ -325,11 +325,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     {showLoadMore && (
                         <div className={styles.loadMoreContainer}>
                             <Button
-                                size="large"
+                                size="lg"
                                 onClick={loadMoreComments}
-                                loading={loadingMore}
+                                disabled={loadingMore}
                             >
-                                {t('load_more')}
+                                {loadingMore ? 'Loading...' : t('load_more')}
                             </Button>
                         </div>
                     )}

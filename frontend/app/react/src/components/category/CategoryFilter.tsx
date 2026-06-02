@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState, useEffect, useRef} from 'react';
-import {Button} from 'antd';
+import {Button} from '@/components/ui/button';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
@@ -157,12 +157,12 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             <div className={styles.categoryTabs}>
                 {/* 所有分类按钮 */}
                 <Button
-                    type={selectedCategory === null ? 'primary' : 'default'}
-                    ghost={selectedCategory !== null}
-                    size="large"
+                    variant={selectedCategory === null ? 'default' : 'outline'}
+                    size="lg"
                     onClick={() => handleCategoryChange(null)}
-                    icon={<XIcon name="carbon:grid" size={16}/>}
+                    className="gap-2"
                 >
+                    <XIcon name="carbon:grid" size={16}/>
                     {t('all_categories')}
                 </Button>
 
@@ -178,12 +178,12 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                 onMouseLeave={() => node.id && hideSubmenu(node.id)}
                             >
                                 <Button
-                                    type={selectedCategory === node.id ? 'primary' : 'default'}
-                                    ghost={selectedCategory !== node.id}
-                                    size="large"
+                                    variant={selectedCategory === node.id ? 'default' : 'outline'}
+                                    size="lg"
                                     onClick={() => node.id && handleCategoryClick(node.id)}
-                                    icon={<XIcon name={node.icon || 'carbon:folder'} size={16}/>}
+                                    className="gap-2"
                                 >
+                                    <XIcon name={node.icon || 'carbon:folder'} size={16}/>
                                     {getCategoryName(node)}
                                 </Button>
 
@@ -197,15 +197,15 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                         {node.children!.map((child) => (
                                             <Button
                                                 key={child.id}
-                                                type={selectedCategory === child.id ? 'primary' : 'default'}
-                                                ghost={selectedCategory !== child.id}
-                                                size="medium"
+                                                variant={selectedCategory === child.id ? 'default' : 'outline'}
+                                                size="sm"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleCategoryChange(child.id || 0);
                                                 }}
-                                                icon={<XIcon name={child.icon || 'carbon:folder'} size={14}/>}
+                                                className="gap-2"
                                             >
+                                                <XIcon name={child.icon || 'carbon:folder'} size={14}/>
                                                 {getCategoryName(child)}
                                             </Button>
                                         ))}
@@ -220,12 +220,12 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                         {rootCategories.map((cat) => (
                             <Button
                                 key={cat.id}
-                                type={selectedCategory === cat.id ? 'primary' : 'default'}
-                                ghost={selectedCategory !== cat.id}
-                                size="large"
+                                variant={selectedCategory === cat.id ? 'default' : 'outline'}
+                                size="lg"
                                 onClick={() => handleCategoryChange(cat.id || 0)}
-                                icon={<XIcon name={cat.icon || 'carbon:folder'} size={16}/>}
+                                className="gap-2"
                             >
+                                <XIcon name={cat.icon || 'carbon:folder'} size={16}/>
                                 {getCategoryName(cat)}
                             </Button>
                         ))}

@@ -1,7 +1,8 @@
 'use client';
 
 import React, {useState, useEffect, useCallback} from 'react';
-import {Pagination, Skeleton} from 'antd';
+import {Skeleton} from '@/components/ui/skeleton';
+import {Button} from '@/components/ui/button';
 import {useTranslations} from 'next-intl';
 import {AppEmpty} from '@/components/ui';
 
@@ -124,13 +125,14 @@ const PostList: React.FC<PostListProps> = ({
                 <div className={styles.postsGrid} style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}>
                     {Array.from({length: currentPageSize}).map((_, index) => (
                         <div key={index} className={styles.postCardSkeleton}>
-                            <Skeleton.Image style={{height: 240}}/>
+                            <Skeleton className="w-full" style={{height: 240}}/>
                             <div className={styles.skeletonContent}>
-                                <Skeleton paragraph={{rows: 2}} title={false}/>
+                                <Skeleton className="h-4 w-full"/>
+                                <Skeleton className="h-4 w-3/4"/>
                                 <div className={styles.skeletonMeta}>
-                                    <Skeleton.Button size="small" style={{width: 60}}/>
-                                    <Skeleton.Button size="small" style={{width: 60}}/>
-                                    <Skeleton.Button size="small" style={{width: 60}}/>
+                                    <Skeleton className="h-6" style={{width: 60}}/>
+                                    <Skeleton className="h-6" style={{width: 60}}/>
+                                    <Skeleton className="h-6" style={{width: 60}}/>
                                 </div>
                             </div>
                         </div>
@@ -160,17 +162,27 @@ const PostList: React.FC<PostListProps> = ({
 
                     {showPagination && total > currentPageSize && (
                         <div className={styles.paginationWrapper}>
-                            <Pagination
-                                current={currentPage}
-                                pageSize={currentPageSize}
-                                total={total}
-                                showSizeChanger
-                                showQuickJumper
-                                pageSizeOptions={pageSizes.map(String)}
-                                onChange={handlePageChange}
-                                onShowSizeChange={handlePageSizeChange}
-                                showTotal={(total) => t('total_articles', {total})}
-                            />
+                            <div className="flex items-center justify-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={currentPage <= 1}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                >
+                                    Previous
+                                </Button>
+                                <span className="text-sm text-muted-foreground px-2">
+                                    {currentPage} / {Math.ceil(total / currentPageSize)}
+                                </span>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={currentPage >= Math.ceil(total / currentPageSize)}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                >
+                                    Next
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button} from 'antd';
+import {Button} from '@/components/ui/button';
 import {useTranslations} from 'next-intl';
 
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
@@ -72,11 +72,11 @@ export default function HeroSection() {
                 <p className={styles.heroSubtitle}>{brandT('brand_subtitle')}</p>
                 <p className={styles.heroDescription}>{t('hero_description')}</p>
                 <div className={styles.heroActions}>
-                    <Button type="primary" size="large" className={styles.btnPrimary}
+                    <Button size="lg" className={styles.btnPrimary}
                             onClick={() => router.push('/post')}>
                         {t('browse_posts')}
                     </Button>
-                    <Button size="large" className={styles.btnSecondary}
+                    <Button variant="outline" size="lg" className={styles.btnSecondary}
                             onClick={() => router.push('/about')}>
                         {t('learn_more')}
                     </Button>

@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import {Button} from 'antd';
+import {Button} from '@/components/ui/button';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
@@ -26,7 +26,7 @@ export default function FeaturedPostsSection() {
                     <XIcon name="carbon:star-filled" size={28} style={{color: '#6366f1', marginRight: '8px'}} />
                     {t('featured_posts')}
                 </h2>
-                <Button type="text" onClick={() => router.push('/post')}>
+                <Button variant="ghost" onClick={() => router.push('/post')}>
                     {t('view_all')} →
                 </Button>
             </div>

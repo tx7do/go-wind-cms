@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {Input} from 'antd';
+import {OtpInput} from '@/components/ui/otp-input';
 
 import styles from './VerificationCodeInput.module.css';
 
@@ -24,7 +24,7 @@ interface VerificationCodeInputProps {
 
 /**
  * 验证码输入组件
- * 基于 Ant Design Input.OTP 实现
+ * 基于 shadcn/ui OtpInput 实现
  */
 export const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({
                                                                                 length = 6,
@@ -46,7 +46,7 @@ export const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({
 
     return (
         <div className={`${styles.verificationCodeInput} ${className}`}>
-            <Input.OTP
+            <OtpInput
                 length={length}
                 value={value}
                 onChange={handleChange}
