@@ -1,84 +1,44 @@
 <script setup lang="ts">
-import {fetchListPost, getPostTitle, getPostSummary, getPostThumbnail} from '@/api/composables/post'
-import type {ListPostParams} from '@/api/composables/post'
+const { t } = useI18n()
 
-const {t} = useI18n()
+useHead({ title: t('page.posts.posts_list') })
 
-useHead({title: t('page.posts.posts_list')})
-const localePath = useLocalePath()
-const route = useRoute()
+const selectedCategoryId = ref<number | null>(null)
 
-const posts = ref<any[]>([])
-const loading = ref(true)
+const handleCategoryChange = (categoryId: number | null) => {
+  selectedCategoryId.value = categoryId
+}
 
-onMounted(async () => {
-  try {
-    const params: ListPostParams = {
-      paging: {page: 1, pageSize: 20},
-      isTenantUser: true,
-    }
-    const res = await fetchListPost(params)
-    posts.value = res?.items || []
-  } catch (e) {
-    console.error('[Post List] 加载失败:', e)
-  } finally {
-    loading.value = false
+const queryParams = computed(() => {
+  if (selectedCategoryId.value) {
+    return { category_ids__in: [selectedCategoryId.value] }
   }
+  return {}
 })
 </script>
 
 <template>
   <div class="w-full">
     <LayoutPageHero
-        :title="t('page.posts.posts_list')"
-        :description="t('page.posts.explore_latest')"
-        icon="carbon:document"
-        size="md"
+      :title="t('page.posts.posts_list')"
+      :description="t('page.posts.explore_latest')"
+      icon="carbon:document"
+      size="md"
     />
 
-    <section class="w-full py-12 max-md:py-8">
-      <LayoutSectionContainer>
-        <!-- Loading -->
-        <div v-if="loading" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div v-for="i in 6" :key="i" class="rounded-xl border border-border p-4">
-            <UiSkeleton class="h-35 w-full"/>
-            <div class="mt-4 space-y-2">
-              <UiSkeleton class="h-5 w-3/4"/>
-              <UiSkeleton class="h-4 w-full"/>
-            </div>
-          </div>
-        </div>
+    <LayoutSectionContainer>
+      <CategoryFilter
+        :selected-category="selectedCategoryId"
+        :tree-mode="true"
+        :auto-load="true"
+        @category-change="handleCategoryChange"
+      />
 
-        <!-- Empty -->
-        <div v-else-if="posts.length === 0" class="py-20 text-center">
-          <UiAppEmpty :description="t('page.posts.no_results')"/>
-        </div>
-
-        <!-- Post Grid -->
-        <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <NuxtLink
-              v-for="post in posts"
-              :key="post.id"
-              :to="localePath(`/post/${post.id}`)"
-              class="group rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
-          >
-            <div class="aspect-video overflow-hidden rounded-lg bg-muted">
-              <img
-                  v-if="getPostThumbnail(post)"
-                  :src="getPostThumbnail(post)"
-                  :alt="getPostTitle(post)"
-                  class="h-full w-full object-cover transition-transform group-hover:scale-105"
-              />
-            </div>
-            <h3 class="mt-3 text-base font-semibold text-foreground group-hover:text-primary">
-              {{ getPostTitle(post, t('page.post_detail.untitled')) }}
-            </h3>
-            <p class="mt-1 line-clamp-2 text-sm text-muted-foreground">
-              {{ getPostSummary(post) }}
-            </p>
-          </NuxtLink>
-        </div>
-      </LayoutSectionContainer>
-    </section>
+      <PostList
+        :key="selectedCategoryId || 'all'"
+        :query-params="queryParams"
+        :initial-page-size="12"
+      />
+    </LayoutSectionContainer>
   </div>
 </template>
