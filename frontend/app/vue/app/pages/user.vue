@@ -1,10 +1,12 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { XIcon } from '@/plugins/xicon'
 import { useUserStore } from '@/stores/modules/core/user.state'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useGetMe } from '@/api/composables/user-profile'
 
 const { t } = useI18n()
+
+useHead({ title: t('menu.my_profile') })
 const localePath = useLocalePath()
 const userStore = useUserStore()
 const accessStore = useAccessStore()

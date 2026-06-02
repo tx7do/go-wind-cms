@@ -4,6 +4,8 @@ import { usePreferences } from '@/core/preferences/use-preferences'
 
 const { t } = useI18n()
 const { locale } = useI18n()
+
+useHead({ title: t('settings.account.title') })
 const localePath = useLocalePath()
 const switchLocalePath = useSwitchLocalePath()
 

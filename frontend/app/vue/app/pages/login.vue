@@ -4,6 +4,8 @@ import { useAuthStore } from '@/stores/modules/app/auth.state'
 definePageMeta({ layout: 'auth' })
 
 const { t } = useI18n()
+
+useHead({ title: t('authentication.login.title') })
 const localePath = useLocalePath()
 const authStore = useAuthStore()
 

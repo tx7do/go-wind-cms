@@ -4,6 +4,8 @@ import { XIcon } from '@/plugins/xicon'
 import { cn } from '@/lib/utils'
 
 const { t } = useI18n()
+
+useHead({ title: t('page.tags.tags_list') })
 const localePath = useLocalePath()
 
 const tags = ref<any[]>([])

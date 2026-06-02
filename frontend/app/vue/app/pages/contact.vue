@@ -3,6 +3,8 @@ import { XIcon } from '@/plugins/xicon'
 
 const { t } = useI18n()
 
+useHead({ title: t('page.legal.contact.title') })
+
 const cards = [
   {
     icon: 'carbon:help',

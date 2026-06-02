@@ -2,6 +2,8 @@
 definePageMeta({ layout: 'auth' })
 
 const { t } = useI18n()
+
+useHead({ title: t('authentication.register.title') })
 const localePath = useLocalePath()
 
 const activeTab = ref('account')

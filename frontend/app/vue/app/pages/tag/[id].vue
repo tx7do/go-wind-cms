@@ -19,6 +19,12 @@ const total = ref(0)
 
 const tagId = computed(() => Number(route.params.id))
 
+// 动态标题
+const tagTitle = computed(() =>
+  tag.value ? getTagName(tag.value) : t('page.tags.tags_list')
+)
+useHead({ title: () => tagTitle.value })
+
 function getTagName(tagData: any) {
   const translation = getTagTranslation(tagData)
   return translation?.name || t('page.tags.tag_untitled')

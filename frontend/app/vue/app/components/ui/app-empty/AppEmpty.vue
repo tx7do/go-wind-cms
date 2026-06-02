@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 const props = defineProps<{
   variant?: 'default' | 'error' | 'noData'
   inContainer?: boolean
+  description?: string
   class?: string
 }>()
 </script>
@@ -15,7 +16,8 @@ const props = defineProps<{
         <XIcon icon="lucide:inbox" width="64" height="64" class="text-muted-foreground" />
       </slot>
     </div>
-    <p v-if="$slots.default" class="text-sm text-muted-foreground">
+    <p v-if="description" class="text-sm text-muted-foreground">{{ description }}</p>
+    <p v-else-if="$slots.default" class="text-sm text-muted-foreground">
       <slot />
     </p>
   </div>
