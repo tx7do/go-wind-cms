@@ -1,9 +1,11 @@
 import type {
   AppPreferences,
+  ContentPreferences,
   CopyrightPreferences,
   LogoPreferences,
   ThemePreferences,
   TransitionPreferences,
+  WidgetPreferences,
 } from "./app";
 
 /**
@@ -18,6 +20,10 @@ export interface Preferences {
   logo: LogoPreferences;
   /** 主题配置 */
   theme: ThemePreferences;
+  /** 内容偏好（CMS 专用） */
+  content: ContentPreferences;
+  /** 小部件配置 */
+  widget: WidgetPreferences;
   /** 动画配置 */
   transition: TransitionPreferences;
 }
