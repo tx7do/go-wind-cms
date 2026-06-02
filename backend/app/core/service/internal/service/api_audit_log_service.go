@@ -13,7 +13,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data"
 
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 )
 
 type ApiAuditLogService struct {
@@ -24,7 +24,7 @@ type ApiAuditLogService struct {
 	apiAuditLogRepo *data.ApiAuditLogRepo
 	apiRepo         *data.ApiRepo
 
-	apis     []*resourceV1.Api
+	apis     []*permissionV1.Api
 	apiMutex sync.RWMutex
 }
 
@@ -40,7 +40,7 @@ func NewApiAuditLogService(
 	}
 }
 
-func (s *ApiAuditLogService) queryApis(ctx context.Context, path, method string) (*resourceV1.Api, error) {
+func (s *ApiAuditLogService) queryApis(ctx context.Context, path, method string) (*permissionV1.Api, error) {
 	if len(s.apis) == 0 {
 		s.apiMutex.Lock()
 		apis, err := s.apiRepo.List(ctx, &paginationV1.PagingRequest{

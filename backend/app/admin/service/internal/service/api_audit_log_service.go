@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	"sync"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -21,16 +21,16 @@ type ApiAuditLogService struct {
 	log *log.Helper
 
 	apiAuditLogServiceClient auditV1.ApiAuditLogServiceClient
-	apiServiceClient         resourceV1.ApiServiceClient
+	apiServiceClient         permissionV1.ApiServiceClient
 
-	apis     []*resourceV1.Api
+	apis     []*permissionV1.Api
 	apiMutex sync.RWMutex
 }
 
 func NewApiAuditLogService(
 	ctx *bootstrap.Context,
 	apiAuditLogServiceClient auditV1.ApiAuditLogServiceClient,
-	apiServiceClient resourceV1.ApiServiceClient,
+	apiServiceClient permissionV1.ApiServiceClient,
 ) *ApiAuditLogService {
 	return &ApiAuditLogService{
 		log:                      ctx.NewLoggerHelper("api-audit-log/service/admin-service"),
@@ -39,7 +39,7 @@ func NewApiAuditLogService(
 	}
 }
 
-func (s *ApiAuditLogService) queryApis(ctx context.Context, path, method string) (*resourceV1.Api, error) {
+func (s *ApiAuditLogService) queryApis(ctx context.Context, path, method string) (*permissionV1.Api, error) {
 	if len(s.apis) == 0 {
 		s.apiMutex.Lock()
 		apis, err := s.apiServiceClient.List(ctx, &paginationV1.PagingRequest{

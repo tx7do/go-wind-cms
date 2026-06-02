@@ -11,11 +11,11 @@ import (
 
 	"go-wind-cms/app/core/service/internal/data"
 
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 )
 
 type ApiService struct {
-	resourceV1.UnimplementedApiServiceServer
+	permissionV1.UnimplementedApiServiceServer
 
 	log *log.Helper
 
@@ -39,17 +39,17 @@ func NewApiService(
 func (s *ApiService) init() {
 }
 
-func (s *ApiService) List(ctx context.Context, req *paginationV1.PagingRequest) (*resourceV1.ListApiResponse, error) {
+func (s *ApiService) List(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.ListApiResponse, error) {
 	return s.apiRepo.List(ctx, req)
 }
 
-func (s *ApiService) Get(ctx context.Context, req *resourceV1.GetApiRequest) (*resourceV1.Api, error) {
+func (s *ApiService) Get(ctx context.Context, req *permissionV1.GetApiRequest) (*permissionV1.Api, error) {
 	return s.apiRepo.Get(ctx, req)
 }
 
-func (s *ApiService) Create(ctx context.Context, req *resourceV1.CreateApiRequest) (*emptypb.Empty, error) {
+func (s *ApiService) Create(ctx context.Context, req *permissionV1.CreateApiRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
-		return nil, resourceV1.ErrorBadRequest("invalid parameter")
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
 	if err := s.apiRepo.Create(ctx, req); err != nil {
@@ -59,9 +59,9 @@ func (s *ApiService) Create(ctx context.Context, req *resourceV1.CreateApiReques
 	return &emptypb.Empty{}, nil
 }
 
-func (s *ApiService) Update(ctx context.Context, req *resourceV1.UpdateApiRequest) (*emptypb.Empty, error) {
+func (s *ApiService) Update(ctx context.Context, req *permissionV1.UpdateApiRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
-		return nil, resourceV1.ErrorBadRequest("invalid parameter")
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
 	if err := s.apiRepo.Update(ctx, req); err != nil {
@@ -71,7 +71,7 @@ func (s *ApiService) Update(ctx context.Context, req *resourceV1.UpdateApiReques
 	return &emptypb.Empty{}, nil
 }
 
-func (s *ApiService) Delete(ctx context.Context, req *resourceV1.DeleteApiRequest) (*emptypb.Empty, error) {
+func (s *ApiService) Delete(ctx context.Context, req *permissionV1.DeleteApiRequest) (*emptypb.Empty, error) {
 	if err := s.apiRepo.Delete(ctx, req); err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (s *ApiService) Delete(ctx context.Context, req *resourceV1.DeleteApiReques
 	return &emptypb.Empty{}, nil
 }
 
-func (s *ApiService) SyncApis(ctx context.Context, req *resourceV1.SyncApisRequest) (*emptypb.Empty, error) {
+func (s *ApiService) SyncApis(ctx context.Context, req *permissionV1.SyncApisRequest) (*emptypb.Empty, error) {
 	if err := s.apiRepo.BatchCreate(ctx, req.GetApis()); err != nil {
 		return nil, err
 	}

@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
 	"go-wind-cms/pkg/middleware/auth"
 )
@@ -20,17 +20,17 @@ type MenuService struct {
 
 	log *log.Helper
 
-	menuServiceClient resourceV1.MenuServiceClient
+	menuServiceClient permissionV1.MenuServiceClient
 }
 
-func NewMenuService(ctx *bootstrap.Context, menuServiceClient resourceV1.MenuServiceClient) *MenuService {
+func NewMenuService(ctx *bootstrap.Context, menuServiceClient permissionV1.MenuServiceClient) *MenuService {
 	return &MenuService{
 		log:               ctx.NewLoggerHelper("menu/service/admin-service"),
 		menuServiceClient: menuServiceClient,
 	}
 }
 
-func (s *MenuService) List(ctx context.Context, req *paginationV1.PagingRequest) (*resourceV1.ListMenuResponse, error) {
+func (s *MenuService) List(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.ListMenuResponse, error) {
 	ret, err := s.menuServiceClient.List(ctx, req)
 	if err != nil {
 
@@ -40,7 +40,7 @@ func (s *MenuService) List(ctx context.Context, req *paginationV1.PagingRequest)
 	return ret, nil
 }
 
-func (s *MenuService) Get(ctx context.Context, req *resourceV1.GetMenuRequest) (*resourceV1.Menu, error) {
+func (s *MenuService) Get(ctx context.Context, req *permissionV1.GetMenuRequest) (*permissionV1.Menu, error) {
 	ret, err := s.menuServiceClient.Get(ctx, req)
 	if err != nil {
 
@@ -50,7 +50,7 @@ func (s *MenuService) Get(ctx context.Context, req *resourceV1.GetMenuRequest) (
 	return ret, nil
 }
 
-func (s *MenuService) Create(ctx context.Context, req *resourceV1.CreateMenuRequest) (*emptypb.Empty, error) {
+func (s *MenuService) Create(ctx context.Context, req *permissionV1.CreateMenuRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -66,7 +66,7 @@ func (s *MenuService) Create(ctx context.Context, req *resourceV1.CreateMenuRequ
 	return s.menuServiceClient.Create(ctx, req)
 }
 
-func (s *MenuService) Update(ctx context.Context, req *resourceV1.UpdateMenuRequest) (*emptypb.Empty, error) {
+func (s *MenuService) Update(ctx context.Context, req *permissionV1.UpdateMenuRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -87,7 +87,7 @@ func (s *MenuService) Update(ctx context.Context, req *resourceV1.UpdateMenuRequ
 	return s.menuServiceClient.Update(ctx, req)
 }
 
-func (s *MenuService) Delete(ctx context.Context, req *resourceV1.DeleteMenuRequest) (*emptypb.Empty, error) {
+func (s *MenuService) Delete(ctx context.Context, req *permissionV1.DeleteMenuRequest) (*emptypb.Empty, error) {
 	// 获取操作人信息
 	operator, err := auth.FromContext(ctx)
 	if err != nil {

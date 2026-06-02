@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	"strings"
 	"time"
 
@@ -98,13 +98,13 @@ func (r *DictEntryRepo) List(ctx context.Context, req *paginationV1.PagingReques
 	whereSelectors, _, err := r.repository.BuildListSelectorWithPaging(builder, req)
 	if err != nil {
 		r.log.Errorf("parse list param error [%s]", err.Error())
-		return nil, resourceV1.ErrorBadRequest("invalid query parameter")
+		return nil, permissionV1.ErrorBadRequest("invalid query parameter")
 	}
 
 	entities, err := builder.All(ctx)
 	if err != nil {
 		r.log.Errorf("query dict entry list failed: %s", err.Error())
-		return nil, resourceV1.ErrorInternalServerError("query dict entry list failed")
+		return nil, permissionV1.ErrorInternalServerError("query dict entry list failed")
 	}
 
 	dtos := make([]*dictV1.DictEntry, 0, len(entities))

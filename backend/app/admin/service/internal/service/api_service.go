@@ -14,7 +14,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
 	"go-wind-cms/app/admin/service/cmd/server/assets"
 
@@ -31,13 +31,13 @@ type ApiService struct {
 
 	log *log.Helper
 
-	apiServiceClient resourceV1.ApiServiceClient
+	apiServiceClient permissionV1.ApiServiceClient
 	routeWalker      RouteWalker
 }
 
 func NewApiService(
 	ctx *bootstrap.Context,
-	apiServiceClient resourceV1.ApiServiceClient,
+	apiServiceClient permissionV1.ApiServiceClient,
 ) *ApiService {
 	svc := &ApiService{
 		log:              ctx.NewLoggerHelper("api/service/admin-service"),
@@ -60,15 +60,15 @@ func (s *ApiService) RegisterRouteWalker(routeWalker RouteWalker) {
 	s.routeWalker = routeWalker
 }
 
-func (s *ApiService) List(ctx context.Context, req *paginationV1.PagingRequest) (*resourceV1.ListApiResponse, error) {
+func (s *ApiService) List(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.ListApiResponse, error) {
 	return s.apiServiceClient.List(ctx, req)
 }
 
-func (s *ApiService) Get(ctx context.Context, req *resourceV1.GetApiRequest) (*resourceV1.Api, error) {
+func (s *ApiService) Get(ctx context.Context, req *permissionV1.GetApiRequest) (*permissionV1.Api, error) {
 	return s.apiServiceClient.Get(ctx, req)
 }
 
-func (s *ApiService) Create(ctx context.Context, req *resourceV1.CreateApiRequest) (*emptypb.Empty, error) {
+func (s *ApiService) Create(ctx context.Context, req *permissionV1.CreateApiRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -88,7 +88,7 @@ func (s *ApiService) Create(ctx context.Context, req *resourceV1.CreateApiReques
 	return &emptypb.Empty{}, nil
 }
 
-func (s *ApiService) Update(ctx context.Context, req *resourceV1.UpdateApiRequest) (*emptypb.Empty, error) {
+func (s *ApiService) Update(ctx context.Context, req *permissionV1.UpdateApiRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -113,7 +113,7 @@ func (s *ApiService) Update(ctx context.Context, req *resourceV1.UpdateApiReques
 	return &emptypb.Empty{}, nil
 }
 
-func (s *ApiService) Delete(ctx context.Context, req *resourceV1.DeleteApiRequest) (*emptypb.Empty, error) {
+func (s *ApiService) Delete(ctx context.Context, req *permissionV1.DeleteApiRequest) (*emptypb.Empty, error) {
 	if _, err := s.apiServiceClient.Delete(ctx, req); err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func (s *ApiService) syncWithOpenAPI(ctx context.Context) error {
 	}
 
 	var count uint32 = 0
-	var apiList []*resourceV1.Api
+	var apiList []*permissionV1.Api
 
 	// 遍历所有路径和操作
 	for path, pathItem := range doc.Paths.Map() {
@@ -166,7 +166,7 @@ func (s *ApiService) syncWithOpenAPI(ctx context.Context) error {
 
 			count++
 
-			apiList = append(apiList, &resourceV1.Api{
+			apiList = append(apiList, &permissionV1.Api{
 				Id:                trans.Ptr(count),
 				Path:              trans.Ptr(path),
 				Method:            trans.Ptr(method),
@@ -178,7 +178,7 @@ func (s *ApiService) syncWithOpenAPI(ctx context.Context) error {
 		}
 	}
 
-	_, _ = s.apiServiceClient.SyncApis(ctx, &resourceV1.SyncApisRequest{
+	_, _ = s.apiServiceClient.SyncApis(ctx, &permissionV1.SyncApisRequest{
 		Apis: apiList,
 	})
 
@@ -193,13 +193,13 @@ func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
 
 	var count uint32 = 0
 
-	var apiList []*resourceV1.Api
+	var apiList []*permissionV1.Api
 
 	if err := s.routeWalker.WalkRoute(func(info http.RouteInfo) error {
 		//log.Infof("Path[%s] Method[%s]", info.Path, info.Method)
 		count++
 
-		apiList = append(apiList, &resourceV1.Api{
+		apiList = append(apiList, &permissionV1.Api{
 			Id:     trans.Ptr(count),
 			Path:   trans.Ptr(info.Path),
 			Method: trans.Ptr(info.Method),
@@ -218,7 +218,7 @@ func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
 		return apiList[i].GetPath() < apiList[j].GetPath()
 	})
 
-	_, _ = s.apiServiceClient.SyncApis(ctx, &resourceV1.SyncApisRequest{
+	_, _ = s.apiServiceClient.SyncApis(ctx, &permissionV1.SyncApisRequest{
 		Apis: apiList,
 	})
 
@@ -226,23 +226,23 @@ func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
 }
 
 // GetWalkRouteData 获取通过 WalkRoute 获取的路由数据，用于调试
-func (s *ApiService) GetWalkRouteData(_ context.Context, _ *emptypb.Empty) (*resourceV1.ListApiResponse, error) {
+func (s *ApiService) GetWalkRouteData(_ context.Context, _ *emptypb.Empty) (*permissionV1.ListApiResponse, error) {
 	if s.routeWalker == nil {
 		return nil, adminV1.ErrorInternalServerError("router walker is nil")
 	}
 
-	resp := &resourceV1.ListApiResponse{
-		Items: []*resourceV1.Api{},
+	resp := &permissionV1.ListApiResponse{
+		Items: []*permissionV1.Api{},
 	}
 	var count uint32 = 0
 	if err := s.routeWalker.WalkRoute(func(info http.RouteInfo) error {
 		//log.Infof("Path[%s] Method[%s]", info.Path, info.Method)
 		count++
-		resp.Items = append(resp.Items, &resourceV1.Api{
+		resp.Items = append(resp.Items, &permissionV1.Api{
 			Id:     trans.Ptr(count),
 			Path:   trans.Ptr(info.Path),
 			Method: trans.Ptr(info.Method),
-			Status: trans.Ptr(resourceV1.Api_ON),
+			Status: trans.Ptr(permissionV1.Api_ON),
 		})
 		return nil
 	}); err != nil {

@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	resourcepb "go-wind-cms/api/gen/go/resource/service/v1"
+	resourcepb "go-wind-cms/api/gen/go/permission/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
 	"time"
 

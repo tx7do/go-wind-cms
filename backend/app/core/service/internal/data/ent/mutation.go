@@ -9,7 +9,7 @@ import (
 	auditpb "go-wind-cms/api/gen/go/audit/service/v1"
 	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
-	resourcepb "go-wind-cms/api/gen/go/resource/service/v1"
+	resourcepb "go-wind-cms/api/gen/go/permission/service/v1"
 	taskpb "go-wind-cms/api/gen/go/task/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/api"
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"

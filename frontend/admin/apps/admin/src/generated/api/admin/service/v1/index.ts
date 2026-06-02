@@ -101,12 +101,12 @@ export type AdminErrorReason =
   | "NETWORK_CONNECT_TIMEOUT_ERROR";
 // 查询路由列表 - 回应
 export type ListRouteResponse = {
-  items: resourceservicev1_MenuRouteItem[] | undefined;
+  items: permissionservicev1_MenuRouteItem[] | undefined;
 };
 
 // 路由项
-export type resourceservicev1_MenuRouteItem = {
-  children: resourceservicev1_MenuRouteItem[] | undefined;
+export type permissionservicev1_MenuRouteItem = {
+  children: permissionservicev1_MenuRouteItem[] | undefined;
   //
   // Behaviors: OPTIONAL
   path?: string;
@@ -124,11 +124,11 @@ export type resourceservicev1_MenuRouteItem = {
   component?: string;
   //
   // Behaviors: OPTIONAL
-  meta?: resourceservicev1_MenuMeta;
+  meta?: permissionservicev1_MenuMeta;
 };
 
 // 路由元信息
-export type resourceservicev1_MenuMeta = {
+export type permissionservicev1_MenuMeta = {
   //
   // Behaviors: OPTIONAL
   activeIcon?: string;
@@ -206,7 +206,7 @@ export type ListPermissionCodeResponse = {
 };
 
 export type InitialContextResponse = {
-  menus: resourceservicev1_MenuRouteItem[] | undefined;
+  menus: permissionservicev1_MenuRouteItem[] | undefined;
   permissions: string[] | undefined;
 };
 
@@ -291,19 +291,19 @@ type wellKnownEmpty = Record<never, never>;
 // API资源管理服务
 export interface ApiService {
   // 查询API资源列表
-  List(request: pagination_PagingRequest): Promise<resourceservicev1_ListApiResponse>;
+  List(request: pagination_PagingRequest): Promise<permissionservicev1_ListApiResponse>;
   // 查询API资源详情
-  Get(request: resourceservicev1_GetApiRequest): Promise<resourceservicev1_Api>;
+  Get(request: permissionservicev1_GetApiRequest): Promise<permissionservicev1_Api>;
   // 创建API资源
-  Create(request: resourceservicev1_CreateApiRequest): Promise<wellKnownEmpty>;
+  Create(request: permissionservicev1_CreateApiRequest): Promise<wellKnownEmpty>;
   // 更新API资源
-  Update(request: resourceservicev1_UpdateApiRequest): Promise<wellKnownEmpty>;
+  Update(request: permissionservicev1_UpdateApiRequest): Promise<wellKnownEmpty>;
   // 删除API资源
-  Delete(request: resourceservicev1_DeleteApiRequest): Promise<wellKnownEmpty>;
+  Delete(request: permissionservicev1_DeleteApiRequest): Promise<wellKnownEmpty>;
   // 同步API资源
   SyncApis(request: wellKnownEmpty): Promise<wellKnownEmpty>;
   // 查询路由数据
-  GetWalkRouteData(request: wellKnownEmpty): Promise<resourceservicev1_ListApiResponse>;
+  GetWalkRouteData(request: wellKnownEmpty): Promise<permissionservicev1_ListApiResponse>;
 }
 
 export function createApiServiceClient(
@@ -387,7 +387,7 @@ export function createApiServiceClient(
       }, {
         service: "ApiService",
         method: "List",
-      }) as Promise<resourceservicev1_ListApiResponse>;
+      }) as Promise<permissionservicev1_ListApiResponse>;
     },
     Get(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
@@ -410,7 +410,7 @@ export function createApiServiceClient(
       }, {
         service: "ApiService",
         method: "Get",
-      }) as Promise<resourceservicev1_Api>;
+      }) as Promise<permissionservicev1_Api>;
     },
     Create(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `admin/v1/apis`; // eslint-disable-line quotes
@@ -501,7 +501,7 @@ export function createApiServiceClient(
       }, {
         service: "ApiService",
         method: "GetWalkRouteData",
-      }) as Promise<resourceservicev1_ListApiResponse>;
+      }) as Promise<permissionservicev1_ListApiResponse>;
     },
   };
 }
@@ -669,13 +669,13 @@ export type pagination_Sorting_Direction =
 type wellKnownFieldMask = string;
 
 // 查询列表 - 回应
-export type resourceservicev1_ListApiResponse = {
-  items: resourceservicev1_Api[] | undefined;
+export type permissionservicev1_ListApiResponse = {
+  items: permissionservicev1_Api[] | undefined;
   total: number | undefined;
 };
 
 // API资源
-export type resourceservicev1_Api = {
+export type permissionservicev1_Api = {
   id?: number;
   operation?: string;
   path?: string;
@@ -683,8 +683,8 @@ export type resourceservicev1_Api = {
   module?: string;
   moduleDescription?: string;
   description?: string;
-  scope?: resourceservicev1_Api_Scope;
-  status?: resourceservicev1_Api_Status;
+  scope?: permissionservicev1_Api_Scope;
+  status?: permissionservicev1_Api_Status;
   createdBy?: number;
   updatedBy?: number;
   deletedBy?: number;
@@ -694,12 +694,12 @@ export type resourceservicev1_Api = {
 };
 
 // API作用域
-export type resourceservicev1_Api_Scope =
+export type permissionservicev1_Api_Scope =
   | "API_SCOPE_INVALID"
   | "ADMIN"
   | "APP";
 // 权限状态
-export type resourceservicev1_Api_Status =
+export type permissionservicev1_Api_Status =
   | "OFF"
   | "ON";
 // Encoded using RFC 3339, where generated output will always be Z-normalized
@@ -708,26 +708,26 @@ export type resourceservicev1_Api_Status =
 type wellKnownTimestamp = string;
 
 // 查询 - 请求
-export type resourceservicev1_GetApiRequest = {
+export type permissionservicev1_GetApiRequest = {
   id?: number;
   viewMask?: wellKnownFieldMask;
 };
 
 // 创建 - 请求
-export type resourceservicev1_CreateApiRequest = {
-  data: resourceservicev1_Api | undefined;
+export type permissionservicev1_CreateApiRequest = {
+  data: permissionservicev1_Api | undefined;
 };
 
 // 更新 - 请求
-export type resourceservicev1_UpdateApiRequest = {
+export type permissionservicev1_UpdateApiRequest = {
   id: number | undefined;
-  data: resourceservicev1_Api | undefined;
+  data: permissionservicev1_Api | undefined;
   updateMask: wellKnownFieldMask | undefined;
   allowMissing?: boolean;
 };
 
 // 删除 - 请求
-export type resourceservicev1_DeleteApiRequest = {
+export type permissionservicev1_DeleteApiRequest = {
   id?: number;
 };
 
@@ -4303,15 +4303,15 @@ export type mediaservicev1_DeleteMediaAssetRequest = {
 // 后台菜单管理服务
 export interface MenuService {
   // 查询菜单列表
-  List(request: pagination_PagingRequest): Promise<resourceservicev1_ListMenuResponse>;
+  List(request: pagination_PagingRequest): Promise<permissionservicev1_ListMenuResponse>;
   // 查询菜单详情
-  Get(request: resourceservicev1_GetMenuRequest): Promise<resourceservicev1_Menu>;
+  Get(request: permissionservicev1_GetMenuRequest): Promise<permissionservicev1_Menu>;
   // 创建菜单
-  Create(request: resourceservicev1_CreateMenuRequest): Promise<wellKnownEmpty>;
+  Create(request: permissionservicev1_CreateMenuRequest): Promise<wellKnownEmpty>;
   // 更新菜单
-  Update(request: resourceservicev1_UpdateMenuRequest): Promise<wellKnownEmpty>;
+  Update(request: permissionservicev1_UpdateMenuRequest): Promise<wellKnownEmpty>;
   // 删除菜单
-  Delete(request: resourceservicev1_DeleteMenuRequest): Promise<wellKnownEmpty>;
+  Delete(request: permissionservicev1_DeleteMenuRequest): Promise<wellKnownEmpty>;
 }
 
 export function createMenuServiceClient(
@@ -4395,7 +4395,7 @@ export function createMenuServiceClient(
       }, {
         service: "MenuService",
         method: "List",
-      }) as Promise<resourceservicev1_ListMenuResponse>;
+      }) as Promise<permissionservicev1_ListMenuResponse>;
     },
     Get(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       if (!request.id) {
@@ -4418,7 +4418,7 @@ export function createMenuServiceClient(
       }, {
         service: "MenuService",
         method: "Get",
-      }) as Promise<resourceservicev1_Menu>;
+      }) as Promise<permissionservicev1_Menu>;
     },
     Create(request) { // eslint-disable-line @typescript-eslint/no-unused-vars
       const path = `admin/v1/menus`; // eslint-disable-line quotes
@@ -4483,18 +4483,18 @@ export function createMenuServiceClient(
   };
 }
 // 查询菜单列表 - 回应
-export type resourceservicev1_ListMenuResponse = {
-  items: resourceservicev1_Menu[] | undefined;
+export type permissionservicev1_ListMenuResponse = {
+  items: permissionservicev1_Menu[] | undefined;
   total: number | undefined;
 };
 
 // 菜单
-export type resourceservicev1_Menu = {
+export type permissionservicev1_Menu = {
   //
   // Behaviors: OPTIONAL
   id?: number;
-  status?: resourceservicev1_Menu_Status;
-  type?: resourceservicev1_Menu_Type;
+  status?: permissionservicev1_Menu_Status;
+  type?: permissionservicev1_Menu_Type;
   //
   // Behaviors: OPTIONAL
   path?: string;
@@ -4512,9 +4512,9 @@ export type resourceservicev1_Menu = {
   component?: string;
   //
   // Behaviors: OPTIONAL
-  meta?: resourceservicev1_MenuMeta;
+  meta?: permissionservicev1_MenuMeta;
   parentId?: number;
-  children: resourceservicev1_Menu[] | undefined;
+  children: permissionservicev1_Menu[] | undefined;
   createdBy?: number;
   updatedBy?: number;
   deletedBy?: number;
@@ -4524,37 +4524,37 @@ export type resourceservicev1_Menu = {
 };
 
 // 菜单状态
-export type resourceservicev1_Menu_Status =
+export type permissionservicev1_Menu_Status =
   | "OFF"
   | "ON";
 // 菜单类型
-export type resourceservicev1_Menu_Type =
+export type permissionservicev1_Menu_Type =
   | "CATALOG"
   | "MENU"
   | "BUTTON"
   | "EMBEDDED"
   | "LINK";
 // 查询菜单详情 - 请求
-export type resourceservicev1_GetMenuRequest = {
+export type permissionservicev1_GetMenuRequest = {
   id?: number;
   viewMask?: wellKnownFieldMask;
 };
 
 // 创建菜单 - 请求
-export type resourceservicev1_CreateMenuRequest = {
-  data: resourceservicev1_Menu | undefined;
+export type permissionservicev1_CreateMenuRequest = {
+  data: permissionservicev1_Menu | undefined;
 };
 
 // 更新菜单 - 请求
-export type resourceservicev1_UpdateMenuRequest = {
+export type permissionservicev1_UpdateMenuRequest = {
   id: number | undefined;
-  data: resourceservicev1_Menu | undefined;
+  data: permissionservicev1_Menu | undefined;
   updateMask: wellKnownFieldMask | undefined;
   allowMissing?: boolean;
 };
 
 // 删除菜单 - 请求
-export type resourceservicev1_DeleteMenuRequest = {
+export type permissionservicev1_DeleteMenuRequest = {
   operatorId?: number;
   id?: number;
 };

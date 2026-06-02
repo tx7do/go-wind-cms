@@ -15,9 +15,6 @@ import (
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
-
 	"go-wind-cms/pkg/middleware/auth"
 )
 
@@ -26,7 +23,7 @@ type AdminPortalService struct {
 
 	log *log.Helper
 
-	menuServiceClient       resourceV1.MenuServiceClient
+	menuServiceClient       permissionV1.MenuServiceClient
 	permissionServiceClient permissionV1.PermissionServiceClient
 
 	roleServiceClient permissionV1.RoleServiceClient
@@ -35,7 +32,7 @@ type AdminPortalService struct {
 
 func NewRouterService(
 	ctx *bootstrap.Context,
-	menuServiceClient resourceV1.MenuServiceClient,
+	menuServiceClient permissionV1.MenuServiceClient,
 	permissionServiceClient permissionV1.PermissionServiceClient,
 	roleServiceClient permissionV1.RoleServiceClient,
 	userServiceClient identityV1.UserServiceClient,
@@ -58,9 +55,9 @@ func (s *AdminPortalService) menuListToQueryString(menus []uint32, onlyButton bo
 	query := map[string]string{"id__in": idsStr}
 
 	if onlyButton {
-		query["type"] = resourceV1.Menu_BUTTON.String()
+		query["type"] = permissionV1.Menu_BUTTON.String()
 	} else {
-		query["type__not"] = resourceV1.Menu_BUTTON.String()
+		query["type__not"] = permissionV1.Menu_BUTTON.String()
 	}
 
 	query["status"] = "ON"
@@ -143,22 +140,22 @@ func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb
 	}, nil
 }
 
-func (s *AdminPortalService) fillRouteItem(menus []*resourceV1.Menu) []*resourceV1.MenuRouteItem {
+func (s *AdminPortalService) fillRouteItem(menus []*permissionV1.Menu) []*permissionV1.MenuRouteItem {
 	if len(menus) == 0 {
 		return nil
 	}
 
-	var routers []*resourceV1.MenuRouteItem
+	var routers []*permissionV1.MenuRouteItem
 
 	for _, v := range menus {
-		if v.GetStatus() != resourceV1.Menu_ON {
+		if v.GetStatus() != permissionV1.Menu_ON {
 			continue
 		}
-		if v.GetType() == resourceV1.Menu_BUTTON {
+		if v.GetType() == permissionV1.Menu_BUTTON {
 			continue
 		}
 
-		item := &resourceV1.MenuRouteItem{
+		item := &permissionV1.MenuRouteItem{
 			Path:      v.Path,
 			Component: v.Component,
 			Name:      v.Name,

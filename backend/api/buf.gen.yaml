@@ -51,7 +51,7 @@ managed:
       value: go-wind-cms/api/gen/go/identity/service/v1;identitypb
     - file_option: go_package
       path: resource/service/v1
-      value: go-wind-cms/api/gen/go/resource/service/v1;resourcepb
+      value: go-wind-cms/api/gen/go/permission/service/v1;resourcepb
 
     - file_option: go_package
       path: content/service/v1

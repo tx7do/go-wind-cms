@@ -5,7 +5,7 @@ package admin.service.v1;
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-import "resource/service/v1/menu.proto";
+import "permission/service/v1/menu.proto";
 
 // 后台前端初始化数据与配置服务
 service AdminPortalService {
@@ -33,7 +33,7 @@ service AdminPortalService {
 
 // 查询路由列表 - 回应
 message ListRouteResponse {
-  repeated resource.service.v1.MenuRouteItem items = 1;
+  repeated permission.service.v1.MenuRouteItem items = 1;
 }
 
 // 查询权限码列表 - 回应
@@ -42,6 +42,6 @@ message ListPermissionCodeResponse {
 }
 
 message InitialContextResponse {
-  repeated resource.service.v1.MenuRouteItem menus = 1;  // 菜单树
+  repeated permission.service.v1.MenuRouteItem menus = 1;  // 菜单树
   repeated string permissions = 2;   // 权限码
 }

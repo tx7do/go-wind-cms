@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        (unknown)
-// source: resource/service/v1/api.proto
+// source: permission/service/v1/api.proto
 
-package resourcepb
+package permissionpb
 
 import (
 	_ "github.com/google/gnostic/openapiv3"
@@ -61,11 +61,11 @@ func (x Api_Scope) String() string {
 }
 
 func (Api_Scope) Descriptor() protoreflect.EnumDescriptor {
-	return file_resource_service_v1_api_proto_enumTypes[0].Descriptor()
+	return file_permission_service_v1_api_proto_enumTypes[0].Descriptor()
 }
 
 func (Api_Scope) Type() protoreflect.EnumType {
-	return &file_resource_service_v1_api_proto_enumTypes[0]
+	return &file_permission_service_v1_api_proto_enumTypes[0]
 }
 
 func (x Api_Scope) Number() protoreflect.EnumNumber {
@@ -74,7 +74,7 @@ func (x Api_Scope) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Api_Scope.Descriptor instead.
 func (Api_Scope) EnumDescriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{0, 0}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{0, 0}
 }
 
 // 权限状态
@@ -108,11 +108,11 @@ func (x Api_Status) String() string {
 }
 
 func (Api_Status) Descriptor() protoreflect.EnumDescriptor {
-	return file_resource_service_v1_api_proto_enumTypes[1].Descriptor()
+	return file_permission_service_v1_api_proto_enumTypes[1].Descriptor()
 }
 
 func (Api_Status) Type() protoreflect.EnumType {
-	return &file_resource_service_v1_api_proto_enumTypes[1]
+	return &file_permission_service_v1_api_proto_enumTypes[1]
 }
 
 func (x Api_Status) Number() protoreflect.EnumNumber {
@@ -121,7 +121,7 @@ func (x Api_Status) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Api_Status.Descriptor instead.
 func (Api_Status) EnumDescriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{0, 1}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{0, 1}
 }
 
 // API资源
@@ -134,8 +134,8 @@ type Api struct {
 	Module            *string                `protobuf:"bytes,5,opt,name=module,proto3,oneof" json:"module,omitempty"`                                                // 所属业务模块
 	ModuleDescription *string                `protobuf:"bytes,6,opt,name=module_description,json=moduleDescription,proto3,oneof" json:"module_description,omitempty"` // 模块描述
 	Description       *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                                      // 描述
-	Scope             *Api_Scope             `protobuf:"varint,8,opt,name=scope,proto3,enum=resource.service.v1.Api_Scope,oneof" json:"scope,omitempty"`              // 作用域
-	Status            *Api_Status            `protobuf:"varint,10,opt,name=status,proto3,enum=resource.service.v1.Api_Status,oneof" json:"status,omitempty"`          // 状态
+	Scope             *Api_Scope             `protobuf:"varint,8,opt,name=scope,proto3,enum=permission.service.v1.Api_Scope,oneof" json:"scope,omitempty"`            // 作用域
+	Status            *Api_Status            `protobuf:"varint,10,opt,name=status,proto3,enum=permission.service.v1.Api_Status,oneof" json:"status,omitempty"`        // 状态
 	CreatedBy         *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                      // 创建者用户ID
 	UpdatedBy         *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                      // 更新者用户ID
 	DeletedBy         *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                      // 删除者用户ID
@@ -148,7 +148,7 @@ type Api struct {
 
 func (x *Api) Reset() {
 	*x = Api{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[0]
+	mi := &file_permission_service_v1_api_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -160,7 +160,7 @@ func (x *Api) String() string {
 func (*Api) ProtoMessage() {}
 
 func (x *Api) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[0]
+	mi := &file_permission_service_v1_api_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -173,7 +173,7 @@ func (x *Api) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Api.ProtoReflect.Descriptor instead.
 func (*Api) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{0}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Api) GetId() uint32 {
@@ -292,7 +292,7 @@ type ListApiResponse struct {
 
 func (x *ListApiResponse) Reset() {
 	*x = ListApiResponse{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[1]
+	mi := &file_permission_service_v1_api_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -304,7 +304,7 @@ func (x *ListApiResponse) String() string {
 func (*ListApiResponse) ProtoMessage() {}
 
 func (x *ListApiResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[1]
+	mi := &file_permission_service_v1_api_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -317,7 +317,7 @@ func (x *ListApiResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListApiResponse.ProtoReflect.Descriptor instead.
 func (*ListApiResponse) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{1}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ListApiResponse) GetItems() []*Api {
@@ -348,7 +348,7 @@ type GetApiRequest struct {
 
 func (x *GetApiRequest) Reset() {
 	*x = GetApiRequest{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[2]
+	mi := &file_permission_service_v1_api_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -360,7 +360,7 @@ func (x *GetApiRequest) String() string {
 func (*GetApiRequest) ProtoMessage() {}
 
 func (x *GetApiRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[2]
+	mi := &file_permission_service_v1_api_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -373,7 +373,7 @@ func (x *GetApiRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetApiRequest.ProtoReflect.Descriptor instead.
 func (*GetApiRequest) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{2}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetApiRequest) GetQueryBy() isGetApiRequest_QueryBy {
@@ -419,7 +419,7 @@ type CreateApiRequest struct {
 
 func (x *CreateApiRequest) Reset() {
 	*x = CreateApiRequest{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[3]
+	mi := &file_permission_service_v1_api_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -431,7 +431,7 @@ func (x *CreateApiRequest) String() string {
 func (*CreateApiRequest) ProtoMessage() {}
 
 func (x *CreateApiRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[3]
+	mi := &file_permission_service_v1_api_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -444,7 +444,7 @@ func (x *CreateApiRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateApiRequest.ProtoReflect.Descriptor instead.
 func (*CreateApiRequest) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{3}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateApiRequest) GetData() *Api {
@@ -467,7 +467,7 @@ type UpdateApiRequest struct {
 
 func (x *UpdateApiRequest) Reset() {
 	*x = UpdateApiRequest{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[4]
+	mi := &file_permission_service_v1_api_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -479,7 +479,7 @@ func (x *UpdateApiRequest) String() string {
 func (*UpdateApiRequest) ProtoMessage() {}
 
 func (x *UpdateApiRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[4]
+	mi := &file_permission_service_v1_api_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -492,7 +492,7 @@ func (x *UpdateApiRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateApiRequest.ProtoReflect.Descriptor instead.
 func (*UpdateApiRequest) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{4}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateApiRequest) GetId() uint32 {
@@ -536,7 +536,7 @@ type DeleteApiRequest struct {
 
 func (x *DeleteApiRequest) Reset() {
 	*x = DeleteApiRequest{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[5]
+	mi := &file_permission_service_v1_api_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -548,7 +548,7 @@ func (x *DeleteApiRequest) String() string {
 func (*DeleteApiRequest) ProtoMessage() {}
 
 func (x *DeleteApiRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[5]
+	mi := &file_permission_service_v1_api_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -561,7 +561,7 @@ func (x *DeleteApiRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteApiRequest.ProtoReflect.Descriptor instead.
 func (*DeleteApiRequest) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{5}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DeleteApiRequest) GetQueryBy() isDeleteApiRequest_QueryBy {
@@ -599,7 +599,7 @@ type CountApiResponse struct {
 
 func (x *CountApiResponse) Reset() {
 	*x = CountApiResponse{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[6]
+	mi := &file_permission_service_v1_api_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -611,7 +611,7 @@ func (x *CountApiResponse) String() string {
 func (*CountApiResponse) ProtoMessage() {}
 
 func (x *CountApiResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[6]
+	mi := &file_permission_service_v1_api_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -624,7 +624,7 @@ func (x *CountApiResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountApiResponse.ProtoReflect.Descriptor instead.
 func (*CountApiResponse) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{6}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CountApiResponse) GetCount() uint64 {
@@ -643,7 +643,7 @@ type SyncApisRequest struct {
 
 func (x *SyncApisRequest) Reset() {
 	*x = SyncApisRequest{}
-	mi := &file_resource_service_v1_api_proto_msgTypes[7]
+	mi := &file_permission_service_v1_api_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -655,7 +655,7 @@ func (x *SyncApisRequest) String() string {
 func (*SyncApisRequest) ProtoMessage() {}
 
 func (x *SyncApisRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_resource_service_v1_api_proto_msgTypes[7]
+	mi := &file_permission_service_v1_api_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -668,7 +668,7 @@ func (x *SyncApisRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncApisRequest.ProtoReflect.Descriptor instead.
 func (*SyncApisRequest) Descriptor() ([]byte, []int) {
-	return file_resource_service_v1_api_proto_rawDescGZIP(), []int{7}
+	return file_permission_service_v1_api_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SyncApisRequest) GetApis() []*Api {
@@ -678,11 +678,11 @@ func (x *SyncApisRequest) GetApis() []*Api {
 	return nil
 }
 
-var File_resource_service_v1_api_proto protoreflect.FileDescriptor
+var File_permission_service_v1_api_proto protoreflect.FileDescriptor
 
-const file_resource_service_v1_api_proto_rawDesc = "" +
+const file_permission_service_v1_api_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresource/service/v1/api.proto\x12\x13resource.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa4\n" +
+	"\x1fpermission/service/v1/api.proto\x12\x15permission.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa8\n" +
 	"\n" +
 	"\x03Api\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b资源IDH\x00R\x02id\x88\x01\x01\x128\n" +
@@ -691,10 +691,10 @@ const file_resource_service_v1_api_proto_rawDesc = "" +
 	"\x06method\x18\x04 \x01(\tB+\xbaG(\x92\x02%请求方法（GET/POST/PUT/DELETE）H\x03R\x06method\x88\x01\x01\x12c\n" +
 	"\x06module\x18\x05 \x01(\tBF\xbaGC\x92\x02@所属业务模块（如 “用户管理”“支付系统”）H\x04R\x06module\x88\x01\x01\x12F\n" +
 	"\x12module_description\x18\x06 \x01(\tB\x12\xbaG\x0f\x92\x02\f模块描述H\x05R\x11moduleDescription\x88\x01\x01\x123\n" +
-	"\vdescription\x18\a \x01(\tB\f\xbaG\t\x92\x02\x06描述H\x06R\vdescription\x88\x01\x01\x12J\n" +
-	"\x05scope\x18\b \x01(\x0e2\x1e.resource.service.v1.Api.ScopeB\x0f\xbaG\f\x92\x02\t作用域H\aR\x05scope\x88\x01\x01\x12J\n" +
+	"\vdescription\x18\a \x01(\tB\f\xbaG\t\x92\x02\x06描述H\x06R\vdescription\x88\x01\x01\x12L\n" +
+	"\x05scope\x18\b \x01(\x0e2 .permission.service.v1.Api.ScopeB\x0f\xbaG\f\x92\x02\t作用域H\aR\x05scope\x88\x01\x01\x12L\n" +
 	"\x06status\x18\n" +
-	" \x01(\x0e2\x1f.resource.service.v1.Api.StatusB\f\xbaG\t\x92\x02\x06状态H\bR\x06status\x88\x01\x01\x12;\n" +
+	" \x01(\x0e2!.permission.service.v1.Api.StatusB\f\xbaG\t\x92\x02\x06状态H\bR\x06status\x88\x01\x01\x12;\n" +
 	"\n" +
 	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\tR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
@@ -730,9 +730,9 @@ const file_resource_service_v1_api_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"W\n" +
-	"\x0fListApiResponse\x12.\n" +
-	"\x05items\x18\x01 \x03(\v2\x18.resource.service.v1.ApiR\x05items\x12\x14\n" +
+	"\v_deleted_at\"Y\n" +
+	"\x0fListApiResponse\x120\n" +
+	"\x05items\x18\x01 \x03(\v2\x1a.permission.service.v1.ApiR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x04R\x05total\"\xc0\x01\n" +
 	"\rGetApiRequest\x12\x1c\n" +
 	"\x02id\x18\x01 \x01(\rB\n" +
@@ -741,12 +741,12 @@ const file_resource_service_v1_api_proto_rawDesc = "" +
 	"\n" +
 	"\bquery_byB\f\n" +
 	"\n" +
-	"_view_mask\"@\n" +
-	"\x10CreateApiRequest\x12,\n" +
-	"\x04data\x18\x01 \x01(\v2\x18.resource.service.v1.ApiR\x04data\"\x8e\x03\n" +
+	"_view_mask\"B\n" +
+	"\x10CreateApiRequest\x12.\n" +
+	"\x04data\x18\x01 \x01(\v2\x1a.permission.service.v1.ApiR\x04data\"\x90\x03\n" +
 	"\x10UpdateApiRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\x12,\n" +
-	"\x04data\x18\x02 \x01(\v2\x18.resource.service.v1.ApiR\x04data\x12s\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\x12.\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.permission.service.v1.ApiR\x04data\x12s\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB6\xbaG3:\x16\x12\x14id,realname,username\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
@@ -757,79 +757,79 @@ const file_resource_service_v1_api_proto_rawDesc = "" +
 	"\n" +
 	"\bquery_by\"(\n" +
 	"\x10CountApiResponse\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x04R\x05count\"?\n" +
-	"\x0fSyncApisRequest\x12,\n" +
-	"\x04apis\x18\x01 \x03(\v2\x18.resource.service.v1.ApiR\x04apis2\xec\x04\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count\"A\n" +
+	"\x0fSyncApisRequest\x12.\n" +
+	"\x04apis\x18\x01 \x03(\v2\x1a.permission.service.v1.ApiR\x04apis2\xfe\x04\n" +
 	"\n" +
-	"ApiService\x12I\n" +
-	"\x04List\x12\x19.pagination.PagingRequest\x1a$.resource.service.v1.ListApiResponse\"\x00\x12K\n" +
-	"\x05Count\x12\x19.pagination.PagingRequest\x1a%.resource.service.v1.CountApiResponse\"\x00\x12E\n" +
-	"\x03Get\x12\".resource.service.v1.GetApiRequest\x1a\x18.resource.service.v1.Api\"\x00\x12I\n" +
-	"\x06Create\x12%.resource.service.v1.CreateApiRequest\x1a\x16.google.protobuf.Empty\"\x00\x12I\n" +
-	"\x06Update\x12%.resource.service.v1.UpdateApiRequest\x1a\x16.google.protobuf.Empty\"\x00\x12I\n" +
-	"\x06Delete\x12%.resource.service.v1.DeleteApiRequest\x1a\x16.google.protobuf.Empty\"\x00\x12J\n" +
-	"\bSyncApis\x12$.resource.service.v1.SyncApisRequest\x1a\x16.google.protobuf.Empty\"\x00\x12R\n" +
-	"\x10GetWalkRouteData\x12\x16.google.protobuf.Empty\x1a$.resource.service.v1.ListApiResponse\"\x00B\xc8\x01\n" +
-	"\x17com.resource.service.v1B\bApiProtoP\x01Z5go-wind-cms/api/gen/go/resource/service/v1;resourcepb\xa2\x02\x03RSX\xaa\x02\x13Resource.Service.V1\xca\x02\x13Resource\\Service\\V1\xe2\x02\x1fResource\\Service\\V1\\GPBMetadata\xea\x02\x15Resource::Service::V1b\x06proto3"
+	"ApiService\x12K\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a&.permission.service.v1.ListApiResponse\"\x00\x12M\n" +
+	"\x05Count\x12\x19.pagination.PagingRequest\x1a'.permission.service.v1.CountApiResponse\"\x00\x12I\n" +
+	"\x03Get\x12$.permission.service.v1.GetApiRequest\x1a\x1a.permission.service.v1.Api\"\x00\x12K\n" +
+	"\x06Create\x12'.permission.service.v1.CreateApiRequest\x1a\x16.google.protobuf.Empty\"\x00\x12K\n" +
+	"\x06Update\x12'.permission.service.v1.UpdateApiRequest\x1a\x16.google.protobuf.Empty\"\x00\x12K\n" +
+	"\x06Delete\x12'.permission.service.v1.DeleteApiRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
+	"\bSyncApis\x12&.permission.service.v1.SyncApisRequest\x1a\x16.google.protobuf.Empty\"\x00\x12T\n" +
+	"\x10GetWalkRouteData\x12\x16.google.protobuf.Empty\x1a&.permission.service.v1.ListApiResponse\"\x00B\xd6\x01\n" +
+	"\x19com.permission.service.v1B\bApiProtoP\x01Z9go-wind-cms/api/gen/go/permission/service/v1;permissionpb\xa2\x02\x03PSX\xaa\x02\x15Permission.Service.V1\xca\x02\x15Permission\\Service\\V1\xe2\x02!Permission\\Service\\V1\\GPBMetadata\xea\x02\x17Permission::Service::V1b\x06proto3"
 
 var (
-	file_resource_service_v1_api_proto_rawDescOnce sync.Once
-	file_resource_service_v1_api_proto_rawDescData []byte
+	file_permission_service_v1_api_proto_rawDescOnce sync.Once
+	file_permission_service_v1_api_proto_rawDescData []byte
 )
 
-func file_resource_service_v1_api_proto_rawDescGZIP() []byte {
-	file_resource_service_v1_api_proto_rawDescOnce.Do(func() {
-		file_resource_service_v1_api_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resource_service_v1_api_proto_rawDesc), len(file_resource_service_v1_api_proto_rawDesc)))
+func file_permission_service_v1_api_proto_rawDescGZIP() []byte {
+	file_permission_service_v1_api_proto_rawDescOnce.Do(func() {
+		file_permission_service_v1_api_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_permission_service_v1_api_proto_rawDesc), len(file_permission_service_v1_api_proto_rawDesc)))
 	})
-	return file_resource_service_v1_api_proto_rawDescData
+	return file_permission_service_v1_api_proto_rawDescData
 }
 
-var file_resource_service_v1_api_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resource_service_v1_api_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
-var file_resource_service_v1_api_proto_goTypes = []any{
-	(Api_Scope)(0),                // 0: resource.service.v1.Api.Scope
-	(Api_Status)(0),               // 1: resource.service.v1.Api.Status
-	(*Api)(nil),                   // 2: resource.service.v1.Api
-	(*ListApiResponse)(nil),       // 3: resource.service.v1.ListApiResponse
-	(*GetApiRequest)(nil),         // 4: resource.service.v1.GetApiRequest
-	(*CreateApiRequest)(nil),      // 5: resource.service.v1.CreateApiRequest
-	(*UpdateApiRequest)(nil),      // 6: resource.service.v1.UpdateApiRequest
-	(*DeleteApiRequest)(nil),      // 7: resource.service.v1.DeleteApiRequest
-	(*CountApiResponse)(nil),      // 8: resource.service.v1.CountApiResponse
-	(*SyncApisRequest)(nil),       // 9: resource.service.v1.SyncApisRequest
+var file_permission_service_v1_api_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_permission_service_v1_api_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_permission_service_v1_api_proto_goTypes = []any{
+	(Api_Scope)(0),                // 0: permission.service.v1.Api.Scope
+	(Api_Status)(0),               // 1: permission.service.v1.Api.Status
+	(*Api)(nil),                   // 2: permission.service.v1.Api
+	(*ListApiResponse)(nil),       // 3: permission.service.v1.ListApiResponse
+	(*GetApiRequest)(nil),         // 4: permission.service.v1.GetApiRequest
+	(*CreateApiRequest)(nil),      // 5: permission.service.v1.CreateApiRequest
+	(*UpdateApiRequest)(nil),      // 6: permission.service.v1.UpdateApiRequest
+	(*DeleteApiRequest)(nil),      // 7: permission.service.v1.DeleteApiRequest
+	(*CountApiResponse)(nil),      // 8: permission.service.v1.CountApiResponse
+	(*SyncApisRequest)(nil),       // 9: permission.service.v1.SyncApisRequest
 	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
 	(*fieldmaskpb.FieldMask)(nil), // 11: google.protobuf.FieldMask
 	(*v1.PagingRequest)(nil),      // 12: pagination.PagingRequest
 	(*emptypb.Empty)(nil),         // 13: google.protobuf.Empty
 }
-var file_resource_service_v1_api_proto_depIdxs = []int32{
-	0,  // 0: resource.service.v1.Api.scope:type_name -> resource.service.v1.Api.Scope
-	1,  // 1: resource.service.v1.Api.status:type_name -> resource.service.v1.Api.Status
-	10, // 2: resource.service.v1.Api.created_at:type_name -> google.protobuf.Timestamp
-	10, // 3: resource.service.v1.Api.updated_at:type_name -> google.protobuf.Timestamp
-	10, // 4: resource.service.v1.Api.deleted_at:type_name -> google.protobuf.Timestamp
-	2,  // 5: resource.service.v1.ListApiResponse.items:type_name -> resource.service.v1.Api
-	11, // 6: resource.service.v1.GetApiRequest.view_mask:type_name -> google.protobuf.FieldMask
-	2,  // 7: resource.service.v1.CreateApiRequest.data:type_name -> resource.service.v1.Api
-	2,  // 8: resource.service.v1.UpdateApiRequest.data:type_name -> resource.service.v1.Api
-	11, // 9: resource.service.v1.UpdateApiRequest.update_mask:type_name -> google.protobuf.FieldMask
-	2,  // 10: resource.service.v1.SyncApisRequest.apis:type_name -> resource.service.v1.Api
-	12, // 11: resource.service.v1.ApiService.List:input_type -> pagination.PagingRequest
-	12, // 12: resource.service.v1.ApiService.Count:input_type -> pagination.PagingRequest
-	4,  // 13: resource.service.v1.ApiService.Get:input_type -> resource.service.v1.GetApiRequest
-	5,  // 14: resource.service.v1.ApiService.Create:input_type -> resource.service.v1.CreateApiRequest
-	6,  // 15: resource.service.v1.ApiService.Update:input_type -> resource.service.v1.UpdateApiRequest
-	7,  // 16: resource.service.v1.ApiService.Delete:input_type -> resource.service.v1.DeleteApiRequest
-	9,  // 17: resource.service.v1.ApiService.SyncApis:input_type -> resource.service.v1.SyncApisRequest
-	13, // 18: resource.service.v1.ApiService.GetWalkRouteData:input_type -> google.protobuf.Empty
-	3,  // 19: resource.service.v1.ApiService.List:output_type -> resource.service.v1.ListApiResponse
-	8,  // 20: resource.service.v1.ApiService.Count:output_type -> resource.service.v1.CountApiResponse
-	2,  // 21: resource.service.v1.ApiService.Get:output_type -> resource.service.v1.Api
-	13, // 22: resource.service.v1.ApiService.Create:output_type -> google.protobuf.Empty
-	13, // 23: resource.service.v1.ApiService.Update:output_type -> google.protobuf.Empty
-	13, // 24: resource.service.v1.ApiService.Delete:output_type -> google.protobuf.Empty
-	13, // 25: resource.service.v1.ApiService.SyncApis:output_type -> google.protobuf.Empty
-	3,  // 26: resource.service.v1.ApiService.GetWalkRouteData:output_type -> resource.service.v1.ListApiResponse
+var file_permission_service_v1_api_proto_depIdxs = []int32{
+	0,  // 0: permission.service.v1.Api.scope:type_name -> permission.service.v1.Api.Scope
+	1,  // 1: permission.service.v1.Api.status:type_name -> permission.service.v1.Api.Status
+	10, // 2: permission.service.v1.Api.created_at:type_name -> google.protobuf.Timestamp
+	10, // 3: permission.service.v1.Api.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 4: permission.service.v1.Api.deleted_at:type_name -> google.protobuf.Timestamp
+	2,  // 5: permission.service.v1.ListApiResponse.items:type_name -> permission.service.v1.Api
+	11, // 6: permission.service.v1.GetApiRequest.view_mask:type_name -> google.protobuf.FieldMask
+	2,  // 7: permission.service.v1.CreateApiRequest.data:type_name -> permission.service.v1.Api
+	2,  // 8: permission.service.v1.UpdateApiRequest.data:type_name -> permission.service.v1.Api
+	11, // 9: permission.service.v1.UpdateApiRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 10: permission.service.v1.SyncApisRequest.apis:type_name -> permission.service.v1.Api
+	12, // 11: permission.service.v1.ApiService.List:input_type -> pagination.PagingRequest
+	12, // 12: permission.service.v1.ApiService.Count:input_type -> pagination.PagingRequest
+	4,  // 13: permission.service.v1.ApiService.Get:input_type -> permission.service.v1.GetApiRequest
+	5,  // 14: permission.service.v1.ApiService.Create:input_type -> permission.service.v1.CreateApiRequest
+	6,  // 15: permission.service.v1.ApiService.Update:input_type -> permission.service.v1.UpdateApiRequest
+	7,  // 16: permission.service.v1.ApiService.Delete:input_type -> permission.service.v1.DeleteApiRequest
+	9,  // 17: permission.service.v1.ApiService.SyncApis:input_type -> permission.service.v1.SyncApisRequest
+	13, // 18: permission.service.v1.ApiService.GetWalkRouteData:input_type -> google.protobuf.Empty
+	3,  // 19: permission.service.v1.ApiService.List:output_type -> permission.service.v1.ListApiResponse
+	8,  // 20: permission.service.v1.ApiService.Count:output_type -> permission.service.v1.CountApiResponse
+	2,  // 21: permission.service.v1.ApiService.Get:output_type -> permission.service.v1.Api
+	13, // 22: permission.service.v1.ApiService.Create:output_type -> google.protobuf.Empty
+	13, // 23: permission.service.v1.ApiService.Update:output_type -> google.protobuf.Empty
+	13, // 24: permission.service.v1.ApiService.Delete:output_type -> google.protobuf.Empty
+	13, // 25: permission.service.v1.ApiService.SyncApis:output_type -> google.protobuf.Empty
+	3,  // 26: permission.service.v1.ApiService.GetWalkRouteData:output_type -> permission.service.v1.ListApiResponse
 	19, // [19:27] is the sub-list for method output_type
 	11, // [11:19] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
@@ -837,35 +837,35 @@ var file_resource_service_v1_api_proto_depIdxs = []int32{
 	0,  // [0:11] is the sub-list for field type_name
 }
 
-func init() { file_resource_service_v1_api_proto_init() }
-func file_resource_service_v1_api_proto_init() {
-	if File_resource_service_v1_api_proto != nil {
+func init() { file_permission_service_v1_api_proto_init() }
+func file_permission_service_v1_api_proto_init() {
+	if File_permission_service_v1_api_proto != nil {
 		return
 	}
-	file_resource_service_v1_api_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resource_service_v1_api_proto_msgTypes[2].OneofWrappers = []any{
+	file_permission_service_v1_api_proto_msgTypes[0].OneofWrappers = []any{}
+	file_permission_service_v1_api_proto_msgTypes[2].OneofWrappers = []any{
 		(*GetApiRequest_Id)(nil),
 	}
-	file_resource_service_v1_api_proto_msgTypes[4].OneofWrappers = []any{}
-	file_resource_service_v1_api_proto_msgTypes[5].OneofWrappers = []any{
+	file_permission_service_v1_api_proto_msgTypes[4].OneofWrappers = []any{}
+	file_permission_service_v1_api_proto_msgTypes[5].OneofWrappers = []any{
 		(*DeleteApiRequest_Id)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resource_service_v1_api_proto_rawDesc), len(file_resource_service_v1_api_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_service_v1_api_proto_rawDesc), len(file_permission_service_v1_api_proto_rawDesc)),
 			NumEnums:      2,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_resource_service_v1_api_proto_goTypes,
-		DependencyIndexes: file_resource_service_v1_api_proto_depIdxs,
-		EnumInfos:         file_resource_service_v1_api_proto_enumTypes,
-		MessageInfos:      file_resource_service_v1_api_proto_msgTypes,
+		GoTypes:           file_permission_service_v1_api_proto_goTypes,
+		DependencyIndexes: file_permission_service_v1_api_proto_depIdxs,
+		EnumInfos:         file_permission_service_v1_api_proto_enumTypes,
+		MessageInfos:      file_permission_service_v1_api_proto_msgTypes,
 	}.Build()
-	File_resource_service_v1_api_proto = out.File
-	file_resource_service_v1_api_proto_goTypes = nil
-	file_resource_service_v1_api_proto_depIdxs = nil
+	File_permission_service_v1_api_proto = out.File
+	file_permission_service_v1_api_proto_goTypes = nil
+	file_permission_service_v1_api_proto_depIdxs = nil
 }

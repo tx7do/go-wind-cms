@@ -9,7 +9,7 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type resourceservicev1_Api as Api } from '#/generated/api/admin/service/v1';
+import { type permissionservicev1_Api as Api } from '#/generated/api/admin/service/v1';
 import { $t } from '#/locales';
 import { methodList, useApiStore } from '#/stores';
 
@@ -194,7 +194,7 @@ async function handleSync() {
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('menu.system.api')">
+    <Grid :table-title="$t('menu.permission.api')">
       <template #toolbar-tools>
         <a-button type="primary" class="mr-2" @click="handleCreate">
           {{ $t('page.api.button.create') }}

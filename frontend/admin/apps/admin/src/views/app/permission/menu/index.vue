@@ -10,7 +10,7 @@ import { Icon } from '@iconify/vue';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type resourceservicev1_Menu as Menu } from '#/generated/api/admin/service/v1';
+import { type permissionservicev1_Menu as Menu } from '#/generated/api/admin/service/v1';
 import { $t } from '#/locales';
 import {
   menuTypeToColor,
@@ -222,7 +222,7 @@ function normalizeAuthority(authority: unknown): string[] {
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('menu.system.menu')">
+    <Grid :table-title="$t('menu.permission.menu')">
       <template #toolbar-tools>
         <a-button class="mr-2" type="primary" @click="handleCreate">
           {{ $t('page.menu.button.create') }}

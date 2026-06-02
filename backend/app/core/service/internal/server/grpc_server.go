@@ -18,8 +18,6 @@ import (
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
-	resourceV1 "go-wind-cms/api/gen/go/resource/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
@@ -106,8 +104,8 @@ func NewGrpcServer(
 	dictV1.RegisterDictEntryServiceServer(srv, dictEntryService)
 	dictV1.RegisterLanguageServiceServer(srv, languageService)
 
-	resourceV1.RegisterApiServiceServer(srv, apiService)
-	resourceV1.RegisterMenuServiceServer(srv, menuService)
+	permissionV1.RegisterApiServiceServer(srv, apiService)
+	permissionV1.RegisterMenuServiceServer(srv, menuService)
 
 	permissionV1.RegisterPermissionServiceServer(srv, permissionService)
 	permissionV1.RegisterPermissionGroupServiceServer(srv, permissionGroupService)
