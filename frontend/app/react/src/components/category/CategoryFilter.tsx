@@ -163,20 +163,21 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         );
     }
 
-    // 通用按钮样式
+    // 通用按钮样式：统一浅灰描边 + hover 底色填充
     const btnBase = cn(
-        'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium',
+        'inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium',
         'transition-all duration-200 cursor-pointer select-none',
-        'border border-transparent',
+        'border border-border/60 bg-transparent',
+        'hover:bg-muted/60 hover:border-border',
     );
     const btnInactive = cn(
-        'bg-muted/40 text-foreground/70',
-        'hover:bg-primary/8 hover:text-primary hover:border-primary/25',
+        'text-muted-foreground',
+        'hover:text-foreground',
     );
     const btnActive = cn(
-        /* 选中态柔化：半透明绿底 + primary 文字（取代高饱和实心绿）*/
-        'bg-primary/12 text-primary border-primary/30',
-        'hover:bg-primary/18',
+        /* 选中态：绿色填充白字 */
+        'bg-primary text-primary-foreground border-primary',
+        'hover:bg-primary/90 hover:border-primary',
     );
 
     return (
@@ -224,7 +225,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                     <XIcon name={node.icon || 'carbon:folder'} size={15}/>
                                     {getCategoryName(node)}
                                     {hasChildren(node.id || 0) && (
-                                        <XIcon name="carbon:chevron-down" size={12} className="ml-0.5 opacity-60"/>
+                                        <XIcon name="carbon:chevron-down" size={14} className="ml-0.5 opacity-60"/>
                                     )}
                                 </button>
 

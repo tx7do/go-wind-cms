@@ -33,73 +33,36 @@ const PageHero: React.FC<PageHeroProps> = ({
     children,
     size = 'md',
 }) => {
-    const minHeight = size === 'sm' ? 'min-h-[220px]' : size === 'lg' ? 'min-h-[340px]' : 'min-h-[280px]';
-    const padding = size === 'sm' ? 'py-14' : size === 'lg' ? 'py-24' : 'py-18';
+    const minHeight = size === 'sm' ? 'min-h-[280px]' : size === 'lg' ? 'min-h-[380px]' : 'min-h-[340px]';
+    const padding = size === 'sm' ? 'py-16' : size === 'lg' ? 'py-28' : 'py-20';
 
     return (
         <section className={cn(
             'relative w-full overflow-hidden border-b border-border',
+            'dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900/80 dark:to-background',
+            'bg-gradient-to-b from-[hsl(142,70%,96%)] via-[hsl(142,50%,98%)] to-background',
             minHeight,
             padding,
             'flex items-center justify-center text-center',
         )}>
-            {/* 背景层：风的流体渐变 */}
-            <div className="absolute inset-0 -z-10">
-                {/* 基础渐变：倾斜风的轨迹 */}
+            {/* 装饰线条层：低透明度风轨纹理 */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                {/* 水平流动线条 */}
                 <div
-                    className={cn(
-                        'absolute inset-0',
-                    )}
+                    className="absolute inset-0"
                     style={{
-                        background: accentColor
-                            ? `linear-gradient(135deg, ${accentColor}22 0%, hsl(var(--background)) 45%, ${accentColor}10 100%)`
-                            : 'linear-gradient(135deg, hsl(var(--primary) / 0.10) 0%, hsl(var(--background)) 45%, hsl(var(--primary) / 0.05) 100%)',
+                        backgroundImage: `repeating-linear-gradient(0deg, hsl(var(--primary)) 0, hsl(var(--primary)) 1px, transparent 1px, transparent 60px)`,
                     }}
                 />
-
-                {/* 风的流体光晕：双径向层 */}
+                {/* 斜向风轨线条 */}
                 <div
-                    className="absolute inset-0 opacity-70"
+                    className="absolute inset-0"
                     style={{
-                        background: `radial-gradient(ellipse at 25% 35%, ${accentColor || 'hsl(var(--primary))'}20 0%, transparent 55%), radial-gradient(ellipse at 75% 65%, rgba(56, 189, 248, 0.08) 0%, transparent 55%)`,
-                    }}
-                />
-
-                {/* 风的流向斜线纹理 */}
-                <div
-                    className={cn(
-                        'absolute inset-0 opacity-[0.05]',
-                        'dark:opacity-[0.08]',
-                    )}
-                    style={{
-                        backgroundImage: `repeating-linear-gradient(135deg, ${accentColor || 'hsl(var(--primary))'} 0, ${accentColor || 'hsl(var(--primary))'} 1px, transparent 1px, transparent 48px)`,
-                        maskImage: 'radial-gradient(ellipse at center, black 20%, transparent 75%)',
-                        WebkitMaskImage: 'radial-gradient(ellipse at center, black 20%, transparent 75%)',
-                    }}
-                />
-
-                {/* 点阵装饰背景：科技门户层次感 */}
-                <div
-                    className={cn(
-                        'absolute inset-0 opacity-[0.08]',
-                        'dark:opacity-[0.12]',
-                    )}
-                    style={{
-                        backgroundImage: `radial-gradient(${accentColor || 'hsl(var(--primary))'} 1px, transparent 1px)`,
-                        backgroundSize: '24px 24px',
-                        maskImage: 'radial-gradient(ellipse at center, black 10%, transparent 65%)',
-                        WebkitMaskImage: 'radial-gradient(ellipse at center, black 10%, transparent 65%)',
-                    }}
-                />
-
-                {/* 底部风迹光带：变宽为渐变带，更流体 */}
-                <div
-                    className="absolute bottom-0 left-0 right-0 h-0.5 opacity-40"
-                    style={{
-                        background: `linear-gradient(90deg, transparent, ${accentColor || 'hsl(var(--primary))'} 30%, #38bdf8 70%, transparent)`,
+                        backgroundImage: `repeating-linear-gradient(135deg, hsl(var(--primary)) 0, hsl(var(--primary)) 1px, transparent 1px, transparent 80px)`,
                     }}
                 />
             </div>
+
 
             {/* 内容层 */}
             <div className={cn(
@@ -126,19 +89,19 @@ const PageHero: React.FC<PageHeroProps> = ({
                     </p>
                 )}
 
-                {/* 主标题 */}
+                {/* 主标题：深色模式白字，亮色模式深色字 */}
                 <h1 className={cn(
-                    'mb-4 font-bold leading-tight text-foreground',
+                    'mb-4 font-bold leading-tight dark:text-white text-foreground',
                     size === 'lg' ? 'text-4xl max-md:text-2xl' : 'text-3xl max-md:text-2xl',
                     size === 'sm' && 'text-2xl max-md:text-xl',
                 )}>
                     {title}
                 </h1>
 
-                {/* 描述：弱化一阶，拉开与主标题的字重对比 */}
+                {/* 描述：深色模式浅灰，亮色模式 muted */}
                 {description && (
                     <p className={cn(
-                        'mx-auto text-muted-foreground/80 font-light',
+                        'mx-auto font-light dark:text-slate-300 text-muted-foreground',
                         size === 'lg' ? 'max-w-2xl text-lg max-md:text-base' : 'max-w-xl text-base max-md:text-sm',
                         size === 'sm' && 'text-sm max-md:text-xs',
                     )}>
@@ -146,11 +109,11 @@ const PageHero: React.FC<PageHeroProps> = ({
                     </p>
                 )}
 
-                {/* 元信息 */}
+                {/* 元信息：深色模式浅灰，亮色模式 muted */}
                 {meta && (
                     <div className={cn(
                         'mt-5 flex flex-wrap items-center justify-center gap-4',
-                        'text-sm text-muted-foreground',
+                        'text-sm dark:text-slate-400 text-muted-foreground',
                     )}>
                         {meta}
                     </div>
