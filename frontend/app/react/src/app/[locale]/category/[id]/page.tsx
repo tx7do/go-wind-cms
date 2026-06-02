@@ -67,11 +67,10 @@ export default function CategoryDetailPage() {
     }
 
     function handleBackToParent() {
-        // 优先级：有父分类 → 回父分类；有历史 → router.back()；降级 → /category
+        // 有父分类 → 回父分类；无父分类 → 回分类总览页
+        // 分类详情页没有 from 参数，router.back() 退回的页面不可预测，所以直接导航到确定的路由
         if (parentCategoryId) {
             router.push(`/category/${parentCategoryId}`);
-        } else if (typeof window !== 'undefined' && window.history.length > 2) {
-            router.back();
         } else {
             router.push('/category');
         }

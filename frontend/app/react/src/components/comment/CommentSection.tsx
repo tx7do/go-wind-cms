@@ -256,11 +256,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 {/* Gradient top bar */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-primary opacity-90"/>
 
-                <div className="mb-8 flex items-center gap-4 border-b-2 border-primary/8 pb-6 max-md:mb-6 max-md:pb-5">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md max-md:h-10 max-md:w-10 max-md:rounded-lg">
-                        <XIcon name="carbon:edit" size={24}/>
-                    </div>
-                    <h3 className="text-2xl font-bold tracking-tight text-foreground max-md:text-xl max-sm:text-lg">
+                {/* 标题块：去除绿色背景方框，改为简洁文字 + 绿色图标点绥 */}
+                <div className="mb-8 flex items-center gap-2.5 max-md:mb-6">
+                    <XIcon name="carbon:edit" size={22} className="text-primary"/>
+                    <h3 className="text-lg font-bold tracking-tight text-foreground max-md:text-base">
                         {t('write_comment')}
                     </h3>
                 </div>
@@ -330,16 +329,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                             size="lg"
                             onClick={handleSubmitComment}
                             disabled={submitting}
-                            className="gap-2"
+                            className="gap-2 text-primary-foreground"
                         >
-                            {submitting ? <Spinner size="sm"/> : <XIcon name="carbon:send-alt" size={18}/>}
+                            {submitting ? <Spinner size="sm"/> : <XIcon name="carbon:send-alt" size={18} className="text-primary-foreground"/>}
                             {t('submit_comment')}
                         </Button>
                         <span className="flex items-center gap-2 rounded-lg border border-primary/10 bg-primary/5 px-3.5 py-2 text-[13px] text-muted-foreground max-md:justify-center max-md:text-xs max-md:px-3 max-md:py-1.5">
                             <XIcon name="carbon:information" size={16} className="text-primary"/>
                             {t('fill_form_info')}
                         </span>
-                        <span className="ml-auto flex items-center gap-2 rounded-lg border border-border bg-black/[0.03] px-3 py-1.5 text-xs text-muted-foreground max-md:ml-0 max-md:justify-center">
+                        <span className={cn(
+                            'ml-auto flex items-center gap-2 rounded-lg border border-border/60 bg-muted/40 px-3 py-1.5 text-xs',
+                            'text-muted-foreground font-medium',
+                            'max-md:ml-0 max-md:justify-center',
+                        )}>
                             <XIcon name="carbon:keyboard" size={16}/>
                             Ctrl + Enter {t('submit_comment')}
                         </span>

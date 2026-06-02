@@ -42,12 +42,9 @@ export default function TagDetailPage() {
     }
 
     function handleBack() {
-        // 优先级：有历史 → router.back()（最丝滑）；降级 → /tag
-        if (typeof window !== 'undefined' && window.history.length > 2) {
-            router.back();
-        } else {
-            router.push('/tag');
-        }
+        // 标签详情页没有 from 参数，router.back() 退回的页面不可预测
+        // 按钮文字是「返回列表」，始终导航到标签总览页
+        router.push('/tag');
     }
 
     useEffect(() => {
