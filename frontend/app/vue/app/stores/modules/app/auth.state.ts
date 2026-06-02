@@ -10,25 +10,16 @@ import type {UserInfo} from "@/typings";
 import {useAccessStore, useUserStore} from '@/stores'
 import {resetAllStores} from "@/stores/setup";
 
-import {
-    createAuthenticationServiceClient,
-    createUserProfileServiceClient
-} from "@/api/generated/app/service/v1";
-import {requestClientRequestHandler} from "@/transport/rest/request";
-import {useMessage} from "naive-ui";
+// API 调用从 composables 层引入
+import {login as apiLogin, logout as apiLogout, refreshToken as apiRefreshToken} from '@/api/composables/auth';
+import {getMe} from '@/api/composables/user-profile';
+import { toast } from 'vue-sonner';
 
 const {t} = useI18n()
-const message = useMessage()
 
 export const useAuthStore = defineStore('auth', () => {
     const accessStore = useAccessStore()
     const userStore = useUserStore()
-    const authnService = createAuthenticationServiceClient(
-        requestClientRequestHandler,
-    );
-    const userProfileService = createUserProfileServiceClient(
-        requestClientRequestHandler,
-    );
 
     const router = useRouter()
 
@@ -49,7 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             loginLoading.value = true
 
-            const {access_token} = await authnService.Login({
+            const {access_token} = await apiLogin({
                 username: params.username,
                 email: params.email,
                 mobile: params.mobile,
@@ -76,7 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
                 }
 
                 if (userInfo?.realname) {
-                    message.success(t('authentication.login.login_success'))
+                    toast.success(t('authentication.login.login_success'))
                 }
             }
         } finally {
@@ -94,7 +85,7 @@ export const useAuthStore = defineStore('auth', () => {
      */
     async function logout(redirect: boolean = true) {
         try {
-            await authnService.Logout({})
+            await apiLogout()
         } catch {
             // 不做任何处理
         } finally {
@@ -136,10 +127,7 @@ export const useAuthStore = defineStore('auth', () => {
         const refreshTokenValue = typeof accessStore.refreshToken === 'string'
             ? accessStore.refreshToken
             : accessStore.refreshToken?.value ?? '';
-        const resp = await authnService.RefreshToken({
-            grant_type: 'password',
-            refresh_token: refreshTokenValue,
-        })
+        const resp = await apiRefreshToken(refreshTokenValue)
         const newToken = resp.access_token
 
         accessStore.setAccessToken(newToken || '')
@@ -151,7 +139,7 @@ export const useAuthStore = defineStore('auth', () => {
      * 拉取用户信息
      */
     async function fetchUserInfo() {
-        return (await userProfileService.GetUser({})) as unknown as UserInfo;
+        return (await getMe()) as unknown as UserInfo;
     }
 
     /**

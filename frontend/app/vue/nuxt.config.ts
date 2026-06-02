@@ -1,33 +1,21 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     devtools: {enabled: true},
     css: [
+        '~/assets/css/main.css',
     ],
     modules: [
         '@nuxtjs/i18n',
     ],
-    components: [
-        {
-            path: 'node_modules/naive-ui',
-            prefix: 'N',
-            extensions: [
-                '.vue',
-                '.ts'
-            ],
-        },
-    ],
-    build: {
-        transpile: [
-            'naive-ui',
-            'vueuc',
-        ]
-    },
     vite: {
+        plugins: [
+            tailwindcss(),
+        ],
         optimizeDeps: {
             include: [
-                'naive-ui',
-                'vueuc',
                 'date-fns-tz',
                 'highlight.js/lib/core'
             ],
@@ -39,7 +27,7 @@ export default defineNuxtConfig({
             {code: 'en', iso: 'en-US', name: 'English', file: 'en.json'}
         ],
         defaultLocale: 'zh',
-        strategy: 'prefix_except_default', // /en/about 或 /about
-        detectBrowserLanguage: false, // CMS 前台通常由路由或用户手动切换
+        strategy: 'prefix_except_default',
+        detectBrowserLanguage: false,
     }
 })
