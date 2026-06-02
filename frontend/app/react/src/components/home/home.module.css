@@ -22,6 +22,19 @@
     justify-content: center;
 }
 
+/* Hero 底部淡出遮罩：向页面背景色自然过渡，消除硬切 */
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent 0%, hsl(var(--background)) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
 /* 深色模式：夜空黑 → slate-900 → 暗翡翠极光（风行 + 中台科技感）*/
 :global(.dark) .hero {
     background: linear-gradient(45deg, #000000 0%, #0f172a 50%, rgba(6, 78, 59, 0.35) 100%);
@@ -36,6 +49,32 @@
     overflow: hidden;
     z-index: 0;
     pointer-events: none;
+}
+
+/* 霓虹電能綠極光呼吸燈：高模糊半透明绿色圆 */
+.heroGlow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: hsl(var(--primary) / 0.08);
+    filter: blur(100px);
+    pointer-events: none;
+    animation: glowBreathe 6s ease-in-out infinite;
+}
+
+@keyframes glowBreathe {
+    0%, 100% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.15);
+    }
 }
 
 /* 风的流体光晕：带倾斜角度的多层径向渐变 */
@@ -483,5 +522,23 @@
 
     .heroDescription {
         font-size: 1rem;
+    }
+
+    /* 手机端隐藏背景装饰代码片段，避免与正文重叠 */
+    .heroCodeSnippets {
+        display: none;
+    }
+
+    /* 手机端按钮垂直通栏排列 */
+    .heroActions {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0 1rem;
+    }
+
+    .btnPrimary,
+    .btnSecondary {
+        width: 100% !important;
+        justify-content: center !important;
     }
 }

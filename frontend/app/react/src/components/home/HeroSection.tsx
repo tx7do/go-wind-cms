@@ -15,6 +15,8 @@ export default function HeroSection() {
         <section className={styles.hero}>
             {/* Animated Background Elements */}
             <div className={styles.heroBgWrapper}>
+                {/* 霓虹電能綠極光呼吸燈 */}
+                <div className={styles.heroGlow}></div>
                 <div className={styles.heroGradientBg}></div>
                 {/* Grid Background */}
                 <div className={styles.heroGridBg}></div>
