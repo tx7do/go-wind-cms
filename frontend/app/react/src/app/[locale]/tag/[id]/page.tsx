@@ -3,7 +3,6 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
-import {Button} from '@/components/ui/button';
 import {ArrowLeft} from 'lucide-react';
 import {AppEmpty} from '@/components/ui';
 
@@ -43,7 +42,12 @@ export default function TagDetailPage() {
     }
 
     function handleBack() {
-        router.push('/tag');
+        // 优先级：有历史 → router.back()（最丝滑）；降级 → /tag
+        if (typeof window !== 'undefined' && window.history.length > 2) {
+            router.back();
+        } else {
+            router.push('/tag');
+        }
     }
 
     useEffect(() => {
@@ -73,17 +77,15 @@ export default function TagDetailPage() {
 
             {/* Posts Section */}
             <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
-                {/* Back Button */}
+                {/* Back Button — ghost 风格，与 Post/Category 详情页统一 */}
                 <div className="mb-8">
-                    <Button
-                        variant="outline"
-                        size="sm"
+                    <button
                         onClick={handleBack}
-                        className="gap-2"
+                        className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
                     >
-                        <ArrowLeft className="h-4 w-4"/>
-                        {t('categories.back_to_list')}
-                    </Button>
+                        <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"/>
+                        <span>{t('categories.back_to_list')}</span>
+                    </button>
                 </div>
 
                 {/* Posts List with Pagination */}

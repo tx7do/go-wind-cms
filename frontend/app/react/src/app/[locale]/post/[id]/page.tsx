@@ -218,19 +218,37 @@ export default function PostDetailPage() {
         const from = searchParams.get('from');
         const categoryId = searchParams.get('categoryId');
 
+        // 优先级1：有明确来源参数 → 精确返回
         if (from === 'category' && categoryId) {
             router.push(`/category/${categoryId}`);
-        } else if (from === 'user') {
-            router.push('/user');
-        } else if (from === 'post') {
-            router.push('/post');
-        } else if (from === 'home') {
-            router.push('/');
-        } else if (window.history.length > 2) {
-            router.back();
-        } else {
-            router.push('/post');
+            return;
         }
+        if (from === 'tag') {
+            router.push('/tag');
+            return;
+        }
+        if (from === 'user') {
+            router.push('/user');
+            return;
+        }
+        if (from === 'home') {
+            router.push('/');
+            return;
+        }
+        if (from === 'post-list') {
+            router.push('/post');
+            return;
+        }
+
+        // 优先级2：有浏览历史 → router.back()（最丝滑体验）
+        // 阈值 > 2：避免在直接链接进入时 back 到 about:blank
+        if (typeof window !== 'undefined' && window.history.length > 2) {
+            router.back();
+            return;
+        }
+
+        // 优先级3：降级 → 文章列表页
+        router.push('/post');
     };
 
     const handleLike = () => {

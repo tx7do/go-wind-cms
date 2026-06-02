@@ -70,7 +70,7 @@ export default function CategoryDetailPage() {
         // 优先级：有父分类 → 回父分类；有历史 → router.back()；降级 → /category
         if (parentCategoryId) {
             router.push(`/category/${parentCategoryId}`);
-        } else if (window.history.length > 1) {
+        } else if (typeof window !== 'undefined' && window.history.length > 2) {
             router.back();
         } else {
             router.push('/category');
