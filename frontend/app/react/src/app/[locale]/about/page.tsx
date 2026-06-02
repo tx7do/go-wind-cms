@@ -75,11 +75,11 @@ export default function AboutPage() {
             <section className="w-full bg-background py-20">
                 <div className="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
-                        <div>
+                        <div className="antialiased">
                             <h2 className="mb-6 text-3xl font-bold text-foreground">{t('about_us')}</h2>
-                            <p className="mb-4 leading-relaxed text-muted-foreground">{t('about_us_desc_1')}</p>
-                            <p className="mb-4 leading-relaxed text-muted-foreground">{t('about_us_desc_2')}</p>
-                            <p className="leading-relaxed text-muted-foreground">{t('about_us_desc_3')}</p>
+                            <p className="mb-4 text-[15px] leading-loose tracking-normal text-muted-foreground">{t('about_us_desc_1')}</p>
+                            <p className="mb-4 text-[15px] leading-loose tracking-normal text-muted-foreground">{t('about_us_desc_2')}</p>
+                            <p className="text-[15px] leading-loose tracking-normal text-muted-foreground">{t('about_us_desc_3')}</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             {[
@@ -89,8 +89,8 @@ export default function AboutPage() {
                                 {num: '24/7', label: t('stat_support')},
                             ].map((stat) => (
                                 <div key={stat.label} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
-                                    <div className="mb-2 text-3xl font-bold text-primary">{stat.num}</div>
-                                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                                    <div className="mb-3 text-3xl font-bold text-primary">{stat.num}</div>
+                                    <div className="text-[15px] font-medium text-muted-foreground">{stat.label}</div>
                                 </div>
                             ))}
                         </div>
@@ -108,7 +108,7 @@ export default function AboutPage() {
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
                         {features.map((feature) => (
                             <div key={feature.title} className="group rounded-xl border border-border bg-card p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
-                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:shadow-md">
+                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:shadow-md drop-shadow-[0_0_8px_rgba(34,197,94,0.35)]">
                                     <XIcon name={feature.icon} size={32}/>
                                 </div>
                                 <h3 className="mb-2 text-lg font-bold text-foreground transition-colors group-hover:text-primary">{feature.title}</h3>
@@ -133,8 +133,8 @@ export default function AboutPage() {
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img src={member.avatar} alt={member.name} width={120} height={120}/>
                                 </div>
-                                <h3 className="mb-1 text-lg font-bold text-foreground">{member.name}</h3>
-                                <p className="text-sm text-muted-foreground">{member.role}</p>
+                                <h3 className="mb-2 text-lg font-bold text-foreground">{member.name}</h3>
+                                <p className="text-xs text-muted-foreground/80">{member.role}</p>
                             </div>
                         ))}
                     </div>
@@ -156,7 +156,7 @@ export default function AboutPage() {
                         ].map((value) => (
                             <div key={value.title} className="rounded-xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
                                 <h3 className="mb-3 text-xl font-bold text-primary">{value.title}</h3>
-                                <p className="leading-relaxed text-muted-foreground">{value.desc}</p>
+                                <p className="text-sm leading-relaxed text-muted-foreground mt-2">{value.desc}</p>
                             </div>
                         ))}
                     </div>

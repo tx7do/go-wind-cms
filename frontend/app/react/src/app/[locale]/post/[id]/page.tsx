@@ -387,10 +387,10 @@ export default function PostDetailPage() {
             <div className="w-full max-w-[1200px] mx-auto px-8 py-6 max-md:px-4">
                 <button
                     onClick={handleBack}
-                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-foreground transition-all hover:border-primary hover:bg-primary/5"
+                    className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
                     aria-label={t('post_detail.back')}
                 >
-                    <XIcon name="carbon:arrow-left"/>
+                    <XIcon name="carbon:arrow-left" className="transition-transform duration-300 group-hover:-translate-x-1"/>
                     <span>{t('post_detail.back')}</span>
                 </button>
             </div>
@@ -409,7 +409,7 @@ export default function PostDetailPage() {
                     {/* Table of Contents Sidebar */}
                     {tableOfContents.length > 0 && isTocExpanded && (
                         <aside className="w-[240px] shrink-0 max-md:hidden">
-                            <div className="sticky top-24 rounded-lg border border-border bg-card p-4">
+                            <nav className="sticky top-24 rounded-lg border border-border bg-card p-4 pr-5 border-r border-r-border/50">
                                 <div className="mb-3 flex items-center justify-between">
                                     <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
                                         <XIcon name="carbon:list"/>
@@ -422,14 +422,16 @@ export default function PostDetailPage() {
                                         <XIcon name="carbon:chevron-left"/>
                                     </button>
                                 </div>
-                                <nav className="space-y-1">
+                                <div className="space-y-0.5">
                                     {tableOfContents.map(item => (
                                         <a
                                             key={item.id}
                                             href={`#${item.id}`}
-                                            className={`block truncate rounded px-2 py-1.5 text-sm transition-colors hover:bg-primary/5 hover:text-primary ${
-                                                item.level === 3 ? 'pl-6 text-muted-foreground' : 'text-foreground'
-                                            } ${activeHeading === item.id ? 'bg-primary/10 font-medium text-primary' : ''}`}
+                                            className={`block truncate rounded px-2 py-1.5 text-sm transition-colors ${
+                                                activeHeading === item.id
+                                                    ? 'bg-primary/10 font-medium text-primary'
+                                                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                                            } ${item.level === 3 ? 'pl-6 text-[13px]' : ''}`}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 setTimeout(() => scrollToHeading(item.id), 10);
@@ -438,8 +440,8 @@ export default function PostDetailPage() {
                                             {item.text}
                                         </a>
                                     ))}
-                                </nav>
-                            </div>
+                                </div>
+                            </nav>
                         </aside>
                     )}
 
@@ -460,24 +462,25 @@ export default function PostDetailPage() {
                     <div className="flex-1 min-w-0">
                         {/* Post Header */}
                         <header className="mb-8">
-                            <h1 className="mb-4 text-3xl font-bold text-foreground max-md:text-2xl">
+                            <h1 className="mb-5 text-3xl font-bold leading-tight text-foreground max-md:text-2xl">
                                 {displayTitle}
                             </h1>
-                            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                            {/* 信息带：独立分属，与正文拉开层次 */}
+                            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pb-5 text-sm font-medium text-muted-foreground border-b border-border/40">
                                 <div className="flex items-center gap-1.5">
-                                    <XIcon name="carbon:user-avatar"/>
+                                    <XIcon name="carbon:user-avatar" size={16}/>
                                     <span>{post.authorName}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <XIcon name="carbon:calendar"/>
+                                    <XIcon name="carbon:calendar" size={16}/>
                                     <span>{formatDate(post.createdAt)}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <XIcon name="carbon:view"/>
+                                    <XIcon name="carbon:view" size={16}/>
                                     <span>{post.visits || 0}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <XIcon name="carbon:thumbs-up"/>
+                                    <XIcon name="carbon:thumbs-up" size={16}/>
                                     <span>{post.likes || 0}</span>
                                 </div>
                             </div>

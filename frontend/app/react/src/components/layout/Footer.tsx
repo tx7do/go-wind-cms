@@ -90,7 +90,7 @@ export default function Footer() {
                                 key={social.key}
                                 variant="ghost"
                                 size="icon"
-                                className="text-2xl text-muted-foreground hover:text-primary transition-all hover:-translate-y-0.5"
+                                className="text-2xl text-muted-foreground hover:text-primary transition-colors duration-300 hover:-translate-y-0.5"
                                 aria-label={social.name}
                                 onClick={() => handleSocialClick(social.name)}
                             >
