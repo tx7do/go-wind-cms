@@ -329,9 +329,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                             size="lg"
                             onClick={handleSubmitComment}
                             disabled={submitting}
-                            className="gap-2 text-primary-foreground"
+                            className="gap-2"
                         >
-                            {submitting ? <Spinner size="sm"/> : <XIcon name="carbon:send-alt" size={18} className="text-primary-foreground"/>}
+                            {submitting ? <Spinner size="sm"/> : <XIcon name="carbon:send-alt" size={18}/>} 
                             {t('submit_comment')}
                         </Button>
                         <span className="flex items-center gap-2 rounded-lg border border-primary/10 bg-primary/5 px-3.5 py-2 text-[13px] text-muted-foreground max-md:justify-center max-md:text-xs max-md:px-3 max-md:py-1.5">

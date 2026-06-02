@@ -57,8 +57,8 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
         // 主色调 → --primary / --ring
         root.style.setProperty('--primary', theme.colorPrimary);
 
-        // 根据暗色/亮色自动计算 primary-foreground（取对比色）
-        root.style.setProperty('--primary-foreground', isDark ? '144.4 96.6% 11.4%' : '144 96.6% 11.4%');
+        // 根据暗色/亮色自动计算 primary-foreground（绿底按钮上的文字必须是纯白色）
+        root.style.setProperty('--primary-foreground', '0 0% 100%');
 
         // 成功色
         root.style.setProperty('--success', theme.colorSuccess);
