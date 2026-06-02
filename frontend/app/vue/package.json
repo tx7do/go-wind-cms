@@ -20,8 +20,10 @@
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "date-fns-tz": "^3.2.0",
+    "dompurify": "^3.4.7",
     "embla-carousel-vue": "^8.6.0",
     "lucide-vue-next": "^1.0.0",
+    "marked": "^18.0.4",
     "nprogress": "^0.2.0",
     "nuxt": "^4.4.4",
     "pinia": "^2.3.1",
@@ -37,6 +39,7 @@
     "@tailwindcss/vite": "^4.3.0",
     "@tanstack/vue-query-devtools": "^5.8.0",
     "@types/crypto-js": "^4.2.2",
+    "@types/dompurify": "^3.2.0",
     "shadcn-nuxt": "^2.7.3",
     "tailwindcss": "^4.3.0"
   }

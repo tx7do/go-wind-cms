@@ -56,7 +56,7 @@ const handleClickLogout = async () => {
       <!-- 桌面端功能按钮区 -->
       <div class="flex shrink-0 items-center gap-1 max-md:hidden">
         <!-- 用户菜单 -->
-        <UiDropdownMenu>
+        <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
             <UiButton variant="ghost" size="icon" aria-label="User menu">
               <XIcon icon="lucide:user" width="16" height="16" />
@@ -92,7 +92,7 @@ const handleClickLogout = async () => {
         </UiDropdownMenu>
 
         <!-- 语言菜单 -->
-        <UiDropdownMenu>
+        <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
             <UiButton variant="ghost" size="icon" aria-label="Language">
               <XIcon icon="lucide:globe" width="16" height="16" />
@@ -109,7 +109,7 @@ const handleClickLogout = async () => {
         </UiDropdownMenu>
 
         <!-- 主题菜单 -->
-        <UiDropdownMenu>
+        <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
             <UiButton variant="ghost" size="icon" aria-label="Toggle theme">
               <XIcon                 :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
@@ -137,7 +137,7 @@ const handleClickLogout = async () => {
 
       <!-- 手机端：主题切换 + 汉堡选单 -->
       <div class="flex shrink-0 items-center gap-1 md:hidden">
-        <UiDropdownMenu>
+        <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
             <UiButton variant="ghost" size="icon" aria-label="Toggle theme">
               <XIcon                 :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
