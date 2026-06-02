@@ -529,6 +529,30 @@
         display: none;
     }
 
+    /* 手机端放大呼吸灯：扩大光晕扩散范围，托举文字脱离黑洞 */
+    .heroGlow {
+        width: 640px;
+        height: 640px;
+        filter: blur(120px);
+        background: hsl(var(--primary) / 0.08);
+    }
+
+    /* 手机端降低光晕动画幅度，避免过度闪烁 */
+    .heroGlow {
+        animation: glowBreatheMobile 6s ease-in-out infinite;
+    }
+
+    @keyframes glowBreatheMobile {
+        0%, 100% {
+            opacity: 0.7;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+            opacity: 0.9;
+            transform: translate(-50%, -50%) scale(1.08);
+        }
+    }
+
     /* 手机端按钮垂直通栏排列 */
     .heroActions {
         flex-direction: column;

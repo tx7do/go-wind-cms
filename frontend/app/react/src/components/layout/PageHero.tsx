@@ -38,7 +38,7 @@ const PageHero: React.FC<PageHeroProps> = ({
 
     return (
         <section className={cn(
-            'relative w-full overflow-hidden border-b border-border',
+            'relative w-full overflow-hidden',
             'dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900/80 dark:to-background',
             'bg-gradient-to-b from-[hsl(142,70%,96%)] via-[hsl(142,50%,98%)] to-background',
             minHeight,

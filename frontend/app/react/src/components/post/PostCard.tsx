@@ -44,7 +44,10 @@ const PostCard: React.FC<PostCardProps> = ({
         <article
             className={cn(
                 'group flex h-full cursor-pointer flex-col overflow-hidden',
+                /* 亮色模式：纯白卡片 */
                 'rounded-2xl border border-border bg-card shadow-sm',
+                /* 深色模式：磨砂玻璃浮空塊 */
+                'dark:border-slate-800/50 dark:bg-slate-900/40 dark:backdrop-blur-md dark:shadow-xl',
                 /* 空气动力学悬浮：纯 primary 辉光（无暗影底），更空灵 */
                 'transition-all duration-500 ease-out',
                 'hover:-translate-y-1.5 hover:border-primary/40',
