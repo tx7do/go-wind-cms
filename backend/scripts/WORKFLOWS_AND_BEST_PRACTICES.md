@@ -406,7 +406,6 @@ Stop-Process -Id <PID> -Force
 
 - ✅ 数据库容器运行：`docker ps | grep postgres`
 - ✅ Redis 容器运行：`docker ps | grep redis`
-- ✅ Consul 容器运行：`docker ps | grep consul`
 
 ### 应用检查
 
