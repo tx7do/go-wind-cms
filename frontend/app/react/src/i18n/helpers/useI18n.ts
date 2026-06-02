@@ -6,6 +6,7 @@ import {usePathname} from 'next/navigation';
 import {useI18nRouter} from "@/i18n/helpers/useI18nRouter";
 import {useLoading} from '@/store/core/loading/store';
 import {usePreferences} from '@/core/preferences';
+import {queryClient} from '@/core';
 
 
 /**
@@ -23,8 +24,11 @@ export function useI18n(namespace: string = 'common') {
 
     // 切换语言（使用 next-intl 的路由器）
     const changeLocale = (targetLocale: string) => {
-        // 同步到 preferences store
+        // 同步到 preferences store（影响 Accept-Language header）
         setLanguage(targetLocale as never);
+
+        // 清除 React Query 缓存，确保新语言下重新请求数据
+        queryClient.clear();
 
         // 从当前路径中提取不包含 locale 的路径部分
         const segments = pathname.split('/').slice(2).join('/');

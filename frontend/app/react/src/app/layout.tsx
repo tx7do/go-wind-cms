@@ -7,6 +7,7 @@ import {env} from "@/config";
 import {DEFAULT_LANGUAGE} from "@/i18n";
 import StoreProvider from '@/store/StoreProvider';
 import ThemeClientProvider from '@/components/layout/ThemeClientProvider';
+import DevToolsClient from '@/components/dev/DevToolsClient';
 import initThemeScript from '@/utils/init-theme-script';
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
             <StoreProvider>
                 <ThemeClientProvider>{children}</ThemeClientProvider>
             </StoreProvider>
+            <DevToolsClient/>
         </body>
         </html>
     );

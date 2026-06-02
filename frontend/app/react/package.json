@@ -57,6 +57,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.100.14",
     "@types/crypto-js": "^4.2.2",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
