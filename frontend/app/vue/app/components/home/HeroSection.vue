@@ -89,6 +89,13 @@ const localePath = useLocalePath()
     background: linear-gradient(45deg, #000000 0%, #0f172a 50%, rgba(6, 78, 59, 0.35) 100%);
 }
 
+/* auto + 系统暗色时，CSS @media 后备，等价于 .dark 的样式 */
+@media (prefers-color-scheme: dark) {
+    :global(:root:not(.light)) .hero {
+        background: linear-gradient(45deg, #000000 0%, #0f172a 50%, rgba(6, 78, 59, 0.35) 100%);
+    }
+}
+
 .hero::after {
     content: '';
     position: absolute;
@@ -198,8 +205,8 @@ const localePath = useLocalePath()
 }
 
 @keyframes glowPulseSnippet {
-    0%, 100% { box-shadow: 0 10px 40px hsl(0 0% 0% / 0.4), 0 0 20px hsl(var(--primary) / 0.2); }
-    50% { box-shadow: 0 10px 40px hsl(0 0% 0% / 0.5), 0 0 40px hsl(var(--primary) / 0.35); }
+    0%, 100% { box-shadow: 0 10px 40px hsl(0 0% 0% / 0.4), 0 0 20px hsl(var(--primary) / 0.2), inset 0 1px 0 hsl(0 0% 100% / 0.05); }
+    50% { box-shadow: 0 10px 40px hsl(0 0% 0% / 0.5), 0 0 40px hsl(var(--primary) / 0.35), inset 0 1px 0 hsl(0 0% 100% / 0.08); }
 }
 
 .heroWaves { position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; animation: wave 10s linear infinite; opacity: 0.3; }
@@ -270,15 +277,31 @@ const localePath = useLocalePath()
     font-size: 1.05rem !important; font-weight: 700;
     padding: 16px 40px !important; border-radius: 10px !important;
     border: none !important;
-    box-shadow: 0 8px 24px hsl(var(--primary) / 0.35), 0 4px 12px hsl(var(--primary) / 0.2);
+    box-shadow: 0 8px 24px hsl(var(--primary) / 0.35), 0 4px 12px hsl(var(--primary) / 0.2), inset 0 0 0 1px hsl(0 0% 100% / 0.1);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 1px 2px hsl(0 0% 0% / 0.3);
     position: relative; overflow: hidden;
-    display: inline-flex !important; align-items: center;
+    display: inline-flex !important; align-items: center; gap: 0.5rem;
 }
 
 .btnPrimary:hover {
     transform: translateY(-2px) translateX(4px) scale(1.02);
-    box-shadow: 0 12px 32px hsl(var(--primary) / 0.5), 0 0 24px hsl(var(--primary) / 0.4);
+    box-shadow: 0 12px 32px hsl(var(--primary) / 0.5), 0 0 24px hsl(var(--primary) / 0.4), 0 6px 16px hsl(var(--primary) / 0.3), inset 0 0 0 1px hsl(0 0% 100% / 0.15);
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.95) 0%, hsl(var(--primary)) 100%) !important;
+}
+
+.btnPrimary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.2), transparent);
+    transition: left 0.5s;
+    pointer-events: none;
+}
+
+.btnPrimary:hover::before {
+    left: 100%;
 }
 
 .btnSecondary {
@@ -288,15 +311,32 @@ const localePath = useLocalePath()
     padding: 16px 40px !important; border-radius: 10px !important;
     border: 1px solid hsl(var(--primary) / 0.35) !important;
     backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px hsl(0 0% 0% / 0.2), inset 0 0 0 1px hsl(0 0% 100% / 0.05);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 1px 3px hsl(0 0% 0% / 0.5);
     position: relative; overflow: hidden;
-    display: inline-flex !important; align-items: center;
+    display: inline-flex !important; align-items: center; gap: 0.5rem;
+}
+
+.btnSecondary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.15), transparent);
+    transition: left 0.5s;
+    pointer-events: none;
+}
+
+.btnSecondary:hover::before {
+    left: 100%;
 }
 
 .btnSecondary:hover {
     background: hsl(var(--primary) / 0.12) !important;
     border-color: hsl(var(--primary) / 0.6) !important;
     transform: translateY(-2px) translateX(4px) scale(1.02);
+    box-shadow: 0 8px 24px hsl(0 0% 0% / 0.3), 0 0 20px hsl(var(--primary) / 0.25), inset 0 0 0 1px hsl(0 0% 100% / 0.08);
 }
 
 @media (max-width: 900px) {
@@ -308,6 +348,21 @@ const localePath = useLocalePath()
     .heroCodeSnippets { display: none; }
     .heroGlow { width: 640px; height: 640px; filter: blur(120px); }
     .heroActions { flex-direction: column; gap: 0.75rem; padding: 0; }
-    .btnPrimary, .btnSecondary { width: 100% !important; justify-content: center !important; }
+    .btnPrimary,
+    .btnSecondary {
+        width: 100% !important;
+        justify-content: center !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .heroGlow {
+        animation: glowBreatheMobile 6s ease-in-out infinite;
+    }
+
+    @keyframes glowBreatheMobile {
+        0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+        50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.08); }
+    }
 }
 </style>

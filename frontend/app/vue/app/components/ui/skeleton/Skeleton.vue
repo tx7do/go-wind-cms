@@ -13,5 +13,5 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
-  <div v-bind="delegatedProps" :class="cn('animate-pulse rounded-md bg-primary/10', props.class)" />
+  <div v-bind="delegatedProps" :class="cn('animate-pulse rounded-md bg-muted', props.class)" />
 </template>

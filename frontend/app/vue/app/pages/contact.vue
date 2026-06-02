@@ -55,8 +55,8 @@ const cards = [
           <a
             v-if="card.email"
             :href="`mailto:${card.email}`"
-            class="mt-3 inline-block rounded-md px-3 py-1.5 text-sm font-medium select-all transition-colors hover:underline bg-primary/5 dark:bg-primary/10"
-            :class="card.accent === 'primary' ? 'text-primary' : card.accent === 'blue' ? 'text-blue-500 dark:text-blue-400' : 'text-foreground'"
+            class="mt-3 inline-block rounded-md px-3 py-1.5 text-sm font-medium select-all transition-colors hover:underline bg-primary/5"
+            :class="card.accent === 'primary' ? 'text-primary' : card.accent === 'blue' ? 'text-blue-500' : 'text-foreground'"
           >
             {{ card.email }}
           </a>

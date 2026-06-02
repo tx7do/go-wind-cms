@@ -122,7 +122,7 @@ const handleAction = (action: () => void) => {
               }"
             >
               <span class="flex items-center gap-2">
-                <XIcon v-if="item.icon" :name="`carbon:${item.icon}`" :size="16" />
+                <XIcon v-if="item.icon" :icon="`carbon:${item.icon}`" :size="16" />
                 <span>{{ item.title }}</span>
               </span>
               <XIcon                 v-if="(item.children?.length ?? 0) > 0"
@@ -144,7 +144,7 @@ const handleAction = (action: () => void) => {
                 class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-foreground/70 transition-colors hover:bg-primary/10 hover:text-primary"
                 @click="handleNavigate(child)"
               >
-                <XIcon v-if="child.icon" :name="`carbon:${child.icon}`" :size="14" />
+                <XIcon v-if="child.icon" :icon="`carbon:${child.icon}`" :size="14" />
                 <span>{{ child.title }}</span>
               </button>
             </div>
@@ -217,7 +217,7 @@ const handleAction = (action: () => void) => {
               'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
               locale === 'zh-CN' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
-            @click="handleAction(() => navigateTo(switchLocalePath('zh-CN')))"
+            @click="handleAction(() => navigateTo(localePath('zh-CN')))"
           >
             <span>简体中文</span>
           </button>
@@ -227,7 +227,7 @@ const handleAction = (action: () => void) => {
               'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
               locale === 'en-US' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
-            @click="handleAction(() => navigateTo(switchLocalePath('en-US')))"
+            @click="handleAction(() => navigateTo(localePath('en-US')))"
           >
             <span>English</span>
           </button>

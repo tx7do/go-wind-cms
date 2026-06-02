@@ -79,7 +79,7 @@ onMounted(async () => {
             </div>
 
             <!-- Content -->
-            <div class="prose prose-neutral dark:prose-invert max-w-none" v-html="getPostContent(post)" />
+            <div class="prose prose-neutral prose-invert max-w-none" v-html="getPostContent(post)" />
           </article>
         </LayoutSectionContainer>
       </section>

@@ -6,7 +6,7 @@ const { isDark, toggleTheme } = usePreferences()
 const { locale } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 
-const languageOptions = [
+const languageOptions: { key: 'zh-CN' | 'en-US'; label: string }[] = [
   { key: 'zh-CN', label: '中文' },
   { key: 'en-US', label: 'English' },
 ]

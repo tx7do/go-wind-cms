@@ -111,16 +111,16 @@ usePreferences() // keep theme reactivity
           'max-md:px-2',
         )"
         @click="() => {
-          if (!(item.children?.length > 0)) {
+          if (!(item.children && item.children.length > 0)) {
             handleNavigate(item)
           }
         }"
       >
-        <XIcon v-if="item.icon" :name="`carbon:${item.icon}`" :size="16" />
+        <XIcon v-if="item.icon" :icon="`carbon:${item.icon}`" :size="16" />
         <span class="whitespace-nowrap">{{ item.title }}</span>
         <XIcon
           v-if="(item.children?.length ?? 0) > 0"
-          name="carbon:chevron-down"
+          icon="carbon:chevron-down"
           :size="12"
           :class="cn('transition-transform duration-200', openMenuId === (item.id ?? 0) && 'rotate-180')"
         />
@@ -147,7 +147,7 @@ usePreferences() // keep theme reactivity
             openMenuId = null
           }"
         >
-          <XIcon v-if="child.icon" :name="`carbon:${child.icon}`" :size="14" />
+          <XIcon v-if="child.icon" :icon="`carbon:${child.icon}`" :size="14" />
           <span class="truncate">{{ child.title }}</span>
         </button>
       </div>

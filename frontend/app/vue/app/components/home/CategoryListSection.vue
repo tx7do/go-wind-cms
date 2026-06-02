@@ -72,21 +72,21 @@ const getCategoryName = (category: any): string => {
         <div
           v-for="category in categories"
           :key="category.id"
-          class="group scroll-reveal-item relative flex min-h-50 h-full cursor-pointer flex-col rounded-2xl border border-slate-100 bg-white p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 hover:bg-slate-50 dark:border-slate-800/40 dark:bg-slate-900/50 dark:hover:bg-slate-900 hover:shadow-[0_12px_30px_rgba(34,197,94,0.06)]"
+          class="group scroll-reveal-item relative flex min-h-50 h-full cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 hover:bg-accent/5 hover:shadow-[0_12px_30px_rgba(34,197,94,0.06)]"
           @click="navigateTo(localePath(`/category/${category.id}`))"
         >
           <div class="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100 rounded-2xl" />
           <div class="relative z-1 flex h-full flex-col justify-between">
             <div class="mb-5 flex gap-5">
-              <div class="mb-4 flex h-17.5 w-17.5 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100/50 text-3xl dark:bg-primary/10 dark:text-primary dark:border-primary/20 transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 dark:group-hover:bg-primary dark:group-hover:text-white dark:group-hover:border-primary group-hover:shadow-[0_8px_24px_-4px_hsl(var(--primary)/0.4)]">
+              <div class="mb-4 flex h-17.5 w-17.5 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 text-3xl transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 group-hover:shadow-[0_8px_24px_-4px_hsl(var(--primary)/0.4)]">
                 <XIcon :icon="getIconName(category.icon)" :size="48" />
               </div>
               <div class="flex-1 w-full min-w-0">
-                <h3 class="mb-2 text-lg font-extrabold leading-tight tracking-wide text-slate-900 dark:text-foreground transition-colors">
+                <h3 class="mb-2 text-lg font-extrabold leading-tight tracking-wide text-foreground transition-colors">
                   {{ getCategoryName(category) }}
                 </h3>
-                <p class="text-xs text-slate-500 dark:text-muted-foreground mt-1">
-                  <span class="mr-1 font-medium text-emerald-600 dark:text-primary">{{ category.postCount || 0 }}</span>
+                <p class="text-xs text-muted-foreground mt-1">
+                  <span class="mr-1 font-medium text-primary">{{ category.postCount || 0 }}</span>
                   {{ t('page.home.articles_unit') }}
                 </p>
               </div>
@@ -100,19 +100,19 @@ const getCategoryName = (category: any): string => {
         <div
           v-for="category in categories"
           :key="category.id"
-          class="group scroll-reveal-item w-[170px] shrink-0 flex cursor-pointer flex-col items-center rounded-2xl border border-slate-100 bg-white p-4 text-center transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 dark:border-slate-800/40 dark:bg-slate-900/50"
+          class="group scroll-reveal-item w-[170px] shrink-0 flex cursor-pointer flex-col items-center rounded-2xl border border-border bg-card p-4 text-center transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/30"
           @click="navigateTo(localePath(`/category/${category.id}`))"
         >
           <div class="relative z-1 flex h-full w-full flex-col items-center justify-between gap-3">
-            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100/50 dark:bg-primary/10 dark:text-primary dark:border-primary/20 transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:bg-primary dark:group-hover:text-white">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white">
               <XIcon :icon="getIconName(category.icon)" :size="32" />
             </div>
             <div class="flex w-full min-w-0 flex-1 flex-col items-center gap-1">
-              <h3 class="line-clamp-2 text-sm font-bold leading-tight tracking-wide text-slate-900 dark:text-foreground">
+              <h3 class="line-clamp-2 text-sm font-bold leading-tight tracking-wide text-foreground">
                 {{ getCategoryName(category) }}
               </h3>
-              <p class="text-xs text-slate-500 dark:text-muted-foreground">
-                <span class="mr-1 font-medium text-emerald-600 dark:text-primary">{{ category.postCount || 0 }}</span>
+              <p class="text-xs text-muted-foreground">
+                <span class="mr-1 font-medium text-primary">{{ category.postCount || 0 }}</span>
                 {{ t('page.home.articles_unit') }}
               </p>
             </div>

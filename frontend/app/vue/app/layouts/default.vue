@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { preferencesManager } from '@/core/preferences/preferences'
 import { usePreferences } from '@/core/preferences/use-preferences'
 
 const { isDark } = usePreferences()
@@ -8,11 +7,6 @@ const route = useRoute()
 // 检查是否是认证页面
 const isAuthPage = computed(() => {
   return route.path.includes('/register') || route.path.includes('/login')
-})
-
-// 初始化偏好设置
-onMounted(() => {
-  preferencesManager.initPreferences({ namespace: 'gowind' })
 })
 </script>
 

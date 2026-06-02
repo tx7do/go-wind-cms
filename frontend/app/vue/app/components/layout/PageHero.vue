@@ -23,8 +23,7 @@ const padding = computed(() =>
 <template>
   <section :class="cn(
     'relative w-full overflow-hidden',
-    'dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900/80 dark:to-background',
-    'bg-gradient-to-b from-[hsl(142,70%,96%)] via-[hsl(142,50%,98%)] to-background',
+    'bg-gradient-to-b from-primary/5 via-primary/[0.02] to-background',
     minHeight, padding,
     'flex items-center justify-center text-center',
   )">
@@ -62,7 +61,7 @@ const padding = computed(() =>
 
       <!-- 主标题 -->
       <h1 :class="cn(
-        'mb-4 font-bold leading-tight dark:text-white text-foreground',
+        'mb-4 font-bold leading-tight text-foreground',
         size === 'lg' ? 'text-4xl max-md:text-2xl' : 'text-3xl max-md:text-2xl',
         size === 'sm' && 'text-2xl max-md:text-xl',
       )">
@@ -73,7 +72,7 @@ const padding = computed(() =>
       <p
         v-if="description"
         :class="cn(
-          'mx-auto font-light dark:text-slate-300 text-muted-foreground',
+          'mx-auto font-light text-muted-foreground',
           size === 'lg' ? 'max-w-2xl text-lg max-md:text-base' : 'max-w-xl text-base max-md:text-sm',
           size === 'sm' && 'text-sm max-md:text-xs',
         )"

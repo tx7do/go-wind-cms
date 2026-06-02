@@ -3,10 +3,14 @@ import type { Preferences } from "./types";
 /**
  * 更新 CSS 变量 — 适配 shadcn-vue
  *
- * shadcn-vue 使用：
- * - `.dark` class on <html> 切换暗色模式
- * - `data-theme` 属性切换主题色预设（通过 main.css 中定义的 [data-theme="xxx"] 选择器）
- * - `--radius` 控制全局圆角
+ * 暗色模式策略（三层）：
+ * 1. CSS 后备：@media (prefers-color-scheme: dark) 在 JS 执行前自动跟随系统
+ * 2. JS 精确控制：通过 .dark / .light class 覆盖 @media
+ *    - mode='auto'  → 移除 .dark 和 .light，由 @media 接管
+ *    - mode='dark'  → 添加 .dark，移除 .light
+ *    - mode='light' → 添加 .light，移除 .dark
+ * 3. data-theme 属性切换主题色预设
+ * 4. --radius 控制全局圆角
  */
 function updateCSSVariables(preferences: Preferences) {
   if (typeof document === "undefined") return;
@@ -17,10 +21,19 @@ function updateCSSVariables(preferences: Preferences) {
   const theme = preferences?.theme ?? {};
   const { mode, builtinType, radius } = theme;
 
-  // 1. 暗色模式 — 切换 .dark class
+  // 1. 暗色模式 — 通过 .dark / .light class 精确控制
   if (Reflect.has(theme, "mode")) {
-    const dark = isDarkTheme(mode);
-    root.classList.toggle("dark", dark);
+    if (mode === "dark") {
+      root.classList.add("dark");
+      root.classList.remove("light");
+    } else if (mode === "light") {
+      root.classList.add("light");
+      root.classList.remove("dark");
+    } else {
+      // auto：移除两个 class，让 CSS @media (prefers-color-scheme: dark) 接管
+      root.classList.remove("dark");
+      root.classList.remove("light");
+    }
   }
 
   // 2. 主题色预设 — 切换 data-theme 属性

@@ -85,6 +85,8 @@
 /* ==========================================
  * 深色模式 (Dark Mode) — 暗夜疾行
  * ========================================== */
+
+/* JS 精确控制：通过 .dark / .light class 切换 */
 .dark {
     --background: 224 45% 6%;
     --foreground: 210 20% 98%;
@@ -120,6 +122,47 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142.1 86.2% 50.3%;
+}
+
+/* 纯 CSS 后备：JS 未执行前，浏览器自动跟随系统暗色偏好。
+ * 等价于 .dark 的变量值，选择器用 :root:not(.light) 确保
+ * 手动亮色模式优先于系统偏好。 */
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+        --background: 224 45% 6%;
+        --foreground: 210 20% 98%;
+
+        --card: 222.2 47.4% 11%;
+        --card-foreground: 210 20% 98%;
+
+        --popover: 222.2 47.4% 11%;
+        --popover-foreground: 210 20% 98%;
+
+        --primary: 142.1 86.2% 50.3%;
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 217.2 32.6% 13.5%;
+        --secondary-foreground: 210 20% 98%;
+
+        --muted: 217.2 32.6% 13.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217.2 91.2% 59.8%;
+        --accent-foreground: 210 20% 98%;
+
+        --destructive: 0 62.8% 50%;
+        --destructive-foreground: 0 0% 98%;
+
+        --success: 142.1 86.2% 50.3%;
+        --success-foreground: 0 0% 98%;
+
+        --warning: 38 92% 55%;
+        --warning-foreground: 0 0% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 142.1 86.2% 50.3%;
+    }
 }
 
 /* ========== 基础重置 ========== */

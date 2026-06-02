@@ -10,6 +10,10 @@ const currentMode = computed(() => themePref.value.mode)
 
 const localePath = useLocalePath()
 const switchLocalePath = useSwitchLocalePath()
+
+const changeLocale = (code: 'zh-CN' | 'en-US') => {
+  navigateTo(switchLocalePath(code))
+}
 const accessStore = useAccessStore()
 const authStore = useAuthStore()
 
@@ -29,7 +33,7 @@ const handleClickLogout = async () => {
 </script>
 
 <template>
-  <header class="fixed top-0 left-0 right-0 z-1000 flex justify-center bg-background/80 backdrop-blur-md border-b border-border/50 dark:border-border/30 dark:bg-background/60">
+  <header class="fixed top-0 left-0 right-0 z-1000 flex justify-center bg-background/80 backdrop-blur-md border-b border-border/40">
     <div class="flex h-(--layout-header-height) w-full max-w-300 items-center gap-6 px-4 max-md:gap-3 max-md:px-3">
       <!-- Logo -->
       <button
@@ -95,10 +99,10 @@ const handleClickLogout = async () => {
             </UiButton>
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent align="end">
-            <UiDropdownMenuItem @click="switchLocalePath('zh-CN')">
+            <UiDropdownMenuItem @click="changeLocale('zh-CN')">
               简体中文
             </UiDropdownMenuItem>
-            <UiDropdownMenuItem @click="switchLocalePath('en-US')">
+            <UiDropdownMenuItem @click="changeLocale('en-US')">
               English
             </UiDropdownMenuItem>
           </UiDropdownMenuContent>

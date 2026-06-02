@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     components: [
         {
             path: '~/components',
+            extensions: ['.vue'],
             ignore: ['**/index.ts'],
         },
     ],
@@ -16,6 +17,7 @@ export default defineNuxtConfig({
     modules: [
         '@nuxtjs/i18n',
         '@pinia/nuxt',
+        'shadcn-nuxt'
     ],
     vite: {
         plugins: [

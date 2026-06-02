@@ -11,7 +11,7 @@ const props = defineProps<{
 
 <template>
   <span :class="cn('flex items-center gap-1.5 text-muted-foreground', props.class)">
-    <XIcon v-if="icon" :name="icon" :size="iconSize ?? 16" class="text-muted-foreground" />
+    <XIcon v-if="icon" :icon="icon" :size="iconSize ?? 16" class="text-muted-foreground" />
     <slot />
   </span>
 </template>
