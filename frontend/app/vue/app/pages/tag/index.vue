@@ -131,7 +131,7 @@ onMounted(loadTags)
             :disabled="page <= 1"
             @click="handlePageChange(page - 1)"
           >
-            {{ t('common.previous') || 'Previous' }}
+            {{ t('common.prev') }}
           </UiButton>
           <span class="text-sm text-muted-foreground">
             {{ page }} / {{ Math.ceil(total / pageSize) }}
