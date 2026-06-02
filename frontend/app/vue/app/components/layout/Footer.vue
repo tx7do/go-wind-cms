@@ -45,7 +45,7 @@ const handleSocialClick = (name: string) => {
   <footer class="w-full bg-card flex justify-center">
     <div class="flex w-full max-w-300 items-center justify-between gap-4 border-t border-border px-6 py-4 text-muted-foreground min-h-18 max-md:flex-col max-md:items-start max-md:gap-3 max-md:py-4 max-md:pb-5">
       <nav class="flex flex-wrap items-center gap-1" aria-label="Footer links">
-        <UIButton
+        <UiButton
           v-for="link in footerLinks"
           :key="link.key"
           variant="ghost"
@@ -53,16 +53,16 @@ const handleSocialClick = (name: string) => {
           @click="handleFooterLinkClick(link.key)"
         >
           {{ t(link.labelKey) }}
-        </UIButton>
+        </UiButton>
       </nav>
 
       <div class="flex shrink-0 items-center gap-3 max-md:w-full max-md:justify-between">
         <span class="text-sm whitespace-nowrap">
           {{ t('ui.copyright') }}
         </span>
-        <Separator class="h-3.5 w-px bg-border max-md:hidden" />
+        <UiSeparator class="h-3.5 w-px bg-border max-md:hidden" />
         <div class="flex items-center gap-1" aria-label="Social links">
-          <UIButton
+          <UiButton
             v-for="social in socialLinks"
             :key="social.key"
             variant="ghost"
@@ -72,7 +72,7 @@ const handleSocialClick = (name: string) => {
             @click="handleSocialClick(social.name)"
           >
             <XIcon :icon="social.icon" />
-          </UIButton>
+          </UiButton>
         </div>
       </div>
     </div>

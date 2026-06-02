@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { XIcon } from '@/plugins/xicon'
-import { fetchListTags } from '@/api/composables/tag'
+import { fetchListTag } from '@/api/composables/tag'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -22,7 +22,7 @@ let abortController: AbortController | null = null
 onMounted(async () => {
   loading.value = true
   try {
-    const res = await fetchListTags({
+    const res = await fetchListTag({
       paging: { page: 1, pageSize: 6 },
       formValues: { status: 'TAG_STATUS_ACTIVE', isFeatured: true },
     }) as any
@@ -53,15 +53,15 @@ onUnmounted(() => { abortController?.abort() })
         <XIcon name="carbon:fire" :size="28" class="mr-2 text-primary" />
         {{ t('page.tags.popular_tags') }}
       </h2>
-      <UIButton variant="ghost" @click="navigateTo(localePath('/tag'))">
+      <UiButton variant="ghost" @click="navigateTo(localePath('/tag'))">
         {{ t('page.tags.view_all') }} →
-      </UIButton>
+      </UiButton>
     </div>
     <div class="w-full">
       <!-- Loading -->
       <div v-if="loading" class="flex flex-wrap justify-center gap-3">
         <div v-for="i in 6" :key="i" class="h-10 w-28">
-          <Skeleton class="h-full w-full rounded-full" />
+          <UiSkeleton class="h-full w-full rounded-full" />
         </div>
       </div>
       <!-- Tags -->

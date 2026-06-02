@@ -1,5 +1,4 @@
 import {ref} from 'vue'
-import {useRouter} from 'vue-router'
 import {defineStore} from 'pinia'
 import CryptoJS from 'crypto-js';
 
@@ -15,13 +14,10 @@ import {login as apiLogin, logout as apiLogout, refreshToken as apiRefreshToken}
 import {getMe} from '@/api/composables/user-profile';
 import { toast } from 'vue-sonner';
 
-const {t} = useI18n()
-
 export const useAuthStore = defineStore('auth', () => {
     const accessStore = useAccessStore()
     const userStore = useUserStore()
-
-    const router = useRouter()
+    const { t } = useI18n()
 
     const loginLoading = ref(false)
 
@@ -63,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
                 } else {
                     onSuccess
                         ? await onSuccess?.()
-                        : await router.push(userInfo.homePath || DEFAULT_HOME_PATH)
+                        : await navigateTo(userInfo.homePath || DEFAULT_HOME_PATH)
                 }
 
                 if (userInfo?.realname) {
@@ -93,11 +89,12 @@ export const useAuthStore = defineStore('auth', () => {
             accessStore.setLoginExpired(false)
 
             // 回登录页带上当前路由地址
-            await router.replace({
+            const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/'
+            await navigateTo({
                 path: LOGIN_PATH,
                 query: redirect
                     ? {
-                        redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+                        redirect: encodeURIComponent(currentPath),
                     }
                     : {},
             })
@@ -164,9 +161,10 @@ export const useAuthStore = defineStore('auth', () => {
      * @param password 明文密码
      */
     function encryptPassword(password: string): string {
-        const key = import.meta.env.VITE_AES_KEY;
+        const config = useRuntimeConfig()
+        const key = config.public.aesKey as string;
         if (!key) {
-            throw new Error('VITE_AES_KEY is not set in environment');
+            throw new Error('AES_KEY is not set in runtime config');
         }
         return encryptData(password, key, key);
     }

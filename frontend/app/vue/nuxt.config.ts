@@ -4,13 +4,18 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     devtools: {enabled: true},
+    components: [
+        {
+            path: '~/components',
+            ignore: ['**/index.ts'],
+        },
+    ],
     css: [
         '~/assets/css/main.css',
     ],
     modules: [
         '@nuxtjs/i18n',
         '@pinia/nuxt',
-        '@tanstack/vue-query/nuxt',
     ],
     vite: {
         plugins: [

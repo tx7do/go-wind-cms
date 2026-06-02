@@ -19,15 +19,15 @@ const scrollToCategories = () => {
         <XIcon name="carbon:star-filled" :size="28" class="mr-2 text-primary" />
         {{ t('page.home.featured_posts') }}
       </h2>
-      <UIButton variant="ghost" @click="navigateTo(localePath('/post'))">
+      <UiButton variant="ghost" @click="navigateTo(localePath('/post'))">
         {{ t('page.home.view_all') }} →
-      </UIButton>
+      </UiButton>
     </div>
     <div class="w-full">
       <!-- PostList component placeholder - will be replaced with actual PostList when business components are created -->
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div v-for="i in 3" :key="i" class="flex min-h-50 flex-col rounded-2xl border border-border bg-card p-6">
-          <Skeleton class="h-35 w-full" />
+          <UiSkeleton class="h-35 w-full" />
         </div>
       </div>
     </div>

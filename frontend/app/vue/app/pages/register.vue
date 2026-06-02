@@ -16,22 +16,22 @@ definePageMeta({ layout: 'auth' })
 
       <form @submit.prevent class="space-y-4">
         <div>
-          <UILabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.username') }}</UILabel>
-          <UIInput type="text" :placeholder="$t('authentication.register.username_placeholder')" />
+          <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.username') }}</UiLabel>
+          <UiInput type="text" :placeholder="$t('authentication.register.username_placeholder')" />
         </div>
         <div>
-          <UILabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.email') }}</UILabel>
-          <UIInput type="email" :placeholder="$t('authentication.register.email_placeholder')" />
+          <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.email') }}</UiLabel>
+          <UiInput type="email" :placeholder="$t('authentication.register.email_placeholder')" />
         </div>
         <div>
-          <UILabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.password') }}</UILabel>
-          <UIInput type="password" :placeholder="$t('authentication.register.password_placeholder')" />
+          <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.password') }}</UiLabel>
+          <UiInput type="password" :placeholder="$t('authentication.register.password_placeholder')" />
         </div>
         <div>
-          <UILabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.confirm_password') }}</UILabel>
-          <UIInput type="password" :placeholder="$t('authentication.register.confirm_password_placeholder')" />
+          <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.register.confirm_password') }}</UiLabel>
+          <UiInput type="password" :placeholder="$t('authentication.register.confirm_password_placeholder')" />
         </div>
-        <UIButton class="w-full" type="submit">{{ $t('authentication.register.register_button') }}</UIButton>
+        <UiButton class="w-full" type="submit">{{ $t('authentication.register.register_button') }}</UiButton>
       </form>
 
       <div class="mt-6 text-center text-sm text-muted-foreground">

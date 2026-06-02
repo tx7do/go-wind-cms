@@ -5,7 +5,7 @@ import { useLanguageChangeEffect } from '@/hooks/use-language-change-effect'
 import { usePreferences } from '@/core/preferences/use-preferences'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useAuthStore } from '@/stores/modules/app/auth.state'
-import { fetchListNavigations } from '@/api/composables/navigation'
+import { fetchListNavigation } from '@/api/composables/navigation'
 import { cn } from '@/lib/utils'
 
 // @ts-ignore
@@ -30,7 +30,7 @@ const expandedId = ref<number | null>(null)
 
 const loadNav = async () => {
   try {
-    const res = await fetchListNavigations({
+    const res = await fetchListNavigation({
       paging: { page: 1, pageSize: 10 },
     }) as any
 
@@ -51,7 +51,7 @@ const loadNav = async () => {
 onMounted(loadNav)
 
 useLanguageChangeEffect(() => {
-  fetchListNavigations({ paging: { page: 1, pageSize: 10 } })
+  fetchListNavigation({ paging: { page: 1, pageSize: 10 } })
     .then((res: any) => {
       if (res.items?.length) {
         const headerNav = res.items.find((nav: any) =>
@@ -83,22 +83,22 @@ const handleAction = (action: () => void) => {
 
 <template>
   <!-- 汉堡按钮 -->
-  <UIButton variant="ghost" size="icon" aria-label="Open menu" class="md:hidden" @click="open = true">
-    <iconify-icon icon="lucide:menu" width="20" height="20" />
-  </UIButton>
+  <UiButton variant="ghost" size="icon" aria-label="Open menu" class="md:hidden" @click="open = true">
+    <XIcon icon="lucide:menu" width="20" height="20" />
+  </UiButton>
 
   <!-- 抽屉 -->
-  <UISheet :open="open" @update:open="open = $event">
-    <UISheetContent side="right" class="flex w-full flex-col p-0 sm:max-w-sm">
+  <UiSheet :open="open" @update:open="open = $event">
+    <UiSheetContent side="right" class="flex w-full flex-col p-0 sm:max-w-sm">
       <!-- 顶部品牌区 -->
-      <UISheetHeader class="border-b border-border px-5 py-4">
+      <UiSheetHeader class="border-b border-border px-5 py-4">
         <div class="flex items-center gap-2">
           <img src="/logo.png" alt="Logo" width="32" height="32" class="h-8 w-8" />
-          <UISheetTitle class="text-base font-bold text-primary">
+          <UiSheetTitle class="text-base font-bold text-primary">
             {{ t('app.title') }}
-          </UISheetTitle>
+          </UiSheetTitle>
         </div>
-      </UISheetHeader>
+      </UiSheetHeader>
 
       <!-- 滚动内容区 -->
       <div class="flex-1 overflow-y-auto px-3 py-3">
@@ -125,8 +125,7 @@ const handleAction = (action: () => void) => {
                 <XIcon v-if="item.icon" :name="`carbon:${item.icon}`" :size="16" />
                 <span>{{ item.title }}</span>
               </span>
-              <iconify-icon
-                v-if="(item.children?.length ?? 0) > 0"
+              <XIcon                 v-if="(item.children?.length ?? 0) > 0"
                 icon="lucide:chevron-down"
                 width="16" height="16"
                 :class="cn('transition-transform', expandedId === (item.id ?? 0) && 'rotate-180')"
@@ -163,7 +162,7 @@ const handleAction = (action: () => void) => {
               class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/user')))"
             >
-              <iconify-icon icon="lucide:home" width="16" height="16" />
+              <XIcon icon="lucide:home" width="16" height="16" />
               <span>{{ t('menu.homepage') }}</span>
             </button>
             <button
@@ -171,7 +170,7 @@ const handleAction = (action: () => void) => {
               class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/settings')))"
             >
-              <iconify-icon icon="lucide:user" width="16" height="16" />
+              <XIcon icon="lucide:user" width="16" height="16" />
               <span>{{ t('menu.my_profile') }}</span>
             </button>
             <button
@@ -179,7 +178,7 @@ const handleAction = (action: () => void) => {
               class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/10"
               @click="handleAction(async () => { await authStore.logout() })"
             >
-              <iconify-icon icon="lucide:log-out" width="16" height="16" />
+              <XIcon icon="lucide:log-out" width="16" height="16" />
               <span>{{ t('menu.logout') }}</span>
             </button>
           </template>
@@ -189,7 +188,7 @@ const handleAction = (action: () => void) => {
               class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/login')))"
             >
-              <iconify-icon icon="lucide:user" width="16" height="16" />
+              <XIcon icon="lucide:user" width="16" height="16" />
               <span>{{ t('navbar.user.login') }}</span>
             </button>
             <button
@@ -197,7 +196,7 @@ const handleAction = (action: () => void) => {
               class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/register')))"
             >
-              <iconify-icon icon="lucide:user" width="16" height="16" />
+              <XIcon icon="lucide:user" width="16" height="16" />
               <span>{{ t('navbar.user.register') }}</span>
             </button>
           </template>
@@ -208,7 +207,7 @@ const handleAction = (action: () => void) => {
 
         <!-- 语言切换 -->
         <div class="mb-2 px-3 py-1 text-xs font-semibold text-muted-foreground">
-          <iconify-icon icon="lucide:globe" width="12" height="12" class="mr-1 inline" />
+          <XIcon icon="lucide:globe" width="12" height="12" class="mr-1 inline" />
           {{ t('navbar.language.title') }}
         </div>
         <div class="space-y-0.5">
@@ -239,8 +238,7 @@ const handleAction = (action: () => void) => {
 
         <!-- 主题切换 -->
         <div class="mb-2 px-3 py-1 text-xs font-semibold text-muted-foreground">
-          <iconify-icon
-            :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
+          <XIcon             :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
             width="16" height="16"
           />
           <span class="ml-1">{{ t('navbar.theme.title') || 'Theme' }}</span>
@@ -260,11 +258,11 @@ const handleAction = (action: () => void) => {
             )"
             @click="handleAction(() => setThemeMode(mode.key as any))"
           >
-            <iconify-icon :icon="mode.icon" width="16" height="16" />
+            <XIcon :icon="mode.icon" width="16" height="16" />
             <span>{{ mode.label }}</span>
           </button>
         </div>
       </div>
-    </UISheetContent>
-  </UISheet>
+    </UiSheetContent>
+  </UiSheet>
 </template>

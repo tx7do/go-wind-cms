@@ -52,113 +52,111 @@ const handleClickLogout = async () => {
       <!-- 桌面端功能按钮区 -->
       <div class="flex shrink-0 items-center gap-1 max-md:hidden">
         <!-- 用户菜单 -->
-        <UIDropdownMenu>
-          <UIDropdownMenuTrigger as-child>
-            <UIButton variant="ghost" size="icon" aria-label="User menu">
-              <iconify-icon icon="lucide:user" width="16" height="16" />
-            </UIButton>
-          </UIDropdownMenuTrigger>
-          <UIDropdownMenuContent align="end">
+        <UiDropdownMenu>
+          <UiDropdownMenuTrigger as-child>
+            <UiButton variant="ghost" size="icon" aria-label="User menu">
+              <XIcon icon="lucide:user" width="16" height="16" />
+            </UiButton>
+          </UiDropdownMenuTrigger>
+          <UiDropdownMenuContent align="end">
             <template v-if="isLogin">
-              <UIDropdownMenuItem @click="handleClickUserHomepage">
-                <iconify-icon icon="lucide:home" width="16" height="16" />
+              <UiDropdownMenuItem @click="handleClickUserHomepage">
+                <XIcon icon="lucide:home" width="16" height="16" />
                 {{ t('menu.homepage') }}
-              </UIDropdownMenuItem>
-              <UIDropdownMenuItem @click="handleClickSettings">
-                <iconify-icon icon="lucide:user" width="16" height="16" />
+              </UiDropdownMenuItem>
+              <UiDropdownMenuItem @click="handleClickSettings">
+                <XIcon icon="lucide:user" width="16" height="16" />
                 {{ t('menu.my_profile') }}
-              </UIDropdownMenuItem>
-              <UIDropdownMenuSeparator />
-              <UIDropdownMenuItem class="text-destructive" @click="handleClickLogout">
-                <iconify-icon icon="lucide:log-out" width="16" height="16" />
+              </UiDropdownMenuItem>
+              <UiDropdownMenuSeparator />
+              <UiDropdownMenuItem class="text-destructive" @click="handleClickLogout">
+                <XIcon icon="lucide:log-out" width="16" height="16" />
                 {{ t('menu.logout') }}
-              </UIDropdownMenuItem>
+              </UiDropdownMenuItem>
             </template>
             <template v-else>
-              <UIDropdownMenuItem @click="handleClickLogin">
-                <iconify-icon icon="lucide:user" width="16" height="16" />
+              <UiDropdownMenuItem @click="handleClickLogin">
+                <XIcon icon="lucide:user" width="16" height="16" />
                 {{ t('navbar.user.login') }}
-              </UIDropdownMenuItem>
-              <UIDropdownMenuItem @click="handleClickRegister">
-                <iconify-icon icon="lucide:user" width="16" height="16" />
+              </UiDropdownMenuItem>
+              <UiDropdownMenuItem @click="handleClickRegister">
+                <XIcon icon="lucide:user" width="16" height="16" />
                 {{ t('navbar.user.register') }}
-              </UIDropdownMenuItem>
+              </UiDropdownMenuItem>
             </template>
-          </UIDropdownMenuContent>
-        </UIDropdownMenu>
+          </UiDropdownMenuContent>
+        </UiDropdownMenu>
 
         <!-- 语言菜单 -->
-        <UIDropdownMenu>
-          <UIDropdownMenuTrigger as-child>
-            <UIButton variant="ghost" size="icon" aria-label="Language">
-              <iconify-icon icon="lucide:globe" width="16" height="16" />
-            </UIButton>
-          </UIDropdownMenuTrigger>
-          <UIDropdownMenuContent align="end">
-            <UIDropdownMenuItem @click="switchLocalePath('zh')">
+        <UiDropdownMenu>
+          <UiDropdownMenuTrigger as-child>
+            <UiButton variant="ghost" size="icon" aria-label="Language">
+              <XIcon icon="lucide:globe" width="16" height="16" />
+            </UiButton>
+          </UiDropdownMenuTrigger>
+          <UiDropdownMenuContent align="end">
+            <UiDropdownMenuItem @click="switchLocalePath('zh')">
               简体中文
-            </UIDropdownMenuItem>
-            <UIDropdownMenuItem @click="switchLocalePath('en')">
+            </UiDropdownMenuItem>
+            <UiDropdownMenuItem @click="switchLocalePath('en')">
               English
-            </UIDropdownMenuItem>
-          </UIDropdownMenuContent>
-        </UIDropdownMenu>
+            </UiDropdownMenuItem>
+          </UiDropdownMenuContent>
+        </UiDropdownMenu>
 
         <!-- 主题菜单 -->
-        <UIDropdownMenu>
-          <UIDropdownMenuTrigger as-child>
-            <UIButton variant="ghost" size="icon" aria-label="Toggle theme">
-              <iconify-icon
-                :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
+        <UiDropdownMenu>
+          <UiDropdownMenuTrigger as-child>
+            <UiButton variant="ghost" size="icon" aria-label="Toggle theme">
+              <XIcon                 :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
                 width="16" height="16"
                 class="theme-icon-animate"
               />
-            </UIButton>
-          </UIDropdownMenuTrigger>
-          <UIDropdownMenuContent align="end">
-            <UIDropdownMenuItem @click="setThemeMode('dark')">
-              <iconify-icon icon="lucide:moon" width="16" height="16" />
+            </UiButton>
+          </UiDropdownMenuTrigger>
+          <UiDropdownMenuContent align="end">
+            <UiDropdownMenuItem @click="setThemeMode('dark')">
+              <XIcon icon="lucide:moon" width="16" height="16" />
               {{ t('navbar.theme.dark') }}
-            </UIDropdownMenuItem>
-            <UIDropdownMenuItem @click="setThemeMode('light')">
-              <iconify-icon icon="lucide:sun" width="16" height="16" />
+            </UiDropdownMenuItem>
+            <UiDropdownMenuItem @click="setThemeMode('light')">
+              <XIcon icon="lucide:sun" width="16" height="16" />
               {{ t('navbar.theme.light') }}
-            </UIDropdownMenuItem>
-            <UIDropdownMenuItem @click="setThemeMode('auto')">
-              <iconify-icon icon="lucide:monitor" width="16" height="16" />
+            </UiDropdownMenuItem>
+            <UiDropdownMenuItem @click="setThemeMode('auto')">
+              <XIcon icon="lucide:monitor" width="16" height="16" />
               {{ t('navbar.theme.system') }}
-            </UIDropdownMenuItem>
-          </UIDropdownMenuContent>
-        </UIDropdownMenu>
+            </UiDropdownMenuItem>
+          </UiDropdownMenuContent>
+        </UiDropdownMenu>
       </div>
 
       <!-- 手机端：主题切换 + 汉堡选单 -->
       <div class="flex shrink-0 items-center gap-1 md:hidden">
-        <UIDropdownMenu>
-          <UIDropdownMenuTrigger as-child>
-            <UIButton variant="ghost" size="icon" aria-label="Toggle theme">
-              <iconify-icon
-                :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
+        <UiDropdownMenu>
+          <UiDropdownMenuTrigger as-child>
+            <UiButton variant="ghost" size="icon" aria-label="Toggle theme">
+              <XIcon                 :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
                 width="16" height="16"
                 class="theme-icon-animate"
               />
-            </UIButton>
-          </UIDropdownMenuTrigger>
-          <UIDropdownMenuContent align="end">
-            <UIDropdownMenuItem @click="setThemeMode('dark')">
-              <iconify-icon icon="lucide:moon" width="16" height="16" />
+            </UiButton>
+          </UiDropdownMenuTrigger>
+          <UiDropdownMenuContent align="end">
+            <UiDropdownMenuItem @click="setThemeMode('dark')">
+              <XIcon icon="lucide:moon" width="16" height="16" />
               {{ t('navbar.theme.dark') }}
-            </UIDropdownMenuItem>
-            <UIDropdownMenuItem @click="setThemeMode('light')">
-              <iconify-icon icon="lucide:sun" width="16" height="16" />
+            </UiDropdownMenuItem>
+            <UiDropdownMenuItem @click="setThemeMode('light')">
+              <XIcon icon="lucide:sun" width="16" height="16" />
               {{ t('navbar.theme.light') }}
-            </UIDropdownMenuItem>
-            <UIDropdownMenuItem @click="setThemeMode('auto')">
-              <iconify-icon icon="lucide:monitor" width="16" height="16" />
+            </UiDropdownMenuItem>
+            <UiDropdownMenuItem @click="setThemeMode('auto')">
+              <XIcon icon="lucide:monitor" width="16" height="16" />
               {{ t('navbar.theme.system') }}
-            </UIDropdownMenuItem>
-          </UIDropdownMenuContent>
-        </UIDropdownMenu>
+            </UiDropdownMenuItem>
+          </UiDropdownMenuContent>
+        </UiDropdownMenu>
 
         <!-- 汉堡选单 -->
         <LayoutMobileNav />

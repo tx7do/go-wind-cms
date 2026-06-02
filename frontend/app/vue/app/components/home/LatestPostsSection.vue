@@ -12,15 +12,15 @@ const localePath = useLocalePath()
         <XIcon name="carbon:document" :size="28" class="mr-2 text-primary" />
         {{ t('page.home.latest_posts') }}
       </h2>
-      <UIButton variant="ghost" @click="navigateTo(localePath('/post'))">
+      <UiButton variant="ghost" @click="navigateTo(localePath('/post'))">
         {{ t('page.home.view_all') }} →
-      </UIButton>
+      </UiButton>
     </div>
     <div class="w-full">
       <!-- PostList placeholder -->
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div v-for="i in 6" :key="i" class="flex min-h-50 flex-col rounded-2xl border border-border bg-card p-6">
-          <Skeleton class="h-35 w-full" />
+          <UiSkeleton class="h-35 w-full" />
         </div>
       </div>
     </div>

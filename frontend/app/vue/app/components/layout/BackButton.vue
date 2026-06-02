@@ -18,7 +18,7 @@ const props = defineProps<{
     )"
     @click="onClick"
   >
-    <iconify-icon icon="lucide:arrow-left" width="16" height="16" class="transition-transform duration-300 group-hover:-translate-x-1" />
+    <XIcon icon="lucide:arrow-left" width="16" height="16" class="transition-transform duration-300 group-hover:-translate-x-1" />
     <span>{{ label }}</span>
   </button>
 </template>

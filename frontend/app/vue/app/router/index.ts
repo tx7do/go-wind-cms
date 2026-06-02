@@ -1,10 +1,5 @@
-import type {App} from "vue";
+// Router utilities for Nuxt project
+// Nuxt manages routing via file-based system (app/pages/)
+// This file re-exports useful types
 
-import router from "./router";
-
-export function setupRouter(app: App<Element>) {
-  app.use(router)
-}
-
-export * from './router'
-export * from './utils'
+export * from './types'

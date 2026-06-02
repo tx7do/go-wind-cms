@@ -1,5 +1,4 @@
 import {defineStore} from "pinia";
-import {navigateTo} from "@/router";
 
 interface NavbarState {
     /**
@@ -71,7 +70,11 @@ export const useNavbarStore = defineStore('navbar', {
         },
 
         async navigateToAndHideOverlay(path: string, force: boolean = false) {
-            await navigateTo(path, force);
+            if (force && typeof window !== 'undefined') {
+                window.location.href = path;
+            } else {
+                await navigateTo(path);
+            }
             this.setActiveOverlay(undefined);
         }
     },

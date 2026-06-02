@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { XIcon } from '@/plugins/xicon'
 import { cn } from '@/lib/utils'
-import { fetchListCategories } from '@/api/composables/category'
+import { fetchListCategory } from '@/api/composables/category'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -18,7 +18,7 @@ const loadCategories = async () => {
 
   loading.value = true
   try {
-    const res = await fetchListCategories({
+    const res = await fetchListCategory({
       paging: { page: 1, pageSize: 8 },
       formValues: { status: 'CATEGORY_STATUS_ACTIVE' },
       fieldMask: 'id,status,sortOrder,icon,code,postCount,directPostCount,parent_id,createdAt,translations.id,translations.categoryId,translations.name,translations.languageCode,translations.description',
@@ -55,15 +55,15 @@ const getCategoryName = (category: any): string => {
         <XIcon name="carbon:folder-details" :size="28" class="mr-2 text-primary" />
         {{ t('page.home.categories') }}
       </h2>
-      <UIButton variant="ghost" @click="navigateTo(localePath('/category'))">
+      <UiButton variant="ghost" @click="navigateTo(localePath('/category'))">
         {{ t('page.home.view_all') }} →
-      </UIButton>
+      </UiButton>
     </div>
 
     <!-- Loading Skeleton -->
     <div v-if="loading" class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6">
       <div v-for="i in 8" :key="i" class="flex min-h-50 flex-col rounded-2xl border border-border bg-card p-6">
-        <Skeleton class="h-35 w-full" />
+        <UiSkeleton class="h-35 w-full" />
       </div>
     </div>
     <template v-else>

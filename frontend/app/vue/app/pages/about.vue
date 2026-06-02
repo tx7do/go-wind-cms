@@ -75,8 +75,8 @@ const { t } = useI18n()
           <h2 class="mb-4 text-3xl font-bold text-foreground">{{ t('page.about.cta_title') }}</h2>
           <p class="mb-8 text-lg text-muted-foreground">{{ t('page.about.cta_desc') }}</p>
           <div class="flex flex-wrap justify-center gap-4">
-            <UIButton size="lg" class="rounded-lg px-6 py-2.5 font-medium">{{ t('page.about.cta_explore') }}</UIButton>
-            <UIButton variant="outline" size="lg" class="rounded-lg px-6 py-2.5 font-medium">{{ t('page.about.cta_contact') }}</UIButton>
+            <UiButton size="lg" class="rounded-lg px-6 py-2.5 font-medium">{{ t('page.about.cta_explore') }}</UiButton>
+            <UiButton variant="outline" size="lg" class="rounded-lg px-6 py-2.5 font-medium">{{ t('page.about.cta_contact') }}</UiButton>
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { XIcon } from '@/plugins/xicon'
 import { useLanguageChangeEffect } from '@/hooks/use-language-change-effect'
 import { usePreferences } from '@/core/preferences/use-preferences'
 import { cn } from '@/lib/utils'
-import { fetchListNavigations } from '@/api/composables/navigation'
+import { fetchListNavigation } from '@/api/composables/navigation'
 
 // @ts-ignore - generated types
 import type { siteservicev1_NavigationItem } from '@/api/generated/app/service/v1'
@@ -20,7 +20,7 @@ let closeTimer: ReturnType<typeof setTimeout> | null = null
 const loadNav = async () => {
   try {
     isLoading.value = true
-    const res = await fetchListNavigations({
+    const res = await fetchListNavigation({
       paging: { page: 1, pageSize: 10 },
     }) as any
 
@@ -46,7 +46,7 @@ onMounted(() => {
 
 useLanguageChangeEffect(() => {
   isLoading.value = true
-  fetchListNavigations({ paging: { page: 1, pageSize: 10 } })
+  fetchListNavigation({ paging: { page: 1, pageSize: 10 } })
     .then((res: any) => {
       if (res.items?.length) {
         const headerNav = res.items.find((nav: any) =>
@@ -91,7 +91,7 @@ usePreferences() // keep theme reactivity
 
 <template>
   <div v-if="isLoading" class="flex h-full items-center gap-2">
-    <Skeleton v-for="i in 5" :key="i" class="h-7 w-16 rounded-lg" />
+    <UiSkeleton v-for="i in 5" :key="i" class="h-7 w-16 rounded-lg" />
   </div>
   <nav v-else-if="navigationItems.length > 0" class="flex h-full items-center gap-0.5">
     <div

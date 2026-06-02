@@ -53,15 +53,15 @@ const menuItems = [
             <h2 class="mb-2 text-lg font-semibold text-foreground">{{ t('settings.account.section_title') }}</h2>
             <p class="mb-4 text-sm text-muted-foreground">{{ t('settings.account.section_desc') }}</p>
             <div class="space-y-3">
-              <UISettingRow :label="t('settings.account.password')" :description="t('settings.account.password_not_set')">
-                <UIButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UIButton>
-              </UISettingRow>
-              <UISettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.password_not_set')">
-                <UIButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UIButton>
-              </UISettingRow>
-              <UISettingRow :label="t('settings.account.bind_email')" :description="t('settings.account.email_not_bound')">
-                <UIButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UIButton>
-              </UISettingRow>
+              <UiSettingRow :label="t('settings.account.password')" :description="t('settings.account.password_not_set')">
+                <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+              </UiSettingRow>
+              <UiSettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.password_not_set')">
+                <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+              </UiSettingRow>
+              <UiSettingRow :label="t('settings.account.bind_email')" :description="t('settings.account.email_not_bound')">
+                <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+              </UiSettingRow>
             </div>
           </div>
         </template>
@@ -75,10 +75,10 @@ const menuItems = [
           <div class="mb-8">
             <h2 class="mb-2 text-lg font-semibold text-foreground">{{ t('settings.message.email_notifications') }}</h2>
             <div class="space-y-3">
-              <UISettingRow :label="t('settings.message.system_messages')" />
-              <UISettingRow :label="t('settings.message.comment_notifications')" />
-              <UISettingRow :label="t('settings.message.activity_updates')" />
-              <UISettingRow :label="t('settings.message.recommended_content')" />
+              <UiSettingRow :label="t('settings.message.system_messages')" />
+              <UiSettingRow :label="t('settings.message.comment_notifications')" />
+              <UiSettingRow :label="t('settings.message.activity_updates')" />
+              <UiSettingRow :label="t('settings.message.recommended_content')" />
             </div>
           </div>
         </template>
@@ -92,18 +92,18 @@ const menuItems = [
           <div class="mb-8">
             <h2 class="mb-2 text-lg font-semibold text-foreground">{{ t('settings.preference.theme_settings') }}</h2>
             <p class="mb-4 text-sm text-muted-foreground">{{ t('settings.preference.theme_desc') }}</p>
-            <UISettingRow :label="t('settings.preference.theme')">
-              <UISelect v-model="themePref.mode" @update:model-value="(v: any) => setThemeMode(v)">
-                <UISelectTrigger class="w-[180px] h-8">
-                  <UISelectValue />
-                </UISelectTrigger>
-                <UISelectContent>
-                  <UISelectItem value="light">{{ t('settings.preference.theme_light') }}</UISelectItem>
-                  <UISelectItem value="dark">{{ t('settings.preference.theme_dark') }}</UISelectItem>
-                  <UISelectItem value="auto">{{ t('settings.preference.theme_auto') }}</UISelectItem>
-                </UISelectContent>
-              </UISelect>
-            </UISettingRow>
+            <UiSettingRow :label="t('settings.preference.theme')">
+              <UiSelect v-model="themePref.mode" @update:model-value="(v: any) => setThemeMode(v)">
+                <UiSelectTrigger class="w-[180px] h-8">
+                  <UiSelectValue />
+                </UiSelectTrigger>
+                <UiSelectContent>
+                  <UiSelectItem value="light">{{ t('settings.preference.theme_light') }}</UiSelectItem>
+                  <UiSelectItem value="dark">{{ t('settings.preference.theme_dark') }}</UiSelectItem>
+                  <UiSelectItem value="auto">{{ t('settings.preference.theme_auto') }}</UiSelectItem>
+                </UiSelectContent>
+              </UiSelect>
+            </UiSettingRow>
           </div>
         </template>
       </main>

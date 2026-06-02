@@ -18,6 +18,7 @@ class StorageManager implements IStorageCache {
   private readonly defaultTTL?: number | null;
   private readonly tabId: string;
   private channel: BroadcastChannel | null = null;
+  private isServer: boolean = false;
   private metrics: StorageMetrics = {
     hits: 0,
     misses: 0,
@@ -30,6 +31,18 @@ class StorageManager implements IStorageCache {
   private metricsDebounceTimer: number | null = null;
   private readonly onMetricsCallback?: (metrics: StorageMetrics) => void;
   private onSyncCallback?: (event: SyncMessage) => void;
+
+  /**
+   * SSR 环境下的 no-op Storage 适配器
+   */
+  private static readonly NOOP_STORAGE: Storage = {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {},
+    clear: () => {},
+    key: () => null,
+    get length() { return 0; },
+  };
 
   constructor(options: StorageManagerOptions = {}) {
     const {
@@ -58,17 +71,16 @@ class StorageManager implements IStorageCache {
     };
     this.onMetricsCallback = onMetrics;
     this.onSyncCallback = onSync;
-    this.tabId =
-      typeof window !== "undefined"
-        ? `${prefix}_${Math.random().toString(36).substring(2, 10)}`
-        : "ssr";
 
     // SSR 兼容
     if (typeof window === "undefined") {
-      this.storage = {} as Storage;
+      this.isServer = true;
+      this.storage = StorageManager.NOOP_STORAGE;
+      this.tabId = "ssr";
       return;
     }
 
+    this.tabId = `${prefix}_${Math.random().toString(36).substring(2, 10)}`;
     this.storage = storageType === "localStorage" ? window.localStorage : window.sessionStorage;
     this.defaultTTL = defaultTTL;
 

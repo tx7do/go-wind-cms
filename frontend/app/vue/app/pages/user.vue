@@ -29,15 +29,15 @@ const localePath = useLocalePath()
           </div>
 
           <div class="mt-8 space-y-4">
-            <UISettingRow :label="t('settings.account.password')" :description="t('settings.account.password_not_set')">
-              <UIButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UIButton>
-            </UISettingRow>
-            <UISettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.password_not_set')">
-              <UIButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UIButton>
-            </UISettingRow>
-            <UISettingRow :label="t('settings.account.bind_email')" :description="t('settings.account.email_not_bound')">
-              <UIButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UIButton>
-            </UISettingRow>
+            <UiSettingRow :label="t('settings.account.password')" :description="t('settings.account.password_not_set')">
+              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+            </UiSettingRow>
+            <UiSettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.password_not_set')">
+              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+            </UiSettingRow>
+            <UiSettingRow :label="t('settings.account.bind_email')" :description="t('settings.account.email_not_bound')">
+              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+            </UiSettingRow>
           </div>
         </div>
       </div>

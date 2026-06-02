@@ -12,7 +12,7 @@ const props = defineProps<{
   <div :class="cn('flex w-full items-center justify-center gap-4 py-12 px-5', props.inContainer && 'my-20', props.class)">
     <div class="opacity-50">
       <slot name="image">
-        <iconify-icon icon="lucide:inbox" width="64" height="64" class="text-muted-foreground" />
+        <XIcon icon="lucide:inbox" width="64" height="64" class="text-muted-foreground" />
       </slot>
     </div>
     <p v-if="$slots.default" class="text-sm text-muted-foreground">

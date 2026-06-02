@@ -2,11 +2,14 @@ import { RequestClient } from '@/core/transport/rest/request-client'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useUserStore } from '@/stores/modules/core/user.state'
 import { refreshToken as apiRefreshToken } from '@/api/service/auth'
-import { fetchUserProfile } from '@/api/composables/user-profile'
+import { fetchMe } from '@/api/composables/user-profile'
 import { useAppConfig } from '@/hooks/use-app-config'
 
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(async (nuxtApp) => {
+  if (import.meta.server) return
+
   const config = useAppConfig()
+  const i18n = nuxtApp.$i18n
 
   const accessStore = useAccessStore()
   const userStore = useUserStore()
@@ -19,8 +22,7 @@ export default defineNuxtPlugin(async () => {
     },
 
     getLocale: () => {
-      const { locale } = useI18n()
-      return locale.value
+      return i18n?.locale?.value || 'zh'
     },
 
     refreshToken: async () => {
@@ -56,8 +58,7 @@ export default defineNuxtPlugin(async () => {
 
       if (redirect && typeof window !== 'undefined') {
         const currentPath = window.location.pathname
-        const { locale } = useI18n()
-        const loginPath = `/${locale.value}/login?redirect=${encodeURIComponent(currentPath)}`
+        const loginPath = `/${i18n?.locale?.value || 'zh'}/login?redirect=${encodeURIComponent(currentPath)}`
         window.location.href = loginPath
       }
     },
@@ -75,7 +76,7 @@ export default defineNuxtPlugin(async () => {
     const isValid = !expiresAt || expiresAt > Date.now()
     if (isValid) {
       try {
-        const user = await fetchUserProfile()
+        const user = await fetchMe()
         userStore.setUserInfo(user as any)
       } catch {
         // Silent - token may be expired

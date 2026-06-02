@@ -60,12 +60,12 @@ const localePath = useLocalePath()
       <p :class="$style.heroSubtitle">{{ t('authentication.login.brand_subtitle') }}</p>
       <p :class="$style.heroDescription">{{ t('page.home.hero_description') }}</p>
       <div :class="$style.heroActions">
-        <UIButton size="lg" :class="$style.btnPrimary" @click="navigateTo(localePath('/post'))">
+        <UiButton size="lg" :class="$style.btnPrimary" @click="navigateTo(localePath('/post'))">
           {{ t('page.home.browse_posts') }}
-        </UIButton>
-        <UIButton variant="outline" size="lg" :class="$style.btnSecondary" @click="navigateTo(localePath('/about'))">
+        </UiButton>
+        <UiButton variant="outline" size="lg" :class="$style.btnSecondary" @click="navigateTo(localePath('/about'))">
           {{ t('page.home.learn_more') }}
-        </UIButton>
+        </UiButton>
       </div>
     </div>
   </section>

@@ -10,8 +10,8 @@ const handleSearch = () => {
 <template>
   <div class="mx-2 hidden h-11 max-w-80 flex-1 items-center md:flex lg:max-w-80">
     <div class="relative w-full">
-      <iconify-icon icon="lucide:search" width="16" height="16" class="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
-      <UIInput
+      <XIcon icon="lucide:search" width="16" height="16" class="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      <UiInput
         class="h-full w-full pl-8"
         v-model="searchQuery"
         @keyup="handleSearch"
