@@ -242,20 +242,16 @@ onMounted(() => {
           />
         </div>
         <div class="flex flex-col gap-2">
-          <textarea
+          <CommentRichTextEditor
             v-model="newComment.content"
-            rows="5"
+            :submitting="submitting"
             :placeholder="t('comment.write_comment')"
-            class="w-full min-h-[120px] resize-y rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground transition-all duration-300 hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60"
-            :disabled="submitting"
-            @keydown.ctrl.enter="handleSubmitComment"
-            @keydown.meta.enter="handleSubmitComment"
+            :max-length="1000"
+            :submit-label="t('comment.submit_comment')"
+            @submit="handleSubmitComment"
           />
         </div>
         <div class="flex flex-wrap items-center gap-4 max-md:flex-col max-md:items-stretch">
-          <UiButton :disabled="submitting" @click="handleSubmitComment">
-            {{ submitting ? '...' : t('comment.submit_comment') }}
-          </UiButton>
           <span class="flex items-center gap-2 rounded-lg border border-primary/10 bg-primary/5 px-3.5 py-2 text-[13px] text-muted-foreground max-md:justify-center max-md:text-xs max-md:px-3 max-md:py-1.5">
             <XIcon icon="carbon:information" :size="16" class="text-primary" />
             {{ t('comment.fill_form_info') }}

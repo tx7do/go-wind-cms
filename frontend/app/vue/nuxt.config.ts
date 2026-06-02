@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     ],
     css: [
         '~/assets/css/main.css',
+        'katex/dist/katex.min.css',
     ],
     modules: [
         '@nuxtjs/i18n',
