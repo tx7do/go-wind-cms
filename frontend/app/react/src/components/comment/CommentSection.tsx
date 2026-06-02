@@ -2,7 +2,6 @@
 
 import React, {useState, useEffect, useRef} from 'react';
 import {Button} from '@/components/ui/button';
-import {Spinner} from '@/components/ui/spinner';
 import {useTranslations} from 'next-intl';
 
 import {XIcon} from '@/plugins/xicon';
@@ -16,6 +15,7 @@ import type {
 
 import {cn} from '@/lib/utils';
 import CommentTree from './CommentTree';
+import RichTextEditor from './RichTextEditor';
 
 interface CommentForm {
     content: string;
@@ -118,7 +118,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     // 提交评论
     async function handleSubmitComment() {
-        if (!newComment.content.trim()) {
+        // Tiptap 空内容会返回 <p></p>，需要用 textContent 检查
+        const tmpDiv = document.createElement('div');
+        tmpDiv.innerHTML = newComment.content;
+        const textContent = tmpDiv.textContent?.trim() || '';
+        if (!textContent) {
             alert(t('empty_content'));
             return;
         }
@@ -299,52 +303,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <textarea
+                        <RichTextEditor
                             value={newComment.content}
-                            onChange={(e) => setNewComment({...newComment, content: e.target.value})}
+                            onChange={(content) => setNewComment({...newComment, content})}
+                            onSubmit={handleSubmitComment}
+                            submitting={submitting}
                             placeholder={t('write_comment')}
-                            className={cn(
-                                'w-full min-h-[120px] resize-y rounded-lg border border-border bg-background px-4 py-3 text-foreground',
-                                'transition-all duration-300',
-                                'hover:border-primary',
-                                'focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15',
-                                'disabled:cursor-not-allowed disabled:opacity-60',
-                            )}
-                            disabled={submitting}
-                            rows={6}
-                            onKeyDown={(e) => {
-                                // Ctrl/Cmd + Enter 提交
-                                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                                    e.preventDefault();
-                                    handleSubmitComment();
-                                }
-                            }}
+                            maxLength={1000}
+                            submitLabel={t('submit_comment')}
                         />
-                        <div className="-mt-1 text-right text-sm text-muted-foreground">
-                            {newComment.content.length} / 1000
-                        </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-4 max-md:flex-col max-md:items-stretch">
-                        <Button
-                            size="lg"
-                            onClick={handleSubmitComment}
-                            disabled={submitting}
-                            className="gap-2"
-                        >
-                            {submitting ? <Spinner size="sm"/> : <XIcon name="carbon:send-alt" size={18}/>} 
-                            {t('submit_comment')}
-                        </Button>
                         <span className="flex items-center gap-2 rounded-lg border border-primary/10 bg-primary/5 px-3.5 py-2 text-[13px] text-muted-foreground max-md:justify-center max-md:text-xs max-md:px-3 max-md:py-1.5">
                             <XIcon name="carbon:information" size={16} className="text-primary"/>
                             {t('fill_form_info')}
-                        </span>
-                        <span className={cn(
-                            'ml-auto flex items-center gap-2 rounded-lg border border-border/60 bg-muted/40 px-3 py-1.5 text-xs',
-                            'text-muted-foreground font-medium',
-                            'max-md:ml-0 max-md:justify-center',
-                        )}>
-                            <XIcon name="carbon:keyboard" size={16}/>
-                            Ctrl + Enter {t('submit_comment')}
                         </span>
                     </div>
                 </div>
