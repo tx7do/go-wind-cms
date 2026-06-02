@@ -1,11 +1,6 @@
 import React, {useState, useEffect, useCallback, useRef, useMemo} from 'react';
 import {Skeleton} from '@/components/ui/skeleton';
 import {Button} from '@/components/ui/button';
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-} from '@/components/ui/carousel';
 import {useTranslations} from 'next-intl';
 
 import {fetchListCategories} from '@/api/hooks/category';
@@ -142,30 +137,16 @@ export default function CategoryListSection({
                         ))}
                     </div>
 
-                    {/* Mobile Carousel */}
-                    <div className="hidden max-md:block w-full px-2 pb-8">
-                        <Carousel
-                            opts={{
-                                align: 'center',
-                                loop: false,
-                            }}
-                            className="w-full py-6"
-                        >
-                            <CarouselContent>
-                                {categories.map((category) => (
-                                    <CarouselItem
-                                        key={category.id}
-                                        className="flex items-stretch justify-center px-2 py-3"
-                                        onClick={() => handleViewCategoryDetail(category.id || 0)}
-                                    >
-                                        <HomeCategoryCard
-                                            category={category}
-                                            onClick={handleViewCategoryDetail}
-                                        />
-                                    </CarouselItem>
-                                ))}
-                            </CarouselContent>
-                        </Carousel>
+                    {/* Mobile：横向传送带（X-Axis Slider） */}
+                    <div className="hidden max-md:flex w-full gap-4 overflow-x-auto no-scrollbar scroll-smooth px-4 pb-4 pt-2 -mx-4">
+                        {categories.map((category) => (
+                            <HomeCategoryCard
+                                key={category.id}
+                                category={category}
+                                onClick={handleViewCategoryDetail}
+                                mobileCompact
+                            />
+                        ))}
                     </div>
                 </>
             )}

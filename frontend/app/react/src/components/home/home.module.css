@@ -512,6 +512,10 @@
         padding: 7rem 1rem 2rem;
     }
 
+    .heroContent {
+        padding: 0 1rem;  /* 与下方卡片容器 px-4 对齐（16px） */
+    }
+
     .heroTitle {
         font-size: 2.5rem;
     }
@@ -553,16 +557,18 @@
         }
     }
 
-    /* 手机端按钮垂直通栏排列 */
+    /* 手机端按钮垂直通栏排列，与下方卡片容器对齐 */
     .heroActions {
         flex-direction: column;
         gap: 0.75rem;
-        padding: 0 1rem;
+        padding: 0;  /* 由 .heroContent 的 padding: 0 1rem 控制边距 */
     }
 
     .btnPrimary,
     .btnSecondary {
         width: 100% !important;
         justify-content: center !important;
+        padding-left: 1rem !important;  /* 按钮内部左右各 16px 内边距 */
+        padding-right: 1rem !important;
     }
 }
