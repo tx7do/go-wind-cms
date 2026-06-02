@@ -33,6 +33,10 @@
     "terms_and": "和",
     "terms_of_service": "服务条款",
     "privacy_policy": "隐私政策",
+    "fill_required": "请填写所有必填项",
+    "logging_in": "登录中...",
+    "coming_soon": "即将上线...",
+    "please_login": "请先登录",
     "back_home": "返回首页"
   },
   "register": {
@@ -69,6 +73,9 @@
     "code_sent_subtitle": "请查收邮件并输入验证码",
     "resend_after": "后重新发送",
     "next_step": "下一步",
+    "fill_required": "请填写所有必填项",
+    "password_mismatch": "两次输入的密码不一致",
+    "registering": "注册中...",
     "back_home": "返回首页"
   },
   "forgotPassword": {

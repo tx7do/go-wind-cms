@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="flex min-h-screen w-full items-center justify-center bg-background">
+  <div class="min-h-screen w-full bg-background">
     <slot />
   </div>
 </template>

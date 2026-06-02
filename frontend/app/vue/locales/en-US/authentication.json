@@ -33,6 +33,10 @@
     "terms_and": "and",
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
+    "fill_required": "Please fill in all required fields",
+    "logging_in": "Logging in...",
+    "coming_soon": "Coming soon...",
+    "please_login": "Please login first",
     "back_home": "Back to Home"
   },
   "register": {
@@ -69,6 +73,9 @@
     "code_sent_subtitle": "Please check your inbox and enter the code",
     "resend_after": "to resend",
     "next_step": "Next Step",
+    "fill_required": "Please fill in all required fields",
+    "password_mismatch": "Passwords do not match",
+    "registering": "Registering...",
     "back_home": "Back to Home"
   },
   "forgotPassword": {
