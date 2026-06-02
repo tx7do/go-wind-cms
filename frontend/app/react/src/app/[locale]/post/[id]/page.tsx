@@ -28,7 +28,7 @@ interface TocItem {
     id: string;
     level: number;
     text: string;
-    element: Element;
+    index: number; // 在所有 h2/h3 中的位置（用于从实时 DOM 查询）
 }
 
 export default function PostDetailPage() {
@@ -121,94 +121,62 @@ export default function PostDetailPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId]); // 只依赖 postId
 
-    // Generate table of contents - 在内容渲染后生成目录
-    useEffect(() => {
-        if (!displayContent || !contentRef.current) {
-            console.log('[TOC] Skip generation:', {hasContent: !!displayContent, hasRef: !!contentRef.current});
-            return;
-        }
+    // 生成目录（仅存储索引和文本，不存储 DOM 引用）
+    const generateToc = useCallback(() => {
+        const contentEl = contentRef.current;
+        if (!contentEl) return;
 
-        const timeoutId = setTimeout(() => {
-            const contentEl = contentRef.current;
-            if (!contentEl) {
-                console.log('[TOC] No content element');
-                return;
-            }
+        const headings = contentEl.querySelectorAll('h2, h3');
+        const toc: TocItem[] = [];
 
-            const headings = contentEl.querySelectorAll('h2, h3');
-            const toc: TocItem[] = [];
+        headings.forEach((heading, index) => {
+            const id = `heading-${index}`;
+            heading.setAttribute('id', id);
 
-            console.log('[TOC] Found headings:', headings.length);
-
-            headings.forEach((heading, index) => {
-                const level = heading.tagName === 'H2' ? 2 : 3;
-                const id = `heading-${index}`;
-                if (!heading.id) heading.setAttribute('id', id);
-
-                toc.push({
-                    id,
-                    level,
-                    text: heading.textContent || '',
-                    element: heading
-                });
+            toc.push({
+                id,
+                level: heading.tagName === 'H2' ? 2 : 3,
+                text: heading.textContent || '',
+                index,
             });
+        });
 
-            setTableOfContents(toc);
-            console.log('[TOC] Generated:', toc.length, 'items');
-
-            // 页面加载时检查 URL hash，自动滚动到对应位置
-            if (window.location.hash) {
-                const hashId = window.location.hash.slice(1);
-                setTimeout(() => {
-                    scrollToHeading(hashId);
-                }, 300);
-            }
-        }, 100); // 等待内容完全渲染
-
-        return () => clearTimeout(timeoutId);
-    }, [displayContent]); // 依赖计算后的内容
-
-    // 监听内容变化，重新生成目录
-    useEffect(() => {
-        if (displayContent && tableOfContents.length === 0) {
-            generateTableOfContents();
-        }
-    }, [displayContent, tableOfContents.length]);
-
-    // 生成目录函数
-    const generateTableOfContents = useCallback(() => {
-        setTimeout(() => {
-            if (!contentRef.current) return;
-
-            const contentEl = contentRef.current;
-            const headings = contentEl.querySelectorAll('h2, h3');
-            const toc: TocItem[] = [];
-
-            console.log('[GenerateTOC] Found headings:', headings.length);
-
-            headings.forEach((heading, index) => {
-                const level = heading.tagName === 'H2' ? 2 : 3;
-                const id = `heading-${index}`;
-
-                if (!heading.id) {
-                    heading.setAttribute('id', id);
-                    console.log(`[GenerateTOC] Set ID "${id}" on ${heading.tagName}:`, heading.textContent);
-                }
-
-                toc.push({
-                    id,
-                    level,
-                    text: heading.textContent || '',
-                    element: heading
-                });
-            });
-
-            setTableOfContents(toc);
-            console.log('[GenerateTOC] Generated TOC:', toc);
-        }, 500);
+        setTableOfContents(toc);
     }, []);
 
-    // 防抖函数
+    // 内容渲染后生成目录（延迟以等待 marked + Shiki 完成）
+    useEffect(() => {
+        if (!displayContent) return;
+
+        // 第一次：100ms 后生成初始目录
+        const t1 = setTimeout(generateToc, 100);
+        // 第二次：1500ms 后重新生成（Shiki 异步加载完成后 DOM 会被替换）
+        const t2 = setTimeout(generateToc, 1500);
+
+        return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+        };
+    }, [displayContent, generateToc]);
+
+    // 页面加载时检查 URL hash，自动滚动到对应位置
+    useEffect(() => {
+        if (!displayContent || !window.location.hash) return;
+        const hashId = window.location.hash.slice(1);
+        const t = setTimeout(() => scrollToHeading(hashId), 500);
+        return () => clearTimeout(t);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [displayContent, tableOfContents.length]);
+
+    // 从实时 DOM 查询 heading 元素（避免 Shiki 重新渲染后引用过期）
+    const getLiveHeading = useCallback((index: number): Element | null => {
+        const contentEl = contentRef.current;
+        if (!contentEl) return null;
+        const headings = contentEl.querySelectorAll('h2, h3');
+        return headings[index] || null;
+    }, []);
+
+    // 节流函数
     const throttle = useCallback((fn: (...args: unknown[]) => void, delay: number) => {
         let timer: ReturnType<typeof setTimeout> | null = null;
         return function (this: unknown, ...args: unknown[]) {
@@ -221,24 +189,25 @@ export default function PostDetailPage() {
         };
     }, []);
 
-    // 滚动处理函数
+    // 滚动处理：从实时 DOM 读取位置
     const handleScroll = useCallback(() => {
-        if (tableOfContents.length > 0) {
-            let currentActive = activeHeading;
-            for (const heading of tableOfContents) {
-                if (heading.element && heading.element.getBoundingClientRect().top < HEADING_OFFSET) {
-                    currentActive = heading.id;
-                }
+        if (tableOfContents.length === 0) return;
+        let currentActive = '';
+        for (const tocItem of tableOfContents) {
+            const el = getLiveHeading(tocItem.index);
+            if (el && el.getBoundingClientRect().top < HEADING_OFFSET) {
+                currentActive = tocItem.id;
             }
+        }
+        if (currentActive !== activeHeading) {
             setActiveHeading(currentActive);
         }
-    }, [tableOfContents, activeHeading]);
+    }, [tableOfContents, activeHeading, getLiveHeading]);
 
     const throttledScroll = useMemo(() => {
         return throttle(handleScroll, THROTTLE_DELAY);
     }, [throttle, handleScroll]);
 
-    // Scroll handler
     useEffect(() => {
         window.addEventListener('scroll', throttledScroll);
         return () => window.removeEventListener('scroll', throttledScroll);
@@ -293,46 +262,34 @@ export default function PostDetailPage() {
         });
     };
 
-    const scrollToHeading = (id: string) => {
+    // 点击目录时定位：用 getBoundingClientRect 一次性计算绝对位置，避免 scrollIntoView + CSS scroll-behavior 冲突
+    const scrollToHeading = useCallback((id: string) => {
         const tocItem = tableOfContents.find(item => item.id === id);
-        const element = tocItem?.element || document.getElementById(id);
+        if (!tocItem) return;
 
-        if (element) {
-            console.log('[TOC Scroll] Start',
-                'ID:', id,
-                '| Element:', element.textContent?.trim()
-            );
+        const element = getLiveHeading(tocItem.index);
+        if (!element) return;
 
-            element.scrollIntoView({behavior: 'auto', block: 'start'});
+        // 确保 DOM 元素有 id
+        element.setAttribute('id', id);
 
-            setTimeout(() => {
-                const currentScroll = window.pageYOffset;
-                const headerOffset = 100;
-                const targetPosition = currentScroll - headerOffset;
+        // 一次性计算目标滚动位置：元素相对于视口的位置 + 当前滚动位置 - 顶部导航栏偏移
+        const rect = element.getBoundingClientRect();
+        const HEADER_OFFSET = 80; // 顶部导航栏高度
+        const targetPosition = window.scrollY + rect.top - HEADER_OFFSET;
 
-                console.log('[TOC Scroll] Adjusting:',
-                    'from:', currentScroll.toFixed(2),
-                    'to:', targetPosition.toFixed(2)
-                );
+        window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: 'smooth',
+        });
 
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
-                });
+        setActiveHeading(id);
 
-                setActiveHeading(id);
-
-                if (window.history.pushState) {
-                    const currentState = window.history.state || {};
-                    window.history.pushState(currentState, '', `#${id}`);
-                } else {
-                    window.location.hash = `#${id}`;
-                }
-            }, 50);
-        } else {
-            console.error('[ScrollToHeading] Element not found:', id);
+        if (window.history.pushState) {
+            const currentState = window.history.state || {};
+            window.history.pushState(currentState, '', `#${id}`);
         }
-    };
+    }, [tableOfContents, getLiveHeading]);
 
     if (isLoading) {
         return (

@@ -3,7 +3,6 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
-import {Button} from '@/components/ui/button';
 import {ArrowLeft} from 'lucide-react';
 import {AppEmpty} from '@/components/ui';
 
@@ -68,8 +67,11 @@ export default function CategoryDetailPage() {
     }
 
     function handleBackToParent() {
+        // 优先级：有父分类 → 回父分类；有历史 → router.back()；降级 → /category
         if (parentCategoryId) {
             router.push(`/category/${parentCategoryId}`);
+        } else if (window.history.length > 1) {
+            router.back();
         } else {
             router.push('/category');
         }
@@ -108,17 +110,15 @@ export default function CategoryDetailPage() {
 
             {/* Posts Section */}
             <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
-                {/* Back to Parent Button */}
+                {/* Back Button */}
                 <div className="mb-8">
-                    <Button
-                        variant="outline"
-                        size="sm"
+                    <button
                         onClick={handleBackToParent}
-                        className="gap-2"
+                        className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
                     >
-                        <ArrowLeft className="h-4 w-4"/>
-                        {parentCategoryId ? t('categories.back_to_parent') : t('categories.back_to_list')}
-                    </Button>
+                        <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"/>
+                        <span>{parentCategoryId ? t('categories.back_to_parent') : t('categories.back_to_list')}</span>
+                    </button>
                 </div>
 
                 {/* Sub Categories List */}

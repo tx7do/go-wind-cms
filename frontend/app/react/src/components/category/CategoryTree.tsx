@@ -70,24 +70,25 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                     >
                         <div
                             className={cn(
-                                'group relative flex cursor-pointer items-stretch overflow-hidden',
-                                'rounded-xl border border-border bg-card',
+                                'group relative flex cursor-pointer items-center overflow-hidden',
+                                'rounded-xl border border-border/60 bg-card/50',
                                 'transition-all duration-300',
-                                'hover:border-primary/50 hover:shadow-md',
-                                expanded && 'border-primary/40 shadow-sm',
+                                'hover:bg-card hover:border-primary/30 hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.12)]',
+                                expanded && 'border-primary/40 bg-card shadow-sm',
                             )}
                             onClick={() => handleViewCategory(category.id || 0)}
                         >
                             {/* 左侧色条指示器 */}
                             <div className={cn(
-                                'w-1 flex-shrink-0 bg-primary/0 transition-colors duration-300',
+                                'w-1 self-stretch flex-shrink-0 bg-primary/0 transition-colors duration-300',
                                 'group-hover:bg-primary',
                                 expanded && 'bg-primary',
                             )}/>
 
-                            <div className="flex flex-1 gap-4 p-4 max-md:flex-col max-md:p-3 max-md:gap-3">
+                            <div className="flex flex-1 items-center gap-4 p-4 max-md:flex-col max-md:items-start max-md:p-3 max-md:gap-3">
+                                {/* 缩图：rounded-lg + 微间距，像精致狐裹的组件 */}
                                 <div className={cn(
-                                    'relative h-[100px] w-[140px] flex-shrink-0 overflow-hidden rounded-lg bg-muted',
+                                    'relative h-[90px] w-[130px] flex-shrink-0 overflow-hidden rounded-lg bg-muted',
                                     'max-md:h-[180px] max-md:w-full',
                                 )}>
                                     <img
@@ -97,7 +98,8 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"/>
                                 </div>
-                                <div className="flex flex-1 flex-col justify-center gap-1.5 max-md:w-full">
+                                {/* 文字区：垂直居中 */}
+                                <div className="flex flex-1 flex-col gap-1.5 max-md:w-full">
                                     <h3 className={cn(
                                         'flex items-center gap-2 text-base font-semibold leading-tight text-foreground transition-colors',
                                         'group-hover:text-primary',
@@ -120,6 +122,13 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                         )}
                                     </div>
                                 </div>
+
+                                {/* 右侧箭头：无子分类时显示 */}
+                                {!hasChildren && (
+                                    <div className="flex-shrink-0 text-muted-foreground/50 transition-all duration-300 group-hover:text-primary group-hover:translate-x-1 max-md:hidden">
+                                        <XIcon name="carbon:chevron-right" size={20}/>
+                                    </div>
+                                )}
                             </div>
 
                             {/* 展开/收起按钮 */}

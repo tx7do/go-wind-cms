@@ -78,25 +78,31 @@ const PostCard: React.FC<PostCardProps> = ({
                 )}>
                     {getPostSummary(post)}
                 </p>
+                {/* 元数据固定双行布局：第一行作者+日期，第二行浏览+点赞，确保所有卡片对齐 */}
                 <div className={cn(
-                    'flex flex-wrap gap-4 border-t border-border pt-3 text-[13px] font-medium text-muted-foreground',
-                    'max-md:text-xs max-md:gap-3',
+                    'border-t border-border pt-3 text-[13px] font-medium text-muted-foreground',
+                    'flex flex-col gap-1.5',
+                    'max-md:text-xs',
                 )}>
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <XIcon name="carbon:user" size={16}/>
-                        <span>{post.authorName}</span>
+                    <div className="flex flex-wrap gap-4">
+                        <div className="flex items-center gap-1.5 whitespace-nowrap">
+                            <XIcon name="carbon:user" size={16}/>
+                            <span>{post.authorName || '—'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 whitespace-nowrap">
+                            <XIcon name="carbon:calendar" size={16}/>
+                            <span>{formatDate(post.createdAt)}</span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <XIcon name="carbon:calendar" size={16}/>
-                        <span>{formatDate(post.createdAt)}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <XIcon name="carbon:view" size={16}/>
-                        <span>{post.visits || 0}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <XIcon name="carbon:thumbs-up" size={16}/>
-                        <span>{post.likes || 0}</span>
+                    <div className="flex flex-wrap gap-4">
+                        <div className="flex items-center gap-1.5 whitespace-nowrap">
+                            <XIcon name="carbon:view" size={16}/>
+                            <span>{post.visits || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 whitespace-nowrap">
+                            <XIcon name="carbon:thumbs-up" size={16}/>
+                            <span>{post.likes || 0}</span>
+                        </div>
                     </div>
                 </div>
             </div>
