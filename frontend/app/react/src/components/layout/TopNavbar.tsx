@@ -8,6 +8,7 @@ import {fetchListNavigations} from '@/api/hooks/navigation';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import {usePreferences} from '@/core/preferences';
 import {cn} from '@/lib/utils';
+import {Skeleton} from '@/components/ui/skeleton';
 
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 
@@ -108,8 +109,10 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
 
     if (isLoading) {
         return (
-            <div className="flex h-full items-center text-sm text-muted-foreground">
-                Loading…
+            <div className="flex h-full items-center gap-2">
+                {Array.from({length: 5}).map((_, i) => (
+                    <Skeleton key={i} className="h-7 w-16 rounded-lg"/>
+                ))}
             </div>
         );
     }

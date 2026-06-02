@@ -1,43 +1,13 @@
 'use client';
 
-import React, {useEffect} from 'react';
-import {Spinner} from '@/components/ui/spinner';
-import {usePathname} from 'next/navigation';
+export {default as NavigationProgress} from './NavigationProgress';
 
-import {useLoading} from '@/store/core/loading/store';
-
+/**
+ * @deprecated 已被 NavigationProgress 顶部进度条替代
+ *
+ * 全屏遮罩会导致页面无法交互，体验较差。
+ * 请使用 <NavigationProgress /> 或 loading.tsx 骨架屏方案。
+ */
 export default function GlobalLoading() {
-    const {isLoading, finish} = useLoading();
-    const pathname = usePathname();
-
-    useEffect(() => {
-        if (isLoading) {
-            const timer = setTimeout(() => {
-                console.warn('[GlobalLoading] Loading timeout (>5s), forcing finish');
-                finish();
-            }, 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [isLoading, finish]);
-
-    useEffect(() => {
-        if (isLoading) {
-            const timer = setTimeout(() => {
-                console.log('[GlobalLoading] Route changed, page rendered, hiding loading');
-                finish();
-            }, 300);
-            return () => clearTimeout(timer);
-        }
-    }, [pathname, isLoading, finish]);
-
-    if (!isLoading) return null;
-
-    return (
-        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-black/70">
-            <div className="flex flex-col items-center gap-4">
-                <Spinner size="lg"/>
-                <p className="mt-2 text-base font-medium text-foreground">加载中...</p>
-            </div>
-        </div>
-    );
+    return null;
 }

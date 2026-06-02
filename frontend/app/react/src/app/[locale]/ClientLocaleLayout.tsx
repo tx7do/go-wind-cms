@@ -6,7 +6,7 @@ import {usePathname} from 'next/navigation';
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import GlobalLoading from "@/components/layout/GlobalLoading";
+import NavigationProgress from "@/components/layout/NavigationProgress";
 
 import {DEFAULT_TIME_ZONE} from "@/i18n";
 
@@ -35,7 +35,7 @@ const ClientLocaleLayout: React.FC<ClientLocaleLayoutProps> = ({locale, messages
                     {children}
                 </main>
                 {!isAuthPage && <Footer/>}
-                <GlobalLoading/>
+                <NavigationProgress/>
             </div>
         </NextIntlClientProvider>
     );

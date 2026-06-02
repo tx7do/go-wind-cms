@@ -8,6 +8,7 @@ import {fetchListCategories, getCategoryName as getCategoryNameHelper} from '@/a
 import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
 
 import {cn} from '@/lib/utils';
+import {Skeleton} from '@/components/ui/skeleton';
 
 interface CategoryFilterProps {
     categories?: contentservicev1_Category[]; // 外部传入的分类数据（可选）
@@ -148,7 +149,18 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     }
 
     if (loading && autoLoad) {
-        return <div className="py-10 text-center text-muted-foreground">加载中...</div>;
+        return (
+            <div className="relative z-20 mb-10 max-md:mb-6">
+                <div className="flex flex-wrap items-center gap-2.5 rounded-xl border border-border bg-card/50 p-3.5 backdrop-blur-sm">
+                    <Skeleton className="h-9 w-24 rounded-lg"/>
+                    <Skeleton className="h-9 w-20 rounded-lg"/>
+                    <Skeleton className="h-9 w-28 rounded-lg"/>
+                    <Skeleton className="h-9 w-22 rounded-lg"/>
+                    <Skeleton className="h-9 w-24 rounded-lg"/>
+                    <Skeleton className="h-9 w-20 rounded-lg"/>
+                </div>
+            </div>
+        );
     }
 
     // 通用按钮样式
