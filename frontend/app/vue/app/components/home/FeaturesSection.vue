@@ -19,7 +19,7 @@ const features = [
     <div class="w-full max-w-300 mx-auto px-8 max-md:px-4">
       <div class="mb-12 text-center">
         <h2 class="inline-flex items-center gap-2 text-[2.25rem] font-extrabold leading-tight tracking-tight text-foreground">
-          <XIcon name="carbon:rocket" :size="28" class="mr-2 text-primary" />
+          <XIcon icon="carbon:rocket" :size="28" class="mr-2 text-primary" />
           {{ t('page.home.platform_features') }}
         </h2>
       </div>
@@ -43,7 +43,7 @@ const features = [
             'group-hover:scale-110 group-hover:-rotate-6 group-hover:bg-primary group-hover:text-white',
             'group-hover:shadow-[0_8px_24px_-4px_hsl(var(--primary)/0.4)]',
           )">
-            <XIcon :name="feature.icon" :size="48" />
+            <XIcon :icon="feature.icon" :size="48" />
           </div>
           <h3 class="mb-3 text-xl font-bold text-foreground transition-colors group-hover:text-primary">
             {{ feature.title }}

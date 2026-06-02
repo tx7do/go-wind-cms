@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { fetchListTag, getTagTranslation } from '@/api/composables/tag'
 import type { ListTagParams } from '@/api/composables/tag'
 import { XIcon } from '@/plugins/xicon'
@@ -58,7 +58,7 @@ onMounted(async () => {
             :to="localePath(`/tag/${tag.id}`)"
             class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
           >
-            <XIcon name="carbon:tag" :size="14" />
+            <XIcon icon="carbon:tag" :size="14" />
             {{ getTagName(tag) }}
           </NuxtLink>
         </div>

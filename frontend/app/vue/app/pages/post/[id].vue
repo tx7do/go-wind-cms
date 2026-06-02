@@ -1,46 +1,88 @@
 <script setup lang="ts">
 import { XIcon } from '@/plugins/xicon'
+import { fetchPost, getPostTitle, getPostSummary, getPostThumbnail, getPostContent } from '@/api/composables/post'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
+const route = useRoute()
 
-// Placeholder - will be replaced with actual user data
+const post = ref<any>(null)
+const loading = ref(true)
+const error = ref('')
+
+const postId = computed(() => Number(route.params.id))
+
+onMounted(async () => {
+  try {
+    if (!postId.value) {
+      error.value = t('page.post_detail.not_found')
+      return
+    }
+    post.value = await fetchPost(postId.value)
+  } catch (e) {
+    console.error('[Post Detail] 加载失败:', e)
+    error.value = t('page.post_detail.load_failed')
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
   <div class="w-full">
-    <LayoutPageHero
-      :title="t('menu.my_profile')"
-      icon="carbon:user"
-      size="md"
-    />
-
-    <section class="w-full py-12 max-md:py-8">
-      <div class="mx-auto max-w-3xl px-4">
-        <div class="rounded-2xl border border-border bg-card p-8">
-          <div class="flex items-center gap-6">
-            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <XIcon name="carbon:user" :size="40" />
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-foreground">{{ t('menu.my_profile') }}</h2>
-              <p class="text-sm text-muted-foreground">user@gowind.dev</p>
-            </div>
-          </div>
-
-          <div class="mt-8 space-y-4">
-            <UiSettingRow :label="t('settings.account.password')" :description="t('settings.account.password_not_set')">
-              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
-            </UiSettingRow>
-            <UiSettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.password_not_set')">
-              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
-            </UiSettingRow>
-            <UiSettingRow :label="t('settings.account.bind_email')" :description="t('settings.account.email_not_bound')">
-              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
-            </UiSettingRow>
+    <!-- Loading -->
+    <div v-if="loading" class="w-full py-20">
+      <LayoutSectionContainer>
+        <div class="mx-auto max-w-3xl space-y-4">
+          <UiSkeleton class="h-10 w-3/4" />
+          <UiSkeleton class="h-5 w-1/3" />
+          <div class="mt-8 space-y-3">
+            <UiSkeleton class="h-4 w-full" />
+            <UiSkeleton class="h-4 w-full" />
+            <UiSkeleton class="h-4 w-2/3" />
           </div>
         </div>
-      </div>
-    </section>
+      </LayoutSectionContainer>
+    </div>
+
+    <!-- Error -->
+    <div v-else-if="error" class="w-full py-20 text-center">
+      <LayoutSectionContainer>
+        <div class="flex flex-col items-center gap-4">
+          <XIcon icon="carbon:warning-alt" :size="48" class="text-muted-foreground" />
+          <p class="text-lg text-muted-foreground">{{ error }}</p>
+          <UiButton variant="outline" @click="navigateTo(localePath('/post'))">
+            {{ t('common.back') || '← Back' }}
+          </UiButton>
+        </div>
+      </LayoutSectionContainer>
+    </div>
+
+    <!-- Post Detail -->
+    <template v-else-if="post">
+      <LayoutPageHero
+        :title="getPostTitle(post, t('page.post_detail.untitled'))"
+        :subtitle="getPostSummary(post)"
+        size="sm"
+      />
+
+      <section class="w-full py-12 max-md:py-8">
+        <LayoutSectionContainer>
+          <article class="mx-auto max-w-3xl">
+            <!-- Thumbnail -->
+            <div v-if="getPostThumbnail(post)" class="mb-8 overflow-hidden rounded-xl">
+              <img
+                :src="getPostThumbnail(post)"
+                :alt="getPostTitle(post)"
+                class="h-auto w-full object-cover"
+              />
+            </div>
+
+            <!-- Content -->
+            <div class="prose prose-neutral dark:prose-invert max-w-none" v-html="getPostContent(post)" />
+          </article>
+        </LayoutSectionContainer>
+      </section>
+    </template>
   </div>
 </template>

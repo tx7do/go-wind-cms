@@ -1,6 +1,41 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/modules/app/auth.state'
+
 definePageMeta({ layout: 'auth' })
+
+const { t } = useI18n()
 const localePath = useLocalePath()
+const authStore = useAuthStore()
+
+const form = reactive({
+  username: '',
+  password: '',
+  rememberMe: false,
+})
+
+const loading = ref(false)
+const errorMsg = ref('')
+
+const handleLogin = async () => {
+  errorMsg.value = ''
+  if (!form.username || !form.password) {
+    errorMsg.value = t('authentication.login.fill_required')
+    return
+  }
+  loading.value = true
+  try {
+    await authStore.authLogin({
+      username: form.username,
+      password: form.password,
+    }, async () => {
+      await navigateTo(localePath('/'))
+    })
+  } catch (e: any) {
+    errorMsg.value = e?.message || t('authentication.login.login_failed')
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -15,23 +50,31 @@ const localePath = useLocalePath()
         <p class="mt-2 text-sm text-muted-foreground">{{ $t('authentication.login.login_with') }}</p>
       </div>
 
-      <form @submit.prevent class="space-y-4">
+      <form class="space-y-4" @submit.prevent="handleLogin">
+        <!-- Error message -->
+        <div v-if="errorMsg" class="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {{ errorMsg }}
+        </div>
+
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.login.username') }}</UiLabel>
-          <UiInput type="text" :placeholder="$t('authentication.login.placeholder_email')" />
+          <UiInput v-model="form.username" type="text" :placeholder="$t('authentication.login.placeholder_email')" />
         </div>
         <div>
           <UiLabel class="mb-2 block text-sm font-medium">{{ $t('authentication.login.password') }}</UiLabel>
-          <UiInput type="password" :placeholder="$t('authentication.login.placeholder_password')" />
+          <UiInput v-model="form.password" type="password" :placeholder="$t('authentication.login.placeholder_password')" />
         </div>
         <div class="flex items-center justify-between text-sm">
           <label class="flex items-center gap-2 text-muted-foreground">
-            <input type="checkbox" class="rounded" />
+            <input v-model="form.rememberMe" type="checkbox" class="rounded" />
             {{ $t('authentication.login.remember_me') }}
           </label>
           <NuxtLink :to="localePath('/')" class="text-primary hover:underline">{{ $t('authentication.login.forgot_password') }}</NuxtLink>
         </div>
-        <UiButton class="w-full" type="submit">{{ $t('authentication.login.login') }}</UiButton>
+        <UiButton class="w-full" type="submit" :disabled="loading">
+          <span v-if="loading">{{ $t('authentication.login.logging_in') || 'Loading...' }}</span>
+          <span v-else>{{ $t('authentication.login.login') }}</span>
+        </UiButton>
       </form>
 
       <div class="mt-6 text-center text-sm text-muted-foreground">

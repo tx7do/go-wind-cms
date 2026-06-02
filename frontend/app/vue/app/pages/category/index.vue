@@ -65,7 +65,7 @@ onMounted(async () => {
           >
             <div class="flex items-center gap-3">
               <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <XIcon :name="getIconName(cat.icon)" :size="24" />
+                <XIcon :icon="getIconName(cat.icon)" :size="24" />
               </div>
               <div>
                 <h3 class="text-base font-semibold text-foreground group-hover:text-primary">

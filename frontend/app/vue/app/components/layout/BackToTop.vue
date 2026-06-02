@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { cn } from '@/lib/utils'
 
@@ -46,6 +46,6 @@ const scrollToTop = () => {
     aria-label="Back to top"
     @click="scrollToTop"
   >
-    <XIcon name="carbon:arrow-up" />
+    <XIcon icon="carbon:arrow-up" />
   </button>
 </template>

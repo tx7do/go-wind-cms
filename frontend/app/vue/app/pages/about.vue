@@ -59,7 +59,7 @@ const { t } = useI18n()
             class="group rounded-xl border border-border bg-card p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
           >
             <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:shadow-md">
-              <XIcon :name="feature.icon" :size="32" />
+              <XIcon :icon="feature.icon" :size="32" />
             </div>
             <h3 class="mb-2 text-lg font-bold text-foreground transition-colors group-hover:text-primary">{{ feature.title }}</h3>
             <p class="text-sm leading-relaxed text-muted-foreground">{{ feature.description }}</p>

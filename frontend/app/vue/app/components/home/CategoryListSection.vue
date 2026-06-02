@@ -52,7 +52,7 @@ const getCategoryName = (category: any): string => {
     <!-- Section Header -->
     <div class="mb-8 flex items-center justify-between">
       <h2 class="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl">
-        <XIcon name="carbon:folder-details" :size="28" class="mr-2 text-primary" />
+        <XIcon icon="carbon:folder-details" :size="28" class="mr-2 text-primary" />
         {{ t('page.home.categories') }}
       </h2>
       <UiButton variant="ghost" @click="navigateTo(localePath('/category'))">
@@ -79,7 +79,7 @@ const getCategoryName = (category: any): string => {
           <div class="relative z-1 flex h-full flex-col justify-between">
             <div class="mb-5 flex gap-5">
               <div class="mb-4 flex h-17.5 w-17.5 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100/50 text-3xl dark:bg-primary/10 dark:text-primary dark:border-primary/20 transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 dark:group-hover:bg-primary dark:group-hover:text-white dark:group-hover:border-primary group-hover:shadow-[0_8px_24px_-4px_hsl(var(--primary)/0.4)]">
-                <XIcon :name="getIconName(category.icon)" :size="48" />
+                <XIcon :icon="getIconName(category.icon)" :size="48" />
               </div>
               <div class="flex-1 w-full min-w-0">
                 <h3 class="mb-2 text-lg font-extrabold leading-tight tracking-wide text-slate-900 dark:text-foreground transition-colors">
@@ -105,7 +105,7 @@ const getCategoryName = (category: any): string => {
         >
           <div class="relative z-1 flex h-full w-full flex-col items-center justify-between gap-3">
             <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100/50 dark:bg-primary/10 dark:text-primary dark:border-primary/20 transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:bg-primary dark:group-hover:text-white">
-              <XIcon :name="getIconName(category.icon)" :size="32" />
+              <XIcon :icon="getIconName(category.icon)" :size="32" />
             </div>
             <div class="flex w-full min-w-0 flex-1 flex-col items-center gap-1">
               <h3 class="line-clamp-2 text-sm font-bold leading-tight tracking-wide text-slate-900 dark:text-foreground">

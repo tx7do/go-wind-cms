@@ -48,7 +48,7 @@ const cards = [
             class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border"
             :class="card.accent === 'primary' ? 'bg-primary/10 text-primary border-primary/20' : card.accent === 'blue' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' : 'bg-muted text-muted-foreground border-border'"
           >
-            <XIcon :name="card.icon" :size="22" />
+            <XIcon :icon="card.icon" :size="22" />
           </div>
           <h3 class="text-base font-semibold text-foreground">{{ card.title }}</h3>
           <p class="mt-2 text-xs leading-relaxed text-muted-foreground">{{ card.desc }}</p>

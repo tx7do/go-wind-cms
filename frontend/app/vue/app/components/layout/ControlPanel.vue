@@ -28,7 +28,7 @@ const languageOptions = [
       @click="toggleTheme"
       aria-label="Toggle theme"
     >
-      <XIcon :name="isDark ? 'carbon:sun' : 'carbon:moon'" :size="18" class="theme-icon-animate" />
+      <XIcon :icon="isDark ? 'carbon:sun' : 'carbon:moon'" :size="18" class="theme-icon-animate" />
     </button>
   </div>
 </template>

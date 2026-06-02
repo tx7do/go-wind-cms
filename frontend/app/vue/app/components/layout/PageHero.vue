@@ -48,7 +48,7 @@ const padding = computed(() =>
         class="mb-4 flex items-center justify-center"
         :style="{ color: accentColor || 'hsl(var(--primary))' }"
       >
-        <XIcon :name="icon" :size="iconSize ?? 48" />
+        <XIcon :icon="icon" :size="iconSize ?? 48" />
       </div>
 
       <!-- 副标题 -->

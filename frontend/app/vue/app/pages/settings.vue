@@ -7,7 +7,7 @@ const { locale } = useI18n()
 const localePath = useLocalePath()
 const switchLocalePath = useSwitchLocalePath()
 
-const { theme: themePref, setTheme: setThemeMode } = usePreferences()
+const { themePreferences: themePref, setTheme: setThemeMode } = usePreferences()
 
 const activeMenu = ref<'account' | 'message' | 'preference'>('account')
 
@@ -34,7 +34,7 @@ const menuItems = [
             @click="activeMenu = item.key as any"
           >
             <div class="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
-              <XIcon :name="item.icon" :size="18" />
+              <XIcon :icon="item.icon" :size="18" />
             </div>
             <span>{{ item.label }}</span>
           </div>
