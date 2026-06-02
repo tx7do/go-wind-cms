@@ -60,7 +60,9 @@
     "content_desc": "Customize the types of content you want to see",
     "hide_sensitive_content": "Hide Sensitive Content",
     "compact_mode": "Compact Mode",
-    "show_recommendations": "Show Recommendations"
+    "show_recommendations": "Show Recommendations",
+    "reset_defaults": "Reset to Defaults",
+    "reset": "Reset"
   },
   "help": {
     "title": "FAQ",

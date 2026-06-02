@@ -60,7 +60,9 @@
     "content_desc": "自定义您要看到的内容类型",
     "hide_sensitive_content": "隐藏敏感内容",
     "compact_mode": "紧凑模式",
-    "show_recommendations": "显示推荐内容"
+    "show_recommendations": "显示推荐内容",
+    "reset_defaults": "恢复默认设置",
+    "reset": "重置"
   },
   "help": {
     "title": "常见问题",

@@ -8,6 +8,7 @@ import {AppEmpty} from '@/components/ui';
 
 import {useI18nRouter} from "@/i18n/helpers";
 import PageHero from '@/components/layout/PageHero';
+import SectionContainer from '@/components/layout/SectionContainer';
 import {XIcon} from '@/plugins/xicon';
 
 import {fetchListTags, getTranslation as getTagTranslation} from '@/api/hooks/tag';
@@ -82,7 +83,7 @@ export default function TagListPage() {
             />
 
             {/* Tags Grid */}
-            <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
+            <SectionContainer>
                 {/* Loading Skeleton */}
                 {loading ? (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6">
@@ -167,7 +168,7 @@ export default function TagListPage() {
                         )}
                     </>
                 )}
-            </div>
+            </SectionContainer>
         </div>
     );
 }

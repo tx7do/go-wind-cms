@@ -4,6 +4,7 @@ import {useState, useMemo} from 'react';
 import {useTranslations} from 'next-intl';
 
 import PageHero from '@/components/layout/PageHero';
+import SectionContainer from '@/components/layout/SectionContainer';
 import CategoryFilter from '@/components/category/CategoryFilter';
 import PostList from '@/components/post/PostList';
 
@@ -33,7 +34,7 @@ export default function PostListPage() {
                 size="md"
             />
 
-            <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
+            <SectionContainer>
                 <CategoryFilter
                     selectedCategory={selectedCategoryId}
                     treeMode={true}
@@ -47,7 +48,7 @@ export default function PostListPage() {
                     initialPageSize={12}
                     pageSizes={[12, 24, 36, 48]}
                 />
-            </div>
+            </SectionContainer>
         </div>
     );
 }

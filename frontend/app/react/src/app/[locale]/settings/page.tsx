@@ -5,6 +5,7 @@ import {useTranslations, useLocale} from 'next-intl';
 import {Switch} from '@/components/ui/switch';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Button} from '@/components/ui/button';
+import SettingRow from '@/components/ui/setting-row';
 import XIcon from '@/plugins/xicon';
 
 import {usePreferences} from '@/core/preferences';
@@ -99,27 +100,15 @@ export default function SettingsPage() {
                                 <h2 className="mb-2 text-lg font-semibold text-foreground">{t('account.section_title')}</h2>
                                 <p className="mb-4 text-sm text-muted-foreground">{t('account.section_desc')}</p>
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div>
-                                            <div className="text-sm font-medium text-foreground">{t('account.password')}</div>
-                                            <div className="mt-1 text-xs text-muted-foreground">{t('account.password_not_set')}</div>
-                                        </div>
+                                    <SettingRow label={t('account.password')} description={t('account.password_not_set')}>
                                         <Button variant="outline" size="sm">{t('account.edit')}</Button>
-                                    </div>
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div>
-                                            <div className="text-sm font-medium text-foreground">{t('account.bind_phone')}</div>
-                                            <div className="mt-1 text-xs text-muted-foreground">{t('account.password_not_set')}</div>
-                                        </div>
+                                    </SettingRow>
+                                    <SettingRow label={t('account.bind_phone')} description={t('account.password_not_set')}>
                                         <Button variant="outline" size="sm">{t('account.edit')}</Button>
-                                    </div>
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div>
-                                            <div className="text-sm font-medium text-foreground">{t('account.bind_email')}</div>
-                                            <div className="mt-1 text-xs text-muted-foreground">{t('account.email_not_bound')}</div>
-                                        </div>
+                                    </SettingRow>
+                                    <SettingRow label={t('account.bind_email')} description={t('account.email_not_bound')}>
                                         <Button variant="outline" size="sm">{t('account.edit')}</Button>
-                                    </div>
+                                    </SettingRow>
                                 </div>
                             </div>
                             <div>
@@ -165,28 +154,23 @@ export default function SettingsPage() {
                                 <h2 className="mb-2 text-lg font-semibold text-foreground">{t('message.email_notifications')}</h2>
                                 <p className="mb-4 text-sm text-muted-foreground">{t('message.email_notifications_desc')}</p>
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div className="text-sm font-medium text-foreground">{t('message.system_messages')}</div>
+                                    <SettingRow label={t('message.system_messages')}>
                                         <Switch defaultChecked/>
-                                    </div>
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div className="text-sm font-medium text-foreground">{t('message.comment_notifications')}</div>
+                                    </SettingRow>
+                                    <SettingRow label={t('message.comment_notifications')}>
                                         <Switch defaultChecked/>
-                                    </div>
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div className="text-sm font-medium text-foreground">{t('message.activity_updates')}</div>
+                                    </SettingRow>
+                                    <SettingRow label={t('message.activity_updates')}>
                                         <Switch defaultChecked/>
-                                    </div>
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div className="text-sm font-medium text-foreground">{t('message.recommended_content')}</div>
+                                    </SettingRow>
+                                    <SettingRow label={t('message.recommended_content')}>
                                         <Switch defaultChecked/>
-                                    </div>
+                                    </SettingRow>
                                 </div>
                             </div>
                             <div>
                                 <h2 className="mb-4 text-lg font-semibold text-foreground">{t('message.email_frequency')}</h2>
-                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                    <div className="text-sm font-medium text-foreground">{t('message.frequency_desc')}</div>
+                                <SettingRow label={t('message.frequency_desc')}>
                                     <Select defaultValue="immediately">
                                         <SelectTrigger className="w-[180px] h-8">
                                             <SelectValue/>
@@ -198,12 +182,12 @@ export default function SettingsPage() {
                                             <SelectItem value="monthly">{t('message.frequency_monthly')}</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </SettingRow>
                             </div>
                         </>
                     )}
 
-                    {/* 偏好设置 - 连接 usePreferences */}
+                    {/* 偏好设置 */}
                     {activeMenu === 'preference' && (
                         <>
                             <div className="mb-8">
@@ -213,8 +197,7 @@ export default function SettingsPage() {
                             <div className="mb-8">
                                 <h2 className="mb-2 text-lg font-semibold text-foreground">{t('preference.theme_settings')}</h2>
                                 <p className="mb-4 text-sm text-muted-foreground">{t('preference.theme_desc')}</p>
-                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                    <div className="text-sm font-medium text-foreground">{t('preference.theme')}</div>
+                                <SettingRow label={t('preference.theme')}>
                                     <Select value={themePref.mode} onValueChange={(v) => handleThemeChange(v as ThemeModeType)}>
                                         <SelectTrigger className="w-[180px] h-8">
                                             <SelectValue/>
@@ -225,13 +208,12 @@ export default function SettingsPage() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </SettingRow>
                             </div>
                             <div className="mb-8">
                                 <h2 className="mb-2 text-lg font-semibold text-foreground">{t('preference.language_settings')}</h2>
                                 <p className="mb-4 text-sm text-muted-foreground">{t('preference.language_desc')}</p>
-                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                    <div className="text-sm font-medium text-foreground">{t('preference.language')}</div>
+                                <SettingRow label={t('preference.language')}>
                                     <Select value={locale as SupportedLanguagesType} onValueChange={(v) => handleLanguageChange(v as SupportedLanguagesType)}>
                                         <SelectTrigger className="w-[180px] h-8">
                                             <SelectValue/>
@@ -242,43 +224,37 @@ export default function SettingsPage() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </SettingRow>
                             </div>
                             <div className="mb-8">
                                 <h2 className="mb-2 text-lg font-semibold text-foreground">{t('preference.content_preferences')}</h2>
                                 <p className="mb-4 text-sm text-muted-foreground">{t('preference.content_desc')}</p>
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div className="text-sm font-medium text-foreground">{t('preference.hide_sensitive_content')}</div>
+                                    <SettingRow label={t('preference.hide_sensitive_content')}>
                                         <Switch
                                             checked={contentPref.hideSensitiveContent}
                                             onCheckedChange={(checked) => updateContent({hideSensitiveContent: checked})}
                                         />
-                                    </div>
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div className="text-sm font-medium text-foreground">{t('preference.compact_mode')}</div>
+                                    </SettingRow>
+                                    <SettingRow label={t('preference.compact_mode')}>
                                         <Switch
                                             checked={contentPref.compactMode}
                                             onCheckedChange={(checked) => updateContent({compactMode: checked})}
                                         />
-                                    </div>
-                                    <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                        <div className="text-sm font-medium text-foreground">{t('preference.show_recommendations')}</div>
+                                    </SettingRow>
+                                    <SettingRow label={t('preference.show_recommendations')}>
                                         <Switch
                                             checked={contentPref.showRecommendations}
                                             onCheckedChange={(checked) => updateContent({showRecommendations: checked})}
                                         />
-                                    </div>
+                                    </SettingRow>
                                 </div>
                             </div>
-                            <div>
-                                <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-                                    <div className="text-sm font-medium text-foreground">恢复默认设置</div>
-                                    <Button variant="destructive" size="sm" onClick={() => resetPreferences()}>
-                                        重置
-                                    </Button>
-                                </div>
-                            </div>
+                            <SettingRow label={t('preference.reset_defaults')}>
+                                <Button variant="destructive" size="sm" onClick={() => resetPreferences()}>
+                                    {t('preference.reset')}
+                                </Button>
+                            </SettingRow>
                         </>
                     )}
                 </main>

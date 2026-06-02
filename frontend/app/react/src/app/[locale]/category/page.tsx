@@ -8,6 +8,7 @@ import {AppEmpty} from '@/components/ui';
 import {fetchListCategories} from '@/api/hooks/category';
 import CategoryTree from '@/components/category/CategoryTree';
 import PageHero from '@/components/layout/PageHero';
+import SectionContainer from '@/components/layout/SectionContainer';
 
 import {contentservicev1_Category, contentservicev1_ListCategoryResponse} from "@/api/generated/app/service/v1";
 import {useI18nRouter} from "@/i18n/helpers";
@@ -54,7 +55,7 @@ export default function CategoryListPage() {
             />
 
             {/* Content Section */}
-            <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
+            <SectionContainer>
                 {/* Loading Skeleton */}
                 {loading ? (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
@@ -80,7 +81,7 @@ export default function CategoryListPage() {
                         )}
                     </>
                 )}
-            </div>
+            </SectionContainer>
         </div>
     );
 }

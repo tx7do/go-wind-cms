@@ -3,11 +3,12 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
-import {ArrowLeft} from 'lucide-react';
 import {AppEmpty} from '@/components/ui';
+import BackButton from '@/components/layout/BackButton';
 
 import {useI18nRouter} from "@/i18n/helpers";
 import PageHero from '@/components/layout/PageHero';
+import SectionContainer from '@/components/layout/SectionContainer';
 import {XIcon} from '@/plugins/xicon';
 
 import {fetchTag, getTranslation as getTagTranslation} from '@/api/hooks/tag';
@@ -73,16 +74,13 @@ export default function TagDetailPage() {
             />
 
             {/* Posts Section */}
-            <div className="w-full max-w-[1200px] mx-auto px-8 py-12 max-md:px-4">
+            <SectionContainer>
                 {/* Back Button — ghost 风格，与 Post/Category 详情页统一 */}
                 <div className="mb-8">
-                    <button
+                    <BackButton 
+                        label={t('categories.back_to_list')} 
                         onClick={handleBack}
-                        className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
-                    >
-                        <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"/>
-                        <span>{t('categories.back_to_list')}</span>
-                    </button>
+                    />
                 </div>
 
                 {/* Posts List with Pagination */}
@@ -95,7 +93,7 @@ export default function TagDetailPage() {
                         from="tag"
                     />
                 )}
-            </div>
+            </SectionContainer>
         </div>
     );
 }

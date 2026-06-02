@@ -3,8 +3,6 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useTranslations} from 'next-intl';
 
-import XIcon from '@/plugins/xicon';
-
 import {
     type contentservicev1_ListPostResponse,
     type contentservicev1_Post,
@@ -14,26 +12,27 @@ import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
 import {fetchUserProfile} from "@/api/hooks/user-profile";
 
 import {formatDateTime} from "@/utils";
+import UserStatGrid from '@/components/user/UserStatGrid';
+import UserInfoSidebar, {type InfoSection, type InfoRow} from '@/components/user/UserInfoSidebar';
+import MetaDataItem from '@/components/ui/meta-data-item';
 
 export default function UserProfilePage() {
     const t = useTranslations('page.user');
 
     const [loading, setLoading] = useState(false);
     const [postsLoading, setPostsLoading] = useState(false);
-
     const [activeTab, setActiveTab] = useState<'posts' | 'activities' | 'collections'>('posts');
-
     const [user, setUser] = useState<identityservicev1_User | null>(null);
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [postsTotal, setPostsTotal] = useState(0);
 
     // 统计数据
-    const stats = useMemo(() => ({
-        followers: user?.followers ?? 0,
-        following: user?.following ?? 0,
-        posts: user?.postCount ?? 0,
-        likes: user?.likeCount ?? 0,
-    }), [user]);
+    const stats = useMemo(() => [
+        {value: user?.following ?? 0, label: t('following')},
+        {value: user?.followers ?? 0, label: t('followers')},
+        {value: user?.postCount ?? 0, label: t('posts')},
+        {value: user?.likeCount ?? 0, label: t('likes_received')},
+    ], [user]);
 
     // 格式化性别
     const formatGender = (gender?: string) => {
@@ -60,15 +59,58 @@ export default function UserProfilePage() {
         return statusMap[status] || status;
     };
 
-    // 获取用户信息
+    const statusColor: Record<string, string> = {
+        'NORMAL': 'bg-green-500/10 text-green-600',
+        'DISABLED': 'bg-red-500/10 text-red-600',
+        'PENDING': 'bg-yellow-500/10 text-yellow-600',
+        'LOCKED': 'bg-orange-500/10 text-orange-600',
+        'EXPIRED': 'bg-gray-500/10 text-gray-600',
+        'CLOSED': 'bg-red-500/10 text-red-600',
+    };
+
+    // 侧栏信息分区
+    const sidebarSections: InfoSection[] = useMemo(() => {
+        const sections: InfoSection[] = [];
+
+        // 基础信息
+        const basicRows = [];
+        if (user?.username) basicRows.push({label: t('username'), value: user.username});
+        if (user?.realname) basicRows.push({label: t('realname'), value: user.realname});
+        if (user?.email) basicRows.push({label: t('email'), value: user.email});
+        if (user?.mobile) basicRows.push({label: t('mobile'), value: user.mobile});
+        if (basicRows.length > 0) sections.push({title: t('basic_info'), rows: basicRows});
+
+        // 账号信息
+        const accountRows: InfoRow[] = [{
+            label: t('status'),
+            value: (
+                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[user?.status || ''] || 'bg-muted text-muted-foreground'}`}>
+                    {formatStatus(user?.status)}
+                </span>
+            )
+        }];
+        if (user?.roleNames?.length) {
+            accountRows.push({label: t('roles'), value: user.roleNames.join(', ')});
+        }
+        if (user?.createdAt) {
+            accountRows.push({label: t('created_at'), value: formatDateTime(user.createdAt)});
+        }
+        if (user?.lastLoginAt) {
+            accountRows.push({label: t('last_login_at'), value: formatDateTime(user.lastLoginAt)});
+        }
+        sections.push({title: t('account_info'), rows: accountRows});
+
+        return sections;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, t]);
+
     async function loadUserProfile() {
         setLoading(true);
         try {
             const result = await fetchUserProfile() as identityservicev1_User;
             setUser(result || null);
-
             if (activeTab === 'posts') {
-                await loadUserPosts();
+                await loadUserPosts(result?.id);
             }
         } catch (error) {
             console.error('Load user profile failed:', error);
@@ -78,15 +120,15 @@ export default function UserProfilePage() {
         }
     }
 
-    // 加载用户的帖子列表
-    async function loadUserPosts() {
-        if (!user?.id) return;
+    async function loadUserPosts(userId?: number) {
+        const targetId = userId || user?.id;
+        if (!targetId) return;
 
         setPostsLoading(true);
         try {
             const result = await fetchListPosts({
                 paging: {page: 1, pageSize: 10},
-                formValues: {author_id: user.id},
+                formValues: {author_id: targetId},
                 fieldMask: undefined,
                 orderBy: ['-createdAt']
             }) as unknown as contentservicev1_ListPostResponse;
@@ -100,19 +142,18 @@ export default function UserProfilePage() {
         }
     }
 
-    // 监听 activeTab 变化
     useEffect(() => {
         if (activeTab === 'posts' && posts.length === 0 && user) {
             loadUserPosts();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, user]);
 
-    // 初始加载
     useEffect(() => {
         loadUserProfile();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // 渲染 Loading Skeleton
     if (loading) {
         return (
             <div className="w-full">
@@ -136,7 +177,6 @@ export default function UserProfilePage() {
         );
     }
 
-    // 用户未登录
     if (!user) {
         return (
             <div className="flex w-full items-center justify-center py-20">
@@ -149,15 +189,6 @@ export default function UserProfilePage() {
         'MALE': 'bg-blue-500/10 text-blue-600',
         'FEMALE': 'bg-pink-500/10 text-pink-600',
         'SECRET': 'bg-muted text-muted-foreground',
-    };
-
-    const statusColor: Record<string, string> = {
-        'NORMAL': 'bg-green-500/10 text-green-600',
-        'DISABLED': 'bg-red-500/10 text-red-600',
-        'PENDING': 'bg-yellow-500/10 text-yellow-600',
-        'LOCKED': 'bg-orange-500/10 text-orange-600',
-        'EXPIRED': 'bg-gray-500/10 text-gray-600',
-        'CLOSED': 'bg-red-500/10 text-red-600',
     };
 
     const tabBase = 'cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors border-transparent text-muted-foreground hover:text-foreground';
@@ -213,95 +244,14 @@ export default function UserProfilePage() {
                     </div>
 
                     {/* 统计数据 */}
-                    <div className="mt-6 grid grid-cols-4 gap-4 border-t border-border pt-6 max-md:grid-cols-2">
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-foreground">{stats.following}</div>
-                            <div className="text-xs text-muted-foreground">{t('following')}</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-foreground">{stats.followers}</div>
-                            <div className="text-xs text-muted-foreground">{t('followers')}</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-foreground">{stats.posts}</div>
-                            <div className="text-xs text-muted-foreground">{t('posts')}</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-foreground">{stats.likes}</div>
-                            <div className="text-xs text-muted-foreground">{t('likes_received')}</div>
-                        </div>
-                    </div>
+                    <UserStatGrid stats={stats}/>
                 </div>
             </div>
 
             {/* 内容区域 */}
             <div className="w-full max-w-[1200px] mx-auto grid grid-cols-[300px_1fr] gap-6 px-8 py-8 max-md:grid-cols-1 max-md:px-4">
                 {/* 左侧面板 */}
-                <aside>
-                    <div className="rounded-xl border border-border bg-card p-6">
-                        <div>
-                            <h3 className="mb-3 text-sm font-semibold text-foreground">{t('basic_info')}</h3>
-                            <div className="space-y-2">
-                                {user?.username && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{t('username')}:</span>
-                                        <span className="text-foreground">{user.username}</span>
-                                    </div>
-                                )}
-                                {user?.realname && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{t('realname')}:</span>
-                                        <span className="text-foreground">{user.realname}</span>
-                                    </div>
-                                )}
-                                {user?.email && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{t('email')}:</span>
-                                        <span className="text-foreground">{user.email}</span>
-                                    </div>
-                                )}
-                                {user?.mobile && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{t('mobile')}:</span>
-                                        <span className="text-foreground">{user.mobile}</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="my-4 border-t border-border"/>
-
-                        <div>
-                            <h3 className="mb-3 text-sm font-semibold text-foreground">{t('account_info')}</h3>
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">{t('status')}:</span>
-                                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[user?.status || ''] || 'bg-muted text-muted-foreground'}`}>
-                                        {formatStatus(user?.status)}
-                                    </span>
-                                </div>
-                                {user?.roleNames?.length && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{t('roles')}:</span>
-                                        <span className="text-foreground">{user.roleNames.join(', ')}</span>
-                                    </div>
-                                )}
-                                {user?.createdAt && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{t('created_at')}:</span>
-                                        <span className="text-foreground">{formatDateTime(user.createdAt)}</span>
-                                    </div>
-                                )}
-                                {user?.lastLoginAt && (
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted-foreground">{t('last_login_at')}:</span>
-                                        <span className="text-foreground">{formatDateTime(user.lastLoginAt)}</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+                <UserInfoSidebar sections={sidebarSections}/>
 
                 {/* 主内容区 */}
                 <main className="min-w-0">
@@ -343,22 +293,10 @@ export default function UserProfilePage() {
                                                         <h3 className="mb-1 font-semibold text-foreground">{getPostTitle(post)}</h3>
                                                         <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{getPostSummary(post)}</p>
                                                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                                            <span className="flex items-center gap-1">
-                                                                <XIcon name="carbon:view" size={16}/>
-                                                                {post.visits || 0} {t('views')}
-                                                            </span>
-                                                            <span className="flex items-center gap-1">
-                                                                <XIcon name="carbon:thumbs-up" size={16}/>
-                                                                {post.likes || 0} {t('likes')}
-                                                            </span>
-                                                            <span className="flex items-center gap-1">
-                                                                <XIcon name="carbon:chat" size={16}/>
-                                                                {post.commentCount || 0} {t('comments')}
-                                                            </span>
-                                                            <span className="flex items-center gap-1">
-                                                                <XIcon name="carbon:time" size={16}/>
-                                                                {formatDateTime(post.createdAt)}
-                                                            </span>
+                                                            <MetaDataItem icon="carbon:view" text={`${post.visits || 0} ${t('views')}`}/>
+                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${post.likes || 0} ${t('likes')}`}/>
+                                                            <MetaDataItem icon="carbon:chat" text={`${post.commentCount || 0} ${t('comments')}`}/>
+                                                            <MetaDataItem icon="carbon:time" text={formatDateTime(post.createdAt)}/>
                                                         </div>
                                                     </div>
                                                     <button className="shrink-0 cursor-pointer text-sm text-primary transition-colors hover:text-primary/80 hover:underline">
@@ -368,31 +306,32 @@ export default function UserProfilePage() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="py-12 text-center">
-                                            <div className="mb-2 text-4xl">📄</div>
-                                            <div className="text-sm text-muted-foreground">{t('no_posts')}</div>
-                                        </div>
+                                        <EmptyTab icon="📄" text={t('no_posts')}/>
                                     )}
                                 </>
                             )}
 
                             {activeTab === 'activities' && (
-                                <div className="py-12 text-center">
-                                    <div className="mb-2 text-4xl">🎯</div>
-                                    <div className="text-sm text-muted-foreground">{t('no_activities')}</div>
-                                </div>
+                                <EmptyTab icon="🎯" text={t('no_activities')}/>
                             )}
 
                             {activeTab === 'collections' && (
-                                <div className="py-12 text-center">
-                                    <div className="mb-2 text-4xl">🔖</div>
-                                    <div className="text-sm text-muted-foreground">{t('no_collections')}</div>
-                                </div>
+                                <EmptyTab icon="🔖" text={t('no_collections')}/>
                             )}
                         </div>
                     </div>
                 </main>
             </div>
+        </div>
+    );
+}
+
+/** 空状态占位 */
+function EmptyTab({icon, text}: {icon: string; text: string}) {
+    return (
+        <div className="py-12 text-center">
+            <div className="mb-2 text-4xl">{icon}</div>
+            <div className="text-sm text-muted-foreground">{text}</div>
         </div>
     );
 }
