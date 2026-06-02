@@ -23,11 +23,9 @@ const padding = computed(() =>
 <template>
   <section :class="cn(
     'relative w-full overflow-hidden',
-    'bg-gradient-to-b from-[hsl(142,70%,96%)] via-[hsl(142,50%,98%)] to-background',
-    'dark:from-slate-950 dark:via-slate-900/80 dark:to-background',
     minHeight, padding,
     'flex items-center justify-center text-center',
-  )">
+  )" :style="{ background: `linear-gradient(to bottom, var(--hero-gradient-from), var(--hero-gradient-via), var(--hero-gradient-to))` }">
     <!-- 装饰线条层 -->
     <div class="absolute inset-0 opacity-[0.03] pointer-events-none">
       <div
@@ -62,7 +60,7 @@ const padding = computed(() =>
 
       <!-- 主标题 -->
       <h1 :class="cn(
-        'mb-4 font-bold leading-tight text-foreground dark:text-white',
+        'mb-4 font-bold leading-tight text-foreground',
         size === 'lg' ? 'text-4xl max-md:text-2xl' : 'text-3xl max-md:text-2xl',
         size === 'sm' && 'text-2xl max-md:text-xl',
       )">
@@ -73,7 +71,7 @@ const padding = computed(() =>
       <p
         v-if="description"
         :class="cn(
-          'mx-auto font-light text-muted-foreground dark:text-slate-300',
+          'mx-auto font-light text-muted-foreground',
           size === 'lg' ? 'max-w-2xl text-lg max-md:text-base' : 'max-w-xl text-base max-md:text-sm',
           size === 'sm' && 'text-sm max-md:text-xs',
         )"
@@ -84,7 +82,7 @@ const padding = computed(() =>
       <!-- 自定义内容 slot -->
       <div v-if="$slots.default" :class="cn(
         'mt-5 flex flex-wrap items-center justify-center gap-4',
-        'text-sm text-muted-foreground dark:text-slate-400',
+        'text-sm text-muted-foreground',
       )">
         <slot />
       </div>

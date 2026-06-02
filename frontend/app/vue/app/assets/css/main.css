@@ -80,6 +80,11 @@
     --layout-header-height: 64px;
     --layout-footer-height: 200px;
     --layout-max-width: 1200px;
+
+    /* Hero 渐变背景 */
+    --hero-gradient-from: hsl(142, 70%, 96%);
+    --hero-gradient-via: hsl(142, 50%, 98%);
+    --hero-gradient-to: hsl(var(--background));
 }
 
 /* ==========================================
@@ -122,6 +127,11 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142.1 86.2% 50.3%;
+
+    /* Hero 渐变背景 */
+    --hero-gradient-from: hsl(222, 47%, 11%);
+    --hero-gradient-via: hsl(222, 47%, 14%);
+    --hero-gradient-to: hsl(var(--background));
 }
 
 /* 纯 CSS 后备：JS 未执行前，浏览器自动跟随系统暗色偏好。
@@ -162,6 +172,11 @@
         --border: 217.2 32.6% 17.5%;
         --input: 217.2 32.6% 17.5%;
         --ring: 142.1 86.2% 50.3%;
+
+        /* Hero 渐变背景 */
+        --hero-gradient-from: hsl(222, 47%, 11%);
+        --hero-gradient-via: hsl(222, 47%, 14%);
+        --hero-gradient-to: hsl(var(--background));
     }
 }
 
