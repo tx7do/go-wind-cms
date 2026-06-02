@@ -5,7 +5,7 @@ import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useAuthStore } from '@/stores/modules/app/auth.state'
 
 const { t } = useI18n()
-const { theme: themePref, setThemeMode } = usePreferences()
+const { themePreferences: themePref, setTheme: setThemeMode } = usePreferences()
 const currentMode = computed(() => themePref.value.mode)
 
 const localePath = useLocalePath()

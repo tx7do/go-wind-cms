@@ -7,7 +7,7 @@ const { locale } = useI18n()
 const localePath = useLocalePath()
 const switchLocalePath = useSwitchLocalePath()
 
-const { theme: themePref, setThemeMode } = usePreferences()
+const { theme: themePref, setTheme: setThemeMode } = usePreferences()
 
 const activeMenu = ref<'account' | 'message' | 'preference'>('account')
 

@@ -66,6 +66,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
+    "@tanstack/vue-query-devtools": "^5.8.0",
     "@types/crypto-js": "^4.2.2",
     "@types/marked": "^6.0.0",
     "@types/nprogress": "^0.2.3",

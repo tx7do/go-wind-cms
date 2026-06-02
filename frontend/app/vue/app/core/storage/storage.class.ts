@@ -463,7 +463,7 @@ class StorageManager implements IStorageCache {
     }
 
     for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
+      const key = keys[i]!;
       const fullKey = this.getFullKey(key);
 
       try {
@@ -543,7 +543,7 @@ class StorageManager implements IStorageCache {
     const entries = Object.entries(items);
 
     for (let i = 0; i < entries.length; i++) {
-      const [key, item] = entries[i];
+      const [key, item] = entries[i]!;
       const fullKey = this.getFullKey(key);
 
       try {

@@ -14,7 +14,7 @@ import type { siteservicev1_NavigationItem } from '@/api/generated/app/service/v
 const { t } = useI18n()
 const localePath = useLocalePath()
 const { locale } = useI18n()
-const { theme: themePref, setThemeMode } = usePreferences()
+const { themePreferences: themePref, setTheme: setThemeMode } = usePreferences()
 const currentMode = computed(() => themePref.value.mode)
 const accessStore = useAccessStore()
 const authStore = useAuthStore()
