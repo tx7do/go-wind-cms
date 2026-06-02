@@ -466,32 +466,30 @@ export default function PostDetailPage() {
                             <ContentViewer content={displayContent} type="markdown"/>
                         </div>
 
-                        {/* Post Actions */}
-                        <footer className="mb-8 border-t border-border pt-6">
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={handleLike}
-                                    className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card transition-all hover:border-primary hover:bg-primary/5 ${isLiked ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground'}`}
-                                    aria-label={t('post_detail.likes')}
-                                >
-                                    <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'}/>
-                                </button>
-                                <button
-                                    onClick={handleBookmark}
-                                    className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card transition-all hover:border-primary hover:bg-primary/5 ${isBookmarked ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground'}`}
-                                    aria-label={t('post_detail.bookmark')}
-                                >
-                                    <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'}/>
-                                </button>
-                                <button
-                                    onClick={handleShare}
-                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-all hover:border-primary hover:bg-primary/5 hover:text-primary"
-                                    aria-label={t('post_detail.share')}
-                                >
-                                    <XIcon name="carbon:share"/>
-                                </button>
-                            </div>
-                        </footer>
+                        {/* Post Actions - 固定定位在页面右侧垂直居中 */}
+                        <div className="fixed top-1/2 right-8 z-10 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
+                            <button
+                                onClick={handleLike}
+                                className={`flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-border bg-card shadow-md transition-all hover:border-primary hover:bg-primary/5 hover:shadow-lg ${isLiked ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                                aria-label={t('post_detail.likes')}
+                            >
+                                <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} size={20}/>
+                            </button>
+                            <button
+                                onClick={handleBookmark}
+                                className={`flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-border bg-card shadow-md transition-all hover:border-primary hover:bg-primary/5 hover:shadow-lg ${isBookmarked ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                                aria-label={t('post_detail.bookmark')}
+                            >
+                                <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} size={20}/>
+                            </button>
+                            <button
+                                onClick={handleShare}
+                                className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition-all hover:border-primary hover:bg-primary/5 hover:shadow-lg hover:text-primary"
+                                aria-label={t('post_detail.share')}
+                            >
+                                <XIcon name="carbon:share" size={20}/>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </article>
