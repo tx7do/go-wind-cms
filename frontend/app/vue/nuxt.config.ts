@@ -4,6 +4,21 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     devtools: {enabled: true},
+
+    // 静态站点生成配置
+    ssr: true,
+    nitro: {
+        prerender: {
+            // 预渲染静态页面，动态路由页面由客户端渲染
+            routes: ['/'],
+            crawlLinks: true,
+        },
+    },
+    // SPA fallback：未预渲染的路由返回 200 + index.html（由 nginx 配合）
+    app: {
+        baseURL: '/',
+        buildAssetsDir: '_nuxt',
+    },
     components: [
         {
             path: '~/components',

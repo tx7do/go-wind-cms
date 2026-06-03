@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     // 所有 URL 以 / 结尾，生成 /path/index.html 目录结构
     // Nginx try_files 可以方便地做 fallback
     trailingSlash: true,
+
+    distDir: 'dist',
 };
 
 export default withNextIntl(nextConfig);
