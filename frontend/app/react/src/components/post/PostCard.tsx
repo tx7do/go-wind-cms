@@ -12,6 +12,7 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
 import type {contentservicev1_Post} from '@/api/generated/app/service/v1';
 
+import Image from '@/components/ui/image';
 import {formatDate} from "@/utils";
 import {cn} from '@/lib/utils';
 
@@ -57,7 +58,7 @@ const PostCard: React.FC<PostCardProps> = ({
             style={{ willChange: 'transform, box-shadow' }}
         >
             <div className="relative h-[240px] w-full flex-shrink-0 overflow-hidden bg-background max-md:h-[200px]">
-                <img
+                <Image
                     src={getPostThumbnail(post)}
                     alt={getPostTitle(post)}
                     className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]"

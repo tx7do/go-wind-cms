@@ -23,6 +23,7 @@ import {
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
+import Image from '@/components/ui/image';
 
 export default function PostDetailPage() {
     const t = useTranslations('page');
@@ -172,7 +173,7 @@ export default function PostDetailPage() {
                 {/* Post Thumbnail Banner */}
                 {displayThumbnail && (
                     <div className="relative mb-8 h-[300px] overflow-hidden rounded-xl max-md:h-[200px]">
-                        <img src={displayThumbnail} alt={displayTitle} className="h-full w-full object-cover"/>
+                        <Image src={displayThumbnail} alt={displayTitle} className="h-full w-full object-cover"/>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"/>
                     </div>
                 )}

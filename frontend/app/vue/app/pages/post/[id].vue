@@ -163,7 +163,7 @@ onMounted(() => {
       <article class="w-full max-w-[1200px] mx-auto px-8 max-md:px-4">
         <!-- Thumbnail Banner -->
         <div v-if="displayThumbnail" class="relative mb-8 h-[300px] overflow-hidden rounded-xl max-md:h-[200px]">
-          <img :src="displayThumbnail" :alt="displayTitle" class="h-full w-full object-cover"/>
+          <UiImage :src="displayThumbnail" :alt="displayTitle" class="h-full w-full object-cover"/>
           <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"/>
         </div>
 

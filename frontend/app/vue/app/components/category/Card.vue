@@ -34,7 +34,7 @@ function handleClick() {
     @click="handleClick"
   >
     <div class="relative h-[160px] w-full overflow-hidden bg-background">
-      <img
+      <UiImage
         :src="getCategoryThumbnail(category)"
         :alt="getCategoryName(category, t('page.categories.category_untitled'))"
         :class="cn(

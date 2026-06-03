@@ -77,7 +77,7 @@ function isExpanded(category: any) {
             'relative h-[90px] w-[130px] flex-shrink-0 overflow-hidden rounded-lg bg-muted',
             'max-md:h-[180px] max-md:w-full',
           )">
-            <img
+            <UiImage
               :src="getCategoryThumbnail(category)"
               :alt="getCategoryName(category, t('page.categories.category_untitled'))"
               class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"

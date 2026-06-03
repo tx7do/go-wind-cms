@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { XIcon } from '@/plugins/xicon'
 import { fetchListPost, getPostTitle, getPostSummary, getPostThumbnail } from '@/api/composables/post'
 
@@ -64,7 +64,7 @@ onMounted(async () => {
           class="group flex min-h-50 flex-col rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/30 hover:bg-primary/5"
         >
           <div class="aspect-video overflow-hidden rounded-lg bg-muted">
-            <img
+            <UiImage
               v-if="getPostThumbnail(post)"
               :src="getPostThumbnail(post)"
               :alt="getPostTitle(post)"

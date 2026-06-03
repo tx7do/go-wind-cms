@@ -12,6 +12,7 @@ import {
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
 import {cn} from '@/lib/utils';
+import Image from '@/components/ui/image';
 
 interface CategoryCardProps {
     category: contentservicev1_Category | null;
@@ -45,7 +46,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
             onClick={handleClick}
         >
             <div className="relative h-[160px] w-full overflow-hidden bg-background">
-                <img
+                <Image
                     src={getCategoryThumbnail(category)}
                     alt={getCategoryName(category, t)}
                     className={cn(

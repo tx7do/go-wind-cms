@@ -12,6 +12,7 @@ import {
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
 import {cn} from '@/lib/utils';
+import Image from '@/components/ui/image';
 
 interface CategoryTreeProps {
     categories: contentservicev1_Category[];
@@ -91,7 +92,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                     'relative h-[90px] w-[130px] flex-shrink-0 overflow-hidden rounded-lg bg-muted',
                                     'max-md:h-[180px] max-md:w-full',
                                 )}>
-                                    <img
+                                    <Image
                                         src={getCategoryThumbnail(category)}
                                         alt={getCategoryName(category, t)}
                                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"

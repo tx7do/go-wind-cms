@@ -37,7 +37,7 @@ function handleViewPost() {
     @click="handleViewPost"
   >
     <div class="relative h-[240px] w-full flex-shrink-0 overflow-hidden bg-background max-md:h-[200px]">
-      <img
+      <UiImage
         :src="getPostThumbnail(post)"
         :alt="getPostTitle(post)"
         class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]"
