@@ -151,7 +151,7 @@ export function getPostSummary(post: contentservicev1_Post): string {
  */
 export function getPostThumbnail(post: contentservicev1_Post): string {
   const translation = getTranslation(post);
-  return translation?.thumbnail || '/placeholder.jpg';
+  return translation?.thumbnail || '/placeholder.png';
 }
 
 /**

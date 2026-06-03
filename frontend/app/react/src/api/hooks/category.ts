@@ -155,5 +155,5 @@ export function getCategoryDescription(category: contentservicev1_Category | nul
  */
 export function getCategoryThumbnail(category: contentservicev1_Category | null) {
   const translation = getTranslation(category);
-  return translation?.thumbnail || '/placeholder.jpg';
+  return translation?.thumbnail || '/placeholder.png';
 }

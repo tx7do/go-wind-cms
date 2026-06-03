@@ -140,7 +140,7 @@ export function getCategoryDescription(category: contentservicev1_Category) {
   return translation?.description || '';
 }
 
-export function getCategoryThumbnail(category: contentservicev1_Category, fallback = '/placeholder.jpg') {
+export function getCategoryThumbnail(category: contentservicev1_Category, fallback = '/placeholder.png') {
   const translation = getCategoryTranslation(category);
   return translation?.thumbnail || fallback;
 }

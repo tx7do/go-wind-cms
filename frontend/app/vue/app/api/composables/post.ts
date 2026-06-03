@@ -146,7 +146,7 @@ export function getPostSummary(post: contentservicev1_Post) {
   return translation?.summary || '';
 }
 
-export function getPostThumbnail(post: contentservicev1_Post, fallback = '/placeholder.jpg') {
+export function getPostThumbnail(post: contentservicev1_Post, fallback = '/placeholder.png') {
   const translation = getPostTranslation(post);
   return translation?.thumbnail || fallback;
 }
