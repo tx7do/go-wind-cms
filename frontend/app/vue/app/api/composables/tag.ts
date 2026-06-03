@@ -15,7 +15,7 @@ import {
   updateTag,
 } from '@/api/service/tag';
 import { queryClient } from '@/plugins/vue-query';
-import { preferencesManager } from '@/core/preferences';
+import { getCurrentLocale } from '@/utils/locale';
 
 // 直接导出 service 层函数
 export { createTag, deleteTag, getTag, listTag, updateTag };
@@ -37,7 +37,7 @@ export function useListTag(
 ) {
   return useMutation({
     mutationFn: (params) => {
-      const locale = preferencesManager.getPreferences().app.locale;
+      const locale = getCurrentLocale();
       return listTag(
         params.paging,
         params.formValues,
@@ -51,9 +51,9 @@ export function useListTag(
 }
 
 export async function fetchListTag(params: ListTagParams) {
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['listTag', params],
+    queryKey: ['listTag', params, locale],
     queryFn: () =>
       listTag(
         params.paging,
@@ -70,15 +70,19 @@ export function useGetTag(
   options?: UseMutationOptions<any, Error, number>,
 ) {
   return useMutation({
-    mutationFn: (id) => getTag(id),
+    mutationFn: (id) => {
+      const locale = getCurrentLocale();
+      return getTag(id, locale);
+    },
     ...options,
   });
 }
 
 export async function fetchTag(id: number) {
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['getTag', id],
-    queryFn: () => getTag(id),
+    queryKey: ['getTag', id, locale],
+    queryFn: () => getTag(id, locale),
     retry: 0,
   });
 }
@@ -119,7 +123,7 @@ export function useDeleteTag(
 export function getTagTranslation(tag: contentservicev1_Tag) {
   if (!tag?.translations || tag.translations.length === 0) return null;
 
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   const translation = tag.translations?.find(
     (t: contentservicev1_TagTranslation) => t.languageCode === locale,
   );

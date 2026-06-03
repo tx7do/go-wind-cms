@@ -15,7 +15,7 @@ import {
   updateCategory,
 } from '@/api/service/category';
 import { queryClient } from '@/plugins/vue-query';
-import { preferencesManager } from '@/core/preferences';
+import { getCurrentLocale } from '@/utils/locale';
 
 // 直接导出 service 层函数
 export { createCategory, deleteCategory, getCategory, listCategory, updateCategory };
@@ -37,7 +37,7 @@ export function useListCategory(
 ) {
   return useMutation({
     mutationFn: (params) => {
-      const locale = preferencesManager.getPreferences().app.locale;
+      const locale = getCurrentLocale();
       return listCategory(
         params.paging,
         params.formValues,
@@ -51,9 +51,9 @@ export function useListCategory(
 }
 
 export async function fetchListCategory(params: ListCategoryParams) {
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['listCategory', params],
+    queryKey: ['listCategory', params, locale],
     queryFn: () =>
       listCategory(
         params.paging,
@@ -71,7 +71,7 @@ export function useGetCategory(
 ) {
   return useMutation({
     mutationFn: ({ id, fieldMask }) => {
-      const locale = preferencesManager.getPreferences().app.locale;
+      const locale = getCurrentLocale();
       return getCategory(id, fieldMask, locale);
     },
     ...options,
@@ -79,9 +79,9 @@ export function useGetCategory(
 }
 
 export async function fetchCategory(id: number, fieldMask?: string) {
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['getCategory', id, fieldMask],
+    queryKey: ['getCategory', id, fieldMask, locale],
     queryFn: () => getCategory(id, fieldMask, locale),
     retry: 0,
   });
@@ -123,7 +123,7 @@ export function useDeleteCategory(
 export function getCategoryTranslation(category: contentservicev1_Category) {
   if (!category?.translations || category.translations.length === 0) return null;
 
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   const translation = category.translations?.find(
     (t: contentservicev1_CategoryTranslation) => t.languageCode === locale,
   );

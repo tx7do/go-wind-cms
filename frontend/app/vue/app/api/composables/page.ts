@@ -15,7 +15,7 @@ import {
   updatePage,
 } from '@/api/service/page';
 import { queryClient } from '@/plugins/vue-query';
-import { preferencesManager } from '@/core/preferences';
+import { getCurrentLocale } from '@/utils/locale';
 
 // 直接导出 service 层函数
 export { createPage, deletePage, getPage, listPage, updatePage };
@@ -37,7 +37,7 @@ export function useListPage(
 ) {
   return useMutation({
     mutationFn: (params) => {
-      const locale = preferencesManager.getPreferences().app.locale;
+      const locale = getCurrentLocale();
       return listPage(
         params.paging,
         params.formValues,
@@ -51,9 +51,9 @@ export function useListPage(
 }
 
 export async function fetchListPage(params: ListPageParams) {
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['listPage', params],
+    queryKey: ['listPage', params, locale],
     queryFn: () =>
       listPage(
         params.paging,
@@ -119,7 +119,7 @@ export function useDeletePage(
 export function getPageTranslation(page: contentservicev1_Page) {
   if (!page?.translations || page.translations.length === 0) return null;
 
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   const translation = page.translations?.find(
     (t: contentservicev1_PageTranslation) => t.languageCode === locale,
   );

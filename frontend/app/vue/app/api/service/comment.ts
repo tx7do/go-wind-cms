@@ -23,14 +23,19 @@ export async function listComment(
   formValues?: null | object,
   fieldMask?: undefined | string,
   orderBy?: null | string[],
-  options?: { isTenantUser?: boolean },
+  options?: { isTenantUser?: boolean; locale?: string },
 ) {
+  const merged: Record<string, any> = {
+    ...(formValues ?? {}),
+    locale: options?.locale,
+  };
+
   const noPaging = paging?.page === undefined && paging?.pageSize === undefined;
   // @ts-ignore proto generated code is error.
   return await getCommentService().List({
     fieldMask,
     orderBy: makeOrderBy(orderBy),
-    query: makeQueryString(formValues, options?.isTenantUser),
+    query: makeQueryString(merged, options?.isTenantUser),
     page: paging?.page,
     pageSize: paging?.pageSize,
     noPaging,

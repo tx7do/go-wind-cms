@@ -15,7 +15,7 @@ import {
   updatePost,
 } from '@/api/service/post';
 import { queryClient } from '@/plugins/vue-query';
-import { preferencesManager } from '@/core/preferences';
+import { getCurrentLocale } from '@/utils/locale';
 
 // 直接导出 service 层函数
 export { createPost, deletePost, getPost, listPost, updatePost };
@@ -37,7 +37,7 @@ export function useListPost(
 ) {
   return useMutation({
     mutationFn: (params) => {
-      const locale = preferencesManager.getPreferences().app.locale;
+      const locale = getCurrentLocale();
       return listPost(
         params.paging,
         params.formValues,
@@ -51,9 +51,9 @@ export function useListPost(
 }
 
 export async function fetchListPost(params: ListPostParams) {
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['listPost', params],
+    queryKey: ['listPost', params, locale],
     queryFn: () =>
       listPost(
         params.paging,
@@ -71,7 +71,7 @@ export function useGetPost(
 ) {
   return useMutation({
     mutationFn: (id) => {
-      const locale = preferencesManager.getPreferences().app.locale;
+      const locale = getCurrentLocale();
       return getPost(id, locale);
     },
     ...options,
@@ -79,9 +79,9 @@ export function useGetPost(
 }
 
 export async function fetchPost(id: number) {
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['getPost', id],
+    queryKey: ['getPost', id, locale],
     queryFn: () => getPost(id, locale),
     retry: 0,
   });
@@ -127,7 +127,7 @@ export function useDeletePost(
 export function getPostTranslation(post: contentservicev1_Post) {
   if (!post?.translations || post.translations.length === 0) return null;
 
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   // 优先查找当前语言的翻译
   const translation = post.translations?.find(
     (t: contentservicev1_PostTranslation) => t.languageCode === locale,

@@ -4,3 +4,4 @@ export * from './utils';
 export * from './progress';
 export * from './crypto';
 export * from './date';
+export * from './locale';

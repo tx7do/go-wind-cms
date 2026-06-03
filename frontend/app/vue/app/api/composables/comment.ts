@@ -11,6 +11,7 @@ import {
   updateComment,
 } from '@/api/service/comment';
 import { queryClient } from '@/plugins/vue-query';
+import { getCurrentLocale } from '@/utils/locale';
 
 // 直接导出 service 层函数
 export { createComment, deleteComment, getComment, listComment, updateComment };
@@ -31,28 +32,31 @@ export function useListComment(
   options?: UseMutationOptions<any, Error, ListCommentParams>,
 ) {
   return useMutation({
-    mutationFn: (params) =>
-      listComment(
+    mutationFn: (params) => {
+      const locale = getCurrentLocale();
+      return listComment(
         params.paging,
         params.formValues,
         params.fieldMask,
         params.orderBy,
-        { isTenantUser: params.isTenantUser },
-      ),
+        { isTenantUser: params.isTenantUser, locale },
+      );
+    },
     ...options,
   });
 }
 
 export async function fetchListComment(params: ListCommentParams) {
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['listComment', params],
+    queryKey: ['listComment', params, locale],
     queryFn: () =>
       listComment(
         params.paging,
         params.formValues,
         params.fieldMask,
         params.orderBy,
-        { isTenantUser: params.isTenantUser },
+        { isTenantUser: params.isTenantUser, locale },
       ),
     retry: 0,
   });

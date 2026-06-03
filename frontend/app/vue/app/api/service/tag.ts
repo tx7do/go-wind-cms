@@ -45,8 +45,8 @@ export async function listTag(
 /**
  * 获取标签
  */
-export async function getTag(id: number) {
-  return await getTagService().Get({ id });
+export async function getTag(id: number, locale?: string) {
+  return await getTagService().Get({ id, locale });
 }
 
 /**

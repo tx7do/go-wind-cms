@@ -12,7 +12,7 @@ import {
   updateNavigation,
 } from '@/api/service/navigation';
 import { queryClient } from '@/plugins/vue-query';
-import { preferencesManager } from '@/core/preferences';
+import { getCurrentLocale } from '@/utils/locale';
 
 // 直接导出 service 层函数
 export { createNavigation, deleteNavigation, getNavigation, listNavigation, updateNavigation };
@@ -34,7 +34,7 @@ export function useListNavigation(
 ) {
   return useMutation({
     mutationFn: (params) => {
-      const locale = preferencesManager.getPreferences().app.locale;
+      const locale = getCurrentLocale();
       return listNavigation(
         params.paging,
         params.formValues,
@@ -48,9 +48,9 @@ export function useListNavigation(
 }
 
 export async function fetchListNavigation(params: ListNavigationParams) {
-  const locale = preferencesManager.getPreferences().app.locale;
+  const locale = getCurrentLocale();
   return queryClient.fetchQuery({
-    queryKey: ['listNavigation', params],
+    queryKey: ['listNavigation', params, locale],
     queryFn: () =>
       listNavigation(
         params.paging,
