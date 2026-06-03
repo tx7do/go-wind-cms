@@ -5,17 +5,16 @@ import {View, Text} from '@tarojs/components';
 import {AppEmpty} from '@/components/ui';
 import CategoryTree from '@/components/category/CategoryTree';
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {fetchListCategories} from '@/api/hooks/category';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {contentservicev1_Category, contentservicev1_ListCategoryResponse} from "@/api/generated/app/service/v1";
+import {contentservicev1_Category} from "@/api/generated/app/service/v1";
 
 import './category.scss';
 
 export default function CategoryListPage() {
   const {t} = useTranslation();
   const router = useI18nRouter();
-  const categoryStore = useCategoryStore();
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<contentservicev1_Category[]>([]);
@@ -23,12 +22,12 @@ export default function CategoryListPage() {
   async function loadCategories() {
     setLoading(true);
     try {
-      const res = (await categoryStore.listCategory({
+      const res = await fetchListCategories({
         paging: undefined,
         formValues: {status: 'CATEGORY_STATUS_ACTIVE'},
         fieldMask: 'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description,translations.thumbnail,translations.cover_image',
         orderBy: ['-sortOrder']
-      })) as unknown as contentservicev1_ListCategoryResponse;
+      });
       setCategories(res.items || []);
     } catch (error) {
       console.error('Load categories failed:', error);

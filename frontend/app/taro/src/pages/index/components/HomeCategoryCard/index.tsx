@@ -2,7 +2,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Text, View} from '@tarojs/components';
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {getCategoryName} from '@/api/hooks/category';
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';
 import XIcon from '@/plugins/xicon';
 
@@ -15,7 +15,6 @@ interface HomeCategoryCardProps {
 
 const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick}) => {
   const {t} = useTranslation();
-  const categoryStore = useCategoryStore();
 
   // 计算更新时间（假设 category.createdAt 是 ISO 字符串或时间戳）
   const getDaysAgo = () => {
@@ -45,7 +44,7 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick}) 
             <XIcon name={category.icon || 'carbon:folder'} size={32} className='icon-placeholder' />
           </View>
           <View className='home-category-info'>
-            <Text className='category-name'>{categoryStore.getCategoryName(category)}</Text>
+            <Text className='category-name'>{getCategoryName(category)}</Text>
             <Text className='home-post-count'>
               {t('page.home.article_count', {count: category.postCount || 0})}
             </Text>

@@ -1,0 +1,14 @@
+allowBuilds:
+  '@parcel/watcher': false
+  '@swc/core': false
+  '@tarojs/binding': false
+  '@tarojs/cli': false
+  core-js: false
+  core-js-pure: false
+  esbuild: false
+  micromark: false
+
+ignoredOptionalDependencies:
+  - react-native
+  - "@react-native/*"
+  - expo-*

@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 import XIcon from '@/plugins/xicon';
 
-import {useTagStore} from '@/store/slices/tag/hooks';
+import {fetchListTags} from '@/api/hooks/tag';
 import type {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
 import {useI18nRouter} from "@/i18n/helpers";
 
@@ -30,7 +30,7 @@ function hexToRgb(hex: string): string {
 
 export default function PopularTagsSection() {
   const {t} = useTranslation();
-  const tagStore = useTagStore();
+  const tagStore = {listTag: fetchListTags}; // 使用 API hooks 替代 store
 
   const [_tags, setTags] = useState<contentservicev1_Tag[]>([]);
   const [loading, setLoading] = useState(false);

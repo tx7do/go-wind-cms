@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text} from '@tarojs/components';
 
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import {useNavigationStore} from '@/store/slices/navigation/hooks';
+import {listNavigation} from '@/api/hooks/navigation';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import XIcon from '@/plugins/xicon';
 
@@ -23,7 +23,6 @@ interface TopNavbarProps {
 }
 
 export default function TopNavbar({onClick}: TopNavbarProps) {
-  const navigationStore = useNavigationStore();
   const router = useI18nRouter();
   const [navigationItems, setNavigationItems] = useState<siteservicev1_NavigationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,9 +61,9 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
     async function loadNavigation() {
       try {
         setIsLoading(true);
-        const res = await navigationStore.listNavigation({
+        const res = await listNavigation({
           paging: {page: 1, pageSize: 10}
-        }) as unknown as { items: siteservicev1_Navigation[]; total: number };
+        });
 
         if (res.items && res.items.length > 0) {
           const headerNav = res.items.find(nav =>
@@ -88,13 +87,12 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
   // 监听语言变化，自动重新加载导航数据
   useLanguageChangeEffect(() => {
     setIsLoading(true);
-    navigationStore.listNavigation({
+    listNavigation({
       paging: {page: 1, pageSize: 10}
     })
       .then(res => {
-        const navRes = res as unknown as { items: siteservicev1_Navigation[]; total: number };
-        if (navRes.items && navRes.items.length > 0) {
-          const headerNav = navRes.items.find(nav =>
+        if (res.items && res.items.length > 0) {
+          const headerNav = res.items.find(nav =>
             nav.location === 'HEADER' && nav.isActive === true
           );
           if (headerNav && headerNav.items && headerNav.items.length > 0) {

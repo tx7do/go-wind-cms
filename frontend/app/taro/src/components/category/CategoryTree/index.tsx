@@ -2,7 +2,11 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {
+  getCategoryName,
+  getCategoryDescription,
+  getCategoryThumbnail,
+} from '@/api/hooks/category';
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 import XIcon from '@/plugins/xicon';
 
@@ -20,7 +24,6 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                                      onCategoryClick
                                                    }) => {
   const {t} = useTranslation();
-  const categoryStore = useCategoryStore();
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
 
   const handleViewCategory = (id: number) => {
@@ -59,7 +62,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
             <View className='category-info'>
               <View className='category-image'>
                 <Image
-                  src={categoryStore.getCategoryThumbnail(category)}
+                  src={getCategoryThumbnail(category)}
                   mode='aspectFill'
                   className='category-img'
                 />
@@ -69,10 +72,10 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                 <Text
                   className={`category-title ${category.children && category.children.length > 0 ? 'has-children' : ''}`}
                 >
-                  {categoryStore.getCategoryName(category, t)}
+                  {getCategoryName(category, t)}
                 </Text>
                 <Text className='description'>
-                  {categoryStore.getCategoryDescription(category)}
+                  {getCategoryDescription(category)}
                 </Text>
                 <View className='category-meta'>
                   <XIcon name='carbon:document' size={16} className='meta-icon' />

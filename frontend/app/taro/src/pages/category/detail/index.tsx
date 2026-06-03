@@ -4,7 +4,7 @@ import {View, Text} from '@tarojs/components';
 import Taro from '@tarojs/taro';
 
 import {AppEmpty} from '@/components/ui';
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {fetchCategory, getCategoryName, getCategoryDescription} from '@/api/hooks/category';
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
@@ -19,7 +19,7 @@ export default function CategoryDetailPage() {
 
   const router = useI18nRouter();
 
-  const categoryStore = useCategoryStore();
+  const [detail, setDetail] = useState<contentservicev1_Category | null>(null);
   const [childCategories, setChildCategories] = useState<contentservicev1_Category[]>([]);
 
   const categoryId = useMemo(() => {
@@ -31,20 +31,20 @@ export default function CategoryDetailPage() {
 
   // Get parent category ID
   const parentCategoryId = useMemo(() => {
-    if (!categoryStore.detail?.parentId) return null;
-    return categoryStore.detail.parentId;
-  }, [categoryStore.detail?.parentId]);
+    if (!detail?.parentId) return null;
+    return detail.parentId;
+  }, [detail?.parentId]);
 
   async function loadCategory() {
     if (!categoryId) return;
 
     try {
-      await categoryStore.getCategory({
+      const loadedCategory = await fetchCategory({
         id: categoryId,
         fieldMask: 'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description,translations.thumbnail,translations.cover_image'
       });
+      setDetail(loadedCategory);
       // Extract child categories from the loaded category
-      const loadedCategory = categoryStore.detail;
       if (loadedCategory?.children && loadedCategory.children.length > 0) {
         setChildCategories([...loadedCategory.children]);
       } else {
@@ -80,16 +80,16 @@ export default function CategoryDetailPage() {
       {/* Hero Section */}
       <View className='hero-section'>
         <View className='hero-content'>
-          <Text className='hero-title'>{categoryStore.getCategoryName(categoryStore.detail)}</Text>
-          {categoryStore.getCategoryDescription(categoryStore.detail) && (
+          <Text className='hero-title'>{getCategoryName(detail)}</Text>
+          {getCategoryDescription(detail) && (
             <Text className='category-description'>
-              {categoryStore.getCategoryDescription(categoryStore.detail)}
+              {getCategoryDescription(detail)}
             </Text>
           )}
           <View className='category-stats'>
             <View className='stat-item'>
               <XIcon name='carbon:document' size={20} />
-              <Text>{categoryStore.detail?.postCount || 0} {t('page.posts.articles')}</Text>
+              <Text>{detail?.postCount || 0} {t('page.posts.articles')}</Text>
             </View>
           </View>
         </View>

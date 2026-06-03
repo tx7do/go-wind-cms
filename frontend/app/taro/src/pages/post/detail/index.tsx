@@ -13,7 +13,7 @@ import {formatDate} from "@/utils";
 import {useI18nRouter} from "@/i18n/helpers";
 
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
-import {usePostStore} from '@/store/slices/post/hooks';
+import {fetchPost, getPostTitle, getPostContent, getPostThumbnail} from '@/api/hooks/post';
 
 import './post-detail.scss';
 
@@ -33,11 +33,9 @@ export default function PostDetailPage() {
 
   const router = useI18nRouter();
 
-  const postStore = usePostStore();
-  const post = postStore.detail as contentservicev1_Post | null;
-
+  const [post, setPost] = useState<contentservicev1_Post | null>(null);
   const [localLoading, setLocalLoading] = useState(true);
-  const isLoading = localLoading || (postStore.loading && !post);
+  const isLoading = localLoading;
   const [tableOfContents, setTableOfContents] = useState<TocItem[]>([]);
   const [activeHeading, setActiveHeading] = useState('');
   const [isLiked, setIsLiked] = useState(false);
@@ -65,18 +63,18 @@ export default function PostDetailPage() {
 
   const displayTitle = useMemo(() => {
     if (!post) return '';
-    return postStore.getPostTitle(post);
-  }, [post, postStore]);
+    return getPostTitle(post);
+  }, [post]);
 
   const displayContent = useMemo(() => {
     if (!post) return '';
-    return postStore.getPostContent(post);
-  }, [post, postStore]);
+    return getPostContent(post);
+  }, [post]);
 
   const displayThumbnail = useMemo(() => {
     if (!post) return '';
-    return postStore.getPostThumbnail(post);
-  }, [post, postStore]);
+    return getPostThumbnail(post);
+  }, [post]);
 
   // 相关文章数据
   const relatedPostsQuery = useMemo(() => {
@@ -96,13 +94,10 @@ export default function PostDetailPage() {
       setLocalLoading(true);
       try {
         console.log('[PostDetail] Before getPost call:', {
-          postId,
-          currentDetail: postStore.detail
+          postId
         });
 
-        const fetchedPost = (await postStore.getPost({
-          id: postId
-        })) as contentservicev1_Post;
+        const fetchedPost = await fetchPost(postId);
 
         console.log('[PostDetail] API returned:', {
           hasFetchedPost: !!fetchedPost,
@@ -112,8 +107,8 @@ export default function PostDetailPage() {
         });
 
         if (fetchedPost) {
+          setPost(fetchedPost);
           // TODO: Taro 中设置页面
-          // document.title = `${postStore.getPostTitle(fetchedPost)} - GoWind Content Hub`;
         }
       } catch (error) {
         console.error('Load post failed:', error);

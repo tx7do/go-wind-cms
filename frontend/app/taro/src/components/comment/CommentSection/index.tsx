@@ -3,7 +3,10 @@ import {useTranslation} from 'react-i18next';
 import {View, Text, Input, Textarea} from '@tarojs/components';
 
 import {AppEmpty} from '@/components/ui';
-import {useCommentStore} from '@/store/slices/comment/hooks';
+import {
+  fetchListComments,
+  fetchCreateComment,
+} from '@/api/hooks/comment';
 import type {
   commentservicev1_Comment,
   commentservicev1_Comment_ContentType, commentservicev1_ListCommentResponse,
@@ -32,7 +35,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                                                          onUpdateComments
                                                        }) => {
   const {t} = useTranslation();
-  const commentStore = useCommentStore();
+  const commentStore = {
+    listComment: fetchListComments,
+    createComment: fetchCreateComment,
+  };
 
   // 状态
   const [submitting, setSubmitting] = useState(false);

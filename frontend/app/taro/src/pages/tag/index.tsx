@@ -7,7 +7,7 @@ import XIcon from '@/plugins/xicon';
 import Pagination from '@/components/Pagination';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {useTagStore} from '@/store/slices/tag/hooks';
+import {fetchListTags, getTagTranslation} from '@/api/hooks/tag';
 import {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
 
 import './tag-list.scss';
@@ -16,8 +16,6 @@ export default function TagListPage() {
   const {t} = useTranslation();
 
   const router = useI18nRouter();
-
-  const tagStore = useTagStore();
 
   const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState<contentservicev1_Tag[]>([]);
@@ -28,7 +26,7 @@ export default function TagListPage() {
   async function loadTags() {
     setLoading(true);
     try {
-      const res = await tagStore.listTag({
+      const res = await fetchListTags({
         paging: {
           page: page,
           pageSize: pageSize,
@@ -38,7 +36,7 @@ export default function TagListPage() {
         },
         fieldMask: null,
         orderBy: null,
-      }) as unknown as contentservicev1_ListTagResponse;
+      }) as contentservicev1_ListTagResponse;
       setTags(res.items || []);
       setTotal(res.total || 0);
     } catch (error) {
@@ -105,9 +103,9 @@ export default function TagListPage() {
                     onClick={() => handleTagClick(tag.id || 0)}
                   >
                     <View className='tag-content'>
-                      <Text>{tagStore.getTranslation(tag)?.name || t('page.tags.tag_untitled')}</Text>
+                      <Text>{getTagTranslation(tag)?.name || t('page.tags.tag_untitled')}</Text>
                       <Text className='tag-description'>
-                        {tagStore.getTranslation(tag)?.description || ''}
+                        {getTagTranslation(tag)?.description || ''}
                       </Text>
                       <View className='tag-meta'>
                         <XIcon name='carbon:document' size={16} />

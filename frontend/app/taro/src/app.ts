@@ -1,10 +1,9 @@
 import {PropsWithChildren, createElement, ReactElement} from 'react';
 import {useLaunch} from '@tarojs/taro';
-import {Provider} from 'react-redux';
 
-import store from './store';
 import './i18n';
 import Layout from './components/layout/Layout';
+import StoreProvider from './store/StoreProvider';
 
 import './app.scss';
 
@@ -14,8 +13,8 @@ function App({children}: PropsWithChildren): ReactElement {
   });
 
   return createElement(
-    Provider as any,
-    {store},
+    StoreProvider,
+    {},
     createElement(
       Layout,
       {},

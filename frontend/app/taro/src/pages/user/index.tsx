@@ -10,8 +10,8 @@ import {
   type contentservicev1_Post,
   identityservicev1_User
 } from "@/api/generated/app/service/v1";
-import {usePostStore} from "@/store/slices/post/hooks";
-import {useUserProfileStore} from "@/store/slices/userProfile/hooks";
+import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
+import {fetchUserProfile} from "@/api/hooks/user-profile";
 
 import './user.scss';
 
@@ -25,9 +25,6 @@ export default function UserProfilePage() {
 
   const [user, setUser] = useState<identityservicev1_User | null>(null);
   const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
-
-  const postStore = usePostStore();
-  const userProfileStore = useUserProfileStore();
 
   // 统计数据
   const stats = useMemo(() => ({
@@ -66,7 +63,7 @@ export default function UserProfilePage() {
   async function loadUserProfile() {
     setLoading(true);
     try {
-      const result = await userProfileStore.fetchUserProfile({}) as identityservicev1_User;
+      const result = await fetchUserProfile() as identityservicev1_User;
       setUser(result || null);
 
       if (activeTab === 'posts') {
@@ -86,12 +83,12 @@ export default function UserProfilePage() {
 
     setPostsLoading(true);
     try {
-      const result = await postStore.listPost({
+      const result = await fetchListPosts({
         paging: {page: 1, pageSize: 10},
         formValues: {author_id: user.id},
         fieldMask: undefined,
         orderBy: ['-createdAt']
-      }) as unknown as contentservicev1_ListPostResponse;
+      }) as contentservicev1_ListPostResponse;
 
       setPosts(result.items || []);
     } catch (error) {
@@ -324,8 +321,8 @@ export default function UserProfilePage() {
                       {posts.map((post) => (
                         <View key={post.id} className='post-item'>
                           <View className='post-content'>
-                            <Text className='post-title'>{postStore.getPostTitle(post)}</Text>
-                            <Text className='post-summary'>{postStore.getPostSummary(post)}</Text>
+                            <Text className='post-title'>{getPostTitle(post)}</Text>
+                            <Text className='post-summary'>{getPostSummary(post)}</Text>
                             <View className='post-meta'>
                               <View className='meta-info'>
                                 <XIcon name='carbon:view' size={16} />

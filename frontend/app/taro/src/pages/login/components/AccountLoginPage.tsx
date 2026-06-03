@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Input, Button, Text} from '@tarojs/components';
 
-import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
+import {useAuth} from '@/api/hooks/auth';
 
 import '../index.scss';
 
@@ -13,7 +13,7 @@ export default function AccountLoginPage() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  const authenticationStore = useAuthenticationStore();
+  const {login} = useAuth();
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -21,7 +21,7 @@ export default function AccountLoginPage() {
     }
     console.log('登录信息:', {username, password, rememberMe});
 
-    await authenticationStore.login({
+    await login({
       username: username,
       password: password,
     });

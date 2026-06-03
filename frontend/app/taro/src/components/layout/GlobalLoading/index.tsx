@@ -1,27 +1,24 @@
 import {useEffect} from 'react';
 import {View, Text} from '@tarojs/components';
-import {useDispatch} from 'react-redux';
-
-import {useLoading} from '@/store/core/loading/hooks';
-import {finishLoading} from '@/store/core/loading/slice';
+import {useLoadingStore} from '@/store/core/loading/store';
 
 import './index.scss';
 
 export default function GlobalLoading() {
-  const {isLoading} = useLoading();
-  const dispatch = useDispatch();
+  const isLoading = useLoadingStore((state) => state.isLoading);
+  const finish = useLoadingStore((state) => state.finish);
 
   // 超时保护 - 如果 loading 超过 5 秒，自动隐藏
   useEffect(() => {
     if (isLoading) {
       const timer = setTimeout(() => {
         console.warn('[GlobalLoading] Loading timeout (>5s), forcing finish');
-        dispatch(finishLoading());
+        finish();
       }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [isLoading, dispatch]);
+  }, [isLoading, finish]);
 
   if (!isLoading) return null;
 

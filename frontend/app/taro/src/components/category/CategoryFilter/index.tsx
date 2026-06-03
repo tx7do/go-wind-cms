@@ -2,7 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {
+  fetchListCategories,
+  getCategoryName as getCategoryNameUtil,
+} from '@/api/hooks/category';
 import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
 import XIcon from '@/plugins/xicon';
 
@@ -28,7 +31,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                                          onLoaded
                                                        }) => {
   const {t} = useTranslation();
-  const categoryStore = useCategoryStore();
+  const categoryStore = {listCategory: fetchListCategories}; // 使用 API hooks 替代 store
 
   const [internalCategories, setInternalCategories] = useState<contentservicev1_Category[]>([]);
   const [loading, setLoading] = useState(false);
@@ -84,7 +87,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   function getCategoryName(category: contentservicev1_Category | null): string {
     if (!category?.id) return '';
-    return categoryStore.getCategoryName(category, t);
+    return getCategoryNameUtil(category, t);
   }
 
   const displayCategories = externalCategories || internalCategories;

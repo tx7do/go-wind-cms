@@ -2,14 +2,11 @@ import {useState, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 
-import {useI18n} from '@/i18n';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import XIcon from '@/plugins/xicon';
 
-import {useAccessStore} from "@/store/core/access/hooks";
-import {useAuthenticationStore} from "@/store/slices/authentication/hooks";
-import {ThemeMode} from "@/store/types";
-import {useThemeStore, useThemeMode} from '@/store/core/theme/hooks';
+import {useAccessStore} from "@/store/core/access/store";
+import {usePreferences} from '@/core/preferences/hooks/usePreferences';
 
 import TopNavbar from '../TopNavbar';
 
@@ -19,15 +16,12 @@ import './index.scss';
 export default function Header() {
   const {t} = useTranslation();
 
-  const themeStore = useThemeStore();
-  const currentMode = useThemeMode();
-  const {changeLocale} = useI18n();
+  const preferences = usePreferences();
   const router = useI18nRouter();
   const accessStore = useAccessStore();
-  const authenticationStore = useAuthenticationStore();
 
-  const accessToken = accessStore.access.accessToken;
-  const isLogin = !!accessToken && !accessStore.access.loginExpired;
+  const accessToken = accessStore.accessToken;
+  const isLogin = !!accessToken && !accessStore.loginExpired;
 
   // 下拉菜单状态
   const [openDropdown, setOpenDropdown] = useState<'user' | 'language' | 'theme' | null>(null);
@@ -51,7 +45,8 @@ export default function Header() {
     console.log('Logout');
 
     if (isLogin) {
-      await authenticationStore.logout();
+      // TODO: 调用登出API
+      accessStore.clearTokens();
     }
     setOpenDropdown(null);
   };
@@ -112,12 +107,12 @@ export default function Header() {
     {
       key: 'zh-CN',
       label: '简体中文',
-      onClick: () => changeLocale('zh-CN')
+      onClick: () => preferences.setLanguage('zh-CN')
     },
     {
       key: 'en-US',
       label: 'English',
-      onClick: () => changeLocale('en-US')
+      onClick: () => preferences.setLanguage('en-US')
     }
   ];
 
@@ -126,31 +121,31 @@ export default function Header() {
       key: 'dark',
       label: t('navbar.theme.dark'),
       icon: 'carbon:moon',
-      onClick: () => themeStore.setMode('dark')
+      onClick: () => preferences.setThemeMode('dark')
     },
     {
       key: 'light',
       label: t('navbar.theme.light'),
       icon: 'carbon:sun',
-      onClick: () => themeStore.setMode('light')
+      onClick: () => preferences.setThemeMode('light')
     },
     {
-      key: 'system',
+      key: 'auto',
       label: t('navbar.theme.system'),
       icon: 'carbon:ibm-watsonx-orchestrate',
-      onClick: () => themeStore.setMode('system')
+      onClick: () => preferences.setThemeMode('auto')
     },
   ];
 
-  const themeIconMap: Record<ThemeMode, string> = {
+  const themeIconMap: Record<string, string> = {
     dark: 'carbon:moon',
     light: 'carbon:sun',
-    system: 'carbon:ibm-watsonx-orchestrate'
+    auto: 'carbon:ibm-watsonx-orchestrate'
   };
 
-  const validMode: ThemeMode = (currentMode && ['dark', 'light', 'system'].includes(currentMode))
-    ? currentMode
-    : 'system';
+  const validMode = ['dark', 'light', 'auto'].includes(preferences.theme.mode)
+    ? preferences.theme.mode
+    : 'auto';
   const iconValue = themeIconMap[validMode];
 
   // SSR 兼容

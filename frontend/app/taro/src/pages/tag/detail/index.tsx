@@ -8,7 +8,7 @@ import XIcon from '@/plugins/xicon';
 import PostListWithPagination from '@/components/post/PostList';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {useTagStore} from '@/store/slices/tag/hooks';
+import {fetchTag, getTagTranslation} from '@/api/hooks/tag';
 import type {contentservicev1_Tag} from "@/api/generated/app/service/v1";
 
 import './tag-detail.scss';
@@ -17,7 +17,6 @@ export default function TagDetailPage() {
   const {t} = useTranslation();
   const router = useI18nRouter();
 
-  const tagStore = useTagStore();
   const [tag, setTag] = useState<contentservicev1_Tag | null>(null);
 
   const [_loading, setLoading] = useState(false);
@@ -33,9 +32,7 @@ export default function TagDetailPage() {
 
     setLoading(true);
     try {
-      const tagData = await tagStore.getTag({
-        id: tagId
-      }) as unknown as contentservicev1_Tag;
+      const tagData = await fetchTag(tagId) as contentservicev1_Tag;
       setTag(tagData);
     } catch (error) {
       console.error('Load tag failed:', error);
@@ -56,7 +53,7 @@ export default function TagDetailPage() {
     return <AppEmpty variant='error' description='Invalid tag ID' />;
   }
 
-  const translation = tagStore.getTranslation(tag);
+  const translation = getTagTranslation(tag);
 
   return (
     <View className='tag-detail-page'>

@@ -2,7 +2,11 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {
+  getCategoryName,
+  getCategoryDescription,
+  getCategoryThumbnail,
+} from '@/api/hooks/category';
 import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 import XIcon from '@/plugins/xicon';
 
@@ -20,7 +24,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                                                      onClick
                                                    }) => {
   const {t} = useTranslation();
-  const categoryStore = useCategoryStore();
 
   const handleClick = () => {
     if (!category?.id || !clickable) return;
@@ -36,15 +39,15 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     >
       <View className='category-card-image'>
         <Image
-          src={categoryStore.getCategoryThumbnail(category)}
+          src={getCategoryThumbnail(category)}
           mode='aspectFill'
           className='category-image-img'
         />
         <View className='image-overlay' />
       </View>
       <View className='category-card-content'>
-        <Text className='category-title'>{categoryStore.getCategoryName(category, t)}</Text>
-        <Text className='category-description'>{categoryStore.getCategoryDescription(category)}</Text>
+        <Text className='category-title'>{getCategoryName(category, t)}</Text>
+        <Text className='category-description'>{getCategoryDescription(category)}</Text>
         <View className='category-card-meta'>
           <XIcon name='carbon:document' size={16} className='meta-icon' />
           <Text className='meta-text'>

@@ -5,7 +5,7 @@ import {View, Text} from '@tarojs/components';
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {useCategoryStore} from '@/store/slices/category/hooks';
+import {fetchListCategories} from '@/api/hooks/category';
 import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
 
 import HomeCategoryCard from '../HomeCategoryCard';
@@ -33,7 +33,7 @@ export default function CategoryListSection(props: CategoryListSectionProps) {
     showHeader = true
   } = props;
   const {t} = useTranslation();
-  const categoryStore = useCategoryStore();
+  const categoryStore = {listCategory: fetchListCategories}; // 使用 API hooks 替代 store
   // 用 useRef 缓存 listCategory 方法，确保依赖稳定
   const listCategoryRef = useRef(categoryStore.listCategory);
 

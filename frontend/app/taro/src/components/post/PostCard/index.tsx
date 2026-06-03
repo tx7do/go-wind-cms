@@ -1,7 +1,11 @@
 import React from 'react';
 import {View, Text, Image} from '@tarojs/components';
 
-import {usePostStore} from '@/store/slices/post/hooks';
+import {
+  getPostTitle,
+  getPostSummary,
+  getPostThumbnail,
+} from '@/api/hooks/post';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import XIcon from '@/plugins/xicon';
 
@@ -22,7 +26,6 @@ const PostCard: React.FC<PostCardProps> = ({
                                              categoryId
                                            }) => {
   const router = useI18nRouter();
-  const postStore = usePostStore();
 
   const handleViewPost = () => {
     const query: string[] = [`from=${from}`];
@@ -40,15 +43,15 @@ const PostCard: React.FC<PostCardProps> = ({
     <View className='post-card' onClick={handleViewPost}>
       <View className='post-image'>
         <Image
-          src={postStore.getPostThumbnail(post)}
+          src={getPostThumbnail(post)}
           mode='aspectFill'
           className='post-image-img'
         />
         <View className='image-overlay' />
       </View>
       <View className='post-content'>
-        <Text className='post-title'>{postStore.getPostTitle(post)}</Text>
-        <Text className='post-summary'>{postStore.getPostSummary(post)}</Text>
+        <Text className='post-title'>{getPostTitle(post)}</Text>
+        <Text className='post-summary'>{getPostSummary(post)}</Text>
         <View className='post-meta'>
           <View className='meta-item'>
             <XIcon name='carbon:user' size={16} className='meta-icon' />

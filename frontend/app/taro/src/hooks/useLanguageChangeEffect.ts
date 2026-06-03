@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import {useI18n} from '@/i18n';
-
-import {useLanguageStore} from '@/store/core/language/hooks';
+import {usePreferencesStore} from '@/core/preferences/store';
+import type {SupportedLanguagesType} from '@/core/preferences/types/layout';
 
 /**
  * 语言切换监听器 Hook - 类似 Vue3 的 useLanguageChangeEffect
@@ -23,12 +23,12 @@ export function useLanguageChangeEffect(
     const {immediate = false, autoCleanup = true} = options;
 
     const {locale} = useI18n();
-    const languageStore = useLanguageStore();
+    const preferencesStore = usePreferencesStore();
 
     useEffect(() => {
-        // 同步 i18n 的 locale 到 Redux store
-        if (languageStore.language.locale !== locale) {
-            languageStore.setLocale(locale);
+        // 同步 i18n 的 locale 到 preferences store
+        if (preferencesStore.preferences.app.locale !== locale) {
+            preferencesStore.setPreferences({app: {locale: locale as SupportedLanguagesType}});
         }
 
         // 执行回调
@@ -49,7 +49,7 @@ export function useLanguageChangeEffect(
             void executeCallback();
         } else {
             // 非立即执行时，只在语言变化时触发
-            const previousLocale = languageStore.language.locale;
+            const previousLocale = preferencesStore.preferences.app.locale;
             if (previousLocale !== locale) {
                 void executeCallback();
             }
@@ -61,5 +61,5 @@ export function useLanguageChangeEffect(
                 cleanupFn();
             }
         };
-    }, [locale, callback, immediate, autoCleanup]);
+    }, [locale, callback, immediate, autoCleanup, preferencesStore]);
 }

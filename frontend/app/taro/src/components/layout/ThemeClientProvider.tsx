@@ -1,8 +1,9 @@
 import React, {useEffect, useRef} from 'react';
-import {useThemeMode} from '@/store/core/theme/hooks';
+import {usePreferences} from '@/core/preferences/hooks/usePreferences';
 
 export default function ThemeClientProvider({children}: { children: React.ReactNode }) {
-    const mode = useThemeMode();
+    const {theme} = usePreferences();
+    const mode = theme.mode;
     const mqRef = useRef<any>(null);
 
     useEffect(() => {

@@ -5,7 +5,7 @@ import {View, Text} from '@tarojs/components';
 import {AppEmpty} from '@/components/ui';
 import Pagination from '@/components/Pagination';
 
-import {usePostStore} from '@/store/slices/post/hooks';
+import {fetchListPosts} from '@/api/hooks/post';
 import type {
   contentservicev1_ListPostResponse,
   contentservicev1_Post
@@ -46,7 +46,7 @@ const PostList: React.FC<PostListProps> = ({
                                              showPagination = false,
                                            }) => {
   const {t} = useTranslation();
-  const postStore = usePostStore();
+  const postStore = {listPost: fetchListPosts}; // 使用 API hooks 替代 store
   const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
