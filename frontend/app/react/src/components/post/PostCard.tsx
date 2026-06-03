@@ -35,7 +35,7 @@ const PostCard: React.FC<PostCardProps> = ({
             query.push(`categoryId=${categoryId}`);
         }
 
-        router.push(`/post/${post.id}?${query.join('&')}`);
+        router.push(`/post/detail?id=${post.id}&${query.join('&')}`);
 
         // 滚动到顶部
         window.scrollTo({top: 0, behavior: 'smooth'});

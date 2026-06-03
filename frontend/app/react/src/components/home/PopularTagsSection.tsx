@@ -88,7 +88,7 @@ export default function PopularTagsSection() {
     }, []);
 
     const handleViewTag = (tag: TagItem) => {
-        router.push(`/tag/${tag.id}`);
+        router.push(`/tag/detail?id=${tag.id}`);
     };
 
     return (

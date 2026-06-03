@@ -1,7 +1,7 @@
 'use client';
 
 import {useState, useEffect, useMemo} from 'react';
-import {useParams} from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {AppEmpty} from '@/components/ui';
 import BackButton from '@/components/layout/BackButton';
@@ -22,17 +22,17 @@ import {contentservicev1_Category} from "@/api/generated/app/service/v1";
 
 export default function CategoryDetailPage() {
     const t = useTranslations('page');
-    const params = useParams();
     const router = useI18nRouter();
+    const searchParams = useSearchParams();
 
     const [_loading, setLoading] = useState(false);
     const [category, setCategory] = useState<contentservicev1_Category | null>(null);
     const [childCategories, setChildCategories] = useState<contentservicev1_Category[]>([]);
 
     const categoryId = useMemo(() => {
-        const id = params?.id;
-        return id ? parseInt(id as string) : null;
-    }, [params?.id]);
+        const id = searchParams.get('id');
+        return id ? parseInt(id) : null;
+    }, [searchParams]);
 
     // Get parent category ID
     const parentCategoryId = useMemo(() => {
@@ -64,14 +64,13 @@ export default function CategoryDetailPage() {
     }
 
     function handleViewChildCategory(id: number) {
-        router.push(`/category/${id}`);
+        router.push(`/category/detail?id=${id}`);
     }
 
     function handleBackToParent() {
         // 有父分类 → 回父分类；无父分类 → 回分类总览页
-        // 分类详情页没有 from 参数，router.back() 退回的页面不可预测，所以直接导航到确定的路由
         if (parentCategoryId) {
-            router.push(`/category/${parentCategoryId}`);
+            router.push(`/category/detail?id=${parentCategoryId}`);
         } else {
             router.push('/category');
         }

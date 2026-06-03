@@ -50,7 +50,7 @@ export default function TagListPage() {
     }
 
     function handleTagClick(id: number) {
-        router.push(`/tag/${id}`);
+        router.push(`/tag/detail?id=${id}`);
     }
 
     function handlePageChange(newPage: number) {

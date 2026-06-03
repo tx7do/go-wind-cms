@@ -1,7 +1,7 @@
 'use client';
 
 import {useState, useEffect, useMemo} from 'react';
-import {useParams} from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {AppEmpty} from '@/components/ui';
 import BackButton from '@/components/layout/BackButton';
@@ -17,16 +17,16 @@ import type {contentservicev1_Tag} from "@/api/generated/app/service/v1";
 
 export default function TagDetailPage() {
     const t = useTranslations('page');
-    const params = useParams();
     const router = useI18nRouter();
+    const searchParams = useSearchParams();
 
     const [loading, setLoading] = useState(false);
     const [tag, setTag] = useState<contentservicev1_Tag | null>(null);
 
     const tagId = useMemo(() => {
-        const id = params?.id;
-        return id ? parseInt(id as string) : null;
-    }, [params?.id]);
+        const id = searchParams.get('id');
+        return id ? parseInt(id) : null;
+    }, [searchParams]);
 
     async function loadTag() {
         if (!tagId) return;
@@ -43,8 +43,6 @@ export default function TagDetailPage() {
     }
 
     function handleBack() {
-        // 标签详情页没有 from 参数，router.back() 退回的页面不可预测
-        // 按钮文字是「返回列表」，始终导航到标签总览页
         router.push('/tag');
     }
 

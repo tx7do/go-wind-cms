@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useState, useMemo, useRef} from 'react';
-import {useParams, useSearchParams} from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 
 import CommentSection from '@/components/comment/CommentSection';
@@ -27,7 +27,6 @@ import Image from '@/components/ui/image';
 
 export default function PostDetailPage() {
     const t = useTranslations('page');
-    const params = useParams();
     const router = useI18nRouter();
     const searchParams = useSearchParams();
 
@@ -42,9 +41,9 @@ export default function PostDetailPage() {
     const contentRef = useRef<HTMLDivElement>(null);
 
     const postId = useMemo(() => {
-        const id = params?.id as string;
+        const id = searchParams.get('id');
         return id ? parseInt(id) : null;
-    }, [params?.id]);
+    }, [searchParams]);
 
     const displayTitle = useMemo(() => post ? getPostTitle(post) : '', [post]);
     const displayContent = useMemo(() => post ? getPostContent(post) : '', [post]);
@@ -89,7 +88,7 @@ export default function PostDetailPage() {
         const categoryId = searchParams.get('categoryId');
 
         if (from === 'category' && categoryId) {
-            router.push(`/category/${categoryId}`);
+            router.push(`/category/detail?id=${categoryId}`);
             return;
         }
         if (from === 'tag') { router.push('/tag'); return; }
