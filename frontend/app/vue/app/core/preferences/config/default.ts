@@ -25,12 +25,11 @@ const defaultPreferences: Preferences = {
     source: "/logo.png",
   },
   theme: {
-    builtinType: "default",
+    mode: "auto",
     colorPrimary: "142.1 76.2% 36.3%",
     colorSuccess: "142.1 76.2% 36.3%",
     colorWarning: "38 92% 50%",
     colorDestructive: "0 84.2% 60.2%",
-    mode: "auto",
     radius: "0.6rem",
   },
   content: {

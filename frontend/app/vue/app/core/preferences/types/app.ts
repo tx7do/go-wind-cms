@@ -1,4 +1,4 @@
-import type { BuiltinThemeType, ThemeModeType } from "./theme";
+import type { ThemeModeType } from "./theme";
 import type { PageTransitionType, SupportedLanguagesType } from "./layout";
 
 /**
@@ -29,8 +29,8 @@ export interface AppPreferences {
  * 主题偏好设置（CMS 前台）
  */
 export interface ThemePreferences {
-  /** 内置主题名 */
-  builtinType: BuiltinThemeType;
+  /** 当前主题模式 */
+  mode: ThemeModeType;
   /** 主题色 */
   colorPrimary: string;
   /** 成功色 */
@@ -39,8 +39,6 @@ export interface ThemePreferences {
   colorWarning: string;
   /** 错误色 */
   colorDestructive: string;
-  /** 当前主题模式 */
-  mode: ThemeModeType;
   /** 圆角 */
   radius: string;
 }

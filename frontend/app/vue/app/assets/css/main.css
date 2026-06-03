@@ -3,6 +3,9 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* 显式告诉 Tailwind v4 扫描 app 下所有目录 */
+@source "../../";
+
 /* ========== Tailwind v4 主题变量（shadcn/ui 兼容） ========== */
 @theme inline {
     --color-background: hsl(var(--background));
