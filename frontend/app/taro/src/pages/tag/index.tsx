@@ -34,8 +34,8 @@ export default function TagListPage() {
         formValues: {
           status: 'TAG_STATUS_ACTIVE'
         },
-        fieldMask: null,
-        orderBy: null,
+        fieldMask: undefined,
+        orderBy: undefined,
       }) as contentservicev1_ListTagResponse;
       setTags(res.items || []);
       setTotal(res.total || 0);

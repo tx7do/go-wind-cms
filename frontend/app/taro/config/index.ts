@@ -1,5 +1,6 @@
 import {defineConfig, type UserConfigExport} from '@tarojs/cli'
 import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
 import devConfig from './dev'
 import prodConfig from './prod'
@@ -39,32 +40,10 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     },
     framework: 'react',
     compiler: 'vite',
+    // 注入 Tailwind CSS v4 Vite 插件
     modifyViteConfig(config) {
-      config.optimizeDeps = config.optimizeDeps || {};
-      config.optimizeDeps.exclude = config.optimizeDeps.exclude || [];
-      config.optimizeDeps.exclude.push(
-        'react-native',
-        'react-native-maps',
-        'react-native-image-zoom-viewer',
-        'react-native-image-pan-zoom',
-        'react-native-screens',
-        'react-native-webview',
-        'react-native-device-info',
-        'react-native-gesture-handler',
-        'react-native-root-siblings',
-        'react-native-safe-area-context',
-        'expo',
-        'expo-barcode-scanner',
-        'expo-camera',
-        'expo-av',
-        '@react-native/assets-registry',
-        '@react-native-picker/picker',
-        '@tarojs/components-rn',
-        '@tarojs/rn-runner',
-        '@tarojs/rn-supporter',
-        '@tarojs/runtime-rn',
-        '@tarojs/taro-rn',
-      );
+      config.plugins = config.plugins || [];
+      config.plugins.push(tailwindcss());
     },
     alias: {
       '@': path.resolve(__dirname, '..', 'src'),
@@ -132,26 +111,7 @@ export default defineConfig<'vite'>(async (merge, {}) => {
         }
       },
     },
-    rn: {
-      appName: 'taroDemo',
-      postcss: {
-        cssModules: {
-          enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
-        }
-      },
-      output: {
-        iosSourceMapUrl: '', // sourcemap 文件url
-        iosSourcemapOutput: '../taro-native-shell/ios/main.map', // sourcemap 文件输出路径
-        iosSourcemapSourcesRoot: '', // 将 sourcemap 资源路径转为相对路径时的根目录
-        androidSourceMapUrl: '',
-        androidSourcemapOutput: '../taro-native-shell/android/app/src/main/assets/index.android.map',
-        androidSourcemapSourcesRoot: '',
-        ios: '../taro-native-shell/ios/main.jsbundle',
-        iosAssetsDest: '../taro-native-shell/ios',
-        android: '../taro-native-shell/android/app/src/main/assets/index.android.bundle',
-        androidAssetsDest: '../taro-native-shell/android/app/src/main/res'
-      },
-    }
+
   }
 
   // 生产环境才设置 browserslist 环境变量

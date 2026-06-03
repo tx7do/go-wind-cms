@@ -122,7 +122,7 @@ export function useDeleteTag(options?: UseMutationOptions<Record<string, never>,
 /**
  * 获取标签的翻译
  */
-export function getTranslation(tag: contentservicev1_Tag | null) {
+export function getTagTranslation(tag: contentservicev1_Tag | null) {
   if (!tag || !tag?.translations || tag.translations.length === 0) return null;
 
   const locale = currentLocaleLanguageCode();

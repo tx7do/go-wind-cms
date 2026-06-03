@@ -12,8 +12,8 @@ interface XIconProps {
 
 export const XIcon: React.FC<XIconProps> = ({name, size = 24, color, className = '', style, svg}) => {
   const env = process.env.TARO_ENV;
-  // UnoCSS class
-  const unoClass = [
+  // Tailwind arbitrary class
+  const twClass = [
     typeof size === 'number' ? `text-[${size}px]` : `text-[${size}]`,
     color ? `text-[${color}]` : '',
     className
@@ -25,7 +25,7 @@ export const XIcon: React.FC<XIconProps> = ({name, size = 24, color, className =
       // @ts-ignore
       <iconify-icon
         icon={name}
-        class={unoClass}
+        class={twClass}
         style={{fontSize: size, color, ...style}}
       />
     );
@@ -34,7 +34,7 @@ export const XIcon: React.FC<XIconProps> = ({name, size = 24, color, className =
   if (svg) {
     // 直接渲染SVG代码
     // @ts-ignore
-    return <svg style={{width: size, height: size, ...style}} className={unoClass}
+    return <svg style={{width: size, height: size, ...style}} className={twClass}
       dangerouslySetInnerHTML={{__html: svg}}
     />;
   }
@@ -43,7 +43,7 @@ export const XIcon: React.FC<XIconProps> = ({name, size = 24, color, className =
     <Image
       src={name}
       style={{width: size, height: size, ...style}}
-      className={unoClass}
+      className={twClass}
       mode='aspectFit'
     />
   );

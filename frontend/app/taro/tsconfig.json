@@ -23,7 +23,8 @@
     "paths": {
       // TS5090 leading './'
       "@/*": ["./src/*"]
-    }
+    },
+    "baseUrl": "."
   },
   "include": ["./src", "./types", "./config", "./messages"],
   "compileOnSave": false

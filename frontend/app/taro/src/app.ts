@@ -6,6 +6,7 @@ import Layout from './components/layout/Layout';
 import StoreProvider from './store/StoreProvider';
 
 import './app.scss';
+import './app.css';
 
 function App({children}: PropsWithChildren): ReactElement {
   useLaunch(() => {
