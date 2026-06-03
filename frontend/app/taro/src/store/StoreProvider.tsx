@@ -23,7 +23,7 @@ import {env} from '@/config/env';
 import {refreshToken as apiRefreshToken} from '@/api/service/auth';
 import type {IUser} from '@/store/core/user/store';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
-import {getCurrentPages} from "@tarojs/taro-rn";
+import Taro from "@tarojs/taro";
 
 /**
  * 应用 Store Provider（聚合）
@@ -98,7 +98,7 @@ export default function StoreProvider({children}: { children: ReactNode }) {
 
                 if (redirect && typeof window !== 'undefined') {
                     // Taro 兼容写法
-                    const pages = getCurrentPages();
+                    const pages = Taro.getCurrentPages();
                     const currentPage = pages[pages.length - 1];
                     const currentPath = currentPage ? `/${currentPage.route}` : '/';
                     window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;

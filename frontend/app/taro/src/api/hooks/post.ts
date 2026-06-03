@@ -16,6 +16,7 @@ import {
 } from '@/api/service/post';
 import { queryClient } from '@/core';
 import { currentLocaleLanguageCode } from '@/i18n';
+import placeholderImage from '@/assets/images/placeholder.png';
 
 // ==============================
 // 文章列表 Hook
@@ -151,7 +152,7 @@ export function getPostSummary(post: contentservicev1_Post): string {
  */
 export function getPostThumbnail(post: contentservicev1_Post): string {
   const translation = getTranslation(post);
-  return translation?.thumbnail || '/placeholder.png';
+  return translation?.thumbnail || placeholderImage;
 }
 
 /**

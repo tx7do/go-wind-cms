@@ -39,6 +39,33 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     },
     framework: 'react',
     compiler: 'vite',
+    modifyViteConfig(config) {
+      config.optimizeDeps = config.optimizeDeps || {};
+      config.optimizeDeps.exclude = config.optimizeDeps.exclude || [];
+      config.optimizeDeps.exclude.push(
+        'react-native',
+        'react-native-maps',
+        'react-native-image-zoom-viewer',
+        'react-native-image-pan-zoom',
+        'react-native-screens',
+        'react-native-webview',
+        'react-native-device-info',
+        'react-native-gesture-handler',
+        'react-native-root-siblings',
+        'react-native-safe-area-context',
+        'expo',
+        'expo-barcode-scanner',
+        'expo-camera',
+        'expo-av',
+        '@react-native/assets-registry',
+        '@react-native-picker/picker',
+        '@tarojs/components-rn',
+        '@tarojs/rn-runner',
+        '@tarojs/rn-supporter',
+        '@tarojs/runtime-rn',
+        '@tarojs/taro-rn',
+      );
+    },
     alias: {
       '@': path.resolve(__dirname, '..', 'src'),
     },

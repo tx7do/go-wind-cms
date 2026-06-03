@@ -17,6 +17,7 @@ import {
 } from '@/api/service/category';
 import { queryClient } from '@/core';
 import { currentLocaleLanguageCode } from '@/i18n';
+import placeholderImage from '@/assets/images/placeholder.png';
 
 // ==============================
 // 分类列表 Hook（Mutation 形式，兼容旧调用）
@@ -155,5 +156,5 @@ export function getCategoryDescription(category: contentservicev1_Category | nul
  */
 export function getCategoryThumbnail(category: contentservicev1_Category | null) {
   const translation = getTranslation(category);
-  return translation?.thumbnail || '/placeholder.png';
+  return translation?.thumbnail || placeholderImage;
 }

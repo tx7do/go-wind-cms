@@ -2,11 +2,11 @@ import React, {useState, useEffect} from 'react';
 import {View, Text} from '@tarojs/components';
 
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import {listNavigation} from '@/api/hooks/navigation';
+import {fetchListNavigations} from '@/api/hooks/navigation';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import XIcon from '@/plugins/xicon';
 
-import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
+import type {siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 
 import './index.scss';
 
@@ -29,7 +29,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // 移动端菜单开关
   const [expandedSubMenus, setExpandedSubMenus] = useState<Set<string>>(new Set()); // 展开的子菜单
-  const [submenuPosition, setSubmenuPosition] = useState<{top: number; left: number} | null>(null); // 子菜单位置
+  const [submenuPosition, setSubmenuPosition] = useState<{ top: number; left: number } | null>(null); // 子菜单位置
 
   // 切换菜单显示
   const toggleMenu = () => {
@@ -61,7 +61,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
     async function loadNavigation() {
       try {
         setIsLoading(true);
-        const res = await listNavigation({
+        const res = await fetchListNavigations({
           paging: {page: 1, pageSize: 10}
         });
 
@@ -87,7 +87,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
   // 监听语言变化，自动重新加载导航数据
   useLanguageChangeEffect(() => {
     setIsLoading(true);
-    listNavigation({
+    fetchListNavigations({
       paging: {page: 1, pageSize: 10}
     })
       .then(res => {
@@ -185,9 +185,9 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                     style={
                       submenuPosition && expandedSubMenus.has(item.id?.toString() || '')
                         ? {
-                            top: `${submenuPosition.top}px`,
-                            left: `${submenuPosition.left}px`,
-                          }
+                          top: `${submenuPosition.top}px`,
+                          left: `${submenuPosition.left}px`,
+                        }
                         : undefined
                     }
                   >
