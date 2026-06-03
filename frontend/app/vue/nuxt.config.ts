@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite'
+import { writeFileSync } from 'node:fs'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
@@ -13,7 +18,26 @@ export default defineNuxtConfig({
             routes: ['/'],
             crawlLinks: true,
         },
+        // SSG 构建后自动生成根路径 index.html 重定向页
+        hooks: {
+            'prerender:done'() {
+                const outputDir = resolve(__dirname, '.output', 'public')
+                writeFileSync(resolve(outputDir, 'index.html'), [
+                    '<!DOCTYPE html>',
+                    '<html><head>',
+                    '<meta charset="utf-8">',
+                    '<meta http-equiv="refresh" content="0;url=/zh-CN/">',
+                    '<title>Redirecting...</title>',
+                    '</head><body>',
+                    '<script>location.replace("/zh-CN/"+location.search+location.hash)</script>',
+                    '<noscript><meta http-equiv="refresh" content="0;url=/zh-CN/"></noscript>',
+                    '<p><a href="/zh-CN/">Click here</a></p>',
+                    '</body></html>',
+                ].join('\n'))
+            },
+        },
     },
+
     // SPA fallback：未预渲染的路由返回 200 + index.html（由 nginx 配合）
     app: {
         baseURL: '/',
