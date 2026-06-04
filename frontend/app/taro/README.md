@@ -1,113 +1,63 @@
 ## Taro CMS 前端项目
 
-本项目基于 [Taro](https://taro.jd.com/) 框架，采用 React + TypeScript 构建，适用于多端（微信小程序、H5、支付宝等）内容管理系统（CMS）前端。
+基于 [Taro 4](https://taro.jd.com/) + React + TypeScript 的多端 CMS 前端，支持 H5、微信/支付宝/抖音小程序。
 
 ---
 
-### 目录结构
+### 快速开始
 
-```
-taro/
-├── babel.config.js           # Babel 配置
-├── commitlint.config.mjs     # Commitlint 配置
-├── package.json              # 项目依赖与脚本
-├── npm-lock.yaml            # npm 锁定文件
-├── project.config.json       # 小程序项目配置
-├── README.md                 # 项目说明文档
-├── stylelint.config.mjs      # Stylelint 配置
-├── tsconfig.json             # TypeScript 配置
-├── config/                   # 构建与环境配置
-│   ├── dev.ts                # 开发环境配置
-│   ├── index.ts              # 主配置文件
-│   └── prod.ts               # 生产环境配置
-├── src/                      # 源码目录
-│   ├── app.config.ts         # 应用配置
-│   ├── app.scss              # 全局样式
-│   ├── app.ts                # 应用入口
-│   ├── index.html            # H5 入口页面
-│   └── pages/                # 页面目录
-│       └── index/            # 首页
-│           ├── index.config.ts
-│           ├── index.scss
-│           └── index.tsx
-├── types/                    # 类型声明
-│   └── global.d.ts
+```bash
+# 安装依赖
+pnpm install
+
+# H5 开发（默认 http://localhost:10086）
+pnpm dev:h5
+
+# 微信小程序开发（dist/ 导入微信开发者工具）
+pnpm dev:weapp
 ```
 
----
+### 构建产物
 
-### 安装与启动
-
-安装Taro cli：
-
-```shell
-npm install -g @tarojs/cli
+```bash
+pnpm build:h5      # H5 生产构建 → dist/
+pnpm build:weapp   # 微信小程序 → dist/
 ```
 
-1. **环境要求**
-  - Node.js >= 16
-  - npm >= 8
-  - 推荐 Windows 10/11 或 macOS
+### 环境变量
 
-2. **安装依赖**
-   ```bash
-   npm install
-   ```
+编辑 `.env.development`：
 
-3. **开发模式启动**
-  - 微信小程序：
-    ```bash
-    npm run dev:weapp
-    ```
-  - H5：
-    ```bash
-    npm run dev:h5
-    ```
-  - 其他平台见 package.json scripts
-
-4. **构建产物**
-  - 微信小程序：
-    ```bash
-    npm run build:weapp
-    ```
-  - H5：
-    ```bash
-    npm run build:h5
-    ```
+```env
+TARO_APP_API_BASE_URL=https://api.cms.gowind.cloud   # 后端 API
+TARO_APP_TITLE='GoWind Content Hub'                    # 应用标题
+TARO_DEFAULT_LOCALE=zh-CN                              # 默认语言
+```
 
 ---
 
 ### 常用命令
 
-| 命令               | 说明      |
-|------------------|---------|
-| npm run dev:*   | 各端开发模式  |
-| npm run build:* | 各端构建产物  |
-| npm run new     | 新建页面/组件 |
+| 命令                          | 说明       |
+|-----------------------------|----------|
+| `pnpm dev:h5`               | H5 开发模式  |
+| `pnpm dev:weapp`            | 微信小程序开发  |
+| `pnpm dev:alipay`           | 支付宝小程序开发 |
+| `pnpm dev:tt`               | 抖音小程序开发  |
+| `pnpm dev:swan`             | 百度小程序开发  |
+| `pnpm dev:qq`               | QQ 小程序开发 |
+| `pnpm dev:jd`               | 京东小程序开发  |
+| `pnpm dev:harmony-hybrid`   | 鸿蒙混合开发   |
+| `pnpm build:h5`             | H5 生产构建  |
+| `pnpm build:weapp`          | 微信小程序构建  |
+| `pnpm build:alipay`         | 支付宝小程序构建 |
+| `pnpm build:tt`             | 抖音小程序构建  |
+| `pnpm build:swan`           | 百度小程序构建  |
+| `pnpm build:qq`             | QQ 小程序构建 |
+| `pnpm build:jd`             | 京东小程序构建  |
+| `pnpm build:harmony-hybrid` | 鸿蒙混合构建   |
+| `pnpm run new`              | 新建页面/组件  |
 
 ---
 
-### 常见问题
-
-1. **依赖安装失败**
-  - 请确保 Node.js 和 npm 版本符合要求。
-  - 删除 `node_modules` 和 `npm-lock.yaml` 后重新安装。
-
-2. **小程序编译异常**
-  - 检查 `project.config.json` 配置。
-  - 确认微信开发者工具已正确导入 `dist` 目录。
-
-3. **H5 构建失败**
-  - 检查端口占用或依赖缺失。
-  - 查看终端报错信息，按提示修复。
-
----
-
-### 联系方式
-
-如有问题或建议，请联系项目维护者。
-
----
-
-> 本项目遵循 MIT 协议，欢迎贡献代码。
-
+> 详细技术文档见 [TECHNICAL_GUIDE.md](./TECHNICAL_GUIDE.md)

@@ -1,5 +1,4 @@
 import {View, Text} from '@tarojs/components';
-import {cn} from '@/lib/utils';
 import {XIcon} from '@/plugins/xicon';
 
 interface LegalPageProps {

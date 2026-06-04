@@ -2,16 +2,16 @@
 
 ## 概述
 
-本模块提供了完整的用户偏好设置管理方案，涵盖主题切换、布局控制、国际化、快捷键、功能部件等配置项。基于 Zustand + persist 实现状态管理与 localStorage 持久化。
+本模块是 Taro 小程序/H5 CMS 前台的用户偏好设置管理方案，涵盖主题切换、内容偏好、语言切换、功能部件开关等配置项。基于 Zustand + persist + React Context 实现状态管理与 localStorage 持久化。
 
 ### 核心特性
 
 - **持久化存储**：偏好设置自动保存到 `localStorage`（键名 `app-preferences`），刷新页面不丢失
 - **深度合并更新**：支持传入部分配置进行深度合并，无需提供完整对象
-- **主题系统**：支持亮色/暗色/自动三种模式 + 15 种内置主题色 + 紧凑模式
-- **响应式主题**：`ThemeProvider` 组件自动监听系统主题变化，`auto` 模式下实时跟随
-- **AntD 集成**：自动将偏好设置转换为 Ant Design 的 `ThemeConfig` 和 `locale`
-- **设置面板**：内置 `PreferencesPanel` Drawer 组件，包含外观/布局/快捷键/通用四个配置页
+- **主题系统**：支持亮色/暗色/自动三种模式，颜色使用 HSL raw 格式映射 CSS 变量
+- **响应式主题**：通过 `useSyncExternalStore` 监听系统主题变化，`auto` 模式下实时跟随
+- **Context 隔离**：使用 React Context + Store 工厂函数，每个客户端独立实例
+- **Tailwind CSS 集成**：`useThemeConfig` 返回 Tailwind CSS 变量风格的主题配置，由 `ThemeClientProvider` 注入 CSS 变量
 
 ---
 
@@ -19,48 +19,46 @@
 
 ```
 src/core/preferences/
-├── index.ts                         # 统一导出
+├── index.ts                         # 统一导出（types + config + hooks + store）
 ├── types/                           # 类型定义
 │   ├── index.ts                     # 类型导出入口
-│   ├── preferences-root.ts          # Preferences 总接口 + DeepPartial
-│   ├── app.ts                       # 各子模块偏好设置接口（14 个）
-│   ├── theme.ts                     # 主题模式 + 内置主题类型
-│   └── layout.ts                    # 布局相关枚举类型
+│   ├── preferences-root.ts          # Preferences 总接口 + DeepPartial + InitialOptions
+│   ├── app.ts                       # 6 个子模块偏好设置接口
+│   ├── theme.ts                     # ThemeModeType 主题模式
+│   └── layout.ts                    # SupportedLanguagesType + PageTransitionType + ContentCompactType
 ├── config/                          # 默认配置
-│   ├── default.ts                   # defaultPreferences 默认值
-│   └── constants.ts                 # BUILT_IN_THEME_PRESETS 主题预设色板
+│   ├── index.ts                     # 导出入口
+│   └── default.ts                   # defaultPreferences 默认值
 ├── store/                           # 状态管理
-│   └── index.ts                     # usePreferencesStore (Zustand + persist)
+│   └── index.ts                     # createPreferencesStore + PreferencesStoreContext + usePreferencesStore
 ├── hooks/                           # Hooks
+│   ├── index.ts                     # 导出入口
 │   ├── usePreferences.ts            # 综合偏好设置 Hook（推荐使用）
-│   ├── useThemeConfig.ts            # AntD ThemeConfig 生成 Hook
-│   └── useLocale.ts                 # 语言切换 Hook
-├── components/                      # UI 组件
-│   ├── ThemeProvider/index.tsx      # 全局主题 Provider（ConfigProvider + 水印 + 滤镜）
-│   └── PreferencesPanel/            # 偏好设置 Drawer 面板
-│       ├── index.tsx                # 面板容器（Drawer + Tab 切换）
-│       ├── AppearancePanel.tsx      # 外观设置页（主题色/暗色/圆角等）
-│       ├── LayoutPanel.tsx          # 布局设置页（侧边栏/标签页/面包屑等）
-│       ├── ShortcutKeyPanel.tsx     # 快捷键设置页
-│       └── GeneralPanel.tsx         # 通用设置页（水印/色弱/灰色模式等）
+│   ├── useThemeConfig.ts            # Tailwind CSS 主题配置 Hook
+│   └── useLocale.ts                 # 语言切换 Hook（usePreferencesLocale）
 └── utils/
     └── merge.ts                     # mergeDeep 深度合并工具
 ```
+
+> **注意**：主题渲染由 `src/components/layout/ThemeClientProvider.tsx` 负责（不在本模块内），它通过内联 CSS 变量注入色板，配合 `usePreferences()` 的 `isDark` 状态切换暗色/亮色。
 
 ### 导入方式
 
 ```typescript
 // Hook（组件内推荐）
-import { usePreferences, useLocale, useThemeConfig } from '@/core/preferences';
+import { usePreferences, usePreferencesLocale, useThemeConfig } from '@/core/preferences';
 
-// Store（需要精细控制订阅时）
-import { usePreferencesStore } from '@/core/preferences';
+// Store（需要精细控制订阅时，必须在 <PreferencesStoreProvider> 内使用）
+import { usePreferencesStore, createPreferencesStore, PreferencesStoreContext } from '@/core/preferences';
 
 // 类型
-import type { Preferences, DeepPartial, ThemeModeType } from '@/core/preferences';
+import type { Preferences, DeepPartial, ThemeModeType, AppPreferences } from '@/core/preferences';
 
-// 组件
-import { ThemeProvider, PreferencesPanel } from '@/core/preferences';
+// 默认配置
+import { defaultPreferences } from '@/core/preferences';
+
+// 深度合并工具
+import { mergeDeep, isPlainObject } from '@/core/preferences';
 ```
 
 ---
@@ -73,14 +71,15 @@ import { ThemeProvider, PreferencesPanel } from '@/core/preferences';
 import { usePreferences } from '@/core/preferences';
 
 const MyComponent = () => {
-  const { theme, app, sidebar, tabbar } = usePreferences();
+  const { theme, app, content, widget, isDark, isMobile } = usePreferences();
 
   return (
     <div>
-      <p>当前主题: {theme.mode}</p>          {/* 'dark' | 'light' | 'auto' */}
-      <p>布局方式: {app.layout}</p>           {/* 'sidebar-nav' | 'header-nav' | ... */}
-      <p>侧边栏折叠: {sidebar.collapsed}</p>  {/* boolean */}
-      <p>标签页风格: {tabbar.styleType}</p>    {/* 'chrome' | 'card' | ... */}
+      <p>当前主题: {theme.mode}</p>                {/* 'dark' | 'light' | 'auto' */}
+      <p>是否暗色: {isDark ? '是' : '否'}</p>      {/* boolean，auto 模式已解析 */}
+      <p>语言: {app.locale}</p>                     {/* 'zh-CN' | 'en-US' */}
+      <p>紧凑模式: {content.compactMode ? '开' : '关'}</p>
+      <p>回到顶部: {widget.backToTop ? '显示' : '隐藏'}</p>
     </div>
   );
 };
@@ -101,16 +100,16 @@ const ThemeSwitcher = () => {
   const handleSetDark = () => setThemeMode('dark');
 
   // 更新部分主题配置
-  const handleChangeColor = () => updateTheme({ colorPrimary: 'hsl(245 82% 67%)' });
+  const handleChangeColor = () => updateTheme({ colorPrimary: '142.1 76.2% 36.3%' });
 
   // 同时更新多个分组
   const handleBatch = () => updatePreferences({
     theme: { mode: 'light' },
-    sidebar: { collapsed: true },
     app: { compact: true },
+    content: { compactMode: true },
   });
 
-  return <Button onClick={handleToggle}>切换主题</Button>;
+  return <button onClick={handleToggle}>切换主题</button>;
 };
 ```
 
@@ -131,39 +130,24 @@ resetPreferences();
 
 | 分组 | 类型 | 说明 | 默认值要点 |
 |------|------|------|-----------|
-| `app` | `AppPreferences` | 全局应用配置 | `sidebar-nav` 布局，`zh-CN`，前端权限模式 |
-| `theme` | `ThemePreferences` | 主题配置 | `dark` 模式，`default` 主题色 |
-| `sidebar` | `SidebarPreferences` | 侧边栏配置 | 宽度 224，不折叠 |
-| `header` | `HeaderPreferences` | 顶栏配置 | 固定模式 |
-| `tabbar` | `TabbarPreferences` | 标签页配置 | `chrome` 风格，启用拖拽/图标/更多 |
-| `breadcrumb` | `BreadcrumbPreferences` | 面包屑配置 | 启用，显示首页图标 |
-| `navigation` | `NavigationPreferences` | 导航菜单配置 | 手风琴模式，圆润风格 |
-| `footer` | `FooterPreferences` | 底栏配置 | 默认隐藏 |
-| `logo` | `LogoPreferences` | Logo 配置 | 启用，使用 `/logo.png` |
-| `copyright` | `CopyrightPreferences` | 版权配置 | 启用 |
-| `transition` | `TransitionPreferences` | 页面动画配置 | `fade-slide`，显示进度条 |
-| `shortcutKeys` | `ShortcutKeyPreferences` | 快捷键配置 | 全部启用 |
-| `widget` | `WidgetPreferences` | 功能部件配置 | 全部启用 |
+| `app` | `AppPreferences` | 全局应用配置 | `zh-CN`，不紧凑，每页 10 条 |
+| `theme` | `ThemePreferences` | 主题配置 | `auto` 模式，绿色主题色 |
+| `content` | `ContentPreferences` | 内容偏好（CMS 专用） | 隐藏敏感内容，显示推荐 |
+| `copyright` | `CopyrightPreferences` | 版权配置 | 启用，GoWind |
 | `widget` | `WidgetPreferences` | 功能部件开关 | 全部启用 |
+| `transition` | `TransitionPreferences` | 页面动画配置 | `fade-slide`，显示进度条 |
 
 ### app — 全局配置
 
 ```typescript
 interface AppPreferences {
-  accessMode: 'frontend' | 'backend';        // 权限模式，默认 'frontend'
-  authPageLayout: 'panel-center' | 'panel-left' | 'panel-right'; // 登录页布局
-  locale: 'zh-CN' | 'en-US';                 // 界面语言
-  layout: 'sidebar-nav' | 'header-nav' | 'mixed-nav' | 'sidebar-mixed-nav' | 'full-content';
-  compact: boolean;                           // AntD 紧凑模式
-  contentCompact: 'compact' | 'wide';         // 内容区域宽度
-  colorGrayMode: boolean;                     // 灰色模式
-  colorWeakMode: boolean;                     // 色弱模式
-  watermark: boolean;                         // 水印
-  enableRefreshToken: boolean;                // 启用 Token 刷新
-  enableTenant: boolean;                      // 启用多租户
-  enablePreferences: boolean;                 // 显示偏好设置入口
-  isMobile: boolean;                          // 移动端模式
-  // ...更多字段见 types/app.ts
+  name: string;                              // 应用名称，默认 'GoWind CMS'
+  title: string;                             // 浏览器标签标题，默认 'GoWind Content Hub'
+  defaultAvatar: string;                     // 默认头像路径
+  locale: SupportedLanguagesType;            // 'zh-CN' | 'en-US'，默认 'zh-CN'
+  isMobile: boolean;                         // 移动端模式，默认 false
+  compact: boolean;                          // 紧凑模式，默认 false
+  defaultPageSize: number;                   // 默认每页条数，默认 10
 }
 ```
 
@@ -171,58 +155,124 @@ interface AppPreferences {
 
 ```typescript
 interface ThemePreferences {
-  mode: 'auto' | 'dark' | 'light';           // 主题模式
-  builtinType: BuiltinThemeType;              // 内置主题名
-  colorPrimary: string;                       // 主题色（HSL 格式）
-  colorSuccess: string;                       // 成功色
-  colorWarning: string;                       // 警告色
-  colorDestructive: string;                   // 错误色
-  radius: string;                             // 圆角大小
-  semiDarkHeader: boolean;                    // 半深色顶栏（仅 light 模式）
-  semiDarkSidebar: boolean;                   // 半深色侧边栏（仅 light 模式）
+  mode: ThemeModeType;                       // 'auto' | 'dark' | 'light'，默认 'auto'
+  colorPrimary: string;                      // 主题色（HSL raw 格式），默认 '142.1 76.2% 36.3%'
+  colorSuccess: string;                      // 成功色，默认 '142.1 76.2% 36.3%'
+  colorWarning: string;                      // 警告色，默认 '38 92% 50%'
+  colorDestructive: string;                  // 错误色，默认 '0 84.2% 60.2%'
+  radius: string;                            // 圆角大小，默认 '0.6rem'
 }
 ```
 
-**内置主题色**（`builtinType`）：
+> **HSL raw 格式说明**：颜色值使用 `"H S% L%"` 格式（如 `"142.1 76.2% 36.3%"`），直接映射到 CSS `hsl()` 函数。不带 `hsl()` 包裹，由 `ThemeClientProvider` 在注入 CSS 变量时组合。
 
-| 主题名 | 色值 | 主题名 | 色值 |
-|--------|------|--------|------|
-| `default` | `hsl(212 100% 45%)` 蓝色 | `green` | `hsl(161 90% 43%)` 绿色 |
-| `violet` | `hsl(245 82% 67%)` 紫色 | `deep-green` | `hsl(181 84% 32%)` 深绿 |
-| `pink` | `hsl(347 77% 60%)` 粉色 | `deep-blue` | `hsl(211 91% 39%)` 深蓝 |
-| `yellow` | `hsl(42 84% 61%)` 黄色 | `orange` | `hsl(18 89% 40%)` 橙色 |
-| `sky-blue` | `hsl(231 98% 65%)` 天蓝 | `rose` | `hsl(0 75% 42%)` 玫红 |
-| `zinc` | `hsl(240 5% 26%)` 锌色 | `neutral` | `hsl(0 0% 25%)` 中性 |
-| `slate` | `hsl(215 25% 27%)` 石板灰 | `gray` | `hsl(217 19% 27%)` 灰色 |
-| `custom` | 自定义 | | |
-
-### sidebar — 侧边栏配置
+### content — 内容偏好
 
 ```typescript
-interface SidebarPreferences {
-  collapsed: boolean;              // 是否折叠
-  collapsedShowTitle: boolean;     // 折叠时是否显示标题
-  enable: boolean;                 // 是否可见
-  expandOnHover: boolean;          // 鼠标悬停自动展开
-  extraCollapse: boolean;          // 扩展区域折叠
-  hidden: boolean;                 // CSS 级隐藏
-  width: number;                   // 宽度（px），默认 224
+interface ContentPreferences {
+  hideSensitiveContent: boolean;             // 隐藏敏感内容，默认 true
+  compactMode: boolean;                      // 紧凑列表/卡片，默认 false
+  showRecommendations: boolean;              // 显示推荐内容，默认 true
 }
 ```
 
-### tabbar — 标签页配置
+### copyright — 版权配置
 
 ```typescript
-interface TabbarPreferences {
-  enable: boolean;                 // 是否启用标签页
-  styleType: 'brisk' | 'card' | 'chrome' | 'plain';  // 标签页风格
-  draggable: boolean;              // 是否可拖拽排序
-  showIcon: boolean;               // 显示标签页图标
-  showMaximize: boolean;           // 显示最大化按钮
-  showMore: boolean;               // 显示更多按钮
-  persist: boolean;                // 持久化标签页状态
-  keepAlive: boolean;              // 标签页缓存
-  height: number;                  // 标签页高度，默认 38
+interface CopyrightPreferences {
+  enable: boolean;                           // 是否显示版权信息，默认 true
+  companyName: string;                       // 公司名称，默认 'GoWind'
+  companySiteLink: string;                   // 公司链接
+  date: string;                              // 版权日期，默认 '2026'
+  icp: string;                               // 备案号
+  icpLink: string;                           // 备案号链接
+}
+```
+
+### widget — 功能部件开关
+
+```typescript
+interface WidgetPreferences {
+  themeToggle: boolean;                      // 主题切换部件，默认 true
+  languageToggle: boolean;                   // 语言切换部件，默认 true
+  globalSearch: boolean;                     // 全局搜索部件，默认 true
+  backToTop: boolean;                        // 回到顶部部件，默认 true
+}
+```
+
+### transition — 页面动画
+
+```typescript
+interface TransitionPreferences {
+  enable: boolean;                           // 是否启用页面切换动画，默认 true
+  loading: boolean;                          // 页面加载 loading，默认 true
+  name: PageTransitionType | string;         // 动画名称，默认 'fade-slide'
+  progress: boolean;                         // 页面加载进度条，默认 true
+}
+```
+
+**PageTransitionType**：`'fade' | 'fade-down' | 'fade-slide' | 'fade-up'`
+
+---
+
+## Store 架构
+
+本模块采用 **Zustand 工厂函数 + React Context** 模式，而非全局单例：
+
+```typescript
+// 1. 创建独立 store 实例（工厂函数）
+const store = createPreferencesStore();
+
+// 2. 通过 Context 注入
+<PreferencesStoreContext.Provider value={store}>
+  <App />
+</PreferencesStoreContext.Provider>
+
+// 3. 组件内通过 Hook 消费
+function MyComponent() {
+  const { preferences, setPreferences } = usePreferencesStore();
+  // ...
+}
+```
+
+### `createPreferencesStore()` — Store 工厂函数
+
+创建独立的 Zustand store 实例，内置 `persist` 中间件：
+
+```typescript
+import { createPreferencesStore } from '@/core/preferences';
+
+const store = createPreferencesStore();
+// store 是标准的 Zustand StoreApi<PreferencesState>
+```
+
+### `usePreferencesStore()` — 消费 Hook
+
+**必须在 `<PreferencesStoreContext.Provider>` 内部使用**，否则会抛出错误。
+
+支持 selector 精确订阅：
+
+```tsx
+import { usePreferencesStore } from '@/core/preferences';
+
+// 完整 state
+const { preferences, setPreferences, resetPreferences, getPreference } = usePreferencesStore();
+
+// selector 精确订阅 — 只有 theme.mode 变化才重渲染
+const themeMode = usePreferencesStore((s) => s.preferences.theme.mode);
+
+// selector 订阅 widget
+const backToTop = usePreferencesStore((s) => s.preferences.widget.backToTop);
+```
+
+### PreferencesState 接口
+
+```typescript
+interface PreferencesState {
+  preferences: Preferences;
+  setPreferences: (overrides: DeepPartial<Preferences>) => void;  // 深度合并更新
+  resetPreferences: () => void;                                    // 重置为默认值
+  getPreference: <K extends keyof Preferences>(key: K) => Preferences[K];
 }
 ```
 
@@ -236,24 +286,19 @@ interface TabbarPreferences {
 
 ```typescript
 const {
+  // 完整偏好设置
+  preferences,   // Preferences
+
   // 分组访问
-  preferences,   // Preferences — 完整偏好设置对象
   app,           // AppPreferences
   theme,         // ThemePreferences
-  sidebar,       // SidebarPreferences
-  tabbar,        // TabbarPreferences
-  breadcrumb,    // BreadcrumbPreferences
-  header,        // HeaderPreferences
-  footer,        // FooterPreferences
-  logo,          // LogoPreferences
-  navigation,    // NavigationPreferences
+  content,       // ContentPreferences
   copyright,     // CopyrightPreferences
-  transition,    // TransitionPreferences
-  shortcutKeys,  // ShortcutKeyPreferences
   widget,        // WidgetPreferences
+  transition,    // TransitionPreferences
 
   // 计算属性
-  isDark,        // boolean — 当前是否暗色模式（含 auto 解析）
+  isDark,        // boolean — 当前是否暗色模式（auto 模式已解析系统偏好）
   isMobile,      // boolean — 当前是否移动端
 
   // 通用更新
@@ -261,115 +306,60 @@ const {
   resetPreferences,   // () => void
   getPreference,      // <K>(key: K) => Preferences[K]
 
-  // 便捷更新
-  updateTheme,   // (overrides: DeepPartial<ThemePreferences>) => void
+  // 分组便捷更新
   updateApp,     // (overrides: DeepPartial<AppPreferences>) => void
+  updateTheme,   // (overrides: DeepPartial<ThemePreferences>) => void
+  updateContent, // (overrides: DeepPartial<ContentPreferences>) => void
+  updateWidget,  // (overrides: DeepPartial<WidgetPreferences>) => void
+
+  // 快捷方法
   toggleTheme,   // () => void — 明暗切换
-  setThemeMode,  // (mode) => void — 设置主题模式
-  setLanguage,   // (locale) => void — 设置语言
+  setThemeMode,  // (mode: ThemeModeType) => void
+  setLanguage,   // (locale: SupportedLanguagesType) => void
 } = usePreferences();
 ```
 
-### `usePreferencesStore` — Zustand Store（精细订阅）
+### `useThemeConfig()` — Tailwind CSS 主题配置
 
-适用于需要精确控制重渲染的场景，使用 selector 只订阅需要的字段：
+返回 Tailwind CSS 变量风格的主题配置信息（无 AntD 依赖）：
 
-```tsx
-import { usePreferencesStore } from '@/core/preferences';
-
-// 只订阅 theme.mode（mode 变化才重渲染）
-const themeMode = usePreferencesStore((s) => s.preferences.theme.mode);
-
-// 只订阅 sidebar.collapsed
-const collapsed = usePreferencesStore((s) => s.preferences.sidebar.collapsed);
-
-// 更新偏好设置
-const setPreferences = usePreferencesStore((s) => s.setPreferences);
-setPreferences({ theme: { mode: 'dark' } });
-
-// 非组件环境中使用
-const locale = usePreferencesStore.getState().preferences.app.locale;
+```typescript
+interface ThemeConfig {
+  isDark: boolean;          // 是否暗色模式
+  isCompact: boolean;       // 是否紧凑模式
+  colorPrimary: string;     // 主色调（HSL raw）
+  radius: string;           // 圆角
+}
 ```
-
-### `useThemeConfig()` — AntD 主题配置
-
-生成 Ant Design 的 `ThemeConfig`，已自动处理暗色算法和紧凑算法：
 
 ```tsx
 import { useThemeConfig } from '@/core/preferences';
-import { ConfigProvider } from 'antd';
 
-const themeConfig = useThemeConfig();
-// → { algorithm: [darkAlgorithm, compactAlgorithm], token: { colorPrimary, ... } }
-
-<ConfigProvider theme={themeConfig}>
-  <App />
-</ConfigProvider>
+const { isDark, colorPrimary, radius } = useThemeConfig();
 ```
 
-> 通常不需要手动使用此 Hook，`ThemeProvider` 组件已内部集成。
+> 主题渲染由 `src/components/layout/ThemeClientProvider.tsx` 负责，它读取 `usePreferences()` 的 `isDark` 注入对应色板的 CSS 变量。
 
-### `useLocale()` — 语言切换
+### `usePreferencesLocale()` — 语言切换
 
-提供语言相关的快捷方法和 Ant Design locale 对象：
+提供语言相关的快捷方法，整合了 next-intl URL locale 和 preferences 持久化 locale：
 
 ```tsx
-import { useLocale } from '@/core/preferences';
+import { usePreferencesLocale } from '@/core/preferences';
 
 const {
-  locale,          // 'zh-CN' | 'en-US'
-  localeName,      // 显示名称（如"简体中文"）
-  antdLocale,      // Ant Design locale 对象
-  isZhCN,          // boolean
-  isEnUS,          // boolean
-  setLocale,       // (locale) => void
-  toggleLocale,    // () => void — 中英切换
-  supportedLocales,// [{ value, label }]
-} = useLocale();
+  locale,           // SupportedLanguagesType — 当前语言（优先 next-intl URL locale）
+  isZhCN,           // boolean
+  isEnUS,           // boolean
+  setLocale,        // (locale: SupportedLanguagesType) => void
+  setZhCN,          // () => void
+  setEnUS,          // () => void
+  toggleLocale,     // () => void — 中英切换
+  supportedLocales, // [{ value, label }]
+} = usePreferencesLocale();
 ```
 
----
-
-## 组件
-
-### `<ThemeProvider>` — 全局主题 Provider
-
-必须在应用最外层使用，负责：
-
-1. **AntD 主题切换**：根据 `theme.mode` 自动应用 `darkAlgorithm` / `defaultAlgorithm`
-2. **系统主题同步**：`mode='auto'` 时监听 `prefers-color-scheme` 变化
-3. **CSS 滤镜**：色弱模式（`invert`）和灰色模式（`grayscale`）
-4. **水印**：根据 `app.watermark` 显示/隐藏水印
-5. **国际化**：根据 `app.locale` 注入 AntD locale
-6. **根元素样式**：同步背景色和文字颜色，防止暗色模式白闪
-
-```tsx
-import { ThemeProvider } from '@/core/preferences';
-
-// 在 App.tsx 中包裹
-<ThemeProvider>
-  <AppRouter />
-</ThemeProvider>
-```
-
-### `<PreferencesPanel>` — 偏好设置面板
-
-内置的设置 Drawer，包含四个 Tab 页：
-
-| Tab | 面板 | 配置项 |
-|-----|------|--------|
-| 外观 | `AppearancePanel` | 主题色、明暗模式、圆角、半深色侧边栏/顶栏 |
-| 布局 | `LayoutPanel` | 布局方式、侧边栏、标签页风格、面包屑、导航风格 |
-| 快捷键 | `ShortcutKeyPanel` | 全局搜索/偏好设置/锁屏/注销快捷键开关 |
-| 通用 | `GeneralPanel` | 水印、色弱模式、灰色模式、默认头像、检查更新 |
-
-```tsx
-import { PreferencesPanel } from '@/core/preferences';
-
-const [open, setOpen] = useState(false);
-
-<PreferencesPanel open={open} onClose={() => setOpen(false)} />
-```
+> **命名说明**：导出名是 `usePreferencesLocale` 而非 `useLocale`，避免与 next-intl 的 `useLocale` 冲突。
 
 ---
 
@@ -379,8 +369,7 @@ const [open, setOpen] = useState(false);
 
 - **存储键名**：`app-preferences`
 - **存储内容**：`preferences` 对象（`partialize` 只持久化偏好设置数据，不持久化方法）
-- **合并策略**：启动时 `persist` 中间件自动将 localStorage 中的值与 `defaultPreferences` 浅合并
-- **深度合并**：运行时通过 `setPreferences()` 更新时使用 `mergeDeep` 进行深度合并
+- **合并策略**：运行时通过 `setPreferences()` 更新时使用 `mergeDeep` 进行深度合并
 
 ```typescript
 // 查看当前存储的偏好设置
@@ -405,8 +394,8 @@ setPreferences({ theme: { mode: 'dark' } });
 // 同时更新多个分组
 setPreferences({
   app: { compact: true },
-  sidebar: { collapsed: true, width: 200 },
-  tabbar: { styleType: 'card' },
+  content: { compactMode: true },
+  widget: { backToTop: false },
 });
 ```
 
@@ -424,7 +413,7 @@ setPreferences({
 
 ## 典型场景
 
-### 场景一：根据主题模式切换逻辑
+### 场景一：根据主题模式切换样式
 
 ```tsx
 import { usePreferences } from '@/core/preferences';
@@ -441,44 +430,67 @@ const MyComponent = () => {
 };
 ```
 
-### 场景二：非组件环境读取偏好设置
-
-```typescript
-import { usePreferencesStore } from '@/core/preferences';
-
-// 在工具函数、service 层等非组件环境中
-const locale = usePreferencesStore.getState().preferences.app.locale;
-const isDark = usePreferencesStore.getState().preferences.theme.mode === 'dark';
-```
-
-### 场景三：精确订阅避免不必要渲染
+### 场景二：精确订阅避免不必要渲染
 
 ```tsx
 import { usePreferencesStore } from '@/core/preferences';
 
-// 只订阅 sidebar.collapsed — 只有该字段变化时才重渲染
-const Sidebar = () => {
-  const collapsed = usePreferencesStore((s) => s.preferences.sidebar.collapsed);
-  return <aside>{collapsed ? '已折叠' : '展开'}</aside>;
+// 只订阅 theme.mode — 只有该字段变化时才重渲染
+const ThemeIndicator = () => {
+  const themeMode = usePreferencesStore((s) => s.preferences.theme.mode);
+  return <span>{themeMode}</span>;
 };
 ```
 
-### 场景四：在 MainLayout 中使用各分组配置
+### 场景三：语言切换
+
+```tsx
+import { usePreferencesLocale } from '@/core/preferences';
+
+const LanguageSwitcher = () => {
+  const { locale, toggleLocale, isZhCN } = usePreferencesLocale();
+
+  return (
+    <button onClick={toggleLocale}>
+      {isZhCN ? 'English' : '中文'}
+    </button>
+  );
+};
+```
+
+### 场景四：使用 Tailwind 主题配置
+
+```tsx
+import { useThemeConfig } from '@/core/preferences';
+
+const StyledCard = () => {
+  const { isDark, colorPrimary, radius } = useThemeConfig();
+
+  return (
+    <div style={{
+      borderRadius: radius,
+      borderColor: `hsl(${colorPrimary})`,
+    }}>
+      卡片内容
+    </div>
+  );
+};
+```
+
+### 场景五：控制功能部件显示
 
 ```tsx
 import { usePreferences } from '@/core/preferences';
 
-const MainLayout = () => {
-  const { sidebar, header, tabbar, breadcrumb, widget } = usePreferences();
+const Layout = () => {
+  const { widget } = usePreferences();
 
   return (
-    <Layout>
-      {header.enable && <Header mode={header.mode} />}
-      {sidebar.enable && <Sider collapsed={sidebar.collapsed} width={sidebar.width} />}
-      {tabbar.enable && <TabsBar styleType={tabbar.styleType} />}
-      {breadcrumb.enable && <Breadcrumbs />}
-      {widget.refresh && <RefreshButton />}
-    </Layout>
+    <>
+      {widget.backToTop && <BackToTopButton />}
+      {widget.themeToggle && <ThemeToggleButton />}
+      {widget.globalSearch && <SearchButton />}
+    </>
   );
 };
 ```
@@ -491,15 +503,9 @@ const MainLayout = () => {
 
 确认使用的是 `usePreferences()` 或 `usePreferencesStore()` Hook（React 组件内），而非直接操作 `localStorage`。Zustand 的响应式机制依赖 Hook 订阅。
 
-### Q2: 如何在非组件环境（service、工具函数）中读取偏好设置？
+### Q2: `usePreferencesStore` 报错 "must be used within PreferencesStoreProvider"？
 
-使用 Zustand 的 `getState()` 静态方法：
-
-```typescript
-import { usePreferencesStore } from '@/core/preferences';
-
-const themeMode = usePreferencesStore.getState().preferences.theme.mode;
-```
+`usePreferencesStore` 通过 React Context 获取 store 实例，必须在应用根节点用 `PreferencesStoreContext.Provider` 包裹并传入 `createPreferencesStore()` 创建的 store。
 
 ### Q3: 刷新后偏好设置丢失？
 
@@ -513,34 +519,34 @@ const themeMode = usePreferencesStore.getState().preferences.theme.mode;
 1. 在 `types/app.ts` 中对应的接口添加字段
 2. 在 `config/default.ts` 的 `defaultPreferences` 中添加默认值
 3. TypeScript 会自动提示所有使用 `setPreferences` 的地方需要更新
+4. 如果需要新的分组，在 `types/preferences-root.ts` 的 `Preferences` 接口中添加
 
 ### Q5: `auto` 主题模式如何工作？
 
 当 `theme.mode` 设为 `'auto'` 时：
-- `ThemeProvider` 会监听系统 `prefers-color-scheme: dark` 媒体查询
-- 系统切换明暗时自动生效
-- `usePreferences()` 的 `isDark` 计算属性已自动处理 `auto` 模式
+- `usePreferences()` 通过 `useSyncExternalStore` 监听系统 `prefers-color-scheme: dark` 媒体查询
+- H5 端：使用 `window.matchMedia` 监听变化
+- 小程序端：使用 `Taro.onThemeChange` 监听变化
+- `isDark` 计算属性已自动处理 `auto` 模式
+- `ThemeClientProvider` 读取 `isDark` 注入对应色板的 CSS 变量
 
 ---
 
 ## 注意事项
 
-1. **使用 `DeepPartial` 更新**：`setPreferences` 接受 `DeepPartial<Preferences>`，只需传入要修改的字段
-2. **不要直接修改 store**：始终通过 `setPreferences()` 更新，确保 `mergeDeep` 正确执行和持久化触发
-3. **精确订阅**：在性能敏感组件中使用 `usePreferencesStore((s) => s.preferences.xxx)` 选择器，避免整个 preferences 对象变化时重渲染
-4. **`ThemeProvider` 位置**：必须在最外层（`App.tsx`），在 `ConfigProvider` 之上的层级
-5. **主题色格式**：颜色值使用 HSL 格式（如 `hsl(212 100% 45%)`），与 CSS 变量兼容
-6. **偏好设置面板**：通过 `app.enablePreferences` 控制是否显示设置入口，设为 `false` 可隐藏
+1. **Context 依赖**：所有 hooks 必须在 `PreferencesStoreContext.Provider` 内使用
+2. **使用 `DeepPartial` 更新**：`setPreferences` 接受 `DeepPartial<Preferences>`，只需传入要修改的字段
+3. **不要直接修改 store**：始终通过 `setPreferences()` 更新，确保 `mergeDeep` 正确执行和持久化触发
+4. **精确订阅**：在性能敏感组件中使用 `usePreferencesStore((s) => s.preferences.xxx)` 选择器，避免整个 preferences 对象变化时重渲染
+5. **主题色格式**：颜色值使用 HSL raw 格式（如 `"142.1 76.2% 36.3%"`），由 CSS `hsl()` 函数组合
+6. **主题渲染分离**：本模块只管理偏好数据，CSS 变量注入由 `src/components/layout/ThemeClientProvider.tsx` 负责
 
 ---
 
 ## 相关文件
 
-- [Store](./store/index.ts) — usePreferencesStore 状态管理
+- [Store](./store/index.ts) — createPreferencesStore + PreferencesStoreContext + usePreferencesStore
 - [默认配置](./config/default.ts) — defaultPreferences 默认值
 - [类型定义](./types/) — 所有偏好设置接口
-- [ThemeProvider](./components/ThemeProvider/index.tsx) — 全局主题 Provider
-- [PreferencesPanel](./components/PreferencesPanel/index.tsx) — 设置面板
-- [深度合并工具](./utils/merge.ts) — mergeDeep
-- [i18n 语言同步](../i18n/hooks/useLocaleSync.ts) — 语言偏好与 i18n 同步
-- [引导入口](../../bootstrap.ts) — 初始化时读取 locale
+- [深度合并工具](./utils/merge.ts) — mergeDeep + isPlainObject
+- [ThemeClientProvider](../../components/layout/ThemeClientProvider.tsx) — 主题 CSS 变量注入（外部模块）

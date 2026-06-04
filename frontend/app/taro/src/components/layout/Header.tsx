@@ -1,11 +1,11 @@
 import {View, Text, Image} from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import {useEffect, useState} from 'react';
 import {useTranslations} from '@/lib/next-intl-compat';
 import logoImage from '@/assets/images/logo.png';
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {MobileNavTrigger} from './MobileNav';
-import Taro from '@tarojs/taro';
-import {useEffect, useState} from 'react';
 
 export default function Header() {
     const appT = useTranslations('app');

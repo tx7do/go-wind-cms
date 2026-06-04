@@ -1,5 +1,6 @@
-import type {DeepPartial} from "../types";
 import {isValidElement} from "react";
+
+import type {DeepPartial} from "../types";
 
 /**
  * 深度合并对象

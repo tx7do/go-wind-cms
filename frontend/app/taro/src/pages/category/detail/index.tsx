@@ -13,7 +13,6 @@ import {
   fetchCategory,
   getCategoryName,
   getCategoryDescription,
-  getCategoryThumbnail,
 } from '@/api/hooks/category';
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
@@ -85,7 +84,6 @@ export default function CategoryDetailPage() {
 
   const categoryName = getCategoryName(detail);
   const categoryDesc = getCategoryDescription(detail);
-  const thumbnail = getCategoryThumbnail(detail);
   const hasChildren = childCategories.length > 0;
 
   return (
@@ -156,7 +154,6 @@ export default function CategoryDetailPage() {
             loading={false}
             showSkeleton={false}
             columns={2}
-            gap={16}
             onCategoryClick={handleViewChildCategory}
           />
         </View>
