@@ -4,116 +4,69 @@
 
 /* ========== Tailwind 主题变量（shadcn/ui 兼容） ========== */
 
-/* ==========================================
- * 浅色模式 (Light Mode) — 疾風掠影
- * ========================================== */
-:root {
-    /* 核心背景：帶有微弱微風動感的淺冷灰藍 */
-    --background: 210 40% 98%;      /* #F4F7F9 */
-    --foreground: 224 71.4% 4.1%;   /* #020617 */
-
-    /* 卡片：純白浮空感 */
+/* 浅色模式 */
+page {
+    --background: 210 40% 98%;
+    --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 224 71.4% 4.1%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-
-    /* 核心主色：極光電能綠 (Voltage Green) */
-    --primary: 142.1 76.2% 36.3%;   /* #16A34A */
-    --primary-foreground: 0 0% 100%; /* 纯白：绿底按钮上的文字颜色 */
-
+    --primary: 142.1 76.2% 36.3%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 93.1%;
     --secondary-foreground: 224 71.4% 4.1%;
-
-    --muted: 210 40% 93.1%;         /* #E5EDF2 */
-    --muted-foreground: 215.4 16.3% 46.9%; /* #64748B */
-
-    /* 點綴與懸停狀態：賽博科技藍 */
-    --accent: 217.2 91.2% 59.8%;    /* #3B82F6 */
+    --muted: 210 40% 93.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 217.2 91.2% 59.8%;
     --accent-foreground: 224 71.4% 4.1%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 0 0% 98%;
-
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
-
-    --border: 214.3 32% 88%;        /* #E2E8F0 */
+    --border: 214.3 32% 88%;
     --input: 214.3 32% 88%;
     --ring: 142.1 76.2% 36.3%;
-
     --radius: 0.6rem;
-
-    /* 布局尺寸 */
     --layout-header-height: 64px;
     --layout-footer-height: 200px;
     --layout-max-width: 1200px;
 }
 
-/* ==========================================
- * 深色模式 (Dark Mode) — 暗夜疾行
- * ========================================== */
+/* 深色模式 */
 .dark {
-    /* 核心背景：深空夜藍（替換純死黑，增加空氣感） */
-    --background: 224 45% 6%;       /* #050b14 深邃但通透的夜空藍黑 */
-    --foreground: 210 20% 98%;      /* #F8FAFC */
-
-    /* 卡片：磨砂玻璃浮空塊（比背景稍亮一階） */
-    --card: 222.2 47.4% 11%;        /* #0d1626 半透明深灰藍 */
+    --background: 224 45% 6%;
+    --foreground: 210 20% 98%;
+    --card: 222.2 47.4% 11%;
     --card-foreground: 210 20% 98%;
-
     --popover: 222.2 47.4% 11%;
     --popover-foreground: 210 20% 98%;
-
-    /* 核心主色：霓虹電能綠 (Neon Voltage) */
-    --primary: 142.1 86.2% 50.3%;   /* #22C55E */
-    --primary-foreground: 0 0% 100%; /* 纯白：绿底按钮上的文字颜色 */
-
+    --primary: 142.1 86.2% 50.3%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 217.2 32.6% 13.5%;
     --secondary-foreground: 210 20% 98%;
-
-    --muted: 217.2 32.6% 13.5%;     /* #1E293B */
-    --muted-foreground: 215 20.2% 65.1%; /* #94A3B8 */
-
-    /* 點綴：深海電光藍 */
-    --accent: 217.2 91.2% 59.8%;    /* #3B82F6 */
+    --muted: 217.2 32.6% 13.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 91.2% 59.8%;
     --accent-foreground: 210 20% 98%;
-
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
-
     --success: 142.1 86.2% 50.3%;
     --success-foreground: 0 0% 98%;
-
     --warning: 38 92% 55%;
     --warning-foreground: 0 0% 98%;
-
-    --border: 217.2 32.6% 17.5%;    /* #334155 */
+    --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142.1 86.2% 50.3%;
 }
 
-/* ========== 基础重置 ========== */
-html {
-    overflow-y: scroll;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-}
-
-@layer base {
-    *, ::before, ::after {
-        box-sizing: border-box;
-    }
-
-    body {
-        overflow-x: hidden;
-        background-color: hsl(var(--background));
-        color: hsl(var(--foreground));
-    }
+/* ========== 全局基础样式 ========== */
+page {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    box-sizing: border-box;
 }
 
 /* ========== 全局过渡动画 ========== */
@@ -131,11 +84,8 @@ html {
     user-select: none;
 }
 
-/* ========== 隐藏滚动条（用于横向流滚动容器） ========== */
+/* ========== 隐藏滚动条 ========== */
 .no-scrollbar {
-    &::-webkit-scrollbar {
-        display: none;
-    }
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -164,10 +114,6 @@ html {
 /* ========== Categories Grid / Carousel Visibility ========== */
 .desktop-grid { display: grid; }
 .mobile-carousel { display: none; }
-@media (max-width: 900px) {
-    .desktop-grid { display: none; }
-    .mobile-carousel { display: block; }
-}
 
 /* ========== Scroll Reveal Section ========== */
 .scroll-reveal .section-header {
@@ -201,15 +147,7 @@ html {
     animation: theme-icon-spin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ========== Tailwind v4 基础层补充 ========== */
-@layer base {
-    * {
-        border-color: hsl(var(--border));
-    }
-    body {
-        font-feature-settings: 'rlig' 1, 'calt' 1;
-    }
-}
+/* ========== Tailwind 基础层补充 ========== */
 
 /* ========== Hero 浮动动画 ========== */
 @keyframes float-slow {

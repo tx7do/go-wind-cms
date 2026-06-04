@@ -54,14 +54,26 @@ module.exports = {
       },
     },
   },
+  // 小程序不支持的关键字选择器：*, ::before, ::after, ::backdrop, :hover, :focus 等
   corePlugins: {
     preflight: false,
     space: false,
     divideWidth: false,
     divideColor: false,
+    divideStyle: false,
     ringWidth: false,
     ringColor: false,
+    ringOffsetWidth: false,
+    ringOffsetColor: false,
     appearance: false,
     cursor: false,
+    placeholderColor: false,
+    outline: false,
+  },
+  // 模式：小程序不支持 @media，通过 weapp-tailwindcss 的 deviceRatio 适配
+  variants: {
+    extend: {
+      // 只保留小程序支持的变体
+    },
   },
 }
