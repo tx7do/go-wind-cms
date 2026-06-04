@@ -3,34 +3,32 @@ import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
 import {AppEmpty} from '@/components/ui';
+import {Skeleton} from '@/components/ui/skeleton';
+import {Button} from '@/components/ui/button';
 import XIcon from '@/plugins/xicon';
-import {Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext} from '@/components/ui/pagination';
-import {useI18nRouter} from "@/i18n/helpers";
 
 import {fetchListTags, getTagTranslation} from '@/api/hooks/tag';
 import {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
+import {useTranslations} from '@/lib/next-intl-compat';
+import {useI18nRouter} from '@/i18n/helpers';
+
 export default function TagListPage() {
   const {t} = useTranslation();
-
+  const pt = useTranslations('page.tags');
   const router = useI18nRouter();
 
   const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState<contentservicev1_Tag[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, _setPageSize] = useState(20);
+  const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
 
   async function loadTags() {
     setLoading(true);
     try {
       const res = await fetchListTags({
-        paging: {
-          page: page,
-          pageSize: pageSize,
-        },
-        formValues: {
-          status: 'TAG_STATUS_ACTIVE'
-        },
+        paging: {page, pageSize},
+        formValues: {status: 'TAG_STATUS_ACTIVE'},
         fieldMask: undefined,
         orderBy: undefined,
       }) as contentservicev1_ListTagResponse;
@@ -44,107 +42,133 @@ export default function TagListPage() {
   }
 
   function handleTagClick(id: number) {
-    router.push(`/tag/${id}`);
-  }
-
-  function handlePageChange(newPage: number) {
-    setPage(newPage);
-    loadTags();
+    router.push(`/tag/detail?id=${id}`);
   }
 
   useEffect(() => {
     loadTags();
   }, [page, pageSize]);
 
-  useEffect(() => {
-    if (page !== 1) {
-      setPage(1);
-    }
-  }, [pageSize]);
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <View className='tag-list-page'>
-      {/* Hero Section */}
-      <View className='hero-section'>
-        <View className='hero-content'>
-          <Text className='hero-title'>{t('page.tags.tags_list')}</Text>
-          <Text className='hero-subtitle'>{t('page.tags.explore_all')}</Text>
-          <View className='tag-stats'>
-            <View className='stat-item'>
-              <XIcon name='carbon:tag' size={20} />
-              <Text>{total} {t('page.tags.total_tags')}</Text>
-            </View>
-          </View>
+    <View className='min-h-screen w-full bg-pageBg pb-[240rpx]'>
+      {/* 页面标题 - px-[24rpx] 与 Header/卡片网格对齐 */}
+      <View className='bg-cardBg px-[24rpx] pt-[40rpx] pb-[24rpx] border-b-[1rpx] border-splitLine'>
+        <Text className='text-title font-bold text-textMain'>{t('page.tags.tags_list')}</Text>
+        <Text className='text-desc text-textSec block mt-[8rpx]'>{t('page.tags.explore_all')}</Text>
+        <View className='flex items-center gap-[12rpx] mt-[16rpx]'>
+          <XIcon name='carbon:tag' size={14} className='text-textSec' />
+          <Text className='text-tips text-textSec'>{total} {t('page.tags.total_tags')}</Text>
         </View>
       </View>
 
-      {/* Tags Grid */}
-      <View className='page-container'>
-        {/* Loading Skeleton - TODO: 实现 Taro 骨架屏 */}
+      {/* 标签网格 */}
+      <View className='px-[24rpx] pt-[24rpx]'>
         {loading ? (
-          <View className='tags-grid'>
-            <Text>{t('common.loading')}</Text>
+          <View className='grid grid-cols-2 gap-[24rpx]'>
+            {Array.from({length: 6}).map((_, i) => (
+              <View key={i} className='rounded-[16rpx] bg-cardBg overflow-hidden'>
+                <Skeleton className='w-full h-[200rpx]' />
+              </View>
+            ))}
           </View>
         ) : (
           <>
             {tags.length > 0 && (
-              <View className='tags-grid'>
-                {tags.map((tag) => (
-                  <View
-                    key={tag.id}
-                    className='tag-card'
-                    style={{
-                      borderColor: tag.color || 'rgba(0, 0, 0, 0.08)',
-                      background: `linear-gradient(135deg, ${tag.color || '#f0f0f0'}15 0%, #ffffff 100%)`
-                    }}
-                    onClick={() => handleTagClick(tag.id || 0)}
-                  >
-                    <View className='tag-content'>
-                      <Text>{getTagTranslation(tag)?.name || t('page.tags.tag_untitled')}</Text>
-                      <Text className='tag-description'>
-                        {getTagTranslation(tag)?.description || ''}
-                      </Text>
-                      <View className='tag-meta'>
-                        <XIcon name='carbon:document' size={16} />
-                        <Text>
-                          {tag.postCount || 0} {t('page.posts.articles')}
-                        </Text>
+              <View className='grid grid-cols-2 gap-[24rpx]'>
+                {tags.map((tag) => {
+                  const tagName = getTagTranslation(tag)?.name || t('page.tags.tag_untitled');
+                  const tagDesc = getTagTranslation(tag)?.description || '';
+
+                  return (
+                    <View
+                      key={tag.id}
+                      className='flex flex-col rounded-[16rpx] bg-cardBg overflow-hidden tap-active'
+                      style={{
+                        borderTop: `3px solid ${tag.color || '#1677ff'}`,
+                      }}
+                      onClick={() => handleTagClick(tag.id || 0)}
+                      hoverClass='opacity-80'
+                    >
+                      <View className='flex flex-col p-[24rpx]'>
+                        {/* 标题行 */}
+                        <View className='flex items-center gap-[12rpx]'>
+                          <View
+                            className='w-[40rpx] h-[40rpx] rounded-full flex items-center justify-center flex-shrink-0'
+                            style={{backgroundColor: `${tag.color || '#1677ff'}20`}}
+                          >
+                            <XIcon name='carbon:tag' size={16} style={{color: tag.color || '#1677ff'}} />
+                          </View>
+                          <Text
+                            className='text-body font-bold text-textMain flex-1 min-w-0'
+                            style={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {tagName}
+                          </Text>
+                        </View>
+
+                        {/* 描述文字 - 使用较亮的颜色提升暗色模式可读性 */}
+                        {tagDesc && (
+                          <Text
+                            className='text-tips leading-[1.6] mt-[12rpx] mb-[16rpx]'
+                            style={{
+                              color: 'var(--color-text-sec)',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                            }}
+                          >
+                            {tagDesc}
+                          </Text>
+                        )}
+
+                        {/* 底部篇数 - 图标与文字间距充足 */}
+                        <View className='flex items-center gap-[12rpx]'>
+                          <XIcon name='carbon:document' size={12} className='text-textSec' />
+                          <Text className='text-tips text-textSec'>
+                            {tag.postCount || 0} {t('page.posts.articles')}
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                ))}
-                {tags.length === 0 && total > 0 && (
-                  <AppEmpty description={t('page.tags.no_tags_in_page')} />
-                )}
+                  );
+                })}
               </View>
             )}
 
             {!loading && tags.length === 0 && total === 0 && (
-              <AppEmpty inContainer description={t('page.tags.no_tags')} />
+              <AppEmpty description={t('page.tags.no_tags')} />
             )}
 
-            {total > pageSize && (
-              <View className='mt-8'>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious onClick={() => page > 1 && handlePageChange(page - 1)} />
-                    </PaginationItem>
-                    {Array.from({length: Math.ceil(total / pageSize)}, (_, i) => i + 1)
-                      .filter(p => p === 1 || p === Math.ceil(total / pageSize) || Math.abs(p - page) <= 1)
-                      .map(p => (
-                        <PaginationItem key={p}>
-                          <PaginationLink isActive={p === page} onClick={() => handlePageChange(p)}>
-                            {p}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))
-                    }
-                    <PaginationItem>
-                      <PaginationNext onClick={() => page < Math.ceil(total / pageSize) && handlePageChange(page + 1)} />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+            {/* 分页 */}
+            {totalPages > 1 && (
+              <View className='flex items-center justify-center gap-[24rpx] py-[48rpx]'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  disabled={page <= 1}
+                  onClick={() => setPage(page - 1)}
+                >
+                  {pt('previous') || '上一页'}
+                </Button>
+                <Text className='text-desc text-textSec'>
+                  {page} / {totalPages}
+                </Text>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  disabled={page >= totalPages}
+                  onClick={() => setPage(page + 1)}
+                >
+                  {pt('next') || '下一页'}
+                </Button>
               </View>
             )}
           </>

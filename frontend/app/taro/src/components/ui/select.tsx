@@ -59,6 +59,9 @@ function SelectContent({children, className, position}: {
     const {open, setOpen} = React.useContext(SelectContext);
     if (!open) return null;
 
+    // position 参数保留用于将来扩展（如 'popper' | 'item-aligned'）
+    void position;
+
     return (
         <View className='fixed inset-0 z-50' onClick={() => setOpen(false)}>
             <View

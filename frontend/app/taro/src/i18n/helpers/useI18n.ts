@@ -1,6 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {usePreferencesStore} from '@/core/preferences/store';
 import {useLoadingStore} from '@/store/core/loading/store';
+import type {SupportedLanguagesType} from '@/core/preferences/types/layout';
 
 
 /**
@@ -14,7 +15,7 @@ export function useI18n(namespace: string = 'common') {
 
   // 同步 locale 到 preferences store
   if (preferencesStore.preferences.app.locale !== i18n.language) {
-    preferencesStore.setPreferences({app: {locale: i18n.language}});
+    preferencesStore.setPreferences({app: {locale: i18n.language as SupportedLanguagesType}});
   }
 
   // 切换语言
@@ -25,7 +26,7 @@ export function useI18n(namespace: string = 'common') {
     // 切换语言
     i18n.changeLanguage(targetLocale).then(() => {
       // 保存到 preferences store（自动持久化）
-      preferencesStore.setPreferences({app: {locale: targetLocale}});
+      preferencesStore.setPreferences({app: {locale: targetLocale as SupportedLanguagesType}});
       loadingStore.finish();
       console.log('[useI18n] Locale changed successfully');
     });
