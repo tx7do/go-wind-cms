@@ -126,7 +126,7 @@ export default function PostDetailPage() {
 
     // ===== 正常渲染 =====
     return (
-        <View className='min-h-screen w-full bg-pageBg pb-[200rpx]'>
+        <View className='min-h-screen w-full bg-pageBg pb-[300rpx]'>
             {/* 封面图 */}
             {displayThumbnail && (
                 <View className='w-full h-[400rpx] overflow-hidden'>
@@ -199,21 +199,21 @@ export default function PostDetailPage() {
             )}
 
             {/* 评论区 */}
-            <View className='mt-[16rpx]'>
+            <View className='mt-[24rpx]'>
                 <CommentSection objectId={postId} contentType='CONTENT_TYPE_POST' onUpdateComments={() => {}} />
             </View>
 
             {/* 相关文章 */}
             {relatedPostsQuery && (
-                <View className='mt-[16rpx]'>
+                <View className='mt-[24rpx]'>
                     {/* 区块标题 */}
-                    <View className='flex items-center gap-[8rpx] bg-pageBg px-[24rpx] py-[14rpx]'>
+                    <View className='flex items-center gap-[8rpx] bg-pageBg px-[32rpx] py-[14rpx]'>
                         <XIcon name='carbon:document' size={16} className='text-primary' />
                         <Text className='text-desc font-bold text-textMain'>
                             {t('page.post_detail.related_posts')}
                         </Text>
                     </View>
-                    <View className='px-[24rpx] py-[16rpx]'>
+                    <View className='px-[32rpx] py-[16rpx]'>
                         <PostList
                           queryParams={relatedPostsQuery}
                           fieldMask='id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'
@@ -229,7 +229,7 @@ export default function PostDetailPage() {
             )}
 
             {/* 返回按钮 */}
-            <View className='px-[24rpx] py-[32rpx]'>
+            <View className='px-[32rpx] py-[32rpx]'>
                 <View
                   className='flex items-center justify-center gap-[8rpx] py-[20rpx] rounded-[12rpx] bg-cardBg border-[1rpx] border-splitLine'
                   onClick={() => router.back()}

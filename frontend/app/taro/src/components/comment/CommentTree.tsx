@@ -234,7 +234,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                         {/* 回复表单 - 内嵌在评论下方 */}
                         {replyingCommentId === comment.id && (
                             <View className='mt-[12rpx] ml-[64rpx] rounded-[8rpx] p-[16rpx]'>
-                                <View className='rounded-[8rpx] bg-pageBg p-[12rpx]'>
+                                <View className='rounded-[8rpx] bg-pageBg border-[1rpx] border-splitLine p-[12rpx]'>
                                     <Textarea
                                       value={replyContent}
                                       onInput={(e) => setReplyContent(e.detail.value ?? '')}

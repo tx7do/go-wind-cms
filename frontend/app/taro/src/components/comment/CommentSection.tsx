@@ -224,11 +224,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         return (
             <View className='flex flex-col'>
                 {/* 标题骨架 */}
-                <View className='flex items-center gap-[8rpx] bg-pageBg px-[24rpx] py-[16rpx]'>
+                <View className='flex items-center gap-[8rpx] bg-pageBg px-[32rpx] py-[16rpx]'>
                     <Skeleton className='h-[36rpx] w-[240rpx] rounded-[8rpx]' />
                 </View>
                 {/* 表单骨架 */}
-                <View className='bg-cardBg p-[24rpx]'>
+                <View className='bg-cardBg p-[32rpx]'>
                     <Skeleton className='h-[80rpx] w-full rounded-[12rpx] mb-[16rpx]' />
                     <View className='flex justify-end'>
                         <Skeleton className='h-[56rpx] w-[160rpx] rounded-[8rpx]' />
@@ -236,7 +236,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 </View>
                 {/* 评论骨架 */}
                 {Array.from({length: 2}).map((_, i) => (
-                    <View key={i} className='bg-cardBg p-[24rpx] mt-[12rpx]'>
+                    <View key={i} className='bg-cardBg p-[32rpx] mt-[12rpx]'>
                         <View className='flex items-center gap-[12rpx] mb-[12rpx]'>
                             <Skeleton className='h-[56rpx] w-[56rpx] rounded-full' />
                             <Skeleton className='h-[28rpx] w-[140rpx] rounded-[8rpx]' />
@@ -252,7 +252,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     return (
         <View className='flex flex-col'>
             {/* 区块标题 */}
-            <View className='flex items-center justify-between bg-pageBg px-[24rpx] py-[14rpx]'>
+            <View className='flex items-center justify-between bg-pageBg px-[32rpx] py-[14rpx]'>
                 <View className='flex items-center gap-[8rpx]'>
                     <XIcon name='carbon:chat' size={18} className='text-primary' />
                     <Text className='text-desc font-bold text-textMain'>
@@ -262,21 +262,21 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             </View>
 
             {/* 评论表单 */}
-            <View className='bg-cardBg px-[24rpx] py-[20rpx]'>
+            <View className='bg-cardBg px-[32rpx] py-[20rpx]'>
                 {/* 评论输入框 - 点击展开 */}
                 {!formExpanded ? (
                     <View
-                      className='flex items-center gap-[12rpx] min-h-[72rpx] px-[20rpx] rounded-[12rpx] bg-pageBg'
+                      className='flex items-center gap-[12rpx] min-h-[72rpx] px-[20rpx] rounded-[12rpx] bg-pageBg border-[1rpx] border-splitLine'
                       onClick={() => setFormExpanded(true)}
                     >
-                        <XIcon name='carbon:edit' size={16} className='text-textWeak' />
-                        <Text className='text-desc text-textWeak'>{t('write_comment')}</Text>
+                        <XIcon name='carbon:edit' size={16} className='text-textThird' />
+                        <Text className='text-desc text-textThird'>{t('write_comment')}</Text>
                     </View>
                 ) : (
                     <View className='flex flex-col'>
                         {/* 昵称 + 邮箱 */}
                         <View className='flex gap-[12rpx] mb-[12rpx]'>
-                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg px-[16rpx] overflow-hidden'>
+                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg border-[1rpx] border-splitLine px-[16rpx] overflow-hidden'>
                                 <XIcon name='carbon:user-avatar' size={14} className='text-textWeak flex-shrink-0' style={{marginRight: '8rpx'}} />
                                 <View className='flex-1'>
                                     <Input
@@ -288,7 +288,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                                     />
                                 </View>
                             </View>
-                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg px-[16rpx] overflow-hidden'>
+                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg border-[1rpx] border-splitLine px-[16rpx] overflow-hidden'>
                                 <XIcon name='carbon:email' size={14} className='text-textWeak flex-shrink-0' style={{marginRight: '8rpx'}} />
                                 <View className='flex-1'>
                                     <Input
@@ -303,7 +303,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                         </View>
 
                         {/* 评论内容 */}
-                        <View className='w-full rounded-[12rpx] bg-pageBg p-[16rpx]'>
+                        <View className='w-full rounded-[12rpx] bg-pageBg border-[1rpx] border-splitLine p-[16rpx]'>
                             <Textarea
                               value={newComment.content}
                               onInput={(e) => setNewComment({...newComment, content: e.detail.value ?? ''})}
