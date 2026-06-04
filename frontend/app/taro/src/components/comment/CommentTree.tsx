@@ -233,16 +233,18 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                         {/* 回复表单 - 内嵌在评论下方 */}
                         {replyingCommentId === comment.id && (
-                            <View className='mt-[12rpx] ml-[64rpx] bg-pageBg rounded-[8rpx] p-[16rpx]'>
-                                <Textarea
-                                  value={replyContent}
-                                  onInput={(e) => setReplyContent(e.detail.value ?? '')}
-                                  placeholder={t('write_comment')}
-                                  maxlength={1000}
-                                  className='w-full min-h-[80rpx] text-tips text-textMain bg-cardBg rounded-[8rpx] p-[12rpx]'
-                                  disabled={submitting}
-                                  focus
-                                />
+                            <View className='mt-[12rpx] ml-[64rpx] rounded-[8rpx] p-[16rpx]'>
+                                <View className='rounded-[8rpx] bg-pageBg p-[12rpx]'>
+                                    <Textarea
+                                      value={replyContent}
+                                      onInput={(e) => setReplyContent(e.detail.value ?? '')}
+                                      placeholder={t('write_comment')}
+                                      maxlength={1000}
+                                      className='w-full min-h-[80rpx] text-tips text-textMain'
+                                      disabled={submitting}
+                                      focus
+                                    />
+                                </View>
                                 <View className='flex items-center justify-between mt-[8rpx]'>
                                     <Text className='text-tips text-textThird'>
                                         {replyContent.length}/1000

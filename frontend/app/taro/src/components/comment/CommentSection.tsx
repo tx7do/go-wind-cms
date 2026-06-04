@@ -276,39 +276,45 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     <View className='flex flex-col'>
                         {/* 昵称 + 邮箱 */}
                         <View className='flex gap-[12rpx] mb-[12rpx]'>
-                            <View className='flex-1 flex items-center bg-pageBg rounded-[8rpx] px-[16rpx]'>
-                                <XIcon name='carbon:user-avatar' size={14} className='text-textWeak mr-[8rpx]' />
-                                <Input
-                                  value={newComment.authorName}
-                                  onInput={(e) => setNewComment({...newComment, authorName: e.detail.value})}
-                                  placeholder={t('nickname') + ' *'}
-                                  className='flex-1 h-[64rpx] text-tips text-textMain'
-                                  disabled={submitting}
-                                />
+                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg px-[16rpx] overflow-hidden'>
+                                <XIcon name='carbon:user-avatar' size={14} className='text-textWeak flex-shrink-0' style={{marginRight: '8rpx'}} />
+                                <View className='flex-1'>
+                                    <Input
+                                      value={newComment.authorName}
+                                      onInput={(e) => setNewComment({...newComment, authorName: e.detail.value})}
+                                      placeholder={t('nickname') + ' *'}
+                                      className='h-[64rpx] text-tips text-textMain'
+                                      disabled={submitting}
+                                    />
+                                </View>
                             </View>
-                            <View className='flex-1 flex items-center bg-pageBg rounded-[8rpx] px-[16rpx]'>
-                                <XIcon name='carbon:email' size={14} className='text-textWeak mr-[8rpx]' />
-                                <Input
-                                  value={newComment.authorEmail}
-                                  onInput={(e) => setNewComment({...newComment, authorEmail: e.detail.value})}
-                                  placeholder={t('email') + ' *'}
-                                  className='flex-1 h-[64rpx] text-tips text-textMain'
-                                  disabled={submitting}
-                                />
+                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg px-[16rpx] overflow-hidden'>
+                                <XIcon name='carbon:email' size={14} className='text-textWeak flex-shrink-0' style={{marginRight: '8rpx'}} />
+                                <View className='flex-1'>
+                                    <Input
+                                      value={newComment.authorEmail}
+                                      onInput={(e) => setNewComment({...newComment, authorEmail: e.detail.value})}
+                                      placeholder={t('email') + ' *'}
+                                      className='h-[64rpx] text-tips text-textMain'
+                                      disabled={submitting}
+                                    />
+                                </View>
                             </View>
                         </View>
 
                         {/* 评论内容 */}
-                        <Textarea
-                          value={newComment.content}
-                          onInput={(e) => setNewComment({...newComment, content: e.detail.value ?? ''})}
-                          placeholder={t('write_comment')}
-                          maxlength={1000}
-                          className='w-full min-h-[120rpx] text-desc text-textMain bg-pageBg rounded-[12rpx] p-[16rpx]'
-                          style={{lineHeight: 1.6}}
-                          disabled={submitting}
-                          focus
-                        />
+                        <View className='w-full rounded-[12rpx] bg-pageBg p-[16rpx]'>
+                            <Textarea
+                              value={newComment.content}
+                              onInput={(e) => setNewComment({...newComment, content: e.detail.value ?? ''})}
+                              placeholder={t('write_comment')}
+                              maxlength={1000}
+                              className='w-full min-h-[120rpx] text-desc text-textMain'
+                              style={{lineHeight: 1.6}}
+                              disabled={submitting}
+                              focus
+                            />
+                        </View>
 
                         {/* 操作栏 */}
                         <View className='flex items-center justify-between mt-[12rpx]'>
