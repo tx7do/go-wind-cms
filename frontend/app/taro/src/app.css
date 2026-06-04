@@ -71,6 +71,24 @@ page.dark {
     scrollbar-width: none;
 }
 
+/* ========== Taro Input/Textarea 强制背景透明 ========== */
+/* Taro 编译后 Input 和 Textarea 有默认白色背景，必须通过全局 CSS 覆盖 */
+input,
+textarea,
+.taro-input,
+.taro-textarea {
+    background-color: transparent !important;
+    color: var(--color-text-main) !important;
+}
+
+/* Placeholder 颜色 - 暗黑模式适配 */
+input::placeholder,
+textarea::placeholder,
+.taro-input::placeholder,
+.taro-textarea::placeholder {
+    color: var(--color-text-third);
+}
+
 /* ========== ContentViewer Markdown 样式 ========== */
 .content-viewer {
     font-size: 30rpx;

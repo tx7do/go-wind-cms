@@ -273,56 +273,49 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                         <Text className='text-desc text-textThird'>{t('write_comment')}</Text>
                     </View>
                 ) : (
-                    <View className='flex flex-col'>
+                    <View className='flex flex-col gap-[24rpx]'>
                         {/* 昵称 + 邮箱 */}
-                        <View className='flex gap-[12rpx] mb-[12rpx]'>
-                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg border-[1rpx] border-splitLine px-[16rpx] overflow-hidden'>
-                                <XIcon name='carbon:user-avatar' size={14} className='text-textWeak flex-shrink-0' style={{marginRight: '8rpx'}} />
-                                <View className='flex-1'>
-                                    <Input
-                                      value={newComment.authorName}
-                                      onInput={(e) => setNewComment({...newComment, authorName: e.detail.value})}
-                                      placeholder={t('nickname') + ' *'}
-                                      className='h-[64rpx] text-tips text-textMain'
-                                      disabled={submitting}
-                                    />
-                                </View>
+                        <View className='flex gap-[12rpx]'>
+                            <View className='flex-1 rounded-[8rpx] bg-pageBg border border-splitLine/60 px-[16rpx] overflow-hidden'>
+                                <Input
+                                  value={newComment.authorName}
+                                  onInput={(e) => setNewComment({...newComment, authorName: e.detail.value})}
+                                  placeholder={t('nickname')}
+                                  className='h-[64rpx] text-tips text-textMain'
+                                  disabled={submitting}
+                                />
                             </View>
-                            <View className='flex-1 flex items-center rounded-[8rpx] bg-pageBg border-[1rpx] border-splitLine px-[16rpx] overflow-hidden'>
-                                <XIcon name='carbon:email' size={14} className='text-textWeak flex-shrink-0' style={{marginRight: '8rpx'}} />
-                                <View className='flex-1'>
-                                    <Input
-                                      value={newComment.authorEmail}
-                                      onInput={(e) => setNewComment({...newComment, authorEmail: e.detail.value})}
-                                      placeholder={t('email') + ' *'}
-                                      className='h-[64rpx] text-tips text-textMain'
-                                      disabled={submitting}
-                                    />
-                                </View>
+                            <View className='flex-1 rounded-[8rpx] bg-pageBg border border-splitLine/60 px-[16rpx] overflow-hidden'>
+                                <Input
+                                  value={newComment.authorEmail}
+                                  onInput={(e) => setNewComment({...newComment, authorEmail: e.detail.value})}
+                                  placeholder={t('email')}
+                                  className='h-[64rpx] text-tips text-textMain'
+                                  disabled={submitting}
+                                />
                             </View>
                         </View>
 
                         {/* 评论内容 */}
-                        <View className='w-full rounded-[12rpx] bg-pageBg border-[1rpx] border-splitLine p-[16rpx]'>
+                        <View className='w-full rounded-[12rpx] bg-pageBg border border-splitLine/60 p-[16rpx]'>
                             <Textarea
                               value={newComment.content}
                               onInput={(e) => setNewComment({...newComment, content: e.detail.value ?? ''})}
                               placeholder={t('write_comment')}
                               maxlength={1000}
                               className='w-full min-h-[120rpx] text-desc text-textMain'
-                              style={{lineHeight: 1.6}}
                               disabled={submitting}
                             />
                         </View>
 
                         {/* 操作栏 */}
-                        <View className='flex items-center justify-between mt-[12rpx]'>
+                        <View className='flex items-center justify-between'>
                             <Text className={cn('text-tips', isOverLimit ? 'text-danger' : 'text-textThird')}>
                                 {textLength} / 1000
                             </Text>
                             <View className='flex items-center gap-[12rpx]'>
                                 <View
-                                  className='flex items-center justify-center px-[32rpx] py-[16rpx] rounded-[8rpx] bg-pageBg border-[1rpx] border-splitLine'
+                                  className='flex items-center justify-center px-[32rpx] py-[16rpx] rounded-[8rpx] bg-pageBg border border-splitLine/60'
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setFormExpanded(false);
@@ -390,7 +383,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     )}
                 </View>
             ) : (
-                <View className='bg-cardBg py-[64rpx]'>
+                <View className='bg-cardBg py-[80rpx] flex items-center justify-center'>
                     <AppEmpty description={t('no_comments')} inContainer />
                 </View>
             )}
