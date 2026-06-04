@@ -312,7 +312,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                               className='w-full min-h-[120rpx] text-desc text-textMain'
                               style={{lineHeight: 1.6}}
                               disabled={submitting}
-                              focus
                             />
                         </View>
 
@@ -323,11 +322,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                             </Text>
                             <View className='flex items-center gap-[12rpx]'>
                                 <View
-                                  className='px-[20rpx] py-[10rpx] rounded-[8rpx]'
-                                  onClick={() => setFormExpanded(false)}
-                                  hoverClass='tap-active'
+                                  className='flex items-center justify-center px-[32rpx] py-[16rpx] rounded-[8rpx] bg-pageBg border-[1rpx] border-splitLine'
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFormExpanded(false);
+                                  }}
                                 >
-                                    <Text className='text-tips text-textSec'>{t('cancel')}</Text>
+                                    <Text className='text-desc text-textSec'>{t('cancel')}</Text>
                                 </View>
                                 <View
                                   className={cn(

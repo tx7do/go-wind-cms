@@ -126,7 +126,7 @@ export default function PostDetailPage() {
 
     // ===== 正常渲染 =====
     return (
-        <View className='min-h-screen w-full bg-pageBg pb-[300rpx]'>
+        <View className='min-h-screen w-full bg-pageBg pb-[400rpx]'>
             {/* 封面图 */}
             {displayThumbnail && (
                 <View className='w-full h-[400rpx] overflow-hidden'>
@@ -199,13 +199,13 @@ export default function PostDetailPage() {
             )}
 
             {/* 评论区 */}
-            <View className='mt-[24rpx]'>
+            <View className='mt-[32rpx]'>
                 <CommentSection objectId={postId} contentType='CONTENT_TYPE_POST' onUpdateComments={() => {}} />
             </View>
 
             {/* 相关文章 */}
             {relatedPostsQuery && (
-                <View className='mt-[24rpx]'>
+                <View className='mt-[32rpx]'>
                     {/* 区块标题 */}
                     <View className='flex items-center gap-[8rpx] bg-pageBg px-[32rpx] py-[14rpx]'>
                         <XIcon name='carbon:document' size={16} className='text-primary' />
@@ -229,7 +229,7 @@ export default function PostDetailPage() {
             )}
 
             {/* 返回按钮 */}
-            <View className='px-[32rpx] py-[32rpx]'>
+            <View className='mt-[32rpx] px-[32rpx] pb-[48rpx]'>
                 <View
                   className='flex items-center justify-center gap-[8rpx] py-[20rpx] rounded-[12rpx] bg-cardBg border-[1rpx] border-splitLine'
                   onClick={() => router.back()}
