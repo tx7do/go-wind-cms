@@ -1,9 +1,5 @@
 import {useTranslation} from 'react-i18next';
-import {View, Text} from '@tarojs/components';
-
-import './disclaimer.scss';
-
-export default function DisclaimerPage() {
+import {View, Text} from '@tarojs/components';export default function DisclaimerPage() {
   const {t} = useTranslation();
 
   return (

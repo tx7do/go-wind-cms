@@ -7,8 +7,4 @@ allowBuilds:
   core-js-pure: false
   esbuild: false
   micromark: false
-
-ignoredOptionalDependencies:
-  - react-native
-  - "@react-native/*"
-  - expo-*
+  weapp-tailwindcss: set this to true or false

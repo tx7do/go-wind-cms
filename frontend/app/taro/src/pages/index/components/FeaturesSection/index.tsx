@@ -1,11 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
-import XIcon from '@/plugins/xicon';
-
-import './index.scss';
-
-interface Feature {
+import XIcon from '@/plugins/xicon';interface Feature {
   icon: string;
   title: string;
   description: string;

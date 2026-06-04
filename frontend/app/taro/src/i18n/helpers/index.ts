@@ -3,4 +3,4 @@
  */
 
 export {useI18n} from './useI18n';
-export {useI18nRouter, useRouter} from './useI18nRouter';
+export {useI18nRouter} from './useI18nRouter';

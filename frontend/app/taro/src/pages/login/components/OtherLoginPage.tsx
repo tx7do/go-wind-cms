@@ -1,11 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
-import XIcon from '@/plugins/xicon';
-
-import '../index.scss';
-
-export default function OtherLoginPage() {
+import XIcon from '@/plugins/xicon';export default function OtherLoginPage() {
   const {t} = useTranslation();
 
   const handleGoogleLogin = () => {

@@ -1,10 +1,6 @@
 import {useState, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, Input, Button, Text} from '@tarojs/components';
-
-import '../index.scss';
-
-export default function PhoneLoginPage() {
+import {View, Input, Button, Text} from '@tarojs/components';export default function PhoneLoginPage() {
   const {t} = useTranslation();
 
   const [phone, setPhone] = useState('');

@@ -3,11 +3,7 @@ import {View, Text} from '@tarojs/components';
 
 import XIcon from '@/plugins/xicon';
 import PostList from '@/components/post/PostList';
-import {useI18nRouter} from "@/i18n/helpers";
-
-import './index.scss';
-
-export default function LatestPostsSection() {
+import {useI18nRouter} from "@/i18n/helpers";export default function LatestPostsSection() {
   const {t} = useTranslation();
 
   const router = useI18nRouter();

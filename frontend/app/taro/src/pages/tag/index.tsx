@@ -4,14 +4,11 @@ import {View, Text} from '@tarojs/components';
 
 import {AppEmpty} from '@/components/ui';
 import XIcon from '@/plugins/xicon';
-import Pagination from '@/components/Pagination';
+import {Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext} from '@/components/ui/pagination';
 import {useI18nRouter} from "@/i18n/helpers";
 
 import {fetchListTags, getTagTranslation} from '@/api/hooks/tag';
 import {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
-
-import './tag-list.scss';
-
 export default function TagListPage() {
   const {t} = useTranslation();
 
@@ -127,14 +124,27 @@ export default function TagListPage() {
             )}
 
             {total > pageSize && (
-              <View className='pagination-wrapper'>
-                <Pagination
-                  current={page}
-                  total={total}
-                  pageSize={pageSize}
-                  onChange={handlePageChange}
-                  showSizeChanger
-                />
+              <View className='mt-8'>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious onClick={() => page > 1 && handlePageChange(page - 1)} />
+                    </PaginationItem>
+                    {Array.from({length: Math.ceil(total / pageSize)}, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === Math.ceil(total / pageSize) || Math.abs(p - page) <= 1)
+                      .map(p => (
+                        <PaginationItem key={p}>
+                          <PaginationLink isActive={p === page} onClick={() => handlePageChange(p)}>
+                            {p}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))
+                    }
+                    <PaginationItem>
+                      <PaginationNext onClick={() => page < Math.ceil(total / pageSize) && handlePageChange(page + 1)} />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
               </View>
             )}
           </>

@@ -1,11 +1,6 @@
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Input, Button,Text, View} from '@tarojs/components';
-
-
-import '../register.scss';
-
-export default function AccountRegisterPage() {
+import {Input, Button,Text, View} from '@tarojs/components';export default function AccountRegisterPage() {
   const {t} = useTranslation();
 
   const [username, setUsername] = useState('');

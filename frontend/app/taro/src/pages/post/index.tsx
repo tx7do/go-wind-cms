@@ -5,8 +5,6 @@ import {View, Text} from '@tarojs/components';
 import CategoryFilter from '@/components/category/CategoryFilter';
 import PostList from '@/components/post/PostList';
 
-import './post-list.scss';
-
 export default function PostListPage() {
   const {t} = useTranslation();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -45,7 +43,7 @@ export default function PostListPage() {
         </View>
 
         <PostList
-          key={selectedCategoryId || 'all'}  // 使用 key 强制重新渲染
+          key={selectedCategoryId || 'all'}  // 使用 key 强制刷新组件
           queryParams={queryParams}
           initialPageSize={12}
           pageSizes={[12, 24, 36, 48]}

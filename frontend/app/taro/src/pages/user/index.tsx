@@ -11,11 +11,7 @@ import {
   identityservicev1_User
 } from "@/api/generated/app/service/v1";
 import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
-import {fetchUserProfile} from "@/api/hooks/user-profile";
-
-import './user.scss';
-
-export default function UserProfilePage() {
+import {fetchUserProfile} from "@/api/hooks/user-profile";export default function UserProfilePage() {
   const {t} = useTranslation();
 
   const [loading, setLoading] = useState(false);

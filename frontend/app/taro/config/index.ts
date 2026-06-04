@@ -1,6 +1,6 @@
 import {defineConfig, type UserConfigExport} from '@tarojs/cli'
 import path from 'path'
-import tailwindcss from '@tailwindcss/vite'
+import {UnifiedViteWeappTailwindcssPlugin} from 'weapp-tailwindcss/vite'
 
 import devConfig from './dev'
 import prodConfig from './prod'
@@ -40,10 +40,14 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     },
     framework: 'react',
     compiler: 'vite',
-    // 注入 Tailwind CSS v4 Vite 插件
+    // weapp-tailwindcss：小程序下 Tailwind 原子化适配
     modifyViteConfig(config) {
       config.plugins = config.plugins || [];
-      config.plugins.push(tailwindcss());
+      config.plugins.push(
+        UnifiedViteWeappTailwindcssPlugin({
+          rem2rpx: true,
+        }),
+      );
     },
     alias: {
       '@': path.resolve(__dirname, '..', 'src'),
@@ -55,22 +59,24 @@ export default defineConfig<'vite'>(async (merge, {}) => {
           config: {}
         },
         cssModules: {
-          enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
+          enable: false,
           config: {
-            namingPattern: 'module', // 转换模式，取值为 global/module
+            namingPattern: 'module',
             generateScopedName: '[name]__[local]___[hash:base64:5]'
           }
-        }
+        },
+        tailwindcss: {
+          enable: true,
+          config: require('../tailwind.config.js'),
+        },
       },
     },
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
-
-      // 路由器配置
       router: {
-        mode: 'browser', // 可选：'hash' | 'browser' | 'multi'
-        customRoutes: { // 自定义路由映射
+        mode: 'browser',
+        customRoutes: {
           'pages/index/index': '/',
           'pages/about/index': '/about',
           'pages/contact/index': '/contact',
@@ -91,7 +97,6 @@ export default defineConfig<'vite'>(async (merge, {}) => {
           'pages/404/index': '/404'
         }
       },
-
       miniCssExtractPluginOption: {
         ignoreOrder: true,
         filename: 'css/[name].[hash].css',
@@ -103,12 +108,16 @@ export default defineConfig<'vite'>(async (merge, {}) => {
           config: {}
         },
         cssModules: {
-          enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
+          enable: false,
           config: {
-            namingPattern: 'module', // 转换模式，取值为 global/module
+            namingPattern: 'module',
             generateScopedName: '[name]__[local]___[hash:base64:5]'
           }
-        }
+        },
+        tailwindcss: {
+          enable: true,
+          config: require('../tailwind.config.js'),
+        },
       },
     },
 

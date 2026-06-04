@@ -1,3 +1,1 @@
-export * from './Button';
-export * from './Input';
-export * from './AppEmpty';
+export {AppEmpty, default} from './AppEmpty';

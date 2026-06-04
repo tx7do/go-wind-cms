@@ -9,11 +9,7 @@ import XIcon from '@/plugins/xicon';
 import AccountRegisterPage from './components/AccountRegisterPage';
 import EmailRegisterPage from './components/EmailRegisterPage';
 import PhoneRegisterPage from './components/PhoneRegisterPage';
-import OtherRegisterPage from './components/OtherRegisterPage';
-
-import './register.scss';
-
-export default function RegisterPage() {
+import OtherRegisterPage from './components/OtherRegisterPage';export default function RegisterPage() {
   const {t} = useTranslation();
   const [activeTab, setActiveTab] = useState<'account' | 'email' | 'phone' | 'other'>('account');
 

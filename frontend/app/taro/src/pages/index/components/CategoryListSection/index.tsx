@@ -8,11 +8,7 @@ import {useI18nRouter} from "@/i18n/helpers";
 import {fetchListCategories} from '@/api/hooks/category';
 import type {contentservicev1_Category, contentservicev1_ListCategoryResponse} from '@/api/generated/app/service/v1';
 
-import HomeCategoryCard from '../HomeCategoryCard';
-
-import './index.scss';
-
-interface CategoryListSectionProps {
+import HomeCategoryCard from '../HomeCategoryCard';interface CategoryListSectionProps {
   skeletonCount?: number;
   pageSize?: number;
   page?: number;

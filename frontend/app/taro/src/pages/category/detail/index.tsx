@@ -10,11 +10,7 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
 import CategoryList from '@/components/category/CategoryList';
 import PostListWithPagination from '@/components/post/PostList';
-import {contentservicev1_Category} from "@/api/generated/app/service/v1";
-
-import './category-detail.scss';
-
-export default function CategoryDetailPage() {
+import {contentservicev1_Category} from "@/api/generated/app/service/v1";export default function CategoryDetailPage() {
   const {t} = useTranslation();
 
   const router = useI18nRouter();

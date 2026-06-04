@@ -5,11 +5,7 @@ import XIcon from '@/plugins/xicon';
 
 import {fetchListTags} from '@/api/hooks/tag';
 import type {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
-import {useI18nRouter} from "@/i18n/helpers";
-
-import './index.scss';
-
-interface TagItem {
+import {useI18nRouter} from "@/i18n/helpers";interface TagItem {
   id: number;
   name: string;
   color: string;

@@ -1,53 +1,46 @@
-import {useEffect} from "react";
+import {useEffect} from 'react';
 import {View} from '@tarojs/components';
 
-import HeroSection from './components/HeroSection';
-import FeaturedPostsSection from './components/FeaturedPostsSection';
-import CategoryListSection from './components/CategoryListSection';
-import PopularTagsSection from './components/PopularTagsSection';
-import LatestPostsSection from './components/LatestPostsSection';
-import FeaturesSection from './components/FeaturesSection';
-
-import './index.scss';
-import './page.scss';
+import HeroSection from '@/components/home/HeroSection';
+import FeaturedPostsSection from '@/components/home/FeaturedPostsSection';
+import CategoryListSection from '@/components/home/CategoryListSection';
+import PopularTagsSection from '@/components/home/PopularTagsSection';
+import LatestPostsSection from '@/components/home/LatestPostsSection';
+import FeaturesSection from '@/components/home/FeaturesSection';
+import SectionContainer from '@/components/layout/SectionContainer';
 
 export default function Home() {
+    useEffect(() => {
+        console.log('[Home Page] Component mounted');
+    }, []);
 
-  // 获取路由参数
-  useEffect(() => {
-    console.log('[Home Page] Component mounted');
-    // 可以在这里获取 URL 参数中的 locale
-  }, []);
+    return (
+        <View className='w-full min-h-screen bg-background'>
+            {/* Hero Section */}
+            <HeroSection />
 
-  return (
-    <View className='home-page'>
-      {/* Hero Section */}
-      <HeroSection />
+            {/* Featured Posts */}
+            <SectionContainer>
+                <FeaturedPostsSection />
+            </SectionContainer>
 
-      {/* Featured Posts */}
-      <View className='section-container'>
-        <FeaturedPostsSection />
-      </View>
+            {/* Categories */}
+            <SectionContainer>
+                <CategoryListSection />
+            </SectionContainer>
 
-      {/* Categories */}
-      <View className='section-container'>
-        <CategoryListSection />
-      </View>
+            {/* Latest Posts */}
+            <SectionContainer>
+                <LatestPostsSection />
+            </SectionContainer>
 
-      {/* Latest Posts */}
-      <View className='section-container'>
-        <LatestPostsSection />
-      </View>
+            {/* Popular Tags */}
+            <SectionContainer>
+                <PopularTagsSection />
+            </SectionContainer>
 
-      {/* Popular Tags */}
-      <View className='section-container'>
-        <PopularTagsSection />
-      </View>
-
-      {/* Features */}
-      <View className='section-container'>
-        <FeaturesSection />
-      </View>
-    </View>
-  );
+            {/* Features — 自带背景和容器 */}
+            <FeaturesSection />
+        </View>
+    );
 }

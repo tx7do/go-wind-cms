@@ -2,11 +2,7 @@ import {useState, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
-import XIcon from "@/plugins/xicon";
-
-import './settings.scss';
-
-interface MenuItem {
+import XIcon from "@/plugins/xicon";interface MenuItem {
   key: string;
   icon: string;
   label: string;

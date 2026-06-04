@@ -1,11 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 
-import XIcon from '@/plugins/xicon';
-
-import './about.scss';
-
-export default function AboutPage() {
+import XIcon from '@/plugins/xicon';export default function AboutPage() {
   const {t} = useTranslation();
 
   const features = [

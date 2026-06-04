@@ -1,11 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
-import XIcon from '@/plugins/xicon';
-
-import '../register.scss';
-
-export default function OtherRegisterPage() {
+import XIcon from '@/plugins/xicon';export default function OtherRegisterPage() {
   const {t} = useTranslation();
 
   const handleButtonGoogleRegister = () => {

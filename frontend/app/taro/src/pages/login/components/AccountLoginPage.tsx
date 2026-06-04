@@ -2,11 +2,7 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Input, Button, Text} from '@tarojs/components';
 
-import {useAuth} from '@/api/hooks/auth';
-
-import '../index.scss';
-
-export default function AccountLoginPage() {
+import {useAuth} from '@/api/hooks/auth';export default function AccountLoginPage() {
   const {t} = useTranslation();
 
   const [username, setUsername] = useState('');

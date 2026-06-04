@@ -1,4 +1,4 @@
-import {useLocale as useNextLocale} from 'next-intl';
+﻿import {useLocale as useNextLocale} from '@/lib/next-intl-compat';
 
 import {usePreferences} from './usePreferences';
 import type {SupportedLanguagesType} from '../types/layout';

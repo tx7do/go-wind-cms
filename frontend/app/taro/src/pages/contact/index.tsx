@@ -1,9 +1,5 @@
 import {useTranslation} from 'react-i18next';
-import {View, Text} from '@tarojs/components';
-
-import './contact.scss';
-
-export default function ContactPage() {
+import {View, Text} from '@tarojs/components';export default function ContactPage() {
   const {t} = useTranslation();
 
   return (

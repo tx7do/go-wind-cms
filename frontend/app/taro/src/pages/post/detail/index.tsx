@@ -13,11 +13,7 @@ import {formatDate} from "@/utils";
 import {useI18nRouter} from "@/i18n/helpers";
 
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
-import {fetchPost, getPostTitle, getPostContent, getPostThumbnail} from '@/api/hooks/post';
-
-import './post-detail.scss';
-
-// 常量定义
+import {fetchPost, getPostTitle, getPostContent, getPostThumbnail} from '@/api/hooks/post';// 常量定义
 const HEADING_OFFSET = 150;
 const THROTTLE_DELAY = 200;
 

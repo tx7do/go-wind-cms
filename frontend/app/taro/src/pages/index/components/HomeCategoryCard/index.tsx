@@ -4,11 +4,7 @@ import {Text, View} from '@tarojs/components';
 
 import {getCategoryName} from '@/api/hooks/category';
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';
-import XIcon from '@/plugins/xicon';
-
-import './index.scss';
-
-interface HomeCategoryCardProps {
+import XIcon from '@/plugins/xicon';interface HomeCategoryCardProps {
   category: contentservicev1_Category;
   onClick?: (id: number) => void;
 }

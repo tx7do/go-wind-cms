@@ -1,8 +1,6 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
-import './privacy.scss';
-
 export default function PrivacyPage() {
   const {t} = useTranslation();
 

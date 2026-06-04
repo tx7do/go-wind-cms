@@ -1,10 +1,6 @@
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, Input, Button, Text} from '@tarojs/components';
-
-import '../register.scss';
-
-export default function EmailRegisterPage() {
+import {View, Input, Button, Text} from '@tarojs/components';export default function EmailRegisterPage() {
   const {t} = useTranslation();
 
   const [email, setEmail] = useState('');

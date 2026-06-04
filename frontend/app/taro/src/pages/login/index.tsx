@@ -9,11 +9,7 @@ import XIcon from '@/plugins/xicon';
 import AccountLoginPage from './components/AccountLoginPage';
 import EmailLoginPage from './components/EmailLoginPage';
 import PhoneLoginPage from './components/PhoneLoginPage';
-import OtherLoginPage from './components/OtherLoginPage';
-
-import './index.scss';
-
-export default function LoginPage() {
+import OtherLoginPage from './components/OtherLoginPage';export default function LoginPage() {
   const {t} = useTranslation();
   const [activeTab, setActiveTab] = useState<'account' | 'email' | 'phone' | 'other'>('account');
 

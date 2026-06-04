@@ -1,9 +1,5 @@
 import {useTranslation} from 'react-i18next';
-import {View, Text} from '@tarojs/components';
-
-import './terms.scss';
-
-export default function TermsPage() {
+import {View, Text} from '@tarojs/components';export default function TermsPage() {
   const {t} = useTranslation();
 
   return (

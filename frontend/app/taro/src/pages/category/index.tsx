@@ -8,11 +8,7 @@ import CategoryTree from '@/components/category/CategoryTree';
 import {fetchListCategories} from '@/api/hooks/category';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import {contentservicev1_Category} from "@/api/generated/app/service/v1";
-
-import './category.scss';
-
-export default function CategoryListPage() {
+import {contentservicev1_Category} from "@/api/generated/app/service/v1";export default function CategoryListPage() {
   const {t} = useTranslation();
   const router = useI18nRouter();
 

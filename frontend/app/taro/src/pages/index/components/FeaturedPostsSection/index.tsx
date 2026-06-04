@@ -5,11 +5,7 @@ import {useMemo} from 'react';
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 
-import PostList from '@/components/post/PostList';
-
-import './index.scss';
-
-export default function FeaturedPostsSection() {
+import PostList from '@/components/post/PostList';export default function FeaturedPostsSection() {
   const {t} = useTranslation();
   // 用 useMemo 缓存 queryParams 和 orderBy，避免重复请求
   const queryParams = useMemo(() => ({status: 'POST_STATUS_PUBLISHED', isFeatured: true}), []);

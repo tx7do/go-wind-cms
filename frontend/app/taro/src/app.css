@@ -1,48 +1,230 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* ========== Tailwind v4 Theme 配置 ========== */
-@theme {
-  /* 颜色 - 映射到 app.scss 中的 CSS 变量 */
-  --color-background: var(--color-bg);
-  --color-foreground: var(--color-text-primary);
-  --color-card: var(--color-surface);
-  --color-card-foreground: var(--color-text-primary);
-  --color-popover: var(--color-surface);
-  --color-popover-foreground: var(--color-text-primary);
-  --color-primary: #6366f1;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #6b7280;
-  --color-accent: #f1f5f9;
-  --color-accent-foreground: #0f172a;
-  --color-destructive: #ef4444;
-  --color-destructive-foreground: #ffffff;
-  --color-border: #e5e7eb;
-  --color-input: #e5e7eb;
-  --color-ring: #6366f1;
-  --color-brand: #6366f1;
-  --color-brand-light: #8b5cf6;
-  --color-brand-dark: #a855f7;
+/* ========== Tailwind 主题变量（shadcn/ui 兼容） ========== */
 
-  /* 圆角 */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+/* ==========================================
+ * 浅色模式 (Light Mode) — 疾風掠影
+ * ========================================== */
+:root {
+    /* 核心背景：帶有微弱微風動感的淺冷灰藍 */
+    --background: 210 40% 98%;      /* #F4F7F9 */
+    --foreground: 224 71.4% 4.1%;   /* #020617 */
 
-  /* 动画 */
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
+    /* 卡片：純白浮空感 */
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+
+    /* 核心主色：極光電能綠 (Voltage Green) */
+    --primary: 142.1 76.2% 36.3%;   /* #16A34A */
+    --primary-foreground: 0 0% 100%; /* 纯白：绿底按钮上的文字颜色 */
+
+    --secondary: 210 40% 93.1%;
+    --secondary-foreground: 224 71.4% 4.1%;
+
+    --muted: 210 40% 93.1%;         /* #E5EDF2 */
+    --muted-foreground: 215.4 16.3% 46.9%; /* #64748B */
+
+    /* 點綴與懸停狀態：賽博科技藍 */
+    --accent: 217.2 91.2% 59.8%;    /* #3B82F6 */
+    --accent-foreground: 224 71.4% 4.1%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --border: 214.3 32% 88%;        /* #E2E8F0 */
+    --input: 214.3 32% 88%;
+    --ring: 142.1 76.2% 36.3%;
+
+    --radius: 0.6rem;
+
+    /* 布局尺寸 */
+    --layout-header-height: 64px;
+    --layout-footer-height: 200px;
+    --layout-max-width: 1200px;
 }
 
-@keyframes accordion-down {
-  from { height: 0; }
-  to { height: var(--radix-accordion-content-height); }
+/* ==========================================
+ * 深色模式 (Dark Mode) — 暗夜疾行
+ * ========================================== */
+.dark {
+    /* 核心背景：深空夜藍（替換純死黑，增加空氣感） */
+    --background: 224 45% 6%;       /* #050b14 深邃但通透的夜空藍黑 */
+    --foreground: 210 20% 98%;      /* #F8FAFC */
+
+    /* 卡片：磨砂玻璃浮空塊（比背景稍亮一階） */
+    --card: 222.2 47.4% 11%;        /* #0d1626 半透明深灰藍 */
+    --card-foreground: 210 20% 98%;
+
+    --popover: 222.2 47.4% 11%;
+    --popover-foreground: 210 20% 98%;
+
+    /* 核心主色：霓虹電能綠 (Neon Voltage) */
+    --primary: 142.1 86.2% 50.3%;   /* #22C55E */
+    --primary-foreground: 0 0% 100%; /* 纯白：绿底按钮上的文字颜色 */
+
+    --secondary: 217.2 32.6% 13.5%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 217.2 32.6% 13.5%;     /* #1E293B */
+    --muted-foreground: 215 20.2% 65.1%; /* #94A3B8 */
+
+    /* 點綴：深海電光藍 */
+    --accent: 217.2 91.2% 59.8%;    /* #3B82F6 */
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142.1 86.2% 50.3%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 98%;
+
+    --border: 217.2 32.6% 17.5%;    /* #334155 */
+    --input: 217.2 32.6% 17.5%;
+    --ring: 142.1 86.2% 50.3%;
 }
 
-@keyframes accordion-up {
-  from { height: var(--radix-accordion-content-height); }
-  to { height: 0; }
+/* ========== 基础重置 ========== */
+html {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
+
+@layer base {
+    *, ::before, ::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        overflow-x: hidden;
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+    }
+}
+
+/* ========== 全局过渡动画 ========== */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.no-select {
+    user-select: none;
+}
+
+/* ========== 隐藏滚动条（用于横向流滚动容器） ========== */
+.no-scrollbar {
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ========== Scroll Reveal Animation ========== */
+.scroll-reveal-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal-item.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-reveal-item:nth-child(1) { transition-delay: 0.08s; }
+.scroll-reveal-item:nth-child(2) { transition-delay: 0.16s; }
+.scroll-reveal-item:nth-child(3) { transition-delay: 0.24s; }
+.scroll-reveal-item:nth-child(4) { transition-delay: 0.32s; }
+.scroll-reveal-item:nth-child(5) { transition-delay: 0.4s; }
+.scroll-reveal-item:nth-child(6) { transition-delay: 0.48s; }
+.scroll-reveal-item:nth-child(7) { transition-delay: 0.56s; }
+.scroll-reveal-item:nth-child(8) { transition-delay: 0.64s; }
+
+/* ========== Categories Grid / Carousel Visibility ========== */
+.desktop-grid { display: grid; }
+.mobile-carousel { display: none; }
+@media (max-width: 900px) {
+    .desktop-grid { display: none; }
+    .mobile-carousel { display: block; }
+}
+
+/* ========== Scroll Reveal Section ========== */
+.scroll-reveal .section-header {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUpSection 0.6s ease-out 0.2s forwards;
+}
+
+@keyframes fadeInUpSection {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== 主题切换图标「空气动力学」微动效 ========== */
+@keyframes theme-icon-spin {
+    0% {
+        transform: rotate(-90deg) scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: rotate(10deg) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+.theme-icon-animate {
+    animation: theme-icon-spin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ========== Tailwind v4 基础层补充 ========== */
+@layer base {
+    * {
+        border-color: hsl(var(--border));
+    }
+    body {
+        font-feature-settings: 'rlig' 1, 'calt' 1;
+    }
+}
+
+/* ========== Hero 浮动动画 ========== */
+@keyframes float-slow {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+@keyframes float-medium {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(-3deg); }
+}
+@keyframes float-fast {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+.animate-float-medium { animation: float-medium 6s ease-in-out infinite; }
+.animate-float-fast { animation: float-fast 4s ease-in-out infinite; }

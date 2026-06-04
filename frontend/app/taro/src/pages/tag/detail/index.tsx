@@ -9,11 +9,7 @@ import PostListWithPagination from '@/components/post/PostList';
 import {useI18nRouter} from "@/i18n/helpers";
 
 import {fetchTag, getTagTranslation} from '@/api/hooks/tag';
-import type {contentservicev1_Tag} from "@/api/generated/app/service/v1";
-
-import './tag-detail.scss';
-
-export default function TagDetailPage() {
+import type {contentservicev1_Tag} from "@/api/generated/app/service/v1";export default function TagDetailPage() {
   const {t} = useTranslation();
   const router = useI18nRouter();
 

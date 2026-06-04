@@ -1,11 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
-import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-
-import './index.scss';
-
-export default function HeroSection() {
+import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';export default function HeroSection() {
   const {t} = useTranslation();
   const router = useI18nRouter();
 
