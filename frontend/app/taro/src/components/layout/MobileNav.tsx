@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createContext, useContext} from 'react';
+import React, {useState, useEffect, useCallback, useRef, createContext, useContext} from 'react';
 import {View, Text, Image} from '@tarojs/components';
 import {useTranslations, useLocale} from '@/lib/next-intl-compat';
 import logoImage from '@/assets/images/logo.png';
@@ -7,7 +7,6 @@ import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {useI18n} from '@/i18n';
 import {usePreferences} from '@/core/preferences';
 import {fetchListNavigations} from '@/api/hooks/navigation';
-import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 
 /** 全局抽屉状态上下文 */
@@ -22,7 +21,7 @@ export function MobileNavProvider({children}: {children: React.ReactNode}) {
     return (
         <DrawerCtx.Provider value={{open, setOpen}}>
             {children}
-            <MobileNavDrawer />
+            {open && <MobileNavDrawer />}
         </DrawerCtx.Provider>
     );
 }
@@ -60,36 +59,31 @@ function MobileNavDrawer() {
 
     const close = () => setOpen(false);
 
-    useEffect(() => {
-        let cancelled = false;
-        (async () => {
-            try {
-                const res = await fetchListNavigations({
-                    paging: {page: 1, pageSize: 10}
-                }) as unknown as { items: siteservicev1_Navigation[]; total: number };
-                if (cancelled) return;
-                if (res.items?.length) {
-                    const headerNav = res.items.find(nav => nav.location === 'HEADER' && nav.isActive === true);
-                    if (headerNav?.items?.length) setNavigationItems(headerNav.items);
-                }
-            } catch (error) {
-                console.error('[MobileNav] 加载导航失败:', error);
+    const loadNavigations = useCallback(async () => {
+        try {
+            const res = await fetchListNavigations({paging: {page: 1, pageSize: 10}}) as unknown as { items: siteservicev1_Navigation[]; total: number };
+            if (res.items?.length) {
+                const headerNav = res.items.find(nav => nav.location === 'HEADER' && nav.isActive === true);
+                if (headerNav?.items?.length) setNavigationItems(headerNav.items);
             }
-        })();
-        return () => { cancelled = true; };
+        } catch (error) {
+            console.error('[MobileNav] 加载导航失败:', error);
+        }
     }, []);
 
-    useLanguageChangeEffect(() => {
-        fetchListNavigations({paging: {page: 1, pageSize: 10}})
-            .then(res => {
-                const navRes = res as unknown as { items: siteservicev1_Navigation[]; total: number };
-                if (navRes.items?.length) {
-                    const headerNav = navRes.items.find(nav => nav.location === 'HEADER' && nav.isActive === true);
-                    if (headerNav?.items?.length) setNavigationItems(headerNav.items);
-                }
-            })
-            .catch(error => console.error('[MobileNav] 重新加载导航失败:', error));
-    }, {immediate: false, autoCleanup: true});
+    // 首次加载
+    useEffect(() => {
+        loadNavigations();
+    }, [loadNavigations]);
+
+    // locale 变化时重新加载导航（用 ref 跳过首次）
+    const prevLocaleRef = useRef(locale);
+    useEffect(() => {
+        if (prevLocaleRef.current !== locale) {
+            prevLocaleRef.current = locale;
+            loadNavigations();
+        }
+    }, [locale, loadNavigations]);
 
     const handleNavigate = (item: siteservicev1_NavigationItem) => {
         if (item.url) router.push(item.url);
@@ -100,8 +94,6 @@ function MobileNavDrawer() {
         action();
         close();
     };
-
-    if (!open) return null;
 
     return (
         <View
@@ -120,23 +112,18 @@ function MobileNavDrawer() {
                 className='fixed top-0 bottom-0 bg-cardBg flex flex-col'
                 style={{right: 0, width: '560rpx', zIndex: 2}}
             >
-                {/* 顶部品牌区 */}
+                {/* 顶部关闭按钮区 */}
                 <View
-                    className='flex items-center px-[32rpx] border-b-[1rpx] border-splitLine'
-                    style={{height: '120rpx'}}
+                    className='flex items-center justify-end border-b-[1rpx] border-splitLine'
+                    style={{height: '128rpx', padding: '16rpx 32rpx 16rpx 32rpx'}}
                 >
-                    <Image src={logoImage} mode='aspectFit' className='h-[48rpx] w-[48rpx]' />
-                    <Text className='text-card-title font-bold text-primary' style={{marginLeft: '16rpx'}}>
-                        {brandTitle}
-                    </Text>
-                    {/* 关闭按钮 */}
                     <View
-                        className='flex items-center justify-center rounded'
-                        style={{marginLeft: 'auto', width: '72rpx', height: '72rpx'}}
+                        className='flex items-center justify-center rounded-full'
+                        style={{width: '88rpx', height: '88rpx', backgroundColor: 'rgba(0,0,0,0.04)'}}
                         onClick={close}
                         hoverClass='tap-active'
                     >
-                        <XIcon name='carbon:close' size={22} className='text-textSec' />
+                        <XIcon name='carbon:close' size={22} className='text-textMain' />
                     </View>
                 </View>
 
@@ -226,9 +213,9 @@ function MobileNavDrawer() {
 
                     {/* 语言切换 */}
                     <View className='py-[8rpx]'>
-                        <View className='flex items-center px-[32rpx]' style={{height: '64rpx'}}>
-                            <XIcon name='carbon:earth' size={14} className='text-textThird' />
-                            <Text className='text-tips text-textThird' style={{marginLeft: '8rpx'}}>{t('language.title')}</Text>
+                        <View className='flex items-center px-[32rpx]' style={{height: '56rpx'}}>
+                            <XIcon name='carbon:earth' size={12} className='text-textThird' />
+                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>语言</Text>
                         </View>
                         <DrawerItem label='简体中文' onClick={() => handleAction(() => changeLocale('zh-CN'))} active={locale === 'zh-CN'} />
                         <DrawerItem label='English' onClick={() => handleAction(() => changeLocale('en-US'))} active={locale === 'en-US'} />
@@ -239,13 +226,13 @@ function MobileNavDrawer() {
 
                     {/* 主题切换 */}
                     <View className='py-[8rpx]'>
-                        <View className='flex items-center px-[32rpx]' style={{height: '64rpx'}}>
+                        <View className='flex items-center px-[32rpx]' style={{height: '56rpx'}}>
                             <XIcon
                                 name={currentMode === 'dark' ? 'carbon:moon' : currentMode === 'light' ? 'carbon:sun' : 'carbon:monitor'}
-                                size={14}
+                                size={12}
                                 className='text-textThird'
                             />
-                            <Text className='text-tips text-textThird' style={{marginLeft: '8rpx'}}>{t('theme.title')}</Text>
+                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>主题模式</Text>
                         </View>
                         <DrawerItem icon='carbon:sun' label={t('theme.light')} onClick={() => handleAction(() => setThemeMode('light'))} active={currentMode === 'light'} />
                         <DrawerItem icon='carbon:moon' label={t('theme.dark')} onClick={() => handleAction(() => setThemeMode('dark'))} active={currentMode === 'dark'} />
@@ -257,7 +244,7 @@ function MobileNavDrawer() {
     );
 }
 
-/** 抽屉内菜单项 */
+/** 抽屉内菜单项 - 增强选中状态视觉反馈 */
 function DrawerItem({icon, label, onClick, active, destructive}: {
     icon?: string;
     label: React.ReactNode;
@@ -265,6 +252,7 @@ function DrawerItem({icon, label, onClick, active, destructive}: {
     active?: boolean;
     destructive?: boolean;
 }) {
+    // 选中状态：浅蓝色背景 + 主色文字 + 加粗
     const bgStyle = active ? {backgroundColor: 'rgba(22,119,255,0.08)'} : {};
 
     return (
@@ -284,10 +272,14 @@ function DrawerItem({icon, label, onClick, active, destructive}: {
                 </View>
             )}
             <Text
-                className={`text-body ${destructive ? 'text-danger' : active ? 'text-primary font-bold' : 'text-textMain'}`}
+                className={`text-body flex-1 ${destructive ? 'text-danger' : active ? 'text-primary font-bold' : 'text-textMain'}`}
             >
                 {label}
             </Text>
+            {/* 选中状态：右侧显示勾选图标 */}
+            {active && !destructive && (
+                <XIcon name='carbon:checkmark' size={18} className='text-primary' />
+            )}
         </View>
     );
 }
