@@ -137,7 +137,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                     {/* 评论主体 */}
                     <View className='bg-cardBg px-[32rpx] py-[20rpx]'>
                         {/* 头像 - 独立左侧 */}
-                        <View className='flex gap-[12rpx]'>
+                        <View className='flex items-start gap-[12rpx]'>
                             {/* 头像 */}
                             <View className='flex items-center justify-center w-[48rpx] h-[48rpx] rounded-full bg-primary/10 flex-shrink-0'>
                                 <Text className='text-tips font-bold text-primary'>
@@ -234,7 +234,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                         {/* 回复表单 - 内嵌在评论下方 */}
                         {replyingCommentId === comment.id && (
-                            <View className='mt-[12rpx] ml-[64rpx] rounded-[8rpx] p-[16rpx]'>
+                            <View className='mt-[12rpx] ml-[60rpx] rounded-[8rpx] p-[16rpx]'>
                                 <View className='rounded-[8rpx] bg-pageBg border border-splitLine/60 p-[12rpx]'>
                                     <Textarea
                                       value={replyContent}
@@ -277,7 +277,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                     {/* 子评论区域 */}
                     {hasChildren(comment) && isExpanded(comment) && (
-                        <View className='ml-[64rpx] border-l-[2rpx] border-primary/20 pl-[16rpx]'>
+                        <View className='ml-[60rpx] border-l-[2rpx] border-primary/20 pl-[16rpx]'>
                             {/* 加载中 */}
                             {isLoading(comment) && (
                                 <View className='flex items-center gap-[8rpx] py-[24rpx]'>
