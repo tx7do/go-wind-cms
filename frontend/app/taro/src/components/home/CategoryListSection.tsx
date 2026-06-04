@@ -53,7 +53,7 @@ export default function CategoryListSection({pageSize = 8, page = 1}: {
     return (
         <View className='w-full'>
             {/* 标题行 */}
-            <View className='flex items-center justify-between mb-[24rpx]'>
+            <View className='flex items-center justify-between mb-[32rpx]'>
                 <View className='flex items-center gap-[8rpx]'>
                     <XIcon name='carbon:folder-details' size={20} className='text-primary' />
                     <Text className='text-card-title font-bold text-textMain'>
@@ -61,15 +61,18 @@ export default function CategoryListSection({pageSize = 8, page = 1}: {
                     </Text>
                 </View>
                 <View
-                  className='px-[16rpx] py-[8rpx] min-w-touch min-h-touch flex items-center justify-center'
+                  className='px-[24rpx] py-[12rpx] rounded-full flex items-center justify-center'
+                  style={{
+                      backgroundColor: 'rgba(22,119,255,0.08)',
+                  }}
                   onClick={() => router.push('/category')}
                   hoverClass='tap-active'
                 >
-                    <Text className='text-desc text-primary'>{t('view_all')} →</Text>
+                    <Text className='text-tips font-medium text-primary'>{t('view_all')} →</Text>
                 </View>
             </View>
 
-            {/* 横向滑动分类列表 */}
+            {/* 横向滑动分类列表 - 使用正内边距确保边缘留白 */}
             {loading ? (
                 <View className='flex gap-[16rpx] overflow-hidden'>
                     {Array.from({length: 4}).map((_, i) => (

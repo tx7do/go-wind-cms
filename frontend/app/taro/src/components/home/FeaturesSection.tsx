@@ -4,50 +4,75 @@ import {XIcon} from '@/plugins/xicon';
 
 /**
  * 首页「平台特性」区块
- * - 2列 grid 布局
- * - 图标+标题+描述
+ * - 竖向排列，一行一个卡片
  */
+const FEATURE_ICONS = [
+    'carbon:document', 'carbon:cloud', 'carbon:security',
+    'carbon:analytics', 'carbon:api', 'carbon:collaborate',
+];
+
+const FEATURE_BG_COLORS = [
+    'rgba(22,119,255,0.08)', 'rgba(0,180,42,0.08)', 'rgba(255,125,0,0.08)',
+    'rgba(114,46,209,0.08)', 'rgba(19,194,194,0.08)', 'rgba(235,47,150,0.08)',
+];
+
+const FEATURE_ICON_COLORS = ['#1677ff', '#00b42a', '#ff7d00', '#722ed1', '#13c2c2', '#eb2f96'];
+
 export default function FeaturesSection() {
     const t = useTranslations('page.home');
 
     const features = [
-        {icon: 'carbon:document', title: t('flexible_content_management'), description: t('content_management_desc')},
-        {icon: 'carbon:cloud', title: t('multi_tenant_architecture'), description: t('multi_tenant_desc')},
-        {icon: 'carbon:security', title: t('enterprise_security'), description: t('security_desc')},
-        {icon: 'carbon:analytics', title: t('advanced_analytics'), description: t('analytics_desc')},
-        {icon: 'carbon:api', title: t('api_integration'), description: t('api_integration_desc')},
-        {icon: 'carbon:collaborate', title: t('real_time_collaboration'), description: t('real_time_collaboration_desc')},
+        {title: t('flexible_content_management')},
+        {title: t('multi_tenant_architecture')},
+        {title: t('enterprise_security')},
+        {title: t('advanced_analytics')},
+        {title: t('api_integration')},
+        {title: t('real_time_collaboration')},
     ];
 
     return (
         <View className='w-full'>
-            {/* 标题行 */}
-            <View className='flex items-center justify-center gap-[8rpx] mb-[24rpx]'>
-                <XIcon name='carbon:rocket' size={20} className='text-primary' />
+            {/* 区块标题 - 左对齐，与其他区块一致 */}
+            <View className='flex items-center gap-[8rpx] mb-[32rpx]'>
+                <XIcon name='carbon:rocket' size={18} className='text-primary' />
                 <Text className='text-card-title font-bold text-textMain'>
                     {t('platform_features')}
                 </Text>
             </View>
 
-            {/* 2列特性网格 */}
-            <View className='flex flex-wrap gap-[16rpx]'>
+            {/* 竖向排列特性卡片 - 独立卡片质感 */}
+            <View className='flex flex-col gap-[16rpx]'>
                 {features.map((feature, index) => (
                     <View
-                      key={index}
-                      className='rounded bg-cardBg p-[24rpx] flex flex-col items-center text-center'
-                      style={{width: 'calc(50% - 8rpx)'}}
+                        key={index}
+                        className='rounded-[16rpx] bg-cardBg flex flex-row items-center shadow-sm'
+                        style={{
+                            padding: '24rpx',
+                        }}
                     >
+                        {/* 彩色图标圆 */}
                         <View
-                          className='flex items-center justify-center w-[72rpx] h-[72rpx] rounded mb-[16rpx]'
-                          style={{backgroundColor: 'rgba(22,119,255,0.08)'}}
+                            className='flex items-center justify-center rounded-full flex-shrink-0'
+                            style={{
+                                width: '72rpx',
+                                height: '72rpx',
+                                backgroundColor: FEATURE_BG_COLORS[index],
+                            }}
                         >
-                            <XIcon name={feature.icon || ''} size={28} className='text-primary' />
+                            <XIcon
+                                name={FEATURE_ICONS[index]}
+                                size={28}
+                                style={{color: FEATURE_ICON_COLORS[index]}}
+                            />
                         </View>
-                        <Text className='text-desc font-bold text-textMain mb-[8rpx]'>
-                            {feature.title}
-                        </Text>
-                        <Text className='text-tips text-textSec leading-[1.6]'>
-                            {feature.description}
+                        {/* 标题 */}
+                        <Text
+                            className='text-desc font-semibold text-textMain ml-[16rpx] flex-1'
+                            style={{
+                                lineHeight: '1.5',
+                            }}
+                        >
+                            {feature.title || ''}
                         </Text>
                     </View>
                 ))}

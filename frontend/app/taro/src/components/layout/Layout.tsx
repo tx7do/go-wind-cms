@@ -5,17 +5,20 @@ import Footer from './Footer';
 import NavigationProgress from './NavigationProgress';
 import BackToTop from './BackToTop';
 import ThemeClientProvider from './ThemeClientProvider';
+import {MobileNavProvider} from './MobileNav';
 
 function Layout({children}: PropsWithChildren) {
   return (
     <ThemeClientProvider>
-      <NavigationProgress />
-      <Header />
-      <View className='min-h-screen pt-[88rpx]'>
-        {children}
-      </View>
-      <Footer />
-      <BackToTop />
+      <MobileNavProvider>
+        <NavigationProgress />
+        <Header />
+        <View className='min-h-screen pt-[88rpx]'>
+          {children}
+        </View>
+        <Footer />
+        <BackToTop />
+      </MobileNavProvider>
     </ThemeClientProvider>
   );
 }

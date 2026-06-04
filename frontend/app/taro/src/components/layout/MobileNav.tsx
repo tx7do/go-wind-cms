@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, createContext, useContext} from 'react';
 import {View, Text, Image} from '@tarojs/components';
 import {useTranslations, useLocale} from '@/lib/next-intl-compat';
 import logoImage from '@/assets/images/logo.png';
@@ -10,7 +10,40 @@ import {fetchListNavigations} from '@/api/hooks/navigation';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 
-export default function MobileNav() {
+/** 全局抽屉状态上下文 */
+const DrawerCtx = createContext<{
+    open: boolean;
+    setOpen: (v: boolean) => void;
+}>({open: false, setOpen: () => {}});
+
+/** 供 Layout 使用的 Provider + 抽屉渲染 */
+export function MobileNavProvider({children}: {children: React.ReactNode}) {
+    const [open, setOpen] = useState(false);
+    return (
+        <DrawerCtx.Provider value={{open, setOpen}}>
+            {children}
+            <MobileNavDrawer />
+        </DrawerCtx.Provider>
+    );
+}
+
+/** Header 中的汉堡触发按钮 */
+export function MobileNavTrigger() {
+    const {open, setOpen} = useContext(DrawerCtx);
+    return (
+        <View
+            className='flex items-center justify-center w-[64rpx] h-[64rpx] rounded'
+            onClick={() => setOpen(!open)}
+            hoverClass='tap-active'
+        >
+            <XIcon name={open ? 'carbon:close' : 'carbon:menu'} size={20} className='text-textSec' />
+        </View>
+    );
+}
+
+/** 抽屉面板（在 Layout 顶层渲染，不受 Header fixed 嵌套影响） */
+function MobileNavDrawer() {
+    const {open, setOpen} = useContext(DrawerCtx);
     const t = useTranslations('navbar');
     const menuT = useTranslations('menu');
     const appT = useTranslations('app');
@@ -22,9 +55,10 @@ export default function MobileNav() {
     const {changeLocale} = useI18n();
     const currentMode = themePref.mode;
 
-    const [open, setOpen] = useState(false);
     const [navigationItems, setNavigationItems] = useState<siteservicev1_NavigationItem[]>([]);
     const [expandedId, setExpandedId] = useState<number | null>(null);
+
+    const close = () => setOpen(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -59,65 +93,58 @@ export default function MobileNav() {
 
     const handleNavigate = (item: siteservicev1_NavigationItem) => {
         if (item.url) router.push(item.url);
-        setOpen(false);
+        close();
     };
 
     const handleAction = (action: () => void) => {
         action();
-        setOpen(false);
+        close();
     };
 
-    // ---- 汉堡按钮 ----
-    if (!open) {
-        return (
-            <View
-              className='flex items-center justify-center w-[64rpx] h-[64rpx] rounded'
-              onClick={() => setOpen(true)}
-              hoverClass='tap-active'
-            >
-                <XIcon name='carbon:menu' size={20} className='text-textSec' />
-            </View>
-        );
-    }
+    if (!open) return null;
 
-    // ---- 全屏抽屉 ----
     return (
         <View
-          className='fixed top-0 left-0 right-0 bottom-0 z-[2000]'
-          style={{width: '100vw', height: '100vh'}}
+            className='fixed top-0 left-0 right-0 bottom-0 z-[2000]'
+            style={{width: '100vw', height: '100vh'}}
         >
             {/* 半透明遮罩 */}
             <View
-              className='absolute top-0 left-0 right-0 bottom-0'
-              style={{backgroundColor: 'rgba(0,0,0,0.4)'}}
-              onClick={() => setOpen(false)}
+                className='fixed top-0 left-0 right-0 bottom-0'
+                style={{backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1}}
+                onClick={close}
             />
 
             {/* 右侧抽屉面板 */}
             <View
-              className='absolute top-0 right-0 bottom-0 bg-cardBg flex flex-col'
-              style={{width: '560rpx'}}
+                className='fixed top-0 bottom-0 bg-cardBg flex flex-col'
+                style={{right: 0, width: '560rpx', zIndex: 2}}
             >
                 {/* 顶部品牌区 */}
-                <View className='flex items-center px-[32rpx] border-b-[1rpx] border-splitLine'
-                  style={{height: '120rpx'}}
+                <View
+                    className='flex items-center px-[32rpx] border-b-[1rpx] border-splitLine'
+                    style={{height: '120rpx'}}
                 >
                     <Image src={logoImage} mode='aspectFit' className='h-[48rpx] w-[48rpx]' />
-                    <Text className='text-card-title font-bold text-primary ml-[16rpx]'>{brandTitle}</Text>
+                    <Text className='text-card-title font-bold text-primary' style={{marginLeft: '16rpx'}}>
+                        {brandTitle}
+                    </Text>
+                    {/* 关闭按钮 */}
                     <View
-                      className='flex items-center justify-center w-[64rpx] h-[64rpx] ml-auto'
-                      onClick={() => setOpen(false)}
-                      hoverClass='tap-active'
+                        className='flex items-center justify-center rounded'
+                        style={{marginLeft: 'auto', width: '72rpx', height: '72rpx'}}
+                        onClick={close}
+                        hoverClass='tap-active'
                     >
-                        <XIcon name='carbon:close' size={20} className='text-textThird' />
+                        <XIcon name='carbon:close' size={22} className='text-textSec' />
                     </View>
                 </View>
 
                 {/* 可滚动内容区 */}
-                <View className='flex-1 overflow-y-auto py-[16rpx]'>
+                <View className='flex-1 overflow-y-auto'>
                     {/* 主导航 */}
                     {navigationItems.length > 0 && (
-                        <View className='mb-[16rpx]'>
+                        <View className='py-[8rpx]'>
                             {navigationItems.map((item) => {
                                 const itemId = item.id ?? 0;
                                 const hasChildren = (item.children?.length ?? 0) > 0;
@@ -126,31 +153,31 @@ export default function MobileNav() {
                                 return (
                                     <View key={itemId}>
                                         <View
-                                          className='flex items-center justify-between px-[32rpx]'
-                                          style={{height: '88rpx'}}
-                                          onClick={() => {
+                                            className='flex items-center justify-between px-[32rpx]'
+                                            style={{height: '96rpx'}}
+                                            onClick={() => {
                                                 if (hasChildren) {
                                                     setExpandedId(isExpanded ? null : itemId);
                                                 } else {
                                                     handleNavigate(item);
                                                 }
                                             }}
-                                          hoverClass='tap-active'
+                                            hoverClass='tap-active'
                                         >
                                             <View className='flex items-center'>
                                                 {item.icon && (
-                                                    <View className='mr-[16rpx]'>
-                                                        <XIcon name={`carbon:${item.icon}`} size={16} className='text-primary' />
+                                                    <View style={{marginRight: '16rpx'}}>
+                                                        <XIcon name={`carbon:${item.icon}`} size={18} className='text-primary' />
                                                     </View>
                                                 )}
                                                 <Text className='text-body text-textMain'>{item.title}</Text>
                                             </View>
                                             {hasChildren && (
                                                 <XIcon
-                                                  name='carbon:chevron-down'
-                                                  size={16}
-                                                  className='text-textThird'
-                                                  style={{transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s'}}
+                                                    name='carbon:chevron-down'
+                                                    size={16}
+                                                    className='text-textThird'
+                                                    style={{transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s'}}
                                                 />
                                             )}
                                         </View>
@@ -158,20 +185,20 @@ export default function MobileNav() {
                                         {/* 子导航 */}
                                         {hasChildren && isExpanded && (
                                             <View
-                                              className='border-l-[2rpx] border-splitLine'
-                                              style={{marginLeft: '32rpx'}}
+                                                className='border-l-[2rpx] border-splitLine'
+                                                style={{marginLeft: '32rpx'}}
                                             >
                                                 {item.children!.map((child: siteservicev1_NavigationItem) => (
                                                     <View
-                                                      key={child.id?.toString()}
-                                                      className='flex items-center px-[24rpx]'
-                                                      style={{height: '80rpx'}}
-                                                      onClick={() => handleNavigate(child)}
-                                                      hoverClass='tap-active'
+                                                        key={child.id?.toString()}
+                                                        className='flex items-center px-[24rpx]'
+                                                        style={{height: '84rpx'}}
+                                                        onClick={() => handleNavigate(child)}
+                                                        hoverClass='tap-active'
                                                     >
                                                         {child.icon && (
-                                                            <View className='mr-[16rpx]'>
-                                                                <XIcon name={`carbon:${child.icon}`} size={14} className='text-textThird' />
+                                                            <View style={{marginRight: '16rpx'}}>
+                                                                <XIcon name={`carbon:${child.icon}`} size={16} className='text-textThird' />
                                                             </View>
                                                         )}
                                                         <Text className='text-desc text-textSec'>{child.title}</Text>
@@ -186,38 +213,44 @@ export default function MobileNav() {
                     )}
 
                     {/* 分隔线 */}
-                    <View className='bg-splitLine mx-[32rpx] my-[16rpx]' style={{height: '1rpx'}} />
+                    <View className='bg-splitLine' style={{height: '1rpx', margin: '0 32rpx'}} />
 
                     {/* 用户操作 */}
-                    <DrawerItem icon='carbon:user' label={menuT('homepage')} onClick={() => handleAction(() => router.push('/user'))} />
-                    <DrawerItem icon='carbon:settings' label={menuT('my_profile')} onClick={() => handleAction(() => router.push('/settings'))} />
+                    <View className='py-[8rpx]'>
+                        <DrawerItem icon='carbon:user' label={menuT('homepage')} onClick={() => handleAction(() => router.push('/user'))} />
+                        <DrawerItem icon='carbon:settings' label={menuT('my_profile')} onClick={() => handleAction(() => router.push('/settings'))} />
+                    </View>
 
                     {/* 分隔线 */}
-                    <View className='bg-splitLine mx-[32rpx] my-[16rpx]' style={{height: '1rpx'}} />
+                    <View className='bg-splitLine' style={{height: '1rpx', margin: '0 32rpx'}} />
 
                     {/* 语言切换 */}
-                    <View className='px-[32rpx] py-[8rpx]'>
-                        <View className='flex items-center'>
-                            <XIcon name='carbon:earth' size={12} className='text-textThird mr-[8rpx]' />
-                            <Text className='text-tips text-textThird'>{t('language.title')}</Text>
+                    <View className='py-[8rpx]'>
+                        <View className='flex items-center px-[32rpx]' style={{height: '64rpx'}}>
+                            <XIcon name='carbon:earth' size={14} className='text-textThird' />
+                            <Text className='text-tips text-textThird' style={{marginLeft: '8rpx'}}>{t('language.title')}</Text>
                         </View>
+                        <DrawerItem label='简体中文' onClick={() => handleAction(() => changeLocale('zh-CN'))} active={locale === 'zh-CN'} />
+                        <DrawerItem label='English' onClick={() => handleAction(() => changeLocale('en-US'))} active={locale === 'en-US'} />
                     </View>
-                    <DrawerItem label='简体中文' onClick={() => handleAction(() => changeLocale('zh-CN'))} active={locale === 'zh-CN'} />
-                    <DrawerItem label='English' onClick={() => handleAction(() => changeLocale('en-US'))} active={locale === 'en-US'} />
 
                     {/* 分隔线 */}
-                    <View className='bg-splitLine mx-[32rpx] my-[16rpx]' style={{height: '1rpx'}} />
+                    <View className='bg-splitLine' style={{height: '1rpx', margin: '0 32rpx'}} />
 
                     {/* 主题切换 */}
-                    <View className='px-[32rpx] py-[8rpx]'>
-                        <View className='flex items-center'>
-                            <XIcon name={currentMode === 'dark' ? 'carbon:moon' : currentMode === 'light' ? 'carbon:sun' : 'carbon:monitor'} size={12} className='text-textThird mr-[8rpx]' />
-                            <Text className='text-tips text-textThird'>{t('theme.title') || 'Theme'}</Text>
+                    <View className='py-[8rpx]'>
+                        <View className='flex items-center px-[32rpx]' style={{height: '64rpx'}}>
+                            <XIcon
+                                name={currentMode === 'dark' ? 'carbon:moon' : currentMode === 'light' ? 'carbon:sun' : 'carbon:monitor'}
+                                size={14}
+                                className='text-textThird'
+                            />
+                            <Text className='text-tips text-textThird' style={{marginLeft: '8rpx'}}>{t('theme.title')}</Text>
                         </View>
+                        <DrawerItem icon='carbon:sun' label={t('theme.light')} onClick={() => handleAction(() => setThemeMode('light'))} active={currentMode === 'light'} />
+                        <DrawerItem icon='carbon:moon' label={t('theme.dark')} onClick={() => handleAction(() => setThemeMode('dark'))} active={currentMode === 'dark'} />
+                        <DrawerItem icon='carbon:monitor' label={t('theme.system')} onClick={() => handleAction(() => setThemeMode('auto'))} active={currentMode === 'auto'} />
                     </View>
-                    <DrawerItem icon='carbon:sun' label={t('theme.light')} onClick={() => handleAction(() => setThemeMode('light'))} active={currentMode === 'light'} />
-                    <DrawerItem icon='carbon:moon' label={t('theme.dark')} onClick={() => handleAction(() => setThemeMode('dark'))} active={currentMode === 'dark'} />
-                    <DrawerItem icon='carbon:monitor' label={t('theme.system')} onClick={() => handleAction(() => setThemeMode('auto'))} active={currentMode === 'auto'} />
                 </View>
             </View>
         </View>
@@ -236,25 +269,28 @@ function DrawerItem({icon, label, onClick, active, destructive}: {
 
     return (
         <View
-          className='flex items-center px-[32rpx]'
-          style={{height: '88rpx', ...bgStyle}}
-          onClick={onClick}
-          hoverClass='tap-active'
+            className='flex items-center px-[32rpx]'
+            style={{height: '88rpx', ...bgStyle}}
+            onClick={onClick}
+            hoverClass='tap-active'
         >
             {icon && (
-                <View className='mr-[16rpx]'>
+                <View style={{marginRight: '16rpx'}}>
                     <XIcon
-                      name={icon}
-                      size={16}
-                      className={destructive ? 'text-danger' : active ? 'text-primary' : 'text-textSec'}
+                        name={icon}
+                        size={18}
+                        className={destructive ? 'text-danger' : active ? 'text-primary' : 'text-textSec'}
                     />
                 </View>
             )}
             <Text
-              className={`text-body ${destructive ? 'text-danger' : active ? 'text-primary font-bold' : 'text-textMain'}`}
+                className={`text-body ${destructive ? 'text-danger' : active ? 'text-primary font-bold' : 'text-textMain'}`}
             >
                 {label}
             </Text>
         </View>
     );
 }
+
+/** 默认导出保持向后兼容 */
+export default MobileNavTrigger;

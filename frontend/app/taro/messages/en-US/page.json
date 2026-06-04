@@ -21,6 +21,7 @@
     "code_snippet_api": "const api = 'v1'",
     "popular_tags": "Popular Tags",
     "popular_posts": "Popular Posts",
+    "articles_unit": "articles",
     "flexible_content_management": "Flexible Content Management",
     "content_management_desc": "Powerful tools for managing all types of content",
     "multi_tenant_architecture": "Multi-Tenant Architecture",

@@ -1,6 +1,6 @@
 import {View, Text} from '@tarojs/components';
 import {XIcon} from '@/plugins/xicon';
-import {getCategoryName} from '@/api/hooks/category';
+import {getCategoryName, getCategoryDescription} from '@/api/hooks/category';
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';
 import {useTranslations} from '@/lib/next-intl-compat';
 
@@ -21,57 +21,90 @@ const HomeCategoryCard: React.FC<{
         return icon.includes(':') ? icon : `carbon:${icon}`;
     };
 
-    // ---- 横向滑动卡片（首页分类区） ----
+    const name = getCategoryName(category);
+    const desc = getCategoryDescription?.(category);
+    const count = category.postCount || 0;
+
+    // ---- 横向滑动大卡片（首页分类区） ----
     if (mobileCompact) {
         return (
             <View
-              className='flex-shrink-0 w-[180rpx] flex flex-col items-center rounded bg-cardBg p-[20rpx]'
-              onClick={handleClick}
-              hoverClass='tap-active'
+                className='flex-shrink-0 rounded-[16rpx] bg-cardBg overflow-hidden'
+                style={{width: '260rpx'}}
+                onClick={handleClick}
+                hoverClass='tap-active'
             >
+                {/* 顶部图标区 - 增强背景色 */}
                 <View
-                  className='flex items-center justify-center w-[72rpx] h-[72rpx] rounded mb-[12rpx]'
-                  style={{backgroundColor: 'rgba(22,119,255,0.08)'}}
-                >
-                    <XIcon name={getIconName(category.icon)} size={28} className='text-primary' />
-                </View>
-                <Text
-                  className='text-tips font-bold text-textMain text-center mb-[4rpx]'
-                  style={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        maxWidth: '140rpx',
+                    className='flex items-center justify-center'
+                    style={{
+                        height: '120rpx',
+                        backgroundColor: 'rgba(22,119,255,0.1)',
                     }}
                 >
-                    {getCategoryName(category)}
-                </Text>
-                <Text className='text-tips text-textThird'>
-                    <Text className='text-primary'>{category.postCount || 0}</Text> {t('articles_unit')}
-                </Text>
+                    <XIcon name={getIconName(category.icon)} size={40} className='text-primary' />
+                </View>
+                {/* 文字区 */}
+                <View className='p-[20rpx]'>
+                    <Text
+                        className='text-desc font-bold text-textMain mb-[8rpx]'
+                        numberOfLines={1}
+                        style={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 1,
+                            WebkitBoxOrient: 'vertical',
+                        }}
+                    >
+                        {name}
+                    </Text>
+                    <Text className='text-tips text-textThird'>
+                        <Text className='text-primary font-medium'>{count}</Text>
+                        <Text className='text-tips text-textThird'>篇</Text>
+                    </Text>
+                </View>
             </View>
         );
     }
 
-    // ---- 默认列表卡片 ----
+    // ---- 默认列表卡片（横排） ----
     return (
         <View
-          className='flex flex-row items-center rounded bg-cardBg p-[24rpx] min-h-touch'
-          onClick={handleClick}
-          hoverClass='tap-active'
+            className='flex flex-row items-center rounded bg-cardBg p-[24rpx]'
+            style={{minHeight: '88rpx'}}
+            onClick={handleClick}
+            hoverClass='tap-active'
         >
             <View
-              className='flex items-center justify-center w-[72rpx] h-[72rpx] rounded mr-[20rpx] flex-shrink-0'
-              style={{backgroundColor: 'rgba(22,119,255,0.08)'}}
+                className='flex items-center justify-center rounded flex-shrink-0'
+                style={{
+                    width: '72rpx',
+                    height: '72rpx',
+                    marginRight: '20rpx',
+                    backgroundColor: 'rgba(22,119,255,0.08)',
+                }}
             >
                 <XIcon name={getIconName(category.icon)} size={28} className='text-primary' />
             </View>
             <View className='flex-1 min-w-0'>
-                <Text className='text-body font-bold text-textMain'>{getCategoryName(category)}</Text>
-                <Text className='text-tips text-textThird'>
-                    <Text className='text-primary'>{category.postCount || 0}</Text> {t('articles_unit')}
-                </Text>
+                <Text className='text-body font-bold text-textMain'>{name}</Text>
+                {desc && (
+                    <Text
+                        className='text-tips text-textSec'
+                        style={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        {desc}
+                    </Text>
+                )}
             </View>
+            <Text className='text-tips text-textThird flex-shrink-0' style={{marginLeft: '16rpx'}}>
+                <Text className='text-primary'>{count}</Text> {t('articles_unit')}
+            </Text>
         </View>
     );
 };

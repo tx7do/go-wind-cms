@@ -24,11 +24,14 @@ export default function FeaturedPostsSection() {
                     </Text>
                 </View>
                 <View
-                  className='px-[16rpx] py-[8rpx] min-w-touch min-h-touch flex items-center justify-center'
+                  className='px-[24rpx] py-[12rpx] rounded-full flex items-center justify-center'
+                  style={{
+                      backgroundColor: 'rgba(22,119,255,0.08)',
+                  }}
                   onClick={() => router.push('/post')}
                   hoverClass='tap-active'
                 >
-                    <Text className='text-desc text-primary'>{t('view_all')} →</Text>
+                    <Text className='text-tips font-medium text-primary'>{t('view_all')} →</Text>
                 </View>
             </View>
 

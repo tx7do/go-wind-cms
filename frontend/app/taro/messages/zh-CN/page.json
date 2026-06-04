@@ -21,6 +21,7 @@
     "code_snippet_api": "const api = 'v1'",
     "popular_tags": "热门标签",
     "popular_posts": "热门文章",
+    "articles_unit": "篇",
     "flexible_content_management": "灵活的内容管理",
     "content_management_desc": "强大的内容管理工具，支持各种类型的内容",
     "multi_tenant_architecture": "多租户架构",

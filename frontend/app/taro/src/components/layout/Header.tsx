@@ -3,15 +3,27 @@ import {useTranslations} from '@/lib/next-intl-compat';
 import logoImage from '@/assets/images/logo.png';
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import MobileNav from './MobileNav';
+import {MobileNavTrigger} from './MobileNav';
+import Taro from '@tarojs/taro';
+import {useEffect, useState} from 'react';
 
 export default function Header() {
     const appT = useTranslations('app');
     const brandTitle = appT('title');
     const router = useI18nRouter();
+    const [safeAreaTop, setSafeAreaTop] = useState(0);
+
+    // 获取安全区域
+    useEffect(() => {
+        const systemInfo = Taro.getSystemInfoSync();
+        setSafeAreaTop(systemInfo.statusBarHeight || 0);
+    }, []);
 
     return (
-        <View className='fixed top-0 left-0 right-0 z-[1000] bg-cardBg border-b-[1rpx] border-splitLine'>
+        <View 
+          className='fixed top-0 left-0 right-0 z-[1000] bg-cardBg border-b-[1rpx] border-splitLine'
+          style={{paddingTop: `${safeAreaTop}px`}}
+        >
             <View className='flex h-[88rpx] items-center justify-between px-[24rpx]'>
                 {/* Logo */}
                 <View
@@ -39,7 +51,7 @@ export default function Header() {
                     </View>
 
                     {/* 汉堡菜单 */}
-                    <MobileNav />
+                    <MobileNavTrigger />
                 </View>
             </View>
         </View>

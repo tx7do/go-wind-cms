@@ -38,6 +38,10 @@ const PostCard: React.FC<PostCardProps> = ({
         Taro.pageScrollTo({scrollTop: 0, duration: 300});
     };
 
+    const thumbnail = getPostThumbnail(post);
+    const title = getPostTitle(post);
+    const summary = getPostSummary(post);
+
     // ---- 紧凑横排卡片 ----
     if (compact) {
         return (
@@ -46,12 +50,15 @@ const PostCard: React.FC<PostCardProps> = ({
               onClick={handleViewPost}
               hoverClass='tap-active'
             >
-                <View className='w-[200rpx] h-[200rpx] flex-shrink-0 overflow-hidden'>
-                    <Image
-                      src={getPostThumbnail(post)}
-                      mode='aspectFill'
-                      className='w-full h-full'
-                    />
+                {/* 缩略图 / 图标占位 - 固定 16:9 比例 */}
+                <View className='w-[240rpx] h-[136rpx] flex-shrink-0 overflow-hidden bg-pageBg'>
+                    {thumbnail ? (
+                        <Image src={thumbnail} mode='aspectFill' className='w-full h-full' />
+                    ) : (
+                        <View className='w-full h-full flex items-center justify-center'>
+                            <XIcon name='carbon:document' size={40} className='text-textWeak' />
+                        </View>
+                    )}
                 </View>
                 <View className='flex-1 flex flex-col justify-between p-[20rpx] min-w-0'>
                     <Text
@@ -64,16 +71,16 @@ const PostCard: React.FC<PostCardProps> = ({
                             WebkitBoxOrient: 'vertical',
                         }}
                     >
-                        {getPostTitle(post)}
+                        {title}
                     </Text>
-                    <View className='flex items-center gap-[16rpx] text-tips text-textThird'>
-                        <View className='flex items-center gap-[4rpx]'>
-                            <XIcon name='carbon:calendar' size={12} className='text-textThird' />
-                            <Text className='text-tips text-textThird'>{formatDate(post.createdAt)}</Text>
+                    <View className='flex items-center gap-[20rpx] text-tips text-textSec'>
+                        <View className='flex items-center gap-[6rpx]'>
+                            <XIcon name='carbon:calendar' size={14} className='text-textSec' />
+                            <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
                         </View>
-                        <View className='flex items-center gap-[4rpx]'>
-                            <XIcon name='carbon:view' size={12} className='text-textThird' />
-                            <Text className='text-tips text-textThird'>{post.visits || 0}</Text>
+                        <View className='flex items-center gap-[6rpx]'>
+                            <XIcon name='carbon:view' size={14} className='text-textSec' />
+                            <Text className='text-tips text-textSec'>{post.visits || 0}</Text>
                         </View>
                     </View>
                 </View>
@@ -84,37 +91,41 @@ const PostCard: React.FC<PostCardProps> = ({
     // ---- 默认竖排卡片（封面+标题+摘要） ----
     return (
         <View
-          className='flex flex-col rounded bg-cardBg overflow-hidden min-h-touch'
+          className='flex flex-col rounded-[16rpx] bg-cardBg overflow-hidden min-h-touch'
           onClick={handleViewPost}
           hoverClass='tap-active'
         >
-            {/* 封面图 */}
-            <View className='w-full h-[280rpx] overflow-hidden bg-pageBg'>
-                <Image
-                  src={getPostThumbnail(post)}
-                  mode='aspectFill'
-                  className='w-full h-full'
-                />
+            {/* 封面图 / 渐变背景 + 图标占位 */}
+            <View className='w-full h-[280rpx] overflow-hidden flex items-center justify-center' style={{
+                background: thumbnail ? 'none' : 'linear-gradient(135deg, rgba(22,119,255,0.06) 0%, rgba(114,46,209,0.06) 100%)',
+            }}>
+                {thumbnail ? (
+                    <Image src={thumbnail} mode='aspectFill' className='w-full h-full' />
+                ) : (
+                    <XIcon name='carbon:document' size={64} className='text-primary' style={{opacity: 0.6}} />
+                )}
             </View>
 
             {/* 内容区 */}
             <View className='flex flex-col gap-[12rpx] p-[24rpx]'>
                 {/* 标题 */}
-                <Text
-                  className='text-body font-bold text-textMain leading-[1.5]'
-                  style={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                    }}
-                >
-                    {getPostTitle(post)}
-                </Text>
+                {title && title !== 'title' && (
+                    <Text
+                      className='text-body font-bold text-textMain leading-[1.5]'
+                      style={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                        }}
+                    >
+                        {title}
+                    </Text>
+                )}
 
                 {/* 摘要 */}
-                {getPostSummary(post) && (
+                {summary && summary !== 'content' && (
                     <Text
                       className='text-desc text-textSec leading-[1.6]'
                       style={{
@@ -125,7 +136,7 @@ const PostCard: React.FC<PostCardProps> = ({
                             WebkitBoxOrient: 'vertical',
                         }}
                     >
-                        {getPostSummary(post)}
+                        {summary}
                     </Text>
                 )}
 
