@@ -61,6 +61,7 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
                 '--color-page-bg': '#17171a',
                 '--color-card-bg': '#232326',
                 '--color-split-line': '#3a3a3c',
+                '--color-bar-bg': 'rgba(35, 35, 38, 0.92)',
             } as React.CSSProperties;
         }
         return {
@@ -73,6 +74,7 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
             '--color-card-bg': '#ffffff',
             // 分割线：更轻以避免与卡片边框叠加后显得粗重
             '--color-split-line': '#e8eaed',
+            '--color-bar-bg': 'rgba(255, 255, 255, 0.92)',
         } as React.CSSProperties;
     }, [isDark]);
 

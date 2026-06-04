@@ -20,6 +20,8 @@ page {
     --color-card-bg: #ffffff;
     /* 分割线/边框色 */
     --color-split-line: #e8eaed;
+    /* 底部操作栏背景 */
+    --color-bar-bg: rgba(255, 255, 255, 0.92);
 
     background-color: var(--color-page-bg);
     color: var(--color-text-main);
@@ -37,6 +39,7 @@ page.dark {
     --color-page-bg: #17171a;
     --color-card-bg: #232326;
     --color-split-line: #3a3a3c;
+    --color-bar-bg: rgba(35, 35, 38, 0.92);
 
     background-color: var(--color-page-bg);
     color: var(--color-text-main);
@@ -76,7 +79,7 @@ page.dark {
     word-break: break-word;
 }
 
-/* 标题 */
+/* 标题 - 层级：h1 > h2 > h3 > h4 > 正文 */
 .content-viewer h1,
 .content-viewer h2,
 .content-viewer h3,
@@ -85,15 +88,19 @@ page.dark {
 .content-viewer h6 {
     font-weight: 700;
     color: var(--color-text-main);
-    margin-top: 40rpx;
+    line-height: 1.35;
     margin-bottom: 20rpx;
 }
-.content-viewer h1 { font-size: 42rpx; line-height: 1.3; }
-.content-viewer h2 { font-size: 38rpx; line-height: 1.35; padding-bottom: 12rpx; border-bottom: 2rpx solid var(--color-split-line); }
-.content-viewer h3 { font-size: 34rpx; line-height: 1.4; }
-.content-viewer h4 { font-size: 32rpx; line-height: 1.5; }
-.content-viewer h5 { font-size: 30rpx; line-height: 1.5; }
-.content-viewer h6 { font-size: 28rpx; line-height: 1.5; color: var(--color-text-sec); }
+/* h1 必须小于文章总标题(48rpx)，但大于所有内文标题 */
+.content-viewer h1 { font-size: 40rpx; margin-top: 48rpx; }
+/* h2 是正文核心分段标题 */
+.content-viewer h2 { font-size: 34rpx; margin-top: 48rpx; padding-bottom: 12rpx; border-bottom: 2rpx solid var(--color-split-line); }
+/* h3 是子分段标题 */
+.content-viewer h3 { font-size: 32rpx; margin-top: 40rpx; }
+/* h4 及以下与正文接近，靠加粗区分 */
+.content-viewer h4 { font-size: 30rpx; margin-top: 32rpx; }
+.content-viewer h5 { font-size: 30rpx; margin-top: 28rpx; }
+.content-viewer h6 { font-size: 28rpx; margin-top: 24rpx; color: var(--color-text-sec); }
 
 /* 段落 / Text */
 .content-viewer Text,
@@ -182,6 +189,10 @@ page.dark {
     line-height: 1.8;
     color: var(--color-text-main);
     margin-bottom: 8rpx;
+}
+.content-viewer li Text,
+.content-viewer li p {
+    color: var(--color-text-main);
 }
 
 /* 图片 */

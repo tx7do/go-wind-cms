@@ -91,7 +91,7 @@ export default function PostDetailPage() {
                     </View>
                 </View>
                 {/* 内容骨架 */}
-                <View className='px-[32rpx] py-[32rpx]'>
+                <View className='bg-cardBg mt-[16rpx] px-[32rpx] py-[32rpx]'>
                     <Skeleton className='h-[32rpx] w-full rounded-[8rpx] mb-[16rpx]' />
                     <Skeleton className='h-[32rpx] w-[90%] rounded-[8rpx] mb-[16rpx]' />
                     <Skeleton className='h-[32rpx] w-[75%] rounded-[8rpx] mb-[32rpx]' />
@@ -132,24 +132,24 @@ export default function PostDetailPage() {
                 </View>
             )}
 
-            {/* 文章头部 - 白色卡片 */}
-            <View className={`bg-cardBg px-[32rpx] pt-[32rpx] pb-[24rpx] ${displayThumbnail ? '' : 'pt-[40rpx]'}`}>
-                {/* 标题 */}
-                <Text className='text-title font-bold text-textMain block mb-[16rpx] leading-[1.4]'>
+            {/* 文章头部 - 独立白色卡片 */}
+            <View className={`bg-cardBg px-[32rpx] pt-[32rpx] pb-[28rpx] ${displayThumbnail ? '' : 'pt-[40rpx]'}`}>
+                {/* 标题 - 全页最大字号 */}
+                <Text className='text-title font-bold text-textMain block mb-[16rpx] leading-[1.35]'>
                     {displayTitle}
                 </Text>
 
                 {/* 摘要 */}
                 {displaySummary && (
-                    <Text className='text-desc text-textSec block mb-[20rpx] leading-[1.6]'>
+                    <Text className='text-desc text-textSec block mb-[24rpx] leading-[1.6]'>
                         {displaySummary}
                     </Text>
                 )}
 
                 {/* 作者信息行 */}
-                <View className='flex items-center gap-[16rpx] mb-[16rpx]'>
-                    <View className='w-[56rpx] h-[56rpx] rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'>
-                        <Text className='text-body font-bold text-primary'>
+                <View className='flex items-center gap-[16rpx] mb-[20rpx]'>
+                    <View className='w-[52rpx] h-[52rpx] rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'>
+                        <Text className='text-desc font-bold text-primary'>
                             {post.authorName?.charAt(0) || 'A'}
                         </Text>
                     </View>
@@ -161,18 +161,18 @@ export default function PostDetailPage() {
 
                 {/* 统计标签 */}
                 <View className='flex items-center gap-[16rpx] flex-wrap'>
-                    <View className='flex items-center gap-[6rpx] px-[16rpx] py-[6rpx] rounded-full bg-pageBg'>
+                    <View className='flex items-center gap-[4rpx] px-[14rpx] py-[4rpx] rounded-full bg-pageBg'>
                         <XIcon name='carbon:view' size={12} className='text-textThird' />
                         <Text className='text-tips text-textSec'>{post.visits || 0} {t('page.post_detail.views')}</Text>
                     </View>
-                    <View className='flex items-center gap-[6rpx] px-[16rpx] py-[6rpx] rounded-full bg-pageBg'>
+                    <View className='flex items-center gap-[4rpx] px-[14rpx] py-[4rpx] rounded-full bg-pageBg'>
                         <XIcon name='carbon:thumbs-up' size={12} className='text-textThird' />
                         <Text className='text-tips text-textSec'>{post.likes || 0} {t('page.post_detail.likes')}</Text>
                     </View>
                 </View>
             </View>
 
-            {/* 文章内容 - 白色卡片 */}
+            {/* 文章正文 - 独立白色卡片，确保内容有左右安全边距 */}
             <View className='bg-cardBg px-[32rpx] py-[32rpx] mt-[16rpx]'>
                 <ContentViewer content={displayContent} type='markdown' />
             </View>
@@ -205,9 +205,9 @@ export default function PostDetailPage() {
             {relatedPostsQuery && (
                 <View className='mt-[16rpx]'>
                     {/* 区块标题 */}
-                    <View className='flex items-center gap-[8rpx] bg-pageBg px-[24rpx] py-[16rpx] border-b-[2rpx] border-primary'>
-                        <XIcon name='carbon:document' size={18} className='text-primary' />
-                        <Text className='text-card-title font-bold text-textMain'>
+                    <View className='flex items-center gap-[8rpx] bg-pageBg px-[24rpx] py-[14rpx]'>
+                        <XIcon name='carbon:document' size={16} className='text-primary' />
+                        <Text className='text-desc font-bold text-textMain'>
                             {t('page.post_detail.related_posts')}
                         </Text>
                     </View>
@@ -226,7 +226,7 @@ export default function PostDetailPage() {
                 </View>
             )}
 
-            {/* 返回首页 */}
+            {/* 返回按钮 */}
             <View className='px-[24rpx] py-[32rpx]'>
                 <View
                   className='flex items-center justify-center gap-[8rpx] py-[20rpx] rounded-[12rpx] bg-cardBg border-[1rpx] border-splitLine'
@@ -239,12 +239,20 @@ export default function PostDetailPage() {
             </View>
 
             {/* 浮动底部操作栏 */}
-            <View className='fixed bottom-0 left-0 right-0 z-50 bg-cardBg border-t-[1rpx] border-splitLine px-[32rpx] py-[16rpx] flex items-center justify-around'
-              style={{paddingBottom: 'calc(16rpx + env(safe-area-inset-bottom))'}}
+            <View
+              className='fixed bottom-0 left-0 right-0 z-50 bg-cardBg border-t-[1rpx] border-splitLine flex items-center justify-around'
+              style={{
+                backgroundColor: 'var(--color-card-bg)',
+                paddingTop: '16rpx',
+                paddingBottom: 'calc(32rpx + env(safe-area-inset-bottom))',
+                paddingLeft: '16rpx',
+                paddingRight: '16rpx',
+              }}
             >
                 <View
-                  className='flex items-center gap-[6rpx] px-[24rpx] py-[12rpx] rounded-full tap-active'
+                  className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
                   onClick={() => setIsLiked(!isLiked)}
+                  hoverClass='tap-active'
                 >
                     <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} size={20}
                       className={isLiked ? 'text-primary' : 'text-textSec'}
@@ -254,8 +262,9 @@ export default function PostDetailPage() {
                     </Text>
                 </View>
                 <View
-                  className='flex items-center gap-[6rpx] px-[24rpx] py-[12rpx] rounded-full tap-active'
+                  className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
                   onClick={() => setIsBookmarked(!isBookmarked)}
+                  hoverClass='tap-active'
                 >
                     <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} size={20}
                       className={isBookmarked ? 'text-primary' : 'text-textSec'}
@@ -265,8 +274,9 @@ export default function PostDetailPage() {
                     </Text>
                 </View>
                 <View
-                  className='flex items-center gap-[6rpx] px-[24rpx] py-[12rpx] rounded-full tap-active'
+                  className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
                   onClick={handleShare}
+                  hoverClass='tap-active'
                 >
                     <XIcon name='carbon:share' size={20} className='text-textSec' />
                     <Text className='text-tips text-textSec'>{t('page.post_detail.share')}</Text>
