@@ -68,9 +68,11 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
             '--color-text-sec': '#4e5969',
             '--color-text-third': '#86909c',
             '--color-text-weak': '#c9cdd4',
-            '--color-page-bg': '#f2f3f5',
+            // 亮色背景：页面底色略深于纯白，卡片纯白以形成对比
+            '--color-page-bg': '#ebedf0',
             '--color-card-bg': '#ffffff',
-            '--color-split-line': '#e5e6eb',
+            // 分割线：更轻以避免与卡片边框叠加后显得粗重
+            '--color-split-line': '#e8eaed',
         } as React.CSSProperties;
     }, [isDark]);
 

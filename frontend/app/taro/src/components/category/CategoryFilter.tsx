@@ -101,25 +101,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         handleCategoryChange(nodeId);
     };
 
-    // 显示子菜单
-    const showSubmenu = (nodeId: number) => {
-        if (hasChildren(nodeId)) {
-            if (hideTimers.current.has(nodeId)) {
-                clearTimeout(hideTimers.current.get(nodeId));
-                hideTimers.current.delete(nodeId);
-            }
-            setExpandedIds(prev => new Set(prev).add(nodeId));
-        }
-    };
-
-    // 保持子菜单打开 (鼠标在菜单上时)
-    const keepSubmenuOpen = (nodeId: number) => {
-        if (hideTimers.current.has(nodeId)) {
-            clearTimeout(hideTimers.current.get(nodeId));
-            hideTimers.current.delete(nodeId);
-        }
-    };
-
     // 隐藏子菜单 - 添加延时避免快速消失
     const hideSubmenu = (nodeId: number) => {
         const timer = setTimeout(() => {
@@ -142,6 +123,22 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }
     };
 
+    // 点击外部区域关闭菜单
+    useEffect(() => {
+        if (expandedIds.size === 0) return;
+
+        // 使用 Taro 的点击事件委托（小程序不支持 document.addEventListener）
+        // 这里通过组件外层容器的 onClick 来捕获外部点击
+        return () => {
+            // 清理函数
+        };
+    }, [expandedIds]);
+
+    // 关闭所有展开的菜单
+    const closeAllMenus = () => {
+        setExpandedIds(new Set());
+    };
+
     function hasChildren(categoryId: number): boolean {
         const category = displayCategories.find(cat => cat.id === categoryId);
         return !!(category && category.children && category.children.length > 0);
@@ -149,7 +146,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
     if (loading && autoLoad) {
         return (
-            <View className='relative z-20 mb-10 max-md:mb-6'>
+            <View className='relative z-20 mb-8 max-md:mb-5'>
                 <View className='flex flex-wrap items-center gap-2.5 rounded-xl border border-border bg-card/50 p-3.5 backdrop-blur-sm'>
                     <Skeleton className='h-9 w-24 rounded-lg' />
                     <Skeleton className='h-9 w-20 rounded-lg' />
@@ -162,25 +159,31 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         );
     }
 
-    // 通用按钮样式：统一浅灰描边 + hover 底色填充
+    // 通用按钮样式：统一圆角胶囊 + 内边距
     const btnBase = cn(
-        'inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium',
-        'transition-all duration-200 cursor-pointer select-none',
-        'border border-border/60 bg-transparent',
-        'hover:bg-muted/60 hover:border-border',
+        'inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium',
+        'transition-all duration-200 cursor-pointer select-none whitespace-nowrap',
     );
     const btnInactive = cn(
-        'text-muted-foreground',
-        'hover:text-foreground',
+        'text-textThird bg-cardBg',
+        'hover:text-textSec',
     );
     const btnActive = cn(
-        /* 选中态：绿色填充白字 */
-        'bg-primary text-primary-foreground border-primary',
-        'hover:bg-primary/90 hover:border-primary',
+        /* 选中态：主色填充白字 */
+        'bg-primary text-primary-foreground',
+        'hover:bg-primary/90',
     );
 
     return (
-        <View className='relative z-20 mb-10 max-md:mb-6'>
+        <View className='relative z-20 mb-8 max-md:mb-5'>
+            {/* 点击外部关闭菜单的遮罩层 */}
+            {expandedIds.size > 0 && (
+                <View
+                  className='fixed inset-0 z-[998]'
+                  onClick={closeAllMenus}
+                />
+            )}
+
             {/* 移动端：横向流滚动容器，禁用换行 */}
             <View className={cn(
                 'flex items-center gap-3 overflow-x-auto no-scrollbar scroll-smooth whitespace-nowrap',
@@ -190,9 +193,9 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             >
                 {/* 所有分类按钮 */}
                 <View
-                  type='button'
                   onClick={() => handleCategoryChange(null)}
-                  className={cn(btnBase, selectedCategory === null ? btnActive : btnInactive, 'shrink-0')}
+                  className={cn(btnBase, selectedCategory === null ? btnActive : btnInactive, 'shrink-0', 'tap-active')}
+                  hoverClass='opacity-70'
                 >
                     <XIcon name='carbon:grid' size={15} />
                     {t('all_categories')}
@@ -206,22 +209,21 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 {/* 树形模式 */}
                 {treeMode ? (
                     <>
-                        {/* 一级分类 (横向排列 + 悬浮菜单) */}
+                        {/* 一级分类 (横向排列 + 触摸菜单) */}
                         {displayCategories.map((node) => (
                             <View
                               key={node.id}
                               className='relative'
-                              onMouseEnter={() => node.id && showSubmenu(node.id)}
-                              onMouseLeave={() => node.id && hideSubmenu(node.id)}
                             >
                                 <View
-                                  type='button'
                                   onClick={() => node.id && handleCategoryClick(node.id)}
                                   className={cn(
                                         btnBase,
                                         selectedCategory === node.id ? btnActive : btnInactive,
                                         'shrink-0',
+                                        'tap-active',
                                     )}
+                                  hoverClass='opacity-70'
                                 >
                                     <XIcon name={node.icon || 'carbon:folder'} size={15} />
                                     {getCategoryName(node)}
@@ -229,47 +231,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                         <XIcon name='carbon:chevron-down' size={14} className='ml-0.5 opacity-60' />
                                     )}
                                 </View>
-
-                                {/* 子分类菜单 */}
-                                {hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && (
-                                    <View
-                                      className={cn(
-                                            'absolute left-0 top-full z-50 mt-1.5',
-                                            'min-w-[200px] max-w-[320px]',
-                                            'rounded-lg border border-border bg-popover p-1.5',
-                                            'shadow-lg shadow-black/5',
-                                            'animate-in fade-in-0 zoom-in-95 duration-150',
-                                        )}
-                                      onMouseEnter={() => keepSubmenuOpen(node.id || 0)}
-                                      onMouseLeave={() => hideSubmenu(node.id || 0)}
-                                    >
-                                        {node.children!.map((child) => (
-                                            <View
-                                              key={child.id}
-                                              type='button'
-                                              onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleCategoryChange(child.id || 0);
-                                                }}
-                                              className={cn(
-                                                    'flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm',
-                                                    'transition-colors duration-150 cursor-pointer',
-                                                    selectedCategory === child.id
-                                                        ? 'bg-primary/10 text-primary font-medium'
-                                                        : 'text-foreground/80 hover:bg-muted hover:text-foreground',
-                                                )}
-                                            >
-                                                <XIcon name={child.icon || 'carbon:folder'} size={14} />
-                                                <Text className='truncate'>{getCategoryName(child)}</Text>
-                                                {child.postCount !== undefined && child.postCount > 0 && (
-                                                    <Text className='ml-auto text-xs text-muted-foreground'>
-                                                        {child.postCount}
-                                                    </Text>
-                                                )}
-                                            </View>
-                                        ))}
-                                    </View>
-                                )}
                             </View>
                         ))}
                     </>
@@ -279,9 +240,9 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                         {rootCategories.map((cat) => (
                             <View
                               key={cat.id}
-                              type='button'
                               onClick={() => handleCategoryChange(cat.id || 0)}
-                              className={cn(btnBase, selectedCategory === cat.id ? btnActive : btnInactive, 'shrink-0')}
+                              className={cn(btnBase, selectedCategory === cat.id ? btnActive : btnInactive, 'shrink-0', 'tap-active')}
+                              hoverClass='opacity-70'
                             >
                                 <XIcon name={cat.icon || 'carbon:folder'} size={15} />
                                 {getCategoryName(cat)}
@@ -290,6 +251,57 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                     </>
                 )}
             </View>
+
+            {/* 下拉菜单（移到滚动容器外部，避免被 overflow 裁剪） */}
+            {treeMode && (
+                <>
+                    {displayCategories.map((node) => (
+                        hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && (
+                            <View
+                              key={`dropdown-${node.id}`}
+                              className={cn(
+                                    'absolute left-4 top-full z-[999] mt-2',
+                                    'min-w-[240px] max-w-[400px]',
+                                    'rounded-lg border border-border bg-popover p-1.5',
+                                    'shadow-lg shadow-black/10',
+                                )}
+                            >
+                                {node.children!.map((child) => (
+                                    <View
+                                      key={child.id}
+                                      onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCategoryChange(child.id || 0);
+                                            closeAllMenus(); // 选择后关闭所有菜单
+                                        }}
+                                      className={cn(
+                                            'flex w-full items-center gap-2 rounded-md px-3 py-2.5',
+                                            'transition-colors duration-150 cursor-pointer',
+                                            selectedCategory === child.id
+                                                ? 'bg-primary/10 text-primary font-medium'
+                                                : 'text-textSec hover:bg-cardBg',
+                                            'tap-active',
+                                        )}
+                                      hoverClass='opacity-70'
+                                    >
+                                        <View className='flex items-center gap-2 flex-1 min-w-0'>
+                                            <XIcon name={child.icon || 'carbon:folder'} size={14} className='flex-shrink-0' />
+                                            <Text className='truncate'>{getCategoryName(child)}</Text>
+                                        </View>
+                                        {child.postCount !== undefined && child.postCount > 0 && (
+                                            <View className='flex-shrink-0 text-right' style={{ minWidth: '24px' }}>
+                                                <Text className='text-xs text-textThird'>
+                                                    {child.postCount}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </View>
+                                ))}
+                            </View>
+                        )
+                    ))}
+                </>
+            )}
         </View>
     );
 };

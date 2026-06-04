@@ -6,17 +6,33 @@ module.exports = {
     extend: {
       /* ========== 全局通用色板（规范 §3） ========== */
       colors: {
+        // 主色系
         primary: '#1677ff',       // 主色/主按钮/重点强调
+        'primary-foreground': '#ffffff', // 主色上的文字色
         success: '#00b42a',       // 成功状态/完成提示
         warning: '#ff7d00',       // 警告状态/待处理提示
         danger: '#f53f3f',        // 错误状态/删除/高危操作
+        
+        // 文字色（通过 CSS 变量支持主题切换）
         textMain: 'var(--color-text-main)',    // 一级正文/核心内容
         textSec: 'var(--color-text-sec)',      // 二级正文/次要内容
         textThird: 'var(--color-text-third)', // 三级辅助文字/说明
         textWeak: 'var(--color-text-weak)',   // 占位文字/禁用状态文字
+        
+        // 背景色（通过 CSS 变量支持主题切换）
         pageBg: 'var(--color-page-bg)',       // 页面背景色
         cardBg: 'var(--color-card-bg)',       // 卡片/模块底色
         splitLine: 'var(--color-split-line)', // 分割线/边框色
+        
+        // shadcn/ui 兼容色值（映射到自定义变量）
+        border: 'var(--color-split-line)',    // 边框色（兼容 border-border）
+        background: 'var(--color-page-bg)',   // 背景色（兼容 bg-background）
+        foreground: 'var(--color-text-main)', // 前景色（兼容 text-foreground）
+        muted: 'var(--color-split-line)',     // 弱化背景（兼容 bg-muted）
+        'muted-foreground': 'var(--color-text-third)', // 弱化文字（兼容 text-muted-foreground）
+        popover: 'var(--color-card-bg)',      // 弹出层背景（兼容 bg-popover）
+        input: 'var(--color-split-line)',     // 输入框边框（兼容 border-input）
+        ring: 'var(--color-text-main)',       // 聚焦环（兼容 ring-ring）
       },
       /* ========== 圆角分级（规范 §1.2） ========== */
       borderRadius: {

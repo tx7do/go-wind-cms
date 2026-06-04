@@ -14,14 +14,14 @@ export default function PostListPage() {
     }, [selectedCategoryId]);
 
     return (
-        <View className='w-full bg-pageBg'>
+        <View className='min-h-screen w-full bg-pageBg pb-[160rpx]'>
             {/* 页面标题 */}
-            <View className='bg-cardBg px-[24rpx] py-[32rpx] border-b-[1rpx] border-splitLine'>
+            <View className='bg-cardBg px-[24rpx] pt-[40rpx] pb-[24rpx] border-b-[1rpx] border-splitLine'>
                 <Text className='text-title font-bold text-textMain'>{t('page.posts.posts_list')}</Text>
             </View>
 
             {/* 分类筛选 */}
-            <View className='px-[24rpx] py-[16rpx]'>
+            <View className='px-[24rpx] pt-[24rpx]'>
                 <CategoryFilter
                     selectedCategory={selectedCategoryId}
                     treeMode
@@ -30,12 +30,14 @@ export default function PostListPage() {
                 />
             </View>
 
-            <View className='px-[24rpx]'>
+            {/* 文章列表 */}
+            <View className='px-[24rpx] pt-[24rpx]'>
                 <PostList
                     key={selectedCategoryId || 'all'}
                     queryParams={queryParams}
                     initialPageSize={12}
                     pageSizes={[12, 24, 36, 48]}
+                    showPagination={true}
                 />
             </View>
         </View>

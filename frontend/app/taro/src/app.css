@@ -16,10 +16,10 @@ page {
     --color-text-third: #86909c;
     --color-text-weak: #c9cdd4;
     /* 背景色 */
-    --color-page-bg: #f2f3f5;
+    --color-page-bg: #ebedf0;
     --color-card-bg: #ffffff;
     /* 分割线/边框色 */
-    --color-split-line: #e5e6eb;
+    --color-split-line: #e8eaed;
 
     background-color: var(--color-page-bg);
     color: var(--color-text-main);

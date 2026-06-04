@@ -141,22 +141,22 @@ const PostCard: React.FC<PostCardProps> = ({
                 )}
 
                 {/* 元数据 */}
-                <View className='flex items-center gap-[16rpx] pt-[12rpx] border-t-[1rpx] border-splitLine text-tips text-textThird'>
-                    <View className='flex items-center gap-[4rpx]'>
-                        <XIcon name='carbon:user' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textThird'>{post.authorName || '—'}</Text>
+                <View className='flex items-center gap-[24rpx] pt-[12rpx] border-t-[1rpx] border-splitLine text-tips text-textSec'>
+                    <View className='flex items-center gap-[6rpx]'>
+                        <XIcon name='carbon:user' size={12} className='text-textSec' />
+                        <Text className='text-tips text-textSec'>{post.authorName || '—'}</Text>
                     </View>
-                    <View className='flex items-center gap-[4rpx]'>
-                        <XIcon name='carbon:calendar' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textThird'>{formatDate(post.createdAt)}</Text>
+                    <View className='flex items-center gap-[6rpx]'>
+                        <XIcon name='carbon:calendar' size={12} className='text-textSec' />
+                        <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
                     </View>
-                    <View className='flex items-center gap-[4rpx]'>
-                        <XIcon name='carbon:view' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textThird'>{post.visits || 0}</Text>
+                    <View className='flex items-center gap-[6rpx]'>
+                        <XIcon name='carbon:view' size={12} className='text-textSec' />
+                        <Text className='text-tips text-textSec'>{post.visits || 0}</Text>
                     </View>
-                    <View className='flex items-center gap-[4rpx]'>
-                        <XIcon name='carbon:thumbs-up' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textThird'>{post.likes || 0}</Text>
+                    <View className='flex items-center gap-[6rpx]'>
+                        <XIcon name='carbon:thumbs-up' size={12} className='text-textSec' />
+                        <Text className='text-tips text-textSec'>{post.likes || 0}</Text>
                     </View>
                 </View>
             </View>
