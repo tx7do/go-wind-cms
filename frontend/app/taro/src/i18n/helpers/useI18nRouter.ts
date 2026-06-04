@@ -52,6 +52,18 @@ export function useI18nRouter() {
         Taro.redirectTo({url: resolveTaroPath(path)});
     };
 
+    const reLaunch = (path: string) => {
+        if (typeof window !== 'undefined') {
+            // 加时间戳强制浏览器绕过缓存，必定整页重载
+            const separator = path.includes('?') ? '&' : '?';
+            const url = window.location.origin + path + separator + '_t=' + Date.now();
+            console.log('[reLaunch] navigating to:', url);
+            window.location.href = url;
+        } else {
+            Taro.reLaunch({url: resolveTaroPath(path)});
+        }
+    };
+
     const back = () => {
         Taro.navigateBack();
     };
@@ -59,6 +71,7 @@ export function useI18nRouter() {
     return {
         push,
         replace,
+        reLaunch,
         back,
         localizedPath: (path: string) => path,
     };

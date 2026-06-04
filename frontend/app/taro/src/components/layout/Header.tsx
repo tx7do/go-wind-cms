@@ -19,6 +19,15 @@ export default function Header() {
         setSafeAreaTop(systemInfo.statusBarHeight || 0);
     }, []);
 
+    // 回首页：直接用浏览器原生导航绕过 Taro SPA 路由
+    const goHome = () => {
+        console.log('[goHome] clicked');
+        if (typeof window !== 'undefined') {
+            console.log('[goHome] navigating to:', window.location.origin + '/');
+            window.location.href = window.location.origin + '/';
+        }
+    };
+
     return (
         <View 
           className='fixed top-0 left-0 right-0 z-[1000] bg-cardBg border-b-[1rpx] border-splitLine'
@@ -28,7 +37,7 @@ export default function Header() {
                 {/* Logo */}
                 <View
                   className='flex items-center gap-[16rpx] min-w-touch min-h-touch justify-center'
-                  onClick={() => router.push('/')}
+                  onClick={goHome}
                   hoverClass='tap-active'
                 >
                     <View className='h-[48rpx] w-[48rpx]'>

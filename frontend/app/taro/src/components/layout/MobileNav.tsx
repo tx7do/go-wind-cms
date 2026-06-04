@@ -83,8 +83,14 @@ function MobileNavDrawer() {
     }, [locale, loadNavigations]);
 
     const handleNavigate = (item: siteservicev1_NavigationItem) => {
-        if (item.url) router.push(item.url);
         close();
+        if (!item.url) return;
+        // 首页特殊处理：Taro.navigateTo 不触发页面重渲染，用浏览器原生导航
+        if (item.url === '/' && typeof window !== 'undefined') {
+            window.location.href = window.location.origin + '/';
+        } else {
+            router.push(item.url);
+        }
     };
 
     const handleAction = (action: () => void) => {

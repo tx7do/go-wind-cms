@@ -114,7 +114,7 @@ export default function PostDetailPage() {
                 <Text className='text-body text-textSec mb-[8rpx]'>{t('page.post_detail.post_not_found')}</Text>
                 <View
                   className='flex items-center gap-[8rpx] px-[32rpx] py-[16rpx] rounded-full bg-primary/10 mt-[24rpx]'
-                  onClick={() => router.push('/')}
+                  onClick={() => router.reLaunch('/')}
                   hoverClass='tap-active'
                 >
                     <XIcon name='carbon:home' size={16} className='text-primary' />
