@@ -85,6 +85,14 @@ export default function CategoryDetailPage() {
   }
 
   const categoryName = getCategoryName(detail);
+
+  // 分类加载完成后，用分类名称作为导航栏标题
+  useEffect(() => {
+    if (categoryName) {
+      Taro.setNavigationBarTitle({title: categoryName});
+    }
+  }, [categoryName]);
+
   const categoryDesc = getCategoryDescription(detail);
   const hasChildren = childCategories.length > 0;
 

@@ -13,11 +13,9 @@ import {usePreferences} from '@/core/preferences';
 import {contentservicev1_Post} from '@/api/generated/app/service/v1';
 import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
 import {Skeleton} from '@/components/ui/skeleton';
-import {usePageTitle} from '@/hooks/usePageTitle';
 
 export default function PostDetailPage() {
     const {t} = useTranslation();
-    usePageTitle('page.title.post_detail');
     const router = useI18nRouter();
     const {isDark} = usePreferences();
     const [post, setPost] = useState<contentservicev1_Post | null>(null);
@@ -41,6 +39,14 @@ export default function PostDetailPage() {
     }, []);
 
     const displayTitle = useMemo(() => post ? getPostTitle(post) : '', [post]);
+
+    // 文章加载完成后，用文章标题作为导航栏标题
+    useEffect(() => {
+        if (displayTitle) {
+            Taro.setNavigationBarTitle({title: displayTitle});
+        }
+    }, [displayTitle]);
+
     const displayContent = useMemo(() => post ? getPostContent(post) : '', [post]);
     const displayThumbnail = useMemo(() => post ? getPostThumbnail(post) : '', [post]);
     const displaySummary = useMemo(() => post ? getPostSummary(post) : '', [post]);

@@ -61,6 +61,14 @@ export default function TagDetailPage() {
   }
 
   const translation = getTagTranslation(tag);
+  const tagName = translation?.name || '';
+
+  // 标签加载完成后，用标签名称作为导航栏标题
+  useEffect(() => {
+    if (tagName) {
+      Taro.setNavigationBarTitle({title: tagName});
+    }
+  }, [tagName]);
 
   return (
     <View className='min-h-screen w-full bg-pageBg pb-[160rpx]'>
