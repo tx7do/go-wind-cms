@@ -26,8 +26,6 @@ interface PostListProps {
     tagId?: number;
     columns?: number; // 保留接口兼容，实际移动端固定单列
     showPagination?: boolean;
-    pageSizes?: number[];
-    /** 紧凑横排模式 */
     compact?: boolean;
 }
 
@@ -43,7 +41,6 @@ const PostList: React.FC<PostListProps> = ({
     categoryId,
     tagId,
     showPagination = false,
-    pageSizes = [10, 20, 30, 40],
     compact = false,
 }) => {
     const t = useTranslations('page.posts');
@@ -70,11 +67,11 @@ const PostList: React.FC<PostListProps> = ({
         fetchPosts(1, currentPageSize);
     }, [categoryId, tagId]);
 
-    const fetchPosts = useCallback(async (page: number, pageSize: number) => {
+    const fetchPosts = useCallback(async (p: number, ps: number) => {
         setLoading(true);
         try {
             const res = await fetchListPosts({
-                paging: {page, pageSize},
+                paging: {page: p, pageSize: ps},
                 formValues: {
                     ...queryParams,
                     ...(categoryId && {category_ids__in: [categoryId]}),
@@ -98,11 +95,6 @@ const PostList: React.FC<PostListProps> = ({
     }, [currentPage, currentPageSize]);
 
     const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-    };
-
-    const handlePageSizeChange = (size: number, newPage: number) => {
-        setCurrentPageSize(size);
         setCurrentPage(newPage);
     };
 

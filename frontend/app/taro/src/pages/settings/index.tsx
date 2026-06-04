@@ -48,9 +48,9 @@ export default function SettingsPage() {
             <View className='flex bg-cardBg border-b-[1rpx] border-splitLine'>
                 {menuItems.map((item) => (
                     <View
-                        key={item.key}
-                        className={`flex-1 flex items-center justify-center gap-[8rpx] py-[24rpx] min-h-touch ${activeMenu === item.key ? 'border-b-[4rpx] border-primary' : ''}`}
-                        onClick={() => setActiveMenu(item.key)}
+                      key={item.key}
+                      className={`flex-1 flex items-center justify-center gap-[8rpx] py-[24rpx] min-h-touch ${activeMenu === item.key ? 'border-b-[4rpx] border-primary' : ''}`}
+                      onClick={() => setActiveMenu(item.key)}
                     >
                         <XIcon name={item.icon} size={16} className={activeMenu === item.key ? 'text-primary' : 'text-textThird'} />
                         <Text className={`text-desc ${activeMenu === item.key ? 'text-primary font-bold' : 'text-textSec'}`}>
@@ -66,9 +66,9 @@ export default function SettingsPage() {
                 <View className='rounded bg-cardBg overflow-hidden'>
                     {sections?.items.map((item, index) => (
                         <View
-                            key={index}
-                            className={`flex items-center justify-between px-[24rpx] h-[88rpx] min-h-touch ${index < sections.items.length - 1 ? 'border-b-[1rpx] border-splitLine' : ''}`}
-                            hoverClass='tap-active'
+                          key={index}
+                          className={`flex items-center justify-between px-[24rpx] h-[88rpx] min-h-touch ${index < sections.items.length - 1 ? 'border-b-[1rpx] border-splitLine' : ''}`}
+                          hoverClass='tap-active'
                         >
                             <Text className='text-body text-textMain'>{item.label}</Text>
                             <View className='flex items-center gap-[8rpx]'>

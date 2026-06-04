@@ -91,9 +91,9 @@ export default function PostDetailPage() {
             {/* 返回导航 */}
             <View className='bg-cardBg px-[24rpx]'>
                 <View
-                    className='flex items-center gap-[8rpx] h-[88rpx] min-h-touch'
-                    onClick={() => router.back()}
-                    hoverClass='tap-active'
+                  className='flex items-center gap-[8rpx] h-[88rpx] min-h-touch'
+                  onClick={() => router.back()}
+                  hoverClass='tap-active'
                 >
                     <XIcon name='carbon:arrow-left' size={16} className='text-textSec' />
                     <Text className='text-desc text-textSec'>{t('page.post_detail.back')}</Text>
@@ -138,26 +138,28 @@ export default function PostDetailPage() {
             {/* 操作按钮 */}
             <View className='flex justify-center gap-[48rpx] py-[32rpx] bg-cardBg mt-[16rpx]'>
                 <View
-                    className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
-                    onClick={() => setIsLiked(!isLiked)}
-                    hoverClass='tap-active'
+                  className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
+                  onClick={() => setIsLiked(!isLiked)}
+                  hoverClass='tap-active'
                 >
                     <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} size={24}
-                        className={isLiked ? 'text-primary' : 'text-textThird'} />
+                      className={isLiked ? 'text-primary' : 'text-textThird'}
+                    />
                     <Text className='text-tips text-textSec'>{t('page.post_detail.likes')}</Text>
                 </View>
                 <View
-                    className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
-                    onClick={() => setIsBookmarked(!isBookmarked)}
-                    hoverClass='tap-active'
+                  className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
+                  onClick={() => setIsBookmarked(!isBookmarked)}
+                  hoverClass='tap-active'
                 >
                     <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} size={24}
-                        className={isBookmarked ? 'text-primary' : 'text-textThird'} />
+                      className={isBookmarked ? 'text-primary' : 'text-textThird'}
+                    />
                     <Text className='text-tips text-textSec'>{t('page.post_detail.bookmark')}</Text>
                 </View>
                 <View
-                    className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
-                    hoverClass='tap-active'
+                  className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
+                  hoverClass='tap-active'
                 >
                     <XIcon name='carbon:share' size={24} className='text-textThird' />
                     <Text className='text-tips text-textSec'>{t('page.post_detail.share')}</Text>
@@ -174,14 +176,14 @@ export default function PostDetailPage() {
                         {t('page.post_detail.related_posts')}
                     </Text>
                     <PostList
-                        queryParams={relatedPostsQuery}
-                        fieldMask='id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'
-                        orderBy={['-sortOrder']}
-                        page={1}
-                        pageSize={3}
-                        columns={1}
-                        showSkeleton={false}
-                        showPagination={false}
+                      queryParams={relatedPostsQuery}
+                      fieldMask='id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'
+                      orderBy={['-sortOrder']}
+                      page={1}
+                      pageSize={3}
+                      columns={1}
+                      showSkeleton={false}
+                      showPagination={false}
                     />
                 </View>
             )}

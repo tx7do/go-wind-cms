@@ -8,7 +8,7 @@ import XIcon from '@/plugins/xicon';
 
 import CategoryTree from '@/components/category/CategoryTree';
 
-import {fetchListCategories, getCategoryName} from '@/api/hooks/category';
+import {fetchListCategories} from '@/api/hooks/category';
 import {useI18nRouter} from '@/i18n/helpers';
 
 import {contentservicev1_Category} from '@/api/generated/app/service/v1';

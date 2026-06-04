@@ -1,18 +1,20 @@
-import {View, Text} from '@tarojs/components';
-import React, {useState, useEffect, useRef} from 'react';
-import {Button} from '@/components/ui/button';
-import {useTranslations} from '@/lib/next-intl-compat';
+import Taro from '@tarojs/taro';
+import {View, Text, Input} from '@tarojs/components';
+import React, {useState, useEffect} from 'react';
 
+import {useTranslations} from '@/lib/next-intl-compat';
+import {cn} from '@/lib/utils';
 import {XIcon} from '@/plugins/xicon';
 import {AppEmpty} from '@/components/ui';
+import {Skeleton} from '@/components/ui/skeleton';
 import {fetchListComments} from '@/api/hooks/comment';
 import {createComment as createCommentApi} from '@/api/service/comment';
 import type {
     commentservicev1_Comment,
-    commentservicev1_Comment_ContentType, commentservicev1_ListCommentResponse,
+    commentservicev1_Comment_ContentType,
+    commentservicev1_ListCommentResponse,
 } from '@/api/generated/app/service/v1';
 
-import {cn} from '@/lib/utils';
 import CommentTree from './CommentTree';
 import RichTextEditor from './RichTextEditor';
 
@@ -29,10 +31,10 @@ interface CommentSectionProps {
 }
 
 const CommentSection: React.FC<CommentSectionProps> = ({
-                                                           objectId,
-                                                           contentType,
-                                                           onUpdateComments
-                                                       }) => {
+    objectId,
+    contentType,
+    onUpdateComments,
+}) => {
     const t = useTranslations('comment');
 
     // 状态
@@ -40,7 +42,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     const [loading, setLoading] = useState(false);
     const [comments, setComments] = useState<commentservicev1_Comment[]>([]);
 
-    // 分页相关状态
+    // 分页
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize] = useState(20);
     const [_total, setTotal] = useState(0);
@@ -53,14 +55,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         authorEmail: '',
     });
 
-    const commentsListRef = useRef<HTMLDivElement>(null);
-
     // 计算属性
     const displayComments = comments;
     const hasComments = displayComments.length > 0;
     const showLoadMore = hasMore && !loadingMore;
 
-    // 加载评论 (分页)
+    // 加载评论
     async function loadComments(reset = false) {
         if (!objectId || !contentType) return;
         if (loading || (loadingMore && !reset)) return;
@@ -73,15 +73,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
         try {
             const res = await fetchListComments({
-                paging: {
-                    page: reset ? 1 : currentPage,
-                    pageSize: pageSize
-                },
+                paging: {page: reset ? 1 : currentPage, pageSize},
                 formValues: {
-                    objectId: objectId,
-                    contentType: contentType,
-                    status: 'STATUS_APPROVED'
-                }
+                    objectId,
+                    contentType,
+                    status: 'STATUS_APPROVED',
+                },
             }) as unknown as commentservicev1_ListCommentResponse;
 
             const newComments = res.items || [];
@@ -94,7 +91,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             }
 
             setTotal(newTotal);
-            // 判断是否还有更多数据
             const allComments = reset ? newComments : [...comments, ...newComments];
             setHasMore(allComments.length < newTotal);
             setCurrentPage(prev => prev + 1);
@@ -108,7 +104,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         }
     }
 
-    // 加载更多
     function loadMoreComments() {
         if (hasMore && !loadingMore) {
             loadComments();
@@ -117,26 +112,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     // 提交评论
     async function handleSubmitComment() {
-        // Tiptap 空内容会返回 <Text></Text>，需要用 textContent 检查
-        const tmpDiv = document.createElement('div');
-        tmpDiv.innerHTML = newComment.content;
-        const textContent = tmpDiv.textContent?.trim() || '';
+        const textContent = newComment.content.trim();
         if (!textContent) {
-            alert(t('empty_content'));
+            Taro.showToast({title: t('empty_content'), icon: 'none'});
             return;
         }
         if (!newComment.authorName.trim()) {
-            alert(t('invalid_nickname'));
+            Taro.showToast({title: t('invalid_nickname'), icon: 'none'});
             return;
         }
-        if (!newComment.authorEmail.trim()) {
-            alert(t('invalid_email'));
-            return;
-        }
-        // 邮箱格式验证
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(newComment.authorEmail)) {
-            alert(t('invalid_email'));
+            Taro.showToast({title: t('invalid_email'), icon: 'none'});
             return;
         }
         if (!objectId || submitting) return;
@@ -144,7 +131,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         setSubmitting(true);
         try {
             await createCommentApi({
-                objectId: objectId,
+                objectId,
                 contentType: contentType ?? undefined,
                 content: newComment.content,
                 authorName: newComment.authorName,
@@ -152,18 +139,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 status: 'STATUS_PENDING',
             });
 
-            alert(t('comment_submitted'));
+            Taro.showToast({title: t('comment_submitted'), icon: 'success'});
             setNewComment({content: '', authorName: '', authorEmail: ''});
             setCurrentPage(1);
             await loadComments(true);
-
-            // 用户体验优化：提交后滚动到评论列表
-            setTimeout(() => {
-                commentsListRef.current?.scrollIntoView({behavior: 'smooth'});
-            }, 100);
         } catch (error) {
             console.error('Submit comment failed:', error);
-            alert(t('submit_comment_failed'));
+            Taro.showToast({title: t('submit_comment_failed'), icon: 'none'});
         } finally {
             setSubmitting(false);
         }
@@ -172,16 +154,15 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     // 处理回复
     async function handleReply(comment: commentservicev1_Comment, content: string) {
         if (!content.trim()) {
-            alert(t('empty_content'));
+            Taro.showToast({title: t('empty_content'), icon: 'none'});
             return;
         }
-
         if (!objectId || submitting) return;
 
         setSubmitting(true);
         try {
             await createCommentApi({
-                objectId: objectId,
+                objectId,
                 contentType: contentType ?? undefined,
                 content: content.trim(),
                 authorName: comment.authorName,
@@ -191,12 +172,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 status: 'STATUS_PENDING',
             });
 
-            alert(t('comment_posted'));
+            Taro.showToast({title: t('comment_posted'), icon: 'success'});
             setCurrentPage(1);
             await loadComments(true);
         } catch (error) {
             console.error('Submit reply failed:', error);
-            alert(t('submit_comment_failed'));
+            Taro.showToast({title: t('submit_comment_failed'), icon: 'none'});
         } finally {
             setSubmitting(false);
         }
@@ -208,16 +189,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
         try {
             const res = await fetchListComments({
-                paging: {
-                    page: 1,
-                    pageSize: 50
-                },
+                paging: {page: 1, pageSize: 50},
                 formValues: {
-                    objectId: objectId,
-                    contentType: contentType,
+                    objectId,
+                    contentType,
                     parentId: parentComment.id,
-                    status: 'STATUS_APPROVED'
-                }
+                    status: 'STATUS_APPROVED',
+                },
             }) as unknown as commentservicev1_ListCommentResponse;
 
             parentComment.children = res.items || [];
@@ -227,136 +205,123 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         }
     }
 
-    // 生命周期：自动加载评论
     useEffect(() => {
         if (objectId && contentType) {
             loadComments(true);
         }
     }, [objectId, contentType]);
 
+    // 加载态
+    if (loading) {
+        return (
+            <View className='flex flex-col gap-[24rpx] py-[32rpx]'>
+                <View className='flex items-center gap-[12rpx]'>
+                    <XIcon name='carbon:chat' size={20} className='text-primary' />
+                    <Skeleton className='h-[36rpx] w-[200rpx] rounded-[8rpx]' />
+                </View>
+                {Array.from({length: 3}).map((_, i) => (
+                    <View key={i} className='rounded-[16rpx] bg-cardBg p-[24rpx]'>
+                        <View className='flex items-center gap-[16rpx] mb-[16rpx]'>
+                            <Skeleton className='h-[64rpx] w-[64rpx] rounded-full' />
+                            <Skeleton className='h-[28rpx] w-[160rpx] rounded-[8rpx]' />
+                        </View>
+                        <Skeleton className='h-[24rpx] w-full rounded-[8rpx] mb-[8rpx]' />
+                        <Skeleton className='h-[24rpx] w-[70%] rounded-[8rpx]' />
+                    </View>
+                ))}
+            </View>
+        );
+    }
+
     return (
-        <View className={cn(
-            'mx-auto mb-10 max-w-300 rounded-2xl border border-border bg-card p-14 shadow-sm backdrop-blur-sm',
-            'max-md:rounded-xl max-md:p-10',
-            'max-sm:rounded-xl max-sm:p-8',
-        )}
-        >
-            {/* Section Header */}
-            <View className='mb-10 max-md:mb-8'>
-                <Text className='flex items-center gap-3.5 text-3xl font-bold tracking-tight text-foreground max-md:text-2xl max-sm:text-xl'>
-                    <XIcon name='carbon:chat' size={36} />
+        <View className='flex flex-col'>
+            {/* 标题栏 - 灰色背景 + 底部蓝线 */}
+            <View className='flex items-center gap-[12rpx] bg-pageBg px-[24rpx] py-[16rpx] border-b-[2rpx] border-primary'>
+                <XIcon name='carbon:chat' size={20} className='text-primary' />
+                <Text className='text-card-title font-bold text-textMain'>
                     {t('comments_count', {count: displayComments.length})}
                 </Text>
             </View>
 
-            {/* Comment Form */}
-            <View className={cn(
-                'relative mb-12 overflow-hidden rounded-2xl border border-primary/10 p-12',
-                'bg-linear-to-br from-card to-primary/2 shadow-sm',
-                'transition-all duration-400 hover:border-primary hover:shadow-md',
-                'max-md:rounded-xl max-md:p-8 max-md:mb-9',
-                'max-sm:p-7 max-sm:mb-8',
-            )}
-            >
-                {/* Gradient top bar */}
-                <View className='absolute top-0 left-0 right-0 h-1 bg-primary opacity-90' />
-
-                {/* 标题块：去除绿色背景方框，改为简洁文字 + 绿色图标点绥 */}
-                <View className='mb-8 flex items-center gap-2.5 max-md:mb-6'>
-                    <XIcon name='carbon:edit' size={22} className='text-primary' />
-                    <Text className='text-lg font-bold tracking-tight text-foreground max-md:text-base'>
-                        {t('write_comment')}
-                    </Text>
+            {/* 评论表单 - 白色卡片 */}
+            <View className='bg-cardBg p-[24rpx] mb-[16rpx]'>
+                {/* 表单标题 */}
+                <View className='flex items-center gap-[8rpx] mb-[16rpx]'>
+                    <XIcon name='carbon:edit' size={18} className='text-primary' />
+                    <Text className='text-desc font-bold text-textMain'>{t('write_comment')}</Text>
                 </View>
 
-                <View className='flex flex-col gap-6'>
-                    <View className='grid grid-cols-2 gap-6 max-md:grid-cols-1 max-md:gap-4'>
-                        <View className='flex flex-col gap-2'>
-                            <input
-                              value={newComment.authorName}
-                              onChange={(e) => setNewComment({...newComment, authorName: e.target.value})}
-                              placeholder={t('nickname') + ' *'}
-                              className={cn(
-                                    'w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground',
-                                    'transition-all duration-300',
-                                    'hover:border-primary',
-                                    'focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15',
-                                    'disabled:cursor-not-allowed disabled:opacity-60',
-                                )}
-                              disabled={submitting}
-                            />
-                        </View>
-                        <View className='flex flex-col gap-2'>
-                            <input
-                              value={newComment.authorEmail}
-                              onChange={(e) => setNewComment({...newComment, authorEmail: e.target.value})}
-                              placeholder={t('email') + ' *'}
-                              className={cn(
-                                    'w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground',
-                                    'transition-all duration-300',
-                                    'hover:border-primary',
-                                    'focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15',
-                                    'disabled:cursor-not-allowed disabled:opacity-60',
-                                )}
-                              disabled={submitting}
-                              type='email'
-                            />
-                        </View>
-                    </View>
-                    <View className='flex flex-col gap-2'>
-                        <RichTextEditor
-                          value={newComment.content}
-                          onChange={(content) => setNewComment({...newComment, content})}
-                          onSubmit={handleSubmitComment}
-                          submitting={submitting}
-                          placeholder={t('write_comment')}
-                          maxLength={1000}
-                          submitLabel={t('submit_comment')}
-                        />
-                    </View>
-                    <View className='flex flex-wrap items-center gap-4 max-md:flex-col max-md:items-stretch'>
-                        <Text className='flex items-center gap-2 rounded-lg border border-primary/10 bg-primary/5 px-3.5 py-2 text-[13px] text-muted-foreground max-md:justify-center max-md:text-xs max-md:px-3 max-md:py-1.5'>
-                            <XIcon name='carbon:information' size={16} className='text-primary' />
-                            {t('fill_form_info')}
-                        </Text>
-                    </View>
+                {/* 昵称 + 邮箱 - 灰色背景合并 */}
+                <View className='flex gap-[16rpx] mb-[16rpx] bg-pageBg rounded-[12rpx] px-[16rpx] py-[12rpx]'>
+                    <Input
+                      value={newComment.authorName}
+                      onInput={(e) => setNewComment({...newComment, authorName: e.detail.value})}
+                      placeholder={t('nickname') + ' *'}
+                      className='flex-1 h-[48rpx] text-desc text-textMain bg-transparent'
+                      disabled={submitting}
+                    />
+                    <Input
+                      value={newComment.authorEmail}
+                      onInput={(e) => setNewComment({...newComment, authorEmail: e.detail.value})}
+                      placeholder={t('email') + ' *'}
+                      className='flex-1 h-[48rpx] text-desc text-textMain bg-transparent'
+                      disabled={submitting}
+                    />
+                </View>
+
+                {/* 内容编辑器 */}
+                <RichTextEditor
+                  value={newComment.content}
+                  onChange={(content) => setNewComment({...newComment, content})}
+                  onSubmit={handleSubmitComment}
+                  submitting={submitting}
+                  placeholder={t('write_comment')}
+                  maxLength={1000}
+                  submitLabel={t('submit_comment')}
+                />
+
+                {/* 提示 */}
+                <View className='flex items-center gap-[6rpx] mt-[12rpx]'>
+                    <XIcon name='carbon:information' size={14} className='text-primary' />
+                    <Text className='text-tips text-textSec'>{t('fill_form_info')}</Text>
                 </View>
             </View>
 
-            {/* Comments List */}
+            {/* 评论列表 */}
             {hasComments ? (
-                <View ref={commentsListRef} className='flex flex-col gap-7'>
+                <View className='flex flex-col gap-[16rpx]'>
                     <CommentTree
                       comments={displayComments}
                       onReply={handleReply}
                       onLoadChildren={loadChildren}
                     />
 
-                    {/* 加载更多按钮 */}
+                    {/* 加载更多 - 居中独立按钮 */}
                     {showLoadMore && (
-                        <View className='mt-8 flex justify-center border-t border-primary/8 pt-6'>
-                            <Button
-                              size='lg'
+                        <View className='flex justify-center py-[24rpx]'>
+                            <View
+                              className={cn(
+                                'flex items-center gap-[8rpx] px-[40rpx] py-[20rpx] rounded-[12rpx]',
+                                'bg-cardBg text-desc text-textSec',
+                              )}
                               onClick={loadMoreComments}
-                              disabled={loadingMore}
+                              hoverClass='tap-active'
                             >
-                                {loadingMore ? 'Loading...' : t('load_more')}
-                            </Button>
+                                <XIcon name='carbon:chevron-down' size={16} />
+                                <Text>{t('load_more')}</Text>
+                            </View>
                         </View>
                     )}
 
-                    {/* 没有更多提示 */}
+                    {/* 没有更多 */}
                     {!hasMore && hasComments && (
-                        <View className='py-5 text-center text-sm font-medium tracking-wide text-muted-foreground'>
-                            {t('no_more')}
+                        <View className='py-[24rpx] text-center'>
+                            <Text className='text-tips text-textSec'>{t('no_more')}</Text>
                         </View>
                     )}
                 </View>
             ) : (
-                <AppEmpty
-                  description={t('no_comments')}
-                  inContainer
-                />
+                <AppEmpty description={t('no_comments')} inContainer />
             )}
         </View>
     );

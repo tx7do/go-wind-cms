@@ -29,15 +29,15 @@ const HomeCategoryCard: React.FC<{
     if (mobileCompact) {
         return (
             <View
-                className='flex-shrink-0 rounded-[16rpx] bg-cardBg overflow-hidden'
-                style={{width: '260rpx'}}
-                onClick={handleClick}
-                hoverClass='tap-active'
+              className='flex-shrink-0 rounded-[16rpx] bg-cardBg overflow-hidden'
+              style={{width: '260rpx'}}
+              onClick={handleClick}
+              hoverClass='tap-active'
             >
                 {/* 顶部图标区 - 增强背景色 */}
                 <View
-                    className='flex items-center justify-center'
-                    style={{
+                  className='flex items-center justify-center'
+                  style={{
                         height: '120rpx',
                         backgroundColor: 'rgba(22,119,255,0.1)',
                     }}
@@ -47,9 +47,9 @@ const HomeCategoryCard: React.FC<{
                 {/* 文字区 */}
                 <View className='p-[20rpx]'>
                     <Text
-                        className='text-desc font-bold text-textMain mb-[8rpx]'
-                        numberOfLines={1}
-                        style={{
+                      className='text-desc font-bold text-textMain mb-[8rpx]'
+                      numberOfLines={1}
+                      style={{
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             display: '-webkit-box',
@@ -71,14 +71,14 @@ const HomeCategoryCard: React.FC<{
     // ---- 默认列表卡片（横排） ----
     return (
         <View
-            className='flex flex-row items-center rounded bg-cardBg p-[24rpx]'
-            style={{minHeight: '88rpx'}}
-            onClick={handleClick}
-            hoverClass='tap-active'
+          className='flex flex-row items-center rounded bg-cardBg p-[24rpx]'
+          style={{minHeight: '88rpx'}}
+          onClick={handleClick}
+          hoverClass='tap-active'
         >
             <View
-                className='flex items-center justify-center rounded flex-shrink-0'
-                style={{
+              className='flex items-center justify-center rounded flex-shrink-0'
+              style={{
                     width: '72rpx',
                     height: '72rpx',
                     marginRight: '20rpx',
@@ -91,8 +91,8 @@ const HomeCategoryCard: React.FC<{
                 <Text className='text-body font-bold text-textMain'>{name}</Text>
                 {desc && (
                     <Text
-                        className='text-tips text-textSec'
-                        style={{
+                      className='text-tips text-textSec'
+                      style={{
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',

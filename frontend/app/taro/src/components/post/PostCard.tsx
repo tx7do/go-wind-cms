@@ -98,7 +98,8 @@ const PostCard: React.FC<PostCardProps> = ({
             {/* 封面图 / 渐变背景 + 图标占位 */}
             <View className='w-full h-[280rpx] overflow-hidden flex items-center justify-center' style={{
                 background: thumbnail ? 'none' : 'linear-gradient(135deg, rgba(22,119,255,0.06) 0%, rgba(114,46,209,0.06) 100%)',
-            }}>
+            }}
+            >
                 {thumbnail ? (
                     <Image src={thumbnail} mode='aspectFill' className='w-full h-full' />
                 ) : (

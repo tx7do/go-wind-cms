@@ -113,10 +113,9 @@ export default function TagDetailPage() {
           <PostListWithPagination
             key={tagId}
             initialPageSize={10}
-            pageSizes={[10, 20, 30, 40]}
             tagId={tagId}
             from='tag'
-            showPagination={true}
+            showPagination
           />
         )}
       </View>

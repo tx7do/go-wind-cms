@@ -171,7 +171,7 @@ export default function CategoryDetailPage() {
             pageSizes={[12, 24, 36, 48]}
             categoryId={categoryId}
             from='category'
-            showPagination={true}
+            showPagination
           />
         )}
       </View>

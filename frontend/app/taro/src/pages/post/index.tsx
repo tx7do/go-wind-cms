@@ -23,21 +23,20 @@ export default function PostListPage() {
             {/* 分类筛选 */}
             <View className='px-[24rpx] pt-[24rpx]'>
                 <CategoryFilter
-                    selectedCategory={selectedCategoryId}
-                    treeMode
-                    autoLoad
-                    onCategoryChange={setSelectedCategoryId}
+                  selectedCategory={selectedCategoryId}
+                  treeMode
+                  autoLoad
+                  onCategoryChange={setSelectedCategoryId}
                 />
             </View>
 
             {/* 文章列表 */}
             <View className='px-[24rpx] pt-[24rpx]'>
                 <PostList
-                    key={selectedCategoryId || 'all'}
-                    queryParams={queryParams}
-                    initialPageSize={12}
-                    pageSizes={[12, 24, 36, 48]}
-                    showPagination={true}
+                  key={selectedCategoryId || 'all'}
+                  queryParams={queryParams}
+                  initialPageSize={12}
+                  showPagination
                 />
             </View>
         </View>

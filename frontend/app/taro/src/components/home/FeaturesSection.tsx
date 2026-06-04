@@ -44,33 +44,33 @@ export default function FeaturesSection() {
             <View className='flex flex-col gap-[16rpx]'>
                 {features.map((feature, index) => (
                     <View
-                        key={index}
-                        className='rounded-[16rpx] bg-cardBg flex flex-row items-center shadow-sm'
-                        style={{
-                            padding: '24rpx',
-                        }}
+                      key={index}
+                      className='rounded-[16rpx] bg-cardBg flex flex-row items-center shadow-sm'
+                      style={{
+                        padding: '24rpx',
+                      }}
                     >
                         {/* 彩色图标圆 */}
                         <View
-                            className='flex items-center justify-center rounded-full flex-shrink-0'
-                            style={{
-                                width: '72rpx',
-                                height: '72rpx',
-                                backgroundColor: FEATURE_BG_COLORS[index],
-                            }}
+                          className='flex items-center justify-center rounded-full flex-shrink-0'
+                          style={{
+                            width: '72rpx',
+                            height: '72rpx',
+                            backgroundColor: FEATURE_BG_COLORS[index],
+                          }}
                         >
                             <XIcon
-                                name={FEATURE_ICONS[index]}
-                                size={28}
-                                style={{color: FEATURE_ICON_COLORS[index]}}
+                              name={FEATURE_ICONS[index]}
+                              size={28}
+                              style={{color: FEATURE_ICON_COLORS[index]}}
                             />
                         </View>
                         {/* 标题 */}
                         <Text
-                            className='text-desc font-semibold text-textMain ml-[16rpx] flex-1'
-                            style={{
-                                lineHeight: '1.5',
-                            }}
+                          className='text-desc font-semibold text-textMain ml-[16rpx] flex-1'
+                          style={{
+                            lineHeight: '1.5',
+                          }}
                         >
                             {feature.title || ''}
                         </Text>

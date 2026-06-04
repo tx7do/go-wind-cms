@@ -2,9 +2,7 @@ import {useState, useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 import XIcon from '@/plugins/xicon';
-import {formatDateTime} from '@/utils';
-import {type contentservicev1_ListPostResponse, type contentservicev1_Post, identityservicev1_User} from '@/api/generated/app/service/v1';
-import {fetchListPosts, getPostTitle, getPostSummary} from '@/api/hooks/post';
+import {identityservicev1_User} from '@/api/generated/app/service/v1';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
 import {useI18nRouter} from '@/i18n/helpers';
 
@@ -13,7 +11,6 @@ export default function UserProfilePage() {
     const router = useI18nRouter();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<identityservicev1_User | null>(null);
-    const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [activeTab, setActiveTab] = useState<'posts' | 'activities' | 'collections'>('posts');
 
     const stats = useMemo(() => ({
@@ -80,9 +77,9 @@ export default function UserProfilePage() {
                         )}
                     </View>
                     <View
-                        className='px-[24rpx] h-[56rpx] rounded flex items-center border-[1rpx] border-primary'
-                        hoverClass='tap-active'
-                        onClick={() => router.push('/settings')}
+                      className='px-[24rpx] h-[56rpx] rounded flex items-center border-[1rpx] border-primary'
+                      hoverClass='tap-active'
+                      onClick={() => router.push('/settings')}
                     >
                         <Text className='text-tips text-primary'>{t('page.user.edit_profile')}</Text>
                     </View>
@@ -108,9 +105,9 @@ export default function UserProfilePage() {
             <View className='flex bg-cardBg border-b-[1rpx] border-splitLine mt-[16rpx]'>
                 {tabs.map((tab) => (
                     <View
-                        key={tab.key}
-                        className={`flex-1 text-center py-[24rpx] min-h-touch ${activeTab === tab.key ? 'border-b-[4rpx] border-primary' : ''}`}
-                        onClick={() => setActiveTab(tab.key)}
+                      key={tab.key}
+                      className={`flex-1 text-center py-[24rpx] min-h-touch ${activeTab === tab.key ? 'border-b-[4rpx] border-primary' : ''}`}
+                      onClick={() => setActiveTab(tab.key)}
                     >
                         <Text className={activeTab === tab.key ? 'text-body text-primary font-bold' : 'text-body text-textSec'}>
                             {tab.label}

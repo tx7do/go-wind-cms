@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {View, Text, Image} from '@tarojs/components';
+import {View} from '@tarojs/components';
 import {marked} from 'marked';
 import type {ContentViewerProps} from './types';
 

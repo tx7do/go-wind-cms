@@ -182,7 +182,6 @@ export default function TableOfContents({
                             {tableOfContents.map(item => (
                                 <View
                                   key={item.id}
-                                  href={`#${item.id}`}
                                   className={`block truncate rounded px-2 py-1.5 text-sm transition-colors ${
                                         activeHeading === item.id
                                             ? 'bg-primary/10 font-medium text-primary'
