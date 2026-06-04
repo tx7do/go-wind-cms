@@ -1,7 +1,6 @@
-import React, {useState, useEffect, useCallback, useRef, createContext, useContext} from 'react';
-import {View, Text, Image} from '@tarojs/components';
+import {useState, useEffect, useCallback, useRef, createContext, useContext, type ReactNode} from 'react';
+import {View, Text} from '@tarojs/components';
 import {useTranslations, useLocale} from '@/lib/next-intl-compat';
-import logoImage from '@/assets/images/logo.png';
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 import {useI18n} from '@/i18n';
@@ -16,7 +15,7 @@ const DrawerCtx = createContext<{
 }>({open: false, setOpen: () => {}});
 
 /** 供 Layout 使用的 Provider + 抽屉渲染 */
-export function MobileNavProvider({children}: {children: React.ReactNode}) {
+export function MobileNavProvider({children}: {children: ReactNode}) {
     const [open, setOpen] = useState(false);
     return (
         <DrawerCtx.Provider value={{open, setOpen}}>
@@ -31,9 +30,9 @@ export function MobileNavTrigger() {
     const {open, setOpen} = useContext(DrawerCtx);
     return (
         <View
-            className='flex items-center justify-center w-[64rpx] h-[64rpx] rounded'
-            onClick={() => setOpen(!open)}
-            hoverClass='tap-active'
+          className='flex items-center justify-center w-[64rpx] h-[64rpx] rounded'
+          onClick={() => setOpen(!open)}
+          hoverClass='tap-active'
         >
             <XIcon name={open ? 'carbon:close' : 'carbon:menu'} size={20} className='text-textSec' />
         </View>
@@ -97,31 +96,31 @@ function MobileNavDrawer() {
 
     return (
         <View
-            className='fixed top-0 left-0 right-0 bottom-0 z-[2000]'
-            style={{width: '100vw', height: '100vh'}}
+          className='fixed top-0 left-0 right-0 bottom-0 z-[2000]'
+          style={{width: '100vw', height: '100vh'}}
         >
             {/* 半透明遮罩 */}
             <View
-                className='fixed top-0 left-0 right-0 bottom-0'
-                style={{backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1}}
-                onClick={close}
+              className='fixed top-0 left-0 right-0 bottom-0'
+              style={{backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1}}
+              onClick={close}
             />
 
             {/* 右侧抽屉面板 */}
             <View
-                className='fixed top-0 bottom-0 bg-cardBg flex flex-col'
-                style={{right: 0, width: '560rpx', zIndex: 2}}
+              className='fixed top-0 bottom-0 bg-cardBg flex flex-col'
+              style={{right: 0, width: '560rpx', zIndex: 2}}
             >
                 {/* 顶部关闭按钮区 */}
                 <View
-                    className='flex items-center justify-end border-b-[1rpx] border-splitLine'
-                    style={{height: '128rpx', padding: '16rpx 32rpx 16rpx 32rpx'}}
+                  className='flex items-center justify-end border-b-[1rpx] border-splitLine'
+                  style={{height: '128rpx', padding: '16rpx 32rpx 16rpx 32rpx'}}
                 >
                     <View
-                        className='flex items-center justify-center rounded-full'
-                        style={{width: '88rpx', height: '88rpx', backgroundColor: 'rgba(0,0,0,0.04)'}}
-                        onClick={close}
-                        hoverClass='tap-active'
+                      className='flex items-center justify-center rounded-full'
+                      style={{width: '88rpx', height: '88rpx', backgroundColor: 'rgba(0,0,0,0.04)'}}
+                      onClick={close}
+                      hoverClass='tap-active'
                     >
                         <XIcon name='carbon:close' size={22} className='text-textMain' />
                     </View>
@@ -140,16 +139,16 @@ function MobileNavDrawer() {
                                 return (
                                     <View key={itemId}>
                                         <View
-                                            className='flex items-center justify-between px-[32rpx]'
-                                            style={{height: '96rpx'}}
-                                            onClick={() => {
+                                          className='flex items-center justify-between px-[32rpx]'
+                                          style={{height: '96rpx'}}
+                                          onClick={() => {
                                                 if (hasChildren) {
                                                     setExpandedId(isExpanded ? null : itemId);
                                                 } else {
                                                     handleNavigate(item);
                                                 }
                                             }}
-                                            hoverClass='tap-active'
+                                          hoverClass='tap-active'
                                         >
                                             <View className='flex items-center'>
                                                 {item.icon && (
@@ -161,10 +160,10 @@ function MobileNavDrawer() {
                                             </View>
                                             {hasChildren && (
                                                 <XIcon
-                                                    name='carbon:chevron-down'
-                                                    size={16}
-                                                    className='text-textThird'
-                                                    style={{transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s'}}
+                                                  name='carbon:chevron-down'
+                                                  size={16}
+                                                  className='text-textThird'
+                                                  style={{transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s'}}
                                                 />
                                             )}
                                         </View>
@@ -172,16 +171,16 @@ function MobileNavDrawer() {
                                         {/* 子导航 */}
                                         {hasChildren && isExpanded && (
                                             <View
-                                                className='border-l-[2rpx] border-splitLine'
-                                                style={{marginLeft: '32rpx'}}
+                                              className='border-l-[2rpx] border-splitLine'
+                                              style={{marginLeft: '32rpx'}}
                                             >
                                                 {item.children!.map((child: siteservicev1_NavigationItem) => (
                                                     <View
-                                                        key={child.id?.toString()}
-                                                        className='flex items-center px-[24rpx]'
-                                                        style={{height: '84rpx'}}
-                                                        onClick={() => handleNavigate(child)}
-                                                        hoverClass='tap-active'
+                                                      key={child.id?.toString()}
+                                                      className='flex items-center px-[24rpx]'
+                                                      style={{height: '84rpx'}}
+                                                      onClick={() => handleNavigate(child)}
+                                                      hoverClass='tap-active'
                                                     >
                                                         {child.icon && (
                                                             <View style={{marginRight: '16rpx'}}>
@@ -228,9 +227,9 @@ function MobileNavDrawer() {
                     <View className='py-[8rpx]'>
                         <View className='flex items-center px-[32rpx]' style={{height: '56rpx'}}>
                             <XIcon
-                                name={currentMode === 'dark' ? 'carbon:moon' : currentMode === 'light' ? 'carbon:sun' : 'carbon:monitor'}
-                                size={12}
-                                className='text-textThird'
+                              name={currentMode === 'dark' ? 'carbon:moon' : currentMode === 'light' ? 'carbon:sun' : 'carbon:monitor'}
+                              size={12}
+                              className='text-textThird'
                             />
                             <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>主题模式</Text>
                         </View>
@@ -257,22 +256,22 @@ function DrawerItem({icon, label, onClick, active, destructive}: {
 
     return (
         <View
-            className='flex items-center px-[32rpx]'
-            style={{height: '88rpx', ...bgStyle}}
-            onClick={onClick}
-            hoverClass='tap-active'
+          className='flex items-center px-[32rpx]'
+          style={{height: '88rpx', ...bgStyle}}
+          onClick={onClick}
+          hoverClass='tap-active'
         >
             {icon && (
                 <View style={{marginRight: '16rpx'}}>
                     <XIcon
-                        name={icon}
-                        size={18}
-                        className={destructive ? 'text-danger' : active ? 'text-primary' : 'text-textSec'}
+                      name={icon}
+                      size={18}
+                      className={destructive ? 'text-danger' : active ? 'text-primary' : 'text-textSec'}
                     />
                 </View>
             )}
             <Text
-                className={`text-body flex-1 ${destructive ? 'text-danger' : active ? 'text-primary font-bold' : 'text-textMain'}`}
+              className={`text-body flex-1 ${destructive ? 'text-danger' : active ? 'text-primary font-bold' : 'text-textMain'}`}
             >
                 {label}
             </Text>
