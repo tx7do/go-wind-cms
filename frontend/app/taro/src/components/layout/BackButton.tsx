@@ -1,27 +1,20 @@
 import React from 'react';
 import {View} from '@tarojs/components';
-import {cn} from '@/lib/utils';
 import {XIcon} from '@/plugins/xicon';
 
-export interface BackButtonProps {
+const BackButton: React.FC<{
     label: string;
     onClick: () => void;
     className?: string;
-}
-
-const BackButton: React.FC<BackButtonProps> = ({label, onClick, className}) => {
+}> = ({label, onClick, className}) => {
     return (
         <View
+          className={`flex items-center gap-[8rpx] px-[16rpx] py-[12rpx] min-h-touch ${className || ''}`}
           onClick={onClick}
-          className={cn(
-                'group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5',
-                'text-sm text-muted-foreground transition-colors',
-                'hover:bg-muted/60 hover:text-foreground',
-                className,
-            )}
+          hoverClass='tap-active'
         >
-            <XIcon name='carbon:arrow-left' size={16} className='transition-transform duration-300 group-hover:-translate-x-1' />
-            <View>{label}</View>
+            <XIcon name='carbon:arrow-left' size={16} className='text-textSec' />
+            <View className='text-desc text-textSec'>{label}</View>
         </View>
     );
 };

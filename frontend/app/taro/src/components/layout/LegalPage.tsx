@@ -1,7 +1,6 @@
 import {View, Text} from '@tarojs/components';
 import {cn} from '@/lib/utils';
-
-import PageHero from './PageHero';
+import {XIcon} from '@/plugins/xicon';
 
 interface LegalPageProps {
     icon: string;
@@ -10,55 +9,32 @@ interface LegalPageProps {
     items: string[];
 }
 
-/**
- * 法定/静态信息页面通用模板
- * 用于 privacy / terms / disclaimer 等结构一致的页面
- *
- * 居中单栏文档流布局，消除宽屏右侧视觉死角
- * 序号采用电能绿，悬浮时卡片边框亮起
- */
 export default function LegalPage({icon, title, description, items}: LegalPageProps) {
     return (
-        <View className='w-full'>
-            <PageHero
-              title={title}
-              description={description}
-              icon={icon}
-              size='sm'
-            />
+        <View className='w-full bg-pageBg'>
+            {/* 页面标题栏 */}
+            <View className='bg-cardBg px-[24rpx] py-[32rpx] border-b-[1rpx] border-splitLine'>
+                <View className='flex items-center gap-[16rpx] mb-[16rpx]'>
+                    <XIcon name={icon} size={24} className='text-primary' />
+                    <Text className='text-title font-bold text-textMain'>{title}</Text>
+                </View>
+                <Text className='text-desc text-textSec'>{description}</Text>
+            </View>
 
-            {/* 居中单栏文档流容器 */}
-            <View className='w-full py-12 max-md:py-8'>
-                <View className='mx-auto max-w-4xl px-4'>
-                    <View
-                      className={cn(
-                            'rounded-2xl border border-border bg-card p-8 md:p-10',
-                            'shadow-[0_20px_50px_rgba(0,0,0,0.15)]',
-                            'transition-all duration-300',
-                            'hover:border-primary/20',
-                        )}
-                    >
-                        <View className='space-y-5'>
-                            {items.map((item, index) => (
-                                <View
-                                  key={index}
-                                  className='flex items-start gap-4 text-base leading-relaxed text-foreground max-md:text-sm'
-                                >
-                                    {/* 绿色数字序号 */}
-                                    <Text
-                                      className={cn(
-                                            'shrink-0 font-mono text-sm font-bold tabular-nums',
-                                            'text-primary',
-                                            'mt-0.5 min-w-8',
-                                        )}
-                                    >
-                                        {String(index + 1).padStart(2, '0')}.
-                                    </Text>
-                                    <Text>{item}</Text>
-                                </View>
-                            ))}
+            {/* 内容列表 */}
+            <View className='px-[24rpx] py-[32rpx]'>
+                <View className='rounded bg-cardBg p-[24rpx]'>
+                    {items.map((item, index) => (
+                        <View
+                          key={index}
+                          className='flex items-start gap-[16rpx] py-[16rpx]'
+                        >
+                            <Text className='shrink-0 text-desc font-bold text-primary min-w-[48rpx]'>
+                                {String(index + 1).padStart(2, '0')}.
+                            </Text>
+                            <Text className='text-body text-textMain leading-relaxed'>{item}</Text>
                         </View>
-                    </View>
+                    ))}
                 </View>
             </View>
         </View>

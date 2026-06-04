@@ -11,7 +11,7 @@ function Layout({children}: PropsWithChildren) {
     <ThemeClientProvider>
       <NavigationProgress />
       <Header />
-      <View className='min-h-screen pt-(--layout-header-height)'>
+      <View className='min-h-screen pt-[88rpx]'>
         {children}
       </View>
       <Footer />

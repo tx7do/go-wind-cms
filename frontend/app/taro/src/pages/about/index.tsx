@@ -1,185 +1,68 @@
 import {useTranslation} from 'react-i18next';
-import {View, Text, Image} from '@tarojs/components';
+import {View, Text} from '@tarojs/components';
+import XIcon from '@/plugins/xicon';
 
-import XIcon from '@/plugins/xicon';export default function AboutPage() {
-  const {t} = useTranslation();
+export default function AboutPage() {
+    const {t} = useTranslation();
 
-  const features = [
-    {
-      icon: 'carbon:document-add',
-      title: t('page.about.feature_content'),
-      description: t('page.about.feature_content_desc'),
-    },
-    {
-      icon: 'carbon:cloud-upload',
-      title: t('page.about.feature_multi_tenant'),
-      description: t('page.about.feature_multi_tenant_desc'),
-    },
-    {
-      icon: 'carbon:security',
-      title: t('page.about.feature_security'),
-      description: t('page.about.feature_security_desc'),
-    },
-    {
-      icon: 'carbon:api',
-      title: t('page.about.feature_api'),
-      description: t('page.about.feature_api_desc'),
-    },
-    {
-      icon: 'carbon:collaborate',
-      title: t('page.about.feature_collaboration'),
-      description: t('page.about.feature_collaboration_desc'),
-    },
-    {
-      icon: 'carbon:analytics',
-      title: t('page.about.feature_analytics'),
-      description: t('page.about.feature_analytics_desc'),
-    },
-  ];
+    const features = [
+        {icon: 'carbon:document-add', title: t('page.about.feature_content'), description: t('page.about.feature_content_desc')},
+        {icon: 'carbon:cloud-upload', title: t('page.about.feature_multi_tenant'), description: t('page.about.feature_multi_tenant_desc')},
+        {icon: 'carbon:security', title: t('page.about.feature_security'), description: t('page.about.feature_security_desc')},
+        {icon: 'carbon:api', title: t('page.about.feature_api'), description: t('page.about.feature_api_desc')},
+        {icon: 'carbon:collaborate', title: t('page.about.feature_collaboration'), description: t('page.about.feature_collaboration_desc')},
+        {icon: 'carbon:analytics', title: t('page.about.feature_analytics'), description: t('page.about.feature_analytics_desc')},
+    ];
 
-  const teamMembers = [
-    {
-      name: t('page.about.team_member_1'),
-      role: t('page.about.team_role_1'),
-      avatar: '/assets/images/logo.png',
-    },
-    {
-      name: t('page.about.team_member_2'),
-      role: t('page.about.team_role_2'),
-      avatar: '/assets/images/logo.png',
-    },
-    {
-      name: t('page.about.team_member_3'),
-      role: t('page.about.team_role_3'),
-      avatar: '/assets/images/logo.png',
-    },
-  ];
+    const stats = [
+        {number: '10K+', label: t('page.about.stat_users')},
+        {number: '500+', label: t('page.about.stat_projects')},
+        {number: '99.9%', label: t('page.about.stat_uptime')},
+        {number: '24/7', label: t('page.about.stat_support')},
+    ];
 
-  return (
-    <View className='about-page'>
-      {/* Hero Section */}
-      <View className='hero'>
-        <View className='hero-content'>
-          <Text className='hero-title'>{t('page.about.title')}</Text>
-          <Text className='hero-subtitle'>{t('page.about.subtitle')}</Text>
-          <Text className='hero-description'>{t('page.about.description')}</Text>
-        </View>
-      </View>
-
-      {/* About Section */}
-      <View className='about-section'>
-        <View className='section-container'>
-          <View className='about-content'>
-            <h2>{t('page.about.about_us')}</h2>
-            <p>{t('page.about.about_us_desc_1')}</p>
-            <p>{t('page.about.about_us_desc_2')}</p>
-            <p>{t('page.about.about_us_desc_3')}</p>
-          </View>
-          <View className='about-stats'>
-            <View className='stat-card'>
-              <Text className='stat-number'>10K+</Text>
-              <Text className='stat-label'>{t('page.about.stat_users')}</Text>
+    return (
+        <View className='w-full bg-pageBg'>
+            {/* 页面标题 */}
+            <View className='bg-cardBg px-[24rpx] py-[32rpx] border-b-[1rpx] border-splitLine'>
+                <Text className='text-title font-bold text-textMain block mb-[8rpx]'>{t('page.about.title')}</Text>
+                <Text className='text-desc text-textSec block'>{t('page.about.subtitle')}</Text>
             </View>
-            <View className='stat-card'>
-              <Text className='stat-number'>500+</Text>
-              <Text className='stat-label'>{t('page.about.stat_projects')}</Text>
-            </View>
-            <View className='stat-card'>
-              <Text className='stat-number'>99.9%</Text>
-              <Text className='stat-label'>{t('page.about.stat_uptime')}</Text>
-            </View>
-            <View className='stat-card'>
-              <Text className='stat-number'>24/7</Text>
-              <Text className='stat-label'>{t('page.about.stat_support')}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
 
-      {/* Features Section */}
-      <View className='features-section'>
-        <View className='section-container'>
-          <View className='section-header'>
-            <h2>{t('page.about.features')}</h2>
-            <p>{t('page.about.features_desc')}</p>
-          </View>
-          <View className='features-grid'>
-            {features.map((feature) => (
-              <View key={feature.title} className='feature-card'>
-                <View className='feature-icon'>
-                  <XIcon name={feature.icon} size={36} />
+            {/* 关于我们 */}
+            <View className='px-[24rpx] py-[32rpx]'>
+                <Text className='text-card-title font-bold text-textMain block mb-[16rpx]'>{t('page.about.about_us')}</Text>
+                <Text className='text-body text-textSec leading-relaxed block mb-[16rpx]'>{t('page.about.about_us_desc_1')}</Text>
+                <Text className='text-body text-textSec leading-relaxed block mb-[16rpx]'>{t('page.about.about_us_desc_2')}</Text>
+                <Text className='text-body text-textSec leading-relaxed'>{t('page.about.about_us_desc_3')}</Text>
+            </View>
+
+            {/* 统计数据 */}
+            <View className='grid grid-cols-4 gap-[16rpx] px-[24rpx] pb-[32rpx]'>
+                {stats.map((stat) => (
+                    <View key={stat.label} className='rounded bg-cardBg p-[16rpx] text-center'>
+                        <Text className='text-card-title font-bold text-primary block'>{stat.number}</Text>
+                        <Text className='text-tips text-textThird block'>{stat.label}</Text>
+                    </View>
+                ))}
+            </View>
+
+            {/* 功能特性 */}
+            <View className='px-[24rpx] py-[32rpx]'>
+                <Text className='text-card-title font-bold text-textMain block mb-[8rpx]'>{t('page.about.features')}</Text>
+                <Text className='text-desc text-textSec block mb-[24rpx]'>{t('page.about.features_desc')}</Text>
+                <View className='grid grid-cols-2 gap-[16rpx]'>
+                    {features.map((feature) => (
+                        <View key={feature.title} className='rounded bg-cardBg p-[24rpx]'>
+                            <View className='flex items-center justify-center w-[72rpx] h-[72rpx] rounded bg-primary/10 mb-[16rpx]'>
+                                <XIcon name={feature.icon} size={28} className='text-primary' />
+                            </View>
+                            <Text className='text-desc font-bold text-textMain block mb-[8rpx]'>{feature.title}</Text>
+                            <Text className='text-tips text-textSec leading-relaxed'>{feature.description}</Text>
+                        </View>
+                    ))}
                 </View>
-                <Text className='feature-title'>{feature.title}</Text>
-                <Text className='feature-description'>{feature.description}</Text>
-              </View>
-            ))}
-          </View>
+            </View>
         </View>
-      </View>
-
-      {/* Team Section */}
-      <View className='team-section'>
-        <View className='section-container'>
-          <View className='section-header'>
-            <h2>{t('page.about.team')}</h2>
-            <p>{t('page.about.team_desc')}</p>
-          </View>
-          <View className='team-grid'>
-            {teamMembers.map((member) => (
-              <View key={member.name} className='team-card'>
-                <View className='team-avatar'>
-                  <Image
-                    src={member.avatar}
-                    style={{width: 120, height: 120}}
-                  />
-                </View>
-                <Text className='team-name'>{member.name}</Text>
-                <Text className='team-role'>{member.role}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      </View>
-
-      {/* Values Section */}
-      <View className='values-section'>
-        <View className='section-container'>
-          <View className='section-header'>
-            <h2>{t('page.about.values')}</h2>
-            <p>{t('page.about.values_desc')}</p>
-          </View>
-          <View className='values-grid'>
-            <View className='value-card'>
-              <Text className='value-title'>{t('page.about.value_innovation')}</Text>
-              <Text className='value-description'>{t('page.about.value_innovation_desc')}</Text>
-            </View>
-            <View className='value-card'>
-              <Text className='value-title'>{t('page.about.value_reliability')}</Text>
-              <Text className='value-description'>{t('page.about.value_reliability_desc')}</Text>
-            </View>
-            <View className='value-card'>
-              <Text className='value-title'>{t('page.about.value_customer')}</Text>
-              <Text className='value-description'>{t('page.about.value_customer_desc')}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* CTA Section */}
-      <View className='cta-section'>
-        <View className='section-container'>
-          <h2>{t('page.about.cta_title')}</h2>
-          <p>{t('page.about.cta_desc')}</p>
-          <View className='cta-buttons'>
-            <View className='button-primary'>
-              <Text>{t('page.about.cta_explore')}</Text>
-            </View>
-            <View className='button-default'>
-              <Text>{t('page.about.cta_contact')}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
+    );
 }

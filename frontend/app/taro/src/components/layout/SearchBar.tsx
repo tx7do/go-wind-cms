@@ -8,18 +8,14 @@ export default function SearchBar() {
     const t = useTranslations('navbar.top');
     const [searchQuery, setSearchQuery] = useState('');
 
-    const handleSearch = () => {
-        console.log('Searching for:', searchQuery);
-    };
-
     return (
-        <View className='mx-2 hidden h-11 max-w-80 flex-1 md:flex lg:max-w-80'>
+        <View className='px-[24rpx] py-[16rpx]'>
             <View className='relative w-full'>
-                <View className='absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground'>
-                    <XIcon name='carbon:search' size={16} />
+                <View className='absolute left-[16rpx] top-1/2 -translate-y-1/2'>
+                    <XIcon name='carbon:search' size={16} className='text-textThird' />
                 </View>
                 <Input
-                  className='h-full w-full pl-8'
+                  className='w-full h-[80rpx] rounded pl-[56rpx] bg-cardBg border-[1rpx] border-splitLine'
                   value={searchQuery}
                   onInput={(e: any) => setSearchQuery(e.detail?.value ?? e.target?.value ?? '')}
                   placeholder={t('search_placeholder')}

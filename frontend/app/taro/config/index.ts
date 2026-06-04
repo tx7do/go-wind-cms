@@ -40,14 +40,17 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     },
     framework: 'react',
     compiler: 'vite',
-    // weapp-tailwindcss：小程序下 Tailwind 原子化适配
+    // weapp-tailwindcss：仅小程序端启用（规范 §8.3 插件环境隔离）
     modifyViteConfig(config) {
       config.plugins = config.plugins || [];
-      config.plugins.push(
-        UnifiedViteWeappTailwindcssPlugin({
-          rem2rpx: true,
-        }),
-      );
+      // 仅小程序端注入 weapp-tailwindcss 转换插件
+      if (process.env.TARO_ENV === 'weapp') {
+        config.plugins.push(
+          UnifiedViteWeappTailwindcssPlugin({
+            rem2rpx: true,
+          }),
+        );
+      }
     },
     alias: {
       '@': path.resolve(__dirname, '..', 'src'),

@@ -1,16 +1,11 @@
 import {View, Text} from '@tarojs/components';
-﻿import React, {useState, useEffect, useCallback, useRef} from 'react';
+import {useState, useEffect, useCallback, useRef} from 'react';
 import {Skeleton} from '@/components/ui/skeleton';
-import {Button} from '@/components/ui/button';
 import {useTranslations} from '@/lib/next-intl-compat';
-
 import {XIcon} from '@/plugins/xicon';
 import {fetchListTags} from '@/api/hooks/tag';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-import {
-    contentservicev1_ListTagResponse,
-    contentservicev1_Tag
-} from '@/api/generated/app/service/v1';
+import {contentservicev1_ListTagResponse} from '@/api/generated/app/service/v1';
 
 interface TagItem {
     id: number;
@@ -19,149 +14,113 @@ interface TagItem {
     postCount: number;
 }
 
+/** 预定义标签色板，避免 HSL 在小程序端兼容性问题 */
+const TAG_COLORS = [
+    '#1677ff', '#00b42a', '#ff7d00', '#f53f3f',
+    '#722ed1', '#13c2c2', '#eb2f96', '#faad14',
+];
+
+/**
+ * 首页「热门标签」区块
+ * - flex wrap 流式布局
+ * - 显示最多 6 个标签
+ */
 export default function PopularTagsSection() {
     const t = useTranslations('page.tags');
     const router = useI18nRouter();
-
-    const [_tags, setTags] = useState<contentservicev1_Tag[]>([]);
     const [loading, setLoading] = useState(false);
     const [displayTags, setDisplayTags] = useState<TagItem[]>([]);
-    const [hoveredId, setHoveredId] = useState<number | null>(null);
-
-    // 用于取消异步操作
-    const abortControllerRef = useRef<AbortController | null>(null);
+    const abortRef = useRef<AbortController | null>(null);
 
     const loadPopularTags = useCallback(async () => {
-        // 取消之前的请求
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
-
-        // 创建新的 AbortController
-        abortControllerRef.current = new AbortController();
-        const signal = abortControllerRef.current.signal;
-
+        if (abortRef.current) abortRef.current.abort();
+        abortRef.current = new AbortController();
         setLoading(true);
         try {
             const res = await fetchListTags({
                 paging: {page: 1, pageSize: 6},
                 formValues: {status: 'TAG_STATUS_ACTIVE', isFeatured: true},
-                fieldMask: undefined,
-                orderBy: undefined,
             }) as unknown as contentservicev1_ListTagResponse;
-
-            if (signal.aborted) return;
-
-            const tagItems = res.items || [];
-            setTags(tagItems);
-
-            // 生成带颜色的标签
-            const taggedItems: TagItem[] = tagItems
+            const tagItems = (res.items || [])
                 .filter(tag => tag.id !== undefined)
                 .map((tag, index) => ({
                     id: tag.id!,
                     name: tag.translations?.[0]?.name || t('tag_untitled'),
-                    color: tag.color || `hsl(${(index * 67) % 360}, 70%, 55%)`,
+                    color: tag.color || TAG_COLORS[index % TAG_COLORS.length],
                     postCount: tag.postCount || 0,
                 }));
-
-            setDisplayTags(taggedItems);
+            setDisplayTags(tagItems);
         } catch (error) {
-            if (signal.aborted) return;
             console.error('Failed to load tags:', error);
-            setTags([]);
             setDisplayTags([]);
         } finally {
-            if (!signal.aborted) {
-                setLoading(false);
-            }
+            setLoading(false);
         }
     }, [t]);
 
     useEffect(() => {
         loadPopularTags();
-
-        return () => {
-            if (abortControllerRef.current) {
-                abortControllerRef.current.abort();
-            }
-        };
+        return () => { abortRef.current?.abort(); };
     }, []);
-
-    const handleViewTag = (tag: TagItem) => {
-        router.push(`/tag/detail?id=${tag.id}`);
-    };
 
     return (
         <View className='w-full'>
-            <View className='mb-8 flex items-center justify-between'>
-                <Text className='flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl'>
-                    <XIcon name='carbon:fire' size={28} className='mr-2 text-primary' />
-                    {t('popular_tags')}
-                </Text>
-                <Button variant='ghost' onClick={() => router.push('/tag')}>
-                    {t('view_all')} →
-                </Button>
+            {/* 标题行 */}
+            <View className='flex items-center justify-between mb-[24rpx]'>
+                <View className='flex items-center gap-[8rpx]'>
+                    <XIcon name='carbon:fire' size={20} className='text-primary' />
+                    <Text className='text-card-title font-bold text-textMain'>
+                        {t('popular_tags')}
+                    </Text>
+                </View>
+                <View
+                  className='px-[16rpx] py-[8rpx] min-w-touch min-h-touch flex items-center justify-center'
+                  onClick={() => router.push('/tag')}
+                  hoverClass='tap-active'
+                >
+                    <Text className='text-desc text-primary'>{t('view_all')} →</Text>
+                </View>
             </View>
-            <View className='w-full'>
-                {loading ? (
-                    <View className='flex flex-wrap justify-center gap-3'>
-                        {Array.from({length: 6}).map((_, i) => (
-                            <View key={i} className='h-10 w-28'>
-                                <Skeleton className='h-full w-full rounded-full' />
-                            </View>
-                        ))}
-                    </View>
-                ) : (
-                    <View className='flex flex-wrap justify-center gap-3 max-md:gap-2'>
-                        {displayTags.map((tag) => {
-                            const isHovered = hoveredId === tag.id;
-                            return (
-                                <View
-                                  key={tag.id}
-                                  className='group flex cursor-pointer items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg max-md:px-4 max-md:py-2 max-md:text-xs'
-                                  style={isHovered ? {
-                                        backgroundColor: tag.color,
-                                        color: '#ffffff',
-                                        borderColor: tag.color,
-                                        boxShadow: `0 8px 24px -8px ${tag.color}80`,
-                                    } : {
-                                        backgroundColor: `${tag.color}12`,
-                                        color: tag.color,
-                                        borderColor: `${tag.color}40`,
-                                    }}
-                                  onMouseEnter={() => setHoveredId(tag.id)}
-                                  onMouseLeave={() => setHoveredId(null)}
-                                  onClick={() => handleViewTag(tag)}
-                                >
-                                    {/* 左侧圆点指示器 */}
-                                    <Text
-                                      className='h-2 w-2 rounded-full transition-all duration-300'
-                                      style={{backgroundColor: isHovered ? '#fff' : tag.color}}
-                                    />
-                                    <Text className='truncate tracking-tight'>
-                                        {tag.name}
-                                    </Text>
-                                    {/* 文章数 */}
-                                    {tag.postCount > 0 && (
-                                        <Text
-                                          className='rounded-full px-2 py-0.5 text-[10px] font-bold leading-none transition-colors duration-300'
-                                          style={isHovered ? {
-                                                backgroundColor: 'rgba(255,255,255,0.25)',
-                                                color: '#fff',
-                                            } : {
-                                                backgroundColor: `${tag.color}25`,
-                                            }}
-                                        >
-                                            {tag.postCount}
-                                        </Text>
-                                    )}
-                                </View>
-                            );
-                        })}
-                    </View>
-                )}
-            </View>
+
+            {loading ? (
+                <View className='flex flex-wrap gap-[16rpx]'>
+                    {Array.from({length: 6}).map((_, i) => (
+                        <View key={i} className='h-[64rpx] w-[160rpx]'>
+                            <Skeleton className='h-full w-full rounded-full' />
+                        </View>
+                    ))}
+                </View>
+            ) : displayTags.length > 0 ? (
+                <View className='flex flex-wrap gap-[16rpx]'>
+                    {displayTags.map((tag) => (
+                        <View
+                          key={tag.id}
+                          className='flex items-center gap-[8rpx] rounded-full px-[24rpx] py-[12rpx] min-h-[64rpx]'
+                          style={{
+                                backgroundColor: `${tag.color}14`,
+                                borderWidth: '2rpx',
+                                borderStyle: 'solid',
+                                borderColor: `${tag.color}40`,
+                            }}
+                          onClick={() => router.push(`/tag/detail?id=${tag.id}`)}
+                          hoverClass='tap-active'
+                        >
+                            <View
+                              className='w-[12rpx] h-[12rpx] rounded-full'
+                              style={{backgroundColor: tag.color}}
+                            />
+                            <Text className='text-desc font-semibold' style={{color: tag.color}}>
+                                {tag.name}
+                            </Text>
+                            {tag.postCount > 0 && (
+                                <Text className='text-tips' style={{color: tag.color}}>
+                                    {tag.postCount}
+                                </Text>
+                            )}
+                        </View>
+                    ))}
+                </View>
+            ) : null}
         </View>
     );
 }

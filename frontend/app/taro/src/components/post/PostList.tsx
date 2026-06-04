@@ -19,31 +19,33 @@ interface PostListProps {
     orderBy?: string[];
     page?: number;
     pageSize?: number;
-    initialPageSize?: number; // 初始每页条数
+    initialPageSize?: number;
     showSkeleton?: boolean;
     from?: string;
     categoryId?: number;
-    tagId?: number; // 新增 tagId 支持
-    columns?: number; // 控制列数
-    showPagination?: boolean; // 是否显示分页
-    pageSizes?: number[]; // 每页条数选项
+    tagId?: number;
+    columns?: number; // 保留接口兼容，实际移动端固定单列
+    showPagination?: boolean;
+    pageSizes?: number[];
+    /** 紧凑横排模式 */
+    compact?: boolean;
 }
 
 const PostList: React.FC<PostListProps> = ({
-                                               queryParams = {},
-                                               fieldMask,
-                                               orderBy,
-                                               page = 1,
-                                               pageSize,
-                                               initialPageSize = 10, // 默认 10 条
-                                               showSkeleton = true,
-                                               from = 'post-list',
-                                               categoryId,
-                                               tagId,
-                                               columns = 3,
-                                               showPagination = false,
-                                               pageSizes = [10, 20, 30, 40]
-                                           }) => {
+    queryParams = {},
+    fieldMask,
+    orderBy,
+    page = 1,
+    pageSize,
+    initialPageSize = 10,
+    showSkeleton = true,
+    from = 'post-list',
+    categoryId,
+    tagId,
+    showPagination = false,
+    pageSizes = [10, 20, 30, 40],
+    compact = false,
+}) => {
     const t = useTranslations('page.posts');
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [loading, setLoading] = useState(false);
@@ -51,24 +53,20 @@ const PostList: React.FC<PostListProps> = ({
     const [currentPage, setCurrentPage] = useState<number>(page);
     const [currentPageSize, setCurrentPageSize] = useState<number>(pageSize ?? initialPageSize);
 
-    // 同步外部 page 变化（只在首次渲染或外部 page 真正变化时）
     useEffect(() => {
         if (page !== undefined && page !== currentPage) {
             setCurrentPage(page);
         }
     }, [currentPage, page]);
 
-    // 同步外部 pageSize 变化（只在首次渲染或外部 pageSize 真正变化时）
     useEffect(() => {
         if (pageSize !== undefined && pageSize !== currentPageSize) {
             setCurrentPageSize(pageSize);
         }
     }, [currentPageSize, pageSize]);
 
-    // 监听 categoryId 和 tagId 变化，重置页码并重新查询
     useEffect(() => {
         setCurrentPage(1);
-        // 直接调用 fetchPosts，使用新的 categoryId/tagId
         fetchPosts(1, currentPageSize);
     }, [categoryId, tagId]);
 
@@ -76,17 +74,14 @@ const PostList: React.FC<PostListProps> = ({
         setLoading(true);
         try {
             const res = await fetchListPosts({
-                paging: {
-                    page: page,
-                    pageSize: pageSize,
-                },
+                paging: {page, pageSize},
                 formValues: {
                     ...queryParams,
                     ...(categoryId && {category_ids__in: [categoryId]}),
-                    ...(tagId && {tag_ids__in: [tagId]})
+                    ...(tagId && {tag_ids__in: [tagId]}),
                 },
-                fieldMask: fieldMask,
-                orderBy: orderBy
+                fieldMask,
+                orderBy,
             }) as unknown as contentservicev1_ListPostResponse;
             setPosts(res.items || []);
             setTotal(res.total || 0);
@@ -98,44 +93,47 @@ const PostList: React.FC<PostListProps> = ({
         }
     }, [queryParams, categoryId, tagId, fieldMask, orderBy]);
 
-    // 监听页面变化
     useEffect(() => {
         fetchPosts(currentPage, currentPageSize);
-    }, [currentPage, currentPageSize]); // 移除 fetchPosts 依赖，避免循环
+    }, [currentPage, currentPageSize]);
 
-    // 监听外部 page 变化（已在上面处理）
-
-    // 处理页面变化
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
 
-    // 处理每页条数变化
     const handlePageSizeChange = (size: number, newPage: number) => {
         setCurrentPageSize(size);
         setCurrentPage(newPage);
     };
 
+    const totalPages = Math.ceil(total / currentPageSize);
+
     return (
         <View className='w-full'>
             {/* Loading Skeleton */}
             {loading && showSkeleton && (
-                <View
-                  className='grid gap-6 max-md:!grid-cols-1 max-md:gap-4'
-                  style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}
-                >
-                    {Array.from({length: currentPageSize}).map((_, index) => (
-                        <View key={index} className='overflow-hidden rounded-2xl border border-border bg-card'>
-                            <Skeleton className='h-60 w-full' />
-                            <View className='p-6'>
-                                <Skeleton className='h-4 w-full' />
-                                <Skeleton className='h-4 w-3/4' />
-                                <View className='mt-4 flex gap-3 border-t border-border pt-4'>
-                                    <Skeleton className='h-6 w-[60px]' />
-                                    <Skeleton className='h-6 w-[60px]' />
-                                    <Skeleton className='h-6 w-[60px]' />
+                <View className='flex flex-col gap-[24rpx]'>
+                    {Array.from({length: Math.min(currentPageSize, 3)}).map((_, index) => (
+                        <View key={index} className='rounded bg-cardBg overflow-hidden'>
+                            {!compact ? (
+                                <>
+                                    <Skeleton className='w-full h-[280rpx]' />
+                                    <View className='p-[24rpx] flex flex-col gap-[16rpx]'>
+                                        <Skeleton className='h-[32rpx] w-3/4 rounded' />
+                                        <Skeleton className='h-[28rpx] w-full rounded' />
+                                        <Skeleton className='h-[28rpx] w-1/2 rounded' />
+                                    </View>
+                                </>
+                            ) : (
+                                <View className='flex flex-row p-[20rpx] gap-[20rpx]'>
+                                    <Skeleton className='w-[200rpx] h-[200rpx] rounded flex-shrink-0' />
+                                    <View className='flex-1 flex flex-col gap-[12rpx] justify-center'>
+                                        <Skeleton className='h-[28rpx] w-full rounded' />
+                                        <Skeleton className='h-[28rpx] w-2/3 rounded' />
+                                        <Skeleton className='h-[24rpx] w-1/2 rounded' />
+                                    </View>
                                 </View>
-                            </View>
+                            )}
                         </View>
                     ))}
                 </View>
@@ -145,48 +143,44 @@ const PostList: React.FC<PostListProps> = ({
             {!loading && posts.length > 0 && (
                 <>
                     {showPagination && total > currentPageSize && (
-                        <View className='mb-6 rounded-xl border border-border bg-card px-5 py-4 text-sm text-muted-foreground'>
-                            <Text>{t('total_articles', {total})}</Text>
+                        <View className='mb-[24rpx] rounded bg-cardBg px-[24rpx] py-[20rpx]'>
+                            <Text className='text-desc text-textSec'>{t('total_articles', {total})}</Text>
                         </View>
                     )}
 
-                    <View
-                      className='grid gap-6 max-md:!grid-cols-1 max-md:gap-4'
-                      style={{gridTemplateColumns: `repeat(${columns}, 1fr)`}}
-                    >
+                    <View className='flex flex-col gap-[24rpx]'>
                         {posts.map((post, index) => (
                             <PostCard
                               key={`${post.id}-${index}`}
                               post={post}
                               from={from}
                               categoryId={categoryId}
+                              compact={compact}
                             />
                         ))}
                     </View>
 
-                    {showPagination && total > currentPageSize && (
-                        <View className='flex justify-center py-10'>
-                            <View className='flex items-center justify-center gap-2'>
-                                <Button
-                                  variant='outline'
-                                  size='sm'
-                                  disabled={currentPage <= 1}
-                                  onClick={() => handlePageChange(currentPage - 1)}
-                                >
-                                    Previous
-                                </Button>
-                                <Text className='px-2 text-sm text-muted-foreground'>
-                                    {currentPage} / {Math.ceil(total / currentPageSize)}
-                                </Text>
-                                <Button
-                                  variant='outline'
-                                  size='sm'
-                                  disabled={currentPage >= Math.ceil(total / currentPageSize)}
-                                  onClick={() => handlePageChange(currentPage + 1)}
-                                >
-                                    Next
-                                </Button>
-                            </View>
+                    {showPagination && totalPages > 1 && (
+                        <View className='flex items-center justify-center gap-[24rpx] py-[48rpx]'>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              disabled={currentPage <= 1}
+                              onClick={() => handlePageChange(currentPage - 1)}
+                            >
+                                {t('previous') || '上一页'}
+                            </Button>
+                            <Text className='text-desc text-textSec'>
+                                {currentPage} / {totalPages}
+                            </Text>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              disabled={currentPage >= totalPages}
+                              onClick={() => handlePageChange(currentPage + 1)}
+                            >
+                                {t('next') || '下一页'}
+                            </Button>
                         </View>
                     )}
                 </>

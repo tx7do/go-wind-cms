@@ -1,46 +1,43 @@
-import {useEffect} from 'react';
 import {View} from '@tarojs/components';
 
-import HeroSection from '@/components/home/HeroSection';
 import FeaturedPostsSection from '@/components/home/FeaturedPostsSection';
 import CategoryListSection from '@/components/home/CategoryListSection';
-import PopularTagsSection from '@/components/home/PopularTagsSection';
 import LatestPostsSection from '@/components/home/LatestPostsSection';
+import PopularTagsSection from '@/components/home/PopularTagsSection';
 import FeaturesSection from '@/components/home/FeaturesSection';
-import SectionContainer from '@/components/layout/SectionContainer';
 
+/**
+ * 首页
+ * 布局：精选 → 分类 → 最新文章 → 热门标签 → 平台特性
+ * 每个区块通过 SectionContainer 统一 px-[24rpx] 内边距
+ */
 export default function Home() {
-    useEffect(() => {
-        console.log('[Home Page] Component mounted');
-    }, []);
-
     return (
-        <View className='w-full min-h-screen bg-background'>
-            {/* Hero Section */}
-            <HeroSection />
-
-            {/* Featured Posts */}
-            <SectionContainer>
+        <View className='w-full bg-pageBg pb-[48rpx]'>
+            {/* 精选文章 */}
+            <View className='px-[24rpx] py-[32rpx]'>
                 <FeaturedPostsSection />
-            </SectionContainer>
+            </View>
 
-            {/* Categories */}
-            <SectionContainer>
+            {/* 分类（横向滑动） */}
+            <View className='px-[24rpx] py-[32rpx]'>
                 <CategoryListSection />
-            </SectionContainer>
+            </View>
 
-            {/* Latest Posts */}
-            <SectionContainer>
+            {/* 最新文章 */}
+            <View className='px-[24rpx] py-[32rpx]'>
                 <LatestPostsSection />
-            </SectionContainer>
+            </View>
 
-            {/* Popular Tags */}
-            <SectionContainer>
+            {/* 热门标签 */}
+            <View className='px-[24rpx] py-[32rpx]'>
                 <PopularTagsSection />
-            </SectionContainer>
+            </View>
 
-            {/* Features — 自带背景和容器 */}
-            <FeaturesSection />
+            {/* 平台特性 */}
+            <View className='px-[24rpx] py-[32rpx]'>
+                <FeaturesSection />
+            </View>
         </View>
     );
 }

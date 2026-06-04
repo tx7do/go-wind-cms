@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from '@tarojs/components';
+import {View, Text} from '@tarojs/components';
 import {XIcon} from '@/plugins/xicon';
 import {cn} from '@/lib/utils';
 
@@ -20,21 +20,21 @@ export const AppEmpty: React.FC<AppEmptyProps> = ({
     style,
 }) => {
     const defaultIcon = image || (
-        <XIcon name='carbon:inbox' size={64} className='text-muted-foreground' />
+        <XIcon name='carbon:inbox' size={48} className='text-textWeak' />
     );
 
     return (
         <View
           className={cn(
-                'flex w-full items-center justify-center gap-4 py-12 px-5',
-                inContainer && 'my-20',
+                'flex w-full flex-col items-center justify-center gap-[24rpx] py-[96rpx] px-[24rpx]',
+                inContainer && 'my-[120rpx]',
                 className,
             )}
           style={style}
         >
             <View className='opacity-50'>{defaultIcon}</View>
             {description && (
-                <View className='text-sm text-muted-foreground'>{description}</View>
+                <Text className='text-desc text-textThird'>{description}</Text>
             )}
         </View>
     );

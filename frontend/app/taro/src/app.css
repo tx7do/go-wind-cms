@@ -2,71 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ========== Tailwind 主题变量（shadcn/ui 兼容） ========== */
-
-/* 浅色模式 */
+/* ========== 安全区 CSS 变量（规范 §5.3） ========== */
 page {
-    --background: 210 40% 98%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 93.1%;
-    --secondary-foreground: 224 71.4% 4.1%;
-    --muted: 210 40% 93.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 217.2 91.2% 59.8%;
-    --accent-foreground: 224 71.4% 4.1%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --success: 142.1 76.2% 36.3%;
-    --success-foreground: 0 0% 98%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 98%;
-    --border: 214.3 32% 88%;
-    --input: 214.3 32% 88%;
-    --ring: 142.1 76.2% 36.3%;
-    --radius: 0.6rem;
-    --layout-header-height: 64px;
-    --layout-footer-height: 200px;
-    --layout-max-width: 1200px;
+    --safe-top: env(safe-area-inset-top, 0rpx);
+    --safe-bottom: env(safe-area-inset-bottom, 0rpx);
 }
 
-/* 深色模式 */
-.dark {
-    --background: 224 45% 6%;
-    --foreground: 210 20% 98%;
-    --card: 222.2 47.4% 11%;
-    --card-foreground: 210 20% 98%;
-    --popover: 222.2 47.4% 11%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 142.1 86.2% 50.3%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 13.5%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 217.2 32.6% 13.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 91.2% 59.8%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --success: 142.1 86.2% 50.3%;
-    --success-foreground: 0 0% 98%;
-    --warning: 38 92% 55%;
-    --warning-foreground: 0 0% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 142.1 86.2% 50.3%;
-}
-
-/* ========== 全局基础样式 ========== */
+/* ========== 全局基础样式（规范 §3 色板） ========== */
 page {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: #f2f3f5;
+    color: #1d2129;
     box-sizing: border-box;
+    font-size: 32rpx;
+}
+
+/* ========== 点击反馈工具类（规范 §6.1） ========== */
+.tap-active {
+    opacity: 0.8;
 }
 
 /* ========== 全局过渡动画 ========== */
@@ -90,79 +42,4 @@ page {
     scrollbar-width: none;
 }
 
-/* ========== Scroll Reveal Animation ========== */
-.scroll-reveal-item {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
 
-.scroll-reveal-item.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.scroll-reveal-item:nth-child(1) { transition-delay: 0.08s; }
-.scroll-reveal-item:nth-child(2) { transition-delay: 0.16s; }
-.scroll-reveal-item:nth-child(3) { transition-delay: 0.24s; }
-.scroll-reveal-item:nth-child(4) { transition-delay: 0.32s; }
-.scroll-reveal-item:nth-child(5) { transition-delay: 0.4s; }
-.scroll-reveal-item:nth-child(6) { transition-delay: 0.48s; }
-.scroll-reveal-item:nth-child(7) { transition-delay: 0.56s; }
-.scroll-reveal-item:nth-child(8) { transition-delay: 0.64s; }
-
-/* ========== Categories Grid / Carousel Visibility ========== */
-.desktop-grid { display: grid; }
-.mobile-carousel { display: none; }
-
-/* ========== Scroll Reveal Section ========== */
-.scroll-reveal .section-header {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUpSection 0.6s ease-out 0.2s forwards;
-}
-
-@keyframes fadeInUpSection {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ========== 主题切换图标「空气动力学」微动效 ========== */
-@keyframes theme-icon-spin {
-    0% {
-        transform: rotate(-90deg) scale(0.5);
-        opacity: 0;
-    }
-    60% {
-        transform: rotate(10deg) scale(1.1);
-        opacity: 1;
-    }
-    100% {
-        transform: rotate(0deg) scale(1);
-        opacity: 1;
-    }
-}
-
-.theme-icon-animate {
-    animation: theme-icon-spin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ========== Tailwind 基础层补充 ========== */
-
-/* ========== Hero 浮动动画 ========== */
-@keyframes float-slow {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(5deg); }
-}
-@keyframes float-medium {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-15px) rotate(-3deg); }
-}
-@keyframes float-fast {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(3deg); }
-}
-
-.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
-.animate-float-medium { animation: float-medium 6s ease-in-out infinite; }
-.animate-float-fast { animation: float-fast 4s ease-in-out infinite; }

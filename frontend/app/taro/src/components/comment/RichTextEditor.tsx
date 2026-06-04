@@ -1,4 +1,3 @@
-import React from 'react';
 import {View} from '@tarojs/components';
 import {cn} from '@/lib/utils';
 import {XIcon} from '@/plugins/xicon';

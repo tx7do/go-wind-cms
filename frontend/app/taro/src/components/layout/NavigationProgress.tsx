@@ -120,7 +120,7 @@ export default function NavigationProgress() {
 
     return (
         <View
-          className='fixed left-0 right-0 top-0 z-9999 pointer-events-none'
+          className='fixed left-0 right-0 top-0 z-[9999]'
           role='progressbar'
           aria-valuenow={Math.round(progress)}
           aria-valuemin={0}

@@ -1,40 +1,48 @@
 import {View, Text} from '@tarojs/components';
-﻿import React from 'react';
-import {Button} from '@/components/ui/button';
 import {useTranslations} from '@/lib/next-intl-compat';
-
 import {XIcon} from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-
 import PostList from '@/components/post/PostList';
 
+/**
+ * 首页「最新文章」区块
+ * - 默认竖排卡片（封面+标题+摘要）
+ * - 显示 4 篇
+ */
 export default function LatestPostsSection() {
     const t = useTranslations('page.home');
     const router = useI18nRouter();
+
     return (
-        <View className='w-full scroll-reveal'>
-            <View className='mb-8 flex items-center justify-between'>
-                <Text className='flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl'>
-                    <XIcon name='carbon:document' size={28} className='mr-2 text-primary' />
-                    {t('latest_posts')}
-                </Text>
-                <Button variant='ghost' onClick={() => router.push('/post')}>
-                    {t('view_all')} →
-                </Button>
+        <View className='w-full'>
+            {/* 标题行 */}
+            <View className='flex items-center justify-between mb-[32rpx]'>
+                <View className='flex items-center gap-[8rpx]'>
+                    <XIcon name='carbon:document' size={20} className='text-primary' />
+                    <Text className='text-card-title font-bold text-textMain'>
+                        {t('latest_posts')}
+                    </Text>
+                </View>
+                <View
+                  className='px-[16rpx] py-[8rpx] min-w-touch min-h-touch flex items-center justify-center'
+                  onClick={() => router.push('/post')}
+                  hoverClass='tap-active'
+                >
+                    <Text className='text-desc text-primary'>{t('view_all')} →</Text>
+                </View>
             </View>
-            <View className='w-full'>
-                <PostList
-                  queryParams={{status: 'POST_STATUS_PUBLISHED'}}
-                  fieldMask='id,status,sortOrder,isFeatured,visits,likes,commentCount,authorName,availableLanguages,createdAt,translations.id,translations.postId,translations.languageCode,translations.title,translations.summary,translations.thumbnail'
-                  orderBy={['-createdAt']}
-                  page={1}
-                  pageSize={6}
-                  columns={3}
-                  showSkeleton
-                  from='home'
-                  showPagination={false}
-                />
-            </View>
+
+            {/* 文章列表：默认竖排卡片 */}
+            <PostList
+              queryParams={{status: 'POST_STATUS_PUBLISHED'}}
+              fieldMask='id,status,sortOrder,isFeatured,visits,likes,commentCount,authorName,availableLanguages,createdAt,translations.id,translations.postId,translations.languageCode,translations.title,translations.summary,translations.thumbnail'
+              orderBy={['-createdAt']}
+              page={1}
+              pageSize={4}
+              showSkeleton
+              from='home'
+              showPagination={false}
+            />
         </View>
     );
 }

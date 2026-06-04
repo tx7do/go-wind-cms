@@ -94,12 +94,8 @@ export default function StoreProvider({children}: { children: ReactNode }) {
                 accessStore.getState().clearTokens();
                 userStore.getState().clearUser();
 
-                if (redirect && typeof window !== 'undefined') {
-                    // Taro 兼容写法
-                    const pages = Taro.getCurrentPages();
-                    const currentPage = pages[pages.length - 1];
-                    const currentPath = currentPage ? `/${currentPage.route}` : '/';
-                    window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+                if (redirect && typeof Taro !== 'undefined') {
+                    Taro.redirectTo({url: '/pages/user/index'});
                 }
             },
 
