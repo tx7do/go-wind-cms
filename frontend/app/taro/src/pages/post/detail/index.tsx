@@ -9,6 +9,7 @@ import BackToTop from '@/components/layout/BackToTop';
 import XIcon from '@/plugins/xicon';
 import {formatDate} from '@/utils';
 import {useI18nRouter} from '@/i18n/helpers';
+import {usePreferences} from '@/core/preferences';
 import {contentservicev1_Post} from '@/api/generated/app/service/v1';
 import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
 import {Skeleton} from '@/components/ui/skeleton';
@@ -16,6 +17,7 @@ import {Skeleton} from '@/components/ui/skeleton';
 export default function PostDetailPage() {
     const {t} = useTranslation();
     const router = useI18nRouter();
+    const {isDark} = usePreferences();
     const [post, setPost] = useState<contentservicev1_Post | null>(null);
     const [loading, setLoading] = useState(true);
     const [isLiked, setIsLiked] = useState(false);
@@ -238,11 +240,14 @@ export default function PostDetailPage() {
                 </View>
             </View>
 
-            {/* 浮动底部操作栏 */}
+            {/* 浮动底部操作栏 - 毛玻璃遮罩 */}
             <View
-              className='fixed bottom-0 left-0 right-0 z-50 bg-cardBg border-t-[1rpx] border-splitLine flex items-center justify-around'
+              className='fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around'
               style={{
-                backgroundColor: 'var(--color-card-bg)',
+                backgroundColor: isDark ? 'rgba(35, 35, 38, 0.88)' : 'rgba(255, 255, 255, 0.88)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                borderTop: isDark ? '1rpx solid rgba(255, 255, 255, 0.08)' : '1rpx solid rgba(0, 0, 0, 0.06)',
                 paddingTop: '16rpx',
                 paddingBottom: 'calc(32rpx + env(safe-area-inset-bottom))',
                 paddingLeft: '16rpx',
