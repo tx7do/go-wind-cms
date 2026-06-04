@@ -13,12 +13,8 @@ function App({children}: PropsWithChildren): ReactElement {
 
   return createElement(
     StoreProvider,
-    {},
-    createElement(
-      Layout,
-      {},
-      children
-    )
+    null,
+    createElement(Layout, null, children)
   ) as ReactElement;
 }
 

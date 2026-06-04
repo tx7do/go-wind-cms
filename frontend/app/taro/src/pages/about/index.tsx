@@ -31,7 +31,7 @@ export default function AboutPage() {
 
             {/* 关于我们 */}
             <View className='px-[24rpx] pt-[32rpx]'>
-                <View className='rounded-[16rpx] bg-cardBg p-[32rpx]'>
+                <View className='rounded-[32rpx] bg-cardBg p-[32rpx]'>
                     <Text className='text-card-title font-bold text-textMain block mb-[16rpx]'>{t('page.about.about_us')}</Text>
                     <Text className='text-body text-textSec leading-[1.8] block mb-[16rpx]'>{t('page.about.about_us_desc_1')}</Text>
                     <Text className='text-body text-textSec leading-[1.8] block mb-[16rpx]'>{t('page.about.about_us_desc_2')}</Text>
@@ -43,9 +43,9 @@ export default function AboutPage() {
             <View className='px-[24rpx] pt-[32rpx]'>
                 <View className='grid grid-cols-2 gap-[24rpx]'>
                     {stats.map((stat) => (
-                        <View key={stat.label} className='rounded-[16rpx] bg-cardBg p-[32rpx]'>
+                        <View key={stat.label} className='rounded-[32rpx] bg-cardBg p-[32rpx]'>
                             <View className='flex items-center gap-[12rpx] mb-[12rpx]'>
-                                <View className='w-[48rpx] h-[48rpx] rounded-full bg-primary/10 flex items-center justify-center'>
+                                <View className='w-[48rpx] h-[48rpx] rounded-[16rpx] bg-primary/10 flex items-center justify-center'>
                                     <XIcon name={stat.icon} size={18} className='text-primary' />
                                 </View>
                                 <Text className='text-card-title font-bold text-primary'>{stat.number}</Text>
@@ -58,29 +58,31 @@ export default function AboutPage() {
 
             {/* 功能特性 */}
             <View className='px-[24rpx] pt-[32rpx]'>
-                <Text className='text-card-title font-bold text-textMain block mb-[8rpx]'>{t('page.about.features')}</Text>
-                <Text className='text-desc text-textSec block mb-[24rpx]'>{t('page.about.features_desc')}</Text>
-                <View className='grid grid-cols-2 gap-[24rpx]'>
-                    {features.map((feature) => (
-                        <View key={feature.title} className='rounded-[16rpx] bg-cardBg p-[24rpx]'>
-                            <View className='flex items-center justify-center w-[72rpx] h-[72rpx] rounded-[16rpx] bg-primary/10 mb-[16rpx]'>
-                                <XIcon name={feature.icon} size={28} className='text-primary' />
+                <View className='rounded-[32rpx] bg-cardBg p-[32rpx]'>
+                    <Text className='text-card-title font-bold text-textMain block mb-[8rpx]'>{t('page.about.features')}</Text>
+                    <Text className='text-desc text-textSec mb-[32rpx]'>{t('page.about.features_desc')}</Text>
+                    <View className='grid grid-cols-2 gap-[24rpx]'>
+                        {features.map((feature) => (
+                            <View key={feature.title} className='rounded-[24rpx] bg-pageBg p-[24rpx]'>
+                                <View className='flex items-center justify-center w-[72rpx] h-[72rpx] rounded-[24rpx] bg-primary/10 mb-[16rpx]'>
+                                    <XIcon name={feature.icon} size={28} className='text-primary' />
+                                </View>
+                                <Text className='text-desc font-bold text-textMain block mb-[8rpx]'>{feature.title}</Text>
+                                <Text
+                                  className='text-tips text-textSec leading-[1.6]'
+                                  style={{
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 3,
+                                    WebkitBoxOrient: 'vertical',
+                                  }}
+                                >
+                                    {feature.description}
+                                </Text>
                             </View>
-                            <Text className='text-desc font-bold text-textMain block mb-[8rpx]'>{feature.title}</Text>
-                            <Text
-                              className='text-tips text-textSec leading-[1.6]'
-                              style={{
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 3,
-                                WebkitBoxOrient: 'vertical',
-                              }}
-                            >
-                                {feature.description}
-                            </Text>
-                        </View>
-                    ))}
+                        ))}
+                    </View>
                 </View>
             </View>
         </View>
