@@ -1,6 +1,8 @@
 import {useTranslation} from 'react-i18next';
+import Taro from '@tarojs/taro';
 import {usePreferencesStore} from '@/core/preferences/store';
 import {useLoadingStore} from '@/store/core/loading/store';
+import {queryClient} from '@/core/query-client';
 import type {SupportedLanguagesType} from '@/core/preferences/types/layout';
 
 
@@ -27,8 +29,22 @@ export function useI18n(namespace: string = 'common') {
     i18n.changeLanguage(targetLocale).then(() => {
       // 保存到 preferences store（自动持久化）
       preferencesStore.setPreferences({app: {locale: targetLocale as SupportedLanguagesType}});
+      // 清除所有查询缓存
+      queryClient.clear();
       loadingStore.finish();
       console.log('[useI18n] Locale changed successfully');
+
+      // 刷新当前页面，让所有组件重新挂载并拉取新语言的数据
+      // H5 端用 location.reload 强制整页刷新
+      if (process.env.TARO_ENV === 'h5') {
+        window.location.reload();
+      } else {
+        const pages = Taro.getCurrentPages();
+        const currentPage = pages[pages.length - 1];
+        if (currentPage) {
+          Taro.redirectTo({url: `/${currentPage.route}`});
+        }
+      }
     });
   };
 

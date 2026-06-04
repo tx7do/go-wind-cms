@@ -67,7 +67,8 @@ export async function listTagsRaw(params: {
  * 获取单个标签
  */
 export async function getTag(id: number) {
-  return getTagService().Get({id});
+  const locale = currentLocaleLanguageCode();
+  return getTagService().Get({id, locale});
 }
 
 /**

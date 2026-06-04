@@ -218,10 +218,10 @@ function MobileNavDrawer() {
                     <View className='py-[8rpx]'>
                         <View className='flex items-center px-[32rpx]' style={{height: '56rpx'}}>
                             <XIcon name='carbon:earth' size={12} className='text-textThird' />
-                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>语言</Text>
+                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>{t('language.title')}</Text>
                         </View>
-                        <DrawerItem label='简体中文' onClick={() => handleAction(() => changeLocale('zh-CN'))} active={locale === 'zh-CN'} />
-                        <DrawerItem label='English' onClick={() => handleAction(() => changeLocale('en-US'))} active={locale === 'en-US'} />
+                        <DrawerItem label={t('language.zh-CN')} onClick={() => handleAction(() => changeLocale('zh-CN'))} active={locale === 'zh-CN'} />
+                        <DrawerItem label={t('language.en-US')} onClick={() => handleAction(() => changeLocale('en-US'))} active={locale === 'en-US'} />
                     </View>
 
                     {/* 分隔线 */}
@@ -235,7 +235,7 @@ function MobileNavDrawer() {
                               size={12}
                               className='text-textThird'
                             />
-                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>主题模式</Text>
+                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>{t('theme.title')}</Text>
                         </View>
                         <DrawerItem icon='carbon:sun' label={t('theme.light')} onClick={() => handleAction(() => setThemeMode('light'))} active={currentMode === 'light'} />
                         <DrawerItem icon='carbon:moon' label={t('theme.dark')} onClick={() => handleAction(() => setThemeMode('dark'))} active={currentMode === 'dark'} />

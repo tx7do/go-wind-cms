@@ -67,7 +67,8 @@ export async function listPostsRaw(params: {
  * 获取单个文章
  */
 export async function getPost(id: number) {
-  return getPostService().Get({id});
+  const locale = currentLocaleLanguageCode();
+  return getPostService().Get({id, locale});
 }
 
 /**

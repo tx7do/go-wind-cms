@@ -17,7 +17,7 @@ i18n
         translation: flattenedMessages['en-US'],
       },
     },
-    lng: defaultLocale,
+    lng: getPersistedLocale(),
     fallbackLng: 'zh-CN',
     interpolation: {
       escapeValue: false,
@@ -26,6 +26,24 @@ i18n
     nsSeparator: '.',
     keySeparator: '.',
   });
+
+// 从 zustand persist 存储中读取持久化的 locale
+function getPersistedLocale(): string {
+  if (typeof window === 'undefined') return defaultLocale;
+  try {
+    const raw = localStorage.getItem('app-preferences');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const locale = parsed?.state?.preferences?.app?.locale;
+      if (locale && (locale === 'zh-CN' || locale === 'en-US')) return locale;
+    }
+  } catch {}
+  // fallback: 从 navigator.language 推断
+  const nav = navigator.language || '';
+  if (nav.startsWith('zh')) return 'zh-CN';
+  if (nav.startsWith('en')) return 'en-US';
+  return defaultLocale;
+}
 
 // 显式导出 config 中的内容
 export {allMessages, defaultLocale, DEFAULT_LANGUAGE, locales, validateLocale};
@@ -42,14 +60,5 @@ export function useCurrentLocaleLanguageCode(): string {
 
 // 获取当前语言代码（如 zh-CN、en-US）
 export function currentLocaleLanguageCode(): string {
-  if (typeof window !== 'undefined') {
-    // 从 localStorage 获取
-    let locale = localStorage.getItem('locale');
-    // fallback 到浏览器语言
-    if (!locale) locale = navigator.language || 'zh-CN';
-    if (locale.startsWith('zh')) return 'zh-CN';
-    if (locale.startsWith('en')) return 'en-US';
-    return locale;
-  }
-  return 'zh-CN';
+  return i18n.language || 'zh-CN';
 }

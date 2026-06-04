@@ -61,7 +61,7 @@ const HomeCategoryCard: React.FC<{
                     </Text>
                     <Text className='text-tips text-textThird'>
                         <Text className='text-primary font-medium'>{count}</Text>
-                        <Text className='text-tips text-textThird'>篇</Text>
+                        <Text className='text-tips text-textThird'>{t('articles_unit')}</Text>
                     </Text>
                 </View>
             </View>
