@@ -44,8 +44,13 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     }
 
     function handleReply(comment: commentservicev1_Comment) {
-        setReplyingCommentId(comment.id || 0);
-        setReplyContent('');
+        if (replyingCommentId === comment.id) {
+            setReplyingCommentId(null);
+            setReplyContent('');
+        } else {
+            setReplyingCommentId(comment.id || 0);
+            setReplyContent('');
+        }
     }
 
     function cancelReply() {
@@ -72,7 +77,6 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         }
     }
 
-    // 点赞
     function handleLike(comment: commentservicev1_Comment) {
         const commentId = comment.id || 0;
         if (likedComments.has(commentId)) {
@@ -86,7 +90,6 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         }
     }
 
-    // 分享 - 复制链接
     function handleShare(comment: commentservicev1_Comment) {
         const commentUrl = `#comment-${comment.id}`;
         Taro.setClipboardData({
@@ -96,7 +99,6 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         });
     }
 
-    // 展开/收起子评论
     async function toggleExpand(comment: commentservicev1_Comment) {
         const id = comment.id || 0;
         if (isExpanded(comment)) {
@@ -129,139 +131,141 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     if (!comments || comments.length === 0) return null;
 
     return (
-        <View className='flex flex-col gap-[16rpx]'>
-            {comments.map((comment) => (
-                <View key={comment.id} className='flex flex-col'>
-                    {/* 评论主体 - 白色卡片 */}
-                    <View className='bg-cardBg p-[24rpx]'>
+        <View className='flex flex-col'>
+            {comments.map((comment, index) => (
+                <View key={comment.id}>
+                    {/* 评论主体 */}
+                    <View className='bg-cardBg px-[24rpx] py-[20rpx]'>
                         {/* 头部：头像 + 用户名 + 时间 */}
-                        <View className='flex items-start gap-[12rpx] mb-[12rpx]'>
-                            <View className='flex items-center justify-center w-[64rpx] h-[64rpx] rounded-full bg-primary/10 flex-shrink-0'>
-                                <Text className='text-body font-bold text-primary'>
-                                    {comment.authorName?.charAt(0) || 'U'}
+                        <View className='flex items-start gap-[12rpx]'>
+                            {/* 头像 - 带颜色背景的首字母 */}
+                            <View className='flex items-center justify-center w-[52rpx] h-[52rpx] rounded-full bg-primary/10 flex-shrink-0'>
+                                <Text className='text-tips font-bold text-primary'>
+                                    {comment.authorName?.charAt(0)?.toUpperCase() || 'U'}
                                 </Text>
                             </View>
                             <View className='flex-1 min-w-0'>
-                                <View className='flex items-center gap-[8rpx] mb-[4rpx]'>
-                                    <Text className='text-desc font-bold text-textMain'>
-                                        @{comment.authorName}
+                                {/* 用户名行 */}
+                                <View className='flex items-center gap-[8rpx] flex-wrap'>
+                                    <Text className='text-tips font-bold text-textMain'>
+                                        {comment.authorName}
                                     </Text>
                                     {isOwnerReply(comment) && (
-                                        <View className='flex items-center gap-[4rpx] rounded-[8rpx] bg-primary px-[8rpx] py-[2rpx]'>
-                                            <XIcon name='carbon:badge' size={10} className='text-white' />
-                                            <Text className='text-tips font-bold text-white'>{t('owner_reply')}</Text>
+                                        <View className='flex items-center gap-[2rpx] rounded-[4rpx] bg-primary/10 px-[6rpx] py-[1rpx]'>
+                                            <XIcon name='carbon:badge' size={10} className='text-primary' />
+                                            <Text className='text-[20rpx] font-bold text-primary'>{t('owner_reply')}</Text>
                                         </View>
                                     )}
+                                    <Text className='text-tips text-textThird'>{formatDate(comment.createdAt)}</Text>
                                 </View>
-                                <View className='flex items-center gap-[8rpx]'>
-                                    {comment.location && !isOwnerReply(comment) && (
-                                        <Text className='text-tips text-textSec'>{comment.location}</Text>
-                                    )}
-                                    <Text className='text-tips text-textSec'>{formatDate(comment.createdAt)}</Text>
-                                </View>
-                            </View>
-                        </View>
 
-                        {/* 评论内容 */}
-                        <View className='mb-[16rpx]'>
-                            <Text className='text-body text-textMain leading-[1.6]'>{comment.content}</Text>
-                        </View>
-
-                        {/* 操作栏 - 无分割线 */}
-                        <View className='flex items-center gap-[24rpx]'>
-                            {/* 点赞 */}
-                            <View
-                              className='flex items-center gap-[4rpx]'
-                              onClick={() => handleLike(comment)}
-                              hoverClass='tap-active'
-                            >
-                                <XIcon
-                                  name={likedComments.has(comment.id || 0) ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'}
-                                  size={16}
-                                  className={likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textSec'}
-                                />
-                                <Text className='text-tips text-textSec'>
-                                    {comment.likeCount || 0}
+                                {/* 评论内容 */}
+                                <Text className='text-desc text-textMain leading-[1.7] block mt-[8rpx]'>
+                                    {comment.content}
                                 </Text>
-                            </View>
 
-                            {/* 回复 */}
-                            <View
-                              className='flex items-center gap-[4rpx]'
-                              onClick={() => handleReply(comment)}
-                              hoverClass='tap-active'
-                            >
-                                <XIcon name='carbon:chat' size={16} className='text-textSec' />
-                                <Text className='text-tips text-textSec'>{t('reply')}</Text>
-                            </View>
+                                {/* 操作栏 */}
+                                <View className='flex items-center gap-[20rpx] mt-[12rpx]'>
+                                    {/* 点赞 */}
+                                    <View
+                                      className='flex items-center gap-[4rpx]'
+                                      onClick={() => handleLike(comment)}
+                                      hoverClass='tap-active'
+                                    >
+                                        <XIcon
+                                          name={likedComments.has(comment.id || 0) ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'}
+                                          size={14}
+                                          className={likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textThird'}
+                                        />
+                                        <Text
+                                          className={cn(
+                                            'text-tips',
+                                            likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textThird',
+                                          )}
+                                        >
+                                            {(comment.likeCount || 0) + (likedComments.has(comment.id || 0) ? 1 : 0)}
+                                        </Text>
+                                    </View>
 
-                            {/* 分享 */}
-                            <View
-                              className='flex items-center gap-[4rpx]'
-                              onClick={() => handleShare(comment)}
-                              hoverClass='tap-active'
-                            >
-                                <XIcon name='carbon:share' size={16} className='text-textSec' />
-                                <Text className='text-tips text-textSec'>{t('share')}</Text>
-                            </View>
+                                    {/* 回复 */}
+                                    <View
+                                      className='flex items-center gap-[4rpx]'
+                                      onClick={() => handleReply(comment)}
+                                      hoverClass='tap-active'
+                                    >
+                                        <XIcon name='carbon:chat' size={14} className='text-textThird' />
+                                        <Text className='text-tips text-textThird'>{t('reply')}</Text>
+                                    </View>
 
-                            {/* 查看回复 */}
-                            {comment.replyCount && comment.replyCount > 0 ? (
-                                <View
-                                  className='flex items-center gap-[4rpx] ml-auto'
-                                  onClick={() => toggleExpand(comment)}
-                                  hoverClass='tap-active'
-                                >
-                                    <XIcon
-                                      name={isExpanded(comment) ? 'carbon:chevron-down' : 'carbon:chevron-up'}
-                                      size={14}
-                                      className='text-primary'
-                                    />
-                                    <Text className='text-tips text-primary font-medium'>
-                                        {isExpanded(comment)
-                                            ? t('hide_replies')
-                                            : t('view_replies', {count: comment.replyCount})
-                                        }
-                                    </Text>
+                                    {/* 分享 */}
+                                    <View
+                                      className='flex items-center gap-[4rpx]'
+                                      onClick={() => handleShare(comment)}
+                                      hoverClass='tap-active'
+                                    >
+                                        <XIcon name='carbon:share' size={14} className='text-textThird' />
+                                        <Text className='text-tips text-textThird'>{t('share')}</Text>
+                                    </View>
+
+                                    {/* 查看回复 */}
+                                    {comment.replyCount && comment.replyCount > 0 ? (
+                                        <View
+                                          className='flex items-center gap-[4rpx] ml-auto'
+                                          onClick={() => toggleExpand(comment)}
+                                          hoverClass='tap-active'
+                                        >
+                                            <XIcon
+                                              name={isExpanded(comment) ? 'carbon:chevron-up' : 'carbon:chevron-down'}
+                                              size={12}
+                                              className='text-primary'
+                                            />
+                                            <Text className='text-tips text-primary'>
+                                                {isExpanded(comment)
+                                                    ? t('hide_replies')
+                                                    : t('view_replies', {count: comment.replyCount})
+                                                }
+                                            </Text>
+                                        </View>
+                                    ) : null}
                                 </View>
-                            ) : null}
+                            </View>
                         </View>
 
-                        {/* 回复表单 */}
+                        {/* 回复表单 - 内嵌在评论下方 */}
                         {replyingCommentId === comment.id && (
-                            <View className='mt-[16rpx] pt-[16rpx]'>
+                            <View className='mt-[12rpx] ml-[64rpx] bg-pageBg rounded-[8rpx] p-[16rpx]'>
                                 <Textarea
                                   value={replyContent}
                                   onInput={(e) => setReplyContent(e.detail.value ?? '')}
                                   placeholder={t('write_comment')}
                                   maxlength={1000}
-                                  className='w-full min-h-[120rpx] text-body text-textMain bg-pageBg rounded-[12rpx] p-[16rpx]'
+                                  className='w-full min-h-[80rpx] text-tips text-textMain bg-cardBg rounded-[8rpx] p-[12rpx]'
                                   disabled={submitting}
+                                  focus
                                 />
-                                <View className='flex items-center justify-between mt-[12rpx]'>
-                                    <Text className='text-tips text-textSec'>
-                                        {replyContent.length} / 1000
+                                <View className='flex items-center justify-between mt-[8rpx]'>
+                                    <Text className='text-tips text-textThird'>
+                                        {replyContent.length}/1000
                                     </Text>
-                                    <View className='flex gap-[12rpx]'>
+                                    <View className='flex items-center gap-[8rpx]'>
                                         <View
-                                          className='px-[24rpx] py-[12rpx] rounded-[8rpx] bg-pageBg'
+                                          className='px-[16rpx] py-[6rpx] rounded-[6rpx]'
                                           onClick={cancelReply}
                                           hoverClass='tap-active'
                                         >
-                                            <Text className='text-desc text-textSec'>{t('cancel')}</Text>
+                                            <Text className='text-tips text-textSec'>{t('cancel')}</Text>
                                         </View>
                                         <View
                                           className={cn(
-                                              'px-[24rpx] py-[12rpx] rounded-[8rpx]',
-                                              'bg-primary',
-                                              submitting && 'opacity-50',
+                                            'flex items-center gap-[4rpx] px-[20rpx] py-[6rpx] rounded-[6rpx]',
+                                            'bg-primary',
+                                            (submitting || !replyContent.trim()) && 'opacity-50',
                                           )}
                                           onClick={() => submitReply(comment)}
                                           hoverClass='tap-active'
                                         >
-                                            <Text className='text-desc text-white'>
-                                                {submitting ? '...' : t('submit_comment')}
-                                            </Text>
+                                            {submitting && <Spinner size='sm' className='text-white' />}
+                                            <Text className='text-tips text-white font-medium'>{t('reply')}</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -269,14 +273,14 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                         )}
                     </View>
 
-                    {/* 递归渲染子评论 */}
+                    {/* 子评论区域 */}
                     {hasChildren(comment) && isExpanded(comment) && (
-                        <View className='ml-[48rpx] mt-[16rpx] border-l-[2rpx] border-primary/20 pl-[24rpx]'>
+                        <View className='ml-[64rpx] border-l-[2rpx] border-primary/20 pl-[16rpx]'>
                             {/* 加载中 */}
                             {isLoading(comment) && (
-                                <View className='flex items-center justify-center gap-[12rpx] py-[32rpx]'>
+                                <View className='flex items-center gap-[8rpx] py-[24rpx]'>
                                     <Spinner size='sm' className='text-primary' />
-                                    <Text className='text-desc text-textSec'>{t('loading')}</Text>
+                                    <Text className='text-tips text-textSec'>{t('loading')}</Text>
                                 </View>
                             )}
                             {/* 子评论列表 */}
@@ -288,6 +292,11 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                 />
                             )}
                         </View>
+                    )}
+
+                    {/* 评论间分割线 */}
+                    {index < comments.length - 1 && (
+                        <View className='h-[1rpx] bg-splitLine ml-[24rpx]' />
                     )}
                 </View>
             ))}

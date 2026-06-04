@@ -168,7 +168,6 @@ export default function CategoryDetailPage() {
           <PostListWithPagination
             key={categoryId}
             initialPageSize={12}
-            pageSizes={[12, 24, 36, 48]}
             categoryId={categoryId}
             from='category'
             showPagination

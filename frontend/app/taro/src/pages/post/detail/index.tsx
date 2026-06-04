@@ -10,7 +10,8 @@ import XIcon from '@/plugins/xicon';
 import {formatDate} from '@/utils';
 import {useI18nRouter} from '@/i18n/helpers';
 import {contentservicev1_Post} from '@/api/generated/app/service/v1';
-import {fetchPost, getPostTitle, getPostContent, getPostThumbnail} from '@/api/hooks/post';
+import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
+import {Skeleton} from '@/components/ui/skeleton';
 
 export default function PostDetailPage() {
     const {t} = useTranslation();
@@ -38,6 +39,7 @@ export default function PostDetailPage() {
     const displayTitle = useMemo(() => post ? getPostTitle(post) : '', [post]);
     const displayContent = useMemo(() => post ? getPostContent(post) : '', [post]);
     const displayThumbnail = useMemo(() => post ? getPostThumbnail(post) : '', [post]);
+    const displaySummary = useMemo(() => post ? getPostSummary(post) : '', [post]);
 
     const relatedPostsQuery = useMemo(() => {
         if (!post?.categoryIds) return null;
@@ -60,38 +62,174 @@ export default function PostDetailPage() {
         loadPost();
     }, [postId]);
 
+    // 分享功能
+    function handleShare() {
+        Taro.setClipboardData({
+            data: window?.location?.href || '',
+        }).then(() => {
+            Taro.showToast({title: t('page.post_detail.link_copied'), icon: 'success'});
+        }).catch(() => {
+            Taro.showToast({title: t('page.post_detail.copy_failed'), icon: 'none'});
+        });
+    }
+
+    // ===== 加载态 =====
     if (loading) {
         return (
-            <View className='w-full bg-pageBg min-h-screen'>
-                <View className='bg-cardBg px-[24rpx] py-[32rpx]'>
-                    <View className='h-[48rpx] w-[60%] bg-splitLine rounded mb-[24rpx]' />
-                    <View className='h-[32rpx] w-[40%] bg-splitLine rounded' />
+            <View className='min-h-screen w-full bg-pageBg'>
+                {/* 头部骨架 */}
+                <View className='bg-cardBg'>
+                    <View className='h-[360rpx] bg-splitLine/30' />
+                    <View className='px-[32rpx] py-[32rpx]'>
+                        <Skeleton className='h-[44rpx] w-[80%] rounded-[8rpx] mb-[16rpx]' />
+                        <Skeleton className='h-[32rpx] w-[60%] rounded-[8rpx] mb-[24rpx]' />
+                        <View className='flex gap-[24rpx]'>
+                            <Skeleton className='h-[24rpx] w-[120rpx] rounded-[8rpx]' />
+                            <Skeleton className='h-[24rpx] w-[160rpx] rounded-[8rpx]' />
+                            <Skeleton className='h-[24rpx] w-[100rpx] rounded-[8rpx]' />
+                        </View>
+                    </View>
                 </View>
-                <View className='px-[24rpx] py-[32rpx]'>
-                    <View className='h-[400rpx] bg-splitLine rounded mb-[24rpx]' />
-                    <View className='h-[32rpx] w-[80%] bg-splitLine rounded mb-[16rpx]' />
-                    <View className='h-[32rpx] w-[60%] bg-splitLine rounded mb-[16rpx]' />
-                    <View className='h-[32rpx] w-[70%] bg-splitLine rounded' />
+                {/* 内容骨架 */}
+                <View className='px-[32rpx] py-[32rpx]'>
+                    <Skeleton className='h-[32rpx] w-full rounded-[8rpx] mb-[16rpx]' />
+                    <Skeleton className='h-[32rpx] w-[90%] rounded-[8rpx] mb-[16rpx]' />
+                    <Skeleton className='h-[32rpx] w-[75%] rounded-[8rpx] mb-[32rpx]' />
+                    <Skeleton className='h-[32rpx] w-full rounded-[8rpx] mb-[16rpx]' />
+                    <Skeleton className='h-[32rpx] w-[60%] rounded-[8rpx]' />
                 </View>
             </View>
         );
     }
 
+    // ===== 空态 =====
     if (!post) {
         return (
-            <View className='w-full bg-pageBg min-h-screen flex items-center justify-center'>
-                <XIcon name='carbon:warning' size={28} className='text-textWeak' />
-                <Text className='text-body text-textThird mt-[16rpx]'>{t('page.post_detail.not_found') || 'Post not found'}</Text>
+            <View className='min-h-screen w-full bg-pageBg flex flex-col items-center justify-center'>
+                <View className='w-[120rpx] h-[120rpx] rounded-full bg-pageBg flex items-center justify-center mb-[24rpx]'>
+                    <XIcon name='carbon:document-unknown' size={48} className='text-textWeak' />
+                </View>
+                <Text className='text-body text-textSec mb-[8rpx]'>{t('page.post_detail.post_not_found')}</Text>
+                <View
+                  className='flex items-center gap-[8rpx] px-[32rpx] py-[16rpx] rounded-full bg-primary/10 mt-[24rpx]'
+                  onClick={() => router.push('/')}
+                  hoverClass='tap-active'
+                >
+                    <XIcon name='carbon:home' size={16} className='text-primary' />
+                    <Text className='text-desc text-primary'>{t('page.error.go_home')}</Text>
+                </View>
             </View>
         );
     }
 
+    // ===== 正常渲染 =====
     return (
-        <View className='w-full bg-pageBg'>
-            {/* 返回导航 */}
-            <View className='bg-cardBg px-[24rpx]'>
+        <View className='min-h-screen w-full bg-pageBg pb-[200rpx]'>
+            {/* 封面图 */}
+            {displayThumbnail && (
+                <View className='w-full h-[400rpx] overflow-hidden'>
+                    <Image src={displayThumbnail} mode='aspectFill' className='w-full h-full' />
+                </View>
+            )}
+
+            {/* 文章头部 - 白色卡片 */}
+            <View className={`bg-cardBg px-[32rpx] pt-[32rpx] pb-[24rpx] ${displayThumbnail ? '' : 'pt-[40rpx]'}`}>
+                {/* 标题 */}
+                <Text className='text-title font-bold text-textMain block mb-[16rpx] leading-[1.4]'>
+                    {displayTitle}
+                </Text>
+
+                {/* 摘要 */}
+                {displaySummary && (
+                    <Text className='text-desc text-textSec block mb-[20rpx] leading-[1.6]'>
+                        {displaySummary}
+                    </Text>
+                )}
+
+                {/* 作者信息行 */}
+                <View className='flex items-center gap-[16rpx] mb-[16rpx]'>
+                    <View className='w-[56rpx] h-[56rpx] rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'>
+                        <Text className='text-body font-bold text-primary'>
+                            {post.authorName?.charAt(0) || 'A'}
+                        </Text>
+                    </View>
+                    <View className='flex-1 min-w-0'>
+                        <Text className='text-desc font-medium text-textMain block'>{post.authorName}</Text>
+                        <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
+                    </View>
+                </View>
+
+                {/* 统计标签 */}
+                <View className='flex items-center gap-[16rpx] flex-wrap'>
+                    <View className='flex items-center gap-[6rpx] px-[16rpx] py-[6rpx] rounded-full bg-pageBg'>
+                        <XIcon name='carbon:view' size={12} className='text-textThird' />
+                        <Text className='text-tips text-textSec'>{post.visits || 0} {t('page.post_detail.views')}</Text>
+                    </View>
+                    <View className='flex items-center gap-[6rpx] px-[16rpx] py-[6rpx] rounded-full bg-pageBg'>
+                        <XIcon name='carbon:thumbs-up' size={12} className='text-textThird' />
+                        <Text className='text-tips text-textSec'>{post.likes || 0} {t('page.post_detail.likes')}</Text>
+                    </View>
+                </View>
+            </View>
+
+            {/* 文章内容 - 白色卡片 */}
+            <View className='bg-cardBg px-[32rpx] py-[32rpx] mt-[16rpx]'>
+                <ContentViewer content={displayContent} type='markdown' />
+            </View>
+
+            {/* 标签 */}
+            {post.tagIds && post.tagIds.length > 0 && (
+                <View className='bg-cardBg px-[32rpx] py-[20rpx] mt-[16rpx]'>
+                    <View className='flex items-center gap-[8rpx] flex-wrap'>
+                        <XIcon name='carbon:tag' size={14} className='text-textThird' />
+                        {post.tagIds.map((tagId) => (
+                            <View
+                              key={tagId}
+                              className='px-[16rpx] py-[6rpx] rounded-full bg-pageBg'
+                              onClick={() => router.push(`/tag/detail?id=${tagId}`)}
+                              hoverClass='tap-active'
+                            >
+                                <Text className='text-tips text-textSec'>#{tagId}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+            )}
+
+            {/* 评论区 */}
+            <View className='mt-[16rpx]'>
+                <CommentSection objectId={postId} contentType='CONTENT_TYPE_POST' onUpdateComments={() => {}} />
+            </View>
+
+            {/* 相关文章 */}
+            {relatedPostsQuery && (
+                <View className='mt-[16rpx]'>
+                    {/* 区块标题 */}
+                    <View className='flex items-center gap-[8rpx] bg-pageBg px-[24rpx] py-[16rpx] border-b-[2rpx] border-primary'>
+                        <XIcon name='carbon:document' size={18} className='text-primary' />
+                        <Text className='text-card-title font-bold text-textMain'>
+                            {t('page.post_detail.related_posts')}
+                        </Text>
+                    </View>
+                    <View className='px-[24rpx] py-[16rpx]'>
+                        <PostList
+                          queryParams={relatedPostsQuery}
+                          fieldMask='id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'
+                          orderBy={['-sortOrder']}
+                          page={1}
+                          pageSize={4}
+                          compact
+                          showSkeleton={false}
+                          showPagination={false}
+                        />
+                    </View>
+                </View>
+            )}
+
+            {/* 返回首页 */}
+            <View className='px-[24rpx] py-[32rpx]'>
                 <View
-                  className='flex items-center gap-[8rpx] h-[88rpx] min-h-touch'
+                  className='flex items-center justify-center gap-[8rpx] py-[20rpx] rounded-[12rpx] bg-cardBg border-[1rpx] border-splitLine'
                   onClick={() => router.back()}
                   hoverClass='tap-active'
                 >
@@ -100,93 +238,40 @@ export default function PostDetailPage() {
                 </View>
             </View>
 
-            {/* 文章封面 */}
-            {displayThumbnail && (
-                <View className='w-full h-[360rpx]'>
-                    <Image src={displayThumbnail} mode='aspectFill' className='w-full h-full' />
-                </View>
-            )}
-
-            {/* 文章头部 */}
-            <View className='bg-cardBg px-[24rpx] py-[32rpx]'>
-                <Text className='text-title font-bold text-textMain block mb-[16rpx]'>{displayTitle}</Text>
-                <View className='flex flex-wrap gap-[24rpx]'>
-                    <View className='flex items-center gap-[8rpx]'>
-                        <XIcon name='carbon:user' size={14} className='text-textThird' />
-                        <Text className='text-desc text-textSec'>{post.authorName}</Text>
-                    </View>
-                    <View className='flex items-center gap-[8rpx]'>
-                        <XIcon name='carbon:calendar' size={14} className='text-textThird' />
-                        <Text className='text-desc text-textSec'>{formatDate(post.createdAt)}</Text>
-                    </View>
-                    <View className='flex items-center gap-[8rpx]'>
-                        <XIcon name='carbon:view' size={14} className='text-textThird' />
-                        <Text className='text-desc text-textSec'>{post.visits || 0}</Text>
-                    </View>
-                    <View className='flex items-center gap-[8rpx]'>
-                        <XIcon name='carbon:thumb-up' size={14} className='text-textThird' />
-                        <Text className='text-desc text-textSec'>{post.likes || 0}</Text>
-                    </View>
-                </View>
-            </View>
-
-            {/* 文章内容 */}
-            <View className='bg-cardBg px-[24rpx] py-[24rpx] mt-[16rpx]'>
-                <ContentViewer content={displayContent} type='markdown' />
-            </View>
-
-            {/* 操作按钮 */}
-            <View className='flex justify-center gap-[48rpx] py-[32rpx] bg-cardBg mt-[16rpx]'>
+            {/* 浮动底部操作栏 */}
+            <View className='fixed bottom-0 left-0 right-0 z-50 bg-cardBg border-t-[1rpx] border-splitLine px-[32rpx] py-[16rpx] flex items-center justify-around'
+              style={{paddingBottom: 'calc(16rpx + env(safe-area-inset-bottom))'}}
+            >
                 <View
-                  className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
+                  className='flex items-center gap-[6rpx] px-[24rpx] py-[12rpx] rounded-full tap-active'
                   onClick={() => setIsLiked(!isLiked)}
-                  hoverClass='tap-active'
                 >
-                    <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} size={24}
-                      className={isLiked ? 'text-primary' : 'text-textThird'}
+                    <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} size={20}
+                      className={isLiked ? 'text-primary' : 'text-textSec'}
                     />
-                    <Text className='text-tips text-textSec'>{t('page.post_detail.likes')}</Text>
+                    <Text className={isLiked ? 'text-tips text-primary' : 'text-tips text-textSec'}>
+                        {t('page.post_detail.likes')}
+                    </Text>
                 </View>
                 <View
-                  className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
+                  className='flex items-center gap-[6rpx] px-[24rpx] py-[12rpx] rounded-full tap-active'
                   onClick={() => setIsBookmarked(!isBookmarked)}
-                  hoverClass='tap-active'
                 >
-                    <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} size={24}
-                      className={isBookmarked ? 'text-primary' : 'text-textThird'}
+                    <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} size={20}
+                      className={isBookmarked ? 'text-primary' : 'text-textSec'}
                     />
-                    <Text className='text-tips text-textSec'>{t('page.post_detail.bookmark')}</Text>
+                    <Text className={isBookmarked ? 'text-tips text-primary' : 'text-tips text-textSec'}>
+                        {t('page.post_detail.bookmark')}
+                    </Text>
                 </View>
                 <View
-                  className='flex flex-col items-center gap-[8rpx] min-w-touch min-h-touch justify-center'
-                  hoverClass='tap-active'
+                  className='flex items-center gap-[6rpx] px-[24rpx] py-[12rpx] rounded-full tap-active'
+                  onClick={handleShare}
                 >
-                    <XIcon name='carbon:share' size={24} className='text-textThird' />
+                    <XIcon name='carbon:share' size={20} className='text-textSec' />
                     <Text className='text-tips text-textSec'>{t('page.post_detail.share')}</Text>
                 </View>
             </View>
-
-            {/* 评论区 */}
-            <CommentSection objectId={postId} contentType='CONTENT_TYPE_POST' onUpdateComments={() => {}} />
-
-            {/* 相关文章 */}
-            {relatedPostsQuery && (
-                <View className='px-[24rpx] py-[32rpx]'>
-                    <Text className='text-card-title font-bold text-textMain block mb-[24rpx]'>
-                        {t('page.post_detail.related_posts')}
-                    </Text>
-                    <PostList
-                      queryParams={relatedPostsQuery}
-                      fieldMask='id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'
-                      orderBy={['-sortOrder']}
-                      page={1}
-                      pageSize={3}
-                      columns={1}
-                      showSkeleton={false}
-                      showPagination={false}
-                    />
-                </View>
-            )}
 
             <BackToTop scrollThreshold={500} />
         </View>

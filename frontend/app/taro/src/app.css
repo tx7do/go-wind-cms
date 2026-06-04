@@ -68,4 +68,186 @@ page.dark {
     scrollbar-width: none;
 }
 
+/* ========== ContentViewer Markdown 样式 ========== */
+.content-viewer {
+    font-size: 30rpx;
+    line-height: 1.8;
+    color: var(--color-text-main);
+    word-break: break-word;
+}
+
+/* 标题 */
+.content-viewer h1,
+.content-viewer h2,
+.content-viewer h3,
+.content-viewer h4,
+.content-viewer h5,
+.content-viewer h6 {
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-top: 40rpx;
+    margin-bottom: 20rpx;
+}
+.content-viewer h1 { font-size: 42rpx; line-height: 1.3; }
+.content-viewer h2 { font-size: 38rpx; line-height: 1.35; padding-bottom: 12rpx; border-bottom: 2rpx solid var(--color-split-line); }
+.content-viewer h3 { font-size: 34rpx; line-height: 1.4; }
+.content-viewer h4 { font-size: 32rpx; line-height: 1.5; }
+.content-viewer h5 { font-size: 30rpx; line-height: 1.5; }
+.content-viewer h6 { font-size: 28rpx; line-height: 1.5; color: var(--color-text-sec); }
+
+/* 段落 / Text */
+.content-viewer Text,
+.content-viewer p {
+    font-size: 30rpx;
+    line-height: 1.8;
+    color: var(--color-text-main);
+    margin-bottom: 20rpx;
+}
+
+/* 链接 */
+.content-viewer .markdown-link,
+.content-viewer a {
+    color: #1677ff;
+    text-decoration: none;
+}
+
+/* 行内代码 */
+.content-viewer .inline-code,
+.content-viewer code:not(pre code) {
+    font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 26rpx;
+    padding: 2rpx 8rpx;
+    border-radius: 6rpx;
+    background-color: var(--color-page-bg);
+    color: #1677ff;
+}
+
+/* 代码块 */
+.content-viewer .code-block,
+.content-viewer pre {
+    font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 26rpx;
+    line-height: 1.6;
+    background-color: var(--color-page-bg);
+    border-radius: 12rpx;
+    padding: 24rpx;
+    margin: 24rpx 0;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.content-viewer .code-block code {
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--color-text-main);
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+.content-viewer .code-block::before {
+    content: attr(data-lang);
+    display: block;
+    font-size: 22rpx;
+    color: var(--color-text-third);
+    margin-bottom: 16rpx;
+    text-transform: uppercase;
+    letter-spacing: 1rpx;
+}
+
+/* 引用 */
+.content-viewer blockquote {
+    margin: 24rpx 0;
+    padding: 16rpx 24rpx;
+    border-left: 6rpx solid #1677ff;
+    background-color: var(--color-page-bg);
+    border-radius: 0 8rpx 8rpx 0;
+    color: var(--color-text-sec);
+}
+.content-viewer blockquote Text,
+.content-viewer blockquote p {
+    color: var(--color-text-sec);
+    margin-bottom: 0;
+}
+
+/* 列表 */
+.content-viewer ul,
+.content-viewer ol {
+    margin: 16rpx 0;
+    padding-left: 40rpx;
+}
+.content-viewer ul { list-style-type: disc; }
+.content-viewer ol { list-style-type: decimal; }
+.content-viewer li {
+    font-size: 30rpx;
+    line-height: 1.8;
+    color: var(--color-text-main);
+    margin-bottom: 8rpx;
+}
+
+/* 图片 */
+.content-viewer .markdown-image {
+    margin: 24rpx 0;
+    text-align: center;
+}
+.content-viewer .markdown-image .md-img {
+    max-width: 100%;
+    border-radius: 8rpx;
+}
+.content-viewer .markdown-image figcaption {
+    font-size: 24rpx;
+    color: var(--color-text-third);
+    margin-top: 8rpx;
+}
+
+/* 表格 */
+.content-viewer table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24rpx 0;
+    font-size: 28rpx;
+}
+.content-viewer th,
+.content-viewer td {
+    border: 2rpx solid var(--color-split-line);
+    padding: 12rpx 16rpx;
+    text-align: left;
+}
+.content-viewer th {
+    font-weight: 600;
+    background-color: var(--color-page-bg);
+    color: var(--color-text-main);
+}
+.content-viewer td {
+    color: var(--color-text-main);
+}
+
+/* 分割线 */
+.content-viewer hr {
+    border: none;
+    border-top: 2rpx solid var(--color-split-line);
+    margin: 32rpx 0;
+}
+
+/* 纯文本块 */
+.content-viewer .plain-text-block {
+    font-size: 30rpx;
+    line-height: 1.8;
+    color: var(--color-text-main);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* 错误提示 */
+.content-viewer .content-error {
+    color: #f53f3f;
+    font-size: 28rpx;
+}
+
+/* 加粗 / 斜体 */
+.content-viewer strong { font-weight: 700; color: var(--color-text-main); }
+.content-viewer em { font-style: italic; }
+
+/* 删除线 */
+.content-viewer del,
+.content-viewer s { text-decoration: line-through; color: var(--color-text-third); }
 
