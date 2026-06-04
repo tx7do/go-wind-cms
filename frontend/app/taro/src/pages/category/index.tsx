@@ -3,12 +3,17 @@ import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 
 import {AppEmpty} from '@/components/ui';
+import {Skeleton} from '@/components/ui/skeleton';
+import XIcon from '@/plugins/xicon';
+
 import CategoryTree from '@/components/category/CategoryTree';
 
-import {fetchListCategories} from '@/api/hooks/category';
-import {useI18nRouter} from "@/i18n/helpers";
+import {fetchListCategories, getCategoryName} from '@/api/hooks/category';
+import {useI18nRouter} from '@/i18n/helpers';
 
-import {contentservicev1_Category} from "@/api/generated/app/service/v1";export default function CategoryListPage() {
+import {contentservicev1_Category} from '@/api/generated/app/service/v1';
+
+export default function CategoryListPage() {
   const {t} = useTranslation();
   const router = useI18nRouter();
 
@@ -37,25 +42,47 @@ import {contentservicev1_Category} from "@/api/generated/app/service/v1";export
   }, []);
 
   const handleCategoryClick = (id: number) => {
-    router.push(`/category/${id}`);
+    router.push(`/category/detail?id=${id}`);
   };
 
+  // 统计分类总数和文章总数
+  const totalPosts = categories.reduce((sum, cat) => sum + (cat.postCount || 0), 0);
+
   return (
-    <View className='category-page'>
-      {/* Hero Section */}
-      <View className='hero-section'>
-        <View className='hero-content'>
-          <Text className='hero-title'>内容分类</Text>
-          <Text className='hero-subtitle'>浏览所有内容分类</Text>
+    <View className='min-h-screen w-full bg-pageBg pb-[240rpx]'>
+      {/* 页面标题 - px-[24rpx] 与 Header 对齐 */}
+      <View className='bg-cardBg px-[24rpx] pt-[40rpx] pb-[24rpx] border-b-[1rpx] border-splitLine'>
+        <Text className='text-title font-bold text-textMain'>{t('page.categories.categories_list')}</Text>
+        <Text className='text-desc text-textSec block mt-[8rpx]'>{t('page.categories.explore_all')}</Text>
+        <View className='flex items-center gap-[16rpx] mt-[16rpx]'>
+          <View className='flex items-center gap-[6rpx]'>
+            <XIcon name='carbon:folder' size={14} className='text-textSec' />
+            <Text className='text-tips text-textSec'>{categories.length} {t('page.categories.categories_count')}</Text>
+          </View>
+          <View className='w-[1rpx] h-[20rpx] bg-splitLine' />
+          <View className='flex items-center gap-[6rpx]'>
+            <XIcon name='carbon:document' size={14} className='text-textSec' />
+            <Text className='text-tips text-textSec'>{totalPosts} {t('page.posts.articles')}</Text>
+          </View>
         </View>
       </View>
 
-      {/* Content Section */}
-      <View className='page-container'>
-        {/* Loading Skeleton - TODO: 实现 Taro 的加载骨架屏 */}
+      {/* 分类列表 */}
+      <View className='px-[24rpx] pt-[24rpx]'>
         {loading ? (
-          <View className='categories-loading'>
-            <Text>{t('common.loading')}</Text>
+          <View className='flex flex-col gap-[24rpx]'>
+            {Array.from({length: 4}).map((_, i) => (
+              <View key={i} className='rounded-[16rpx] bg-cardBg overflow-hidden'>
+                <View className='flex items-center gap-[24rpx] p-[24rpx]'>
+                  <Skeleton className='w-[180rpx] h-[120rpx] rounded-[12rpx]' />
+                  <View className='flex-1 flex flex-col gap-[16rpx]'>
+                    <Skeleton className='h-[32rpx] w-[60%] rounded' />
+                    <Skeleton className='h-[24rpx] w-full rounded' />
+                    <Skeleton className='h-[24rpx] w-[40%] rounded' />
+                  </View>
+                </View>
+              </View>
+            ))}
           </View>
         ) : (
           <>
@@ -68,7 +95,7 @@ import {contentservicev1_Category} from "@/api/generated/app/service/v1";export
               <AppEmpty
                 description={t('page.categories.no_categories')}
                 inContainer
-                image={<span className='i-carbon:folder-blank' style={{fontSize: '64px'}} />}
+                image={<View style={{fontSize: '48px'}}><XIcon name='carbon:folder-blank' size={48} /></View>}
               />
             )}
           </>

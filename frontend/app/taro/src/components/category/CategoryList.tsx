@@ -13,7 +13,6 @@ interface CategoryListProps {
     loading?: boolean;
     showSkeleton?: boolean;
     columns?: number;
-    gap?: number;
     onCategoryClick?: (id: number) => void;
 }
 
@@ -21,8 +20,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
                                                        categories = [],
                                                        loading = false,
                                                        showSkeleton = true,
-                                                       columns = 3,
-                                                       gap = 20,
+                                                       columns = 2,
                                                        onCategoryClick
                                                    }) => {
     const t = useTranslations('page.categories');
@@ -36,19 +34,15 @@ const CategoryList: React.FC<CategoryListProps> = ({
             {/* Loading Skeleton */}
             {loading && showSkeleton && (
                 <View
-                  className='grid max-md:grid-cols-1'
-                  style={{
-                        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-                        gap: `${gap}px`
-                    }}
+                  className='grid grid-cols-2 gap-[24rpx]'
                 >
-                    {Array.from({length: columns}).map((_, index) => (
-                        <View key={index} className='overflow-hidden rounded-xl border border-border bg-background'>
-                            <Skeleton className='h-40 w-full' />
-                            <View className='p-4'>
-                                <Skeleton className='h-4 w-full' />
-                                <Skeleton className='h-4 w-3/4' />
-                                <Skeleton className='h-6 w-[60px]' />
+                    {Array.from({length: columns * 2}).map((_, index) => (
+                        <View key={index} className='overflow-hidden rounded-[16rpx] bg-cardBg'>
+                            <Skeleton className='h-[180rpx] w-full' />
+                            <View className='p-[24rpx]'>
+                                <Skeleton className='h-[32rpx] w-full rounded' />
+                                <Skeleton className='h-[24rpx] w-[80%] rounded mt-[12rpx]' />
+                                <Skeleton className='h-[24rpx] w-[40%] rounded mt-[12rpx]' />
                             </View>
                         </View>
                     ))}
@@ -57,10 +51,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
 
             {/* Loaded Content */}
             {!loading && categories.length > 0 && (
-                <View
-                  className='grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] max-md:grid-cols-1'
-                  style={{gap: `${gap}px`}}
-                >
+                <View className='grid grid-cols-2 gap-[24rpx]'>
                     {categories.map((category) => (
                         <CategoryCard
                           key={category.id}

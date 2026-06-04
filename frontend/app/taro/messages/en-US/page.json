@@ -51,6 +51,9 @@
     "total_articles": "{{total}} articles in total"
   },
   "categories": {
+    "categories_list": "Categories",
+    "explore_all": "Explore all categories",
+    "categories_count": "categories",
     "categories": "Categories",
     "browse_all": "Browse all content categories",
     "no_categories": "No categories",

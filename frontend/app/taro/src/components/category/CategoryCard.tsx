@@ -36,46 +36,53 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     return (
         <View
           className={cn(
-                'group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background',
-                /* 空气动力学悬浮：纯 primary 辉光 */
-                'transition-all duration-500 ease-out',
-                clickable && 'cursor-pointer hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_40px_-8px_hsl(var(--primary)/0.15)]',
-                !clickable && 'cursor-default',
+                'flex flex-col overflow-hidden rounded-[16rpx] bg-cardBg',
+                clickable && 'tap-active',
             )}
           onClick={handleClick}
+          hoverClass={clickable ? 'opacity-80' : undefined}
         >
-            <View className='relative h-[160px] w-full overflow-hidden bg-background'>
+            {/* 封面图 */}
+            <View className='relative w-full h-[180rpx] overflow-hidden'>
                 <Image
                   src={getCategoryThumbnail(category)}
                   alt={getCategoryName(category, t)}
-                  className={cn(
-                        'h-full w-full object-cover transition-transform duration-700 ease-out',
-                        clickable && 'group-hover:scale-[1.12]',
-                    )}
+                  className='w-full h-full object-cover'
                 />
-                {/* hover 风迹渐变蒙层 */}
-                <View className={cn(
-                    'absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-sky-400/20 transition-opacity duration-500',
-                    clickable ? 'opacity-0 group-hover:opacity-100' : 'opacity-0',
-                )}
-                />
+                <View className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent' />
             </View>
-            <View className='p-4'>
-                <Text className={cn(
-                    'mb-2 line-clamp-2 text-base font-bold leading-tight text-foreground transition-colors',
-                    clickable && 'group-hover:text-primary',
-                )}
+
+            {/* 内容区域 */}
+            <View className='flex flex-col p-[24rpx]'>
+                <Text
+                  className='text-body font-bold text-textMain'
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
                 >
                     {getCategoryName(category, t)}
                 </Text>
-                <Text className='mb-3 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground'>
-                    {getCategoryDescription(category)}
-                </Text>
-                <View className='flex items-center gap-1.5 text-xs font-medium text-muted-foreground'>
-                    <Text className='flex items-center'>
-                        <XIcon name='carbon:document' size={14} />
+
+                {getCategoryDescription(category) && (
+                    <Text
+                      className='text-tips text-textSec mt-[8rpx]'
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                        {getCategoryDescription(category)}
                     </Text>
-                    <Text>
+                )}
+
+                <View className='flex items-center gap-[8rpx] mt-[16rpx]'>
+                    <XIcon name='carbon:document' size={12} className='text-textThird' />
+                    <Text className='text-tips text-textSec'>
                         {category.postCount || 0} {t('articles_count')}
                     </Text>
                 </View>

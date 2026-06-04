@@ -51,6 +51,9 @@
     "total_articles": "共 {{total}} 篇文章"
   },
   "categories": {
+    "categories_list": "内容分类",
+    "explore_all": "浏览所有内容分类",
+    "categories_count": "个分类",
     "categories": "内容分类",
     "browse_all": "浏览所有内容分类",
     "no_categories": "暂无分类",

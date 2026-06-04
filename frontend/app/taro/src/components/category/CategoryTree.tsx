@@ -1,4 +1,4 @@
-import {View, Text} from '@tarojs/components';
+import {View, Text, ITouchEvent} from '@tarojs/components';
 import React, {useState} from 'react';
 import {useTranslations} from '@/lib/next-intl-compat';
 
@@ -19,13 +19,6 @@ interface CategoryTreeProps {
     onCategoryClick?: (id: number) => void;
 }
 
-const levelMarginClass: Record<number, string> = {
-    0: '',
-    1: 'ml-8 max-md:ml-4',
-    2: 'ml-16 max-md:ml-8',
-    3: 'ml-24 max-md:ml-12',
-};
-
 const CategoryTree: React.FC<CategoryTreeProps> = ({
                                                        categories = [],
                                                        level = 0,
@@ -38,7 +31,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
         onCategoryClick?.(id);
     };
 
-    const toggleExpand = (e: React.MouseEvent, category: contentservicev1_Category) => {
+    const toggleExpand = (e: React.MouseEvent | ITouchEvent, category: contentservicev1_Category) => {
         e.stopPropagation();
         if (category.children && category.children.length > 0) {
             const newExpanded = new Set(expandedCategories);
@@ -58,7 +51,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
     if (!categories || categories.length === 0) return null;
 
     return (
-        <View className='flex flex-col gap-4 max-md:gap-3'>
+        <View className='flex flex-col gap-[24rpx]'>
             {categories.map((category) => {
                 const hasChildren = !!(category.children && category.children.length > 0);
                 const expanded = isExpanded(category);
@@ -66,108 +59,110 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                 return (
                     <View
                       key={category.id}
-                      className={cn('flex flex-col', levelMarginClass[level] || '')}
+                      className='flex flex-col'
+                      style={{marginLeft: level > 0 ? `${level * 24}px` : 0}}
                     >
                         <View
                           className={cn(
-                                'group relative flex cursor-pointer items-center overflow-hidden',
-                                'rounded-xl border border-border/60 bg-card/50',
-                                'transition-all duration-300',
-                                'hover:bg-card hover:border-primary/30 hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.12)]',
-                                expanded && 'border-primary/40 bg-card shadow-sm',
+                                'flex items-stretch overflow-hidden',
+                                'rounded-[16rpx] bg-cardBg',
+                                expanded && 'border-[1rpx] border-primary/30',
                             )}
                           onClick={() => handleViewCategory(category.id || 0)}
+                          hoverClass='opacity-80'
                         >
-                            {/* 左侧色条指示器 */}
-                            <View className={cn(
-                                'w-1 self-stretch flex-shrink-0 bg-primary/0 transition-colors duration-300',
-                                'group-hover:bg-primary',
-                                expanded && 'bg-primary',
-                            )}
+                            {/* 左侧色条 */}
+                            <View
+                              className={cn(
+                                    'w-[6rpx] flex-shrink-0',
+                                    expanded ? 'bg-primary' : 'bg-transparent',
+                                )}
                             />
 
-                            <View className='flex flex-1 items-center gap-4 p-4 max-md:flex-col max-md:items-start max-md:p-3 max-md:gap-3'>
-                                {/* 缩图：rounded-lg + 微间距，像精致狐裹的组件 */}
-                                <View className={cn(
-                                    'relative h-[90px] w-[130px] flex-shrink-0 overflow-hidden rounded-lg bg-muted',
-                                    'max-md:h-[180px] max-md:w-full',
-                                )}
-                                >
+                            <View className='flex items-center gap-[24rpx] p-[24rpx] flex-1 min-w-0'>
+                                {/* 缩略图 */}
+                                <View className='w-[180rpx] h-[120rpx] flex-shrink-0 overflow-hidden rounded-[12rpx] bg-splitLine'>
                                     <Image
                                       src={getCategoryThumbnail(category)}
                                       alt={getCategoryName(category, t)}
-                                      className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
+                                      className='w-full h-full object-cover'
                                     />
-                                    <View className='absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
                                 </View>
-                                {/* 文字区：垂直居中 */}
-                                <View className='flex flex-1 flex-col gap-1.5 max-md:w-full'>
-                                    <Text className={cn(
-                                        'flex items-center gap-2 text-base font-semibold leading-tight text-foreground transition-colors',
-                                        'group-hover:text-primary',
-                                    )}
+
+                                {/* 文字区 */}
+                                <View className='flex flex-1 flex-col gap-[8rpx] min-w-0'>
+                                    <Text
+                                      className='text-body font-bold text-textMain'
+                                      style={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
                                     >
                                         {getCategoryName(category, t)}
                                     </Text>
-                                    <Text className='line-clamp-2 text-sm leading-relaxed text-muted-foreground'>
-                                        {getCategoryDescription(category)}
-                                    </Text>
-                                    <View className='mt-1 flex items-center gap-3 text-xs text-muted-foreground'>
-                                        <Text className='flex items-center gap-1'>
-                                            <XIcon name='carbon:document' size={14} />
-                                            {category.postCount || 0} {t('articles_count')}
+                                    {getCategoryDescription(category) && (
+                                        <Text
+                                          className='text-tips text-textSec'
+                                          style={{
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                          }}
+                                        >
+                                            {getCategoryDescription(category)}
                                         </Text>
-                                        {hasChildren && (
-                                            <Text className='flex items-center gap-1'>
-                                                <XIcon name='carbon:folder' size={14} />
-                                                {category.children!.length}
+                                    )}
+                                    <View className='flex items-center gap-[16rpx] mt-[4rpx]'>
+                                        <View className='flex items-center gap-[6rpx]'>
+                                            <XIcon name='carbon:document' size={12} className='text-textThird' />
+                                            <Text className='text-tips text-textSec'>
+                                                {category.postCount || 0} {t('articles_count')}
                                             </Text>
+                                        </View>
+                                        {hasChildren && (
+                                            <View className='flex items-center gap-[6rpx]'>
+                                                <XIcon name='carbon:folder' size={12} className='text-textThird' />
+                                                <Text className='text-tips text-textSec'>
+                                                    {category.children!.length}
+                                                </Text>
+                                            </View>
                                         )}
                                     </View>
                                 </View>
 
-                                {/* 右侧箭头：无子分类时显示 */}
-                                {!hasChildren && (
-                                    <View className='flex-shrink-0 text-muted-foreground/50 transition-all duration-300 group-hover:text-primary group-hover:translate-x-1 max-md:hidden'>
-                                        <XIcon name='carbon:chevron-right' size={20} />
+                                {/* 右侧箭头或展开按钮 */}
+                                {!hasChildren ? (
+                                    <View className='flex-shrink-0'>
+                                        <XIcon name='carbon:chevron-right' size={18} className='text-textThird' />
+                                    </View>
+                                ) : (
+                                    <View
+                                      className={cn(
+                                            'flex items-center justify-center w-[56rpx] h-[56rpx] rounded-full',
+                                            'border-[1rpx] border-splitLine',
+                                            expanded && 'bg-primary/10 border-primary/30',
+                                        )}
+                                      onClick={(e) => toggleExpand(e, category)}
+                                    >
+                                        <XIcon
+                                          name={expanded ? 'carbon:chevron-down' : 'carbon:chevron-right'}
+                                          size={16}
+                                          className={expanded ? 'text-primary' : 'text-textSec'}
+                                        />
                                     </View>
                                 )}
                             </View>
-
-                            {/* 展开/收起按钮 */}
-                            {hasChildren && (
-                                <View
-                                  className={cn(
-                                        'flex items-center justify-center px-3',
-                                        'border-l border-border text-muted-foreground',
-                                        'transition-colors duration-200',
-                                        'hover:bg-primary/5 hover:text-primary',
-                                        'max-md:absolute max-md:top-2 max-md:right-2 max-md:z-10',
-                                        'max-md:h-8 max-md:w-8 max-md:rounded-full max-md:border max-md:border-border',
-                                        'max-md:bg-card/90 max-md:shadow-sm max-md:border-l',
-                                        'max-md:hover:bg-primary max-md:hover:text-white max-md:hover:scale-110',
-                                    )}
-                                  onClick={(e) => toggleExpand(e, category)}
-                                >
-                                    <XIcon
-                                      name={expanded ? 'carbon:chevron-down' : 'carbon:chevron-right'}
-                                      size={20}
-                                      className={cn('transition-transform duration-300', expanded && 'rotate-180')}
-                                    />
-                                </View>
-                            )}
                         </View>
 
                         {/* 递归渲染子分类 */}
                         {hasChildren && expanded && (
-                            <View className={cn(
-                                'mt-2 overflow-hidden',
-                                'border-l-2 border-primary/20 ml-3',
-                            )}
-                            >
+                            <View className='mt-[16rpx] ml-[32rpx] border-l-[2rpx] border-primary/20 pl-[16rpx]'>
                                 <CategoryTree
                                   categories={category.children!}
-                                  level={level + 1}
+                                  level={0}
                                   onCategoryClick={onCategoryClick}
                                 />
                             </View>

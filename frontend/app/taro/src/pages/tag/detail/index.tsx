@@ -19,9 +19,17 @@ export default function TagDetailPage() {
   const [_loading, setLoading] = useState(false);
 
   const tagId = useMemo(() => {
-    const pages = Taro.getCurrentPages();
-    const currentPage = pages[pages.length - 1];
-    const id = (currentPage as any).options?.id;
+    let id: string | null = null;
+    if (typeof Taro.getCurrentInstance === 'function') {
+      const instance = Taro.getCurrentInstance();
+      const routeId = instance?.router?.params?.id;
+      id = typeof routeId === 'string' ? routeId : null;
+    } else {
+      const pages = Taro.getCurrentPages();
+      const currentPage = pages[pages.length - 1];
+      const pageId = (currentPage as any).options?.id;
+      id = typeof pageId === 'string' ? pageId : null;
+    }
     return id ? parseInt(id) : null;
   }, []);
 
