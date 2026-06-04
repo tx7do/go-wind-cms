@@ -10,9 +10,71 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" >
   <title>taro</title>
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@latest/dist/iconify-icon.min.js"></script>
-  <script><%= htmlWebpackPlugin.options.script %></script>
+  <script>
+    // 主题初始化（内联，首帧即执行，防闪烁）
+    (function(){
+      var ns='app',key=ns+'-theme-mode',mode=null;
+      try{var s=localStorage.getItem(key);if(s){try{var p=JSON.parse(s);mode=p.value||p}catch(e){mode=s}}}
+      catch(e){}
+      var dark=false;
+      if(mode==='dark')dark=true;
+      else if(mode==='light')dark=false;
+      else dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+      document.documentElement.classList.add(dark?'dark':'light');
+    })();
+  </script>
+  <style>
+    /* 首屏加载动画 - JS 挂载后 #app 内容会替换此元素 */
+    #app {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      background-color: #ebedf0;
+      transition: background-color 0.3s;
+    }
+    .dark #app {
+      background-color: #17171a;
+    }
+    .app-loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .app-loader-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e8eaed;
+      border-top-color: #1677ff;
+      border-radius: 50%;
+      animation: app-spin 0.8s linear infinite;
+    }
+    .dark .app-loader-spinner {
+      border-color: #3a3a3c;
+      border-top-color: #1677ff;
+    }
+    .app-loader-text {
+      font-size: 14px;
+      color: #86909c;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .dark .app-loader-text {
+      color: rgba(255,255,255,0.54);
+    }
+    @keyframes app-spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div class="app-loader">
+      <div class="app-loader-spinner"></div>
+      <div class="app-loader-text">Loading...</div>
+    </div>
+  </div>
 </body>
 </html>
