@@ -21,7 +21,6 @@ export default function LatestPostsSection() {
   const router = useI18nRouter();
   const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [current, setCurrent] = useState(0);
 
   // 获取文章列表
   useEffect(() => {
@@ -113,7 +112,7 @@ export default function LatestPostsSection() {
         indicatorDots
         indicatorColor='rgba(22,119,255,0.2)'
         indicatorActiveColor='rgba(22,119,255,1)'
-        onChange={(e) => setCurrent(e.detail.current)}
+        onChange={() => {}}
       >
         {posts.map((post) => {
           const thumbnail = getPostThumbnail(post);

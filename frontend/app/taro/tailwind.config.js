@@ -10,13 +10,13 @@ module.exports = {
         success: '#00b42a',       // 成功状态/完成提示
         warning: '#ff7d00',       // 警告状态/待处理提示
         danger: '#f53f3f',        // 错误状态/删除/高危操作
-        textMain: '#1d2129',      // 一级正文/核心内容
-        textSec: '#4e5969',       // 二级正文/次要内容
-        textThird: '#86909c',     // 三级辅助文字/说明
-        textWeak: '#c9cdd4',      // 占位文字/禁用状态文字
-        pageBg: '#f2f3f5',        // 页面背景色
-        cardBg: '#ffffff',        // 卡片/模块底色
-        splitLine: '#e5e6eb',     // 分割线/边框色
+        textMain: 'var(--color-text-main)',    // 一级正文/核心内容
+        textSec: 'var(--color-text-sec)',      // 二级正文/次要内容
+        textThird: 'var(--color-text-third)', // 三级辅助文字/说明
+        textWeak: 'var(--color-text-weak)',   // 占位文字/禁用状态文字
+        pageBg: 'var(--color-page-bg)',       // 页面背景色
+        cardBg: 'var(--color-card-bg)',       // 卡片/模块底色
+        splitLine: 'var(--color-split-line)', // 分割线/边框色
       },
       /* ========== 圆角分级（规范 §1.2） ========== */
       borderRadius: {

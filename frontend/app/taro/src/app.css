@@ -8,12 +8,38 @@ page {
     --safe-bottom: env(safe-area-inset-bottom, 0rpx);
 }
 
-/* ========== 全局基础样式（规范 §3 色板） ========== */
+/* ========== 亮色主题色板（CSS 变量） ========== */
 page {
-    background-color: #f2f3f5;
-    color: #1d2129;
+    /* 文字色 */
+    --color-text-main: #1d2129;
+    --color-text-sec: #4e5969;
+    --color-text-third: #86909c;
+    --color-text-weak: #c9cdd4;
+    /* 背景色 */
+    --color-page-bg: #f2f3f5;
+    --color-card-bg: #ffffff;
+    /* 分割线/边框色 */
+    --color-split-line: #e5e6eb;
+
+    background-color: var(--color-page-bg);
+    color: var(--color-text-main);
     box-sizing: border-box;
     font-size: 32rpx;
+}
+
+/* ========== 暗色主题色板（H5: .dark on <html>; 小程序: 由 ThemeClientProvider style 覆盖） ========== */
+.dark page,
+page.dark {
+    --color-text-main: #ffffffd9;
+    --color-text-sec: #ffffffb3;
+    --color-text-third: #ffffff8a;
+    --color-text-weak: #ffffff59;
+    --color-page-bg: #17171a;
+    --color-card-bg: #232326;
+    --color-split-line: #3a3a3c;
+
+    background-color: var(--color-page-bg);
+    color: var(--color-text-main);
 }
 
 /* ========== 点击反馈工具类（规范 §6.1） ========== */

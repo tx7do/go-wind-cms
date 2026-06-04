@@ -23,15 +23,35 @@ export function usePreferences() {
     const transition = useMemo(() => preferences.transition, [preferences.transition]);
 
     // 响应式跟踪系统暗色模式（auto 模式需要）
+    // H5: 使用 window.matchMedia
+    // 小程序: 使用 Taro.getSystemInfoSync().theme
     const subscribeSystemDark = (callback: () => void) => {
-        if (typeof window === 'undefined') return () => {};
-        const mq = window.matchMedia('(prefers-color-scheme: dark)');
-        mq.addEventListener('change', callback);
-        return () => mq.removeEventListener('change', callback);
+        if (typeof window !== 'undefined') {
+            const mq = window.matchMedia('(prefers-color-scheme: dark)');
+            mq.addEventListener('change', callback);
+            return () => mq.removeEventListener('change', callback);
+        }
+        // 小程序端：Taro.onThemeChange
+        try {
+            const Taro = require('@tarojs/taro');
+            Taro.onThemeChange(callback as any);
+            return () => Taro.offThemeChange(callback as any);
+        } catch {
+            return () => {};
+        }
     };
     const getSystemIsDark = () => {
-        if (typeof window === 'undefined') return false;
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (typeof window !== 'undefined') {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        // 小程序端
+        try {
+            const Taro = require('@tarojs/taro');
+            const systemInfo = Taro.getSystemInfoSync();
+            return systemInfo.theme === 'dark';
+        } catch {
+            return false;
+        }
     };
     const systemIsDark = useSyncExternalStore(subscribeSystemDark, getSystemIsDark, () => false);
 

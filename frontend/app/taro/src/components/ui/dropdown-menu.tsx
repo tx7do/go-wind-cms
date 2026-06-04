@@ -30,9 +30,8 @@ function DropdownMenu({open: controlledOpen, onOpenChange, children}: DropdownMe
     );
 }
 
-function DropdownMenuTrigger({children, asChild, className}: {
+function DropdownMenuTrigger({children, className}: {
     children: React.ReactNode;
-    asChild?: boolean;
     className?: string;
 }) {
     const {open, setOpen} = React.useContext(DropdownMenuContext);
@@ -43,10 +42,9 @@ function DropdownMenuTrigger({children, asChild, className}: {
     );
 }
 
-function DropdownMenuContent({children, className, align}: {
+function DropdownMenuContent({children, className}: {
     children: React.ReactNode;
     className?: string;
-    align?: 'start' | 'end' | 'center';
 }) {
     const {open, setOpen} = React.useContext(DropdownMenuContext);
 

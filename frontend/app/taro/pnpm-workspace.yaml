@@ -8,4 +8,4 @@ allowBuilds:
   esbuild: false
   micromark: false
   unrs-resolver: set this to true or false
-  weapp-tailwindcss: set this to true or false
+  weapp-tailwindcss: false

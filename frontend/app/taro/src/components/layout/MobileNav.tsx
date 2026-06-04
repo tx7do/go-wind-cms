@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback, useRef, createContext, useContext, type ReactNode} from 'react';
+import {useState, useEffect, useCallback, useRef, createContext, useContext, type ReactNode, type ReactElement} from 'react';
 import {View, Text} from '@tarojs/components';
 import {useTranslations, useLocale} from '@/lib/next-intl-compat';
 import {XIcon} from '@/plugins/xicon';
@@ -15,7 +15,7 @@ const DrawerCtx = createContext<{
 }>({open: false, setOpen: () => {}});
 
 /** 供 Layout 使用的 Provider + 抽屉渲染 */
-export function MobileNavProvider({children}: {children: ReactNode}) {
+export function MobileNavProvider({children}: {children: ReactNode}): ReactElement {
     const [open, setOpen] = useState(false);
     return (
         <DrawerCtx.Provider value={{open, setOpen}}>
@@ -41,11 +41,9 @@ export function MobileNavTrigger() {
 
 /** 抽屉面板（在 Layout 顶层渲染，不受 Header fixed 嵌套影响） */
 function MobileNavDrawer() {
-    const {open, setOpen} = useContext(DrawerCtx);
+    const {setOpen} = useContext(DrawerCtx);
     const t = useTranslations('navbar');
     const menuT = useTranslations('menu');
-    const appT = useTranslations('app');
-    const brandTitle = appT('title');
 
     const router = useI18nRouter();
     const locale = useLocale();
@@ -108,7 +106,7 @@ function MobileNavDrawer() {
 
             {/* 右侧抽屉面板 */}
             <View
-              className='fixed top-0 bottom-0 bg-cardBg flex flex-col'
+              className='fixed top-0 bottom-0 bg-cardBg text-textMain border-l-[1rpx] border-splitLine flex flex-col'
               style={{right: 0, width: '560rpx', zIndex: 2}}
             >
                 {/* 顶部关闭按钮区 */}
@@ -117,8 +115,8 @@ function MobileNavDrawer() {
                   style={{height: '128rpx', padding: '16rpx 32rpx 16rpx 32rpx'}}
                 >
                     <View
-                      className='flex items-center justify-center rounded-full'
-                      style={{width: '88rpx', height: '88rpx', backgroundColor: 'rgba(0,0,0,0.04)'}}
+                      className='flex items-center justify-center rounded-full bg-pageBg'
+                      style={{width: '88rpx', height: '88rpx'}}
                       onClick={close}
                       hoverClass='tap-active'
                     >
@@ -251,7 +249,7 @@ function DrawerItem({icon, label, onClick, active, destructive}: {
     active?: boolean;
     destructive?: boolean;
 }) {
-    // 选中状态：浅蓝色背景 + 主色文字 + 加粗
+    // 选中状态：半透明主色背景 + 主色文字 + 加粗
     const bgStyle = active ? {backgroundColor: 'rgba(22,119,255,0.08)'} : {};
 
     return (
