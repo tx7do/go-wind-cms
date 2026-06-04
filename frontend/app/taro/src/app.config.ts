@@ -18,7 +18,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'Taro CMS',
+    navigationBarTitleText: 'GoWind CMS',
     navigationBarTextStyle: 'black'
   }
 })
