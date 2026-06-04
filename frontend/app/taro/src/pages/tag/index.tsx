@@ -6,6 +6,7 @@ import {AppEmpty} from '@/components/ui';
 import {Skeleton} from '@/components/ui/skeleton';
 import {Button} from '@/components/ui/button';
 import XIcon from '@/plugins/xicon';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 import {fetchListTags, getTagTranslation} from '@/api/hooks/tag';
 import {contentservicev1_ListTagResponse, contentservicev1_Tag} from '@/api/generated/app/service/v1';
@@ -14,6 +15,7 @@ import {useI18nRouter} from '@/i18n/helpers';
 
 export default function TagListPage() {
   const {t} = useTranslation();
+  usePageTitle('page.title.tags');
   const pt = useTranslations('page.tags');
   const router = useI18nRouter();
 

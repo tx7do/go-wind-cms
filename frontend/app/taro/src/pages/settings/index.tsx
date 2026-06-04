@@ -2,9 +2,11 @@ import {useState, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 import XIcon from '@/plugins/xicon';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 export default function SettingsPage() {
     const {t} = useTranslation();
+    usePageTitle('page.title.settings');
     const [activeMenu, setActiveMenu] = useState<'account' | 'message' | 'preference'>('account');
 
     const menuItems = useMemo(() => [

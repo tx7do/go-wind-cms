@@ -3,9 +3,11 @@ import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 import CategoryFilter from '@/components/category/CategoryFilter';
 import PostList from '@/components/post/PostList';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 export default function PostListPage() {
     const {t} = useTranslation();
+    usePageTitle('page.title.posts');
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
     const queryParams = useMemo(() => {

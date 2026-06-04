@@ -2,6 +2,7 @@ import {View} from '@tarojs/components';
 import {useState} from 'react';
 import {useDidShow} from '@tarojs/taro';
 
+import {usePageTitle} from '@/hooks/usePageTitle';
 import FeaturedPostsSection from '@/components/home/FeaturedPostsSection';
 import CategoryListSection from '@/components/home/CategoryListSection';
 import LatestPostsSection from '@/components/home/LatestPostsSection';
@@ -16,6 +17,7 @@ import FeaturesSection from '@/components/home/FeaturesSection';
  * 各 Section 以 refreshKey 为 key 重新挂载并刷新数据。
  */
 export default function Home() {
+    usePageTitle('page.title.home');
     const [refreshKey, setRefreshKey] = useState(0);
 
     // 页面每次显示时触发（首次进入 + 从其他页面返回）

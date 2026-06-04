@@ -5,9 +5,11 @@ import XIcon from '@/plugins/xicon';
 import {identityservicev1_User} from '@/api/generated/app/service/v1';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
 import {useI18nRouter} from '@/i18n/helpers';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 export default function UserProfilePage() {
     const {t} = useTranslation();
+    usePageTitle('page.title.user');
     const router = useI18nRouter();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<identityservicev1_User | null>(null);

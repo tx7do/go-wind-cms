@@ -1,4 +1,20 @@
 {
+  "title": {
+    "home": "首页",
+    "categories": "内容分类",
+    "category_detail": "分类详情",
+    "posts": "文章列表",
+    "post_detail": "文章详情",
+    "tags": "标签列表",
+    "tag_detail": "标签详情",
+    "about": "关于",
+    "contact": "联系我们",
+    "disclaimer": "免责声明",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "settings": "设置",
+    "user": "个人中心"
+  },
   "home": {
     "untitled": "未命名",
     "category_default": "分类",

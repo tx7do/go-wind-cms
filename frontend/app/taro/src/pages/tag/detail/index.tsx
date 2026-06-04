@@ -7,12 +7,14 @@ import {AppEmpty} from '@/components/ui';
 import XIcon from '@/plugins/xicon';
 import PostListWithPagination from '@/components/post/PostList';
 import {useI18nRouter} from '@/i18n/helpers';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 import {fetchTag, getTagTranslation} from '@/api/hooks/tag';
 import type {contentservicev1_Tag} from '@/api/generated/app/service/v1';
 
 export default function TagDetailPage() {
   const {t} = useTranslation();
+  usePageTitle('page.title.tag_detail');
   const router = useI18nRouter();
 
   const [tag, setTag] = useState<contentservicev1_Tag | null>(null);

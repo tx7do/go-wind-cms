@@ -6,6 +6,7 @@ import Taro from '@tarojs/taro';
 import {AppEmpty} from '@/components/ui';
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 import CategoryList from '@/components/category/CategoryList';
 import PostListWithPagination from '@/components/post/PostList';
@@ -18,6 +19,7 @@ import {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
 export default function CategoryDetailPage() {
   const {t} = useTranslation();
+  usePageTitle('page.title.category_detail');
   const router = useI18nRouter();
 
   const [detail, setDetail] = useState<contentservicev1_Category | null>(null);

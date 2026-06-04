@@ -1,8 +1,10 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 export default function ContactPage() {
     const {t} = useTranslation();
+    usePageTitle('page.title.contact');
 
     return (
         <View className='w-full bg-pageBg'>

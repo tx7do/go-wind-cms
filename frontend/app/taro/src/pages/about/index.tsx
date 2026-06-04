@@ -1,9 +1,11 @@
 import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
 import XIcon from '@/plugins/xicon';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 export default function AboutPage() {
     const {t} = useTranslation();
+    usePageTitle('page.title.about');
 
     const features = [
         {icon: 'carbon:document-add', title: t('page.about.feature_content'), description: t('page.about.feature_content_desc')},

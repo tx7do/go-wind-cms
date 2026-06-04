@@ -13,9 +13,11 @@ import {usePreferences} from '@/core/preferences';
 import {contentservicev1_Post} from '@/api/generated/app/service/v1';
 import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
 import {Skeleton} from '@/components/ui/skeleton';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 export default function PostDetailPage() {
     const {t} = useTranslation();
+    usePageTitle('page.title.post_detail');
     const router = useI18nRouter();
     const {isDark} = usePreferences();
     const [post, setPost] = useState<contentservicev1_Post | null>(null);

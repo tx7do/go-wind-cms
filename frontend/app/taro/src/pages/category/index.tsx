@@ -5,6 +5,7 @@ import {View, Text} from '@tarojs/components';
 import {AppEmpty} from '@/components/ui';
 import {Skeleton} from '@/components/ui/skeleton';
 import XIcon from '@/plugins/xicon';
+import {usePageTitle} from '@/hooks/usePageTitle';
 
 import CategoryTree from '@/components/category/CategoryTree';
 
@@ -15,6 +16,7 @@ import {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
 export default function CategoryListPage() {
   const {t} = useTranslation();
+  usePageTitle('page.title.categories');
   const router = useI18nRouter();
 
   const [loading, setLoading] = useState(false);

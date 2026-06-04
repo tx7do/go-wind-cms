@@ -1,4 +1,20 @@
 {
+  "title": {
+    "home": "Home",
+    "categories": "Categories",
+    "category_detail": "Category Detail",
+    "posts": "Posts",
+    "post_detail": "Post Detail",
+    "tags": "Tags",
+    "tag_detail": "Tag Detail",
+    "about": "About",
+    "contact": "Contact Us",
+    "disclaimer": "Disclaimer",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "settings": "Settings",
+    "user": "Profile"
+  },
   "home": {
     "untitled": "Untitled",
     "category_default": "Category",
