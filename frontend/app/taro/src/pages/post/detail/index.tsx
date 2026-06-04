@@ -199,7 +199,7 @@ export default function PostDetailPage() {
             )}
 
             {/* 评论区 */}
-            <View className='mt-[32rpx]'>
+            <View className='mt-[32rpx] mb-[32rpx]'>
                 <CommentSection objectId={postId} contentType='CONTENT_TYPE_POST' onUpdateComments={() => {}} />
             </View>
 

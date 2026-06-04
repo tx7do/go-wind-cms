@@ -356,7 +356,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
                     {/* 加载更多 */}
                     {showLoadMore && (
-                        <View className='flex justify-center py-[24rpx]'>
+                        <View className='flex justify-center py-[24rpx] pb-[64rpx]'>
                             <View
                               className={cn(
                                 'flex items-center gap-[8rpx] px-[32rpx] py-[16rpx] rounded-full',

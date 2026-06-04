@@ -54,10 +54,10 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
     const themeStyle = useMemo(() => {
         if (isDark) {
             return {
-                '--color-text-main': '#ffffffd9',
-                '--color-text-sec': '#ffffffb3',
-                '--color-text-third': '#ffffff8a',
-                '--color-text-weak': '#ffffff59',
+                '--color-text-main': '#ffffffe6',
+                '--color-text-sec': '#ffffffcc',
+                '--color-text-third': '#ffffffa3',
+                '--color-text-weak': '#ffffff6b',
                 '--color-page-bg': '#17171a',
                 '--color-card-bg': '#232326',
                 '--color-split-line': '#3a3a3c',

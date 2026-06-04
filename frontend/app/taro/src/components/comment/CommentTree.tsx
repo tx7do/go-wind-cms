@@ -135,32 +135,33 @@ const CommentTree: React.FC<CommentTreeProps> = ({
             {comments.map((comment, index) => (
                 <View key={comment.id}>
                     {/* 评论主体 */}
-                    <View className='bg-cardBg px-[24rpx] py-[20rpx]'>
-                        {/* 头部：头像 + 用户名 + 时间 */}
-                        <View className='flex items-start gap-[12rpx]'>
-                            {/* 头像 - 带颜色背景的首字母 */}
-                            <View className='flex items-center justify-center w-[52rpx] h-[52rpx] rounded-full bg-primary/10 flex-shrink-0'>
+                    <View className='bg-cardBg px-[32rpx] py-[20rpx]'>
+                        {/* 头像 - 独立左侧 */}
+                        <View className='flex gap-[12rpx]'>
+                            {/* 头像 */}
+                            <View className='flex items-center justify-center w-[48rpx] h-[48rpx] rounded-full bg-primary/10 flex-shrink-0'>
                                 <Text className='text-tips font-bold text-primary'>
                                     {comment.authorName?.charAt(0)?.toUpperCase() || 'U'}
                                 </Text>
                             </View>
-                            <View className='flex-1 min-w-0'>
+                            {/* 右侧内容区：用户名 + 正文 + 操作栏，共享同一条左侧对齐线 */}
+                            <View className='flex-1 min-w-0 flex flex-col'>
                                 {/* 用户名行 */}
                                 <View className='flex items-center gap-[8rpx] flex-wrap'>
-                                    <Text className='text-tips font-bold text-textMain'>
+                                    <Text className='text-desc font-medium text-textMain'>
                                         {comment.authorName}
                                     </Text>
                                     {isOwnerReply(comment) && (
-                                        <View className='flex items-center gap-[2rpx] rounded-[4rpx] bg-primary/10 px-[6rpx] py-[1rpx]'>
-                                            <XIcon name='carbon:badge' size={10} className='text-primary' />
-                                            <Text className='text-[20rpx] font-bold text-primary'>{t('owner_reply')}</Text>
+                                        <View className='flex items-center gap-[2rpx] rounded-[6rpx] bg-primary/15 px-[10rpx] py-[2rpx]'>
+                                            <XIcon name='carbon:verified' size={12} className='text-primary' />
+                                            <Text className='text-tips font-medium text-primary'>{t('owner_reply')}</Text>
                                         </View>
                                     )}
-                                    <Text className='text-tips text-textThird'>{formatDate(comment.createdAt)}</Text>
+                                    <Text className='text-tips text-textSec'>{formatDate(comment.createdAt)}</Text>
                                 </View>
 
-                                {/* 评论内容 */}
-                                <Text className='text-desc text-textMain leading-[1.7] block mt-[8rpx]'>
+                                {/* 正文 */}
+                                <Text className='text-desc text-textMain leading-[1.7] mt-[6rpx] block'>
                                     {comment.content}
                                 </Text>
 
@@ -175,12 +176,12 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                         <XIcon
                                           name={likedComments.has(comment.id || 0) ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'}
                                           size={14}
-                                          className={likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textThird'}
+                                          className={likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textSec'}
                                         />
                                         <Text
                                           className={cn(
                                             'text-tips',
-                                            likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textThird',
+                                            likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textSec',
                                           )}
                                         >
                                             {(comment.likeCount || 0) + (likedComments.has(comment.id || 0) ? 1 : 0)}
@@ -193,8 +194,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                       onClick={() => handleReply(comment)}
                                       hoverClass='tap-active'
                                     >
-                                        <XIcon name='carbon:chat' size={14} className='text-textThird' />
-                                        <Text className='text-tips text-textThird'>{t('reply')}</Text>
+                                        <XIcon name='carbon:chat' size={14} className='text-textSec' />
+                                        <Text className='text-tips text-textSec'>{t('reply')}</Text>
                                     </View>
 
                                     {/* 分享 */}
@@ -203,8 +204,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                       onClick={() => handleShare(comment)}
                                       hoverClass='tap-active'
                                     >
-                                        <XIcon name='carbon:share' size={14} className='text-textThird' />
-                                        <Text className='text-tips text-textThird'>{t('share')}</Text>
+                                        <XIcon name='carbon:share' size={14} className='text-textSec' />
+                                        <Text className='text-tips text-textSec'>{t('share')}</Text>
                                     </View>
 
                                     {/* 查看回复 */}
