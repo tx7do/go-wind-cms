@@ -3,7 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
+import 'package:flutter_app/src/features/cms/services/post_service.dart';
+import 'package:flutter_app/src/features/cms/services/category_service.dart';
+import 'package:flutter_app/src/features/cms/services/tag_service.dart' show TagService, ListTagResponse;
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
@@ -21,10 +27,54 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  ContentServiceV1Category? _selectedCategory;
+  final _postService = PostService();
+  final _categoryService = CategoryService();
+  final _tagService = TagService();
+
+  Category? _selectedCategory;
+  List<Category> _categories = [];
+  List<Post> _posts = [];
+  List<ContentServiceV1Tag> _tags = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final results = await Future.wait([
+      _categoryService.list(),
+      _postService.list(),
+      _tagService.list(),
+    ]);
+
+    if (!mounted) return;
+
+    setState(() {
+      _categories = (results[0] as ListCategoryResponse?)?.items ?? [];
+      _posts = (results[1] as ListPostResponse?)?.items ?? [];
+      _tags = (results[2] as ListTagResponse?)?.items ?? [];
+      _isLoading = false;
+    });
+  }
+
+  List<Category> get _displayCategories => _categories.skip(1).toList();
+
+  List<Post> get _filteredPosts {
+    if (_selectedCategory == null) return _posts;
+    return _posts
+        .where((p) => (p.categoryIds ?? []).contains(_selectedCategory!.id))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return ResponsiveLayout(
       mobileBody: _buildMobileView(),
       webBody: _buildWebView(),
@@ -35,7 +85,7 @@ class _ExplorePageState extends State<ExplorePage> {
 
   Widget _buildMobileView() {
     final theme = Theme.of(context);
-    final categories = mockCategories.skip(1).toList();
+    final categories = _displayCategories;
     final filteredPosts = _filteredPosts;
 
     return Scaffold(
@@ -70,7 +120,7 @@ class _ExplorePageState extends State<ExplorePage> {
 
   Widget _buildWebView() {
     final theme = Theme.of(context);
-    final categories = mockCategories.skip(1).toList();
+    final categories = _displayCategories;
     final filteredPosts = _filteredPosts;
     final crossCount = ResponsiveUtils.postGridColumns(context);
 
@@ -88,7 +138,6 @@ class _ExplorePageState extends State<ExplorePage> {
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
-          // 分类区域
           SliverToBoxAdapter(
             child: Center(
               child: ConstrainedBox(
@@ -117,14 +166,13 @@ class _ExplorePageState extends State<ExplorePage> {
                         selectedCategory: _selectedCategory,
                         onSelect: (cat) {
                           setState(() {
-                            _selectedCategory = _selectedCategory?.id == cat.id!
+                            _selectedCategory = _selectedCategory?.id == cat.id
                                 ? null
                                 : cat;
                           });
                         },
                       ),
                       const SizedBox(height: 24),
-                      // 标签
                       Text(
                         '热门标签',
                         style: TextStyle(
@@ -134,9 +182,8 @@ class _ExplorePageState extends State<ExplorePage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      _TagWrap(),
+                      _TagWrap(tags: _tags),
                       const SizedBox(height: 24),
-                      // 文章标题
                       _SectionRow(
                         title: _selectedCategory == null
                             ? '全部文章'
@@ -152,7 +199,6 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
             ),
           ),
-          // 文章网格
           SliverToBoxAdapter(
             child: Center(
               child: ConstrainedBox(
@@ -163,6 +209,8 @@ class _ExplorePageState extends State<ExplorePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _WebPostGrid(
                     posts: filteredPosts,
+                    categories: _categories,
+                    tags: _tags,
                     crossAxisCount: crossCount,
                   ),
                 ),
@@ -176,13 +224,6 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   // =================== 共享组件 ===================
-
-  List<Post> get _filteredPosts {
-    if (_selectedCategory == null) return mockPosts;
-    return mockPosts
-        .where((p) => (p.categoryIds ?? []).contains(_selectedCategory!.id!))
-        .toList();
-  }
 
   Widget _buildCategoryGridSliver(
     List<Category> categories, {
@@ -201,7 +242,7 @@ class _ExplorePageState extends State<ExplorePage> {
         ),
         delegate: SliverChildBuilderDelegate((context, index) {
           final category = categories[index];
-          final isSelected = _selectedCategory?.id == category.id!;
+          final isSelected = _selectedCategory?.id == category.id;
           return _CategoryGridItem(
             category: category,
             isSelected: isSelected,
@@ -239,7 +280,7 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
             ),
             SizedBox(height: isMobile ? 12.h : 12),
-            _TagWrap(),
+            _TagWrap(tags: _tags),
           ],
         ),
       ),
@@ -298,7 +339,11 @@ class _ExplorePageState extends State<ExplorePage> {
           delegate: SliverChildBuilderDelegate(
             (context, index) => Padding(
               padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
-              child: PostCard(post: posts[index]),
+              child: PostCard(
+                post: posts[index],
+                categories: _categories,
+                tags: _tags,
+              ),
             ),
             childCount: posts.length,
           ),
@@ -310,10 +355,8 @@ class _ExplorePageState extends State<ExplorePage> {
 
 // =================== 辅助组件 ===================
 
-/// 用于替代 MultiSliver 的简单包装
 class MultiSliver extends StatelessWidget {
   final List<Widget> children;
-
   const MultiSliver(this.children, {super.key});
 
   @override
@@ -322,7 +365,6 @@ class MultiSliver extends StatelessWidget {
   }
 }
 
-/// 分类网格（Web 端使用 Wrap）
 class _CategoryGrid extends StatelessWidget {
   final List<Category> categories;
   final int crossAxisCount;
@@ -342,7 +384,7 @@ class _CategoryGrid extends StatelessWidget {
       spacing: 10,
       runSpacing: 10,
       children: categories.map((cat) {
-        final isSelected = selectedCategory?.id == cat.id!;
+        final isSelected = selectedCategory?.id == cat.id;
         return _CategoryGridItem(
           category: cat,
           isSelected: isSelected,
@@ -440,14 +482,16 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
   }
 }
 
-/// 标签 Wrap
 class _TagWrap extends StatelessWidget {
+  final List<ContentServiceV1Tag> tags;
+  const _TagWrap({required this.tags});
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: mockTags.map((tag) {
+      children: tags.map((tag) {
         final name = (tag.translations ?? []).isNotEmpty
             ? (tag.translations ?? []).first.name ?? ''
             : '';
@@ -460,7 +504,6 @@ class _TagWrap extends StatelessWidget {
   }
 }
 
-/// 区域标题行
 class _SectionRow extends StatelessWidget {
   final String title;
   final int count;
@@ -502,12 +545,18 @@ class _SectionRow extends StatelessWidget {
   }
 }
 
-/// Web 端文章网格
 class _WebPostGrid extends StatelessWidget {
   final List<Post> posts;
+  final List<Category> categories;
+  final List<ContentServiceV1Tag> tags;
   final int crossAxisCount;
 
-  const _WebPostGrid({required this.posts, required this.crossAxisCount});
+  const _WebPostGrid({
+    required this.posts,
+    required this.categories,
+    required this.tags,
+    required this.crossAxisCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -521,7 +570,11 @@ class _WebPostGrid extends StatelessWidget {
                   48 -
                   (crossAxisCount - 1) * 16) /
               crossAxisCount,
-          child: PostCard(post: post),
+          child: PostCard(
+            post: post,
+            categories: categories,
+            tags: tags,
+          ),
         );
       }).toList(),
     );

@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_category_translation.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
 import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_cloud.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/features/cms/widgets/category_tabs.dart';
+import 'package:flutter_app/src/features/cms/services/category_service.dart';
+import 'package:flutter_app/src/features/cms/services/post_service.dart';
+import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 
 typedef Post = ContentServiceV1Post;
+typedef Category = ContentServiceV1Category;
+typedef Tag = ContentServiceV1Tag;
 
-/// 首页 - 手机端视图（原有单栏瀑布流布局）
+/// 首页 - 手机端视图
 class HomeMobileView extends StatefulWidget {
   const HomeMobileView({super.key});
 
@@ -20,40 +30,96 @@ class HomeMobileView extends StatefulWidget {
 
 class _HomeMobileViewState extends State<HomeMobileView>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  final _categoryService = CategoryService();
+  final _postService = PostService();
+  final _tagService = TagService();
+
+  TabController? _tabController;
   int _currentCategoryIndex = 0;
+
+  List<Category> _categories = [];
+  List<Post> _posts = [];
+  List<Tag> _tags = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: mockCategories.length, vsync: this);
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        setState(() {
-          _currentCategoryIndex = _tabController.index;
-        });
-      }
-    });
+    _loadData();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
+  Future<void> _loadData() async {
+    final results = await Future.wait([
+      _categoryService.list(),
+      _postService.list(),
+      _tagService.list(),
+    ]);
+
+    if (!mounted) return;
+
+    setState(() {
+      _categories = (results[0] as ListCategoryResponse?)?.items ?? [];
+      _posts = (results[1] as ListPostResponse?)?.items ?? [];
+      _tags = (results[2] as ListTagResponse?)?.items ?? [];
+
+      // 插入"推荐"虚拟分类
+      if (_categories.isNotEmpty) {
+        _categories.insert(
+          0,
+          Category(
+            id: 0,
+            sortOrder: -1,
+            translations: [
+              CategoryTranslation(
+                languageCode: 'zh',
+                name: '推荐',
+                slug: 'recommend',
+              ),
+            ],
+          ),
+        );
+      }
+
+      _tabController?.dispose();
+      _tabController = TabController(
+        length: _categories.length,
+        vsync: this,
+      );
+      _tabController!.addListener(() {
+        if (!_tabController!.indexIsChanging) {
+          setState(() => _currentCategoryIndex = _tabController!.index);
+        }
+      });
+    });
+  }
+
   List<Post> get _filteredPosts {
-    if (_currentCategoryIndex == 0) return mockPosts;
-    final category = mockCategories[_currentCategoryIndex];
-    return mockPosts.where((p) => (p.categoryIds ?? []).contains(category.id!)).toList();
+    if (_currentCategoryIndex == 0) return _posts;
+    if (_currentCategoryIndex >= _categories.length) return [];
+    final category = _categories[_currentCategoryIndex];
+    return _posts
+        .where((p) => (p.categoryIds ?? []).contains(category.id))
+        .toList();
   }
 
   List<Post> get _featuredPosts =>
-      mockPosts.where((p) => p.isFeatured == true).toList();
+      _posts.where((p) => p.isFeatured == true).toList();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (_categories.isEmpty || _tabController == null) {
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -88,8 +154,8 @@ class _HomeMobileViewState extends State<HomeMobileView>
                 child: Container(
                   color: theme.colorScheme.surface,
                   child: CategoryTabs(
-                    categories: mockCategories,
-                    tabController: _tabController,
+                    categories: _categories,
+                    tabController: _tabController!,
                   ),
                 ),
               ),
@@ -98,8 +164,8 @@ class _HomeMobileViewState extends State<HomeMobileView>
         },
         body: TabBarView(
           controller: _tabController,
-          children: List.generate(mockCategories.length, (index) {
-            final posts = index == 0 ? mockPosts : _filteredPosts;
+          children: List.generate(_categories.length, (index) {
+            final posts = index == 0 ? _posts : _filteredPosts;
             return _buildTabContent(context, posts, index == 0);
           }),
         ),
@@ -115,8 +181,13 @@ class _HomeMobileViewState extends State<HomeMobileView>
     return CustomScrollView(
       slivers: [
         if (isRecommend) ...[
-          SliverToBoxAdapter(child: FeaturedCarousel(posts: _featuredPosts)),
-          SliverToBoxAdapter(child: TagCloud(tags: mockTags)),
+          SliverToBoxAdapter(
+            child: FeaturedCarousel(
+              posts: _featuredPosts,
+              categories: _categories,
+            ),
+          ),
+          SliverToBoxAdapter(child: TagCloud(tags: _tags)),
         ],
 
         SliverToBoxAdapter(
@@ -162,7 +233,11 @@ class _HomeMobileViewState extends State<HomeMobileView>
             delegate: SliverChildBuilderDelegate(
               (context, index) => Padding(
                 padding: EdgeInsets.only(bottom: 12.h),
-                child: PostCard(post: posts[index]),
+                child: PostCard(
+                  post: posts[index],
+                  categories: _categories,
+                  tags: _tags,
+                ),
               ),
               childCount: posts.length,
             ),

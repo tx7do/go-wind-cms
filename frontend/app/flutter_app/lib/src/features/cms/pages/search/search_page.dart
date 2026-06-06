@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
+import 'package:flutter_app/src/features/cms/services/post_service.dart';
+import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
 
 /// 搜索页
 class SearchPage extends StatefulWidget {
@@ -15,8 +20,36 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final _searchController = TextEditingController();
+  final _postService = PostService();
+  final _tagService = TagService();
+
   String _query = '';
   bool _hasSearched = false;
+  bool _isLoading = true;
+
+  List<ContentServiceV1Post> _posts = [];
+  List<ContentServiceV1Tag> _tags = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final results = await Future.wait([
+      _postService.list(),
+      _tagService.list(),
+    ]);
+
+    if (!mounted) return;
+
+    setState(() {
+      _posts = (results[0] as ListPostResponse?)?.items ?? [];
+      _tags = (results[1] as ListTagResponse?)?.items ?? [];
+      _isLoading = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -34,6 +67,24 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _buildView({required bool isMobile}) {
     final theme = Theme.of(context);
+
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: theme.colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 22),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          titleSpacing: 0,
+          title: const Text('搜索', style: TextStyle(fontSize: 15)),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -124,7 +175,7 @@ class _SearchPageState extends State<SearchPage> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: mockTags.take(6).map((tag) {
+                children: _tags.take(6).map((tag) {
                   final name = (tag.translations ?? []).isNotEmpty
                       ? (tag.translations ?? []).first.name ?? ''
                       : '';
@@ -150,7 +201,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              ...mockPosts
+              ..._posts
                   .take(3)
                   .map(
                     (post) => Padding(
@@ -265,14 +316,14 @@ class _SearchPageState extends State<SearchPage> {
   List get _filteredPosts {
     if (_query.isEmpty) return [];
     final q = _query.toLowerCase();
-    return mockPosts.where((post) {
+    return _posts.where((post) {
       final title = (post.translations ?? []).isNotEmpty
           ? (post.translations ?? []).first.title ?? ''
           : '';
       final summary = (post.translations ?? []).isNotEmpty
           ? (post.translations ?? []).first.summary ?? ''
           : '';
-      final tagNames = mockTags
+      final tagNames = _tags
           .where((t) => post.tagIds != null && t.id != null && (post.tagIds as List).contains(t.id!))
           .map(
             (t) => (t.translations ?? []).isNotEmpty ? (t.translations ?? []).first.name ?? '' : '',
@@ -287,7 +338,7 @@ class _SearchPageState extends State<SearchPage> {
   List get _filteredTags {
     if (_query.isEmpty) return [];
     final q = _query.toLowerCase();
-    return mockTags.where((tag) {
+    return _tags.where((tag) {
       final name = (tag.translations ?? []).isNotEmpty
           ? (tag.translations ?? []).first.name ?? ''
           : '';
@@ -298,7 +349,7 @@ class _SearchPageState extends State<SearchPage> {
 
 /// 简化版文章卡片（搜索结果用）
 class _SimplePostCard extends StatefulWidget {
-  final dynamic post;
+  final ContentServiceV1Post post;
 
   const _SimplePostCard({required this.post});
 
@@ -367,7 +418,7 @@ class _SimplePostCardState extends State<_SimplePostCard> {
             Row(
               children: [
                 Text(
-                  post.authorName,
+                  post.authorName ?? '',
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.colorScheme.onSurface.withAlpha(120),
@@ -381,7 +432,7 @@ class _SimplePostCardState extends State<_SimplePostCard> {
                 ),
                 const SizedBox(width: 3),
                 Text(
-                  '${post.likes}',
+                  '${post.likes ?? 0}',
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.colorScheme.onSurface.withAlpha(100),

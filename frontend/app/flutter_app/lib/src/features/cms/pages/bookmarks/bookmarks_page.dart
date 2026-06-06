@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
+import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
@@ -16,10 +18,38 @@ class BookmarksPage extends StatefulWidget {
 }
 
 class _BookmarksPageState extends State<BookmarksPage> {
-  final _bookmarkedPosts = mockPosts.take(3).toList();
+  final _postService = PostService();
+
+  List<ContentServiceV1Post> _posts = [];
+  bool _isLoading = true;
+
+  // TODO: 等待收藏 API 实现后，替换为真实的收藏列表
+  // 当前暂从 API 获取文章列表，取前3篇作为占位
+  List<ContentServiceV1Post> get _bookmarkedPosts => _posts.take(3).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final result = await _postService.list();
+
+    if (!mounted) return;
+
+    setState(() {
+      _posts = (result as ListPostResponse?)?.items ?? [];
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return ResponsiveLayout(
       mobileBody: _buildMobileView(),
       webBody: _buildWebView(),
@@ -61,6 +91,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
   Widget _buildWebView() {
     final theme = Theme.of(context);
     final crossCount = ResponsiveUtils.postGridColumns(context);
+    final bookmarked = _bookmarkedPosts;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -76,7 +107,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
-          if (_bookmarkedPosts.isEmpty)
+          if (bookmarked.isEmpty)
             SliverFillRemaining(child: _buildEmptyState(theme))
           else ...[
             SliverToBoxAdapter(
@@ -96,7 +127,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '已收藏 ${_bookmarkedPosts.length} 篇文章',
+                          '已收藏 ${bookmarked.length} 篇文章',
                           style: TextStyle(
                             fontSize: 13,
                             color: theme.colorScheme.onSurface.withAlpha(160),
@@ -119,7 +150,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                     child: Wrap(
                       spacing: 16,
                       runSpacing: 16,
-                      children: _bookmarkedPosts.map((post) {
+                      children: bookmarked.map((post) {
                         return SizedBox(
                           width:
                               (Breakpoints.webContentMaxWidth -
@@ -145,8 +176,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
 
   List<Widget> _buildContentSlivers({required bool isMobile}) {
     final theme = Theme.of(context);
+    final bookmarked = _bookmarkedPosts;
 
-    if (_bookmarkedPosts.isEmpty) {
+    if (bookmarked.isEmpty) {
       return [SliverFillRemaining(child: _buildEmptyState(theme))];
     }
 
@@ -168,7 +200,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
               ),
               SizedBox(width: isMobile ? 6.w : 6),
               Text(
-                '已收藏 ${_bookmarkedPosts.length} 篇文章',
+                '已收藏 ${bookmarked.length} 篇文章',
                 style: TextStyle(
                   fontSize: isMobile ? 13.sp : 13,
                   color: theme.colorScheme.onSurface.withAlpha(160),
@@ -184,9 +216,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
           delegate: SliverChildBuilderDelegate(
             (context, index) => Padding(
               padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
-              child: PostCard(post: _bookmarkedPosts[index]),
+              child: PostCard(post: bookmarked[index]),
             ),
-            childCount: _bookmarkedPosts.length,
+            childCount: bookmarked.length,
           ),
         ),
       ),

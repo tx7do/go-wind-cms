@@ -2,18 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
+import 'package:flutter_app/generated/api/models/comment_service_v1_list_comment_response.dart';
+import 'package:flutter_app/src/features/cms/services/post_service.dart';
+import 'package:flutter_app/src/features/cms/services/category_service.dart';
+import 'package:flutter_app/src/features/cms/services/tag_service.dart';
+import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 
+typedef Post = ContentServiceV1Post;
+typedef Category = ContentServiceV1Category;
+typedef CommentType = CommentServiceV1Comment;
+
 /// 文章详情页
-class PostDetailPage extends StatelessWidget {
+class PostDetailPage extends StatefulWidget {
   final int postId;
 
   const PostDetailPage({super.key, required this.postId});
 
   @override
+  State<PostDetailPage> createState() => _PostDetailPageState();
+}
+
+class _PostDetailPageState extends State<PostDetailPage> {
+  final _postService = PostService();
+  final _categoryService = CategoryService();
+  final _tagService = TagService();
+  final _commentService = CommentService();
+
+  Post? _post;
+  List<Category> _categories = [];
+  List<ContentServiceV1Tag> _tags = [];
+  List<CommentServiceV1Comment> _comments = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final results = await Future.wait([
+      _postService.get(widget.postId),
+      _categoryService.list(),
+      _tagService.list(),
+      _commentService.list(),
+    ]);
+
+    if (!mounted) return;
+
+    final post = results[0] as Post?;
+    final categories = (results[1] as ListCategoryResponse?)?.items ?? [];
+    final tags = (results[2] as ListTagResponse?)?.items ?? [];
+    final allComments = (results[3] as ListCommentResponse?)?.items ?? [];
+
+    setState(() {
+      _post = post;
+      _categories = categories;
+      _tags = tags;
+      _comments = allComments
+          .where((c) => c.objectId != null && c.objectId == post?.id)
+          .toList();
+      _isLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return ResponsiveLayout(
       mobileBody: _buildView(context, isMobile: true),
       webBody: _buildView(context, isMobile: false),
@@ -22,11 +87,7 @@ class PostDetailPage extends StatelessWidget {
 
   Widget _buildView(BuildContext context, {required bool isMobile}) {
     final theme = Theme.of(context);
-    final post = mockPosts.firstWhere(
-      (p) => p.id != null && p.id == postId,
-      orElse: () => mockPosts.first,
-    );
-    final comments = mockComments.where((c) => c.objectId != null && c.objectId == post.id).toList();
+    final post = _post!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -54,8 +115,8 @@ class PostDetailPage extends StatelessWidget {
         children: [
           Expanded(
             child: isMobile
-                ? _buildMobileBody(context, post, comments)
-                : _buildWebBody(context, post, comments),
+                ? _buildMobileBody(context, post, _comments)
+                : _buildWebBody(context, post, _comments),
           ),
           _CommentInputBar(isMobile: isMobile),
         ],
@@ -67,12 +128,12 @@ class PostDetailPage extends StatelessWidget {
 
   Widget _buildMobileBody(
     BuildContext context,
-    dynamic post,
+    Post post,
     List<CommentServiceV1Comment> comments,
   ) {
     return CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(child: _PostHeader(post: post, isMobile: true)),
+        SliverToBoxAdapter(child: _PostHeader(post: post, isMobile: true, categories: _categories)),
         SliverToBoxAdapter(child: _PostContent(post: post, isMobile: true)),
         _buildTagsSliver(post, isMobile: true),
         SliverToBoxAdapter(child: _InteractionBar(post: post, isMobile: true)),
@@ -86,7 +147,7 @@ class PostDetailPage extends StatelessWidget {
 
   Widget _buildWebBody(
     BuildContext context,
-    dynamic post,
+    Post post,
     List<CommentServiceV1Comment> comments,
   ) {
     final theme = Theme.of(context);
@@ -104,7 +165,7 @@ class PostDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _PostHeader(post: post, isMobile: false),
+                    _PostHeader(post: post, isMobile: false, categories: _categories),
                     _PostContent(post: post, isMobile: false),
                     _buildTagsWidget(post, isMobile: false),
                     _InteractionBar(post: post, isMobile: false),
@@ -150,8 +211,8 @@ class PostDetailPage extends StatelessWidget {
 
   // =================== 标签 ===================
 
-  Widget _buildTagsSliver(dynamic post, {required bool isMobile}) {
-    final tags = mockTags.where((t) => post.tagIds != null && t.id != null && post.tagIds!.contains(t.id!)).toList();
+  Widget _buildTagsSliver(Post post, {required bool isMobile}) {
+    final tags = _tags.where((t) => post.tagIds != null && t.id != null && post.tagIds!.contains(t.id!)).toList();
     if (tags.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
 
     return SliverToBoxAdapter(
@@ -181,8 +242,8 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTagsWidget(dynamic post, {required bool isMobile}) {
-    final tags = mockTags.where((t) => post.tagIds != null && t.id != null && post.tagIds!.contains(t.id!)).toList();
+  Widget _buildTagsWidget(Post post, {required bool isMobile}) {
+    final tags = _tags.where((t) => post.tagIds != null && t.id != null && post.tagIds!.contains(t.id!)).toList();
     if (tags.isEmpty) return const SizedBox.shrink();
 
     return Padding(
@@ -209,7 +270,7 @@ class PostDetailPage extends StatelessWidget {
 
   Widget _buildCommentsSliver(
     BuildContext context,
-    List<Comment> comments, {
+    List<CommentType> comments, {
     required bool isMobile,
   }) {
     final theme = Theme.of(context);
@@ -264,10 +325,11 @@ class PostDetailPage extends StatelessWidget {
 // =================== 子组件 ===================
 
 class _PostHeader extends StatelessWidget {
-  final dynamic post;
+  final Post post;
   final bool isMobile;
+  final List<Category> categories;
 
-  const _PostHeader({required this.post, required this.isMobile});
+  const _PostHeader({required this.post, required this.isMobile, required this.categories});
 
   String get _title =>
       post.translations?.isNotEmpty == true ? post.translations!.first.title ?? '' : '';
@@ -276,7 +338,7 @@ class _PostHeader extends StatelessWidget {
     if ((post.categoryIds ?? []).isEmpty) return '';
     final catId = post.categoryIds!.first;
     try {
-      final cat = mockCategories.firstWhere((c) => c.id != null && c.id == catId);
+      final cat = categories.firstWhere((c) => c.id != null && c.id == catId);
       return (cat.translations ?? []).isNotEmpty ? cat.translations!.first.name ?? '' : '';
     } catch (_) {
       return '';
@@ -380,7 +442,7 @@ class _PostHeader extends StatelessWidget {
 }
 
 class _PostContent extends StatelessWidget {
-  final dynamic post;
+  final Post post;
   final bool isMobile;
 
   const _PostContent({required this.post, required this.isMobile});
@@ -444,7 +506,7 @@ class _PostContent extends StatelessWidget {
 }
 
 class _InteractionBar extends StatelessWidget {
-  final dynamic post;
+  final Post post;
   final bool isMobile;
 
   const _InteractionBar({required this.post, required this.isMobile});

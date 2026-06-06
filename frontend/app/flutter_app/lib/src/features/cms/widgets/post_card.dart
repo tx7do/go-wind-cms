@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 
 typedef Post = ContentServiceV1Post;
@@ -16,8 +15,15 @@ typedef Tag = ContentServiceV1Tag;
 /// 支持响应式布局和 Web 端 Hover 效果
 class PostCard extends StatefulWidget {
   final Post post;
+  final List<Category> categories;
+  final List<Tag> tags;
 
-  const PostCard({super.key, required this.post});
+  const PostCard({
+    super.key,
+    required this.post,
+    this.categories = const [],
+    this.tags = const [],
+  });
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -45,14 +51,14 @@ class _PostCardState extends State<PostCard> {
     if ((widget.post.categoryIds ?? []).isEmpty) return null;
     final catId = widget.post.categoryIds!.first;
     try {
-      return mockCategories.firstWhere((c) => c.id == catId);
+      return widget.categories.firstWhere((c) => c.id == catId);
     } catch (_) {
       return null;
     }
   }
 
   List<Tag> _getTags() {
-    return mockTags
+    return widget.tags
         .where((t) =>
             t.id != null && (widget.post.tagIds ?? []).contains(t.id!))
         .toList();

@@ -5,10 +5,10 @@ import 'package:flutter_app/src/features/cms/pages/home/home_page.dart';
 import 'package:flutter_app/src/features/cms/pages/explore/explore_page.dart';
 import 'package:flutter_app/src/features/cms/pages/bookmarks/bookmarks_page.dart';
 import 'package:flutter_app/src/features/cms/pages/profile/profile_page.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
+import 'package:flutter_app/generated/api/models/site_service_v1_navigation.dart';
+import 'package:flutter_app/generated/api/models/site_service_v1_list_navigation_response.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
-
 
 /// CMS 主布局 - 底部导航 + 页面切换
 class CmsMainScaffold extends StatefulWidget {
@@ -20,6 +20,9 @@ class CmsMainScaffold extends StatefulWidget {
 
 class _CmsMainScaffoldState extends State<CmsMainScaffold> {
   int _currentIndex = 0;
+  final _navService = NavigationService();
+
+  List<SiteServiceV1Navigation> _navigations = [];
 
   /// 底部导航对应的页面
   static const List<Widget> _pages = [
@@ -29,9 +32,23 @@ class _CmsMainScaffoldState extends State<CmsMainScaffold> {
     ProfilePage(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadNavigations();
+  }
+
+  Future<void> _loadNavigations() async {
+    final result = await _navService.list();
+    if (!mounted) return;
+    setState(() {
+      _navigations = (result as ListNavigationResponse?)?.items ?? [];
+    });
+  }
+
   /// 从 API 数据获取移动端底部导航项
-  List<NavigationItem> get _navItems =>
-      getFlatNavItems(mockNavigations, NavigationLocation.mobile);
+  List get _navItems =>
+      getFlatNavItems(_navigations, NavigationLocation.mobile);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +63,9 @@ class _CmsMainScaffoldState extends State<CmsMainScaffold> {
       // Web/桌面端已有顶部导航栏，隐藏底部导航栏
       bottomNavigationBar: isWide
           ? null
-          : Container(
+          : _navItems.length < 2
+              ? null
+              : Container(
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
                 boxShadow: [

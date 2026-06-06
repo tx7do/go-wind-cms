@@ -4,16 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 
 typedef Post = ContentServiceV1Post;
+typedef Category = ContentServiceV1Category;
 
 /// 焦点推荐轮播组件
 class FeaturedCarousel extends StatefulWidget {
   final List<Post> posts;
+  final List<Category> categories;
 
-  const FeaturedCarousel({super.key, required this.posts});
+  const FeaturedCarousel({
+    super.key,
+    required this.posts,
+    this.categories = const [],
+  });
 
   @override
   State<FeaturedCarousel> createState() => _FeaturedCarouselState();
@@ -74,7 +80,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
               itemCount: widget.posts.length,
               itemBuilder: (context, index) {
                 final post = widget.posts[index];
-                return _FeaturedCard(post: post);
+                return _FeaturedCard(post: post, categories: widget.categories);
               },
             ),
           ),
@@ -107,8 +113,9 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
 
 class _FeaturedCard extends StatelessWidget {
   final Post post;
+  final List<Category> categories;
 
-  const _FeaturedCard({required this.post});
+  const _FeaturedCard({required this.post, this.categories = const []});
 
   String get _title => (post.translations ?? []).isNotEmpty
       ? post.translations!.first.title ?? ''
@@ -119,7 +126,7 @@ class _FeaturedCard extends StatelessWidget {
     if ((post.categoryIds ?? []).isEmpty) return '';
     final catId = post.categoryIds!.first;
     try {
-      final cat = mockCategories.firstWhere((c) => c.id != null && c.id == catId);
+      final cat = categories.firstWhere((c) => c.id != null && c.id == catId);
       return (cat.translations ?? []).isNotEmpty
           ? cat.translations!.first.name ?? ''
           : '';

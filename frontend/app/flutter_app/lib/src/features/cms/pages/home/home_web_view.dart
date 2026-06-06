@@ -3,23 +3,90 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
+import 'package:flutter_app/src/features/cms/services/post_service.dart';
+import 'package:flutter_app/src/features/cms/services/category_service.dart';
+import 'package:flutter_app/src/features/cms/services/tag_service.dart';
+import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_cloud.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
+import 'package:flutter_app/generated/api/models/site_service_v1_navigation.dart';
+import 'package:flutter_app/generated/api/models/site_service_v1_navigation_location.dart';
+import 'package:flutter_app/generated/api/models/site_service_v1_list_navigation_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
+import 'package:flutter_app/generated/api/models/comment_service_v1_list_comment_response.dart';
 
+typedef Post = ContentServiceV1Post;
+typedef Category = ContentServiceV1Category;
+typedef Tag = ContentServiceV1Tag;
+typedef Comment = CommentServiceV1Comment;
+typedef NavigationLocation = SiteServiceV1NavigationLocation;
 
 /// 首页 - Web/平板端视图
-///
-/// 左侧：轮播 + 文章列表（3/4 宽度）
-/// 右侧：分类 + 标签云 + 热门评论（1/4 宽度，固定侧边栏）
-/// 整体居中，最大宽度 1200
-class HomeWebView extends StatelessWidget {
+class HomeWebView extends StatefulWidget {
   const HomeWebView({super.key});
+
+  @override
+  State<HomeWebView> createState() => _HomeWebViewState();
+}
+
+class _HomeWebViewState extends State<HomeWebView> {
+  final _navService = NavigationService();
+  final _postService = PostService();
+  final _categoryService = CategoryService();
+  final _tagService = TagService();
+  final _commentService = CommentService();
+
+  List<SiteServiceV1Navigation> _navigations = [];
+  List<Post> _posts = [];
+  List<Category> _categories = [];
+  List<Tag> _tags = [];
+  List<Comment> _comments = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final results = await Future.wait([
+      _navService.list(),
+      _postService.list(),
+      _categoryService.list(),
+      _tagService.list(),
+      _commentService.list(),
+    ]);
+
+    if (!mounted) return;
+
+    setState(() {
+      _navigations = (results[0] as ListNavigationResponse?)?.items ?? [];
+      _posts = (results[1] as ListPostResponse?)?.items ?? [];
+      _categories = (results[2] as ListCategoryResponse?)?.items ?? [];
+      _tags = (results[3] as ListTagResponse?)?.items ?? [];
+      _comments = (results[4] as ListCommentResponse?)?.items ?? [];
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -45,7 +112,7 @@ class HomeWebView extends StatelessWidget {
             centerTitle: false,
             actions: [
               ...getFlatNavItems(
-                mockNavigations,
+                _navigations,
                 NavigationLocation.header,
               ).map(
                 (item) => _NavBarLink(item.title ?? '', resolveNavRoute(item) == '/'),
@@ -57,12 +124,9 @@ class HomeWebView extends StatelessWidget {
                 tooltip: '搜索',
               ),
               const SizedBox(width: 16),
-              // 设置按钮
               IconButton(
                 icon: const Icon(Icons.settings_outlined, size: 22),
-                onPressed: () {
-                  // TODO: 跳转到设置页/个人中心
-                },
+                onPressed: () {},
                 tooltip: '设置',
               ),
               const SizedBox(width: 8),
@@ -97,21 +161,23 @@ class HomeWebView extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 左侧主内容（轮播 + 文章列表）
+                  // 左侧主内容
                   Expanded(
                     flex: 3,
                     child: Column(
                       children: [
-                        // 轮播
                         FeaturedCarousel(
-                          posts: mockPosts.where((p) => p.isFeatured == true).toList(),
+                          posts: _posts.where((p) => p.isFeatured == true).toList(),
+                          categories: _categories,
                         ),
                         const SizedBox(height: 20),
-                        // 文章列表标题
-                        _SectionHeader(title: '最新文章', count: mockPosts.length),
+                        _SectionHeader(title: '最新文章', count: _posts.length),
                         const SizedBox(height: 12),
-                        // 文章网格（Web 端双列）
-                        _WebPostGrid(posts: mockPosts),
+                        _WebPostGrid(
+                          posts: _posts,
+                          categories: _categories,
+                          tags: _tags,
+                        ),
                       ],
                     ),
                   ),
@@ -119,7 +185,11 @@ class HomeWebView extends StatelessWidget {
                   // 右侧固定侧边栏
                   SizedBox(
                     width: Breakpoints.webSidebarWidth,
-                    child: _Sidebar(),
+                    child: _Sidebar(
+                      categories: _categories,
+                      tags: _tags,
+                      comments: _comments,
+                    ),
                   ),
                 ],
               ),
@@ -227,9 +297,15 @@ class _SectionHeader extends StatelessWidget {
 
 /// Web 端文章网格
 class _WebPostGrid extends StatelessWidget {
-  final List posts;
+  final List<Post> posts;
+  final List<Category> categories;
+  final List<Tag> tags;
 
-  const _WebPostGrid({required this.posts});
+  const _WebPostGrid({
+    required this.posts,
+    required this.categories,
+    required this.tags,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +321,11 @@ class _WebPostGrid extends StatelessWidget {
                   24 -
                   16) /
               2,
-          child: PostCard(post: post),
+          child: PostCard(
+            post: post,
+            categories: categories,
+            tags: tags,
+          ),
         );
       }).toList(),
     );
@@ -254,6 +334,16 @@ class _WebPostGrid extends StatelessWidget {
 
 /// 右侧边栏
 class _Sidebar extends StatelessWidget {
+  final List<Category> categories;
+  final List<Tag> tags;
+  final List<Comment> comments;
+
+  const _Sidebar({
+    required this.categories,
+    required this.tags,
+    required this.comments,
+  });
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -299,7 +389,7 @@ class _Sidebar extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: mockCategories.skip(1).map((cat) {
+                  children: categories.map((cat) {
                     final name = (cat.translations ?? []).isNotEmpty
                         ? (cat.translations ?? []).first.name ?? ''
                         : '';
@@ -329,7 +419,7 @@ class _Sidebar extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: TagCloud(tags: mockTags),
+            child: TagCloud(tags: tags),
           ),
         ),
         const SizedBox(height: 16),
@@ -369,7 +459,7 @@ class _Sidebar extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                ...mockComments
+                ...comments
                     .take(3)
                     .map(
                       (comment) => Padding(

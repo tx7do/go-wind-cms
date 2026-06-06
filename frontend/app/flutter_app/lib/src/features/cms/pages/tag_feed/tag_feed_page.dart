@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/src/features/cms/data/mock_data.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
+import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
+import 'package:flutter_app/src/features/cms/services/post_service.dart';
+import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
@@ -10,13 +14,50 @@ import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 typedef Post = ContentServiceV1Post;
 
 /// 标签文章列表页
-class TagFeedPage extends StatelessWidget {
+class TagFeedPage extends StatefulWidget {
   final int tagId;
 
   const TagFeedPage({super.key, required this.tagId});
 
   @override
+  State<TagFeedPage> createState() => _TagFeedPageState();
+}
+
+class _TagFeedPageState extends State<TagFeedPage> {
+  final _postService = PostService();
+  final _tagService = TagService();
+
+  List<Post> _posts = [];
+  List<ContentServiceV1Tag> _tags = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final results = await Future.wait([
+      _postService.list(),
+      _tagService.list(),
+    ]);
+
+    if (!mounted) return;
+
+    setState(() {
+      _posts = (results[0] as ListPostResponse?)?.items ?? [];
+      _tags = (results[1] as ListTagResponse?)?.items ?? [];
+      _isLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return ResponsiveLayout(
       mobileBody: _buildView(context, isMobile: true),
       webBody: _buildView(context, isMobile: false),
@@ -25,14 +66,14 @@ class TagFeedPage extends StatelessWidget {
 
   Widget _buildView(BuildContext context, {required bool isMobile}) {
     final theme = Theme.of(context);
-    final tag = mockTags.firstWhere(
-      (t) => t.id != null && t.id == tagId,
-      orElse: () => mockTags.first,
+    final tag = _tags.firstWhere(
+      (t) => t.id != null && t.id == widget.tagId,
+      orElse: () => ContentServiceV1Tag(),
     );
     final tagName = (tag.translations ?? []).isNotEmpty
         ? tag.translations!.first.name ?? ''
         : '';
-    final posts = mockPosts.where((p) => (p.tagIds ?? []).contains(tag.id!)).toList();
+    final posts = _posts.where((p) => (p.tagIds ?? []).contains(tag.id)).toList();
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -68,7 +109,7 @@ class TagFeedPage extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
             child: Text(
-              '${tag.postCount} 篇相关文章',
+              '${tag.postCount ?? 0} 篇相关文章',
               style: TextStyle(
                 fontSize: isMobile ? 13.sp : 13,
                 color: theme.colorScheme.onSurface.withAlpha(120),
