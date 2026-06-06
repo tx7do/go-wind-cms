@@ -37,35 +37,89 @@ class _HomeWebViewState extends State<HomeWebView> {
   final _postService = PostService();
   final _categoryService = CategoryService();
   final _tagService = TagService();
+  final _scrollController = ScrollController();
 
   List<SiteServiceV1Navigation> _navigations = [];
   List<Post> _posts = [];
   List<Category> _categories = [];
   List<Tag> _tags = [];
   bool _isLoading = true;
+  bool _isLoadingMore = false;
+  bool _hasMorePosts = true;
+  int _currentPage = 1;
+  static const int _pageSize = 10;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// 滚动监听：距离底部 200px 时预加载下一页
+  void _onScroll() {
+    if (_scrollController.hasClients &&
+        _scrollController.position.maxScrollExtent > 0 &&
+        _scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !_isLoadingMore &&
+        _hasMorePosts &&
+        !_isLoading) {
+      _loadMorePosts();
+    }
   }
 
   Future<void> _loadData() async {
     final results = await Future.wait([
       _navService.list(),
-      _postService.list(),
+      _postService.listPaged(page: _currentPage, pageSize: _pageSize),
       _categoryService.list(),
       _tagService.list(),
     ]);
 
     if (!mounted) return;
 
+    final postResponse = results[1] as ListPostResponse?;
+    final items = postResponse?.items ?? [];
+    final total = int.tryParse(postResponse?.total ?? '') ?? 0;
+
     setState(() {
       _navigations = (results[0] as ListNavigationResponse?)?.items ?? [];
-      _posts = (results[1] as ListPostResponse?)?.items ?? [];
+      _posts = items;
       _categories = (results[2] as ListCategoryResponse?)?.items ?? [];
       _tags = (results[3] as ListTagResponse?)?.items ?? [];
+      _hasMorePosts = items.length >= _pageSize && _posts.length < total;
       _isLoading = false;
+    });
+  }
+
+  Future<void> _loadMorePosts() async {
+    if (_isLoadingMore || !_hasMorePosts) return;
+
+    setState(() => _isLoadingMore = true);
+
+    final response = await _postService.listPaged(
+      page: _currentPage + 1,
+      pageSize: _pageSize,
+    );
+
+    if (!mounted) return;
+
+    final items = response?.items ?? [];
+    final total = int.tryParse(response?.total ?? '') ?? 0;
+
+    setState(() {
+      _currentPage++;
+      _posts.addAll(items);
+      _hasMorePosts = items.length >= _pageSize && _posts.length < total;
+      _isLoadingMore = false;
     });
   }
 
@@ -83,6 +137,7 @@ class _HomeWebViewState extends State<HomeWebView> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           // Web 端 AppBar
           SliverAppBar(
@@ -170,6 +225,31 @@ class _HomeWebViewState extends State<HomeWebView> {
                           categories: _categories,
                           tags: _tags,
                         ),
+                        // 加载更多指示器
+                        if (_isLoadingMore)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            ),
+                          ),
+                        if (!_hasMorePosts && _posts.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: Text(
+                                '— 已加载全部 —',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.onSurface.withAlpha(80),
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),

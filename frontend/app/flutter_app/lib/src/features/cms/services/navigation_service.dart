@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' show IconData, Icons;
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart'
-    show Mutation, Query, InfiniteQuery;
+    show Mutation, Query;
 
 import 'package:flutter_app/generated/api/navigation_service/navigation_service_client.dart'
     show NavigationServiceClient;

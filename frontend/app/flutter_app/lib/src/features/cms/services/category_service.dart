@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart'
-    show Mutation, Query, InfiniteQuery;
+    show Mutation, Query;
 
 import 'package:flutter_app/generated/api/category_service/category_service_client.dart'
     show CategoryServiceClient;

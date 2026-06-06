@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
@@ -121,6 +122,13 @@ class _FeaturedCard extends StatelessWidget {
       ? post.translations!.first.title ?? ''
       : '';
 
+  /// 获取封面图
+  String? get _coverImage {
+    if ((post.translations ?? []).isEmpty) return null;
+    final thumb = post.translations!.first.thumbnail;
+    return (thumb != null && thumb.isNotEmpty) ? thumb : null;
+  }
+
   /// 获取文章关联的分类名称
   String get _categoryName {
     if ((post.categoryIds ?? []).isEmpty) return '';
@@ -144,49 +152,87 @@ class _FeaturedCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: isMobile ? 4.w : 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.primaryContainer,
-            theme.colorScheme.primary.withAlpha((0.3 * 255).round()),
-          ],
-        ),
+        gradient: _coverImage == null
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.colorScheme.primaryContainer,
+                  theme.colorScheme.primary.withAlpha((0.3 * 255).round()),
+                ],
+              )
+            : null,
+        color: _coverImage != null ? Colors.grey.shade100 : null,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
         child: Stack(
           children: [
-            // 背景装饰
-            Positioned(
-              right: -20,
-              top: -20,
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: theme.colorScheme.primary.withAlpha(
-                    (0.1 * 255).round(),
+            // 背景图（如果有封面图）
+            if (_coverImage != null)
+              Positioned.fill(
+                child: CachedNetworkImage(
+                  imageUrl: _coverImage!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey.shade100,
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey.shade100,
+                    child: const Center(
+                      child: Icon(Icons.image_outlined, color: Colors.grey),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              left: -30,
-              bottom: -30,
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: theme.colorScheme.primary.withAlpha(
-                    (0.08 * 255).round(),
+            // 渐变遮罩：有图片时用半透明深色遮罩保证文字可读性
+            if (_coverImage != null)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withAlpha((0.05 * 255).round()),
+                        Colors.black.withAlpha((0.55 * 255).round()),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            // 内容
+            // 无图片时的背景装饰圆圈
+            if (_coverImage == null) ...[
+              Positioned(
+                right: -20,
+                top: -20,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: theme.colorScheme.primary.withAlpha(
+                      (0.1 * 255).round(),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -30,
+                bottom: -30,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: theme.colorScheme.primary.withAlpha(
+                      (0.08 * 255).round(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            // 文字内容
             Padding(
               padding: EdgeInsets.all(isMobile ? 20.w : 20),
               child: Column(
@@ -200,9 +246,11 @@ class _FeaturedCard extends StatelessWidget {
                         vertical: isMobile ? 4.h : 4,
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withAlpha(
-                          (0.2 * 255).round(),
-                        ),
+                        color: _coverImage != null
+                            ? Colors.white.withAlpha((0.25 * 255).round())
+                            : theme.colorScheme.primary.withAlpha(
+                                (0.2 * 255).round(),
+                              ),
                         borderRadius: BorderRadius.circular(
                           isMobile ? 12.r : 12,
                         ),
@@ -212,7 +260,9 @@ class _FeaturedCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: isMobile ? 11.sp : 11,
                           fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurface,
+                          color: _coverImage != null
+                              ? Colors.white
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -224,7 +274,9 @@ class _FeaturedCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: isMobile ? 16.sp : 16,
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
+                      color: _coverImage != null
+                          ? Colors.white
+                          : theme.colorScheme.onSurface,
                       height: 1.3,
                     ),
                   ),
@@ -235,21 +287,27 @@ class _FeaturedCard extends StatelessWidget {
                         post.authorName ?? '',
                         style: TextStyle(
                           fontSize: isMobile ? 12.sp : 12,
-                          color: theme.colorScheme.onSurface.withAlpha(160),
+                          color: _coverImage != null
+                              ? Colors.white.withAlpha((0.8 * 255).round())
+                              : theme.colorScheme.onSurface.withAlpha(160),
                         ),
                       ),
                       SizedBox(width: isMobile ? 12.w : 12),
                       Icon(
                         Icons.remove_red_eye_outlined,
                         size: isMobile ? 14.sp : 14,
-                        color: theme.colorScheme.onSurface.withAlpha(120),
+                        color: _coverImage != null
+                            ? Colors.white.withAlpha((0.7 * 255).round())
+                            : theme.colorScheme.onSurface.withAlpha(120),
                       ),
                       SizedBox(width: isMobile ? 3.w : 3),
                       Text(
                         '${post.visits}',
                         style: TextStyle(
                           fontSize: isMobile ? 12.sp : 12,
-                          color: theme.colorScheme.onSurface.withAlpha(120),
+                          color: _coverImage != null
+                              ? Colors.white.withAlpha((0.7 * 255).round())
+                              : theme.colorScheme.onSurface.withAlpha(120),
                         ),
                       ),
                     ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
@@ -82,7 +83,7 @@ class _PostCardState extends State<PostCard> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
         transform: _isHovered && !_isMobile
-            ? (Matrix4.identity()..translate(0.0, -2.0))
+            ? (Matrix4.translationValues(0.0, -2.0, 0.0))
             : Matrix4.identity(),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(_isMobile ? 14.r : 14),
@@ -127,6 +128,34 @@ class _PostCardState extends State<PostCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 封面图（如果有）
+                  if (_coverImage != null) ...[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                        _isMobile ? 10.r : 10,
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: _coverImage!,
+                        height: _isMobile ? 140.h : 140,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          height: _isMobile ? 140.h : 140,
+                          color: Colors.grey.shade100,
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          height: _isMobile ? 140.h : 140,
+                          color: Colors.grey.shade100,
+                          child: Icon(
+                            Icons.image_outlined,
+                            color: Colors.grey.shade300,
+                            size: _isMobile ? 32.sp : 32,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: _isMobile ? 12.h : 12),
+                  ],
                   _buildHeader(context, theme),
                   SizedBox(height: _isMobile ? 10.h : 10),
                   _buildContent(context, theme),
