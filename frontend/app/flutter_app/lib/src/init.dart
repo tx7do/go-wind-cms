@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
 
+import 'package:flutter_app/src/core/config/environments.dart';
 import 'package:flutter_app/src/core/repositories/init.dart' as repos;
 import 'package:flutter_app/src/core/transport/init.dart' as transport;
 import 'package:flutter_app/src/core/widgets/error_page.dart';
@@ -15,6 +16,8 @@ import 'init_thirdparty_plugins.dart';
 /// 应用初始化
 Future<void> init() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Environments.init();
 
   await initThirdPartyPlugins();
 

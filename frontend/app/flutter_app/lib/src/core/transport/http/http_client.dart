@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart' show GetIt;
 
-import 'package:flutter_app/src/core/constants/environments.dart';
+import 'package:flutter_app/src/core/config/environments.dart';
 
 /// 配置选项
 void _configureOptions(Dio dio) {
