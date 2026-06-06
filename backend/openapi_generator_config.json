@@ -1,0 +1,9 @@
+{
+  "openapiGeneratorVersion": "7.17.0",
+  "additionalCommands": "",
+  "downloadUrlOverride": null,
+  "jarCacheDir": ".dart_tool/openapi_generator_cache",
+  "customGeneratorUrls": [
+    "https://repo1.maven.org/maven2/com/bluetrainsoftware/maven/openapi-dart-generator/7.2/openapi-dart-generator-7.2.jar"
+  ]
+}

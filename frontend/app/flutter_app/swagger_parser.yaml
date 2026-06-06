@@ -1,0 +1,7 @@
+swagger_parser:
+  schema_path: ../../../backend/app/app/service/cmd/server/assets/openapi.yaml
+  output_directory: lib/generated/api
+  language: dart
+  client_api: dio
+  squash_clients: true
+  root_client: true

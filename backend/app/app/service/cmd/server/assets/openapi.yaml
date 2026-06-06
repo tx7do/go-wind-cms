@@ -91,7 +91,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListCategoryResponse'
+                                $ref: '#/components/schemas/content.service.v1.ListCategoryResponse'
         post:
             tags:
                 - CategoryService
@@ -101,7 +101,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateCategoryRequest'
+                            $ref: '#/components/schemas/content.service.v1.CreateCategoryRequest'
                 required: true
             responses:
                 "200":
@@ -109,7 +109,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Category'
+                                $ref: '#/components/schemas/content.service.v1.Category'
     /app/v1/categories/{id}:
         get:
             tags:
@@ -142,7 +142,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Category'
+                                $ref: '#/components/schemas/content.service.v1.Category'
         put:
             tags:
                 - CategoryService
@@ -159,7 +159,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateCategoryRequest'
+                            $ref: '#/components/schemas/content.service.v1.UpdateCategoryRequest'
                 required: true
             responses:
                 "200":
@@ -167,7 +167,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Category'
+                                $ref: '#/components/schemas/content.service.v1.Category'
         delete:
             tags:
                 - CategoryService
@@ -216,7 +216,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/CategoryTranslation'
+                                $ref: '#/components/schemas/content.service.v1.CategoryTranslation'
     /app/v1/comments:
         get:
             tags:
@@ -294,7 +294,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListCommentResponse'
+                                $ref: '#/components/schemas/comment.service.v1.ListCommentResponse'
         post:
             tags:
                 - CommentService
@@ -304,7 +304,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateCommentRequest'
+                            $ref: '#/components/schemas/comment.service.v1.CreateCommentRequest'
                 required: true
             responses:
                 "200":
@@ -312,7 +312,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Comment'
+                                $ref: '#/components/schemas/comment.service.v1.Comment'
     /app/v1/comments/{id}:
         get:
             tags:
@@ -337,7 +337,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Comment'
+                                $ref: '#/components/schemas/comment.service.v1.Comment'
         put:
             tags:
                 - CommentService
@@ -354,7 +354,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateCommentRequest'
+                            $ref: '#/components/schemas/comment.service.v1.UpdateCommentRequest'
                 required: true
             responses:
                 "200":
@@ -362,7 +362,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Comment'
+                                $ref: '#/components/schemas/comment.service.v1.Comment'
         delete:
             tags:
                 - CommentService
@@ -439,7 +439,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/DownloadFileResponse'
+                                $ref: '#/components/schemas/storage.service.v1.DownloadFileResponse'
     /app/v1/file/upload:
         put:
             tags:
@@ -450,7 +450,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UploadFileRequest'
+                            $ref: '#/components/schemas/storage.service.v1.UploadFileRequest'
                 required: true
             responses:
                 "200":
@@ -458,7 +458,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UploadFileResponse'
+                                $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
         post:
             tags:
                 - FileTransferService
@@ -468,7 +468,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UploadFileRequest'
+                            $ref: '#/components/schemas/storage.service.v1.UploadFileRequest'
                 required: true
             responses:
                 "200":
@@ -476,7 +476,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UploadFileResponse'
+                                $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
     /app/v1/login:
         post:
             tags:
@@ -487,7 +487,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/LoginRequest'
+                            $ref: '#/components/schemas/authentication.service.v1.LoginRequest'
                 required: true
             responses:
                 "200":
@@ -495,7 +495,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/LoginResponse'
+                                $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
             security:
                 - {}
     /app/v1/logout:
@@ -524,7 +524,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/User'
+                                $ref: '#/components/schemas/identity.service.v1.User'
         put:
             tags:
                 - UserProfileService
@@ -534,7 +534,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateUserRequest'
+                            $ref: '#/components/schemas/identity.service.v1.UpdateUserRequest'
                 required: true
             responses:
                 "200":
@@ -550,7 +550,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UploadAvatarRequest'
+                            $ref: '#/components/schemas/identity.service.v1.UploadAvatarRequest'
                 required: true
             responses:
                 "200":
@@ -558,7 +558,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UploadAvatarResponse'
+                                $ref: '#/components/schemas/identity.service.v1.UploadAvatarResponse'
         delete:
             tags:
                 - UserProfileService
@@ -578,7 +578,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/BindContactRequest'
+                            $ref: '#/components/schemas/identity.service.v1.BindContactRequest'
                 required: true
             responses:
                 "200":
@@ -594,7 +594,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/VerifyContactRequest'
+                            $ref: '#/components/schemas/identity.service.v1.VerifyContactRequest'
                 required: true
             responses:
                 "200":
@@ -610,7 +610,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/ChangePasswordRequest'
+                            $ref: '#/components/schemas/identity.service.v1.ChangePasswordRequest'
                 required: true
             responses:
                 "200":
@@ -693,7 +693,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListNavigationResponse'
+                                $ref: '#/components/schemas/site.service.v1.ListNavigationResponse'
         post:
             tags:
                 - NavigationService
@@ -703,7 +703,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateNavigationRequest'
+                            $ref: '#/components/schemas/site.service.v1.CreateNavigationRequest'
                 required: true
             responses:
                 "200":
@@ -711,7 +711,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Navigation'
+                                $ref: '#/components/schemas/site.service.v1.Navigation'
     /app/v1/navigations/{id}:
         get:
             tags:
@@ -740,7 +740,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Navigation'
+                                $ref: '#/components/schemas/site.service.v1.Navigation'
         put:
             tags:
                 - NavigationService
@@ -757,7 +757,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateNavigationRequest'
+                            $ref: '#/components/schemas/site.service.v1.UpdateNavigationRequest'
                 required: true
             responses:
                 "200":
@@ -765,7 +765,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Navigation'
+                                $ref: '#/components/schemas/site.service.v1.Navigation'
         delete:
             tags:
                 - NavigationService
@@ -859,7 +859,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListPageResponse'
+                                $ref: '#/components/schemas/content.service.v1.ListPageResponse'
         post:
             tags:
                 - PageService
@@ -869,7 +869,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreatePageRequest'
+                            $ref: '#/components/schemas/content.service.v1.CreatePageRequest'
                 required: true
             responses:
                 "200":
@@ -877,7 +877,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Page'
+                                $ref: '#/components/schemas/content.service.v1.Page'
     /app/v1/pages/{id}:
         get:
             tags:
@@ -910,7 +910,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Page'
+                                $ref: '#/components/schemas/content.service.v1.Page'
         put:
             tags:
                 - PageService
@@ -927,7 +927,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdatePageRequest'
+                            $ref: '#/components/schemas/content.service.v1.UpdatePageRequest'
                 required: true
             responses:
                 "200":
@@ -935,7 +935,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Page'
+                                $ref: '#/components/schemas/content.service.v1.Page'
         delete:
             tags:
                 - PageService
@@ -984,7 +984,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/PageTranslation'
+                                $ref: '#/components/schemas/content.service.v1.PageTranslation'
     /app/v1/posts:
         get:
             tags:
@@ -1062,7 +1062,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListPostResponse'
+                                $ref: '#/components/schemas/content.service.v1.ListPostResponse'
         post:
             tags:
                 - PostService
@@ -1072,7 +1072,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreatePostRequest'
+                            $ref: '#/components/schemas/content.service.v1.CreatePostRequest'
                 required: true
             responses:
                 "200":
@@ -1080,7 +1080,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Post'
+                                $ref: '#/components/schemas/content.service.v1.Post'
     /app/v1/posts/{id}:
         get:
             tags:
@@ -1113,7 +1113,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Post'
+                                $ref: '#/components/schemas/content.service.v1.Post'
         put:
             tags:
                 - PostService
@@ -1130,7 +1130,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdatePostRequest'
+                            $ref: '#/components/schemas/content.service.v1.UpdatePostRequest'
                 required: true
             responses:
                 "200":
@@ -1138,7 +1138,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Post'
+                                $ref: '#/components/schemas/content.service.v1.Post'
         delete:
             tags:
                 - PostService
@@ -1187,7 +1187,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/PostTranslation'
+                                $ref: '#/components/schemas/content.service.v1.PostTranslation'
     /app/v1/refresh-token:
         post:
             tags:
@@ -1198,7 +1198,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/LoginRequest'
+                            $ref: '#/components/schemas/authentication.service.v1.LoginRequest'
                 required: true
             responses:
                 "200":
@@ -1206,7 +1206,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/LoginResponse'
+                                $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
     /app/v1/tags:
         get:
             tags:
@@ -1284,7 +1284,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListTagResponse'
+                                $ref: '#/components/schemas/content.service.v1.ListTagResponse'
         post:
             tags:
                 - TagService
@@ -1294,7 +1294,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateTagRequest'
+                            $ref: '#/components/schemas/content.service.v1.CreateTagRequest'
                 required: true
             responses:
                 "200":
@@ -1302,7 +1302,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Tag'
+                                $ref: '#/components/schemas/content.service.v1.Tag'
     /app/v1/tags/{id}:
         get:
             tags:
@@ -1335,7 +1335,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Tag'
+                                $ref: '#/components/schemas/content.service.v1.Tag'
         put:
             tags:
                 - TagService
@@ -1352,7 +1352,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateTagRequest'
+                            $ref: '#/components/schemas/content.service.v1.UpdateTagRequest'
                 required: true
             responses:
                 "200":
@@ -1360,7 +1360,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Tag'
+                                $ref: '#/components/schemas/content.service.v1.Tag'
         delete:
             tags:
                 - TagService
@@ -1409,205 +1409,121 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/TagTranslation'
+                                $ref: '#/components/schemas/content.service.v1.TagTranslation'
 components:
     schemas:
-        Any:
+        KratosStatus:
             type: object
             properties:
-                value:
-                    $ref: '#/components/schemas/GoogleProtobufAny'
-                yaml:
-                    type: string
-        BindContactRequest:
-            type: object
-            properties:
-                phone:
-                    $ref: '#/components/schemas/BindPhoneRequest'
-                email:
-                    $ref: '#/components/schemas/BindEmailRequest'
-        BindEmailRequest:
-            type: object
-            properties:
-                email:
-                    type: string
-                    description: 邮箱地址
-                verificationCode:
-                    type: string
-                    description: 邮箱验证码（可选）
-        BindPhoneRequest:
-            type: object
-            properties:
-                phone:
-                    type: string
-                    description: 手机号码
                 code:
-                    type: string
-                    description: 验证码
-        Category:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: 类别ID
-                    format: uint32
-                status:
-                    enum:
-                        - CATEGORY_STATUS_UNSPECIFIED
-                        - CATEGORY_STATUS_ACTIVE
-                        - CATEGORY_STATUS_HIDDEN
-                        - CATEGORY_STATUS_ARCHIVED
-                    type: string
-                    description: 分类状态
-                    format: enum
-                sortOrder:
-                    type: integer
-                    description: 排序优先级（数值越小越靠前，同级分类间排序）
-                    format: uint32
-                isNav:
-                    type: boolean
-                    description: 是否显示在导航菜单
-                icon:
-                    type: string
-                    description: 分类图标
-                code:
-                    type: string
-                    description: 唯一代码（如 slug、编码等，便于唯一标识分类）
-                postCount:
-                    type: integer
-                    description: 该分类下的文章总数（含子分类，可选）
-                    format: uint32
-                directPostCount:
-                    type: integer
-                    description: 该分类下的直接文章数（不含子分类）
-                    format: uint32
-                translations:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/CategoryTranslation'
-                    description: 多语言翻译列表
-                availableLanguages:
-                    example: ["zh-CN", "en-US", "ja-JP"]
-                    type: array
-                    items:
-                        type: string
-                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
-                customFields:
-                    type: object
-                    additionalProperties:
-                        type: string
-                    description: 自定义字段，键值对形式，便于扩展
-                parentId:
-                    type: integer
-                    description: 父节点ID
-                    format: uint32
-                children:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/Category'
-                    description: 子节点树
-                depth:
-                    type: integer
-                    description: 分类层级深度（0=顶级，1=二级，以此类推）
+                    type: number
+                    description: 错误码
                     format: int32
-                path:
+                message:
                     type: string
-                    description: 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
-                createdBy:
-                    type: integer
-                    description: 创建者用户ID
-                    format: uint32
-                updatedBy:
-                    type: integer
-                    description: 更新者用户ID
-                    format: uint32
-                deletedBy:
-                    type: integer
-                    description: 删除者用户ID
-                    format: uint32
-                createdAt:
+                    description: 错误消息
+                reason:
                     type: string
-                    description: 创建时间
-                    format: date-time
-                updatedAt:
-                    type: string
-                    description: 更新时间
-                    format: date-time
-                deletedAt:
-                    type: string
-                    description: 删除时间
-                    format: date-time
-            description: 类别
-        CategoryTranslation:
+                    description: 错误原因
+                metadata:
+                    type: object
+                    description: 元数据
+            description: Kratos错误返回
+        authentication.service.v1.LoginRequest:
+            required:
+                - grant_type
             type: object
             properties:
-                id:
+                grant_type:
+                    enum:
+                        - password
+                        - client_credentials
+                        - authorization_code
+                        - refresh_token
+                        - implicit
+                    type: string
+                    default: password
+                    description: 授权类型，此处的值固定为"password"，必选项。
+                    format: enum
+                client_id:
+                    type: string
+                    description: 客户端ID
+                client_secret:
+                    type: string
+                    description: 客户端密钥
+                scope:
+                    type: string
+                    description: 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
+                redirect_uri:
+                    type: string
+                    description: 跳转链接
+                user_id:
                     type: integer
-                    description: 翻译记录ID
+                    description: 用户ID
                     format: uint32
-                categoryId:
-                    type: integer
-                    description: 关联的分类ID
-                    format: uint32
-                languageCode:
+                username:
                     type: string
-                    description: 语言代码
-                name:
+                    description: 用户名
+                email:
                     type: string
-                    description: 分类名称
-                slug:
+                    description: 电子邮件地址
+                mobile:
                     type: string
-                    description: 分类别名
-                description:
+                    description: 手机号
+                password:
                     type: string
-                    description: 分类描述
-                thumbnail:
+                    description: 用户的密码
+                refresh_token:
                     type: string
-                    description: 缩略图
-                coverImage:
+                    description: 更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。
+                code:
                     type: string
-                    description: 封面图
-                fullPath:
+                    description: 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
+                client_type:
+                    enum:
+                        - admin
+                        - app
                     type: string
-                    description: 完整路径（如 /zh-CN/category/tech）
-                seo:
-                    $ref: '#/components/schemas/SeoMeta'
-                createdBy:
-                    type: integer
-                    description: 创建者用户ID
-                    format: uint32
-                updatedBy:
-                    type: integer
-                    description: 更新者用户ID
-                    format: uint32
-                deletedBy:
-                    type: integer
-                    description: 删除者用户ID
-                    format: uint32
-                createdAt:
+                    description: 客户端类型
+                    format: enum
+                device_id:
                     type: string
-                    description: 创建时间
-                    format: date-time
-                updatedAt:
+                    description: 设备唯一标识（可选），用于设备绑定、推送、风控等
+                jti:
                     type: string
-                    description: 更新时间
-                    format: date-time
-                deletedAt:
-                    type: string
-                    description: 删除时间
-                    format: date-time
-            description: 类别翻译
-        ChangePasswordRequest:
+                    description: 建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击
+            description: 用户登录 - 请求
+        authentication.service.v1.LoginResponse:
             type: object
             properties:
-                oldPassword:
+                token_type:
+                    enum:
+                        - bearer
+                        - mac
                     type: string
-                    description: 旧密码
-                newPassword:
+                    default: Bearer
+                    description: 令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。
+                    format: enum
+                access_token:
                     type: string
-                    description: 新密码
-            description: 修改用户密码（需要验证旧密码） - 请求
-        Comment:
+                    description: 访问令牌，必选项。授权服务器颁发的访问令牌字符串。
+                expires_in:
+                    type: string
+                    description: 访问令牌过期时间（秒）
+                refresh_token:
+                    type: string
+                    description: 更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。
+                scope:
+                    type: string
+                    description: 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
+                refresh_expires_in:
+                    type: string
+                    description: 刷新令牌过期时间（秒）
+                id_token:
+                    type: string
+                    description: ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+            description: 用户登录 - 回应
+        comment.service.v1.Comment:
             type: object
             properties:
                 id:
@@ -1700,7 +1616,7 @@ components:
                 children:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Comment'
+                        $ref: '#/components/schemas/comment.service.v1.Comment'
                     description: 子节点树
                 replyToId:
                     type: integer
@@ -1731,404 +1647,108 @@ components:
                     description: 删除时间
                     format: date-time
             description: 评论
-        CreateCategoryRequest:
+        comment.service.v1.CreateCommentRequest:
             type: object
             properties:
                 data:
-                    $ref: '#/components/schemas/Category'
-            description: 请求 - 创建类别
-        CreateCommentRequest:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/Comment'
+                    $ref: '#/components/schemas/comment.service.v1.Comment'
             description: 请求 - 创建评论
-        CreateNavigationRequest:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/Navigation'
-            description: 请求 - 创建导航
-        CreatePageRequest:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/Page'
-            description: 请求 - 创建页面
-        CreatePostRequest:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/Post'
-            description: 请求 - 创建帖子
-        CreateTagRequest:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/Tag'
-            description: 请求 - 创建标签
-        DownloadFileResponse:
-            type: object
-            properties:
-                file:
-                    type: string
-                    description: 直接返回文件字节（小文件或同步场景）
-                    format: bytes
-                downloadUrl:
-                    type: string
-                    description: 预签名 URL（大文件或异步下载）
-                sourceFileName:
-                    type: string
-                    description: 原始文件名，客户端用于保存或显示
-                mime:
-                    type: string
-                    description: MIME 类型，默认 application/octet-stream
-                size:
-                    type: string
-                    description: 文件大小（字节），可用于进度或校验
-                checksum:
-                    type: string
-                    description: 可选，文件校验（如 MD5 或 SHA256）
-                storagePath:
-                    type: string
-                    description: 可选，后端存储位置或 key
-                updatedAt:
-                    type: string
-                    description: 可选，最后修改时间
-                    format: date-time
-            description: 文件下载响应
-        EmailVerification:
-            required:
-                - code
-            type: object
-            properties:
-                email:
-                    type: string
-                    description: 邮箱地址
-                code:
-                    type: string
-                    description: 邮箱验证码
-            description: 邮箱验证
-        ExternalDocs:
-            type: object
-            properties:
-                description:
-                    type: string
-                url:
-                    type: string
-                specificationExtension:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/NamedAny'
-            description: Allows referencing an external resource for extended documentation.
-        GoogleProtobufAny:
-            type: object
-            properties:
-                '@type':
-                    type: string
-                    description: The type of the serialized message.
-            additionalProperties: true
-            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        KratosStatus:
-            type: object
-            properties:
-                code:
-                    type: number
-                    description: 错误码
-                    format: int32
-                message:
-                    type: string
-                    description: 错误消息
-                reason:
-                    type: string
-                    description: 错误原因
-                metadata:
-                    type: object
-                    description: 元数据
-            description: Kratos错误返回
-        ListCategoryResponse:
+        comment.service.v1.ListCommentResponse:
             type: object
             properties:
                 items:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Category'
-                total:
-                    type: string
-            description: 回应 - 类别列表
-        ListCommentResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/Comment'
+                        $ref: '#/components/schemas/comment.service.v1.Comment'
                 total:
                     type: string
             description: 回应 - 评论列表
-        ListNavigationResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/Navigation'
-                total:
-                    type: string
-            description: 回应 - 导航列表
-        ListPageResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/Page'
-                total:
-                    type: string
-            description: 回应 - 页面列表
-        ListPostResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/Post'
-                total:
-                    type: string
-            description: 回应 - 帖子列表
-        ListTagResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/Tag'
-                total:
-                    type: string
-            description: 回应 - 标签列表
-        LoginRequest:
-            required:
-                - grant_type
-            type: object
-            properties:
-                grant_type:
-                    enum:
-                        - password
-                        - client_credentials
-                        - authorization_code
-                        - refresh_token
-                        - implicit
-                    type: string
-                    default: password
-                    description: 授权类型，此处的值固定为"password"，必选项。
-                    format: enum
-                client_id:
-                    type: string
-                    description: 客户端ID
-                client_secret:
-                    type: string
-                    description: 客户端密钥
-                scope:
-                    type: string
-                    description: 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
-                redirect_uri:
-                    type: string
-                    description: 跳转链接
-                user_id:
-                    type: integer
-                    description: 用户ID
-                    format: uint32
-                username:
-                    type: string
-                    description: 用户名
-                email:
-                    type: string
-                    description: 电子邮件地址
-                mobile:
-                    type: string
-                    description: 手机号
-                password:
-                    type: string
-                    description: 用户的密码
-                refresh_token:
-                    type: string
-                    description: 更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。
-                code:
-                    type: string
-                    description: 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
-                client_type:
-                    enum:
-                        - admin
-                        - app
-                    type: string
-                    description: 客户端类型
-                    format: enum
-                device_id:
-                    type: string
-                    description: 设备唯一标识（可选），用于设备绑定、推送、风控等
-                jti:
-                    type: string
-                    description: 建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击
-            description: 用户登录 - 请求
-        LoginResponse:
-            type: object
-            properties:
-                token_type:
-                    enum:
-                        - bearer
-                        - mac
-                    type: string
-                    default: Bearer
-                    description: 令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。
-                    format: enum
-                access_token:
-                    type: string
-                    description: 访问令牌，必选项。授权服务器颁发的访问令牌字符串。
-                expires_in:
-                    type: string
-                    description: 访问令牌过期时间（秒）
-                refresh_token:
-                    type: string
-                    description: 更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。
-                scope:
-                    type: string
-                    description: 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
-                refresh_expires_in:
-                    type: string
-                    description: 刷新令牌过期时间（秒）
-                id_token:
-                    type: string
-                    description: ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
-            description: 用户登录 - 回应
-        NamedAny:
-            type: object
-            properties:
-                name:
-                    type: string
-                    description: Map key
-                value:
-                    allOf:
-                        - $ref: '#/components/schemas/Any'
-                    description: Mapped value
-            description: Automatically-generated message used to represent maps of Any as ordered (name,value) pairs.
-        Navigation:
+        comment.service.v1.UpdateCommentRequest:
             type: object
             properties:
                 id:
                     type: integer
-                    description: 导航ID
                     format: uint32
-                name:
+                data:
+                    $ref: '#/components/schemas/comment.service.v1.Comment'
+                updateMask:
+                    example: id,realname,username
                     type: string
-                    description: 导航名称（如'主导航'、'页脚'）
-                location:
-                    enum:
-                        - NAVIGATION_LOCATION_UNSPECIFIED
-                        - HEADER
-                        - FOOTER
-                        - SIDEBAR
-                        - MOBILE
-                        - TOP_BAR
-                        - OFFCANVAS
-                    type: string
-                    description: 渲染位置
-                    format: enum
-                locale:
-                    type: string
-                    description: 关联的语言区域（如 'zh-CN', 'en-US'），空值表示默认/通用导航；仅用于后台管理筛选，不影响前端渲染逻辑
-                isActive:
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
                     type: boolean
-                    description: 是否启用（禁用后前端不渲染）
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/NavigationItem'
-                    description: 导航项列表（按 sort_order 排序）
-                createdBy:
-                    type: integer
-                    description: 创建者用户ID
-                    format: uint32
-                updatedBy:
-                    type: integer
-                    description: 更新者用户ID
-                    format: uint32
-                deletedBy:
-                    type: integer
-                    description: 删除者用户ID
-                    format: uint32
-                createdAt:
-                    type: string
-                    description: 创建时间
-                    format: date-time
-                updatedAt:
-                    type: string
-                    description: 更新时间
-                    format: date-time
-                deletedAt:
-                    type: string
-                    description: 删除时间
-                    format: date-time
-            description: 导航
-        NavigationItem:
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 请求 - 更新评论
+        content.service.v1.Category:
             type: object
             properties:
                 id:
                     type: integer
-                    description: 导航项目项ID
+                    description: 类别ID
                     format: uint32
-                navigationId:
-                    type: integer
-                    description: 所属导航项目菜单ID
-                    format: uint32
-                title:
-                    type: string
-                    description: 显示文本（单语言，多语言通过多套导航项目实现）
-                description:
-                    type: string
-                    description: 描述文本（用于悬停提示或移动端）
-                icon:
-                    type: string
-                    description: 图标（支持 Font Awesome 格式如 'fas fa-home'，或 SVG URL）
-                url:
-                    type: string
-                    description: 目标 URL（link_type=CUSTOM/EXTERNAL 时必填；关联类型可自动生成）
-                linkType:
+                status:
                     enum:
-                        - LINK_TYPE_UNSPECIFIED
-                        - LINK_TYPE_CUSTOM
-                        - LINK_TYPE_POST
-                        - LINK_TYPE_PAGE
-                        - LINK_TYPE_CATEGORY
-                        - LINK_TYPE_EXTERNAL
+                        - CATEGORY_STATUS_UNSPECIFIED
+                        - CATEGORY_STATUS_ACTIVE
+                        - CATEGORY_STATUS_HIDDEN
+                        - CATEGORY_STATUS_ARCHIVED
                     type: string
-                    description: 链接类型
+                    description: 分类状态
                     format: enum
-                objectId:
-                    type: integer
-                    description: 关联对象ID（link_type=POST/PAGE/CATEGORY 时使用）
-                    format: uint32
                 sortOrder:
                     type: integer
-                    description: 排序优先级（数值越小越靠前）
+                    description: 排序优先级（数值越小越靠前，同级分类间排序）
                     format: uint32
-                isOpenNewTab:
+                isNav:
                     type: boolean
-                    description: 是否在新标签页打开
-                isInvalid:
-                    type: boolean
-                    description: 是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项目项）
-                requiredPermission:
+                    description: 是否显示在导航菜单
+                icon:
                     type: string
-                    description: 访问权限标识（如 view_admin_panel，前端可根据用户权限决定是否显示该导航项目项）
+                    description: 分类图标
+                code:
+                    type: string
+                    description: 唯一代码（如 slug、编码等，便于唯一标识分类）
+                postCount:
+                    type: integer
+                    description: 该分类下的文章总数（含子分类，可选）
+                    format: uint32
+                directPostCount:
+                    type: integer
+                    description: 该分类下的直接文章数（不含子分类）
+                    format: uint32
+                translations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.CategoryTranslation'
+                    description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
+                customFields:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 自定义字段，键值对形式，便于扩展
                 parentId:
                     type: integer
-                    description: 父菜单项ID（0 表示顶级项）
+                    description: 父节点ID
                     format: uint32
                 children:
                     type: array
                     items:
-                        $ref: '#/components/schemas/NavigationItem'
+                        $ref: '#/components/schemas/content.service.v1.Category'
                     description: 子节点树
+                depth:
+                    type: integer
+                    description: 分类层级深度（0=顶级，1=二级，以此类推）
+                    format: int32
+                path:
+                    type: string
+                    description: 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
                 createdBy:
                     type: integer
                     description: 创建者用户ID
@@ -2153,8 +1773,131 @@ components:
                     type: string
                     description: 删除时间
                     format: date-time
-            description: 导航项目项
-        Page:
+            description: 类别
+        content.service.v1.CategoryTranslation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 翻译记录ID
+                    format: uint32
+                categoryId:
+                    type: integer
+                    description: 关联的分类ID
+                    format: uint32
+                languageCode:
+                    type: string
+                    description: 语言代码
+                name:
+                    type: string
+                    description: 分类名称
+                slug:
+                    type: string
+                    description: 分类别名
+                description:
+                    type: string
+                    description: 分类描述
+                thumbnail:
+                    type: string
+                    description: 缩略图
+                coverImage:
+                    type: string
+                    description: 封面图
+                fullPath:
+                    type: string
+                    description: 完整路径（如 /zh-CN/category/tech）
+                seo:
+                    $ref: '#/components/schemas/content.service.v1.SeoMeta'
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 类别翻译
+        content.service.v1.CreateCategoryRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/content.service.v1.Category'
+            description: 请求 - 创建类别
+        content.service.v1.CreatePageRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/content.service.v1.Page'
+            description: 请求 - 创建页面
+        content.service.v1.CreatePostRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/content.service.v1.Post'
+            description: 请求 - 创建帖子
+        content.service.v1.CreateTagRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/content.service.v1.Tag'
+            description: 请求 - 创建标签
+        content.service.v1.ListCategoryResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.Category'
+                total:
+                    type: string
+            description: 回应 - 类别列表
+        content.service.v1.ListPageResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.Page'
+                total:
+                    type: string
+            description: 回应 - 页面列表
+        content.service.v1.ListPostResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.Post'
+                total:
+                    type: string
+            description: 回应 - 帖子列表
+        content.service.v1.ListTagResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.Tag'
+                total:
+                    type: string
+            description: 回应 - 标签列表
+        content.service.v1.Page:
             type: object
             properties:
                 id:
@@ -2234,7 +1977,7 @@ components:
                 translations:
                     type: array
                     items:
-                        $ref: '#/components/schemas/PageTranslation'
+                        $ref: '#/components/schemas/content.service.v1.PageTranslation'
                     description: 多语言翻译列表
                 availableLanguages:
                     example: ["zh-CN", "en-US", "ja-JP"]
@@ -2249,7 +1992,7 @@ components:
                 children:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Page'
+                        $ref: '#/components/schemas/content.service.v1.Page'
                     description: 子节点树
                 depth:
                     type: integer
@@ -2283,7 +2026,7 @@ components:
                     description: 删除时间
                     format: date-time
             description: 页面
-        PageTranslation:
+        content.service.v1.PageTranslation:
             type: object
             properties:
                 id:
@@ -2306,7 +2049,7 @@ components:
                 sections:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Section'
+                        $ref: '#/components/schemas/content.service.v1.Section'
                     description: 页面内容区块（模块化）
                 thumbnail:
                     type: string
@@ -2318,7 +2061,7 @@ components:
                     type: string
                     description: 完整路径（如 /zh-CN/about-us），首页应为 '/' 或 '/zh-CN/'
                 seo:
-                    $ref: '#/components/schemas/SeoMeta'
+                    $ref: '#/components/schemas/content.service.v1.SeoMeta'
                 createdBy:
                     type: integer
                     description: 创建者用户ID
@@ -2344,19 +2087,7 @@ components:
                     description: 删除时间
                     format: date-time
             description: 页面翻译
-        PhoneVerification:
-            required:
-                - code
-            type: object
-            properties:
-                phone:
-                    type: string
-                    description: 手机号码，带国家码
-                code:
-                    type: string
-                    description: 短信验证码
-            description: 手机验证
-        Post:
+        content.service.v1.Post:
             type: object
             properties:
                 id:
@@ -2431,7 +2162,7 @@ components:
                 translations:
                     type: array
                     items:
-                        $ref: '#/components/schemas/PostTranslation'
+                        $ref: '#/components/schemas/content.service.v1.PostTranslation'
                     description: 多语言翻译列表
                 availableLanguages:
                     example: ["zh-CN", "en-US", "ja-JP"]
@@ -2483,7 +2214,7 @@ components:
                     description: 发布时间
                     format: date-time
             description: 帖子
-        PostTranslation:
+        content.service.v1.PostTranslation:
             type: object
             properties:
                 id:
@@ -2523,7 +2254,7 @@ components:
                     description: 当前语言版本的字数（中文按字符数，英文按单词数）
                     format: uint32
                 seo:
-                    $ref: '#/components/schemas/SeoMeta'
+                    $ref: '#/components/schemas/content.service.v1.SeoMeta'
                 createdBy:
                     type: integer
                     description: 创建者用户ID
@@ -2549,21 +2280,7 @@ components:
                     description: 删除时间
                     format: date-time
             description: 帖子翻译
-        PresignOption:
-            type: object
-            properties:
-                method:
-                    type: string
-                    description: 预签名使用的 HTTP 方法，例如 PUT 或 POST
-                expireSeconds:
-                    type: integer
-                    description: 预签名有效期（秒）
-                    format: int32
-                contentType:
-                    type: string
-                    description: 预签名约束的 Content-Type（可选）
-            description: 预签名选项
-        Section:
+        content.service.v1.Section:
             type: object
             properties:
                 type:
@@ -2604,7 +2321,7 @@ components:
                         type: string
                     description: 区块内容（键值对，适配不同类型区块）
             description: 页面区块（内容构建模块）
-        SeoMeta:
+        content.service.v1.SeoMeta:
             type: object
             properties:
                 seoTitle:
@@ -2629,36 +2346,82 @@ components:
                     type: string
                     description: 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
             description: SEO 元信息结构设计
-        StorageObject:
+        content.service.v1.Tag:
             type: object
             properties:
-                bucketName:
+                id:
+                    type: integer
+                    description: 标签ID
+                    format: uint32
+                status:
+                    enum:
+                        - TAG_STATUS_UNSPECIFIED
+                        - TAG_STATUS_ACTIVE
+                        - TAG_STATUS_HIDDEN
+                        - TAG_STATUS_ARCHIVED
                     type: string
-                    description: 目标文件桶名称
-                fileDirectory:
-                    example: tenant/1001/user/avatar/
+                    description: 标签状态
+                    format: enum
+                color:
                     type: string
-                    description: 存储目录（如 'user/1001/avatar/'），服务端会在此目录下生成唯一文件名
-                objectName:
-                    example: user/1001/avatar.jpg
+                    description: 标签颜色（HEX 格式，如 '#3498db'，用于标签云/前端展示）
+                icon:
                     type: string
-                    description: OSS 对象键（完整路径，如 'user/1001/avatar.jpg'）。若未提供，服务端将自动生成。
-            description: 对象存储对象
-        Tag:
-            type: object
-            properties:
-                name:
+                    description: 标签图标（可选，支持图标名称如 'fas fa-code' 或 SVG URL）
+                group:
                     type: string
-                description:
+                    description: 标签分组（可选，如 '技术栈'、'行业'，用于后台分类管理，不影响前台展示）
+                sortOrder:
+                    type: integer
+                    description: 排序优先级（数值越小越靠前，同组内排序）
+                    format: uint32
+                isFeatured:
+                    type: boolean
+                    description: 是否推荐
+                code:
                     type: string
-                externalDocs:
-                    $ref: '#/components/schemas/ExternalDocs'
-                specificationExtension:
+                    description: 唯一代码（如 slug、编码等，便于唯一标识标签）
+                postCount:
+                    type: integer
+                    description: 使用该标签的文章总数（跨所有语言，仅统计 status=ACTIVE 的文章）
+                    format: uint32
+                translations:
                     type: array
                     items:
-                        $ref: '#/components/schemas/NamedAny'
-            description: Adds metadata to a single tag that is used by the Operation Object. It is not mandatory to have a Tag Object per tag defined in the Operation Object instances.
-        TagTranslation:
+                        $ref: '#/components/schemas/content.service.v1.TagTranslation'
+                    description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 标签
+        content.service.v1.TagTranslation:
             type: object
             properties:
                 id:
@@ -2688,7 +2451,7 @@ components:
                     type: string
                     description: 完整路径（格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang）
                 seo:
-                    $ref: '#/components/schemas/SeoMeta'
+                    $ref: '#/components/schemas/content.service.v1.SeoMeta'
                 createdBy:
                     type: integer
                     description: 创建者用户ID
@@ -2714,14 +2477,14 @@ components:
                     description: 删除时间
                     format: date-time
             description: 标签翻译
-        UpdateCategoryRequest:
+        content.service.v1.UpdateCategoryRequest:
             type: object
             properties:
                 id:
                     type: integer
                     format: uint32
                 data:
-                    $ref: '#/components/schemas/Category'
+                    $ref: '#/components/schemas/content.service.v1.Category'
                 updateMask:
                     example: id,realname,username
                     type: string
@@ -2731,48 +2494,14 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新类别
-        UpdateCommentRequest:
+        content.service.v1.UpdatePageRequest:
             type: object
             properties:
                 id:
                     type: integer
                     format: uint32
                 data:
-                    $ref: '#/components/schemas/Comment'
-                updateMask:
-                    example: id,realname,username
-                    type: string
-                    description: 要更新的字段列表
-                    format: field-mask
-                allowMissing:
-                    type: boolean
-                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
-            description: 请求 - 更新评论
-        UpdateNavigationRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                data:
-                    $ref: '#/components/schemas/Navigation'
-                updateMask:
-                    example: id,realname,username
-                    type: string
-                    description: 要更新的字段列表
-                    format: field-mask
-                allowMissing:
-                    type: boolean
-                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
-            description: 请求 - 更新导航
-        UpdatePageRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                data:
-                    $ref: '#/components/schemas/Page'
+                    $ref: '#/components/schemas/content.service.v1.Page'
                 updateMask:
                     example: id,realname,username
                     type: string
@@ -2782,14 +2511,14 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新页面
-        UpdatePostRequest:
+        content.service.v1.UpdatePostRequest:
             type: object
             properties:
                 id:
                     type: integer
                     format: uint32
                 data:
-                    $ref: '#/components/schemas/Post'
+                    $ref: '#/components/schemas/content.service.v1.Post'
                 updateMask:
                     example: id,realname,username
                     type: string
@@ -2799,14 +2528,14 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新帖子
-        UpdateTagRequest:
+        content.service.v1.UpdateTagRequest:
             type: object
             properties:
                 id:
                     type: integer
                     format: uint32
                 data:
-                    $ref: '#/components/schemas/Tag'
+                    $ref: '#/components/schemas/content.service.v1.Tag'
                 updateMask:
                     example: id,realname,username
                     type: string
@@ -2816,7 +2545,66 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新标签
-        UpdateUserRequest:
+        identity.service.v1.BindContactRequest:
+            type: object
+            properties:
+                phone:
+                    $ref: '#/components/schemas/identity.service.v1.BindPhoneRequest'
+                email:
+                    $ref: '#/components/schemas/identity.service.v1.BindEmailRequest'
+        identity.service.v1.BindEmailRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                    description: 邮箱地址
+                verificationCode:
+                    type: string
+                    description: 邮箱验证码（可选）
+        identity.service.v1.BindPhoneRequest:
+            type: object
+            properties:
+                phone:
+                    type: string
+                    description: 手机号码
+                code:
+                    type: string
+                    description: 验证码
+        identity.service.v1.ChangePasswordRequest:
+            type: object
+            properties:
+                oldPassword:
+                    type: string
+                    description: 旧密码
+                newPassword:
+                    type: string
+                    description: 新密码
+            description: 修改用户密码（需要验证旧密码） - 请求
+        identity.service.v1.EmailVerification:
+            required:
+                - code
+            type: object
+            properties:
+                email:
+                    type: string
+                    description: 邮箱地址
+                code:
+                    type: string
+                    description: 邮箱验证码
+            description: 邮箱验证
+        identity.service.v1.PhoneVerification:
+            required:
+                - code
+            type: object
+            properties:
+                phone:
+                    type: string
+                    description: 手机号码，带国家码
+                code:
+                    type: string
+                    description: 短信验证码
+            description: 手机验证
+        identity.service.v1.UpdateUserRequest:
             required:
                 - data
             type: object
@@ -2825,7 +2613,7 @@ components:
                     type: integer
                     format: uint32
                 data:
-                    $ref: '#/components/schemas/User'
+                    $ref: '#/components/schemas/identity.service.v1.User'
                 password:
                     readOnly: true
                     type: string
@@ -2839,7 +2627,7 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新用户 - 请求
-        UploadAvatarRequest:
+        identity.service.v1.UploadAvatarRequest:
             type: object
             properties:
                 imageBase64:
@@ -2848,49 +2636,12 @@ components:
                 imageUrl:
                     type: string
                     description: 图片的URL地址
-        UploadAvatarResponse:
+        identity.service.v1.UploadAvatarResponse:
             type: object
             properties:
                 url:
                     type: string
-        UploadFileRequest:
-            type: object
-            properties:
-                storageObject:
-                    $ref: '#/components/schemas/StorageObject'
-                file:
-                    type: string
-                    description: 直接上传的文件内容（内联字节）
-                    format: bytes
-                presign:
-                    $ref: '#/components/schemas/PresignOption'
-                sourceFileName:
-                    type: string
-                    description: 原文件文件名
-                mime:
-                    type: string
-                    description: 文件的MIME类型
-                size:
-                    type: string
-                    description: 文件大小（字节）
-                tenantId:
-                    type: integer
-                    description: 租户ID，0代表系统全局角色
-                    format: uint32
-                userId:
-                    type: integer
-                    description: 用户ID
-                    format: uint32
-        UploadFileResponse:
-            type: object
-            properties:
-                objectName:
-                    type: string
-                    description: OSS 对象键
-                presignedUrl:
-                    type: string
-                    description: 预签名上传链接
-        User:
+        identity.service.v1.User:
             type: object
             properties:
                 id:
@@ -3063,16 +2814,288 @@ components:
                     description: 删除时间
                     format: date-time
             description: 用户
-        VerifyContactRequest:
+        identity.service.v1.VerifyContactRequest:
             type: object
             properties:
                 phone:
-                    $ref: '#/components/schemas/PhoneVerification'
+                    $ref: '#/components/schemas/identity.service.v1.PhoneVerification'
                 email:
-                    $ref: '#/components/schemas/EmailVerification'
+                    $ref: '#/components/schemas/identity.service.v1.EmailVerification'
                 verificationId:
                     type: string
                     description: 服务端生成的验证码会话ID（可选）
+        site.service.v1.CreateNavigationRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/site.service.v1.Navigation'
+            description: 请求 - 创建导航
+        site.service.v1.ListNavigationResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/site.service.v1.Navigation'
+                total:
+                    type: string
+            description: 回应 - 导航列表
+        site.service.v1.Navigation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 导航ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 导航名称（如'主导航'、'页脚'）
+                location:
+                    enum:
+                        - NAVIGATION_LOCATION_UNSPECIFIED
+                        - HEADER
+                        - FOOTER
+                        - SIDEBAR
+                        - MOBILE
+                        - TOP_BAR
+                        - OFFCANVAS
+                    type: string
+                    description: 渲染位置
+                    format: enum
+                locale:
+                    type: string
+                    description: 关联的语言区域（如 'zh-CN', 'en-US'），空值表示默认/通用导航；仅用于后台管理筛选，不影响前端渲染逻辑
+                isActive:
+                    type: boolean
+                    description: 是否启用（禁用后前端不渲染）
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/site.service.v1.NavigationItem'
+                    description: 导航项列表（按 sort_order 排序）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 导航
+        site.service.v1.NavigationItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 导航项目项ID
+                    format: uint32
+                navigationId:
+                    type: integer
+                    description: 所属导航项目菜单ID
+                    format: uint32
+                title:
+                    type: string
+                    description: 显示文本（单语言，多语言通过多套导航项目实现）
+                description:
+                    type: string
+                    description: 描述文本（用于悬停提示或移动端）
+                icon:
+                    type: string
+                    description: 图标（支持 Font Awesome 格式如 'fas fa-home'，或 SVG URL）
+                url:
+                    type: string
+                    description: 目标 URL（link_type=CUSTOM/EXTERNAL 时必填；关联类型可自动生成）
+                linkType:
+                    enum:
+                        - LINK_TYPE_UNSPECIFIED
+                        - LINK_TYPE_CUSTOM
+                        - LINK_TYPE_POST
+                        - LINK_TYPE_PAGE
+                        - LINK_TYPE_CATEGORY
+                        - LINK_TYPE_EXTERNAL
+                    type: string
+                    description: 链接类型
+                    format: enum
+                objectId:
+                    type: integer
+                    description: 关联对象ID（link_type=POST/PAGE/CATEGORY 时使用）
+                    format: uint32
+                sortOrder:
+                    type: integer
+                    description: 排序优先级（数值越小越靠前）
+                    format: uint32
+                isOpenNewTab:
+                    type: boolean
+                    description: 是否在新标签页打开
+                isInvalid:
+                    type: boolean
+                    description: 是否无效（如关联的文章/页面被删除或设置为不可见，前端可根据此字段决定是否隐藏该导航项目项）
+                requiredPermission:
+                    type: string
+                    description: 访问权限标识（如 view_admin_panel，前端可根据用户权限决定是否显示该导航项目项）
+                parentId:
+                    type: integer
+                    description: 父菜单项ID（0 表示顶级项）
+                    format: uint32
+                children:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/site.service.v1.NavigationItem'
+                    description: 子节点树
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 导航项目项
+        site.service.v1.UpdateNavigationRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/site.service.v1.Navigation'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 请求 - 更新导航
+        storage.service.v1.DownloadFileResponse:
+            type: object
+            properties:
+                file:
+                    type: string
+                    description: 直接返回文件字节（小文件或同步场景）
+                    format: bytes
+                downloadUrl:
+                    type: string
+                    description: 预签名 URL（大文件或异步下载）
+                sourceFileName:
+                    type: string
+                    description: 原始文件名，客户端用于保存或显示
+                mime:
+                    type: string
+                    description: MIME 类型，默认 application/octet-stream
+                size:
+                    type: string
+                    description: 文件大小（字节），可用于进度或校验
+                checksum:
+                    type: string
+                    description: 可选，文件校验（如 MD5 或 SHA256）
+                storagePath:
+                    type: string
+                    description: 可选，后端存储位置或 key
+                updatedAt:
+                    type: string
+                    description: 可选，最后修改时间
+                    format: date-time
+            description: 文件下载响应
+        storage.service.v1.PresignOption:
+            type: object
+            properties:
+                method:
+                    type: string
+                    description: 预签名使用的 HTTP 方法，例如 PUT 或 POST
+                expireSeconds:
+                    type: integer
+                    description: 预签名有效期（秒）
+                    format: int32
+                contentType:
+                    type: string
+                    description: 预签名约束的 Content-Type（可选）
+            description: 预签名选项
+        storage.service.v1.StorageObject:
+            type: object
+            properties:
+                bucketName:
+                    type: string
+                    description: 目标文件桶名称
+                fileDirectory:
+                    example: tenant/1001/user/avatar/
+                    type: string
+                    description: 存储目录（如 'user/1001/avatar/'），服务端会在此目录下生成唯一文件名
+                objectName:
+                    example: user/1001/avatar.jpg
+                    type: string
+                    description: OSS 对象键（完整路径，如 'user/1001/avatar.jpg'）。若未提供，服务端将自动生成。
+            description: 对象存储对象
+        storage.service.v1.UploadFileRequest:
+            type: object
+            properties:
+                storageObject:
+                    $ref: '#/components/schemas/storage.service.v1.StorageObject'
+                file:
+                    type: string
+                    description: 直接上传的文件内容（内联字节）
+                    format: bytes
+                presign:
+                    $ref: '#/components/schemas/storage.service.v1.PresignOption'
+                sourceFileName:
+                    type: string
+                    description: 原文件文件名
+                mime:
+                    type: string
+                    description: 文件的MIME类型
+                size:
+                    type: string
+                    description: 文件大小（字节）
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+        storage.service.v1.UploadFileResponse:
+            type: object
+            properties:
+                objectName:
+                    type: string
+                    description: OSS 对象键
+                presignedUrl:
+                    type: string
+                    description: 预签名上传链接
     responses:
         default:
             description: default kratos response

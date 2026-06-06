@@ -38,6 +38,7 @@ plugin:
 	@go install github.com/envoyproxy/protoc-gen-validate@latest
 	@go install github.com/menta2k/protoc-gen-redact/v3@latest
 	@go install github.com/go-kratos/protoc-gen-typescript-http@latest
+	@flutter pub global activate protoc_plugin
 
 # install cli tools
 cli:
