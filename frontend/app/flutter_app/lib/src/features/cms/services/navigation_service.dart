@@ -14,6 +14,7 @@ import 'package:flutter_app/generated/api/models/site_service_v1_navigation_loca
 import 'package:flutter_app/generated/api/models/site_service_v1_create_navigation_request.dart';
 import 'package:flutter_app/generated/api/models/site_service_v1_list_navigation_response.dart';
 import 'package:flutter_app/generated/api/models/site_service_v1_update_navigation_request.dart';
+import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
 
@@ -158,19 +159,18 @@ class NavigationService extends BaseService {
   // ─── Queries ──────────────────────────────────────────
 
   /// 获取导航列表 Query
-  Query<ListNavigationResponse> listQuery({
-    int? page,
-    int? pageSize,
-    String? orderBy,
-    bool noPaging = true,
-  }) {
+  ///
+  /// [query] 分页查询参数，不传则全量加载
+  Query<ListNavigationResponse> listQuery([PaginationQuery? query]) {
+    final q = query ?? const PaginationQuery();
     return Query<ListNavigationResponse>(
       key: 'navigations',
       queryFn: () => _api.navigationServiceList(
-        page: page,
-        pageSize: pageSize,
-        orderBy: orderBy,
-        noPaging: noPaging,
+        page: q.page,
+        pageSize: q.pageSize,
+        noPaging: q.noPaging,
+        orderBy: q.orderByString,
+        query: q.queryString,
       ),
     );
   }
@@ -224,18 +224,17 @@ class NavigationService extends BaseService {
   // ─── 直接调用方法（非 Mutation，适合简单场景） ─────────
 
   /// 获取导航列表
-  Future<dynamic> list({
-    int? page,
-    int? pageSize,
-    String? orderBy,
-    bool noPaging = true,
-  }) async {
+  ///
+  /// [query] 分页查询参数，不传则全量加载
+  Future<dynamic> list([PaginationQuery? query]) async {
+    final q = query ?? const PaginationQuery();
     try {
       return await _api.navigationServiceList(
-        page: page,
-        pageSize: pageSize,
-        orderBy: orderBy,
-        noPaging: noPaging,
+        page: q.page,
+        pageSize: q.pageSize,
+        noPaging: q.noPaging,
+        orderBy: q.orderByString,
+        query: q.queryString,
       );
     } on DioException catch (e) {
       return handleDioError(e);

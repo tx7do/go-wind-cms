@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/repositories/user_preference_cache.dart';
+import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';

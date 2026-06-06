@@ -11,6 +11,7 @@ import 'package:flutter_app/generated/api/models/content_service_v1_post_transla
 import 'package:flutter_app/generated/api/models/content_service_v1_create_post_request.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_update_post_request.dart';
+import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
 
@@ -32,20 +33,19 @@ class PostService extends BaseService {
 
   // ─── Queries ──────────────────────────────────────────
 
-  /// 获取帖子列表 Query（不分页，全量加载）
-  Query<ListPostResponse> listQuery({
-    int? page,
-    int? pageSize,
-    String? orderBy,
-    bool noPaging = true,
-  }) {
+  /// 获取帖子列表 Query
+  ///
+  /// [query] 分页查询参数，不传则全量加载
+  Query<ListPostResponse> listQuery([PaginationQuery? query]) {
+    final q = query ?? const PaginationQuery();
     return Query<ListPostResponse>(
       key: 'posts',
       queryFn: () => _api.postServiceList(
-        page: page,
-        pageSize: pageSize,
-        orderBy: orderBy,
-        noPaging: noPaging,
+        page: q.page,
+        pageSize: q.pageSize,
+        noPaging: q.noPaging,
+        orderBy: q.orderByString,
+        query: q.queryString,
       ),
     );
   }
@@ -116,41 +116,45 @@ class PostService extends BaseService {
 
   // ─── 直接调用方法（非 Mutation，适合简单场景） ─────────
 
-  /// 获取帖子列表（不分页，全量加载）
-  Future<dynamic> list({
-    int? page,
-    int? pageSize,
-    String? orderBy,
-    bool noPaging = true,
-  }) async {
+  /// 获取帖子列表
+  ///
+  /// [query] 分页查询参数，不传则全量加载
+  Future<dynamic> list([PaginationQuery? query]) async {
+    final q = query ?? const PaginationQuery();
     try {
       return await _api.postServiceList(
-        page: page,
-        pageSize: pageSize,
-        orderBy: orderBy,
-        noPaging: noPaging,
+        page: q.page,
+        pageSize: q.pageSize,
+        noPaging: q.noPaging,
+        orderBy: q.orderByString,
+        query: q.queryString,
       );
     } on DioException catch (e) {
       return handleDioError(e);
     }
   }
 
-  /// 获取帖子分页列表（按页加载）
+  /// 获取帖子分页列表（便捷方法）
   ///
   /// [page] 页码（从 1 开始）
   /// [pageSize] 每页条数
-  /// 返回 ListPostResponse，包含 items 和 total
+  /// [query] 可传入额外的查询条件，page/pageSize 会覆盖
   Future<ListPostResponse?> listPaged({
     required int page,
     int pageSize = 10,
-    String? orderBy,
+    PaginationQuery? query,
   }) async {
+    final q = (query ?? const PaginationQuery()).copyWith(
+      page: page,
+      pageSize: pageSize,
+    );
     try {
       return await _api.postServiceList(
-        page: page,
-        pageSize: pageSize,
-        orderBy: orderBy,
-        noPaging: false,
+        page: q.page,
+        pageSize: q.pageSize,
+        noPaging: q.noPaging,
+        orderBy: q.orderByString,
+        query: q.queryString,
       );
     } on DioException catch (e) {
       handleDioError(e);
