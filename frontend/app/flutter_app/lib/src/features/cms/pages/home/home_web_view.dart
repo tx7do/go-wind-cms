@@ -6,26 +6,22 @@ import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
-import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_cloud.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
 import 'package:flutter_app/generated/api/models/site_service_v1_navigation.dart';
 import 'package:flutter_app/generated/api/models/site_service_v1_navigation_location.dart';
 import 'package:flutter_app/generated/api/models/site_service_v1_list_navigation_response.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_list_comment_response.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
 typedef Tag = ContentServiceV1Tag;
-typedef Comment = CommentServiceV1Comment;
 typedef NavigationLocation = SiteServiceV1NavigationLocation;
 
 /// 首页 - Web/平板端视图
@@ -41,13 +37,11 @@ class _HomeWebViewState extends State<HomeWebView> {
   final _postService = PostService();
   final _categoryService = CategoryService();
   final _tagService = TagService();
-  final _commentService = CommentService();
 
   List<SiteServiceV1Navigation> _navigations = [];
   List<Post> _posts = [];
   List<Category> _categories = [];
   List<Tag> _tags = [];
-  List<Comment> _comments = [];
   bool _isLoading = true;
 
   @override
@@ -62,7 +56,6 @@ class _HomeWebViewState extends State<HomeWebView> {
       _postService.list(),
       _categoryService.list(),
       _tagService.list(),
-      _commentService.list(),
     ]);
 
     if (!mounted) return;
@@ -72,7 +65,6 @@ class _HomeWebViewState extends State<HomeWebView> {
       _posts = (results[1] as ListPostResponse?)?.items ?? [];
       _categories = (results[2] as ListCategoryResponse?)?.items ?? [];
       _tags = (results[3] as ListTagResponse?)?.items ?? [];
-      _comments = (results[4] as ListCommentResponse?)?.items ?? [];
       _isLoading = false;
     });
   }
@@ -101,7 +93,7 @@ class _HomeWebViewState extends State<HomeWebView> {
             title: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: Text(
-                'Wind CMS',
+                'GoWind CMS',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -156,7 +148,7 @@ class _HomeWebViewState extends State<HomeWebView> {
               maxWidth: Breakpoints.webContentMaxWidth,
               padding: const EdgeInsets.symmetric(
                 horizontal: Breakpoints.webContentPadding,
-                vertical: 20,
+                vertical: 28,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,9 +162,9 @@ class _HomeWebViewState extends State<HomeWebView> {
                           posts: _posts.where((p) => p.isFeatured == true).toList(),
                           categories: _categories,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 32),
                         _SectionHeader(title: '最新文章', count: _posts.length),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                         _WebPostGrid(
                           posts: _posts,
                           categories: _categories,
@@ -181,19 +173,20 @@ class _HomeWebViewState extends State<HomeWebView> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 24),
-                  // 右侧固定侧边栏
+                  const SizedBox(width: 40),
+                  // 右侧固定侧边栏（极简：只保留热门标签）
                   SizedBox(
                     width: Breakpoints.webSidebarWidth,
-                    child: _Sidebar(
-                      categories: _categories,
-                      tags: _tags,
-                      comments: _comments,
-                    ),
+                    child: _Sidebar(tags: _tags),
                   ),
                 ],
               ),
             ),
+          ),
+
+          // 页脚
+          SliverToBoxAdapter(
+            child: _Footer(),
           ),
         ],
       ),
@@ -318,7 +311,7 @@ class _WebPostGrid extends StatelessWidget {
               (Breakpoints.webContentMaxWidth * 0.75 -
                   Breakpoints.webSidebarWidth -
                   Breakpoints.webContentPadding * 2 -
-                  24 -
+                  40 -
                   16) /
               2,
           child: PostCard(
@@ -332,17 +325,11 @@ class _WebPostGrid extends StatelessWidget {
   }
 }
 
-/// 右侧边栏
+/// 右侧边栏（极简版：只保留热门标签云）
 class _Sidebar extends StatelessWidget {
-  final List<Category> categories;
   final List<Tag> tags;
-  final List<Comment> comments;
 
-  const _Sidebar({
-    required this.categories,
-    required this.tags,
-    required this.comments,
-  });
+  const _Sidebar({required this.tags});
 
   @override
   Widget build(BuildContext context) {
@@ -351,61 +338,6 @@ class _Sidebar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 分类卡片
-        Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(
-              color: theme.colorScheme.onSurface.withAlpha(
-                (0.06 * 255).round(),
-              ),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.folder_outlined,
-                      size: 18,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '文章分类',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: categories.map((cat) {
-                    final name = (cat.translations ?? []).isNotEmpty
-                        ? (cat.translations ?? []).first.name ?? ''
-                        : '';
-                    return ActionChip(
-                      onPressed: () {},
-                      label: Text(name, style: const TextStyle(fontSize: 13)),
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
         // 标签云
         Card(
           elevation: 0,
@@ -418,91 +350,33 @@ class _Sidebar extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: TagCloud(tags: tags),
           ),
         ),
-        const SizedBox(height: 16),
-
-        // 热门评论
-        Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(
-              color: theme.colorScheme.onSurface.withAlpha(
-                (0.06 * 255).round(),
-              ),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.comment_outlined,
-                      size: 18,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '热门评论',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ...comments
-                    .take(3)
-                    .map(
-                      (comment) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              comment.authorName ?? '',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              comment.content ?? '',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: theme.colorScheme.onSurface.withAlpha(
-                                  160,
-                                ),
-                                height: 1.4,
-                              ),
-                            ),
-                            Divider(
-                              height: 16,
-                              color: theme.colorScheme.onSurface.withAlpha(
-                                (0.06 * 255).round(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-              ],
-            ),
-          ),
-        ),
       ],
+    );
+  }
+}
+
+/// 页脚
+class _Footer extends StatelessWidget {
+  const _Footer();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 32),
+      alignment: Alignment.center,
+      child: Text(
+        '© 2026 Wind CMS  ·  Powered by Flutter',
+        style: TextStyle(
+          fontSize: 12,
+          color: theme.colorScheme.onSurface.withAlpha(80),
+          height: 1.6,
+        ),
+      ),
     );
   }
 }

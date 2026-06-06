@@ -86,15 +86,21 @@ class _PostCardState extends State<PostCard> {
             : Matrix4.identity(),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(_isMobile ? 14.r : 14),
-          boxShadow: _isHovered && !_isMobile
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withAlpha((0.08 * 255).round()),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [],
+          boxShadow: [
+            // 基础轻阴影：让卡片始终有精致的「盒子感」
+            BoxShadow(
+              color: Colors.black.withAlpha((0.03 * 255).round()),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+            // Hover 态：阴影加深 + 上浮
+            if (_isHovered && !_isMobile)
+              BoxShadow(
+                color: Colors.black.withAlpha((0.08 * 255).round()),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+          ],
         ),
         child: Card(
           elevation: 0,
@@ -218,14 +224,14 @@ class _PostCardState extends State<PostCard> {
             height: 1.4,
           ),
         ),
-        SizedBox(height: _isMobile ? 6.h : 6),
+        SizedBox(height: _isMobile ? 8.h : 8),
         Text(
           _summary,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: _isMobile ? 13.sp : 13,
-            color: theme.colorScheme.onSurface.withAlpha(160),
+            color: Colors.grey.shade600,
             height: 1.5,
           ),
         ),

@@ -14,14 +14,14 @@ class Breakpoints {
   /// 平板端最大宽度
   static const double tablet = 1024;
 
-  /// Web 端内容最大宽度
-  static const double webContentMaxWidth = 1200;
+  /// Web 端内容最大宽度（收窄至 1140，大屏幕两侧留白更明显，视觉更高级）
+  static const double webContentMaxWidth = 1140;
 
   /// Web 端侧边栏宽度
-  static const double webSidebarWidth = 280;
+  static const double webSidebarWidth = 260;
 
   /// Web 端内容区间距
-  static const double webContentPadding = 24;
+  static const double webContentPadding = 32;
 
   /// 判断当前是否为手机端
   static bool isMobile(double width) => width < mobile;

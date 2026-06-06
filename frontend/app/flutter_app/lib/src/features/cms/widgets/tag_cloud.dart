@@ -7,25 +7,31 @@ import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 typedef Tag = ContentServiceV1Tag;
 
 /// 热门标签云组件
+///
+/// 右侧侧边栏极简版：统一柔和色调，限制数量，Wrap 错落排列
 class TagCloud extends StatelessWidget {
   final List<Tag> tags;
 
-  const TagCloud({super.key, required this.tags});
+  /// 最大显示标签数量，超出部分隐藏
+  final int maxTags;
+
+  const TagCloud({super.key, required this.tags, this.maxTags = 10});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isMobile = ResponsiveUtils.isMobile(context);
+    final displayTags = tags.take(maxTags).toList();
 
     return Padding(
       padding: isMobile
           ? EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 4.h)
-          : const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          : const EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(bottom: isMobile ? 10.h : 10),
+            padding: EdgeInsets.only(bottom: isMobile ? 10.h : 14),
             child: Row(
               children: [
                 Icon(Icons.local_fire_department,
@@ -44,8 +50,8 @@ class TagCloud extends StatelessWidget {
           ),
           Wrap(
             spacing: isMobile ? 8.w : 8,
-            runSpacing: isMobile ? 8.h : 8,
-            children: tags.map((tag) => _TagChip(tag: tag, isMobile: isMobile)).toList(),
+            runSpacing: isMobile ? 8.h : 10,
+            children: displayTags.map((tag) => _TagChip(tag: tag, isMobile: isMobile)).toList(),
           ),
         ],
       ),
@@ -59,37 +65,37 @@ class _TagChip extends StatelessWidget {
 
   const _TagChip({required this.tag, required this.isMobile});
 
-  Color _parseColor(String? hexColor) {
-    if (hexColor == null) return Colors.grey;
-    try {
-      final hex = hexColor.replaceAll('#', '');
-      return Color(int.parse('FF$hex', radix: 16));
-    } catch (_) {
-      return Colors.grey;
-    }
-  }
+  String get _name => (tag.translations ?? []).isNotEmpty
+      ? tag.translations!.first.name ?? ''
+      : '';
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final tagColor = _parseColor(tag.color);
-
-    return ActionChip(
-      onPressed: () {
+    return InkWell(
+      onTap: () {
         // TODO: Navigate to tag feed page
       },
-      label: Text(
-        '# ${(tag.translations ?? []).isNotEmpty ? tag.translations!.first.name ?? '' : ''}',
-        style: TextStyle(
-          fontSize: isMobile ? 13.sp : 13,
-          color: tagColor,
-          fontWeight: FontWeight.w500,
+      borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 12.w : 12,
+          vertical: isMobile ? 6.h : 6,
+        ),
+        decoration: BoxDecoration(
+          // 统一柔和淡灰色底，不使用五颜六色
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Text(
+          '# $_name',
+          style: TextStyle(
+            fontSize: isMobile ? 13.sp : 13,
+            color: Colors.grey.shade700,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
-      avatar: Icon(Icons.tag, size: isMobile ? 14.sp : 14, color: tagColor),
-      side: BorderSide(color: tagColor.withAlpha((0.3 * 255).round())),
-      backgroundColor: tagColor.withAlpha((0.06 * 255).round()),
-      padding: EdgeInsets.symmetric(horizontal: isMobile ? 4.w : 4, vertical: 0),
     );
   }
 }

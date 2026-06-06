@@ -66,12 +66,12 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
     return Padding(
       padding: isMobile
           ? EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h)
-          : const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          : const EdgeInsets.fromLTRB(0, 12, 0, 4),
       child: Column(
         children: [
           // 轮播图
           SizedBox(
-            height: isMobile ? 180.h : 200,
+            height: isMobile ? 160.h : 180,
             child: PageView.builder(
               controller: _pageController,
               onPageChanged: (index) {
