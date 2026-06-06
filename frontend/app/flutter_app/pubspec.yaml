@@ -169,3 +169,21 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  fonts:
+    - family: Noto Color Emoji
+      fonts:
+        - asset: assets/fonts/NotoColorEmoji-Regular.ttf
+    - family: Noto Sans SC
+      fonts:
+        #        - asset: assets/fonts/NotoSansSC-Bold.ttf
+        #        - asset: assets/fonts/NotoSansSC-Medium.ttf
+        - asset: assets/fonts/NotoSansSC-Regular.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+          style: normal
+
+  assets:
+    - .env
+    - .dev.env
