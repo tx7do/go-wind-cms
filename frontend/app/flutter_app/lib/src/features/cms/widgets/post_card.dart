@@ -236,24 +236,26 @@ class _PostCardState extends State<PostCard> {
   Widget _buildFooter(BuildContext context, ThemeData theme) {
     final tags = _getTags();
 
+    final tagText = tags
+        .take(3)
+        .map((tag) =>
+            '#${(tag.translations ?? []).isNotEmpty ? (tag.translations ?? []).first.name ?? '' : ''}')
+        .join('  ');
+
     return Row(
       children: [
-        ...tags
-            .take(3)
-            .map(
-              (tag) => Padding(
-                padding: EdgeInsets.only(right: _isMobile ? 6.w : 6),
-                child: Text(
-                  '#${(tag.translations ?? []).isNotEmpty ? (tag.translations ?? []).first.name ?? '' : ''}',
-                  style: TextStyle(
-                    fontSize: _isMobile ? 12.sp : 12,
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
+        Expanded(
+          child: Text(
+            tagText,
+            style: TextStyle(
+              fontSize: _isMobile ? 12.sp : 12,
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w400,
             ),
-        const Spacer(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
         _buildStat(
           Icons.comment_outlined,
           '${widget.post.commentCount ?? 0}',

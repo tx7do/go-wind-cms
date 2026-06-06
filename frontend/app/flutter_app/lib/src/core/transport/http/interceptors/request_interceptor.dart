@@ -11,6 +11,11 @@ class RequestInterceptor extends Interceptor {
     options.queryParameters['timestamp'] =
         DateTime.now().millisecondsSinceEpoch;
 
+    // locale 不在此全局注入：
+    // OpenAPI 中只有 Get 单条/GetTranslation 接口接受 locale 参数，
+    // List/Create/Update/Delete 等接口不接受，全局注入会导致无效参数。
+    // locale 由各 service 层的 get()/getQuery() 按需传递。
+
     // 继续请求流程
     return handler.next(options);
   }
