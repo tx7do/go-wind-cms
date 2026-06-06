@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/repositories/user_preference_cache.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
@@ -48,6 +50,18 @@ class _HomeWebViewState extends State<HomeWebView> {
   bool _hasMorePosts = true;
   int _currentPage = 1;
   static const int _pageSize = 10;
+
+  /// 获取当前用户语言偏好，转换为 API 格式 (zh_CN → zh-CN)
+  String? get _currentLocale {
+    try {
+      final lang = GetIt.instance<UserPreferenceCache>().language;
+      if (lang.isEmpty) return null;
+      // zh_CN → zh-CN
+      return lang.replaceAll('_', '-');
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   void initState() {
@@ -161,6 +175,7 @@ class _HomeWebViewState extends State<HomeWebView> {
               ...getFlatNavItems(
                 _navigations,
                 NavigationLocation.header,
+                locale: _currentLocale,
               ).map(
                 (item) => _NavBarLink(item.title ?? '', resolveNavRoute(item) == '/'),
               ),

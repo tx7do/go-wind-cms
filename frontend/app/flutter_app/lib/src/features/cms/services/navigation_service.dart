@@ -95,21 +95,30 @@ bool isExternalLink(NavigationItem item) {
 ///
 /// [navigations] 服务端返回的完整导航列表
 /// [location] 目标位置（HEADER / MOBILE / SIDEBAR / FOOTER）
-/// [locale] 语言代码（可选，空则不过滤）
+/// [locale] 语言代码（可选）。传入后会优先匹配对应语言的导航；
+///   如果该语言没有任何匹配，则 fallback 到 locale 为空的通用导航。
 List<Navigation> filterNavigationsByLocation(
   List<Navigation> navigations,
   NavigationLocation location, {
-  String? locale,
+    String? locale,
 }) {
-  return navigations.where((nav) {
+  final active = navigations.where((nav) {
     if (nav.isActive != true) return false;
     if (nav.location != location) return false;
-    if (locale != null) {
-      final navLocale = nav.locale;
-      if (navLocale != null && navLocale != locale) return false;
-    }
     return true;
   }).toList();
+
+  if (locale == null || locale.isEmpty) {
+    // 未指定 locale，只取通用导航（locale 为 null）
+    return active.where((nav) => nav.locale == null || nav.locale!.isEmpty).toList();
+  }
+
+  // 优先找匹配 locale 的
+  final matched = active.where((nav) => locale == nav.locale).toList();
+  if (matched.isNotEmpty) return matched;
+
+  // fallback 到通用导航（locale 为 null 或空）
+  return active.where((nav) => nav.locale == null || nav.locale!.isEmpty).toList();
 }
 
 /// 获取扁平化的导航项（按 sortOrder 排序）
