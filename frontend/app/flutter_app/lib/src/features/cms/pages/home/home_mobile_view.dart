@@ -72,7 +72,15 @@ class _HomeMobileViewState extends State<HomeMobileView> {
     }
 
     return Scaffold(
-      body: _buildPage(_currentIndex),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        switchInCurve: Curves.easeInOut,
+        switchOutCurve: Curves.easeInOut,
+        child: KeyedSubtree(
+          key: ValueKey(_currentIndex),
+          child: _buildPage(_currentIndex),
+        ),
+      ),
       bottomNavigationBar: AppBottomNavBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: _onNavTap,

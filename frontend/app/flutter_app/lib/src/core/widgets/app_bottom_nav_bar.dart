@@ -63,21 +63,30 @@ class AppBottomNavBar extends StatelessWidget {
       child: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-          child: NavigationBar(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: onDestinationSelected,
-            height: 60.h,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            indicatorColor: theme.colorScheme.primaryContainer,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            destinations: items.map((item) {
-              return NavigationDestination(
-                icon: Icon(item.icon, size: 24.sp),
-                selectedIcon: Icon(item.activeIcon, size: 24.sp),
-                label: item.label,
-              );
-            }).toList(),
+          // 用 Theme 覆盖去掉水波纹
+          child: Theme(
+            data: theme.copyWith(
+              splashFactory: NoSplash.splashFactory,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+            ),
+            child: NavigationBar(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: onDestinationSelected,
+              height: 60.h,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              indicatorColor: theme.colorScheme.primaryContainer,
+              surfaceTintColor: Colors.transparent,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              destinations: items.map((item) {
+                return NavigationDestination(
+                  icon: Icon(item.icon, size: 24.sp),
+                  selectedIcon: Icon(item.activeIcon, size: 24.sp),
+                  label: item.label,
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),
