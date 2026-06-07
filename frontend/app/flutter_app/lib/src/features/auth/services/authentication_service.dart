@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation;
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 import 'package:flutter_app/generated/api/authentication_service/authentication_service_client.dart'
     show AuthenticationServiceClient;
@@ -12,6 +16,7 @@ import 'package:flutter_app/generated/api/models/authentication_service_v1_login
 import 'package:flutter_app/src/core/repositories/user_auth_cache.dart'
     show UserAuthCache;
 
+import 'package:flutter_app/src/core/config/environments.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
 
 export 'package:get_it/get_it.dart';
@@ -74,6 +79,21 @@ class AuthenticationService extends AuthService {
 
   // ─── Mutations ───────────────────────────────────────
 
+  /// AES-CBC 加密密码
+  ///
+  /// 使用 [Environments.aesKey] 作为密钥和 IV（与 Web 端一致），
+  /// 加密模式为 AES-CBC + PKCS7 padding，输出 Base64 字符串。
+  static String _encryptPassword(String password) {
+    final key = Environments.aesKey;
+    final keyBytes = encrypt.Key.fromUtf8(key);
+    final iv = encrypt.IV.fromUtf8(key);
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(keyBytes, mode: encrypt.AESMode.cbc, padding: 'PKCS7'),
+    );
+    final encrypted = encrypter.encrypt(password, iv: iv);
+    return encrypted.base64;
+  }
+
   /// 用户登录 Mutation
   ///
   /// 用法：
@@ -85,10 +105,11 @@ class AuthenticationService extends AuthService {
   Mutation<AuthenticationServiceV1LoginResponse, LoginParams> loginMutation() {
     return Mutation<AuthenticationServiceV1LoginResponse, LoginParams>(
       mutationFn: (params) async {
+        final encryptedPassword = _encryptPassword(params.password);
         final request = AuthenticationServiceV1LoginRequest(
           grantType: AuthenticationServiceV1LoginRequestGrantType.password,
           username: params.username,
-          password: params.password,
+          password: encryptedPassword,
         );
         return _api.authenticationServiceLogin(body: request);
       },

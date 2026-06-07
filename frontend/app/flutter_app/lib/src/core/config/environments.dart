@@ -19,6 +19,9 @@ class Environments {
   /// API基本链接地址
   static String get apiBaseUrl => dotenv.get('API_BASE_URL');
 
+  /// SSE基本链接地址
+  static String get sseUrl => dotenv.get('SSE_URL');
+
   /// 连接超时时间
   static Duration get connectionTimeout =>
       secondStringToDuration(dotenv.get('CONNECTION_TIMEOUT'));
@@ -29,6 +32,9 @@ class Environments {
 
   /// IOS应用ID
   static String get iosAppId => dotenv.get('IOS_APP_ID');
+
+  /// AES密钥
+  static String get aesKey => dotenv.get('AES_KEY');
 
   /// Sentry异常监控DSN
   static String get sentryDSN => dotenv.get('SENTRY_DSN');
