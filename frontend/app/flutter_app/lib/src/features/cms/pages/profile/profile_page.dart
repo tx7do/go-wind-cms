@@ -28,6 +28,12 @@ class ProfilePage extends StatelessWidget {
             elevation: 0,
             backgroundColor: themeData.colorScheme.surface,
             surfaceTintColor: Colors.transparent,
+            leading: !isMobile
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => context.go('/'),
+                  )
+                : null,
             title: Text(
               S.of(context).me,
               style: TextStyle(
