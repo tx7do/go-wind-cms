@@ -29,7 +29,6 @@ class FeaturedCarousel extends StatefulWidget {
 }
 
 class _FeaturedCarouselState extends State<FeaturedCarousel> {
-  final PageController _pageController = PageController();
   int _currentPage = 0;
   Timer? _autoPlayTimer;
 
@@ -42,21 +41,22 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
   @override
   void dispose() {
     _autoPlayTimer?.cancel();
-    _pageController.dispose();
     super.dispose();
   }
 
   void _startAutoPlay() {
     _autoPlayTimer = Timer.periodic(const Duration(seconds: 4), (_) {
-      if (_pageController.hasClients) {
-        final nextPage = (_currentPage + 1) % widget.posts.length;
-        _pageController.animateToPage(
-          nextPage,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      }
+      if (!mounted || widget.posts.isEmpty) return;
+      setState(() {
+        _currentPage = (_currentPage + 1) % widget.posts.length;
+      });
     });
+  }
+
+  /// 用户交互后重启自动播放
+  void _resetAutoPlay() {
+    _autoPlayTimer?.cancel();
+    _startAutoPlay();
   }
 
   @override
@@ -65,6 +65,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
 
     final theme = Theme.of(context);
     final isMobile = ResponsiveUtils.isMobile(context);
+    final post = widget.posts[_currentPage];
 
     return Padding(
       padding: isMobile
@@ -72,19 +73,48 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
           : const EdgeInsets.fromLTRB(0, 12, 0, 4),
       child: Column(
         children: [
-          // 轮播图
+          // 轮播图 - 使用 AnimatedSwitcher 替代 PageView，避免嵌套 Viewport
           SizedBox(
             height: isMobile ? 160.h : 180,
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => _currentPage = index);
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              // 左右滑动/点击切换
+              onTap: () {
+                setState(() {
+                  _currentPage = (_currentPage + 1) % widget.posts.length;
+                });
+                _resetAutoPlay();
               },
-              itemCount: widget.posts.length,
-              itemBuilder: (context, index) {
-                final post = widget.posts[index];
-                return _FeaturedCard(post: post, categories: widget.categories);
+              onHorizontalDragEnd: (details) {
+                if (details.primaryVelocity == null) return;
+                if (details.primaryVelocity! < 0) {
+                  // 左滑 -> 下一页
+                  setState(() {
+                    _currentPage = (_currentPage + 1) % widget.posts.length;
+                  });
+                } else {
+                  // 右滑 -> 上一页
+                  setState(() {
+                    _currentPage = (_currentPage - 1 + widget.posts.length) % widget.posts.length;
+                  });
+                }
+                _resetAutoPlay();
               },
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                switchInCurve: Curves.easeInOut,
+                switchOutCurve: Curves.easeInOut,
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: KeyedSubtree(
+                  key: ValueKey(_currentPage),
+                  child: _FeaturedCard(
+                    post: post,
+                    categories: widget.categories,
+                  ),
+                ),
+              ),
             ),
           ),
           SizedBox(height: isMobile ? 10.h : 10),

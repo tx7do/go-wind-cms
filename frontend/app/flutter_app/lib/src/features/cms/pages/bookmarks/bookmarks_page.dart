@@ -93,82 +93,59 @@ class _BookmarksPageState extends State<BookmarksPage> {
     final crossCount = ResponsiveUtils.postGridColumns(context);
     final bookmarked = _bookmarkedPosts;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            elevation: 0,
-            backgroundColor: theme.colorScheme.surface,
-            surfaceTintColor: Colors.transparent,
-            title: Text(
-              S.of(context).myBookmarks,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    return CustomScrollView(
+      slivers: [
+        if (bookmarked.isEmpty)
+          SliverFillRemaining(child: _buildEmptyState(theme))
+        else ...[
+          SliverToBoxAdapter(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: Breakpoints.webContentMaxWidth,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.bookmark,
+                        size: 18,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        S.of(context).bookmarkedCount(bookmarked.length),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: theme.colorScheme.onSurface.withAlpha(160),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
-          if (bookmarked.isEmpty)
-            SliverFillRemaining(child: _buildEmptyState(theme))
-          else ...[
-            SliverToBoxAdapter(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: Breakpoints.webContentMaxWidth,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.bookmark,
-                          size: 18,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          S.of(context).bookmarkedCount(bookmarked.length),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: theme.colorScheme.onSurface.withAlpha(160),
-                          ),
-                        ),
-                      ],
-                    ),
+          SliverToBoxAdapter(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: Breakpoints.webContentMaxWidth,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _WebPostGrid(
+                    posts: bookmarked,
+                    crossAxisCount: crossCount,
                   ),
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: Breakpoints.webContentMaxWidth,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossCount,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 0.75,
-                      ),
-                      itemCount: bookmarked.length,
-                      itemBuilder: (context, index) {
-                        return PostCard(post: bookmarked[index]);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-          SliverToBoxAdapter(child: const SizedBox(height: 32)),
+          ),
         ],
-      ),
+        SliverToBoxAdapter(child: const SizedBox(height: 32)),
+      ],
     );
   }
 
@@ -253,6 +230,54 @@ class _BookmarksPageState extends State<BookmarksPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Web 端文章网格（避免 GridView viewport hitTest 错误）
+class _WebPostGrid extends StatelessWidget {
+  final List<ContentServiceV1Post> posts;
+  final int crossAxisCount;
+
+  const _WebPostGrid({
+    required this.posts,
+    required this.crossAxisCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const crossAxisSpacing = 16.0;
+        const mainAxisSpacing = 16.0;
+        const childAspectRatio = 1.1;
+        final availableWidth = constraints.maxWidth - crossAxisSpacing * (crossAxisCount - 1);
+        final childWidth = availableWidth / crossAxisCount;
+        final childHeight = childWidth / childAspectRatio;
+
+        final rows = <Widget>[];
+        for (var i = 0; i < posts.length; i += crossAxisCount) {
+          final rowChildren = <Widget>[];
+          for (var j = 0; j < crossAxisCount && i + j < posts.length; j++) {
+            rowChildren.add(
+              SizedBox(
+                width: childWidth,
+                height: childHeight,
+                child: PostCard(post: posts[i + j]),
+              ),
+            );
+            if (j < crossAxisCount - 1 && i + j + 1 < posts.length) {
+              rowChildren.add(const SizedBox(width: crossAxisSpacing));
+            }
+          }
+          rows.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowChildren));
+          if (i + crossAxisCount < posts.length) {
+            rows.add(const SizedBox(height: mainAxisSpacing));
+          }
+        }
+
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows);
+      },
     );
   }
 }

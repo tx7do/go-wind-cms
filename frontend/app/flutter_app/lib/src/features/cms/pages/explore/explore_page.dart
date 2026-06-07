@@ -128,100 +128,87 @@ class _ExplorePageState extends State<ExplorePage> {
     final filteredPosts = _filteredPosts;
     final crossCount = ResponsiveUtils.postGridColumns(context);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            elevation: 0,
-            backgroundColor: theme.colorScheme.surface,
-            surfaceTintColor: Colors.transparent,
-            title: Text(
-              S.of(context).discover,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: Breakpoints.webContentMaxWidth,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        S.of(context).browseCategories,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.onSurface,
-                        ),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: Breakpoints.webContentMaxWidth,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      S.of(context).browseCategories,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
                       ),
-                      const SizedBox(height: 12),
-                      _CategoryGrid(
-                        categories: categories,
-                        crossAxisCount: ResponsiveUtils.categoryGridColumns(
-                          context,
-                        ),
-                        selectedCategory: _selectedCategory,
-                        onSelect: (cat) {
-                          setState(() {
-                            _selectedCategory = _selectedCategory?.id == cat.id
-                                ? null
-                                : cat;
-                          });
-                        },
+                    ),
+                    const SizedBox(height: 12),
+                    _CategoryGrid(
+                      categories: categories,
+                      crossAxisCount: ResponsiveUtils.categoryGridColumns(
+                        context,
                       ),
-                      const SizedBox(height: 24),
-                      Text(
-                        S.of(context).hotTags,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                      selectedCategory: _selectedCategory,
+                      onSelect: (cat) {
+                        setState(() {
+                          _selectedCategory = _selectedCategory?.id == cat.id
+                              ? null
+                              : cat;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      S.of(context).hotTags,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
                       ),
-                      const SizedBox(height: 12),
-                      _TagWrap(tags: _tags),
-                      const SizedBox(height: 24),
-                      _SectionRow(
-                        title: _selectedCategory == null
-                            ? S.of(context).allPosts
-                            : getCategoryName(_selectedCategory),
-                        count: filteredPosts.length,
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 12),
+                    _TagWrap(tags: _tags),
+                    const SizedBox(height: 24),
+                    _SectionRow(
+                      title: _selectedCategory == null
+                          ? S.of(context).allPosts
+                          : getCategoryName(_selectedCategory),
+                      count: filteredPosts.length,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ),
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: Breakpoints.webContentMaxWidth,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: _WebPostGrid(
-                    posts: filteredPosts,
-                    categories: _categories,
-                    tags: _tags,
-                    crossAxisCount: crossCount,
-                  ),
+        ),
+        SliverToBoxAdapter(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: Breakpoints.webContentMaxWidth,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: _WebPostGrid(
+                  posts: filteredPosts,
+                  categories: _categories,
+                  tags: _tags,
+                  crossAxisCount: crossCount,
                 ),
               ),
             ),
           ),
-          SliverToBoxAdapter(child: const SizedBox(height: 32)),
-        ],
-      ),
+        ),
+        SliverToBoxAdapter(child: const SizedBox(height: 32)),
+      ],
     );
   }
 
@@ -556,19 +543,39 @@ class _WebPostGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.75,
-      ),
-      itemCount: posts.length,
-      itemBuilder: (context, index) {
-        final post = posts[index];
-        return PostCard(post: post, categories: categories, tags: tags);
+    // 使用 LayoutBuilder + Row/Column 布局替代 GridView，
+    // 避免 Web 端 viewport hitTestChildren null 错误
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisSpacing = 16.0;
+        final mainAxisSpacing = 16.0;
+        final childAspectRatio = 1.1;
+        final availableWidth = constraints.maxWidth - crossAxisSpacing * (crossAxisCount - 1);
+        final childWidth = availableWidth / crossAxisCount;
+        final childHeight = childWidth / childAspectRatio;
+
+        final rows = <Widget>[];
+        for (var i = 0; i < posts.length; i += crossAxisCount) {
+          final rowChildren = <Widget>[];
+          for (var j = 0; j < crossAxisCount && i + j < posts.length; j++) {
+            rowChildren.add(
+              SizedBox(
+                width: childWidth,
+                height: childHeight,
+                child: PostCard(post: posts[i + j], categories: categories, tags: tags),
+              ),
+            );
+            if (j < crossAxisCount - 1 && i + j + 1 < posts.length) {
+              rowChildren.add(SizedBox(width: crossAxisSpacing));
+            }
+          }
+          rows.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowChildren));
+          if (i + crossAxisCount < posts.length) {
+            rows.add(SizedBox(height: mainAxisSpacing));
+          }
+        }
+
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows);
       },
     );
   }

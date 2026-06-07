@@ -155,7 +155,10 @@ class _PostCardState extends State<PostCard> {
                   ],
                   _buildHeader(context, theme),
                   SizedBox(height: _isMobile ? 10.h : 10),
-                  _buildContent(context, theme),
+                  // 使用 Flexible 允许内容区域收缩，防止溢出
+                  Flexible(
+                    child: _buildContent(context, theme),
+                  ),
                   SizedBox(height: _isMobile ? 12.h : 12),
                   _buildFooter(context, theme),
                 ],
@@ -238,6 +241,7 @@ class _PostCardState extends State<PostCard> {
   Widget _buildContent(BuildContext context, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           _title,
@@ -247,10 +251,10 @@ class _PostCardState extends State<PostCard> {
             fontSize: _isMobile ? 16.sp : 16,
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface,
-            height: 1.4,
+            height: 1.3,
           ),
         ),
-        SizedBox(height: _isMobile ? 8.h : 8),
+        SizedBox(height: _isMobile ? 6.h : 6),
         Text(
           _summary,
           maxLines: 2,
@@ -258,7 +262,7 @@ class _PostCardState extends State<PostCard> {
           style: TextStyle(
             fontSize: _isMobile ? 13.sp : 13,
             color: Colors.grey.shade600,
-            height: 1.5,
+            height: 1.4,
           ),
         ),
       ],

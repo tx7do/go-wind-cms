@@ -52,6 +52,61 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
     final isMobile = ResponsiveUtils.isMobile(context);
     final loc = S.of(context);
 
+    final body = _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : _comments.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.comment_outlined,
+                      size: 56,
+                      color: theme.colorScheme.onSurface.withAlpha(60),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      loc.noCommentsYet,
+                      style: TextStyle(
+                        fontSize: isMobile ? 15.sp : 15,
+                        color: theme.colorScheme.onSurface.withAlpha(120),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: _loadData,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: ListView.separated(
+                      padding: EdgeInsets.all(isMobile ? 16.w : 24),
+                      itemCount: _comments.length,
+                      separatorBuilder: (_, __) => Divider(
+                        height: isMobile ? 24.h : 24,
+                        color: theme.colorScheme.onSurface.withAlpha(30),
+                      ),
+                      itemBuilder: (context, index) {
+                        return _CommentCard(
+                          comment: _comments[index],
+                          isMobile: isMobile,
+                          onTap: () {
+                            final objectId = _comments[index].objectId;
+                            if (objectId != null) {
+                              context.push('/post/$objectId');
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              );
+
+    // Web 端由 WebShellLayout 提供 Scaffold
+    if (!isMobile) return body;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -62,64 +117,13 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
         title: Text(
           loc.myComments,
           style: TextStyle(
-            fontSize: isMobile ? 18.sp : 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _comments.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.comment_outlined,
-                        size: 56,
-                        color: theme.colorScheme.onSurface.withAlpha(60),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        loc.noCommentsYet,
-                        style: TextStyle(
-                          fontSize: isMobile ? 15.sp : 15,
-                          color: theme.colorScheme.onSurface.withAlpha(120),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadData,
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 600),
-                      child: ListView.separated(
-                        padding: EdgeInsets.all(isMobile ? 16.w : 24),
-                        itemCount: _comments.length,
-                        separatorBuilder: (_, __) => Divider(
-                          height: isMobile ? 24.h : 24,
-                          color: theme.colorScheme.onSurface.withAlpha(30),
-                        ),
-                        itemBuilder: (context, index) {
-                          return _CommentCard(
-                            comment: _comments[index],
-                            isMobile: isMobile,
-                            onTap: () {
-                              // 跳转到评论所属的文章详情
-                              final objectId = _comments[index].objectId;
-                              if (objectId != null) {
-                                context.push('/post/$objectId');
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
+      body: body,
     );
   }
 }

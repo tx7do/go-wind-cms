@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 
@@ -28,6 +27,24 @@ class AboutPage extends StatelessWidget {
     required bool isMobile,
   }) {
     final s = S.of(context);
+    final body = Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: isMobile ? double.infinity : 720,
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 20 : 48,
+            vertical: 40,
+          ),
+          child: _buildStaticContent(theme, s, isMobile: isMobile),
+        ),
+      ),
+    );
+
+    // Web 端由 WebShellLayout 提供 Scaffold
+    if (!isMobile) return body;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -37,20 +54,7 @@ class AboutPage extends StatelessWidget {
         leading: const AppBackButton(),
         title: Text(s.about),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: isMobile ? double.infinity : 720,
-          ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 20 : 48,
-              vertical: 40,
-            ),
-            child: _buildStaticContent(theme, s, isMobile: isMobile),
-          ),
-        ),
-      ),
+      body: body,
     );
   }
 

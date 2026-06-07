@@ -30,6 +30,78 @@ class SettingsPage extends StatelessWidget {
     final isMobile = ResponsiveUtils.isMobile(context);
     final themeData = Theme.of(context);
 
+    final body = Theme(
+      data: themeData.copyWith(
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+      ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(isMobile ? 16.w : 24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 外观设置卡片
+                Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(isMobile ? 16.r : 16),
+                  ),
+                  color: themeData.colorScheme.surface,
+                  child: Padding(
+                    padding: EdgeInsets.all(isMobile ? 16.w : 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 区标题
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.palette_outlined,
+                              size: 18,
+                              color: themeData.colorScheme.primary,
+                            ),
+                            SizedBox(width: isMobile ? 8.w : 8),
+                            Text(
+                              S.of(context).appearance,
+                              style: TextStyle(
+                                fontSize: isMobile ? 15.sp : 15,
+                                fontWeight: FontWeight.w600,
+                                color: themeData.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: isMobile ? 16.h : 16),
+
+                        // 主题色
+                        _buildThemeColorSection(context, isMobile),
+                        SizedBox(height: isMobile ? 20.h : 20),
+
+                        // 深色模式
+                        _buildThemeModeSection(context, isMobile),
+                        SizedBox(height: isMobile ? 20.h : 20),
+
+                        // 语言切换
+                        _buildLanguageSection(context, isMobile),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Web 端由 WebShellLayout 提供 Scaffold
+    if (!isMobile) return body;
+
     return Scaffold(
       backgroundColor: themeData.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -40,80 +112,13 @@ class SettingsPage extends StatelessWidget {
         title: Text(
           S.of(context).settings,
           style: TextStyle(
-            fontSize: isMobile ? 18.sp : 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
       ),
-      body: Theme(
-        data: themeData.copyWith(
-          splashFactory: NoSplash.splashFactory,
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-        ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(isMobile ? 16.w : 24),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 外观设置卡片
-                  Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(isMobile ? 16.r : 16),
-                    ),
-                    color: themeData.colorScheme.surface,
-                    child: Padding(
-                      padding: EdgeInsets.all(isMobile ? 16.w : 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 区标题
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.palette_outlined,
-                                size: 18,
-                                color: themeData.colorScheme.primary,
-                              ),
-                              SizedBox(width: isMobile ? 8.w : 8),
-                              Text(
-                                S.of(context).appearance,
-                                style: TextStyle(
-                                  fontSize: isMobile ? 15.sp : 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: themeData.colorScheme.onSurface,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: isMobile ? 16.h : 16),
-
-                          // 主题色
-                          _buildThemeColorSection(context, isMobile),
-                          SizedBox(height: isMobile ? 20.h : 20),
-
-                          // 深色模式
-                          _buildThemeModeSection(context, isMobile),
-                          SizedBox(height: isMobile ? 20.h : 20),
-
-                          // 语言切换
-                          _buildLanguageSection(context, isMobile),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      body: body,
     );
   }
 

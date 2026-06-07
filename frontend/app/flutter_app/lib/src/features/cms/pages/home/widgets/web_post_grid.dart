@@ -26,19 +26,52 @@ class WebPostGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.75,
-      ),
-      itemCount: posts.length,
-      itemBuilder: (context, index) {
-        final post = posts[index];
-        return PostCard(post: post, categories: categories, tags: tags);
+    // 使用 LayoutBuilder + Row/Column 布局替代 GridView，
+    // 避免 Web 端 viewport hitTestChildren null 错误
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisSpacing = 16.0;
+        final mainAxisSpacing = 16.0;
+        final childAspectRatio = 1.1;
+        final crossAxisCount = 2;
+        final availableWidth = constraints.maxWidth - crossAxisSpacing * (crossAxisCount - 1);
+        final childWidth = availableWidth / crossAxisCount;
+        final childHeight = childWidth / childAspectRatio;
+
+        final rows = <Widget>[];
+        for (var i = 0; i < posts.length; i += crossAxisCount) {
+          final rowChildren = <Widget>[];
+          for (var j = 0; j < crossAxisCount && i + j < posts.length; j++) {
+            rowChildren.add(
+              SizedBox(
+                width: childWidth,
+                height: childHeight,
+                child: PostCard(
+                  post: posts[i + j],
+                  categories: categories,
+                  tags: tags,
+                ),
+              ),
+            );
+            if (j < crossAxisCount - 1 && i + j + 1 < posts.length) {
+              rowChildren.add(SizedBox(width: crossAxisSpacing));
+            }
+          }
+          rows.add(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: rowChildren,
+            ),
+          );
+          if (i + crossAxisCount < posts.length) {
+            rows.add(SizedBox(height: mainAxisSpacing));
+          }
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: rows,
+        );
       },
     );
   }

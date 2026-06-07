@@ -9,7 +9,17 @@ A CMS Flutter project.
 - `flutter --version` 查看Flutter的版本信息
 - `flutter build apk` 打包安卓包
 - `flutter build apk --target-platform android-arm,android-arm64` 指定编译目标打包Android的APK包
+- `flutter build appbundle` 打包安卓 AAB 包（Google Play 上架用）
 - `flutter build ios` 打包苹果ipa
+- `flutter build ios --release --no-codesign` 打包iOS但不签名（用于测试）
+- `flutter build macos` 打包 macOS 应用
+- `flutter build macos --release` 打包 macOS Release 版本
+- `flutter build windows` 打包 Windows 应用（.exe）
+- `flutter build windows --release` 打包 Windows Release 版本
+- `flutter build linux` 打包 Linux 应用
+- `flutter build web` 打包 Web 应用
+- `flutter build web --release --web-renderer canvaskit` 打包 Web（CanvasKit 渲染器）
+- `flutter build web --release --web-renderer html` 打包 Web（HTML 渲染器）
 - `flutter run` 运行项目 默认`--debug`
 - `flutter run --profile` 运行线上测试包
 - `flutter run --release` 运行线上包

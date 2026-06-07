@@ -30,6 +30,24 @@ class LegalPage extends StatelessWidget {
     required bool isMobile,
   }) {
     final s = S.of(ctx);
+    final body = Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: isMobile ? double.infinity : 720,
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 20 : 48,
+            vertical: 32,
+          ),
+          child: _buildContent(theme, s),
+        ),
+      ),
+    );
+
+    // Web 端由 WebShellLayout 提供 Scaffold
+    if (!isMobile) return body;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -39,20 +57,7 @@ class LegalPage extends StatelessWidget {
         leading: const AppBackButton(),
         title: Text(_getTitle(s)),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: isMobile ? double.infinity : 720,
-          ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 20 : 48,
-              vertical: 32,
-            ),
-            child: _buildContent(theme, s),
-          ),
-        ),
-      ),
+      body: body,
     );
   }
 

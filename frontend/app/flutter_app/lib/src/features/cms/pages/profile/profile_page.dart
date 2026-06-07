@@ -20,34 +20,23 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: themeData.scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            pinned: true,
-            floating: true,
-            elevation: 0,
-            backgroundColor: themeData.colorScheme.surface,
-            surfaceTintColor: Colors.transparent,
-            leading: !isMobile
-                ? IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      if (context.canPop()) {
-                        context.pop();
-                      } else {
-                        // PC端无法 pop 时，回到首页
-                        context.go('/');
-                      }
-                    },
-                  )
-                : null,
-            title: Text(
-              S.of(context).me,
-              style: TextStyle(
-                fontSize: isMobile ? 22.sp : 22,
-                fontWeight: FontWeight.bold,
-                color: themeData.colorScheme.onSurface,
+          // 移动端显示标题栏，Web端由 Shell 提供顶部导航
+          if (isMobile)
+            SliverAppBar(
+              pinned: true,
+              floating: true,
+              elevation: 0,
+              backgroundColor: themeData.colorScheme.surface,
+              surfaceTintColor: Colors.transparent,
+              title: Text(
+                S.of(context).me,
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.bold,
+                  color: themeData.colorScheme.onSurface,
+                ),
               ),
             ),
-          ),
 
           // 用户信息卡片
           SliverToBoxAdapter(
