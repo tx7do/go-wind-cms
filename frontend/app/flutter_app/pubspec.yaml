@@ -117,6 +117,8 @@ dependencies:
   flutter_easyloading: ^3.0.5
   jiffy: ^6.4.5
   retrofit: ^4.9.2
+  flutter_markdown: ^0.7.7+1
+  flutter_widget_from_html: ^0.17.2
 
 dev_dependencies:
   flutter_test:

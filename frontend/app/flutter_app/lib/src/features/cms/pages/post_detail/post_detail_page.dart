@@ -16,6 +16,7 @@ import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
+import 'package:flutter_app/src/features/cms/widgets/content_viewer.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -491,14 +492,11 @@ class _PostContent extends StatelessWidget {
             ),
           ),
           SizedBox(height: isMobile ? 16.h : 16),
-          // 正文
-          Text(
-            _content,
-            style: TextStyle(
-              fontSize: isMobile ? 15.sp : 15,
-              color: theme.colorScheme.onSurface,
-              height: 1.8,
-            ),
+          // 正文 — 使用 ContentViewer 根据 editorType 自适应渲染
+          ContentViewer(
+            content: _content,
+            editorType: post.editorType,
+            isMobile: isMobile,
           ),
         ],
       ),
