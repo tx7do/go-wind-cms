@@ -177,8 +177,54 @@ class _PostDetailPageState extends State<PostDetailPage> {
       ],
     );
 
-    // Web 端由 WebShellLayout 提供 Scaffold，不再嵌套 Scaffold
-    if (!isMobile) return body;
+    // Web 端：在内容顶部嵌入操作栏（返回 + 分享 + 收藏）
+    if (!isMobile) {
+      return Column(
+        children: [
+          // Web 端轻量操作栏
+          Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: theme.colorScheme.onSurface.withAlpha(15),
+                  width: 1,
+                ),
+              ),
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: Breakpoints.webContentMaxWidth),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      AppBackButton(color: theme.colorScheme.onSurface),
+                      const Spacer(),
+                      IconButton(
+                        icon: Icon(Icons.share_outlined, size: 20, color: theme.colorScheme.onSurface.withAlpha(150)),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.bookmark_border, size: 20, color: theme.colorScheme.onSurface.withAlpha(150)),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(child: _buildWebBody(post, commentCount)),
+          CommentInputBar(
+            isMobile: false,
+            replyTo: _replyTo,
+            onReplyChanged: (c) => setState(() => _replyTo = c),
+            onSend: _sendComment,
+          ),
+        ],
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
