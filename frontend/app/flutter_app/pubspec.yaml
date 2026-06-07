@@ -117,6 +117,8 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_easyloading: ^3.0.5
   jiffy: ^6.4.5
+  flutter_native_splash: ^2.4.6
+
   retrofit: ^4.9.2
   flutter_markdown: ^0.7.7+1
   flutter_widget_from_html: ^0.17.2
@@ -145,6 +147,17 @@ dev_dependencies:
   retrofit_generator: ^10.2.1
 
 # The following section is specific to Flutter packages.
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#121212"
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#121212"
+  android: true
+  ios: true
+  web: true
+  fullscreen: true
+
 flutter:
 
   generate: true
