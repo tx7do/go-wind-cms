@@ -14,7 +14,10 @@ import 'package:flutter_app/generated/api/models/site_service_v1_navigation_loca
 
 /// 首页 - 手机端视图（带底部导航，动态加载）
 class HomeMobileView extends StatefulWidget {
-  const HomeMobileView({super.key});
+  /// 初始显示的路由（如从 /profile 切回时自动定位到对应 tab）
+  final String? initialRoute;
+
+  const HomeMobileView({super.key, this.initialRoute});
 
   @override
   State<HomeMobileView> createState() => _HomeMobileViewState();
@@ -62,6 +65,11 @@ class _HomeMobileViewState extends State<HomeMobileView> {
           .toList();
       _isLoading = false;
     });
+
+    // 初始路由同步
+    if (widget.initialRoute != null) {
+      syncTabFromRoute(widget.initialRoute!);
+    }
   }
 
   @override
@@ -92,6 +100,18 @@ class _HomeMobileViewState extends State<HomeMobileView> {
   void _onNavTap(int index) {
     if (index == _currentIndex) return;
     setState(() => _currentIndex = index);
+  }
+
+  /// 根据当前路由路径自动切换到对应的 tab
+  ///
+  /// 从路由 builder 传入 [initialRoute]，安全地匹配 tab
+  void syncTabFromRoute(String route) {
+    for (int i = 0; i < _navItems.length; i++) {
+      if (_navItems[i].route == route && i != _currentIndex) {
+        setState(() => _currentIndex = i);
+        return;
+      }
+    }
   }
 
   Widget _buildPage(int index) {

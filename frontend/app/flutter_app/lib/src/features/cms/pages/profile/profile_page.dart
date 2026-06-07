@@ -270,11 +270,17 @@ class _AppearanceSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
       ),
       color: themeData.colorScheme.surface,
-      child: Padding(
-        padding: EdgeInsets.all(isMobile ? 16.w : 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      child: Theme(
+        data: themeData.copyWith(
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(isMobile ? 16.w : 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // 区标题
             Row(
               children: [
@@ -385,6 +391,7 @@ class _AppearanceSection extends StatelessWidget {
           ],
         ),
       ),
+      ),
     );
   }
 }
@@ -406,22 +413,58 @@ class _SettingRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
+
+    // Mobile: 上下布局避免 SegmentedButton 溢出
+    if (isMobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                size: 20.sp,
+                color: themeData.colorScheme.onSurface.withAlpha(180),
+              ),
+              SizedBox(width: 10.w),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: themeData.colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          SizedBox(
+            width: double.infinity,
+            child: trailing,
+          ),
+        ],
+      );
+    }
+
+    // Web: 横向布局，trailing 用 Flexible 允许压缩
     return Row(
       children: [
         Icon(
           icon,
-          size: isMobile ? 20.sp : 20,
+          size: 20,
           color: themeData.colorScheme.onSurface.withAlpha(180),
         ),
-        SizedBox(width: isMobile ? 10.w : 10),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: isMobile ? 14.sp : 14,
-            color: themeData.colorScheme.onSurface,
+        const SizedBox(width: 10),
+        Flexible(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              color: themeData.colorScheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        const Spacer(),
+        const SizedBox(width: 10),
         Flexible(child: trailing),
       ],
     );
