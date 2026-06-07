@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
 /// 文章标签展示组件
 ///
@@ -28,35 +29,6 @@ class PostTags extends StatelessWidget {
         .toList();
   }
 
-  String _tagName(ContentServiceV1Tag tag) {
-    return (tag.translations ?? []).isNotEmpty
-        ? (tag.translations ?? []).first.name ?? ''
-        : '';
-  }
-
-  Widget _buildTagList(List<ContentServiceV1Tag> tags) {
-    return Padding(
-      padding: asSliver
-          ? EdgeInsets.fromLTRB(isMobile ? 20.w : 0, 8, isMobile ? 20.w : 0, 0)
-          : const EdgeInsets.fromLTRB(0, 8, 0, 0),
-      child: Wrap(
-        spacing: isMobile ? 8.w : 8,
-        runSpacing: isMobile ? 6.h : 6,
-        children: tags.map((tag) {
-          return ActionChip(
-            onPressed: () {},
-            label: Text(
-              '# ${_tagName(tag)}',
-              style: TextStyle(fontSize: isMobile ? 12.sp : 12),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: isMobile ? 4.w : 4),
-            visualDensity: VisualDensity.compact,
-          );
-        }).toList(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final tags = _matchedTags;
@@ -66,7 +38,19 @@ class PostTags extends StatelessWidget {
           : const SizedBox.shrink();
     }
 
-    final content = _buildTagList(tags);
+    final content = Padding(
+      padding: asSliver
+          ? EdgeInsets.fromLTRB(isMobile ? 20.w : 0, 8, isMobile ? 20.w : 0, 0)
+          : const EdgeInsets.fromLTRB(0, 8, 0, 0),
+      child: Wrap(
+        spacing: isMobile ? 8.w : 8,
+        runSpacing: isMobile ? 6.h : 6,
+        children: tags
+            .map((tag) => TagChip(tag: tag, isMobile: isMobile, compact: true))
+            .toList(),
+      ),
+    );
+
     return asSliver ? SliverToBoxAdapter(child: content) : content;
   }
 }

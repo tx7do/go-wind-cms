@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
-import 'package:flutter_app/src/core/utils/translation_helpers.dart';
+import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
-typedef Tag = ContentServiceV1Tag;
 
 /// 标签列表页
 ///
@@ -117,10 +114,10 @@ class _TagListPageState extends State<TagListPage> {
               spacing: 10,
               runSpacing: 10,
               children: _tags.map((tag) {
-                return _TagChip(
+                return TagChip(
                   tag: tag,
                   isMobile: false,
-                  onTap: () => _navigateToPosts(tag),
+                  showPostCount: true,
                 );
               }).toList(),
             ),
@@ -135,84 +132,12 @@ class _TagListPageState extends State<TagListPage> {
         spacing: 8.w,
         runSpacing: 8.h,
         children: _tags.map((tag) {
-          return _TagChip(
+          return TagChip(
             tag: tag,
             isMobile: true,
-            onTap: () => _navigateToPosts(tag),
+            showPostCount: true,
           );
         }).toList(),
-      ),
-    );
-  }
-
-  void _navigateToPosts(Tag tag) {
-    if (tag.id != null) {
-      context.go('/posts?tagId=${tag.id}');
-    }
-  }
-}
-
-class _TagChip extends StatefulWidget {
-  final Tag tag;
-  final bool isMobile;
-  final VoidCallback onTap;
-
-  const _TagChip({
-    required this.tag,
-    required this.isMobile,
-    required this.onTap,
-  });
-
-  @override
-  State<_TagChip> createState() => _TagChipState();
-}
-
-class _TagChipState extends State<_TagChip> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final name = getTagName(widget.tag);
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: ActionChip(
-        onPressed: widget.onTap,
-        backgroundColor: _isHovered
-            ? theme.colorScheme.primaryContainer.withAlpha(120)
-            : theme.colorScheme.surfaceContainerLow,
-        side: BorderSide(
-          color: theme.colorScheme.onSurface.withAlpha((0.08 * 255).round()),
-        ),
-        labelPadding: EdgeInsets.symmetric(
-          horizontal: widget.isMobile ? 4.w : 6,
-          vertical: widget.isMobile ? 2.h : 2,
-        ),
-        label: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '# $name',
-              style: TextStyle(
-                fontSize: widget.isMobile ? 14.sp : 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (widget.tag.postCount != null && widget.tag.postCount! > 0) ...[
-              SizedBox(width: widget.isMobile ? 4.w : 4),
-              Text(
-                '(${widget.tag.postCount})',
-                style: TextStyle(
-                  fontSize: widget.isMobile ? 12.sp : 12,
-                  color: theme.colorScheme.onSurface.withAlpha(140),
-                ),
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }

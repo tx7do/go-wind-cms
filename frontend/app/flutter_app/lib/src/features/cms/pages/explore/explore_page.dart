@@ -16,6 +16,7 @@ import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
+import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -488,11 +489,7 @@ class _TagWrap extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: tags.map((tag) {
-        final name = getTagName(tag);
-        return ActionChip(
-          onPressed: () {},
-          label: Text('# $name', style: const TextStyle(fontSize: 13)),
-        );
+        return TagChip(tag: tag, isMobile: false);
       }).toList(),
     );
   }

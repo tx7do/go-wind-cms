@@ -10,6 +10,7 @@ import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
+import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
 /// 搜索页
 class SearchPage extends StatefulWidget {
@@ -273,15 +274,10 @@ class _SearchPageState extends State<SearchPage> {
                     spacing: 8,
                     runSpacing: 8,
                     children: filteredTags.map((tag) {
-                      final name = (tag.translations ?? []).isNotEmpty
-                          ? (tag.translations ?? []).first.name ?? ''
-                          : '';
-                      return ActionChip(
-                        onPressed: () {},
-                        label: Text(
-                          '# $name (${tag.postCount})',
-                          style: const TextStyle(fontSize: 13),
-                        ),
+                      return TagChip(
+                        tag: tag,
+                        isMobile: isMobile,
+                        showPostCount: true,
                       );
                     }).toList(),
                   ),
