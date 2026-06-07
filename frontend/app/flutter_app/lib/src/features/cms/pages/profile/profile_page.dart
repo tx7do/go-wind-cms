@@ -110,89 +110,95 @@ class _UserProfileCardState extends State<_UserProfileCard> {
     final themeData = Theme.of(context);
     final loc = S.of(context);
     final isMobile = widget.isMobile;
-    final hasLogin = GetIt.instance<UserAuthCache>().hasLogin;
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
-      ),
-      color: themeData.colorScheme.surface,
-      child: Padding(
-        padding: EdgeInsets.all(isMobile ? 20.w : 20),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: isMobile ? 32.r : 32,
-              backgroundColor: themeData.colorScheme.primaryContainer,
-              child: Icon(
-                Icons.person,
-                size: isMobile ? 32.sp : 32,
-                color: themeData.colorScheme.onSurface,
-              ),
-            ),
-            SizedBox(width: isMobile ? 16.w : 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    hasLogin ? loc.appName : loc.guestUser,
-                    style: TextStyle(
-                      fontSize: isMobile ? 18.sp : 18,
-                      fontWeight: FontWeight.bold,
-                      color: themeData.colorScheme.onSurface,
+    return ValueListenableBuilder<bool>(
+      valueListenable: GetIt.instance<UserAuthCache>().loginStateNotifier,
+      builder: (context, hasLogin, _) {
+        return Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
+          ),
+          color: themeData.colorScheme.surface,
+          child: Padding(
+            padding: EdgeInsets.all(isMobile ? 20.w : 20),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: isMobile ? 32.r : 32,
+                  backgroundColor: themeData.colorScheme.primaryContainer,
+                  child: Icon(
+                    Icons.person,
+                    size: isMobile ? 32.sp : 32,
+                    color: themeData.colorScheme.onSurface,
+                  ),
+                ),
+                SizedBox(width: isMobile ? 16.w : 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        hasLogin ? loc.appName : loc.guestUser,
+                        style: TextStyle(
+                          fontSize: isMobile ? 18.sp : 18,
+                          fontWeight: FontWeight.bold,
+                          color: themeData.colorScheme.onSurface,
+                        ),
+                      ),
+                      SizedBox(height: isMobile ? 4.h : 4),
+                      Text(
+                        hasLogin ? loc.welcomeBack : loc.loginForMore,
+                        style: TextStyle(
+                          fontSize: isMobile ? 13.sp : 13,
+                          color: themeData.colorScheme.onSurface.withAlpha(140),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (hasLogin)
+                  OutlinedButton(
+                    onPressed: () => _handleLogout(context),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 20.w : 20,
+                        vertical: isMobile ? 8.h : 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(isMobile ? 20.r : 20),
+                      ),
+                    ),
+                    child: Text(
+                      loc.logout,
+                      style: TextStyle(fontSize: isMobile ? 14.sp : 14),
+                    ),
+                  )
+                else
+                  OutlinedButton(
+                    onPressed: () => context.go('/login'),
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 20.w : 20,
+                        vertical: isMobile ? 8.h : 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(isMobile ? 20.r : 20),
+                      ),
+                    ),
+                    child: Text(
+                      loc.login,
+                      style: TextStyle(fontSize: isMobile ? 14.sp : 14),
                     ),
                   ),
-                  SizedBox(height: isMobile ? 4.h : 4),
-                  Text(
-                    hasLogin ? loc.welcomeBack : loc.loginForMore,
-                    style: TextStyle(
-                      fontSize: isMobile ? 13.sp : 13,
-                      color: themeData.colorScheme.onSurface.withAlpha(140),
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
-            if (hasLogin)
-              OutlinedButton(
-                onPressed: () => _handleLogout(context),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 20.w : 20,
-                    vertical: isMobile ? 8.h : 8,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(isMobile ? 20.r : 20),
-                  ),
-                ),
-                child: Text(
-                  loc.logout,
-                  style: TextStyle(fontSize: isMobile ? 14.sp : 14),
-                ),
-              )
-            else
-              OutlinedButton(
-                onPressed: () => context.go('/login'),
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 20.w : 20,
-                    vertical: isMobile ? 8.h : 8,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(isMobile ? 20.r : 20),
-                  ),
-                ),
-                child: Text(
-                  loc.login,
-                  style: TextStyle(fontSize: isMobile ? 14.sp : 14),
-                ),
-              ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

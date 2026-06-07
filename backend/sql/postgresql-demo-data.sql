@@ -917,10 +917,14 @@ INSERT INTO public.navigations (
 (102, NOW(), NOW(), '页脚导航', 'FOOTER', 'zh-CN', true, 1, 1),
 -- Sidebar Navigation (SIDEBAR)
 (103, NOW(), NOW(), '侧边栏导航', 'SIDEBAR', 'zh-CN', true, 1, 1),
+-- 手机端底部导航
+(104, NOW(), NOW(), '手机底部导航', 'MOBILE', 'zh-CN', true, 1, 1),
+
 -- 英文导航组（对应中文组）
 (201, NOW(), NOW(), 'Main Navigation', 'HEADER', 'en-US', true, 1, 1),
 (202, NOW(), NOW(), 'Footer Navigation', 'FOOTER', 'en-US', true, 1, 1),
-(203, NOW(), NOW(), 'Sidebar Navigation', 'SIDEBAR', 'en-US', true, 1, 1);
+(203, NOW(), NOW(), 'Sidebar Navigation', 'SIDEBAR', 'en-US', true, 1, 1),
+(204, NOW(), NOW(), 'Mobile Bottom Navigation', 'MOBILE', 'en-US', true, 1, 1);
 
 -- ----------------------------
 -- 插入 navigation_items 表（导航项）
@@ -970,7 +974,17 @@ INSERT INTO public.navigation_items (
 (2011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 202, 'GitHub', 'https://github.com/tx7do/go-wind-cms', 0, 'logo-github', 'Visit our GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
 -- ========== 导航组 203（en-US Sidebar Navigation） ==========
 (2012, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 203, 'Popular Tags', '/tag', 0, 'pricetag', 'Browse popular tags', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
-(2013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 203, 'Archive', '/archive', 0, 'archive', 'Post archive', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1);
+(2013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 203, 'Archive', '/archive', 0, 'archive', 'Post archive', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
+-- ========== 导航组 104（zh-CN 手机底部导航） ==========
+(1014, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 104, '首页', '/', 0, 'home', '返回首页', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(1015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 104, '发现', '/discover', 0, 'compass', '发现内容', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(1016, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 104, '收藏', '/bookmarks', 0, 'bookmark', '我的收藏', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(1017, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 104, '我的', '/me', 0, 'person', '个人中心', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+-- ========== 导航组 204（en-US Mobile Bottom Navigation） ==========
+(2014, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 204, 'Home', '/', 0, 'home', 'Back to homepage', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(2015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 204, 'Discover', '/discover', 0, 'compass', 'Discover content', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(2016, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 204, 'Bookmarks', '/bookmarks', 0, 'bookmark', 'My bookmarks', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(2017, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 204, 'Me', '/me', 0, 'person', 'Personal center', false, false, 'nav-item mobile-nav', '', NULL, 1, 1);
 
 
 -- ----------------------------

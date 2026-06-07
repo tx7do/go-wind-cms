@@ -6,6 +6,7 @@ import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/constants/router_paths.dart';
 import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
+import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
@@ -210,21 +211,30 @@ class _HomeWebViewState extends State<HomeWebView> {
                 tooltip: S.of(context).settings,
               ),
               const SizedBox(width: 4),
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: OutlinedButton(
-                  onPressed: () => context.go(AppRoutePath.login),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+              ValueListenableBuilder<bool>(
+                valueListenable:
+                    GetIt.instance<UserAuthCache>().loginStateNotifier,
+                builder: (context, hasLogin, _) {
+                  return MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: OutlinedButton(
+                      onPressed: () =>
+                          context.go(hasLogin ? '/' : AppRoutePath.login),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(hasLogin
+                          ? S.of(context).me
+                          : S.of(context).login),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(S.of(context).login),
-                ),
+                  );
+                },
               ),
               const SizedBox(width: 8),
             ],

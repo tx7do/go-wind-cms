@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:jose/jose.dart';
 import 'package:shared_preferences/shared_preferences.dart'
@@ -33,6 +36,12 @@ class UserAuthCache {
 
   String _deviceId = '';
   String _mqttClientId = '';
+
+  /// 登录状态变更通知器
+  final _loginStateNotifier = ValueNotifier<bool>(false);
+
+  /// 监听登录状态变化
+  ValueNotifier<bool> get loginStateNotifier => _loginStateNotifier;
 
   int get userId {
     return _userId ?? 0;
@@ -81,6 +90,7 @@ class UserAuthCache {
     _assessToken = accessToken;
     _refreshUserId(accessToken);
     await _prefs.setString(_StorageKey.accessToken, _assessToken);
+    _notifyLoginStateChanged();
   }
 
   /// 存储刷新令牌
@@ -92,7 +102,9 @@ class UserAuthCache {
   /// 清除访问令牌
   Future<void> clearAccessToken() async {
     _userId = null;
+    _assessToken = '';
     await _prefs.remove(_StorageKey.accessToken);
+    _notifyLoginStateChanged();
   }
 
   /// 清除刷新令牌
@@ -200,5 +212,11 @@ class UserAuthCache {
   _initToken() async {
     await _refreshAccessToken();
     await _refreshRefreshToken();
+    _notifyLoginStateChanged();
+  }
+
+  /// 通知登录状态变化
+  void _notifyLoginStateChanged() {
+    _loginStateNotifier.value = hasLogin;
   }
 }

@@ -111,9 +111,11 @@ class AuthenticationService extends AuthService {
           username: params.username,
           password: encryptedPassword,
         );
-        return _api.authenticationServiceLogin(body: request);
+        final response = await _api.authenticationServiceLogin(body: request);
+        // 确保 token 被保存到缓存
+        await doLoginSuccess(response);
+        return response;
       },
-      onSuccess: (response, _) => doLoginSuccess(response),
     );
   }
 
@@ -152,7 +154,7 @@ class AuthenticationService extends AuthService {
       final response = await _api.authenticationServiceRefreshToken(
         body: request,
       );
-      doLoginSuccess(response);
+      await doLoginSuccess(response);
       return response;
     } on DioException catch (e) {
       return handleDioError(e);
@@ -162,8 +164,8 @@ class AuthenticationService extends AuthService {
   // ─── 内部方法 ────────────────────────────────────────
 
   /// 认证成功处理
-  doLoginSuccess(AuthenticationServiceV1LoginResponse msg) {
-    GetIt.instance<UserAuthCache>().saveAuthInfo(
+  doLoginSuccess(AuthenticationServiceV1LoginResponse msg) async {
+    await GetIt.instance<UserAuthCache>().saveAuthInfo(
       msg.accessToken ?? '',
       refreshToken: msg.refreshToken,
     );

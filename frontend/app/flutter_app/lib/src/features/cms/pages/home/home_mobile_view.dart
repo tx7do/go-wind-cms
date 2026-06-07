@@ -2,22 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
-import 'package:flutter_app/src/features/cms/widgets/tag_cloud.dart';
-import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
-import 'package:flutter_app/src/features/cms/widgets/category_tabs.dart';
-import 'package:flutter_app/src/features/cms/services/category_service.dart';
-import 'package:flutter_app/src/features/cms/services/post_service.dart';
-import 'package:flutter_app/src/features/cms/services/tag_service.dart';
+import 'package:flutter_app/src/features/cms/pages/home/home_content_view.dart';
+import 'package:flutter_app/src/features/cms/pages/explore/explore_page.dart';
+import 'package:flutter_app/src/features/cms/pages/bookmarks/bookmarks_page.dart';
+import 'package:flutter_app/src/features/cms/pages/profile/profile_page.dart';
 
-typedef Post = ContentServiceV1Post;
-typedef Category = ContentServiceV1Category;
-typedef Tag = ContentServiceV1Tag;
+/// 底部导航项定义
+class _BottomNavItem {
+  final IconData icon;
+  final IconData activeIcon;
+  final String Function(S) localizedName;
 
-/// 首页 - 手机端视图
+  const _BottomNavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.localizedName,
+  });
+}
+
+final _bottomNavItems = [
+  _BottomNavItem(
+    icon: Icons.home_outlined,
+    activeIcon: Icons.home,
+    localizedName: (loc) => loc.home,
+  ),
+  _BottomNavItem(
+    icon: Icons.explore_outlined,
+    activeIcon: Icons.explore,
+    localizedName: (loc) => loc.discover,
+  ),
+  _BottomNavItem(
+    icon: Icons.bookmark_border,
+    activeIcon: Icons.bookmark,
+    localizedName: (loc) => loc.bookmarks,
+  ),
+  _BottomNavItem(
+    icon: Icons.person_outline,
+    activeIcon: Icons.person,
+    localizedName: (loc) => loc.me,
+  ),
+];
+
+/// 首页 - 手机端视图（带底部导航）
 class HomeMobileView extends StatefulWidget {
   const HomeMobileView({super.key});
 
@@ -25,223 +51,68 @@ class HomeMobileView extends StatefulWidget {
   State<HomeMobileView> createState() => _HomeMobileViewState();
 }
 
-class _HomeMobileViewState extends State<HomeMobileView>
-    with SingleTickerProviderStateMixin {
-  final _categoryService = CategoryService();
-  final _postService = PostService();
-  final _tagService = TagService();
-
-  TabController? _tabController;
-  int _currentCategoryIndex = 0;
-
-  List<Category> _categories = [];
-  List<Post> _posts = [];
-  List<Tag> _tags = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadData() async {
-    final results = await Future.wait([
-      _categoryService.list(),
-      _postService.list(),
-      _tagService.list(),
-    ]);
-
-    if (!mounted) return;
-
-    setState(() {
-      _categories = (results[0] as ListCategoryResponse?)?.items ?? [];
-      _posts = (results[1] as ListPostResponse?)?.items ?? [];
-      _tags = (results[2] as ListTagResponse?)?.items ?? [];
-
-      // 插入"推荐"虚拟分类
-      if (_categories.isNotEmpty) {
-        _categories.insert(
-          0,
-          Category(
-            id: 0,
-            sortOrder: -1,
-            translations: [
-              CategoryTranslation(
-                languageCode: 'zh',
-                name: S.current.recommend,
-                slug: 'recommend',
-              ),
-            ],
-          ),
-        );
-      }
-
-      _tabController?.dispose();
-      _tabController = TabController(length: _categories.length, vsync: this);
-      _tabController!.addListener(() {
-        if (!_tabController!.indexIsChanging) {
-          setState(() => _currentCategoryIndex = _tabController!.index);
-        }
-      });
-    });
-  }
-
-  List<Post> get _filteredPosts {
-    if (_currentCategoryIndex == 0) return _posts;
-    if (_currentCategoryIndex >= _categories.length) return [];
-    final category = _categories[_currentCategoryIndex];
-    return _posts
-        .where((p) => (p.categoryIds ?? []).contains(category.id))
-        .toList();
-  }
-
-  List<Post> get _featuredPosts =>
-      _posts.where((p) => p.isFeatured == true).toList();
+class _HomeMobileViewState extends State<HomeMobileView> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    if (_categories.isEmpty || _tabController == null) {
-      return Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
+    final loc = S.of(context);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              pinned: false,
-              elevation: 0,
-              backgroundColor: theme.colorScheme.surface,
-              surfaceTintColor: Colors.transparent,
-              title: Text(
-                S.of(context).appName,
-                style: TextStyle(
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.search, size: 24.sp),
-                  onPressed: () {},
-                  tooltip: S.of(context).search,
-                ),
-                SizedBox(width: 8.w),
-              ],
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(46.h),
-                child: Container(
-                  color: theme.colorScheme.surface,
-                  child: CategoryTabs(
-                    categories: _categories,
-                    tabController: _tabController!,
-                  ),
-                ),
-              ),
+      body: _buildPage(_currentIndex),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha((0.05 * 255).round()),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
             ),
-          ];
-        },
-        body: TabBarView(
-          controller: _tabController,
-          children: List.generate(_categories.length, (index) {
-            final posts = index == 0 ? _posts : _filteredPosts;
-            return _buildTabContent(context, posts, index == 0);
-          }),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+            child: NavigationBar(
+              selectedIndex: _currentIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              height: 60.h,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              indicatorColor: theme.colorScheme.primaryContainer,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              destinations: _bottomNavItems.map((item) {
+                return NavigationDestination(
+                  icon: Icon(item.icon, size: 24.sp),
+                  selectedIcon: Icon(item.activeIcon, size: 24.sp),
+                  label: item.localizedName(loc),
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTabContent(
-    BuildContext context,
-    List<Post> posts,
-    bool isRecommend,
-  ) {
-    return CustomScrollView(
-      slivers: [
-        if (isRecommend) ...[
-          SliverToBoxAdapter(
-            child: FeaturedCarousel(
-              posts: _featuredPosts,
-              categories: _categories,
-            ),
-          ),
-          SliverToBoxAdapter(child: TagCloud(tags: _tags)),
-        ],
-
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
-            child: Row(
-              children: [
-                Container(
-                  width: 4.w,
-                  height: 18.h,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  isRecommend
-                      ? S.of(context).latestPosts
-                      : S.of(context).relatedArticles,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  S.of(context).postsCount(posts.length),
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withAlpha(128),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => Padding(
-                padding: EdgeInsets.only(bottom: 12.h),
-                child: PostCard(
-                  post: posts[index],
-                  categories: _categories,
-                  tags: _tags,
-                ),
-              ),
-              childCount: posts.length,
-            ),
-          ),
-        ),
-
-        SliverToBoxAdapter(child: SizedBox(height: 24.h)),
-      ],
-    );
+  Widget _buildPage(int index) {
+    switch (index) {
+      case 0:
+        return const HomeContentView();
+      case 1:
+        return const ExplorePage();
+      case 2:
+        return const BookmarksPage();
+      case 3:
+        return const ProfilePage();
+      default:
+        return const HomeContentView();
+    }
   }
 }

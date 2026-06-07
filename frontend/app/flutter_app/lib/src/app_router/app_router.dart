@@ -7,7 +7,7 @@ import 'package:flutter_app/src/core/constants/index.dart' as constants;
 
 import 'package:flutter_app/src/core/widgets/not_found_page.dart';
 import 'package:flutter_app/src/app_router/route_names.dart';
-import 'package:flutter_app/src/features/cms/pages/main_scaffold.dart';
+import 'package:flutter_app/src/features/cms/pages/home/home_page.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/post_detail_page.dart';
 import 'package:flutter_app/src/features/cms/pages/post_list/post_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/tag_feed/tag_feed_page.dart';
@@ -27,12 +27,12 @@ class AppRouter {
     redirect: _guard,
     errorBuilder: (context, state) => const NotFoundPage(),
     routes: [
-      // 主页 (底部导航)
+      // 主页
       GoRoute(
         path: constants.AppRoutePath.initial,
         name: RouteNames.home,
         builder: (context, state) {
-          return const CmsMainScaffold();
+          return const HomePage();
         },
         routes: [
           // 文章详情
