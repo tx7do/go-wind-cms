@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
@@ -148,19 +147,19 @@ class _BookmarksPageState extends State<BookmarksPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: bookmarked.map((post) {
-                        return SizedBox(
-                          width:
-                              (Breakpoints.webContentMaxWidth -
-                                  48 -
-                                  (crossCount - 1) * 16) /
-                              crossCount,
-                          child: PostCard(post: post),
-                        );
-                      }).toList(),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossCount,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: bookmarked.length,
+                      itemBuilder: (context, index) {
+                        return PostCard(post: bookmarked[index]);
+                      },
                     ),
                   ),
                 ),

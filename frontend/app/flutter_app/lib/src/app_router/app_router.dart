@@ -18,6 +18,8 @@ import 'package:flutter_app/src/features/auth/pages/login_page.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/features/cms/pages/explore/explore_page.dart';
 import 'package:flutter_app/src/features/cms/pages/profile/profile_page.dart';
+import 'package:flutter_app/src/features/cms/pages/settings/settings_page.dart';
+import 'package:flutter_app/src/features/cms/pages/my_comments/my_comments_page.dart';
 import 'package:flutter_app/src/features/cms/pages/about/about_page.dart';
 import 'package:flutter_app/src/features/cms/pages/legal/legal_page.dart';
 
@@ -114,6 +116,22 @@ class AppRouter {
         path: constants.AppRoutePath.about,
         builder: (context, state) {
           return const AboutPage();
+        },
+      ),
+      // 设置
+      GoRoute(
+        name: RouteNames.settings,
+        path: constants.AppRoutePath.settings,
+        builder: (context, state) {
+          return const SettingsPage();
+        },
+      ),
+      // 我的评论
+      GoRoute(
+        name: RouteNames.myComments,
+        path: constants.AppRoutePath.myComments,
+        builder: (context, state) {
+          return const MyCommentsPage();
         },
       ),
       // 联系我们

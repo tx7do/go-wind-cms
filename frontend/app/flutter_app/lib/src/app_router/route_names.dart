@@ -15,6 +15,8 @@ class RouteNames {
   static const String login = 'login';
   static const String explore = 'explore';
   static const String profile = 'profile';
+  static const String settings = 'settings';
+  static const String myComments = 'my_comments';
   static const String about = 'about';
   static const String contact = 'contact';
   static const String disclaimer = 'disclaimer';

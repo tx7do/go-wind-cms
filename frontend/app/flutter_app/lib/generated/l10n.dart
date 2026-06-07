@@ -59,619 +59,489 @@ class S {
     return Intl.message('GoWind CMS', name: 'appName', desc: '', args: []);
   }
 
-  /// `Home`
+  /// `首页`
   String get home {
-    return Intl.message('Home', name: 'home', desc: '', args: []);
+    return Intl.message('首页', name: 'home', desc: '', args: []);
   }
 
-  /// `Discover`
+  /// `发现`
   String get discover {
-    return Intl.message('Discover', name: 'discover', desc: '', args: []);
+    return Intl.message('发现', name: 'discover', desc: '', args: []);
   }
 
-  /// `Bookmarks`
+  /// `收藏`
   String get bookmarks {
-    return Intl.message('Bookmarks', name: 'bookmarks', desc: '', args: []);
+    return Intl.message('收藏', name: 'bookmarks', desc: '', args: []);
   }
 
-  /// `Me`
+  /// `我的`
   String get me {
-    return Intl.message('Me', name: 'me', desc: '', args: []);
+    return Intl.message('我的', name: 'me', desc: '', args: []);
   }
 
-  /// `Search`
+  /// `搜索`
   String get search {
-    return Intl.message('Search', name: 'search', desc: '', args: []);
+    return Intl.message('搜索', name: 'search', desc: '', args: []);
   }
 
-  /// `Settings`
+  /// `设置`
   String get settings {
-    return Intl.message('Settings', name: 'settings', desc: '', args: []);
+    return Intl.message('设置', name: 'settings', desc: '', args: []);
   }
 
-  /// `Login`
+  /// `登录`
   String get login {
-    return Intl.message('Login', name: 'login', desc: '', args: []);
+    return Intl.message('登录', name: 'login', desc: '', args: []);
   }
 
-  /// `Latest Posts`
+  /// `最新文章`
   String get latestPosts {
-    return Intl.message(
-      'Latest Posts',
-      name: 'latestPosts',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('最新文章', name: 'latestPosts', desc: '', args: []);
   }
 
-  /// `Related Articles`
+  /// `相关文章`
   String get relatedArticles {
-    return Intl.message(
-      'Related Articles',
-      name: 'relatedArticles',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('相关文章', name: 'relatedArticles', desc: '', args: []);
   }
 
-  /// `All Posts`
+  /// `全部文章`
   String get allPosts {
-    return Intl.message('All Posts', name: 'allPosts', desc: '', args: []);
+    return Intl.message('全部文章', name: 'allPosts', desc: '', args: []);
   }
 
-  /// `— All Loaded —`
+  /// `— 已加载全部 —`
   String get allLoaded {
-    return Intl.message(
-      '— All Loaded —',
-      name: 'allLoaded',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('— 已加载全部 —', name: 'allLoaded', desc: '', args: []);
   }
 
-  /// `Browse Categories`
+  /// `浏览分类`
   String get browseCategories {
-    return Intl.message(
-      'Browse Categories',
-      name: 'browseCategories',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('浏览分类', name: 'browseCategories', desc: '', args: []);
   }
 
-  /// `Hot Tags`
+  /// `热门标签`
   String get hotTags {
-    return Intl.message('Hot Tags', name: 'hotTags', desc: '', args: []);
+    return Intl.message('热门标签', name: 'hotTags', desc: '', args: []);
   }
 
-  /// `Recommend`
+  /// `推荐`
   String get recommend {
-    return Intl.message('Recommend', name: 'recommend', desc: '', args: []);
+    return Intl.message('推荐', name: 'recommend', desc: '', args: []);
   }
 
-  /// `{count} posts`
+  /// `{count} 篇`
   String postsCount(int count) {
     return Intl.message(
-      '$count posts',
+      '$count 篇',
       name: 'postsCount',
       desc: '',
       args: [count],
     );
   }
 
-  /// `{count} articles`
+  /// `{count} 篇文章`
   String postsCountFull(int count) {
     return Intl.message(
-      '$count articles',
+      '$count 篇文章',
       name: 'postsCountFull',
       desc: '',
       args: [count],
     );
   }
 
-  /// `My Bookmarks`
+  /// `我的收藏`
   String get myBookmarks {
-    return Intl.message(
-      'My Bookmarks',
-      name: 'myBookmarks',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('我的收藏', name: 'myBookmarks', desc: '', args: []);
   }
 
-  /// `Bookmarked {count} articles`
+  /// `已收藏 {count} 篇文章`
   String bookmarkedCount(int count) {
     return Intl.message(
-      'Bookmarked $count articles',
+      '已收藏 $count 篇文章',
       name: 'bookmarkedCount',
       desc: '',
       args: [count],
     );
   }
 
-  /// `No bookmarked articles yet`
+  /// `还没有收藏的文章`
   String get noBookmarks {
-    return Intl.message(
-      'No bookmarked articles yet',
-      name: 'noBookmarks',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('还没有收藏的文章', name: 'noBookmarks', desc: '', args: []);
   }
 
-  /// `Tap the bookmark button while reading to save`
+  /// `浏览文章时点击收藏按钮即可保存`
   String get bookmarkHint {
     return Intl.message(
-      'Tap the bookmark button while reading to save',
+      '浏览文章时点击收藏按钮即可保存',
       name: 'bookmarkHint',
       desc: '',
       args: [],
     );
   }
 
-  /// `Search articles, tags...`
+  /// `搜索文章、标签...`
   String get searchHint {
-    return Intl.message(
-      'Search articles, tags...',
-      name: 'searchHint',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('搜索文章、标签...', name: 'searchHint', desc: '', args: []);
   }
 
-  /// `Hot Searches`
+  /// `热门搜索`
   String get hotSearch {
-    return Intl.message('Hot Searches', name: 'hotSearch', desc: '', args: []);
+    return Intl.message('热门搜索', name: 'hotSearch', desc: '', args: []);
   }
 
-  /// `Recommended Reading`
+  /// `推荐阅读`
   String get recommendedReading {
-    return Intl.message(
-      'Recommended Reading',
-      name: 'recommendedReading',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('推荐阅读', name: 'recommendedReading', desc: '', args: []);
   }
 
-  /// `No results found for "{query}"`
+  /// `没有找到「{query}」相关内容`
   String noSearchResults(String query) {
     return Intl.message(
-      'No results found for "$query"',
+      '没有找到「$query」相关内容',
       name: 'noSearchResults',
       desc: '',
       args: [query],
     );
   }
 
-  /// `Related Tags`
+  /// `相关标签`
   String get relatedTags {
-    return Intl.message(
-      'Related Tags',
-      name: 'relatedTags',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('相关标签', name: 'relatedTags', desc: '', args: []);
   }
 
-  /// `Related Articles ({count})`
+  /// `相关文章 ({count})`
   String relatedPostsCount(int count) {
     return Intl.message(
-      'Related Articles ($count)',
+      '相关文章 ($count)',
       name: 'relatedPostsCount',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Comments ({count})`
+  /// `评论 ({count})`
   String commentsCount(int count) {
     return Intl.message(
-      'Comments ($count)',
+      '评论 ($count)',
       name: 'commentsCount',
       desc: '',
       args: [count],
     );
   }
 
-  /// `Views`
+  /// `浏览`
   String get views {
-    return Intl.message('Views', name: 'views', desc: '', args: []);
+    return Intl.message('浏览', name: 'views', desc: '', args: []);
   }
 
-  /// `Likes`
+  /// `点赞`
   String get likes {
-    return Intl.message('Likes', name: 'likes', desc: '', args: []);
+    return Intl.message('点赞', name: 'likes', desc: '', args: []);
   }
 
-  /// `Comments`
+  /// `评论`
   String get comments {
-    return Intl.message('Comments', name: 'comments', desc: '', args: []);
+    return Intl.message('评论', name: 'comments', desc: '', args: []);
   }
 
-  /// `Share`
+  /// `分享`
   String get share {
-    return Intl.message('Share', name: 'share', desc: '', args: []);
+    return Intl.message('分享', name: 'share', desc: '', args: []);
   }
 
-  /// `Reply`
+  /// `回复`
   String get reply {
-    return Intl.message('Reply', name: 'reply', desc: '', args: []);
+    return Intl.message('回复', name: 'reply', desc: '', args: []);
   }
 
-  /// `Write your comment...`
+  /// `写下你的评论...`
   String get writeComment {
-    return Intl.message(
-      'Write your comment...',
-      name: 'writeComment',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('写下你的评论...', name: 'writeComment', desc: '', args: []);
   }
 
-  /// `Today`
+  /// `今天`
   String get today {
-    return Intl.message('Today', name: 'today', desc: '', args: []);
+    return Intl.message('今天', name: 'today', desc: '', args: []);
   }
 
-  /// `Yesterday`
+  /// `昨天`
   String get yesterday {
-    return Intl.message('Yesterday', name: 'yesterday', desc: '', args: []);
+    return Intl.message('昨天', name: 'yesterday', desc: '', args: []);
   }
 
-  /// `{days} days ago`
+  /// `{days} 天前`
   String daysAgo(int days) {
-    return Intl.message(
-      '$days days ago',
-      name: 'daysAgo',
-      desc: '',
-      args: [days],
-    );
+    return Intl.message('$days 天前', name: 'daysAgo', desc: '', args: [days]);
   }
 
-  /// `{weeks} weeks ago`
+  /// `{weeks} 周前`
   String weeksAgo(int weeks) {
-    return Intl.message(
-      '$weeks weeks ago',
-      name: 'weeksAgo',
-      desc: '',
-      args: [weeks],
-    );
+    return Intl.message('$weeks 周前', name: 'weeksAgo', desc: '', args: [weeks]);
   }
 
-  /// `{month}/{day}`
+  /// `{month} 月 {day} 日`
   String monthDay(int month, int day) {
     return Intl.message(
-      '$month/$day',
+      '$month 月 $day 日',
       name: 'monthDay',
       desc: '',
       args: [month, day],
     );
   }
 
-  /// `{year}/{month}/{day}`
+  /// `{year} 年 {month} 月 {day} 日`
   String yearMonthDay(int year, int month, int day) {
     return Intl.message(
-      '$year/$month/$day',
+      '$year 年 $month 月 $day 日',
       name: 'yearMonthDay',
       desc: '',
       args: [year, month, day],
     );
   }
 
-  /// `{count} related articles`
+  /// `{count} 篇相关文章`
   String relatedPostsCountFull(int count) {
     return Intl.message(
-      '$count related articles',
+      '$count 篇相关文章',
       name: 'relatedPostsCountFull',
       desc: '',
       args: [count],
     );
   }
 
-  /// `No related articles yet`
+  /// `暂无相关文章`
   String get noRelatedPosts {
-    return Intl.message(
-      'No related articles yet',
-      name: 'noRelatedPosts',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('暂无相关文章', name: 'noRelatedPosts', desc: '', args: []);
   }
 
-  /// `Guest`
+  /// `访客用户`
   String get guestUser {
-    return Intl.message('Guest', name: 'guestUser', desc: '', args: []);
+    return Intl.message('访客用户', name: 'guestUser', desc: '', args: []);
   }
 
-  /// `Login for more features`
+  /// `登录后享受更多功能`
   String get loginForMore {
-    return Intl.message(
-      'Login for more features',
-      name: 'loginForMore',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('登录后享受更多功能', name: 'loginForMore', desc: '', args: []);
   }
 
-  /// `Appearance`
+  /// `外观设置`
   String get appearance {
-    return Intl.message('Appearance', name: 'appearance', desc: '', args: []);
+    return Intl.message('外观设置', name: 'appearance', desc: '', args: []);
   }
 
-  /// `Theme Color`
+  /// `语言`
+  String get language {
+    return Intl.message('语言', name: 'language', desc: '', args: []);
+  }
+
+  /// `主题色`
   String get themeColor {
-    return Intl.message('Theme Color', name: 'themeColor', desc: '', args: []);
+    return Intl.message('主题色', name: 'themeColor', desc: '', args: []);
   }
 
-  /// `Dark Mode`
+  /// `深色模式`
   String get darkMode {
-    return Intl.message('Dark Mode', name: 'darkMode', desc: '', args: []);
+    return Intl.message('深色模式', name: 'darkMode', desc: '', args: []);
   }
 
-  /// `Light`
+  /// `浅色`
   String get light {
-    return Intl.message('Light', name: 'light', desc: '', args: []);
+    return Intl.message('浅色', name: 'light', desc: '', args: []);
   }
 
-  /// `System`
+  /// `跟随系统`
   String get followSystem {
-    return Intl.message('System', name: 'followSystem', desc: '', args: []);
+    return Intl.message('跟随系统', name: 'followSystem', desc: '', args: []);
   }
 
-  /// `Dark`
+  /// `深色`
   String get dark {
-    return Intl.message('Dark', name: 'dark', desc: '', args: []);
+    return Intl.message('深色', name: 'dark', desc: '', args: []);
   }
 
-  /// `Reading Stats`
+  /// `阅读统计`
   String get readingStats {
-    return Intl.message(
-      'Reading Stats',
-      name: 'readingStats',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('阅读统计', name: 'readingStats', desc: '', args: []);
   }
 
-  /// `Browse History`
+  /// `浏览历史`
   String get browseHistory {
-    return Intl.message(
-      'Browse History',
-      name: 'browseHistory',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('浏览历史', name: 'browseHistory', desc: '', args: []);
   }
 
-  /// `View reading history`
+  /// `查看阅读记录`
   String get viewReadingHistory {
     return Intl.message(
-      'View reading history',
+      '查看阅读记录',
       name: 'viewReadingHistory',
       desc: '',
       args: [],
     );
   }
 
-  /// `My Comments`
+  /// `我的评论`
   String get myComments {
-    return Intl.message('My Comments', name: 'myComments', desc: '', args: []);
+    return Intl.message('我的评论', name: 'myComments', desc: '', args: []);
   }
 
-  /// `Manage your comments`
+  /// `管理发表的评论`
   String get manageComments {
-    return Intl.message(
-      'Manage your comments',
-      name: 'manageComments',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('管理发表的评论', name: 'manageComments', desc: '', args: []);
   }
 
-  /// `Notifications`
+  /// `消息通知`
   String get notifications {
-    return Intl.message(
-      'Notifications',
-      name: 'notifications',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('消息通知', name: 'notifications', desc: '', args: []);
   }
 
-  /// `No new messages`
+  /// `暂无新消息`
   String get noNewMessages {
-    return Intl.message(
-      'No new messages',
-      name: 'noNewMessages',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('暂无新消息', name: 'noNewMessages', desc: '', args: []);
   }
 
-  /// `Theme, language & preferences`
+  /// `主题、语言等偏好`
   String get themeLanguagePrefs {
     return Intl.message(
-      'Theme, language & preferences',
+      '主题、语言等偏好',
       name: 'themeLanguagePrefs',
       desc: '',
       args: [],
     );
   }
 
-  /// `About`
+  /// `关于`
   String get about {
-    return Intl.message('About', name: 'about', desc: '', args: []);
+    return Intl.message('关于', name: 'about', desc: '', args: []);
   }
 
-  /// `Version info & help`
+  /// `版本信息和帮助`
   String get versionInfo {
-    return Intl.message(
-      'Version info & help',
-      name: 'versionInfo',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('版本信息和帮助', name: 'versionInfo', desc: '', args: []);
   }
 
-  /// `Articles Read`
+  /// `已读文章`
   String get readPosts {
-    return Intl.message('Articles Read', name: 'readPosts', desc: '', args: []);
+    return Intl.message('已读文章', name: 'readPosts', desc: '', args: []);
   }
 
-  /// `Bookmarked`
+  /// `收藏文章`
   String get bookmarkedPostsLabel {
     return Intl.message(
-      'Bookmarked',
+      '收藏文章',
       name: 'bookmarkedPostsLabel',
       desc: '',
       args: [],
     );
   }
 
-  /// `Reading Time`
+  /// `阅读时长`
   String get readingTime {
-    return Intl.message(
-      'Reading Time',
-      name: 'readingTime',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('阅读时长', name: 'readingTime', desc: '', args: []);
   }
 
-  /// `Error Occurred!`
+  /// `暂无评论`
+  String get noCommentsYet {
+    return Intl.message('暂无评论', name: 'noCommentsYet', desc: '', args: []);
+  }
+
+  /// `发生错误！`
   String get errorOccurred {
-    return Intl.message(
-      'Error Occurred!',
-      name: 'errorOccurred',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('发生错误！', name: 'errorOccurred', desc: '', args: []);
   }
 
-  /// `Page Not Found`
+  /// `页面未找到`
   String get pageNotFound {
-    return Intl.message(
-      'Page Not Found',
-      name: 'pageNotFound',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('页面未找到', name: 'pageNotFound', desc: '', args: []);
   }
 
-  /// `Sorry, the page you are looking for does not exist or has been moved.`
+  /// `抱歉，您访问的页面不存在或已被移动。`
   String get pageNotFoundDesc {
     return Intl.message(
-      'Sorry, the page you are looking for does not exist or has been moved.',
+      '抱歉，您访问的页面不存在或已被移动。',
       name: 'pageNotFoundDesc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Back to Home`
+  /// `返回首页`
   String get backToHome {
-    return Intl.message('Back to Home', name: 'backToHome', desc: '', args: []);
+    return Intl.message('返回首页', name: 'backToHome', desc: '', args: []);
   }
 
-  /// `Username`
+  /// `用户名`
   String get username {
-    return Intl.message('Username', name: 'username', desc: '', args: []);
+    return Intl.message('用户名', name: 'username', desc: '', args: []);
   }
 
-  /// `Password`
+  /// `密码`
   String get password {
-    return Intl.message('Password', name: 'password', desc: '', args: []);
+    return Intl.message('密码', name: 'password', desc: '', args: []);
   }
 
-  /// `Enter username`
+  /// `请输入用户名`
   String get usernameHint {
-    return Intl.message(
-      'Enter username',
-      name: 'usernameHint',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('请输入用户名', name: 'usernameHint', desc: '', args: []);
   }
 
-  /// `Enter password`
+  /// `请输入密码`
   String get passwordHint {
-    return Intl.message(
-      'Enter password',
-      name: 'passwordHint',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('请输入密码', name: 'passwordHint', desc: '', args: []);
   }
 
-  /// `Login`
+  /// `登录`
   String get loginButton {
-    return Intl.message('Login', name: 'loginButton', desc: '', args: []);
+    return Intl.message('登录', name: 'loginButton', desc: '', args: []);
   }
 
-  /// `Login successful`
+  /// `登录成功`
   String get loginSuccess {
-    return Intl.message(
-      'Login successful',
-      name: 'loginSuccess',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('登录成功', name: 'loginSuccess', desc: '', args: []);
   }
 
-  /// `Login failed, please check username and password`
+  /// `登录失败，请检查用户名和密码`
   String get loginFailed {
     return Intl.message(
-      'Login failed, please check username and password',
+      '登录失败，请检查用户名和密码',
       name: 'loginFailed',
       desc: '',
       args: [],
     );
   }
 
-  /// `Logout`
+  /// `退出登录`
   String get logout {
-    return Intl.message('Logout', name: 'logout', desc: '', args: []);
+    return Intl.message('退出登录', name: 'logout', desc: '', args: []);
   }
 
-  /// `Are you sure you want to logout?`
+  /// `确定要退出登录吗？`
   String get logoutConfirm {
-    return Intl.message(
-      'Are you sure you want to logout?',
-      name: 'logoutConfirm',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('确定要退出登录吗？', name: 'logoutConfirm', desc: '', args: []);
   }
 
-  /// `Cancel`
+  /// `取消`
   String get cancel {
-    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+    return Intl.message('取消', name: 'cancel', desc: '', args: []);
   }
 
-  /// `Confirm`
+  /// `确定`
   String get confirm {
-    return Intl.message('Confirm', name: 'confirm', desc: '', args: []);
+    return Intl.message('确定', name: 'confirm', desc: '', args: []);
   }
 
-  /// `This feature is coming soon`
+  /// `该功能即将上线，敬请期待`
   String get featureNotAvailable {
     return Intl.message(
-      'This feature is coming soon',
+      '该功能即将上线，敬请期待',
       name: 'featureNotAvailable',
       desc: '',
       args: [],
     );
   }
 
-  /// `Welcome back`
+  /// `欢迎回来`
   String get welcomeBack {
-    return Intl.message(
-      'Welcome back',
-      name: 'welcomeBack',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('欢迎回来', name: 'welcomeBack', desc: '', args: []);
   }
 
   /// `© 2026 GoWind CMS  ·  Powered by Flutter`
@@ -684,380 +554,330 @@ class S {
     );
   }
 
-  /// `A modern content management system powered by Go and Flutter`
+  /// `一个基于 Go 和 Flutter 构建的现代化内容管理系统`
   String get aboutSubtitle {
     return Intl.message(
-      'A modern content management system powered by Go and Flutter',
+      '一个基于 Go 和 Flutter 构建的现代化内容管理系统',
       name: 'aboutSubtitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Content Management`
+  /// `内容管理`
   String get aboutFeature1Title {
-    return Intl.message(
-      'Content Management',
-      name: 'aboutFeature1Title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('内容管理', name: 'aboutFeature1Title', desc: '', args: []);
   }
 
-  /// `Create, edit and publish content with an intuitive and powerful editor`
+  /// `使用直观且强大的编辑器创建、编辑和发布内容`
   String get aboutFeature1Desc {
     return Intl.message(
-      'Create, edit and publish content with an intuitive and powerful editor',
+      '使用直观且强大的编辑器创建、编辑和发布内容',
       name: 'aboutFeature1Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Multi-language Support`
+  /// `多语言支持`
   String get aboutFeature2Title {
     return Intl.message(
-      'Multi-language Support',
+      '多语言支持',
       name: 'aboutFeature2Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Built-in internationalization to serve a global audience effortlessly`
+  /// `内置国际化能力，轻松服务全球受众`
   String get aboutFeature2Desc {
     return Intl.message(
-      'Built-in internationalization to serve a global audience effortlessly',
+      '内置国际化能力，轻松服务全球受众',
       name: 'aboutFeature2Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Cross-platform`
+  /// `跨平台`
   String get aboutFeature3Title {
-    return Intl.message(
-      'Cross-platform',
-      name: 'aboutFeature3Title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('跨平台', name: 'aboutFeature3Title', desc: '', args: []);
   }
 
-  /// `Seamless experience across Web, iOS, Android and desktop platforms`
+  /// `在 Web、iOS、Android 和桌面平台享受一致的体验`
   String get aboutFeature3Desc {
     return Intl.message(
-      'Seamless experience across Web, iOS, Android and desktop platforms',
+      '在 Web、iOS、Android 和桌面平台享受一致的体验',
       name: 'aboutFeature3Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Built with`
+  /// `技术栈`
   String get aboutTechStack {
-    return Intl.message(
-      'Built with',
-      name: 'aboutTechStack',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('技术栈', name: 'aboutTechStack', desc: '', args: []);
   }
 
-  /// `Contact Us`
+  /// `联系我们`
   String get contactUs {
-    return Intl.message('Contact Us', name: 'contactUs', desc: '', args: []);
+    return Intl.message('联系我们', name: 'contactUs', desc: '', args: []);
   }
 
-  /// `Email`
+  /// `电子邮件`
   String get contactEmail {
-    return Intl.message('Email', name: 'contactEmail', desc: '', args: []);
+    return Intl.message('电子邮件', name: 'contactEmail', desc: '', args: []);
   }
 
-  /// `You can reach us via email at support@gowind.dev for any questions, suggestions or feedback. We typically respond within 1-2 business days.`
+  /// `您可以通过 support@gowind.dev 联系我们，咨询任何问题、建议或反馈。我们通常在 1-2 个工作日内回复。`
   String get contactEmailDesc {
     return Intl.message(
-      'You can reach us via email at support@gowind.dev for any questions, suggestions or feedback. We typically respond within 1-2 business days.',
+      '您可以通过 support@gowind.dev 联系我们，咨询任何问题、建议或反馈。我们通常在 1-2 个工作日内回复。',
       name: 'contactEmailDesc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Website`
+  /// `官方网站`
   String get contactWebsite {
-    return Intl.message('Website', name: 'contactWebsite', desc: '', args: []);
+    return Intl.message('官方网站', name: 'contactWebsite', desc: '', args: []);
   }
 
-  /// `Visit our official website gowind.dev for the latest updates, documentation, and community resources.`
+  /// `访问我们的官方网站 gowind.dev，获取最新动态、文档和社区资源。`
   String get contactWebsiteDesc {
     return Intl.message(
-      'Visit our official website gowind.dev for the latest updates, documentation, and community resources.',
+      '访问我们的官方网站 gowind.dev，获取最新动态、文档和社区资源。',
       name: 'contactWebsiteDesc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Community`
+  /// `开发者社区`
   String get contactCommunity {
-    return Intl.message(
-      'Community',
-      name: 'contactCommunity',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('开发者社区', name: 'contactCommunity', desc: '', args: []);
   }
 
-  /// `Join our developer community on GitHub to report issues, share ideas, and contribute to the project.`
+  /// `加入我们的 GitHub 开发者社区，报告问题、分享想法、参与项目贡献。`
   String get contactCommunityDesc {
     return Intl.message(
-      'Join our developer community on GitHub to report issues, share ideas, and contribute to the project.',
+      '加入我们的 GitHub 开发者社区，报告问题、分享想法、参与项目贡献。',
       name: 'contactCommunityDesc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Disclaimer`
+  /// `免责条款`
   String get disclaimer {
-    return Intl.message('Disclaimer', name: 'disclaimer', desc: '', args: []);
+    return Intl.message('免责条款', name: 'disclaimer', desc: '', args: []);
   }
 
-  /// `Content Accuracy`
+  /// `内容准确性`
   String get disclaimerContent1Title {
     return Intl.message(
-      'Content Accuracy',
+      '内容准确性',
       name: 'disclaimerContent1Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `The information provided on this platform is for general informational purposes only. We make no warranties about the completeness, accuracy, or reliability of the content. Any action you take upon the information is strictly at your own risk.`
+  /// `本平台提供的信息仅供参考。我们对内容的完整性、准确性或可靠性不作任何保证。您根据本平台信息采取的任何行动均由您自行承担风险。`
   String get disclaimerContent1Desc {
     return Intl.message(
-      'The information provided on this platform is for general informational purposes only. We make no warranties about the completeness, accuracy, or reliability of the content. Any action you take upon the information is strictly at your own risk.',
+      '本平台提供的信息仅供参考。我们对内容的完整性、准确性或可靠性不作任何保证。您根据本平台信息采取的任何行动均由您自行承担风险。',
       name: 'disclaimerContent1Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `External Links`
+  /// `外部链接`
   String get disclaimerContent2Title {
     return Intl.message(
-      'External Links',
+      '外部链接',
       name: 'disclaimerContent2Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `This platform may contain links to external websites. We have no control over the content and nature of these sites and are not responsible for any damages from browsing or using them.`
+  /// `本平台可能包含指向外部网站的链接。我们无法控制这些网站的内容和性质，对因浏览或使用这些网站造成的任何损害不承担责任。`
   String get disclaimerContent2Desc {
     return Intl.message(
-      'This platform may contain links to external websites. We have no control over the content and nature of these sites and are not responsible for any damages from browsing or using them.',
+      '本平台可能包含指向外部网站的链接。我们无法控制这些网站的内容和性质，对因浏览或使用这些网站造成的任何损害不承担责任。',
       name: 'disclaimerContent2Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Limitation of Liability`
+  /// `责任限制`
   String get disclaimerContent3Title {
     return Intl.message(
-      'Limitation of Liability',
+      '责任限制',
       name: 'disclaimerContent3Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `In no event shall we be liable for any direct, indirect, incidental, consequential, or special damages arising out of or in connection with the use of this platform.`
+  /// `在任何情况下，我们均不对因使用本平台而产生的任何直接、间接、附带、后果性或特殊性损害承担责任。`
   String get disclaimerContent3Desc {
     return Intl.message(
-      'In no event shall we be liable for any direct, indirect, incidental, consequential, or special damages arising out of or in connection with the use of this platform.',
+      '在任何情况下，我们均不对因使用本平台而产生的任何直接、间接、附带、后果性或特殊性损害承担责任。',
       name: 'disclaimerContent3Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Privacy Policy`
+  /// `隐私协议`
   String get privacyPolicy {
-    return Intl.message(
-      'Privacy Policy',
-      name: 'privacyPolicy',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('隐私协议', name: 'privacyPolicy', desc: '', args: []);
   }
 
-  /// `Information Collection`
+  /// `信息收集`
   String get privacyContent1Title {
     return Intl.message(
-      'Information Collection',
+      '信息收集',
       name: 'privacyContent1Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `We collect minimal personal information necessary to provide our services. This may include your email address, username, and usage preferences. We do not sell or share your personal data with third parties.`
+  /// `我们仅收集提供服务所需的最少个人信息，可能包括您的电子邮箱、用户名和使用偏好。我们不会出售或与第三方共享您的个人数据。`
   String get privacyContent1Desc {
     return Intl.message(
-      'We collect minimal personal information necessary to provide our services. This may include your email address, username, and usage preferences. We do not sell or share your personal data with third parties.',
+      '我们仅收集提供服务所需的最少个人信息，可能包括您的电子邮箱、用户名和使用偏好。我们不会出售或与第三方共享您的个人数据。',
       name: 'privacyContent1Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Data Storage`
+  /// `数据存储`
   String get privacyContent2Title {
     return Intl.message(
-      'Data Storage',
+      '数据存储',
       name: 'privacyContent2Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Your data is stored securely on our servers with industry-standard encryption. We retain your data only for as long as necessary to provide the services or as required by law.`
+  /// `您的数据安全地存储在我们的服务器上，采用行业标准的加密技术。我们仅在提供服务所必需的期限或法律要求的期限内保留您的数据。`
   String get privacyContent2Desc {
     return Intl.message(
-      'Your data is stored securely on our servers with industry-standard encryption. We retain your data only for as long as necessary to provide the services or as required by law.',
+      '您的数据安全地存储在我们的服务器上，采用行业标准的加密技术。我们仅在提供服务所必需的期限或法律要求的期限内保留您的数据。',
       name: 'privacyContent2Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Cookies & Tracking`
+  /// `Cookie 与追踪`
   String get privacyContent3Title {
     return Intl.message(
-      'Cookies & Tracking',
+      'Cookie 与追踪',
       name: 'privacyContent3Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `We use essential cookies to ensure the proper functioning of the platform. Analytics cookies may be used to improve user experience, which can be disabled in your browser settings.`
+  /// `我们使用必要的 Cookie 以确保平台正常运行。可能会使用分析 Cookie 以改善用户体验，您可以在浏览器设置中禁用这些 Cookie。`
   String get privacyContent3Desc {
     return Intl.message(
-      'We use essential cookies to ensure the proper functioning of the platform. Analytics cookies may be used to improve user experience, which can be disabled in your browser settings.',
+      '我们使用必要的 Cookie 以确保平台正常运行。可能会使用分析 Cookie 以改善用户体验，您可以在浏览器设置中禁用这些 Cookie。',
       name: 'privacyContent3Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Your Rights`
+  /// `您的权利`
   String get privacyContent4Title {
     return Intl.message(
-      'Your Rights',
+      '您的权利',
       name: 'privacyContent4Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `You have the right to access, correct, or delete your personal data at any time. Contact our support team for any privacy-related requests.`
+  /// `您有权随时访问、更正或删除您的个人数据。如有任何隐私相关请求，请联系我们的支持团队。`
   String get privacyContent4Desc {
     return Intl.message(
-      'You have the right to access, correct, or delete your personal data at any time. Contact our support team for any privacy-related requests.',
+      '您有权随时访问、更正或删除您的个人数据。如有任何隐私相关请求，请联系我们的支持团队。',
       name: 'privacyContent4Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Terms of Service`
+  /// `服务条款`
   String get termsOfService {
-    return Intl.message(
-      'Terms of Service',
-      name: 'termsOfService',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('服务条款', name: 'termsOfService', desc: '', args: []);
   }
 
-  /// `Acceptance of Terms`
+  /// `接受条款`
   String get termsContent1Title {
-    return Intl.message(
-      'Acceptance of Terms',
-      name: 'termsContent1Title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('接受条款', name: 'termsContent1Title', desc: '', args: []);
   }
 
-  /// `By accessing and using this platform, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you must not use the platform.`
+  /// `访问和使用本平台即表示您同意受本服务条款的约束。如果您不同意这些条款的任何部分，请勿使用本平台。`
   String get termsContent1Desc {
     return Intl.message(
-      'By accessing and using this platform, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you must not use the platform.',
+      '访问和使用本平台即表示您同意受本服务条款的约束。如果您不同意这些条款的任何部分，请勿使用本平台。',
       name: 'termsContent1Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `User Responsibilities`
+  /// `用户责任`
   String get termsContent2Title {
-    return Intl.message(
-      'User Responsibilities',
-      name: 'termsContent2Title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('用户责任', name: 'termsContent2Title', desc: '', args: []);
   }
 
-  /// `You are responsible for maintaining the confidentiality of your account. You agree not to post any content that is unlawful, harmful, threatening, abusive, or otherwise objectionable.`
+  /// `您有责任保管好您的账户信息。您同意不发布任何违法、有害、威胁、辱骂或其他不当内容。`
   String get termsContent2Desc {
     return Intl.message(
-      'You are responsible for maintaining the confidentiality of your account. You agree not to post any content that is unlawful, harmful, threatening, abusive, or otherwise objectionable.',
+      '您有责任保管好您的账户信息。您同意不发布任何违法、有害、威胁、辱骂或其他不当内容。',
       name: 'termsContent2Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Prohibited Activities`
+  /// `禁止行为`
   String get termsContent3Title {
-    return Intl.message(
-      'Prohibited Activities',
-      name: 'termsContent3Title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('禁止行为', name: 'termsContent3Title', desc: '', args: []);
   }
 
-  /// `Users must not attempt to gain unauthorized access to our systems, interfere with the platform's operation, or use automated tools to scrape or collect data without permission.`
+  /// `用户不得试图未经授权访问我们的系统、干扰平台运营或使用自动化工具未经许可抓取或收集数据。`
   String get termsContent3Desc {
     return Intl.message(
-      'Users must not attempt to gain unauthorized access to our systems, interfere with the platform\'s operation, or use automated tools to scrape or collect data without permission.',
+      '用户不得试图未经授权访问我们的系统、干扰平台运营或使用自动化工具未经许可抓取或收集数据。',
       name: 'termsContent3Desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Modifications`
+  /// `条款修改`
   String get termsContent4Title {
-    return Intl.message(
-      'Modifications',
-      name: 'termsContent4Title',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('条款修改', name: 'termsContent4Title', desc: '', args: []);
   }
 
-  /// `We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms.`
+  /// `我们保留随时修改本条款的权利。在条款变更后继续使用本平台，即表示您接受修改后的条款。`
   String get termsContent4Desc {
     return Intl.message(
-      'We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms.',
+      '我们保留随时修改本条款的权利。在条款变更后继续使用本平台，即表示您接受修改后的条款。',
       name: 'termsContent4Desc',
       desc: '',
       args: [],
@@ -1070,8 +890,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale.fromSubtags(languageCode: 'en'),
       Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'),
+      Locale.fromSubtags(languageCode: 'en', countryCode: 'US'),
     ];
   }
 

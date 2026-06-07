@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
@@ -27,21 +26,20 @@ class WebPostGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: posts.map((post) {
-        return SizedBox(
-          width:
-              (Breakpoints.webContentMaxWidth * 0.75 -
-                  Breakpoints.webSidebarWidth -
-                  Breakpoints.webContentPadding * 2 -
-                  40 -
-                  16) /
-              2,
-          child: PostCard(post: post, categories: categories, tags: tags),
-        );
-      }).toList(),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: posts.length,
+      itemBuilder: (context, index) {
+        final post = posts[index];
+        return PostCard(post: post, categories: categories, tags: tags);
+      },
     );
   }
 }

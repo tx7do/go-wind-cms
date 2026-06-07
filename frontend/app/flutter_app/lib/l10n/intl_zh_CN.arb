@@ -114,6 +114,7 @@
   "guestUser": "访客用户",
   "loginForMore": "登录后享受更多功能",
   "appearance": "外观设置",
+  "language": "语言",
   "themeColor": "主题色",
   "darkMode": "深色模式",
   "light": "浅色",
@@ -132,6 +133,7 @@
   "readPosts": "已读文章",
   "bookmarkedPostsLabel": "收藏文章",
   "readingTime": "阅读时长",
+  "noCommentsYet": "暂无评论",
 
   "errorOccurred": "发生错误！",
 

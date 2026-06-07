@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_app/src/features/auth/services/authentication_service.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/src/core/themes/index.dart' as theme;
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 
@@ -31,7 +29,7 @@ class ProfilePage extends StatelessWidget {
             leading: !isMobile
                 ? IconButton(
                     icon: const Icon(Icons.arrow_back),
-                    onPressed: () => context.go('/'),
+                    onPressed: () => context.pop(),
                   )
                 : null,
             title: Text(
@@ -49,14 +47,6 @@ class ProfilePage extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(isMobile ? 16.w : 16),
               child: _UserProfileCard(isMobile: isMobile),
-            ),
-          ),
-
-          // 外观设置
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 16),
-              child: _AppearanceSection(isMobile: isMobile),
             ),
           ),
 
@@ -239,238 +229,6 @@ class _UserProfileCardState extends State<_UserProfileCard> {
   }
 }
 
-/// 外观设置区：主题色 + 深色模式切换 + 语言切换
-class _AppearanceSection extends StatelessWidget {
-  final bool isMobile;
-
-  const _AppearanceSection({required this.isMobile});
-
-  /// 预设主题色列表
-  static const List<Color> _presetColors = [
-    Color(0xFF3A7CA5), // 默认蓝
-    Color(0xFF6750A4), // 紫色
-    Color(0xFF006B5E), // 墨绿
-    Color(0xFFB7262E), // 中国红
-    Color(0xFFF57C00), // 橙色
-    Color(0xFF1565C0), // 深蓝
-    Color(0xFFAD1457), // 玫红
-    Color(0xFF2E7D32), // 绿色
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    final cubit = context.read<theme.AppThemeCubit>();
-    final currentSeedColor = cubit.currentSeedColor;
-    final currentThemeMode = cubit.currentValue;
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
-      ),
-      color: themeData.colorScheme.surface,
-      child: Theme(
-        data: themeData.copyWith(
-          splashFactory: NoSplash.splashFactory,
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(isMobile ? 16.w : 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            // 区标题
-            Row(
-              children: [
-                Icon(
-                  Icons.palette_outlined,
-                  size: 18,
-                  color: themeData.colorScheme.primary,
-                ),
-                SizedBox(width: isMobile ? 8.w : 8),
-                Text(
-                  S.of(context).appearance,
-                  style: TextStyle(
-                    fontSize: isMobile ? 15.sp : 15,
-                    fontWeight: FontWeight.w600,
-                    color: themeData.colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: isMobile ? 16.h : 16),
-
-            // 主题色选择
-            Text(
-              S.of(context).themeColor,
-              style: TextStyle(
-                fontSize: isMobile ? 13.sp : 13,
-                color: themeData.colorScheme.onSurface.withAlpha(160),
-              ),
-            ),
-            SizedBox(height: isMobile ? 8.h : 8),
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              children: _presetColors.map((color) {
-                final isSelected =
-                    color.toARGB32() == currentSeedColor.toARGB32();
-                return MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => cubit.modifySeedColor(color),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: isMobile ? 36.w : 36,
-                      height: isMobile ? 36.w : 36,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: isSelected
-                            ? Border.all(
-                                color: themeData.colorScheme.onSurface,
-                                width: 3,
-                              )
-                            : null,
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: color.withAlpha((0.4 * 255).round()),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: isSelected
-                          ? Icon(
-                              Icons.check,
-                              size: isMobile ? 18.sp : 18,
-                              color: Colors.white,
-                            )
-                          : null,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: isMobile ? 16.h : 16),
-
-            // 深色模式切换
-            _SettingRow(
-              icon: Icons.dark_mode_outlined,
-              title: S.of(context).darkMode,
-              isMobile: isMobile,
-              trailing: SegmentedButton<ThemeMode>(
-                segments: [
-                  ButtonSegment(
-                    value: ThemeMode.light,
-                    label: Text(S.of(context).light),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.system,
-                    label: Text(S.of(context).followSystem),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.dark,
-                    label: Text(S.of(context).dark),
-                  ),
-                ],
-                selected: {currentThemeMode},
-                onSelectionChanged: (modes) => cubit.modify(modes.first),
-                style: ButtonStyle(
-                  visualDensity: VisualDensity.compact,
-                  textStyle: WidgetStateProperty.all(
-                    TextStyle(fontSize: isMobile ? 12.sp : 12),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      ),
-    );
-  }
-}
-
-/// 设置行
-class _SettingRow extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final bool isMobile;
-  final Widget trailing;
-
-  const _SettingRow({
-    required this.icon,
-    required this.title,
-    required this.isMobile,
-    required this.trailing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-
-    // Mobile: 上下布局避免 SegmentedButton 溢出
-    if (isMobile) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                size: 20.sp,
-                color: themeData.colorScheme.onSurface.withAlpha(180),
-              ),
-              SizedBox(width: 10.w),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: themeData.colorScheme.onSurface,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          SizedBox(
-            width: double.infinity,
-            child: trailing,
-          ),
-        ],
-      );
-    }
-
-    // Web: 横向布局，trailing 用 Flexible 允许压缩
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: themeData.colorScheme.onSurface.withAlpha(180),
-        ),
-        const SizedBox(width: 10),
-        Flexible(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              color: themeData.colorScheme.onSurface,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Flexible(child: trailing),
-      ],
-    );
-  }
-}
-
 class _MenuSection extends StatelessWidget {
   final bool isMobile;
 
@@ -546,12 +304,20 @@ class _MenuSection extends StatelessWidget {
               vertical: isMobile ? 4.h : 4,
             ),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(S.of(context).featureNotAvailable),
-                  duration: const Duration(seconds: 1),
-                ),
-              );
+              if (item.icon == Icons.settings_outlined) {
+                context.push('/settings');
+              } else if (item.icon == Icons.info_outline) {
+                context.push('/about');
+              } else if (item.icon == Icons.comment_outlined) {
+                context.push('/my_comments');
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(S.of(context).featureNotAvailable),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              }
             },
           );
         }).toList(),

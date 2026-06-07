@@ -556,19 +556,20 @@ class _WebPostGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: posts.map((post) {
-        return SizedBox(
-          width:
-              (Breakpoints.webContentMaxWidth -
-                  48 -
-                  (crossAxisCount - 1) * 16) /
-              crossAxisCount,
-          child: PostCard(post: post, categories: categories, tags: tags),
-        );
-      }).toList(),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: posts.length,
+      itemBuilder: (context, index) {
+        final post = posts[index];
+        return PostCard(post: post, categories: categories, tags: tags);
+      },
     );
   }
 }

@@ -1,7 +1,7 @@
 {
   "appName": "GoWind CMS",
 
-  "@@locale": "en",
+  "@@locale": "en_US",
 
   "home": "Home",
   "discover": "Discover",
@@ -114,6 +114,7 @@
   "guestUser": "Guest",
   "loginForMore": "Login for more features",
   "appearance": "Appearance",
+  "language": "Language",
   "themeColor": "Theme Color",
   "darkMode": "Dark Mode",
   "light": "Light",
@@ -132,6 +133,7 @@
   "readPosts": "Articles Read",
   "bookmarkedPostsLabel": "Bookmarked",
   "readingTime": "Reading Time",
+  "noCommentsYet": "No comments yet",
 
   "errorOccurred": "Error Occurred!",
 

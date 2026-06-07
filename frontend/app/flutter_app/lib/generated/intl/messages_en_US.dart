@@ -1,5 +1,5 @@
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
-// This is a library that provides messages for a en locale. All the
+// This is a library that provides messages for a en_US locale. All the
 // messages from the main program should be duplicated here with the same
 // function name.
 
@@ -18,7 +18,7 @@ final messages = new MessageLookup();
 typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 
 class MessageLookup extends MessageLookupByLibrary {
-  String get localeName => 'en';
+  String get localeName => 'en_US';
 
   static String m0(count) => "Bookmarked ${count} articles";
 
@@ -134,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "hotSearch": MessageLookupByLibrary.simpleMessage("Hot Searches"),
     "hotTags": MessageLookupByLibrary.simpleMessage("Hot Tags"),
+    "language": MessageLookupByLibrary.simpleMessage("Language"),
     "latestPosts": MessageLookupByLibrary.simpleMessage("Latest Posts"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),
     "likes": MessageLookupByLibrary.simpleMessage("Likes"),
@@ -160,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noBookmarks": MessageLookupByLibrary.simpleMessage(
       "No bookmarked articles yet",
     ),
+    "noCommentsYet": MessageLookupByLibrary.simpleMessage("No comments yet"),
     "noNewMessages": MessageLookupByLibrary.simpleMessage("No new messages"),
     "noRelatedPosts": MessageLookupByLibrary.simpleMessage(
       "No related articles yet",

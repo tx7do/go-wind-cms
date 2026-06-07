@@ -76,6 +76,7 @@ class _CMSAppState extends State<CMSApp> {
       theme: theme.getLightTheme(seedColor: seedColor),
       darkTheme: theme.getDarkTheme(seedColor: seedColor),
       themeMode: context.watch<theme.AppThemeCubit>().themeMode,
+      locale: context.watch<theme.AppThemeCubit>().currentLocale,
       builder: (context, routerChild) {
         // EasyLoading 作为路由的外部包装
         final easyLoadingBuilder = EasyLoading.init();

@@ -1,7 +1,8 @@
 flutter_intl:
   enabled: true
   arb_dir: lib/l10n
-  template_arb_file: intl_en.arb
+  main_locale: zh_CN
+  template_arb_file: intl_en_US.arb
   output_dir: lib/generated
   output_file_name: l10n.dart
   class_name: S
