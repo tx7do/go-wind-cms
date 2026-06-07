@@ -69,79 +69,58 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildView({required bool isMobile}) {
     final theme = Theme.of(context);
 
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: theme.colorScheme.surface,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          leading: const AppBackButton(),
-          titleSpacing: 0,
-          title: Text(S.current.search, style: const TextStyle(fontSize: 15)),
+    final appBar = AppBar(
+      backgroundColor: theme.colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      leading: const AppBackButton(),
+      titleSpacing: 0,
+      title: TextField(
+        controller: _searchController,
+        autofocus: true,
+        style: const TextStyle(fontSize: 15),
+        decoration: InputDecoration(
+          hintText: S.of(context).searchHint,
+          hintStyle: TextStyle(fontSize: 15, color: theme.colorScheme.onSurface.withAlpha(100)),
+          border: InputBorder.none,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
         ),
-        body: const Center(child: CircularProgressIndicator()),
-      );
+        onSubmitted: (value) {
+          setState(() { _query = value.trim(); _hasSearched = true; });
+        },
+      ),
+      actions: [
+        if (_searchController.text.isNotEmpty)
+          IconButton(icon: const Icon(Icons.clear, size: 20), onPressed: () {
+            _searchController.clear();
+            setState(() { _query = ''; _hasSearched = false; });
+          }),
+        TextButton(
+          onPressed: () { setState(() { _query = _searchController.text.trim(); _hasSearched = true; }); },
+          child: Text(S.of(context).search, style: const TextStyle(fontSize: 14)),
+        ),
+      ],
+    );
+
+    final body = _hasSearched
+        ? _buildResults(context, isMobile)
+        : _buildSuggestions(context, isMobile);
+
+    if (_isLoading) {
+      final loadingBody = const Center(child: CircularProgressIndicator());
+      // Web 端不嵌套 Scaffold
+      if (!isMobile) return loadingBody;
+      return Scaffold(backgroundColor: theme.scaffoldBackgroundColor, appBar: appBar, body: loadingBody);
     }
+
+    // Web 端由 WebShellLayout 提供 Scaffold
+    if (!isMobile) return body;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: const AppBackButton(),
-        titleSpacing: 0,
-        title: TextField(
-          controller: _searchController,
-          autofocus: true,
-          style: const TextStyle(fontSize: 15),
-          decoration: InputDecoration(
-            hintText: S.of(context).searchHint,
-            hintStyle: TextStyle(
-              fontSize: 15,
-              color: theme.colorScheme.onSurface.withAlpha(100),
-            ),
-            border: InputBorder.none,
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(vertical: 10),
-          ),
-          onSubmitted: (value) {
-            setState(() {
-              _query = value.trim();
-              _hasSearched = true;
-            });
-          },
-        ),
-        actions: [
-          if (_searchController.text.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.clear, size: 20),
-              onPressed: () {
-                _searchController.clear();
-                setState(() {
-                  _query = '';
-                  _hasSearched = false;
-                });
-              },
-            ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                _query = _searchController.text.trim();
-                _hasSearched = true;
-              });
-            },
-            child: Text(
-              S.of(context).search,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
-        ],
-      ),
-      body: _hasSearched
-          ? _buildResults(context, isMobile)
-          : _buildSuggestions(context, isMobile),
+      appBar: appBar,
+      body: body,
     );
   }
 
@@ -243,60 +222,64 @@ class _SearchPageState extends State<SearchPage> {
       );
     }
 
-    return ListView(
-      padding: EdgeInsets.all(hPad),
-      children: [
-        Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: isMobile
-                  ? double.infinity
-                  : Breakpoints.webContentMaxWidth,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (filteredTags.isNotEmpty) ...[
-                  Text(
-                    S.of(context).relatedTags,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: filteredTags.map((tag) {
-                      return TagChip(
-                        tag: tag,
-                        isMobile: isMobile,
-                        showPostCount: true,
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                if (filteredPosts.isNotEmpty) ...[
-                  Text(
-                    S.of(context).relatedPostsCount(filteredPosts.length),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ...filteredPosts.map(
-                    (post) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _SimplePostCard(post: post),
-                    ),
-                  ),
-                ],
-              ],
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.all(hPad),
+          sliver: SliverToBoxAdapter(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isMobile
+                      ? double.infinity
+                      : Breakpoints.webContentMaxWidth,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (filteredTags.isNotEmpty) ...[
+                      Text(
+                        S.of(context).relatedTags,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: filteredTags.map((tag) {
+                          return TagChip(
+                            tag: tag,
+                            isMobile: isMobile,
+                            showPostCount: true,
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (filteredPosts.isNotEmpty) ...[
+                      Text(
+                        S.of(context).relatedPostsCount(filteredPosts.length),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ...filteredPosts.map(
+                        (post) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _SimplePostCard(post: post),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
           ),
         ),

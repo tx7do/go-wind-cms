@@ -155,10 +155,7 @@ class _PostCardState extends State<PostCard> {
                   ],
                   _buildHeader(context, theme),
                   SizedBox(height: _isMobile ? 10.h : 10),
-                  // 使用 Flexible 允许内容区域收缩，防止溢出
-                  Flexible(
-                    child: _buildContent(context, theme),
-                  ),
+                  _buildContent(context, theme),
                   SizedBox(height: _isMobile ? 12.h : 12),
                   _buildFooter(context, theme),
                 ],

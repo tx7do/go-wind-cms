@@ -129,7 +129,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Center(child: CircularProgressIndicator());
     }
 
     return ResponsiveLayout(
@@ -143,40 +143,47 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final post = _post!;
     final commentCount = post.commentCount ?? _comments.length;
 
+    final appBar = AppBar(
+      backgroundColor: theme.colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      leading: const AppBackButton(),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.share_outlined, size: 22),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: const Icon(Icons.bookmark_border, size: 22),
+          onPressed: () {},
+        ),
+        const SizedBox(width: 4),
+      ],
+    );
+
+    final body = Column(
+      children: [
+        Expanded(
+          child: isMobile
+              ? _buildMobileBody(post, commentCount)
+              : _buildWebBody(post, commentCount),
+        ),
+        CommentInputBar(
+          isMobile: isMobile,
+          replyTo: _replyTo,
+          onReplyChanged: (c) => setState(() => _replyTo = c),
+          onSend: _sendComment,
+        ),
+      ],
+    );
+
+    // Web 端由 WebShellLayout 提供 Scaffold，不再嵌套 Scaffold
+    if (!isMobile) return body;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: const AppBackButton(),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share_outlined, size: 22),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.bookmark_border, size: 22),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: isMobile
-                ? _buildMobileBody(post, commentCount)
-                : _buildWebBody(post, commentCount),
-          ),
-          CommentInputBar(
-            isMobile: isMobile,
-            replyTo: _replyTo,
-            onReplyChanged: (c) => setState(() => _replyTo = c),
-            onSend: _sendComment,
-          ),
-        ],
-      ),
+      appBar: appBar,
+      body: body,
     );
   }
 

@@ -75,16 +75,14 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
                   ],
                 ),
               )
-            : RefreshIndicator(
-                onRefresh: _loadData,
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 600),
+            : isMobile
+                ? RefreshIndicator(
+                    onRefresh: _loadData,
                     child: ListView.separated(
-                      padding: EdgeInsets.all(isMobile ? 16.w : 24),
+                      padding: EdgeInsets.all(16.w),
                       itemCount: _comments.length,
                       separatorBuilder: (_, __) => Divider(
-                        height: isMobile ? 24.h : 24,
+                        height: 24.h,
                         color: theme.colorScheme.onSurface.withAlpha(30),
                       ),
                       itemBuilder: (context, index) {
@@ -100,9 +98,45 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
                         );
                       },
                     ),
-                  ),
-                ),
-              );
+                  )
+                : CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        sliver: SliverToBoxAdapter(
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 600),
+                              child: Column(
+                                children: List.generate(_comments.length, (index) {
+                                  return Column(
+                                    children: [
+                                      _CommentCard(
+                                        comment: _comments[index],
+                                        isMobile: false,
+                                        onTap: () {
+                                          final objectId = _comments[index].objectId;
+                                          if (objectId != null) {
+                                            context.push('/post/$objectId');
+                                          }
+                                        },
+                                      ),
+                                      if (index < _comments.length - 1)
+                                        Divider(
+                                          height: 24,
+                                          color: theme.colorScheme.onSurface.withAlpha(30),
+                                        ),
+                                    ],
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                    ],
+                  );
 
     // Web 端由 WebShellLayout 提供 Scaffold
     if (!isMobile) return body;

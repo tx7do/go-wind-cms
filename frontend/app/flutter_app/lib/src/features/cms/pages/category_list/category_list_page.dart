@@ -51,7 +51,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Center(child: CircularProgressIndicator());
     }
 
     return ResponsiveLayout(
@@ -64,44 +64,35 @@ class _CategoryListPageState extends State<CategoryListPage> {
     final theme = Theme.of(context);
     final loc = S.of(context);
 
+    final appBar = AppBar(
+      backgroundColor: theme.colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      leading: const AppBackButton(),
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.folder_outlined, size: isMobile ? 20.sp : 20, color: theme.colorScheme.primary),
+          SizedBox(width: isMobile ? 6.w : 6),
+          Text(loc.browseCategories, style: TextStyle(fontSize: isMobile ? 18.sp : 18, fontWeight: FontWeight.bold)),
+        ],
+      ),
+      centerTitle: true,
+    );
+
+    final body = _categories.isEmpty
+        ? Center(
+            child: Text(loc.noRelatedPosts, style: TextStyle(fontSize: 15, color: theme.colorScheme.onSurface.withAlpha(120))),
+          )
+        : _buildBody(isMobile);
+
+    // Web 端由 WebShellLayout 提供 Scaffold
+    if (!isMobile) return body;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: const AppBackButton(),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.folder_outlined,
-              size: isMobile ? 20.sp : 20,
-              color: theme.colorScheme.primary,
-            ),
-            SizedBox(width: isMobile ? 6.w : 6),
-            Text(
-              loc.browseCategories,
-              style: TextStyle(
-                fontSize: isMobile ? 18.sp : 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-      ),
-      body: _categories.isEmpty
-          ? Center(
-              child: Text(
-                loc.noRelatedPosts,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: theme.colorScheme.onSurface.withAlpha(120),
-                ),
-              ),
-            )
-          : _buildBody(isMobile),
+      appBar: appBar,
+      body: body,
     );
   }
 

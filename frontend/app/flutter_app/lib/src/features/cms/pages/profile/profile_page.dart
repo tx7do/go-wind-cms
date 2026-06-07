@@ -16,73 +16,63 @@ class ProfilePage extends StatelessWidget {
     final themeData = Theme.of(context);
     final isMobile = ResponsiveUtils.isMobile(context);
 
+    final body = CustomScrollView(
+      slivers: [
+        // 移动端显示标题栏，Web端由 Shell 提供顶部导航
+        if (isMobile)
+          SliverAppBar(
+            pinned: true,
+            floating: true,
+            elevation: 0,
+            backgroundColor: themeData.colorScheme.surface,
+            surfaceTintColor: Colors.transparent,
+            title: Text(
+              S.of(context).me,
+              style: TextStyle(
+                fontSize: 22.sp,
+                fontWeight: FontWeight.bold,
+                color: themeData.colorScheme.onSurface,
+              ),
+            ),
+          ),
+
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(isMobile ? 16.w : 16),
+            child: _UserProfileCard(isMobile: isMobile),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 16),
+            child: _MenuSection(isMobile: isMobile),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(isMobile ? 16.w : 16, 20, isMobile ? 16.w : 16, 8),
+            child: Text(
+              S.of(context).readingStats,
+              style: TextStyle(fontSize: isMobile ? 16.sp : 16, fontWeight: FontWeight.w600, color: themeData.colorScheme.onSurface),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 16),
+            child: _StatsSection(isMobile: isMobile),
+          ),
+        ),
+        SliverToBoxAdapter(child: SizedBox(height: isMobile ? 24.h : 24)),
+      ],
+    );
+
+    // Web 端由 WebShellLayout 提供 Scaffold，不再嵌套 Scaffold
+    if (!isMobile) return body;
+
     return Scaffold(
       backgroundColor: themeData.scaffoldBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          // 移动端显示标题栏，Web端由 Shell 提供顶部导航
-          if (isMobile)
-            SliverAppBar(
-              pinned: true,
-              floating: true,
-              elevation: 0,
-              backgroundColor: themeData.colorScheme.surface,
-              surfaceTintColor: Colors.transparent,
-              title: Text(
-                S.of(context).me,
-                style: TextStyle(
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.bold,
-                  color: themeData.colorScheme.onSurface,
-                ),
-              ),
-            ),
-
-          // 用户信息卡片
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(isMobile ? 16.w : 16),
-              child: _UserProfileCard(isMobile: isMobile),
-            ),
-          ),
-
-          // 功能菜单
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 16),
-              child: _MenuSection(isMobile: isMobile),
-            ),
-          ),
-
-          // 数据统计
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                isMobile ? 16.w : 16,
-                20,
-                isMobile ? 16.w : 16,
-                8,
-              ),
-              child: Text(
-                S.of(context).readingStats,
-                style: TextStyle(
-                  fontSize: isMobile ? 16.sp : 16,
-                  fontWeight: FontWeight.w600,
-                  color: themeData.colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 16),
-              child: _StatsSection(isMobile: isMobile),
-            ),
-          ),
-
-          SliverToBoxAdapter(child: SizedBox(height: isMobile ? 24.h : 24)),
-        ],
-      ),
+      body: body,
     );
   }
 }

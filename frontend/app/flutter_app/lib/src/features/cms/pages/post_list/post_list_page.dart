@@ -101,7 +101,7 @@ class _PostListPageState extends State<PostListPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Center(child: CircularProgressIndicator());
     }
 
     return ResponsiveLayout(
@@ -114,94 +114,141 @@ class _PostListPageState extends State<PostListPage> {
     final theme = Theme.of(context);
     final loc = S.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: const AppBackButton(),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.article_outlined,
-              size: isMobile ? 20.sp : 20,
-              color: theme.colorScheme.primary,
-            ),
-            SizedBox(width: isMobile ? 6.w : 6),
-            Flexible(
-              child: Text(
-                _pageTitle,
-                style: TextStyle(
-                  fontSize: isMobile ? 18.sp : 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(isMobile ? 28.h : 28),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: isMobile ? 10.h : 10),
+    final appBar = AppBar(
+      backgroundColor: theme.colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      leading: const AppBackButton(),
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.article_outlined,
+            size: isMobile ? 20.sp : 20,
+            color: theme.colorScheme.primary,
+          ),
+          SizedBox(width: isMobile ? 6.w : 6),
+          Flexible(
             child: Text(
-              loc.postsCountFull(_posts.length),
+              _pageTitle,
               style: TextStyle(
-                fontSize: isMobile ? 13.sp : 13,
-                color: theme.colorScheme.onSurface.withAlpha(120),
+                fontSize: isMobile ? 18.sp : 18,
+                fontWeight: FontWeight.bold,
               ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+      centerTitle: true,
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(isMobile ? 28.h : 28),
+        child: Padding(
+          padding: EdgeInsets.only(bottom: isMobile ? 10.h : 10),
+          child: Text(
+            loc.postsCountFull(_posts.length),
+            style: TextStyle(
+              fontSize: isMobile ? 13.sp : 13,
+              color: theme.colorScheme.onSurface.withAlpha(120),
             ),
           ),
         ),
       ),
-      body: _posts.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.article_outlined,
-                    size: 56,
-                    color: theme.colorScheme.onSurface.withAlpha(60),
+    );
+
+    final body = _posts.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.article_outlined,
+                  size: 56,
+                  color: theme.colorScheme.onSurface.withAlpha(60),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  loc.noRelatedPosts,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: theme.colorScheme.onSurface.withAlpha(120),
                   ),
-                  const SizedBox(height: 14),
-                  Text(
-                    loc.noRelatedPosts,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: theme.colorScheme.onSurface.withAlpha(120),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : _buildBody(isMobile),
+                ),
+              ],
+            ),
+          )
+        : _buildBody(isMobile);
+
+    // Web 端由 WebShellLayout 提供 Scaffold，不再嵌套 Scaffold
+    if (!isMobile) return body;
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: appBar,
+      body: body,
     );
   }
 
   Widget _buildBody(bool isMobile) {
     if (!isMobile) {
-      return Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: Breakpoints.webContentMaxWidth,
-          ),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            itemCount: _posts.length,
-            itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: PostCard(
-                post: _posts[index],
-                categories: _categories,
-                tags: _tags,
+      return CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: Breakpoints.webContentMaxWidth,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      Text(
+                        _pageTitle,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        S.of(context).postsCountFull(_posts.length),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            sliver: SliverToBoxAdapter(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: Breakpoints.webContentMaxWidth,
+                  ),
+                  child: Column(
+                    children: _posts.map((post) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: PostCard(
+                        post: post,
+                        categories: _categories,
+                        tags: _tags,
+                      ),
+                    )).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        ],
       );
     }
 
