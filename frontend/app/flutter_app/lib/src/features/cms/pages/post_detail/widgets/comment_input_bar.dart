@@ -10,7 +10,7 @@ class CommentInputBar extends StatefulWidget {
   final CommentServiceV1Comment? replyTo;
   final void Function(CommentServiceV1Comment? comment)? onReplyChanged;
   final Future<void> Function(String content, {int? parentId, int? replyToId})
-      onSend;
+  onSend;
 
   const CommentInputBar({
     super.key,
@@ -91,8 +91,7 @@ class _CommentInputBarState extends State<CommentInputBar> {
         color: theme.colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color:
-                theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+            color: theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
           ),
         ),
       ),
@@ -110,17 +109,21 @@ class _CommentInputBarState extends State<CommentInputBar> {
                 if (replyTo != null)
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     margin: const EdgeInsets.only(bottom: 8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer
-                          .withAlpha(80),
+                      color: theme.colorScheme.primaryContainer.withAlpha(80),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.reply,
-                            size: 16, color: theme.colorScheme.primary),
+                        Icon(
+                          Icons.reply,
+                          size: 16,
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
@@ -132,13 +135,11 @@ class _CommentInputBarState extends State<CommentInputBar> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              widget.onReplyChanged?.call(null),
+                          onTap: () => widget.onReplyChanged?.call(null),
                           child: Icon(
                             Icons.close,
                             size: 16,
-                            color: theme.colorScheme.onSurface
-                                .withAlpha(120),
+                            color: theme.colorScheme.onSurface.withAlpha(120),
                           ),
                         ),
                       ],
@@ -148,11 +149,9 @@ class _CommentInputBarState extends State<CommentInputBar> {
                   children: [
                     Expanded(
                       child: Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 14),
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
-                          color: theme
-                              .colorScheme.surfaceContainerHighest
+                          color: theme.colorScheme.surfaceContainerHighest
                               .withAlpha((0.5 * 255).round()),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -168,14 +167,13 @@ class _CommentInputBarState extends State<CommentInputBar> {
                             border: InputBorder.none,
                             hintText: S.of(context).writeComment,
                             hintStyle: TextStyle(
-                              fontSize:
-                                  widget.isMobile ? 14.sp : 14,
-                              color: theme.colorScheme.onSurface
-                                  .withAlpha(100),
+                              fontSize: widget.isMobile ? 14.sp : 14,
+                              color: theme.colorScheme.onSurface.withAlpha(100),
                             ),
                             isDense: true,
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                            ),
                           ),
                           textInputAction: TextInputAction.send,
                           onSubmitted: (_) => _handleSend(),

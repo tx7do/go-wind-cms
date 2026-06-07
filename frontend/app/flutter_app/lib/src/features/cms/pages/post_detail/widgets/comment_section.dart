@@ -64,10 +64,7 @@ class CommentSection extends StatelessWidget {
   }
 
   /// 递归展开评论树
-  Iterable<Widget> _expandTree(
-    CommentType comment, {
-    int depth = 0,
-  }) sync* {
+  Iterable<Widget> _expandTree(CommentType comment, {int depth = 0}) sync* {
     yield CommentItem(
       comment: comment,
       isMobile: isMobile,
@@ -83,9 +80,7 @@ class CommentSection extends StatelessWidget {
 
   /// 所有评论展开后的 Widget 列表
   List<Widget> get _allCommentWidgets {
-    return commentTree
-        .expand((c) => _expandTree(c))
-        .toList();
+    return commentTree.expand((c) => _expandTree(c)).toList();
   }
 
   // =================== Sliver 模式 ===================
@@ -97,14 +92,10 @@ class CommentSection extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: isMobile ? 20.w : 0),
           sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final widgets =
-                    _expandTree(commentTree[index]).toList();
-                return Column(children: widgets);
-              },
-              childCount: commentTree.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final widgets = _expandTree(commentTree[index]).toList();
+              return Column(children: widgets);
+            }, childCount: commentTree.length),
           ),
         ),
       ],
@@ -117,10 +108,7 @@ class CommentSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHeader(context),
-        ..._allCommentWidgets,
-      ],
+      children: [_buildHeader(context), ..._allCommentWidgets],
     );
   }
 

@@ -167,9 +167,8 @@ class _FeaturedCard extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: _coverImage!,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey.shade100,
-                  ),
+                  placeholder: (context, url) =>
+                      Container(color: Colors.grey.shade100),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.grey.shade100,
                     child: const Center(

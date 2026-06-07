@@ -54,10 +54,7 @@ class _TagChipState extends State<TagChip> {
       children: [
         Text(
           '# $name',
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500),
         ),
         if (widget.showPostCount &&
             widget.tag.postCount != null &&
@@ -66,7 +63,9 @@ class _TagChipState extends State<TagChip> {
           Text(
             '(${widget.tag.postCount})',
             style: TextStyle(
-              fontSize: widget.compact ? fontSize : (widget.isMobile ? 12.sp.toDouble() : 12.0),
+              fontSize: widget.compact
+                  ? fontSize
+                  : (widget.isMobile ? 12.sp.toDouble() : 12.0),
               color: theme.colorScheme.onSurface.withAlpha(140),
             ),
           ),

@@ -38,13 +38,7 @@ class CategoryTabs extends StatelessWidget {
         fontSize: 14.sp,
         fontWeight: FontWeight.w400,
       ),
-      tabs: categories
-          .map(
-            (cat) => Tab(
-              text: getCategoryName(cat),
-            ),
-          )
-          .toList(),
+      tabs: categories.map((cat) => Tab(text: getCategoryName(cat))).toList(),
     );
   }
 }

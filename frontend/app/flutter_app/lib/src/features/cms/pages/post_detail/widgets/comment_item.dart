@@ -28,10 +28,7 @@ class CommentItem extends StatelessWidget {
     final realChildren = findChildren(comment, allComments);
 
     return Padding(
-      padding: EdgeInsets.only(
-        left: indent,
-        bottom: isMobile ? 14.h : 14,
-      ),
+      padding: EdgeInsets.only(left: indent, bottom: isMobile ? 14.h : 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

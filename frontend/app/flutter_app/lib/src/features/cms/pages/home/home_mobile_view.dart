@@ -87,10 +87,7 @@ class _HomeMobileViewState extends State<HomeMobileView>
       }
 
       _tabController?.dispose();
-      _tabController = TabController(
-        length: _categories.length,
-        vsync: this,
-      );
+      _tabController = TabController(length: _categories.length, vsync: this);
       _tabController!.addListener(() {
         if (!_tabController!.indexIsChanging) {
           setState(() => _currentCategoryIndex = _tabController!.index);
@@ -206,7 +203,9 @@ class _HomeMobileViewState extends State<HomeMobileView>
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  isRecommend ? S.of(context).latestPosts : S.of(context).relatedArticles,
+                  isRecommend
+                      ? S.of(context).latestPosts
+                      : S.of(context).relatedArticles,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,

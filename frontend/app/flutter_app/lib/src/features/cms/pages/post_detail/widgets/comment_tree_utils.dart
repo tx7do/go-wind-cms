@@ -10,7 +10,9 @@ List<CommentType> buildCommentTree(List<CommentType> flatList) {
   // 检查是否已经有树形数据（第一条评论有 children 字段非空即视为树形）
   if (flatList.isNotEmpty &&
       flatList.any((c) => c.children != null && c.children!.isNotEmpty)) {
-    return flatList.where((c) => c.parentId == null || c.parentId == 0).toList();
+    return flatList
+        .where((c) => c.parentId == null || c.parentId == 0)
+        .toList();
   }
 
   // 扁平列表 → 按 parentId 归组

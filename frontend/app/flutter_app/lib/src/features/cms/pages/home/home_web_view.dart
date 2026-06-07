@@ -177,20 +177,23 @@ class _HomeWebViewState extends State<HomeWebView> {
             centerTitle: false,
             actions: [
               ...getFlatNavItems(
-                _navigations,
-                NavigationLocation.header,
-                locale: _currentLocale,
-              )
-                  .where((item) => resolveNavRoute(item) != null || isExternalLink(item))
+                    _navigations,
+                    NavigationLocation.header,
+                    locale: _currentLocale,
+                  )
+                  .where(
+                    (item) =>
+                        resolveNavRoute(item) != null || isExternalLink(item),
+                  )
                   .map(
-                (item) => _NavBarLink(
-                  label: item.title ?? '',
-                  route: resolveNavRoute(item),
-                  isExternal: isExternalLink(item),
-                  isOpenNewTab: item.isOpenNewTab == true,
-                  isActive: false,
-                ),
-              ),
+                    (item) => _NavBarLink(
+                      label: item.title ?? '',
+                      route: resolveNavRoute(item),
+                      isExternal: isExternalLink(item),
+                      isOpenNewTab: item.isOpenNewTab == true,
+                      isActive: false,
+                    ),
+                  ),
               const SizedBox(width: 16),
               IconButton(
                 icon: const Icon(Icons.search, size: 22),
@@ -241,11 +244,16 @@ class _HomeWebViewState extends State<HomeWebView> {
                     child: Column(
                       children: [
                         FeaturedCarousel(
-                          posts: _posts.where((p) => p.isFeatured == true).toList(),
+                          posts: _posts
+                              .where((p) => p.isFeatured == true)
+                              .toList(),
                           categories: _categories,
                         ),
                         const SizedBox(height: 32),
-                        _SectionHeader(title: S.of(context).latestPosts, count: _posts.length),
+                        _SectionHeader(
+                          title: S.of(context).latestPosts,
+                          count: _posts.length,
+                        ),
                         const SizedBox(height: 16),
                         _WebPostGrid(
                           posts: _posts,
@@ -260,7 +268,9 @@ class _HomeWebViewState extends State<HomeWebView> {
                               child: SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               ),
                             ),
                           ),
@@ -272,7 +282,9 @@ class _HomeWebViewState extends State<HomeWebView> {
                                 S.of(context).allLoaded,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Theme.of(context).colorScheme.onSurface.withAlpha(80),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withAlpha(80),
                                 ),
                               ),
                             ),
@@ -292,9 +304,7 @@ class _HomeWebViewState extends State<HomeWebView> {
           ),
 
           // 页脚
-          SliverToBoxAdapter(
-            child: _Footer(),
-          ),
+          SliverToBoxAdapter(child: _Footer()),
         ],
       ),
     );
@@ -452,11 +462,7 @@ class _WebPostGrid extends StatelessWidget {
                   40 -
                   16) /
               2,
-          child: PostCard(
-            post: post,
-            categories: categories,
-            tags: tags,
-          ),
+          child: PostCard(post: post, categories: categories, tags: tags),
         );
       }).toList(),
     );

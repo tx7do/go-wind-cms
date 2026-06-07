@@ -59,10 +59,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
       _postService.get(widget.postId),
       _categoryService.list(),
       _tagService.list(),
-      _commentService.list(PaginationQuery(
-        skipLocale: true,
-        formValues: {'object_id': widget.postId},
-      )),
+      _commentService.list(
+        PaginationQuery(
+          skipLocale: true,
+          formValues: {'object_id': widget.postId},
+        ),
+      ),
     ]);
 
     if (!mounted) return;
@@ -83,8 +85,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
   }
 
   /// 发送评论
-  Future<void> _sendComment(String content,
-      {int? parentId, int? replyToId}) async {
+  Future<void> _sendComment(
+    String content, {
+    int? parentId,
+    int? replyToId,
+  }) async {
     final newComment = CommentServiceV1Comment(
       objectId: widget.postId,
       content: content,
@@ -94,9 +99,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final result = await _commentService.create(newComment);
     if (result is Status) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result.getMessage)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(result.getMessage)));
       }
       return;
     }
@@ -105,10 +110,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
   /// 仅刷新评论
   Future<void> _refreshComments() async {
-    final result = await _commentService.list(PaginationQuery(
-      skipLocale: true,
-      formValues: {'object_id': widget.postId},
-    ));
+    final result = await _commentService.list(
+      PaginationQuery(
+        skipLocale: true,
+        formValues: {'object_id': widget.postId},
+      ),
+    );
     if (!mounted) return;
     if (result is ListCommentResponse) {
       setState(() {
@@ -181,18 +188,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-            child: PostHeader(
-                post: post, isMobile: true, categories: _categories)),
-        SliverToBoxAdapter(
-            child: PostContent(post: post, isMobile: true)),
+          child: PostHeader(
+            post: post,
+            isMobile: true,
+            categories: _categories,
+          ),
+        ),
+        SliverToBoxAdapter(child: PostContent(post: post, isMobile: true)),
         PostTags(
           allTags: _tags,
           tagIds: post.tagIds,
           isMobile: true,
           asSliver: true,
         ),
-        SliverToBoxAdapter(
-            child: InteractionBar(post: post, isMobile: true)),
+        SliverToBoxAdapter(child: InteractionBar(post: post, isMobile: true)),
         CommentSection(
           commentCount: commentCount,
           commentTree: _commentTree,
@@ -223,7 +232,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     PostHeader(
-                        post: post, isMobile: false, categories: _categories),
+                      post: post,
+                      isMobile: false,
+                      categories: _categories,
+                    ),
                     PostContent(post: post, isMobile: false),
                     PostTags(
                       allTags: _tags,

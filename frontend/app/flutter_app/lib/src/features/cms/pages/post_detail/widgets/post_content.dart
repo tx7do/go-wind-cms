@@ -11,11 +11,7 @@ class PostContent extends StatelessWidget {
   final Post post;
   final bool isMobile;
 
-  const PostContent({
-    super.key,
-    required this.post,
-    required this.isMobile,
-  });
+  const PostContent({super.key, required this.post, required this.isMobile});
 
   String get _summary => getPostSummary(post);
 

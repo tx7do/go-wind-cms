@@ -10,11 +10,7 @@ class InteractionBar extends StatelessWidget {
   final Post post;
   final bool isMobile;
 
-  const InteractionBar({
-    super.key,
-    required this.post,
-    required this.isMobile,
-  });
+  const InteractionBar({super.key, required this.post, required this.isMobile});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +30,7 @@ class InteractionBar extends StatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(isMobile ? 14.r : 14),
           border: Border.all(
-            color:
-                theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+            color: theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
           ),
         ),
         child: Row(
@@ -73,7 +68,12 @@ class InteractionItem extends StatefulWidget {
   final String value;
   final String label;
 
-  const InteractionItem({super.key, required this.icon, required this.value, required this.label});
+  const InteractionItem({
+    super.key,
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
 
   @override
   State<InteractionItem> createState() => _InteractionItemState();

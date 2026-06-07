@@ -109,8 +109,7 @@ class PostHeader extends StatelessWidget {
                     color: theme.colorScheme.primaryContainer.withAlpha(
                       (0.5 * 255).round(),
                     ),
-                    borderRadius:
-                        BorderRadius.circular(isMobile ? 12.r : 12),
+                    borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
                   ),
                   child: Text(
                     _categoryName,

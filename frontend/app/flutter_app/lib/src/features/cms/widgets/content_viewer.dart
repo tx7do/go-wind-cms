@@ -39,12 +39,22 @@ class ContentViewer extends StatelessWidget {
     if (content.isEmpty) return const SizedBox.shrink();
 
     return switch (editorType) {
-      ContentServiceV1PostEditorType.editorTypeMarkdown => _buildMarkdown(context),
-      ContentServiceV1PostEditorType.editorTypeRichText => _buildRichText(context),
-      ContentServiceV1PostEditorType.editorTypePlainText => _buildPlainText(context),
+      ContentServiceV1PostEditorType.editorTypeMarkdown => _buildMarkdown(
+        context,
+      ),
+      ContentServiceV1PostEditorType.editorTypeRichText => _buildRichText(
+        context,
+      ),
+      ContentServiceV1PostEditorType.editorTypePlainText => _buildPlainText(
+        context,
+      ),
       ContentServiceV1PostEditorType.editorTypeCode => _buildCodeBlock(context),
-      ContentServiceV1PostEditorType.editorTypeJsonBlock => _buildJsonBlock(context),
-      ContentServiceV1PostEditorType.editorTypeVisualBuilder => _buildJsonBlock(context),
+      ContentServiceV1PostEditorType.editorTypeJsonBlock => _buildJsonBlock(
+        context,
+      ),
+      ContentServiceV1PostEditorType.editorTypeVisualBuilder => _buildJsonBlock(
+        context,
+      ),
       // unspecified / null / unknown → 默认按 Markdown 渲染
       _ => _buildMarkdown(context),
     };
@@ -123,7 +133,9 @@ class ContentViewer extends StatelessWidget {
           fontStyle: FontStyle.italic,
         ),
         blockquoteDecoration: BoxDecoration(
-          color: theme.colorScheme.primaryContainer.withAlpha((0.15 * 255).round()),
+          color: theme.colorScheme.primaryContainer.withAlpha(
+            (0.15 * 255).round(),
+          ),
           borderRadius: BorderRadius.circular(isMobile ? 8.r : 8),
         ),
         listBullet: TextStyle(
@@ -226,8 +238,7 @@ class ContentViewer extends StatelessWidget {
     String displayContent;
     try {
       final decoded = jsonDecode(content);
-      displayContent =
-          const JsonEncoder.withIndent('  ').convert(decoded);
+      displayContent = const JsonEncoder.withIndent('  ').convert(decoded);
     } catch (_) {
       displayContent = content;
     }

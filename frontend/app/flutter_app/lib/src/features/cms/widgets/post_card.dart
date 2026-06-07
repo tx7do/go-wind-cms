@@ -53,8 +53,9 @@ class _PostCardState extends State<PostCard> {
 
   List<Tag> _getTags() {
     return widget.tags
-        .where((t) =>
-            t.id != null && (widget.post.tagIds ?? []).contains(t.id!))
+        .where(
+          (t) => t.id != null && (widget.post.tagIds ?? []).contains(t.id!),
+        )
         .toList();
   }
 
@@ -174,7 +175,9 @@ class _PostCardState extends State<PostCard> {
           radius: _isMobile ? 16.r : 16,
           backgroundColor: theme.colorScheme.primaryContainer,
           child: Text(
-            (widget.post.authorName ?? '').isNotEmpty ? (widget.post.authorName ?? '')[0] : '?',
+            (widget.post.authorName ?? '').isNotEmpty
+                ? (widget.post.authorName ?? '')[0]
+                : '?',
             style: TextStyle(
               fontSize: _isMobile ? 13.sp : 13,
               fontWeight: FontWeight.w600,
@@ -264,10 +267,7 @@ class _PostCardState extends State<PostCard> {
   Widget _buildFooter(BuildContext context, ThemeData theme) {
     final tags = _getTags();
 
-    final tagText = tags
-        .take(3)
-        .map((tag) => '#${getTagName(tag)}')
-        .join('  ');
+    final tagText = tags.take(3).map((tag) => '#${getTagName(tag)}').join('  ');
 
     return Row(
       children: [

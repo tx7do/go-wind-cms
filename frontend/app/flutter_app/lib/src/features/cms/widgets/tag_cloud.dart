@@ -6,7 +6,6 @@ import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
-
 /// 热门标签云组件
 ///
 /// 右侧侧边栏极简版：统一柔和色调，限制数量，Wrap 错落排列
@@ -35,8 +34,11 @@ class TagCloud extends StatelessWidget {
             padding: EdgeInsets.only(bottom: isMobile ? 10.h : 14),
             child: Row(
               children: [
-                Icon(Icons.local_fire_department,
-                    size: isMobile ? 18.sp : 18, color: Colors.orange),
+                Icon(
+                  Icons.local_fire_department,
+                  size: isMobile ? 18.sp : 18,
+                  color: Colors.orange,
+                ),
                 SizedBox(width: isMobile ? 6.w : 6),
                 Text(
                   S.of(context).hotTags,
@@ -52,11 +54,12 @@ class TagCloud extends StatelessWidget {
           Wrap(
             spacing: isMobile ? 8.w : 8,
             runSpacing: isMobile ? 8.h : 10,
-            children: displayTags.map((tag) => TagChip(tag: tag, isMobile: isMobile)).toList(),
+            children: displayTags
+                .map((tag) => TagChip(tag: tag, isMobile: isMobile))
+                .toList(),
           ),
         ],
       ),
     );
   }
 }
-
