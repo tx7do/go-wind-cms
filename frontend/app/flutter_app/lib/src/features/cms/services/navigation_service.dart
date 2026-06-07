@@ -59,31 +59,58 @@ IconData resolveNavIcon(String? iconName, {IconData fallback = Icons.article}) {
   return navIconMap[iconName] ?? fallback;
 }
 
+/// 需要路径参数（:id）的路由前缀
+const _parameterizedPrefixes = ['/post/', '/page/', '/tag/'];
+
+/// 检查路径是否为需要参数的路由但没有带上参数
+///
+/// 例如 `/post`、`/tag` 是无效的（需要 `/post/123`、`/tag/5`）
+bool _isIncompleteRoute(String url) {
+  for (final prefix in _parameterizedPrefixes) {
+    // /post、/tag 等（恰好等于前缀去掉最后的 /）
+    final bare = prefix.substring(0, prefix.length - 1);
+    if (url == bare) return true;
+  }
+  return false;
+}
+
 /// 获取 NavigationItem 的路由路径
 ///
 /// 根据 linkType 和 url/objectId 生成 Flutter 路由：
-/// - CUSTOM: 使用 url 字段
-/// - POST: /post/{objectId}
-/// - PAGE: /page/{objectId}
-/// - CATEGORY: /category/{objectId}
+/// - CUSTOM: 使用 url 字段（会过滤掉不完整的参数化路由）
+/// - POST: 有 objectId → `/post/{id}`，无 → `/posts`
+/// - PAGE: 有 objectId → `/page/{id}`，无 → `/posts`
+/// - CATEGORY: 有 objectId → `/posts?categoryId={id}`，无 → `/categories`
 /// - EXTERNAL: 使用 url 字段（外部链接，不走 Flutter 路由）
 String? resolveNavRoute(NavigationItem item) {
   final linkType = item.linkType;
-  if (linkType == null) return item.url;
-  switch (linkType) {
-    case NavigationItemLinkType.linkTypeCustom:
-      return item.url != null && item.url!.isNotEmpty ? item.url : null;
-    case NavigationItemLinkType.linkTypePost:
-      return item.objectId != null ? '/post/${item.objectId}' : null;
-    case NavigationItemLinkType.linkTypePage:
-      return item.objectId != null ? '/page/${item.objectId}' : null;
-    case NavigationItemLinkType.linkTypeCategory:
-      return item.objectId != null ? '/category/${item.objectId}' : null;
-    case NavigationItemLinkType.linkTypeExternal:
-      return item.url != null && item.url!.isNotEmpty ? item.url : null;
-    default:
-      return item.url != null && item.url!.isNotEmpty ? item.url : null;
+  // 外部链接不经过路由校验
+  if (linkType == NavigationItemLinkType.linkTypeExternal) {
+    return item.url;
   }
+
+  final String? url;
+  switch (linkType) {
+    case NavigationItemLinkType.linkTypePost:
+      // 有 ID → 文章详情，无 ID → 文章列表
+      url = item.objectId != null ? '/post/${item.objectId}' : '/posts';
+    case NavigationItemLinkType.linkTypePage:
+      // PAGE 类型复用文章详情
+      url = item.objectId != null ? '/page/${item.objectId}' : '/posts';
+    case NavigationItemLinkType.linkTypeCategory:
+      // 有 ID → 该分类下的文章列表，无 ID → 分类列表页
+      url = item.objectId != null
+          ? '/posts?categoryId=${item.objectId}'
+          : '/categories';
+    // CUSTOM、null、$unknown 等均走 url 字段
+    default:
+      url = item.url;
+  }
+
+  // 统一校验：url 为空或不完整的参数化路由（如 /post 没有 ID）都返回 null
+  if (url == null || url.isEmpty) return null;
+  if (_isIncompleteRoute(url)) return null;
+  return url;
 }
 
 /// 判断该导航项是否为外部链接

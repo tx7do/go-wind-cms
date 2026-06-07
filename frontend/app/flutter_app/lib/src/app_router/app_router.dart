@@ -5,9 +5,14 @@ import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/src/core/constants/index.dart' as constants;
 
+import 'package:flutter_app/src/core/widgets/not_found_page.dart';
+import 'package:flutter_app/src/app_router/route_names.dart';
 import 'package:flutter_app/src/features/cms/pages/main_scaffold.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/post_detail_page.dart';
+import 'package:flutter_app/src/features/cms/pages/post_list/post_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/tag_feed/tag_feed_page.dart';
+import 'package:flutter_app/src/features/cms/pages/tag_list/tag_list_page.dart';
+import 'package:flutter_app/src/features/cms/pages/category_list/category_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/search/search_page.dart';
 
 /// CMS 应用路由
@@ -17,18 +22,19 @@ class AppRouter {
   static final router = GoRouter(
     initialLocation: initial,
     redirect: _guard,
+    errorBuilder: (context, state) => const NotFoundPage(),
     routes: [
       // 主页 (底部导航)
       GoRoute(
         path: constants.AppRoutePath.initial,
-        name: 'home',
+        name: RouteNames.home,
         builder: (context, state) {
           return const CmsMainScaffold();
         },
         routes: [
           // 文章详情
           GoRoute(
-            name: 'post_detail',
+            name: RouteNames.postDetail,
             path: 'post/:id',
             builder: (context, state) {
               final postId =
@@ -38,7 +44,7 @@ class AppRouter {
           ),
           // 标签文章列表
           GoRoute(
-            name: 'tag_feed',
+            name: RouteNames.tagFeed,
             path: 'tag/:id',
             builder: (context, state) {
               final tagId =
@@ -48,7 +54,7 @@ class AppRouter {
           ),
           // 搜索
           GoRoute(
-            name: 'search',
+            name: RouteNames.search,
             path: 'search',
             builder: (context, state) {
               return const SearchPage();
@@ -56,7 +62,7 @@ class AppRouter {
           ),
           // 页面详情（复用 PostDetailPage）
           GoRoute(
-            name: 'page_detail',
+            name: RouteNames.pageDetail,
             path: 'page/:id',
             builder: (context, state) {
               final pageId =
@@ -64,14 +70,34 @@ class AppRouter {
               return PostDetailPage(postId: pageId);
             },
           ),
-          // 分类文章列表（复用 TagFeedPage）
+          // 文章列表（支持按分类/标签过滤）
           GoRoute(
-            name: 'category_feed',
-            path: 'category/:id',
+            name: RouteNames.postList,
+            path: 'posts',
             builder: (context, state) {
-              final categoryId =
-                  int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
-              return TagFeedPage(tagId: categoryId);
+              final categoryId = int.tryParse(
+                state.uri.queryParameters['categoryId'] ?? '',
+              );
+              final tagId = int.tryParse(
+                state.uri.queryParameters['tagId'] ?? '',
+              );
+              return PostListPage(categoryId: categoryId, tagId: tagId);
+            },
+          ),
+          // 分类列表
+          GoRoute(
+            name: RouteNames.categoryList,
+            path: 'categories',
+            builder: (context, state) {
+              return const CategoryListPage();
+            },
+          ),
+          // 标签列表
+          GoRoute(
+            name: RouteNames.tagList,
+            path: 'tags',
+            builder: (context, state) {
+              return const TagListPage();
             },
           ),
         ],

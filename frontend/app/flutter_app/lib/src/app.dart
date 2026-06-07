@@ -89,7 +89,19 @@ class _CMSAppState extends State<CMSApp> {
       supportedLocales: l10n.S.delegate.supportedLocales,
       localeListResolutionCallback: (locales, supportedLocales) {
         debug('locale list: $locales');
-        return locales?.first;
+        if (locales == null || locales.isEmpty) {
+          return supportedLocales.first;
+        }
+        for (final locale in locales) {
+          // 精确匹配
+          if (supportedLocales.contains(locale)) return locale;
+          // 语言代码匹配（忽略国家代码差异，如 zh-CN → zh_CN）
+          final match = supportedLocales.where(
+            (sl) => sl.languageCode == locale.languageCode,
+          );
+          if (match.isNotEmpty) return match.first;
+        }
+        return supportedLocales.first;
       },
     );
   }

@@ -1,3 +1,11 @@
+flutter_intl:
+  enabled: true
+  arb_dir: lib/l10n
+  template_arb_file: intl_en.arb
+  output_dir: lib/generated
+  output_file_name: l10n.dart
+  class_name: S
+
 name: flutter_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
@@ -135,6 +143,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

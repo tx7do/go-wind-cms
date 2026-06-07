@@ -180,7 +180,9 @@ class _HomeWebViewState extends State<HomeWebView> {
                 _navigations,
                 NavigationLocation.header,
                 locale: _currentLocale,
-              ).map(
+              )
+                  .where((item) => resolveNavRoute(item) != null || isExternalLink(item))
+                  .map(
                 (item) => _NavBarLink(
                   label: item.title ?? '',
                   route: resolveNavRoute(item),
@@ -333,13 +335,11 @@ class _NavBarLinkState extends State<_NavBarLink> {
       return;
     }
 
-    // 内部路由
-    if (widget.isOpenNewTab) {
-      // 新标签页：在新窗口打开（Web端）
-      // GoRouter 不直接支持新标签页，此处直接 go
+    // 内部路由：尝试跳转，路由不存在时回退到首页
+    try {
       context.go(route);
-    } else {
-      context.go(route);
+    } catch (_) {
+      context.go('/');
     }
   }
 

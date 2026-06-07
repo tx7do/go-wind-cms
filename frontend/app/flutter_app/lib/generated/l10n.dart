@@ -96,12 +96,22 @@ class S {
 
   /// `Latest Posts`
   String get latestPosts {
-    return Intl.message('Latest Posts', name: 'latestPosts', desc: '', args: []);
+    return Intl.message(
+      'Latest Posts',
+      name: 'latestPosts',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Related Articles`
   String get relatedArticles {
-    return Intl.message('Related Articles', name: 'relatedArticles', desc: '', args: []);
+    return Intl.message(
+      'Related Articles',
+      name: 'relatedArticles',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `All Posts`
@@ -111,12 +121,22 @@ class S {
 
   /// `— All Loaded —`
   String get allLoaded {
-    return Intl.message('— All Loaded —', name: 'allLoaded', desc: '', args: []);
+    return Intl.message(
+      '— All Loaded —',
+      name: 'allLoaded',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Browse Categories`
   String get browseCategories {
-    return Intl.message('Browse Categories', name: 'browseCategories', desc: '', args: []);
+    return Intl.message(
+      'Browse Categories',
+      name: 'browseCategories',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Hot Tags`
@@ -151,7 +171,12 @@ class S {
 
   /// `My Bookmarks`
   String get myBookmarks {
-    return Intl.message('My Bookmarks', name: 'myBookmarks', desc: '', args: []);
+    return Intl.message(
+      'My Bookmarks',
+      name: 'myBookmarks',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Bookmarked {count} articles`
@@ -166,17 +191,32 @@ class S {
 
   /// `No bookmarked articles yet`
   String get noBookmarks {
-    return Intl.message('No bookmarked articles yet', name: 'noBookmarks', desc: '', args: []);
+    return Intl.message(
+      'No bookmarked articles yet',
+      name: 'noBookmarks',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Tap the bookmark button while reading to save`
   String get bookmarkHint {
-    return Intl.message('Tap the bookmark button while reading to save', name: 'bookmarkHint', desc: '', args: []);
+    return Intl.message(
+      'Tap the bookmark button while reading to save',
+      name: 'bookmarkHint',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Search articles, tags...`
   String get searchHint {
-    return Intl.message('Search articles, tags...', name: 'searchHint', desc: '', args: []);
+    return Intl.message(
+      'Search articles, tags...',
+      name: 'searchHint',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Hot Searches`
@@ -186,7 +226,12 @@ class S {
 
   /// `Recommended Reading`
   String get recommendedReading {
-    return Intl.message('Recommended Reading', name: 'recommendedReading', desc: '', args: []);
+    return Intl.message(
+      'Recommended Reading',
+      name: 'recommendedReading',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `No results found for "{query}"`
@@ -201,7 +246,12 @@ class S {
 
   /// `Related Tags`
   String get relatedTags {
-    return Intl.message('Related Tags', name: 'relatedTags', desc: '', args: []);
+    return Intl.message(
+      'Related Tags',
+      name: 'relatedTags',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Related Articles ({count})`
@@ -251,7 +301,12 @@ class S {
 
   /// `Write your comment...`
   String get writeComment {
-    return Intl.message('Write your comment...', name: 'writeComment', desc: '', args: []);
+    return Intl.message(
+      'Write your comment...',
+      name: 'writeComment',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Today`
@@ -306,7 +361,12 @@ class S {
 
   /// `No related articles yet`
   String get noRelatedPosts {
-    return Intl.message('No related articles yet', name: 'noRelatedPosts', desc: '', args: []);
+    return Intl.message(
+      'No related articles yet',
+      name: 'noRelatedPosts',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Guest`
@@ -316,7 +376,12 @@ class S {
 
   /// `Login for more features`
   String get loginForMore {
-    return Intl.message('Login for more features', name: 'loginForMore', desc: '', args: []);
+    return Intl.message(
+      'Login for more features',
+      name: 'loginForMore',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Appearance`
@@ -351,17 +416,32 @@ class S {
 
   /// `Reading Stats`
   String get readingStats {
-    return Intl.message('Reading Stats', name: 'readingStats', desc: '', args: []);
+    return Intl.message(
+      'Reading Stats',
+      name: 'readingStats',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Browse History`
   String get browseHistory {
-    return Intl.message('Browse History', name: 'browseHistory', desc: '', args: []);
+    return Intl.message(
+      'Browse History',
+      name: 'browseHistory',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `View reading history`
   String get viewReadingHistory {
-    return Intl.message('View reading history', name: 'viewReadingHistory', desc: '', args: []);
+    return Intl.message(
+      'View reading history',
+      name: 'viewReadingHistory',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `My Comments`
@@ -371,22 +451,42 @@ class S {
 
   /// `Manage your comments`
   String get manageComments {
-    return Intl.message('Manage your comments', name: 'manageComments', desc: '', args: []);
+    return Intl.message(
+      'Manage your comments',
+      name: 'manageComments',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Notifications`
   String get notifications {
-    return Intl.message('Notifications', name: 'notifications', desc: '', args: []);
+    return Intl.message(
+      'Notifications',
+      name: 'notifications',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `No new messages`
   String get noNewMessages {
-    return Intl.message('No new messages', name: 'noNewMessages', desc: '', args: []);
+    return Intl.message(
+      'No new messages',
+      name: 'noNewMessages',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Theme, language & preferences`
   String get themeLanguagePrefs {
-    return Intl.message('Theme, language & preferences', name: 'themeLanguagePrefs', desc: '', args: []);
+    return Intl.message(
+      'Theme, language & preferences',
+      name: 'themeLanguagePrefs',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `About`
@@ -396,7 +496,12 @@ class S {
 
   /// `Version info & help`
   String get versionInfo {
-    return Intl.message('Version info & help', name: 'versionInfo', desc: '', args: []);
+    return Intl.message(
+      'Version info & help',
+      name: 'versionInfo',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Articles Read`
@@ -406,17 +511,57 @@ class S {
 
   /// `Bookmarked`
   String get bookmarkedPostsLabel {
-    return Intl.message('Bookmarked', name: 'bookmarkedPostsLabel', desc: '', args: []);
+    return Intl.message(
+      'Bookmarked',
+      name: 'bookmarkedPostsLabel',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Reading Time`
   String get readingTime {
-    return Intl.message('Reading Time', name: 'readingTime', desc: '', args: []);
+    return Intl.message(
+      'Reading Time',
+      name: 'readingTime',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Error Occurred!`
   String get errorOccurred {
-    return Intl.message('Error Occurred!', name: 'errorOccurred', desc: '', args: []);
+    return Intl.message(
+      'Error Occurred!',
+      name: 'errorOccurred',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Page Not Found`
+  String get pageNotFound {
+    return Intl.message(
+      'Page Not Found',
+      name: 'pageNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sorry, the page you are looking for does not exist or has been moved.`
+  String get pageNotFoundDesc {
+    return Intl.message(
+      'Sorry, the page you are looking for does not exist or has been moved.',
+      name: 'pageNotFoundDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back to Home`
+  String get backToHome {
+    return Intl.message('Back to Home', name: 'backToHome', desc: '', args: []);
   }
 }
 

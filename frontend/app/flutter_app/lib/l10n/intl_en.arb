@@ -127,5 +127,9 @@
   "bookmarkedPostsLabel": "Bookmarked",
   "readingTime": "Reading Time",
 
-  "errorOccurred": "Error Occurred!"
+  "errorOccurred": "Error Occurred!",
+
+  "pageNotFound": "Page Not Found",
+  "pageNotFoundDesc": "Sorry, the page you are looking for does not exist or has been moved.",
+  "backToHome": "Back to Home"
 }

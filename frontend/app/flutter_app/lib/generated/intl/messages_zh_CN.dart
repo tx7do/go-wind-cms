@@ -20,24 +20,45 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh_CN';
 
+  static String m0(count) => "已收藏 \$count 篇文章";
+
+  static String m1(count) => "评论 (\$count)";
+
+  static String m2(days) => "\$days 天前";
+
+  static String m3(month, day) => "\$month 月 \$day 日";
+
+  static String m4(query) => "没有找到「\$query」相关内容";
+
+  static String m5(count) => "\$count 篇";
+
+  static String m6(count) => "\$count 篇文章";
+
+  static String m7(count) => "相关文章 (\$count)";
+
+  static String m8(count) => "\$count 篇相关文章";
+
+  static String m9(year, month, day) => "\$year 年 \$month 月 \$day 日";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("关于"),
     "allLoaded": MessageLookupByLibrary.simpleMessage("— 已加载全部 —"),
     "allPosts": MessageLookupByLibrary.simpleMessage("全部文章"),
-    "appearance": MessageLookupByLibrary.simpleMessage("外观设置"),
     "appName": MessageLookupByLibrary.simpleMessage("GoWind CMS"),
-    "bookmarkedCount": (count) => MessageLookupByLibrary.simpleMessage("已收藏 $count 篇文章"),
-    "bookmarkedPostsLabel": MessageLookupByLibrary.simpleMessage("收藏文章"),
+    "appearance": MessageLookupByLibrary.simpleMessage("外观设置"),
+    "backToHome": MessageLookupByLibrary.simpleMessage("返回首页"),
     "bookmarkHint": MessageLookupByLibrary.simpleMessage("浏览文章时点击收藏按钮即可保存"),
+    "bookmarkedCount": m0,
+    "bookmarkedPostsLabel": MessageLookupByLibrary.simpleMessage("收藏文章"),
     "bookmarks": MessageLookupByLibrary.simpleMessage("收藏"),
     "browseCategories": MessageLookupByLibrary.simpleMessage("浏览分类"),
     "browseHistory": MessageLookupByLibrary.simpleMessage("浏览历史"),
     "comments": MessageLookupByLibrary.simpleMessage("评论"),
-    "commentsCount": (count) => MessageLookupByLibrary.simpleMessage("评论 ($count)"),
+    "commentsCount": m1,
     "dark": MessageLookupByLibrary.simpleMessage("深色"),
     "darkMode": MessageLookupByLibrary.simpleMessage("深色模式"),
-    "daysAgo": (days) => MessageLookupByLibrary.simpleMessage("$days 天前"),
+    "daysAgo": m2,
     "discover": MessageLookupByLibrary.simpleMessage("发现"),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("发生错误！"),
     "followSystem": MessageLookupByLibrary.simpleMessage("跟随系统"),
@@ -52,24 +73,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginForMore": MessageLookupByLibrary.simpleMessage("登录后享受更多功能"),
     "manageComments": MessageLookupByLibrary.simpleMessage("管理发表的评论"),
     "me": MessageLookupByLibrary.simpleMessage("我的"),
-    "monthDay": (month, day) => MessageLookupByLibrary.simpleMessage("$month 月 $day 日"),
+    "monthDay": m3,
     "myBookmarks": MessageLookupByLibrary.simpleMessage("我的收藏"),
     "myComments": MessageLookupByLibrary.simpleMessage("我的评论"),
     "noBookmarks": MessageLookupByLibrary.simpleMessage("还没有收藏的文章"),
     "noNewMessages": MessageLookupByLibrary.simpleMessage("暂无新消息"),
     "noRelatedPosts": MessageLookupByLibrary.simpleMessage("暂无相关文章"),
-    "noSearchResults": (query) => MessageLookupByLibrary.simpleMessage("没有找到「$query」相关内容"),
+    "noSearchResults": m4,
     "notifications": MessageLookupByLibrary.simpleMessage("消息通知"),
-    "postsCount": (count) => MessageLookupByLibrary.simpleMessage("$count 篇"),
-    "postsCountFull": (count) => MessageLookupByLibrary.simpleMessage("$count 篇文章"),
+    "pageNotFound": MessageLookupByLibrary.simpleMessage("页面未找到"),
+    "pageNotFoundDesc": MessageLookupByLibrary.simpleMessage(
+      "抱歉，您访问的页面不存在或已被移动。",
+    ),
+    "postsCount": m5,
+    "postsCountFull": m6,
     "readPosts": MessageLookupByLibrary.simpleMessage("已读文章"),
     "readingStats": MessageLookupByLibrary.simpleMessage("阅读统计"),
     "readingTime": MessageLookupByLibrary.simpleMessage("阅读时长"),
     "recommend": MessageLookupByLibrary.simpleMessage("推荐"),
     "recommendedReading": MessageLookupByLibrary.simpleMessage("推荐阅读"),
     "relatedArticles": MessageLookupByLibrary.simpleMessage("相关文章"),
-    "relatedPostsCount": (count) => MessageLookupByLibrary.simpleMessage("相关文章 ($count)"),
-    "relatedPostsCountFull": (count) => MessageLookupByLibrary.simpleMessage("$count 篇相关文章"),
+    "relatedPostsCount": m7,
+    "relatedPostsCountFull": m8,
     "relatedTags": MessageLookupByLibrary.simpleMessage("相关标签"),
     "reply": MessageLookupByLibrary.simpleMessage("回复"),
     "search": MessageLookupByLibrary.simpleMessage("搜索"),
@@ -83,7 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewReadingHistory": MessageLookupByLibrary.simpleMessage("查看阅读记录"),
     "views": MessageLookupByLibrary.simpleMessage("浏览"),
     "writeComment": MessageLookupByLibrary.simpleMessage("写下你的评论..."),
-    "yearMonthDay": (year, month, day) => MessageLookupByLibrary.simpleMessage("$year 年 $month 月 $day 日"),
+    "yearMonthDay": m9,
     "yesterday": MessageLookupByLibrary.simpleMessage("昨天"),
   };
 }
