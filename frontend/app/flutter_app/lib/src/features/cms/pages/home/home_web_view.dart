@@ -166,7 +166,7 @@ class _HomeWebViewState extends State<HomeWebView> {
             title: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: Text(
-                'GoWind CMS',
+                S.of(context).appName,
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -514,7 +514,7 @@ class _Footer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 32),
       alignment: Alignment.center,
       child: Text(
-        '© 2026 GoWind CMS  ·  Powered by Flutter',
+        S.of(context).footerText,
         style: TextStyle(
           fontSize: 12,
           color: theme.colorScheme.onSurface.withAlpha(80),

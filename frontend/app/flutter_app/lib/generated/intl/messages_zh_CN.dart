@@ -38,7 +38,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m8(count) => "${count} 篇相关文章";
 
-  static String m9(year, month, day) => "${year} 年 ${month} 月 ${day} 日";
+  static String m9(weeks) => "${weeks} 周前";
+
+  static String m10(year, month, day) => "${year} 年 ${month} 月 ${day} 日";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -54,14 +56,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookmarks": MessageLookupByLibrary.simpleMessage("收藏"),
     "browseCategories": MessageLookupByLibrary.simpleMessage("浏览分类"),
     "browseHistory": MessageLookupByLibrary.simpleMessage("浏览历史"),
+    "cancel": MessageLookupByLibrary.simpleMessage("取消"),
     "comments": MessageLookupByLibrary.simpleMessage("评论"),
     "commentsCount": m1,
+    "confirm": MessageLookupByLibrary.simpleMessage("确定"),
     "dark": MessageLookupByLibrary.simpleMessage("深色"),
     "darkMode": MessageLookupByLibrary.simpleMessage("深色模式"),
     "daysAgo": m2,
     "discover": MessageLookupByLibrary.simpleMessage("发现"),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("发生错误！"),
+    "featureNotAvailable": MessageLookupByLibrary.simpleMessage("该功能即将上线，敬请期待"),
     "followSystem": MessageLookupByLibrary.simpleMessage("跟随系统"),
+    "footerText": MessageLookupByLibrary.simpleMessage(
+      "© 2026 GoWind CMS  ·  Powered by Flutter",
+    ),
     "guestUser": MessageLookupByLibrary.simpleMessage("访客用户"),
     "home": MessageLookupByLibrary.simpleMessage("首页"),
     "hotSearch": MessageLookupByLibrary.simpleMessage("热门搜索"),
@@ -70,7 +78,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "light": MessageLookupByLibrary.simpleMessage("浅色"),
     "likes": MessageLookupByLibrary.simpleMessage("点赞"),
     "login": MessageLookupByLibrary.simpleMessage("登录"),
+    "loginButton": MessageLookupByLibrary.simpleMessage("登录"),
+    "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败，请检查用户名和密码"),
     "loginForMore": MessageLookupByLibrary.simpleMessage("登录后享受更多功能"),
+    "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
+    "logout": MessageLookupByLibrary.simpleMessage("退出登录"),
+    "logoutConfirm": MessageLookupByLibrary.simpleMessage("确定要退出登录吗？"),
     "manageComments": MessageLookupByLibrary.simpleMessage("管理发表的评论"),
     "me": MessageLookupByLibrary.simpleMessage("我的"),
     "monthDay": m3,
@@ -85,6 +98,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "pageNotFoundDesc": MessageLookupByLibrary.simpleMessage(
       "抱歉，您访问的页面不存在或已被移动。",
     ),
+    "password": MessageLookupByLibrary.simpleMessage("密码"),
+    "passwordHint": MessageLookupByLibrary.simpleMessage("请输入密码"),
     "postsCount": m5,
     "postsCountFull": m6,
     "readPosts": MessageLookupByLibrary.simpleMessage("已读文章"),
@@ -104,11 +119,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "themeColor": MessageLookupByLibrary.simpleMessage("主题色"),
     "themeLanguagePrefs": MessageLookupByLibrary.simpleMessage("主题、语言等偏好"),
     "today": MessageLookupByLibrary.simpleMessage("今天"),
+    "username": MessageLookupByLibrary.simpleMessage("用户名"),
+    "usernameHint": MessageLookupByLibrary.simpleMessage("请输入用户名"),
     "versionInfo": MessageLookupByLibrary.simpleMessage("版本信息和帮助"),
     "viewReadingHistory": MessageLookupByLibrary.simpleMessage("查看阅读记录"),
     "views": MessageLookupByLibrary.simpleMessage("浏览"),
+    "weeksAgo": m9,
+    "welcomeBack": MessageLookupByLibrary.simpleMessage("欢迎回来"),
     "writeComment": MessageLookupByLibrary.simpleMessage("写下你的评论..."),
-    "yearMonthDay": m9,
+    "yearMonthDay": m10,
     "yesterday": MessageLookupByLibrary.simpleMessage("昨天"),
   };
 }

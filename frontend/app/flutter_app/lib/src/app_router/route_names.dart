@@ -12,4 +12,5 @@ class RouteNames {
   static const String postList = 'post_list';
   static const String categoryList = 'category_list';
   static const String tagList = 'tag_list';
+  static const String login = 'login';
 }

@@ -38,7 +38,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m8(count) => "${count} related articles";
 
-  static String m9(year, month, day) => "${year}/${month}/${day}";
+  static String m9(weeks) => "${weeks} weeks ago";
+
+  static String m10(year, month, day) => "${year}/${month}/${day}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -58,14 +60,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "Browse Categories",
     ),
     "browseHistory": MessageLookupByLibrary.simpleMessage("Browse History"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "comments": MessageLookupByLibrary.simpleMessage("Comments"),
     "commentsCount": m1,
+    "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "dark": MessageLookupByLibrary.simpleMessage("Dark"),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "daysAgo": m2,
     "discover": MessageLookupByLibrary.simpleMessage("Discover"),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("Error Occurred!"),
+    "featureNotAvailable": MessageLookupByLibrary.simpleMessage(
+      "This feature is coming soon",
+    ),
     "followSystem": MessageLookupByLibrary.simpleMessage("System"),
+    "footerText": MessageLookupByLibrary.simpleMessage(
+      "© 2026 GoWind CMS  ·  Powered by Flutter",
+    ),
     "guestUser": MessageLookupByLibrary.simpleMessage("Guest"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "hotSearch": MessageLookupByLibrary.simpleMessage("Hot Searches"),
@@ -74,8 +84,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "light": MessageLookupByLibrary.simpleMessage("Light"),
     "likes": MessageLookupByLibrary.simpleMessage("Likes"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
+    "loginFailed": MessageLookupByLibrary.simpleMessage(
+      "Login failed, please check username and password",
+    ),
     "loginForMore": MessageLookupByLibrary.simpleMessage(
       "Login for more features",
+    ),
+    "loginSuccess": MessageLookupByLibrary.simpleMessage("Login successful"),
+    "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "logoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to logout?",
     ),
     "manageComments": MessageLookupByLibrary.simpleMessage(
       "Manage your comments",
@@ -97,6 +116,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "pageNotFoundDesc": MessageLookupByLibrary.simpleMessage(
       "Sorry, the page you are looking for does not exist or has been moved.",
     ),
+    "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "passwordHint": MessageLookupByLibrary.simpleMessage("Enter password"),
     "postsCount": m5,
     "postsCountFull": m6,
     "readPosts": MessageLookupByLibrary.simpleMessage("Articles Read"),
@@ -122,15 +143,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Theme, language & preferences",
     ),
     "today": MessageLookupByLibrary.simpleMessage("Today"),
+    "username": MessageLookupByLibrary.simpleMessage("Username"),
+    "usernameHint": MessageLookupByLibrary.simpleMessage("Enter username"),
     "versionInfo": MessageLookupByLibrary.simpleMessage("Version info & help"),
     "viewReadingHistory": MessageLookupByLibrary.simpleMessage(
       "View reading history",
     ),
     "views": MessageLookupByLibrary.simpleMessage("Views"),
+    "weeksAgo": m9,
+    "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome back"),
     "writeComment": MessageLookupByLibrary.simpleMessage(
       "Write your comment...",
     ),
-    "yearMonthDay": m9,
+    "yearMonthDay": m10,
     "yesterday": MessageLookupByLibrary.simpleMessage("Yesterday"),
   };
 }

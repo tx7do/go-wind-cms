@@ -132,7 +132,7 @@ class _HomeMobileViewState extends State<HomeMobileView>
               backgroundColor: theme.colorScheme.surface,
               surfaceTintColor: Colors.transparent,
               title: Text(
-                'GoWind CMS',
+                S.of(context).appName,
                 style: TextStyle(
                   fontSize: 22.sp,
                   fontWeight: FontWeight.bold,

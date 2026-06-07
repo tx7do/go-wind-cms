@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
@@ -316,12 +317,13 @@ class _PostCardState extends State<PostCard> {
   }
 
   String _formatDate(DateTime date) {
+    final loc = S.of(context);
     final now = DateTime.now();
     final diff = now.difference(date);
-    if (diff.inDays == 0) return '今天';
-    if (diff.inDays == 1) return '昨天';
-    if (diff.inDays < 7) return '${diff.inDays}天前';
-    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}周前';
-    return '${date.month}月${date.day}日';
+    if (diff.inDays == 0) return loc.today;
+    if (diff.inDays == 1) return loc.yesterday;
+    if (diff.inDays < 7) return loc.daysAgo(diff.inDays);
+    if (diff.inDays < 30) return loc.weeksAgo((diff.inDays / 7).floor());
+    return loc.monthDay(date.month, date.day);
   }
 }

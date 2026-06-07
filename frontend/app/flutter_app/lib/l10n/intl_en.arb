@@ -81,6 +81,12 @@
       "days": {"type": "int"}
     }
   },
+  "weeksAgo": "{weeks} weeks ago",
+  "@weeksAgo": {
+    "placeholders": {
+      "weeks": {"type": "int"}
+    }
+  },
   "monthDay": "{month}/{day}",
   "@monthDay": {
     "placeholders": {
@@ -131,5 +137,20 @@
 
   "pageNotFound": "Page Not Found",
   "pageNotFoundDesc": "Sorry, the page you are looking for does not exist or has been moved.",
-  "backToHome": "Back to Home"
+  "backToHome": "Back to Home",
+
+  "username": "Username",
+  "password": "Password",
+  "usernameHint": "Enter username",
+  "passwordHint": "Enter password",
+  "loginButton": "Login",
+  "loginSuccess": "Login successful",
+  "loginFailed": "Login failed, please check username and password",
+  "logout": "Logout",
+  "logoutConfirm": "Are you sure you want to logout?",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "featureNotAvailable": "This feature is coming soon",
+  "welcomeBack": "Welcome back",
+  "footerText": "© 2026 GoWind CMS  ·  Powered by Flutter"
 }

@@ -14,6 +14,7 @@ import 'package:flutter_app/src/features/cms/pages/tag_feed/tag_feed_page.dart';
 import 'package:flutter_app/src/features/cms/pages/tag_list/tag_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/category_list/category_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/search/search_page.dart';
+import 'package:flutter_app/src/features/auth/pages/login_page.dart';
 
 /// CMS 应用路由
 class AppRouter {
@@ -101,6 +102,14 @@ class AppRouter {
             },
           ),
         ],
+      ),
+      // 登录页
+      GoRoute(
+        name: RouteNames.login,
+        path: constants.AppRoutePath.login,
+        builder: (context, state) {
+          return const LoginPage();
+        },
       ),
     ],
   );

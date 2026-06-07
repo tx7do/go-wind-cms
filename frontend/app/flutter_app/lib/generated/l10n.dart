@@ -329,6 +329,16 @@ class S {
     );
   }
 
+  /// `{weeks} weeks ago`
+  String weeksAgo(int weeks) {
+    return Intl.message(
+      '$weeks weeks ago',
+      name: 'weeksAgo',
+      desc: '',
+      args: [weeks],
+    );
+  }
+
   /// `{month}/{day}`
   String monthDay(int month, int day) {
     return Intl.message(
@@ -562,6 +572,116 @@ class S {
   /// `Back to Home`
   String get backToHome {
     return Intl.message('Back to Home', name: 'backToHome', desc: '', args: []);
+  }
+
+  /// `Username`
+  String get username {
+    return Intl.message('Username', name: 'username', desc: '', args: []);
+  }
+
+  /// `Password`
+  String get password {
+    return Intl.message('Password', name: 'password', desc: '', args: []);
+  }
+
+  /// `Enter username`
+  String get usernameHint {
+    return Intl.message(
+      'Enter username',
+      name: 'usernameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter password`
+  String get passwordHint {
+    return Intl.message(
+      'Enter password',
+      name: 'passwordHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login`
+  String get loginButton {
+    return Intl.message('Login', name: 'loginButton', desc: '', args: []);
+  }
+
+  /// `Login successful`
+  String get loginSuccess {
+    return Intl.message(
+      'Login successful',
+      name: 'loginSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login failed, please check username and password`
+  String get loginFailed {
+    return Intl.message(
+      'Login failed, please check username and password',
+      name: 'loginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get logout {
+    return Intl.message('Logout', name: 'logout', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to logout?`
+  String get logoutConfirm {
+    return Intl.message(
+      'Are you sure you want to logout?',
+      name: 'logoutConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message('Confirm', name: 'confirm', desc: '', args: []);
+  }
+
+  /// `This feature is coming soon`
+  String get featureNotAvailable {
+    return Intl.message(
+      'This feature is coming soon',
+      name: 'featureNotAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome back`
+  String get welcomeBack {
+    return Intl.message(
+      'Welcome back',
+      name: 'welcomeBack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `© 2026 GoWind CMS  ·  Powered by Flutter`
+  String get footerText {
+    return Intl.message(
+      '© 2026 GoWind CMS  ·  Powered by Flutter',
+      name: 'footerText',
+      desc: '',
+      args: [],
+    );
   }
 }
 
