@@ -5,9 +5,9 @@ import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
-
 
 /// 标签列表页
 ///
@@ -63,10 +63,7 @@ class _TagListPageState extends State<TagListPage> {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: const AppBackButton(),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -114,11 +111,7 @@ class _TagListPageState extends State<TagListPage> {
               spacing: 10,
               runSpacing: 10,
               children: _tags.map((tag) {
-                return TagChip(
-                  tag: tag,
-                  isMobile: false,
-                  showPostCount: true,
-                );
+                return TagChip(tag: tag, isMobile: false, showPostCount: true);
               }).toList(),
             ),
           ),
@@ -132,11 +125,7 @@ class _TagListPageState extends State<TagListPage> {
         spacing: 8.w,
         runSpacing: 8.h,
         children: _tags.map((tag) {
-          return TagChip(
-            tag: tag,
-            isMobile: true,
-            showPostCount: true,
-          );
+          return TagChip(tag: tag, isMobile: true, showPostCount: true);
         }).toList(),
       ),
     );

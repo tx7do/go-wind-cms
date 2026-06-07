@@ -5,12 +5,10 @@ import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
-import 'package:flutter_app/src/features/cms/services/tag_service.dart' show TagService, ListTagResponse;
+import 'package:flutter_app/src/features/cms/services/tag_service.dart'
+    show TagService, ListTagResponse;
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
@@ -356,6 +354,7 @@ class _ExplorePageState extends State<ExplorePage> {
 
 class MultiSliver extends StatelessWidget {
   final List<Widget> children;
+
   const MultiSliver(this.children, {super.key});
 
   @override
@@ -463,7 +462,9 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
                   ),
                   SizedBox(height: widget.isMobile ? 4.h : 4),
                   Text(
-                    S.of(context).postsCountFull(widget.category.postCount ?? 0),
+                    S
+                        .of(context)
+                        .postsCountFull(widget.category.postCount ?? 0),
                     style: TextStyle(
                       fontSize: widget.isMobile ? 12.sp : 12,
                       color: theme.colorScheme.onSurface.withAlpha(140),
@@ -481,6 +482,7 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
 
 class _TagWrap extends StatelessWidget {
   final List<ContentServiceV1Tag> tags;
+
   const _TagWrap({required this.tags});
 
   @override
@@ -561,11 +563,7 @@ class _WebPostGrid extends StatelessWidget {
                   48 -
                   (crossAxisCount - 1) * 16) /
               crossAxisCount,
-          child: PostCard(
-            post: post,
-            categories: categories,
-            tags: tags,
-          ),
+          child: PostCard(post: post, categories: categories, tags: tags),
         );
       }).toList(),
     );

@@ -950,7 +950,7 @@ INSERT INTO public.navigation_items (
 (1008, NOW(), NOW(), 1, 'LINK_TYPE_PAGE', 102, '联系我们', '/contact', 2, 'email', '联系我们', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
 (1009, NOW(), NOW(), 2, 'LINK_TYPE_PAGE', 102, '隐私政策', '/privacy', 3, 'shield-checkmark', '隐私政策', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
 (1010, NOW(), NOW(), 3, 'LINK_TYPE_PAGE', 102, '服务条款', '/terms', 4, 'document', '服务条款', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(1011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 102, 'GitHub', 'https://github.com', 0, 'logo-github', '访问我们的GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(1011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 102, 'GitHub', 'https://github.com/tx7do/go-wind-cms', 0, 'logo-github', '访问我们的GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
 -- ========== 导航组 103（zh-CN 侧边栏导航） ==========
 (1012, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 103, '热门标签', '/tag', 0, 'pricetag', '浏览热门标签', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
 (1013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 103, '归档', '/archive', 0, 'archive', '文章归档', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
@@ -967,7 +967,7 @@ INSERT INTO public.navigation_items (
 (2008, NOW(), NOW(), 1, 'LINK_TYPE_PAGE', 202, 'Contact', '/contact', 2, 'email', 'Contact us', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
 (2009, NOW(), NOW(), 2, 'LINK_TYPE_PAGE', 202, 'Privacy Policy', '/privacy', 3, 'shield-checkmark', 'Privacy policy', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
 (2010, NOW(), NOW(), 3, 'LINK_TYPE_PAGE', 202, 'Terms of Service', '/terms', 4, 'document', 'Terms of service', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(2011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 202, 'GitHub', 'https://github.com', 0, 'logo-github', 'Visit our GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
+(2011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 202, 'GitHub', 'https://github.com/tx7do/go-wind-cms', 0, 'logo-github', 'Visit our GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
 -- ========== 导航组 203（en-US Sidebar Navigation） ==========
 (2012, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 203, 'Popular Tags', '/tag', 0, 'pricetag', 'Browse popular tags', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
 (2013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 203, 'Archive', '/archive', 0, 'archive', 'Post archive', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1);

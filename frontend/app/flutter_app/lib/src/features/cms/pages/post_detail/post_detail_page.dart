@@ -11,6 +11,7 @@ import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/transport/http/status.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/comment_tree_utils.dart';
@@ -148,10 +149,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: const AppBackButton(),
         actions: [
           IconButton(
             icon: const Icon(Icons.share_outlined, size: 22),

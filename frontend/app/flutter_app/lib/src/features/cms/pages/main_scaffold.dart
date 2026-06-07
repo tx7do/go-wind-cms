@@ -75,10 +75,7 @@ class _CmsMainScaffoldState extends State<CmsMainScaffold> {
     final isWide = ResponsiveUtils.isWideScreen(context);
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       // Web/桌面端已有顶部导航栏，隐藏底部导航栏
       bottomNavigationBar: isWide
           ? null
@@ -95,8 +92,7 @@ class _CmsMainScaffoldState extends State<CmsMainScaffold> {
               ),
               child: SafeArea(
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
                   child: NavigationBar(
                     selectedIndex: _currentIndex,
                     onDestinationSelected: (index) {

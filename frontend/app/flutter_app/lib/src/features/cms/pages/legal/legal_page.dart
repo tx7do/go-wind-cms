@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 
 /// 法律/信息页面类型
-enum LegalPageType {
-  contact,
-  disclaimer,
-  privacy,
-  terms,
-}
+enum LegalPageType { contact, disclaimer, privacy, terms }
 
 /// 通用法律/信息页面
 ///
@@ -30,7 +24,11 @@ class LegalPage extends StatelessWidget {
     );
   }
 
-  Widget _buildView(BuildContext ctx, ThemeData theme, {required bool isMobile}) {
+  Widget _buildView(
+    BuildContext ctx,
+    ThemeData theme, {
+    required bool isMobile,
+  }) {
     final s = S.of(ctx);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -38,10 +36,7 @@ class LegalPage extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => ctx.go('/'),
-        ),
+        leading: const AppBackButton(),
         title: Text(_getTitle(s)),
       ),
       body: Center(
@@ -62,11 +57,11 @@ class LegalPage extends StatelessWidget {
   }
 
   String _getTitle(S s) => switch (type) {
-        LegalPageType.contact => s.contactUs,
-        LegalPageType.disclaimer => s.disclaimer,
-        LegalPageType.privacy => s.privacyPolicy,
-        LegalPageType.terms => s.termsOfService,
-      };
+    LegalPageType.contact => s.contactUs,
+    LegalPageType.disclaimer => s.disclaimer,
+    LegalPageType.privacy => s.privacyPolicy,
+    LegalPageType.terms => s.termsOfService,
+  };
 
   Widget _buildContent(ThemeData theme, S s) {
     return switch (type) {

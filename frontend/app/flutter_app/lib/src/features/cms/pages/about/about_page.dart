@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 
 /// 关于我们页面
@@ -22,7 +22,11 @@ class AboutPage extends StatelessWidget {
     );
   }
 
-  Widget _buildView(BuildContext context, ThemeData theme, {required bool isMobile}) {
+  Widget _buildView(
+    BuildContext context,
+    ThemeData theme, {
+    required bool isMobile,
+  }) {
     final s = S.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -30,10 +34,7 @@ class AboutPage extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => GoRouter.of(context).go('/'),
-        ),
+        leading: const AppBackButton(),
         title: Text(s.about),
       ),
       body: Center(

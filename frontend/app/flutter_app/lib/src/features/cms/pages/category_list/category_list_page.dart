@@ -7,6 +7,7 @@ import 'package:flutter_app/generated/api/models/content_service_v1_category.dar
 import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
@@ -66,10 +67,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: const AppBackButton(),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

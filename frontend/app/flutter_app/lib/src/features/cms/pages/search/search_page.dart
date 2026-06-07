@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
@@ -77,10 +76,7 @@ class _SearchPageState extends State<SearchPage> {
           backgroundColor: theme.colorScheme.surface,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 22),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          leading: const AppBackButton(),
           titleSpacing: 0,
           title: Text(S.current.search, style: const TextStyle(fontSize: 15)),
         ),
@@ -94,10 +90,7 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: const AppBackButton(),
         titleSpacing: 0,
         title: TextField(
           controller: _searchController,
@@ -139,7 +132,10 @@ class _SearchPageState extends State<SearchPage> {
                 _hasSearched = true;
               });
             },
-            child: Text(S.of(context).search, style: const TextStyle(fontSize: 14)),
+            child: Text(
+              S.of(context).search,
+              style: const TextStyle(fontSize: 14),
+            ),
           ),
         ],
       ),
@@ -321,9 +317,16 @@ class _SearchPageState extends State<SearchPage> {
           ? (post.translations ?? []).first.summary ?? ''
           : '';
       final tagNames = _tags
-          .where((t) => post.tagIds != null && t.id != null && (post.tagIds as List).contains(t.id!))
+          .where(
+            (t) =>
+                post.tagIds != null &&
+                t.id != null &&
+                (post.tagIds as List).contains(t.id!),
+          )
           .map(
-            (t) => (t.translations ?? []).isNotEmpty ? (t.translations ?? []).first.name ?? '' : '',
+            (t) => (t.translations ?? []).isNotEmpty
+                ? (t.translations ?? []).first.name ?? ''
+                : '',
           )
           .toList();
       return title.toLowerCase().contains(q) ||

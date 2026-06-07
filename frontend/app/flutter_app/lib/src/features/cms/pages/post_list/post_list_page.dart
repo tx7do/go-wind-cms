@@ -13,6 +13,7 @@ import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 import 'package:flutter_app/src/core/services/pagination_query.dart';
@@ -75,7 +76,8 @@ class _PostListPageState extends State<PostListPage> {
 
     setState(() {
       _posts = (results[0] as ContentServiceV1ListPostResponse?)?.items ?? [];
-      _categories = (results[1] as ContentServiceV1ListCategoryResponse?)?.items ?? [];
+      _categories =
+          (results[1] as ContentServiceV1ListCategoryResponse?)?.items ?? [];
       _tags = (results[2] as ContentServiceV1ListTagResponse?)?.items ?? [];
       _isLoading = false;
     });
@@ -115,10 +117,7 @@ class _PostListPageState extends State<PostListPage> {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: const AppBackButton(),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

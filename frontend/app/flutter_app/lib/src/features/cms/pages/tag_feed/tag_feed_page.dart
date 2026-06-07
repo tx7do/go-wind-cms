@@ -4,12 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
@@ -73,7 +72,9 @@ class _TagFeedPageState extends State<TagFeedPage> {
       orElse: () => ContentServiceV1Tag(),
     );
     final tagName = getTagName(tag);
-    final posts = _posts.where((p) => (p.tagIds ?? []).contains(tag.id)).toList();
+    final posts = _posts
+        .where((p) => (p.tagIds ?? []).contains(tag.id))
+        .toList();
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -81,10 +82,7 @@ class _TagFeedPageState extends State<TagFeedPage> {
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: const AppBackButton(),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
