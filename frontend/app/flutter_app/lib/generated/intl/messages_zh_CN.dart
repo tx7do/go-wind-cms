@@ -20,25 +20,25 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh_CN';
 
-  static String m0(count) => "已收藏 \$count 篇文章";
+  static String m0(count) => "已收藏 ${count} 篇文章";
 
-  static String m1(count) => "评论 (\$count)";
+  static String m1(count) => "评论 (${count})";
 
-  static String m2(days) => "\$days 天前";
+  static String m2(days) => "${days} 天前";
 
-  static String m3(month, day) => "\$month 月 \$day 日";
+  static String m3(month, day) => "${month} 月 ${day} 日";
 
-  static String m4(query) => "没有找到「\$query」相关内容";
+  static String m4(query) => "没有找到「${query}」相关内容";
 
-  static String m5(count) => "\$count 篇";
+  static String m5(count) => "${count} 篇";
 
-  static String m6(count) => "\$count 篇文章";
+  static String m6(count) => "${count} 篇文章";
 
-  static String m7(count) => "相关文章 (\$count)";
+  static String m7(count) => "相关文章 (${count})";
 
-  static String m8(count) => "\$count 篇相关文章";
+  static String m8(count) => "${count} 篇相关文章";
 
-  static String m9(year, month, day) => "\$year 年 \$month 月 \$day 日";
+  static String m9(year, month, day) => "${year} 年 ${month} 月 ${day} 日";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{

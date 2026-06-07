@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_app/generated/l10n.dart' as l10n;
 
 import 'package:flutter_app/src/core/extensions/app_localizations_context.dart';
+import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/themes/index.dart' as theme;
 import 'package:flutter_app/src/core/utilities/logger.dart' show debug;
 
@@ -31,7 +32,7 @@ class _CMSAppState extends State<CMSApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(375, 812),
+      designSize: Breakpoints.designSize,
       minTextAdapt: true,
       splitScreenMode: true,
       ensureScreenSize: true,

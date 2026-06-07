@@ -19,14 +19,14 @@
   "hotTags": "热门标签",
   "recommend": "推荐",
 
-  "postsCount": "$count 篇",
+  "postsCount": "{count} 篇",
   "@postsCount": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
 
-  "postsCountFull": "$count 篇文章",
+  "postsCountFull": "{count} 篇文章",
   "@postsCountFull": {
     "placeholders": {
       "count": {"type": "int"}
@@ -34,7 +34,7 @@
   },
 
   "myBookmarks": "我的收藏",
-  "bookmarkedCount": "已收藏 $count 篇文章",
+  "bookmarkedCount": "已收藏 {count} 篇文章",
   "@bookmarkedCount": {
     "placeholders": {
       "count": {"type": "int"}
@@ -46,21 +46,21 @@
   "searchHint": "搜索文章、标签...",
   "hotSearch": "热门搜索",
   "recommendedReading": "推荐阅读",
-  "noSearchResults": "没有找到「$query」相关内容",
+  "noSearchResults": "没有找到「{query}」相关内容",
   "@noSearchResults": {
     "placeholders": {
       "query": {"type": "String"}
     }
   },
   "relatedTags": "相关标签",
-  "relatedPostsCount": "相关文章 ($count)",
+  "relatedPostsCount": "相关文章 ({count})",
   "@relatedPostsCount": {
     "placeholders": {
       "count": {"type": "int"}
     }
   },
 
-  "commentsCount": "评论 ($count)",
+  "commentsCount": "评论 ({count})",
   "@commentsCount": {
     "placeholders": {
       "count": {"type": "int"}
@@ -75,20 +75,20 @@
 
   "today": "今天",
   "yesterday": "昨天",
-  "daysAgo": "$days 天前",
+  "daysAgo": "{days} 天前",
   "@daysAgo": {
     "placeholders": {
       "days": {"type": "int"}
     }
   },
-  "monthDay": "$month 月 $day 日",
+  "monthDay": "{month} 月 {day} 日",
   "@monthDay": {
     "placeholders": {
       "month": {"type": "int"},
       "day": {"type": "int"}
     }
   },
-  "yearMonthDay": "$year 年 $month 月 $day 日",
+  "yearMonthDay": "{year} 年 {month} 月 {day} 日",
   "@yearMonthDay": {
     "placeholders": {
       "year": {"type": "int"},
@@ -97,7 +97,7 @@
     }
   },
 
-  "relatedPostsCountFull": "$count 篇相关文章",
+  "relatedPostsCountFull": "{count} 篇相关文章",
   "@relatedPostsCountFull": {
     "placeholders": {
       "count": {"type": "int"}

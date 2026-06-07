@@ -1,3 +1,5 @@
+import 'dart:ui' show Size;
+
 /// 设备断点常量
 ///
 /// 设备类型     | 屏幕宽度范围         | 布局策略
@@ -7,6 +9,9 @@
 /// 网页 Web    | > 1024 dp           | 三栏/最大宽度居中
 class Breakpoints {
   Breakpoints._();
+
+  /// ScreenUtil 设计稿基准尺寸（iPhone 6/7/8）
+  static const Size designSize = Size(375, 812);
 
   /// 手机端最大宽度
   static const double mobile = 600;
