@@ -15,6 +15,7 @@ import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
+import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -332,15 +333,14 @@ class _PostHeader extends StatelessWidget {
 
   const _PostHeader({required this.post, required this.isMobile, required this.categories});
 
-  String get _title =>
-      post.translations?.isNotEmpty == true ? post.translations!.first.title ?? '' : '';
+  String get _title => getPostTitle(post);
 
   String get _categoryName {
     if ((post.categoryIds ?? []).isEmpty) return '';
     final catId = post.categoryIds!.first;
     try {
       final cat = categories.firstWhere((c) => c.id != null && c.id == catId);
-      return (cat.translations ?? []).isNotEmpty ? cat.translations!.first.name ?? '' : '';
+      return getCategoryName(cat);
     } catch (_) {
       return '';
     }
@@ -450,11 +450,9 @@ class _PostContent extends StatelessWidget {
 
   const _PostContent({required this.post, required this.isMobile});
 
-  String get _summary =>
-      post.translations?.isNotEmpty == true ? post.translations!.first.summary ?? '' : '';
+  String get _summary => getPostSummary(post);
 
-  String get _content =>
-      post.translations?.isNotEmpty == true ? post.translations!.first.content ?? '' : '';
+  String get _content => getPostContent(post);
 
   @override
   Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
+import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -118,16 +119,10 @@ class _FeaturedCard extends StatelessWidget {
 
   const _FeaturedCard({required this.post, this.categories = const []});
 
-  String get _title => (post.translations ?? []).isNotEmpty
-      ? post.translations!.first.title ?? ''
-      : '';
+  String get _title => getPostTitle(post);
 
   /// 获取封面图
-  String? get _coverImage {
-    if ((post.translations ?? []).isEmpty) return null;
-    final thumb = post.translations!.first.thumbnail;
-    return (thumb != null && thumb.isNotEmpty) ? thumb : null;
-  }
+  String? get _coverImage => getPostThumbnail(post);
 
   /// 获取文章关联的分类名称
   String get _categoryName {
@@ -135,9 +130,7 @@ class _FeaturedCard extends StatelessWidget {
     final catId = post.categoryIds!.first;
     try {
       final cat = categories.firstWhere((c) => c.id != null && c.id == catId);
-      return (cat.translations ?? []).isNotEmpty
-          ? cat.translations!.first.name ?? ''
-          : '';
+      return getCategoryName(cat);
     } catch (_) {
       return '';
     }

@@ -6,6 +6,7 @@ import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
+import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -33,20 +34,11 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool _isHovered = false;
 
-  String get _title => (widget.post.translations ?? []).isNotEmpty
-      ? widget.post.translations!.first.title ?? ''
-      : '';
+  String get _title => getPostTitle(widget.post);
 
-  String get _summary => (widget.post.translations ?? []).isNotEmpty
-      ? widget.post.translations!.first.summary ?? ''
-      : '';
+  String get _summary => getPostSummary(widget.post);
 
-  String? get _coverImage =>
-      (widget.post.translations ?? []).isNotEmpty &&
-          widget.post.translations!.first.thumbnail != null &&
-          widget.post.translations!.first.thumbnail!.isNotEmpty
-      ? widget.post.translations!.first.thumbnail
-      : null;
+  String? get _coverImage => getPostThumbnail(widget.post);
 
   Category? _getCategory() {
     if ((widget.post.categoryIds ?? []).isEmpty) return null;
@@ -224,9 +216,7 @@ class _PostCardState extends State<PostCard> {
               borderRadius: BorderRadius.circular(_isMobile ? 8.r : 8),
             ),
             child: Text(
-              (category.translations ?? []).isNotEmpty
-                  ? category.translations!.first.name ?? ''
-                  : '',
+              getCategoryName(category),
               style: TextStyle(
                 fontSize: _isMobile ? 11.sp : 11,
                 fontWeight: FontWeight.w500,
@@ -273,8 +263,7 @@ class _PostCardState extends State<PostCard> {
 
     final tagText = tags
         .take(3)
-        .map((tag) =>
-            '#${(tag.translations ?? []).isNotEmpty ? (tag.translations ?? []).first.name ?? '' : ''}')
+        .map((tag) => '#${getTagName(tag)}')
         .join('  ');
 
     return Row(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
@@ -179,12 +181,18 @@ class _HomeWebViewState extends State<HomeWebView> {
                 NavigationLocation.header,
                 locale: _currentLocale,
               ).map(
-                (item) => _NavBarLink(item.title ?? '', resolveNavRoute(item) == '/'),
+                (item) => _NavBarLink(
+                  label: item.title ?? '',
+                  route: resolveNavRoute(item),
+                  isExternal: isExternalLink(item),
+                  isOpenNewTab: item.isOpenNewTab == true,
+                  isActive: false,
+                ),
               ),
               const SizedBox(width: 16),
               IconButton(
                 icon: const Icon(Icons.search, size: 22),
-                onPressed: () {},
+                onPressed: () => context.go('/search'),
                 tooltip: S.of(context).search,
               ),
               const SizedBox(width: 16),
@@ -294,9 +302,18 @@ class _HomeWebViewState extends State<HomeWebView> {
 /// 导航栏链接
 class _NavBarLink extends StatefulWidget {
   final String label;
+  final String? route;
+  final bool isExternal;
+  final bool isOpenNewTab;
   final bool isActive;
 
-  const _NavBarLink(this.label, this.isActive);
+  const _NavBarLink({
+    required this.label,
+    this.route,
+    this.isExternal = false,
+    this.isOpenNewTab = false,
+    this.isActive = false,
+  });
 
   @override
   State<_NavBarLink> createState() => _NavBarLinkState();
@@ -305,6 +322,27 @@ class _NavBarLink extends StatefulWidget {
 class _NavBarLinkState extends State<_NavBarLink> {
   bool _isHovered = false;
 
+  void _handleTap() {
+    final route = widget.route;
+    if (route == null || route.isEmpty) return;
+
+    if (widget.isExternal) {
+      // 外部链接：通过 url_launcher 打开
+      final uri = Uri.tryParse(route);
+      if (uri != null) launchUrl(uri);
+      return;
+    }
+
+    // 内部路由
+    if (widget.isOpenNewTab) {
+      // 新标签页：在新窗口打开（Web端）
+      // GoRouter 不直接支持新标签页，此处直接 go
+      context.go(route);
+    } else {
+      context.go(route);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -312,30 +350,33 @@ class _NavBarLinkState extends State<_NavBarLink> {
         ? theme.colorScheme.primary
         : theme.colorScheme.onSurface;
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          border: widget.isActive
-              ? Border(
-                  bottom: BorderSide(
-                    color: theme.colorScheme.primary,
-                    width: 2,
-                  ),
-                )
-              : null,
-        ),
-        child: Text(
-          widget.label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w400,
-            color: _isHovered && !widget.isActive
-                ? theme.colorScheme.primary
-                : color,
+    return GestureDetector(
+      onTap: _handleTap,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            border: widget.isActive
+                ? Border(
+                    bottom: BorderSide(
+                      color: theme.colorScheme.primary,
+                      width: 2,
+                    ),
+                  )
+                : null,
+          ),
+          child: Text(
+            widget.label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w400,
+              color: _isHovered && !widget.isActive
+                  ? theme.colorScheme.primary
+                  : color,
+            ),
           ),
         ),
       ),

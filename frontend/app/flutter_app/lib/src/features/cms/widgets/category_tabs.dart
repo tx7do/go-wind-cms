@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
+import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Category = ContentServiceV1Category;
 
@@ -40,9 +41,7 @@ class CategoryTabs extends StatelessWidget {
       tabs: categories
           .map(
             (cat) => Tab(
-              text: (cat.translations ?? []).isNotEmpty
-                  ? cat.translations!.first.name ?? ''
-                  : '',
+              text: getCategoryName(cat),
             ),
           )
           .toList(),

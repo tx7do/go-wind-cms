@@ -11,6 +11,7 @@ import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
+import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
 
@@ -71,9 +72,7 @@ class _TagFeedPageState extends State<TagFeedPage> {
       (t) => t.id != null && t.id == widget.tagId,
       orElse: () => ContentServiceV1Tag(),
     );
-    final tagName = (tag.translations ?? []).isNotEmpty
-        ? tag.translations!.first.name ?? ''
-        : '';
+    final tagName = getTagName(tag);
     final posts = _posts.where((p) => (p.tagIds ?? []).contains(tag.id)).toList();
 
     return Scaffold(

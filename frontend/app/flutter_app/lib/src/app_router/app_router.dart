@@ -54,6 +54,26 @@ class AppRouter {
               return const SearchPage();
             },
           ),
+          // 页面详情（复用 PostDetailPage）
+          GoRoute(
+            name: 'page_detail',
+            path: 'page/:id',
+            builder: (context, state) {
+              final pageId =
+                  int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
+              return PostDetailPage(postId: pageId);
+            },
+          ),
+          // 分类文章列表（复用 TagFeedPage）
+          GoRoute(
+            name: 'category_feed',
+            path: 'category/:id',
+            builder: (context, state) {
+              final categoryId =
+                  int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
+              return TagFeedPage(tagId: categoryId);
+            },
+          ),
         ],
       ),
     ],

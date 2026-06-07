@@ -15,6 +15,7 @@ import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
+import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -188,9 +189,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       _SectionRow(
                         title: _selectedCategory == null
                             ? S.of(context).allPosts
-                            : ((_selectedCategory!.translations ?? []).isNotEmpty
-                                  ? _selectedCategory!.translations!.first.name ?? ''
-                                  : ''),
+                            : getCategoryName(_selectedCategory),
                         count: filteredPosts.length,
                       ),
                       const SizedBox(height: 12),
@@ -313,9 +312,7 @@ class _ExplorePageState extends State<ExplorePage> {
               Text(
                 _selectedCategory == null
                     ? S.of(context).allPosts
-                    : ((_selectedCategory!.translations ?? []).isNotEmpty
-                          ? _selectedCategory!.translations!.first.name ?? ''
-                          : ''),
+                    : getCategoryName(_selectedCategory),
                 style: TextStyle(
                   fontSize: isMobile ? 16.sp : 16,
                   fontWeight: FontWeight.w600,
@@ -420,9 +417,7 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final name = (widget.category.translations ?? []).isNotEmpty
-        ? (widget.category.translations ?? []).first.name ?? ''
-        : '';
+    final name = getCategoryName(widget.category);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -493,9 +488,7 @@ class _TagWrap extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: tags.map((tag) {
-        final name = (tag.translations ?? []).isNotEmpty
-            ? (tag.translations ?? []).first.name ?? ''
-            : '';
+        final name = getTagName(tag);
         return ActionChip(
           onPressed: () {},
           label: Text('# $name', style: const TextStyle(fontSize: 13)),

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
+import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Tag = ContentServiceV1Tag;
 
@@ -66,9 +67,7 @@ class _TagChip extends StatelessWidget {
 
   const _TagChip({required this.tag, required this.isMobile});
 
-  String get _name => (tag.translations ?? []).isNotEmpty
-      ? tag.translations!.first.name ?? ''
-      : '';
+  String get _name => getTagName(tag);
 
   @override
   Widget build(BuildContext context) {
