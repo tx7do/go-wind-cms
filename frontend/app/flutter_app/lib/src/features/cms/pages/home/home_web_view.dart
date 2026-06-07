@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/repositories/user_preference_cache.dart';
 import 'package:flutter_app/src/core/services/pagination_query.dart';
@@ -184,13 +185,13 @@ class _HomeWebViewState extends State<HomeWebView> {
               IconButton(
                 icon: const Icon(Icons.search, size: 22),
                 onPressed: () {},
-                tooltip: '搜索',
+                tooltip: S.of(context).search,
               ),
               const SizedBox(width: 16),
               IconButton(
                 icon: const Icon(Icons.settings_outlined, size: 22),
                 onPressed: () {},
-                tooltip: '设置',
+                tooltip: S.of(context).settings,
               ),
               const SizedBox(width: 8),
               MouseRegion(
@@ -206,7 +207,7 @@ class _HomeWebViewState extends State<HomeWebView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('登录'),
+                  child: Text(S.of(context).login),
                 ),
               ),
               const SizedBox(width: 16),
@@ -234,7 +235,7 @@ class _HomeWebViewState extends State<HomeWebView> {
                           categories: _categories,
                         ),
                         const SizedBox(height: 32),
-                        _SectionHeader(title: '最新文章', count: _posts.length),
+                        _SectionHeader(title: S.of(context).latestPosts, count: _posts.length),
                         const SizedBox(height: 16),
                         _WebPostGrid(
                           posts: _posts,
@@ -258,7 +259,7 @@ class _HomeWebViewState extends State<HomeWebView> {
                             padding: const EdgeInsets.symmetric(vertical: 24),
                             child: Center(
                               child: Text(
-                                '— 已加载全部 —',
+                                S.of(context).allLoaded,
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Theme.of(context).colorScheme.onSurface.withAlpha(80),
@@ -373,7 +374,7 @@ class _SectionHeader extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          '$count 篇',
+          S.of(context).postsCount(count),
           style: TextStyle(
             fontSize: 13,
             color: theme.colorScheme.onSurface.withAlpha(128),
@@ -466,7 +467,7 @@ class _Footer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 32),
       alignment: Alignment.center,
       child: Text(
-        '© 2026 Wind CMS  ·  Powered by Flutter',
+        '© 2026 GoWind CMS  ·  Powered by Flutter',
         style: TextStyle(
           fontSize: 12,
           color: theme.colorScheme.onSurface.withAlpha(80),

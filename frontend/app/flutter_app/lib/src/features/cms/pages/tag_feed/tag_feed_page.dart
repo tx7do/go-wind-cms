@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
@@ -109,7 +110,7 @@ class _TagFeedPageState extends State<TagFeedPage> {
           child: Padding(
             padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
             child: Text(
-              '${tag.postCount ?? 0} 篇相关文章',
+              S.of(context).relatedPostsCountFull(tag.postCount ?? 0),
               style: TextStyle(
                 fontSize: isMobile ? 13.sp : 13,
                 color: theme.colorScheme.onSurface.withAlpha(120),
@@ -130,7 +131,7 @@ class _TagFeedPageState extends State<TagFeedPage> {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    '暂无相关文章',
+                    S.of(context).noRelatedPosts,
                     style: TextStyle(
                       fontSize: 15,
                       color: theme.colorScheme.onSurface.withAlpha(120),

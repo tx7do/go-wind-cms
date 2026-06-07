@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/constants/index.dart';
 
 class CustomErrorWidget extends StatelessWidget {
@@ -15,9 +16,9 @@ class CustomErrorWidget extends StatelessWidget {
         children: [
           GlobalIcons.error(),
           const SizedBox(height: 10.0),
-          const Text(
-            'Error Occurred!',
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          Text(
+            S.of(context).errorOccurred,
+            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10.0),
           Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
@@ -72,7 +73,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
             backgroundColor: theme.colorScheme.surface,
             surfaceTintColor: Colors.transparent,
             title: Text(
-              '我的收藏',
+              S.of(context).myBookmarks,
               style: TextStyle(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
@@ -102,9 +103,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
             elevation: 0,
             backgroundColor: theme.colorScheme.surface,
             surfaceTintColor: Colors.transparent,
-            title: const Text(
-              '我的收藏',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            title: Text(
+              S.of(context).myBookmarks,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
           if (bookmarked.isEmpty)
@@ -127,7 +128,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '已收藏 ${bookmarked.length} 篇文章',
+                          S.of(context).bookmarkedCount(bookmarked.length),
                           style: TextStyle(
                             fontSize: 13,
                             color: theme.colorScheme.onSurface.withAlpha(160),
@@ -200,7 +201,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
               ),
               SizedBox(width: isMobile ? 6.w : 6),
               Text(
-                '已收藏 ${bookmarked.length} 篇文章',
+                S.of(context).bookmarkedCount(bookmarked.length),
                 style: TextStyle(
                   fontSize: isMobile ? 13.sp : 13,
                   color: theme.colorScheme.onSurface.withAlpha(160),
@@ -237,7 +238,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            '还没有收藏的文章',
+            S.of(context).noBookmarks,
             style: TextStyle(
               fontSize: 15,
               color: theme.colorScheme.onSurface.withAlpha(120),
@@ -245,7 +246,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            '浏览文章时点击收藏按钮即可保存',
+            S.of(context).bookmarkHint,
             style: TextStyle(
               fontSize: 13,
               color: theme.colorScheme.onSurface.withAlpha(80),

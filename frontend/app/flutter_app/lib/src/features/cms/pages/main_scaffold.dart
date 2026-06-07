@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/features/cms/pages/home/home_page.dart';
 import 'package:flutter_app/src/features/cms/pages/explore/explore_page.dart';
 import 'package:flutter_app/src/features/cms/pages/bookmarks/bookmarks_page.dart';
@@ -8,26 +9,30 @@ import 'package:flutter_app/src/features/cms/pages/profile/profile_page.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 
 /// 底部导航项定义
-const List<_BottomNavItem> _bottomNavItems = [
+List<_BottomNavItem> _bottomNavItems = [
   _BottomNavItem(
     icon: Icons.home_outlined,
     activeIcon: Icons.home,
-    label: '首页',
+    label: 'home',
+    localizedName: (loc) => loc.home,
   ),
   _BottomNavItem(
     icon: Icons.explore_outlined,
     activeIcon: Icons.explore,
-    label: '发现',
+    label: 'discover',
+    localizedName: (loc) => loc.discover,
   ),
   _BottomNavItem(
     icon: Icons.bookmark_border,
     activeIcon: Icons.bookmark,
-    label: '收藏',
+    label: 'bookmarks',
+    localizedName: (loc) => loc.bookmarks,
   ),
   _BottomNavItem(
     icon: Icons.person_outline,
     activeIcon: Icons.person,
-    label: '我的',
+    label: 'me',
+    localizedName: (loc) => loc.me,
   ),
 ];
 
@@ -35,11 +40,13 @@ class _BottomNavItem {
   final IconData icon;
   final IconData activeIcon;
   final String label;
+  final String Function(S) localizedName;
 
   const _BottomNavItem({
     required this.icon,
     required this.activeIcon,
     required this.label,
+    required this.localizedName,
   });
 }
 
@@ -104,10 +111,11 @@ class _CmsMainScaffoldState extends State<CmsMainScaffold> {
                     labelBehavior:
                         NavigationDestinationLabelBehavior.alwaysShow,
                     destinations: _bottomNavItems.map((item) {
+                      final loc = S.of(context);
                       return NavigationDestination(
                         icon: Icon(item.icon, size: 24.sp),
                         selectedIcon: Icon(item.activeIcon, size: 24.sp),
-                        label: item.label,
+                        label: item.localizedName(loc),
                       );
                     }).toList(),
                   ),

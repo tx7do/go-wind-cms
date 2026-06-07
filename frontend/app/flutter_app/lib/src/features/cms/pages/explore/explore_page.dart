@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
@@ -99,7 +100,7 @@ class _ExplorePageState extends State<ExplorePage> {
             backgroundColor: theme.colorScheme.surface,
             surfaceTintColor: Colors.transparent,
             title: Text(
-              '发现',
+              S.of(context).discover,
               style: TextStyle(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
@@ -134,7 +135,7 @@ class _ExplorePageState extends State<ExplorePage> {
             backgroundColor: theme.colorScheme.surface,
             surfaceTintColor: Colors.transparent,
             title: Text(
-              '发现',
+              S.of(context).discover,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
@@ -150,7 +151,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '浏览分类',
+                        S.of(context).browseCategories,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -174,7 +175,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        '热门标签',
+                        S.of(context).hotTags,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -186,7 +187,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       const SizedBox(height: 24),
                       _SectionRow(
                         title: _selectedCategory == null
-                            ? '全部文章'
+                            ? S.of(context).allPosts
                             : ((_selectedCategory!.translations ?? []).isNotEmpty
                                   ? _selectedCategory!.translations!.first.name ?? ''
                                   : ''),
@@ -272,7 +273,7 @@ class _ExplorePageState extends State<ExplorePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '热门标签',
+              S.of(context).hotTags,
               style: TextStyle(
                 fontSize: isMobile ? 16.sp : 16,
                 fontWeight: FontWeight.w600,
@@ -311,7 +312,7 @@ class _ExplorePageState extends State<ExplorePage> {
               SizedBox(width: isMobile ? 8.w : 8),
               Text(
                 _selectedCategory == null
-                    ? '全部文章'
+                    ? S.of(context).allPosts
                     : ((_selectedCategory!.translations ?? []).isNotEmpty
                           ? _selectedCategory!.translations!.first.name ?? ''
                           : ''),
@@ -323,7 +324,7 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
               const Spacer(),
               Text(
-                '${posts.length} 篇',
+                S.of(context).postsCount(posts.length),
                 style: TextStyle(
                   fontSize: isMobile ? 13.sp : 13,
                   color: theme.colorScheme.onSurface.withAlpha(128),
@@ -466,7 +467,7 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
                   ),
                   SizedBox(height: widget.isMobile ? 4.h : 4),
                   Text(
-                    '${widget.category.postCount ?? 0} 篇文章',
+                    S.of(context).postsCountFull(widget.category.postCount ?? 0),
                     style: TextStyle(
                       fontSize: widget.isMobile ? 12.sp : 12,
                       color: theme.colorScheme.onSurface.withAlpha(140),
@@ -534,7 +535,7 @@ class _SectionRow extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          '$count 篇',
+          S.of(context).postsCount(count),
           style: TextStyle(
             fontSize: 13,
             color: theme.colorScheme.onSurface.withAlpha(128),

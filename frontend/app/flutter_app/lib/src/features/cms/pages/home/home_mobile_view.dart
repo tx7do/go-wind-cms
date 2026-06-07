@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category_translation.dart';
@@ -77,7 +78,7 @@ class _HomeMobileViewState extends State<HomeMobileView>
             translations: [
               CategoryTranslation(
                 languageCode: 'zh',
-                name: '推荐',
+                name: S.current.recommend,
                 slug: 'recommend',
               ),
             ],
@@ -145,7 +146,7 @@ class _HomeMobileViewState extends State<HomeMobileView>
                 IconButton(
                   icon: Icon(Icons.search, size: 24.sp),
                   onPressed: () {},
-                  tooltip: '搜索',
+                  tooltip: S.of(context).search,
                 ),
                 SizedBox(width: 8.w),
               ],
@@ -205,7 +206,7 @@ class _HomeMobileViewState extends State<HomeMobileView>
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  isRecommend ? '最新文章' : '相关文章',
+                  isRecommend ? S.of(context).latestPosts : S.of(context).relatedArticles,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
@@ -214,7 +215,7 @@ class _HomeMobileViewState extends State<HomeMobileView>
                 ),
                 const Spacer(),
                 Text(
-                  '${posts.length} 篇',
+                  S.of(context).postsCount(posts.length),
                   style: TextStyle(
                     fontSize: 13.sp,
                     color: Theme.of(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
@@ -80,7 +81,7 @@ class _SearchPageState extends State<SearchPage> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           titleSpacing: 0,
-          title: const Text('搜索', style: TextStyle(fontSize: 15)),
+          title: Text(S.current.search, style: const TextStyle(fontSize: 15)),
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -102,7 +103,7 @@ class _SearchPageState extends State<SearchPage> {
           autofocus: true,
           style: const TextStyle(fontSize: 15),
           decoration: InputDecoration(
-            hintText: '搜索文章、标签...',
+            hintText: S.of(context).searchHint,
             hintStyle: TextStyle(
               fontSize: 15,
               color: theme.colorScheme.onSurface.withAlpha(100),
@@ -137,7 +138,7 @@ class _SearchPageState extends State<SearchPage> {
                 _hasSearched = true;
               });
             },
-            child: const Text('搜索', style: TextStyle(fontSize: 14)),
+            child: Text(S.of(context).search, style: const TextStyle(fontSize: 14)),
           ),
         ],
       ),
@@ -164,7 +165,7 @@ class _SearchPageState extends State<SearchPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '热门搜索',
+                S.of(context).hotSearch,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -193,7 +194,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
               const SizedBox(height: 24),
               Text(
-                '推荐阅读',
+                S.of(context).recommendedReading,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -234,7 +235,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
             const SizedBox(height: 14),
             Text(
-              '没有找到 "$_query" 相关内容',
+              S.of(context).noSearchResults(_query),
               style: TextStyle(
                 fontSize: 15,
                 color: theme.colorScheme.onSurface.withAlpha(120),
@@ -260,7 +261,7 @@ class _SearchPageState extends State<SearchPage> {
               children: [
                 if (filteredTags.isNotEmpty) ...[
                   Text(
-                    '相关标签',
+                    S.of(context).relatedTags,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -288,7 +289,7 @@ class _SearchPageState extends State<SearchPage> {
                 ],
                 if (filteredPosts.isNotEmpty) ...[
                   Text(
-                    '相关文章 (${filteredPosts.length})',
+                    S.of(context).relatedPostsCount(filteredPosts.length),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,

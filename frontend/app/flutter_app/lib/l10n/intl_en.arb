@@ -1,3 +1,131 @@
 {
-  "appName": "GoWind CMS"
+  "appName": "GoWind CMS",
+
+  "@@locale": "en",
+
+  "home": "Home",
+  "discover": "Discover",
+  "bookmarks": "Bookmarks",
+  "me": "Me",
+  "search": "Search",
+  "settings": "Settings",
+  "login": "Login",
+
+  "latestPosts": "Latest Posts",
+  "relatedArticles": "Related Articles",
+  "allPosts": "All Posts",
+  "allLoaded": "— All Loaded —",
+  "browseCategories": "Browse Categories",
+  "hotTags": "Hot Tags",
+  "recommend": "Recommend",
+
+  "postsCount": "{count} posts",
+  "@postsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "postsCountFull": "{count} articles",
+  "@postsCountFull": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "myBookmarks": "My Bookmarks",
+  "bookmarkedCount": "Bookmarked {count} articles",
+  "@bookmarkedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "noBookmarks": "No bookmarked articles yet",
+  "bookmarkHint": "Tap the bookmark button while reading to save",
+
+  "searchHint": "Search articles, tags...",
+  "hotSearch": "Hot Searches",
+  "recommendedReading": "Recommended Reading",
+  "noSearchResults": "No results found for \"{query}\"",
+  "@noSearchResults": {
+    "placeholders": {
+      "query": {"type": "String"}
+    }
+  },
+  "relatedTags": "Related Tags",
+  "relatedPostsCount": "Related Articles ({count})",
+  "@relatedPostsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "commentsCount": "Comments ({count})",
+  "@commentsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "views": "Views",
+  "likes": "Likes",
+  "comments": "Comments",
+  "share": "Share",
+  "reply": "Reply",
+  "writeComment": "Write your comment...",
+
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "daysAgo": "{days} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "monthDay": "{month}/{day}",
+  "@monthDay": {
+    "placeholders": {
+      "month": {"type": "int"},
+      "day": {"type": "int"}
+    }
+  },
+  "yearMonthDay": "{year}/{month}/{day}",
+  "@yearMonthDay": {
+    "placeholders": {
+      "year": {"type": "int"},
+      "month": {"type": "int"},
+      "day": {"type": "int"}
+    }
+  },
+
+  "relatedPostsCountFull": "{count} related articles",
+  "@relatedPostsCountFull": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "noRelatedPosts": "No related articles yet",
+
+  "guestUser": "Guest",
+  "loginForMore": "Login for more features",
+  "appearance": "Appearance",
+  "themeColor": "Theme Color",
+  "darkMode": "Dark Mode",
+  "light": "Light",
+  "followSystem": "System",
+  "dark": "Dark",
+  "readingStats": "Reading Stats",
+  "browseHistory": "Browse History",
+  "viewReadingHistory": "View reading history",
+  "myComments": "My Comments",
+  "manageComments": "Manage your comments",
+  "notifications": "Notifications",
+  "noNewMessages": "No new messages",
+  "themeLanguagePrefs": "Theme, language & preferences",
+  "about": "About",
+  "versionInfo": "Version info & help",
+  "readPosts": "Articles Read",
+  "bookmarkedPostsLabel": "Bookmarked",
+  "readingTime": "Reading Time",
+
+  "errorOccurred": "Error Occurred!"
 }

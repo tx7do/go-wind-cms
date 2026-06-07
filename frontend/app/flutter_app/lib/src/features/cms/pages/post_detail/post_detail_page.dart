@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
@@ -184,7 +185,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '评论 (${comments.length})',
+                            S.of(context).commentsCount(comments.length),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -296,7 +297,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 ),
                 SizedBox(width: isMobile ? 8.w : 8),
                 Text(
-                  '评论 (${comments.length})',
+                  S.of(context).commentsCount(comments.length),
                   style: TextStyle(
                     fontSize: isMobile ? 16.sp : 16,
                     fontWeight: FontWeight.w600,
@@ -398,7 +399,7 @@ class _PostHeader extends StatelessWidget {
                     SizedBox(height: isMobile ? 2.h : 2),
                     Text(
                       post.publishTime != null
-                          ? _formatDate(post.publishTime!)
+                          ? _formatDate(context, post.publishTime!)
                           : '',
                       style: TextStyle(
                         fontSize: isMobile ? 12.sp : 12,
@@ -437,8 +438,10 @@ class _PostHeader extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) =>
-      '${date.year}年${date.month}月${date.day}日';
+  String _formatDate(BuildContext context, DateTime date) {
+    final loc = S.of(context);
+    return loc.yearMonthDay(date.year, date.month, date.day);
+  }
 }
 
 class _PostContent extends StatelessWidget {
@@ -538,15 +541,15 @@ class _InteractionBar extends StatelessWidget {
             _InteractionItem(
               Icons.remove_red_eye_outlined,
               '${post.visits}',
-              '浏览',
+              S.of(context).views,
             ),
-            _InteractionItem(Icons.favorite_outline, '${post.likes}', '点赞'),
+            _InteractionItem(Icons.favorite_outline, '${post.likes}', S.of(context).likes),
             _InteractionItem(
               Icons.comment_outlined,
               '${post.commentCount}',
-              '评论',
+              S.of(context).comments,
             ),
-            _InteractionItem(Icons.share_outlined, '分享', ''),
+            _InteractionItem(Icons.share_outlined, S.of(context).share, ''),
           ],
         ),
       ),
@@ -662,7 +665,7 @@ class _CommentItem extends StatelessWidget {
                     const Spacer(),
                     Text(
                       comment.createdAt != null
-                          ? _formatDate(comment.createdAt!)
+                          ? _formatDate(context, comment.createdAt!)
                           : '',
                       style: TextStyle(
                         fontSize: isMobile ? 11.sp : 11,
@@ -698,7 +701,7 @@ class _CommentItem extends StatelessWidget {
                     ),
                     SizedBox(width: isMobile ? 16.w : 16),
                     Text(
-                      '回复',
+                      S.of(context).reply,
                       style: TextStyle(
                         fontSize: isMobile ? 11.sp : 11,
                         color: theme.colorScheme.primary,
@@ -714,13 +717,14 @@ class _CommentItem extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(BuildContext context, DateTime date) {
+    final loc = S.of(context);
     final now = DateTime.now();
     final diff = now.difference(date);
-    if (diff.inDays == 0) return '今天';
-    if (diff.inDays == 1) return '昨天';
-    if (diff.inDays < 7) return '${diff.inDays}天前';
-    return '${date.month}月${date.day}日';
+    if (diff.inDays == 0) return loc.today;
+    if (diff.inDays == 1) return loc.yesterday;
+    if (diff.inDays < 7) return loc.daysAgo(diff.inDays);
+    return loc.monthDay(date.month, date.day);
   }
 }
 
@@ -769,7 +773,7 @@ class _CommentInputBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '写下你的评论...',
+                      S.of(context).writeComment,
                       style: TextStyle(
                         fontSize: isMobile ? 14.sp : 14,
                         color: theme.colorScheme.onSurface.withAlpha(100),

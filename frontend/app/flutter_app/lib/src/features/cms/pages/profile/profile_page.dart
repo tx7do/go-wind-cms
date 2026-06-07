@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/themes/index.dart' as theme;
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 
@@ -25,7 +26,7 @@ class ProfilePage extends StatelessWidget {
             backgroundColor: themeData.colorScheme.surface,
             surfaceTintColor: Colors.transparent,
             title: Text(
-              '我的',
+              S.of(context).me,
               style: TextStyle(
                 fontSize: isMobile ? 22.sp : 22,
                 fontWeight: FontWeight.bold,
@@ -122,7 +123,7 @@ class _UserProfileCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '访客用户',
+                    S.of(context).guestUser,
                     style: TextStyle(
                       fontSize: isMobile ? 18.sp : 18,
                       fontWeight: FontWeight.bold,
@@ -131,7 +132,7 @@ class _UserProfileCard extends StatelessWidget {
                   ),
                   SizedBox(height: isMobile ? 4.h : 4),
                   Text(
-                    '登录后享受更多功能',
+                    S.of(context).loginForMore,
                     style: TextStyle(
                       fontSize: isMobile ? 13.sp : 13,
                       color: themeData.colorScheme.onSurface.withAlpha(140),
@@ -151,7 +152,7 @@ class _UserProfileCard extends StatelessWidget {
                       BorderRadius.circular(isMobile ? 20.r : 20),
                 ),
               ),
-              child: Text('登录',
+              child: Text(S.of(context).login,
                   style: TextStyle(fontSize: isMobile ? 14.sp : 14)),
             ),
           ],
@@ -203,7 +204,7 @@ class _AppearanceSection extends StatelessWidget {
                     color: themeData.colorScheme.primary),
                 SizedBox(width: isMobile ? 8.w : 8),
                 Text(
-                  '外观设置',
+                  S.of(context).appearance,
                   style: TextStyle(
                     fontSize: isMobile ? 15.sp : 15,
                     fontWeight: FontWeight.w600,
@@ -216,7 +217,7 @@ class _AppearanceSection extends StatelessWidget {
 
             // 主题色选择
             Text(
-              '主题色',
+              S.of(context).themeColor,
               style: TextStyle(
                 fontSize: isMobile ? 13.sp : 13,
                 color: themeData.colorScheme.onSurface.withAlpha(160),
@@ -269,13 +270,13 @@ class _AppearanceSection extends StatelessWidget {
             // 深色模式切换
             _SettingRow(
               icon: Icons.dark_mode_outlined,
-              title: '深色模式',
+              title: S.of(context).darkMode,
               isMobile: isMobile,
               trailing: SegmentedButton<ThemeMode>(
-                segments: const [
-                  ButtonSegment(value: ThemeMode.light, label: Text('浅色')),
-                  ButtonSegment(value: ThemeMode.system, label: Text('跟随系统')),
-                  ButtonSegment(value: ThemeMode.dark, label: Text('深色')),
+                segments: [
+                  ButtonSegment(value: ThemeMode.light, label: Text(S.of(context).light)),
+                  ButtonSegment(value: ThemeMode.system, label: Text(S.of(context).followSystem)),
+                  ButtonSegment(value: ThemeMode.dark, label: Text(S.of(context).dark)),
                 ],
                 selected: {currentThemeMode},
                 onSelectionChanged: (modes) => cubit.modify(modes.first),
@@ -340,14 +341,14 @@ class _MenuSection extends StatelessWidget {
     final isWide = ResponsiveUtils.isWideScreen(context);
 
     final menuItems = [
-      _MenuItem(Icons.history_outlined, '浏览历史', '查看阅读记录'),
-      _MenuItem(Icons.comment_outlined, '我的评论', '管理发表的评论'),
-      _MenuItem(Icons.notifications_outlined, '消息通知', '暂无新消息'),
+      _MenuItem(Icons.history_outlined, S.of(context).browseHistory, S.of(context).viewReadingHistory),
+      _MenuItem(Icons.comment_outlined, S.of(context).myComments, S.of(context).manageComments),
+      _MenuItem(Icons.notifications_outlined, S.of(context).notifications, S.of(context).noNewMessages),
       if (!isWide) ...[
         // 手机端：设置在菜单中
-        _MenuItem(Icons.settings_outlined, '设置', '主题、语言等偏好'),
+        _MenuItem(Icons.settings_outlined, S.of(context).settings, S.of(context).themeLanguagePrefs),
       ],
-      _MenuItem(Icons.info_outline, '关于', '版本信息和帮助'),
+      _MenuItem(Icons.info_outline, S.of(context).about, S.of(context).versionInfo),
     ];
 
     return Card(
@@ -405,10 +406,10 @@ class _StatsSection extends StatelessWidget {
     final themeData = Theme.of(context);
 
     final stats = [
-      _StatItem('12', '已读文章'),
-      _StatItem('5', '我的评论'),
-      _StatItem('3', '收藏文章'),
-      _StatItem('2h', '阅读时长'),
+      _StatItem('12', S.of(context).readPosts),
+      _StatItem('5', S.of(context).myComments),
+      _StatItem('3', S.of(context).bookmarkedPostsLabel),
+      _StatItem('2h', S.of(context).readingTime),
     ];
 
     return Card(

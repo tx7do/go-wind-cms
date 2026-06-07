@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 
@@ -38,7 +39,7 @@ class TagCloud extends StatelessWidget {
                     size: isMobile ? 18.sp : 18, color: Colors.orange),
                 SizedBox(width: isMobile ? 6.w : 6),
                 Text(
-                  '热门标签',
+                  S.of(context).hotTags,
                   style: TextStyle(
                     fontSize: isMobile ? 14.sp : 14,
                     fontWeight: FontWeight.w600,
