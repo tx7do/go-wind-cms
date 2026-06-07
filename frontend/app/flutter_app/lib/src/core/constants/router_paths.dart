@@ -9,6 +9,7 @@ class AppRoutePath {
   static const signUp = '/sign_up';
 
   static const notFound = '/not_found';
+  static const explore = '/explore';
   static const profile = '/profile';
   static const about = '/about';
   static const contact = '/contact';

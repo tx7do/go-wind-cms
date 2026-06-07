@@ -15,6 +15,7 @@ import 'package:flutter_app/src/features/cms/pages/tag_list/tag_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/category_list/category_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/search/search_page.dart';
 import 'package:flutter_app/src/features/auth/pages/login_page.dart';
+import 'package:flutter_app/src/features/cms/pages/explore/explore_page.dart';
 import 'package:flutter_app/src/features/cms/pages/profile/profile_page.dart';
 import 'package:flutter_app/src/features/cms/pages/about/about_page.dart';
 import 'package:flutter_app/src/features/cms/pages/legal/legal_page.dart';
@@ -90,6 +91,14 @@ class AppRouter {
         path: constants.AppRoutePath.profile,
         builder: (context, state) {
           return const ProfilePage();
+        },
+      ),
+      // 发现页
+      GoRoute(
+        name: RouteNames.explore,
+        path: constants.AppRoutePath.explore,
+        builder: (context, state) {
+          return const ExplorePage();
         },
       ),
       // 关于我们

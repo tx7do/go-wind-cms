@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
 
 /// 底部导航项定义
 class BottomNavItem {
   final IconData icon;
   final IconData activeIcon;
-  final String Function(S) localizedName;
+  final String label;
+  final String? route;
 
   const BottomNavItem({
     required this.icon,
     required this.activeIcon,
-    required this.localizedName,
+    required this.label,
+    this.route,
   });
+
+  /// 从服务端 NavigationItem 构造
+  factory BottomNavItem.fromNavigationItem(NavigationItem item) {
+    final iconName = item.icon ?? '';
+    final activeIconName = iconName.replaceAll('_outlined', '');
+    return BottomNavItem(
+      icon: resolveNavIcon(iconName, fallback: Icons.article_outlined),
+      activeIcon: resolveNavIcon(activeIconName, fallback: Icons.article),
+      label: item.title ?? '',
+      route: resolveNavRoute(item),
+    );
+  }
 }
 
 /// 应用底部导航栏
@@ -34,7 +48,6 @@ class AppBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final loc = S.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -62,7 +75,7 @@ class AppBottomNavBar extends StatelessWidget {
               return NavigationDestination(
                 icon: Icon(item.icon, size: 24.sp),
                 selectedIcon: Icon(item.activeIcon, size: 24.sp),
-                label: item.localizedName(loc),
+                label: item.label,
               );
             }).toList(),
           ),
