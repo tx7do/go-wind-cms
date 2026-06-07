@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart' show GetIt;
-import 'package:cached_query/cached_query.dart'
-    show Mutation, Query;
+import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
 import 'package:flutter_app/generated/api/category_service/category_service_client.dart'
     show CategoryServiceClient;
@@ -51,10 +50,7 @@ class CategoryService extends BaseService {
   }
 
   /// 获取单个类别详情 Query
-  Query<Category> getQuery({
-    required int id,
-    String? locale,
-  }) {
+  Query<Category> getQuery({required int id, String? locale}) {
     return Query<Category>(
       key: 'category-$id',
       queryFn: () => _api.categoryServiceGet(id: id, locale: locale),
@@ -80,8 +76,7 @@ class CategoryService extends BaseService {
   // ─── Mutations ────────────────────────────────────────
 
   /// 创建类别 Mutation
-  Mutation<Category, Category>
-      createMutation() {
+  Mutation<Category, Category> createMutation() {
     return Mutation<Category, Category>(
       mutationFn: (category) => _api.categoryServiceCreate(
         body: CreateCategoryRequest(data: category),
@@ -91,8 +86,7 @@ class CategoryService extends BaseService {
   }
 
   /// 更新类别 Mutation
-  Mutation<Category, UpdateCategoryParams>
-      updateMutation() {
+  Mutation<Category, UpdateCategoryParams> updateMutation() {
     return Mutation<Category, UpdateCategoryParams>(
       mutationFn: (params) => _api.categoryServiceUpdate(
         id: params.id,
@@ -188,11 +182,7 @@ class CategoryService extends BaseService {
   }
 
   /// 获取翻译数据
-  Future<dynamic> getTranslation(
-    int id, {
-    String? code,
-    String? locale,
-  }) async {
+  Future<dynamic> getTranslation(int id, {String? code, String? locale}) async {
     try {
       return await _api.categoryServiceGetTranslation(
         id: id,

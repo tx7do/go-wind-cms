@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart' show GetIt;
-import 'package:cached_query/cached_query.dart'
-    show Mutation, Query;
+import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
 import 'package:flutter_app/generated/api/post_service/post_service_client.dart'
     show PostServiceClient;
@@ -28,8 +27,7 @@ typedef ListPostResponse = ContentServiceV1ListPostResponse;
 class PostService extends BaseService {
   PostService() : super(tag: 'PostService');
 
-  PostServiceClient get _api =>
-      GetIt.instance<RestClient>().postService;
+  PostServiceClient get _api => GetIt.instance<RestClient>().postService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -51,11 +49,7 @@ class PostService extends BaseService {
   }
 
   /// 获取单个帖子详情 Query
-  Query<Post> getQuery({
-    required int id,
-    String? code,
-    String? locale,
-  }) {
+  Query<Post> getQuery({required int id, String? code, String? locale}) {
     return Query<Post>(
       key: 'post-$id',
       queryFn: () => _api.postServiceGet(id: id, code: code, locale: locale),
@@ -70,11 +64,8 @@ class PostService extends BaseService {
   }) {
     return Query<PostTranslation>(
       key: 'post-$id-translation',
-      queryFn: () => _api.postServiceGetTranslation(
-        id: id,
-        code: code,
-        locale: locale,
-      ),
+      queryFn: () =>
+          _api.postServiceGetTranslation(id: id, code: code, locale: locale),
     );
   }
 
@@ -83,9 +74,8 @@ class PostService extends BaseService {
   /// 创建帖子 Mutation
   Mutation<Post, Post> createMutation() {
     return Mutation<Post, Post>(
-      mutationFn: (post) => _api.postServiceCreate(
-        body: CreatePostRequest(data: post),
-      ),
+      mutationFn: (post) =>
+          _api.postServiceCreate(body: CreatePostRequest(data: post)),
       invalidateQueries: ['posts'],
     );
   }
@@ -174,9 +164,7 @@ class PostService extends BaseService {
   /// 创建帖子
   Future<dynamic> create(Post post) async {
     try {
-      return await _api.postServiceCreate(
-        body: CreatePostRequest(data: post),
-      );
+      return await _api.postServiceCreate(body: CreatePostRequest(data: post));
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -215,11 +203,7 @@ class PostService extends BaseService {
   }
 
   /// 获取翻译数据
-  Future<dynamic> getTranslation(
-    int id, {
-    String? code,
-    String? locale,
-  }) async {
+  Future<dynamic> getTranslation(int id, {String? code, String? locale}) async {
     try {
       return await _api.postServiceGetTranslation(
         id: id,

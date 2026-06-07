@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart' show GetIt;
-import 'package:cached_query/cached_query.dart'
-    show Mutation, Query;
+import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
 import 'package:flutter_app/generated/api/comment_service/comment_service_client.dart'
     show CommentServiceClient;
@@ -26,8 +25,7 @@ typedef ListCommentResponse = CommentServiceV1ListCommentResponse;
 class CommentService extends BaseService {
   CommentService() : super(tag: 'CommentService');
 
-  CommentServiceClient get _api =>
-      GetIt.instance<RestClient>().commentService;
+  CommentServiceClient get _api => GetIt.instance<RestClient>().commentService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -49,9 +47,7 @@ class CommentService extends BaseService {
   }
 
   /// 获取单个评论详情 Query
-  Query<Comment> getQuery({
-    required int id,
-  }) {
+  Query<Comment> getQuery({required int id}) {
     return Query<Comment>(
       key: 'comment-$id',
       queryFn: () => _api.commentServiceGet(id: id),
@@ -63,9 +59,8 @@ class CommentService extends BaseService {
   /// 创建评论 Mutation
   Mutation<Comment, Comment> createMutation() {
     return Mutation<Comment, Comment>(
-      mutationFn: (comment) => _api.commentServiceCreate(
-        body: CreateCommentRequest(data: comment),
-      ),
+      mutationFn: (comment) =>
+          _api.commentServiceCreate(body: CreateCommentRequest(data: comment)),
       invalidateQueries: ['comments'],
     );
   }

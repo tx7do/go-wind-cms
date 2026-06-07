@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart' show GetIt;
-import 'package:cached_query/cached_query.dart'
-    show Mutation, Query;
+import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
 import 'package:flutter_app/generated/api/tag_service/tag_service_client.dart'
     show TagServiceClient;
@@ -28,8 +27,7 @@ typedef ListTagResponse = ContentServiceV1ListTagResponse;
 class TagService extends BaseService {
   TagService() : super(tag: 'TagService');
 
-  TagServiceClient get _api =>
-      GetIt.instance<RestClient>().tagService;
+  TagServiceClient get _api => GetIt.instance<RestClient>().tagService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -51,11 +49,7 @@ class TagService extends BaseService {
   }
 
   /// 获取单个标签详情 Query
-  Query<Tag> getQuery({
-    required int id,
-    String? code,
-    String? locale,
-  }) {
+  Query<Tag> getQuery({required int id, String? code, String? locale}) {
     return Query<Tag>(
       key: 'tag-$id',
       queryFn: () => _api.tagServiceGet(id: id, code: code, locale: locale),
@@ -70,11 +64,8 @@ class TagService extends BaseService {
   }) {
     return Query<TagTranslation>(
       key: 'tag-$id-translation',
-      queryFn: () => _api.tagServiceGetTranslation(
-        id: id,
-        code: code,
-        locale: locale,
-      ),
+      queryFn: () =>
+          _api.tagServiceGetTranslation(id: id, code: code, locale: locale),
     );
   }
 
@@ -83,9 +74,8 @@ class TagService extends BaseService {
   /// 创建标签 Mutation
   Mutation<Tag, Tag> createMutation() {
     return Mutation<Tag, Tag>(
-      mutationFn: (tag) => _api.tagServiceCreate(
-        body: CreateTagRequest(data: tag),
-      ),
+      mutationFn: (tag) =>
+          _api.tagServiceCreate(body: CreateTagRequest(data: tag)),
       invalidateQueries: ['tags'],
     );
   }
@@ -146,9 +136,7 @@ class TagService extends BaseService {
   /// 创建标签
   Future<dynamic> create(Tag tag) async {
     try {
-      return await _api.tagServiceCreate(
-        body: CreateTagRequest(data: tag),
-      );
+      return await _api.tagServiceCreate(body: CreateTagRequest(data: tag));
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -187,11 +175,7 @@ class TagService extends BaseService {
   }
 
   /// 获取翻译数据
-  Future<dynamic> getTranslation(
-    int id, {
-    String? code,
-    String? locale,
-  }) async {
+  Future<dynamic> getTranslation(int id, {String? code, String? locale}) async {
     try {
       return await _api.tagServiceGetTranslation(
         id: id,

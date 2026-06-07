@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart' show IconData, Icons;
 import 'package:get_it/get_it.dart' show GetIt;
-import 'package:cached_query/cached_query.dart'
-    show Mutation, Query;
+import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
 import 'package:flutter_app/generated/api/navigation_service/navigation_service_client.dart'
     show NavigationServiceClient;
@@ -101,7 +100,7 @@ bool isExternalLink(NavigationItem item) {
 List<Navigation> filterNavigationsByLocation(
   List<Navigation> navigations,
   NavigationLocation location, {
-    String? locale,
+  String? locale,
 }) {
   final active = navigations.where((nav) {
     if (nav.isActive != true) return false;
@@ -111,7 +110,9 @@ List<Navigation> filterNavigationsByLocation(
 
   if (locale == null || locale.isEmpty) {
     // 未指定 locale，只取通用导航（locale 为 null）
-    return active.where((nav) => nav.locale == null || nav.locale!.isEmpty).toList();
+    return active
+        .where((nav) => nav.locale == null || nav.locale!.isEmpty)
+        .toList();
   }
 
   // 优先找匹配 locale 的
@@ -119,7 +120,9 @@ List<Navigation> filterNavigationsByLocation(
   if (matched.isNotEmpty) return matched;
 
   // fallback 到通用导航（locale 为 null 或空）
-  return active.where((nav) => nav.locale == null || nav.locale!.isEmpty).toList();
+  return active
+      .where((nav) => nav.locale == null || nav.locale!.isEmpty)
+      .toList();
 }
 
 /// 获取扁平化的导航项（按 sortOrder 排序）
@@ -131,7 +134,11 @@ List<NavigationItem> getFlatNavItems(
   NavigationLocation location, {
   String? locale,
 }) {
-  final filtered = filterNavigationsByLocation(navigations, location, locale: locale);
+  final filtered = filterNavigationsByLocation(
+    navigations,
+    location,
+    locale: locale,
+  );
   final items = <NavigationItem>[];
 
   for (final nav in filtered) {
@@ -176,9 +183,7 @@ class NavigationService extends BaseService {
   }
 
   /// 获取单个导航详情 Query
-  Query<Navigation> getQuery({
-    required int id,
-  }) {
+  Query<Navigation> getQuery({required int id}) {
     return Query<Navigation>(
       key: 'navigation-$id',
       queryFn: () => _api.navigationServiceGet(id: id),
