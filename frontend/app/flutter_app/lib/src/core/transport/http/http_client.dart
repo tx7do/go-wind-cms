@@ -16,8 +16,8 @@ void _configureOptions(Dio dio) {
 
 /// 注册默认拦截器
 void _configureInterceptors(Dio dio) {
-  // 日志
-  dio.interceptors.add(LogInterceptor());
+  // 日志（调试时取消注释）
+  // dio.interceptors.add(LogInterceptor());
   // // jwt认证
   // dio.interceptors.add(AuthenticationInterceptor(
   //     authService: authService, autoRefreshToken: false));

@@ -207,7 +207,8 @@ class _HomeWebViewState extends State<HomeWebView> {
               ),
               IconButton(
                 icon: const Icon(Icons.settings_outlined, size: 22),
-                onPressed: () => context.go(AppRoutePath.login),
+                onPressed: () =>
+                    context.go(AppRoutePath.profile),
                 tooltip: S.of(context).settings,
               ),
               const SizedBox(width: 4),
@@ -219,7 +220,7 @@ class _HomeWebViewState extends State<HomeWebView> {
                     cursor: SystemMouseCursors.click,
                     child: OutlinedButton(
                       onPressed: () =>
-                          context.go(hasLogin ? '/' : AppRoutePath.login),
+                          context.go(hasLogin ? AppRoutePath.profile : AppRoutePath.login),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
