@@ -6,9 +6,6 @@ import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_list_comment_response.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
@@ -16,6 +13,7 @@ import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
+import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/features/cms/widgets/content_viewer.dart';
 
 typedef Post = ContentServiceV1Post;
@@ -55,7 +53,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
       _postService.get(widget.postId),
       _categoryService.list(),
       _tagService.list(),
-      _commentService.list(),
+      _commentService.list(PaginationQuery(
+        skipLocale: true,
+        formValues: {'object_id': widget.postId},
+      )),
     ]);
 
     if (!mounted) return;
@@ -63,15 +64,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final post = results[0] as Post?;
     final categories = (results[1] as ListCategoryResponse?)?.items ?? [];
     final tags = (results[2] as ListTagResponse?)?.items ?? [];
-    final allComments = (results[3] as ListCommentResponse?)?.items ?? [];
+    final comments = (results[3] as ListCommentResponse?)?.items ?? [];
 
     setState(() {
       _post = post;
       _categories = categories;
       _tags = tags;
-      _comments = allComments
-          .where((c) => c.objectId != null && c.objectId == post?.id)
-          .toList();
+      _comments = comments;
       _isLoading = false;
     });
   }
@@ -140,7 +139,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         SliverToBoxAdapter(child: _PostContent(post: post, isMobile: true)),
         _buildTagsSliver(post, isMobile: true),
         SliverToBoxAdapter(child: _InteractionBar(post: post, isMobile: true)),
-        _buildCommentsSliver(context, comments, isMobile: true),
+        _buildCommentsSliver(context, post, comments, isMobile: true),
         SliverToBoxAdapter(child: SizedBox(height: 16.h)),
       ],
     );
@@ -187,7 +186,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            S.of(context).commentsCount(comments.length),
+                            S.of(context).commentsCount(post.commentCount ?? comments.length),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -273,10 +272,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
   Widget _buildCommentsSliver(
     BuildContext context,
+    Post post,
     List<CommentType> comments, {
     required bool isMobile,
   }) {
     final theme = Theme.of(context);
+    final count = post.commentCount ?? comments.length;
     return SliverMainAxisGroup(
       slivers: [
         SliverToBoxAdapter(
@@ -299,7 +300,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 ),
                 SizedBox(width: isMobile ? 8.w : 8),
                 Text(
-                  S.of(context).commentsCount(comments.length),
+                  S.of(context).commentsCount(count),
                   style: TextStyle(
                     fontSize: isMobile ? 16.sp : 16,
                     fontWeight: FontWeight.w600,
@@ -536,13 +537,13 @@ class _InteractionBar extends StatelessWidget {
           children: [
             _InteractionItem(
               Icons.remove_red_eye_outlined,
-              '${post.visits}',
+              '${post.visits ?? 0}',
               S.of(context).views,
             ),
-            _InteractionItem(Icons.favorite_outline, '${post.likes}', S.of(context).likes),
+            _InteractionItem(Icons.favorite_outline, '${post.likes ?? 0}', S.of(context).likes),
             _InteractionItem(
               Icons.comment_outlined,
-              '${post.commentCount}',
+              '${post.commentCount ?? 0}',
               S.of(context).comments,
             ),
             _InteractionItem(Icons.share_outlined, S.of(context).share, ''),

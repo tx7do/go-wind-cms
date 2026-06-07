@@ -1,7 +1,7 @@
 import 'dart:convert' show json;
 
 import 'package:flutter/material.dart' show ThemeMode, Color;
-import 'package:flutter_app/src/core/models/user_preference.dart'
+import 'package:flutter_app/src/core/preference/user_preference.dart'
     show UserPreference;
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:shared_preferences/shared_preferences.dart';

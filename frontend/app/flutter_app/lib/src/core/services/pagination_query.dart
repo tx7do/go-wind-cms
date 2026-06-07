@@ -2,7 +2,7 @@ import 'dart:convert' show jsonEncode;
 
 import 'package:get_it/get_it.dart' show GetIt;
 
-import 'package:flutter_app/src/core/repositories/user_preference_cache.dart';
+import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 
 /// 通用分页查询类
 ///

@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
-import 'package:flutter_app/src/core/repositories/user_preference_cache.dart';
+import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';

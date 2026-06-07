@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get_it/get_it.dart' show GetIt;
 
-import 'package:flutter_app/src/core/repositories/index.dart';
+import 'package:flutter_app/src/core/preference/preference.dart';
 import 'package:flutter_app/src/core/themes/light_theme.dart' show kDefaultSeedColor;
 
 part 'app_theme_state.dart';

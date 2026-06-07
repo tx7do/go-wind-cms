@@ -6,7 +6,7 @@ import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post_translation.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag_translation.dart';
-import 'package:flutter_app/src/core/repositories/user_preference_cache.dart';
+import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 
 typedef Category = ContentServiceV1Category;
 typedef CategoryTranslation = ContentServiceV1CategoryTranslation;
