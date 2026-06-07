@@ -190,27 +190,30 @@ class SettingsPage extends StatelessWidget {
       icon: Icons.dark_mode_outlined,
       title: S.of(context).darkMode,
       isMobile: isMobile,
-      trailing: SegmentedButton<ThemeMode>(
-        segments: [
-          ButtonSegment(
-            value: ThemeMode.light,
-            label: Text(S.of(context).light),
-          ),
-          ButtonSegment(
-            value: ThemeMode.system,
-            label: Text(S.of(context).followSystem),
-          ),
-          ButtonSegment(
-            value: ThemeMode.dark,
-            label: Text(S.of(context).dark),
-          ),
-        ],
-        selected: {currentThemeMode},
-        onSelectionChanged: (modes) => cubit.modify(modes.first),
-        style: ButtonStyle(
-          visualDensity: VisualDensity.compact,
-          textStyle: WidgetStateProperty.all(
-            TextStyle(fontSize: isMobile ? 12.sp : 12),
+      trailing: SizedBox(
+        width: isMobile ? 260.w : 260,
+        child: SegmentedButton<ThemeMode>(
+          segments: [
+            ButtonSegment(
+              value: ThemeMode.light,
+              label: Text(S.of(context).light),
+            ),
+            ButtonSegment(
+              value: ThemeMode.system,
+              label: Text(S.of(context).followSystem),
+            ),
+            ButtonSegment(
+              value: ThemeMode.dark,
+              label: Text(S.of(context).dark),
+            ),
+          ],
+          selected: {currentThemeMode},
+          onSelectionChanged: (modes) => cubit.modify(modes.first),
+          style: ButtonStyle(
+            visualDensity: VisualDensity.compact,
+            textStyle: WidgetStateProperty.all(
+              TextStyle(fontSize: isMobile ? 12.sp : 12),
+            ),
           ),
         ),
       ),
@@ -232,23 +235,23 @@ class SettingsPage extends StatelessWidget {
       icon: Icons.language,
       title: S.of(context).language,
       isMobile: isMobile,
-      trailing: SegmentedButton<Locale>(
-        segments: supportedLocales.map((locale) {
-          final label = localeLabels[locale] ?? locale.toLanguageTag();
-          return ButtonSegment(
-            value: locale,
-            label: Text(label),
-          );
-        }).toList(),
-        selected: {currentLocale},
-        onSelectionChanged: (locales) => cubit.modifyLocale(locales.first),
-        style: ButtonStyle(
-          visualDensity: VisualDensity.compact,
-          minimumSize: WidgetStateProperty.all(
-            Size(isMobile ? 80.w : 80, 32),
-          ),
-          textStyle: WidgetStateProperty.all(
-            TextStyle(fontSize: isMobile ? 12.sp : 12),
+      trailing: SizedBox(
+        width: isMobile ? 180.w : 180,
+        child: SegmentedButton<Locale>(
+          segments: supportedLocales.map((locale) {
+            final label = localeLabels[locale] ?? locale.toLanguageTag();
+            return ButtonSegment(
+              value: locale,
+              label: Text(label),
+            );
+          }).toList(),
+          selected: {currentLocale},
+          onSelectionChanged: (locales) => cubit.modifyLocale(locales.first),
+          style: ButtonStyle(
+            visualDensity: VisualDensity.compact,
+            textStyle: WidgetStateProperty.all(
+              TextStyle(fontSize: isMobile ? 12.sp : 12),
+            ),
           ),
         ),
       ),

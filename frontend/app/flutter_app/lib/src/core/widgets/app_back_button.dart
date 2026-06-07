@@ -27,14 +27,23 @@ class AppBackButton extends StatelessWidget {
       // 无法 pop 时，返回到上一个 tab 页面
       // 根据当前路由判断应该返回到哪里
       final location = GoRouterState.of(context).uri.toString();
+      String targetRoute;
+      
       if (location.startsWith('/profile') || 
           location.startsWith('/settings') ||
           location.startsWith('/my_comments') ||
           location.startsWith('/about')) {
-        context.go('/profile');
+        targetRoute = '/profile';
       } else {
-        context.go('/');
+        targetRoute = '/';
       }
+      
+      // 如果已经在目标页面，不执行跳转
+      if (location == targetRoute || location == '$targetRoute/') {
+        return;
+      }
+      
+      context.go(targetRoute);
     }
   }
 }
