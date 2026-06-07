@@ -52,13 +52,12 @@ class AppBottomNavBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha((0.05 * 255).round()),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+        border: Border(
+          top: BorderSide(
+            color: theme.colorScheme.onSurface.withAlpha((0.08 * 255).round()),
+            width: 0.5,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         child: Padding(

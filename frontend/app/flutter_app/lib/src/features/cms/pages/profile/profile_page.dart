@@ -422,7 +422,7 @@ class _SettingRow extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        trailing,
+        Flexible(child: trailing),
       ],
     );
   }
