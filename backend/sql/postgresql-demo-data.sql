@@ -63,6 +63,7 @@ VALUES
     (14, 1, 1, 'DEPARTMENT', '客服部', 'CS', '负责全集团客户咨询、投诉处理、售后服务及客户满意度提升', '/1/14', 9, 11, 'ON', now()),
     (15, 1, 14, 'TEAM', '客服一组', 'CS-1', '承接华南区域客户服务、售后问题处理及客户关系维护', '/1/14/15', 1, 20, 'ON', now())
 ;
+SELECT setval('sys_org_units_id_seq', (SELECT MAX(id) FROM sys_org_units));
 
 -- ----------------------------
 -- 插入 sys_positions 岗位数据
@@ -489,6 +490,7 @@ INSERT INTO public.comments (
  '192.168.1.100', '北京', '', 'zh-CN', false, false,
  15, 15)
 ;
+SELECT setval('comments_id_seq', (SELECT MAX(id) FROM comments));
 
 -- ----------------------------
 -- 插入 media_assets 媒体资源数据
@@ -585,6 +587,7 @@ INSERT INTO public.media_assets (
     'md5:8f9e8d7c6b5a4f3e2d1c0b9a8s7d6f5e', 1, 10007,
     0, false
 );
+SELECT setval('media_assets_id_seq', (SELECT MAX(id) FROM media_assets));
 
 -- ----------------------------
 -- 插入 site_settings 站点设置数据
@@ -695,6 +698,7 @@ INSERT INTO public.site_settings (
     '{"auto":"自动审核", "manual":"人工审核", "admin_only":"仅管理员审核"}'::jsonb,
     true, ''
 );
+SELECT setval('site_settings_id_seq', (SELECT MAX(id) FROM site_settings));
 
 -- ----------------------------
 -- 插入 sites 表测试数据
@@ -761,57 +765,7 @@ INSERT INTO public.sites (
     'SITE_STATUS_MAINTENANCE', 'zh-CN', 'mobile', 'old-mobile-theme',
     256800
 );
-
--- ----------------------------
--- 插入 sites 表测试数据
--- ----------------------------
-INSERT INTO public.sites (
-    created_at, updated_at, tenant_id, name, slug, domain,
-    alternate_domains, is_default, status, default_locale,
-    template, theme, visit_count
-) VALUES
--- 站点1：默认中文站点（主站）
-(
-    NOW(), NOW(), 0,
-    'GoWind 官方博客',
-    'gowind-blog',
-    'blog.gowind.com',
-    '["www.gowind-blog.com", "blog.gowind.cn"]'::jsonb,
-    true,
-    'SITE_STATUS_ACTIVE',
-    'zh-CN',
-    'default-blog',
-    'dark-mode',
-    12580
-),
--- 站点2：英文子站点
-(
-    NOW(), NOW(), 0,
-    'GoWind English Docs',
-    'gowind-docs-en',
-    'docs.gowind.com',
-    '["en-docs.gowind.com"]'::jsonb,
-    false,
-    'SITE_STATUS_ACTIVE',
-    'en-US',
-    'default-docs',
-    'light-mode',
-    8920
-),
--- 站点3：维护中的测试站点（用于测试状态逻辑）
-(
-    NOW(), NOW(), 0,
-    '测试站点（维护中）',
-    'test-site-maintenance',
-    'test.gowind.com',
-    '[]'::jsonb,
-    false,
-    'SITE_STATUS_MAINTENANCE',
-    'zh-CN',
-    'default-test',
-    'default',
-    1560
-);
+SELECT setval('sites_id_seq', (SELECT MAX(id) FROM sites));
 
 -- ----------------------------
 -- 插入 site_settings 表测试数据
@@ -902,7 +856,7 @@ INSERT INTO public.site_settings (
     'SETTING_TYPE_TEXT', '维护页面内容', '站点维护时显示的提示内容', '请输入维护提示', NULL,
     true, NULL
 );
-
+SELECT setval('site_settings_id_seq', (SELECT MAX(id) FROM site_settings));
 
 -- ----------------------------
 -- 插入 navigations 表（导航组）
@@ -925,6 +879,7 @@ INSERT INTO public.navigations (
 (202, NOW(), NOW(), 'Footer Navigation', 'FOOTER', 'en-US', true, 1, 1),
 (203, NOW(), NOW(), 'Sidebar Navigation', 'SIDEBAR', 'en-US', true, 1, 1),
 (204, NOW(), NOW(), 'Mobile Bottom Navigation', 'MOBILE', 'en-US', true, 1, 1);
+SELECT setval('navigations_id_seq', (SELECT MAX(id) FROM navigations));
 
 -- ----------------------------
 -- 插入 navigation_items 表（导航项）
@@ -985,7 +940,7 @@ INSERT INTO public.navigation_items (
 (2015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 204, 'Discover', '/explore', 0, 'explore', 'Discover content', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
 (2016, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 204, 'Bookmarks', '/bookmarks', 0, 'bookmark', 'My bookmarks', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
 (2017, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 204, 'Me', '/profile', 0, 'person', 'Personal center', false, false, 'nav-item mobile-nav', '', NULL, 1, 1);
-
+SELECT setval('navigation_items_id_seq', (SELECT MAX(id) FROM navigation_items));
 
 -- ----------------------------
 -- 插入 pages 表（页面主表）测试数据
@@ -1109,6 +1064,7 @@ INSERT INTO public.pages (
     '<script src="/js/register-verify.js"></script>',
     0, NULL
 );
+SELECT setval('pages_id_seq', (SELECT MAX(id) FROM pages));
 
 -- ----------------------------
 -- 插入 page_translations 表（页面多语言翻译）测试数据
@@ -1277,7 +1233,7 @@ Sorry, the page you are looking for does not exist or has been deleted.
     'GoWind 团队成立于2024年，专注于高性能开源Content Hub系统的研发，致力于为开发者提供简单、高效的内容管理解决方案。',
     '关于我们 - 风行内容中台'
 );
-
+SELECT setval('page_translations_id_seq', (SELECT MAX(id) FROM page_translations));
 
 -- ----------------------------
 -- 插入 categories 表（分类主表）测试数据
@@ -1319,6 +1275,7 @@ INSERT INTO public.categories (
 (41, NOW() - INTERVAL '14 days', NOW() - INTERVAL '3 days', 1, '/startup/team-management', 'CATEGORY_STATUS_ACTIVE', 1, false, 'carbon:group', 5, 5, '{}'::jsonb, 4, 1, 1),
 -- 产品思考
 (42, NOW() - INTERVAL '13 days', NOW() - INTERVAL '2 days', 2, '/startup/product-thinking', 'CATEGORY_STATUS_ACTIVE', 1, false, 'carbon:product', 3, 3, '{}'::jsonb, 4, 1, 1);
+SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));
 
 -- ----------------------------
 -- 插入 category_translations 表（分类翻译）
@@ -1381,7 +1338,7 @@ INSERT INTO public.category_translations (
 (42, NOW() - INTERVAL '13 days', NOW() - INTERVAL '2 days', 42, 'zh-CN', '产品思考', 'product-thinking', '产品规划和思考', 'https://picsum.photos/400/300?random=42', 'https://picsum.photos/1200/400?random=42', NULL, '/startup/product-thinking', '产品思考,规划,产品', '产品规划和思考', '产品思考 | 创业思考', 1, 1),
 -- ========== 分类42（产品思考）- 英文 ==========
 (142, NOW() - INTERVAL '13 days', NOW() - INTERVAL '2 days', 42, 'en-US', 'Product Thinking', 'product-thinking', 'Product planning and thinking', 'https://picsum.photos/400/300?random=42', 'https://picsum.photos/1200/400?random=42', NULL, '/en/startup/product-thinking', 'Product Thinking,Planning', 'Product planning and thinking', 'Product Thinking | Startup Insights', 1, 1);
-
+SELECT setval('category_translations_id_seq', (SELECT MAX(id) FROM category_translations));
 
 -- ----------------------------
 -- 插入 tags 表（标签主表）测试数据（ID 1-20，匹配前文文章tag_ids）
@@ -1510,6 +1467,7 @@ INSERT INTO public.tags (
     20, 'TAG_STATUS_ACTIVE',
     '#4CAF50', 'icon-concurrency', 'TECH', false, 2
 );
+SELECT setval('tags_id_seq', (SELECT MAX(id) FROM tags));
 
 -- ----------------------------
 -- 插入 tag_translations 表（标签多语言翻译）测试数据
@@ -1962,7 +1920,7 @@ INSERT INTO public.tag_translations (
     'High Concurrency | GoWind Tags'
 )
 ;
-
+SELECT setval('tag_translations_id_seq', (SELECT MAX(id) FROM tag_translations));
 
 -- ----------------------------
 -- 插入 posts 表
@@ -2054,6 +2012,7 @@ INSERT INTO public.posts (
     1003, '王五', '',
     '{"benchmark_data": "true", "qps_before": "50000", "qps_after": "100000", "optimization_points": "DB, Cache, Code"}'::jsonb
 );
+SELECT setval('posts_id_seq', (SELECT MAX(id) FROM posts));
 
 -- ----------------------------
 -- 插入 post_translations 表
@@ -2800,6 +2759,7 @@ v1.9 version had only 50K QPS with 200ms response time, unable to meet high-conc
     'Share GoWind Content Hub performance optimization practical experience covering database optimization, caching strategies, code-level improvements, achieving 100% QPS increase.',
     'GoWind Content Hub Performance Optimization Guide: Practical Experience from 50K to 100K QPS | GoWind Technical Blog'
 );
+SELECT setval('post_translations_id_seq', (SELECT MAX(id) FROM post_translations));
 
 -- ----------------------------
 -- 插入 post_categories 表（文章-分类关联）
@@ -2831,6 +2791,7 @@ VALUES
 (8, 1, NOW() - INTERVAL '8 days'),
 (8, 2, NOW() - INTERVAL '8 days')
 ;
+SELECT setval('post_categories_id_seq', (SELECT MAX(id) FROM post_categories));
 
 -- ----------------------------
 -- 插入 post_tags 表（文章-标签关联）
@@ -2870,5 +2831,6 @@ VALUES
 (8, 19, NOW() - INTERVAL '8 days'),
 (8, 20, NOW() - INTERVAL '8 days')
 ;
+SELECT setval('post_tags_id_seq', (SELECT MAX(id) FROM post_tags));
 
 COMMIT;

@@ -41,6 +41,9 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
     setState(() {
       _categories = (result as ContentServiceV1ListCategoryResponse?)?.items ?? [];
+      // 按 sortOrder 排序
+      _categories.sort((a, b) => (a.sortOrder ?? 0).compareTo(b.sortOrder ?? 0));
+      
       _isLoading = false;
     });
   }

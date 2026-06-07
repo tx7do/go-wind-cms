@@ -3,7 +3,7 @@ import 'dart:convert' show json;
 class UserPreference {
   UserPreference({
     this.language = 'zh_CN',
-    this.themeMode = 'light',
+    this.themeMode = 'system',  // 默认跟随系统
     this.fontSize = 12,
     this.allowNotifications = true,
     this.soundEnabled = true,
@@ -44,7 +44,7 @@ class UserPreference {
 
     return UserPreference(
       language: map['language'] as String? ?? 'zh_CN',
-      themeMode: map['themeMode'] as String? ?? 'light',
+      themeMode: map['themeMode'] as String? ?? 'system',  // 默认跟随系统
       fontSize: (map['fontSize'] as num?)?.toInt() ?? 12,
       allowNotifications: map['allowNotifications'] as bool? ?? true,
       soundEnabled: map['soundEnabled'] as bool? ?? true,

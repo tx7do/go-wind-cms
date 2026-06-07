@@ -78,6 +78,9 @@ class _PostListPageState extends State<PostListPage> {
       _posts = (results[0] as ContentServiceV1ListPostResponse?)?.items ?? [];
       _categories =
           (results[1] as ContentServiceV1ListCategoryResponse?)?.items ?? [];
+      // 按 sortOrder 排序
+      _categories.sort((a, b) => (a.sortOrder ?? 0).compareTo(b.sortOrder ?? 0));
+      
       _tags = (results[2] as ContentServiceV1ListTagResponse?)?.items ?? [];
       _isLoading = false;
     });

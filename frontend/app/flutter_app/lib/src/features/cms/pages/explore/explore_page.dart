@@ -55,6 +55,9 @@ class _ExplorePageState extends State<ExplorePage> {
 
     setState(() {
       _categories = (results[0] as ListCategoryResponse?)?.items ?? [];
+      // 按 sortOrder 排序
+      _categories.sort((a, b) => (a.sortOrder ?? 0).compareTo(b.sortOrder ?? 0));
+      
       _posts = (results[1] as ListPostResponse?)?.items ?? [];
       _tags = (results[2] as ListTagResponse?)?.items ?? [];
       _isLoading = false;

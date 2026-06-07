@@ -156,7 +156,7 @@ class UserPreferenceCache {
   _makeDefaultUserPreference() {
     return UserPreference(
       language: 'zh_CN',
-      themeMode: 'light',
+      themeMode: 'system',  // 默认跟随系统
       fontSize: 12,
       allowNotifications: true,
       soundEnabled: true,
