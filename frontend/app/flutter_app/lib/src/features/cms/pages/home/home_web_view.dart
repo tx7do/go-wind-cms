@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/constants/router_paths.dart';
 import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
-import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
-import 'package:flutter_app/src/features/cms/widgets/tag_cloud.dart';
-import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
 import 'package:flutter_app/generated/api/models/site_service_v1_navigation.dart';
 import 'package:flutter_app/generated/api/models/site_service_v1_navigation_location.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_list_navigation_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_tag_response.dart';
+
+import 'widgets/nav_bar_link.dart';
+import 'widgets/section_header.dart';
+import 'widgets/web_post_grid.dart';
+import 'widgets/web_sidebar.dart';
+import 'widgets/web_footer.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -60,7 +59,6 @@ class _HomeWebViewState extends State<HomeWebView> {
     try {
       final lang = GetIt.instance<UserPreferenceCache>().language;
       if (lang.isEmpty) return null;
-      // zh_CN → zh-CN
       return lang.replaceAll('_', '-');
     } catch (_) {
       return null;
@@ -176,41 +174,46 @@ class _HomeWebViewState extends State<HomeWebView> {
             ),
             centerTitle: false,
             actions: [
-              ...getFlatNavItems(
-                    _navigations,
-                    NavigationLocation.header,
-                    locale: _currentLocale,
-                  )
-                  .where(
-                    (item) =>
-                        resolveNavRoute(item) != null || isExternalLink(item),
-                  )
-                  .map(
-                    (item) => _NavBarLink(
-                      label: item.title ?? '',
-                      route: resolveNavRoute(item),
-                      isExternal: isExternalLink(item),
-                      isOpenNewTab: item.isOpenNewTab == true,
-                      isActive: false,
-                    ),
+              // 可滚动的导航链接区域（Flexible 不会抢占 title 空间）
+              Flexible(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children:
+                        getFlatNavItems(
+                              _navigations,
+                              NavigationLocation.header,
+                              locale: _currentLocale,
+                            )
+                            .map(
+                              (item) => NavBarLink(
+                                label: item.title ?? '',
+                                route: resolveNavRoute(item),
+                                isExternal: isExternalLink(item),
+                                isOpenNewTab: item.isOpenNewTab == true,
+                                isActive: false,
+                              ),
+                            )
+                            .toList(),
                   ),
-              const SizedBox(width: 16),
+                ),
+              ),
+              const SizedBox(width: 8),
               IconButton(
                 icon: const Icon(Icons.search, size: 22),
                 onPressed: () => context.go('/search'),
                 tooltip: S.of(context).search,
               ),
-              const SizedBox(width: 16),
               IconButton(
                 icon: const Icon(Icons.settings_outlined, size: 22),
-                onPressed: () {},
+                onPressed: () => context.go(AppRoutePath.login),
                 tooltip: S.of(context).settings,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () => context.go(AppRoutePath.login),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -223,7 +226,7 @@ class _HomeWebViewState extends State<HomeWebView> {
                   child: Text(S.of(context).login),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 8),
             ],
           ),
 
@@ -250,12 +253,12 @@ class _HomeWebViewState extends State<HomeWebView> {
                           categories: _categories,
                         ),
                         const SizedBox(height: 32),
-                        _SectionHeader(
+                        SectionHeader(
                           title: S.of(context).latestPosts,
                           count: _posts.length,
                         ),
                         const SizedBox(height: 16),
-                        _WebPostGrid(
+                        WebPostGrid(
                           posts: _posts,
                           categories: _categories,
                           tags: _tags,
@@ -293,10 +296,10 @@ class _HomeWebViewState extends State<HomeWebView> {
                     ),
                   ),
                   const SizedBox(width: 40),
-                  // 右侧固定侧边栏（极简：只保留热门标签）
+                  // 右侧固定侧边栏
                   SizedBox(
                     width: Breakpoints.webSidebarWidth,
-                    child: _Sidebar(tags: _tags),
+                    child: WebSidebar(tags: _tags),
                   ),
                 ],
               ),
@@ -304,222 +307,8 @@ class _HomeWebViewState extends State<HomeWebView> {
           ),
 
           // 页脚
-          SliverToBoxAdapter(child: _Footer()),
+          SliverToBoxAdapter(child: WebFooter(navigations: _navigations)),
         ],
-      ),
-    );
-  }
-}
-
-/// 导航栏链接
-class _NavBarLink extends StatefulWidget {
-  final String label;
-  final String? route;
-  final bool isExternal;
-  final bool isOpenNewTab;
-  final bool isActive;
-
-  const _NavBarLink({
-    required this.label,
-    this.route,
-    this.isExternal = false,
-    this.isOpenNewTab = false,
-    this.isActive = false,
-  });
-
-  @override
-  State<_NavBarLink> createState() => _NavBarLinkState();
-}
-
-class _NavBarLinkState extends State<_NavBarLink> {
-  bool _isHovered = false;
-
-  void _handleTap() {
-    final route = widget.route;
-    if (route == null || route.isEmpty) return;
-
-    if (widget.isExternal) {
-      // 外部链接：通过 url_launcher 打开
-      final uri = Uri.tryParse(route);
-      if (uri != null) launchUrl(uri);
-      return;
-    }
-
-    // 内部路由：尝试跳转，路由不存在时回退到首页
-    try {
-      context.go(route);
-    } catch (_) {
-      context.go('/');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = widget.isActive
-        ? theme.colorScheme.primary
-        : theme.colorScheme.onSurface;
-
-    return GestureDetector(
-      onTap: _handleTap,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            border: widget.isActive
-                ? Border(
-                    bottom: BorderSide(
-                      color: theme.colorScheme.primary,
-                      width: 2,
-                    ),
-                  )
-                : null,
-          ),
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w400,
-              color: _isHovered && !widget.isActive
-                  ? theme.colorScheme.primary
-                  : color,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 分区标题
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final int count;
-
-  const _SectionHeader({required this.title, required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        Container(
-          width: 4,
-          height: 18,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primary,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        const Spacer(),
-        Text(
-          S.of(context).postsCount(count),
-          style: TextStyle(
-            fontSize: 13,
-            color: theme.colorScheme.onSurface.withAlpha(128),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Web 端文章网格
-class _WebPostGrid extends StatelessWidget {
-  final List<Post> posts;
-  final List<Category> categories;
-  final List<Tag> tags;
-
-  const _WebPostGrid({
-    required this.posts,
-    required this.categories,
-    required this.tags,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: posts.map((post) {
-        return SizedBox(
-          width:
-              (Breakpoints.webContentMaxWidth * 0.75 -
-                  Breakpoints.webSidebarWidth -
-                  Breakpoints.webContentPadding * 2 -
-                  40 -
-                  16) /
-              2,
-          child: PostCard(post: post, categories: categories, tags: tags),
-        );
-      }).toList(),
-    );
-  }
-}
-
-/// 右侧边栏（极简版：只保留热门标签云）
-class _Sidebar extends StatelessWidget {
-  final List<Tag> tags;
-
-  const _Sidebar({required this.tags});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 标签云
-        Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(
-              color: theme.colorScheme.onSurface.withAlpha(
-                (0.06 * 255).round(),
-              ),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: TagCloud(tags: tags),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// 页脚
-class _Footer extends StatelessWidget {
-  const _Footer();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 32),
-      alignment: Alignment.center,
-      child: Text(
-        S.of(context).footerText,
-        style: TextStyle(
-          fontSize: 12,
-          color: theme.colorScheme.onSurface.withAlpha(80),
-          height: 1.6,
-        ),
       ),
     );
   }

@@ -9,4 +9,9 @@ class AppRoutePath {
   static const signUp = '/sign_up';
 
   static const notFound = '/not_found';
+  static const about = '/about';
+  static const contact = '/contact';
+  static const disclaimer = '/disclaimer';
+  static const privacy = '/privacy';
+  static const terms = '/terms';
 }

@@ -45,6 +45,28 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("About"),
+    "aboutFeature1Desc": MessageLookupByLibrary.simpleMessage(
+      "Create, edit and publish content with an intuitive and powerful editor",
+    ),
+    "aboutFeature1Title": MessageLookupByLibrary.simpleMessage(
+      "Content Management",
+    ),
+    "aboutFeature2Desc": MessageLookupByLibrary.simpleMessage(
+      "Built-in internationalization to serve a global audience effortlessly",
+    ),
+    "aboutFeature2Title": MessageLookupByLibrary.simpleMessage(
+      "Multi-language Support",
+    ),
+    "aboutFeature3Desc": MessageLookupByLibrary.simpleMessage(
+      "Seamless experience across Web, iOS, Android and desktop platforms",
+    ),
+    "aboutFeature3Title": MessageLookupByLibrary.simpleMessage(
+      "Cross-platform",
+    ),
+    "aboutSubtitle": MessageLookupByLibrary.simpleMessage(
+      "A modern content management system powered by Go and Flutter",
+    ),
+    "aboutTechStack": MessageLookupByLibrary.simpleMessage("Built with"),
     "allLoaded": MessageLookupByLibrary.simpleMessage("— All Loaded —"),
     "allPosts": MessageLookupByLibrary.simpleMessage("All Posts"),
     "appName": MessageLookupByLibrary.simpleMessage("GoWind CMS"),
@@ -64,9 +86,41 @@ class MessageLookup extends MessageLookupByLibrary {
     "comments": MessageLookupByLibrary.simpleMessage("Comments"),
     "commentsCount": m1,
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+    "contactCommunity": MessageLookupByLibrary.simpleMessage("Community"),
+    "contactCommunityDesc": MessageLookupByLibrary.simpleMessage(
+      "Join our developer community on GitHub to report issues, share ideas, and contribute to the project.",
+    ),
+    "contactEmail": MessageLookupByLibrary.simpleMessage("Email"),
+    "contactEmailDesc": MessageLookupByLibrary.simpleMessage(
+      "You can reach us via email at support@gowind.dev for any questions, suggestions or feedback. We typically respond within 1-2 business days.",
+    ),
+    "contactUs": MessageLookupByLibrary.simpleMessage("Contact Us"),
+    "contactWebsite": MessageLookupByLibrary.simpleMessage("Website"),
+    "contactWebsiteDesc": MessageLookupByLibrary.simpleMessage(
+      "Visit our official website gowind.dev for the latest updates, documentation, and community resources.",
+    ),
     "dark": MessageLookupByLibrary.simpleMessage("Dark"),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "daysAgo": m2,
+    "disclaimer": MessageLookupByLibrary.simpleMessage("Disclaimer"),
+    "disclaimerContent1Desc": MessageLookupByLibrary.simpleMessage(
+      "The information provided on this platform is for general informational purposes only. We make no warranties about the completeness, accuracy, or reliability of the content. Any action you take upon the information is strictly at your own risk.",
+    ),
+    "disclaimerContent1Title": MessageLookupByLibrary.simpleMessage(
+      "Content Accuracy",
+    ),
+    "disclaimerContent2Desc": MessageLookupByLibrary.simpleMessage(
+      "This platform may contain links to external websites. We have no control over the content and nature of these sites and are not responsible for any damages from browsing or using them.",
+    ),
+    "disclaimerContent2Title": MessageLookupByLibrary.simpleMessage(
+      "External Links",
+    ),
+    "disclaimerContent3Desc": MessageLookupByLibrary.simpleMessage(
+      "In no event shall we be liable for any direct, indirect, incidental, consequential, or special damages arising out of or in connection with the use of this platform.",
+    ),
+    "disclaimerContent3Title": MessageLookupByLibrary.simpleMessage(
+      "Limitation of Liability",
+    ),
     "discover": MessageLookupByLibrary.simpleMessage("Discover"),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("Error Occurred!"),
     "featureNotAvailable": MessageLookupByLibrary.simpleMessage(
@@ -120,6 +174,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordHint": MessageLookupByLibrary.simpleMessage("Enter password"),
     "postsCount": m5,
     "postsCountFull": m6,
+    "privacyContent1Desc": MessageLookupByLibrary.simpleMessage(
+      "We collect minimal personal information necessary to provide our services. This may include your email address, username, and usage preferences. We do not sell or share your personal data with third parties.",
+    ),
+    "privacyContent1Title": MessageLookupByLibrary.simpleMessage(
+      "Information Collection",
+    ),
+    "privacyContent2Desc": MessageLookupByLibrary.simpleMessage(
+      "Your data is stored securely on our servers with industry-standard encryption. We retain your data only for as long as necessary to provide the services or as required by law.",
+    ),
+    "privacyContent2Title": MessageLookupByLibrary.simpleMessage(
+      "Data Storage",
+    ),
+    "privacyContent3Desc": MessageLookupByLibrary.simpleMessage(
+      "We use essential cookies to ensure the proper functioning of the platform. Analytics cookies may be used to improve user experience, which can be disabled in your browser settings.",
+    ),
+    "privacyContent3Title": MessageLookupByLibrary.simpleMessage(
+      "Cookies & Tracking",
+    ),
+    "privacyContent4Desc": MessageLookupByLibrary.simpleMessage(
+      "You have the right to access, correct, or delete your personal data at any time. Contact our support team for any privacy-related requests.",
+    ),
+    "privacyContent4Title": MessageLookupByLibrary.simpleMessage("Your Rights"),
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "readPosts": MessageLookupByLibrary.simpleMessage("Articles Read"),
     "readingStats": MessageLookupByLibrary.simpleMessage("Reading Stats"),
     "readingTime": MessageLookupByLibrary.simpleMessage("Reading Time"),
@@ -138,6 +215,29 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "share": MessageLookupByLibrary.simpleMessage("Share"),
+    "termsContent1Desc": MessageLookupByLibrary.simpleMessage(
+      "By accessing and using this platform, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you must not use the platform.",
+    ),
+    "termsContent1Title": MessageLookupByLibrary.simpleMessage(
+      "Acceptance of Terms",
+    ),
+    "termsContent2Desc": MessageLookupByLibrary.simpleMessage(
+      "You are responsible for maintaining the confidentiality of your account. You agree not to post any content that is unlawful, harmful, threatening, abusive, or otherwise objectionable.",
+    ),
+    "termsContent2Title": MessageLookupByLibrary.simpleMessage(
+      "User Responsibilities",
+    ),
+    "termsContent3Desc": MessageLookupByLibrary.simpleMessage(
+      "Users must not attempt to gain unauthorized access to our systems, interfere with the platform\'s operation, or use automated tools to scrape or collect data without permission.",
+    ),
+    "termsContent3Title": MessageLookupByLibrary.simpleMessage(
+      "Prohibited Activities",
+    ),
+    "termsContent4Desc": MessageLookupByLibrary.simpleMessage(
+      "We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms.",
+    ),
+    "termsContent4Title": MessageLookupByLibrary.simpleMessage("Modifications"),
+    "termsOfService": MessageLookupByLibrary.simpleMessage("Terms of Service"),
     "themeColor": MessageLookupByLibrary.simpleMessage("Theme Color"),
     "themeLanguagePrefs": MessageLookupByLibrary.simpleMessage(
       "Theme, language & preferences",

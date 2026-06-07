@@ -73,139 +73,185 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
+    final theme = Theme.of(context);
     final isMobile = ResponsiveUtils.isMobile(context);
     final loc = S.of(context);
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: themeData.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: themeData.colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 22),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          loc.login,
-          style: TextStyle(
-            fontSize: isMobile ? 18.sp : 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 24.w : 400,
-            vertical: isMobile ? 32.h : 48,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Logo / App Name
-                Icon(
-                  Icons.article_outlined,
-                  size: isMobile ? 64.sp : 64,
-                  color: themeData.colorScheme.primary,
+      backgroundColor: theme.colorScheme.surface,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // 返回按钮
+            Positioned(
+              top: isMobile ? 8 : 16,
+              left: isMobile ? 8 : 16,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                onPressed: () => context.go('/'),
+                tooltip: loc.backToHome,
+                style: IconButton.styleFrom(
+                  backgroundColor: theme.colorScheme.onSurface.withAlpha(15),
                 ),
-                SizedBox(height: isMobile ? 16.h : 16),
-                Text(
-                  loc.appName,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: isMobile ? 24.sp : 24,
-                    fontWeight: FontWeight.bold,
-                    color: themeData.colorScheme.primary,
-                  ),
-                ),
-                SizedBox(height: isMobile ? 48.h : 48),
-
-                // Username
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: loc.username,
-                    hintText: loc.usernameHint,
-                    prefixIcon: const Icon(Icons.person_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return loc.usernameHint;
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: isMobile ? 16.h : 16),
-
-                // Password
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: loc.password,
-                    hintText: loc.passwordHint,
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return loc.passwordHint;
-                    }
-                    return null;
-                  },
-                  onFieldSubmitted: (_) => _handleLogin(),
-                ),
-                SizedBox(height: isMobile ? 32.h : 32),
-
-                // Login Button
-                SizedBox(
-                  height: isMobile ? 48.h : 48,
-                  child: ElevatedButton(
-                    onPressed: _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: themeData.colorScheme.primary,
-                      foregroundColor: themeData.colorScheme.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          isMobile ? 12.r : 12,
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      loc.loginButton,
-                      style: TextStyle(
-                        fontSize: isMobile ? 16.sp : 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+
+            // 主内容：居中卡片
+            Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 24.w : 48,
+                  vertical: isMobile ? 32.h : 48,
+                ),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: isMobile ? double.infinity : 420,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(isMobile ? 20.r : 24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha((0.06 * 255).round()),
+                        blurRadius: 32,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 28.w : 40,
+                      vertical: isMobile ? 32.h : 48,
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Logo
+                          Container(
+                            width: isMobile ? 64.w : 72,
+                            height: isMobile ? 64.w : 72,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(
+                                isMobile ? 18.r : 20,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.article_outlined,
+                              size: isMobile ? 32.sp : 36,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          SizedBox(height: isMobile ? 20.h : 24),
+                          Text(
+                            loc.appName,
+                            style: TextStyle(
+                              fontSize: isMobile ? 22.sp : 24,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          SizedBox(height: isMobile ? 4.h : 6),
+                          Text(
+                            loc.loginForMore,
+                            style: TextStyle(
+                              fontSize: isMobile ? 13.sp : 14,
+                              color: theme.colorScheme.onSurface.withAlpha(140),
+                            ),
+                          ),
+                          SizedBox(height: isMobile ? 32.h : 40),
+
+                          // Username
+                          TextFormField(
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                              labelText: loc.username,
+                              hintText: loc.usernameHint,
+                              prefixIcon: const Icon(Icons.person_outline),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  isMobile ? 12.r : 14,
+                                ),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return loc.usernameHint;
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: isMobile ? 16.h : 18),
+
+                          // Password
+                          TextFormField(
+                            controller: _passwordController,
+                            obscureText: _obscurePassword,
+                            decoration: InputDecoration(
+                              labelText: loc.password,
+                              hintText: loc.passwordHint,
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  isMobile ? 12.r : 14,
+                                ),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return loc.passwordHint;
+                              }
+                              return null;
+                            },
+                            onFieldSubmitted: (_) => _handleLogin(),
+                          ),
+                          SizedBox(height: isMobile ? 28.h : 32),
+
+                          // Login Button
+                          SizedBox(
+                            width: double.infinity,
+                            height: isMobile ? 48.h : 50,
+                            child: FilledButton(
+                              onPressed: _handleLogin,
+                              style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    isMobile ? 12.r : 14,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                loc.loginButton,
+                                style: TextStyle(
+                                  fontSize: isMobile ? 16.sp : 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

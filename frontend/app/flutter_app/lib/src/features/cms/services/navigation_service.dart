@@ -60,54 +60,57 @@ IconData resolveNavIcon(String? iconName, {IconData fallback = Icons.article}) {
 }
 
 /// 需要路径参数（:id）的路由前缀
+///
+/// 只有带 / 的前缀（如 /post/、/page/、/tag/）才是真正的参数化路由，
+/// /post、/tag 等现在是合法的列表页路由，不应被视为“不完整”。
 const _parameterizedPrefixes = ['/post/', '/page/', '/tag/'];
 
 /// 检查路径是否为需要参数的路由但没有带上参数
 ///
-/// 例如 `/post`、`/tag` 是无效的（需要 `/post/123`、`/tag/5`）
+/// 例如 `/post/`（有前缀但没 ID）是无效的，但 `/post` 是合法的列表页路由。
 bool _isIncompleteRoute(String url) {
   for (final prefix in _parameterizedPrefixes) {
-    // /post、/tag 等（恰好等于前缀去掉最后的 /）
-    final bare = prefix.substring(0, prefix.length - 1);
-    if (url == bare) return true;
+    // 只有路径恰好是 /post/ 或 /tag/ （以 / 结尾但缺少 ID）才是不完整的
+    if (url == prefix) return true;
   }
   return false;
 }
 
 /// 获取 NavigationItem 的路由路径
 ///
-/// 根据 linkType 和 url/objectId 生成 Flutter 路由：
-/// - CUSTOM: 使用 url 字段（会过滤掉不完整的参数化路由）
-/// - POST: 有 objectId → `/post/{id}`，无 → `/posts`
-/// - PAGE: 有 objectId → `/page/{id}`，无 → `/posts`
-/// - CATEGORY: 有 objectId → `/posts?categoryId={id}`，无 → `/categories`
-/// - EXTERNAL: 使用 url 字段（外部链接，不走 Flutter 路由）
+/// 路由以 item.url 为准（后端已填好完整路径）。
+/// 仅当 url 为空时，才根据 linkType + objectId 自动生成回退路径。
+/// - EXTERNAL: 始终使用 url 字段（外部链接，不走 Flutter 路由）
+/// - POST/PAGE/CATEGORY: 优先 url，否则从 objectId 拼接
+/// - CUSTOM/其他: 使用 url 字段
 String? resolveNavRoute(NavigationItem item) {
   final linkType = item.linkType;
-  // 外部链接不经过路由校验
+
+  // 外部链接：直接返回 url
   if (linkType == NavigationItemLinkType.linkTypeExternal) {
     return item.url;
   }
 
+  // 优先使用后端填写的 url 字段
+  if (item.url != null && item.url!.isNotEmpty) {
+    if (!_isIncompleteRoute(item.url!)) return item.url;
+  }
+
+  // url 为空时根据 linkType + objectId 回退
   final String? url;
   switch (linkType) {
     case NavigationItemLinkType.linkTypePost:
-      // 有 ID → 文章详情，无 ID → 文章列表
-      url = item.objectId != null ? '/post/${item.objectId}' : '/posts';
+      url = item.objectId != null ? '/post/${item.objectId}' : '/post';
     case NavigationItemLinkType.linkTypePage:
-      // PAGE 类型复用文章详情
-      url = item.objectId != null ? '/page/${item.objectId}' : '/posts';
+      url = item.objectId != null ? '/page/${item.objectId}' : '/post';
     case NavigationItemLinkType.linkTypeCategory:
-      // 有 ID → 该分类下的文章列表，无 ID → 分类列表页
       url = item.objectId != null
-          ? '/posts?categoryId=${item.objectId}'
-          : '/categories';
-    // CUSTOM、null、$unknown 等均走 url 字段
+          ? '/post?categoryId=${item.objectId}'
+          : '/category';
     default:
-      url = item.url;
+      url = null;
   }
 
-  // 统一校验：url 为空或不完整的参数化路由（如 /post 没有 ID）都返回 null
   if (url == null || url.isEmpty) return null;
   if (_isIncompleteRoute(url)) return null;
   return url;

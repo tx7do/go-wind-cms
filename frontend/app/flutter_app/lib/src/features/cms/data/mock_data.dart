@@ -550,7 +550,7 @@ final mockHeaderNavigation = Navigation(
       id: 12,
       title: '标签',
       icon: 'label_outlined',
-      url: '/tags',
+      url: '/tag',
       linkType: NavigationItemLinkType.linkTypeCustom,
       sortOrder: 2,
     ),

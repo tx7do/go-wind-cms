@@ -15,6 +15,8 @@ import 'package:flutter_app/src/features/cms/pages/tag_list/tag_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/category_list/category_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/search/search_page.dart';
 import 'package:flutter_app/src/features/auth/pages/login_page.dart';
+import 'package:flutter_app/src/features/cms/pages/about/about_page.dart';
+import 'package:flutter_app/src/features/cms/pages/legal/legal_page.dart';
 
 /// CMS 应用路由
 class AppRouter {
@@ -71,36 +73,6 @@ class AppRouter {
               return PostDetailPage(postId: pageId);
             },
           ),
-          // 文章列表（支持按分类/标签过滤）
-          GoRoute(
-            name: RouteNames.postList,
-            path: 'posts',
-            builder: (context, state) {
-              final categoryId = int.tryParse(
-                state.uri.queryParameters['categoryId'] ?? '',
-              );
-              final tagId = int.tryParse(
-                state.uri.queryParameters['tagId'] ?? '',
-              );
-              return PostListPage(categoryId: categoryId, tagId: tagId);
-            },
-          ),
-          // 分类列表
-          GoRoute(
-            name: RouteNames.categoryList,
-            path: 'categories',
-            builder: (context, state) {
-              return const CategoryListPage();
-            },
-          ),
-          // 标签列表
-          GoRoute(
-            name: RouteNames.tagList,
-            path: 'tags',
-            builder: (context, state) {
-              return const TagListPage();
-            },
-          ),
         ],
       ),
       // 登录页
@@ -109,6 +81,74 @@ class AppRouter {
         path: constants.AppRoutePath.login,
         builder: (context, state) {
           return const LoginPage();
+        },
+      ),
+      // 关于我们
+      GoRoute(
+        name: RouteNames.about,
+        path: constants.AppRoutePath.about,
+        builder: (context, state) {
+          return const AboutPage();
+        },
+      ),
+      // 联系我们
+      GoRoute(
+        name: RouteNames.contact,
+        path: constants.AppRoutePath.contact,
+        builder: (context, state) {
+          return const LegalPage(type: LegalPageType.contact);
+        },
+      ),
+      // 免责条款
+      GoRoute(
+        name: RouteNames.disclaimer,
+        path: constants.AppRoutePath.disclaimer,
+        builder: (context, state) {
+          return const LegalPage(type: LegalPageType.disclaimer);
+        },
+      ),
+      // 隐私协议
+      GoRoute(
+        name: RouteNames.privacy,
+        path: constants.AppRoutePath.privacy,
+        builder: (context, state) {
+          return const LegalPage(type: LegalPageType.privacy);
+        },
+      ),
+      // 服务条款
+      GoRoute(
+        name: RouteNames.terms,
+        path: constants.AppRoutePath.terms,
+        builder: (context, state) {
+          return const LegalPage(type: LegalPageType.terms);
+        },
+      ),
+      // 文章列表（/post）
+      GoRoute(
+        name: RouteNames.postList,
+        path: '/post',
+        builder: (context, state) {
+          final categoryId = int.tryParse(
+            state.uri.queryParameters['categoryId'] ?? '',
+          );
+          final tagId = int.tryParse(state.uri.queryParameters['tagId'] ?? '');
+          return PostListPage(categoryId: categoryId, tagId: tagId);
+        },
+      ),
+      // 分类列表（/category）
+      GoRoute(
+        name: RouteNames.categoryList,
+        path: '/category',
+        builder: (context, state) {
+          return const CategoryListPage();
+        },
+      ),
+      // 标签列表（/tag）
+      GoRoute(
+        name: RouteNames.tagList,
+        path: '/tag',
+        builder: (context, state) {
+          return const TagListPage();
         },
       ),
     ],

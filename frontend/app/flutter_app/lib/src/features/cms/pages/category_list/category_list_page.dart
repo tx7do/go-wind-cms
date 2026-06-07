@@ -152,7 +152,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 
   void _navigateToPosts(Category category) {
     if (category.id != null) {
-      context.go('/posts?categoryId=${category.id}');
+      context.go('/post?categoryId=${category.id}');
     }
   }
 }

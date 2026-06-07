@@ -683,6 +683,386 @@ class S {
       args: [],
     );
   }
+
+  /// `A modern content management system powered by Go and Flutter`
+  String get aboutSubtitle {
+    return Intl.message(
+      'A modern content management system powered by Go and Flutter',
+      name: 'aboutSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Content Management`
+  String get aboutFeature1Title {
+    return Intl.message(
+      'Content Management',
+      name: 'aboutFeature1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create, edit and publish content with an intuitive and powerful editor`
+  String get aboutFeature1Desc {
+    return Intl.message(
+      'Create, edit and publish content with an intuitive and powerful editor',
+      name: 'aboutFeature1Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Multi-language Support`
+  String get aboutFeature2Title {
+    return Intl.message(
+      'Multi-language Support',
+      name: 'aboutFeature2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Built-in internationalization to serve a global audience effortlessly`
+  String get aboutFeature2Desc {
+    return Intl.message(
+      'Built-in internationalization to serve a global audience effortlessly',
+      name: 'aboutFeature2Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cross-platform`
+  String get aboutFeature3Title {
+    return Intl.message(
+      'Cross-platform',
+      name: 'aboutFeature3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Seamless experience across Web, iOS, Android and desktop platforms`
+  String get aboutFeature3Desc {
+    return Intl.message(
+      'Seamless experience across Web, iOS, Android and desktop platforms',
+      name: 'aboutFeature3Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Built with`
+  String get aboutTechStack {
+    return Intl.message(
+      'Built with',
+      name: 'aboutTechStack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact Us`
+  String get contactUs {
+    return Intl.message('Contact Us', name: 'contactUs', desc: '', args: []);
+  }
+
+  /// `Email`
+  String get contactEmail {
+    return Intl.message('Email', name: 'contactEmail', desc: '', args: []);
+  }
+
+  /// `You can reach us via email at support@gowind.dev for any questions, suggestions or feedback. We typically respond within 1-2 business days.`
+  String get contactEmailDesc {
+    return Intl.message(
+      'You can reach us via email at support@gowind.dev for any questions, suggestions or feedback. We typically respond within 1-2 business days.',
+      name: 'contactEmailDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Website`
+  String get contactWebsite {
+    return Intl.message('Website', name: 'contactWebsite', desc: '', args: []);
+  }
+
+  /// `Visit our official website gowind.dev for the latest updates, documentation, and community resources.`
+  String get contactWebsiteDesc {
+    return Intl.message(
+      'Visit our official website gowind.dev for the latest updates, documentation, and community resources.',
+      name: 'contactWebsiteDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Community`
+  String get contactCommunity {
+    return Intl.message(
+      'Community',
+      name: 'contactCommunity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Join our developer community on GitHub to report issues, share ideas, and contribute to the project.`
+  String get contactCommunityDesc {
+    return Intl.message(
+      'Join our developer community on GitHub to report issues, share ideas, and contribute to the project.',
+      name: 'contactCommunityDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disclaimer`
+  String get disclaimer {
+    return Intl.message('Disclaimer', name: 'disclaimer', desc: '', args: []);
+  }
+
+  /// `Content Accuracy`
+  String get disclaimerContent1Title {
+    return Intl.message(
+      'Content Accuracy',
+      name: 'disclaimerContent1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The information provided on this platform is for general informational purposes only. We make no warranties about the completeness, accuracy, or reliability of the content. Any action you take upon the information is strictly at your own risk.`
+  String get disclaimerContent1Desc {
+    return Intl.message(
+      'The information provided on this platform is for general informational purposes only. We make no warranties about the completeness, accuracy, or reliability of the content. Any action you take upon the information is strictly at your own risk.',
+      name: 'disclaimerContent1Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `External Links`
+  String get disclaimerContent2Title {
+    return Intl.message(
+      'External Links',
+      name: 'disclaimerContent2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This platform may contain links to external websites. We have no control over the content and nature of these sites and are not responsible for any damages from browsing or using them.`
+  String get disclaimerContent2Desc {
+    return Intl.message(
+      'This platform may contain links to external websites. We have no control over the content and nature of these sites and are not responsible for any damages from browsing or using them.',
+      name: 'disclaimerContent2Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limitation of Liability`
+  String get disclaimerContent3Title {
+    return Intl.message(
+      'Limitation of Liability',
+      name: 'disclaimerContent3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In no event shall we be liable for any direct, indirect, incidental, consequential, or special damages arising out of or in connection with the use of this platform.`
+  String get disclaimerContent3Desc {
+    return Intl.message(
+      'In no event shall we be liable for any direct, indirect, incidental, consequential, or special damages arising out of or in connection with the use of this platform.',
+      name: 'disclaimerContent3Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Information Collection`
+  String get privacyContent1Title {
+    return Intl.message(
+      'Information Collection',
+      name: 'privacyContent1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We collect minimal personal information necessary to provide our services. This may include your email address, username, and usage preferences. We do not sell or share your personal data with third parties.`
+  String get privacyContent1Desc {
+    return Intl.message(
+      'We collect minimal personal information necessary to provide our services. This may include your email address, username, and usage preferences. We do not sell or share your personal data with third parties.',
+      name: 'privacyContent1Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data Storage`
+  String get privacyContent2Title {
+    return Intl.message(
+      'Data Storage',
+      name: 'privacyContent2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your data is stored securely on our servers with industry-standard encryption. We retain your data only for as long as necessary to provide the services or as required by law.`
+  String get privacyContent2Desc {
+    return Intl.message(
+      'Your data is stored securely on our servers with industry-standard encryption. We retain your data only for as long as necessary to provide the services or as required by law.',
+      name: 'privacyContent2Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cookies & Tracking`
+  String get privacyContent3Title {
+    return Intl.message(
+      'Cookies & Tracking',
+      name: 'privacyContent3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We use essential cookies to ensure the proper functioning of the platform. Analytics cookies may be used to improve user experience, which can be disabled in your browser settings.`
+  String get privacyContent3Desc {
+    return Intl.message(
+      'We use essential cookies to ensure the proper functioning of the platform. Analytics cookies may be used to improve user experience, which can be disabled in your browser settings.',
+      name: 'privacyContent3Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Rights`
+  String get privacyContent4Title {
+    return Intl.message(
+      'Your Rights',
+      name: 'privacyContent4Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have the right to access, correct, or delete your personal data at any time. Contact our support team for any privacy-related requests.`
+  String get privacyContent4Desc {
+    return Intl.message(
+      'You have the right to access, correct, or delete your personal data at any time. Contact our support team for any privacy-related requests.',
+      name: 'privacyContent4Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Terms of Service`
+  String get termsOfService {
+    return Intl.message(
+      'Terms of Service',
+      name: 'termsOfService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Acceptance of Terms`
+  String get termsContent1Title {
+    return Intl.message(
+      'Acceptance of Terms',
+      name: 'termsContent1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By accessing and using this platform, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you must not use the platform.`
+  String get termsContent1Desc {
+    return Intl.message(
+      'By accessing and using this platform, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you must not use the platform.',
+      name: 'termsContent1Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Responsibilities`
+  String get termsContent2Title {
+    return Intl.message(
+      'User Responsibilities',
+      name: 'termsContent2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You are responsible for maintaining the confidentiality of your account. You agree not to post any content that is unlawful, harmful, threatening, abusive, or otherwise objectionable.`
+  String get termsContent2Desc {
+    return Intl.message(
+      'You are responsible for maintaining the confidentiality of your account. You agree not to post any content that is unlawful, harmful, threatening, abusive, or otherwise objectionable.',
+      name: 'termsContent2Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prohibited Activities`
+  String get termsContent3Title {
+    return Intl.message(
+      'Prohibited Activities',
+      name: 'termsContent3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Users must not attempt to gain unauthorized access to our systems, interfere with the platform's operation, or use automated tools to scrape or collect data without permission.`
+  String get termsContent3Desc {
+    return Intl.message(
+      'Users must not attempt to gain unauthorized access to our systems, interfere with the platform\'s operation, or use automated tools to scrape or collect data without permission.',
+      name: 'termsContent3Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Modifications`
+  String get termsContent4Title {
+    return Intl.message(
+      'Modifications',
+      name: 'termsContent4Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms.`
+  String get termsContent4Desc {
+    return Intl.message(
+      'We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms.',
+      name: 'termsContent4Desc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

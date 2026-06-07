@@ -13,4 +13,9 @@ class RouteNames {
   static const String categoryList = 'category_list';
   static const String tagList = 'tag_list';
   static const String login = 'login';
+  static const String about = 'about';
+  static const String contact = 'contact';
+  static const String disclaimer = 'disclaimer';
+  static const String privacy = 'privacy';
+  static const String terms = 'terms';
 }
