@@ -45,6 +45,11 @@ class PaginationQuery {
   /// 是否需要清理租户字段
   final bool isTenantUser;
 
+  /// 是否跳过自动注入 locale
+  ///
+  /// 某些 API（如 Comment）不支持 locale 参数，设为 true 可跳过。
+  final bool skipLocale;
+
   const PaginationQuery({
     this.page,
     this.pageSize,
@@ -53,6 +58,7 @@ class PaginationQuery {
     this.orderBy,
     this.locale,
     this.isTenantUser = false,
+    this.skipLocale = false,
   });
 
   // ─── 私有工具方法 ──────────────────────────────────────
@@ -91,7 +97,6 @@ class PaginationQuery {
   /// 将 formValues + locale 合并为 JSON 字符串。
   /// 参考 TS: makeQueryString()
   String? get queryString {
-    final resolvedLocale = locale ?? _currentLocale;
     final Map<String, dynamic> values = {};
 
     if (formValues != null) {
@@ -99,8 +104,11 @@ class PaginationQuery {
       values.addAll(cleaned);
     }
 
-    if (resolvedLocale != null && resolvedLocale.isNotEmpty) {
-      values['locale'] = resolvedLocale;
+    if (!skipLocale) {
+      final resolvedLocale = locale ?? _currentLocale;
+      if (resolvedLocale != null && resolvedLocale.isNotEmpty) {
+        values['locale'] = resolvedLocale;
+      }
     }
 
     if (values.isEmpty) return null;
@@ -185,6 +193,7 @@ class PaginationQuery {
     List<String>? orderBy,
     String? locale,
     bool? isTenantUser,
+    bool? skipLocale,
     bool clearPage = false,
     bool clearFormValues = false,
   }) {
@@ -196,6 +205,7 @@ class PaginationQuery {
       orderBy: orderBy ?? this.orderBy,
       locale: locale ?? this.locale,
       isTenantUser: isTenantUser ?? this.isTenantUser,
+      skipLocale: skipLocale ?? this.skipLocale,
     );
   }
 

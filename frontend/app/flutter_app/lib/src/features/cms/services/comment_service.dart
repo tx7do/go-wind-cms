@@ -33,7 +33,7 @@ class CommentService extends BaseService {
   ///
   /// [query] 分页查询参数，不传则全量加载
   Query<ListCommentResponse> listQuery([PaginationQuery? query]) {
-    final q = query ?? const PaginationQuery();
+    final q = query ?? const PaginationQuery(skipLocale: true);
     return Query<ListCommentResponse>(
       key: 'comments',
       queryFn: () => _api.commentServiceList(
@@ -95,7 +95,7 @@ class CommentService extends BaseService {
   ///
   /// [query] 分页查询参数，不传则全量加载
   Future<dynamic> list([PaginationQuery? query]) async {
-    final q = query ?? const PaginationQuery();
+    final q = query ?? const PaginationQuery(skipLocale: true);
     try {
       return await _api.commentServiceList(
         page: q.page,

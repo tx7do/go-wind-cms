@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
@@ -112,7 +113,9 @@ class _PostCardState extends State<PostCard> {
           margin: EdgeInsets.zero,
           child: InkWell(
             onTap: () {
-              // TODO: Navigate to post detail page
+              if (widget.post.id != null) {
+                context.go('/post/${widget.post.id}');
+              }
             },
             borderRadius: BorderRadius.circular(_isMobile ? 14.r : 14),
             child: Padding(
