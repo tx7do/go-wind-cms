@@ -14,11 +14,63 @@ import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 import 'package:flutter_app/src/core/services/pagination_query.dart';
+import 'package:flutter_app/src/core/transport/http/status.dart';
 import 'package:flutter_app/src/features/cms/widgets/content_viewer.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
 typedef CommentType = CommentServiceV1Comment;
+
+/// 将扁平评论列表构建为树形结构
+///
+/// 如果后端已返回 [children] 字段，直接返回顶层评论；
+/// 否则根据 [parentId] 归组。
+List<CommentType> buildCommentTree(List<CommentType> flatList) {
+  // 检查是否已经有树形数据（第一条评论有 children 字段非空即视为树形）
+  if (flatList.isNotEmpty && flatList.any((c) => c.children != null && c.children!.isNotEmpty)) {
+    return flatList.where((c) => c.parentId == null || c.parentId == 0).toList();
+  }
+
+  // 扁平列表 → 按 parentId 归组
+  final Map<int, List<CommentType>> childrenMap = {};
+  final List<CommentType> roots = [];
+
+  for (final comment in flatList) {
+    final pid = comment.parentId;
+    if (pid == null || pid == 0) {
+      roots.add(comment);
+    } else {
+      childrenMap.putIfAbsent(pid, () => []).add(comment);
+    }
+  }
+
+  // 递归构建（使用可变副本携带 children）
+  List<CommentType> attachChildren(List<CommentType> parents) {
+    return parents.map((parent) {
+      final kids = childrenMap[parent.id ?? -1] ?? [];
+      if (kids.isEmpty) return parent;
+      // CommentType 是 const 构造函数，无法修改 children，
+      // 直接返回原对象，渲染时通过 childrenMap 查找子节点
+      return parent;
+    }).toList();
+  }
+
+  attachChildren(roots);
+  return roots;
+}
+
+/// 递归获取某评论的所有子评论（从扁平列表中查找）
+List<CommentType> findChildren(
+  CommentType comment,
+  List<CommentType> flatList,
+) {
+  // 优先使用后端返回的 children
+  if (comment.children != null && comment.children!.isNotEmpty) {
+    return comment.children!;
+  }
+  // 否则从扁平列表中按 parentId 查找
+  return flatList.where((c) => c.parentId == comment.id).toList();
+}
 
 /// 文章详情页
 class PostDetailPage extends StatefulWidget {
@@ -40,6 +92,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   List<Category> _categories = [];
   List<ContentServiceV1Tag> _tags = [];
   List<CommentServiceV1Comment> _comments = [];
+  List<CommentServiceV1Comment> _commentTree = [];
+  CommentServiceV1Comment? _replyTo;
   bool _isLoading = true;
 
   @override
@@ -71,8 +125,45 @@ class _PostDetailPageState extends State<PostDetailPage> {
       _categories = categories;
       _tags = tags;
       _comments = comments;
+      _commentTree = buildCommentTree(comments);
       _isLoading = false;
     });
+  }
+
+  /// 发送评论
+  Future<void> _sendComment(String content, {int? parentId, int? replyToId}) async {
+    final newComment = CommentServiceV1Comment(
+      objectId: widget.postId,
+      content: content,
+      parentId: parentId,
+      replyToId: replyToId,
+    );
+    final result = await _commentService.create(newComment);
+    if (result is Status) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.getMessage)),
+        );
+      }
+      return;
+    }
+    // 发送成功，刷新评论列表
+    await _refreshComments();
+  }
+
+  /// 仅刷新评论
+  Future<void> _refreshComments() async {
+    final result = await _commentService.list(PaginationQuery(
+      skipLocale: true,
+      formValues: {'object_id': widget.postId},
+    ));
+    if (!mounted) return;
+    if (result is ListCommentResponse) {
+      setState(() {
+        _comments = result.items ?? [];
+        _commentTree = buildCommentTree(_comments);
+      });
+    }
   }
 
   @override
@@ -117,10 +208,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
         children: [
           Expanded(
             child: isMobile
-                ? _buildMobileBody(context, post, _comments)
-                : _buildWebBody(context, post, _comments),
+                ? _buildMobileBody(context, post, _commentTree, _comments)
+                : _buildWebBody(context, post, _commentTree, _comments),
           ),
-          _CommentInputBar(isMobile: isMobile),
+          _CommentInputBar(
+            isMobile: isMobile,
+            replyTo: _replyTo,
+            onReplyChanged: (c) => setState(() => _replyTo = c),
+            onSend: _sendComment,
+          ),
         ],
       ),
     );
@@ -131,7 +227,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget _buildMobileBody(
     BuildContext context,
     Post post,
-    List<CommentServiceV1Comment> comments,
+    List<CommentServiceV1Comment> commentTree,
+    List<CommentServiceV1Comment> allComments,
   ) {
     return CustomScrollView(
       slivers: [
@@ -139,7 +236,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         SliverToBoxAdapter(child: _PostContent(post: post, isMobile: true)),
         _buildTagsSliver(post, isMobile: true),
         SliverToBoxAdapter(child: _InteractionBar(post: post, isMobile: true)),
-        _buildCommentsSliver(context, post, comments, isMobile: true),
+        _buildCommentsSliver(context, post, commentTree, allComments, isMobile: true),
         SliverToBoxAdapter(child: SizedBox(height: 16.h)),
       ],
     );
@@ -150,7 +247,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget _buildWebBody(
     BuildContext context,
     Post post,
-    List<CommentServiceV1Comment> comments,
+    List<CommentServiceV1Comment> commentTree,
+    List<CommentServiceV1Comment> allComments,
   ) {
     final theme = Theme.of(context);
 
@@ -186,7 +284,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            S.of(context).commentsCount(post.commentCount ?? comments.length),
+                            S.of(context).commentsCount(post.commentCount ?? allComments.length),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -196,9 +294,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         ],
                       ),
                     ),
-                    // 评论列表
-                    ...comments.map(
-                      (c) => _CommentItem(comment: c, isMobile: false),
+                    // 评论列表（树形）
+                    ...commentTree.expand(
+                      (c) => _buildCommentWithChildren(c, allComments, isMobile: false),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -273,11 +371,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget _buildCommentsSliver(
     BuildContext context,
     Post post,
-    List<CommentType> comments, {
+    List<CommentType> commentTree,
+    List<CommentType> allComments, {
     required bool isMobile,
   }) {
     final theme = Theme.of(context);
-    final count = post.commentCount ?? comments.length;
+    final count = post.commentCount ?? allComments.length;
     return SliverMainAxisGroup(
       slivers: [
         SliverToBoxAdapter(
@@ -315,14 +414,47 @@ class _PostDetailPageState extends State<PostDetailPage> {
           padding: EdgeInsets.symmetric(horizontal: isMobile ? 20.w : 0),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) =>
-                  _CommentItem(comment: comments[index], isMobile: isMobile),
-              childCount: comments.length,
+              (context, index) {
+                final widgets = _buildCommentWithChildren(
+                  commentTree[index],
+                  allComments,
+                  isMobile: isMobile,
+                ).toList();
+                return Column(children: widgets);
+              },
+              childCount: commentTree.length,
             ),
           ),
         ),
       ],
     );
+  }
+
+  // =================== 树形评论递归构建 ===================
+
+  /// 递归展开一条评论及其所有子评论为 Widget 列表
+  Iterable<Widget> _buildCommentWithChildren(
+    CommentType comment,
+    List<CommentType> allComments, {
+    required bool isMobile,
+    int depth = 0,
+  }) sync* {
+    yield _CommentItem(
+      comment: comment,
+      isMobile: isMobile,
+      depth: depth,
+      allComments: allComments,
+      onReply: (c) => setState(() => _replyTo = c),
+    );
+    final children = findChildren(comment, allComments);
+    for (final child in children) {
+      yield* _buildCommentWithChildren(
+        child,
+        allComments,
+        isMobile: isMobile,
+        depth: depth + 1,
+      );
+    }
   }
 }
 
@@ -620,17 +752,27 @@ class _InteractionItemState extends State<_InteractionItem> {
 class _CommentItem extends StatelessWidget {
   final CommentServiceV1Comment comment;
   final bool isMobile;
+  final int depth;
+  final List<CommentServiceV1Comment> allComments;
+  final void Function(CommentServiceV1Comment comment)? onReply;
 
-  const _CommentItem({required this.comment, required this.isMobile});
+  const _CommentItem({
+    required this.comment,
+    required this.isMobile,
+    this.depth = 0,
+    required this.allComments,
+    this.onReply,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isReply = comment.parentId != null && comment.parentId != 0;
+    final indent = (depth * (isMobile ? 36.w : 36)).toDouble();
+    final hasChildren = findChildren(comment, allComments).isNotEmpty;
 
     return Padding(
       padding: EdgeInsets.only(
-        left: isReply ? (isMobile ? 40.w : 40) : 0,
+        left: indent,
         bottom: isMobile ? 14.h : 14,
       ),
       child: Row(
@@ -651,15 +793,18 @@ class _CommentItem extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      comment.authorName ?? '',
-                      style: TextStyle(
-                        fontSize: isMobile ? 13.sp : 13,
-                        fontWeight: FontWeight.w500,
-                        color: theme.colorScheme.onSurface,
+                    Flexible(
+                      child: Text(
+                        comment.authorName ?? '',
+                        style: TextStyle(
+                          fontSize: isMobile ? 13.sp : 13,
+                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Text(
                       comment.createdAt != null
                           ? _formatDate(context, comment.createdAt!)
@@ -672,6 +817,18 @@ class _CommentItem extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: isMobile ? 4.h : 4),
+                // 如果是回复（depth > 0），显示回复的 "@某人"
+                if (depth > 0 && comment.replyToId != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      _replyToText,
+                      style: TextStyle(
+                        fontSize: isMobile ? 12.sp : 12,
+                        color: theme.colorScheme.primary.withAlpha(180),
+                      ),
+                    ),
+                  ),
                 Text(
                   comment.content ?? '',
                   style: TextStyle(
@@ -690,20 +847,40 @@ class _CommentItem extends StatelessWidget {
                     ),
                     SizedBox(width: isMobile ? 3.w : 3),
                     Text(
-                      '${comment.likeCount}',
+                      '${comment.likeCount ?? 0}',
                       style: TextStyle(
                         fontSize: isMobile ? 11.sp : 11,
                         color: theme.colorScheme.onSurface.withAlpha(100),
                       ),
                     ),
                     SizedBox(width: isMobile ? 16.w : 16),
-                    Text(
-                      S.of(context).reply,
-                      style: TextStyle(
-                        fontSize: isMobile ? 11.sp : 11,
-                        color: theme.colorScheme.primary,
+                    GestureDetector(
+                      onTap: () => onReply?.call(comment),
+                      child: Text(
+                        S.of(context).reply,
+                        style: TextStyle(
+                          fontSize: isMobile ? 11.sp : 11,
+                          color: theme.colorScheme.primary,
+                        ),
                       ),
                     ),
+                    // 如果有子评论，显示回复数
+                    if (hasChildren) ...[
+                      SizedBox(width: isMobile ? 16.w : 16),
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        size: 12,
+                        color: theme.colorScheme.onSurface.withAlpha(80),
+                      ),
+                      SizedBox(width: isMobile ? 3.w : 3),
+                      Text(
+                        '${comment.replyCount ?? findChildren(comment, allComments).length}',
+                        style: TextStyle(
+                          fontSize: isMobile ? 11.sp : 11,
+                          color: theme.colorScheme.onSurface.withAlpha(80),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -712,6 +889,16 @@ class _CommentItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// 获取回复目标的作者名
+  String get _replyToText {
+    if (comment.replyToId == null) return '';
+    final target = allComments.where((c) => c.id == comment.replyToId);
+    if (target.isEmpty) return '';
+    final name = target.first.authorName ?? '';
+    if (name.isEmpty) return '';
+    return '@$name';
   }
 
   String _formatDate(BuildContext context, DateTime date) {
@@ -725,20 +912,84 @@ class _CommentItem extends StatelessWidget {
   }
 }
 
-class _CommentInputBar extends StatelessWidget {
+class _CommentInputBar extends StatefulWidget {
   final bool isMobile;
+  final CommentServiceV1Comment? replyTo;
+  final void Function(CommentServiceV1Comment? comment)? onReplyChanged;
+  final Future<void> Function(String content, {int? parentId, int? replyToId}) onSend;
 
-  const _CommentInputBar({required this.isMobile});
+  const _CommentInputBar({
+    required this.isMobile,
+    this.replyTo,
+    this.onReplyChanged,
+    required this.onSend,
+  });
+
+  @override
+  State<_CommentInputBar> createState() => _CommentInputBarState();
+}
+
+class _CommentInputBarState extends State<_CommentInputBar> {
+  final _controller = TextEditingController();
+  final _focusNode = FocusNode();
+  bool _isSending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // 当回复目标变化时，自动聚焦输入框
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.replyTo != null) {
+        _focusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _CommentInputBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.replyTo != oldWidget.replyTo && widget.replyTo != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _focusNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSend() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty || _isSending) return;
+
+    setState(() => _isSending = true);
+    try {
+      await widget.onSend(
+        text,
+        parentId: widget.replyTo?.id,
+        replyToId: widget.replyTo?.id,
+      );
+      _controller.clear();
+      widget.onReplyChanged?.call(null);
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final replyTo = widget.replyTo;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        isMobile ? 16.w : 16,
+        widget.isMobile ? 16.w : 16,
         10,
-        isMobile ? 16.w : 16,
+        widget.isMobile ? 16.w : 16,
         10,
       ),
       decoration: BoxDecoration(
@@ -756,36 +1007,94 @@ class _CommentInputBar extends StatelessWidget {
             constraints: const BoxConstraints(
               maxWidth: Breakpoints.webContentMaxWidth,
             ),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
+                // 回复提示条
+                if (replyTo != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    margin: const EdgeInsets.only(bottom: 8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest
-                          .withAlpha((0.5 * 255).round()),
-                      borderRadius: BorderRadius.circular(20),
+                      color: theme.colorScheme.primaryContainer.withAlpha(80),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
-                      S.of(context).writeComment,
-                      style: TextStyle(
-                        fontSize: isMobile ? 14.sp : 14,
-                        color: theme.colorScheme.onSurface.withAlpha(100),
+                    child: Row(
+                      children: [
+                        Icon(Icons.reply, size: 16, color: theme.colorScheme.primary),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '${S.of(context).reply} ${replyTo.authorName ?? ''}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => widget.onReplyChanged?.call(null),
+                          child: Icon(
+                            Icons.close,
+                            size: 16,
+                            color: theme.colorScheme.onSurface.withAlpha(120),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest
+                              .withAlpha((0.5 * 255).round()),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: TextField(
+                          controller: _controller,
+                          focusNode: _focusNode,
+                          enabled: !_isSending,
+                          style: TextStyle(
+                            fontSize: widget.isMobile ? 14.sp : 14,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: S.of(context).writeComment,
+                            hintStyle: TextStyle(
+                              fontSize: widget.isMobile ? 14.sp : 14,
+                              color: theme.colorScheme.onSurface.withAlpha(100),
+                            ),
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (_) => _handleSend(),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: Icon(
-                    Icons.send,
-                    size: 22,
-                    color: theme.colorScheme.primary,
-                  ),
-                  onPressed: () {},
+                    const SizedBox(width: 10),
+                    IconButton(
+                      icon: _isSending
+                          ? SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: theme.colorScheme.primary,
+                              ),
+                            )
+                          : Icon(
+                              Icons.send,
+                              size: 22,
+                              color: theme.colorScheme.primary,
+                            ),
+                      onPressed: _isSending ? null : _handleSend,
+                    ),
+                  ],
                 ),
               ],
             ),
