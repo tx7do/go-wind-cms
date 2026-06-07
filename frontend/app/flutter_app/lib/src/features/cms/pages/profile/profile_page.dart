@@ -29,7 +29,14 @@ class ProfilePage extends StatelessWidget {
             leading: !isMobile
                 ? IconButton(
                     icon: const Icon(Icons.arrow_back),
-                    onPressed: () => context.pop(),
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        // PC端无法 pop 时，回到首页
+                        context.go('/');
+                      }
+                    },
                   )
                 : null,
             title: Text(

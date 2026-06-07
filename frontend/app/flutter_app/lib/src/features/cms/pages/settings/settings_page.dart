@@ -185,35 +185,102 @@ class SettingsPage extends StatelessWidget {
   Widget _buildThemeModeSection(BuildContext context, bool isMobile) {
     final cubit = context.read<theme.AppThemeCubit>();
     final currentThemeMode = cubit.currentValue;
+    final themeData = Theme.of(context);
 
     return _SettingRow(
       icon: Icons.dark_mode_outlined,
       title: S.of(context).darkMode,
       isMobile: isMobile,
-      trailing: SizedBox(
-        width: isMobile ? 260.w : 260,
-        child: SegmentedButton<ThemeMode>(
-          segments: [
-            ButtonSegment(
-              value: ThemeMode.light,
-              label: Text(S.of(context).light),
+      trailing: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: themeData.colorScheme.outline.withAlpha(100),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildSegmentButton(
+              context,
+              S.of(context).light,
+              currentThemeMode == ThemeMode.light,
+              () => cubit.modify(ThemeMode.light),
+              isMobile,
+              isFirst: true,
             ),
-            ButtonSegment(
-              value: ThemeMode.system,
-              label: Text(S.of(context).followSystem),
+            _buildSegmentButton(
+              context,
+              S.of(context).followSystem,
+              currentThemeMode == ThemeMode.system,
+              () => cubit.modify(ThemeMode.system),
+              isMobile,
             ),
-            ButtonSegment(
-              value: ThemeMode.dark,
-              label: Text(S.of(context).dark),
+            _buildSegmentButton(
+              context,
+              S.of(context).dark,
+              currentThemeMode == ThemeMode.dark,
+              () => cubit.modify(ThemeMode.dark),
+              isMobile,
+              isLast: true,
             ),
           ],
-          selected: {currentThemeMode},
-          onSelectionChanged: (modes) => cubit.modify(modes.first),
-          style: ButtonStyle(
-            visualDensity: VisualDensity.compact,
-            textStyle: WidgetStateProperty.all(
-              TextStyle(fontSize: isMobile ? 12.sp : 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSegmentButton(
+    BuildContext context,
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+    bool isMobile, {
+    bool isFirst = false,
+    bool isLast = false,
+  }) {
+    final themeData = Theme.of(context);
+    final fontSize = isMobile ? 12.sp : 12.0;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: IntrinsicWidth(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 16.w : 16,
+            vertical: isMobile ? 8.h : 8,
+          ),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? themeData.colorScheme.primaryContainer
+                : Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: isFirst ? const Radius.circular(19) : Radius.zero,
+              bottomLeft: isFirst ? const Radius.circular(19) : Radius.zero,
+              topRight: isLast ? const Radius.circular(19) : Radius.zero,
+              bottomRight: isLast ? const Radius.circular(19) : Radius.zero,
             ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isSelected)
+                Icon(
+                  Icons.check,
+                  size: isMobile ? 14.sp : 14,
+                  color: themeData.colorScheme.onSurface,
+                ),
+              if (isSelected) SizedBox(width: isMobile ? 4.w : 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color: themeData.colorScheme.onSurface,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -224,6 +291,7 @@ class SettingsPage extends StatelessWidget {
     final cubit = context.read<theme.AppThemeCubit>();
     final currentLocale = cubit.currentLocale;
     final supportedLocales = cubit.supportedLocales;
+    final themeData = Theme.of(context);
 
     // 使用简短名称：中文(中国) / English
     final localeLabels = <Locale, String>{
@@ -235,24 +303,32 @@ class SettingsPage extends StatelessWidget {
       icon: Icons.language,
       title: S.of(context).language,
       isMobile: isMobile,
-      trailing: SizedBox(
-        width: isMobile ? 180.w : 180,
-        child: SegmentedButton<Locale>(
-          segments: supportedLocales.map((locale) {
+      trailing: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: themeData.colorScheme.outline.withAlpha(100),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: supportedLocales.asMap().entries.map((entry) {
+            final index = entry.key;
+            final locale = entry.value;
             final label = localeLabels[locale] ?? locale.toLanguageTag();
-            return ButtonSegment(
-              value: locale,
-              label: Text(label),
+            final isSelected = currentLocale == locale;
+            
+            return _buildSegmentButton(
+              context,
+              label,
+              isSelected,
+              () => cubit.modifyLocale(locale),
+              isMobile,
+              isFirst: index == 0,
+              isLast: index == supportedLocales.length - 1,
             );
           }).toList(),
-          selected: {currentLocale},
-          onSelectionChanged: (locales) => cubit.modifyLocale(locales.first),
-          style: ButtonStyle(
-            visualDensity: VisualDensity.compact,
-            textStyle: WidgetStateProperty.all(
-              TextStyle(fontSize: isMobile ? 12.sp : 12),
-            ),
-          ),
         ),
       ),
     );
@@ -325,8 +401,8 @@ class _SettingRow extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(width: 10),
-        Flexible(child: trailing),
+        const Spacer(),
+        trailing,
       ],
     );
   }
