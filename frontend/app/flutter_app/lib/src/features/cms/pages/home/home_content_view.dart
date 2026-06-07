@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
@@ -140,7 +141,7 @@ class _HomeContentViewState extends State<HomeContentView>
               actions: [
                 IconButton(
                   icon: Icon(Icons.search, size: 24.sp),
-                  onPressed: () {},
+                  onPressed: () => context.go('/search'),
                   tooltip: S.of(context).search,
                 ),
                 SizedBox(width: 8.w),

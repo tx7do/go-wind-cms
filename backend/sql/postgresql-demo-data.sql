@@ -977,12 +977,12 @@ INSERT INTO public.navigation_items (
 (2013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 203, 'Archive', '/archive', 0, 'archive', 'Post archive', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
 -- ========== 导航组 104（zh-CN 手机底部导航） ==========
 (1014, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 104, '首页', '/', 0, 'home', '返回首页', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(1015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 104, '发现', '/discover', 0, 'compass', '发现内容', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(1015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 104, '发现', '/discover', 0, 'explore', '发现内容', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
 (1016, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 104, '收藏', '/bookmarks', 0, 'bookmark', '我的收藏', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
 (1017, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 104, '我的', '/me', 0, 'person', '个人中心', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
 -- ========== 导航组 204（en-US Mobile Bottom Navigation） ==========
 (2014, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 204, 'Home', '/', 0, 'home', 'Back to homepage', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(2015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 204, 'Discover', '/discover', 0, 'compass', 'Discover content', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
+(2015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 204, 'Discover', '/discover', 0, 'explore', 'Discover content', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
 (2016, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 204, 'Bookmarks', '/bookmarks', 0, 'bookmark', 'My bookmarks', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
 (2017, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 204, 'Me', '/me', 0, 'person', 'Personal center', false, false, 'nav-item mobile-nav', '', NULL, 1, 1);
 
