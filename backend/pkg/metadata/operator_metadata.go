@@ -48,7 +48,14 @@ func FromContext(ctx context.Context, server bool) (*authenticationV1.OperatorMe
 		md, ok = metadata.FromClientContext(ctx)
 	}
 	if !ok {
-		return nil, ErrNoMetadata
+		// client context 未命中时，自动回退到 server context。
+		// 场景：gRPC server handler 内部直接 Publish 到 Kafka 时，
+		// 操作员元数据只存在于 server context（来自请求头），
+		// client context 中尚未填充。
+		md, ok = metadata.FromServerContext(ctx)
+		if !ok {
+			return nil, ErrNoMetadata
+		}
 	}
 
 	val := md.Get(mdOperatorKey)
