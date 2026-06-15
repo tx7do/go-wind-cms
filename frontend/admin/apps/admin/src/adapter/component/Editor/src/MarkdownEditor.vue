@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
-import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 
 import { type EditorProps, MdEditor } from 'md-editor-v3';
+
+import { $t } from '#/locales';
 
 import { isDarkMode } from './utils';
 
@@ -23,7 +24,7 @@ interface UseEditorConfigProps {
 const props = withDefaults(defineProps<UseEditorConfigProps>(), {
   disabled: false,
   height: '100%', // 默认撑满父容器
-  placeholder: $t('ui.editor.please_input_content'),
+  placeholder: $t('common.editor.please_input_content'),
   options: () => ({}),
   uploadImage: undefined,
 });
@@ -109,16 +110,18 @@ const toolbars = computed(() => {
 });
 
 // 编辑器配置
-const editorProps = computed<EditorProps>(() => ({
-  previewOnly: false,
-  preview: true,
-  showCodeRowNumber: true,
-  noMermaid: false,
-  noKatex: false,
-  toolbars: toolbars.value,
-  // 合并用户自定义配置
-  ...props.options,
-}));
+const editorProps = computed(
+  () =>
+    ({
+      preview: true,
+      showCodeRowNumber: true,
+      noMermaid: false,
+      noKatex: false,
+      toolbars: toolbars.value,
+      // 合并用户自定义配置
+      ...props.options,
+    }) as EditorProps,
+);
 
 // 响应式高度（传给编辑器）
 const editorHeight = ref<number>(600); // 初始兜底高度
@@ -146,7 +149,6 @@ const updateEditorHeight = () => {
   } else if (typeof props.height === 'string') {
     // 处理带px的字符串（如"800px"）
     const pxMatch = props.height.match(/^(\d+)px$/);
-    // eslint-disable-next-line unicorn/prefer-ternary
     if (pxMatch) {
       editorHeight.value = Number(pxMatch[1]);
     } else {
@@ -186,7 +188,7 @@ const handleUploadImages = async (
   callback(urls);
 };
 
-const handleSave = (val: string, _html: string) => {
+const handleSave = (val: string) => {
   // 创建 Blob 对象（Markdown 格式）
   const blob = new Blob([val], { type: 'text/markdown;charset=utf-8' });
 
@@ -265,56 +267,136 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    ref="wrapperRef"
-    class="md-editor-wrapper"
-    :style="{ height: props.height === '100vh' ? '100vh' : '100%' }"
-  >
+  <div ref="wrapperRef" class="markdown-editor-wrapper">
     <MdEditor
       v-model="localValue"
       :theme="theme"
+      :height="editorHeight"
       :placeholder="placeholder"
-      :preview-only="false"
       :disabled="disabled"
-      v-bind="editorProps"
-      @change="handleChange"
+      :preview="editorProps.preview"
+      :toolbars="editorProps.toolbars"
+      :show-code-row-number="editorProps.showCodeRowNumber"
+      :no-mermaid="editorProps.noMermaid"
+      :no-katex="editorProps.noKatex"
       @on-upload-img="handleUploadImages"
       @on-save="handleSave"
-      class="md-editor-inner"
+      @update:model-value="handleChange"
     />
   </div>
 </template>
 
 <style scoped>
-.md-editor-wrapper {
+.markdown-editor-wrapper {
   box-sizing: border-box;
   width: 100%;
   min-height: 1px;
   overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  transition:
+    border-color 0.2s cubic-bezier(0.08, 0.82, 0.17, 1),
+    box-shadow 0.2s cubic-bezier(0.08, 0.82, 0.17, 1);
 }
 
-.md-editor-wrapper :deep(.md-editor-inner) {
+.markdown-editor-wrapper :deep(.md-editor) {
   width: 100% !important;
-  height: 100% !important;
+  border: none !important;
+  border-radius: 8px !important;
 }
 
-.md-editor-wrapper :deep(.m-md-editor) {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: unset !important;
+/* 聚焦态 */
+.markdown-editor-wrapper:focus-within {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 10%);
+}
+</style>
+
+<!--
+  暗色模式配色覆盖必须用非 scoped 块，
+  scoped 的 :deep() 对 CSS 自定义属性的覆盖在 Vite 构建中不稳定。
+  使用 html.dark 前缀 + .markdown-editor-wrapper 限定作用范围。
+  颜色统一对接 Vben 框架 CSS 变量。
+-->
+<style>
+/* CSS 变量覆盖 */
+html.dark .markdown-editor-wrapper {
+  border-color: hsl(var(--accent-dark));
 }
 
-.md-editor-wrapper :deep(.m-md-editor .m-md-content) {
-  height: calc(100% - 40px) !important;
+html.dark .markdown-editor-wrapper:focus-within {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 18%);
 }
 
-.md-editor-wrapper :deep(.m-md-editor .m-md-preview),
-.md-editor-wrapper :deep(.m-md-editor .m-md-edit-area) {
-  width: 100% !important;
-  height: 100% !important;
+html.dark .markdown-editor-wrapper .md-editor.md-editor-dark {
+  --md-color: hsl(var(--foreground));
+  --md-hover-color: hsl(var(--foreground));
+  --md-bk-color: hsl(var(--background));
+  --md-bk-color-outstand: hsl(var(--accent-dark));
+  --md-bk-hover-color: hsl(var(--accent-lighter));
+  --md-border-color: hsl(var(--accent-dark));
+  --md-border-hover-color: hsl(var(--accent-darker));
+  --md-border-active-color: hsl(var(--primary));
 }
 
-.md-editor-wrapper :deep(.m-md-editor.dark) {
-  height: 100% !important;
+/* 工具栏背景 */
+html.dark
+  .markdown-editor-wrapper
+  .md-editor.md-editor-dark
+  .md-editor-toolbar-wrapper {
+  background-color: hsl(var(--accent-lighter)) !important;
+  border-bottom-color: hsl(0deg 0% 100% / 8%) !important;
+}
+
+/* 工具栏按钮颜色 */
+html.dark
+  .markdown-editor-wrapper
+  .md-editor.md-editor-dark
+  .md-editor-toolbar
+  .md-editor-toolbar-item {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* 工具栏按钮 hover */
+html.dark
+  .markdown-editor-wrapper
+  .md-editor.md-editor-dark
+  .md-editor-toolbar
+  .md-editor-toolbar-item:not([disabled]):hover {
+  color: hsl(var(--foreground)) !important;
+  background-color: hsl(0deg 0% 100% / 8%) !important;
+}
+
+/* CodeMirror 编辑区 */
+html.dark .markdown-editor-wrapper .md-editor.md-editor-dark .cm-content {
+  color: hsl(var(--foreground)) !important;
+  caret-color: hsl(var(--foreground)) !important;
+}
+
+html.dark .markdown-editor-wrapper .md-editor.md-editor-dark .cm-editor {
+  background-color: hsl(var(--background)) !important;
+}
+
+/* 编辑器外层背景 */
+html.dark .markdown-editor-wrapper .md-editor.md-editor-dark {
+  background-color: hsl(var(--background)) !important;
+}
+
+/* 输入区域背景 */
+html.dark
+  .markdown-editor-wrapper
+  .md-editor.md-editor-dark
+  .md-editor-input-wrapper {
+  background-color: hsl(var(--background)) !important;
+}
+
+/* placeholder 颜色 */
+html.dark
+  .markdown-editor-wrapper
+  .md-editor.md-editor-dark
+  .md-editor-input-wrapper
+  textarea::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
 }
 </style>

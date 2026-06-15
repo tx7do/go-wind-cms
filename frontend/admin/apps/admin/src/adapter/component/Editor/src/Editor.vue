@@ -3,7 +3,7 @@ import type { EditorEmits, EditorProps } from '../types';
 
 import { computed, defineAsyncComponent } from 'vue';
 
-import { $t } from '@vben/locales';
+import { $t } from '#/locales';
 
 import { EditorType } from '../types';
 
@@ -11,13 +11,15 @@ const props = withDefaults(defineProps<EditorProps>(), {
   editorType: EditorType.MARKDOWN,
   height: '100%',
   disabled: false,
-  placeholder: $t('ui.editor.please_input_content'),
+  placeholder: $t('common.editor.please_input_content'),
 });
 
 const emit = defineEmits<EditorEmits>();
 
 // 懒加载编辑器组件
-const TiptapEditor = defineAsyncComponent(() => import('./TiptapEditor.vue'));
+const TiptapEditor = defineAsyncComponent(
+  () => import('./TiptapEditor/index.vue'),
+);
 const MarkdownEditor = defineAsyncComponent(
   () => import('./MarkdownEditor.vue'),
 );

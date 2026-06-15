@@ -5,16 +5,16 @@
 已成功整合四种编辑器：
 
 1. **Tiptap Editor** - 现代化富文本编辑器（推荐使用）
-2. **Markdown Editor** - Markdown 编辑器（使用 md-editor-v3）
-3. **JSON Editor** - JSON 编辑器（使用 json-editor-vue）
-4. **Code Editor** - 代码编辑器（使用 monaco-editor）
-5. **PlainText Editor** - 纯文本编辑器（使用 textarea）
+2. **Markdown Editor** - Markdown 编辑器（使用 `md-editor-v3`）
+3. **JSON Editor** - JSON 编辑器（使用 `json-editor-vue`）
+4. **Code Editor** - 代码编辑器（使用 `monaco-editor`）
+5. **PlainText Editor** - 纯文本编辑器（使用 `textarea`）
 
 ## 文件结构
 
 ```
-apps/admin/src/components/editor/
-├── editor.vue          # 主编辑器组件（根据类型动态加载）
+/src/components/Editor/
+├── Editor.vue          # 主编辑器组件（根据类型动态加载）
 ├── PlainTextEditor.vue # 纯文本编辑器
 ├── TiptapEditor.vue    # Tiptap 现代富文本编辑器（推荐）
 ├── MarkdownEditor.vue  # Markdown 编辑器

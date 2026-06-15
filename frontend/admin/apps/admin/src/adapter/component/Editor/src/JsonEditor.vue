@@ -13,19 +13,17 @@ import { preferences } from '@vben/preferences';
 
 import VueJsonEditor from 'json-editor-vue';
 
-import 'jsoneditor/dist/jsoneditor.min.css';
+// vanilla-jsoneditor 暗色主题通过内联 <style> 引入（间接依赖无法直接 import）
 
 // 类型定义
-type EditorMode = 'code' | 'form' | 'text' | 'tree' | 'view';
-
 interface Props {
   modelValue: string;
   height?: number | string;
   disabled?: boolean;
   placeholder?: string;
   options?: {
-    mode?: EditorMode;
-    modes?: EditorMode[];
+    mode?: any;
+    modes?: any[];
     search?: boolean;
   };
 }
@@ -260,8 +258,9 @@ onMounted(() => {
       });
     }
 
-    if (!instance?.el) return;
     const container = instance?.proxy?.$el as HTMLElement | undefined;
+    if (!container) return;
+
     const editorEl = container.querySelector('.json-editor-core');
 
     if (editorEl) {
@@ -299,7 +298,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="json-editor-container" :class="{ 'json-editor-dark': isDark }">
+  <div class="json-editor-container" :class="{ 'jse-theme-dark': isDark }">
     <!-- 错误提示 -->
     <div v-if="parseError" class="error-message">
       {{ parseError }}
@@ -307,9 +306,9 @@ onUnmounted(() => {
 
     <VueJsonEditor
       v-model="jsonData"
-      :mode="options.mode"
+      :mode="options?.mode"
       :disabled="disabled"
-      :search="options.search"
+      :search="options?.search"
       :placeholder="placeholder"
       :style="{ height: editorHeight, width: '100%' }"
       class="json-editor-core"
@@ -319,224 +318,238 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+/* ============ 容器 ============ */
 .json-editor-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  background-color: hsl(var(--background));
+  transition:
+    border-color 0.2s cubic-bezier(0.08, 0.82, 0.17, 1),
+    box-shadow 0.2s cubic-bezier(0.08, 0.82, 0.17, 1);
+  /* vanilla-jsoneditor 内置 --jse-* 变量体系 */
+  --jse-theme-color: hsl(var(--accent-lighter));
+  --jse-theme-color-highlight: hsl(var(--accent));
+
+  /* 模式切换按钮选中态 */
+  --jse-button-primary-background: hsl(var(--primary) / 10%);
+  --jse-button-primary-background-highlight: hsl(var(--primary) / 15%);
+  --jse-button-primary-color: hsl(var(--primary));
 }
 
-.json-editor-dark {
-  --bg-primary: #0f172a !important;
-  --bg-secondary: #1e293b !important;
-  --text-primary: #fff !important;
-  --text-secondary: #94a3b8 !important;
-  --border-primary: #1e293b !important;
-  --border-secondary: #334155 !important;
-  --error-bg: #2a1a1a !important;
-  --error-text: #f88 !important;
-  --error-border: #4a2222 !important;
-
-  background-color: var(--bg-primary) !important;
-  border-color: var(--border-primary) !important;
+/* 聚焦态 */
+.json-editor-container:focus-within {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 10%);
 }
 
+/* ============ 错误提示 ============ */
 .error-message {
   padding: 8px 12px;
   margin: 0;
   font-size: 12px;
   line-height: 1.4;
-  color: #c33;
-  background-color: #fee;
-  border-bottom: 1px solid #fcc;
+  color: hsl(var(--destructive));
+  background-color: hsl(var(--destructive) / 5%);
+  border-bottom: 1px solid hsl(var(--destructive) / 20%);
 }
 
-.json-editor-dark .error-message {
-  color: var(--error-text) !important;
-  background-color: var(--error-bg) !important;
-  border-bottom-color: var(--error-border) !important;
-}
-
+/* ============ 编辑器核心 ============ */
 .json-editor-container :deep(.json-editor-core) {
   flex: 1;
   width: 100%;
   overflow: hidden;
 }
+</style>
 
-/* 暗黑模式 - 基础样式 */
-.json-editor-dark :deep(.jsoneditor) {
-  font-family: Monaco, Consolas, 'Courier New', monospace !important;
-  font-size: 14px !important;
-  color: var(--text-primary) !important;
-  background-color: var(--bg-primary) !important;
-  border: none !important;
+<!-- vanilla-jsoneditor 暗色主题（颜色对接 Vben 框架 CSS 变量） -->
+<style>
+.jse-theme-dark {
+  --jse-theme: dark !important;
+  --jse-theme-color: hsl(var(--accent-lighter)) !important;
+  --jse-theme-color-highlight: hsl(var(--accent-dark)) !important;
+
+  /* ===== 背景色系 ===== */
+  --jse-background-color: hsl(var(--background));
+  --jse-panel-background: hsl(var(--accent));
+  --jse-panel-background-border: 1px solid hsl(var(--accent-dark));
+  --jse-modal-background: hsl(var(--accent));
+  --jse-modal-code-background: hsl(var(--accent));
+  --jse-modal-overlay-background: hsl(0deg 0% 0% / 60%);
+
+  /* ===== 文字色系 ===== */
+  --jse-text-color: hsl(var(--foreground));
+  --jse-text-color-inverse: hsl(var(--muted-foreground));
+  --jse-menu-color: hsl(var(--foreground));
+
+  /* ===== 边框色系 ===== */
+  --jse-main-border: 1px solid hsl(var(--accent-dark));
+  --jse-panel-border: 1px solid hsl(var(--accent-dark));
+  --jse-panel-color: hsl(var(--foreground));
+  --jse-panel-color-readonly: hsl(var(--muted-foreground));
+
+  /* ===== 工具栏/菜单按钮 ===== */
+  --jse-panel-button-color: hsl(var(--foreground));
+  --jse-panel-button-color-highlight: hsl(var(--foreground));
+  --jse-panel-button-background: transparent;
+  --jse-panel-button-background-highlight: hsl(0deg 0% 100% / 8%);
+
+  /* 模式切换按钮选中态 */
+  --jse-button-primary-background: hsl(var(--primary) / 20%);
+  --jse-button-primary-background-highlight: hsl(var(--primary) / 30%);
+  --jse-button-primary-color: hsl(var(--primary));
+
+  /* ===== 导航栏 ===== */
+  --jse-navigation-bar-background: hsl(var(--accent-dark));
+  --jse-navigation-bar-background-highlight: hsl(var(--accent-darker));
+  --jse-navigation-bar-dropdown-color: hsl(var(--foreground));
+
+  /* ===== 右键菜单 ===== */
+  --jse-context-menu-background: hsl(var(--accent));
+  --jse-context-menu-background-highlight: hsl(var(--accent-dark));
+  --jse-context-menu-separator-color: hsl(var(--accent-dark));
+  --jse-context-menu-color: hsl(var(--foreground));
+  --jse-context-menu-pointer-background: hsl(var(--accent-darker));
+  --jse-context-menu-pointer-background-highlight: hsl(var(--muted-foreground));
+  --jse-context-menu-pointer-color: hsl(var(--foreground));
+
+  /* ===== 语法高亮 ===== */
+  --jse-key-color: hsl(var(--primary));
+  --jse-value-color: hsl(var(--foreground));
+  --jse-value-color-number: hsl(var(--success));
+  --jse-value-color-boolean: hsl(291deg 61% 64%);
+  --jse-value-color-null: hsl(291deg 61% 64%);
+  --jse-value-color-string: hsl(var(--success));
+  --jse-value-color-url: hsl(var(--primary));
+  --jse-delimiter-color: hsl(var(--muted-foreground));
+
+  /* ===== 交互状态 ===== */
+  --jse-edit-outline: 2px solid hsl(var(--primary));
+  --jse-selection-background-color: hsl(var(--accent-dark));
+  --jse-selection-background-inactive-color: hsl(var(--accent));
+  --jse-hover-background-color: hsl(0deg 0% 100% / 6%);
+  --jse-active-line-background-color: hsl(0deg 0% 100% / 4%);
+  --jse-search-match-background-color: hsl(var(--accent-dark));
+
+  /* ===== 折叠/搜索 ===== */
+  --jse-collapsed-items-background-color: hsl(var(--accent));
+  --jse-collapsed-items-selected-background-color: hsl(var(--accent-dark));
+  --jse-collapsed-items-link-color: hsl(var(--muted-foreground));
+  --jse-collapsed-items-link-color-highlight: hsl(var(--primary));
+  --jse-search-match-color: hsl(var(--accent-darker));
+  --jse-search-match-outline: 1px solid hsl(var(--muted-foreground));
+  --jse-search-match-active-color: hsl(var(--accent-darker));
+  --jse-search-match-active-outline: 1px solid hsl(var(--muted-foreground));
+
+  /* ===== 标签/表格 ===== */
+  --jse-tag-background: hsl(var(--accent-dark));
+  --jse-tag-color: hsl(var(--muted-foreground));
+  --jse-table-header-background: hsl(var(--accent));
+  --jse-table-header-background-highlight: hsl(var(--accent-dark));
+  --jse-table-row-odd-background: hsl(0deg 0% 100% / 3%);
+
+  /* ===== 输入/按钮 ===== */
+  --jse-input-background: hsl(var(--accent));
+  --jse-input-border: 1px solid hsl(var(--accent-dark));
+  --jse-button-background: hsl(var(--accent-darker));
+  --jse-button-background-highlight: hsl(var(--muted-foreground));
+  --jse-button-color: hsl(var(--foreground));
+  --jse-button-secondary-background: hsl(var(--accent-dark));
+  --jse-button-secondary-background-highlight: hsl(var(--accent-darker));
+  --jse-button-secondary-background-disabled: hsl(var(--accent));
+  --jse-button-secondary-color: hsl(var(--foreground));
+  --jse-a-color: hsl(var(--primary));
+  --jse-a-color-highlight: hsl(var(--primary));
+
+  /* ===== 提示框 ===== */
+  --jse-tooltip-color: hsl(var(--foreground));
+  --jse-tooltip-background: hsl(var(--accent));
+  --jse-tooltip-border: 1px solid hsl(var(--accent-dark));
+  --jse-tooltip-action-button-color: hsl(var(--foreground));
+  --jse-tooltip-action-button-background: hsl(var(--accent-darker));
+
+  /* ===== Svelte Select ===== */
+  --jse-svelte-select-background: hsl(var(--accent));
+  --jse-svelte-select-border: 1px solid hsl(var(--accent-dark));
+  --list-background: hsl(var(--accent));
+  --item-hover-bg: hsl(var(--accent-dark));
+  --multi-item-bg: hsl(var(--accent-dark));
+  --input-color: hsl(var(--foreground));
+  --multi-clear-bg: hsl(var(--accent-darker));
+  --multi-item-clear-icon-color: hsl(var(--foreground));
+  --multi-item-outline: 1px solid hsl(var(--accent-darker));
+  --list-shadow: 0 2px 8px 0 hsl(0deg 0% 0% / 40%);
+
+  /* ===== 其他 ===== */
+  --jse-color-picker-background: hsl(var(--accent-dark));
+  --jse-color-picker-border-box-shadow: hsl(var(--accent-darker)) 0 0 0 1px;
+
+  /* 聚焦态边框 */
+  border-color: hsl(var(--accent-dark)) !important;
 }
 
-.json-editor-dark :deep(.jsoneditor > *) {
-  background-color: var(--bg-primary) !important;
+/* ===== 亮色模式：工具栏模式切换按钮 ===== */
+.json-editor-container:not(.jse-theme-dark) .jse-menu {
+  background-color: hsl(var(--accent-lighter)) !important;
 }
 
-/* 暗黑模式 - 菜单样式 */
-.json-editor-dark :deep(.jsoneditor-menu) {
-  padding: 4px !important;
-  background-color: var(--bg-secondary) !important;
-  border-bottom: 1px solid var(--border-primary) !important;
+.json-editor-container:not(.jse-theme-dark) .jse-menu button {
+  color: hsl(var(--muted-foreground)) !important;
+  background-color: transparent !important;
 }
 
-.json-editor-dark :deep(.jsoneditor-menu button) {
-  padding: 4px 8px !important;
-  margin: 0 2px !important;
-  color: var(--text-primary) !important;
-  border: none !important;
-  border-radius: 4px !important;
-  transition: background-color 0.2s ease !important;
+.json-editor-container:not(.jse-theme-dark) .jse-menu button:hover {
+  color: hsl(var(--foreground)) !important;
+  background-color: hsl(0deg 0% 0% / 4%) !important;
 }
 
-.json-editor-dark :deep(.jsoneditor-menu button:hover) {
-  background-color: var(--border-secondary) !important;
+.json-editor-container:not(.jse-theme-dark) .jse-menu button[class*='selected'],
+.json-editor-container:not(.jse-theme-dark) .jse-menu button[class*='active'],
+.json-editor-container:not(.jse-theme-dark) .jse-menu button.selected,
+.json-editor-container:not(.jse-theme-dark) .jse-menu button.active {
+  color: hsl(var(--primary)) !important;
+  background-color: hsl(var(--primary) / 10%) !important;
 }
 
-/* 暗黑模式 - 树状视图 */
-.json-editor-dark :deep(.jsoneditor-tree) {
-  padding: 8px !important;
-  color: var(--text-primary) !important;
-  background-color: var(--bg-primary) !important;
+.json-editor-container:not(.jse-theme-dark)
+  .jse-menu
+  button[style*='theme-color'] {
+  color: hsl(var(--primary)) !important;
+  background-color: hsl(var(--primary) / 10%) !important;
+  background-image: none !important;
 }
 
-.json-editor-dark :deep(.jsoneditor-tree .jsoneditor-field) {
-  margin-right: 4px !important;
-  font-weight: 500 !important;
-  color: #93c5fd !important;
+html.dark .json-editor-container:focus-within {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 18%);
 }
 
-.json-editor-dark :deep(.jsoneditor-tree .jsoneditor-string) {
-  color: #a3e635 !important;
+/* ===== 暗色模式：工具栏模式切换按钮 ===== */
+html.dark .jse-theme-dark .jse-menu button {
+  color: hsl(var(--muted-foreground)) !important;
+  background-color: transparent !important;
 }
 
-.json-editor-dark :deep(.jsoneditor-tree .jsoneditor-number) {
-  color: #f87171 !important;
+html.dark .jse-theme-dark .jse-menu button:hover {
+  color: hsl(var(--foreground)) !important;
+  background-color: hsl(0deg 0% 100% / 6%) !important;
 }
 
-.json-editor-dark :deep(.jsoneditor-tree .jsoneditor-boolean) {
-  color: #60a5fa !important;
+html.dark .jse-theme-dark .jse-menu button[class*='selected'],
+html.dark .jse-theme-dark .jse-menu button[class*='active'],
+html.dark .jse-theme-dark .jse-menu button.selected,
+html.dark .jse-theme-dark .jse-menu button.active {
+  color: hsl(var(--primary)) !important;
+  background-color: hsl(var(--primary) / 18%) !important;
 }
 
-.json-editor-dark :deep(.jsoneditor-tree .jsoneditor-null) {
-  color: #94a3b8 !important;
-}
-
-/* 暗黑模式 - 代码/文本模式 */
-.json-editor-dark :deep(.jsoneditor-code) {
-  color: var(--text-primary) !important;
-  background-color: var(--bg-primary) !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-code textarea) {
-  padding: 8px !important;
-  font-family: Monaco, Consolas, 'Courier New', monospace !important;
-  color: var(--text-primary) !important;
-  resize: none !important;
-  background-color: var(--bg-primary) !important;
-  border: none !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-code textarea:focus) {
-  border: 1px solid #60a5fa !important;
-  border-radius: 2px !important;
-  outline: none !important;
-}
-
-/* 暗黑模式 - 表单模式 */
-.json-editor-dark :deep(.jsoneditor-form) {
-  color: var(--text-primary) !important;
-  background-color: var(--bg-primary) !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-form input),
-.json-editor-dark :deep(.jsoneditor-form textarea),
-.json-editor-dark :deep(.jsoneditor-form select) {
-  color: var(--text-primary) !important;
-  background-color: var(--bg-secondary) !important;
-  border: 1px solid var(--border-secondary) !important;
-  border-radius: 4px !important;
-}
-
-/* 暗黑模式 - 搜索框 */
-.json-editor-dark :deep(.jsoneditor-search) {
-  padding: 4px 8px !important;
-  margin: 0 4px !important;
-  color: var(--text-primary) !important;
-  background-color: var(--bg-secondary) !important;
-  border: 1px solid var(--border-primary) !important;
-  border-radius: 4px !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-search::placeholder) {
-  color: var(--text-secondary) !important;
-  opacity: 1 !important;
-}
-
-/* 暗黑模式 - 输入框 */
-.json-editor-dark :deep(.jsoneditor-text-input) {
-  padding: 2px 4px !important;
-  color: var(--text-primary) !important;
-  background-color: var(--bg-secondary) !important;
-  border: 1px solid var(--border-secondary) !important;
-  border-radius: 2px !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-text-input:focus) {
-  background-color: #1a2436 !important;
-  border-color: #60a5fa !important;
-  outline: none !important;
-}
-
-/* 禁用状态 */
-.json-editor-container :deep(.jsoneditor-disabled) {
-  cursor: not-allowed !important;
-  background-color: #1a2436 !important;
-  opacity: 0.8 !important;
-}
-
-/* 暗黑模式 - 滚动条 */
-.json-editor-dark :deep(.jsoneditor-tree::-webkit-scrollbar),
-.json-editor-dark :deep(.jsoneditor-code::-webkit-scrollbar) {
-  width: 8px !important;
-  height: 8px !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-tree::-webkit-scrollbar-track),
-.json-editor-dark :deep(.jsoneditor-code::-webkit-scrollbar-track) {
-  background: var(--bg-primary) !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-tree::-webkit-scrollbar-thumb),
-.json-editor-dark :deep(.jsoneditor-code::-webkit-scrollbar-thumb) {
-  background: var(--border-secondary) !important;
-  border-radius: 4px !important;
-}
-
-.json-editor-dark :deep(.jsoneditor-tree::-webkit-scrollbar-thumb:hover),
-.json-editor-dark :deep(.jsoneditor-code::-webkit-scrollbar-thumb:hover) {
-  background: #475569 !important;
-}
-
-/* 亮色模式基础样式 */
-.json-editor-container :deep(.jsoneditor) {
-  font-family: Monaco, Consolas, 'Courier New', monospace !important;
-  font-size: 14px !important;
-}
-
-.json-editor-container :deep(.jsoneditor-menu) {
-  padding: 4px !important;
-}
-
-.json-editor-container :deep(.jsoneditor-menu button) {
-  padding: 4px 8px !important;
-  border-radius: 4px !important;
+html.dark .jse-theme-dark .jse-menu button[style*='theme-color'] {
+  color: hsl(var(--primary)) !important;
+  background-color: hsl(var(--primary) / 18%) !important;
+  background-image: none !important;
 }
 </style>
