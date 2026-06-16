@@ -17,8 +17,8 @@ managed:
 inputs:
   - directory: protos
     paths:
-      - protos/admin/service/v1
+      - protos/app/service/v1
 
 plugins:
-  - local: protoc-gen-typescript-http
-    out: ../../frontend/admin/apps/admin/src/api/generated
+  - local: protoc-gen-typescript-dart
+    out: ../../frontend/app/flutter_app/app/api/generated

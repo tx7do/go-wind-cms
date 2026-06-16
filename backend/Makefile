@@ -37,7 +37,7 @@ plugin:
 	@go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
 	@go install github.com/envoyproxy/protoc-gen-validate@latest
 	@go install github.com/menta2k/protoc-gen-redact/v3@latest
-	@go install github.com/go-kratos/protoc-gen-typescript-http@latest
+	@go install github.com/tx7do/go-wind-toolkit/protoc-gen-typescript-http@latest
 	@flutter pub global activate protoc_plugin
 
 # install cli tools
@@ -47,10 +47,6 @@ cli:
 	@go install github.com/bufbuild/buf/cmd/buf@latest
 	@go install entgo.io/ent/cmd/ent@latest
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	@go install github.com/tx7do/go-wind-toolkit/config-exporter/cmd/cfgexp@latest
-	@go install github.com/tx7do/go-wind-toolkit/sql-orm/cmd/sql2orm@latest
-	@go install github.com/tx7do/go-wind-toolkit/sql-proto/cmd/sql2proto@latest
-	@go install github.com/tx7do/go-wind-toolkit/sql-kratos/cmd/sql2kratos@latest
 	@go install github.com/tx7do/go-wind-toolkit/gowind/cmd/gow@latest
 
 # download dependencies of module

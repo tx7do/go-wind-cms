@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -24,6 +25,10 @@ import (
 	"go-wind-cms/pkg/middleware/auth"
 )
 
+type InternalMessagePublisher interface {
+	Publish(ctx context.Context, streamId sse.StreamID, event *sse.Event)
+}
+
 type InternalMessageService struct {
 	adminV1.InternalMessageServiceHTTPServer
 
@@ -36,7 +41,9 @@ type InternalMessageService struct {
 	userServiceClient           identityV1.UserServiceClient
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
 
-	sseServer *sse.Server
+	internalMessagePublisher InternalMessagePublisher
+
+	clientType authenticationV1.ClientType
 }
 
 func NewInternalMessageService(
@@ -46,7 +53,7 @@ func NewInternalMessageService(
 	internalMessageRecipientRepo internalMessageV1.InternalMessageRecipientServiceClient,
 	authenticationRepo authenticationV1.AuthenticationServiceClient,
 	userRepo identityV1.UserServiceClient,
-	sseServer *sse.Server,
+	clientType authenticationV1.ClientType,
 ) *InternalMessageService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "internal-message/service/admin-service"))
 	return &InternalMessageService{
@@ -56,8 +63,44 @@ func NewInternalMessageService(
 		internalMessageRecipientServiceClient: internalMessageRecipientRepo,
 		authenticationServiceClient:           authenticationRepo,
 		userServiceClient:                     userRepo,
-		sseServer:                             sseServer,
+		clientType:                            clientType,
 	}
+}
+
+func (s *InternalMessageService) RegisterInternalMessagePublisher(internalMessagePublisher InternalMessagePublisher) {
+	s.internalMessagePublisher = internalMessagePublisher
+}
+
+func (s *InternalMessageService) HandleSubscribe(streamID sse.StreamID, _ *sse.Subscriber) {
+	s.log.Infof("subscriber [%s] connected", streamID)
+}
+
+func (s *InternalMessageService) HandleAuthorize(_ *http.Request, token string) error {
+	//s.log.Debugf("authorizing token: %s", token)
+	//s.log.Debugf("authorizing token HEADER: %s", req.Header.Get("Authorization"))
+
+	resp, err := s.authenticationServiceClient.ValidateToken(context.Background(), &authenticationV1.ValidateTokenRequest{
+		ClientType:    s.clientType,
+		Token:         token,
+		TokenCategory: authenticationV1.TokenCategory_ACCESS,
+	})
+	if err != nil {
+		s.log.Errorf("token authentication failed: %s", err)
+		return err
+	}
+
+	if resp.GetIsBlocked() {
+		s.log.Warnf("token is blocked: %s", token)
+		return authenticationV1.ErrorForbidden("token is blocked")
+	}
+	if !resp.GetIsValid() {
+		s.log.Warnf("token is invalid: %s", token)
+		return authenticationV1.ErrorUnauthorized("invalid token")
+	}
+
+	s.log.Debugf("token authenticated successfully, userId: [%d]", resp.GetPayload().GetUserId())
+
+	return nil
 }
 
 func (s *InternalMessageService) ListMessage(ctx context.Context, req *paginationV1.PagingRequest) (*internalMessageV1.ListInternalMessageResponse, error) {
@@ -213,7 +256,7 @@ func (s *InternalMessageService) sendNotification(ctx context.Context, messageId
 		return err
 	}
 	for _, streamId := range recipientStreamIds.AccessTokens {
-		s.sseServer.Publish(ctx, sse.StreamID(streamId), &sse.Event{
+		s.internalMessagePublisher.Publish(ctx, sse.StreamID(streamId), &sse.Event{
 			ID:    []byte(id.NewGUIDv7(false)),
 			Data:  recipientJson,
 			Event: []byte("notification"),
