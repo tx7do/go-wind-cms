@@ -241,7 +241,8 @@ function Install-GoPlugins {
         'github.com/google/gnostic/cmd/protoc-gen-openapi@latest',
         'github.com/envoyproxy/protoc-gen-validate@latest',
         'github.com/menta2k/protoc-gen-redact/v3@latest',
-        'github.com/tx7do/go-wind-toolkit/protoc-gen-typescript-http@latest'
+        'github.com/tx7do/go-wind-toolkit/protoc-gen-typescript-http@latest',
+        'github.com/tx7do/go-wind-toolkit/protoc-gen-dart-http@latest'
     )
     
     Install-GoPackages -Packages $plugins
@@ -252,7 +253,6 @@ function Install-GoCliTools {
     Log "Installing CLI scaffold tools..."
     
     $cliTools = @(
-        'github.com/go-kratos/kratos/cmd/kratos/v2@latest',
         'github.com/google/gnostic@latest',
         'github.com/bufbuild/buf/cmd/buf@latest',
         'entgo.io/ent/cmd/ent@latest',

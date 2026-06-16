@@ -20,5 +20,5 @@ inputs:
       - protos/app/service/v1
 
 plugins:
-  - local: protoc-gen-typescript-dart
-    out: ../../frontend/app/flutter_app/app/api/generated
+  - local: protoc-gen-dart-http
+    out: ../../frontend/app/flutter_app/lib/generated/api

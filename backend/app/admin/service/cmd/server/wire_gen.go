@@ -74,8 +74,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageServiceClient := data.NewInternalMessageServiceClient(context, discovery)
 	internalMessageCategoryServiceClient := data.NewInternalMessageCategoryServiceClient(context, discovery)
 	internalMessageRecipientServiceClient := data.NewInternalMessageRecipientServiceClient(context, discovery)
-	sseServer := server.NewSseServer(context)
-	internalMessageService := service.NewInternalMessageService(context, internalMessageServiceClient, internalMessageCategoryServiceClient, internalMessageRecipientServiceClient, authenticationServiceClient, userServiceClient, sseServer)
+	internalMessageService := service.NewInternalMessageService(context, internalMessageServiceClient, internalMessageCategoryServiceClient, internalMessageRecipientServiceClient, authenticationServiceClient, userServiceClient, clientType)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(context, internalMessageCategoryServiceClient)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(context, internalMessageServiceClient, internalMessageRecipientServiceClient)
 	apiAuditLogService := service.NewApiAuditLogService(context, apiAuditLogServiceClient, apiServiceClient)
@@ -113,6 +112,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
+	sseServer := server.NewSseServer(context, internalMessageService)
 	app := newApp(context, httpServer, grpcServer, sseServer)
 	return app, func() {
 	}, nil

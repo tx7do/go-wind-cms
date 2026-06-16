@@ -15,6 +15,8 @@ import (
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+
 	"go-wind-cms/pkg/middleware/auth"
 )
 
