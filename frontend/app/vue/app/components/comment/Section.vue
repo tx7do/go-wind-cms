@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { XIcon } from '@/plugins/xicon'
 import { cn } from '@/lib/utils'
-import { fetchListComment } from '@/api/composables/comment'
-import { createComment } from '@/api/service/comment'
+import { fetchListComment, createComment } from '@/api/composables/comment'
 
 const props = defineProps<{
   objectId: number | null

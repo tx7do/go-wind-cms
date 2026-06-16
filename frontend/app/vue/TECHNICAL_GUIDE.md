@@ -106,54 +106,80 @@ ui/
 ├────────────┬────────────┬─────────────────────────┤
 │  Stores    │ Preferences│  Composables (Hooks)     │  状态/逻辑层
 ├────────────┴────────────┴─────────────────────────┤
-│                 API Layer (三层架构)                │  数据层
+│                 API Layer (两层架构 + ApiClient)     │  数据层
 ├───────────────────────────────────────────────────┤
 │            Core (Transport / Storage)              │  基础设施层
 └───────────────────────────────────────────────────┘
 ```
 
-### 3.2 API 三层架构
+### 3.2 API 两层架构 + 统一 ApiClient
 
-API 模块是本项目最核心的架构设计之一，分为三层：
+API 模块是本项目最核心的架构设计之一，采用 **Generated → Composables** 两层架构，并通过 `apiClient` 单例统一管理所有 Service Client：
 
 ```
 api/
+├── client.ts            ← ApiClient 单例（统一入口，懒加载各 Service Client）
 ├── generated/           ← 第一层：Protobuf 自动生成的 TypeScript 客户端
-├── service/             ← 第二层：业务服务封装（单例 Client + 纯函数）
-└── composables/         ← 第三层：Vue Query 集成（响应式 Hooks）
+│   └── index.ts             # 类型定义 + Service Client 工厂 + ApiClient 类
+└── composables/         ← 第二层：业务逻辑封装 + Vue Query 集成
+    ├── post.ts              # 纯函数(listPost...) + Hook(useListPost...) + fetch(fetchListPost...)
+    └── ...
 ```
 
 **第一层：Generated（协议层）**
 
-由 `protoc-gen-typescript-http` 自动生成，定义了与后端 API 的类型契约。每个服务提供 `createXxxServiceClient` 工厂方法，接受一个 `requestApi` 函数作为 HTTP 适配器。
-
-**第二层：Service（服务层）**
-
-对生成的客户端进行封装，提供业务语义清晰的纯函数 API：
+由 `protoc-gen-typescript-http` 自动生成，定义了与后端 API 的类型契约。除了每个服务的 `createXxxServiceClient` 工厂方法外，还提供了统一的 `ApiClient` 类，内置懒加载缓存：
 
 ```ts
-// service/post.ts
-let _instance: ReturnType<typeof createPostServiceClient> | null = null;
-
-export function getPostService() {
-  if (!_instance) {
-    _instance = createPostServiceClient(requestApi);  // 注入 HTTP 适配器
+// generated/index.ts（自动生成，不要修改）
+export class ApiClient {
+  private _postService?: PostService;
+  get postService(): PostService {
+    return this._postService ??= createPostServiceClient(this._transport);
   }
-  return _instance;
+  // ... 其他服务同理
 }
-
-export async function listPost(paging?, formValues?, fieldMask?, orderBy?, options?) {
-  // 组装查询参数，委托给生成的客户端
-  return await getPostService().List({ fieldMask, orderBy, query, page, pageSize });
-}
+export function createApiClient(transport: ClientTransport): ApiClient;
 ```
 
-**第三层：Composables（组合式函数层）**
+**ApiClient 单例**
 
-集成 TanStack Vue Query，提供响应式数据管理：
+`client.ts` 将已有的 `requestApi`（基于 Axios）适配为 `ClientTransport` 接口，创建全局唯一的 `apiClient` 实例：
+
+```ts
+// client.ts
+import { createApiClient, type ClientTransport } from '@/api/generated/app/service/v1';
+import { requestApi } from '@/core/transport/rest';
+
+const transport: ClientTransport = {
+  unary(path, method, body) {
+    return requestApi({ path, method, body });
+  },
+};
+export const apiClient = createApiClient(transport);
+```
+
+**第二层：Composables（业务逻辑 + Vue Query 集成）**
+
+每个 Composables 文件同时包含三层内容：业务纯函数、Vue Query Hooks、fetch 方法。业务逻辑直接调用 `apiClient`：
 
 ```ts
 // composables/post.ts
+import { apiClient } from '@/api/client';
+
+// 业务纯函数（组装参数，调用 apiClient）
+export async function listPost(paging?, formValues?, fieldMask?, orderBy?, options?) {
+  return await apiClient.postService.List({
+    fieldMask,
+    orderBy: makeOrderBy(orderBy),
+    query: makeQueryString(merged, options?.isTenantUser),
+    page: paging?.page,
+    pageSize: paging?.pageSize,
+    noPaging,
+  });
+}
+
+// Vue Query Hook（用于组件）
 export function useListPost(options?) {
   return useMutation({
     mutationFn: (params) => {
@@ -164,7 +190,7 @@ export function useListPost(options?) {
   });
 }
 
-// 不带 Hook 的纯数据获取（供 Store / 非组件上下文使用）
+// fetch 方法（供 Store / 非组件上下文使用）
 export async function fetchListPost(params: ListPostParams) {
   return queryClient.fetchQuery({
     queryKey: ['listPost', params, locale],
@@ -173,9 +199,10 @@ export async function fetchListPost(params: ListPostParams) {
 }
 ```
 
-这种分层设计的优势：
-- **可替换性**：Service 层屏蔽了协议细节，更换 API 协议只需重写 Service 层
-- **灵活调用**：组件中使用 `useXxx` Hook，Store 中使用 `fetchXxx` 方法
+这种架构设计的优势：
+- **简洁性**：消除了独立的 Service 层，减少文件数量和样板代码
+- **统一管理**：`apiClient` 单例统一管理所有 Service Client 的创建和缓存
+- **灵活调用**：组件中使用 `useXxx` Hook，Store 中使用 `fetchXxx` 方法，无需缓存时直接调用纯函数
 - **语言感知**：Composable 层自动注入当前 locale，组件无需关心
 
 ### 3.3 请求客户端（RequestClient）
@@ -443,40 +470,29 @@ nitro: {
 
 在 `api/generated/` 中确保后端已生成对应的 TypeScript 客户端（如 `createProductServiceClient`）。
 
-**第二步：编写 Service 层**
+**第二步：编写 Composables 层**
 
-```ts
-// api/service/product.ts
-import { createProductServiceClient } from '@/api/generated/app/service/v1';
-import { requestApi } from '@/core/transport/rest';
-
-let _instance: ReturnType<typeof createProductServiceClient> | null = null;
-
-export function getProductService() {
-  if (!_instance) {
-    _instance = createProductServiceClient(requestApi);
-  }
-  return _instance;
-}
-
-export async function listProduct(paging?, formValues?, options?) {
-  return await getProductService().List({ ... });
-}
-
-export async function getProduct(id: number) {
-  return await getProductService().Get({ id });
-}
-```
-
-**第三步：编写 Composable 层**
+在 `api/composables/product.ts` 中同时编写业务纯函数、Vue Query Hooks 和 fetch 方法，直接使用 `apiClient`：
 
 ```ts
 // api/composables/product.ts
-import { useMutation } from '@tanstack/vue-query';
-import { listProduct, getProduct } from '@/api/service/product';
+import { useMutation, type UseMutationOptions } from '@tanstack/vue-query';
+import { type Paging, makeOrderBy, makeQueryString, makeUpdateMask } from '@/core/transport/rest';
+import { apiClient } from '@/api/client';
+import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
 
-export function useListProduct(options?) {
+// 业务纯函数
+export async function listProduct(paging?: Paging, formValues?, options?) {
+  return await apiClient.productService.List({ /* 组装参数 */ });
+}
+
+export async function getProduct(id: number, locale?: string) {
+  return await apiClient.productService.Get({ id, locale });
+}
+
+// Vue Query Hook
+export function useListProduct(options?: UseMutationOptions<any, Error, ListProductParams>) {
   return useMutation({
     mutationFn: (params) => {
       const locale = getCurrentLocale();
@@ -486,6 +502,7 @@ export function useListProduct(options?) {
   });
 }
 
+// fetch 方法
 export async function fetchProduct(id: number) {
   const locale = getCurrentLocale();
   return queryClient.fetchQuery({
@@ -495,14 +512,14 @@ export async function fetchProduct(id: number) {
 }
 ```
 
-**第四步：注册导出**
+**第三步：注册导出**
 
-在 `api/service/index.ts` 和 `api/composables/index.ts` 中添加：
+在 `api/composables/index.ts` 中添加：
 ```ts
 export * from './product';
 ```
 
-**第五步：创建页面**
+**第四步：创建页面**
 
 在 `pages/product/` 下创建路由页面，使用 Composable 获取数据。
 
@@ -580,10 +597,10 @@ client.addResponseInterceptor({
 
 ```
 app/
-├── api/                    # API 三层架构
+├── api/                    # API 两层架构 + ApiClient
+│   ├── client.ts           #   ApiClient 单例
 │   ├── generated/          #   Protobuf 生成代码
-│   ├── service/            #   业务服务封装
-│   └── composables/        #   Vue Query Hooks
+│   └── composables/        #   业务逻辑 + Vue Query Hooks
 ├── assets/css/             # 全局样式 + 主题变量
 ├── components/             # Vue 组件
 │   ├── auth/               #   认证组件（登录/注册）
@@ -616,8 +633,8 @@ locales/                    # 国际化翻译文件
 
 ## 八、总结
 
-本项目采用清晰的分层架构，将 **协议层 → 服务层 → 组合函数层** 解耦，使每一层都可以独立演进和替换。核心基础设施（Transport、Storage、Preferences）高度模块化，可方便地扩展或替换实现。
+本项目采用清晰的分层架构，将 **协议层 → 组合函数层** 通过 `apiClient` 单例解耦，使每一层都可以独立演进和替换。核心基础设施（Transport、Storage、Preferences）高度模块化，可方便地扩展或替换实现。
 
-对于二次开发者而言，最常见的扩展模式是：**新增 Service → 新增 Composable → 创建页面组件**。整个流程有清晰的模板可遵循，大部分情况下无需触碰基础设施代码。
+对于二次开发者而言，最常见的扩展模式是：**新增 Composable → 创建页面组件**。每个 Composable 文件集中了业务纯函数、Vue Query Hooks 和 fetch 方法，大部分情况下无需触碰基础设施代码。
 
 项目在暗色模式、国际化、SSR/SSG 兼容性等方面积累了大量工程实践细节，建议开发者在深入开发前完整阅读 `core/` 目录下的实现代码，理解整体设计意图后再进行扩展。

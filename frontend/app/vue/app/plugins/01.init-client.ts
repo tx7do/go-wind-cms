@@ -1,7 +1,7 @@
 import {RequestClient} from '@/core/transport/rest/request-client'
 import {useAccessStore} from '@/stores/modules/core/access.state'
 import {useUserStore} from '@/stores/modules/core/user.state'
-import {refreshToken as apiRefreshToken} from '@/api/service/auth'
+import {refreshToken as apiRefreshToken} from '@/api/composables/auth'
 import {fetchMe} from '@/api/composables/user-profile'
 import {useAppConfig} from '@/hooks/use-app-config'
 

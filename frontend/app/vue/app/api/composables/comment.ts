@@ -2,18 +2,75 @@ import {
   useMutation,
   type UseMutationOptions,
 } from '@tanstack/vue-query';
-import { type Paging } from '@/core/transport/rest';
-import {
-  createComment,
-  deleteComment,
-  getComment,
-  listComment,
-  updateComment,
-} from '@/api/service/comment';
+import { type Paging, makeOrderBy, makeQueryString, makeUpdateMask } from '@/core/transport/rest';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 
-// 直接导出 service 层函数
-export { createComment, deleteComment, getComment, listComment, updateComment };
+// ==============================
+// Service 层方法（使用 apiClient）
+// ==============================
+
+/**
+ * 查询评论列表
+ */
+export async function listComment(
+  paging?: Paging,
+  formValues?: null | object,
+  fieldMask?: undefined | string,
+  orderBy?: null | string[],
+  options?: { isTenantUser?: boolean },
+) {
+  const noPaging = paging?.page === undefined && paging?.pageSize === undefined;
+  // @ts-ignore proto generated code is error.
+  return await apiClient.commentService.List({
+    fieldMask,
+    orderBy: makeOrderBy(orderBy),
+    query: makeQueryString(formValues, options?.isTenantUser),
+    page: paging?.page,
+    pageSize: paging?.pageSize,
+    noPaging,
+  });
+}
+
+/**
+ * 获取评论
+ */
+export async function getComment(id: number) {
+  return await apiClient.commentService.Get({ id });
+}
+
+/**
+ * 创建评论
+ */
+export async function createComment(values: Record<string, any> = {}) {
+  return await apiClient.commentService.Create({
+    // @ts-ignore proto generated code is error.
+    data: {
+      ...values,
+    },
+  });
+}
+
+/**
+ * 更新评论
+ */
+export async function updateComment(id: number, values: Record<string, any> = {}) {
+  return await apiClient.commentService.Update({
+    id,
+    // @ts-ignore proto generated code is error.
+    data: {
+      ...values,
+    },
+    updateMask: makeUpdateMask(Object.keys(values ?? [])),
+  });
+}
+
+/**
+ * 删除评论
+ */
+export async function deleteComment(id: number) {
+  return await apiClient.commentService.Delete({ id });
+}
 
 /** 列表查询参数 */
 export interface ListCommentParams {

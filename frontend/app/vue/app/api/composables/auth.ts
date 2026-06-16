@@ -6,11 +6,36 @@ import type {
   authenticationservicev1_LoginRequest,
   authenticationservicev1_LoginResponse,
 } from '@/api/generated/app/service/v1';
-import { login, logout, refreshToken } from '@/api/service/auth';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 
-// 直接导出 service 层函数，供非 Vue 上下文使用
-export { login, logout, refreshToken };
+// ==============================
+// Service 层方法（使用 apiClient）
+// ==============================
+
+/**
+ * 登录
+ */
+export async function login(request: authenticationservicev1_LoginRequest): Promise<authenticationservicev1_LoginResponse> {
+  return apiClient.authenticationService.Login(request);
+}
+
+/**
+ * 登出
+ */
+export async function logout() {
+  return apiClient.authenticationService.Logout({});
+}
+
+/**
+ * 刷新 Token
+ */
+export async function refreshToken(refreshTokenValue: string) {
+  return apiClient.authenticationService.RefreshToken({
+    grant_type: 'password',
+    refresh_token: refreshTokenValue ?? '',
+  });
+}
 
 // ==============================
 // 登录（Mutation）

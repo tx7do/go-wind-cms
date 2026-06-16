@@ -6,19 +6,82 @@ import {
   type contentservicev1_Post,
   type contentservicev1_PostTranslation,
 } from '@/api/generated/app/service/v1';
-import { type Paging } from '@/core/transport/rest';
-import {
-  createPost,
-  deletePost,
-  getPost,
-  listPost,
-  updatePost,
-} from '@/api/service/post';
+import { type Paging, makeOrderBy, makeQueryString, makeUpdateMask } from '@/core/transport/rest';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
 
-// 直接导出 service 层函数
-export { createPost, deletePost, getPost, listPost, updatePost };
+// ==============================
+// Service 层方法（使用 apiClient）
+// ==============================
+
+/**
+ * 查询帖子列表
+ */
+export async function listPost(
+  paging?: Paging,
+  formValues?: null | object,
+  fieldMask?: undefined | string,
+  orderBy?: null | string[],
+  options?: { isTenantUser?: boolean; locale?: string },
+) {
+  const merged: Record<string, any> = {
+    ...(formValues ?? {}),
+    locale: options?.locale,
+  };
+
+  const noPaging = paging?.page === undefined && paging?.pageSize === undefined;
+  // @ts-ignore proto generated code is error.
+  return await apiClient.postService.List({
+    fieldMask,
+    orderBy: makeOrderBy(orderBy),
+    query: makeQueryString(merged, options?.isTenantUser),
+    page: paging?.page,
+    pageSize: paging?.pageSize,
+    noPaging,
+  });
+}
+
+/**
+ * 获取帖子
+ */
+export async function getPost(id: number, locale?: string) {
+  if (!id) return null;
+  return await apiClient.postService.Get({ id, locale });
+}
+
+/**
+ * 创建帖子
+ */
+export async function createPost(values: Record<string, any> = {}) {
+  return await apiClient.postService.Create({
+    // @ts-ignore proto generated code is error.
+    data: {
+      ...values,
+    },
+  });
+}
+
+/**
+ * 更新帖子
+ */
+export async function updatePost(id: number, values: Record<string, any> = {}) {
+  return await apiClient.postService.Update({
+    id,
+    // @ts-ignore proto generated code is error.
+    data: {
+      ...values,
+    },
+    updateMask: makeUpdateMask(Object.keys(values ?? [])),
+  });
+}
+
+/**
+ * 删除帖子
+ */
+export async function deletePost(id: number) {
+  return await apiClient.postService.Delete({ id });
+}
 
 /** 列表查询参数 */
 export interface ListPostParams {

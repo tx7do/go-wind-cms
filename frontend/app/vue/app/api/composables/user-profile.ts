@@ -4,33 +4,117 @@ import {
   type UseMutationOptions,
   type UseQueryOptions,
 } from '@tanstack/vue-query';
-import {
-  bindEmail,
-  bindPhone,
-  changePassword,
-  deleteAvatar,
-  getMe,
-  uploadAvatarBase64,
-  uploadAvatarUrl,
-  updateUser,
-  verifyEmail,
-  verifyPhone,
-} from '@/api/service/user-profile';
+import { makeUpdateMask, omit } from '@/core/transport/rest';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 
-// 直接导出 service 层函数，供非 Vue 上下文使用
-export {
-  getMe,
-  updateUser,
-  changePassword,
-  uploadAvatarBase64,
-  uploadAvatarUrl,
-  deleteAvatar,
-  bindPhone,
-  bindEmail,
-  verifyPhone,
-  verifyEmail,
-};
+// ==============================
+// Service 层方法（使用 apiClient）
+// ==============================
+
+/**
+ * 获取当前用户
+ */
+export async function getMe() {
+  try {
+    return await apiClient.userProfileService.GetUser({});
+  } catch (error) {
+    console.error('getMe failed:', error);
+    return null;
+  }
+}
+
+/**
+ * 更新当前用户
+ */
+export async function updateUser(id: number, values: Record<string, any> = {}) {
+  const password = values.password ?? null;
+  const cleaned = omit(values, 'password');
+  const updateMask = makeUpdateMask(Object.keys(cleaned ?? []));
+  return await apiClient.userProfileService.UpdateUser({
+    id,
+    // @ts-ignore proto generated code is error.
+    data: {
+      ...cleaned,
+    },
+    password,
+    // @ts-ignore proto generated code is error.
+    updateMask,
+  });
+}
+
+/**
+ * 修改用户密码
+ */
+export async function changePassword(oldPassword: string, newPassword: string) {
+  return await apiClient.userProfileService.ChangePassword({
+    oldPassword,
+    newPassword,
+  });
+}
+
+/**
+ * 上传用户头像（Base64）
+ */
+export async function uploadAvatarBase64(imageBase64: string) {
+  return await apiClient.userProfileService.UploadAvatar({
+    imageBase64,
+  });
+}
+
+/**
+ * 上传用户头像（图片URL）
+ */
+export async function uploadAvatarUrl(imageUrl: string) {
+  return await apiClient.userProfileService.UploadAvatar({
+    imageUrl,
+  });
+}
+
+/**
+ * 删除用户头像
+ */
+export async function deleteAvatar() {
+  return await apiClient.userProfileService.DeleteAvatar({});
+}
+
+/**
+ * 绑定手机号
+ */
+export async function bindPhone(phone: string, code: string) {
+  return await apiClient.userProfileService.BindContact({
+    phone: { phone, code },
+  });
+}
+
+/**
+ * 绑定邮箱
+ */
+export async function bindEmail(email: string, verificationCode: string) {
+  return await apiClient.userProfileService.BindContact({
+    email: { email, verificationCode },
+  });
+}
+
+/**
+ * 验证手机号
+ */
+export async function verifyPhone(phone: string, code: string, verificationId?: string) {
+  return await apiClient.userProfileService.VerifyContact({
+    phone: { phone, code },
+    verificationId,
+  });
+}
+
+/**
+ * 验证邮箱
+ */
+export async function verifyEmail(email: string, code: string, verificationId?: string) {
+  return await apiClient.userProfileService.VerifyContact({
+    email: { email, code },
+    verificationId,
+  });
+}
 
 // ==============================
 // 获取当前用户（Query）

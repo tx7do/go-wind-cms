@@ -3,19 +3,81 @@ import {
   type UseMutationOptions,
 } from '@tanstack/vue-query';
 import { type siteservicev1_NavigationItem } from '@/api/generated/app/service/v1';
-import { type Paging } from '@/core/transport/rest';
-import {
-  createNavigation,
-  deleteNavigation,
-  getNavigation,
-  listNavigation,
-  updateNavigation,
-} from '@/api/service/navigation';
+import { type Paging, makeOrderBy, makeQueryString, makeUpdateMask } from '@/core/transport/rest';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
 
-// 直接导出 service 层函数
-export { createNavigation, deleteNavigation, getNavigation, listNavigation, updateNavigation };
+// ==============================
+// Service 层方法（使用 apiClient）
+// ==============================
+
+/**
+ * 查询导航列表
+ */
+export async function listNavigation(
+  paging?: Paging,
+  formValues?: null | object,
+  fieldMask?: undefined | string,
+  orderBy?: null | string[],
+  options?: { isTenantUser?: boolean; locale?: string },
+) {
+  const merged: Record<string, any> = {
+    ...(formValues ?? {}),
+    locale: options?.locale,
+  };
+
+  const noPaging = paging?.page === undefined && paging?.pageSize === undefined;
+  // @ts-ignore proto generated code is error.
+  return await apiClient.navigationService.List({
+    fieldMask,
+    orderBy: makeOrderBy(orderBy),
+    query: makeQueryString(merged, options?.isTenantUser),
+    page: paging?.page,
+    pageSize: paging?.pageSize,
+    noPaging,
+  });
+}
+
+/**
+ * 获取导航
+ */
+export async function getNavigation(id: number) {
+  return await apiClient.navigationService.Get({ id });
+}
+
+/**
+ * 创建导航
+ */
+export async function createNavigation(values: Record<string, any> = {}) {
+  return await apiClient.navigationService.Create({
+    // @ts-ignore proto generated code is error.
+    data: {
+      ...values,
+    },
+  });
+}
+
+/**
+ * 更新导航
+ */
+export async function updateNavigation(id: number, values: Record<string, any> = {}) {
+  return await apiClient.navigationService.Update({
+    id,
+    // @ts-ignore proto generated code is error.
+    data: {
+      ...values,
+    },
+    updateMask: makeUpdateMask(Object.keys(values ?? [])),
+  });
+}
+
+/**
+ * 删除导航
+ */
+export async function deleteNavigation(id: number) {
+  return await apiClient.navigationService.Delete({ id });
+}
 
 /** 列表查询参数 */
 export interface ListNavigationParams {
