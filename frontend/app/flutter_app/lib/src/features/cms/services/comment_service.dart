@@ -1,14 +1,13 @@
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
-import 'package:flutter_app/generated/api/comment_service/comment_service_client.dart'
-    show CommentServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, CommentServiceClient;
 
-import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_create_comment_request.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_list_comment_response.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_update_comment_request.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show CommentServiceV1Comment, CommentServiceV1CreateCommentRequest,
+    CommentServiceV1ListCommentResponse, CommentServiceV1UpdateCommentRequest,
+    CommentServiceV1GetCommentRequest, CommentServiceV1DeleteCommentRequest;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
@@ -25,7 +24,7 @@ typedef ListCommentResponse = CommentServiceV1ListCommentResponse;
 class CommentService extends BaseService {
   CommentService() : super(tag: 'CommentService');
 
-  CommentServiceClient get _api => GetIt.instance<RestClient>().commentService;
+  CommentServiceClient get _api => GetIt.instance<ApiClient>().commentService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -36,13 +35,7 @@ class CommentService extends BaseService {
     final q = query ?? const PaginationQuery(skipLocale: true);
     return Query<ListCommentResponse>(
       key: 'comments',
-      queryFn: () => _api.commentServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      ),
+      queryFn: () => _api.list(q.toPagingRequest()),
     );
   }
 
@@ -50,7 +43,7 @@ class CommentService extends BaseService {
   Query<Comment> getQuery({required int id}) {
     return Query<Comment>(
       key: 'comment-$id',
-      queryFn: () => _api.commentServiceGet(id: id),
+      queryFn: () => _api.get(CommentServiceV1GetCommentRequest(id: id)),
     );
   }
 
@@ -60,7 +53,7 @@ class CommentService extends BaseService {
   Mutation<Comment, Comment> createMutation() {
     return Mutation<Comment, Comment>(
       mutationFn: (comment) =>
-          _api.commentServiceCreate(body: CreateCommentRequest(data: comment)),
+          _api.create(CreateCommentRequest(data: comment)),
       invalidateQueries: ['comments'],
     );
   }
@@ -68,9 +61,8 @@ class CommentService extends BaseService {
   /// 更新评论 Mutation
   Mutation<Comment, UpdateCommentParams> updateMutation() {
     return Mutation<Comment, UpdateCommentParams>(
-      mutationFn: (params) => _api.commentServiceUpdate(
-        id: params.id,
-        body: UpdateCommentRequest(
+      mutationFn: (params) => _api.update(
+        UpdateCommentRequest(
           id: params.id,
           data: params.data,
           updateMask: params.updateMask,
@@ -84,7 +76,8 @@ class CommentService extends BaseService {
   /// 删除评论 Mutation
   Mutation<void, int> deleteMutation() {
     return Mutation<void, int>(
-      mutationFn: (id) => _api.commentServiceDelete(id: id),
+      mutationFn: (id) =>
+          _api.delete(CommentServiceV1DeleteCommentRequest(id: id)),
       invalidateQueries: ['comments'],
     );
   }
@@ -97,13 +90,7 @@ class CommentService extends BaseService {
   Future<dynamic> list([PaginationQuery? query]) async {
     final q = query ?? const PaginationQuery(skipLocale: true);
     try {
-      return await _api.commentServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      );
+      return await _api.list(q.toPagingRequest());
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -112,7 +99,7 @@ class CommentService extends BaseService {
   /// 获取单个评论
   Future<dynamic> get(int id) async {
     try {
-      return await _api.commentServiceGet(id: id);
+      return await _api.get(CommentServiceV1GetCommentRequest(id: id));
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -121,8 +108,8 @@ class CommentService extends BaseService {
   /// 创建评论
   Future<dynamic> create(Comment comment) async {
     try {
-      return await _api.commentServiceCreate(
-        body: CreateCommentRequest(data: comment),
+      return await _api.create(
+        CreateCommentRequest(data: comment),
       );
     } on DioException catch (e) {
       return handleDioError(e);
@@ -137,9 +124,8 @@ class CommentService extends BaseService {
     bool? allowMissing,
   }) async {
     try {
-      return await _api.commentServiceUpdate(
-        id: id,
-        body: UpdateCommentRequest(
+      return await _api.update(
+        UpdateCommentRequest(
           id: id,
           data: data,
           updateMask: updateMask,
@@ -154,7 +140,7 @@ class CommentService extends BaseService {
   /// 删除评论
   Future<dynamic> delete(int id) async {
     try {
-      await _api.commentServiceDelete(id: id);
+      await _api.delete(CommentServiceV1DeleteCommentRequest(id: id));
       return null;
     } on DioException catch (e) {
       return handleDioError(e);

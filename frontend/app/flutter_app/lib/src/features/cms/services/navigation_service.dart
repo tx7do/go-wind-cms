@@ -2,25 +2,22 @@ import 'package:flutter/material.dart' show IconData, Icons;
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
-import 'package:flutter_app/generated/api/navigation_service/navigation_service_client.dart'
-    show NavigationServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
-
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation_item.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation_item_link_type.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation_location.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_create_navigation_request.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_list_navigation_response.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_update_navigation_request.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, NavigationServiceClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show SiteServiceV1Navigation, SiteServiceV1NavigationItem,
+        SiteServiceV1NavigationItem$LinkType, SiteServiceV1Navigation$Location,
+        SiteServiceV1CreateNavigationRequest, SiteServiceV1ListNavigationResponse,
+        SiteServiceV1UpdateNavigationRequest, SiteServiceV1GetNavigationRequest,
+        SiteServiceV1DeleteNavigationRequest;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
 
 typedef Navigation = SiteServiceV1Navigation;
 typedef NavigationItem = SiteServiceV1NavigationItem;
-typedef NavigationItemLinkType = SiteServiceV1NavigationItemLinkType;
-typedef NavigationLocation = SiteServiceV1NavigationLocation;
+typedef NavigationItemLinkType = SiteServiceV1NavigationItem$LinkType;
+typedef NavigationLocation = SiteServiceV1Navigation$Location;
 typedef CreateNavigationRequest = SiteServiceV1CreateNavigationRequest;
 typedef UpdateNavigationRequest = SiteServiceV1UpdateNavigationRequest;
 typedef ListNavigationResponse = SiteServiceV1ListNavigationResponse;
@@ -191,7 +188,7 @@ class NavigationService extends BaseService {
   NavigationService() : super(tag: 'NavigationService');
 
   NavigationServiceClient get _api =>
-      GetIt.instance<RestClient>().navigationService;
+      GetIt.instance<ApiClient>().navigationService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -202,13 +199,7 @@ class NavigationService extends BaseService {
     final q = query ?? const PaginationQuery();
     return Query<ListNavigationResponse>(
       key: 'navigations',
-      queryFn: () => _api.navigationServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      ),
+      queryFn: () => _api.list(q.toPagingRequest()),
     );
   }
 
@@ -216,7 +207,7 @@ class NavigationService extends BaseService {
   Query<Navigation> getQuery({required int id}) {
     return Query<Navigation>(
       key: 'navigation-$id',
-      queryFn: () => _api.navigationServiceGet(id: id),
+      queryFn: () => _api.get(SiteServiceV1GetNavigationRequest(id: id)),
     );
   }
 
@@ -225,8 +216,8 @@ class NavigationService extends BaseService {
   /// 创建导航 Mutation
   Mutation<Navigation, Navigation> createMutation() {
     return Mutation<Navigation, Navigation>(
-      mutationFn: (navigation) => _api.navigationServiceCreate(
-        body: CreateNavigationRequest(data: navigation),
+      mutationFn: (navigation) => _api.create(
+        CreateNavigationRequest(data: navigation),
       ),
       invalidateQueries: ['navigations'],
     );
@@ -235,9 +226,8 @@ class NavigationService extends BaseService {
   /// 更新导航 Mutation
   Mutation<Navigation, UpdateNavigationParams> updateMutation() {
     return Mutation<Navigation, UpdateNavigationParams>(
-      mutationFn: (params) => _api.navigationServiceUpdate(
-        id: params.id,
-        body: UpdateNavigationRequest(
+      mutationFn: (params) => _api.update(
+        UpdateNavigationRequest(
           id: params.id,
           data: params.data,
           updateMask: params.updateMask,
@@ -251,7 +241,8 @@ class NavigationService extends BaseService {
   /// 删除导航 Mutation
   Mutation<void, int> deleteMutation() {
     return Mutation<void, int>(
-      mutationFn: (id) => _api.navigationServiceDelete(id: id),
+      mutationFn: (id) => _api
+          .delete(SiteServiceV1DeleteNavigationRequest(id: id)),
       invalidateQueries: ['navigations'],
     );
   }
@@ -264,13 +255,7 @@ class NavigationService extends BaseService {
   Future<dynamic> list([PaginationQuery? query]) async {
     final q = query ?? const PaginationQuery();
     try {
-      return await _api.navigationServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      );
+      return await _api.list(q.toPagingRequest());
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -279,7 +264,7 @@ class NavigationService extends BaseService {
   /// 获取单个导航
   Future<dynamic> get(int id) async {
     try {
-      return await _api.navigationServiceGet(id: id);
+      return await _api.get(SiteServiceV1GetNavigationRequest(id: id));
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -288,8 +273,8 @@ class NavigationService extends BaseService {
   /// 创建导航
   Future<dynamic> create(Navigation navigation) async {
     try {
-      return await _api.navigationServiceCreate(
-        body: CreateNavigationRequest(data: navigation),
+      return await _api.create(
+        CreateNavigationRequest(data: navigation),
       );
     } on DioException catch (e) {
       return handleDioError(e);
@@ -304,9 +289,8 @@ class NavigationService extends BaseService {
     bool? allowMissing,
   }) async {
     try {
-      return await _api.navigationServiceUpdate(
-        id: id,
-        body: UpdateNavigationRequest(
+      return await _api.update(
+        UpdateNavigationRequest(
           id: id,
           data: data,
           updateMask: updateMask,
@@ -321,7 +305,7 @@ class NavigationService extends BaseService {
   /// 删除导航
   Future<dynamic> delete(int id) async {
     try {
-      await _api.navigationServiceDelete(id: id);
+      await _api.delete(SiteServiceV1DeleteNavigationRequest(id: id));
       return null;
     } on DioException catch (e) {
       return handleDioError(e);

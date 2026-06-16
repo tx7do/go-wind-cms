@@ -8,10 +8,10 @@ import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
 import 'package:flutter_app/src/features/cms/pages/home/widgets/nav_bar_link.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation_location.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show SiteServiceV1Navigation, SiteServiceV1Navigation$Location;
 
-typedef NavigationLocation = SiteServiceV1NavigationLocation;
+typedef NavigationLocation = SiteServiceV1Navigation$Location;
 
 /// Web 端持久化顶部导航栏 Shell 布局
 ///

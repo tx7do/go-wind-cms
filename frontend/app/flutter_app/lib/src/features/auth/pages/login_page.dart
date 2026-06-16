@@ -6,7 +6,8 @@ import 'package:cached_query/cached_query.dart' show MutationSuccess;
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/features/auth/services/authentication_service.dart';
-import 'package:flutter_app/generated/api/models/authentication_service_v1_login_response.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show AuthenticationServiceV1LoginResponse;
 
 /// 登录页面
 class LoginPage extends StatefulWidget {
@@ -76,7 +77,6 @@ class _LoginPageState extends State<LoginPage> {
     final theme = Theme.of(context);
     final isMobile = ResponsiveUtils.isMobile(context);
     final loc = S.of(context);
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,

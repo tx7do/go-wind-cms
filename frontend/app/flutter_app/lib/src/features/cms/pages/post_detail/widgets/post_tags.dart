@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Tag;
 import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
 /// 文章标签展示组件

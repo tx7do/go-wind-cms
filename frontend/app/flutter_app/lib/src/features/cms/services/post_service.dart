@@ -1,15 +1,14 @@
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
-import 'package:flutter_app/generated/api/post_service/post_service_client.dart'
-    show PostServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, PostServiceClient;
 
-import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post_translation.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_create_post_request.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_post_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_update_post_request.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Post, ContentServiceV1PostTranslation,
+    ContentServiceV1CreatePostRequest, ContentServiceV1ListPostResponse,
+    ContentServiceV1UpdatePostRequest, ContentServiceV1GetPostRequest,
+    ContentServiceV1DeletePostRequest;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
@@ -27,7 +26,7 @@ typedef ListPostResponse = ContentServiceV1ListPostResponse;
 class PostService extends BaseService {
   PostService() : super(tag: 'PostService');
 
-  PostServiceClient get _api => GetIt.instance<RestClient>().postService;
+  PostServiceClient get _api => GetIt.instance<ApiClient>().postService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -38,13 +37,7 @@ class PostService extends BaseService {
     final q = query ?? const PaginationQuery();
     return Query<ListPostResponse>(
       key: 'posts',
-      queryFn: () => _api.postServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      ),
+      queryFn: () => _api.list(q.toPagingRequest()),
     );
   }
 
@@ -52,7 +45,9 @@ class PostService extends BaseService {
   Query<Post> getQuery({required int id, String? code, String? locale}) {
     return Query<Post>(
       key: 'post-$id',
-      queryFn: () => _api.postServiceGet(id: id, code: code, locale: locale),
+      queryFn: () => _api.get(
+        ContentServiceV1GetPostRequest(id: id, code: code, locale: locale),
+      ),
     );
   }
 
@@ -64,8 +59,9 @@ class PostService extends BaseService {
   }) {
     return Query<PostTranslation>(
       key: 'post-$id-translation',
-      queryFn: () =>
-          _api.postServiceGetTranslation(id: id, code: code, locale: locale),
+      queryFn: () => _api.getTranslation(
+        ContentServiceV1GetPostRequest(id: id, code: code, locale: locale),
+      ),
     );
   }
 
@@ -75,7 +71,7 @@ class PostService extends BaseService {
   Mutation<Post, Post> createMutation() {
     return Mutation<Post, Post>(
       mutationFn: (post) =>
-          _api.postServiceCreate(body: CreatePostRequest(data: post)),
+          _api.create(CreatePostRequest(data: post)),
       invalidateQueries: ['posts'],
     );
   }
@@ -83,9 +79,8 @@ class PostService extends BaseService {
   /// 更新帖子 Mutation
   Mutation<Post, UpdatePostParams> updateMutation() {
     return Mutation<Post, UpdatePostParams>(
-      mutationFn: (params) => _api.postServiceUpdate(
-        id: params.id,
-        body: UpdatePostRequest(
+      mutationFn: (params) => _api.update(
+        UpdatePostRequest(
           id: params.id,
           data: params.data,
           updateMask: params.updateMask,
@@ -99,7 +94,8 @@ class PostService extends BaseService {
   /// 删除帖子 Mutation
   Mutation<void, int> deleteMutation() {
     return Mutation<void, int>(
-      mutationFn: (id) => _api.postServiceDelete(id: id),
+      mutationFn: (id) =>
+          _api.delete(ContentServiceV1DeletePostRequest(id: id)),
       invalidateQueries: ['posts'],
     );
   }
@@ -112,13 +108,7 @@ class PostService extends BaseService {
   Future<dynamic> list([PaginationQuery? query]) async {
     final q = query ?? const PaginationQuery();
     try {
-      return await _api.postServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      );
+      return await _api.list(q.toPagingRequest());
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -139,13 +129,7 @@ class PostService extends BaseService {
       pageSize: pageSize,
     );
     try {
-      return await _api.postServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      );
+      return await _api.list(q.toPagingRequest());
     } on DioException catch (e) {
       handleDioError(e);
       return null;
@@ -155,7 +139,9 @@ class PostService extends BaseService {
   /// 获取单个帖子
   Future<dynamic> get(int id, {String? code, String? locale}) async {
     try {
-      return await _api.postServiceGet(id: id, code: code, locale: locale);
+      return await _api.get(
+        ContentServiceV1GetPostRequest(id: id, code: code, locale: locale),
+      );
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -164,7 +150,7 @@ class PostService extends BaseService {
   /// 创建帖子
   Future<dynamic> create(Post post) async {
     try {
-      return await _api.postServiceCreate(body: CreatePostRequest(data: post));
+      return await _api.create(CreatePostRequest(data: post));
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -178,9 +164,8 @@ class PostService extends BaseService {
     bool? allowMissing,
   }) async {
     try {
-      return await _api.postServiceUpdate(
-        id: id,
-        body: UpdatePostRequest(
+      return await _api.update(
+        UpdatePostRequest(
           id: id,
           data: data,
           updateMask: updateMask,
@@ -195,7 +180,7 @@ class PostService extends BaseService {
   /// 删除帖子
   Future<dynamic> delete(int id) async {
     try {
-      await _api.postServiceDelete(id: id);
+      await _api.delete(ContentServiceV1DeletePostRequest(id: id));
       return null;
     } on DioException catch (e) {
       return handleDioError(e);
@@ -205,10 +190,8 @@ class PostService extends BaseService {
   /// 获取翻译数据
   Future<dynamic> getTranslation(int id, {String? code, String? locale}) async {
     try {
-      return await _api.postServiceGetTranslation(
-        id: id,
-        code: code,
-        locale: locale,
+      return await _api.getTranslation(
+        ContentServiceV1GetPostRequest(id: id, code: code, locale: locale),
       );
     } on DioException catch (e) {
       return handleDioError(e);

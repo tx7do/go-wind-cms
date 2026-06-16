@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:dio/dio.dart' show Dio;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient;
 
 import 'package:flutter_app/src/core/config/environments.dart';
 import 'package:flutter_app/src/core/repositories/init.dart' as repos;
+import 'package:flutter_app/src/core/transport/http/index.dart'
+    show DioClientTransport;
 import 'package:flutter_app/src/core/transport/init.dart' as transport;
 import 'package:flutter_app/src/core/widgets/error_page.dart';
 import 'package:get_it/get_it.dart' show GetIt;
@@ -33,8 +36,8 @@ void _initTransport() {
   transport.init();
 
   final getIt = GetIt.instance;
-  getIt.registerLazySingleton<RestClient>(
-    () => RestClient(GetIt.instance<Dio>()),
+  getIt.registerLazySingleton<ApiClient>(
+    () => ApiClient(DioClientTransport(dio: GetIt.instance<Dio>())),
   );
 }
 

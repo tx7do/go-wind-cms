@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show CommentServiceV1Comment;
 import 'package:flutter_app/src/features/cms/services/comment_service.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
@@ -212,7 +213,7 @@ class _CommentCard extends StatelessWidget {
                     ),
                     if (comment.createdAt != null)
                       Text(
-                        _formatDate(context, comment.createdAt!),
+                        _formatDate(context, DateTime.parse(comment.createdAt!)),
                         style: TextStyle(
                           fontSize: isMobile ? 11.sp : 11,
                           color: theme.colorScheme.onSurface.withAlpha(100),

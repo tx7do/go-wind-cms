@@ -9,8 +9,8 @@ import 'package:flutter_app/src/features/cms/pages/explore/explore_page.dart';
 import 'package:flutter_app/src/features/cms/pages/bookmarks/bookmarks_page.dart';
 import 'package:flutter_app/src/features/cms/pages/profile/profile_page.dart';
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation.dart';
-import 'package:flutter_app/generated/api/models/site_service_v1_navigation_location.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show SiteServiceV1Navigation, SiteServiceV1Navigation$Location;
 
 /// 首页 - 手机端视图（带底部导航，动态加载）
 class HomeMobileView extends StatefulWidget {
@@ -55,7 +55,7 @@ class _HomeMobileViewState extends State<HomeMobileView> {
         (result as ListNavigationResponse?)?.items ?? <SiteServiceV1Navigation>[];
     final items = getFlatNavItems(
       navigations,
-      SiteServiceV1NavigationLocation.mobile,
+      SiteServiceV1Navigation$Location.mobile,
       locale: _currentLocale,
     );
 

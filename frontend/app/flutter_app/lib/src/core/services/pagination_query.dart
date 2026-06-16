@@ -2,6 +2,8 @@ import 'dart:convert' show jsonEncode;
 
 import 'package:get_it/get_it.dart' show GetIt;
 
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show PaginationPagingRequest;
 import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 
 /// 通用分页查询类
@@ -212,5 +214,19 @@ class PaginationQuery {
   /// 下一页查询
   PaginationQuery nextPage() {
     return copyWith(page: (page ?? 1) + 1);
+  }
+
+  /// 转换为生成代码中的 [PaginationPagingRequest]
+  ///
+  /// 供 protoc-gen-dart-http 生成的 Service Client 的 list() 方法使用。
+  PaginationPagingRequest toPagingRequest() {
+    return PaginationPagingRequest(
+      page: page,
+      pageSize: pageSize,
+      noPaging: noPaging,
+      orderBy: orderByString,
+      query: queryString,
+      fieldMask: formattedFieldMask,
+    );
   }
 }

@@ -1,17 +1,13 @@
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
-import 'package:flutter_app/generated/api/user_profile_service/user_profile_service_client.dart'
-    show UserProfileServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
-
-import 'package:flutter_app/generated/api/models/identity_service_v1_user.dart';
-import 'package:flutter_app/generated/api/models/identity_service_v1_update_user_request.dart';
-import 'package:flutter_app/generated/api/models/identity_service_v1_upload_avatar_request.dart';
-import 'package:flutter_app/generated/api/models/identity_service_v1_upload_avatar_response.dart';
-import 'package:flutter_app/generated/api/models/identity_service_v1_bind_contact_request.dart';
-import 'package:flutter_app/generated/api/models/identity_service_v1_verify_contact_request.dart';
-import 'package:flutter_app/generated/api/models/identity_service_v1_change_password_request.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, UserProfileServiceClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show IdentityServiceV1User, IdentityServiceV1UpdateUserRequest,
+        IdentityServiceV1UploadAvatarRequest, IdentityServiceV1UploadAvatarResponse,
+        IdentityServiceV1BindContactRequest, IdentityServiceV1VerifyContactRequest,
+        IdentityServiceV1ChangePasswordRequest;
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
 
@@ -31,7 +27,7 @@ class UserProfileService extends BaseService {
   UserProfileService() : super(tag: 'UserProfileService');
 
   UserProfileServiceClient get _api =>
-      GetIt.instance<RestClient>().userProfileService;
+      GetIt.instance<ApiClient>().userProfileService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -39,7 +35,7 @@ class UserProfileService extends BaseService {
   Query<User> getQuery() {
     return Query<User>(
       key: 'user-profile',
-      queryFn: () => _api.userProfileServiceGetUser(),
+      queryFn: () => _api.getUser({}),
     );
   }
 
@@ -48,8 +44,8 @@ class UserProfileService extends BaseService {
   /// 更新用户资料 Mutation
   Mutation<void, UpdateUserParams> updateMutation() {
     return Mutation<void, UpdateUserParams>(
-      mutationFn: (params) => _api.userProfileServiceUpdateUser(
-        body: UpdateUserRequest(
+      mutationFn: (params) => _api.updateUser(
+        UpdateUserRequest(
           id: params.id,
           data: params.data,
           password: params.password,
@@ -64,8 +60,8 @@ class UserProfileService extends BaseService {
   /// 上传头像 Mutation
   Mutation<UploadAvatarResponse, UploadAvatarParams> uploadAvatarMutation() {
     return Mutation<UploadAvatarResponse, UploadAvatarParams>(
-      mutationFn: (params) => _api.userProfileServiceUploadAvatar(
-        body: UploadAvatarRequest(
+      mutationFn: (params) => _api.uploadAvatar(
+        UploadAvatarRequest(
           imageBase64: params.imageBase64,
           imageUrl: params.imageUrl,
         ),
@@ -77,7 +73,7 @@ class UserProfileService extends BaseService {
   /// 删除头像 Mutation
   Mutation<void, void> deleteAvatarMutation() {
     return Mutation<void, void>(
-      mutationFn: (_) => _api.userProfileServiceDeleteAvatar(),
+      mutationFn: (_) => _api.deleteAvatar({}),
       invalidateQueries: ['user-profile'],
     );
   }
@@ -86,7 +82,7 @@ class UserProfileService extends BaseService {
   Mutation<void, BindContactRequest> bindContactMutation() {
     return Mutation<void, BindContactRequest>(
       mutationFn: (request) =>
-          _api.userProfileServiceBindContact(body: request),
+          _api.bindContact(request),
     );
   }
 
@@ -94,7 +90,7 @@ class UserProfileService extends BaseService {
   Mutation<void, VerifyContactRequest> verifyContactMutation() {
     return Mutation<void, VerifyContactRequest>(
       mutationFn: (request) =>
-          _api.userProfileServiceVerifyContact(body: request),
+          _api.verifyContact(request),
     );
   }
 
@@ -102,7 +98,7 @@ class UserProfileService extends BaseService {
   Mutation<void, ChangePasswordRequest> changePasswordMutation() {
     return Mutation<void, ChangePasswordRequest>(
       mutationFn: (request) =>
-          _api.userProfileServiceChangePassword(body: request),
+          _api.changePassword(request),
     );
   }
 
@@ -111,7 +107,7 @@ class UserProfileService extends BaseService {
   /// 获取当前用户资料
   Future<dynamic> get() async {
     try {
-      return await _api.userProfileServiceGetUser();
+      return await _api.getUser({});
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -126,8 +122,8 @@ class UserProfileService extends BaseService {
     bool? allowMissing,
   }) async {
     try {
-      return await _api.userProfileServiceUpdateUser(
-        body: UpdateUserRequest(
+      return await _api.updateUser(
+        UpdateUserRequest(
           id: id,
           data: data,
           password: password,
@@ -143,8 +139,8 @@ class UserProfileService extends BaseService {
   /// 上传头像（Base64 或 URL）
   Future<dynamic> uploadAvatar({String? imageBase64, String? imageUrl}) async {
     try {
-      return await _api.userProfileServiceUploadAvatar(
-        body: UploadAvatarRequest(imageBase64: imageBase64, imageUrl: imageUrl),
+      return await _api.uploadAvatar(
+        UploadAvatarRequest(imageBase64: imageBase64, imageUrl: imageUrl),
       );
     } on DioException catch (e) {
       return handleDioError(e);
@@ -154,7 +150,7 @@ class UserProfileService extends BaseService {
   /// 删除头像
   Future<dynamic> deleteAvatar() async {
     try {
-      await _api.userProfileServiceDeleteAvatar();
+      await _api.deleteAvatar({});
       return null;
     } on DioException catch (e) {
       return handleDioError(e);
@@ -164,7 +160,7 @@ class UserProfileService extends BaseService {
   /// 绑定手机号码/邮箱
   Future<dynamic> bindContact(BindContactRequest request) async {
     try {
-      return await _api.userProfileServiceBindContact(body: request);
+      return await _api.bindContact(request);
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -173,7 +169,7 @@ class UserProfileService extends BaseService {
   /// 验证手机号码/邮箱
   Future<dynamic> verifyContact(VerifyContactRequest request) async {
     try {
-      return await _api.userProfileServiceVerifyContact(body: request);
+      return await _api.verifyContact(request);
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -185,8 +181,8 @@ class UserProfileService extends BaseService {
     required String newPassword,
   }) async {
     try {
-      return await _api.userProfileServiceChangePassword(
-        body: ChangePasswordRequest(
+      return await _api.changePassword(
+        ChangePasswordRequest(
           oldPassword: oldPassword,
           newPassword: newPassword,
         ),

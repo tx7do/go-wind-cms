@@ -1,34 +1,31 @@
 import 'package:flutter_app/src/features/cms/services/navigation_service.dart'
     show Navigation, NavigationItem, NavigationItemLinkType, NavigationLocation;
 
-import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_category_translation.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post_translation.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_comment_content_type.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_tag_translation.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Category, ContentServiceV1CategoryTranslation,
+        ContentServiceV1Post, ContentServiceV1PostTranslation,
+        CommentServiceV1Comment, CommentServiceV1Comment$ContentType,
+        ContentServiceV1Tag, ContentServiceV1TagTranslation;
 
 typedef Category = ContentServiceV1Category;
 typedef CategoryTranslation = ContentServiceV1CategoryTranslation;
 typedef Post = ContentServiceV1Post;
 typedef PostTranslation = ContentServiceV1PostTranslation;
 typedef Comment = CommentServiceV1Comment;
-typedef CommentContentType = CommentServiceV1CommentContentType;
+typedef CommentContentType = CommentServiceV1Comment$ContentType;
 typedef Tag = ContentServiceV1Tag;
 typedef TagTranslation = ContentServiceV1TagTranslation;
 
 
-/// 辅助：创建 DateTime
-DateTime _ts(
+/// 辅助：创建时间戳字符串（ISO 8601）
+String _ts(
   int year, [
   int month = 1,
   int day = 1,
   int hour = 0,
   int minute = 0,
 ]) {
-  return DateTime(year, month, day, hour, minute);
+  return DateTime(year, month, day, hour, minute).toIso8601String();
 }
 
 /// Mock 分类数据

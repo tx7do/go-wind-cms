@@ -1,11 +1,9 @@
 import 'package:get_it/get_it.dart';
 
-import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_category_translation.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post_translation.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_tag_translation.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Category, ContentServiceV1CategoryTranslation,
+        ContentServiceV1Post, ContentServiceV1PostTranslation,
+        ContentServiceV1Tag, ContentServiceV1TagTranslation;
 import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 
 typedef Category = ContentServiceV1Category;

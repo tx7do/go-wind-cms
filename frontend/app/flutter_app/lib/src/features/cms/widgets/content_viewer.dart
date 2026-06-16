@@ -5,24 +5,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
-import 'package:flutter_app/generated/api/models/content_service_v1_post_editor_type.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1EditorType;
 
 /// 文章内容查看器
 ///
 /// 根据 [editorType] 自适应渲染不同编辑器类型的内容：
-/// - [ContentServiceV1PostEditorType.editorTypeMarkdown]: Markdown 内容（基础文本渲染，后续可接入 flutter_markdown）
-/// - [ContentServiceV1PostEditorType.editorTypeRichText]: 富文本 HTML（基础文本渲染，后续可接入 flutter_html）
-/// - [ContentServiceV1PostEditorType.editorTypePlainText]: 纯文本
-/// - [ContentServiceV1PostEditorType.editorTypeCode]: 代码块（等宽字体 + 代码样式）
-/// - [ContentServiceV1PostEditorType.editorTypeJsonBlock]: JSON 结构化内容
-/// - [ContentServiceV1PostEditorType.editorTypeVisualBuilder]: 可视化构建器（暂按 JSON 展示）
+/// - [ContentServiceV1EditorType.editorTypeMarkdown]: Markdown 内容（基础文本渲染，后续可接入 flutter_markdown）
+/// - [ContentServiceV1EditorType.editorTypeRichText]: 富文本 HTML（基础文本渲染，后续可接入 flutter_html）
+/// - [ContentServiceV1EditorType.editorTypePlainText]: 纯文本
+/// - [ContentServiceV1EditorType.editorTypeCode]: 代码块（等宽字体 + 代码样式）
+/// - [ContentServiceV1EditorType.editorTypeJsonBlock]: JSON 结构化内容
+/// - [ContentServiceV1EditorType.editorTypeVisualBuilder]: 可视化构建器（暂按 JSON 展示）
 /// - 未指定 / unknown: 按 Markdown 渲染
 class ContentViewer extends StatelessWidget {
   /// 文章原始内容
   final String content;
 
   /// 编辑器类型
-  final ContentServiceV1PostEditorType? editorType;
+  final ContentServiceV1EditorType? editorType;
 
   /// 是否手机端布局
   final bool isMobile;
@@ -39,20 +40,20 @@ class ContentViewer extends StatelessWidget {
     if (content.isEmpty) return const SizedBox.shrink();
 
     return switch (editorType) {
-      ContentServiceV1PostEditorType.editorTypeMarkdown => _buildMarkdown(
+      ContentServiceV1EditorType.editorTypeMarkdown => _buildMarkdown(
         context,
       ),
-      ContentServiceV1PostEditorType.editorTypeRichText => _buildRichText(
+      ContentServiceV1EditorType.editorTypeRichText => _buildRichText(
         context,
       ),
-      ContentServiceV1PostEditorType.editorTypePlainText => _buildPlainText(
+      ContentServiceV1EditorType.editorTypePlainText => _buildPlainText(
         context,
       ),
-      ContentServiceV1PostEditorType.editorTypeCode => _buildCodeBlock(context),
-      ContentServiceV1PostEditorType.editorTypeJsonBlock => _buildJsonBlock(
+      ContentServiceV1EditorType.editorTypeCode => _buildCodeBlock(context),
+      ContentServiceV1EditorType.editorTypeJsonBlock => _buildJsonBlock(
         context,
       ),
-      ContentServiceV1PostEditorType.editorTypeVisualBuilder => _buildJsonBlock(
+      ContentServiceV1EditorType.editorTypeVisualBuilder => _buildJsonBlock(
         context,
       ),
       // unspecified / null / unknown → 默认按 Markdown 渲染

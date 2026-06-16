@@ -1,15 +1,14 @@
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
-import 'package:flutter_app/generated/api/category_service/category_service_client.dart'
-    show CategoryServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, CategoryServiceClient;
 
-import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_category_translation.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_create_category_request.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_update_category_request.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Category, ContentServiceV1CategoryTranslation,
+    ContentServiceV1CreateCategoryRequest, ContentServiceV1ListCategoryResponse,
+    ContentServiceV1UpdateCategoryRequest, ContentServiceV1GetCategoryRequest,
+    ContentServiceV1DeleteCategoryRequest;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
@@ -28,7 +27,7 @@ class CategoryService extends BaseService {
   CategoryService() : super(tag: 'CategoryService');
 
   CategoryServiceClient get _api =>
-      GetIt.instance<RestClient>().categoryService;
+      GetIt.instance<ApiClient>().categoryService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -39,13 +38,7 @@ class CategoryService extends BaseService {
     final q = query ?? const PaginationQuery();
     return Query<ListCategoryResponse>(
       key: 'categories',
-      queryFn: () => _api.categoryServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      ),
+      queryFn: () => _api.list(q.toPagingRequest()),
     );
   }
 
@@ -53,7 +46,9 @@ class CategoryService extends BaseService {
   Query<Category> getQuery({required int id, String? locale}) {
     return Query<Category>(
       key: 'category-$id',
-      queryFn: () => _api.categoryServiceGet(id: id, locale: locale),
+      queryFn: () => _api.get(
+        ContentServiceV1GetCategoryRequest(id: id, locale: locale),
+      ),
     );
   }
 
@@ -65,10 +60,12 @@ class CategoryService extends BaseService {
   }) {
     return Query<CategoryTranslation>(
       key: 'category-$id-translation',
-      queryFn: () => _api.categoryServiceGetTranslation(
-        id: id,
-        code: code,
-        locale: locale,
+      queryFn: () => _api.getTranslation(
+        ContentServiceV1GetCategoryRequest(
+          id: id,
+          code: code,
+          locale: locale,
+        ),
       ),
     );
   }
@@ -78,9 +75,8 @@ class CategoryService extends BaseService {
   /// 创建类别 Mutation
   Mutation<Category, Category> createMutation() {
     return Mutation<Category, Category>(
-      mutationFn: (category) => _api.categoryServiceCreate(
-        body: CreateCategoryRequest(data: category),
-      ),
+      mutationFn: (category) =>
+          _api.create(CreateCategoryRequest(data: category)),
       invalidateQueries: ['categories'],
     );
   }
@@ -88,9 +84,8 @@ class CategoryService extends BaseService {
   /// 更新类别 Mutation
   Mutation<Category, UpdateCategoryParams> updateMutation() {
     return Mutation<Category, UpdateCategoryParams>(
-      mutationFn: (params) => _api.categoryServiceUpdate(
-        id: params.id,
-        body: UpdateCategoryRequest(
+      mutationFn: (params) => _api.update(
+        UpdateCategoryRequest(
           id: params.id,
           data: params.data,
           updateMask: params.updateMask,
@@ -104,7 +99,8 @@ class CategoryService extends BaseService {
   /// 删除类别 Mutation
   Mutation<void, int> deleteMutation() {
     return Mutation<void, int>(
-      mutationFn: (id) => _api.categoryServiceDelete(id: id),
+      mutationFn: (id) =>
+          _api.delete(ContentServiceV1DeleteCategoryRequest(id: id)),
       invalidateQueries: ['categories'],
     );
   }
@@ -117,13 +113,7 @@ class CategoryService extends BaseService {
   Future<dynamic> list([PaginationQuery? query]) async {
     final q = query ?? const PaginationQuery();
     try {
-      return await _api.categoryServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      );
+      return await _api.list(q.toPagingRequest());
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -132,7 +122,9 @@ class CategoryService extends BaseService {
   /// 获取单个类别
   Future<dynamic> get(int id, {String? locale}) async {
     try {
-      return await _api.categoryServiceGet(id: id, locale: locale);
+      return await _api.get(
+        ContentServiceV1GetCategoryRequest(id: id, locale: locale),
+      );
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -141,9 +133,7 @@ class CategoryService extends BaseService {
   /// 创建类别
   Future<dynamic> create(Category category) async {
     try {
-      return await _api.categoryServiceCreate(
-        body: CreateCategoryRequest(data: category),
-      );
+      return await _api.create(CreateCategoryRequest(data: category));
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -157,9 +147,8 @@ class CategoryService extends BaseService {
     bool? allowMissing,
   }) async {
     try {
-      return await _api.categoryServiceUpdate(
-        id: id,
-        body: UpdateCategoryRequest(
+      return await _api.update(
+        UpdateCategoryRequest(
           id: id,
           data: data,
           updateMask: updateMask,
@@ -174,7 +163,7 @@ class CategoryService extends BaseService {
   /// 删除类别
   Future<dynamic> delete(int id) async {
     try {
-      await _api.categoryServiceDelete(id: id);
+      await _api.delete(ContentServiceV1DeleteCategoryRequest(id: id));
       return null;
     } on DioException catch (e) {
       return handleDioError(e);
@@ -184,10 +173,12 @@ class CategoryService extends BaseService {
   /// 获取翻译数据
   Future<dynamic> getTranslation(int id, {String? code, String? locale}) async {
     try {
-      return await _api.categoryServiceGetTranslation(
-        id: id,
-        code: code,
-        locale: locale,
+      return await _api.getTranslation(
+        ContentServiceV1GetCategoryRequest(
+          id: id,
+          code: code,
+          locale: locale,
+        ),
       );
     } on DioException catch (e) {
       return handleDioError(e);

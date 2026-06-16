@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Post, ContentServiceV1Category;
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
@@ -89,7 +89,7 @@ class PostHeader extends StatelessWidget {
                     SizedBox(height: isMobile ? 2.h : 2),
                     Text(
                       post.publishTime != null
-                          ? _formatDate(context, post.publishTime!)
+                          ? _formatDate(context, DateTime.parse(post.publishTime!))
                           : '',
                       style: TextStyle(
                         fontSize: isMobile ? 12.sp : 12,

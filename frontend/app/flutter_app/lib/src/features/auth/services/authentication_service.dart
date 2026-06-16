@@ -1,18 +1,13 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation;
 import 'package:encrypt/encrypt.dart' as encrypt;
 
-import 'package:flutter_app/generated/api/authentication_service/authentication_service_client.dart'
-    show AuthenticationServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, AuthenticationServiceClient;
 import 'package:flutter_app/src/app_router/app_router.dart' show AppRouter;
 
-import 'package:flutter_app/generated/api/models/authentication_service_v1_login_request.dart';
-import 'package:flutter_app/generated/api/models/authentication_service_v1_login_request_grant_type.dart';
-import 'package:flutter_app/generated/api/models/authentication_service_v1_login_response.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show AuthenticationServiceV1LoginRequest, AuthenticationServiceV1GrantType, AuthenticationServiceV1LoginResponse;
 import 'package:flutter_app/src/core/repositories/user_auth_cache.dart'
     show UserAuthCache;
 
@@ -27,7 +22,7 @@ export 'package:get_it/get_it.dart';
 /// 自动获得加载状态、错误处理、缓存失效等能力。
 class AuthenticationService extends AuthService {
   AuthenticationServiceClient get _api =>
-      GetIt.instance<RestClient>().authenticationService;
+      GetIt.instance<ApiClient>().authenticationService;
 
   /// 获取当前访问令牌
   @override
@@ -52,7 +47,7 @@ class AuthenticationService extends AuthService {
 
     final result = await _doRefreshToken(token);
     if (result is AuthenticationServiceV1LoginResponse) {
-      return result.accessToken;
+      return result.access_token;
     }
 
     doAuthenticationFailed();
@@ -107,11 +102,11 @@ class AuthenticationService extends AuthService {
       mutationFn: (params) async {
         final encryptedPassword = _encryptPassword(params.password);
         final request = AuthenticationServiceV1LoginRequest(
-          grantType: AuthenticationServiceV1LoginRequestGrantType.password,
+          grant_type: AuthenticationServiceV1GrantType.password,
           username: params.username,
           password: encryptedPassword,
         );
-        final response = await _api.authenticationServiceLogin(body: request);
+        final response = await _api.login(request);
         // 确保 token 被保存到缓存
         await doLoginSuccess(response);
         return response;
@@ -123,7 +118,7 @@ class AuthenticationService extends AuthService {
   Mutation<void, void> logoutMutation() {
     return Mutation<void, void>(
       mutationFn: (_) async {
-        await _api.authenticationServiceLogout();
+        await _api.logout({});
         await GetIt.instance<UserAuthCache>().clearTokens();
       },
     );
@@ -135,10 +130,10 @@ class AuthenticationService extends AuthService {
     return Mutation<AuthenticationServiceV1LoginResponse, String>(
       mutationFn: (refreshToken) async {
         final request = AuthenticationServiceV1LoginRequest(
-          grantType: AuthenticationServiceV1LoginRequestGrantType.refreshToken,
-          refreshToken: refreshToken,
+          grant_type: AuthenticationServiceV1GrantType.refreshToken,
+          refresh_token: refreshToken,
         );
-        return _api.authenticationServiceRefreshToken(body: request);
+        return _api.refreshToken(request);
       },
       onSuccess: (response, _) => doLoginSuccess(response),
     );
@@ -148,12 +143,10 @@ class AuthenticationService extends AuthService {
   Future<dynamic> _doRefreshToken(String refreshToken) async {
     try {
       final request = AuthenticationServiceV1LoginRequest(
-        grantType: AuthenticationServiceV1LoginRequestGrantType.refreshToken,
-        refreshToken: refreshToken,
+        grant_type: AuthenticationServiceV1GrantType.refreshToken,
+        refresh_token: refreshToken,
       );
-      final response = await _api.authenticationServiceRefreshToken(
-        body: request,
-      );
+      final response = await _api.refreshToken(request);
       await doLoginSuccess(response);
       return response;
     } on DioException catch (e) {
@@ -166,8 +159,8 @@ class AuthenticationService extends AuthService {
   /// 认证成功处理
   doLoginSuccess(AuthenticationServiceV1LoginResponse msg) async {
     await GetIt.instance<UserAuthCache>().saveAuthInfo(
-      msg.accessToken ?? '',
-      refreshToken: msg.refreshToken,
+      msg.access_token ?? '',
+      refreshToken: msg.refresh_token,
     );
   }
 

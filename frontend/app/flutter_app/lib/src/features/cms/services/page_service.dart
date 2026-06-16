@@ -1,15 +1,14 @@
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:cached_query/cached_query.dart' show Mutation, Query;
 
-import 'package:flutter_app/generated/api/page_service/page_service_client.dart'
-    show PageServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, PageServiceClient;
 
-import 'package:flutter_app/generated/api/models/content_service_v1_page.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_page_translation.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_create_page_request.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_page_response.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_update_page_request.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Page, ContentServiceV1PageTranslation,
+    ContentServiceV1CreatePageRequest, ContentServiceV1ListPageResponse,
+    ContentServiceV1UpdatePageRequest, ContentServiceV1GetPageRequest,
+    ContentServiceV1DeletePageRequest;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
@@ -27,7 +26,7 @@ typedef ListPageResponse = ContentServiceV1ListPageResponse;
 class PageService extends BaseService {
   PageService() : super(tag: 'PageService');
 
-  PageServiceClient get _api => GetIt.instance<RestClient>().pageService;
+  PageServiceClient get _api => GetIt.instance<ApiClient>().pageService;
 
   // ─── Queries ──────────────────────────────────────────
 
@@ -38,13 +37,7 @@ class PageService extends BaseService {
     final q = query ?? const PaginationQuery();
     return Query<ListPageResponse>(
       key: 'pages',
-      queryFn: () => _api.pageServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      ),
+      queryFn: () => _api.list(q.toPagingRequest()),
     );
   }
 
@@ -52,7 +45,9 @@ class PageService extends BaseService {
   Query<PageModel> getQuery({required int id, String? slug, String? locale}) {
     return Query<PageModel>(
       key: 'page-$id',
-      queryFn: () => _api.pageServiceGet(id: id, slug: slug, locale: locale),
+      queryFn: () => _api.get(
+        ContentServiceV1GetPageRequest(id: id, slug: slug, locale: locale),
+      ),
     );
   }
 
@@ -64,8 +59,9 @@ class PageService extends BaseService {
   }) {
     return Query<PageTranslation>(
       key: 'page-$id-translation',
-      queryFn: () =>
-          _api.pageServiceGetTranslation(id: id, slug: slug, locale: locale),
+      queryFn: () => _api.getTranslation(
+        ContentServiceV1GetPageRequest(id: id, slug: slug, locale: locale),
+      ),
     );
   }
 
@@ -75,7 +71,7 @@ class PageService extends BaseService {
   Mutation<PageModel, PageModel> createMutation() {
     return Mutation<PageModel, PageModel>(
       mutationFn: (page) =>
-          _api.pageServiceCreate(body: CreatePageRequest(data: page)),
+          _api.create(CreatePageRequest(data: page)),
       invalidateQueries: ['pages'],
     );
   }
@@ -83,9 +79,8 @@ class PageService extends BaseService {
   /// 更新页面 Mutation
   Mutation<PageModel, UpdatePageParams> updateMutation() {
     return Mutation<PageModel, UpdatePageParams>(
-      mutationFn: (params) => _api.pageServiceUpdate(
-        id: params.id,
-        body: UpdatePageRequest(
+      mutationFn: (params) => _api.update(
+        UpdatePageRequest(
           id: params.id,
           data: params.data,
           updateMask: params.updateMask,
@@ -99,7 +94,8 @@ class PageService extends BaseService {
   /// 删除页面 Mutation
   Mutation<void, int> deleteMutation() {
     return Mutation<void, int>(
-      mutationFn: (id) => _api.pageServiceDelete(id: id),
+      mutationFn: (id) =>
+          _api.delete(ContentServiceV1DeletePageRequest(id: id)),
       invalidateQueries: ['pages'],
     );
   }
@@ -112,13 +108,7 @@ class PageService extends BaseService {
   Future<dynamic> list([PaginationQuery? query]) async {
     final q = query ?? const PaginationQuery();
     try {
-      return await _api.pageServiceList(
-        page: q.page,
-        pageSize: q.pageSize,
-        noPaging: q.noPaging,
-        orderBy: q.orderByString,
-        query: q.queryString,
-      );
+      return await _api.list(q.toPagingRequest());
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -127,7 +117,9 @@ class PageService extends BaseService {
   /// 获取单个页面
   Future<dynamic> get(int id, {String? slug, String? locale}) async {
     try {
-      return await _api.pageServiceGet(id: id, slug: slug, locale: locale);
+      return await _api.get(
+        ContentServiceV1GetPageRequest(id: id, slug: slug, locale: locale),
+      );
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -136,7 +128,7 @@ class PageService extends BaseService {
   /// 创建页面
   Future<dynamic> create(PageModel page) async {
     try {
-      return await _api.pageServiceCreate(body: CreatePageRequest(data: page));
+      return await _api.create(CreatePageRequest(data: page));
     } on DioException catch (e) {
       return handleDioError(e);
     }
@@ -150,9 +142,8 @@ class PageService extends BaseService {
     bool? allowMissing,
   }) async {
     try {
-      return await _api.pageServiceUpdate(
-        id: id,
-        body: UpdatePageRequest(
+      return await _api.update(
+        UpdatePageRequest(
           id: id,
           data: data,
           updateMask: updateMask,
@@ -167,7 +158,7 @@ class PageService extends BaseService {
   /// 删除页面
   Future<dynamic> delete(int id) async {
     try {
-      await _api.pageServiceDelete(id: id);
+      await _api.delete(ContentServiceV1DeletePageRequest(id: id));
       return null;
     } on DioException catch (e) {
       return handleDioError(e);
@@ -177,10 +168,8 @@ class PageService extends BaseService {
   /// 获取翻译数据
   Future<dynamic> getTranslation(int id, {String? slug, String? locale}) async {
     try {
-      return await _api.pageServiceGetTranslation(
-        id: id,
-        slug: slug,
-        locale: locale,
+      return await _api.getTranslation(
+        ContentServiceV1GetPageRequest(id: id, slug: slug, locale: locale),
       );
     } on DioException catch (e) {
       return handleDioError(e);

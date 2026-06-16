@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_list_category_response.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Category, ContentServiceV1ListCategoryResponse;
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';

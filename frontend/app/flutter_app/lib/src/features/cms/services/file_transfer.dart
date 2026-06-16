@@ -4,15 +4,13 @@ import 'dart:typed_data' show Uint8List;
 import 'package:dio/dio.dart' show DioException, Options, ProgressCallback;
 import 'package:get_it/get_it.dart' show GetIt;
 
-import 'package:flutter_app/generated/api/file_transfer_service/file_transfer_service_client.dart'
-    show FileTransferServiceClient;
-import 'package:flutter_app/generated/api/rest_client.dart' show RestClient;
-
-import 'package:flutter_app/generated/api/models/storage_service_v1_download_file_response.dart';
-import 'package:flutter_app/generated/api/models/storage_service_v1_upload_file_request.dart';
-import 'package:flutter_app/generated/api/models/storage_service_v1_upload_file_response.dart';
-import 'package:flutter_app/generated/api/models/storage_service_v1_storage_object.dart';
-import 'package:flutter_app/generated/api/models/storage_service_v1_presign_option.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ApiClient, FileTransferServiceClient;
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show StorageServiceV1DownloadFileRequest,
+        StorageServiceV1DownloadFileResponse,
+        StorageServiceV1UploadFileRequest, StorageServiceV1UploadFileResponse,
+        StorageServiceV1StorageObject, StorageServiceV1PresignOption;
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
 
@@ -31,7 +29,7 @@ class FileTransferService extends BaseService {
   FileTransferService() : super(tag: 'FileTransferService');
 
   FileTransferServiceClient get _api =>
-      GetIt.instance<RestClient>().fileTransferService;
+      GetIt.instance<ApiClient>().fileTransferService;
 
   // ─── 下载 ─────────────────────────────────────────────
 
@@ -58,17 +56,21 @@ class FileTransferService extends BaseService {
     String? acceptMime,
   }) async {
     try {
-      final resp = await _api.fileTransferServiceDownloadFile(
-        fileId: fileId,
-        object0: bucketName,
-        object1: fileDirectory,
-        object2: objectName,
-        preferPresignedUrl: preferPresignedUrl,
-        presignExpireSeconds: presignExpireSeconds,
-        rangeStart: rangeStart,
-        rangeEnd: rangeEnd,
-        disposition: disposition,
-        acceptMime: acceptMime,
+      final resp = await _api.downloadFile(
+        StorageServiceV1DownloadFileRequest(
+          fileId: fileId,
+          storageObject: StorageObject(
+            bucketName: bucketName,
+            fileDirectory: fileDirectory,
+            objectName: objectName,
+          ),
+          preferPresignedUrl: preferPresignedUrl,
+          presignExpireSeconds: presignExpireSeconds,
+          rangeStart: rangeStart != null ? int.tryParse(rangeStart) : null,
+          rangeEnd: rangeEnd != null ? int.tryParse(rangeEnd) : null,
+          disposition: disposition,
+          acceptMime: acceptMime,
+        ),
       );
 
       // 预签名 URL 模式
@@ -77,7 +79,7 @@ class FileTransferService extends BaseService {
           presignedUrl: resp.downloadUrl,
           sourceFileName: resp.sourceFileName,
           mime: resp.mime,
-          size: resp.size,
+          size: resp.size?.toString(),
         );
       }
 
@@ -91,7 +93,7 @@ class FileTransferService extends BaseService {
         bytes: bytes,
         sourceFileName: resp.sourceFileName,
         mime: resp.mime ?? 'application/octet-stream',
-        size: resp.size,
+        size: resp.size?.toString(),
       );
     } on DioException catch (e) {
       throw handleDioError(e);
@@ -132,7 +134,7 @@ class FileTransferService extends BaseService {
         file: fileBase64,
         sourceFileName: fileName,
         mime: mime,
-        size: fileBytes.length.toString(),
+        size: fileBytes.length,
         presign: presign,
       );
 
@@ -140,9 +142,9 @@ class FileTransferService extends BaseService {
       // 因此对大文件场景建议使用预签名直传。
       // 此处选择 POST 或 PUT。
       if (method.toLowerCase() == 'put') {
-        return await _api.fileTransferServicePutUploadFile(body: request);
+        return await _api.putUploadFile(request);
       }
-      return await _api.fileTransferServicePostUploadFile(body: request);
+      return await _api.postUploadFile(request);
     } on DioException catch (e) {
       throw handleDioError(e);
     }
@@ -176,7 +178,7 @@ class FileTransferService extends BaseService {
         file: fileBase64,
         sourceFileName: fileName,
         mime: mime,
-        size: fileBytes.length.toString(),
+        size: fileBytes.length,
         presign: PresignOption(
           method: presignMethod,
           expireSeconds: presignExpireSeconds,
@@ -184,7 +186,7 @@ class FileTransferService extends BaseService {
         ),
       );
 
-      final resp = await _api.fileTransferServicePostUploadFile(body: request);
+      final resp = await _api.postUploadFile(request);
 
       // 2. 如果有预签名 URL，执行直传
       if (resp.presignedUrl != null && resp.presignedUrl!.isNotEmpty) {

@@ -7,9 +7,9 @@ import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_post.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_category.dart';
-import 'package:flutter_app/generated/api/models/content_service_v1_tag.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show ContentServiceV1Post, ContentServiceV1Category,
+        ContentServiceV1Tag;
 
 import 'widgets/section_header.dart';
 import 'widgets/web_post_grid.dart';
@@ -80,7 +80,7 @@ class _HomeWebViewState extends State<HomeWebView> {
 
     final postResponse = results[0] as ListPostResponse?;
     final items = postResponse?.items ?? [];
-    final total = int.tryParse(postResponse?.total ?? '') ?? 0;
+    final total = postResponse?.total ?? 0;
 
     setState(() {
       _posts = items;
@@ -104,7 +104,7 @@ class _HomeWebViewState extends State<HomeWebView> {
     if (!mounted) return;
 
     final items = response?.items ?? [];
-    final total = int.tryParse(response?.total ?? '') ?? 0;
+    final total = response?.total ?? 0;
 
     setState(() {
       _currentPage++;

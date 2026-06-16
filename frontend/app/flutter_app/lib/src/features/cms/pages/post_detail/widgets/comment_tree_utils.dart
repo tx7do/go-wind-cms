@@ -1,4 +1,5 @@
-import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show CommentServiceV1Comment;
 
 typedef CommentType = CommentServiceV1Comment;
 

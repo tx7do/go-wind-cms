@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/generated/api/models/comment_service_v1_comment.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show CommentServiceV1Comment;
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/comment_tree_utils.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/comment_item.dart';
 
