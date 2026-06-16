@@ -10,19 +10,13 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { Editor } from '#/adapter/component/Editor';
+import { apiClient, editorTypeOptions, uploadMediaAsset } from '#/api';
 import { router } from '#/router';
-import {
-  editorTypeOptions,
-  useFileTransferStore,
-  useTranslatorStore,
-} from '#/stores';
 
 import { usePostEditViewStore } from './post-edit-view.state';
 import PublishPostModal from './publish-post-modal.vue';
 
-const fileTransferStore = useFileTransferStore();
 const postEditViewStore = usePostEditViewStore();
-const translatorStore = useTranslatorStore();
 
 const route = useRoute();
 const { closeCurrentTab } = useTabs();
@@ -101,10 +95,11 @@ async function handleLanguageChange(newLang: string) {
  */
 async function handleTranslate() {
   try {
-    const titleResp = await translatorStore.translate(
-      postEditViewStore.formData.lang,
-      postEditViewStore.formData.title,
-    );
+    const titleResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: postEditViewStore.formData.lang,
+      content: postEditViewStore.formData.title,
+    });
     console.log('Title translation response:', titleResp);
     postEditViewStore.formData.title =
       titleResp.translatedContent || postEditViewStore.formData.title;
@@ -117,10 +112,11 @@ async function handleTranslate() {
   }
 
   try {
-    const contentResp = await translatorStore.translate(
-      postEditViewStore.formData.lang,
-      postEditViewStore.formData.content,
-    );
+    const contentResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: postEditViewStore.formData.lang,
+      content: postEditViewStore.formData.content,
+    });
     console.log('Content translation response:', contentResp);
     postEditViewStore.formData.content =
       contentResp.translatedContent || postEditViewStore.formData.content;
@@ -174,7 +170,7 @@ async function handleUploadImage(file: File): Promise<string> {
   console.log('Upload image:', file);
 
   try {
-    const resp = await fileTransferStore.uploadMediaAsset({}, file);
+    const resp = await uploadMediaAsset({}, file);
     return resp.objectName || '';
   } catch (error) {
     console.error('Image upload failed:', error);

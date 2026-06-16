@@ -4,26 +4,24 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { h, watch } from 'vue';
 
 import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { IconifyIcon, LucideFilePenLine, LucideTrash2 } from "@vben/icons";
+import { IconifyIcon, LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { isEqual } from '@vben/utils';
 
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type siteservicev1_NavigationItem as NavigationItem } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  type siteservicev1_NavigationItem as NavigationItem,
   navigationItemLinkTypeList,
   navigationItemLinkTypeToColor,
   navigationItemLinkTypeToName,
-  useNavigationItemStore,
-} from '#/stores';
+} from '#/api';
+import { $t } from '#/locales';
 
 import NavigationItemDrawer from './navigation-item-drawer.vue';
 import { useNavigationViewStore } from './navigation-view.state';
-import { Icon } from "@iconify/vue";
 
-const navigationItemStore = useNavigationItemStore();
 const navigationViewStore = useNavigationViewStore();
 
 const formOptions: VbenFormProps = {
@@ -183,7 +181,7 @@ function handleEdit(row: any) {
 
 async function handleDelete(row: any) {
   try {
-    await navigationItemStore.deleteNavigationItem(row.id);
+    await apiClient.navigationItemService.Delete({ id: row.id });
     notification.success({
       message: $t('ui.notification.delete_success'),
     });

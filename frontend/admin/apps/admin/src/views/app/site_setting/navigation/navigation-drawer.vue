@@ -8,13 +8,12 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import {
+  apiClient,
+  fetchListLanguages,
+  makeUpdateMask,
   navigationLocationList,
-  useLanguageStore,
-  useNavigationStore,
-} from '#/stores';
-
-const navigationStore = useNavigationStore();
-const languageStore = useLanguageStore();
+  PaginationQuery,
+} from '#/api';
 
 const data = ref<Record<string, any>>();
 const languageOptions = ref<{ label: string; value: string }[]>([]);
@@ -27,9 +26,9 @@ const getTitle = computed(() =>
 
 onMounted(async () => {
   try {
-    const resp = await languageStore.listLanguage(undefined, {}, undefined, [
-      'sortOrder',
-    ]);
+    const resp = await fetchListLanguages(
+      new PaginationQuery({ orderBy: ['sortOrder'] }),
+    );
     languageOptions.value =
       resp.items?.map((lang) => ({
         label: lang.nativeName || lang.languageCode || '',
@@ -140,8 +139,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? navigationStore.createNavigation(payload)
-        : navigationStore.updateNavigation(data.value?.row?.id, payload));
+        ? apiClient.navigationService.Create({ data: { ...payload } })
+        : apiClient.navigationService.Update({
+            id: data.value?.row?.id,
+            data: { ...payload },
+            updateMask: makeUpdateMask(Object.keys(payload)),
+          }));
 
       notification.success({
         message: data.value?.create

@@ -8,8 +8,8 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
+import { apiClient, makeUpdateMask } from '#/api';
 import { router } from '#/router';
-import { useUserListStore } from '#/stores';
 import { TabEnum } from '#/views/app/opm/user/detail/types';
 
 import ApiLogPage from './api-log-page.vue';
@@ -25,8 +25,6 @@ const userId = computed(() => {
   const id = route.params.id ?? -1;
   return Number(id);
 });
-
-const userListStore = useUserListStore();
 
 const [Modal, modalApi] = useVbenModal({
   // 连接抽离的组件
@@ -55,7 +53,11 @@ function goBack() {
  */
 async function handleBanAccount() {
   try {
-    await userListStore.updateUser(userId.value, { status: 'DISABLED' });
+    await apiClient.userService.Update({
+      id: userId.value,
+      data: { status: 'DISABLED' } as any,
+      updateMask: makeUpdateMask(['status']),
+    });
 
     notification.success({
       message: $t('ui.notification.update_status_success'),

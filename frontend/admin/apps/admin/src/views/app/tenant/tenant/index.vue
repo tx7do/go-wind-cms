@@ -9,9 +9,11 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type identityservicev1_Tenant as Tenant } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  fetchListTenants,
+  PaginationQuery,
+  type identityservicev1_Tenant as Tenant,
   tenantAuditStatusList,
   tenantAuditStatusToColor,
   tenantAuditStatusToName,
@@ -21,12 +23,10 @@ import {
   tenantTypeList,
   tenantTypeToColor,
   tenantTypeToName,
-  useTenantStore,
-} from '#/stores';
+} from '#/api';
+import { $t } from '#/locales';
 
 import TenantDrawer from './tenant-drawer.vue';
-
-const tenantStore = useTenantStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -118,12 +118,11 @@ const gridOptions: VxeGridProps<Tenant> = {
     ajax: {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
-        return await tenantStore.listTenant(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
+        return await fetchListTenants(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
         );
       },
     },
@@ -211,7 +210,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await tenantStore.deleteTenant(row.id);
+    await apiClient.tenantService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

@@ -10,17 +10,17 @@ import { i18n } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type contentservicev1_Tag as Tag } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
-import { router } from '#/router';
 import {
+  apiClient,
+  fetchListTags,
+  PaginationQuery,
+  type contentservicev1_Tag as Tag,
   tagStatusList,
   tagStatusToColor,
   tagStatusToName,
-  useTagStore,
-} from '#/stores';
-
-const tagStore = useTagStore();
+} from '#/api';
+import { $t } from '#/locales';
+import { router } from '#/router';
 
 const formOptions: VbenFormProps = {
   // Default expanded
@@ -66,12 +66,14 @@ const gridOptions: VxeGridProps<Tag> = {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
 
-        return await tagStore.listTag(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
+        return await fetchListTags(
+          new PaginationQuery({
+            paging: {
+              page: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            formValues,
+          }),
         );
       },
     },
@@ -175,7 +177,7 @@ async function handleDelete(row: any) {
   console.log('Delete', row);
 
   try {
-    await tagStore.deleteTag(row.id);
+    await apiClient.tagService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

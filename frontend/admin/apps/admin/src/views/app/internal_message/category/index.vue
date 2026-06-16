@@ -9,17 +9,17 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type internal_messageservicev1_InternalMessageCategory as InternalMessageCategory } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
   enableBoolToColor,
   enableBoolToName,
-  useInternalMessageCategoryStore,
-} from '#/stores';
+  fetchListMessageCategories,
+  type internal_messageservicev1_InternalMessageCategory as InternalMessageCategory,
+  PaginationQuery,
+} from '#/api';
+import { $t } from '#/locales';
 
 import InternalMessageCategoryDrawer from './internal-message-category-drawer.vue';
-
-const internalMessageCategoryStore = useInternalMessageCategoryStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -71,12 +71,11 @@ const gridOptions: VxeGridProps<InternalMessageCategory> = {
     ajax: {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
-        return await internalMessageCategoryStore.listInternalMessageCategory(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
+        return await fetchListMessageCategories(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
         );
       },
     },
@@ -157,7 +156,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await internalMessageCategoryStore.deleteInternalMessageCategory(row.id);
+    await apiClient.internalMessageCategoryService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

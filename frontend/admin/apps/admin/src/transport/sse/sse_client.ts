@@ -1,19 +1,26 @@
+import type { EventSourceMessage } from '@microsoft/fetch-event-source/lib/cjs/parse';
+
 import type {
   SSEClientConfig,
   SSEConnectionStatus,
   SSEEventHandler,
   SSEEventName,
-} from '#/transport/sse/types';
+  SSETransport,
+} from './types';
+
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 /**
  * SSE客户端
  */
 export class SSEClient {
+  private abortController: AbortController | null = null;
   private config: Required<SSEClientConfig>;
   private eventSource: EventSource | null = null;
   // 存储事件监听器（键：事件名，值：回调数组）
   private handlers = new Map<SSEEventName, SSEEventHandler[]>();
   private status: SSEConnectionStatus = 'disconnected';
+  private readonly transport: SSETransport;
 
   constructor(config: SSEClientConfig) {
     // 合并默认配置
@@ -21,8 +28,11 @@ export class SSEClient {
       withCredentials: false,
       reconnectDelay: 3000,
       autoParseJson: true,
+      headers: {},
+      transport: 'fetch-event-source',
       ...config,
     };
+    this.transport = this.config.transport;
   }
 
   /**
@@ -52,7 +62,7 @@ export class SSEClient {
   private triggerHandler<T = unknown>(
     eventName: SSEEventName,
     data: T,
-    event: Event,
+    event: Event | EventSourceMessage,
   ): void {
     const handlers = this.handlers.get(eventName);
     if (handlers) {
@@ -67,31 +77,11 @@ export class SSEClient {
   }
 
   /**
-   * 关闭 SSE 连接
+   * 通过 EventSource 建立 SSE 连接
+   * @param url 连接 URL
+   * @private
    */
-  close(): void {
-    if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = null;
-    }
-    this.status = 'disconnected';
-  }
-
-  /**
-   * 建立 SSE 连接
-   * @param url 可选连接 URL，默认为配置中的 URL
-   */
-  connect(url?: string): Error | null {
-    if (this.status === 'connected' || this.status === 'connecting') {
-      console.warn('SSE 连接已存在或正在建立中');
-      return new Error('SSE 连接已存在或正在建立中');
-    }
-
-    if (url === undefined || url === '') {
-      url = this.config.url;
-    }
-
-    this.status = 'connecting';
+  _connectByEventSource(url: string): void {
     this.eventSource = new EventSource(url, {
       withCredentials: this.config.withCredentials,
     });
@@ -119,6 +109,105 @@ export class SSEClient {
         setTimeout(() => this.connect(), this.config.reconnectDelay);
       }
     });
+  }
+
+  /**
+   * 通过 fetchEventSource 建立 SSE 连接（支持更灵活的配置和控制）
+   * @param url 连接 URL
+   * @private
+   */
+  async _connectByFetchEventSource(url: string): Promise<void> {
+    // 用于手动关闭
+    this.abortController = new AbortController();
+
+    await fetchEventSource(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+        ...this.config.headers,
+      },
+      credentials: this.config.withCredentials ? 'include' : 'same-origin',
+      signal: this.abortController.signal,
+      openWhenHidden: true, // 后台页保持连接（可选）
+
+      // 连接成功
+      onopen: async (response) => {
+        if (response.ok) {
+          this.status = 'connected';
+          this.triggerHandler('open', undefined, new Event('open'));
+        } else {
+          throw new Error(`SSE 连接失败 ${response.status}`);
+        }
+      },
+
+      // 接收消息
+      onmessage: (event: EventSourceMessage) => {
+        const data = this.parseData(event.data);
+
+        // 自定义事件名（event: xxx）
+        if (event.event && event.event !== 'message') {
+          this.triggerHandler(event.event as SSEEventName, data, event);
+        }
+
+        // 默认 message 事件
+        this.triggerHandler('message', data, event);
+      },
+
+      // 错误 & 重连
+      onerror: (err) => {
+        this.status = 'error';
+        this.triggerHandler('error', err, new Event('error'));
+
+        // 手动关闭不重连
+        if (this.abortController?.signal.aborted) {
+          throw err;
+        }
+
+        console.log(`[SSE] ${this.config.reconnectDelay}ms 后重试...`);
+      },
+
+      // 关闭
+      onclose: () => {
+        this.status = 'disconnected';
+        throw new Error('SSE 连接关闭，准备重连');
+      },
+    });
+  }
+
+  /**
+   * 关闭 SSE 连接
+   */
+  close(): void {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+    this.status = 'disconnected';
+  }
+
+  /**
+   * 建立 SSE 连接
+   * @param url 可选连接 URL，默认为配置中的 URL
+   */
+  connect(url?: string): Error | null {
+    if (this.status === 'connected' || this.status === 'connecting') {
+      console.warn('SSE 连接已存在或正在建立中');
+      return new Error('SSE 连接已存在或正在建立中');
+    }
+
+    const targetUrl = url === undefined || url === '' ? this.config.url : url;
+
+    this.status = 'connecting';
+    if (this.transport === 'event-source') {
+      this._connectByEventSource(targetUrl);
+    } else {
+      this._connectByFetchEventSource(targetUrl);
+    }
 
     return null;
   }
@@ -170,5 +259,24 @@ export class SSEClient {
         this.triggerHandler(eventName, data, event as MessageEvent);
       });
     }
+  }
+
+  /**
+   * 关闭当前连接并使用新的 URL / headers 重新连接
+   * 适用于 token 刷新后需要携带新凭证的场景
+   * @param url 可选的新连接 URL，默认沿用配置中的 URL
+   */
+  reconnect(url?: string): void {
+    this.close();
+    this.connect(url);
+  }
+
+  /**
+   * 动态设置/更新请求头（不会影响正在进行中的连接，下次 connect 时生效）
+   * 注意：EventSource 模式不支持自定义请求头，此方法仅对 fetch-event-source 模式生效
+   * @param headers 键值对，会浅合并到当前 headers 配置中
+   */
+  setHeaders(headers: Record<string, string>): void {
+    this.config.headers = { ...this.config.headers, ...headers };
   }
 }

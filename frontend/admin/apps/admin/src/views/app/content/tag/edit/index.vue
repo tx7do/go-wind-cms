@@ -9,8 +9,8 @@ import { $t } from '@vben/locales';
 
 import { Col, InputNumber, notification, Row } from 'ant-design-vue';
 
+import { tagStatusList } from '#/api';
 import { router } from '#/router';
-import { tagStatusList } from '#/stores';
 
 import { useTagEditViewStore } from './tag-edit-view.state';
 

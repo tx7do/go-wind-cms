@@ -1,0 +1,662 @@
+---
+description: 视图/页面/表格/表单/Drawer 开发模板。当创建或修改 Vue 视图文件（index.vue、*-drawer.vue）、表格列配置、搜索表单、Slot 渲染时应用此规则。
+globs:
+  - "apps/admin/src/views/**"
+  - "apps/admin/src/adapter/**"
+alwaysApply: false
+---
+
+# 视图/页面开发详细模板
+
+## 标准模块文件结构
+
+```
+views/app/{module}/
+├── index.vue              # 列表页（VxeTable + 搜索表单）
+└── {entity}-drawer.vue    # 新建/编辑 Drawer 表单
+```
+
+## 核心概念：Grid 的两套 Schema
+
+| 配置项 | 作用 | 位置 |
+|---|---|---|
+| `formOptions.schema` | **搜索表单**（表格上方的筛选区域） | 使用 `#/adapter/form` 的 VbenForm 组件 |
+| `gridOptions.columns` | **表格列**（数据展示区域） | 使用 VxeTable 的列配置 |
+
+两者通过 `useVbenVxeGrid({ gridOptions, formOptions })` 合并，搜索表单的值自动传入 `proxyConfig.ajax.query` 的 `formValues` 参数。
+
+## 搜索表单组件 (formOptions.schema)
+
+`component` 字段 **只能使用注册过的组件名**（见 `adapter/component/index.ts`），不要使用原生 HTML 或 Ant Design Vue 原始组件。
+
+| component | 用途 | 关键 props |
+|---|---|---|
+| `Input` | 文本输入 | `placeholder`, `allowClear` |
+| `InputNumber` | 数字输入 | `placeholder`, `allowClear`, `defaultValue` |
+| `Select` | 下拉选择 | `options`, `showSearch`, `allowClear`, `filterOption` |
+| `ApiSelect` | 远程下拉 | `api`, `afterFetch`, `showSearch`, `allowClear`, `filterOption`, `immediate` |
+| `ApiTreeSelect` | 远程树选择 | `api`, `treeDefaultExpandAll`, `labelField`, `valueField`, `childrenField`, `numberToString` |
+| `RadioGroup` | 单选按钮组 | `optionType: 'button'`, `buttonStyle: 'solid'`, `options` |
+| `RangePicker` | 日期范围 | `showTime`, `allowClear`, `presets` |
+| `DatePicker` | 日期选择 | `placeholder`, `allowClear` |
+| `Switch` | 开关 | — |
+| `Textarea` | 多行文本 | `placeholder`, `allowClear` |
+
+### Input 示例
+
+```typescript
+{
+  component: 'Input',
+  fieldName: 'name',
+  label: $t('page.xxx.name'),
+  componentProps: {
+    placeholder: $t('ui.placeholder.input'),
+    allowClear: true,
+  },
+}
+```
+
+### Select 示例（本地选项）
+
+```typescript
+{
+  component: 'Select',
+  fieldName: 'status',
+  label: $t('ui.table.status'),
+  componentProps: {
+    options: xxxStatusList,  // 从 composables 导入的 computed 选项列表
+    placeholder: $t('ui.placeholder.select'),
+    allowClear: true,
+    showSearch: true,
+    filterOption: (input: string, option: any) =>
+      option.label.toLowerCase().includes(input.toLowerCase()),
+  },
+}
+```
+
+### ApiSelect 示例（远程数据）
+
+```typescript
+{
+  component: 'ApiSelect',
+  fieldName: 'roleId',
+  label: $t('page.user.form.role'),
+  componentProps: {
+    allowClear: true,
+    showSearch: true,
+    placeholder: $t('ui.placeholder.select'),
+    filterOption: (input: string, option: any) =>
+      option.label.toLowerCase().includes(input.toLowerCase()),
+    afterFetch: (data: any[]) => data.map((item: any) => ({ label: item.name, value: item.id })),
+    api: async () => {
+      const result = await fetchListRoles(new PaginationQuery({ formValues: { status: 'ON' } }));
+      return result.items;
+    },
+  },
+}
+```
+
+> **关键**: `afterFetch` 必须将数据转为 `{ label, value }[]` 格式。
+
+### ApiTreeSelect 示例
+
+```typescript
+{
+  component: 'ApiTreeSelect',
+  fieldName: 'orgUnitId',
+  label: $t('page.position.orgUnit'),
+  componentProps: {
+    placeholder: $t('ui.placeholder.select'),
+    numberToString: true,
+    showSearch: true,
+    treeDefaultExpandAll: true,
+    allowClear: true,
+    childrenField: 'children',
+    labelField: 'name',
+    valueField: 'id',
+    treeNodeFilterProp: 'label',
+    api: async () => {
+      const result = await fetchListOrgUnits(new PaginationQuery({ formValues: { status: 'ON' } }));
+      return result.items;
+    },
+  },
+}
+```
+
+### RangePicker 示例
+
+```typescript
+import dayjs from 'dayjs';
+
+{
+  component: 'RangePicker',
+  fieldName: 'createdAt',
+  label: $t('page.xxx.createdAt'),
+  componentProps: {
+    showTime: true,
+    allowClear: true,
+    presets: [
+      { label: $t('ui.dateRange.today'), value: [dayjs().startOf('day'), dayjs().endOf('day')] },
+      { label: $t('ui.dateRange.thisWeek'), value: [dayjs().startOf('week'), dayjs().endOf('week')] },
+      { label: $t('ui.dateRange.thisMonth'), value: [dayjs().startOf('month'), dayjs().endOf('month')] },
+    ],
+  },
+}
+```
+
+## 表格列配置 (gridOptions.columns)
+
+### 列类型速查
+
+| 用法 | 配置方式 |
+|---|---|
+| 序号列 | `{ type: 'seq' }` |
+| 普通文本列 | `{ title, field }` |
+| 日期列 | `{ title, field, formatter: 'formatDateTime' }` |
+| 状态/枚举列 | `{ title, field, slots: { default: 'slotName' } }` |
+| 操作列 | `{ title, field: 'action', fixed: 'right', slots: { default: 'action' } }` |
+| 树节点列 | `{ title, field, treeNode: true }` |
+
+### 树形表格配置
+
+```typescript
+const gridOptions: VxeGridProps<OrgUnit> = {
+  pagerConfig: { enabled: false },  // 树形表格不分页
+  treeConfig: {
+    parentField: 'parentId',  // 方式一：扁平数据自动构建树
+    rowField: 'id',
+    transform: true,
+  },
+  // 或者（后端已返回树形结构时）：
+  // treeConfig: { childrenField: 'children', rowField: 'id' },
+  columns: [
+    { title: $t('page.xxx.name'), field: 'name', treeNode: true },
+  ],
+};
+```
+
+## Slot 用法详解
+
+在 `columns` 中声明 `slots: { default: 'slotName' }`，在 `<template #slotName="{ row }">` 中实现渲染。
+
+> **重要**: Slot 中必须使用 Ant Design Vue 的 `a-tag`、`a-button`、`a-popconfirm` 等全局组件，**禁止**使用原生 HTML 元素。
+
+### 状态 Tag Slot（最常用）
+
+```html
+<template #status="{ row }">
+  <a-tag :color="xxxStatusToColor(row.status)">
+    {{ xxxStatusToName(row.status) }}
+  </a-tag>
+</template>
+```
+
+> 颜色和名称映射函数在 `composables` 层定义，从 `#/api` 导入。**不要**在 Slot 中硬编码颜色值。
+
+### 多值 Tag Slot（数组字段）
+
+```html
+<template #role="{ row }">
+  <div>
+    <a-tag
+      v-for="role in row.roleNames"
+      :key="role"
+      class="mb-1 mr-1"
+      :style="{ backgroundColor: getRandomColor(role), color: '#333', border: 'none' }"
+    >
+      {{ role }}
+    </a-tag>
+  </div>
+</template>
+```
+
+> `getRandomColor()` 从 `#/utils/color` 导入。
+
+### 布尔值 Tag Slot
+
+```html
+<template #isEnabled="{ row }">
+  <a-tag :color="enableBoolToColor(row.isEnabled)">
+    {{ enableBoolToName(row.isEnabled) }}
+  </a-tag>
+</template>
+```
+
+### 操作列 Slot（固定模式）
+
+```html
+<template #action="{ row }">
+  <a-button type="link" :icon="h(LucideFilePenLine)" @click.stop="handleEdit(row)" />
+  <a-popconfirm
+    :cancel-text="$t('ui.button.cancel')"
+    :ok-text="$t('ui.button.ok')"
+    :title="$t('ui.text.do_you_want_delete', { moduleName: $t('page.xxx.moduleName') })"
+    @confirm="handleDelete(row)"
+  >
+    <a-button danger type="link" :icon="h(LucideTrash2)" />
+  </a-popconfirm>
+</template>
+```
+
+> 图标使用 `h()` 渲染函数包裹，从 `@vben/icons` 导入。删除前必须用 `a-popconfirm` 二次确认。
+
+### 工具栏 Slot (toolbar-tools)
+
+```html
+<template #toolbar-tools>
+  <a-button class="mr-2" type="primary" @click="handleCreate">
+    {{ $t('page.xxx.button.create') }}
+  </a-button>
+</template>
+```
+
+树形表格的展开/折叠按钮：
+
+```typescript
+const expandAll = () => { gridApi.grid?.setAllTreeExpand(true); };
+const collapseAll = () => { gridApi.grid?.setAllTreeExpand(false); };
+```
+
+## VxeGrid 配置参考
+
+### 基础列表页（带分页）
+
+```typescript
+const gridOptions: VxeGridProps<Xxx> = {
+  toolbarConfig: { custom: true, export: true, refresh: true, zoom: true },
+  exportConfig: {},
+  pagerConfig: {},
+  rowConfig: { isHover: true },
+  height: 'auto',
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({ page }, formValues) => {
+        return await fetchListXxxs(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
+        );
+      },
+    },
+  },
+  columns: [ /* ... */ ],
+};
+```
+
+### Grid 事件监听
+
+```typescript
+import { type VxeGridListeners } from '#/adapter/vxe-table';
+
+const gridEvents: VxeGridListeners<User> = {
+  cellDblclick: ({ row }) => { handleDetail(row); },
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions, gridEvents });
+```
+
+## Drawer 表单组件
+
+### 表单校验规则
+
+```typescript
+rules: 'required'        // 必填（输入框类）
+rules: 'selectRequired'  // 必选（下拉/单选类）
+```
+
+> 已在 `adapter/form.ts` 全局注册，自动国际化提示。**不要**用 Zod 校验。
+
+### 表单默认值与公共配置
+
+```typescript
+const [BaseForm, baseFormApi] = useVbenForm({
+  showDefaultActions: false,
+  commonConfig: {
+    componentProps: { class: 'w-full' },
+  },
+  schema: [
+    {
+      component: 'Input',
+      fieldName: 'name',
+      label: $t('page.xxx.name'),
+      rules: 'required',
+      componentProps: { placeholder: $t('ui.placeholder.input'), allowClear: true },
+    },
+    {
+      component: 'RadioGroup',
+      fieldName: 'status',
+      defaultValue: 'ON',
+      rules: 'selectRequired',
+      componentProps: {
+        optionType: 'button',
+        buttonStyle: 'solid',
+        class: 'flex flex-wrap',
+        options: xxxStatusList,
+      },
+    },
+  ],
+});
+```
+
+## Drawer 表单模板 (xxx-drawer.vue)
+
+```vue
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+
+import { useVbenDrawer } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+
+import { notification } from 'ant-design-vue';
+
+import { useVbenForm } from '#/adapter/form';
+import {
+  PaginationQuery,
+  xxxStatusList,
+  useCreateXxx,
+  useUpdateXxx,
+} from '#/api';
+
+const { mutateAsync: createXxx } = useCreateXxx();
+const { mutateAsync: updateXxx } = useUpdateXxx();
+
+const data = ref();
+
+const getTitle = computed(() =>
+  data.value?.create
+    ? $t('ui.modal.create', { moduleName: $t('page.xxx.moduleName') })
+    : $t('ui.modal.update', { moduleName: $t('page.xxx.moduleName') }),
+);
+
+const [BaseForm, baseFormApi] = useVbenForm({
+  showDefaultActions: false,
+  commonConfig: { componentProps: { class: 'w-full' } },
+  schema: [
+    {
+      component: 'Input',
+      fieldName: 'name',
+      label: $t('page.xxx.name'),
+      componentProps: { placeholder: $t('ui.placeholder.input'), allowClear: true },
+      rules: 'required',
+    },
+    {
+      component: 'RadioGroup',
+      fieldName: 'status',
+      label: $t('ui.table.status'),
+      defaultValue: 'ON',
+      rules: 'selectRequired',
+      componentProps: {
+        optionType: 'button',
+        buttonStyle: 'solid',
+        class: 'flex flex-wrap',
+        options: xxxStatusList,
+      },
+    },
+  ],
+});
+
+const [Drawer, drawerApi] = useVbenDrawer({
+  onCancel() { drawerApi.close(); },
+
+  async onConfirm() {
+    const validate = await baseFormApi.validate();
+    if (!validate.valid) { return; }
+
+    setLoading(true);
+    const values = await baseFormApi.getValues();
+
+    try {
+      await (data.value?.create ? createXxx(values) : updateXxx({ id: data.value.row.id, values }));
+      notification.success({
+        message: data.value?.create
+          ? $t('ui.notification.create_success')
+          : $t('ui.notification.update_success'),
+      });
+    } catch {
+      notification.error({
+        message: data.value?.create
+          ? $t('ui.notification.create_failed')
+          : $t('ui.notification.update_failed'),
+      });
+    } finally {
+      drawerApi.close();
+      setLoading(false);
+    }
+  },
+
+  onOpenChange(isOpen) {
+    if (isOpen) {
+      data.value = drawerApi.getData<Record<string, any>>();
+      baseFormApi.setValues(data.value?.row);
+      setLoading(false);
+    }
+  },
+});
+
+function setLoading(loading: boolean) {
+  drawerApi.setState({ loading });
+}
+</script>
+
+<template>
+  <Drawer :title="getTitle">
+    <BaseForm />
+  </Drawer>
+</template>
+```
+
+## 完整列表页模板 (index.vue)
+
+```vue
+<script lang="ts" setup>
+import type { VxeGridProps } from '#/adapter/vxe-table';
+
+import { h } from 'vue';
+
+import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
+import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
+
+import { notification } from 'ant-design-vue';
+
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  PaginationQuery,
+  xxxStatusList,
+  xxxStatusToColor,
+  xxxStatusToName,
+  useDeleteXxx,
+  fetchListXxxs,
+} from '#/api';
+import { type xxxservicev1_Xxx as Xxx } from '#/api';
+import { $t } from '@vben/locales';
+
+import XxxDrawer from './xxx-drawer.vue';
+
+const { mutateAsync: deleteXxx } = useDeleteXxx();
+
+// 搜索表单
+const formOptions: VbenFormProps = {
+  collapsed: false,
+  showCollapseButton: false,
+  submitOnEnter: true,
+  schema: [
+    {
+      component: 'Input',
+      fieldName: 'name',
+      label: $t('page.xxx.name'),
+      componentProps: { placeholder: $t('ui.placeholder.input'), allowClear: true },
+    },
+    {
+      component: 'Select',
+      fieldName: 'status',
+      label: $t('ui.table.status'),
+      componentProps: {
+        options: xxxStatusList,
+        placeholder: $t('ui.placeholder.select'),
+        allowClear: true,
+        showSearch: true,
+        filterOption: (input: string, option: any) =>
+          option.label.toLowerCase().includes(input.toLowerCase()),
+      },
+    },
+  ],
+};
+
+// 表格配置
+const gridOptions: VxeGridProps<Xxx> = {
+  toolbarConfig: { custom: true, export: true, refresh: true, zoom: true },
+  exportConfig: {},
+  pagerConfig: {},
+  rowConfig: { isHover: true },
+  height: 'auto',
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({ page }, formValues) => {
+        return await fetchListXxxs(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
+        );
+      },
+    },
+  },
+  columns: [
+    { title: $t('page.xxx.name'), field: 'name' },
+    { title: $t('page.xxx.code'), field: 'code' },
+    { title: $t('ui.table.status'), field: 'status', slots: { default: 'status' }, width: 95 },
+    { title: $t('ui.table.createdAt'), field: 'createdAt', formatter: 'formatDateTime', width: 140 },
+    { title: $t('ui.table.remark'), field: 'remark' },
+    { title: $t('ui.table.action'), field: 'action', fixed: 'right', slots: { default: 'action' }, width: 90 },
+  ],
+};
+
+// Grid + Drawer 初始化
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
+
+const [Drawer, drawerApi] = useVbenDrawer({
+  connectedComponent: XxxDrawer,
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) { gridApi.reload(); }
+  },
+});
+
+function openDrawer(create: boolean, row?: any) {
+  drawerApi.setData({ create, row });
+  drawerApi.open();
+}
+
+function handleCreate() { openDrawer(true); }
+function handleEdit(row: any) { openDrawer(false, row); }
+
+async function handleDelete(row: any) {
+  try {
+    await deleteXxx(row.id);
+    notification.success({ message: $t('ui.notification.delete_success') });
+    await gridApi.reload();
+  } catch {
+    notification.error({ message: $t('ui.notification.delete_failed') });
+  }
+}
+</script>
+
+<template>
+  <Page auto-content-height>
+    <Grid :table-title="$t('menu.xxx.moduleName')">
+      <template #toolbar-tools>
+        <a-button class="mr-2" type="primary" @click="handleCreate">
+          {{ $t('page.xxx.button.create') }}
+        </a-button>
+      </template>
+      <template #status="{ row }">
+        <a-tag :color="xxxStatusToColor(row.status)">
+          {{ xxxStatusToName(row.status) }}
+        </a-tag>
+      </template>
+      <template #action="{ row }">
+        <a-button type="link" :icon="h(LucideFilePenLine)" @click.stop="handleEdit(row)" />
+        <a-popconfirm
+          :cancel-text="$t('ui.button.cancel')"
+          :ok-text="$t('ui.button.ok')"
+          :title="$t('ui.text.do_you_want_delete', { moduleName: $t('page.xxx.moduleName') })"
+          @confirm="handleDelete(row)"
+        >
+          <a-button danger type="link" :icon="h(LucideTrash2)" />
+        </a-popconfirm>
+      </template>
+    </Grid>
+    <Drawer />
+  </Page>
+</template>
+```
+
+## Vben 框架 API 速查
+
+### Page 组件（必须包裹）
+
+所有页面 **必须** 用 `<Page>` 包裹，从 `@vben/common-ui` 导入。**禁止**用 `<div>` 替代。
+
+```html
+<Page auto-content-height>
+  <Grid :table-title="...">
+    <!-- ... -->
+  </Grid>
+  <Drawer />
+</Page>
+```
+
+### Grid API 方法
+
+| 方法 | 用途 |
+|---|---|
+| `gridApi.reload()` | 重新加载数据 |
+| `gridApi.grid` | VxeTable 实例（`gridApi.grid?.setAllTreeExpand(true)`） |
+
+### Drawer API 方法
+
+| 方法 | 用途 |
+|---|---|
+| `drawerApi.open()` / `close()` | 打开/关闭抽屉 |
+| `drawerApi.setData({ create, row })` | 传入数据 |
+| `drawerApi.getData<T>()` | 获取传入数据（在 `onOpenChange` 中使用） |
+| `drawerApi.setState({ loading })` | 设置加载状态 |
+
+### Form API 方法
+
+| 方法 | 用途 |
+|---|---|
+| `formApi.getValues()` | 获取表单值 |
+| `formApi.setValues(obj)` | 设置表单值 |
+| `formApi.validate()` | 校验表单（返回 `{ valid: boolean }`） |
+| `formApi.resetForm()` | 重置表单 |
+
+### Notification（消息提示）
+
+```typescript
+import { notification } from 'ant-design-vue';
+notification.success({ message: $t('ui.notification.create_success') });
+```
+
+> **禁止**使用 `alert()`、`console.log` 展示操作结果。预定义 i18n key：`ui.notification.create/update/delete_success` 及 `_failed` 版本。
+
+## 常见错误与纠正
+
+| 错误做法 | 正确做法 |
+|---|---|
+| 原生 `<span style="color:red">正常</span>` | `<a-tag :color="statusToColor(row.status)">` |
+| `window.confirm('确定删除?')` | `<a-popconfirm>` |
+| 原生 `<button>` | `<a-button type="primary/link">` |
+| Slot 中 `dayjs(row.createdAt).format(...)` | `formatter: 'formatDateTime'` |
+| `rules: z.string().min(1, '不能为空')` | `rules: 'required'` 或 `'selectRequired'` |
+| Slot 中 `v-if` 硬编码颜色 | composables 层的 `xxxToColor()` |
+| `import { Tag } from 'ant-design-vue'` 后用 `<Tag>` | 直接用 `<a-tag>`（全局注册） |
+| `<div>` 包裹页面 | `<Page auto-content-height>` |
+| `ref(false)` 管理 loading | `drawerApi.setState({ loading })` |
+| `alert()` / `ElMessage` 提示 | `notification` from `ant-design-vue` |
+| `component: 'AInput'` | `component: 'Input'`（注册名） |
+| 手动 watch 搜索条件重新请求 | 框架自动关联 `formValues` |
+| `:icon="LucideTrash2"` 直接传 | `:icon="h(LucideTrash2)"` 用 h() 包裹 |
+| `ref` + `watch` 管理列表数据 | `proxyConfig.ajax.query` + `PaginationQuery` |

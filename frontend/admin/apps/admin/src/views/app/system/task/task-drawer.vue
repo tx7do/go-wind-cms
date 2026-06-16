@@ -7,9 +7,13 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { enableBoolList, taskTypeList, useTaskStore } from '#/stores';
-
-const taskStore = useTaskStore();
+import {
+  apiClient,
+  enableBoolList,
+  fetchListTaskTypeNames,
+  makeUpdateMask,
+  taskTypeList,
+} from '#/api';
 
 const data = ref();
 
@@ -56,7 +60,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
         showSearch: true,
         placeholder: $t('ui.placeholder.select'),
         api: async () => {
-          const result = await taskStore.listTaskTypeName();
+          const result = await fetchListTaskTypeNames();
           return result.typeNames;
         },
         afterFetch: (data: { name: string; path: string }[]) => {
@@ -221,8 +225,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? taskStore.createTask(values)
-        : taskStore.updateTask(data.value.row.id, values));
+        ? apiClient.taskService.Create({ data: { ...values } })
+        : apiClient.taskService.Update({
+            id: data.value.row.id,
+            data: { ...values },
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

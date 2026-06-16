@@ -12,16 +12,17 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import {
+  apiClient,
   buildMenuTree,
+  fetchListMenus,
   isButton,
   isCatalog,
   isMenu,
+  makeUpdateMask,
   menuTypeList,
+  PaginationQuery,
   statusList,
-  useMenuStore,
-} from '#/stores';
-
-const menuStore = useMenuStore();
+} from '#/api';
 
 addCollection(lucide);
 
@@ -93,10 +94,14 @@ const [BaseForm, baseFormApi] = useVbenForm({
         treeNodeFilterProp: 'label',
         api: async () => {
           const fieldValue = baseFormApi.form.values;
-          const result = await menuStore.listMenu(undefined, {
-            parentId: fieldValue.parentId,
-            status: 'ON',
-          });
+          const result = await fetchListMenus(
+            new PaginationQuery({
+              formValues: {
+                parentId: fieldValue.parentId,
+                status: 'ON',
+              },
+            }),
+          );
           return result.items;
         },
 
@@ -318,8 +323,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? menuStore.createMenu(values)
-        : menuStore.updateMenu(data.value.row.id, values));
+        ? apiClient.menuService.Create({ data: { ...values } as any })
+        : apiClient.menuService.Update({
+            id: data.value.row.id,
+            data: { ...values } as any,
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

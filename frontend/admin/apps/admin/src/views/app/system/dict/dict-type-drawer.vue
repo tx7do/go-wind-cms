@@ -7,9 +7,7 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm, z } from '#/adapter/form';
-import { enableBoolList, useDictStore } from '#/stores';
-
-const dictStore = useDictStore();
+import { apiClient, enableBoolList, makeUpdateMask } from '#/api';
 
 const data = ref();
 
@@ -100,8 +98,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? dictStore.createDictType(values)
-        : dictStore.updateDictType(data.value.row.id, values));
+        ? apiClient.dictTypeService.Create({ data: { ...values } })
+        : apiClient.dictTypeService.Update({
+            id: data.value.row.id,
+            data: { ...values },
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

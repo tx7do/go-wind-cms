@@ -9,8 +9,8 @@ import { $t } from '@vben/locales';
 
 import { Col, InputNumber, notification, Row } from 'ant-design-vue';
 
+import { categoryStatusList } from '#/api';
 import { router } from '#/router';
-import { categoryStatusList } from '#/stores';
 
 import { useCategoryEditViewStore } from './category-edit-view.state';
 

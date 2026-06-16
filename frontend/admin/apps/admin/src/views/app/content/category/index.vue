@@ -10,17 +10,17 @@ import { i18n } from '@vben/locales';
 import { Image, notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type contentservicev1_Category as Category } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
-import { router } from '#/router';
 import {
+  apiClient,
+  type contentservicev1_Category as Category,
   categoryStatusList,
   categoryStatusToColor,
   categoryStatusToName,
-  useCategoryStore,
-} from '#/stores';
-
-const categoryStore = useCategoryStore();
+  fetchListCategories,
+  PaginationQuery,
+} from '#/api';
+import { $t } from '#/locales';
+import { router } from '#/router';
 
 const formOptions: VbenFormProps = {
   // Default expanded
@@ -70,13 +70,16 @@ const gridOptions: VxeGridProps<Category> = {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
 
-        return await categoryStore.listCategory(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
-          'id,status,sort_order,is_nav,icon,code,post_count,direct_post_count,available_languages,parent_id,children,created_by,created_at,translations,translations.id,translations.language_code,translations.name,translations.slug,translations.description,translations.thumbnail,translations.cover_image',
+        return await fetchListCategories(
+          new PaginationQuery({
+            paging: {
+              page: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            formValues,
+            fieldMask:
+              'id,status,sort_order,is_nav,icon,code,post_count,direct_post_count,available_languages,parent_id,children,created_by,created_at,translations,translations.id,translations.language_code,translations.name,translations.slug,translations.description,translations.thumbnail,translations.cover_image',
+          }),
         );
       },
     },
@@ -185,7 +188,7 @@ async function handleDelete(row: any) {
   console.log('Delete', row);
 
   try {
-    await categoryStore.deleteCategory(row.id);
+    await apiClient.categoryService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

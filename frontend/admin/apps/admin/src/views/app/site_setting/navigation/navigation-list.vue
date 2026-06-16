@@ -10,21 +10,20 @@ import { isEqual } from '@vben/utils';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type siteservicev1_Navigation as Navigation } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  fetchListLanguages,
+  type siteservicev1_Navigation as Navigation,
   navigationLocationList,
   navigationLocationToColor,
   navigationLocationToName,
-  useLanguageStore,
-  useNavigationStore,
-} from '#/stores';
+  PaginationQuery,
+} from '#/api';
+import { $t } from '#/locales';
 
 import NavigationDrawer from './navigation-drawer.vue';
 import { useNavigationViewStore } from './navigation-view.state';
 
-const navigationStore = useNavigationStore();
-const languageStore = useLanguageStore();
 const navigationViewStore = useNavigationViewStore();
 
 const languageOptions = ref<{ label: string; value: string }[]>([]);
@@ -180,7 +179,7 @@ function handleEdit(row: any) {
 
 async function handleDelete(row: any) {
   try {
-    await navigationStore.deleteNavigation(row.id);
+    await apiClient.navigationService.Delete({ id: row.id });
     notification.success({
       message: $t('ui.notification.delete_success'),
     });
@@ -205,9 +204,9 @@ watch(
 
 onMounted(async () => {
   try {
-    const resp = await languageStore.listLanguage(undefined, {}, undefined, [
-      'sortOrder',
-    ] as any);
+    const resp = await fetchListLanguages(
+      new PaginationQuery({ orderBy: ['sortOrder'] }) as any,
+    );
     languageOptions.value =
       resp.items?.map((lang) => ({
         label: lang.nativeName || lang.languageCode || '',

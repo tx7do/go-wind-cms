@@ -10,9 +10,9 @@ import { notification } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type commentservicev1_Comment as Comment } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  type commentservicev1_Comment as Comment,
   commentAuthorTypeList,
   commentAuthorTypeToColor,
   commentAuthorTypeToName,
@@ -22,12 +22,12 @@ import {
   commentStatusList,
   commentStatusToColor,
   commentStatusToName,
-  useCommentStore,
-} from '#/stores';
+  fetchListComments,
+  PaginationQuery,
+} from '#/api';
+import { $t } from '#/locales';
 
 import CommentDrawer from './comment-drawer.vue';
-
-const commentStore = useCommentStore();
 
 const formOptions: VbenFormProps = {
   collapsed: false,
@@ -162,21 +162,19 @@ const gridOptions: VxeGridProps<Comment> = {
           );
         }
 
-        return await commentStore.listComment(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          {
-            authorName: formValues.authorName,
-            authorType: formValues.authorType,
-            contentType: formValues.contentType,
-            status: formValues.status,
-            created_at__gte: startTime,
-            created_at__lte: endTime,
-          },
-          null,
-          ['-created_at'],
+        return await fetchListComments(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues: {
+              authorName: formValues.authorName,
+              authorType: formValues.authorType,
+              contentType: formValues.contentType,
+              status: formValues.status,
+              created_at__gte: startTime,
+              created_at__lte: endTime,
+            },
+            orderBy: ['-created_at'],
+          }),
         );
       },
     },
@@ -290,7 +288,7 @@ function handleEdit(row: any) {
 function handleDelete(row: any) {
   (async () => {
     try {
-      await commentStore.deleteComment(row.id);
+      await apiClient.commentService.Delete({ id: row.id });
       notification.success({ message: $t('ui.notification.delete_success') });
       await gridApi.reload();
     } catch {

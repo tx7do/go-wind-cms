@@ -7,9 +7,7 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { useFileStore } from '#/stores';
-
-const fileStore = useFileStore();
+import { apiClient, makeUpdateMask } from '#/api';
 
 const data = ref();
 
@@ -75,8 +73,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? fileStore.createFile(values)
-        : fileStore.updateFile(data.value.row.id, values));
+        ? apiClient.fileService.Create({ data: { ...values } })
+        : apiClient.fileService.Update({
+            id: data.value.row.id,
+            data: { ...values },
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

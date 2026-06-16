@@ -7,14 +7,13 @@ import { defineStore } from 'pinia';
 
 import { EditorType } from '#/adapter/component/Editor';
 import {
+  apiClient,
   convertToEditorType,
   convertToUIEditorType,
-  useLanguageStore,
-  usePostStore,
-} from '#/stores';
-
-const postStore = usePostStore();
-const languageStore = useLanguageStore();
+  fetchListLanguages,
+  makeUpdateMask,
+  PaginationQuery,
+} from '#/api';
 
 const storageManager = new StorageManager({
   prefix: 'post-draft',
@@ -98,11 +97,8 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
      */
     async fetchLanguageList() {
       try {
-        const resp = await languageStore.listLanguage(
-          undefined,
-          {},
-          undefined,
-          ['sortOrder'],
+        const resp = await fetchListLanguages(
+          new PaginationQuery({ orderBy: ['sortOrder'] }),
         );
         this.languageOptions =
           resp.items?.map((lang) => ({
@@ -127,7 +123,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
 
       this.loading = true;
       try {
-        const item = await postStore.getPost(this.postId);
+        const item = await apiClient.postService.Get({ id: this.postId });
         if (!item) {
           throw new Error('Post not found');
         }
@@ -271,26 +267,22 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
       }
 
       try {
+        const data = {
+          editorType: convertToEditorType(this.formData.editorType),
+          translations: [
+            {
+              title: this.formData.title,
+              content: this.formData.content,
+              languageCode: this.formData.lang,
+            },
+          ],
+        };
         await (this.isCreateMode
-          ? postStore.createPost({
-              editorType: convertToEditorType(this.formData.editorType),
-              translations: [
-                {
-                  title: this.formData.title,
-                  content: this.formData.content,
-                  languageCode: this.formData.lang,
-                },
-              ],
-            })
-          : postStore.updatePost(this.formData.id || 0, {
-              editorType: convertToEditorType(this.formData.editorType),
-              translations: [
-                {
-                  title: this.formData.title,
-                  content: this.formData.content,
-                  languageCode: this.formData.lang,
-                },
-              ],
+          ? apiClient.postService.Create({ data })
+          : apiClient.postService.Update({
+              id: this.formData.id || 0,
+              data,
+              updateMask: makeUpdateMask(Object.keys(data)),
             }));
 
         // 发布成功后清除草稿

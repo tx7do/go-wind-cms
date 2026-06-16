@@ -6,20 +6,19 @@ import { Page, type VbenFormProps } from '@vben/common-ui';
 import dayjs from 'dayjs';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type mediaservicev1_MediaAsset as MediaAsset } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  fetchListMediaAssets,
+  type mediaservicev1_MediaAsset as MediaAsset,
   mediaAssetAssetTypeList,
   mediaAssetAssetTypeToColor,
   mediaAssetAssetTypeToName,
   mediaAssetProcessingStatusList,
   mediaAssetProcessingStatusToColor,
   mediaAssetProcessingStatusToName,
-  useMediaAssetStore,
-} from '#/stores';
+  PaginationQuery,
+} from '#/api';
+import { $t } from '#/locales';
 import { formatBytes } from '#/utils';
-
-const mediaAssetStore = useMediaAssetStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -147,20 +146,18 @@ const gridOptions: VxeGridProps<MediaAsset> = {
           console.log(startTime, endTime);
         }
 
-        return await mediaAssetStore.listMediaAsset(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          {
-            type: formValues.type,
-            filename: formValues.filename,
-            processingStatus: formValues.processingStatus,
-            created_at__gte: startTime,
-            created_at__lte: endTime,
-          },
-          null,
-          ['-created_at'],
+        return await fetchListMediaAssets(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues: {
+              type: formValues.type,
+              filename: formValues.filename,
+              processingStatus: formValues.processingStatus,
+              created_at__gte: startTime,
+              created_at__lte: endTime,
+            },
+            orderBy: ['-created_at'],
+          }),
         );
       },
     },

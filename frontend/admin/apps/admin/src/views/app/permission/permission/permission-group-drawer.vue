@@ -8,12 +8,13 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import {
+  apiClient,
   buildPermissionGroupTree,
+  fetchListPermissionGroups,
+  makeUpdateMask,
+  PaginationQuery,
   statusList,
-  usePermissionGroupStore,
-} from '#/stores';
-
-const permissionGroupStore = usePermissionGroupStore();
+} from '#/api';
 
 const data = ref();
 
@@ -87,12 +88,13 @@ const [BaseForm, baseFormApi] = useVbenForm({
         },
         api: async () => {
           const fieldValue = baseFormApi.form.values;
-          const result = await permissionGroupStore.listPermissionGroup(
-            undefined,
-            {
-              parentId: fieldValue.parentId,
-              status: 'ON',
-            },
+          const result = await fetchListPermissionGroups(
+            new PaginationQuery({
+              formValues: {
+                parentId: fieldValue.parentId,
+                status: 'ON',
+              },
+            }),
           );
           return result.items;
         },
@@ -147,11 +149,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? permissionGroupStore.createPermissionGroup(values)
-        : permissionGroupStore.updatePermissionGroup(
-            data.value.row.id,
-            values,
-          ));
+        ? apiClient.permissionGroupService.Create({
+            data: { ...values } as any,
+          })
+        : apiClient.permissionGroupService.Update({
+            id: data.value.row.id,
+            data: { ...values } as any,
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

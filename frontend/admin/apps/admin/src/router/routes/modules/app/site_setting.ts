@@ -52,8 +52,7 @@ const site_setting: RouteRecordRaw[] = [
           title: $t('menu.siteSetting.site'),
           authority: ['sys:platform_admin'],
         },
-        component: () =>
-          import('#/views/app/site_setting/site/index.vue'),
+        component: () => import('#/views/app/site_setting/site/index.vue'),
       },
     ],
   },

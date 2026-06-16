@@ -7,9 +7,7 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { enableBoolList, useInternalMessageCategoryStore } from '#/stores';
-
-const internalMessageCategoryStore = useInternalMessageCategoryStore();
+import { apiClient, enableBoolList, makeUpdateMask } from '#/api';
 
 const data = ref();
 
@@ -112,11 +110,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? internalMessageCategoryStore.createInternalMessageCategory(values)
-        : internalMessageCategoryStore.updateInternalMessageCategory(
-            data.value.row.id,
-            values,
-          ));
+        ? apiClient.internalMessageCategoryService.Create({ data: values })
+        : apiClient.internalMessageCategoryService.Update({
+            id: data.value.row.id,
+            data: values,
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

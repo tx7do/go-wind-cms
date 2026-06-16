@@ -8,14 +8,13 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import {
+  apiClient,
+  fetchListOrgUnits,
+  makeUpdateMask,
+  PaginationQuery,
   positionTypeList,
   statusList,
-  useOrgUnitStore,
-  usePositionStore,
-} from '#/stores';
-
-const positionStore = usePositionStore();
-const orgUnitStore = useOrgUnitStore();
+} from '#/api';
 
 const data = ref();
 
@@ -87,10 +86,11 @@ const [BaseForm, baseFormApi] = useVbenForm({
         valueField: 'id',
         treeNodeFilterProp: 'label',
         api: async () => {
-          const result = await orgUnitStore.listOrgUnit(undefined, {
-            // parent_id: 0,
-            status: 'ON',
-          });
+          const result = await fetchListOrgUnits(
+            new PaginationQuery({
+              formValues: { status: 'ON' },
+            }),
+          );
           return result.items;
         },
       },
@@ -170,8 +170,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? positionStore.createPosition(values)
-        : positionStore.updatePosition(data.value.row.id, values));
+        ? apiClient.positionService.Create({ data: values })
+        : apiClient.positionService.Update({
+            id: data.value.row.id,
+            data: values,
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

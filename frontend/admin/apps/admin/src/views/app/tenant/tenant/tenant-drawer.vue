@@ -8,15 +8,12 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import {
+  apiClient,
+  makeUpdateMask,
   tenantAuditStatusList,
   tenantStatusList,
   tenantTypeList,
-  useTenantStore,
-  useUserListStore,
-} from '#/stores';
-
-const tenantStore = useTenantStore();
-const userListStore = useUserListStore();
+} from '#/api';
 
 const data = ref();
 
@@ -294,7 +291,10 @@ async function createTenantWithAdminUser(values: any) {
 
   // 检查租户编码是否存在
   try {
-    await tenantStore.tenantExists(values.code, values.name);
+    await apiClient.tenantService.TenantExists({
+      code: values.code,
+      name: values.name,
+    });
   } catch {
     notification.error({
       message: $t('page.tenant.tenant_code_exists'),
@@ -305,7 +305,9 @@ async function createTenantWithAdminUser(values: any) {
 
   // 检查用户名是否存在
   try {
-    await userListStore.userExists(values.user.username);
+    await apiClient.userService.UserExists({
+      username: values.user.username,
+    });
   } catch {
     notification.error({
       message: $t('page.tenant.notification.user_username_exists'),
@@ -315,7 +317,7 @@ async function createTenantWithAdminUser(values: any) {
   }
 
   try {
-    await tenantStore.createTenantWithAdminUser({
+    await apiClient.tenantService.CreateTenantWithAdminUser({
       tenant: {
         name: values.name,
         code: values.code,
@@ -346,7 +348,11 @@ async function updateTenant(values: any) {
   console.log('updateTenant', values);
 
   try {
-    await tenantStore.updateTenant(data.value.row.id, values);
+    await apiClient.tenantService.Update({
+      id: data.value.row.id,
+      data: { ...values },
+      updateMask: makeUpdateMask(Object.keys(values)),
+    });
 
     notification.success({
       message: $t('ui.notification.update_success'),

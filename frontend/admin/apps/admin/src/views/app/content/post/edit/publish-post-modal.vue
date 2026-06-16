@@ -7,9 +7,7 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { usePostStore } from '#/stores';
-
-const postStore = usePostStore();
+import { apiClient } from '#/api';
 
 const data = ref();
 
@@ -65,7 +63,7 @@ const [Modal, modalApi] = useVbenModal({
     }
 
     try {
-      await postStore.createPost(values);
+      await apiClient.postService.Create({ data: values });
 
       setLoading(false);
       modalApi.close();

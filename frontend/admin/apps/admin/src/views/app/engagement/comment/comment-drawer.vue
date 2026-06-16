@@ -7,9 +7,7 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { commentStatusList, useCommentStore } from '#/stores';
-
-const commentStore = useCommentStore();
+import { apiClient, commentStatusList, makeUpdateMask } from '#/api';
 
 const data = ref<Record<string, any>>();
 
@@ -80,7 +78,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
     const values = await baseFormApi.getValues();
 
     try {
-      await commentStore.updateComment(data.value?.row?.id, values);
+      await apiClient.commentService.Update({
+        id: data.value?.row?.id,
+        data: values as any,
+        updateMask: makeUpdateMask(Object.keys(values)),
+      });
 
       notification.success({
         message: $t('ui.notification.update_success'),

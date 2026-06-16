@@ -7,9 +7,7 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { navigationItemLinkTypeList, useNavigationItemStore } from '#/stores';
-
-const navigationItemStore = useNavigationItemStore();
+import { apiClient, makeUpdateMask, navigationItemLinkTypeList } from '#/api';
 
 const data = ref<Record<string, any>>();
 
@@ -158,11 +156,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? navigationItemStore.createNavigationItem(payload)
-        : navigationItemStore.updateNavigationItem(
-            data.value?.row?.id,
-            payload,
-          ));
+        ? apiClient.navigationItemService.Create({
+            data: { ...payload } as any,
+          })
+        : apiClient.navigationItemService.Update({
+            id: data.value?.row?.id,
+            data: { ...payload } as any,
+            updateMask: makeUpdateMask(Object.keys(payload)),
+          }));
 
       notification.success({
         message: data.value?.create

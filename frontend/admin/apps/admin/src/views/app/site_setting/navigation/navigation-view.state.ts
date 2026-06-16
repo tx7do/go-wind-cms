@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia';
 
 import {
+  fetchListNavigationItems,
+  fetchListNavigations,
   type siteservicev1_ListNavigationItemResponse as ListNavigationItemResponse,
   type siteservicev1_ListNavigationResponse as ListNavigationResponse,
-} from '#/generated/api/admin/service/v1';
-import { useNavigationItemStore, useNavigationStore } from '#/stores';
-
-const navigationStore = useNavigationStore();
-const navigationItemStore = useNavigationItemStore();
+  PaginationQuery,
+} from '#/api';
 
 /**
  * 导航视图状态接口
@@ -46,12 +45,11 @@ export const useNavigationViewStore = defineStore('permission-view', {
     ) {
       this.loading = true;
       try {
-        this.navigationList = await navigationStore.listNavigation(
-          {
-            page: currentPage,
-            pageSize,
-          },
-          formValues,
+        this.navigationList = await fetchListNavigations(
+          new PaginationQuery({
+            paging: { page: currentPage, pageSize },
+            formValues,
+          }),
         );
         return this.navigationList;
       } catch (error) {
@@ -84,15 +82,14 @@ export const useNavigationViewStore = defineStore('permission-view', {
 
       this.loading = true;
       try {
-        this.itemList = await navigationItemStore.listNavigationItem(
-          {
-            page: currentPage,
-            pageSize,
-          },
-          {
-            ...formValues,
-            navigation_id: navigationId.toString(),
-          },
+        this.itemList = await fetchListNavigationItems(
+          new PaginationQuery({
+            paging: { page: currentPage, pageSize },
+            formValues: {
+              ...formValues,
+              navigation_id: navigationId.toString(),
+            },
+          }),
         );
       } catch (error) {
         console.error(`获取导航[${navigationId}]的导航项失败:`, error);

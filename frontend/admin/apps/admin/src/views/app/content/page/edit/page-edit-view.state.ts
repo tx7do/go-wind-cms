@@ -7,13 +7,12 @@ import { defineStore } from 'pinia';
 
 import { EditorType } from '#/adapter/component/Editor';
 import {
+  apiClient,
   convertToUIEditorType,
-  useLanguageStore,
-  usePageStore,
-} from '#/stores';
-
-const pageStore = usePageStore();
-const languageStore = useLanguageStore();
+  fetchListLanguages,
+  makeUpdateMask,
+  PaginationQuery,
+} from '#/api';
 
 const storageManager = new StorageManager({
   prefix: 'page-draft',
@@ -99,11 +98,8 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
      */
     async fetchLanguageList() {
       try {
-        const resp = await languageStore.listLanguage(
-          undefined,
-          {},
-          undefined,
-          ['sortOrder'],
+        const resp = await fetchListLanguages(
+          new PaginationQuery({ orderBy: ['sortOrder'] }),
         );
         this.languageOptions =
           resp.items?.map((lang) => ({
@@ -128,7 +124,7 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
 
       this.loading = true;
       try {
-        const item = await pageStore.getPage(this.pageId);
+        const item = await apiClient.pageService.Get({ id: this.pageId });
         if (!item) {
           throw new Error('Page not found');
         }
@@ -286,48 +282,33 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
       }
 
       try {
+        const data = {
+          editorType: this.formData.editorType as any,
+          parentId: this.formData.parentId,
+          type: this.formData.type,
+          status: this.formData.status,
+          showInNavigation: this.formData.showInNavigation,
+          disallowComment: this.formData.disallowComment,
+          template: this.formData.template,
+          isCustomTemplate: this.formData.isCustomTemplate,
+          customHead: this.formData.customHead,
+          customFoot: this.formData.customFoot,
+          sortOrder: this.formData.sortOrder,
+          translations: [
+            {
+              title: this.formData.title,
+              slug: this.formData.slug,
+              content: this.formData.content,
+              languageCode: this.formData.lang,
+            },
+          ],
+        };
         await (this.isCreateMode
-          ? pageStore.createPage({
-              editorType: this.formData.editorType as any,
-              parentId: this.formData.parentId,
-              type: this.formData.type,
-              status: this.formData.status,
-              showInNavigation: this.formData.showInNavigation,
-              disallowComment: this.formData.disallowComment,
-              template: this.formData.template,
-              isCustomTemplate: this.formData.isCustomTemplate,
-              customHead: this.formData.customHead,
-              customFoot: this.formData.customFoot,
-              sortOrder: this.formData.sortOrder,
-              translations: [
-                {
-                  title: this.formData.title,
-                  slug: this.formData.slug,
-                  content: this.formData.content,
-                  languageCode: this.formData.lang,
-                },
-              ],
-            })
-          : pageStore.updatePage(this.formData.id || 0, {
-              editorType: this.formData.editorType as any,
-              parentId: this.formData.parentId,
-              type: this.formData.type,
-              status: this.formData.status,
-              showInNavigation: this.formData.showInNavigation,
-              disallowComment: this.formData.disallowComment,
-              template: this.formData.template,
-              isCustomTemplate: this.formData.isCustomTemplate,
-              customHead: this.formData.customHead,
-              customFoot: this.formData.customFoot,
-              sortOrder: this.formData.sortOrder,
-              translations: [
-                {
-                  title: this.formData.title,
-                  slug: this.formData.slug,
-                  content: this.formData.content,
-                  languageCode: this.formData.lang,
-                },
-              ],
+          ? apiClient.pageService.Create({ data })
+          : apiClient.pageService.Update({
+              id: this.formData.id || 0,
+              data,
+              updateMask: makeUpdateMask(Object.keys(data)),
             }));
 
         // Clear draft after successful publish

@@ -4,10 +4,12 @@ import { StorageManager } from '@vben-core/shared/cache';
 
 import { defineStore } from 'pinia';
 
-import { useCategoryStore, useLanguageStore } from '#/stores';
-
-const categoryStore = useCategoryStore();
-const languageStore = useLanguageStore();
+import {
+  apiClient,
+  fetchListLanguages,
+  makeUpdateMask,
+  PaginationQuery,
+} from '#/api';
 
 const storageManager = new StorageManager({
   prefix: 'category-draft',
@@ -95,11 +97,8 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
      */
     async fetchLanguageList() {
       try {
-        const resp = await languageStore.listLanguage(
-          undefined,
-          {},
-          undefined,
-          ['sortOrder'],
+        const resp = await fetchListLanguages(
+          new PaginationQuery({ orderBy: ['sortOrder'] }),
         );
         this.languageOptions =
           resp.items?.map((lang) => ({
@@ -124,7 +123,9 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
 
       this.loading = true;
       try {
-        const item = await categoryStore.getCategory(this.categoryId);
+        const item = await apiClient.categoryService.Get({
+          id: this.categoryId,
+        });
         if (!item) {
           throw new Error('Category not found');
         }
@@ -273,36 +274,28 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
       }
 
       try {
+        const data = {
+          parentId: this.formData.parentId,
+          icon: this.formData.icon,
+          isNav: this.formData.isNav,
+          sortOrder: this.formData.sortOrder,
+          status: this.formData.status,
+          translations: [
+            {
+              name: this.formData.name,
+              slug: this.formData.slug,
+              description: this.formData.description,
+              languageCode: this.formData.lang,
+            },
+          ],
+        };
+
         await (this.isCreateMode
-          ? categoryStore.createCategory({
-              parentId: this.formData.parentId,
-              icon: this.formData.icon,
-              isNav: this.formData.isNav,
-              sortOrder: this.formData.sortOrder,
-              status: this.formData.status,
-              translations: [
-                {
-                  name: this.formData.name,
-                  slug: this.formData.slug,
-                  description: this.formData.description,
-                  languageCode: this.formData.lang,
-                },
-              ],
-            })
-          : categoryStore.updateCategory(this.formData.id || 0, {
-              parentId: this.formData.parentId,
-              icon: this.formData.icon,
-              isNav: this.formData.isNav,
-              sortOrder: this.formData.sortOrder,
-              status: this.formData.status,
-              translations: [
-                {
-                  name: this.formData.name,
-                  slug: this.formData.slug,
-                  description: this.formData.description,
-                  languageCode: this.formData.lang,
-                },
-              ],
+          ? apiClient.categoryService.Create({ data })
+          : apiClient.categoryService.Update({
+              id: this.formData.id || 0,
+              data,
+              updateMask: makeUpdateMask(Object.keys(data)),
             }));
 
         // Clear draft after successful publish

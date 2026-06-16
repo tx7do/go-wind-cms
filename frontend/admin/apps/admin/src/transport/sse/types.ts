@@ -12,6 +12,11 @@ export type SSEEventHandler<T = unknown> = (
 ) => void;
 
 /**
+ * SSE 连接实现方式
+ */
+export type SSETransport = 'event-source' | 'fetch-event-source';
+
+/**
  * SSE 客户端配置
  */
 export interface SSEClientConfig {
@@ -19,6 +24,8 @@ export interface SSEClientConfig {
   withCredentials?: boolean; // 是否携带跨域凭证（cookie 等）
   reconnectDelay?: number; // 断开后重连延迟（毫秒，默认 3000）
   autoParseJson?: boolean; // 是否自动解析 JSON 格式的数据（默认 true）
+  headers?: Record<string, string>; // 可选的 HTTP 请求头
+  transport?: SSETransport; // 连接实现方式（默认 fetch-event-source）
 }
 
 /**

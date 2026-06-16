@@ -10,18 +10,12 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { Editor } from '#/adapter/component/Editor';
+import { apiClient, editorTypeOptions, uploadMediaAsset } from '#/api';
 import { router } from '#/router';
-import {
-  editorTypeOptions,
-  useFileTransferStore,
-  useTranslatorStore,
-} from '#/stores';
 
 import { usePageEditViewStore } from './page-edit-view.state';
 
-const fileTransferStore = useFileTransferStore();
 const pageEditViewStore = usePageEditViewStore();
-const translatorStore = useTranslatorStore();
 
 const route = useRoute();
 const { closeCurrentTab } = useTabs();
@@ -95,10 +89,11 @@ async function handleLanguageChange(newLang: string) {
  */
 async function handleTranslate() {
   try {
-    const titleResp = await translatorStore.translate(
-      pageEditViewStore.formData.lang,
-      pageEditViewStore.formData.title,
-    );
+    const titleResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: pageEditViewStore.formData.lang,
+      content: pageEditViewStore.formData.title,
+    });
     console.log('Title translation response:', titleResp);
     pageEditViewStore.formData.title =
       titleResp.translatedContent || pageEditViewStore.formData.title;
@@ -111,10 +106,11 @@ async function handleTranslate() {
   }
 
   try {
-    const contentResp = await translatorStore.translate(
-      pageEditViewStore.formData.lang,
-      pageEditViewStore.formData.content,
-    );
+    const contentResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: pageEditViewStore.formData.lang,
+      content: pageEditViewStore.formData.content,
+    });
     console.log('Content translation response:', contentResp);
     pageEditViewStore.formData.content =
       contentResp.translatedContent || pageEditViewStore.formData.content;
@@ -168,7 +164,7 @@ async function handleUploadImage(file: File): Promise<string> {
   console.log('Upload image:', file);
 
   try {
-    const resp = await fileTransferStore.uploadMediaAsset({}, file);
+    const resp = await uploadMediaAsset({}, file);
     return resp.objectName || '';
   } catch (error) {
     console.error('Image upload failed:', error);

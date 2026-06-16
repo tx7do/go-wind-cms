@@ -9,18 +9,18 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type siteservicev1_SiteSetting as SiteSetting } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  fetchListSiteSettings,
+  PaginationQuery,
+  type siteservicev1_SiteSetting as SiteSetting,
   siteSettingTypeList,
   siteSettingTypeToColor,
   siteSettingTypeToName,
-  useSiteSettingStore,
-} from '#/stores';
+} from '#/api';
+import { $t } from '#/locales';
 
 import SiteSettingDrawer from './site-setting-drawer.vue';
-
-const siteSettingStore = useSiteSettingStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -85,17 +85,15 @@ const gridOptions: VxeGridProps<SiteSetting> = {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
 
-        return await siteSettingStore.listSiteSetting(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          {
-            key: formValues.key,
-            value: formValues.value,
-          },
-          null,
-          ['-created_at'],
+        return await fetchListSiteSettings(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues: {
+              key: formValues.key,
+              value: formValues.value,
+            },
+            orderBy: ['-created_at'],
+          }),
         );
       },
     },
@@ -183,7 +181,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await siteSettingStore.deleteSiteSetting(row.id);
+    await apiClient.siteSettingService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

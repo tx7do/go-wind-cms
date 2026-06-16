@@ -60,6 +60,7 @@ export type ComponentType =
   | 'DatePicker'
   | 'DefaultButton'
   | 'Divider'
+  | 'Editor'
   | 'IconPicker'
   | 'Input'
   | 'InputNumber'
@@ -76,7 +77,6 @@ export type ComponentType =
   | 'Textarea'
   | 'TimePicker'
   | 'TreeSelect'
-  | 'Editor'
   | 'Upload'
   | BaseFormComponentType;
 

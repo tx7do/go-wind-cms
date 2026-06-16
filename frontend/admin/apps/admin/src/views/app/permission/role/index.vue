@@ -9,18 +9,18 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type permissionservicev1_Role as Role } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  fetchListRoles,
+  PaginationQuery,
+  type permissionservicev1_Role as Role,
   statusList,
   statusToColor,
   statusToName,
-  useRoleStore,
-} from '#/stores';
+} from '#/api';
+import { $t } from '#/locales';
 
 import RoleDrawer from './role-drawer.vue';
-
-const roleStore = useRoleStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -85,12 +85,11 @@ const gridOptions: VxeGridProps<Role> = {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
 
-        return await roleStore.listRole(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
+        return await fetchListRoles(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
         );
       },
     },
@@ -164,7 +163,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await roleStore.deleteRole(row.id);
+    await apiClient.roleService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

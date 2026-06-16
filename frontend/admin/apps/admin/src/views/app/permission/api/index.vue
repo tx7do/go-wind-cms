@@ -9,13 +9,16 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type permissionservicev1_Api as Api } from '#/generated/api/admin/service/v1';
+import {
+  type permissionservicev1_Api as Api,
+  apiClient,
+  fetchListApis,
+  methodList,
+  PaginationQuery,
+} from '#/api';
 import { $t } from '#/locales';
-import { methodList, useApiStore } from '#/stores';
 
 import ApiDrawer from './api-drawer.vue';
-
-const apiStore = useApiStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -80,14 +83,12 @@ const gridOptions: VxeGridProps<Api> = {
       query: async ({ page }, formValues) => {
         // console.log('query:', filters, form, formValues);
 
-        return await apiStore.listApi(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
-          null,
-          ['path'],
+        return await fetchListApis(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+            orderBy: ['path'],
+          }),
         );
       },
     },
@@ -159,7 +160,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await apiStore.deleteApi(row.id);
+    await apiClient.apiService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),
@@ -177,7 +178,7 @@ async function handleSync() {
   console.log('同步');
 
   try {
-    await apiStore.syncApis();
+    await apiClient.apiService.SyncApis({});
 
     notification.success({
       message: $t('ui.notification.sync_success'),

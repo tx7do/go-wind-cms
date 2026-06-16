@@ -9,18 +9,18 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type siteservicev1_Site as Site } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  fetchListSites,
+  PaginationQuery,
+  type siteservicev1_Site as Site,
   siteStatusList,
   siteStatusToColor,
   siteStatusToName,
-  useSiteStore,
-} from '#/stores';
+} from '#/api';
+import { $t } from '#/locales';
 
 import SiteDrawer from './site-drawer.vue';
-
-const siteStore = useSiteStore();
 
 const formOptions: VbenFormProps = {
   collapsed: false,
@@ -89,19 +89,17 @@ const gridOptions: VxeGridProps<Site> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        return await siteStore.listSite(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          {
-            name: formValues.name,
-            slug: formValues.slug,
-            domain: formValues.domain,
-            status: formValues.status,
-          },
-          null,
-          ['-created_at'],
+        return await fetchListSites(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues: {
+              name: formValues.name,
+              slug: formValues.slug,
+              domain: formValues.domain,
+              status: formValues.status,
+            },
+            orderBy: ['-created_at'],
+          }),
         );
       },
     },
@@ -209,7 +207,7 @@ function handleEdit(row: any) {
 function handleDelete(row: any) {
   (async () => {
     try {
-      await siteStore.deleteSite(row.id);
+      await apiClient.siteService.Delete({ id: row.id });
       notification.success({ message: $t('ui.notification.delete_success') });
       await gridApi.reload();
     } catch {

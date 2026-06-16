@@ -8,12 +8,11 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import {
+  apiClient,
   loginPolicyMethodList,
   loginPolicyTypeList,
-  useLoginPolicyStore,
-} from '#/stores';
-
-const loginPolicyStore = useLoginPolicyStore();
+  makeUpdateMask,
+} from '#/api';
 
 const data = ref();
 
@@ -121,8 +120,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? loginPolicyStore.createLoginPolicy(values)
-        : loginPolicyStore.updateLoginPolicy(data.value.row.id, values));
+        ? apiClient.loginPolicyService.Create({ data: { ...values } })
+        : apiClient.loginPolicyService.Update({
+            id: data.value.row.id,
+            data: { ...values },
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create

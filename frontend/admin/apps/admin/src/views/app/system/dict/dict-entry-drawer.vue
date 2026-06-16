@@ -1,9 +1,5 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type {
-  dictservicev1_DictEntryI18n as DictEntryI18n,
-  dictservicev1_DictType as DictType,
-} from '#/generated/api/admin/service/v1';
 
 import { computed, ref } from 'vue';
 
@@ -14,10 +10,17 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenForm, z } from '#/adapter/form';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { enableBoolList, useDictStore } from '#/stores';
+import {
+  apiClient,
+  type dictservicev1_DictEntryI18n as DictEntryI18n,
+  type dictservicev1_DictType as DictType,
+  enableBoolList,
+  fetchListDictTypes,
+  makeUpdateMask,
+  PaginationQuery,
+} from '#/api';
 import { useDictViewStore } from '#/views/app/system/dict/dict-view.state';
 
-const dictStore = useDictStore();
 const dictViewStore = useDictViewStore();
 
 const data = ref();
@@ -58,9 +61,9 @@ const [BaseForm, baseFormApi] = useVbenForm({
           }));
         },
         api: async () => {
-          const result = await dictStore.listDictType(undefined, {
-            is_enabled: 'true',
-          });
+          const result = await fetchListDictTypes(
+            new PaginationQuery({ formValues: { is_enabled: 'true' } }),
+          );
           return result.items;
         },
       },
@@ -223,8 +226,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? dictStore.createDictEntry(values)
-        : dictStore.updateDictEntry(data.value.row.id, values));
+        ? apiClient.dictEntryService.Create({ data: { ...values } as any })
+        : apiClient.dictEntryService.Update({
+            id: data.value.row.id,
+            data: { ...values } as any,
+            updateMask: makeUpdateMask(Object.keys(values)),
+          }));
 
       notification.success({
         message: data.value?.create
@@ -291,9 +298,11 @@ async function saveRowEvent(row: DictEntryI18n) {
 
   try {
     const values = await baseFormApi.getValues();
-    await dictStore.updateDictEntry(data.value.row.id, {
-      ...values,
-      i18n: data.value.row.i18n,
+    const finalValues = { ...values, i18n: data.value.row.i18n };
+    await apiClient.dictEntryService.Update({
+      id: data.value.row.id,
+      data: { ...finalValues } as any,
+      updateMask: makeUpdateMask(Object.keys(finalValues)),
     });
 
     notification.success({

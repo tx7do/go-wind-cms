@@ -5,10 +5,12 @@ import { StorageManager } from '@vben-core/shared/cache';
 
 import { defineStore } from 'pinia';
 
-import { useLanguageStore, useTagStore } from '#/stores';
-
-const tagStore = useTagStore();
-const languageStore = useLanguageStore();
+import {
+  apiClient,
+  fetchListLanguages,
+  makeUpdateMask,
+  PaginationQuery,
+} from '#/api';
 
 const storageManager = new StorageManager({
   prefix: 'tag-draft',
@@ -96,11 +98,8 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
      */
     async fetchLanguageList() {
       try {
-        const resp = await languageStore.listLanguage(
-          undefined,
-          {},
-          undefined,
-          ['sortOrder'],
+        const resp = await fetchListLanguages(
+          new PaginationQuery({ orderBy: ['sortOrder'] }),
         );
         this.languageOptions =
           resp.items?.map((lang) => ({
@@ -125,7 +124,9 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
 
       this.loading = true;
       try {
-        const item = await tagStore.getTag(this.tagId);
+        const item = await apiClient.tagService.Get({
+          id: this.tagId,
+        });
         if (!item) {
           throw new Error('Tag not found');
         }
@@ -277,42 +278,31 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
       }
 
       try {
+        const data = {
+          color: this.formData.color,
+          icon: this.formData.icon,
+          group: this.formData.group,
+          sortOrder: this.formData.sortOrder,
+          isFeatured: this.formData.isFeatured,
+          status: this.formData.status,
+          translations: [
+            {
+              name: this.formData.name,
+              slug: this.formData.slug,
+              description: this.formData.description,
+              coverImage: this.formData.coverImage,
+              template: this.formData.template,
+              languageCode: this.formData.lang,
+            },
+          ],
+        };
+
         await (this.isCreateMode
-          ? tagStore.createTag({
-              color: this.formData.color,
-              icon: this.formData.icon,
-              group: this.formData.group,
-              sortOrder: this.formData.sortOrder,
-              isFeatured: this.formData.isFeatured,
-              status: this.formData.status,
-              translations: [
-                {
-                  name: this.formData.name,
-                  slug: this.formData.slug,
-                  description: this.formData.description,
-                  coverImage: this.formData.coverImage,
-                  template: this.formData.template,
-                  languageCode: this.formData.lang,
-                },
-              ],
-            })
-          : tagStore.updateTag(this.formData.id || 0, {
-              color: this.formData.color,
-              icon: this.formData.icon,
-              group: this.formData.group,
-              sortOrder: this.formData.sortOrder,
-              isFeatured: this.formData.isFeatured,
-              status: this.formData.status,
-              translations: [
-                {
-                  name: this.formData.name,
-                  slug: this.formData.slug,
-                  description: this.formData.description,
-                  coverImage: this.formData.coverImage,
-                  template: this.formData.template,
-                  languageCode: this.formData.lang,
-                },
-              ],
+          ? apiClient.tagService.Create({ data })
+          : apiClient.tagService.Update({
+              id: this.formData.id || 0,
+              data,
+              updateMask: makeUpdateMask(Object.keys(data)),
             }));
 
         // Clear draft after successful publish

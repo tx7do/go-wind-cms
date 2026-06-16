@@ -35,7 +35,7 @@ catalog:
   '@stylistic/stylelint-plugin': ^3.1.1
   '@tailwindcss/nesting': 0.0.0-insiders.565cd3e
   '@tailwindcss/typography': ^0.5.15
-  '@tanstack/vue-query': ^5.62.7
+  '@tanstack/vue-query': ^5.101.0
   '@tanstack/vue-store': ^0.6.0
   '@types/archiver': ^6.0.3
   '@types/eslint': ^9.6.1
@@ -64,7 +64,7 @@ catalog:
   ant-design-vue: ^4.2.6
   archiver: ^7.0.1
   autoprefixer: ^10.4.20
-  axios: ^1.7.9
+  axios: 1.7.9
   axios-mock-adapter: ^2.1.0
   cac: ^6.7.14
   chalk: ^5.3.0
@@ -81,7 +81,7 @@ catalog:
   cz-git: ^1.11.0
   czg: ^1.11.0
   dayjs: ^1.11.19
-  defu: ^6.1.4
+  defu: 6.1.4
   depcheck: ^1.4.7
   dotenv: ^16.4.7
   echarts: ^5.5.1

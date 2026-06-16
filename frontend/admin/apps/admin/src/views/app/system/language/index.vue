@@ -9,17 +9,17 @@ import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type dictservicev1_Language } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  type dictservicev1_Language,
   enableBoolToColor,
   enableBoolToName,
-  useLanguageStore,
-} from '#/stores';
+  fetchListLanguages,
+  PaginationQuery,
+} from '#/api';
+import { $t } from '#/locales';
 
 import LanguageDrawer from './language-drawer.vue';
-
-const languageStore = useLanguageStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -71,12 +71,11 @@ const gridOptions: VxeGridProps<dictservicev1_Language> = {
       query: async ({ page }, formValues) => {
         // console.log('query:', filters, form, formValues);
 
-        return await languageStore.listLanguage(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
+        return await fetchListLanguages(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
         );
       },
     },
@@ -173,7 +172,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await languageStore.deleteLanguage(row.id);
+    await apiClient.languageService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

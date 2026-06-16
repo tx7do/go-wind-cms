@@ -10,19 +10,18 @@ import { isEqual } from '@vben/utils';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type permissionservicev1_Permission as Permission } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
 import {
+  apiClient,
+  type permissionservicev1_Permission as Permission,
   statusList,
   statusToColor,
   statusToName,
-  usePermissionStore,
-} from '#/stores';
+} from '#/api';
+import { $t } from '#/locales';
 import { usePermissionViewStore } from '#/views/app/permission/permission/permission-view.state';
 
 import PermissionDrawer from './permission-drawer.vue';
 
-const permissionStore = usePermissionStore();
 const permissionViewStore = usePermissionViewStore();
 
 const formOptions: VbenFormProps = {
@@ -176,7 +175,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await permissionStore.deletePermission(row.id);
+    await apiClient.permissionService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),
@@ -195,7 +194,7 @@ async function handleSyncPermissions() {
   console.log('同步');
 
   try {
-    await permissionStore.syncPermissions();
+    await apiClient.permissionService.SyncPermissions({});
     permissionViewStore.reloadGroupList();
 
     notification.success({

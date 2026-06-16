@@ -16,21 +16,21 @@ import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
+  apiClient,
   type taskservicev1_ControlTaskRequest_ControlType as ControlTaskRequest_ControlType,
-  type taskservicev1_Task as Task,
-} from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
-import {
   enableList,
+  fetchListTasks,
+  fetchListTaskTypeNames,
+  makeUpdateMask,
+  PaginationQuery,
+  type taskservicev1_Task as Task,
   taskTypeList,
   taskTypeToColor,
   taskTypeToName,
-  useTaskStore,
-} from '#/stores';
+} from '#/api';
+import { $t } from '#/locales';
 
 import TaskDrawer from './task-drawer.vue';
-
-const taskStore = useTaskStore();
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -63,7 +63,7 @@ const formOptions: VbenFormProps = {
         showSearch: true,
         placeholder: $t('ui.placeholder.select'),
         api: async () => {
-          const result = await taskStore.listTaskTypeName();
+          const result = await fetchListTaskTypeNames();
           return result.typeNames;
         },
         afterFetch: (data: { name: string; path: string }[]) => {
@@ -112,12 +112,11 @@ const gridOptions: VxeGridProps<Task> = {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
 
-        return await taskStore.listTask(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
+        return await fetchListTasks(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
         );
       },
     },
@@ -187,7 +186,7 @@ async function handleRestartAllTask() {
   console.log('重启所有任务');
 
   try {
-    await taskStore.restartAllTask();
+    await apiClient.taskService.RestartAllTask({});
 
     notification.success({
       message: $t('ui.notification.operation_success'),
@@ -205,7 +204,7 @@ async function handleStartAllTask() {
   console.log('启动所有任务');
 
   try {
-    await taskStore.startAllTask();
+    await apiClient.taskService.StartAllTask({});
 
     notification.success({
       message: $t('ui.notification.operation_success'),
@@ -223,7 +222,7 @@ async function handleStopAllTask() {
   console.log('停止所有任务');
 
   try {
-    await taskStore.stopAllTask();
+    await apiClient.taskService.StopAllTask({});
 
     notification.success({
       message: $t('ui.notification.operation_success'),
@@ -247,7 +246,10 @@ async function controlTask(
   controlType: ControlTaskRequest_ControlType,
 ) {
   try {
-    await taskStore.controlTask(typeName, controlType);
+    await apiClient.taskService.ControlTask({
+      typeName,
+      controlType,
+    });
 
     notification.success({
       message: $t('ui.notification.operation_success'),
@@ -284,7 +286,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await taskStore.deleteTask(row.id);
+    await apiClient.taskService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),
@@ -306,7 +308,11 @@ async function handleEnableChanged(row: any, checked: boolean) {
   row.enable = checked;
 
   try {
-    await taskStore.updateTask(row.id, { enable: row.enable });
+    await apiClient.taskService.Update({
+      id: row.id,
+      data: { enable: row.enable },
+      updateMask: makeUpdateMask(['enable']),
+    });
 
     await controlTask(row.typeName, row.enable ? 'Start' : 'Stop');
 

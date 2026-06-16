@@ -10,21 +10,21 @@ import { i18n } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type contentservicev1_Page as PageType } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
-import { router } from '#/router';
 import {
+  apiClient,
   editorTypeToColor,
   editorTypeToName,
+  fetchListPages,
   pageStatusList,
   pageStatusToColor,
   pageStatusToName,
+  type contentservicev1_Page as PageType,
   pageTypeToColor,
   pageTypeToName,
-  usePageStore,
-} from '#/stores';
-
-const pageStore = usePageStore();
+  PaginationQuery,
+} from '#/api';
+import { $t } from '#/locales';
+import { router } from '#/router';
 
 const formOptions: VbenFormProps = {
   // Default expanded
@@ -84,12 +84,11 @@ const gridOptions: VxeGridProps<PageType> = {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
 
-        return await pageStore.listPage(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
+        return await fetchListPages(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+          }),
         );
       },
     },
@@ -187,7 +186,7 @@ async function handleDelete(row: any) {
   console.log('Delete', row);
 
   try {
-    await pageStore.deletePage(row.id);
+    await apiClient.pageService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),

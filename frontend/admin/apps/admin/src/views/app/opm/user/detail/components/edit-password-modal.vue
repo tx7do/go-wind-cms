@@ -7,11 +7,9 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { useUserListStore } from '#/stores';
+import { apiClient } from '#/api';
 
 const data = ref();
-
-const userListStore = useUserListStore();
 
 const [BaseForm, baseFormApi] = useVbenForm({
   showDefaultActions: false,
@@ -75,10 +73,10 @@ const [Modal, modalApi] = useVbenModal({
     }
 
     try {
-      await userListStore.editUserPassword(
-        data.value?.userId,
-        values.new_password,
-      );
+      await apiClient.userService.EditUserPassword({
+        userId: data.value?.userId,
+        newPassword: values.new_password,
+      });
 
       setLoading(false);
       modalApi.close();

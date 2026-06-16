@@ -7,10 +7,13 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { siteStatusList, useLanguageStore, useSiteStore } from '#/stores';
-
-const siteStore = useSiteStore();
-const languageStore = useLanguageStore();
+import {
+  apiClient,
+  fetchListLanguages,
+  makeUpdateMask,
+  PaginationQuery,
+  siteStatusList,
+} from '#/api';
 
 const data = ref();
 const languageOptions = ref<{ label: string; value: string }[]>([]);
@@ -23,9 +26,9 @@ const getTitle = computed(() =>
 
 onMounted(async () => {
   try {
-    const resp = await languageStore.listLanguage(undefined, {}, undefined, [
-      'sortOrder',
-    ]);
+    const resp = await fetchListLanguages(
+      new PaginationQuery({ orderBy: ['sortOrder'] }),
+    );
     languageOptions.value =
       resp.items?.map((lang) => ({
         label: lang.nativeName || lang.languageCode || '',
@@ -149,8 +152,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
     (async () => {
       try {
         await (isCreate
-          ? siteStore.createSite(values)
-          : siteStore.updateSite(data.value.row.id, values));
+          ? apiClient.siteService.Create({ data: { ...values } as any })
+          : apiClient.siteService.Update({
+              id: data.value.row.id,
+              data: { ...values } as any,
+              updateMask: makeUpdateMask(Object.keys(values)),
+            }));
 
         notification.success({
           message: isCreate

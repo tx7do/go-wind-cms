@@ -10,21 +10,21 @@ import { i18n } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { type contentservicev1_Post as Post } from '#/generated/api/admin/service/v1';
-import { $t } from '#/locales';
-import { router } from '#/router';
 import {
+  apiClient,
   editorTypeToColor,
   editorTypeToName,
   enableBoolToColor,
   enableBoolToName,
+  fetchListPosts,
+  PaginationQuery,
+  type contentservicev1_Post as Post,
   postStatusList,
   postStatusToColor,
   postStatusToName,
-  usePostStore,
-} from '#/stores';
-
-const postStore = usePostStore();
+} from '#/api';
+import { $t } from '#/locales';
+import { router } from '#/router';
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -80,13 +80,13 @@ const gridOptions: VxeGridProps<Post> = {
       query: async ({ page }, formValues) => {
         console.log('query:', formValues);
 
-        return await postStore.listPost(
-          {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          formValues,
-          'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,code,editor_type,disallow_comment,in_progress,auto_summary,is_featured,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail',
+        return await fetchListPosts(
+          new PaginationQuery({
+            paging: { page: page.currentPage, pageSize: page.pageSize },
+            formValues,
+            fieldMask:
+              'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,code,editor_type,disallow_comment,in_progress,auto_summary,is_featured,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail',
+          }),
         );
       },
     },
@@ -187,7 +187,7 @@ async function handleDelete(row: any) {
   console.log('删除', row);
 
   try {
-    await postStore.deletePost(row.id);
+    await apiClient.postService.Delete({ id: row.id });
 
     notification.success({
       message: $t('ui.notification.delete_success'),
