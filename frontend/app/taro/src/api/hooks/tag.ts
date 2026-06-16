@@ -7,15 +7,78 @@ import {
   type contentservicev1_TagTranslation,
   type contentservicev1_ListTagResponse,
 } from '@/api/generated/app/service/v1';
-import {
-  listTagsRaw,
-  getTag,
-  createTag,
-  updateTag,
-  deleteTag,
-} from '@/api/service/tag';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 import { currentLocaleLanguageCode } from '@/i18n';
+
+// ==============================
+// 标签服务封装（直接使用 apiClient）
+// ==============================
+
+/**
+ * 兼容旧调用方式 - 通过原始参数获取标签列表
+ */
+export async function listTagsRaw(params: {
+  paging?: { page?: number; pageSize?: number };
+  formValues?: object | undefined;
+  fieldMask?: string | undefined;
+  orderBy?: string[] | undefined;
+}): Promise<contentservicev1_ListTagResponse> {
+  const locale = currentLocaleLanguageCode();
+  const formValues = {...(params.formValues || {}), locale};
+  const noPaging =
+    params.paging?.page === undefined && params.paging?.pageSize === undefined;
+
+  return apiClient.tagService.List({
+    fieldMask: params.fieldMask,
+    orderBy: params.orderBy ? JSON.stringify(params.orderBy) : undefined,
+    sorting: Array.isArray(params.orderBy)
+      ? params.orderBy.map((o) => ({field: o, direction: 'ASC'}))
+      : undefined,
+    query: JSON.stringify(formValues),
+    page: params.paging?.page,
+    pageSize: params.paging?.pageSize,
+    noPaging,
+  });
+}
+
+/**
+ * 获取单个标签
+ */
+export async function getTag(id: number) {
+  const locale = currentLocaleLanguageCode();
+  return apiClient.tagService.Get({id, locale});
+}
+
+/**
+ * 创建标签
+ */
+export async function createTag(values: Partial<contentservicev1_Tag>) {
+  return apiClient.tagService.Create({
+    data: values as contentservicev1_Tag,
+  });
+}
+
+/**
+ * 更新标签
+ */
+export async function updateTag(params: {
+  id: number;
+  values: Partial<contentservicev1_Tag>;
+}) {
+  return apiClient.tagService.Update({
+    id: params.id,
+    data: params.values as contentservicev1_Tag,
+    updateMask: Object.keys(params.values ?? {}).join(','),
+  });
+}
+
+/**
+ * 删除标签
+ */
+export async function deleteTag(id: number) {
+  return apiClient.tagService.Delete({id});
+}
 
 // ==============================
 // 标签列表 Hook

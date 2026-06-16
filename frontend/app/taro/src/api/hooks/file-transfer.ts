@@ -5,9 +5,56 @@ import {
 import {
   type storageservicev1_DownloadFileResponse,
 } from '@/api/generated/app/service/v1';
-import { downloadFile, uploadFile } from '@/api/service/file-transfer';
-import { queryClient } from '@/core';
+import { apiClient } from '@/api/client';
+import { RequestClient, queryClient } from '@/core';
 import type { AxiosProgressEvent } from 'axios';
+
+// ==============================
+// 文件传输服务封装（直接使用 apiClient）
+// ==============================
+
+/**
+ * 下载文件
+ */
+export async function downloadFile(
+  bucketName: string,
+  objectName: string,
+  preferPresignedUrl: boolean,
+) {
+  return apiClient.fileTransferService.DownloadFile({
+    storageObject: {bucketName, objectName},
+    preferPresignedUrl,
+  });
+}
+
+/**
+ * 上传文件到服务器
+ */
+export async function uploadFile(
+  bucketName: string,
+  fileDirectory: string,
+  fileData: File,
+  method: 'post' | 'put' = 'post',
+  onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
+) {
+  const storageObject = JSON.stringify({
+    bucketName,
+    fileDirectory,
+  });
+
+  await RequestClient.getInstance().upload(
+    'app/v1/file/upload',
+    {
+      file: fileData,
+      storageObject,
+      sourceFileName: fileData.name,
+      mime: fileData.type,
+      size: String(fileData.size),
+      method,
+    },
+    {onUploadProgress},
+  );
+}
 
 // ==============================
 // 下载文件 Hook

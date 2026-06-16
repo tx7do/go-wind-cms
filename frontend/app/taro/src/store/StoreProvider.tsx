@@ -18,7 +18,7 @@ import {
 } from '@/core/preferences/store';
 import {RequestClient} from '@/core/transport/rest/request-client';
 import {env} from '@/config/env';
-import {refreshToken as apiRefreshToken} from '@/api/service/auth';
+import {refreshToken as apiRefreshToken} from '@/api/hooks/auth';
 import type {IUser} from '@/store/core/user/store';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
 import Taro from "@tarojs/taro";

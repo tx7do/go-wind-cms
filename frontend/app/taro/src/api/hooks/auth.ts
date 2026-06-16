@@ -7,13 +7,41 @@ import {
   type authenticationservicev1_LoginResponse,
   type authenticationservicev1_GrantType,
 } from '@/api/generated/app/service/v1';
-import { login, logout, refreshToken } from '@/api/service/auth';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 import { encryptByAES } from '@/utils';
 import { useAccessStore } from '@/store/core/access/store';
 import { useUserStore, type IUser } from '@/store/core/user/store';
 import { useI18nRouter } from '@/i18n/helpers';
 import { fetchUserProfile } from '@/api/hooks/user-profile';
+
+// ==============================
+// 认证服务封装（直接使用 apiClient）
+// ==============================
+
+/**
+ * 登录
+ */
+async function loginRequest(request: authenticationservicev1_LoginRequest) {
+  return apiClient.authenticationService.Login(request);
+}
+
+/**
+ * 登出
+ */
+async function logoutRequest() {
+  return apiClient.authenticationService.Logout({});
+}
+
+/**
+ * 刷新 Token
+ */
+export async function refreshToken(refreshTokenValue: string) {
+  return apiClient.authenticationService.RefreshToken({
+    grant_type: 'refresh_token',
+    refresh_token: refreshTokenValue ?? '',
+  });
+}
 
 // ==============================
 // 登录 Hook
@@ -26,7 +54,7 @@ export function useLogin(
   >,
 ) {
   return useMutation({
-    mutationFn: (req) => login(req),
+    mutationFn: (req) => loginRequest(req),
     ...options,
   });
 }
@@ -37,7 +65,7 @@ export function useLogin(
 export async function fetchLogin(request: authenticationservicev1_LoginRequest) {
   return queryClient.fetchQuery({
     queryKey: ['login', request],
-    queryFn: () => login(request),
+    queryFn: () => loginRequest(request),
     retry: 0,
   });
 }
@@ -47,7 +75,7 @@ export async function fetchLogin(request: authenticationservicev1_LoginRequest) 
 // ==============================
 export function useLogout(options?: UseMutationOptions<Record<string, never>, Error, void>) {
   return useMutation({
-    mutationFn: () => logout(),
+    mutationFn: () => logoutRequest(),
     ...options,
   });
 }
@@ -58,7 +86,7 @@ export function useLogout(options?: UseMutationOptions<Record<string, never>, Er
 export async function fetchLogout() {
   return queryClient.fetchQuery({
     queryKey: ['logout'],
-    queryFn: () => logout(),
+    queryFn: () => logoutRequest(),
     retry: 0,
   });
 }

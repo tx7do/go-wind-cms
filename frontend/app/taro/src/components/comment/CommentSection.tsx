@@ -8,8 +8,7 @@ import {XIcon} from '@/plugins/xicon';
 import {AppEmpty} from '@/components/ui';
 import {Skeleton} from '@/components/ui/skeleton';
 import {Spinner} from '@/components/ui/spinner';
-import {fetchListComments} from '@/api/hooks/comment';
-import {createComment as createCommentApi} from '@/api/service/comment';
+import {fetchListComments, createComment as createCommentApi} from '@/api/hooks/comment';
 import type {
     commentservicev1_Comment,
     commentservicev1_Comment_ContentType,

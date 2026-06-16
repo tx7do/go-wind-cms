@@ -155,41 +155,26 @@ export default function Home() {
 }
 ```
 
-### 2.3 三层 API 架构
+### 2.3 两层 API 架构
 
-API 层遵循**生成层 → 服务层 → Hook 层**的三层分离架构：
+API 层通过统一的 `apiClient` 单例，简化为**生成层 → Hook 层**的两层架构：
 
 ```
 src/api/
-├── generated/          # [自动生成] protoc-gen-typescript-http 产出
-├── service/            # [服务封装] 业务逻辑、参数转换、单例管理
-├── hooks/              # [React Hook] useMutation/useQuery 封装 + 辅助函数
-└── index.ts            # 统一导出
+├── client.ts            # ApiClient 单例（适配 ClientTransport → requestApi）
+├── generated/           # [自动生成] protoc-gen-typescript-http 产出
+├── hooks/               # [业务封装 + React Hook] 直接使用 apiClient
+└── index.ts             # 统一导出
 ```
 
-**第一层 — 自动生成的客户端**（`generated/`）：由 protobuf 定义自动生成的 HTTP 客户端代码，不应手动编辑。
+**第一层 — 自动生成 + ApiClient 单例**（`generated/` + `client.ts`）：protobuf 生成的 HTTP 客户端代码 + 通过 `createApiClient(transport)` 创建的统一入口。`ApiClient` 内部按需延迟初始化各子服务（`categoryService`、`postService` 等）。
 
-**第二层 — 服务封装**（`service/`）：基于生成的客户端封装业务方法，注入 locale、分页参数等：
-
-```typescript
-// service/post.ts
-export async function listPostsRaw(params) {
-    const locale = currentLocaleLanguageCode();
-    const formValues = {...(params.formValues || {}), locale};
-    return getPostService().List({
-        query: JSON.stringify(formValues),
-        page: params.paging?.page,
-        pageSize: params.paging?.pageSize,
-    });
-}
-```
-
-**第三层 — React Hook**（`hooks/`）：封装为 `useMutation` / `useQuery` Hook 和纯函数 `fetch*` 两种形态：
+**第二层 — React Hook**（`hooks/`）：在每个 hooks 文件中封装业务逻辑（locale 注入、分页转换等），直接调用 `apiClient.xxxService`，并包装为 `useMutation` / `useQuery` Hook 和纯函数 `fetch*` 两种形态：
 
 - `useListPosts()` — 组件内使用的 React Hook
 - `fetchListPosts()` — Store / 非 React 上下文中使用的纯异步函数
 
-每层职责清晰，二开时只需关注 service 和 hooks 层。
+每层职责清晰，二开时只需关注 hooks 层。
 
 ### 2.4 RequestClient — HTTP 通信内核
 
@@ -447,10 +432,10 @@ Token 存储在 Zustand Store 中（内存态），通过 AES 加密后持久化
 
 ```
 src/
-├── api/                    # API 三层架构
+├── api/                    # API 两层架构
+│   ├── client.ts           #   ApiClient 单例
 │   ├── generated/          #   自动生成的客户端代码
-│   ├── service/            #   业务服务封装
-│   └── hooks/              #   React Hook + 辅助函数
+│   └── hooks/              #   业务封装 + React Hook + 辅助函数
 ├── app.config.ts           # Taro 页面注册 + 全局窗口配置
 ├── app.ts                  # 应用入口（StoreProvider + Layout）
 ├── assets/                 # 静态资源
@@ -541,32 +526,40 @@ TARO_ENABLE_MOCK=false                        # 是否启用 Mock
 
 以「产品」模块为例：
 
-**Step 1 — 封装服务层**
+**Step 1 — 封装 Hook 层**
 
-创建 `api/service/product.ts`：
-
-```typescript
-import { requestApi } from '@/core';
-
-export async function listProducts(params: { page?: number; pageSize?: number }) {
-    return requestApi.get('/api/v1/products', { params });
-}
-```
-
-**Step 2 — 封装 Hook 层**
-
-创建 `api/hooks/product.ts`：
+创建 `api/hooks/product.ts`（直接使用 `apiClient`）：
 
 ```typescript
 import { useMutation } from '@tanstack/react-query';
-import { listProducts } from '@/api/service/product';
+import { apiClient } from '@/api/client';
+import { queryClient } from '@/core';
 
+// 业务封装
+export async function listProductsRaw(params: {
+    paging?: { page?: number; pageSize?: number };
+}) {
+    return apiClient.productService.List({
+        page: params.paging?.page,
+        pageSize: params.paging?.pageSize,
+    });
+}
+
+// Hook
 export function useListProducts() {
-    return useMutation({ mutationFn: (params) => listProducts(params) });
+    return useMutation({ mutationFn: (params) => listProductsRaw(params) });
+}
+
+export async function fetchListProducts(params) {
+    return queryClient.fetchQuery({
+        queryKey: ['listProducts', params],
+        queryFn: () => listProductsRaw(params),
+        retry: 0,
+    });
 }
 ```
 
-**Step 3 — 创建页面**
+**Step 2 — 创建页面**
 
 创建 `src/pages/product/index.tsx`：
 
@@ -580,7 +573,7 @@ export default function ProductPage() {
 }
 ```
 
-**Step 4 — 注册页面路由**
+**Step 3 — 注册页面路由**
 
 在 `app.config.ts` 中添加：
 
@@ -603,7 +596,7 @@ customRoutes: {
 }
 ```
 
-**Step 5 — 添加导航入口**
+**Step 4 — 添加导航入口**
 
 在 `components/layout/MobileNav.tsx` 的导航菜单中添加产品页入口。
 
@@ -672,8 +665,8 @@ const darkTheme = {
 本项目前端与后端通过 REST API 通信，对接不同后端的核心修改点：
 
 1. **`config/env.ts`** / **`.env.development`** — 修改 `TARO_APP_API_BASE_URL`
-2. **`api/service/*.ts`** — 调整请求参数格式和响应结构
-3. **`api/hooks/*.ts`** — 调整类型定义
+2. **`api/client.ts`** — 调整 `ClientTransport` 适配逻辑
+3. **`api/hooks/*.ts`** — 调整业务封装参数格式和类型定义
 4. **`api/generated/`** — 如后端使用 protobuf，重新生成；否则手动定义类型
 
 认证流程可通过修改 `StoreProvider.tsx` 中 `RequestClient.init()` 的回调来自定义。
@@ -782,7 +775,7 @@ Taro 环境变量必须以 `TARO_APP_` 前缀开头（Taro 规范），通过 `c
 ## 七、技术亮点总结
 
 1. **一套代码多端运行**：Taro 框架实现 H5 + 微信/支付宝/抖音小程序的统一代码库
-2. **类型安全的 API 层**：protobuf 自动生成 → 三层架构 → 完整 TypeScript 类型贯穿
+2. **类型安全的 API 层**：protobuf 自动生成 → 统一 ApiClient → 两层架构 → 完整 TypeScript 类型贯穿
 3. **Tailwind CSS 多端适配**：通过 weapp-tailwindcss 插件实现 rem→rpx 自动转换
 4. **内联 CSS 变量主题系统**：全平台兼容的暗色/亮色/自动主题切换
 5. **Token 自动刷新**：内置请求排队机制，刷新期间不丢失任何请求

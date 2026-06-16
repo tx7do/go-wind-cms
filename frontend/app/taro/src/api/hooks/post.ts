@@ -7,16 +7,79 @@ import {
   type contentservicev1_PostTranslation,
   type contentservicev1_ListPostResponse,
 } from '@/api/generated/app/service/v1';
-import {
-  listPostsRaw,
-  getPost,
-  createPost,
-  updatePost,
-  deletePost,
-} from '@/api/service/post';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 import { currentLocaleLanguageCode } from '@/i18n';
 import placeholderImage from '@/assets/images/placeholder.png';
+
+// ==============================
+// 文章服务封装（直接使用 apiClient）
+// ==============================
+
+/**
+ * 兼容旧调用方式 - 通过原始参数获取文章列表
+ */
+export async function listPostsRaw(params: {
+  paging?: { page?: number; pageSize?: number };
+  formValues?: object | undefined;
+  fieldMask?: string | undefined;
+  orderBy?: string[] | undefined;
+}): Promise<contentservicev1_ListPostResponse> {
+  const locale = currentLocaleLanguageCode();
+  const formValues = {...(params.formValues || {}), locale};
+  const noPaging =
+    params.paging?.page === undefined && params.paging?.pageSize === undefined;
+
+  return apiClient.postService.List({
+    fieldMask: params.fieldMask,
+    orderBy: params.orderBy ? JSON.stringify(params.orderBy) : undefined,
+    sorting: Array.isArray(params.orderBy)
+      ? params.orderBy.map((o) => ({field: o, direction: 'ASC'}))
+      : undefined,
+    query: JSON.stringify(formValues),
+    page: params.paging?.page,
+    pageSize: params.paging?.pageSize,
+    noPaging,
+  });
+}
+
+/**
+ * 获取单个文章
+ */
+export async function getPost(id: number) {
+  const locale = currentLocaleLanguageCode();
+  return apiClient.postService.Get({id, locale});
+}
+
+/**
+ * 创建文章
+ */
+export async function createPost(values: Partial<contentservicev1_Post>) {
+  return apiClient.postService.Create({
+    data: values as contentservicev1_Post,
+  });
+}
+
+/**
+ * 更新文章
+ */
+export async function updatePost(params: {
+  id: number;
+  values: Partial<contentservicev1_Post>;
+}) {
+  return apiClient.postService.Update({
+    id: params.id,
+    data: params.values as contentservicev1_Post,
+    updateMask: Object.keys(params.values ?? {}).join(','),
+  });
+}
+
+/**
+ * 删除文章
+ */
+export async function deletePost(id: number) {
+  return apiClient.postService.Delete({id});
+}
 
 // ==============================
 // 文章列表 Hook
