@@ -7,7 +7,7 @@ import {useTranslations} from 'next-intl';
 import {XIcon} from '@/plugins/xicon';
 import {AppEmpty} from '@/components/ui';
 import {fetchListComments} from '@/api/hooks/comment';
-import {createComment as createCommentApi} from '@/api/service/comment';
+import {createComment as createCommentApi} from '@/api/hooks/comment';
 import type {
     commentservicev1_Comment,
     commentservicev1_Comment_ContentType, commentservicev1_ListCommentResponse,

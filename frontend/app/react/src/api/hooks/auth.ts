@@ -7,13 +7,41 @@ import {
   type authenticationservicev1_LoginResponse,
   type authenticationservicev1_GrantType,
 } from '@/api/generated/app/service/v1';
-import { login, logout, refreshToken } from '@/api/service/auth';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 import { encryptByAES } from '@/utils';
 import { useAccessStore } from '@/store/core/access/store';
 import { useUserStore, type IUser } from '@/store/core/user/store';
 import { useI18nRouter } from '@/i18n/helpers';
 import { fetchUserProfile } from '@/api/hooks/user-profile';
+
+// ==============================
+// 认证服务 API
+// ==============================
+
+/**
+ * 登录
+ */
+export async function login(request: authenticationservicev1_LoginRequest) {
+  return apiClient.authenticationService.Login(request);
+}
+
+/**
+ * 登出
+ */
+export async function logout() {
+  return apiClient.authenticationService.Logout({});
+}
+
+/**
+ * 刷新 Token
+ */
+export async function refreshToken(refreshToken: string) {
+  return apiClient.authenticationService.RefreshToken({
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken ?? '',
+  });
+}
 
 // ==============================
 // 登录 Hook

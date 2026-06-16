@@ -8,15 +8,93 @@ import {
   type contentservicev1_GetCategoryRequest,
   type contentservicev1_ListCategoryResponse,
 } from '@/api/generated/app/service/v1';
-import {
-  listCategoriesRaw,
-  getCategory,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from '@/api/service/category';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 import { currentLocaleLanguageCode } from '@/i18n';
+
+// ==============================
+// 分类服务 API
+// ==============================
+
+/**
+ * 兼容旧调用方式 - 通过原始参数获取分类列表
+ */
+export async function listCategoriesRaw(params: {
+  paging?: { page?: number; pageSize?: number };
+  formValues?: object | undefined;
+  fieldMask?: string | undefined;
+  orderBy?: string[] | undefined;
+}): Promise<contentservicev1_ListCategoryResponse> {
+  const locale = currentLocaleLanguageCode();
+  const formValues = {...(params.formValues || {}), locale};
+  const noPaging =
+    params.paging?.page === undefined && params.paging?.pageSize === undefined;
+
+  return apiClient.categoryService.List({
+    fieldMask: params.fieldMask,
+    orderBy: params.orderBy ? JSON.stringify(params.orderBy) : undefined,
+    sorting: Array.isArray(params.orderBy)
+      ? params.orderBy.map((o) => ({field: o, direction: 'ASC'}))
+      : undefined,
+    query: JSON.stringify(formValues),
+    page: params.paging?.page,
+    pageSize: params.paging?.pageSize,
+    noPaging,
+  });
+}
+
+/**
+ * 获取单个分类
+ */
+export async function getCategory(request: contentservicev1_GetCategoryRequest) {
+  const locale = currentLocaleLanguageCode();
+  return apiClient.categoryService.Get({
+    ...request,
+    locale,
+  });
+}
+
+/**
+ * 创建分类
+ */
+export async function createCategory(data: Partial<contentservicev1_Category>) {
+  return apiClient.categoryService.Create({
+    data: {
+      ...data,
+      translations: data.translations ?? [],
+      availableLanguages: data.availableLanguages ?? [],
+      customFields: data.customFields ?? [],
+      children: data.children ?? [],
+    } as contentservicev1_Category,
+  });
+}
+
+/**
+ * 更新分类
+ */
+export async function updateCategory(params: {
+  id: number;
+  values: Partial<contentservicev1_Category>;
+}) {
+  return apiClient.categoryService.Update({
+    id: params.id,
+    data: {
+      ...params.values,
+      translations: params.values.translations ?? [],
+      availableLanguages: params.values.availableLanguages ?? [],
+      customFields: params.values.customFields ?? [],
+      children: params.values.children ?? [],
+    } as contentservicev1_Category,
+    updateMask: Object.keys(params.values ?? {}).join(','),
+  });
+}
+
+/**
+ * 删除分类
+ */
+export async function deleteCategory(id: number) {
+  return apiClient.categoryService.Delete({id});
+}
 
 // ==============================
 // 分类列表 Hook（Mutation 形式，兼容旧调用）

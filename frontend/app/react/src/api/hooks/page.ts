@@ -6,14 +6,77 @@ import {
   type contentservicev1_Page,
   type contentservicev1_ListPageResponse,
 } from '@/api/generated/app/service/v1';
-import {
-  listPagesRaw,
-  getPage,
-  createPage,
-  updatePage,
-  deletePage,
-} from '@/api/service/page';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
+import { currentLocaleLanguageCode } from '@/i18n';
+
+// ==============================
+// 页面服务 API
+// ==============================
+
+/**
+ * 兼容旧调用方式 - 通过原始参数获取页面列表
+ */
+export async function listPagesRaw(params: {
+  paging?: { page?: number; pageSize?: number };
+  formValues?: object | undefined;
+  fieldMask?: string | undefined;
+  orderBy?: string[] | undefined;
+}): Promise<contentservicev1_ListPageResponse> {
+  const locale = currentLocaleLanguageCode();
+  const formValues = {...(params.formValues || {}), locale};
+  const noPaging =
+    params.paging?.page === undefined && params.paging?.pageSize === undefined;
+
+  return apiClient.pageService.List({
+    fieldMask: params.fieldMask,
+    orderBy: params.orderBy ? JSON.stringify(params.orderBy) : undefined,
+    sorting: Array.isArray(params.orderBy)
+      ? params.orderBy.map((o) => ({field: o, direction: 'ASC'}))
+      : undefined,
+    query: JSON.stringify(formValues),
+    page: params.paging?.page,
+    pageSize: params.paging?.pageSize,
+    noPaging,
+  });
+}
+
+/**
+ * 获取单个页面
+ */
+export async function getPage(id: number) {
+  return apiClient.pageService.Get({id});
+}
+
+/**
+ * 创建页面
+ */
+export async function createPage(values: Partial<contentservicev1_Page>) {
+  return apiClient.pageService.Create({
+    data: values as contentservicev1_Page,
+  });
+}
+
+/**
+ * 更新页面
+ */
+export async function updatePage(params: {
+  id: number;
+  values: Partial<contentservicev1_Page>;
+}) {
+  return apiClient.pageService.Update({
+    id: params.id,
+    data: params.values as contentservicev1_Page,
+    updateMask: Object.keys(params.values ?? {}).join(','),
+  });
+}
+
+/**
+ * 删除页面
+ */
+export async function deletePage(id: number) {
+  return apiClient.pageService.Delete({id});
+}
 
 // ==============================
 // 页面列表 Hook

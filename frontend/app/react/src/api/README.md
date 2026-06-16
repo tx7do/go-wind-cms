@@ -8,7 +8,7 @@
 
 - [架构概览](#架构概览)
 - [目录结构](#目录结构)
-- [三层架构详解](#三层架构详解)
+- [两层架构详解](#两层架构详解)
 - [使用指南](#使用指南)
 - [开发规范](#开发规范)
 - [最佳实践](#最佳实践)
@@ -18,7 +18,7 @@
 
 ## 架构概览
 
-本项目采用**三层 API 架构**，清晰分离关注点：
+本项目采用**两层 API 架构**，清晰分离关注点：
 
 ```
 ┌─────────────────────────────────────────┐
@@ -29,18 +29,12 @@
 │      API Hooks Layer (React Query层)     │
 │  - useXxx() - React Hooks               │
 │  - fetchXxx() - 非 Hook 方法             │
+│  - listXxxRaw() / getXxx() 等内联封装    │
 └──────────────┬──────────────────────────┘
-               │ 调用 Service
-┌──────────────▼──────────────────────────┐
-│      API Service Layer (服务封装层)       │
-│  - getXxxService() - Service Client     │
-│  - listXxx() / listXxxRaw() - 纯函数     │
-│  - getXxx() / createXxx() 等             │
-└──────────────┬──────────────────────────┘
-               │ 调用 Generated Code
+               │ 调用 apiClient
 ┌──────────────▼──────────────────────────┐
 │   Generated API Code (自动生成代码)       │
-│  - createXxxServiceClient()             │
+│  - apiClient (统一入口，懒加载各 Service) │
 │  - TypeScript Types                     │
 └─────────────────────────────────────────┘
 ```
@@ -51,6 +45,7 @@
 2. **单向依赖**：上层依赖下层，不反向依赖
 3. **类型安全**：全程 TypeScript 类型支持
 4. **环境隔离**：区分 React 组件环境和非 React 环境
+5. **统一入口**：所有 API 调用通过 `apiClient` 统一发起
 
 ---
 
@@ -60,30 +55,22 @@
 src/api/
 ├── generated/                    # 自动生成的 API 代码（不要手动修改）
 │   └── app/service/v1/
-│       └── index.ts              # 所有 API 类型和 Client 工厂
+│       └── index.ts              # 所有 API 类型、Service 接口与 Client 工厂
 │
-├── service/                      # Service 层 - 服务封装
-│   ├── auth.ts                   # 认证服务（login / logout / refreshToken）
-│   ├── user-profile.ts           # 用户资料服务（getMe）
-│   ├── post.ts                   # 文章管理服务
-│   ├── category.ts               # 分类管理服务
-│   ├── tag.ts                    # 标签管理服务
-│   ├── comment.ts                # 评论管理服务
-│   ├── page.ts                   # 页面管理服务
-│   ├── navigation.ts             # 导航管理服务
-│   ├── file-transfer.ts          # 文件传输服务（上传 / 下载）
-│   └── index.ts                  # 统一导出
+├── client.ts                     # apiClient 单例（统一 API 入口）
+│                                 # 通过 ClientTransport 适配 requestApi
+│                                 # 暴露懒加载的各 Service getter
 │
-├── hooks/                        # Hooks 层 - React Query 集成
-│   ├── auth.ts                   # 认证相关 Hooks + useAuth 编排 Hook
-│   ├── user-profile.ts           # 用户资料 Hooks（useQuery 形式）
-│   ├── post.ts                   # 文章管理 Hooks + 辅助函数
-│   ├── category.ts               # 分类管理 Hooks + 辅助函数
-│   ├── tag.ts                    # 标签管理 Hooks + 辅助函数
-│   ├── comment.ts                # 评论管理 Hooks
-│   ├── page.ts                   # 页面管理 Hooks
-│   ├── navigation.ts             # 导航管理 Hooks
-│   ├── file-transfer.ts          # 文件传输 Hooks（含上传进度）
+├── hooks/                        # Hooks 层 - React Query 集成 + API 封装
+│   ├── auth.ts                   # 认证：login/logout/refreshToken + useAuth
+│   ├── user-profile.ts           # 用户资料：getMe + Hooks
+│   ├── post.ts                   # 文章管理：CRUD 封装 + Hooks + 辅助函数
+│   ├── category.ts               # 分类管理：CRUD 封装 + Hooks + 辅助函数
+│   ├── tag.ts                    # 标签管理：CRUD 封装 + Hooks + 辅助函数
+│   ├── comment.ts                # 评论管理：CRUD 封装 + Hooks
+│   ├── page.ts                   # 页面管理：CRUD 封装 + Hooks
+│   ├── navigation.ts             # 导航管理：CRUD 封装 + Hooks + 辅助函数
+│   ├── file-transfer.ts          # 文件传输：downloadFile/uploadFile + Hooks
 │   └── index.ts                  # 统一导出
 │
 └── index.ts                      # API 模块总入口（重导出 generated + hooks）
@@ -91,61 +78,80 @@ src/api/
 
 ---
 
-## 三层架构详解
+## 两层架构详解
 
-### Service 层（服务封装层）
+### ApiClient 层（统一 API 入口）
 
-**位置**: `src/api/service/*.ts`
+**位置**: `src/api/client.ts`
 
 **职责**:
 
-- 封装生成的 API Client
-- 提供单例模式的 Service Client
-- 导出纯函数式的 API 调用方法
-- 自动注入 `locale` 到查询参数
-- 提供两套列表方法：`listXxx(query)` 和 `listXxxRaw(params)`
+- 将已有的 `requestApi`（基于 axios 的 RequestClient）适配为 `ClientTransport`
+- 保留 token 注入、错误拦截、自动刷新等全部已有逻辑
+- 通过 getter 懒加载各 Service Client，无需手动管理单例
 
-**标准模板**（以 `tag.ts` 为例）:
+**ApiClient 暴露的 Service**:
+
+```typescript
+// src/api/client.ts
+export const apiClient = createApiClient(transport);
+
+// 各 Service 通过 getter 懒加载：
+apiClient.authenticationService   // 认证服务
+apiClient.categoryService         // 分类服务
+apiClient.commentService          // 评论服务
+apiClient.fileTransferService     // 文件传输服务
+apiClient.navigationService       // 导航服务
+apiClient.pageService             // 页面服务
+apiClient.postService             // 文章服务
+apiClient.tagService              // 标签服务
+apiClient.userProfileService      // 用户资料服务
+```
+
+**使用方式**:
+
+```typescript
+import { apiClient } from '@/api/client';
+
+// 直接调用生成的 Service 方法
+const tag = await apiClient.tagService.Get({id: 1});
+const post = await apiClient.postService.Create({data: {...}});
+```
+
+> ⚠️ 通常不建议在组件层直接使用 `apiClient`，而应通过 Hooks 层的封装函数调用（见下文）。
+
+---
+
+### Hooks 层（React Query 集成 + API 封装）
+
+**位置**: `src/api/hooks/*.ts`
+
+**职责**:
+
+- 将 `apiClient` 的 Service 调用封装为业务友好的纯函数（自动注入 locale、处理参数转换等）
+- 将封装函数包装为 React Hooks（`useMutation` / `useQuery`）
+- 同时提供非 Hook 的 `fetchXxx()` 方法（基于 `queryClient.fetchQuery`）
+- 提供辅助函数（如 `getPostTitle`、`getCategoryName` 等翻译提取函数）
+
+**标准模板（useMutation 形式）**（以 `tag.ts` 为例）:
 
 ```typescript
 import {
+  useMutation,
+  type UseMutationOptions,
+} from '@tanstack/react-query';
+import {
   type contentservicev1_Tag,
+  type contentservicev1_TagTranslation,
   type contentservicev1_ListTagResponse,
-  createTagServiceClient,
 } from '@/api/generated/app/service/v1';
-import { type PaginationQuery, requestApi } from '@/core';
+import { apiClient } from '@/api/client';
+import { queryClient } from '@/core';
 import { currentLocaleLanguageCode } from '@/i18n';
 
-// 单例模式：缓存 Service Client 实例
-let _instance: ReturnType<typeof createTagServiceClient> | null = null;
-
-/**
- * 获取标签服务单例（延迟初始化）
- */
-export function getTagService() {
-  if (!_instance) {
-    _instance = createTagServiceClient(requestApi);
-  }
-  return _instance;
-}
-
 // ==============================
-// 标签管理 API
+// 标签服务 API（内联封装）
 // ==============================
-
-/**
- * 获取标签列表（PaginationQuery 方式）
- */
-export async function listTags(query: PaginationQuery) {
-  const params = query.toRawParams();
-  const locale = currentLocaleLanguageCode();
-  const formValues = query.formValues ? {...query.formValues, locale} : {locale};
-
-  return getTagService().List({
-    ...params,
-    query: JSON.stringify(formValues),
-  });
-}
 
 /**
  * 兼容旧调用方式 - 通过原始参数获取标签列表
@@ -161,7 +167,7 @@ export async function listTagsRaw(params: {
   const noPaging =
     params.paging?.page === undefined && params.paging?.pageSize === undefined;
 
-  return getTagService().List({
+  return apiClient.tagService.List({
     fieldMask: params.fieldMask,
     orderBy: params.orderBy ? JSON.stringify(params.orderBy) : undefined,
     sorting: Array.isArray(params.orderBy)
@@ -178,14 +184,14 @@ export async function listTagsRaw(params: {
  * 获取单个标签
  */
 export async function getTag(id: number) {
-  return getTagService().Get({id});
+  return apiClient.tagService.Get({id});
 }
 
 /**
  * 创建标签
  */
 export async function createTag(values: Partial<contentservicev1_Tag>) {
-  return getTagService().Create({
+  return apiClient.tagService.Create({
     data: values as contentservicev1_Tag,
   });
 }
@@ -197,7 +203,7 @@ export async function updateTag(params: {
   id: number;
   values: Partial<contentservicev1_Tag>;
 }) {
-  return getTagService().Update({
+  return apiClient.tagService.Update({
     id: params.id,
     data: params.values as contentservicev1_Tag,
     updateMask: Object.keys(params.values ?? {}).join(','),
@@ -208,56 +214,8 @@ export async function updateTag(params: {
  * 删除标签
  */
 export async function deleteTag(id: number) {
-  return getTagService().Delete({id});
+  return apiClient.tagService.Delete({id});
 }
-```
-
-**关键要点**:
-
-- ✅ 使用单例模式缓存 Service Client
-- ✅ 导出 `getXxxService()` 函数供外部使用
-- ✅ 导出纯函数式 API 方法（`async/await`）
-- ✅ `listXxx()` 接收 `PaginationQuery` 对象，调用 `query.toRawParams()`
-- ✅ `listXxxRaw()` 接收原始参数对象，Hooks 层主要调用此方法
-- ✅ 自动注入 `currentLocaleLanguageCode()` 到 `formValues`（文章、分类、标签、页面）
-- ✅ `updateXxx()` 接收 `{ id, values }` 参数，自动生成 `updateMask`
-- ✅ `deleteXxx()` 接收 `id: number`
-- ❌ 不要在 Service 层使用 React Hooks
-- ❌ 不要直接暴露 Service Client 给 UI 层
-
----
-
-### Hooks 层（React Query 集成层）
-
-**位置**: `src/api/hooks/*.ts`
-
-**职责**:
-
-- 将 Service 层的函数包装为 React Hooks（`useMutation` / `useQuery`）
-- 同时提供非 Hook 的 `fetchXxx()` 方法（基于 `queryClient.fetchQuery`）
-- 提供辅助函数（如 `getPostTitle`、`getCategoryName` 等翻译提取函数）
-
-**标准模板（useMutation 形式）**（以 `tag.ts` 为例）:
-
-```typescript
-import {
-  useMutation,
-  type UseMutationOptions,
-} from '@tanstack/react-query';
-import {
-  type contentservicev1_Tag,
-  type contentservicev1_TagTranslation,
-  type contentservicev1_ListTagResponse,
-} from '@/api/generated/app/service/v1';
-import {
-  listTagsRaw,
-  getTag,
-  createTag,
-  updateTag,
-  deleteTag,
-} from '@/api/service/tag';
-import { queryClient } from '@/core';
-import { currentLocaleLanguageCode } from '@/i18n';
 
 // ==============================
 // 标签列表 Hook
@@ -297,7 +255,7 @@ export async function fetchListTags(params: {
 }
 
 // ==============================
-// 获取单个标签 Hook
+// CRUD Hooks（create / update / delete）
 // ==============================
 export function useGetTag(
   options?: UseMutationOptions<contentservicev1_Tag, Error, number>,
@@ -308,20 +266,6 @@ export function useGetTag(
   });
 }
 
-// ==============================================
-// 获取单个标签 【给 Store / 外部调用】
-// ==============================================
-export async function fetchTag(id: number) {
-  return queryClient.fetchQuery({
-    queryKey: ['getTag', id],
-    queryFn: () => getTag(id),
-    retry: 0,
-  });
-}
-
-// ==============================
-// CRUD Hooks（create / update / delete）
-// ==============================
 export function useCreateTag(
   options?: UseMutationOptions<contentservicev1_Tag, Error, Partial<contentservicev1_Tag>>,
 ) {
@@ -379,8 +323,24 @@ import {
 import {
   type identityservicev1_User,
 } from '@/api/generated/app/service/v1';
-import { getMe } from '@/api/service/user-profile';
+import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
+
+// ==============================
+// 用户资料服务 API（内联封装）
+// ==============================
+
+/**
+ * 获取当前登录用户信息
+ */
+export async function getMe(): Promise<identityservicev1_User | null> {
+  try {
+    return await apiClient.userProfileService.GetUser({});
+  } catch (error) {
+    console.error('getMe failed:', error);
+    return null;
+  }
+}
 
 // ==============================
 // 获取当前用户信息 Hook（useQuery 形式）
@@ -434,14 +394,47 @@ export function useAuth() {
 }
 ```
 
+**文件上传的特殊处理**（`file-transfer.ts`）:
+
+文件上传涉及 `multipart/form-data`，不走 `apiClient` 的 `ClientTransport`，而是直接使用底层 `RequestClient`：
+
+```typescript
+import { apiClient } from '@/api/client';
+import { RequestClient, queryClient } from '@/core';
+
+// 下载走 apiClient
+export async function downloadFile(bucketName, objectName, preferPresignedUrl) {
+  return apiClient.fileTransferService.DownloadFile({
+    storageObject: {bucketName, objectName},
+    preferPresignedUrl,
+  });
+}
+
+// 上传走 RequestClient（支持 FormData + 进度回调）
+export async function uploadFile(bucketName, fileDirectory, fileData, method, onUploadProgress) {
+  await RequestClient.getInstance().upload('app/v1/file/upload', {
+    file: fileData,
+    storageObject: JSON.stringify({bucketName, fileDirectory}),
+    sourceFileName: fileData.name,
+    mime: fileData.type,
+    size: String(fileData.size),
+    method,
+  }, {onUploadProgress});
+}
+```
+
 **关键要点**:
 
+- ✅ API 封装函数（`listXxxRaw`、`getXxx`、`createXxx` 等）直接定义在 hooks 文件中
+- ✅ 所有 API 调用通过 `apiClient.xxxService.Method()` 发起
+- ✅ `listXxxRaw()` 接收原始参数对象，自动注入 `currentLocaleLanguageCode()` 到 `formValues`
 - ✅ 列表 Hook 统一使用 `useMutation`（非 `useQuery`），参数类型为原始对象
 - ✅ `user-profile` 使用 `useQuery`（适合"获取单条数据并缓存"的场景）
 - ✅ `useMutation` 的参数类型是 `{ paging?, formValues?, fieldMask?, orderBy? }`
 - ✅ `fetchXxx()` 方法基于 `queryClient.fetchQuery`，`retry: 0`
 - ✅ `useAuth()` 是编排 Hook，协调 `fetchLogin` + `fetchUserProfile` + Store
-- ❌ Hooks 层不直接创建 Service Client
+- ✅ 文件上传走 `RequestClient`（支持 FormData），不走 `apiClient`
+- ❌ 不要再创建独立的 Service 文件，API 封装直接内联到 hooks
 - ❌ Hooks 层不直接使用 `requestApi`
 
 ---
@@ -454,7 +447,8 @@ export function useAuth() {
 
 - ⚠️ **此目录由工具自动生成，不要手动修改**
 - 包含所有 API 的 TypeScript 类型定义
-- 包含所有 Service Client 的工厂函数
+- 包含所有 Service 接口定义和 Client 工厂函数
+- 包含 `ApiClient` 聚合类（通过 `createApiClient` 创建）
 - 当后端 API 变更时，重新生成此目录
 
 **主要导出**:
@@ -467,12 +461,24 @@ export type contentservicev1_Tag = { ... }
 export type identityservicev1_User = { ... }
 export type authenticationservicev1_LoginRequest = { ... }
 
+// Service 接口
+export interface TagService { ... }
+export interface PostService { ... }
+export interface CategoryService { ... }
+export interface AuthenticationService { ... }
+
 // Service Client 工厂
-export function createPostServiceClient(requestApi: RequestApi): PostServiceClient
-export function createCategoryServiceClient(requestApi: RequestApi): CategoryServiceClient
-export function createTagServiceClient(requestApi: RequestApi): TagServiceClient
-export function createAuthenticationServiceClient(requestApi: RequestApi): AuthenticationServiceClient
+export function createTagServiceClient(transport: ClientTransport): TagService
+export function createPostServiceClient(transport: ClientTransport): PostService
 // ... 更多 Service Client
+
+// ApiClient 聚合类（统一入口）
+export class ApiClient {
+  get tagService(): TagService { ... }
+  get postService(): PostService { ... }
+  // ... 更多 Service getter
+}
+export function createApiClient(transport: ClientTransport): ApiClient
 ```
 
 ---
@@ -600,27 +606,16 @@ function UploadButton() {
 
 ### 1. 命名规范
 
-#### Service 层命名
+#### Hooks 层命名（含内联 API 封装）
 
 ```typescript
-// Service Client 获取函数
-export function getTagService() { ... }
-export function getPostService() { ... }
-
-// 列表方法（两套）
-export async function listTags(query: PaginationQuery) { ... }    // PaginationQuery 方式
-export async function listTagsRaw(params: RawParams) { ... }      // 原始参数方式（Hooks 主要调用）
-
-// 单个 / CRUD
+// 内联 API 封装函数（直接在 hooks 文件中定义）
+export async function listTagsRaw(params: RawParams) { ... }      // 原始参数方式
 export async function getTag(id: number) { ... }
 export async function createTag(values: Partial<T>) { ... }
 export async function updateTag(params: { id: number; values: Partial<T> }) { ... }
 export async function deleteTag(id: number) { ... }
-```
 
-#### Hooks 层命名
-
-```typescript
 // useMutation Hooks
 export function useListTags(options?) { ... }
 export function useGetTag(options?) { ... }
@@ -679,9 +674,9 @@ export function useGetTag(options?) { ... }
 ### 3. 错误处理规范
 
 ```typescript
-// ✅ Service 层：让错误自然抛出
+// ✅ API 封装：让错误自然抛出（特殊场景如 getMe 可 try/catch 返回 null）
 export async function getTag(id: number) {
-  return getTagService().Get({ id });  // 错误会向上传播
+  return apiClient.tagService.Get({ id });  // 错误会向上传播
 }
 
 // ✅ React 组件：在 useEffect 中 try/catch
@@ -711,11 +706,6 @@ try {
 ### 4. 注释规范
 
 ```typescript
-/**
- * 获取标签服务单例（延迟初始化）
- */
-export function getTagService() { ... }
-
 /**
  * 兼容旧调用方式 - 通过原始参数获取标签列表
  */
@@ -800,7 +790,7 @@ const changeLocale = (targetLocale: string) => {
    ```typescript
    export async function listTagsRaw(params) {
      console.log('[API] listTagsRaw called with:', params);
-     const result = await getTagService().List({...});
+     const result = await apiClient.tagService.List({...});
      console.log('[API] listTagsRaw result:', result);
      return result;
    }
@@ -810,23 +800,35 @@ const changeLocale = (targetLocale: string) => {
 
 ## 常见问题
 
-### Q1: 为什么需要 Service 层和 Hooks 层？
+### Q1: 为什么不再需要独立的 Service 层？
 
 **A**:
 
-- **Service 层**：封装纯函数式 API 调用，自动注入 locale，处理参数转换，可在任何环境中使用
-- **Hooks 层**：集成 React Query，提供声明式数据获取、缓存、重试等功能
-- **分离好处**：职责清晰、易于测试、可复用性强
+项目原先采用三层架构（Generated → Service → Hooks），其中 Service 层负责创建 Service Client 单例并封装纯函数。现在引入了 `apiClient`（`src/api/client.ts`），它通过 getter 懒加载自动管理所有 Service Client 实例，因此 Service 层的单例管理职责已由 `apiClient` 接管。原先的纯函数封装直接内联到各 hooks 文件中，消除了中间层，减少了文件数量和 import 链路，同时保持了完全相同的功能。
 
-### Q2: `listXxx()` 和 `listXxxRaw()` 的区别？
+### Q2: `apiClient` 是如何工作的？
 
 **A**:
 
-- **`listXxx(query: PaginationQuery)`**：接收 `PaginationQuery` 对象，通过 `query.toRawParams()` 转换参数
-- **`listXxxRaw(params: RawParams)`**：接收原始参数对象 `{ paging?, formValues?, fieldMask?, orderBy? }`，**Hooks 层主要调用此方法**
-- 两者都自动注入 `currentLocaleLanguageCode()` 到 `formValues`（文章、分类、标签、页面模块）
+`apiClient` 是通过 `createApiClient(transport)` 创建的单例，其中 `transport` 将已有的 `requestApi`（基于 axios 的 RequestClient）适配为 `ClientTransport` 接口。`ApiClient` 类为每个服务提供了 getter（如 `get tagService()`），首次访问时通过 `??=` 运算符懒加载创建 Service Client 实例。这样既保留了 token 注入、错误拦截、自动刷新等全部已有逻辑，又无需手动管理单例。
 
-### Q3: 什么时候用 `useMutation`，什么时候用 `useQuery`？
+### Q3: 文件上传为什么不走 `apiClient`？
+
+**A**:
+
+文件上传涉及 `multipart/form-data` 和上传进度回调，而 `apiClient` 的 `ClientTransport` 接口仅支持 JSON body 的 unary 调用。因此上传逻辑直接使用底层 `RequestClient.getInstance().upload()`，它原生支持 FormData 和 `onUploadProgress`。下载则走 `apiClient.fileTransferService.DownloadFile()`（GET 请求，无此限制）。
+
+### Q4: `listXxxRaw()` 方法做了什么？
+
+**A**:
+
+`listXxxRaw(params)` 接收原始参数对象 `{ paging?, formValues?, fieldMask?, orderBy? }`，**Hooks 层主要调用此方法**。它会：
+- 自动注入 `currentLocaleLanguageCode()` 到 `formValues`（文章、分类、标签、页面、导航模块）
+- 将 `orderBy` 数组转换为 `sorting` 对象和 `orderBy` 字符串
+- 将 `formValues` 序列化为 JSON 字符串
+- 计算 `noPaging` 标志
+
+### Q5: 什么时候用 `useMutation`，什么时候用 `useQuery`？
 
 **A**:
 
@@ -834,7 +836,7 @@ const changeLocale = (targetLocale: string) => {
 - **`useQuery`**：适合"自动获取并缓存"的场景，目前仅 `useGetUserProfile` 使用
 - 列表查询统一使用 `useMutation`（非 `useQuery`），在 `useEffect` 中通过 `fetchXxx()` 手动触发
 
-### Q4: 如何添加新的 API 模块？
+### Q6: 如何添加新的 API 模块？
 
 **A**: 遵循以下步骤：
 
@@ -843,39 +845,73 @@ const changeLocale = (targetLocale: string) => {
    npm run generate:api
    ```
 
-2. **创建 Service 文件** (`src/api/service/bookmark.ts`)
+2. **创建 Hooks 文件** (`src/api/hooks/bookmark.ts`)
    ```typescript
-   import { createBookmarkServiceClient } from '@/api/generated/app/service/v1';
-   import { type PaginationQuery, requestApi } from '@/core';
+   import {
+     useMutation,
+     type UseMutationOptions,
+   } from '@tanstack/react-query';
+   import {
+     type contentservicev1_Bookmark,
+     type contentservicev1_ListBookmarkResponse,
+   } from '@/api/generated/app/service/v1';
+   import { apiClient } from '@/api/client';
+   import { queryClient } from '@/core';
    import { currentLocaleLanguageCode } from '@/i18n';
 
-   let _instance: ReturnType<typeof createBookmarkServiceClient> | null = null;
-
-   export function getBookmarkService() {
-     if (!_instance) {
-       _instance = createBookmarkServiceClient(requestApi);
-     }
-     return _instance;
-   }
+   // ==============================
+   // 书签服务 API（内联封装）
+   // ==============================
 
    export async function listBookmarksRaw(params: {
      paging?: { page?: number; pageSize?: number };
      formValues?: object | undefined;
      fieldMask?: string | undefined;
      orderBy?: string[] | undefined;
-   }) { ... }
+   }): Promise<contentservicev1_ListBookmarkResponse> {
+     const locale = currentLocaleLanguageCode();
+     const formValues = {...(params.formValues || {}), locale};
+     const noPaging =
+       params.paging?.page === undefined && params.paging?.pageSize === undefined;
 
-   export async function getBookmark(id: number) { ... }
-   export async function createBookmark(values: Partial<T>) { ... }
-   export async function updateBookmark(params: { id: number; values: Partial<T> }) { ... }
-   export async function deleteBookmark(id: number) { ... }
-   ```
+     return apiClient.bookmarkService.List({
+       fieldMask: params.fieldMask,
+       orderBy: params.orderBy ? JSON.stringify(params.orderBy) : undefined,
+       sorting: Array.isArray(params.orderBy)
+         ? params.orderBy.map((o) => ({field: o, direction: 'ASC'}))
+         : undefined,
+       query: JSON.stringify(formValues),
+       page: params.paging?.page,
+       pageSize: params.paging?.pageSize,
+       noPaging,
+     });
+   }
 
-3. **创建 Hooks 文件** (`src/api/hooks/bookmark.ts`)
-   ```typescript
-   import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
-   import { listBookmarksRaw, getBookmark, createBookmark, updateBookmark, deleteBookmark } from '@/api/service/bookmark';
-   import { queryClient } from '@/core';
+   export async function getBookmark(id: number) {
+     return apiClient.bookmarkService.Get({id});
+   }
+
+   export async function createBookmark(values: Partial<contentservicev1_Bookmark>) {
+     return apiClient.bookmarkService.Create({
+       data: values as contentservicev1_Bookmark,
+     });
+   }
+
+   export async function updateBookmark(params: { id: number; values: Partial<contentservicev1_Bookmark> }) {
+     return apiClient.bookmarkService.Update({
+       id: params.id,
+       data: params.values as contentservicev1_Bookmark,
+       updateMask: Object.keys(params.values ?? {}).join(','),
+     });
+   }
+
+   export async function deleteBookmark(id: number) {
+     return apiClient.bookmarkService.Delete({id});
+   }
+
+   // ==============================
+   // Hooks
+   // ==============================
 
    export function useListBookmarks(options?) {
      return useMutation({ mutationFn: (params) => listBookmarksRaw(params), ...options });
@@ -891,12 +927,12 @@ const changeLocale = (targetLocale: string) => {
    // ... useGetBookmark, useCreateBookmark, useUpdateBookmark, useDeleteBookmark
    ```
 
-4. **导出模块** (`src/api/service/index.ts` 和 `src/api/hooks/index.ts`)
+3. **导出模块** (`src/api/hooks/index.ts`)
    ```typescript
    export * from './bookmark';
    ```
 
-### Q5: 为什么列表查询用 `useMutation` 而不是 `useQuery`？
+### Q7: 为什么列表查询用 `useMutation` 而不是 `useQuery`？
 
 **A**: 这是项目早期的设计选择，主要原因：
 
@@ -920,3 +956,4 @@ const changeLocale = (targetLocale: string) => {
 - Core 模块：`src/core/`（包含 QueryClient、RequestClient、PaginationQuery）
 - 状态管理：`src/store/`（Zustand stores：access、user、loading、preferences）
 - 主题与偏好：`src/core/preferences/`（语言、主题、样式偏好管理）
+- API 入口：`src/api/client.ts`（`apiClient` 单例，统一 API 调用入口）
