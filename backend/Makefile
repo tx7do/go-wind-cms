@@ -20,9 +20,9 @@ SRCS_MK		:= $(foreach dir, app, $(wildcard $(dir)/*/*/Makefile))
 
 # show environment variables
 env:
-	@echo "CURRENT_DIR: $(CURRENT_DIR)"
-	@echo "ROOT_DIR: $(ROOT_DIR)"
-	@echo "SRCS_MK: $(SRCS_MK)"
+	echo "CURRENT_DIR: $(CURRENT_DIR)"
+	echo "ROOT_DIR: $(ROOT_DIR)"
+	echo "SRCS_MK: $(SRCS_MK)"
 
 # initialize develop environment
 init: plugin cli
@@ -30,47 +30,47 @@ init: plugin cli
 # install protoc plugin
 plugin:
 	# go
-	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	@go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
-	@go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
-	@go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
-	@go install github.com/envoyproxy/protoc-gen-validate@latest
-	@go install github.com/menta2k/protoc-gen-redact/v3@latest
-	@go install github.com/tx7do/go-wind-toolkit/protoc-gen-typescript-http@latest
-	@go install github.com/tx7do/go-wind-toolkit/protoc-gen-dart-http@latest
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
+	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
+	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
+	go install github.com/envoyproxy/protoc-gen-validate@latest
+	go install github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact@latest
+	go install github.com/tx7do/go-wind-toolkit/protoc-gen-typescript-http@latest
+	go install github.com/tx7do/go-wind-toolkit/protoc-gen-dart-http@latest
 
 # install cli tools
 cli:
-	@go install github.com/google/gnostic@latest
-	@go install github.com/bufbuild/buf/cmd/buf@latest
-	@go install entgo.io/ent/cmd/ent@latest
-	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	@go install github.com/tx7do/go-wind-toolkit/gowind/cmd/gow@latest
+	go install github.com/google/gnostic@latest
+	go install github.com/bufbuild/buf/cmd/buf@latest
+	go install entgo.io/ent/cmd/ent@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/tx7do/go-wind-toolkit/gowind/cmd/gow@latest
 
 # download dependencies of module
 dep:
-	@go mod download
+	go mod download
 
 # create vendor
 vendor:
-	@go mod vendor
+	go mod vendor
 
 # run tests
 test:
-	@go test ./...
+	go test ./...
 
 # run coverage tests
 cover:
-	@go test -v ./... -coverprofile=coverage.out
+	go test -v ./... -coverprofile=coverage.out
 
 # run static analysis
 vet:
-	@go vet
+	go vet
 
 # run lint
 lint:
-	@golangci-lint run
+	golangci-lint run
 
 # generate wire code
 wire:
@@ -165,22 +165,22 @@ docker:
 
 # install development environment (Unix/Linux/macOS)
 install-dev:
-	@echo "Installing development environment..."
+	echo "Installing development environment..."
 	@bash scripts/env/install_unix_dev.sh
 
 # install production environment (Unix/Linux/macOS)
 install-prod:
-	@echo "Installing production environment..."
+	echo "Installing production environment..."
 	@bash scripts/env/install_unix_prod.sh
 
 # install golang only
 install-golang:
-	@echo "Installing Golang..."
+	echo "Installing Golang..."
 	@bash scripts/env/install_golang.sh
 
 # start all services with docker compose (application + dependencies)
 docker-up:
-	@echo "Starting all services (application + dependencies)..."
+	echo "Starting all services (application + dependencies)..."
 ifdef IS_WINDOWS
 	@powershell -ExecutionPolicy Bypass -File scripts/docker/full_deploy.ps1
 else
@@ -189,7 +189,7 @@ endif
 
 # start only dependency services with docker compose (without application)
 docker-libs:
-	@echo "Starting dependency services only..."
+	echo "Starting dependency services only..."
 ifdef IS_WINDOWS
 	@powershell -ExecutionPolicy Bypass -File scripts/docker/libs_only.ps1
 else
@@ -198,21 +198,21 @@ endif
 
 # stop all docker compose services
 docker-down:
-	@echo "Stopping all services..."
+	echo "Stopping all services..."
 	@docker compose down
 
 # deploy services with PM2
 pm2-deploy:
-	@echo "Deploying services with PM2..."
+	echo "Deploying services with PM2..."
 	@bash scripts/deploy/pm2_service.sh
 
 # show help
 help:
-	@echo ""
-	@echo "Usage:"
-	@echo " make [target]"
-	@echo ""
-	@echo "Targets:"
+	echo ""
+	echo "Usage:"
+	echo " make [target]"
+	echo ""
+	echo "Targets:"
 	@awk '/^[a-zA-Z\-_0-9]+:/ { \
 	helpMessage = match(lastLine, /^# (.*)/); \
 		if (helpMessage) { \
