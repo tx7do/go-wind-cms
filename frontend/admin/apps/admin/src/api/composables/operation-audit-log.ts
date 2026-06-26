@@ -40,6 +40,7 @@ export async function fetchListOperationAuditLogs(params: PaginationQuery) {
     queryKey: ['listOperationAuditLogs', params],
     queryFn: () =>
       apiClient.operationAuditLogService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

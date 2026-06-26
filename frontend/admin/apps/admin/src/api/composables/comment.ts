@@ -39,6 +39,7 @@ export async function fetchListComments(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listComments', params],
     queryFn: () => apiClient.commentService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

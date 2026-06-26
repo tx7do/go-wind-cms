@@ -39,6 +39,7 @@ export async function fetchListTags(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listTags', params],
     queryFn: () => apiClient.tagService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

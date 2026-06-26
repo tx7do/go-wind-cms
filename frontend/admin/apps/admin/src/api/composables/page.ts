@@ -39,6 +39,7 @@ export async function fetchListPages(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listPages', params],
     queryFn: () => apiClient.pageService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

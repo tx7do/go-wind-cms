@@ -39,6 +39,7 @@ export async function fetchListCategories(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listCategories', params],
     queryFn: () => apiClient.categoryService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

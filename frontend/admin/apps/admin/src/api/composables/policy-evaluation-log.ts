@@ -34,6 +34,7 @@ export async function fetchListPolicyEvaluationLogs(params: PaginationQuery) {
     queryKey: ['listPolicyEvaluationLogs', params],
     queryFn: () =>
       apiClient.policyEvaluationLogService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

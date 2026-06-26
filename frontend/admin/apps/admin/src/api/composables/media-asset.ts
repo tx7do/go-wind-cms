@@ -39,6 +39,7 @@ export async function fetchListMediaAssets(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listMediaAssets', params],
     queryFn: () => apiClient.mediaAssetService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

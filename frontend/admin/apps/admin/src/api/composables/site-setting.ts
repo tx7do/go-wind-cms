@@ -40,6 +40,7 @@ export async function fetchListSiteSettings(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listSiteSettings', params],
     queryFn: () => apiClient.siteSettingService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

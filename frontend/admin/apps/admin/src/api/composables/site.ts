@@ -39,6 +39,7 @@ export async function fetchListSites(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listSites', params],
     queryFn: () => apiClient.siteService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

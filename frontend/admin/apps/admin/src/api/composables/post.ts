@@ -41,6 +41,7 @@ export async function fetchListPosts(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listPosts', params],
     queryFn: () => apiClient.postService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

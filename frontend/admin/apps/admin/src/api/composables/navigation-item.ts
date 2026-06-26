@@ -39,6 +39,7 @@ export async function fetchListNavigationItems(params: PaginationQuery) {
   return queryClient.fetchQuery({
     queryKey: ['listNavigationItems', params],
     queryFn: () => apiClient.navigationItemService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }

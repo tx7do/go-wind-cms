@@ -41,6 +41,7 @@ export async function fetchListDataAccessAuditLogs(params: PaginationQuery) {
     queryKey: ['listDataAccessAuditLogs', params],
     queryFn: () =>
       apiClient.dataAccessAuditLogService.List(params.toRawParams()),
+    staleTime: 0,
     retry: 0,
   });
 }
