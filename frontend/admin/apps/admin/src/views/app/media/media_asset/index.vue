@@ -1,12 +1,17 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, type VbenFormProps } from '@vben/common-ui';
+import { h } from 'vue';
 
+import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
+import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
+
+import { notification, Upload } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
+  apiClient,
   fetchListMediaAssets,
   type mediaservicev1_MediaAsset as MediaAsset,
   mediaAssetAssetTypeList,
@@ -16,9 +21,12 @@ import {
   mediaAssetProcessingStatusToColor,
   mediaAssetProcessingStatusToName,
   PaginationQuery,
+  uploadMediaAsset,
 } from '#/api';
 import { $t } from '#/locales';
 import { formatBytes } from '#/utils';
+
+import MediaAssetDrawer from './media-asset-drawer.vue';
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -129,8 +137,6 @@ const gridOptions: VxeGridProps<MediaAsset> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        console.log('query:', formValues);
-
         let startTime: any;
         let endTime: any;
         if (
@@ -143,7 +149,6 @@ const gridOptions: VxeGridProps<MediaAsset> = {
           endTime = dayjs(formValues.createdAt[1]).format(
             'YYYY-MM-DD HH:mm:ss',
           );
-          console.log(startTime, endTime);
         }
 
         return await fetchListMediaAssets(
@@ -187,7 +192,6 @@ const gridOptions: VxeGridProps<MediaAsset> = {
     { title: $t('page.mediaAsset.storagePath'), field: 'storagePath' },
     { title: $t('page.mediaAsset.title'), field: 'title' },
     { title: $t('page.mediaAsset.caption'), field: 'caption' },
-    { title: $t('page.mediaAsset.authorId'), field: 'authorId' },
     {
       title: $t('page.mediaAsset.processingStatus'),
       field: 'processingStatus',
@@ -197,15 +201,110 @@ const gridOptions: VxeGridProps<MediaAsset> = {
       title: $t('page.mediaAsset.referenceCount'),
       field: 'referenceCount',
     },
+    {
+      title: $t('ui.table.action'),
+      field: 'action',
+      fixed: 'right',
+      slots: { default: 'action' },
+      width: 110,
+    },
   ],
 };
 
-const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
+
+const [Drawer, drawerApi] = useVbenDrawer({
+  // 连接抽离的组件
+  connectedComponent: MediaAssetDrawer,
+
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      // 关闭时，重载表格数据
+      gridApi.reload();
+    }
+  },
+});
+
+/* 打开模态窗口 */
+function openDrawer(create: boolean, row?: any) {
+  drawerApi.setData({
+    create,
+    row,
+  });
+
+  drawerApi.open();
+}
+
+/* 编辑 */
+function handleEdit(row: any) {
+  openDrawer(false, row);
+}
+
+/* 删除 */
+async function handleDelete(row: any) {
+  try {
+    await apiClient.mediaAssetService.Delete({ id: row.id });
+
+    notification.success({
+      message: $t('ui.notification.delete_success'),
+    });
+
+    await gridApi.reload();
+  } catch {
+    notification.error({
+      message: $t('ui.notification.delete_failed'),
+    });
+  }
+}
+
+/* 上传媒体资源 */
+async function handleUploadMediaAsset(options: any) {
+  const { file, onSuccess, onError } = options;
+
+  try {
+    await uploadMediaAsset(
+      {
+        fileDirectory: 'media',
+        title: file.name,
+      },
+      file,
+    );
+
+    onSuccess?.({}, file);
+
+    await gridApi.reload();
+
+    notification.success({
+      message: $t('ui.notification.upload_success'),
+    });
+  } catch (error) {
+    console.error('上传媒体资源失败', error);
+
+    try {
+      onError?.(error, file);
+    } catch {}
+
+    notification.error({
+      message: $t('ui.notification.upload_failed'),
+    });
+  }
+}
 </script>
 
 <template>
   <Page auto-content-height>
     <Grid :table-title="$t('menu.media.mediaAsset')">
+      <template #toolbar-tools>
+        <Upload
+          :multiple="false"
+          :custom-request="handleUploadMediaAsset"
+          :show-upload-list="false"
+        >
+          <a-button class="mr-2" type="primary">
+            {{ $t('ui.button.upload') }}
+          </a-button>
+        </Upload>
+      </template>
       <template #type="{ row }">
         <a-tag :color="mediaAssetAssetTypeToColor(row.type)">
           {{ mediaAssetAssetTypeToName(row.type) }}
@@ -219,6 +318,26 @@ const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
       <template #size="{ row }">
         {{ formatBytes(row.size) }}
       </template>
+      <template #action="{ row }">
+        <a-button
+          type="link"
+          :icon="h(LucideFilePenLine)"
+          @click.stop="handleEdit(row)"
+        />
+        <a-popconfirm
+          :cancel-text="$t('ui.button.cancel')"
+          :ok-text="$t('ui.button.ok')"
+          :title="
+            $t('ui.text.do_you_want_delete', {
+              moduleName: $t('page.mediaAsset.moduleName'),
+            })
+          "
+          @confirm="handleDelete(row)"
+        >
+          <a-button danger type="link" :icon="h(LucideTrash2)" />
+        </a-popconfirm>
+      </template>
     </Grid>
+    <Drawer />
   </Page>
 </template>
