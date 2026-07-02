@@ -217,6 +217,14 @@ async function init() {
     });
   }
 
+  try {
+    await postEditViewStore.fetchCategoryList();
+  } catch {
+    notification.error({
+      message: $t('page.post.validation.loadCategoryFailed'),
+    });
+  }
+
   if (isCreateMode.value) {
     postEditViewStore.initCreateMode(initLanguage.value);
   } else if (isEditMode.value) {
@@ -296,6 +304,25 @@ init();
             v-for="option in editorTypeOptions"
             :key="option.value"
             :value="option.value"
+          >
+            {{ option.label }}
+          </a-select-option>
+        </a-select>
+        <a-select
+          v-model:value="postEditViewStore.formData.categoryIds"
+          mode="multiple"
+          :placeholder="$t('page.post.placeholder.category')"
+          :max-tag-count="1"
+          allow-clear
+          show-search
+          option-filter-prop="label"
+          style="min-width: 200px"
+        >
+          <a-select-option
+            v-for="option in postEditViewStore.categoryOptions"
+            :key="option.value"
+            :value="option.value"
+            :label="option.label"
           >
             {{ option.label }}
           </a-select-option>

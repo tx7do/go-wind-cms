@@ -589,7 +589,8 @@
       "content": "请输入帖子内容",
       "untitled": "【无标题】",
       "hasTranslation": "已有翻译",
-      "noTranslation": "未翻译"
+      "noTranslation": "未翻译",
+      "category": "请选择分类"
     },
     "validation": {
       "titleRequired": "帖子标题不能为空",
@@ -610,7 +611,8 @@
       "saveDraftSuccess": "保存草稿成功",
       "saveDraftFailed": "保存草稿失败，请稍后再试",
       "translationNotExists": "翻译内容不存在，请先进行翻译",
-      "translationExists": "翻译内容已存在，是否覆盖原有翻译？"
+      "translationExists": "翻译内容已存在，是否覆盖原有翻译？",
+      "loadCategoryFailed": "加载分类列表失败，请稍后再试"
     }
   },
   "tag": {

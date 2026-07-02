@@ -570,7 +570,8 @@
       "content": "Please enter post content",
       "untitled": "[Untitled]",
       "hasTranslation": "Translation Available",
-      "noTranslation": "No Translation"
+      "noTranslation": "No Translation",
+      "category": "Please select category"
     },
     "validation": {
       "titleRequired": "Post title is required",
@@ -592,7 +593,8 @@
       "saveDraftFailed": "Failed to save draft, please try again later",
       "translationNotExists": "Translation does not exist, please translate first",
       "translationExists": "Translation already exists, do you want to overwrite it?",
-      "loadLanguageFailed": "Failed to load language list, please try again later"
+      "loadLanguageFailed": "Failed to load language list, please try again later",
+      "loadCategoryFailed": "Failed to load category list, please try again later"
     }
   },
   "tag": {

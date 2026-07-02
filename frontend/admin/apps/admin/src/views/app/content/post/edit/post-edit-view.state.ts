@@ -1,4 +1,4 @@
-import type { PostEditProps } from './types';
+import type { CategoryOption, PostEditProps } from './types';
 
 import { $t } from '@vben/locales';
 import { StorageManager } from '@vben-core/shared/cache';
@@ -10,6 +10,7 @@ import {
   apiClient,
   convertToEditorType,
   convertToUIEditorType,
+  fetchListCategories,
   fetchListLanguages,
   makeUpdateMask,
   PaginationQuery,
@@ -41,6 +42,7 @@ interface PostEditViewState {
   needTranslate: boolean; // 是否需要翻译
   formData: PostEditProps; // 表单数据
   languageOptions: { hasTranslation?: boolean; label: string; value: string }[]; // 语言选项列表（带翻译标记）
+  categoryOptions: CategoryOption[]; // 分类选项列表（按当前语言展示名称）
   isCreateMode: boolean; // 是否为创建模式
   postId: null | number; // 文章ID（编辑模式下）
 }
@@ -61,6 +63,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
       editorType: EditorType.MARKDOWN,
     },
     languageOptions: [],
+    categoryOptions: [],
   }),
 
   actions: {
@@ -109,6 +112,36 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
       } catch (error) {
         console.error('获取语言列表失败:', error);
         this.languageOptions = [];
+        throw error;
+      }
+    },
+
+    /**
+     * 加载分类列表（按当前编辑语言展示分类名称）
+     */
+    async fetchCategoryList() {
+      try {
+        const resp = await fetchListCategories(new PaginationQuery());
+        this.categoryOptions =
+          resp.items
+            ?.filter((category) => category.id !== undefined)
+            .map((category) => {
+              const id = category.id as number;
+              // 优先匹配当前语言的翻译，回退到首个可用翻译
+              const translations = category.translations || [];
+              const langItem =
+                translations.find(
+                  (t) => t.languageCode === this.formData.lang,
+                ) || translations[0];
+              return {
+                label: langItem?.name || `#${id}`,
+                value: id,
+              };
+            }) || [];
+        return this.categoryOptions;
+      } catch (error) {
+        console.error('获取分类列表失败:', error);
+        this.categoryOptions = [];
         throw error;
       }
     },
@@ -165,6 +198,10 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
         this.formData.title = langItem.title || '';
         this.formData.content = langItem.content || '';
         this.formData.editorType = convertToUIEditorType(item.editorType);
+        this.formData.categoryIds = [...(item.categoryIds || [])];
+
+        // 分类名称依赖当前语言，切换语言/加载文章后刷新分类选项
+        await this.fetchCategoryList();
 
         // Try to load draft after fetching backend data
         // Draft will override backend data if exists
@@ -181,6 +218,8 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
      */
     async switchLanguage(languageCode: string) {
       this.formData.lang = languageCode;
+      // 分类名称依赖当前语言，切换语言后刷新分类选项
+      await this.fetchCategoryList();
       // If in create mode, try to load draft for this language
       if (this.isCreateMode) {
         // this.loadPostDraft();
@@ -269,6 +308,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
       try {
         const data = {
           editorType: convertToEditorType(this.formData.editorType),
+          categoryIds: this.formData.categoryIds || [],
           translations: [
             {
               title: this.formData.title,
@@ -311,6 +351,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
         editorType: EditorType.MARKDOWN,
       };
       this.languageOptions = [];
+      this.categoryOptions = [];
     },
   },
 });
