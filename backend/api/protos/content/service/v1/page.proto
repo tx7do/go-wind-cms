@@ -233,11 +233,6 @@ message PageTranslation {
     }
   ]; // 语言特定的 slug
 
-  repeated Section sections = 12 [
-    json_name = "sections",
-    (gnostic.openapi.v3.property) = {description: "页面内容区块（模块化）"}
-  ]; // 页面内容区块（模块化）
-
   optional string thumbnail = 13 [
     json_name = "thumbnail",
     (gnostic.openapi.v3.property) = {description: "缩略图"}

@@ -357,5 +357,23 @@
       "LINK_TYPE_CATEGORY": "关联分类",
       "LINK_TYPE_EXTERNAL": "外部链接"
     }
+  },
+  "section": {
+    "type": {
+      "SECTION_TYPE_RICH_TEXT": "富文本区块",
+      "SECTION_TYPE_MARKDOWN": "Markdown区块",
+      "SECTION_TYPE_TITLE": "标题区块",
+      "SECTION_TYPE_IMAGE": "图片区块",
+      "SECTION_TYPE_GALLERY": "图集区块",
+      "SECTION_TYPE_VIDEO": "视频区块",
+      "SECTION_TYPE_BUTTON": "按钮区块",
+      "SECTION_TYPE_DIVIDER": "分割线区块",
+      "SECTION_TYPE_SPACER": "间距区块",
+      "SECTION_TYPE_CODE": "代码区块",
+      "SECTION_TYPE_HTML": "自定义HTML区块",
+      "SECTION_TYPE_FORM": "表单区块",
+      "SECTION_TYPE_CAROUSEL": "轮播图区块",
+      "SECTION_TYPE_CUSTOM": "自定义区块"
+    }
   }
 }

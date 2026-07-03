@@ -41,21 +41,3 @@ func (x *SeoMeta) Redact() string {
 	// Safe field: CanonicalUrl
 	return x.String()
 }
-
-// Redact method implementation for Section
-func (x *Section) Redact() string {
-	if x == nil {
-		return ""
-	}
-
-	// Safe field: Type
-
-	// Safe field: Name
-
-	// Safe field: SortOrder
-
-	// Safe field: Config
-
-	// Safe field: Content
-	return x.String()
-}

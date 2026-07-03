@@ -7,6 +7,7 @@ import (
 	context "context"
 	redact "github.com/menta2k/protoc-gen-redact/v3/redact/v3"
 	pagination "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	redact1 "github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact/redact/v1"
 	annotations "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -27,7 +28,7 @@ var (
 	_ fieldmaskpb.FieldMask
 	_ timestamppb.Timestamp
 	_ annotations.FieldBehavior
-	_ redact.FieldRules
+	_ redact1.FieldRules
 	_ pagination.Sorting
 )
 

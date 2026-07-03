@@ -11,7 +11,7 @@ import "google/protobuf/duration.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 
-import "redact/v3/redact.proto";
+import "redact/v1/redact.proto";
 
 import "identity/service/v1/user.proto";
 
@@ -141,7 +141,7 @@ message LoginRequest {
   }
 
   optional string password = 19 [
-    (redact.v3.value).string = "",
+    (redact.value).string = "",
     json_name = "password",
     (gnostic.openapi.v3.property) = {description: "用户的密码"}
   ]; // 用户的密码，必选项。

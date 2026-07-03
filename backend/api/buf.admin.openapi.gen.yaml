@@ -12,7 +12,7 @@ managed:
     - module: 'buf.build/gnostic/gnostic'
     - module: 'buf.build/gogo/protobuf'
     - module: 'buf.build/tx7do/pagination'
-    - module: 'buf.build/menta2k-org/redact'
+    - module: 'buf.build/go-wind/redact'
 
   override:
     - file_option: go_package_prefix

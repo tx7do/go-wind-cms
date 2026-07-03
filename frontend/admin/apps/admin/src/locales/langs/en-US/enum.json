@@ -361,5 +361,23 @@
       "LINK_TYPE_CATEGORY": "Linked Category",
       "LINK_TYPE_EXTERNAL": "External Link"
     }
+  },
+  "section": {
+    "type": {
+      "SECTION_TYPE_RICH_TEXT": "Rich Text",
+      "SECTION_TYPE_MARKDOWN": "Markdown",
+      "SECTION_TYPE_TITLE": "Title",
+      "SECTION_TYPE_IMAGE": "Image",
+      "SECTION_TYPE_GALLERY": "Gallery",
+      "SECTION_TYPE_VIDEO": "Video",
+      "SECTION_TYPE_BUTTON": "Button",
+      "SECTION_TYPE_DIVIDER": "Divider",
+      "SECTION_TYPE_SPACER": "Spacer",
+      "SECTION_TYPE_CODE": "Code",
+      "SECTION_TYPE_HTML": "Custom HTML",
+      "SECTION_TYPE_FORM": "Form",
+      "SECTION_TYPE_CAROUSEL": "Carousel",
+      "SECTION_TYPE_CUSTOM": "Custom"
+    }
   }
 }

@@ -34,8 +34,6 @@ type PageTranslation struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// SEO 结构化元数据
 	Seo *contentpb.SeoMeta `json:"seo,omitempty"`
-	// 页面内容区块（模块化）
-	Sections []*contentpb.Section `json:"sections,omitempty"`
 	// 关联的页面ID
 	PageID *uint32 `json:"page_id,omitempty"`
 	// 语言代码
@@ -58,7 +56,7 @@ func (*PageTranslation) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case pagetranslation.FieldSeo, pagetranslation.FieldSections:
+		case pagetranslation.FieldSeo:
 			values[i] = new([]byte)
 		case pagetranslation.FieldID, pagetranslation.FieldCreatedBy, pagetranslation.FieldUpdatedBy, pagetranslation.FieldDeletedBy, pagetranslation.FieldPageID:
 			values[i] = new(sql.NullInt64)
@@ -135,14 +133,6 @@ func (_m *PageTranslation) assignValues(columns []string, values []any) error {
 			} else if value != nil && len(*value) > 0 {
 				if err := json.Unmarshal(*value, &_m.Seo); err != nil {
 					return fmt.Errorf("unmarshal field seo: %w", err)
-				}
-			}
-		case pagetranslation.FieldSections:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field sections", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.Sections); err != nil {
-					return fmt.Errorf("unmarshal field sections: %w", err)
 				}
 			}
 		case pagetranslation.FieldPageID:
@@ -262,9 +252,6 @@ func (_m *PageTranslation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("seo=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Seo))
-	builder.WriteString(", ")
-	builder.WriteString("sections=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Sections))
 	builder.WriteString(", ")
 	if v := _m.PageID; v != nil {
 		builder.WriteString("page_id=")

@@ -38,7 +38,7 @@
     "dict": "Data Dictionary",
     "task": "Task Scheduler",
     "file": "File Management",
-    "loginPolicy": "Login Policy",
+    "loginPolicy": "Login Policy"
   },
   "log": {
     "moduleName": "Audit Logs",
@@ -60,7 +60,10 @@
     "editPost": "Edit Post",
     "page": "Pages",
     "category": "Categories",
-    "tag": "Tags"
+    "tag": "Tags",
+    "section": "Sections",
+    "createSection": "Create Section",
+    "editSection": "Edit Section"
   },
   "media": {
     "moduleName": "Media",

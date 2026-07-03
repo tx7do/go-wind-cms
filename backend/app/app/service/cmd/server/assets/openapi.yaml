@@ -1207,6 +1207,201 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+    /app/v1/sections:
+        get:
+            tags:
+                - SectionService
+            description: 获取区块列表
+            operationId: SectionService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListSectionResponse'
+        post:
+            tags:
+                - SectionService
+            description: 创建区块
+            operationId: SectionService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.CreateSectionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Section'
+    /app/v1/sections/{id}:
+        get:
+            tags:
+                - SectionService
+            description: 获取区块数据
+            operationId: SectionService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Section'
+        put:
+            tags:
+                - SectionService
+            description: 更新区块
+            operationId: SectionService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.UpdateSectionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Section'
+        delete:
+            tags:
+                - SectionService
+            description: 删除区块
+            operationId: SectionService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/sections/{id}/translation:
+        get:
+            tags:
+                - SectionService
+            description: 获取翻译数据
+            operationId: SectionService_GetTranslation
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.SectionTranslation'
     /app/v1/tags:
         get:
             tags:
@@ -1851,6 +2046,12 @@ components:
                 data:
                     $ref: '#/components/schemas/content.service.v1.Post'
             description: 请求 - 创建帖子
+        content.service.v1.CreateSectionRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/content.service.v1.Section'
+            description: 请求 - 创建区块
         content.service.v1.CreateTagRequest:
             type: object
             properties:
@@ -1887,6 +2088,16 @@ components:
                 total:
                     type: string
             description: 回应 - 帖子列表
+        content.service.v1.ListSectionResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.Section'
+                total:
+                    type: string
+            description: 回应 - 区块列表
         content.service.v1.ListTagResponse:
             type: object
             properties:
@@ -2046,11 +2257,6 @@ components:
                 slug:
                     type: string
                     description: 语言特定的 slug（覆盖主表 slug，用于多语言路由，如中文用拼音）
-                sections:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/content.service.v1.Section'
-                    description: 页面内容区块（模块化）
                 thumbnail:
                     type: string
                     description: 缩略图
@@ -2283,6 +2489,14 @@ components:
         content.service.v1.Section:
             type: object
             properties:
+                id:
+                    type: integer
+                    description: 区块ID
+                    format: uint32
+                pageId:
+                    type: integer
+                    description: 所属页面ID
+                    format: uint32
                 type:
                     enum:
                         - SECTION_TYPE_UNSPECIFIED
@@ -2305,7 +2519,7 @@ components:
                     format: enum
                 name:
                     type: string
-                    description: 区块名称（后台标识用）
+                    description: 区块名称（后台标识用，语言无关）
                 sortOrder:
                     type: integer
                     description: 排序（越小越靠前）
@@ -2314,13 +2528,87 @@ components:
                     type: object
                     additionalProperties:
                         type: string
-                    description: 区块通用配置（边距、样式、类名等）
+                    description: 区块样式/布局配置（边距、CSS class、列数等，语言无关）
+                translations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.SectionTranslation'
+                    description: 多语言翻译列表
+                availableLanguages:
+                    example: ["zh-CN", "en-US", "ja-JP"]
+                    type: array
+                    items:
+                        type: string
+                    description: 可用的语言代码列表（快速查询，避免遍历 translations）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 页面区块（语言无关的结构，内容随语言变化在翻译表中）
+        content.service.v1.SectionTranslation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 翻译记录ID
+                    format: uint32
+                sectionId:
+                    type: integer
+                    description: 关联的区块ID
+                    format: uint32
+                languageCode:
+                    type: string
+                    description: 语言代码（ISO 639-1 标准）
                 content:
                     type: object
                     additionalProperties:
                         type: string
-                    description: 区块内容（键值对，适配不同类型区块）
-            description: 页面区块（内容构建模块）
+                    description: 区块内容（键值对，适配不同类型区块，随语言变化）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 区块翻译（语言相关的内容）
         content.service.v1.SeoMeta:
             type: object
             properties:
@@ -2528,6 +2816,23 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新帖子
+        content.service.v1.UpdateSectionRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/content.service.v1.Section'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 请求 - 更新区块
         content.service.v1.UpdateTagRequest:
             type: object
             properties:
@@ -3128,6 +3433,8 @@ tags:
       description: 页面服务
     - name: PostService
       description: 帖子服务
+    - name: SectionService
+      description: 页面区块服务
     - name: TagService
       description: 标签服务
     - name: UserProfileService

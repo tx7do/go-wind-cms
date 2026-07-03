@@ -121,9 +121,6 @@ func (r *PageTranslationRepo) newCreateBuilder(data *contentV1.PageTranslation) 
 	if data.Seo != nil {
 		builder.SetSeo(data.Seo)
 	}
-	if data.Sections != nil {
-		builder.SetSections(data.Sections)
-	}
 
 	return builder
 }
@@ -188,10 +185,6 @@ func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 
 			if data.Seo != nil {
 				builder.SetSeo(data.Seo)
-			}
-
-			if data.Sections != nil {
-				builder.SetSections(data.Sections)
 			}
 		},
 		func(s *sql.Selector) {

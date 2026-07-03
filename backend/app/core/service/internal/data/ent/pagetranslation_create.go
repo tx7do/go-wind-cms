@@ -113,12 +113,6 @@ func (_c *PageTranslationCreate) SetSeo(v *contentpb.SeoMeta) *PageTranslationCr
 	return _c
 }
 
-// SetSections sets the "sections" field.
-func (_c *PageTranslationCreate) SetSections(v []*contentpb.Section) *PageTranslationCreate {
-	_c.mutation.SetSections(v)
-	return _c
-}
-
 // SetPageID sets the "page_id" field.
 func (_c *PageTranslationCreate) SetPageID(v uint32) *PageTranslationCreate {
 	_c.mutation.SetPageID(v)
@@ -328,10 +322,6 @@ func (_c *PageTranslationCreate) createSpec() (*PageTranslation, *sqlgraph.Creat
 		_spec.SetField(pagetranslation.FieldSeo, field.TypeJSON, value)
 		_node.Seo = value
 	}
-	if value, ok := _c.mutation.Sections(); ok {
-		_spec.SetField(pagetranslation.FieldSections, field.TypeJSON, value)
-		_node.Sections = value
-	}
 	if value, ok := _c.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
 		_node.PageID = &value
@@ -535,24 +525,6 @@ func (u *PageTranslationUpsert) UpdateSeo() *PageTranslationUpsert {
 // ClearSeo clears the value of the "seo" field.
 func (u *PageTranslationUpsert) ClearSeo() *PageTranslationUpsert {
 	u.SetNull(pagetranslation.FieldSeo)
-	return u
-}
-
-// SetSections sets the "sections" field.
-func (u *PageTranslationUpsert) SetSections(v []*contentpb.Section) *PageTranslationUpsert {
-	u.Set(pagetranslation.FieldSections, v)
-	return u
-}
-
-// UpdateSections sets the "sections" field to the value that was provided on create.
-func (u *PageTranslationUpsert) UpdateSections() *PageTranslationUpsert {
-	u.SetExcluded(pagetranslation.FieldSections)
-	return u
-}
-
-// ClearSections clears the value of the "sections" field.
-func (u *PageTranslationUpsert) ClearSections() *PageTranslationUpsert {
-	u.SetNull(pagetranslation.FieldSections)
 	return u
 }
 
@@ -883,27 +855,6 @@ func (u *PageTranslationUpsertOne) UpdateSeo() *PageTranslationUpsertOne {
 func (u *PageTranslationUpsertOne) ClearSeo() *PageTranslationUpsertOne {
 	return u.Update(func(s *PageTranslationUpsert) {
 		s.ClearSeo()
-	})
-}
-
-// SetSections sets the "sections" field.
-func (u *PageTranslationUpsertOne) SetSections(v []*contentpb.Section) *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetSections(v)
-	})
-}
-
-// UpdateSections sets the "sections" field to the value that was provided on create.
-func (u *PageTranslationUpsertOne) UpdateSections() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateSections()
-	})
-}
-
-// ClearSections clears the value of the "sections" field.
-func (u *PageTranslationUpsertOne) ClearSections() *PageTranslationUpsertOne {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearSections()
 	})
 }
 
@@ -1421,27 +1372,6 @@ func (u *PageTranslationUpsertBulk) UpdateSeo() *PageTranslationUpsertBulk {
 func (u *PageTranslationUpsertBulk) ClearSeo() *PageTranslationUpsertBulk {
 	return u.Update(func(s *PageTranslationUpsert) {
 		s.ClearSeo()
-	})
-}
-
-// SetSections sets the "sections" field.
-func (u *PageTranslationUpsertBulk) SetSections(v []*contentpb.Section) *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.SetSections(v)
-	})
-}
-
-// UpdateSections sets the "sections" field to the value that was provided on create.
-func (u *PageTranslationUpsertBulk) UpdateSections() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.UpdateSections()
-	})
-}
-
-// ClearSections clears the value of the "sections" field.
-func (u *PageTranslationUpsertBulk) ClearSections() *PageTranslationUpsertBulk {
-	return u.Update(func(s *PageTranslationUpsert) {
-		s.ClearSections()
 	})
 }
 

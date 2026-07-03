@@ -47,6 +47,9 @@ func NewRestMiddleware(
 		appV1.OperationTagServiceList,
 
 		appV1.OperationPageServiceGet,
+		appV1.OperationSectionServiceList,
+		appV1.OperationSectionServiceGet,
+		appV1.OperationSectionServiceGetTranslation,
 		appV1.OperationPostServiceGet,
 		appV1.OperationCategoryServiceGet,
 		appV1.OperationCommentServiceGet,
@@ -89,6 +92,7 @@ func NewRestServer(
 	commentService *service.CommentService,
 	tagService *service.TagService,
 	pageService *service.PageService,
+	sectionService *service.SectionService,
 	navigationService *service.NavigationService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
@@ -112,6 +116,7 @@ func NewRestServer(
 	appV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
 	appV1.RegisterTagServiceHTTPServer(srv, tagService)
 	appV1.RegisterPageServiceHTTPServer(srv, pageService)
+	appV1.RegisterSectionServiceHTTPServer(srv, sectionService)
 
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 

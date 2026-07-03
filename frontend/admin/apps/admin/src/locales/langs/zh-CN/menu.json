@@ -67,7 +67,10 @@
     "editCategory": "分类编辑",
     "tag": "标签管理",
     "createTag": "标签创建",
-    "editTag": "标签编辑"
+    "editTag": "标签编辑",
+    "section": "区块管理",
+    "createSection": "区块创建",
+    "editSection": "区块编辑"
   },
   "media": {
     "moduleName": "媒体中心",

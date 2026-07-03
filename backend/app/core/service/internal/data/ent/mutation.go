@@ -9,7 +9,6 @@ import (
 	auditpb "go-wind-cms/api/gen/go/audit/service/v1"
 	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
-	resourcepb "go-wind-cms/api/gen/go/permission/service/v1"
 	taskpb "go-wind-cms/api/gen/go/task/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/api"
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
@@ -56,6 +55,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-cms/app/core/service/internal/data/ent/section"
+	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
@@ -127,6 +128,8 @@ const (
 	TypeRole                     = "Role"
 	TypeRoleMetadata             = "RoleMetadata"
 	TypeRolePermission           = "RolePermission"
+	TypeSection                  = "Section"
+	TypeSectionTranslation       = "SectionTranslation"
 	TypeSite                     = "Site"
 	TypeSiteSetting              = "SiteSetting"
 	TypeTag                      = "Tag"
@@ -36636,7 +36639,7 @@ type MenuMutation struct {
 	alias           *string
 	name            *string
 	component       *string
-	meta            **resourcepb.MenuMeta
+	meta            **permissionpb.MenuMeta
 	clearedFields   map[string]struct{}
 	parent          *uint32
 	clearedparent   bool
@@ -37538,12 +37541,12 @@ func (m *MenuMutation) ResetComponent() {
 }
 
 // SetMeta sets the "meta" field.
-func (m *MenuMutation) SetMeta(rm *resourcepb.MenuMeta) {
-	m.meta = &rm
+func (m *MenuMutation) SetMeta(pm *permissionpb.MenuMeta) {
+	m.meta = &pm
 }
 
 // Meta returns the value of the "meta" field in the mutation.
-func (m *MenuMutation) Meta() (r *resourcepb.MenuMeta, exists bool) {
+func (m *MenuMutation) Meta() (r *permissionpb.MenuMeta, exists bool) {
 	v := m.meta
 	if v == nil {
 		return
@@ -37554,7 +37557,7 @@ func (m *MenuMutation) Meta() (r *resourcepb.MenuMeta, exists bool) {
 // OldMeta returns the old "meta" field's value of the Menu entity.
 // If the Menu object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MenuMutation) OldMeta(ctx context.Context) (v *resourcepb.MenuMeta, err error) {
+func (m *MenuMutation) OldMeta(ctx context.Context) (v *permissionpb.MenuMeta, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldMeta is only allowed on UpdateOne operations")
 	}
@@ -37946,7 +37949,7 @@ func (m *MenuMutation) SetField(name string, value ent.Value) error {
 		m.SetComponent(v)
 		return nil
 	case menu.FieldMeta:
-		v, ok := value.(*resourcepb.MenuMeta)
+		v, ok := value.(*permissionpb.MenuMeta)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -48648,33 +48651,31 @@ func (m *PageMutation) ResetEdge(name string) error {
 // PageTranslationMutation represents an operation that mutates the PageTranslation nodes in the graph.
 type PageTranslationMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *uint32
-	created_at     *time.Time
-	updated_at     *time.Time
-	deleted_at     *time.Time
-	created_by     *uint32
-	addcreated_by  *int32
-	updated_by     *uint32
-	addupdated_by  *int32
-	deleted_by     *uint32
-	adddeleted_by  *int32
-	seo            **contentpb.SeoMeta
-	sections       *[]*contentpb.Section
-	appendsections []*contentpb.Section
-	page_id        *uint32
-	addpage_id     *int32
-	language_code  *string
-	title          *string
-	slug           *string
-	thumbnail      *string
-	cover_image    *string
-	full_path      *string
-	clearedFields  map[string]struct{}
-	done           bool
-	oldValue       func(context.Context) (*PageTranslation, error)
-	predicates     []predicate.PageTranslation
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	seo           **contentpb.SeoMeta
+	page_id       *uint32
+	addpage_id    *int32
+	language_code *string
+	title         *string
+	slug          *string
+	thumbnail     *string
+	cover_image   *string
+	full_path     *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*PageTranslation, error)
+	predicates    []predicate.PageTranslation
 }
 
 var _ ent.Mutation = (*PageTranslationMutation)(nil)
@@ -49187,71 +49188,6 @@ func (m *PageTranslationMutation) ResetSeo() {
 	delete(m.clearedFields, pagetranslation.FieldSeo)
 }
 
-// SetSections sets the "sections" field.
-func (m *PageTranslationMutation) SetSections(c []*contentpb.Section) {
-	m.sections = &c
-	m.appendsections = nil
-}
-
-// Sections returns the value of the "sections" field in the mutation.
-func (m *PageTranslationMutation) Sections() (r []*contentpb.Section, exists bool) {
-	v := m.sections
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSections returns the old "sections" field's value of the PageTranslation entity.
-// If the PageTranslation object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageTranslationMutation) OldSections(ctx context.Context) (v []*contentpb.Section, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSections is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSections requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSections: %w", err)
-	}
-	return oldValue.Sections, nil
-}
-
-// AppendSections adds c to the "sections" field.
-func (m *PageTranslationMutation) AppendSections(c []*contentpb.Section) {
-	m.appendsections = append(m.appendsections, c...)
-}
-
-// AppendedSections returns the list of values that were appended to the "sections" field in this mutation.
-func (m *PageTranslationMutation) AppendedSections() ([]*contentpb.Section, bool) {
-	if len(m.appendsections) == 0 {
-		return nil, false
-	}
-	return m.appendsections, true
-}
-
-// ClearSections clears the value of the "sections" field.
-func (m *PageTranslationMutation) ClearSections() {
-	m.sections = nil
-	m.appendsections = nil
-	m.clearedFields[pagetranslation.FieldSections] = struct{}{}
-}
-
-// SectionsCleared returns if the "sections" field was cleared in this mutation.
-func (m *PageTranslationMutation) SectionsCleared() bool {
-	_, ok := m.clearedFields[pagetranslation.FieldSections]
-	return ok
-}
-
-// ResetSections resets all changes to the "sections" field.
-func (m *PageTranslationMutation) ResetSections() {
-	m.sections = nil
-	m.appendsections = nil
-	delete(m.clearedFields, pagetranslation.FieldSections)
-}
-
 // SetPageID sets the "page_id" field.
 func (m *PageTranslationMutation) SetPageID(u uint32) {
 	m.page_id = &u
@@ -49650,7 +49586,7 @@ func (m *PageTranslationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PageTranslationMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, pagetranslation.FieldCreatedAt)
 	}
@@ -49671,9 +49607,6 @@ func (m *PageTranslationMutation) Fields() []string {
 	}
 	if m.seo != nil {
 		fields = append(fields, pagetranslation.FieldSeo)
-	}
-	if m.sections != nil {
-		fields = append(fields, pagetranslation.FieldSections)
 	}
 	if m.page_id != nil {
 		fields = append(fields, pagetranslation.FieldPageID)
@@ -49718,8 +49651,6 @@ func (m *PageTranslationMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case pagetranslation.FieldSeo:
 		return m.Seo()
-	case pagetranslation.FieldSections:
-		return m.Sections()
 	case pagetranslation.FieldPageID:
 		return m.PageID()
 	case pagetranslation.FieldLanguageCode:
@@ -49757,8 +49688,6 @@ func (m *PageTranslationMutation) OldField(ctx context.Context, name string) (en
 		return m.OldDeletedBy(ctx)
 	case pagetranslation.FieldSeo:
 		return m.OldSeo(ctx)
-	case pagetranslation.FieldSections:
-		return m.OldSections(ctx)
 	case pagetranslation.FieldPageID:
 		return m.OldPageID(ctx)
 	case pagetranslation.FieldLanguageCode:
@@ -49830,13 +49759,6 @@ func (m *PageTranslationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSeo(v)
-		return nil
-	case pagetranslation.FieldSections:
-		v, ok := value.([]*contentpb.Section)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSections(v)
 		return nil
 	case pagetranslation.FieldPageID:
 		v, ok := value.(uint32)
@@ -49989,9 +49911,6 @@ func (m *PageTranslationMutation) ClearedFields() []string {
 	if m.FieldCleared(pagetranslation.FieldSeo) {
 		fields = append(fields, pagetranslation.FieldSeo)
 	}
-	if m.FieldCleared(pagetranslation.FieldSections) {
-		fields = append(fields, pagetranslation.FieldSections)
-	}
 	if m.FieldCleared(pagetranslation.FieldPageID) {
 		fields = append(fields, pagetranslation.FieldPageID)
 	}
@@ -50048,9 +49967,6 @@ func (m *PageTranslationMutation) ClearField(name string) error {
 	case pagetranslation.FieldSeo:
 		m.ClearSeo()
 		return nil
-	case pagetranslation.FieldSections:
-		m.ClearSections()
-		return nil
 	case pagetranslation.FieldPageID:
 		m.ClearPageID()
 		return nil
@@ -50100,9 +50016,6 @@ func (m *PageTranslationMutation) ResetField(name string) error {
 		return nil
 	case pagetranslation.FieldSeo:
 		m.ResetSeo()
-		return nil
-	case pagetranslation.FieldSections:
-		m.ResetSections()
 		return nil
 	case pagetranslation.FieldPageID:
 		m.ResetPageID()
@@ -70502,6 +70415,2340 @@ func (m *RolePermissionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *RolePermissionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RolePermission edge %s", name)
+}
+
+// SectionMutation represents an operation that mutates the Section nodes in the graph.
+type SectionMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	sort_order    *uint32
+	addsort_order *int32
+	page_id       *uint32
+	addpage_id    *int32
+	_type         *section.Type
+	name          *string
+	_config       **map[string]string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Section, error)
+	predicates    []predicate.Section
+}
+
+var _ ent.Mutation = (*SectionMutation)(nil)
+
+// sectionOption allows management of the mutation configuration using functional options.
+type sectionOption func(*SectionMutation)
+
+// newSectionMutation creates new mutation for the Section entity.
+func newSectionMutation(c config, op Op, opts ...sectionOption) *SectionMutation {
+	m := &SectionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSection,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSectionID sets the ID field of the mutation.
+func withSectionID(id uint32) sectionOption {
+	return func(m *SectionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Section
+		)
+		m.oldValue = func(ctx context.Context) (*Section, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Section.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSection sets the old Section of the mutation.
+func withSection(node *Section) sectionOption {
+	return func(m *SectionMutation) {
+		m.oldValue = func(context.Context) (*Section, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SectionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SectionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Section entities.
+func (m *SectionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SectionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SectionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Section.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SectionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SectionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SectionMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[section.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SectionMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[section.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SectionMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, section.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SectionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SectionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SectionMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[section.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SectionMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[section.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SectionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, section.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SectionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SectionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SectionMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[section.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SectionMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[section.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SectionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, section.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SectionMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SectionMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *SectionMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SectionMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SectionMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[section.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SectionMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[section.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SectionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, section.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SectionMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SectionMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *SectionMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SectionMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SectionMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[section.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SectionMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[section.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SectionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, section.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SectionMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SectionMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *SectionMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *SectionMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SectionMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[section.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SectionMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[section.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SectionMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, section.FieldDeletedBy)
+}
+
+// SetSortOrder sets the "sort_order" field.
+func (m *SectionMutation) SetSortOrder(u uint32) {
+	m.sort_order = &u
+	m.addsort_order = nil
+}
+
+// SortOrder returns the value of the "sort_order" field in the mutation.
+func (m *SectionMutation) SortOrder() (r uint32, exists bool) {
+	v := m.sort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSortOrder returns the old "sort_order" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldSortOrder(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSortOrder is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSortOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSortOrder: %w", err)
+	}
+	return oldValue.SortOrder, nil
+}
+
+// AddSortOrder adds u to the "sort_order" field.
+func (m *SectionMutation) AddSortOrder(u int32) {
+	if m.addsort_order != nil {
+		*m.addsort_order += u
+	} else {
+		m.addsort_order = &u
+	}
+}
+
+// AddedSortOrder returns the value that was added to the "sort_order" field in this mutation.
+func (m *SectionMutation) AddedSortOrder() (r int32, exists bool) {
+	v := m.addsort_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSortOrder clears the value of the "sort_order" field.
+func (m *SectionMutation) ClearSortOrder() {
+	m.sort_order = nil
+	m.addsort_order = nil
+	m.clearedFields[section.FieldSortOrder] = struct{}{}
+}
+
+// SortOrderCleared returns if the "sort_order" field was cleared in this mutation.
+func (m *SectionMutation) SortOrderCleared() bool {
+	_, ok := m.clearedFields[section.FieldSortOrder]
+	return ok
+}
+
+// ResetSortOrder resets all changes to the "sort_order" field.
+func (m *SectionMutation) ResetSortOrder() {
+	m.sort_order = nil
+	m.addsort_order = nil
+	delete(m.clearedFields, section.FieldSortOrder)
+}
+
+// SetPageID sets the "page_id" field.
+func (m *SectionMutation) SetPageID(u uint32) {
+	m.page_id = &u
+	m.addpage_id = nil
+}
+
+// PageID returns the value of the "page_id" field in the mutation.
+func (m *SectionMutation) PageID() (r uint32, exists bool) {
+	v := m.page_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPageID returns the old "page_id" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldPageID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPageID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPageID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPageID: %w", err)
+	}
+	return oldValue.PageID, nil
+}
+
+// AddPageID adds u to the "page_id" field.
+func (m *SectionMutation) AddPageID(u int32) {
+	if m.addpage_id != nil {
+		*m.addpage_id += u
+	} else {
+		m.addpage_id = &u
+	}
+}
+
+// AddedPageID returns the value that was added to the "page_id" field in this mutation.
+func (m *SectionMutation) AddedPageID() (r int32, exists bool) {
+	v := m.addpage_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPageID clears the value of the "page_id" field.
+func (m *SectionMutation) ClearPageID() {
+	m.page_id = nil
+	m.addpage_id = nil
+	m.clearedFields[section.FieldPageID] = struct{}{}
+}
+
+// PageIDCleared returns if the "page_id" field was cleared in this mutation.
+func (m *SectionMutation) PageIDCleared() bool {
+	_, ok := m.clearedFields[section.FieldPageID]
+	return ok
+}
+
+// ResetPageID resets all changes to the "page_id" field.
+func (m *SectionMutation) ResetPageID() {
+	m.page_id = nil
+	m.addpage_id = nil
+	delete(m.clearedFields, section.FieldPageID)
+}
+
+// SetType sets the "type" field.
+func (m *SectionMutation) SetType(s section.Type) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *SectionMutation) GetType() (r section.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldType(ctx context.Context) (v *section.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ClearType clears the value of the "type" field.
+func (m *SectionMutation) ClearType() {
+	m._type = nil
+	m.clearedFields[section.FieldType] = struct{}{}
+}
+
+// TypeCleared returns if the "type" field was cleared in this mutation.
+func (m *SectionMutation) TypeCleared() bool {
+	_, ok := m.clearedFields[section.FieldType]
+	return ok
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *SectionMutation) ResetType() {
+	m._type = nil
+	delete(m.clearedFields, section.FieldType)
+}
+
+// SetName sets the "name" field.
+func (m *SectionMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *SectionMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *SectionMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[section.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *SectionMutation) NameCleared() bool {
+	_, ok := m.clearedFields[section.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *SectionMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, section.FieldName)
+}
+
+// SetConfig sets the "config" field.
+func (m *SectionMutation) SetConfig(value *map[string]string) {
+	m._config = &value
+}
+
+// Config returns the value of the "config" field in the mutation.
+func (m *SectionMutation) Config() (r *map[string]string, exists bool) {
+	v := m._config
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConfig returns the old "config" field's value of the Section entity.
+// If the Section object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionMutation) OldConfig(ctx context.Context) (v *map[string]string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConfig is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConfig requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConfig: %w", err)
+	}
+	return oldValue.Config, nil
+}
+
+// ClearConfig clears the value of the "config" field.
+func (m *SectionMutation) ClearConfig() {
+	m._config = nil
+	m.clearedFields[section.FieldConfig] = struct{}{}
+}
+
+// ConfigCleared returns if the "config" field was cleared in this mutation.
+func (m *SectionMutation) ConfigCleared() bool {
+	_, ok := m.clearedFields[section.FieldConfig]
+	return ok
+}
+
+// ResetConfig resets all changes to the "config" field.
+func (m *SectionMutation) ResetConfig() {
+	m._config = nil
+	delete(m.clearedFields, section.FieldConfig)
+}
+
+// Where appends a list predicates to the SectionMutation builder.
+func (m *SectionMutation) Where(ps ...predicate.Section) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SectionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SectionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Section, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SectionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SectionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Section).
+func (m *SectionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SectionMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, section.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, section.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, section.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, section.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, section.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, section.FieldDeletedBy)
+	}
+	if m.sort_order != nil {
+		fields = append(fields, section.FieldSortOrder)
+	}
+	if m.page_id != nil {
+		fields = append(fields, section.FieldPageID)
+	}
+	if m._type != nil {
+		fields = append(fields, section.FieldType)
+	}
+	if m.name != nil {
+		fields = append(fields, section.FieldName)
+	}
+	if m._config != nil {
+		fields = append(fields, section.FieldConfig)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SectionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case section.FieldCreatedAt:
+		return m.CreatedAt()
+	case section.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case section.FieldDeletedAt:
+		return m.DeletedAt()
+	case section.FieldCreatedBy:
+		return m.CreatedBy()
+	case section.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case section.FieldDeletedBy:
+		return m.DeletedBy()
+	case section.FieldSortOrder:
+		return m.SortOrder()
+	case section.FieldPageID:
+		return m.PageID()
+	case section.FieldType:
+		return m.GetType()
+	case section.FieldName:
+		return m.Name()
+	case section.FieldConfig:
+		return m.Config()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SectionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case section.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case section.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case section.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case section.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case section.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case section.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case section.FieldSortOrder:
+		return m.OldSortOrder(ctx)
+	case section.FieldPageID:
+		return m.OldPageID(ctx)
+	case section.FieldType:
+		return m.OldType(ctx)
+	case section.FieldName:
+		return m.OldName(ctx)
+	case section.FieldConfig:
+		return m.OldConfig(ctx)
+	}
+	return nil, fmt.Errorf("unknown Section field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SectionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case section.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case section.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case section.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case section.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case section.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case section.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case section.FieldSortOrder:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSortOrder(v)
+		return nil
+	case section.FieldPageID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPageID(v)
+		return nil
+	case section.FieldType:
+		v, ok := value.(section.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case section.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case section.FieldConfig:
+		v, ok := value.(*map[string]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConfig(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Section field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SectionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, section.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, section.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, section.FieldDeletedBy)
+	}
+	if m.addsort_order != nil {
+		fields = append(fields, section.FieldSortOrder)
+	}
+	if m.addpage_id != nil {
+		fields = append(fields, section.FieldPageID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SectionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case section.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case section.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case section.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case section.FieldSortOrder:
+		return m.AddedSortOrder()
+	case section.FieldPageID:
+		return m.AddedPageID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SectionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case section.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case section.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case section.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case section.FieldSortOrder:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSortOrder(v)
+		return nil
+	case section.FieldPageID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPageID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Section numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SectionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(section.FieldCreatedAt) {
+		fields = append(fields, section.FieldCreatedAt)
+	}
+	if m.FieldCleared(section.FieldUpdatedAt) {
+		fields = append(fields, section.FieldUpdatedAt)
+	}
+	if m.FieldCleared(section.FieldDeletedAt) {
+		fields = append(fields, section.FieldDeletedAt)
+	}
+	if m.FieldCleared(section.FieldCreatedBy) {
+		fields = append(fields, section.FieldCreatedBy)
+	}
+	if m.FieldCleared(section.FieldUpdatedBy) {
+		fields = append(fields, section.FieldUpdatedBy)
+	}
+	if m.FieldCleared(section.FieldDeletedBy) {
+		fields = append(fields, section.FieldDeletedBy)
+	}
+	if m.FieldCleared(section.FieldSortOrder) {
+		fields = append(fields, section.FieldSortOrder)
+	}
+	if m.FieldCleared(section.FieldPageID) {
+		fields = append(fields, section.FieldPageID)
+	}
+	if m.FieldCleared(section.FieldType) {
+		fields = append(fields, section.FieldType)
+	}
+	if m.FieldCleared(section.FieldName) {
+		fields = append(fields, section.FieldName)
+	}
+	if m.FieldCleared(section.FieldConfig) {
+		fields = append(fields, section.FieldConfig)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SectionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SectionMutation) ClearField(name string) error {
+	switch name {
+	case section.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case section.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case section.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case section.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case section.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case section.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case section.FieldSortOrder:
+		m.ClearSortOrder()
+		return nil
+	case section.FieldPageID:
+		m.ClearPageID()
+		return nil
+	case section.FieldType:
+		m.ClearType()
+		return nil
+	case section.FieldName:
+		m.ClearName()
+		return nil
+	case section.FieldConfig:
+		m.ClearConfig()
+		return nil
+	}
+	return fmt.Errorf("unknown Section nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SectionMutation) ResetField(name string) error {
+	switch name {
+	case section.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case section.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case section.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case section.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case section.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case section.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case section.FieldSortOrder:
+		m.ResetSortOrder()
+		return nil
+	case section.FieldPageID:
+		m.ResetPageID()
+		return nil
+	case section.FieldType:
+		m.ResetType()
+		return nil
+	case section.FieldName:
+		m.ResetName()
+		return nil
+	case section.FieldConfig:
+		m.ResetConfig()
+		return nil
+	}
+	return fmt.Errorf("unknown Section field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SectionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SectionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SectionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SectionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SectionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SectionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SectionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Section unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SectionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Section edge %s", name)
+}
+
+// SectionTranslationMutation represents an operation that mutates the SectionTranslation nodes in the graph.
+type SectionTranslationMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	section_id    *uint32
+	addsection_id *int32
+	language_code *string
+	content       **map[string]string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*SectionTranslation, error)
+	predicates    []predicate.SectionTranslation
+}
+
+var _ ent.Mutation = (*SectionTranslationMutation)(nil)
+
+// sectiontranslationOption allows management of the mutation configuration using functional options.
+type sectiontranslationOption func(*SectionTranslationMutation)
+
+// newSectionTranslationMutation creates new mutation for the SectionTranslation entity.
+func newSectionTranslationMutation(c config, op Op, opts ...sectiontranslationOption) *SectionTranslationMutation {
+	m := &SectionTranslationMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSectionTranslation,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSectionTranslationID sets the ID field of the mutation.
+func withSectionTranslationID(id uint32) sectiontranslationOption {
+	return func(m *SectionTranslationMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SectionTranslation
+		)
+		m.oldValue = func(ctx context.Context) (*SectionTranslation, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SectionTranslation.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSectionTranslation sets the old SectionTranslation of the mutation.
+func withSectionTranslation(node *SectionTranslation) sectiontranslationOption {
+	return func(m *SectionTranslationMutation) {
+		m.oldValue = func(context.Context) (*SectionTranslation, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SectionTranslationMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SectionTranslationMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SectionTranslation entities.
+func (m *SectionTranslationMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SectionTranslationMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SectionTranslationMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SectionTranslation.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SectionTranslationMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SectionTranslationMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SectionTranslationMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[sectiontranslation.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SectionTranslationMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SectionTranslationMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, sectiontranslation.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SectionTranslationMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SectionTranslationMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SectionTranslationMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[sectiontranslation.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SectionTranslationMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SectionTranslationMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, sectiontranslation.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SectionTranslationMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SectionTranslationMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SectionTranslationMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[sectiontranslation.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SectionTranslationMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SectionTranslationMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, sectiontranslation.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SectionTranslationMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SectionTranslationMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *SectionTranslationMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SectionTranslationMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SectionTranslationMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[sectiontranslation.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SectionTranslationMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SectionTranslationMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, sectiontranslation.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SectionTranslationMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SectionTranslationMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *SectionTranslationMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SectionTranslationMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SectionTranslationMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[sectiontranslation.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SectionTranslationMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SectionTranslationMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, sectiontranslation.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SectionTranslationMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SectionTranslationMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *SectionTranslationMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *SectionTranslationMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SectionTranslationMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[sectiontranslation.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SectionTranslationMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SectionTranslationMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, sectiontranslation.FieldDeletedBy)
+}
+
+// SetSectionID sets the "section_id" field.
+func (m *SectionTranslationMutation) SetSectionID(u uint32) {
+	m.section_id = &u
+	m.addsection_id = nil
+}
+
+// SectionID returns the value of the "section_id" field in the mutation.
+func (m *SectionTranslationMutation) SectionID() (r uint32, exists bool) {
+	v := m.section_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSectionID returns the old "section_id" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldSectionID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSectionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSectionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSectionID: %w", err)
+	}
+	return oldValue.SectionID, nil
+}
+
+// AddSectionID adds u to the "section_id" field.
+func (m *SectionTranslationMutation) AddSectionID(u int32) {
+	if m.addsection_id != nil {
+		*m.addsection_id += u
+	} else {
+		m.addsection_id = &u
+	}
+}
+
+// AddedSectionID returns the value that was added to the "section_id" field in this mutation.
+func (m *SectionTranslationMutation) AddedSectionID() (r int32, exists bool) {
+	v := m.addsection_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSectionID clears the value of the "section_id" field.
+func (m *SectionTranslationMutation) ClearSectionID() {
+	m.section_id = nil
+	m.addsection_id = nil
+	m.clearedFields[sectiontranslation.FieldSectionID] = struct{}{}
+}
+
+// SectionIDCleared returns if the "section_id" field was cleared in this mutation.
+func (m *SectionTranslationMutation) SectionIDCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldSectionID]
+	return ok
+}
+
+// ResetSectionID resets all changes to the "section_id" field.
+func (m *SectionTranslationMutation) ResetSectionID() {
+	m.section_id = nil
+	m.addsection_id = nil
+	delete(m.clearedFields, sectiontranslation.FieldSectionID)
+}
+
+// SetLanguageCode sets the "language_code" field.
+func (m *SectionTranslationMutation) SetLanguageCode(s string) {
+	m.language_code = &s
+}
+
+// LanguageCode returns the value of the "language_code" field in the mutation.
+func (m *SectionTranslationMutation) LanguageCode() (r string, exists bool) {
+	v := m.language_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLanguageCode returns the old "language_code" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldLanguageCode(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLanguageCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLanguageCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLanguageCode: %w", err)
+	}
+	return oldValue.LanguageCode, nil
+}
+
+// ClearLanguageCode clears the value of the "language_code" field.
+func (m *SectionTranslationMutation) ClearLanguageCode() {
+	m.language_code = nil
+	m.clearedFields[sectiontranslation.FieldLanguageCode] = struct{}{}
+}
+
+// LanguageCodeCleared returns if the "language_code" field was cleared in this mutation.
+func (m *SectionTranslationMutation) LanguageCodeCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldLanguageCode]
+	return ok
+}
+
+// ResetLanguageCode resets all changes to the "language_code" field.
+func (m *SectionTranslationMutation) ResetLanguageCode() {
+	m.language_code = nil
+	delete(m.clearedFields, sectiontranslation.FieldLanguageCode)
+}
+
+// SetContent sets the "content" field.
+func (m *SectionTranslationMutation) SetContent(value *map[string]string) {
+	m.content = &value
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *SectionTranslationMutation) Content() (r *map[string]string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the SectionTranslation entity.
+// If the SectionTranslation object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SectionTranslationMutation) OldContent(ctx context.Context) (v *map[string]string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ClearContent clears the value of the "content" field.
+func (m *SectionTranslationMutation) ClearContent() {
+	m.content = nil
+	m.clearedFields[sectiontranslation.FieldContent] = struct{}{}
+}
+
+// ContentCleared returns if the "content" field was cleared in this mutation.
+func (m *SectionTranslationMutation) ContentCleared() bool {
+	_, ok := m.clearedFields[sectiontranslation.FieldContent]
+	return ok
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *SectionTranslationMutation) ResetContent() {
+	m.content = nil
+	delete(m.clearedFields, sectiontranslation.FieldContent)
+}
+
+// Where appends a list predicates to the SectionTranslationMutation builder.
+func (m *SectionTranslationMutation) Where(ps ...predicate.SectionTranslation) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SectionTranslationMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SectionTranslationMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SectionTranslation, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SectionTranslationMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SectionTranslationMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SectionTranslation).
+func (m *SectionTranslationMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SectionTranslationMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, sectiontranslation.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, sectiontranslation.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, sectiontranslation.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, sectiontranslation.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, sectiontranslation.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, sectiontranslation.FieldDeletedBy)
+	}
+	if m.section_id != nil {
+		fields = append(fields, sectiontranslation.FieldSectionID)
+	}
+	if m.language_code != nil {
+		fields = append(fields, sectiontranslation.FieldLanguageCode)
+	}
+	if m.content != nil {
+		fields = append(fields, sectiontranslation.FieldContent)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SectionTranslationMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case sectiontranslation.FieldCreatedAt:
+		return m.CreatedAt()
+	case sectiontranslation.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case sectiontranslation.FieldDeletedAt:
+		return m.DeletedAt()
+	case sectiontranslation.FieldCreatedBy:
+		return m.CreatedBy()
+	case sectiontranslation.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case sectiontranslation.FieldDeletedBy:
+		return m.DeletedBy()
+	case sectiontranslation.FieldSectionID:
+		return m.SectionID()
+	case sectiontranslation.FieldLanguageCode:
+		return m.LanguageCode()
+	case sectiontranslation.FieldContent:
+		return m.Content()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SectionTranslationMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case sectiontranslation.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case sectiontranslation.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case sectiontranslation.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case sectiontranslation.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case sectiontranslation.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case sectiontranslation.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case sectiontranslation.FieldSectionID:
+		return m.OldSectionID(ctx)
+	case sectiontranslation.FieldLanguageCode:
+		return m.OldLanguageCode(ctx)
+	case sectiontranslation.FieldContent:
+		return m.OldContent(ctx)
+	}
+	return nil, fmt.Errorf("unknown SectionTranslation field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SectionTranslationMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case sectiontranslation.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case sectiontranslation.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case sectiontranslation.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case sectiontranslation.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case sectiontranslation.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case sectiontranslation.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case sectiontranslation.FieldSectionID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSectionID(v)
+		return nil
+	case sectiontranslation.FieldLanguageCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLanguageCode(v)
+		return nil
+	case sectiontranslation.FieldContent:
+		v, ok := value.(*map[string]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SectionTranslation field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SectionTranslationMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, sectiontranslation.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, sectiontranslation.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, sectiontranslation.FieldDeletedBy)
+	}
+	if m.addsection_id != nil {
+		fields = append(fields, sectiontranslation.FieldSectionID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SectionTranslationMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case sectiontranslation.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case sectiontranslation.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case sectiontranslation.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case sectiontranslation.FieldSectionID:
+		return m.AddedSectionID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SectionTranslationMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case sectiontranslation.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case sectiontranslation.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case sectiontranslation.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case sectiontranslation.FieldSectionID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSectionID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SectionTranslation numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SectionTranslationMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(sectiontranslation.FieldCreatedAt) {
+		fields = append(fields, sectiontranslation.FieldCreatedAt)
+	}
+	if m.FieldCleared(sectiontranslation.FieldUpdatedAt) {
+		fields = append(fields, sectiontranslation.FieldUpdatedAt)
+	}
+	if m.FieldCleared(sectiontranslation.FieldDeletedAt) {
+		fields = append(fields, sectiontranslation.FieldDeletedAt)
+	}
+	if m.FieldCleared(sectiontranslation.FieldCreatedBy) {
+		fields = append(fields, sectiontranslation.FieldCreatedBy)
+	}
+	if m.FieldCleared(sectiontranslation.FieldUpdatedBy) {
+		fields = append(fields, sectiontranslation.FieldUpdatedBy)
+	}
+	if m.FieldCleared(sectiontranslation.FieldDeletedBy) {
+		fields = append(fields, sectiontranslation.FieldDeletedBy)
+	}
+	if m.FieldCleared(sectiontranslation.FieldSectionID) {
+		fields = append(fields, sectiontranslation.FieldSectionID)
+	}
+	if m.FieldCleared(sectiontranslation.FieldLanguageCode) {
+		fields = append(fields, sectiontranslation.FieldLanguageCode)
+	}
+	if m.FieldCleared(sectiontranslation.FieldContent) {
+		fields = append(fields, sectiontranslation.FieldContent)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SectionTranslationMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SectionTranslationMutation) ClearField(name string) error {
+	switch name {
+	case sectiontranslation.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case sectiontranslation.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case sectiontranslation.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case sectiontranslation.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case sectiontranslation.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case sectiontranslation.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case sectiontranslation.FieldSectionID:
+		m.ClearSectionID()
+		return nil
+	case sectiontranslation.FieldLanguageCode:
+		m.ClearLanguageCode()
+		return nil
+	case sectiontranslation.FieldContent:
+		m.ClearContent()
+		return nil
+	}
+	return fmt.Errorf("unknown SectionTranslation nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SectionTranslationMutation) ResetField(name string) error {
+	switch name {
+	case sectiontranslation.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case sectiontranslation.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case sectiontranslation.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case sectiontranslation.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case sectiontranslation.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case sectiontranslation.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case sectiontranslation.FieldSectionID:
+		m.ResetSectionID()
+		return nil
+	case sectiontranslation.FieldLanguageCode:
+		m.ResetLanguageCode()
+		return nil
+	case sectiontranslation.FieldContent:
+		m.ResetContent()
+		return nil
+	}
+	return fmt.Errorf("unknown SectionTranslation field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SectionTranslationMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SectionTranslationMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SectionTranslationMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SectionTranslationMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SectionTranslationMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SectionTranslationMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SectionTranslationMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SectionTranslation unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SectionTranslationMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SectionTranslation edge %s", name)
 }
 
 // SiteMutation represents an operation that mutates the Site nodes in the graph.

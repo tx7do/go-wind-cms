@@ -50,6 +50,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-cms/app/core/service/internal/data/ent/section"
+	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
@@ -171,6 +173,8 @@ func checkColumn(t, c string) error {
 			role.Table:                     role.ValidColumn,
 			rolemetadata.Table:             rolemetadata.ValidColumn,
 			rolepermission.Table:           rolepermission.ValidColumn,
+			section.Table:                  section.ValidColumn,
+			sectiontranslation.Table:       sectiontranslation.ValidColumn,
 			site.Table:                     site.ValidColumn,
 			sitesetting.Table:              sitesetting.ValidColumn,
 			tag.Table:                      tag.ValidColumn,

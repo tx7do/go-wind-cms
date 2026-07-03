@@ -48,6 +48,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-cms/app/core/service/internal/data/ent/section"
+	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
@@ -68,7 +70,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 55)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 57)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   api.Table,
@@ -924,7 +926,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pagetranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: pagetranslation.FieldUpdatedBy},
 			pagetranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: pagetranslation.FieldDeletedBy},
 			pagetranslation.FieldSeo:          {Type: field.TypeJSON, Column: pagetranslation.FieldSeo},
-			pagetranslation.FieldSections:     {Type: field.TypeJSON, Column: pagetranslation.FieldSections},
 			pagetranslation.FieldPageID:       {Type: field.TypeUint32, Column: pagetranslation.FieldPageID},
 			pagetranslation.FieldLanguageCode: {Type: field.TypeString, Column: pagetranslation.FieldLanguageCode},
 			pagetranslation.FieldTitle:        {Type: field.TypeString, Column: pagetranslation.FieldTitle},
@@ -1324,6 +1325,52 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[44] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   section.Table,
+			Columns: section.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: section.FieldID,
+			},
+		},
+		Type: "Section",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			section.FieldCreatedAt: {Type: field.TypeTime, Column: section.FieldCreatedAt},
+			section.FieldUpdatedAt: {Type: field.TypeTime, Column: section.FieldUpdatedAt},
+			section.FieldDeletedAt: {Type: field.TypeTime, Column: section.FieldDeletedAt},
+			section.FieldCreatedBy: {Type: field.TypeUint32, Column: section.FieldCreatedBy},
+			section.FieldUpdatedBy: {Type: field.TypeUint32, Column: section.FieldUpdatedBy},
+			section.FieldDeletedBy: {Type: field.TypeUint32, Column: section.FieldDeletedBy},
+			section.FieldSortOrder: {Type: field.TypeUint32, Column: section.FieldSortOrder},
+			section.FieldPageID:    {Type: field.TypeUint32, Column: section.FieldPageID},
+			section.FieldType:      {Type: field.TypeEnum, Column: section.FieldType},
+			section.FieldName:      {Type: field.TypeString, Column: section.FieldName},
+			section.FieldConfig:    {Type: field.TypeJSON, Column: section.FieldConfig},
+		},
+	}
+	graph.Nodes[45] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   sectiontranslation.Table,
+			Columns: sectiontranslation.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: sectiontranslation.FieldID,
+			},
+		},
+		Type: "SectionTranslation",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			sectiontranslation.FieldCreatedAt:    {Type: field.TypeTime, Column: sectiontranslation.FieldCreatedAt},
+			sectiontranslation.FieldUpdatedAt:    {Type: field.TypeTime, Column: sectiontranslation.FieldUpdatedAt},
+			sectiontranslation.FieldDeletedAt:    {Type: field.TypeTime, Column: sectiontranslation.FieldDeletedAt},
+			sectiontranslation.FieldCreatedBy:    {Type: field.TypeUint32, Column: sectiontranslation.FieldCreatedBy},
+			sectiontranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: sectiontranslation.FieldUpdatedBy},
+			sectiontranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: sectiontranslation.FieldDeletedBy},
+			sectiontranslation.FieldSectionID:    {Type: field.TypeUint32, Column: sectiontranslation.FieldSectionID},
+			sectiontranslation.FieldLanguageCode: {Type: field.TypeString, Column: sectiontranslation.FieldLanguageCode},
+			sectiontranslation.FieldContent:      {Type: field.TypeJSON, Column: sectiontranslation.FieldContent},
+		},
+	}
+	graph.Nodes[46] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   site.Table,
 			Columns: site.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -1352,7 +1399,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			site.FieldVisitCount:       {Type: field.TypeUint64, Column: site.FieldVisitCount},
 		},
 	}
-	graph.Nodes[45] = &sqlgraph.Node{
+	graph.Nodes[47] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   sitesetting.Table,
 			Columns: sitesetting.Columns,
@@ -1383,7 +1430,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			sitesetting.FieldValidationRegex: {Type: field.TypeString, Column: sitesetting.FieldValidationRegex},
 		},
 	}
-	graph.Nodes[46] = &sqlgraph.Node{
+	graph.Nodes[48] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tag.Table,
 			Columns: tag.Columns,
@@ -1410,7 +1457,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tag.FieldPostCount:  {Type: field.TypeUint32, Column: tag.FieldPostCount},
 		},
 	}
-	graph.Nodes[47] = &sqlgraph.Node{
+	graph.Nodes[49] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tagtranslation.Table,
 			Columns: tagtranslation.Columns,
@@ -1437,7 +1484,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tagtranslation.FieldFullPath:     {Type: field.TypeString, Column: tagtranslation.FieldFullPath},
 		},
 	}
-	graph.Nodes[48] = &sqlgraph.Node{
+	graph.Nodes[50] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   task.Table,
 			Columns: task.Columns,
@@ -1464,7 +1511,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			task.FieldEnable:      {Type: field.TypeBool, Column: task.FieldEnable},
 		},
 	}
-	graph.Nodes[49] = &sqlgraph.Node{
+	graph.Nodes[51] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tenant.Table,
 			Columns: tenant.Columns,
@@ -1497,7 +1544,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tenant.FieldExpiredAt:        {Type: field.TypeTime, Column: tenant.FieldExpiredAt},
 		},
 	}
-	graph.Nodes[50] = &sqlgraph.Node{
+	graph.Nodes[52] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -1533,7 +1580,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldStatus:      {Type: field.TypeEnum, Column: user.FieldStatus},
 		},
 	}
-	graph.Nodes[51] = &sqlgraph.Node{
+	graph.Nodes[53] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usercredential.Table,
 			Columns: usercredential.Columns,
@@ -1566,7 +1613,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usercredential.FieldResetTokenUsedAt:       {Type: field.TypeTime, Column: usercredential.FieldResetTokenUsedAt},
 		},
 	}
-	graph.Nodes[52] = &sqlgraph.Node{
+	graph.Nodes[54] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userorgunit.Table,
 			Columns: userorgunit.Columns,
@@ -1596,7 +1643,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userorgunit.FieldStatus:     {Type: field.TypeEnum, Column: userorgunit.FieldStatus},
 		},
 	}
-	graph.Nodes[53] = &sqlgraph.Node{
+	graph.Nodes[55] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userposition.Table,
 			Columns: userposition.Columns,
@@ -1625,7 +1672,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userposition.FieldStatus:     {Type: field.TypeEnum, Column: userposition.FieldStatus},
 		},
 	}
-	graph.Nodes[54] = &sqlgraph.Node{
+	graph.Nodes[56] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userrole.Table,
 			Columns: userrole.Columns,
@@ -5662,11 +5709,6 @@ func (f *PageTranslationFilter) WhereSeo(p entql.BytesP) {
 	f.Where(p.Field(pagetranslation.FieldSeo))
 }
 
-// WhereSections applies the entql json.RawMessage predicate on the sections field.
-func (f *PageTranslationFilter) WhereSections(p entql.BytesP) {
-	f.Where(p.Field(pagetranslation.FieldSections))
-}
-
 // WherePageID applies the entql uint32 predicate on the page_id field.
 func (f *PageTranslationFilter) WherePageID(p entql.Uint32P) {
 	f.Where(p.Field(pagetranslation.FieldPageID))
@@ -7296,6 +7338,186 @@ func (f *RolePermissionFilter) WherePriority(p entql.Int32P) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (_q *SectionQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SectionQuery builder.
+func (_q *SectionQuery) Filter() *SectionFilter {
+	return &SectionFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SectionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SectionMutation builder.
+func (m *SectionMutation) Filter() *SectionFilter {
+	return &SectionFilter{config: m.config, predicateAdder: m}
+}
+
+// SectionFilter provides a generic filtering capability at runtime for SectionQuery.
+type SectionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SectionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[44].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SectionFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(section.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *SectionFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(section.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *SectionFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(section.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *SectionFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(section.FieldDeletedAt))
+}
+
+// WhereCreatedBy applies the entql uint32 predicate on the created_by field.
+func (f *SectionFilter) WhereCreatedBy(p entql.Uint32P) {
+	f.Where(p.Field(section.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql uint32 predicate on the updated_by field.
+func (f *SectionFilter) WhereUpdatedBy(p entql.Uint32P) {
+	f.Where(p.Field(section.FieldUpdatedBy))
+}
+
+// WhereDeletedBy applies the entql uint32 predicate on the deleted_by field.
+func (f *SectionFilter) WhereDeletedBy(p entql.Uint32P) {
+	f.Where(p.Field(section.FieldDeletedBy))
+}
+
+// WhereSortOrder applies the entql uint32 predicate on the sort_order field.
+func (f *SectionFilter) WhereSortOrder(p entql.Uint32P) {
+	f.Where(p.Field(section.FieldSortOrder))
+}
+
+// WherePageID applies the entql uint32 predicate on the page_id field.
+func (f *SectionFilter) WherePageID(p entql.Uint32P) {
+	f.Where(p.Field(section.FieldPageID))
+}
+
+// WhereType applies the entql string predicate on the type field.
+func (f *SectionFilter) WhereType(p entql.StringP) {
+	f.Where(p.Field(section.FieldType))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *SectionFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(section.FieldName))
+}
+
+// WhereConfig applies the entql json.RawMessage predicate on the config field.
+func (f *SectionFilter) WhereConfig(p entql.BytesP) {
+	f.Where(p.Field(section.FieldConfig))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *SectionTranslationQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SectionTranslationQuery builder.
+func (_q *SectionTranslationQuery) Filter() *SectionTranslationFilter {
+	return &SectionTranslationFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SectionTranslationMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SectionTranslationMutation builder.
+func (m *SectionTranslationMutation) Filter() *SectionTranslationFilter {
+	return &SectionTranslationFilter{config: m.config, predicateAdder: m}
+}
+
+// SectionTranslationFilter provides a generic filtering capability at runtime for SectionTranslationQuery.
+type SectionTranslationFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SectionTranslationFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[45].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SectionTranslationFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(sectiontranslation.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *SectionTranslationFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(sectiontranslation.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *SectionTranslationFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(sectiontranslation.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *SectionTranslationFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(sectiontranslation.FieldDeletedAt))
+}
+
+// WhereCreatedBy applies the entql uint32 predicate on the created_by field.
+func (f *SectionTranslationFilter) WhereCreatedBy(p entql.Uint32P) {
+	f.Where(p.Field(sectiontranslation.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql uint32 predicate on the updated_by field.
+func (f *SectionTranslationFilter) WhereUpdatedBy(p entql.Uint32P) {
+	f.Where(p.Field(sectiontranslation.FieldUpdatedBy))
+}
+
+// WhereDeletedBy applies the entql uint32 predicate on the deleted_by field.
+func (f *SectionTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
+	f.Where(p.Field(sectiontranslation.FieldDeletedBy))
+}
+
+// WhereSectionID applies the entql uint32 predicate on the section_id field.
+func (f *SectionTranslationFilter) WhereSectionID(p entql.Uint32P) {
+	f.Where(p.Field(sectiontranslation.FieldSectionID))
+}
+
+// WhereLanguageCode applies the entql string predicate on the language_code field.
+func (f *SectionTranslationFilter) WhereLanguageCode(p entql.StringP) {
+	f.Where(p.Field(sectiontranslation.FieldLanguageCode))
+}
+
+// WhereContent applies the entql json.RawMessage predicate on the content field.
+func (f *SectionTranslationFilter) WhereContent(p entql.BytesP) {
+	f.Where(p.Field(sectiontranslation.FieldContent))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (_q *SiteQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
 }
@@ -7324,7 +7546,7 @@ type SiteFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SiteFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[44].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[46].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -7449,7 +7671,7 @@ type SiteSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SiteSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[45].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[47].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -7579,7 +7801,7 @@ type TagFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TagFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[46].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[48].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -7689,7 +7911,7 @@ type TagTranslationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TagTranslationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[47].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[49].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -7799,7 +8021,7 @@ type TaskFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TaskFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[48].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[50].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -7909,7 +8131,7 @@ type TenantFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TenantFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[49].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[51].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -8049,7 +8271,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[50].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[52].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -8204,7 +8426,7 @@ type UserCredentialFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserCredentialFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[51].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[53].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -8344,7 +8566,7 @@ type UserOrgUnitFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserOrgUnitFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[52].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[54].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -8469,7 +8691,7 @@ type UserPositionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserPositionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[53].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[55].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -8589,7 +8811,7 @@ type UserRoleFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserRoleFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[54].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[56].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

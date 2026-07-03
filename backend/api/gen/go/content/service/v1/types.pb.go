@@ -264,83 +264,6 @@ func (x *SeoMeta) GetCanonicalUrl() string {
 	return ""
 }
 
-// 页面区块（内容构建模块）
-type Section struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          *SectionType           `protobuf:"varint,1,opt,name=type,proto3,enum=content.service.v1.SectionType,oneof" json:"type,omitempty"`                                      // 区块类型
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                           // 区块名称（后台标识用）
-	SortOrder     *uint32                `protobuf:"varint,3,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                               // 排序（越小越靠前）
-	Config        map[string]string      `protobuf:"bytes,4,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`   // 区块通用配置（边距、样式、类名等）
-	Content       map[string]string      `protobuf:"bytes,5,rep,name=content,proto3" json:"content,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 区块内容（键值对，适配不同类型区块）
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Section) Reset() {
-	*x = Section{}
-	mi := &file_content_service_v1_types_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Section) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Section) ProtoMessage() {}
-
-func (x *Section) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_types_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Section.ProtoReflect.Descriptor instead.
-func (*Section) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_types_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *Section) GetType() SectionType {
-	if x != nil && x.Type != nil {
-		return *x.Type
-	}
-	return SectionType_SECTION_TYPE_UNSPECIFIED
-}
-
-func (x *Section) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
-	}
-	return ""
-}
-
-func (x *Section) GetSortOrder() uint32 {
-	if x != nil && x.SortOrder != nil {
-		return *x.SortOrder
-	}
-	return 0
-}
-
-func (x *Section) GetConfig() map[string]string {
-	if x != nil {
-		return x.Config
-	}
-	return nil
-}
-
-func (x *Section) GetContent() map[string]string {
-	if x != nil {
-		return x.Content
-	}
-	return nil
-}
-
 var File_content_service_v1_types_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_types_proto_rawDesc = "" +
@@ -362,23 +285,7 @@ const file_content_service_v1_types_proto_rawDesc = "" +
 	"\t_og_titleB\x11\n" +
 	"\x0f_og_descriptionB\v\n" +
 	"\t_og_imageB\x10\n" +
-	"\x0e_canonical_url\"\xf7\x04\n" +
-	"\aSection\x12L\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x1f.content.service.v1.SectionTypeB\x12\xbaG\x0f\x92\x02\f区块类型H\x00R\x04type\x88\x01\x01\x12@\n" +
-	"\x04name\x18\x02 \x01(\tB'\xbaG$\x92\x02!区块名称（后台标识用）H\x01R\x04name\x88\x01\x01\x12E\n" +
-	"\n" +
-	"sort_order\x18\x03 \x01(\rB!\xbaG\x1e\x92\x02\x1b排序（越小越靠前）H\x02R\tsortOrder\x88\x01\x01\x12z\n" +
-	"\x06config\x18\x04 \x03(\v2'.content.service.v1.Section.ConfigEntryB9\xbaG6\x92\x023区块通用配置（边距、样式、类名等）R\x06config\x12\x80\x01\n" +
-	"\acontent\x18\x05 \x03(\v2(.content.service.v1.Section.ContentEntryB<\xbaG9\x92\x026区块内容（键值对，适配不同类型区块）R\acontent\x1a9\n" +
-	"\vConfigEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1a:\n" +
-	"\fContentEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\a\n" +
-	"\x05_typeB\a\n" +
-	"\x05_nameB\r\n" +
-	"\v_sort_order*\xcc\x01\n" +
+	"\x0e_canonical_url*\xcc\x01\n" +
 	"\n" +
 	"EditorType\x12\x1b\n" +
 	"\x17EDITOR_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
@@ -422,24 +329,18 @@ func file_content_service_v1_types_proto_rawDescGZIP() []byte {
 }
 
 var file_content_service_v1_types_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_content_service_v1_types_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_content_service_v1_types_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_content_service_v1_types_proto_goTypes = []any{
 	(EditorType)(0),  // 0: content.service.v1.EditorType
 	(SectionType)(0), // 1: content.service.v1.SectionType
 	(*SeoMeta)(nil),  // 2: content.service.v1.SeoMeta
-	(*Section)(nil),  // 3: content.service.v1.Section
-	nil,              // 4: content.service.v1.Section.ConfigEntry
-	nil,              // 5: content.service.v1.Section.ContentEntry
 }
 var file_content_service_v1_types_proto_depIdxs = []int32{
-	1, // 0: content.service.v1.Section.type:type_name -> content.service.v1.SectionType
-	4, // 1: content.service.v1.Section.config:type_name -> content.service.v1.Section.ConfigEntry
-	5, // 2: content.service.v1.Section.content:type_name -> content.service.v1.Section.ContentEntry
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_types_proto_init() }
@@ -448,14 +349,13 @@ func file_content_service_v1_types_proto_init() {
 		return
 	}
 	file_content_service_v1_types_proto_msgTypes[0].OneofWrappers = []any{}
-	file_content_service_v1_types_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_types_proto_rawDesc), len(file_content_service_v1_types_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   4,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

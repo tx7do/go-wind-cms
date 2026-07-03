@@ -234,8 +234,6 @@ func (x *PageTranslation) Redact() string {
 
 	// Safe field: Slug
 
-	// Safe field: Sections
-
 	// Safe field: Thumbnail
 
 	// Safe field: CoverImage

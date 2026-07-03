@@ -76,7 +76,6 @@ func (PageTranslation) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 		appMixin.Seo{},
-		appMixin.Sections{},
 	}
 }
 

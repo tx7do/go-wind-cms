@@ -50,6 +50,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-cms/app/core/service/internal/data/ent/schema"
+	"go-wind-cms/app/core/service/internal/data/ent/section"
+	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
@@ -1243,6 +1245,30 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	sectionMixin := schema.Section{}.Mixin()
+	sectionMixinFields0 := sectionMixin[0].Fields()
+	_ = sectionMixinFields0
+	sectionMixinFields3 := sectionMixin[3].Fields()
+	_ = sectionMixinFields3
+	sectionFields := schema.Section{}.Fields()
+	_ = sectionFields
+	// sectionDescSortOrder is the schema descriptor for sort_order field.
+	sectionDescSortOrder := sectionMixinFields3[0].Descriptor()
+	// section.DefaultSortOrder holds the default value on creation for the sort_order field.
+	section.DefaultSortOrder = sectionDescSortOrder.Default.(uint32)
+	// sectionDescID is the schema descriptor for id field.
+	sectionDescID := sectionMixinFields0[0].Descriptor()
+	// section.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	section.IDValidator = sectionDescID.Validators[0].(func(uint32) error)
+	sectiontranslationMixin := schema.SectionTranslation{}.Mixin()
+	sectiontranslationMixinFields0 := sectiontranslationMixin[0].Fields()
+	_ = sectiontranslationMixinFields0
+	sectiontranslationFields := schema.SectionTranslation{}.Fields()
+	_ = sectiontranslationFields
+	// sectiontranslationDescID is the schema descriptor for id field.
+	sectiontranslationDescID := sectiontranslationMixinFields0[0].Descriptor()
+	// sectiontranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	sectiontranslation.IDValidator = sectiontranslationDescID.Validators[0].(func(uint32) error)
 	siteMixin := schema.Site{}.Mixin()
 	site.Policy = privacy.NewPolicies(siteMixin[3], schema.Site{})
 	site.Hooks[0] = func(next ent.Mutator) ent.Mutator {

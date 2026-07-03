@@ -1167,6 +1167,54 @@ func (f RolePermissionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RolePermissionMutation", m)
 }
 
+// The SectionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SectionQueryRuleFunc func(context.Context, *ent.SectionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SectionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SectionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SectionQuery", q)
+}
+
+// The SectionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SectionMutationRuleFunc func(context.Context, *ent.SectionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SectionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SectionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SectionMutation", m)
+}
+
+// The SectionTranslationQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SectionTranslationQueryRuleFunc func(context.Context, *ent.SectionTranslationQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SectionTranslationQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SectionTranslationQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SectionTranslationQuery", q)
+}
+
+// The SectionTranslationMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SectionTranslationMutationRuleFunc func(context.Context, *ent.SectionTranslationMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SectionTranslationMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SectionTranslationMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SectionTranslationMutation", m)
+}
+
 // The SiteQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SiteQueryRuleFunc func(context.Context, *ent.SiteQuery) error
@@ -1554,6 +1602,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.RolePermissionQuery:
 		return q.Filter(), nil
+	case *ent.SectionQuery:
+		return q.Filter(), nil
+	case *ent.SectionTranslationQuery:
+		return q.Filter(), nil
 	case *ent.SiteQuery:
 		return q.Filter(), nil
 	case *ent.SiteSettingQuery:
@@ -1670,6 +1722,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RoleMetadataMutation:
 		return m.Filter(), nil
 	case *ent.RolePermissionMutation:
+		return m.Filter(), nil
+	case *ent.SectionMutation:
+		return m.Filter(), nil
+	case *ent.SectionTranslationMutation:
 		return m.Filter(), nil
 	case *ent.SiteMutation:
 		return m.Filter(), nil

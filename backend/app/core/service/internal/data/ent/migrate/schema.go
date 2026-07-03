@@ -2067,7 +2067,6 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
-		{Name: "sections", Type: field.TypeJSON, Nullable: true, Comment: "页面内容区块（模块化）"},
 		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的页面ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "页面标题"},
@@ -2086,27 +2085,27 @@ var (
 			{
 				Name:    "pagetranslation_page_id",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[9]},
+				Columns: []*schema.Column{PageTranslationsColumns[8]},
 			},
 			{
 				Name:    "pagetranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[10]},
+				Columns: []*schema.Column{PageTranslationsColumns[9]},
 			},
 			{
 				Name:    "pagetranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[12]},
+				Columns: []*schema.Column{PageTranslationsColumns[11]},
 			},
 			{
 				Name:    "pagetranslation_page_id_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[9], PageTranslationsColumns[10]},
+				Columns: []*schema.Column{PageTranslationsColumns[8], PageTranslationsColumns[9]},
 			},
 			{
 				Name:    "pagetranslation_language_code_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[10], PageTranslationsColumns[12]},
+				Columns: []*schema.Column{PageTranslationsColumns[9], PageTranslationsColumns[11]},
 			},
 		},
 	}
@@ -3001,6 +3000,77 @@ var (
 			},
 		},
 	}
+	// SectionsColumns holds the columns for the "sections" table.
+	SectionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "所属页面ID"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "区块类型", Enums: []string{"SECTION_TYPE_RICH_TEXT", "SECTION_TYPE_MARKDOWN", "SECTION_TYPE_TITLE", "SECTION_TYPE_IMAGE", "SECTION_TYPE_GALLERY", "SECTION_TYPE_VIDEO", "SECTION_TYPE_BUTTON", "SECTION_TYPE_DIVIDER", "SECTION_TYPE_SPACER", "SECTION_TYPE_CODE", "SECTION_TYPE_HTML", "SECTION_TYPE_FORM", "SECTION_TYPE_CAROUSEL", "SECTION_TYPE_CUSTOM"}, Default: "SECTION_TYPE_RICH_TEXT"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "区块名称（后台标识用，语言无关）"},
+		{Name: "config", Type: field.TypeJSON, Nullable: true, Comment: "区块样式/布局配置（边距、CSS class、列数等，语言无关）"},
+	}
+	// SectionsTable holds the schema information for the "sections" table.
+	SectionsTable = &schema.Table{
+		Name:       "sections",
+		Comment:    "页面区块表",
+		Columns:    SectionsColumns,
+		PrimaryKey: []*schema.Column{SectionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "section_page_id",
+				Unique:  false,
+				Columns: []*schema.Column{SectionsColumns[8]},
+			},
+			{
+				Name:    "section_page_id_sort_order",
+				Unique:  false,
+				Columns: []*schema.Column{SectionsColumns[8], SectionsColumns[7]},
+			},
+		},
+	}
+	// SectionTranslationsColumns holds the columns for the "section_translations" table.
+	SectionTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "section_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的区块ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "content", Type: field.TypeJSON, Nullable: true, Comment: "区块内容（键值对，适配不同类型区块，随语言变化）"},
+	}
+	// SectionTranslationsTable holds the schema information for the "section_translations" table.
+	SectionTranslationsTable = &schema.Table{
+		Name:       "section_translations",
+		Comment:    "区块翻译表",
+		Columns:    SectionTranslationsColumns,
+		PrimaryKey: []*schema.Column{SectionTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "sectiontranslation_section_id",
+				Unique:  false,
+				Columns: []*schema.Column{SectionTranslationsColumns[7]},
+			},
+			{
+				Name:    "sectiontranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{SectionTranslationsColumns[8]},
+			},
+			{
+				Name:    "sectiontranslation_section_id_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{SectionTranslationsColumns[7], SectionTranslationsColumns[8]},
+			},
+		},
+	}
 	// SitesColumns holds the columns for the "sites" table.
 	SitesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3833,6 +3903,8 @@ var (
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
+		SectionsTable,
+		SectionTranslationsTable,
 		SitesTable,
 		SiteSettingsTable,
 		TagsTable,
@@ -4074,6 +4146,16 @@ func init() {
 	}
 	SysRolePermissionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_role_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SectionsTable.Annotation = &entsql.Annotation{
+		Table:     "sections",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SectionTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "section_translations",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

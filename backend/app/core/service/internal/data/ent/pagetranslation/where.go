@@ -429,16 +429,6 @@ func SeoNotNil() predicate.PageTranslation {
 	return predicate.PageTranslation(sql.FieldNotNull(FieldSeo))
 }
 
-// SectionsIsNil applies the IsNil predicate on the "sections" field.
-func SectionsIsNil() predicate.PageTranslation {
-	return predicate.PageTranslation(sql.FieldIsNull(FieldSections))
-}
-
-// SectionsNotNil applies the NotNil predicate on the "sections" field.
-func SectionsNotNil() predicate.PageTranslation {
-	return predicate.PageTranslation(sql.FieldNotNull(FieldSections))
-}
-
 // PageIDEQ applies the EQ predicate on the "page_id" field.
 func PageIDEQ(v uint32) predicate.PageTranslation {
 	return predicate.PageTranslation(sql.FieldEQ(FieldPageID, v))

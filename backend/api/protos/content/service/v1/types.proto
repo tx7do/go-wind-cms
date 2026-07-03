@@ -71,31 +71,3 @@ message SeoMeta {
     (gnostic.openapi.v3.property) = {description: "规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）"}
   ]; // 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
 }
-
-
-// 页面区块（内容构建模块）
-message Section {
-  optional SectionType type = 1 [
-    json_name = "type",
-    (gnostic.openapi.v3.property) = {description: "区块类型"}
-  ]; // 区块类型
-
-  optional string name = 2 [
-    json_name = "name",
-    (gnostic.openapi.v3.property) = {description: "区块名称（后台标识用）"}
-  ]; // 区块名称（后台标识用）
-
-  optional uint32 sort_order = 3 [
-    json_name = "sortOrder",
-    (gnostic.openapi.v3.property) = {description: "排序（越小越靠前）"}
-  ]; // 排序（越小越靠前）
-
-  map<string, string> config = 4 [
-    json_name = "config",
-    (gnostic.openapi.v3.property) = {description: "区块通用配置（边距、样式、类名等）"}
-  ]; // 区块通用配置（边距、样式、类名等）
-  map<string, string> content = 5 [
-    json_name = "content",
-    (gnostic.openapi.v3.property) = {description: "区块内容（键值对，适配不同类型区块）"}
-  ]; // 区块内容（键值对，适配不同类型区块）
-}

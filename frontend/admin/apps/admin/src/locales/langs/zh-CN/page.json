@@ -782,5 +782,34 @@
       "isDefault": "设置为默认站点后，其他站点自动取消默认状态",
       "defaultLocale": "格式: zh-CN、en-US 等 (BCP 47 语言标签)"
     }
+  },
+  "section": {
+    "moduleName": "区块管理",
+    "type": "区块类型",
+    "name": "区块名称",
+    "pageId": "所属页面",
+    "sortOrder": "排序优先级",
+    "config": "区块配置",
+    "content": "区块内容",
+    "button": {
+      "create": "创建区块",
+      "save": "保存区块"
+    },
+    "title": {
+      "create": "创建区块",
+      "edit": "编辑区块"
+    },
+    "placeholder": {
+      "name": "请输入区块名称",
+      "pageId": "请选择所属页面",
+      "content": "请输入区块内容"
+    },
+    "validation": {
+      "typeRequired": "区块类型不能为空",
+      "pageIdRequired": "所属页面不能为空",
+      "contentRequired": "区块内容不能为空",
+      "saveFailed": "保存失败,请稍后重试",
+      "saveSuccess": "保存成功"
+    }
   }
 }

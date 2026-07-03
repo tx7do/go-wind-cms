@@ -96,6 +96,9 @@ var ProviderSet = wire.NewSet(
 	data.NewPageRepo,
 	data.NewPageTranslationRepo,
 
+	data.NewSectionRepo,
+	data.NewSectionTranslationRepo,
+
 	data.NewPostRepo,
 	data.NewPostTranslationRepo,
 	data.NewPostCategoryRepo,

@@ -51,9 +51,11 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	tagService := service.NewTagService(context, tagServiceClient)
 	pageServiceClient := data.NewPageServiceClient(context, discovery)
 	pageService := service.NewPageService(context, pageServiceClient)
+	sectionServiceClient := data.NewSectionServiceClient(context, discovery)
+	sectionService := service.NewSectionService(context, sectionServiceClient)
 	navigationServiceClient := data.NewNavigationServiceClient(context, discovery)
 	navigationService := service.NewNavigationService(context, navigationServiceClient)
-	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, postService, categoryService, commentService, tagService, pageService, navigationService)
+	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, postService, categoryService, commentService, tagService, pageService, sectionService, navigationService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

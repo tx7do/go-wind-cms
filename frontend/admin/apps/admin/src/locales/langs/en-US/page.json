@@ -743,5 +743,34 @@
       "isDefault": "Setting as default site will unset other sites as default",
       "defaultLocale": "Format: zh-CN, en-US etc. (BCP 47 language tag)"
     }
+  },
+  "section": {
+    "moduleName": "Sections",
+    "type": "Section Type",
+    "name": "Section Name",
+    "pageId": "Belongs to Page",
+    "sortOrder": "Sort Order",
+    "config": "Section Config",
+    "content": "Section Content",
+    "button": {
+      "create": "Create Section",
+      "save": "Save Section"
+    },
+    "title": {
+      "create": "Create Section",
+      "edit": "Edit Section"
+    },
+    "placeholder": {
+      "name": "Please enter section name",
+      "pageId": "Please select a page",
+      "content": "Please enter section content"
+    },
+    "validation": {
+      "typeRequired": "Section type is required",
+      "pageIdRequired": "Page is required",
+      "contentRequired": "Section content is required",
+      "saveFailed": "Save failed, please try again later",
+      "saveSuccess": "Saved successfully"
+    }
   }
 }

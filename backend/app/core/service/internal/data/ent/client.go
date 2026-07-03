@@ -55,6 +55,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-cms/app/core/service/internal/data/ent/section"
+	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
@@ -166,6 +168,10 @@ type Client struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// Section is the client for interacting with the Section builders.
+	Section *SectionClient
+	// SectionTranslation is the client for interacting with the SectionTranslation builders.
+	SectionTranslation *SectionTranslationClient
 	// Site is the client for interacting with the Site builders.
 	Site *SiteClient
 	// SiteSetting is the client for interacting with the SiteSetting builders.
@@ -243,6 +249,8 @@ func (c *Client) init() {
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
+	c.Section = NewSectionClient(c.config)
+	c.SectionTranslation = NewSectionTranslationClient(c.config)
 	c.Site = NewSiteClient(c.config)
 	c.SiteSetting = NewSiteSettingClient(c.config)
 	c.Tag = NewTagClient(c.config)
@@ -390,6 +398,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Role:                     NewRoleClient(cfg),
 		RoleMetadata:             NewRoleMetadataClient(cfg),
 		RolePermission:           NewRolePermissionClient(cfg),
+		Section:                  NewSectionClient(cfg),
+		SectionTranslation:       NewSectionTranslationClient(cfg),
 		Site:                     NewSiteClient(cfg),
 		SiteSetting:              NewSiteSettingClient(cfg),
 		Tag:                      NewTagClient(cfg),
@@ -464,6 +474,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Role:                     NewRoleClient(cfg),
 		RoleMetadata:             NewRoleMetadataClient(cfg),
 		RolePermission:           NewRolePermissionClient(cfg),
+		Section:                  NewSectionClient(cfg),
+		SectionTranslation:       NewSectionTranslationClient(cfg),
 		Site:                     NewSiteClient(cfg),
 		SiteSetting:              NewSiteSettingClient(cfg),
 		Tag:                      NewTagClient(cfg),
@@ -513,9 +525,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PageTranslation, c.Permission, c.PermissionApi, c.PermissionAuditLog,
 		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
 		c.Position, c.Post, c.PostCategory, c.PostTag, c.PostTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Site, c.SiteSetting, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -534,9 +546,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PageTranslation, c.Permission, c.PermissionApi, c.PermissionAuditLog,
 		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
 		c.Position, c.Post, c.PostCategory, c.PostTag, c.PostTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Site, c.SiteSetting, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -633,6 +645,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RoleMetadata.mutate(ctx, m)
 	case *RolePermissionMutation:
 		return c.RolePermission.mutate(ctx, m)
+	case *SectionMutation:
+		return c.Section.mutate(ctx, m)
+	case *SectionTranslationMutation:
+		return c.SectionTranslation.mutate(ctx, m)
 	case *SiteMutation:
 		return c.Site.mutate(ctx, m)
 	case *SiteSettingMutation:
@@ -6823,6 +6839,272 @@ func (c *RolePermissionClient) mutate(ctx context.Context, m *RolePermissionMuta
 	}
 }
 
+// SectionClient is a client for the Section schema.
+type SectionClient struct {
+	config
+}
+
+// NewSectionClient returns a client for the Section from the given config.
+func NewSectionClient(c config) *SectionClient {
+	return &SectionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `section.Hooks(f(g(h())))`.
+func (c *SectionClient) Use(hooks ...Hook) {
+	c.hooks.Section = append(c.hooks.Section, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `section.Intercept(f(g(h())))`.
+func (c *SectionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Section = append(c.inters.Section, interceptors...)
+}
+
+// Create returns a builder for creating a Section entity.
+func (c *SectionClient) Create() *SectionCreate {
+	mutation := newSectionMutation(c.config, OpCreate)
+	return &SectionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Section entities.
+func (c *SectionClient) CreateBulk(builders ...*SectionCreate) *SectionCreateBulk {
+	return &SectionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SectionClient) MapCreateBulk(slice any, setFunc func(*SectionCreate, int)) *SectionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SectionCreateBulk{err: fmt.Errorf("calling to SectionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SectionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SectionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Section.
+func (c *SectionClient) Update() *SectionUpdate {
+	mutation := newSectionMutation(c.config, OpUpdate)
+	return &SectionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SectionClient) UpdateOne(_m *Section) *SectionUpdateOne {
+	mutation := newSectionMutation(c.config, OpUpdateOne, withSection(_m))
+	return &SectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SectionClient) UpdateOneID(id uint32) *SectionUpdateOne {
+	mutation := newSectionMutation(c.config, OpUpdateOne, withSectionID(id))
+	return &SectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Section.
+func (c *SectionClient) Delete() *SectionDelete {
+	mutation := newSectionMutation(c.config, OpDelete)
+	return &SectionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SectionClient) DeleteOne(_m *Section) *SectionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SectionClient) DeleteOneID(id uint32) *SectionDeleteOne {
+	builder := c.Delete().Where(section.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SectionDeleteOne{builder}
+}
+
+// Query returns a query builder for Section.
+func (c *SectionClient) Query() *SectionQuery {
+	return &SectionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSection},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Section entity by its id.
+func (c *SectionClient) Get(ctx context.Context, id uint32) (*Section, error) {
+	return c.Query().Where(section.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SectionClient) GetX(ctx context.Context, id uint32) *Section {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SectionClient) Hooks() []Hook {
+	return c.hooks.Section
+}
+
+// Interceptors returns the client interceptors.
+func (c *SectionClient) Interceptors() []Interceptor {
+	return c.inters.Section
+}
+
+func (c *SectionClient) mutate(ctx context.Context, m *SectionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SectionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SectionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SectionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Section mutation op: %q", m.Op())
+	}
+}
+
+// SectionTranslationClient is a client for the SectionTranslation schema.
+type SectionTranslationClient struct {
+	config
+}
+
+// NewSectionTranslationClient returns a client for the SectionTranslation from the given config.
+func NewSectionTranslationClient(c config) *SectionTranslationClient {
+	return &SectionTranslationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `sectiontranslation.Hooks(f(g(h())))`.
+func (c *SectionTranslationClient) Use(hooks ...Hook) {
+	c.hooks.SectionTranslation = append(c.hooks.SectionTranslation, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `sectiontranslation.Intercept(f(g(h())))`.
+func (c *SectionTranslationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SectionTranslation = append(c.inters.SectionTranslation, interceptors...)
+}
+
+// Create returns a builder for creating a SectionTranslation entity.
+func (c *SectionTranslationClient) Create() *SectionTranslationCreate {
+	mutation := newSectionTranslationMutation(c.config, OpCreate)
+	return &SectionTranslationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SectionTranslation entities.
+func (c *SectionTranslationClient) CreateBulk(builders ...*SectionTranslationCreate) *SectionTranslationCreateBulk {
+	return &SectionTranslationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SectionTranslationClient) MapCreateBulk(slice any, setFunc func(*SectionTranslationCreate, int)) *SectionTranslationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SectionTranslationCreateBulk{err: fmt.Errorf("calling to SectionTranslationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SectionTranslationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SectionTranslationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SectionTranslation.
+func (c *SectionTranslationClient) Update() *SectionTranslationUpdate {
+	mutation := newSectionTranslationMutation(c.config, OpUpdate)
+	return &SectionTranslationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SectionTranslationClient) UpdateOne(_m *SectionTranslation) *SectionTranslationUpdateOne {
+	mutation := newSectionTranslationMutation(c.config, OpUpdateOne, withSectionTranslation(_m))
+	return &SectionTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SectionTranslationClient) UpdateOneID(id uint32) *SectionTranslationUpdateOne {
+	mutation := newSectionTranslationMutation(c.config, OpUpdateOne, withSectionTranslationID(id))
+	return &SectionTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SectionTranslation.
+func (c *SectionTranslationClient) Delete() *SectionTranslationDelete {
+	mutation := newSectionTranslationMutation(c.config, OpDelete)
+	return &SectionTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SectionTranslationClient) DeleteOne(_m *SectionTranslation) *SectionTranslationDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SectionTranslationClient) DeleteOneID(id uint32) *SectionTranslationDeleteOne {
+	builder := c.Delete().Where(sectiontranslation.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SectionTranslationDeleteOne{builder}
+}
+
+// Query returns a query builder for SectionTranslation.
+func (c *SectionTranslationClient) Query() *SectionTranslationQuery {
+	return &SectionTranslationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSectionTranslation},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SectionTranslation entity by its id.
+func (c *SectionTranslationClient) Get(ctx context.Context, id uint32) (*SectionTranslation, error) {
+	return c.Query().Where(sectiontranslation.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SectionTranslationClient) GetX(ctx context.Context, id uint32) *SectionTranslation {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SectionTranslationClient) Hooks() []Hook {
+	return c.hooks.SectionTranslation
+}
+
+// Interceptors returns the client interceptors.
+func (c *SectionTranslationClient) Interceptors() []Interceptor {
+	return c.inters.SectionTranslation
+}
+
+func (c *SectionTranslationClient) mutate(ctx context.Context, m *SectionTranslationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SectionTranslationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SectionTranslationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SectionTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SectionTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SectionTranslation mutation op: %q", m.Op())
+	}
+}
+
 // SiteClient is a client for the Site schema.
 type SiteClient struct {
 	config
@@ -8304,9 +8586,9 @@ type (
 		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Post, PostCategory, PostTag, PostTranslation,
-		Role, RoleMetadata, RolePermission, Site, SiteSetting, Tag, TagTranslation,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Hook
+		Role, RoleMetadata, RolePermission, Section, SectionTranslation, Site,
+		SiteSetting, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, Category, CategoryTranslation, Comment, DataAccessAuditLog,
@@ -8317,8 +8599,8 @@ type (
 		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Post, PostCategory, PostTag, PostTranslation,
-		Role, RoleMetadata, RolePermission, Site, SiteSetting, Tag, TagTranslation,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Interceptor
+		Role, RoleMetadata, RolePermission, Section, SectionTranslation, Site,
+		SiteSetting, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

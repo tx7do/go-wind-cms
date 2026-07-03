@@ -536,6 +536,30 @@ func (f RolePermissionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RolePermissionMutation", m)
 }
 
+// The SectionFunc type is an adapter to allow the use of ordinary
+// function as Section mutator.
+type SectionFunc func(context.Context, *ent.SectionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SectionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SectionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SectionMutation", m)
+}
+
+// The SectionTranslationFunc type is an adapter to allow the use of ordinary
+// function as SectionTranslation mutator.
+type SectionTranslationFunc func(context.Context, *ent.SectionTranslationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SectionTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SectionTranslationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SectionTranslationMutation", m)
+}
+
 // The SiteFunc type is an adapter to allow the use of ordinary
 // function as Site mutator.
 type SiteFunc func(context.Context, *ent.SiteMutation) (ent.Value, error)

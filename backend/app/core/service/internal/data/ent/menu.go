@@ -5,7 +5,7 @@ package ent
 import (
 	"encoding/json"
 	"fmt"
-	resourcepb "go-wind-cms/api/gen/go/permission/service/v1"
+	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
 	"strings"
 	"time"
@@ -51,7 +51,7 @@ type Menu struct {
 	// 前端页面组件
 	Component *string `json:"component,omitempty"`
 	// 路由元信息
-	Meta *resourcepb.MenuMeta `json:"meta,omitempty"`
+	Meta *permissionpb.MenuMeta `json:"meta,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MenuQuery when eager-loading is set.
 	Edges        MenuEdges `json:"edges"`

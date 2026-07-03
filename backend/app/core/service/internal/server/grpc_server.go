@@ -77,6 +77,7 @@ func NewGrpcServer(
 	categoryService *service.CategoryService,
 	tagService *service.TagService,
 	pageService *service.PageService,
+	sectionService *service.SectionService,
 
 	siteService *service.SiteService,
 	siteSettingService *service.SiteSettingService,
@@ -136,6 +137,7 @@ func NewGrpcServer(
 	contentV1.RegisterCategoryServiceServer(srv, categoryService)
 	contentV1.RegisterTagServiceServer(srv, tagService)
 	contentV1.RegisterPageServiceServer(srv, pageService)
+	contentV1.RegisterSectionServiceServer(srv, sectionService)
 
 	siteV1.RegisterSiteSettingServiceServer(srv, siteSettingService)
 	siteV1.RegisterSiteServiceServer(srv, siteService)

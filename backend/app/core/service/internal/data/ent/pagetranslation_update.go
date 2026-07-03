@@ -13,7 +13,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -161,24 +160,6 @@ func (_u *PageTranslationUpdate) SetSeo(v *contentpb.SeoMeta) *PageTranslationUp
 // ClearSeo clears the value of the "seo" field.
 func (_u *PageTranslationUpdate) ClearSeo() *PageTranslationUpdate {
 	_u.mutation.ClearSeo()
-	return _u
-}
-
-// SetSections sets the "sections" field.
-func (_u *PageTranslationUpdate) SetSections(v []*contentpb.Section) *PageTranslationUpdate {
-	_u.mutation.SetSections(v)
-	return _u
-}
-
-// AppendSections appends value to the "sections" field.
-func (_u *PageTranslationUpdate) AppendSections(v []*contentpb.Section) *PageTranslationUpdate {
-	_u.mutation.AppendSections(v)
-	return _u
-}
-
-// ClearSections clears the value of the "sections" field.
-func (_u *PageTranslationUpdate) ClearSections() *PageTranslationUpdate {
-	_u.mutation.ClearSections()
 	return _u
 }
 
@@ -424,17 +405,6 @@ func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
 	}
-	if value, ok := _u.mutation.Sections(); ok {
-		_spec.SetField(pagetranslation.FieldSections, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedSections(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, pagetranslation.FieldSections, value)
-		})
-	}
-	if _u.mutation.SectionsCleared() {
-		_spec.ClearField(pagetranslation.FieldSections, field.TypeJSON)
-	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
 	}
@@ -632,24 +602,6 @@ func (_u *PageTranslationUpdateOne) SetSeo(v *contentpb.SeoMeta) *PageTranslatio
 // ClearSeo clears the value of the "seo" field.
 func (_u *PageTranslationUpdateOne) ClearSeo() *PageTranslationUpdateOne {
 	_u.mutation.ClearSeo()
-	return _u
-}
-
-// SetSections sets the "sections" field.
-func (_u *PageTranslationUpdateOne) SetSections(v []*contentpb.Section) *PageTranslationUpdateOne {
-	_u.mutation.SetSections(v)
-	return _u
-}
-
-// AppendSections appends value to the "sections" field.
-func (_u *PageTranslationUpdateOne) AppendSections(v []*contentpb.Section) *PageTranslationUpdateOne {
-	_u.mutation.AppendSections(v)
-	return _u
-}
-
-// ClearSections clears the value of the "sections" field.
-func (_u *PageTranslationUpdateOne) ClearSections() *PageTranslationUpdateOne {
-	_u.mutation.ClearSections()
 	return _u
 }
 
@@ -924,17 +876,6 @@ func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTra
 	}
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
-	}
-	if value, ok := _u.mutation.Sections(); ok {
-		_spec.SetField(pagetranslation.FieldSections, field.TypeJSON, value)
-	}
-	if value, ok := _u.mutation.AppendedSections(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, pagetranslation.FieldSections, value)
-		})
-	}
-	if _u.mutation.SectionsCleared() {
-		_spec.ClearField(pagetranslation.FieldSections, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)

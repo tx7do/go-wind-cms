@@ -25,8 +25,6 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldSeo holds the string denoting the seo field in the database.
 	FieldSeo = "seo"
-	// FieldSections holds the string denoting the sections field in the database.
-	FieldSections = "sections"
 	// FieldPageID holds the string denoting the page_id field in the database.
 	FieldPageID = "page_id"
 	// FieldLanguageCode holds the string denoting the language_code field in the database.
@@ -55,7 +53,6 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedBy,
 	FieldSeo,
-	FieldSections,
 	FieldPageID,
 	FieldLanguageCode,
 	FieldTitle,

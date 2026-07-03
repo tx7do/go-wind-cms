@@ -6,6 +6,7 @@ package authenticationpb
 import (
 	context "context"
 	redact "github.com/menta2k/protoc-gen-redact/v3/redact/v3"
+	redact1 "github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact/redact/v1"
 	identitypb "go-wind-cms/api/gen/go/identity/service/v1"
 	annotations "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
@@ -27,7 +28,7 @@ var (
 	_ timestamppb.Timestamp
 	_ durationpb.Duration
 	_ annotations.FieldBehavior
-	_ redact.FieldRules
+	_ redact1.FieldRules
 	_ identitypb.User
 )
 

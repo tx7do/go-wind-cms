@@ -4,7 +4,7 @@ package admin.service.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "redact/v3/redact.proto";
+import "redact/v1/redact.proto";
 
 import "pagination/v1/pagination.proto";
 
@@ -14,7 +14,7 @@ import "identity/service/v1/user.proto";
 service UserService {
   // 获取用户列表
   rpc List (pagination.PagingRequest) returns (identity.service.v1.ListUserResponse) {
-    option (redact.v3.internal_method) = true;
+    option (redact.internal_method) = true;
     option (google.api.http) = {
       get: "/admin/v1/users"
     };
@@ -22,7 +22,7 @@ service UserService {
 
   // 获取用户数据
   rpc Get (identity.service.v1.GetUserRequest) returns (identity.service.v1.User) {
-    option (redact.v3.internal_method) = true;
+    option (redact.internal_method) = true;
     option (google.api.http) = {
       get: "/admin/v1/users/{id}"
       additional_bindings {
