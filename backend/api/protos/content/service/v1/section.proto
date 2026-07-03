@@ -1,0 +1,272 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+import "content/service/v1/types.proto";
+
+// 页面区块服务
+service SectionService {
+  // 获取区块列表
+  rpc List (pagination.PagingRequest) returns (ListSectionResponse) {}
+
+  // 获取区块数据
+  rpc Get (GetSectionRequest) returns (Section) {}
+
+  // 创建区块
+  rpc Create (CreateSectionRequest) returns (Section) {}
+
+  // 更新区块
+  rpc Update (UpdateSectionRequest) returns (Section) {}
+
+  // 删除区块
+  rpc Delete (DeleteSectionRequest) returns (google.protobuf.Empty) {}
+
+
+  // 检查翻译是否存在
+  rpc TranslationExists(SectionTranslationExistsRequest) returns (SectionTranslationExistsResponse) {}
+
+  // 获取翻译数据
+  rpc GetTranslation(GetSectionRequest) returns (SectionTranslation) {}
+
+  // 创建翻译
+  rpc CreateTranslation(CreateSectionTranslationRequest) returns (SectionTranslation) {}
+
+  // 更新翻译
+  rpc UpdateTranslation(UpdateSectionTranslationRequest) returns (SectionTranslation) {}
+
+  // 删除翻译
+  rpc DeleteTranslation(DeleteSectionTranslationRequest) returns (google.protobuf.Empty) {}
+}
+
+// 页面区块（语言无关的结构，内容随语言变化在翻译表中）
+message Section {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "区块ID"}
+  ]; // 区块ID
+
+  optional uint32 page_id = 2 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "所属页面ID"}
+  ]; // 所属页面ID
+
+  optional SectionType type = 3 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {description: "区块类型"}
+  ]; // 区块类型
+
+  optional string name = 4 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "区块名称（后台标识用，语言无关）"}
+  ]; // 区块名称（后台标识用，语言无关）
+
+  optional uint32 sort_order = 5 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序（越小越靠前）"}
+  ]; // 排序（越小越靠前）
+
+  map<string, string> config = 10 [
+    json_name = "config",
+    (gnostic.openapi.v3.property) = {description: "区块样式/布局配置（边距、CSS class、列数等，语言无关）"}
+  ]; // 区块样式/布局配置（语言无关）
+
+
+  repeated SectionTranslation translations = 20 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ]; // 多语言翻译列表
+
+  repeated string available_languages = 21 [
+    json_name = "availableLanguages",
+    (gnostic.openapi.v3.property) = {
+      description: "可用的语言代码列表（快速查询，避免遍历 translations）",
+      example: {yaml: '["zh-CN", "en-US", "ja-JP"]'}
+    }
+  ]; // 可用的语言代码列表
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 区块翻译（语言相关的内容）
+message SectionTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 section_id = 2 [
+    json_name = "sectionId",
+    (gnostic.openapi.v3.property) = {description: "关联的区块ID"}
+  ]; // 关联的区块ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {
+      description: "语言代码（ISO 639-1 标准）"
+    }
+  ]; // 语言代码
+
+
+  map<string, string> content = 10 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "区块内容（键值对，适配不同类型区块，随语言变化）"}
+  ]; // 区块内容（键值对，适配不同类型区块，随语言变化）
+
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+
+// 回应 - 区块列表
+message ListSectionResponse {
+  repeated Section items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 区块数据
+message GetSectionRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional string locale = 10 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {description: "语言代码，用于指定返回哪个语言版本的数据"}
+  ]; // 语言代码，用于指定返回哪个语言版本的数据
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 请求 - 创建区块
+message CreateSectionRequest {
+  Section data = 1;
+}
+
+// 请求 - 更新区块
+message UpdateSectionRequest {
+  uint32 id = 1;
+
+  Section data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 请求 - 删除区块
+message DeleteSectionRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message SectionTranslationExistsRequest {
+  uint32 section_id = 1 [
+    json_name = "sectionId",
+    (gnostic.openapi.v3.property) = {description: "关联的区块ID"}
+  ]; // 关联的区块ID
+
+  string language_code = 2 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+}
+message SectionTranslationExistsResponse {
+  bool exists = 1 [json_name = "exists", (gnostic.openapi.v3.property) = {description: "翻译是否存在"}]; // 翻译是否存在
+}
+
+message CreateSectionTranslationRequest {
+  uint32 section_id = 1 [
+    json_name = "sectionId",
+    (gnostic.openapi.v3.property) = {description: "关联的区块ID"}
+  ]; // 关联的区块ID
+
+  SectionTranslation data = 2;
+}
+
+message UpdateSectionTranslationRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译ID"}
+  ]; // 翻译ID
+
+  SectionTranslation data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml: "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+message SectionTranslationIdentifier {
+  uint32 section_id = 1 [
+    json_name = "sectionId",
+    (gnostic.openapi.v3.property) = {description: "关联的区块ID"}
+  ]; // 关联的区块ID
+
+  string language_code = 2 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+}
+
+message DeleteSectionTranslationRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+
+    SectionTranslationIdentifier identifier = 2 [
+      json_name = "identifier",
+      (gnostic.openapi.v3.property) = {description: "通过 section_id 和 language_code 组合唯一确定一条翻译记录（优先级高于 ID）"}
+    ]; // 通过 section_id 和 language_code 组合唯一确定一条翻译记录（优先级高于 ID）
+  }
+}
