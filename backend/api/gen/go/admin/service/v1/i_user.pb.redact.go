@@ -5,9 +5,8 @@ package adminpb
 
 import (
 	context "context"
-	redact "github.com/menta2k/protoc-gen-redact/v3/redact/v3"
 	pagination "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	redact1 "github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact/redact/v1"
+	redact "github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact/redact/v1"
 	identitypb "go-wind-cms/api/gen/go/identity/service/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -23,7 +22,7 @@ var (
 	_ codes.Code
 	_ status.Status
 	_ emptypb.Empty
-	_ redact1.FieldRules
+	_ redact.FieldRules
 	_ pagination.Sorting
 	_ identitypb.User
 )

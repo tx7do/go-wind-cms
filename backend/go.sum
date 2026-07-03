@@ -329,8 +329,6 @@ github.com/mattn/go-runewidth v0.0.19 h1:v++JhqYnZuu5jSKrk9RbgF5v4CGUjqRfBm05byF
 github.com/mattn/go-runewidth v0.0.19/go.mod h1:XBkDxAl56ILZc9knddidhrOlY5R/pDhgLpndooCuJAs=
 github.com/mattn/go-sqlite3 v1.14.28 h1:ThEiQrnbtumT+QMknw63Befp/ce/nUPgBPMlRFEum7A=
 github.com/mattn/go-sqlite3 v1.14.28/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
-github.com/menta2k/protoc-gen-redact/v3 v3.0.0-20260213125431-7688a38967d4 h1:+Cicx1O8bVpkJILiIxuMJ7Kh0ughfkC8Pa0ucpedZpA=
-github.com/menta2k/protoc-gen-redact/v3 v3.0.0-20260213125431-7688a38967d4/go.mod h1:OGHWYC2YBsdFicilB+WJmMPFKzQhb/kApNODeu0vgEU=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/mileusna/useragent v1.3.5 h1:SJM5NzBmh/hO+4LGeATKpaEX9+b4vcGg2qXGLiNGDws=
@@ -503,6 +501,8 @@ github.com/tx7do/go-utils/slug v0.0.1 h1:U/8micay7kQGMQiEP0WTLX5JiyTrLP2M5rQ6iTB
 github.com/tx7do/go-utils/slug v0.0.1/go.mod h1:xtwLns5uOYP+//LMsB9vXOBtycP5KW+n/N9gCl1Ag9M=
 github.com/tx7do/go-utils/translator v1.1.3 h1:kqA4iY1A7+n1zWoTaEjIElaBOVtisbaOHt/6sOVVsis=
 github.com/tx7do/go-utils/translator v1.1.3/go.mod h1:jKzL0a5ocwAnCVKg3iUiB36loRfX0iWCtrcmjqjW6Ng=
+github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062 h1:GQlTUYCRD34UtoEDc1mmNLsxbckjhbWiRpIfUGR1ORE=
+github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062/go.mod h1:6pZHTHo8t6GjYu8fEAJr/OTSEUCVn7ai6oCvVjRC+tY=
 github.com/tx7do/kratos-authn v1.1.10 h1:vbMwMbAf+a9QeyqNvTBqJhCm0L/Uu3lb4rULcAi2Lb8=
 github.com/tx7do/kratos-authn v1.1.10/go.mod h1:LkcDHt87Hep8rxns7fwoHnKuOAuUyT8XZ4bVGAGbXF8=
 github.com/tx7do/kratos-authn/engine/jwt v1.1.10 h1:Qwriauesdm5MjRdM4U/RtndYI50YA0POFHWqa+sn+Hw=
@@ -773,8 +773,8 @@ google.golang.org/grpc v1.31.0/go.mod h1:N36X2cJ7JwdamYAgDz+s+rVMFjt3numwzf/HckM
 google.golang.org/grpc v1.33.1/go.mod h1:fr5YgcSWrqhRRxogOsw7RzIpsmvOZ6IcH4kBYTpR3n0=
 google.golang.org/grpc v1.36.0/go.mod h1:qjiiYl8FncCW8feJPdyg3v6XW24KsRHe+dy9BAGRRjU=
 google.golang.org/grpc v1.48.0/go.mod h1:vN9eftEi1UMyUsIF80+uQXhHjbXYbm0uXoFCACuMGWk=
-google.golang.org/grpc v1.81.1 h1:VnnIIZ88UzOOKLukQi+ImGz8O1Wdp8nAGGnvOfEIWQQ=
-google.golang.org/grpc v1.81.1/go.mod h1:xGH9GfzOyMTGIOXBJmXt+BX/V0kcdQbdcuwQ/zNw42I=
+google.golang.org/grpc v1.82.0 h1:vguDnZUPjE26w09A63VoxZPnvPjB5Riyc0mkXPFmAIU=
+google.golang.org/grpc v1.82.0/go.mod h1:yzTZ1TB1Z3SG+LIYaI+WiE8D5+PZ3ArnrSp8zF3+/ZA=
 google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
 google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
 google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=

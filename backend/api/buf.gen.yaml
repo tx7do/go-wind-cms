@@ -98,7 +98,7 @@ plugins:
       - lang=go
 
   # generate redact code
-  - local: protoc-gen-redact
+  - local: protoc-gen-go-redact
     out: gen/go
     opt:
       - paths=source_relative # use relative paths

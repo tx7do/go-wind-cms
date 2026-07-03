@@ -20,7 +20,6 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/jinzhu/inflection v1.0.0
 	github.com/lib/pq v1.12.3
-	github.com/menta2k/protoc-gen-redact/v3 v3.0.0-20260213125431-7688a38967d4
 	github.com/mileusna/useragent v1.3.5
 	github.com/minio/minio-go/v7 v7.0.99
 	github.com/redis/go-redis/v9 v9.19.0
@@ -41,6 +40,7 @@ require (
 	github.com/tx7do/go-utils/password v0.0.2
 	github.com/tx7do/go-utils/slug v0.0.1
 	github.com/tx7do/go-utils/translator v1.1.3
+	github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062
 	github.com/tx7do/kratos-authn v1.1.10
 	github.com/tx7do/kratos-authn/engine/jwt v1.1.10
 	github.com/tx7do/kratos-authz v1.1.8
@@ -67,7 +67,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.43.0
 	google.golang.org/genproto v0.0.0-20260519071638-aa98bba5eb94
 	google.golang.org/genproto/googleapis/api v0.0.0-20260519071638-aa98bba5eb94
-	google.golang.org/grpc v1.81.1
+	google.golang.org/grpc v1.82.0
 	google.golang.org/protobuf v1.36.11
 )
 
