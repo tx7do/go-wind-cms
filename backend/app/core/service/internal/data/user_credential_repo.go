@@ -476,8 +476,10 @@ func (r *UserCredentialRepo) ChangeCredential(ctx context.Context, req *authenti
 		return authenticationV1.ErrorBadRequest("invalid old password")
 	}
 
+	// 注意：这里必须用 GetNewCredential，原代码误写成 GetOldCredential 会导致
+	// 改密码后库里哈希被重置成旧密码的哈希，新密码无法登录、旧密码永久有效。
 	var newCredential string
-	newCredential, err = r.prepareCredential(entity.CredentialType, req.GetOldCredential())
+	newCredential, err = r.prepareCredential(entity.CredentialType, req.GetNewCredential())
 	if err != nil {
 		r.log.Errorf("prepare new credential failed: %s", err.Error())
 		return authenticationV1.ErrorBadRequest("prepare new credential failed")

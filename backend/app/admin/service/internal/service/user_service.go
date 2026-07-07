@@ -287,12 +287,12 @@ func (s *UserService) Delete(ctx context.Context, req *identityV1.DeleteUserRequ
 	}
 	switch req.QueryBy.(type) {
 	case *identityV1.DeleteUserRequest_Username:
-		getRequest.QueryBy = &identityV1.GetUserRequest_Id{
-			Id: req.GetId(),
-		}
-	case *identityV1.DeleteUserRequest_Id:
 		getRequest.QueryBy = &identityV1.GetUserRequest_Username{
 			Username: req.GetUsername(),
+		}
+	case *identityV1.DeleteUserRequest_Id:
+		getRequest.QueryBy = &identityV1.GetUserRequest_Id{
+			Id: req.GetId(),
 		}
 	default:
 		return nil, adminV1.ErrorBadRequest("invalid request delete_by")

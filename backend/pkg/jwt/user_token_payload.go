@@ -193,37 +193,34 @@ func NewUserTokenPayloadWithJwtMapClaims(claims jwt.MapClaims) (*authenticationV
 		payload.Username = trans.Ptr(sub)
 	}
 
-	userId, _ := claims[ClaimFieldUserID]
-	if userId != nil {
-		payload.UserId = uint32(userId.(float64))
+	// 注意：本函数会被审计日志中间件的 extractAuthToken 调用，而那里仅解析 token
+	// 不做签名校验。攻击者可构造签名错误但结构合法的恶意 token，若 claims 值类型
+	// 不符（如把数字字段填成字符串），裸类型断言会 panic，导致中间件崩溃。
+	// 因此所有断言必须用 ,ok 形式，类型不符时跳过该字段而不是 panic。
+	if userId, ok := claims[ClaimFieldUserID].(float64); ok {
+		payload.UserId = uint32(userId)
 	}
 
-	tenantId, _ := claims[ClaimFieldTenantID]
-	if tenantId != nil {
-		payload.TenantId = trans.Ptr(uint32(tenantId.(float64)))
+	if tenantId, ok := claims[ClaimFieldTenantID].(float64); ok {
+		payload.TenantId = trans.Ptr(uint32(tenantId))
 	}
 
-	clientId, _ := claims[ClaimFieldClientID]
-	if clientId != nil {
-		payload.ClientId = trans.Ptr(clientId.(string))
+	if clientId, ok := claims[ClaimFieldClientID].(string); ok {
+		payload.ClientId = trans.Ptr(clientId)
 	}
 
-	deviceId, _ := claims[ClaimFieldDeviceID]
-	if deviceId != nil {
-		payload.DeviceId = trans.Ptr(deviceId.(string))
+	if deviceId, ok := claims[ClaimFieldDeviceID].(string); ok {
+		payload.DeviceId = trans.Ptr(deviceId)
 	}
 
-	dataScope, _ := claims[ClaimFieldDataScope]
-	if dataScope != nil {
-		v, ok := identityV1.DataScope_value[dataScope.(string)]
-		if ok {
+	if dataScope, ok := claims[ClaimFieldDataScope].(string); ok {
+		if v, ok2 := identityV1.DataScope_value[dataScope]; ok2 {
 			payload.DataScope = trans.Ptr(identityV1.DataScope(v))
 		}
 	}
 
-	orgUnitID, _ := claims[ClaimFieldOrgUnitID]
-	if orgUnitID != nil {
-		payload.OrgUnitId = trans.Ptr(uint32(orgUnitID.(float64)))
+	if orgUnitID, ok := claims[ClaimFieldOrgUnitID].(float64); ok {
+		payload.OrgUnitId = trans.Ptr(uint32(orgUnitID))
 	}
 
 	roleCodes, _ := claims[ClaimFieldRoleCodes]
@@ -231,7 +228,9 @@ func NewUserTokenPayloadWithJwtMapClaims(claims jwt.MapClaims) (*authenticationV
 		switch itf := roleCodes.(type) {
 		case []interface{}:
 			for _, rc := range itf {
-				payload.Roles = append(payload.Roles, rc.(string))
+				if s, ok := rc.(string); ok {
+					payload.Roles = append(payload.Roles, s)
+				}
 			}
 
 		case []string:

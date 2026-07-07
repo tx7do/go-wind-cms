@@ -10,6 +10,7 @@ import type {
   StorageValue,
   SyncMessage,
 } from "./storage.types";
+import { getLocalStorage, getSessionStorage, isStorageAvailable } from "./storage-adapter";
 
 class StorageManager implements IStorageCache {
   private readonly prefix: string | undefined;
@@ -63,13 +64,15 @@ class StorageManager implements IStorageCache {
         ? `${prefix}_${Math.random().toString(36).substring(2, 10)}`
         : "ssr";
 
-    // SSR 兼容
-    if (typeof window === "undefined") {
+    // SSR 兼容：node 环境下既无 window 也无 Taro 存储，使用空对象占位
+    // 注意：不能直接用 typeof window === "undefined" 判断，因为小程序端也没有 window，
+    // 但小程序端需要走 Taro 同步存储 API（见 storage-adapter.ts）。
+    if (!isStorageAvailable()) {
       this.storage = {} as Storage;
       return;
     }
 
-    this.storage = storageType === "localStorage" ? window.localStorage : window.sessionStorage;
+    this.storage = storageType === "localStorage" ? getLocalStorage() : getSessionStorage();
     this.defaultTTL = defaultTTL;
 
     if (enableSync) this.initSync();

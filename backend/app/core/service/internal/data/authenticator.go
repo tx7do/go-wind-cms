@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -66,14 +67,24 @@ func NewAuthenticator(
 		cfg:            cfg,
 	}
 
-	a.AdminAuthenticator, _ = authnJwt.NewAuthenticator(
+	// 注意：初始化阶段必须 fail-fast，配置错误（如空 key、不支持的签名算法）时
+	// NewAuthenticator 返回 nil + err。若用 _ 吞掉 err，后续 Authenticate 调用会在
+	// AuthenticateToken 处空指针 panic，把整个登录/鉴权链路打挂。
+	var err error
+	a.AdminAuthenticator, err = authnJwt.NewAuthenticator(
 		authnJwt.WithKey([]byte(cfg.Admin.GetKey())),
 		authnJwt.WithSigningMethod(cfg.Admin.GetMethod()),
 	)
-	a.AppAuthenticator, _ = authnJwt.NewAuthenticator(
+	if err != nil {
+		panic(fmt.Errorf("init admin authenticator failed: %w", err))
+	}
+	a.AppAuthenticator, err = authnJwt.NewAuthenticator(
 		authnJwt.WithKey([]byte(cfg.App.GetKey())),
 		authnJwt.WithSigningMethod(cfg.App.GetMethod()),
 	)
+	if err != nil {
+		panic(fmt.Errorf("init app authenticator failed: %w", err))
+	}
 
 	return &a
 }

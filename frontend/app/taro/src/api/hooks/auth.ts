@@ -130,10 +130,14 @@ export const DEFAULT_HOME_PATH = '/';
 
 /**
  * 加密密码（AES）
+ *
+ * 注意：Taro 的环境变量通过 config/index.ts 的 defineConstants 注入为全局常量
+ * AES_KEY（来源 process.env.TARO_APP_AES_KEY，见 src/config/env.ts 声明）。
+ * 原代码误写成 process.env.NEXT_PUBLIC_AES_KEY（这是 Next.js 变量，Taro 中不存在），
+ * 导致 key 恒为空字符串，密码加密结果后端无法解密、登录完全不可用。
  */
 function encryptPassword(password: string): string {
-    const key = process.env.NEXT_PUBLIC_AES_KEY || '';
-    return encryptByAES(password, key);
+    return encryptByAES(password, AES_KEY);
 }
 
 /**

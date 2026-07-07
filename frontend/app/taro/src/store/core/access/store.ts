@@ -1,6 +1,7 @@
 import {create, type StoreApi, useStore} from 'zustand';
-import {persist} from 'zustand/middleware';
+import {persist, createJSONStorage} from 'zustand/middleware';
 import {createContext, useContext, type Context} from 'react';
+import {getLocalStorage} from '@/core/storage/storage-adapter';
 
 // ==============================
 // 类型定义
@@ -104,7 +105,11 @@ export function createAccessStore(): StoreApi<AccessStore> {
                 },
             }),
             {
-                name: 'gowind-access-storage', // localStorage key
+                name: 'gowind-access-storage', // storage key
+                // 注意：zustand persist 默认使用全局 localStorage，在微信小程序等无
+                // window 对象的运行时会抛 "window is not defined"。这里注入跨端适配器，
+                // 浏览器端用 window.localStorage，小程序端用 Taro 同步存储 API。
+                storage: createJSONStorage(() => getLocalStorage()),
                 partialize: (state) => ({
                     accessToken: state.accessToken,
                     refreshToken: state.refreshToken,

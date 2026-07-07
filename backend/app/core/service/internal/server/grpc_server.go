@@ -40,6 +40,7 @@ func NewGrpcServer(
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
+	userCredentialService *service.UserCredentialService,
 
 	taskService *service.TaskService,
 
@@ -101,6 +102,7 @@ func NewGrpcServer(
 
 	authenticationV1.RegisterLoginPolicyServiceServer(srv, loginPolicyService)
 	authenticationV1.RegisterAuthenticationServiceServer(srv, authenticationService)
+	authenticationV1.RegisterUserCredentialServiceServer(srv, userCredentialService)
 
 	dictV1.RegisterDictTypeServiceServer(srv, dictTypeService)
 	dictV1.RegisterDictEntryServiceServer(srv, dictEntryService)
