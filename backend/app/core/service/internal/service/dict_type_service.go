@@ -40,7 +40,7 @@ func (s *DictTypeService) Get(ctx context.Context, req *dictV1.GetDictTypeReques
 }
 
 func (s *DictTypeService) Create(ctx context.Context, req *dictV1.CreateDictTypeRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, dictV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -52,7 +52,7 @@ func (s *DictTypeService) Create(ctx context.Context, req *dictV1.CreateDictType
 }
 
 func (s *DictTypeService) Update(ctx context.Context, req *dictV1.UpdateDictTypeRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, dictV1.ErrorBadRequest("invalid parameter")
 	}
 

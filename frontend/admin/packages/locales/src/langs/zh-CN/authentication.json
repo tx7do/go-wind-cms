@@ -8,6 +8,7 @@
   "loginFailedDesc": "请检查您的用户名和密码",
   "loginSubtitle": "请输入您的帐户信息以开始管理您的系统",
   "selectAccount": "快速选择账号",
+  "tenantCode": "租户编号（留空为平台登录）",
   "username": "账号",
   "password": "密码",
   "usernameTip": "请输入用户名",

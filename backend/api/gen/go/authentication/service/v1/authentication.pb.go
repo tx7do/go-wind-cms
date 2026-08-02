@@ -251,6 +251,7 @@ type LoginRequest struct {
 	ClientType    *ClientType               `protobuf:"varint,40,opt,name=client_type,proto3,enum=authentication.service.v1.ClientType,oneof" json:"client_type,omitempty"` // 客户端类型
 	DeviceId      *string                   `protobuf:"bytes,50,opt,name=device_id,proto3,oneof" json:"device_id,omitempty"`
 	Jti           *string                   `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"`
+	TenantCode    *string                   `protobuf:"bytes,70,opt,name=tenant_code,proto3,oneof" json:"tenant_code,omitempty"` // 租户编号，留空表示平台登录，非空时解析对应租户
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -399,6 +400,13 @@ func (x *LoginRequest) GetDeviceId() string {
 func (x *LoginRequest) GetJti() string {
 	if x != nil && x.Jti != nil {
 		return *x.Jti
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetTenantCode() string {
+	if x != nil && x.TenantCode != nil {
+		return *x.TenantCode
 	}
 	return ""
 }
@@ -1316,7 +1324,7 @@ var File_authentication_service_v1_authentication_proto protoreflect.FileDescrip
 
 const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\n" +
-	".authentication/service/v1/authentication.proto\x12\x19authentication.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v1/redact.proto\x1a\x1eidentity/service/v1/user.proto\x1a*authentication/service/v1/user_token.proto\"\xa6\r\n" +
+	".authentication/service/v1/authentication.proto\x12\x19authentication.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v1/redact.proto\x1a\x1eidentity/service/v1/user.proto\x1a*authentication/service/v1/user_token.proto\"\xd2\x0e\n" +
 	"\fLoginRequest\x12\x99\x01\n" +
 	"\n" +
 	"grant_type\x18\x01 \x01(\x0e2$.authentication.service.v1.GrantTypeBS\xe0A\x02\xbaGM\x8a\x02\n" +
@@ -1337,7 +1345,8 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\vclient_type\x18( \x01(\x0e2%.authentication.service.v1.ClientTypeB\x15\xbaG\x12\x92\x02\x0f客户端类型H\tR\vclient_type\x88\x01\x01\x12q\n" +
 	"\tdevice_id\x182 \x01(\tBN\xbaGK\x92\x02H设备唯一标识（可选），用于设备绑定、推送、风控等H\n" +
 	"R\tdevice_id\x88\x01\x01\x12\x84\x01\n" +
-	"\x03jti\x18< \x01(\tBm\xbaGj\x92\x02g建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击H\vR\x03jti\x88\x01\x01B\f\n" +
+	"\x03jti\x18< \x01(\tBm\xbaGj\x92\x02g建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击H\vR\x03jti\x88\x01\x01\x12\x99\x01\n" +
+	"\vtenant_code\x18F \x01(\tBr\xbaGo\x92\x02l租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户H\fR\vtenant_code\x88\x01\x01B\f\n" +
 	"\n" +
 	"identifierB\f\n" +
 	"\n" +
@@ -1353,7 +1362,8 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\f_client_typeB\f\n" +
 	"\n" +
 	"_device_idB\x06\n" +
-	"\x04_jti\"\x8c\t\n" +
+	"\x04_jtiB\x0e\n" +
+	"\f_tenant_code\"\x8c\t\n" +
 	"\rLoginResponse\x12\xdb\x01\n" +
 	"\n" +
 	"token_type\x18\x01 \x01(\x0e2$.authentication.service.v1.TokenTypeB\x94\x01\xbaG\x90\x01\x8a\x02\b\x1a\x06Bearer\x92\x02\x81\x01令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。R\n" +

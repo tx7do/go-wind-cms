@@ -180,6 +180,13 @@ message LoginRequest {
       description: "建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击"
     }
   ];
+
+  optional string tenant_code = 70 [
+    json_name = "tenant_code",
+    (gnostic.openapi.v3.property) = {
+      description: "租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户"
+    }
+  ]; // 租户编号，留空表示平台登录，非空时解析对应租户
 }
 
 // 用户登录 - 回应

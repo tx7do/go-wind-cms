@@ -126,6 +126,12 @@ func (r *DictTypeRepo) Get(ctx context.Context, req *dictV1.GetDictTypeRequest) 
 	case *dictV1.GetDictTypeRequest_Id:
 		whereCond = append(whereCond, dicttype.IDEQ(req.GetId()))
 	case *dictV1.GetDictTypeRequest_Code:
+		// type_code 仅在 (tenant_id, type_code) 维度唯一，平台上下文(tid=0)下按 type_code 查询
+		// 会跨租户匹配多行导致 .Only() 报 not singular，且会泄露其他租户字典类型。
+		// 仅允许在具名租户上下文(tid>0)下按 type_code 查询。
+		if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+			return nil, dictV1.ErrorBadRequest("tenant scope required to query dict type by code")
+		}
 		builder.Where(dicttype.TypeCodeEQ(req.GetCode()))
 	}
 

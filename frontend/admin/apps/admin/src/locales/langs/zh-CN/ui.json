@@ -186,7 +186,10 @@
     "paragraph": "段落",
     "justify": "两端对齐",
     "words": "字",
-    "chars": "字符"
+    "chars": "字符",
+    "json_parse_error": "JSON解析错误",
+    "json_serialize_error": "JSON序列化错误",
+    "unknown_error": "未知错误"
   },
   "dateRange": {
     "start": "开始时间",

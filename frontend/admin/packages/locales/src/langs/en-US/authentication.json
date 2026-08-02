@@ -8,6 +8,7 @@
   "loginFailedDesc": "Please check your username and password",
   "loginSubtitle": "Enter your account details to manage your projects",
   "selectAccount": "Quick Select Account",
+  "tenantCode": "Tenant code (leave empty for platform)",
   "username": "Username",
   "password": "Password",
   "usernameTip": "Please enter username",

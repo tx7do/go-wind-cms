@@ -152,8 +152,18 @@ func (r *PositionRepo) Get(ctx context.Context, req *identityV1.GetPositionReque
 	case *identityV1.GetPositionRequest_Id:
 		whereCond = append(whereCond, position.IDEQ(req.GetId()))
 	case *identityV1.GetPositionRequest_Name:
+		// position.name 连租户内都不唯一，平台上下文(tid=0)下按 name 查询必然跨租户匹配多行，
+		// .Only() 会报 not singular。仅允许在具名租户上下文(tid>0)下按 name 查询。
+		if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+			return nil, identityV1.ErrorBadRequest("tenant scope required to query position by name")
+		}
 		whereCond = append(whereCond, position.NameEQ(req.GetName()))
 	case *identityV1.GetPositionRequest_Code:
+		// position.code 仅在 (tenant_id, code) 维度唯一，平台上下文(tid=0)下按 code 查询
+		// 会跨租户匹配多行导致 .Only() 报 not singular。仅允许在具名租户上下文(tid>0)下按 code 查询。
+		if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+			return nil, identityV1.ErrorBadRequest("tenant scope required to query position by code")
+		}
 		whereCond = append(whereCond, position.CodeEQ(req.GetCode()))
 	}
 

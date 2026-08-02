@@ -31,13 +31,13 @@ VALUES (2, 1, 'tenant_admin', '租户管理', '张管理员', 'tenant@company.co
 ALTER TABLE sys_users AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_users);
 
 -- 插入租户管理员的登录凭证（密码：admin，与平台管理员哈希值一致）
-INSERT INTO sys_user_credentials (user_id, identity_type, identifier, credential_type, credential, status,
+INSERT INTO sys_user_credentials (tenant_id, user_id, identity_type, identifier, credential_type, credential, status,
                                   is_primary, created_at)
 VALUES
-    -- 租户管理员（对应users表id=2）
-    (2, 'USERNAME', 'tenant_admin', 'PASSWORD_HASH', '$2a$10$yajZDX20Y40FkG0Bu4N19eXNqRizez/S9fK63.JxGkfLq.RoNKR/a',
+    -- 租户管理员（对应users表id=2，tenant_id=1）
+    (1, 2, 'USERNAME', 'tenant_admin', 'PASSWORD_HASH', '$2a$10$yajZDX20Y40FkG0Bu4N19eXNqRizez/S9fK63.JxGkfLq.RoNKR/a',
      'ENABLED', true, NOW()),
-    (2, 'EMAIL', 'tenant@company.com', 'PASSWORD_HASH',
+    (1, 2, 'EMAIL', 'tenant@company.com', 'PASSWORD_HASH',
      '$2a$10$yajZDX20Y40FkG0Bu4N19eXNqRizez/S9fK63.JxGkfLq.RoNKR/a', 'ENABLED', false, NOW());
 ALTER TABLE sys_user_credentials AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_user_credentials);
 

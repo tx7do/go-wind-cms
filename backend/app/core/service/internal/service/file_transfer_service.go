@@ -181,70 +181,13 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 
 // presignedUploadFile 预签名上传文件
 func (s *FileTransferService) presignedUploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
-	if req.StorageObject == nil {
-		return nil, storageV1.ErrorUploadFailed("unknown storageObject")
-	}
-
-	if req.GetPresign() == nil {
-		return nil, storageV1.ErrorUploadFailed("unknown presign data")
-	}
-
-	var contentType string
-	if req.GetPresign().GetContentType() != "" {
-		contentType = req.GetPresign().GetContentType()
-	} else if req.GetMime() != "" {
-		contentType = req.GetMime()
-	} else {
-		return nil, storageV1.ErrorUploadFailed("unknown content type for presign")
-	}
-
-	if req.GetSourceFileName() == "" {
-		return nil, storageV1.ErrorUploadFailed("unknown source file name")
-	}
-
-	if req.StorageObject.BucketName == nil {
-		req.StorageObject.BucketName = trans.Ptr(oss.ContentTypeToBucketName(contentType))
-	}
-	if req.StorageObject.ObjectName == nil {
-		req.StorageObject.ObjectName = trans.Ptr(
-			oss.EnsureObjectName(
-				req.GetStorageObject().GetFileDirectory(),
-				req.GetSourceFileName(),
-				contentType,
-				req.GetFile(),
-				oss.GenerateFileNameTypeUUID,
-			),
-		)
-	}
-
-	var method storageV1.GetUploadPresignedUrlRequest_Method
-	switch strings.ToLower(req.GetPresign().GetMethod()) {
-	case "put":
-		method = storageV1.GetUploadPresignedUrlRequest_Put
-	case "post":
-		method = storageV1.GetUploadPresignedUrlRequest_Post
-	default:
-		method = storageV1.GetUploadPresignedUrlRequest_Post
-	}
-
-	resp, err := s.mc.GetUploadPresignedUrl(
-		ctx,
-		&storageV1.GetUploadPresignedUrlRequest{
-			ContentType:   trans.Ptr(contentType),
-			ExpireSeconds: req.GetPresign().ExpireSeconds,
-			Method:        method,
-			BucketName:    req.StorageObject.BucketName,
-			FileDirectory: req.StorageObject.FileDirectory,
-		})
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO : 记录文件元数据到数据库（待上传完成后再记录更合适？）
-
-	return &storageV1.UploadFileResponse{
-		PresignedUrl: trans.Ptr(resp.UploadUrl),
-	}, nil
+	// 预签名上传路径已禁用：该路径无法在服务端可靠记录文件元数据
+	// （sourceFileName/tenantId/userId/sha256 无法从 MinIO 事件通知获得，
+	// 且 x-amz-meta-* 客户端可伪造）。当前业务上传统一走 directUploadFile
+	// （服务端中转，已正确落库）。待有预签名直传刚需时，需引入
+	// MinIO 事件通知 + 待确认表 + 回调端点 + 定时清理的完整闭环。
+	_ = req
+	return nil, storageV1.ErrorUploadFailed("presigned upload is not implemented, use direct upload instead")
 }
 
 // UploadFile 上传文件

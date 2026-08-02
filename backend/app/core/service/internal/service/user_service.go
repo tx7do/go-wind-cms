@@ -9,6 +9,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/sliceutil"
 	"github.com/tx7do/go-utils/trans"
@@ -22,6 +23,21 @@ import (
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
 )
+
+// viewerUserIDFromContext 从 viewer context 提取操作人的用户 ID。
+// core 服务经由 ent middleware 注入 viewer context（来源为 gRPC metadata 中的 OperatorMetadata）。
+// 系统上下文（初始化、定时任务等）不存在 viewer，返回 (0, false)。
+func viewerUserIDFromContext(ctx context.Context) (uint32, bool) {
+	vc, exist := viewer.FromContext(ctx)
+	if !exist || vc == nil {
+		return 0, false
+	}
+	uid := vc.UserID()
+	if uid == 0 {
+		return 0, false
+	}
+	return uint32(uid), true
+}
 
 type UserService struct {
 	identityV1.UnimplementedUserServiceServer
@@ -467,7 +483,38 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 }
 
 func (s *UserService) Delete(ctx context.Context, req *identityV1.DeleteUserRequest) (*emptypb.Empty, error) {
-	err := s.userRepo.Delete(ctx, req)
+	// 获取操作人信息（从 viewer context 提取，core 服务经由 ent middleware 注入）
+	operatorID, hasOperator := viewerUserIDFromContext(ctx)
+	if !hasOperator {
+		return nil, identityV1.ErrorBadRequest("operator context required to delete user")
+	}
+
+	// 获取将被删除的用户信息
+	target, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{
+			Id: req.GetId(),
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// 禁止删除默认超级管理员：初始化时创建的平台级 admin（恒为 id=1，
+	// 即便后续改名也由 id 兜底保护）。误删会导致系统失去超级管理员且无法自动重建。
+	if target.GetId() == 1 ||
+		(target.GetUsername() == constants.DefaultAdminUserName && target.GetTenantId() == 0) {
+		s.log.Errorf("operator [%d] attempted to delete default admin user [%d]",
+			operatorID, target.GetId())
+		return nil, identityV1.ErrorBadRequest("default admin cannot be deleted")
+	}
+
+	// 禁止删除自己：误删自身账号将导致当前会话立即失去管理能力。
+	if target.GetId() == operatorID {
+		s.log.Errorf("operator [%d] attempted to delete self", operatorID)
+		return nil, identityV1.ErrorBadRequest("cannot delete yourself")
+	}
+
+	err = s.userRepo.Delete(ctx, req)
 	return &emptypb.Empty{}, err
 }
 

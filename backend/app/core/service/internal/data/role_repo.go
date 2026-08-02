@@ -208,6 +208,12 @@ func (r *RoleRepo) ListRolesByRoleCodes(ctx context.Context, codes []string) ([]
 		return []*permissionV1.Role{}, nil
 	}
 
+	// role.code 仅在 (tenant_id, code) 维度唯一，平台上下文(tid=0)下按 code 列表查询
+	// 会跨租户返回所有匹配角色，造成跨租户角色/权限泄露。仅允许在具名租户上下文(tid>0)下查询。
+	if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+		return nil, permissionV1.ErrorBadRequest("tenant scope required to query roles by codes")
+	}
+
 	entities, err := r.entClient.Client().Role.Query().
 		Where(role.CodeIn(codes...)).
 		All(ctx)
@@ -286,6 +292,12 @@ func (r *RoleRepo) ListRoleIDsByRoleCodes(ctx context.Context, codes []string) (
 		return []uint32{}, nil
 	}
 
+	// role.code 仅在 (tenant_id, code) 维度唯一，平台上下文(tid=0)下按 code 列表查询
+	// 会跨租户返回所有匹配角色 ID，造成跨租户角色/权限泄露。仅允许在具名租户上下文(tid>0)下查询。
+	if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+		return nil, permissionV1.ErrorBadRequest("tenant scope required to query role ids by codes")
+	}
+
 	entities, err := r.entClient.Client().Role.Query().
 		Where(role.CodeIn(codes...)).
 		Select(role.FieldID).
@@ -317,8 +329,19 @@ func (r *RoleRepo) Get(ctx context.Context, req *permissionV1.GetRoleRequest) (*
 	case *permissionV1.GetRoleRequest_Id:
 		whereCond = append(whereCond, role.IDEQ(req.GetId()))
 	case *permissionV1.GetRoleRequest_Name:
+		// role.name 连租户内都不唯一，平台上下文(tid=0)下按 name 查询必然跨租户匹配多行，
+		// .Only() 会报 not singular。仅允许在具名租户上下文(tid>0)下按 name 查询。
+		if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+			return nil, permissionV1.ErrorBadRequest("tenant scope required to query role by name")
+		}
 		whereCond = append(whereCond, role.NameEQ(req.GetName()))
 	case *permissionV1.GetRoleRequest_Code:
+		// role.code 仅在 (tenant_id, code) 维度唯一，平台上下文(tid=0)下按 code 查询
+		// 会跨租户匹配多行导致 .Only() 报 not singular。模板角色查询请用 GetTemplateRole。
+		// 仅允许在具名租户上下文(tid>0)下按 code 查询。
+		if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+			return nil, permissionV1.ErrorBadRequest("tenant scope required to query role by code")
+		}
 		whereCond = append(whereCond, role.CodeEQ(req.GetCode()))
 	}
 
@@ -362,11 +385,10 @@ func (r *RoleRepo) GetTemplateRole(ctx context.Context, templateCode string) (*p
 
 // CreateTenantRoleFromTemplate 从模版创建租户角色
 func (r *RoleRepo) CreateTenantRoleFromTemplate(ctx context.Context, tx *ent.Tx, tenantID, operatorID uint32) (dto *permissionV1.Role, err error) {
-	roleTemplate, err := r.Get(ctx, &permissionV1.GetRoleRequest{
-		QueryBy: &permissionV1.GetRoleRequest_Code{
-			Code: constants.TenantAdminTemplateRoleCode,
-		}},
-	)
+	// 通过专门的 GetTemplateRole 查询模板角色（tenant_id=0 的受保护模板），
+	// 它自带 TenantIDIsNil/TenantIDEQ(0) 过滤，避免通用 Get(Code) 在平台上下文下
+	// 跨租户匹配多行或误中非模板角色。
+	roleTemplate, err := r.GetTemplateRole(ctx, constants.TenantAdminRoleCode)
 	if err != nil {
 		return nil, err
 	}

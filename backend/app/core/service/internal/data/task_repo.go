@@ -128,6 +128,12 @@ func (r *TaskRepo) Get(ctx context.Context, req *taskV1.GetTaskRequest) (*taskV1
 		whereCond = append(whereCond, task.IDEQ(req.GetId()))
 
 	case *taskV1.GetTaskRequest_TypeName:
+		// type_name 仅在 (tenant_id, type_name) 维度唯一，平台上下文(tid=0)下按 type_name 查询
+		// 会跨租户匹配多行导致 .Only() 报 not singular，且会跨租户操控其他租户定时任务。
+		// 仅允许在具名租户上下文(tid>0)下按 type_name 查询。
+		if _, hasTenant := maybeTenantFromViewer(ctx); !hasTenant {
+			return nil, taskV1.ErrorBadRequest("tenant scope required to query task by type name")
+		}
 		whereCond = append(whereCond, task.TypeNameEQ(req.GetTypeName()))
 	}
 

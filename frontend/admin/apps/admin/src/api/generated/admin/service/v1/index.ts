@@ -1040,6 +1040,7 @@ export type authenticationservicev1_LoginRequest = {
   redirect_uri?: string;
   refresh_token?: string;
   scope?: string;
+  tenant_code?: string;
   user_id?: number;
   username?: string;
 };

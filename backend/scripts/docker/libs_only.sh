@@ -66,7 +66,7 @@ deps=(postgres redis etcd minio jaeger)
 
 # 切换到脚本所在目录的上一级（项目根）
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-repo_root="$script_dir/.."
+repo_root="$script_dir/../.."
 cd "$repo_root" || { echo "Failed to cd to repo root: $repo_root" >&2; exit 1; }
 
 echo "Repo root: $repo_root"

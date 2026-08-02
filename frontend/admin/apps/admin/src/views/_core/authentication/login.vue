@@ -17,6 +17,15 @@ const formSchema = computed((): VbenFormSchema[] => {
     {
       component: 'VbenInput',
       componentProps: {
+        placeholder: $t('authentication.tenantCode'),
+      },
+      fieldName: 'tenant_code',
+      label: $t('authentication.tenantCode'),
+      rules: z.optional(z.string()),
+    },
+    {
+      component: 'VbenInput',
+      componentProps: {
         placeholder: $t('authentication.usernameTip'),
       },
       dependencies: {
@@ -50,7 +59,7 @@ const formSchema = computed((): VbenFormSchema[] => {
     :show-code-login="false"
     :show-forget-password="false"
     :show-qrcode-login="false"
-    :show-register="true"
+    :show-register="false"
     :show-third-party-login="false"
     @submit="authStore.authLogin"
   />

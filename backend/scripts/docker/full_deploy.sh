@@ -48,7 +48,7 @@ deps=(postgres redis etcd minio jaeger)
 
 # 切换到脚本所在目录的上一级（项目根）
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$script_dir/.." || { echo "Failed to cd to repo root ($script_dir/..)" >&2; exit 1; }
+cd "$script_dir/../.." || { echo "Failed to cd to repo root ($script_dir/../..)" >&2; exit 1; }
 
 # 检查 docker-compose 文件
 if [ ! -f docker-compose.yml ] && [ ! -f docker-compose.yaml ]; then

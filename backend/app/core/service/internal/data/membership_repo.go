@@ -599,9 +599,18 @@ func (r *MembershipRepo) ListMembershipPositionIDs(ctx context.Context, userID u
 func (r *MembershipRepo) GetMembershipIDByUserID(ctx context.Context, userID uint32) (membershipID uint32, err error) {
 	now := time.Now()
 
+	// membership 按 (tenant_id, user_id) 维度组织，一对多租户模式下同一 user_id 可能
+	// 在多个租户存在 membership 记录。按 user_id 单独 .Only() 会因多行返回 not singular，
+	// 且会跨租户返回错误租户的 membership。必须限定租户范围。
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return 0, identityV1.ErrorBadRequest("tenant scope required to query membership by user id")
+	}
+
 	builder := r.entClient.Client().Membership.Query()
 	builder.Where(
 		membership.UserIDEQ(userID),
+		membership.TenantIDEQ(tid),
 		membership.Or(
 			membership.EndAtIsNil(),
 			membership.EndAtGT(now),
@@ -706,9 +715,19 @@ func (r *MembershipRepo) queryMembershipID(
 	userID uint32,
 ) (uint32, error) {
 	now := time.Now()
+
+	// membership 按 (tenant_id, user_id) 维度组织，一对多租户模式下同一 user_id 可能
+	// 在多个租户存在 membership 记录。按 user_id 单独 .OnlyID() 会因多行返回 not singular，
+	// 且会跨租户返回错误租户的 membership（后续删/改会误伤其他租户）。必须限定租户范围。
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return 0, identityV1.ErrorBadRequest("tenant scope required to query membership by user id")
+	}
+
 	membershipID, err := tx.Membership.Query().
 		Where(
 			membership.UserIDEQ(userID),
+			membership.TenantIDEQ(tid),
 			membership.Or(
 				membership.EndAtIsNil(),
 				membership.EndAtGT(now),

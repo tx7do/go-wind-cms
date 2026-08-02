@@ -88,6 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
       const resp = await loginMutation.execute({
         username: params.username,
         password: encryptPassword(params.password),
+        tenant_code: params.tenant_code,
         grant_type: 'password',
       });
 

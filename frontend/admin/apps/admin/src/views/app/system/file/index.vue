@@ -158,7 +158,7 @@ async function handleUploadFile(options: any) {
       onError?.(error, file);
     } catch {}
 
-    notification.success({
+    notification.error({
       message: $t('ui.notification.upload_failed'),
     });
   }

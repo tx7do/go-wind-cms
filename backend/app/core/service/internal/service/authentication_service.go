@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,6 +20,17 @@ import (
 	"go-wind-cms/pkg/constants"
 	"go-wind-cms/pkg/metadata"
 )
+
+func normalizeLoginVerifyError(err error) error {
+	switch {
+	case authenticationV1.IsUserNotFound(err),
+		authenticationV1.IsUserFreeze(err),
+		authenticationV1.IsInvalidPassword(err):
+		return authenticationV1.ErrorInvalidPassword("invalid username or password")
+	default:
+		return err
+	}
+}
 
 type AuthenticationService struct {
 	authenticationV1.UnimplementedAuthenticationServiceServer
@@ -179,23 +191,46 @@ func (s *AuthenticationService) resolveUserAuthority(ctx context.Context, user *
 
 // doGrantTypePassword 处理授权类型 - 密码
 func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
+	// ===== 租户解析：tenant_code 留空视为平台（tenant 0），非空则按编号定位租户 =====
+	// 解析后的 tenantID 限定后续凭证查询范围，消除同名 identifier 跨租户歧义。
+	var tenantID uint32 = 0
+	if code := req.GetTenantCode(); strings.TrimSpace(code) != "" {
+		tenant, _ := s.tenantRepo.Get(ctx, &identityV1.GetTenantRequest{
+			QueryBy: &identityV1.GetTenantRequest_Code{Code: code},
+		})
+		// 查不到、或租户非启用状态，统一返回同一文案，防止通过返回差异枚举有效租户编号
+		if tenant == nil || tenant.GetStatus() != identityV1.Tenant_ON {
+			return nil, authenticationV1.ErrorBadRequest("invalid tenant")
+		}
+		tenantID = tenant.GetId()
+	}
+
+	// ===== 凭证校验：在解析出的 tenant 范围内查单条凭证并校验密码 =====
+	var matchedUserID uint32
 	var err error
-	if _, err = s.userCredentialRepo.VerifyCredential(ctx, &authenticationV1.VerifyCredentialRequest{
-		IdentityType: authenticationV1.UserCredential_USERNAME,
-		Identifier:   req.GetUsername(),
-		Credential:   req.GetPassword(),
-		NeedDecrypt:  true,
-	}); err != nil {
+	matchedUserID, err = s.userCredentialRepo.FindUserCredential(ctx, tenantID, authenticationV1.UserCredential_USERNAME, req.GetUsername(), req.GetPassword(), true)
+	if err != nil {
+		// 服务端日志保留真实原因（USER_NOT_FOUND / USER_FREEZE / INVALID_PASSWORD），便于运维排查
+		s.log.Errorf("verify user credential failed for username [%s]: %s", req.GetUsername(), err.Error())
+
+		return nil, normalizeLoginVerifyError(err)
+	}
+
+	// 获取用户信息（按凭证归属的 user_id 精确查找，避免同 identifier 多租户歧义）
+	var user *identityV1.User
+	user, err = s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: matchedUserID},
+	})
+	if err != nil {
+		s.log.Errorf("get user by id [%d] failed [%s]", matchedUserID, err.Error())
 		return nil, err
 	}
 
-	// 获取用户信息
-	var user *identityV1.User
-	user, err = s.userRepo.Get(ctx, &identityV1.GetUserRequest{
-		QueryBy: &identityV1.GetUserRequest_Username{Username: req.GetUsername()},
-	})
-	if err != nil {
-		return nil, err
+	// 纵深防御：凭证行的 tenant 必须与用户行的 tenant 一致，否则拒绝登录
+	if user.GetTenantId() != tenantID {
+		s.log.Errorf("tenant mismatch for user [%d]: credential tenant [%d] vs user tenant [%d]",
+			matchedUserID, tenantID, user.GetTenantId())
+		return nil, authenticationV1.ErrorBadRequest("invalid tenant")
 	}
 
 	tokenPayload := &authenticationV1.UserTokenPayload{

@@ -83,6 +83,9 @@ get_go_os_arch() {
           ;;
   esac
 
+  # 设置全局变量（同时保留 echo 输出以兼容可能的外部调用）
+  GO_OS="$os"
+  GO_ARCH="$arch"
   echo "$os $arch"
 }
 
@@ -127,8 +130,9 @@ get_go_latest_version() {
 #   - 下载或解压失败则中止并恢复，不影响旧版本
 install_go_version() {
     local version=$1
-    local os=$2
-    local arch=$3
+    # strip all whitespace via tr to prevent malformed URLs
+    local os=$(echo "$2" | tr -d '[:space:]')
+    local arch=$(echo "$3" | tr -d '[:space:]')
     local sudo_cmd=""
     local tmp_dir=""
 
@@ -215,16 +219,16 @@ install_golang() {
   fi
 
   # Go 未安装 - 执行安装
-  local os_arch
-  read -r OS ARCH <<< $(get_go_os_arch)
-  log "操作系统: $OS, 架构: $ARCH"
+  # 调用 get_go_os_arch 设置 GO_OS / GO_ARCH 全局变量
+  get_go_os_arch > /dev/null
+  log "操作系统: $GO_OS, 架构: $GO_ARCH"
 
   log "Go 未安装，开始安装最新版本..."
   local latest_version
   latest_version=$(get_go_latest_version) || latest_version="go1.25.3"
   log "将安装版本: $latest_version"
 
-  install_go_version "$latest_version" "$OS" "$ARCH"
+  install_go_version "$latest_version" "$GO_OS" "$GO_ARCH"
 
   log "Golang 安装完成！"
 }

@@ -183,7 +183,10 @@
     "toggleHeaderCell": "Toggle Header Cell",
     "insertHorizontalRule": "Insert Horizontal Rule",
     "words": "Words",
-    "chars": "Characters"
+    "chars": "Characters",
+    "json_parse_error": "JSON parse error",
+    "json_serialize_error": "JSON serialization error",
+    "unknown_error": "Unknown error"
   },
   "dateRange": {
     "start": "Start Time",
