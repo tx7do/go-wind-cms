@@ -1,4 +1,5 @@
-﻿export * from './pagination';
+﻿export * from './captcha-headers';
+export * from './pagination';
 export * from './preset-interceptors';
 export * from './request-api';
 export * from './request-client';

@@ -1,6 +1,8 @@
 package data
 
 import (
+	"time"
+
 	"github.com/redis/go-redis/v9"
 
 	authzEngine "github.com/tx7do/kratos-authz/engine"
@@ -13,6 +15,7 @@ import (
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
+	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/translator"
 	"github.com/tx7do/go-utils/translator/google"
 
@@ -53,6 +56,17 @@ func NewRedisClient(ctx *bootstrap.Context) (*redis.Client, func(), error) {
 			l.Error(err)
 		}
 	}, nil
+}
+
+func NewCaptcha(rdb *redis.Client) *captcha.Captcha {
+	captchaInstance := captcha.NewCaptcha(rdb,
+		captcha.WithDriverType(captcha.DriverString),
+		captcha.WithExpire(10*time.Minute),
+		captcha.WithKeyPrefix(serviceid.ProjectName+":captcha"),
+		captcha.WithStringCount(6),
+		captcha.WithStringSource("ABCDEFGHJKLMNPQRSTUVWXYZ23456789"),
+	)
+	return captchaInstance
 }
 
 // NewDiscovery 创建服务发现客户端

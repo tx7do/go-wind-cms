@@ -9,6 +9,8 @@ server:
         - "X-Request-ID"
         - "Content-Type"
         - "Authorization"
+        - "X-Captcha-Id"
+        - "X-Captcha-Value"
       methods:
         - "GET"
         - "POST"

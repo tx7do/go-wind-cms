@@ -9,11 +9,13 @@ import {
   type ClientTransport,
   createApiClient,
 } from '#/api/generated/admin/service/v1';
-import { requestApi } from '#/transport/rest';
+import { consumeCaptchaHeaders, requestApi } from '#/transport/rest';
 
 const transport: ClientTransport = {
   unary(path, method, body, _meta) {
-    return requestApi({ body, method, path });
+    // 消费登录前由 auth store 设置的验证码 Header（一次性，取后即清）
+    const headers = consumeCaptchaHeaders() ?? undefined;
+    return requestApi({ body, headers, method, path });
   },
   serverStream(path, _meta) {
     // SSE 流由 transport/sse 模块独立管理，此处不应被调用

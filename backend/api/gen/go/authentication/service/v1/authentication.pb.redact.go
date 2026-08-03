@@ -159,6 +159,28 @@ func (s *redactedAuthenticationServiceServer) WhoAmI(ctx context.Context, in *em
 	return res, err
 }
 
+// GenerateCaptcha is the redacted wrapper for the actual AuthenticationServiceServer.GenerateCaptcha method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) GenerateCaptcha(ctx context.Context, in *emptypb.Empty) (*GenerateCaptchaResponse, error) {
+	res, err := s.srv.GenerateCaptcha(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
+// VerifyCaptcha is the redacted wrapper for the actual AuthenticationServiceServer.VerifyCaptcha method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) VerifyCaptcha(ctx context.Context, in *VerifyCaptchaRequest) (*VerifyCaptchaResponse, error) {
+	res, err := s.srv.VerifyCaptcha(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
 // Ensure LoginRequest implements the Redactor interface at compile time.
 var _ redact.Redactor = (*LoginRequest)(nil)
 
@@ -405,4 +427,44 @@ func (x *RevokeTokenByIdRequest) Redact() {
 	// Safe field: Reason
 
 	// Safe field: UserId
+}
+
+// Ensure GenerateCaptchaResponse implements the Redactor interface at compile time.
+var _ redact.Redactor = (*GenerateCaptchaResponse)(nil)
+
+// Redact method implementation for GenerateCaptchaResponse
+func (x *GenerateCaptchaResponse) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: CaptchaId
+
+	// Safe field: ImageBase64
+}
+
+// Ensure VerifyCaptchaRequest implements the Redactor interface at compile time.
+var _ redact.Redactor = (*VerifyCaptchaRequest)(nil)
+
+// Redact method implementation for VerifyCaptchaRequest
+func (x *VerifyCaptchaRequest) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: CaptchaId
+
+	// Safe field: UserInput
+}
+
+// Ensure VerifyCaptchaResponse implements the Redactor interface at compile time.
+var _ redact.Redactor = (*VerifyCaptchaResponse)(nil)
+
+// Redact method implementation for VerifyCaptchaResponse
+func (x *VerifyCaptchaResponse) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Valid
 }

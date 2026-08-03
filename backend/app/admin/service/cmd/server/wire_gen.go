@@ -55,7 +55,12 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	adminPortalService := service.NewRouterService(context, menuServiceClient, permissionServiceClient, roleServiceClient, userServiceClient)
 	taskServiceClient := data.NewTaskServiceClient(context, discovery)
 	taskService := service.NewTaskService(context, taskServiceClient)
-	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient)
+	client, cleanup, err := data.NewRedisClient(context)
+	if err != nil {
+		return nil, nil, err
+	}
+	captcha := data.NewCaptcha(client)
+	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient, captcha)
 	loginPolicyServiceClient := data.NewLoginPolicyServiceClient(context, discovery)
 	loginPolicyService := service.NewLoginPolicyService(context, loginPolicyServiceClient)
 	dictTypeServiceClient := data.NewDictTypeServiceClient(context, discovery)
@@ -112,10 +117,12 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	sseServer := server.NewSseServer(context, internalMessageService)
 	app := newApp(context, httpServer, grpcServer, sseServer)
 	return app, func() {
+		cleanup()
 	}, nil
 }

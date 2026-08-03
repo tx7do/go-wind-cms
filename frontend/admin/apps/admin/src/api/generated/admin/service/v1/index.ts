@@ -991,6 +991,14 @@ export interface AuthenticationService {
   RefreshToken(
     request: authenticationservicev1_LoginRequest,
   ): Promise<authenticationservicev1_LoginResponse>;
+  // 生成验证码
+  GenerateCaptcha(
+    request: wellKnownEmpty,
+  ): Promise<authenticationservicev1_GenerateCaptchaResponse>;
+  // 验证验证码
+  VerifyCaptcha(
+    request: authenticationservicev1_VerifyCaptchaRequest,
+  ): Promise<authenticationservicev1_VerifyCaptchaResponse>;
 }
 
 export function createAuthenticationServiceClient(
@@ -1020,6 +1028,22 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'RefreshToken',
       }) as Promise<authenticationservicev1_LoginResponse>;
+    },
+    GenerateCaptcha(_request) {
+      const path = `admin/v1/captcha`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AuthenticationService',
+        method: 'GenerateCaptcha',
+      }) as Promise<authenticationservicev1_GenerateCaptchaResponse>;
+    },
+    VerifyCaptcha(request) {
+      const path = `admin/v1/captcha/verify`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'VerifyCaptcha',
+      }) as Promise<authenticationservicev1_VerifyCaptchaResponse>;
     },
   };
 }
@@ -1071,6 +1095,20 @@ export type authenticationservicev1_LoginResponse = {
 export type authenticationservicev1_TokenType =
   | 'bearer'
   | 'mac';
+export type authenticationservicev1_GenerateCaptchaResponse = {
+  captchaId: string | undefined;
+  imageBase64: string | undefined;
+};
+
+export type authenticationservicev1_VerifyCaptchaRequest = {
+  captchaId: string | undefined;
+  userInput: string | undefined;
+};
+
+export type authenticationservicev1_VerifyCaptchaResponse = {
+  valid: boolean | undefined;
+};
+
 // 类别服务
 export interface CategoryService {
   // 获取类别列表
