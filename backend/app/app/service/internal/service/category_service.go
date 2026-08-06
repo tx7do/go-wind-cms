@@ -34,16 +34,17 @@ func (s *CategoryService) Get(ctx context.Context, req *contentV1.GetCategoryReq
 	return s.categoryClient.Get(ctx, req)
 }
 
-func (s *CategoryService) Create(ctx context.Context, req *contentV1.CreateCategoryRequest) (*contentV1.Category, error) {
-	return s.categoryClient.Create(ctx, req)
+// Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务。
+func (s *CategoryService) Create(_ context.Context, _ *contentV1.CreateCategoryRequest) (*contentV1.Category, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *CategoryService) Update(ctx context.Context, req *contentV1.UpdateCategoryRequest) (*contentV1.Category, error) {
-	return s.categoryClient.Update(ctx, req)
+func (s *CategoryService) Update(_ context.Context, _ *contentV1.UpdateCategoryRequest) (*contentV1.Category, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *CategoryService) Delete(ctx context.Context, req *contentV1.DeleteCategoryRequest) (*emptypb.Empty, error) {
-	return s.categoryClient.Delete(ctx, req)
+func (s *CategoryService) Delete(_ context.Context, _ *contentV1.DeleteCategoryRequest) (*emptypb.Empty, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
 func (s *CategoryService) GetTranslation(ctx context.Context, req *contentV1.GetCategoryRequest) (*contentV1.CategoryTranslation, error) {

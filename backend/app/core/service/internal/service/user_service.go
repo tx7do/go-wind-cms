@@ -474,10 +474,22 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 	}
 
 	if len(req.GetPassword()) > 0 {
+		// 通过目标用户 ID 查询其当前用户名，避免使用客户端可改的 req.Data.Username
+		// （重命名场景下新名尚不存在，或撞名会误改他人密码）
+		target, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+			QueryBy: &identityV1.GetUserRequest_Id{
+				Id: req.GetId(),
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+
 		if err := s.userCredentialRepo.ResetCredential(ctx, &authenticationV1.ResetCredentialRequest{
 			IdentityType:  authenticationV1.UserCredential_USERNAME,
-			Identifier:    req.Data.GetUsername(),
+			Identifier:    target.GetUsername(),
 			NewCredential: req.GetPassword(),
+			NeedDecrypt:   false,
 		}); err != nil {
 			return nil, err
 		}

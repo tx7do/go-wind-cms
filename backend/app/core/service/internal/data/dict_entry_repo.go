@@ -283,14 +283,18 @@ func (r *DictEntryRepo) Update(ctx context.Context, req *dictV1.UpdateDictEntryR
 
 	var hasI18n bool
 	var i18n map[string]*dictV1.DictEntryI18N
-	for n, p := range req.GetUpdateMask().GetPaths() {
+	// 构建剔除 i18n 后的字段掩码，避免在遍历时原地修改切片
+	originalPaths := req.GetUpdateMask().GetPaths()
+	filteredPaths := make([]string, 0, len(originalPaths))
+	for _, p := range originalPaths {
 		if strings.ToLower(p) == "i18n" {
 			hasI18n = true
-			req.GetUpdateMask().Paths = append(req.GetUpdateMask().GetPaths()[:n], req.GetUpdateMask().GetPaths()[n+1:]...)
 			i18n = req.Data.I18N
-			break
+			continue
 		}
+		filteredPaths = append(filteredPaths, p)
 	}
+	req.GetUpdateMask().Paths = filteredPaths
 
 	builder := tx.DictEntry.UpdateOneID(req.GetId())
 	dto, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
@@ -361,6 +365,41 @@ func (r *DictEntryRepo) BatchDelete(ctx context.Context, ids []uint32) error {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 
 		return dictV1.ErrorInternalServerError("delete failed")
+	}
+
+	return nil
+}
+
+// CleanByTypeID 清理指定字典类型下的所有字典项及其多语言数据。
+// 必须在调用方事务中执行，保证类型删除与条目/i18n 删除的原子性。
+func (r *DictEntryRepo) CleanByTypeID(ctx context.Context, tx *ent.Tx, typeID uint32) error {
+	if typeID == 0 {
+		return dictV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// 查询该类型下所有条目 ID（事务内）
+	entries, err := tx.DictEntry.Query().
+		Where(dictentry.HasDictTypeWith(dicttype.IDEQ(typeID))).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query dict entries by type id failed: %s", err.Error())
+		return dictV1.ErrorInternalServerError("query dict entries by type id failed")
+	}
+
+	// 清理每个条目的多语言数据（事务内）
+	for _, entry := range entries {
+		if err := r.i18n.CleanByEntryID(ctx, tx, entry.ID); err != nil {
+			r.log.Errorf("clean dict entry i18n failed: %s", err.Error())
+			return dictV1.ErrorInternalServerError("clean dict entry i18n failed")
+		}
+	}
+
+	// 删除该类型下所有条目（事务内）
+	if _, err := tx.DictEntry.Delete().
+		Where(dictentry.HasDictTypeWith(dicttype.IDEQ(typeID))).
+		Exec(ctx); err != nil {
+		r.log.Errorf("delete dict entries by type id failed: %s", err.Error())
+		return dictV1.ErrorInternalServerError("delete dict entries by type id failed")
 	}
 
 	return nil

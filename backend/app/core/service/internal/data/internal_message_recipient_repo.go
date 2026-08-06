@@ -85,8 +85,17 @@ func (r *InternalMessageRecipientRepo) Count(ctx context.Context, whereCond []fu
 }
 
 func (r *InternalMessageRecipientRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+	// 强制按调用者 user_id 过滤——只能查询自己的收件箱记录
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return false, internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
+
 	exist, err := r.entClient.Client().InternalMessageRecipient.Query().
-		Where(internalmessagerecipient.IDEQ(id)).
+		Where(
+			internalmessagerecipient.IDEQ(id),
+			internalmessagerecipient.RecipientUserIDEQ(callerUserID),
+		).
 		Exist(ctx)
 	if err != nil {
 		r.log.Errorf("query exist failed: %s", err.Error())
@@ -180,6 +189,12 @@ func (r *InternalMessageRecipientRepo) Update(ctx context.Context, req *internal
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 强制按调用者 user_id 过滤——只能更新自己的收件箱记录
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
+
 	// 如果不存在则创建
 	if req.GetAllowMissing() {
 		exist, err := r.IsExist(ctx, req.GetId())
@@ -206,7 +221,13 @@ func (r *InternalMessageRecipientRepo) Update(ctx context.Context, req *internal
 				SetUpdatedAt(time.Now())
 		},
 		func(s *sql.Selector) {
-			s.Where(sql.EQ(internalmessagerecipient.FieldID, req.GetId()))
+			// 仅允许更新属于调用者本人的收件箱记录，防止 IDOR
+			s.Where(
+				sql.And(
+					sql.EQ(internalmessagerecipient.FieldID, req.GetId()),
+					sql.EQ(internalmessagerecipient.FieldRecipientUserID, callerUserID),
+				),
+			)
 		},
 	)
 
@@ -218,7 +239,18 @@ func (r *InternalMessageRecipientRepo) Delete(ctx context.Context, id uint32) er
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err := r.entClient.Client().InternalMessageRecipient.DeleteOneID(id).Exec(ctx); err != nil {
+	// 强制按调用者 user_id 过滤——只能删除自己的收件箱记录
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
+
+	if _, err := r.entClient.Client().InternalMessageRecipient.Delete().
+		Where(
+			internalmessagerecipient.IDEQ(id),
+			internalmessagerecipient.RecipientUserIDEQ(callerUserID),
+		).
+		Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return internalMessageV1.ErrorNotFound("internal message recipient not found")
 		}

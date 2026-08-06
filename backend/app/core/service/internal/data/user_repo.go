@@ -961,9 +961,9 @@ func (r *userRepo) assignUserRelations(ctx context.Context, tx *ent.Tx,
 }
 
 // AssignUserRole 分配角色
-func (r *userRepo) AssignUserRole(ctx context.Context, data *permissionV1.UserRole) error {
+func (r *userRepo) AssignUserRole(ctx context.Context, data *permissionV1.UserRole) (err error) {
 	var tx *ent.Tx
-	tx, err := r.entClient.Client().Tx(ctx)
+	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("start transaction failed")
@@ -985,9 +985,9 @@ func (r *userRepo) AssignUserRole(ctx context.Context, data *permissionV1.UserRo
 }
 
 // AssignUserRoles 分配角色
-func (r *userRepo) AssignUserRoles(ctx context.Context, userID uint32, datas []*permissionV1.UserRole) error {
+func (r *userRepo) AssignUserRoles(ctx context.Context, userID uint32, datas []*permissionV1.UserRole) (err error) {
 	var tx *ent.Tx
-	tx, err := r.entClient.Client().Tx(ctx)
+	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("start transaction failed")
@@ -1009,9 +1009,9 @@ func (r *userRepo) AssignUserRoles(ctx context.Context, userID uint32, datas []*
 }
 
 // AssignUserOrgUnit 分配组织单元给用户
-func (r *userRepo) AssignUserOrgUnit(ctx context.Context, data *identityV1.UserOrgUnit) error {
+func (r *userRepo) AssignUserOrgUnit(ctx context.Context, data *identityV1.UserOrgUnit) (err error) {
 	var tx *ent.Tx
-	tx, err := r.entClient.Client().Tx(ctx)
+	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("start transaction failed")
@@ -1033,9 +1033,9 @@ func (r *userRepo) AssignUserOrgUnit(ctx context.Context, data *identityV1.UserO
 }
 
 // AssignUserOrgUnits 分配组织单元给用户
-func (r *userRepo) AssignUserOrgUnits(ctx context.Context, userID uint32, datas []*identityV1.UserOrgUnit) error {
+func (r *userRepo) AssignUserOrgUnits(ctx context.Context, userID uint32, datas []*identityV1.UserOrgUnit) (err error) {
 	var tx *ent.Tx
-	tx, err := r.entClient.Client().Tx(ctx)
+	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("start transaction failed")
@@ -1057,9 +1057,9 @@ func (r *userRepo) AssignUserOrgUnits(ctx context.Context, userID uint32, datas 
 }
 
 // AssignUserPosition 分配岗位给用户
-func (r *userRepo) AssignUserPosition(ctx context.Context, data *identityV1.UserPosition) error {
+func (r *userRepo) AssignUserPosition(ctx context.Context, data *identityV1.UserPosition) (err error) {
 	var tx *ent.Tx
-	tx, err := r.entClient.Client().Tx(ctx)
+	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("start transaction failed")
@@ -1081,9 +1081,9 @@ func (r *userRepo) AssignUserPosition(ctx context.Context, data *identityV1.User
 }
 
 // AssignUserPositions 分配岗位给用户
-func (r *userRepo) AssignUserPositions(ctx context.Context, userID uint32, datas []*identityV1.UserPosition) error {
+func (r *userRepo) AssignUserPositions(ctx context.Context, userID uint32, datas []*identityV1.UserPosition) (err error) {
 	var tx *ent.Tx
-	tx, err := r.entClient.Client().Tx(ctx)
+	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("start transaction failed")

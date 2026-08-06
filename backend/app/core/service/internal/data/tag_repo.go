@@ -291,7 +291,7 @@ func (r *TagRepo) Create(ctx context.Context, req *contentV1.CreateTagRequest) (
 		SetNillableCode(req.Data.Code).
 		SetNillableSortOrder(req.Data.SortOrder).
 		SetNillableIsFeatured(req.Data.IsFeatured).
-		SetNillablePostCount(req.Data.PostCount).
+		SetPostCount(0).
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
 
@@ -385,7 +385,6 @@ func (r *TagRepo) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (
 				SetNillableCode(req.Data.Code).
 				SetNillableSortOrder(req.Data.SortOrder).
 				SetNillableIsFeatured(req.Data.IsFeatured).
-				SetNillablePostCount(req.Data.PostCount).
 				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
 		},
@@ -421,7 +420,7 @@ func (r *TagRepo) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (
 		}
 	}()
 
-	if err = r.entClient.Client().Tag.
+	if err = tx.Tag.
 		DeleteOneID(req.GetId()).
 		Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())

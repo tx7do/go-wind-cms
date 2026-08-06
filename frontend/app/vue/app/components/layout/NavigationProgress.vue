@@ -10,11 +10,13 @@ const visible = ref(false)
 let progressVal = 0
 let intervalId: ReturnType<typeof setInterval> | null = null
 let timeoutId: ReturnType<typeof setTimeout> | null = null
+let innerTimeoutId: ReturnType<typeof setTimeout> | null = null
 let prevPath: string | null = null
 
 const clearTimers = () => {
   if (intervalId) { clearInterval(intervalId); intervalId = null }
   if (timeoutId) { clearTimeout(timeoutId); timeoutId = null }
+  if (innerTimeoutId) { clearTimeout(innerTimeoutId); innerTimeoutId = null }
 }
 
 const startProgress = () => {
@@ -41,10 +43,10 @@ const finishProgress = () => {
   clearTimers()
   progressVal = 100
   progress.value = 100
-  timeoutId = setTimeout(() => {
-    visible.value = false
-    setTimeout(() => { progressVal = 0; progress.value = 0 }, 100)
-  }, 250)
+	timeoutId = setTimeout(() => {
+	  visible.value = false
+	  innerTimeoutId = setTimeout(() => { progressVal = 0; progress.value = 0 }, 100)
+	}, 250)
 }
 
 // Watch route changes

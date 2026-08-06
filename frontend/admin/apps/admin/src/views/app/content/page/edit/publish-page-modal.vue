@@ -39,7 +39,6 @@ const [Modal, modalApi] = useVbenModal({
   },
 
   async onConfirm() {
-    console.log('onConfirm');
 
     // Validate input data
     const validate = await baseFormApi.validate();
@@ -79,7 +78,6 @@ const [Modal, modalApi] = useVbenModal({
 
       setLoading(false);
 
-      console.log('onOpenChange', data.value);
     }
   },
 });

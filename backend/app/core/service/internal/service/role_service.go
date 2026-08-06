@@ -211,38 +211,25 @@ func (s *RoleService) Delete(ctx context.Context, req *permissionV1.DeleteRoleRe
 	return &emptypb.Empty{}, nil
 }
 
-func (s *RoleService) GetRoleCodesByRoleIds(ctx context.Context, req *permissionV1.GetRoleCodesByRoleIdsRequest) (*permissionV1.GetRoleCodesByRoleIdsResponse, error) {
+func (s *RoleService) ListRoleCodesByIds(ctx context.Context, req *permissionV1.ListRoleCodesByIdsRequest) (*permissionV1.ListRoleCodesByIdsResponse, error) {
 	ids, err := s.roleRepo.ListRoleCodesByRoleIds(ctx, req.GetRoleIds())
 	if err != nil {
 		return nil, err
 	}
 
-	return &permissionV1.GetRoleCodesByRoleIdsResponse{
+	return &permissionV1.ListRoleCodesByIdsResponse{
 		RoleCodes: ids,
 	}, nil
 }
 
-func (s *RoleService) GetRolesByRoleCodes(ctx context.Context, req *permissionV1.GetRolesByRoleCodesRequest) (*permissionV1.ListRoleResponse, error) {
-	roles, err := s.roleRepo.ListRolesByRoleCodes(ctx, req.GetRoleCodes())
+func (s *RoleService) ListRoleIdsByCodes(ctx context.Context, req *permissionV1.ListRoleIdsByCodesRequest) (*permissionV1.ListRoleIdsByCodesResponse, error) {
+	ids, err := s.roleRepo.ListRoleIDsByRoleCodes(ctx, req.GetRoleCodes())
 	if err != nil {
 		return nil, err
 	}
 
-	return &permissionV1.ListRoleResponse{
-		Items: roles,
-		Total: uint64(len(roles)),
-	}, nil
-}
-
-func (s *RoleService) GetRolesByRoleIds(ctx context.Context, req *permissionV1.GetRolesByRoleIdsRequest) (*permissionV1.ListRoleResponse, error) {
-	roles, err := s.roleRepo.ListRolesByRoleIds(ctx, req.GetRoleIds())
-	if err != nil {
-		return nil, err
-	}
-
-	return &permissionV1.ListRoleResponse{
-		Items: roles,
-		Total: uint64(len(roles)),
+	return &permissionV1.ListRoleIdsByCodesResponse{
+		RoleIds: ids,
 	}, nil
 }
 

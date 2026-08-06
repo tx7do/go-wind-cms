@@ -233,6 +233,10 @@ func (r *PostTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 		return nil, nil
 	}
 
+	// word_count 为服务端派生字段，始终根据 content 重新计算，忽略客户端传入值
+	counter := count.NewContentCounter(data.GetContent())
+	data.WordCount = trans.Ptr(uint32(counter.RawChars()))
+
 	builder := r.entClient.Client().PostTranslation.UpdateOneID(id)
 
 	dto, err := r.repository.UpdateOne(ctx, builder, data, updateMask,

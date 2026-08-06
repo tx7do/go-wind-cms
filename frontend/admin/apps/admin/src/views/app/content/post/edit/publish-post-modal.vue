@@ -83,7 +83,6 @@ const [Modal, modalApi] = useVbenModal({
 
       setLoading(false);
 
-      console.log('onOpenChange', data.value);
     }
   },
 });

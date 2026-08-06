@@ -181,9 +181,9 @@ func (r *CommentRepo) Create(ctx context.Context, req *commentV1.CreateCommentRe
 		SetNillableAuthorURL(req.Data.AuthorUrl).
 		SetNillableAuthorType(r.authorTypeConverter.ToEntity(req.Data.AuthorType)).
 		SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
-		SetNillableLikeCount(req.Data.LikeCount).
-		SetNillableDislikeCount(req.Data.DislikeCount).
-		SetNillableReplyCount(req.Data.ReplyCount).
+		SetLikeCount(0).
+		SetDislikeCount(0).
+		SetReplyCount(0).
 		SetNillableIPAddress(req.Data.IpAddress).
 		SetNillableLocation(req.Data.Location).
 		SetNillableUserAgent(req.Data.UserAgent).
@@ -236,9 +236,6 @@ func (r *CommentRepo) Update(ctx context.Context, req *commentV1.UpdateCommentRe
 				SetNillableAuthorURL(req.Data.AuthorUrl).
 				SetNillableAuthorType(r.authorTypeConverter.ToEntity(req.Data.AuthorType)).
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
-				SetNillableLikeCount(req.Data.LikeCount).
-				SetNillableDislikeCount(req.Data.DislikeCount).
-				SetNillableReplyCount(req.Data.ReplyCount).
 				SetNillableIPAddress(req.Data.IpAddress).
 				SetNillableLocation(req.Data.Location).
 				SetNillableUserAgent(req.Data.UserAgent).

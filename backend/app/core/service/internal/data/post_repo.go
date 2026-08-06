@@ -644,7 +644,7 @@ func (r *PostRepo) Delete(ctx context.Context, req *contentV1.DeletePostRequest)
 	}()
 
 	// 删除帖子数据
-	if err = r.entClient.Client().Post.
+	if err = tx.Post.
 		DeleteOneID(req.GetId()).
 		Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())

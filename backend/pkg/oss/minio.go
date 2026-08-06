@@ -121,8 +121,10 @@ func (c *MinIOClient) GetUploadPresignedUrl(ctx context.Context, req *storageV1.
 			return nil, storageV1.ErrorUploadFailed("failed to generate presigned PUT policy")
 		}
 
+		// 先各自基于 presignedURL 独立计算，再分别替换为对外端点，
+		// 避免 uploadUrl/downloadUrl 互相引用尚未赋值的变量。
 		uploadUrl = presignedURL.String()
-		uploadUrl = ReplaceEndpointHost(downloadUrl, c.conf.Minio.UploadHost, c.conf.Minio.Endpoint)
+		uploadUrl = ReplaceEndpointHost(uploadUrl, c.conf.Minio.UploadHost, c.conf.Minio.Endpoint)
 
 		downloadUrl = JoinObjectUrl(presignedURL.Host, bucketName, objectName)
 		downloadUrl = ReplaceEndpointHost(downloadUrl, c.conf.Minio.DownloadHost, c.conf.Minio.Endpoint)
@@ -143,11 +145,13 @@ func (c *MinIOClient) GetUploadPresignedUrl(ctx context.Context, req *storageV1.
 			return nil, storageV1.ErrorUploadFailed("failed to generate presigned POST policy")
 		}
 
+		// 先各自基于 presignedURL 独立计算，再分别替换为对外端点，
+		// 避免 uploadUrl/downloadUrl 互相引用尚未赋值的变量。
 		uploadUrl = presignedURL.String()
-		uploadUrl = ReplaceEndpointHost(downloadUrl, c.conf.Minio.UploadHost, c.conf.Minio.Endpoint)
+		uploadUrl = ReplaceEndpointHost(uploadUrl, c.conf.Minio.UploadHost, c.conf.Minio.Endpoint)
 
 		downloadUrl = JoinObjectUrl(presignedURL.Host, bucketName, objectName)
-		uploadUrl = ReplaceEndpointHost(downloadUrl, c.conf.Minio.DownloadHost, c.conf.Minio.Endpoint)
+		downloadUrl = ReplaceEndpointHost(downloadUrl, c.conf.Minio.DownloadHost, c.conf.Minio.Endpoint)
 		if !strings.HasPrefix(downloadUrl, presignedURL.Scheme) {
 			downloadUrl = presignedURL.Scheme + "://" + downloadUrl
 		}

@@ -50,8 +50,8 @@ const formSchema = computed((): VbenFormSchema[] => {
  * Asynchronously handle the login process
  * @param values 登录表单数据
  */
-async function handleLogin(values: Recordable<any>) {
-  console.log(values);
+async function handleLogin(_values: Recordable<any>) {
+  // TODO: 实现验证码登录逻辑
 }
 </script>
 

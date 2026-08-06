@@ -49,7 +49,6 @@ const [Modal, modalApi] = useVbenModal({
   },
 
   async onConfirm() {
-    console.log('onConfirm');
 
     // 校验输入的数据
     const validate = await baseFormApi.validate();
@@ -64,7 +63,7 @@ const [Modal, modalApi] = useVbenModal({
 
     if (values.new_password !== values.confirm_password) {
       notification.error({
-        message: $t('page.notification.password_mismatch'),
+        message: $t('ui.notification.password_mismatch'),
       });
 
       setLoading(false);
@@ -100,7 +99,6 @@ const [Modal, modalApi] = useVbenModal({
 
       setLoading(false);
 
-      console.log('onOpenChange', data.value?.create, data.value?.userId);
     }
   },
 });

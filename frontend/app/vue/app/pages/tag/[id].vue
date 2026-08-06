@@ -88,6 +88,7 @@ onMounted(loadTag)
           v-if="tagId"
           :key="tagId"
           :initial-page-size="10"
+          :show-pagination="true"
           :tag-id="tagId"
           from="tag"
         />

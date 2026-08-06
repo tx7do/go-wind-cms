@@ -476,3 +476,27 @@ func (s *AuthenticationService) RevokeTokenById(ctx context.Context, req *authen
 
 	return &emptypb.Empty{}, nil
 }
+
+// WhoAmI 返回当前已认证调用者的身份信息。
+// 身份从 viewer 上下文中解析，不接受客户端传入的任何标识，避免越权查询他人身份。
+func (s *AuthenticationService) WhoAmI(ctx context.Context, _ *emptypb.Empty) (*authenticationV1.WhoAmIResponse, error) {
+	userID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return nil, authenticationV1.ErrorUnauthorized("missing authentication context")
+	}
+
+	// 通过 viewer 上下文中的 user_id 查询当前用户，取其用户名
+	user, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{
+			Id: userID,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &authenticationV1.WhoAmIResponse{
+		UserId:   user.GetId(),
+		Username: user.GetUsername(),
+	}, nil
+}

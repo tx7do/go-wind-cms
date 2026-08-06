@@ -428,7 +428,27 @@ func (r *NavigationItemRepo) Delete(ctx context.Context, req *siteV1.DeleteNavig
 		return siteV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err = r.entClient.Client().Navigation.DeleteOneID(req.GetId()).Exec(ctx); err != nil {
+	var tx *ent.Tx
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return siteV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = siteV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	// 删除导航项（而非父级 Navigation 表）
+	if err = tx.NavigationItem.DeleteOneID(req.GetId()).Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 	}
 	return err

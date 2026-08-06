@@ -34,16 +34,18 @@ func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*
 	return s.postClient.Get(ctx, req)
 }
 
-func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostRequest) (*contentV1.Post, error) {
-	return s.postClient.Create(ctx, req)
+// Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务，
+// 公开站点登录用户不应直接创建/修改/删除文章。RBAC 为故意的 noop，故在此显式拒绝。
+func (s *PostService) Create(_ context.Context, _ *contentV1.CreatePostRequest) (*contentV1.Post, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostRequest) (*contentV1.Post, error) {
-	return s.postClient.Update(ctx, req)
+func (s *PostService) Update(_ context.Context, _ *contentV1.UpdatePostRequest) (*contentV1.Post, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostRequest) (*emptypb.Empty, error) {
-	return s.postClient.Delete(ctx, req)
+func (s *PostService) Delete(_ context.Context, _ *contentV1.DeletePostRequest) (*emptypb.Empty, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
 func (s *PostService) GetTranslation(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.PostTranslation, error) {

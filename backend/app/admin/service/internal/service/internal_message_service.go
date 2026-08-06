@@ -74,7 +74,8 @@ func (s *InternalMessageService) RegisterInternalMessagePublisher(internalMessag
 }
 
 func (s *InternalMessageService) HandleSubscribe(streamID sse.StreamID, _ *sse.Subscriber) {
-	s.log.Infof("subscriber [%s] connected", streamID)
+	// streamID 即访问令牌，记录其指纹而非原始值，避免日志泄露可冒充的凭证
+	s.log.Infof("subscriber [%s] connected", hashToken(string(streamID)))
 }
 
 func (s *InternalMessageService) HandleAuthorize(_ *http.Request, token string) error {

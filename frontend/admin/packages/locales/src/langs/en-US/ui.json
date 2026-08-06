@@ -77,5 +77,24 @@
       "backToLogin": "Back to login",
       "entry": "Enter the system"
     }
+  },
+  "notification": {
+    "create_success": "Created successfully",
+    "create_failed": "Creation failed",
+    "update_success": "Updated successfully",
+    "update_failed": "Update failed",
+    "delete_success": "Deleted successfully",
+    "delete_failed": "Deletion failed",
+    "save_success": "Saved successfully",
+    "save_failed": "Saving failed",
+    "operation_success": "Operation succeeded",
+    "operation_failed": "Operation failed",
+    "sync_success": "Synchronization succeeded",
+    "sync_failed": "Synchronization failed",
+    "upload_success": "Upload succeeded",
+    "upload_failed": "Upload failed",
+    "update_status_success": "Status updated successfully",
+    "update_status_failed": "Status update failed",
+    "password_mismatch": "The passwords entered do not match"
   }
 }

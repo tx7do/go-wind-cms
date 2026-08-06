@@ -41,7 +41,9 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 		return nil, contentV1.ErrorBadRequest("invalid parameter")
 	}
 	if req.Data.Status == nil {
-		req.Data.Status = trans.Ptr(contentV1.Post_POST_STATUS_PUBLISHED)
+		// 新建文章默认为草稿状态，发布须显式 Update 切换状态，
+		// 避免创建即发布绕过编辑审核流程
+		req.Data.Status = trans.Ptr(contentV1.Post_POST_STATUS_DRAFT)
 	}
 
 	return s.postRepo.Create(ctx, req)

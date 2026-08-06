@@ -38,6 +38,7 @@ const queryParams = computed(() => {
         :key="selectedCategoryId || 'all'"
         :query-params="queryParams"
         :initial-page-size="12"
+        :show-pagination="true"
       />
     </LayoutSectionContainer>
   </div>

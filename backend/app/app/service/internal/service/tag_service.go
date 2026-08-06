@@ -34,16 +34,17 @@ func (s *TagService) Get(ctx context.Context, req *contentV1.GetTagRequest) (*co
 	return s.tagClient.Get(ctx, req)
 }
 
-func (s *TagService) Create(ctx context.Context, req *contentV1.CreateTagRequest) (*contentV1.Tag, error) {
-	return s.tagClient.Create(ctx, req)
+// Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务。
+func (s *TagService) Create(_ context.Context, _ *contentV1.CreateTagRequest) (*contentV1.Tag, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *TagService) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (*contentV1.Tag, error) {
-	return s.tagClient.Update(ctx, req)
+func (s *TagService) Update(_ context.Context, _ *contentV1.UpdateTagRequest) (*contentV1.Tag, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *TagService) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (*emptypb.Empty, error) {
-	return s.tagClient.Delete(ctx, req)
+func (s *TagService) Delete(_ context.Context, _ *contentV1.DeleteTagRequest) (*emptypb.Empty, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
 func (s *TagService) GetTranslation(ctx context.Context, req *contentV1.GetTagRequest) (*contentV1.TagTranslation, error) {

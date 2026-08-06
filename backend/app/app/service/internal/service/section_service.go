@@ -34,16 +34,17 @@ func (s *SectionService) Get(ctx context.Context, req *contentV1.GetSectionReque
 	return s.sectionServiceClient.Get(ctx, req)
 }
 
-func (s *SectionService) Create(ctx context.Context, req *contentV1.CreateSectionRequest) (*contentV1.Section, error) {
-	return s.sectionServiceClient.Create(ctx, req)
+// Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务。
+func (s *SectionService) Create(_ context.Context, _ *contentV1.CreateSectionRequest) (*contentV1.Section, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *SectionService) Update(ctx context.Context, req *contentV1.UpdateSectionRequest) (*contentV1.Section, error) {
-	return s.sectionServiceClient.Update(ctx, req)
+func (s *SectionService) Update(_ context.Context, _ *contentV1.UpdateSectionRequest) (*contentV1.Section, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *SectionService) Delete(ctx context.Context, req *contentV1.DeleteSectionRequest) (*emptypb.Empty, error) {
-	return s.sectionServiceClient.Delete(ctx, req)
+func (s *SectionService) Delete(_ context.Context, _ *contentV1.DeleteSectionRequest) (*emptypb.Empty, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
 func (s *SectionService) GetTranslation(ctx context.Context, req *contentV1.GetSectionRequest) (*contentV1.SectionTranslation, error) {

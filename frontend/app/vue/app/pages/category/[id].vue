@@ -119,6 +119,7 @@ onMounted(loadCategory)
         <PostList
           :key="categoryId"
           :initial-page-size="10"
+          :show-pagination="true"
           :category-id="categoryId"
           from="category"
         />

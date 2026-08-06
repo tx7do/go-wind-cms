@@ -10,6 +10,8 @@ import (
 
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
+
+	"go-wind-cms/pkg/middleware/auth"
 )
 
 type CommentService struct {
@@ -38,10 +40,36 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 	return s.commentClient.Create(ctx, req)
 }
 
+// ensureCommentOwner 校验调用者是否为目标评论的作者，防止任意登录用户改/删他人评论（IDOR）。
+func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID uint32) error {
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return commentV1.ErrorUnauthorized("authentication required")
+	}
+
+	comment, err := s.commentClient.Get(ctx, &commentV1.GetCommentRequest{
+		Id: commentID,
+	})
+	if err != nil {
+		return err
+	}
+
+	if comment.GetCreatedBy() != operator.GetUserId() {
+		return commentV1.ErrorForbidden("you can only modify your own comments")
+	}
+	return nil
+}
+
 func (s *CommentService) Update(ctx context.Context, req *commentV1.UpdateCommentRequest) (*commentV1.Comment, error) {
+	if err := s.ensureCommentOwner(ctx, req.GetId()); err != nil {
+		return nil, err
+	}
 	return s.commentClient.Update(ctx, req)
 }
 
 func (s *CommentService) Delete(ctx context.Context, req *commentV1.DeleteCommentRequest) (*emptypb.Empty, error) {
+	if err := s.ensureCommentOwner(ctx, req.GetId()); err != nil {
+		return nil, err
+	}
 	return s.commentClient.Delete(ctx, req)
 }

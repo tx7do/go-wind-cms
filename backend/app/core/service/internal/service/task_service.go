@@ -71,6 +71,10 @@ func (s *TaskService) Get(ctx context.Context, req *taskV1.GetTaskRequest) (*tas
 }
 
 func (s *TaskService) ListTaskTypeName(_ context.Context, _ *emptypb.Empty) (*taskV1.ListTaskTypeNameResponse, error) {
+	// taskScheduler 未注入时返回不可用，避免 nil 解引用 panic
+	if s.taskScheduler == nil {
+		return nil, taskV1.ErrorServiceUnavailable("task scheduler is not available")
+	}
 	typeNames := s.taskScheduler.GetRegisteredTaskTypes()
 	return &taskV1.ListTaskTypeNameResponse{
 		TypeNames: typeNames,
@@ -238,6 +242,11 @@ func (s *TaskService) startAllTask(ctx context.Context) (int32, error) {
 
 // stopAllTask 停止所有的任务
 func (s *TaskService) stopAllTask() {
+	// taskScheduler 未注入时跳过，避免 nil 解引用 panic
+	if s.taskScheduler == nil {
+		s.log.Warnf("task scheduler is not available, skip stopAllTask")
+		return
+	}
 	s.log.Infof("开始清除所有的定时任务...")
 
 	// 清除所有的定时任务
@@ -250,6 +259,11 @@ func (s *TaskService) stopAllTask() {
 func (s *TaskService) stopTask(t *taskV1.Task) error {
 	if t == nil {
 		return errors.New("task is nil")
+	}
+
+	// taskScheduler 未注入时返回不可用，避免 nil 解引用 panic
+	if s.taskScheduler == nil {
+		return taskV1.ErrorServiceUnavailable("task scheduler is not available")
 	}
 
 	if t.GetEnable() == false {
@@ -315,6 +329,11 @@ func (s *TaskService) convertTaskOption(t *taskV1.Task) (opts []asynq.Option, pa
 func (s *TaskService) startTask(t *taskV1.Task) error {
 	if t == nil {
 		return errors.New("task is nil")
+	}
+
+	// taskScheduler 未注入时返回不可用，避免 nil 解引用 panic
+	if s.taskScheduler == nil {
+		return taskV1.ErrorServiceUnavailable("task scheduler is not available")
 	}
 
 	if t.GetEnable() == false {

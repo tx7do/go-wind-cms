@@ -12,6 +12,7 @@ onMounted(async () => {
   try {
     const res = await fetchListPost({
       paging: { page: 1, pageSize: 6 },
+      formValues: { status: 'POST_STATUS_PUBLISHED' },
       orderBy: ['-createdAt'],
       isTenantUser: true,
     }) as any

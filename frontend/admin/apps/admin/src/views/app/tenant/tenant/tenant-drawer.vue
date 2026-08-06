@@ -218,8 +218,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
   },
 
   async onConfirm() {
-    console.log('onConfirm');
-
     // 校验输入的数据
     const validate = await baseFormApi.validate();
     if (!validate.valid) {
@@ -230,8 +228,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     // 获取表单数据
     const values = await baseFormApi.getValues();
-
-    console.log(getTitle.value, values);
 
     await (data.value?.create
       ? createTenantWithAdminUser(values)
@@ -248,7 +244,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
       setLoading(false);
 
-      console.log('onOpenChange', data.value, data.value?.create);
     }
   },
 });
@@ -278,12 +273,10 @@ function setLoading(loading: boolean) {
 // }
 
 async function createTenantWithAdminUser(values: any) {
-  console.log('createTenantWithAdminUser', values);
-
   // 检查密码和确认密码是否一致
   if (values.password !== values.passwordConfirm) {
     notification.error({
-      message: $t('page.notification.password_mismatch'),
+      message: $t('ui.notification.password_mismatch'),
     });
     setLoading(false);
     return;
@@ -345,8 +338,6 @@ async function createTenantWithAdminUser(values: any) {
 }
 
 async function updateTenant(values: any) {
-  console.log('updateTenant', values);
-
   try {
     await apiClient.tenantService.Update({
       id: data.value.row.id,

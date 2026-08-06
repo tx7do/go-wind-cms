@@ -87,7 +87,7 @@ onMounted(async () => {
       mermaid.initialize({
         startOnLoad: true,
         theme: 'default',
-        securityLevel: 'loose',
+        securityLevel: 'strict',
       })
     } catch {
       // mermaid 加载失败
@@ -160,17 +160,21 @@ function splitUrlAndText(content: string): string {
 
 renderer.link = (link) => {
   const isExternal = link.href.startsWith('http') || link.href.startsWith('//')
+  // 转义 href 以防止属性逃逸；DOMPurify 仍会随后过滤 javascript: 等危险协议
+  const safeHref = escapeHtml(link.href)
   if (link.href === link.text) {
-    return `<a href="${link.href}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="markdown-link">${escapeHtml(link.text)}</a>`
+    return `<a href="${safeHref}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="markdown-link">${escapeHtml(link.text)}</a>`
   } else {
-    return `<a href="${link.href}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="markdown-link">${escapeHtml(link.href)}</a>${escapeHtml(link.text.replace(link.href, ''))}`
+    return `<a href="${safeHref}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="markdown-link">${escapeHtml(link.href)}</a>${escapeHtml(link.text.replace(link.href, ''))}`
   }
 }
 
 renderer.image = (image) => {
+  const safeSrc = escapeHtml(image.href)
+  const safeAlt = escapeHtml(image.text)
   return `<figure class="markdown-image">
-    <img src="${image.href}" alt="${image.text}" class="md-img" />
-    ${image.text ? `<figcaption>${image.text}</figcaption>` : ''}
+    <img src="${safeSrc}" alt="${safeAlt}" class="md-img" />
+    ${image.text ? `<figcaption>${escapeHtml(image.text)}</figcaption>` : ''}
   </figure>`
 }
 
@@ -229,6 +233,9 @@ function processMathFormulas(html: string): string {
 }
 
 // ========== HTML 消毒 ==========
+// 仅允许 http(s)、mailto、tel 以及相对路径/锚点的 URI，拒绝 javascript:/data: 等危险协议
+const SAFE_URI_REGEXP = /^(?:(?:https?|mailto|tel):|[/#.])/i
+
 function sanitizeHtml(html: string): string {
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: [
@@ -237,7 +244,7 @@ function sanitizeHtml(html: string): string {
       'strong', 'b', 'em', 'i', 'u', 'del', 's',
       'a', 'img', 'blockquote', 'ul', 'ol', 'li',
       'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
-      'video', 'iframe', 'figure', 'figcaption',
+      'video', 'figure', 'figcaption',
       'mark', 'sub', 'sup', 'span', 'div',
       'math', 'mrow', 'mi', 'mn', 'mo', 'mfrac', 'msup', 'msub', 'mover', 'munder',
       'svg', 'g', 'text', 'path', 'circle', 'line', 'polyline', 'polygon', 'rect', 'ellipse',
@@ -245,14 +252,14 @@ function sanitizeHtml(html: string): string {
     ALLOWED_ATTR: [
       'href', 'title', 'target', 'rel',
       'src', 'alt', 'width', 'height',
-      'class', 'id', 'style', 'data-lang',
+      'class', 'id', 'data-lang',
       'data-*',
       'tabindex',
       'viewBox', 'xmlns', 'x', 'y', 'cx', 'cy', 'r', 'x1', 'y1', 'x2', 'y2',
       'd', 'fill', 'stroke', 'stroke-width', 'points', 'transform',
     ],
     KEEP_CONTENT: true,
-    ALLOW_UNKNOWN_PROTOCOLS: true,
+    ALLOWED_URI_REGEXP: SAFE_URI_REGEXP,
   }) as unknown as string
 }
 

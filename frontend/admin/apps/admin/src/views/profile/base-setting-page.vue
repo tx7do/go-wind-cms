@@ -16,6 +16,7 @@ import {
 } from '#/api';
 
 const data = ref<null | User>();
+const submitLoading = ref(false);
 
 const [BaseForm, baseFormApi] = useVbenForm({
   showDefaultActions: false,
@@ -114,7 +115,9 @@ async function handleSubmit() {
   }
 }
 
-function setLoading(_loading: boolean) {}
+function setLoading(loading: boolean) {
+  submitLoading.value = loading;
+}
 
 /**
  * 重新加载用户信息
@@ -144,7 +147,11 @@ reload();
         </div>
       </Col>
     </Row>
-    <a-button type="primary" @click="handleSubmit">
+    <a-button
+      type="primary"
+      :loading="submitLoading"
+      @click="handleSubmit"
+    >
       {{ $t('page.user.button.updateUserInfo') }}
     </a-button>
   </Page>

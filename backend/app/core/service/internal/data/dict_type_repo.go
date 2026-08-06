@@ -25,6 +25,8 @@ type DictTypeRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper
 
+	dictEntryRepo *DictEntryRepo
+
 	mapper *mapper.CopierMapper[dictV1.DictType, ent.DictType]
 
 	repository *entCrud.Repository[
@@ -40,10 +42,12 @@ type DictTypeRepo struct {
 func NewDictTypeRepo(
 	ctx *bootstrap.Context,
 	entClient *entCrud.EntClient[*ent.Client],
+	dictEntryRepo *DictEntryRepo,
 ) *DictTypeRepo {
 	repo := &DictTypeRepo{
 		log:       ctx.NewLoggerHelper("dict-type/repo/admin-service"),
 		entClient: entClient,
+		dictEntryRepo: dictEntryRepo,
 		mapper:    mapper.NewCopierMapper[dictV1.DictType, ent.DictType](),
 	}
 
@@ -249,12 +253,37 @@ func (r *DictTypeRepo) Update(ctx context.Context, req *dictV1.UpdateDictTypeReq
 	return err
 }
 
-func (r *DictTypeRepo) Delete(ctx context.Context, id uint32) error {
+func (r *DictTypeRepo) Delete(ctx context.Context, id uint32) (err error) {
 	if id == 0 {
 		return dictV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err := r.entClient.Client().DictType.DeleteOneID(id).Exec(ctx); err != nil {
+	var tx *ent.Tx
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return dictV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = dictV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	// 级联清理该类型下的所有字典项及其多语言数据
+	if err = r.dictEntryRepo.CleanByTypeID(ctx, tx, id); err != nil {
+		return err
+	}
+
+	// 删除字典类型本身（事务内）
+	if err = tx.DictType.DeleteOneID(id).Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return dictV1.ErrorNotFound("dict not found")
 		}
@@ -267,12 +296,39 @@ func (r *DictTypeRepo) Delete(ctx context.Context, id uint32) error {
 	return nil
 }
 
-func (r *DictTypeRepo) BatchDelete(ctx context.Context, ids []uint32) error {
+func (r *DictTypeRepo) BatchDelete(ctx context.Context, ids []uint32) (err error) {
 	if len(ids) == 0 {
 		return dictV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if _, err := r.entClient.Client().DictType.Delete().
+	var tx *ent.Tx
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return dictV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = dictV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	// 级联清理每个类型下的所有字典项及其多语言数据
+	for _, id := range ids {
+		if err = r.dictEntryRepo.CleanByTypeID(ctx, tx, id); err != nil {
+			return err
+		}
+	}
+
+	// 删除字典类型本身（事务内）
+	if _, err = tx.DictType.Delete().
 		Where(dicttype.IDIn(ids...)).
 		Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {

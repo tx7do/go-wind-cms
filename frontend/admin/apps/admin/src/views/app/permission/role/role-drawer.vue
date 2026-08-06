@@ -132,7 +132,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
   },
 
   async onConfirm() {
-    console.log('onConfirm');
 
     // 校验输入的数据
     const validate = await baseFormApi.validate();
@@ -155,7 +154,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
       finalValues.permissions = filterNumbers(values.permissions);
     }
 
-    console.log(getTitle.value, finalValues, data.value.row);
 
     try {
       await (data.value?.create

@@ -34,16 +34,17 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 	return s.pageServiceClient.Get(ctx, req)
 }
 
-func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageRequest) (*contentV1.Page, error) {
-	return s.pageServiceClient.Create(ctx, req)
+// Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务。
+func (s *PageService) Create(_ context.Context, _ *contentV1.CreatePageRequest) (*contentV1.Page, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageRequest) (*contentV1.Page, error) {
-	return s.pageServiceClient.Update(ctx, req)
+func (s *PageService) Update(_ context.Context, _ *contentV1.UpdatePageRequest) (*contentV1.Page, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageRequest) (*emptypb.Empty, error) {
-	return s.pageServiceClient.Delete(ctx, req)
+func (s *PageService) Delete(_ context.Context, _ *contentV1.DeletePageRequest) (*emptypb.Empty, error) {
+	return nil, contentV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
 func (s *PageService) GetTranslation(ctx context.Context, req *contentV1.GetPageRequest) (*contentV1.PageTranslation, error) {

@@ -56,7 +56,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
   },
 
   async onConfirm() {
-    console.log('onConfirm');
 
     // 校验输入的数据
     const validate = await baseFormApi.validate();
@@ -69,7 +68,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
     // 获取表单数据
     const values = await baseFormApi.getValues();
 
-    console.log(getTitle.value, values);
 
     try {
       await (data.value?.create
@@ -108,7 +106,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
       setLoading(false);
 
-      console.log('onOpenChange', data.value, data.value?.create);
     }
   },
 });

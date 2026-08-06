@@ -3,9 +3,12 @@ import { Page } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
+import { ref } from 'vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { changeMyPassword, getMe } from '#/api';
+import { changeMyPassword } from '#/api';
+
+const submitLoading = ref(false);
 
 const [BaseForm, baseFormApi] = useVbenForm({
   showDefaultActions: false,
@@ -50,8 +53,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
 });
 
 async function handleSubmit() {
-  console.log('submit');
-
   // 校验输入的数据
   const validate = await baseFormApi.validate();
   if (!validate.valid) {
@@ -90,23 +91,19 @@ async function handleSubmit() {
   }
 }
 
-function setLoading(_loading: boolean) {}
-
-/**
- * 重新加载用户信息
- */
-async function reload() {
-  const data = await getMe();
-  await baseFormApi.setValues(data || {});
+function setLoading(loading: boolean) {
+  submitLoading.value = loading;
 }
-
-reload();
 </script>
 
 <template>
   <Page :title="$t('page.user.profile.tab.editPassword')">
     <BaseForm />
-    <a-button type="primary" @click="handleSubmit">
+    <a-button
+      type="primary"
+      :loading="submitLoading"
+      @click="handleSubmit"
+    >
       {{ $t('page.user.button.updatePassword') }}
     </a-button>
   </Page>

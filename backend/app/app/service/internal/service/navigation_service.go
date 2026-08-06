@@ -34,14 +34,15 @@ func (s *NavigationService) Get(ctx context.Context, req *siteV1.GetNavigationRe
 	return s.categoryClient.Get(ctx, req)
 }
 
-func (s *NavigationService) Create(ctx context.Context, req *siteV1.CreateNavigationRequest) (*siteV1.Navigation, error) {
-	return s.categoryClient.Create(ctx, req)
+// Create/Update/Delete 在 app（公开站点）服务上禁用：站点导航的写操作应经由 admin 服务。
+func (s *NavigationService) Create(_ context.Context, _ *siteV1.CreateNavigationRequest) (*siteV1.Navigation, error) {
+	return nil, siteV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *NavigationService) Update(ctx context.Context, req *siteV1.UpdateNavigationRequest) (*siteV1.Navigation, error) {
-	return s.categoryClient.Update(ctx, req)
+func (s *NavigationService) Update(_ context.Context, _ *siteV1.UpdateNavigationRequest) (*siteV1.Navigation, error) {
+	return nil, siteV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }
 
-func (s *NavigationService) Delete(ctx context.Context, req *siteV1.DeleteNavigationRequest) (*emptypb.Empty, error) {
-	return s.categoryClient.Delete(ctx, req)
+func (s *NavigationService) Delete(_ context.Context, _ *siteV1.DeleteNavigationRequest) (*emptypb.Empty, error) {
+	return nil, siteV1.ErrorForbidden("content mutation is not allowed on the public app service")
 }

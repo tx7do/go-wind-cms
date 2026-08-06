@@ -19,7 +19,7 @@ onMounted(async () => {
   try {
     const res = await fetchListPost({
       paging: { page: 1, pageSize: 3 },
-      formValues: { isFeatured: true },
+      formValues: { isFeatured: true, status: 'POST_STATUS_PUBLISHED' },
       isTenantUser: true,
     }) as any
     posts.value = res?.items || []

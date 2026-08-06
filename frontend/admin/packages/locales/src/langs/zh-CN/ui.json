@@ -77,5 +77,24 @@
       "backToLogin": "返回登录",
       "entry": "进入系统"
     }
+  },
+  "notification": {
+    "create_success": "创建成功",
+    "create_failed": "创建失败",
+    "update_success": "更新成功",
+    "update_failed": "更新失败",
+    "delete_success": "删除成功",
+    "delete_failed": "删除失败",
+    "save_success": "保存成功",
+    "save_failed": "保存失败",
+    "operation_success": "操作成功",
+    "operation_failed": "操作失败",
+    "sync_success": "同步成功",
+    "sync_failed": "同步失败",
+    "upload_success": "上传成功",
+    "upload_failed": "上传失败",
+    "update_status_success": "状态更新成功",
+    "update_status_failed": "状态更新失败",
+    "password_mismatch": "两次输入的密码不一致"
   }
 }
