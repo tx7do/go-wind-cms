@@ -191,6 +191,9 @@ func (s *AuthenticationService) resolveUserAuthority(ctx context.Context, user *
 
 // doGrantTypePassword 处理授权类型 - 密码
 func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
+	if req == nil {
+		return nil, authenticationV1.ErrorBadRequest("invalid request")
+	}
 	// ===== 租户解析：tenant_code 留空视为平台（tenant 0），非空则按编号定位租户 =====
 	// 解析后的 tenantID 限定后续凭证查询范围，消除同名 identifier 跨租户歧义。
 	var tenantID uint32 = 0
@@ -271,6 +274,9 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 
 // doGrantTypeRefreshToken 处理授权类型 - 刷新令牌
 func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
+	if req == nil {
+		return nil, authenticationV1.ErrorBadRequest("invalid request")
+	}
 	// 获取用户信息
 	user, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{
@@ -341,6 +347,9 @@ func (s *AuthenticationService) Logout(ctx context.Context, req *authenticationV
 
 // RegisterUser 注册用户
 func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authenticationV1.RegisterUserRequest) (*authenticationV1.RegisterUserResponse, error) {
+	if req == nil {
+		return nil, authenticationV1.ErrorBadRequest("invalid request")
+	}
 	var err error
 
 	var tenantId *uint32
@@ -425,7 +434,7 @@ func (s *AuthenticationService) BlockToken(ctx context.Context, req *authenticat
 
 	var blockedUntil time.Time
 	if req.GetDuration().Seconds > 0 {
-		blockedUntil = time.Now().Add(req.GetDuration().AsDuration() * time.Second)
+		blockedUntil = time.Now().Add(req.GetDuration().AsDuration())
 	}
 
 	return &authenticationV1.BlockTokenResponse{
@@ -442,6 +451,9 @@ func (s *AuthenticationService) UnblockToken(ctx context.Context, req *authentic
 }
 
 func (s *AuthenticationService) RevokeTokenById(ctx context.Context, req *authenticationV1.RevokeTokenByIdRequest) (*emptypb.Empty, error) {
+	if req == nil {
+		return nil, authenticationV1.ErrorBadRequest("invalid request")
+	}
 	if err := s.authenticator.RevokeTokenByJti(ctx, req.ClientType, req.GetUserId(), req.GetJti()); err != nil {
 		return nil, err
 	}

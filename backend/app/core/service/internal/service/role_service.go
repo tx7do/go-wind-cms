@@ -148,7 +148,7 @@ func (s *RoleService) Get(ctx context.Context, req *permissionV1.GetRoleRequest)
 }
 
 func (s *RoleService) Create(ctx context.Context, req *permissionV1.CreateRoleRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -160,7 +160,7 @@ func (s *RoleService) Create(ctx context.Context, req *permissionV1.CreateRoleRe
 }
 
 func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -244,6 +244,9 @@ func (s *RoleService) GetRolesByRoleIds(ctx context.Context, req *permissionV1.G
 }
 
 func (s *RoleService) ListPermissionIds(ctx context.Context, req *permissionV1.ListPermissionIdsRequest) (*permissionV1.ListPermissionIdsResponse, error) {
+	if req == nil {
+		return nil, permissionV1.ErrorBadRequest("invalid request")
+	}
 	var permissionIDs []uint32
 	var err error
 

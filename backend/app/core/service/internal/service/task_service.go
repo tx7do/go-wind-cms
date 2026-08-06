@@ -78,7 +78,7 @@ func (s *TaskService) ListTaskTypeName(_ context.Context, _ *emptypb.Empty) (*ta
 }
 
 func (s *TaskService) Create(ctx context.Context, req *taskV1.CreateTaskRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, taskV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -96,7 +96,7 @@ func (s *TaskService) Create(ctx context.Context, req *taskV1.CreateTaskRequest)
 }
 
 func (s *TaskService) Update(ctx context.Context, req *taskV1.UpdateTaskRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, taskV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -128,10 +128,13 @@ func (s *TaskService) Update(ctx context.Context, req *taskV1.UpdateTaskRequest)
 }
 
 func (s *TaskService) Delete(ctx context.Context, req *taskV1.DeleteTaskRequest) (*emptypb.Empty, error) {
+	if req == nil {
+		return nil, taskV1.ErrorBadRequest("invalid request")
+	}
 	var err error
 	var t *taskV1.Task
 	if t, err = s.taskRepo.Get(ctx, &taskV1.GetTaskRequest{QueryBy: &taskV1.GetTaskRequest_Id{Id: req.GetId()}}); err != nil {
-		s.log.Error(err)
+		return nil, err
 	}
 
 	if err = s.taskRepo.Delete(ctx, req); err != nil {

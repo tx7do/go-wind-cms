@@ -38,7 +38,7 @@ func (s *CategoryService) Get(ctx context.Context, req *contentV1.GetCategoryReq
 }
 
 func (s *CategoryService) Create(ctx context.Context, req *contentV1.CreateCategoryRequest) (*contentV1.Category, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *CategoryService) Create(ctx context.Context, req *contentV1.CreateCateg
 }
 
 func (s *CategoryService) Update(ctx context.Context, req *contentV1.UpdateCategoryRequest) (*contentV1.Category, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

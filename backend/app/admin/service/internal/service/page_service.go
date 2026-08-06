@@ -38,7 +38,7 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 }
 
 func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageRequest) (*contentV1.Page, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageReque
 }
 
 func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageRequest) (*contentV1.Page, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-
+	"errors"
 	"strconv"
 	"time"
 
@@ -773,18 +773,24 @@ func (r *userRepo) Delete(ctx context.Context, req *identityV1.DeleteUserRequest
 }
 
 // removeUserRelations 移除用户关联关系
-func (r *userRepo) removeUserRelations(ctx context.Context, tx *ent.Tx, userID uint32) (err error) {
-	if err = r.userRoleRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
+func (r *userRepo) removeUserRelations(ctx context.Context, tx *ent.Tx, userID uint32) error {
+	var errs []error
+	if err := r.userRoleRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
 		r.log.Errorf("clean user role relations failed: %s", err.Error())
+		errs = append(errs, err)
 	}
-	if err = r.userOrgUnitRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
+	if err := r.userOrgUnitRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
 		r.log.Errorf("clean user org unit relations failed: %s", err.Error())
+		errs = append(errs, err)
 	}
-	if err = r.userPositionRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
+	if err := r.userPositionRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
 		r.log.Errorf("clean user position relations failed: %s", err.Error())
+		errs = append(errs, err)
 	}
-
-	return
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+	return nil
 }
 
 // removeMembershipRelations 移除用户关联关系（通过 Membership 关联）

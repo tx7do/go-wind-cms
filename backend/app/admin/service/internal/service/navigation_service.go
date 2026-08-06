@@ -38,7 +38,7 @@ func (s *NavigationService) Get(ctx context.Context, req *siteV1.GetNavigationRe
 }
 
 func (s *NavigationService) Create(ctx context.Context, req *siteV1.CreateNavigationRequest) (*siteV1.Navigation, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *NavigationService) Create(ctx context.Context, req *siteV1.CreateNaviga
 }
 
 func (s *NavigationService) Update(ctx context.Context, req *siteV1.UpdateNavigationRequest) (*siteV1.Navigation, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

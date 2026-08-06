@@ -160,7 +160,7 @@ func (s *PermissionService) Get(ctx context.Context, req *permissionV1.GetPermis
 }
 
 func (s *PermissionService) Create(ctx context.Context, req *permissionV1.CreatePermissionRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -172,7 +172,7 @@ func (s *PermissionService) Create(ctx context.Context, req *permissionV1.Create
 }
 
 func (s *PermissionService) Update(ctx context.Context, req *permissionV1.UpdatePermissionRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -301,6 +301,9 @@ func (s *PermissionService) appendAPis(
 
 // SyncPermissions 同步权限点
 func (s *PermissionService) SyncPermissions(ctx context.Context, req *permissionV1.SyncPermissionsRequest) (*emptypb.Empty, error) {
+	if req == nil {
+		return nil, permissionV1.ErrorBadRequest("invalid request")
+	}
 
 	// 清理菜单相关权限
 	_ = s.permissionRepo.TruncateBizPermissions(ctx)
@@ -335,6 +338,9 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *permission
 }
 
 func (s *PermissionService) ListPermissionResources(ctx context.Context, req *permissionV1.ListPermissionResourcesRequest) (*permissionV1.ListPermissionResourcesResponse, error) {
+	if req == nil {
+		return nil, permissionV1.ErrorBadRequest("invalid request")
+	}
 	if len(req.PermissionIds) == 0 && len(req.RoleIds) == 0 {
 		return nil, permissionV1.ErrorBadRequest("permission_ids and role_ids cannot be both empty")
 	}

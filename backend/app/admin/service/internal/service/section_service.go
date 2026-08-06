@@ -38,7 +38,7 @@ func (s *SectionService) Get(ctx context.Context, req *contentV1.GetSectionReque
 }
 
 func (s *SectionService) Create(ctx context.Context, req *contentV1.CreateSectionRequest) (*contentV1.Section, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *SectionService) Create(ctx context.Context, req *contentV1.CreateSectio
 }
 
 func (s *SectionService) Update(ctx context.Context, req *contentV1.UpdateSectionRequest) (*contentV1.Section, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

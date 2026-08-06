@@ -20,6 +20,7 @@ import (
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 
 	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-cms/pkg/netutil"
 	"go-wind-cms/pkg/oss"
 )
 
@@ -124,7 +125,7 @@ func (s *FileTransferService) recordFile(
 
 // directUploadFile 直接上传文件
 func (s *FileTransferService) directUploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
-	if req.StorageObject == nil {
+	if req == nil || req.StorageObject == nil {
 		return nil, storageV1.ErrorUploadFailed("unknown storageObject")
 	}
 
@@ -179,16 +180,17 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		req.GetFile(),
 		req.GetSourceFileName(),
 		info, downloadUrl); err != nil {
+		return nil, err
 	}
 
 	return &storageV1.UploadFileResponse{
 		ObjectName: trans.Ptr(downloadUrl),
-	}, err
+	}, nil
 }
 
 // presignedUploadFile 预签名上传文件
 func (s *FileTransferService) presignedUploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
-	if req.StorageObject == nil {
+	if req == nil || req.StorageObject == nil {
 		return nil, storageV1.ErrorUploadFailed("unknown storageObject")
 	}
 
@@ -269,20 +271,19 @@ func (s *FileTransferService) UploadFile(ctx context.Context, req *storageV1.Upl
 }
 
 // downloadFileFromURL 从指定的 URL 下载文件内容
-func (s *FileTransferService) downloadFileFromURL(ctx context.Context, downloadUrl string) (*storageV1.DownloadFileResponse, error) {
-	if downloadUrl == "" {
-		return nil, storageV1.ErrorDownloadFailed("empty download url")
-	}
-
-	// 如果需要支持断点续传，可在此构造请求并设置 Range 头
-	httpReq, err := http.NewRequestWithContext(ctx, "GET", downloadUrl, nil)
+func (s *FileTransferService) downloadFileFromURL(ctx context.Context, downloadContext string) (*storageV1.DownloadFileResponse, error) {
+	parsedURL, err := netutil.ValidateURL(downloadContext)
 	if err != nil {
 		return nil, storageV1.ErrorDownloadFailed(err.Error())
 	}
-	// 示例：如果你要设置 Range（可选）
-	// httpReq.Header.Set("Range", "bytes=100-")
 
-	resp, err := http.DefaultClient.Do(httpReq)
+	httpReq, err := http.NewRequestWithContext(ctx, "GET", parsedURL.String(), nil)
+	if err != nil {
+		return nil, storageV1.ErrorDownloadFailed(err.Error())
+	}
+
+	client := netutil.SafeHTTPClient()
+	resp, err := client.Do(httpReq)
 	if err != nil {
 		return nil, storageV1.ErrorDownloadFailed(err.Error())
 	}
@@ -292,7 +293,7 @@ func (s *FileTransferService) downloadFileFromURL(ctx context.Context, downloadU
 		return nil, storageV1.ErrorDownloadFailed("unexpected status: " + resp.Status)
 	}
 
-	fileData, err := io.ReadAll(resp.Body)
+	fileData, err := io.ReadAll(netutil.LimitReader(resp.Body))
 	if err != nil {
 		return nil, storageV1.ErrorDownloadFailed(err.Error())
 	}

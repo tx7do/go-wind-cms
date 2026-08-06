@@ -57,6 +57,7 @@ export default defineNuxtConfig({
     modules: [
         '@nuxtjs/i18n',
         '@pinia/nuxt',
+        'pinia-plugin-persistedstate/nuxt',
         'shadcn-nuxt'
     ],
     vite: {
@@ -95,5 +96,12 @@ export default defineNuxtConfig({
     },
     pinia: {
         storesDirs: ['./app/stores/**'],
+    },
+    piniaPluginPersistedstate: {
+        // 使用 localStorage 而非默认的 cookies：
+        // 1) cookies 4KB 上限会截断 accessMenus/accessRoutes 等大体积状态
+        // 2) cookies 随每个 HTTP 请求自动发送，扩大 token 泄露面
+        // 3) localStorage 仅客户端可读，避免 SSR 上下文暴露凭证
+        storage: 'localStorage',
     },
 })

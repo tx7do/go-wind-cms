@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -76,9 +78,6 @@ func (s *InternalMessageService) HandleSubscribe(streamID sse.StreamID, _ *sse.S
 }
 
 func (s *InternalMessageService) HandleAuthorize(_ *http.Request, token string) error {
-	//s.log.Debugf("authorizing token: %s", token)
-	//s.log.Debugf("authorizing token HEADER: %s", req.Header.Get("Authorization"))
-
 	resp, err := s.authenticationServiceClient.ValidateToken(context.Background(), &authenticationV1.ValidateTokenRequest{
 		ClientType:    s.clientType,
 		Token:         token,
@@ -89,18 +88,26 @@ func (s *InternalMessageService) HandleAuthorize(_ *http.Request, token string) 
 		return err
 	}
 
+	tokenHash := hashToken(token)
 	if resp.GetIsBlocked() {
-		s.log.Warnf("token is blocked: %s", token)
+		s.log.Warnf("token is blocked: %s", tokenHash)
 		return authenticationV1.ErrorForbidden("token is blocked")
 	}
 	if !resp.GetIsValid() {
-		s.log.Warnf("token is invalid: %s", token)
+		s.log.Warnf("token is invalid: %s", tokenHash)
 		return authenticationV1.ErrorUnauthorized("invalid token")
 	}
 
 	s.log.Debugf("token authenticated successfully, userId: [%d]", resp.GetPayload().GetUserId())
 
 	return nil
+}
+
+// hashToken returns a short SHA-256 fingerprint of a token suitable for
+// log correlation without exposing the raw credential.
+func hashToken(token string) string {
+	sum := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(sum[:])[:16]
 }
 
 func (s *InternalMessageService) ListMessage(ctx context.Context, req *paginationV1.PagingRequest) (*internalMessageV1.ListInternalMessageResponse, error) {
@@ -122,7 +129,7 @@ func (s *InternalMessageService) GetMessage(ctx context.Context, req *internalMe
 }
 
 func (s *InternalMessageService) CreateMessage(ctx context.Context, req *internalMessageV1.CreateInternalMessageRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -142,7 +149,7 @@ func (s *InternalMessageService) CreateMessage(ctx context.Context, req *interna
 }
 
 func (s *InternalMessageService) UpdateMessage(ctx context.Context, req *internalMessageV1.UpdateInternalMessageRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

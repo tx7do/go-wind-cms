@@ -38,7 +38,7 @@ func (s *TagService) Get(ctx context.Context, req *contentV1.GetTagRequest) (*co
 }
 
 func (s *TagService) Create(ctx context.Context, req *contentV1.CreateTagRequest) (*contentV1.Tag, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *TagService) Create(ctx context.Context, req *contentV1.CreateTagRequest
 }
 
 func (s *TagService) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (*contentV1.Tag, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

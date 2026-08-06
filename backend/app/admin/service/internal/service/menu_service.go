@@ -51,7 +51,7 @@ func (s *MenuService) Get(ctx context.Context, req *permissionV1.GetMenuRequest)
 }
 
 func (s *MenuService) Create(ctx context.Context, req *permissionV1.CreateMenuRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -67,7 +67,7 @@ func (s *MenuService) Create(ctx context.Context, req *permissionV1.CreateMenuRe
 }
 
 func (s *MenuService) Update(ctx context.Context, req *permissionV1.UpdateMenuRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

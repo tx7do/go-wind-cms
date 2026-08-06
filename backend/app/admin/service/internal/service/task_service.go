@@ -48,7 +48,7 @@ func (s *TaskService) ListTaskTypeName(ctx context.Context, req *emptypb.Empty) 
 }
 
 func (s *TaskService) Create(ctx context.Context, req *taskV1.CreateTaskRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -65,7 +65,7 @@ func (s *TaskService) Create(ctx context.Context, req *taskV1.CreateTaskRequest)
 }
 
 func (s *TaskService) Update(ctx context.Context, req *taskV1.UpdateTaskRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

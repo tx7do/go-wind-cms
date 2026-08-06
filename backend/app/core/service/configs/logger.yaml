@@ -5,14 +5,14 @@ logger:
     endpoint: "tcp://localhost:24224"
 
   zap:
-    level: "debug"
+    level: "info"
     filename: "./logs/info.log"
     max_size: 1
     max_age: 30
     max_backups: 5
 
   logrus:
-    level: "debug"
+    level: "info"
     formatter: "text"
     timestamp_format: "2006-01-02 15:04:05"
     disable_colors: false

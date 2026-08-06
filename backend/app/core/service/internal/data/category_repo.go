@@ -517,10 +517,10 @@ func (r *CategoryRepo) Update(ctx context.Context, req *contentV1.UpdateCategory
 	}()
 
 	if len(req.Data.Translations) > 0 {
-		//if err = r.categoryTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
-		//	r.log.Errorf("clean translations failed: %s", err.Error())
-		//	return nil, contentV1.ErrorInternalServerError("clean translations failed")
-		//}
+		if err = r.categoryTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("clean translations failed")
+		}
 
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].CategoryId = trans.Ptr(req.GetId())
@@ -589,6 +589,7 @@ func (r *CategoryRepo) Delete(ctx context.Context, req *contentV1.DeleteCategory
 		DeleteOneID(req.GetId()).
 		Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete one data failed")
 	}
 
 	if err = r.categoryTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
@@ -596,7 +597,7 @@ func (r *CategoryRepo) Delete(ctx context.Context, req *contentV1.DeleteCategory
 		return contentV1.ErrorInternalServerError("clean translations failed")
 	}
 
-	return err
+	return nil
 }
 
 func (r *CategoryRepo) TranslationExists(ctx context.Context, categoryId uint32, languageCode string) (bool, error) {

@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -864,32 +865,39 @@ func (r *MembershipRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uin
 }
 
 // CleanRelationsByUserID 清理用户关联的所有关系数据
-func (r *MembershipRepo) CleanRelationsByUserID(ctx context.Context, tx *ent.Tx, userID uint32) (err error) {
+func (r *MembershipRepo) CleanRelationsByUserID(ctx context.Context, tx *ent.Tx, userID uint32) error {
 	if userID == 0 {
 		return nil
 	}
 
-	var membershipID uint32
-	membershipID, err = r.queryMembershipID(ctx, tx, userID)
+	membershipID, err := r.queryMembershipID(ctx, tx, userID)
 	if err != nil {
-		return
+		return err
 	}
 
-	if err = r.membershipRoleRepo.CleanRelationsByMembershipID(ctx, tx, membershipID); err != nil {
+	var errs []error
+	if err := r.membershipRoleRepo.CleanRelationsByMembershipID(ctx, tx, membershipID); err != nil {
 		r.log.Errorf("clean membership roles by membership id failed: %s", err.Error())
+		errs = append(errs, err)
 	}
 
-	if err = r.membershipPositionRepo.CleanRelationsByMembershipID(ctx, tx, membershipID); err != nil {
+	if err := r.membershipPositionRepo.CleanRelationsByMembershipID(ctx, tx, membershipID); err != nil {
 		r.log.Errorf("clean membership positions by membership id failed: %s", err.Error())
+		errs = append(errs, err)
 	}
 
-	if err = r.membershipOrgUnitRepo.CleanRelationsByMembershipID(ctx, tx, membershipID); err != nil {
+	if err := r.membershipOrgUnitRepo.CleanRelationsByMembershipID(ctx, tx, membershipID); err != nil {
 		r.log.Errorf("clean membership org units by membership id failed: %s", err.Error())
+		errs = append(errs, err)
 	}
 
-	if err = tx.Membership.DeleteOneID(membershipID).Exec(ctx); err != nil {
+	if err := tx.Membership.DeleteOneID(membershipID).Exec(ctx); err != nil {
 		r.log.Errorf("delete membership by id failed: %s", err.Error())
+		errs = append(errs, err)
 	}
 
-	return
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+	return nil
 }

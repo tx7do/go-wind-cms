@@ -311,10 +311,10 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 	}()
 
 	if len(req.Data.Translations) > 0 {
-		//if err = r.pageTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
-		//	r.log.Errorf("clean translations failed: %s", err.Error())
-		//	return nil, contentV1.ErrorInternalServerError("clean translations failed")
-		//}
+		if err = r.pageTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("clean translations failed")
+		}
 
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].PageId = trans.Ptr(req.GetId())
@@ -389,6 +389,7 @@ func (r *PageRepo) Delete(ctx context.Context, req *contentV1.DeletePageRequest)
 		DeleteOneID(req.GetId()).
 		Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete one data failed")
 	}
 
 	if err = r.pageTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
@@ -396,7 +397,7 @@ func (r *PageRepo) Delete(ctx context.Context, req *contentV1.DeletePageRequest)
 		return contentV1.ErrorInternalServerError("clean translations failed")
 	}
 
-	return err
+	return nil
 }
 
 func (r *PageRepo) TranslationExists(ctx context.Context, pageId uint32, languageCode string) (bool, error) {

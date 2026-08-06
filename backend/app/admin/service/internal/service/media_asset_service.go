@@ -42,7 +42,7 @@ func (s *MediaAssetService) Create(ctx context.Context, req *mediaV1.CreateMedia
 }
 
 func (s *MediaAssetService) Update(ctx context.Context, req *mediaV1.UpdateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

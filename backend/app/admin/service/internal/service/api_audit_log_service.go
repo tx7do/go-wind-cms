@@ -103,7 +103,7 @@ func (s *ApiAuditLogService) Get(ctx context.Context, req *auditV1.GetApiAuditLo
 }
 
 func (s *ApiAuditLogService) Create(ctx context.Context, req *auditV1.CreateApiAuditLogRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

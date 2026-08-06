@@ -37,7 +37,7 @@ func (s *InternalMessageCategoryService) Get(ctx context.Context, req *internalM
 }
 
 func (s *InternalMessageCategoryService) Create(ctx context.Context, req *internalMessageV1.CreateInternalMessageCategoryRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -49,7 +49,7 @@ func (s *InternalMessageCategoryService) Create(ctx context.Context, req *intern
 }
 
 func (s *InternalMessageCategoryService) Update(ctx context.Context, req *internalMessageV1.UpdateInternalMessageCategoryRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 

@@ -70,7 +70,8 @@ func NewPermissionService(
 
 func (s *PermissionService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
-	if resp, _ := s.permissionServiceClient.Count(ctx, nil); resp.Count == 0 || resp.Count == (uint64)(len(constants.DefaultPermissions)) {
+	resp, _ := s.permissionServiceClient.Count(ctx, nil)
+	if resp != nil && (resp.Count == 0 || resp.Count == (uint64)(len(constants.DefaultPermissions))) {
 		apiCount, _ := s.apiServiceClient.Count(ctx, nil)
 
 		menusCount, _ := s.menuServiceClient.Count(ctx, nil)
@@ -186,7 +187,7 @@ func (s *PermissionService) Get(ctx context.Context, req *permissionV1.GetPermis
 }
 
 func (s *PermissionService) Create(ctx context.Context, req *permissionV1.CreatePermissionRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -202,7 +203,7 @@ func (s *PermissionService) Create(ctx context.Context, req *permissionV1.Create
 }
 
 func (s *PermissionService) Update(ctx context.Context, req *permissionV1.UpdatePermissionRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

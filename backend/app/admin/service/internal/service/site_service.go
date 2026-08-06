@@ -38,7 +38,7 @@ func (s *SiteService) Get(ctx context.Context, req *siteV1.GetSiteRequest) (*sit
 }
 
 func (s *SiteService) Create(ctx context.Context, req *siteV1.CreateSiteRequest) (*siteV1.Site, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *SiteService) Create(ctx context.Context, req *siteV1.CreateSiteRequest)
 }
 
 func (s *SiteService) Update(ctx context.Context, req *siteV1.UpdateSiteRequest) (*siteV1.Site, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

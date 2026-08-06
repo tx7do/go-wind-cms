@@ -38,7 +38,7 @@ func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*
 }
 
 func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostRequest) (*contentV1.Post, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -59,7 +59,7 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 }
 
 func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostRequest) (*contentV1.Post, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

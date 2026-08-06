@@ -82,8 +82,9 @@ export const useAccessStore = defineStore('access', {
         },
     },
     persist: {
-        // 持久化
-        paths: ['accessToken', 'refreshToken', 'accessCodes', 'accessMenus', 'accessRoutes'],
+        // 持久化（v4 用 pick 替代 paths）
+        // storage 由 nuxt.config.ts 的 piniaPluginPersistedstate.storage 统一设为 localStorage
+        pick: ['accessToken', 'refreshToken', 'accessCodes', 'accessMenus', 'accessRoutes'],
     },
 })
 

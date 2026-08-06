@@ -2,7 +2,7 @@ server:
   rest:
     addr: "0.0.0.0:6600"
     timeout: 10s
-    enable_swagger: true
+    enable_swagger: false
     cors:
       headers:
         - "X-Requested-With"
@@ -19,7 +19,8 @@ server:
         - "HEAD"
         - "OPTIONS"
       origins:
-        - "*"
+        - "http://localhost:5666"
+        - "http://127.0.0.1:5666"
     middleware:
       auth:
         method: "HS256"

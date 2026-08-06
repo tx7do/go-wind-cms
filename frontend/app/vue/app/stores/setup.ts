@@ -1,39 +1,21 @@
-import type {Pinia} from 'pinia'
-
-import type {App} from 'vue'
-
-import {createPinia} from 'pinia'
-
-let pinia: Pinia
-
-export interface InitStoreOptions {
-    namespace: string
-}
+import {getActivePinia} from 'pinia'
 
 /**
- * @zh_CN 初始化pinia
+ * 重置当前 pinia 实例下所有 store 的状态。
+ *
+ * 注意：pinia 实例由 @pinia/nuxt 创建并注入，持久化由
+ * pinia-plugin-persistedstate/nuxt module 接管，
+ * storage 在 nuxt.config.ts 中统一配置为 localStorage。
  */
-export async function setupStore(app: App, options: InitStoreOptions) {
-    const {createPersistedState} = await import('pinia-plugin-persistedstate');
-    pinia = createPinia();
-    const {namespace} = options;
-    pinia.use(
-        createPersistedState({
-            // key $appName-$store.id
-            key: storeKey => `${namespace}-${storeKey}`,
-            storage: localStorage,
-        }),
-    );
-    app.use(pinia);
-    return pinia;
-}
-
 export function resetAllStores() {
+    const pinia = getActivePinia() as any
     if (!pinia) {
         console.error('Pinia is not installed')
         return
     }
-    const allStores = (pinia as any)._s
-    for (const [_key, store] of allStores)
+    const allStores = pinia._s
+    if (!allStores) return
+    for (const [_key, store] of allStores) {
         store.$reset()
+    }
 }

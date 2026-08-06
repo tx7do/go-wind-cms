@@ -38,7 +38,7 @@ func (s *NavigationItemService) Get(ctx context.Context, req *siteV1.GetNavigati
 }
 
 func (s *NavigationItemService) Create(ctx context.Context, req *siteV1.CreateNavigationItemRequest) (*siteV1.NavigationItem, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *NavigationItemService) Create(ctx context.Context, req *siteV1.CreateNa
 }
 
 func (s *NavigationItemService) Update(ctx context.Context, req *siteV1.UpdateNavigationItemRequest) (*siteV1.NavigationItem, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

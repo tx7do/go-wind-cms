@@ -45,7 +45,7 @@ func (s *FileService) Get(ctx context.Context, req *storageV1.GetFileRequest) (*
 }
 
 func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileRequest) (*storageV1.File, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, storageV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -53,7 +53,7 @@ func (s *FileService) Create(ctx context.Context, req *storageV1.CreateFileReque
 }
 
 func (s *FileService) Update(ctx context.Context, req *storageV1.UpdateFileRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, storageV1.ErrorBadRequest("invalid parameter")
 	}
 

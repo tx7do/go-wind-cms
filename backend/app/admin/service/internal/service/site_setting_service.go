@@ -38,7 +38,7 @@ func (s *SiteSettingService) Get(ctx context.Context, req *siteV1.GetSiteSetting
 }
 
 func (s *SiteSettingService) Create(ctx context.Context, req *siteV1.CreateSiteSettingRequest) (*siteV1.SiteSetting, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -54,7 +54,7 @@ func (s *SiteSettingService) Create(ctx context.Context, req *siteV1.CreateSiteS
 }
 
 func (s *SiteSettingService) Update(ctx context.Context, req *siteV1.UpdateSiteSettingRequest) (*siteV1.SiteSetting, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
 

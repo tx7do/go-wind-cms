@@ -128,7 +128,7 @@ func (s *InternalMessageService) GetMessage(ctx context.Context, req *internalMe
 }
 
 func (s *InternalMessageService) CreateMessage(ctx context.Context, req *internalMessageV1.CreateInternalMessageRequest) (*internalMessageV1.InternalMessage, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -142,7 +142,7 @@ func (s *InternalMessageService) CreateMessage(ctx context.Context, req *interna
 }
 
 func (s *InternalMessageService) UpdateMessage(ctx context.Context, req *internalMessageV1.UpdateInternalMessageRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
+	if req == nil || req.Data == nil {
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -176,6 +176,9 @@ func (s *InternalMessageService) RevokeMessage(ctx context.Context, req *interna
 
 // SendMessage 发送消息
 func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalMessageV1.SendMessageRequest) (*internalMessageV1.SendMessageResponse, error) {
+	if req == nil {
+		return nil, internalMessageV1.ErrorBadRequest("invalid request")
+	}
 	now := time.Now()
 
 	var err error

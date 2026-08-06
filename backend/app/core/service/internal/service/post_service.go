@@ -37,6 +37,9 @@ func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*
 }
 
 func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostRequest) (*contentV1.Post, error) {
+	if req == nil || req.Data == nil {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
 	if req.Data.Status == nil {
 		req.Data.Status = trans.Ptr(contentV1.Post_POST_STATUS_PUBLISHED)
 	}
