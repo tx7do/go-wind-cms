@@ -120,6 +120,9 @@ func (_u *PostCategoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(postcategory.FieldCreatedAt, field.TypeTime)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(postcategory.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(postcategory.FieldPostID, field.TypeUint32, value)
 	}
@@ -275,6 +278,9 @@ func (_u *PostCategoryUpdateOne) sqlSave(ctx context.Context) (_node *PostCatego
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(postcategory.FieldCreatedAt, field.TypeTime)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(postcategory.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(postcategory.FieldPostID, field.TypeUint32, value)

@@ -100,7 +100,14 @@ func (r *InternalMessageRecipientRepo) List(ctx context.Context, req *pagination
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	builder := r.entClient.Client().InternalMessageRecipient.Query()
+	// 强制按调用者 user_id 过滤——收件箱只能看到自己的消息
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return nil, internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
+
+	builder := r.entClient.Client().InternalMessageRecipient.Query().
+		Where(internalmessagerecipient.RecipientUserIDEQ(callerUserID))
 
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {

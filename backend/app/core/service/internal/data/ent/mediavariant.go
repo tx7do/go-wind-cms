@@ -20,6 +20,8 @@ type MediaVariant struct {
 	ID uint32 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 媒体资源ID
 	MediaID *uint32 `json:"media_id,omitempty"`
 	// 文件ID
@@ -34,7 +36,7 @@ func (*MediaVariant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mediavariant.FieldID, mediavariant.FieldMediaID, mediavariant.FieldFileID, mediavariant.FieldVariantName:
+		case mediavariant.FieldID, mediavariant.FieldTenantID, mediavariant.FieldMediaID, mediavariant.FieldFileID, mediavariant.FieldVariantName:
 			values[i] = new(sql.NullInt64)
 		case mediavariant.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -65,6 +67,13 @@ func (_m *MediaVariant) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.CreatedAt = new(time.Time)
 				*_m.CreatedAt = value.Time
+			}
+		case mediavariant.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case mediavariant.FieldMediaID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -126,6 +135,11 @@ func (_m *MediaVariant) String() string {
 	if v := _m.CreatedAt; v != nil {
 		builder.WriteString("created_at=")
 		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	if v := _m.MediaID; v != nil {

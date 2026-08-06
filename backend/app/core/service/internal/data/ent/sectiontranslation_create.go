@@ -106,6 +106,20 @@ func (_c *SectionTranslationCreate) SetNillableDeletedBy(v *uint32) *SectionTran
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *SectionTranslationCreate) SetTenantID(v uint32) *SectionTranslationCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *SectionTranslationCreate) SetNillableTenantID(v *uint32) *SectionTranslationCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetSectionID sets the "section_id" field.
 func (_c *SectionTranslationCreate) SetSectionID(v uint32) *SectionTranslationCreate {
 	_c.mutation.SetSectionID(v)
@@ -153,6 +167,9 @@ func (_c *SectionTranslationCreate) Mutation() *SectionTranslationMutation {
 
 // Save creates the SectionTranslation in the database.
 func (_c *SectionTranslationCreate) Save(ctx context.Context) (*SectionTranslation, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -176,6 +193,15 @@ func (_c *SectionTranslationCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *SectionTranslationCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := sectiontranslation.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -241,6 +267,10 @@ func (_c *SectionTranslationCreate) createSpec() (*SectionTranslation, *sqlgraph
 	if value, ok := _c.mutation.DeletedBy(); ok {
 		_spec.SetField(sectiontranslation.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(sectiontranslation.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.SectionID(); ok {
 		_spec.SetField(sectiontranslation.FieldSectionID, field.TypeUint32, value)
@@ -493,6 +523,9 @@ func (u *SectionTranslationUpsertOne) UpdateNewValues() *SectionTranslationUpser
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(sectiontranslation.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(sectiontranslation.FieldTenantID)
 		}
 	}))
 	return u
@@ -773,6 +806,7 @@ func (_c *SectionTranslationCreateBulk) Save(ctx context.Context) ([]*SectionTra
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*SectionTranslationMutation)
 				if !ok {
@@ -904,6 +938,9 @@ func (u *SectionTranslationUpsertBulk) UpdateNewValues() *SectionTranslationUpse
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(sectiontranslation.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(sectiontranslation.FieldTenantID)
 			}
 		}
 	}))

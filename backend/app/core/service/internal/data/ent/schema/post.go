@@ -134,6 +134,7 @@ func (Post) Mixin() []ent.Mixin {
 		mixin.OperatorID{},
 		mixin.SortOrder{},
 		appMixin.EditorType{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

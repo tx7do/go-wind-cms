@@ -38,6 +38,8 @@ type Menu struct {
 	Remark *string `json:"remark,omitempty"`
 	// 状态
 	Status *menu.Status `json:"status,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 菜单类型 CATALOG: 目录 MENU: 菜单 BUTTON: 按钮 EMBEDDED: 内嵌 LINK: 外链
 	Type *menu.Type `json:"type,omitempty"`
 	// 路径,当其类型为'按钮'的时候对应的数据操作名,例如:/identity.service.v1.UserService/Login
@@ -96,7 +98,7 @@ func (*Menu) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case menu.FieldMeta:
 			values[i] = new([]byte)
-		case menu.FieldID, menu.FieldCreatedBy, menu.FieldUpdatedBy, menu.FieldDeletedBy, menu.FieldParentID:
+		case menu.FieldID, menu.FieldCreatedBy, menu.FieldUpdatedBy, menu.FieldDeletedBy, menu.FieldParentID, menu.FieldTenantID:
 			values[i] = new(sql.NullInt64)
 		case menu.FieldRemark, menu.FieldStatus, menu.FieldType, menu.FieldPath, menu.FieldRedirect, menu.FieldAlias, menu.FieldName, menu.FieldComponent:
 			values[i] = new(sql.NullString)
@@ -185,6 +187,13 @@ func (_m *Menu) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Status = new(menu.Status)
 				*_m.Status = menu.Status(value.String)
+			}
+		case menu.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case menu.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -324,6 +333,11 @@ func (_m *Menu) String() string {
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

@@ -22,7 +22,7 @@ server:
     middleware:
       auth:
         method: "HS256"
-        key: "some_api_key"
+        key: "${jwt_signing_key:dev_only_change_me_in_prod}"
 
   sse:
     addr: ":6701"

@@ -134,6 +134,20 @@ func (_c *PostCreate) SetNillableEditorType(v *post.EditorType) *PostCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PostCreate) SetTenantID(v uint32) *PostCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PostCreate) SetNillableTenantID(v *uint32) *PostCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *PostCreate) SetStatus(v post.Status) *PostCreate {
 	_c.mutation.SetStatus(v)
@@ -335,7 +349,9 @@ func (_c *PostCreate) Mutation() *PostMutation {
 
 // Save creates the Post in the database.
 func (_c *PostCreate) Save(ctx context.Context) (*Post, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -362,7 +378,7 @@ func (_c *PostCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *PostCreate) defaults() {
+func (_c *PostCreate) defaults() error {
 	if _, ok := _c.mutation.SortOrder(); !ok {
 		v := post.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
@@ -370,6 +386,10 @@ func (_c *PostCreate) defaults() {
 	if _, ok := _c.mutation.EditorType(); !ok {
 		v := post.DefaultEditorType
 		_c.mutation.SetEditorType(v)
+	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := post.DefaultTenantID
+		_c.mutation.SetTenantID(v)
 	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := post.DefaultStatus
@@ -407,6 +427,7 @@ func (_c *PostCreate) defaults() {
 		v := post.DefaultAuthorID
 		_c.mutation.SetAuthorID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -490,6 +511,10 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.EditorType(); ok {
 		_spec.SetField(post.FieldEditorType, field.TypeEnum, value)
 		_node.EditorType = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(post.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
@@ -1044,6 +1069,9 @@ func (u *PostUpsertOne) UpdateNewValues() *PostUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(post.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(post.FieldTenantID)
 		}
 	}))
 	return u
@@ -1757,6 +1785,9 @@ func (u *PostUpsertBulk) UpdateNewValues() *PostUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(post.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(post.FieldTenantID)
 			}
 		}
 	}))

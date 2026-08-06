@@ -11,7 +11,7 @@ server:
       enable_metadata: true
 
   asynq:
-    uri: "redis://:*Abcd123456@redis:6379/1"
+    uri: "redis://:${redis_password:dev_only_change_me}@redis:6379/1"
     enable_gracefully_shutdown: true
     shutdown_timeout: 3s
     codec: "json"

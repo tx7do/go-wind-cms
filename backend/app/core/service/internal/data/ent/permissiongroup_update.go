@@ -468,6 +468,9 @@ func (_u *PermissionGroupUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.PathCleared() {
 		_spec.ClearField(permissiongroup.FieldPath, field.TypeString)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(permissiongroup.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(permissiongroup.FieldName, field.TypeString, value)
 	}
@@ -1041,6 +1044,9 @@ func (_u *PermissionGroupUpdateOne) sqlSave(ctx context.Context) (_node *Permiss
 	}
 	if _u.mutation.PathCleared() {
 		_spec.ClearField(permissiongroup.FieldPath, field.TypeString)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(permissiongroup.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(permissiongroup.FieldName, field.TypeString, value)

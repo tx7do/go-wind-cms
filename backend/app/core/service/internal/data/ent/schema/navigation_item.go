@@ -100,6 +100,7 @@ func (NavigationItem) Mixin() []ent.Mixin {
 		mixin.OperatorID{},
 		mixin.SortOrder{},
 		mixin.Tree[NavigationItem]{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

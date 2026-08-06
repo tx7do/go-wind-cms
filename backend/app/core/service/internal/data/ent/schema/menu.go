@@ -89,6 +89,7 @@ func (Menu) Mixin() []ent.Mixin {
 		//mixin.TreePath{},
 		mixin.Remark{},
 		mixin.SwitchStatus{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

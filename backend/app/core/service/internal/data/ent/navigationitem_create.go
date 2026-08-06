@@ -134,6 +134,20 @@ func (_c *NavigationItemCreate) SetNillableParentID(v *uint32) *NavigationItemCr
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *NavigationItemCreate) SetTenantID(v uint32) *NavigationItemCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *NavigationItemCreate) SetNillableTenantID(v *uint32) *NavigationItemCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetLinkType sets the "link_type" field.
 func (_c *NavigationItemCreate) SetLinkType(v navigationitem.LinkType) *NavigationItemCreate {
 	_c.mutation.SetLinkType(v)
@@ -307,7 +321,9 @@ func (_c *NavigationItemCreate) Mutation() *NavigationItemMutation {
 
 // Save creates the NavigationItem in the database.
 func (_c *NavigationItemCreate) Save(ctx context.Context) (*NavigationItem, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -334,10 +350,14 @@ func (_c *NavigationItemCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *NavigationItemCreate) defaults() {
+func (_c *NavigationItemCreate) defaults() error {
 	if _, ok := _c.mutation.SortOrder(); !ok {
 		v := navigationitem.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
+	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := navigationitem.DefaultTenantID
+		_c.mutation.SetTenantID(v)
 	}
 	if _, ok := _c.mutation.LinkType(); !ok {
 		v := navigationitem.DefaultLinkType
@@ -351,6 +371,7 @@ func (_c *NavigationItemCreate) defaults() {
 		v := navigationitem.DefaultIsInvalid
 		_c.mutation.SetIsInvalid(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -425,6 +446,10 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 	if value, ok := _c.mutation.SortOrder(); ok {
 		_spec.SetField(navigationitem.FieldSortOrder, field.TypeUint32, value)
 		_node.SortOrder = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(navigationitem.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.LinkType(); ok {
 		_spec.SetField(navigationitem.FieldLinkType, field.TypeEnum, value)
@@ -912,6 +937,9 @@ func (u *NavigationItemUpsertOne) UpdateNewValues() *NavigationItemUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(navigationitem.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(navigationitem.FieldTenantID)
 		}
 	}))
 	return u
@@ -1527,6 +1555,9 @@ func (u *NavigationItemUpsertBulk) UpdateNewValues() *NavigationItemUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(navigationitem.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(navigationitem.FieldTenantID)
 			}
 		}
 	}))

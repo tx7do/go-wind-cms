@@ -34,6 +34,8 @@ type Permission struct {
 	Status *permission.Status `json:"status,omitempty"`
 	// 描述
 	Description *string `json:"description,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 权限名称（如：删除用户）
 	Name *string `json:"name,omitempty"`
 	// 权限编码（如：opm:user:delete、order:export）
@@ -48,7 +50,7 @@ func (*Permission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case permission.FieldID, permission.FieldCreatedBy, permission.FieldUpdatedBy, permission.FieldDeletedBy, permission.FieldGroupID:
+		case permission.FieldID, permission.FieldCreatedBy, permission.FieldUpdatedBy, permission.FieldDeletedBy, permission.FieldTenantID, permission.FieldGroupID:
 			values[i] = new(sql.NullInt64)
 		case permission.FieldStatus, permission.FieldDescription, permission.FieldName, permission.FieldCode:
 			values[i] = new(sql.NullString)
@@ -130,6 +132,13 @@ func (_m *Permission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Description = new(string)
 				*_m.Description = value.String
+			}
+		case permission.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case permission.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -226,6 +235,11 @@ func (_m *Permission) String() string {
 	if v := _m.Description; v != nil {
 		builder.WriteString("description=")
 		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	if v := _m.Name; v != nil {

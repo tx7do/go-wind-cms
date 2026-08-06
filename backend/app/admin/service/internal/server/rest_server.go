@@ -26,6 +26,7 @@ import (
 	"go-wind-cms/pkg/metadata"
 	"go-wind-cms/pkg/middleware/auth"
 	applogging "go-wind-cms/pkg/middleware/logging"
+	entmiddleware "go-wind-cms/pkg/middleware/ent"
 )
 
 // NewRestMiddleware 创建中间件
@@ -40,8 +41,12 @@ func NewRestMiddleware(
 	ms = append(ms, logging.Server(ctx.GetLogger()))
 
 	// add white list for authentication.
+	// GenerateCaptcha 和 VerifyCaptcha 必须在白名单中，因为登录需要验证码，
+	// 而获取验证码时用户尚无 token（鸡生蛋问题）。
 	rpc.AddWhiteList(
 		adminV1.OperationAuthenticationServiceLogin,
+		adminV1.OperationAuthenticationServiceGenerateCaptcha,
+		adminV1.OperationAuthenticationServiceVerifyCaptcha,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -58,6 +63,10 @@ func NewRestMiddleware(
 			return err
 		}),
 	))
+
+	// ent.Server() 从请求上下文中提取 OperatorMetadata 并构建 UserViewer，
+	// 使 ent 隐私层能够执行租户隔离。与 gRPC 中间件链保持一致。
+	ms = append(ms, entmiddleware.Server())
 
 	ms = append(ms, selector.Server(
 		auth.Server(

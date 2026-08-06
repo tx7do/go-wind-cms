@@ -113,6 +113,20 @@ func (_c *CategoryTranslationCreate) SetSeo(v *contentpb.SeoMeta) *CategoryTrans
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *CategoryTranslationCreate) SetTenantID(v uint32) *CategoryTranslationCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *CategoryTranslationCreate) SetNillableTenantID(v *uint32) *CategoryTranslationCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetCategoryID sets the "category_id" field.
 func (_c *CategoryTranslationCreate) SetCategoryID(v uint32) *CategoryTranslationCreate {
 	_c.mutation.SetCategoryID(v)
@@ -238,6 +252,9 @@ func (_c *CategoryTranslationCreate) Mutation() *CategoryTranslationMutation {
 
 // Save creates the CategoryTranslation in the database.
 func (_c *CategoryTranslationCreate) Save(ctx context.Context) (*CategoryTranslation, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -261,6 +278,15 @@ func (_c *CategoryTranslationCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *CategoryTranslationCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := categorytranslation.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -335,6 +361,10 @@ func (_c *CategoryTranslationCreate) createSpec() (*CategoryTranslation, *sqlgra
 	if value, ok := _c.mutation.Seo(); ok {
 		_spec.SetField(categorytranslation.FieldSeo, field.TypeJSON, value)
 		_node.Seo = value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(categorytranslation.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CategoryID(); ok {
 		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint32, value)
@@ -715,6 +745,9 @@ func (u *CategoryTranslationUpsertOne) UpdateNewValues() *CategoryTranslationUps
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(categorytranslation.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(categorytranslation.FieldTenantID)
 		}
 	}))
 	return u
@@ -1121,6 +1154,7 @@ func (_c *CategoryTranslationCreateBulk) Save(ctx context.Context) ([]*CategoryT
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*CategoryTranslationMutation)
 				if !ok {
@@ -1252,6 +1286,9 @@ func (u *CategoryTranslationUpsertBulk) UpdateNewValues() *CategoryTranslationUp
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(categorytranslation.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(categorytranslation.FieldTenantID)
 			}
 		}
 	}))

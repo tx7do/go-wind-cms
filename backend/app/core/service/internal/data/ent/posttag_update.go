@@ -120,6 +120,9 @@ func (_u *PostTagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(posttag.FieldCreatedAt, field.TypeTime)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(posttag.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(posttag.FieldPostID, field.TypeUint32, value)
 	}
@@ -275,6 +278,9 @@ func (_u *PostTagUpdateOne) sqlSave(ctx context.Context) (_node *PostTag, err er
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(posttag.FieldCreatedAt, field.TypeTime)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(posttag.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(posttag.FieldPostID, field.TypeUint32, value)

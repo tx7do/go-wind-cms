@@ -5,6 +5,7 @@ package navigationitem
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -30,6 +31,8 @@ const (
 	FieldSortOrder = "sort_order"
 	// FieldParentID holds the string denoting the parent_id field in the database.
 	FieldParentID = "parent_id"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldLinkType holds the string denoting the link_type field in the database.
 	FieldLinkType = "link_type"
 	// FieldNavigationID holds the string denoting the navigation_id field in the database.
@@ -77,6 +80,7 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldSortOrder,
 	FieldParentID,
+	FieldTenantID,
 	FieldLinkType,
 	FieldNavigationID,
 	FieldTitle,
@@ -99,9 +103,18 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// DefaultIsOpenNewTab holds the default value on creation for the "is_open_new_tab" field.
 	DefaultIsOpenNewTab bool
 	// DefaultIsInvalid holds the default value on creation for the "is_invalid" field.
@@ -185,6 +198,11 @@ func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
 // ByParentID orders the results by the parent_id field.
 func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentID, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByLinkType orders the results by the link_type field.

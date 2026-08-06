@@ -120,6 +120,20 @@ func (_c *CommentCreate) SetNillableParentID(v *uint32) *CommentCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *CommentCreate) SetTenantID(v uint32) *CommentCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableTenantID(v *uint32) *CommentCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetContentType sets the "content_type" field.
 func (_c *CommentCreate) SetContentType(v comment.ContentType) *CommentCreate {
 	_c.mutation.SetContentType(v)
@@ -419,7 +433,9 @@ func (_c *CommentCreate) Mutation() *CommentMutation {
 
 // Save creates the Comment in the database.
 func (_c *CommentCreate) Save(ctx context.Context) (*Comment, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -446,7 +462,11 @@ func (_c *CommentCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *CommentCreate) defaults() {
+func (_c *CommentCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := comment.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.AuthorID(); !ok {
 		v := comment.DefaultAuthorID
 		_c.mutation.SetAuthorID(v)
@@ -471,6 +491,7 @@ func (_c *CommentCreate) defaults() {
 		v := comment.DefaultIsSticky
 		_c.mutation.SetIsSticky(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -551,6 +572,10 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.DeletedBy(); ok {
 		_spec.SetField(comment.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(comment.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ContentType(); ok {
 		_spec.SetField(comment.FieldContentType, field.TypeEnum, value)
@@ -1236,6 +1261,9 @@ func (u *CommentUpsertOne) UpdateNewValues() *CommentUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(comment.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(comment.FieldTenantID)
 		}
 	}))
 	return u
@@ -2040,6 +2068,9 @@ func (u *CommentUpsertBulk) UpdateNewValues() *CommentUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(comment.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(comment.FieldTenantID)
 			}
 		}
 	}))

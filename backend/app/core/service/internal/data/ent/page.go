@@ -39,6 +39,8 @@ type Page struct {
 	ParentID *uint32 `json:"parent_id,omitempty"`
 	// 编辑器类型
 	EditorType *page.EditorType `json:"editor_type,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 页面状态
 	Status *page.Status `json:"status,omitempty"`
 	// 页面类型
@@ -111,7 +113,7 @@ func (*Page) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case page.FieldDisallowComment, page.FieldShowInNavigation, page.FieldIsCustomTemplate:
 			values[i] = new(sql.NullBool)
-		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldAuthorID, page.FieldVisits, page.FieldDepth:
+		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldTenantID, page.FieldAuthorID, page.FieldVisits, page.FieldDepth:
 			values[i] = new(sql.NullInt64)
 		case page.FieldPath, page.FieldEditorType, page.FieldStatus, page.FieldType, page.FieldSlug, page.FieldAuthorName, page.FieldRedirectURL, page.FieldTemplate:
 			values[i] = new(sql.NullString)
@@ -207,6 +209,13 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.EditorType = new(page.EditorType)
 				*_m.EditorType = page.EditorType(value.String)
+			}
+		case page.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case page.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -393,6 +402,11 @@ func (_m *Page) String() string {
 	builder.WriteString(", ")
 	if v := _m.EditorType; v != nil {
 		builder.WriteString("editor_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

@@ -1,7 +1,7 @@
 data:
   redis:
     addr: "redis:6379"
-    password: "*Abcd123456"
+    password: "${redis_password:dev_only_change_me}"
     dial_timeout: 10s
     read_timeout: 0.4s
     write_timeout: 0.6s

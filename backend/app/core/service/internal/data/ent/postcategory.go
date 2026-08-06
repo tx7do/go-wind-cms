@@ -20,6 +20,8 @@ type PostCategory struct {
 	ID uint32 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 帖子ID
 	PostID *uint32 `json:"post_id,omitempty"`
 	// 分类ID
@@ -32,7 +34,7 @@ func (*PostCategory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case postcategory.FieldID, postcategory.FieldPostID, postcategory.FieldCategoryID:
+		case postcategory.FieldID, postcategory.FieldTenantID, postcategory.FieldPostID, postcategory.FieldCategoryID:
 			values[i] = new(sql.NullInt64)
 		case postcategory.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -63,6 +65,13 @@ func (_m *PostCategory) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.CreatedAt = new(time.Time)
 				*_m.CreatedAt = value.Time
+			}
+		case postcategory.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case postcategory.FieldPostID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -117,6 +126,11 @@ func (_m *PostCategory) String() string {
 	if v := _m.CreatedAt; v != nil {
 		builder.WriteString("created_at=")
 		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	if v := _m.PostID; v != nil {

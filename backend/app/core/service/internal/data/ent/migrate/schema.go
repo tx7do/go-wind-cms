@@ -19,6 +19,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "module", Type: field.TypeString, Nullable: true, Comment: "所属业务模块"},
 		{Name: "module_description", Type: field.TypeString, Nullable: true, Comment: "业务模块描述"},
@@ -37,22 +38,22 @@ var (
 			{
 				Name:    "idx_sys_api_res_module_path_method_scope",
 				Unique:  true,
-				Columns: []*schema.Column{SysApisColumns[9], SysApisColumns[12], SysApisColumns[13], SysApisColumns[14]},
+				Columns: []*schema.Column{SysApisColumns[10], SysApisColumns[13], SysApisColumns[14], SysApisColumns[15]},
 			},
 			{
 				Name:    "idx_sys_api_res_module",
 				Unique:  false,
-				Columns: []*schema.Column{SysApisColumns[9]},
+				Columns: []*schema.Column{SysApisColumns[10]},
 			},
 			{
 				Name:    "idx_sys_api_res_scope",
 				Unique:  false,
-				Columns: []*schema.Column{SysApisColumns[14]},
+				Columns: []*schema.Column{SysApisColumns[15]},
 			},
 			{
 				Name:    "idx_sys_api_res_path_method",
 				Unique:  false,
-				Columns: []*schema.Column{SysApisColumns[12], SysApisColumns[13]},
+				Columns: []*schema.Column{SysApisColumns[13], SysApisColumns[14]},
 			},
 			{
 				Name:    "idx_sys_api_res_created_by_created_at",
@@ -172,6 +173,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "分类状态", Enums: []string{"CATEGORY_STATUS_ACTIVE", "CATEGORY_STATUS_HIDDEN", "CATEGORY_STATUS_ARCHIVED"}},
 		{Name: "is_nav", Type: field.TypeBool, Nullable: true, Comment: "是否显示在导航菜单", Default: false},
 		{Name: "icon", Type: field.TypeString, Nullable: true, Comment: "分类图标"},
@@ -191,7 +193,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "categories_categories_children",
-				Columns:    []*schema.Column{CategoriesColumns[17]},
+				Columns:    []*schema.Column{CategoriesColumns[18]},
 				RefColumns: []*schema.Column{CategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -200,17 +202,17 @@ var (
 			{
 				Name:    "category_status",
 				Unique:  false,
-				Columns: []*schema.Column{CategoriesColumns[9]},
+				Columns: []*schema.Column{CategoriesColumns[10]},
 			},
 			{
 				Name:    "category_is_nav",
 				Unique:  false,
-				Columns: []*schema.Column{CategoriesColumns[10]},
+				Columns: []*schema.Column{CategoriesColumns[11]},
 			},
 			{
 				Name:    "category_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{CategoriesColumns[17]},
+				Columns: []*schema.Column{CategoriesColumns[18]},
 			},
 		},
 	}
@@ -224,6 +226,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的分类ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "分类名称"},
@@ -243,22 +246,22 @@ var (
 			{
 				Name:    "categorytranslation_category_id_language_code",
 				Unique:  true,
-				Columns: []*schema.Column{CategoryTranslationsColumns[8], CategoryTranslationsColumns[9]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[9], CategoryTranslationsColumns[10]},
 			},
 			{
 				Name:    "categorytranslation_category_id",
 				Unique:  false,
-				Columns: []*schema.Column{CategoryTranslationsColumns[8]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[9]},
 			},
 			{
 				Name:    "categorytranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{CategoryTranslationsColumns[9]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[10]},
 			},
 			{
 				Name:    "categorytranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{CategoryTranslationsColumns[11]},
+				Columns: []*schema.Column{CategoryTranslationsColumns[12]},
 			},
 		},
 	}
@@ -271,6 +274,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "content_type", Type: field.TypeEnum, Nullable: true, Comment: "内容类型", Enums: []string{"CONTENT_TYPE_POST", "CONTENT_TYPE_PAGE", "CONTENT_TYPE_PRODUCT"}},
 		{Name: "object_id", Type: field.TypeUint32, Nullable: true, Comment: "对象ID"},
 		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "评论内容"},
@@ -301,7 +305,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "comments_comments_children",
-				Columns:    []*schema.Column{CommentsColumns[26]},
+				Columns:    []*schema.Column{CommentsColumns[27]},
 				RefColumns: []*schema.Column{CommentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -310,32 +314,32 @@ var (
 			{
 				Name:    "comment_content_type_object_id",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[7], CommentsColumns[8]},
+				Columns: []*schema.Column{CommentsColumns[8], CommentsColumns[9]},
 			},
 			{
 				Name:    "comment_status",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[15]},
+				Columns: []*schema.Column{CommentsColumns[16]},
 			},
 			{
 				Name:    "comment_author_id",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[10]},
+				Columns: []*schema.Column{CommentsColumns[11]},
 			},
 			{
 				Name:    "comment_reply_to_id",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[25]},
+				Columns: []*schema.Column{CommentsColumns[26]},
 			},
 			{
 				Name:    "comment_is_spam",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[23]},
+				Columns: []*schema.Column{CommentsColumns[24]},
 			},
 			{
 				Name:    "comment_is_sticky",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[24]},
+				Columns: []*schema.Column{CommentsColumns[25]},
 			},
 		},
 	}
@@ -1031,6 +1035,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "filename", Type: field.TypeString, Nullable: true, Comment: "原始文件名"},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "媒体类型", Enums: []string{"ASSET_TYPE_IMAGE", "ASSET_TYPE_VIDEO", "ASSET_TYPE_DOCUMENT", "ASSET_TYPE_AUDIO", "ASSET_TYPE_ARCHIVE", "ASSET_TYPE_OTHER"}},
 		{Name: "mime_type", Type: field.TypeString, Nullable: true, Comment: "MIME 类型"},
@@ -1061,42 +1066,42 @@ var (
 			{
 				Name:    "mediaasset_type",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[8]},
+				Columns: []*schema.Column{MediaAssetsColumns[9]},
 			},
 			{
 				Name:    "mediaasset_processing_status",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[19]},
+				Columns: []*schema.Column{MediaAssetsColumns[20]},
 			},
 			{
 				Name:    "mediaasset_folder_id",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[22]},
+				Columns: []*schema.Column{MediaAssetsColumns[23]},
 			},
 			{
 				Name:    "mediaasset_file_id",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[23]},
+				Columns: []*schema.Column{MediaAssetsColumns[24]},
 			},
 			{
 				Name:    "mediaasset_is_private",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[25]},
+				Columns: []*schema.Column{MediaAssetsColumns[26]},
 			},
 			{
 				Name:    "mediaasset_file_hash",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[21]},
+				Columns: []*schema.Column{MediaAssetsColumns[22]},
 			},
 			{
 				Name:    "mediaasset_folder_id_is_private",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[22], MediaAssetsColumns[25]},
+				Columns: []*schema.Column{MediaAssetsColumns[23], MediaAssetsColumns[26]},
 			},
 			{
 				Name:    "mediaasset_type_processing_status",
 				Unique:  false,
-				Columns: []*schema.Column{MediaAssetsColumns[8], MediaAssetsColumns[19]},
+				Columns: []*schema.Column{MediaAssetsColumns[9], MediaAssetsColumns[20]},
 			},
 		},
 	}
@@ -1104,6 +1109,7 @@ var (
 	MediaVariantsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "media_id", Type: field.TypeUint32, Comment: "媒体资源ID"},
 		{Name: "file_id", Type: field.TypeUint32, Comment: "文件ID"},
 		{Name: "variant_name", Type: field.TypeUint32, Nullable: true, Comment: "变体名称"},
@@ -1118,17 +1124,17 @@ var (
 			{
 				Name:    "mediavariant_media_id_file_id",
 				Unique:  true,
-				Columns: []*schema.Column{MediaVariantsColumns[2], MediaVariantsColumns[3]},
+				Columns: []*schema.Column{MediaVariantsColumns[3], MediaVariantsColumns[4]},
 			},
 			{
 				Name:    "mediavariant_media_id",
 				Unique:  false,
-				Columns: []*schema.Column{MediaVariantsColumns[2]},
+				Columns: []*schema.Column{MediaVariantsColumns[3]},
 			},
 			{
 				Name:    "mediavariant_file_id",
 				Unique:  false,
-				Columns: []*schema.Column{MediaVariantsColumns[3]},
+				Columns: []*schema.Column{MediaVariantsColumns[4]},
 			},
 		},
 	}
@@ -1528,6 +1534,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "菜单类型 CATALOG: 目录 MENU: 菜单 BUTTON: 按钮 EMBEDDED: 内嵌 LINK: 外链", Enums: []string{"CATALOG", "MENU", "BUTTON", "EMBEDDED", "LINK"}, Default: "MENU"},
 		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "路径,当其类型为'按钮'的时候对应的数据操作名,例如:/identity.service.v1.UserService/Login", Default: ""},
 		{Name: "redirect", Type: field.TypeString, Nullable: true, Comment: "重定向地址"},
@@ -1546,7 +1553,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "sys_menus_sys_menus_children",
-				Columns:    []*schema.Column{SysMenusColumns[16]},
+				Columns:    []*schema.Column{SysMenusColumns[17]},
 				RefColumns: []*schema.Column{SysMenusColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1555,32 +1562,32 @@ var (
 			{
 				Name:    "idx_sys_menu_parent_name",
 				Unique:  true,
-				Columns: []*schema.Column{SysMenusColumns[16], SysMenusColumns[13]},
+				Columns: []*schema.Column{SysMenusColumns[17], SysMenusColumns[14]},
 			},
 			{
 				Name:    "idx_sys_menu_parent_path",
 				Unique:  true,
-				Columns: []*schema.Column{SysMenusColumns[16], SysMenusColumns[10]},
+				Columns: []*schema.Column{SysMenusColumns[17], SysMenusColumns[11]},
 			},
 			{
 				Name:    "idx_sys_menu_path",
 				Unique:  false,
-				Columns: []*schema.Column{SysMenusColumns[10]},
+				Columns: []*schema.Column{SysMenusColumns[11]},
 			},
 			{
 				Name:    "idx_sys_menu_alias",
 				Unique:  false,
-				Columns: []*schema.Column{SysMenusColumns[12]},
+				Columns: []*schema.Column{SysMenusColumns[13]},
 			},
 			{
 				Name:    "idx_sys_menu_component",
 				Unique:  false,
-				Columns: []*schema.Column{SysMenusColumns[14]},
+				Columns: []*schema.Column{SysMenusColumns[15]},
 			},
 			{
 				Name:    "idx_sys_menu_type",
 				Unique:  false,
-				Columns: []*schema.Column{SysMenusColumns[9]},
+				Columns: []*schema.Column{SysMenusColumns[10]},
 			},
 			{
 				Name:    "idx_sys_menu_status",
@@ -1590,7 +1597,7 @@ var (
 			{
 				Name:    "idx_sys_menu_parent",
 				Unique:  false,
-				Columns: []*schema.Column{SysMenusColumns[16]},
+				Columns: []*schema.Column{SysMenusColumns[17]},
 			},
 			{
 				Name:    "idx_sys_menu_created_by_created_at",
@@ -1613,6 +1620,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "导航名称"},
 		{Name: "location", Type: field.TypeEnum, Nullable: true, Comment: "渲染位置", Enums: []string{"HEADER", "FOOTER", "SIDEBAR", "MOBILE", "TOP_BAR", "OFFCANVAS"}, Default: "HEADER"},
 		{Name: "locale", Type: field.TypeString, Nullable: true, Comment: "关联的语言区域"},
@@ -1628,22 +1636,22 @@ var (
 			{
 				Name:    "navigation_location_locale",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationsColumns[8], NavigationsColumns[9]},
+				Columns: []*schema.Column{NavigationsColumns[9], NavigationsColumns[10]},
 			},
 			{
 				Name:    "navigation_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationsColumns[10]},
+				Columns: []*schema.Column{NavigationsColumns[11]},
 			},
 			{
 				Name:    "navigation_locale",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationsColumns[9]},
+				Columns: []*schema.Column{NavigationsColumns[10]},
 			},
 			{
 				Name:    "navigation_location_locale_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationsColumns[8], NavigationsColumns[9], NavigationsColumns[10]},
+				Columns: []*schema.Column{NavigationsColumns[9], NavigationsColumns[10], NavigationsColumns[11]},
 			},
 		},
 	}
@@ -1657,6 +1665,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "link_type", Type: field.TypeEnum, Nullable: true, Comment: "链接类型", Enums: []string{"LINK_TYPE_CUSTOM", "LINK_TYPE_POST", "LINK_TYPE_PAGE", "LINK_TYPE_CATEGORY", "LINK_TYPE_EXTERNAL"}, Default: "LINK_TYPE_POST"},
 		{Name: "navigation_id", Type: field.TypeUint32, Nullable: true, Comment: "所属导航菜单ID"},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "显示文本"},
@@ -1678,7 +1687,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "navigation_items_navigation_items_children",
-				Columns:    []*schema.Column{NavigationItemsColumns[18]},
+				Columns:    []*schema.Column{NavigationItemsColumns[19]},
 				RefColumns: []*schema.Column{NavigationItemsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1687,37 +1696,37 @@ var (
 			{
 				Name:    "navigationitem_navigation_id",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[9]},
+				Columns: []*schema.Column{NavigationItemsColumns[10]},
 			},
 			{
 				Name:    "navigationitem_link_type",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[8]},
+				Columns: []*schema.Column{NavigationItemsColumns[9]},
 			},
 			{
 				Name:    "navigationitem_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[18]},
+				Columns: []*schema.Column{NavigationItemsColumns[19]},
 			},
 			{
 				Name:    "navigationitem_object_id",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[12]},
+				Columns: []*schema.Column{NavigationItemsColumns[13]},
 			},
 			{
 				Name:    "navigationitem_is_invalid",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[16]},
+				Columns: []*schema.Column{NavigationItemsColumns[17]},
 			},
 			{
 				Name:    "navigationitem_navigation_id_link_type",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[9], NavigationItemsColumns[8]},
+				Columns: []*schema.Column{NavigationItemsColumns[10], NavigationItemsColumns[9]},
 			},
 			{
 				Name:    "navigationitem_navigation_id_is_invalid",
 				Unique:  false,
-				Columns: []*schema.Column{NavigationItemsColumns[9], NavigationItemsColumns[16]},
+				Columns: []*schema.Column{NavigationItemsColumns[10], NavigationItemsColumns[17]},
 			},
 		},
 	}
@@ -1980,6 +1989,7 @@ var (
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
 		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_PLAIN_TEXT", "EDITOR_TYPE_CODE", "EDITOR_TYPE_JSON_BLOCK", "EDITOR_TYPE_VISUAL_BUILDER"}, Default: "EDITOR_TYPE_MARKDOWN"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "页面状态", Enums: []string{"PAGE_STATUS_DRAFT", "PAGE_STATUS_PUBLISHED", "PAGE_STATUS_ARCHIVED"}, Default: "PAGE_STATUS_DRAFT"},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "页面类型", Enums: []string{"PAGE_TYPE_DEFAULT", "PAGE_TYPE_HOME", "PAGE_TYPE_ERROR_404", "PAGE_TYPE_ERROR_500", "PAGE_TYPE_CUSTOM"}, Default: "PAGE_TYPE_HOME"},
 		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "页面唯一标识"},
@@ -2004,7 +2014,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pages_pages_children",
-				Columns:    []*schema.Column{PagesColumns[23]},
+				Columns:    []*schema.Column{PagesColumns[24]},
 				RefColumns: []*schema.Column{PagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2013,47 +2023,47 @@ var (
 			{
 				Name:    "page_status",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[10]},
+				Columns: []*schema.Column{PagesColumns[11]},
 			},
 			{
 				Name:    "page_type",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[11]},
+				Columns: []*schema.Column{PagesColumns[12]},
 			},
 			{
 				Name:    "page_author_id",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[13]},
+				Columns: []*schema.Column{PagesColumns[14]},
 			},
 			{
 				Name:    "page_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[12]},
+				Columns: []*schema.Column{PagesColumns[13]},
 			},
 			{
 				Name:    "page_show_in_navigation",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[17]},
+				Columns: []*schema.Column{PagesColumns[18]},
 			},
 			{
 				Name:    "page_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[23]},
+				Columns: []*schema.Column{PagesColumns[24]},
 			},
 			{
 				Name:    "page_disallow_comment",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[15]},
+				Columns: []*schema.Column{PagesColumns[16]},
 			},
 			{
 				Name:    "page_status_type",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[10], PagesColumns[11]},
+				Columns: []*schema.Column{PagesColumns[11], PagesColumns[12]},
 			},
 			{
 				Name:    "page_status_show_in_navigation",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[10], PagesColumns[17]},
+				Columns: []*schema.Column{PagesColumns[11], PagesColumns[18]},
 			},
 		},
 	}
@@ -2067,6 +2077,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的页面ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "页面标题"},
@@ -2085,27 +2096,27 @@ var (
 			{
 				Name:    "pagetranslation_page_id",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[8]},
+				Columns: []*schema.Column{PageTranslationsColumns[9]},
 			},
 			{
 				Name:    "pagetranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[9]},
+				Columns: []*schema.Column{PageTranslationsColumns[10]},
 			},
 			{
 				Name:    "pagetranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[11]},
+				Columns: []*schema.Column{PageTranslationsColumns[12]},
 			},
 			{
 				Name:    "pagetranslation_page_id_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[8], PageTranslationsColumns[9]},
+				Columns: []*schema.Column{PageTranslationsColumns[9], PageTranslationsColumns[10]},
 			},
 			{
 				Name:    "pagetranslation_language_code_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PageTranslationsColumns[9], PageTranslationsColumns[11]},
+				Columns: []*schema.Column{PageTranslationsColumns[10], PageTranslationsColumns[12]},
 			},
 		},
 	}
@@ -2120,6 +2131,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Comment: "权限名称（如：删除用户）"},
 		{Name: "code", Type: field.TypeString, Comment: "权限编码（如：opm:user:delete、order:export）"},
 		{Name: "group_id", Type: field.TypeUint32, Nullable: true, Comment: "关联权限分组 ID"},
@@ -2134,17 +2146,17 @@ var (
 			{
 				Name:    "uix_perm_code",
 				Unique:  true,
-				Columns: []*schema.Column{SysPermissionsColumns[10]},
+				Columns: []*schema.Column{SysPermissionsColumns[11]},
 			},
 			{
 				Name:    "idx_perm_name",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionsColumns[9]},
+				Columns: []*schema.Column{SysPermissionsColumns[10]},
 			},
 			{
 				Name:    "idx_perm_group_id",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionsColumns[11]},
+				Columns: []*schema.Column{SysPermissionsColumns[12]},
 			},
 		},
 	}
@@ -2157,6 +2169,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
 		{Name: "api_id", Type: field.TypeUint32, Comment: "API资源ID（关联sys_apis.id）"},
 	}
@@ -2170,17 +2183,17 @@ var (
 			{
 				Name:    "uix_perm_api_permission_api_id",
 				Unique:  true,
-				Columns: []*schema.Column{SysPermissionApisColumns[7], SysPermissionApisColumns[8]},
+				Columns: []*schema.Column{SysPermissionApisColumns[8], SysPermissionApisColumns[9]},
 			},
 			{
 				Name:    "idx_perm_api_permission_id",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionApisColumns[7]},
+				Columns: []*schema.Column{SysPermissionApisColumns[8]},
 			},
 			{
 				Name:    "idx_perm_api_api_id",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionApisColumns[8]},
+				Columns: []*schema.Column{SysPermissionApisColumns[9]},
 			},
 		},
 	}
@@ -2253,6 +2266,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Comment: "分组名称（如：用户管理、订单操作）"},
 		{Name: "module", Type: field.TypeString, Nullable: true, Comment: "业务模块标识（如：opm、order、pay）"},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
@@ -2266,7 +2280,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "sys_permission_groups_sys_permission_groups_children",
-				Columns:    []*schema.Column{SysPermissionGroupsColumns[13]},
+				Columns:    []*schema.Column{SysPermissionGroupsColumns[14]},
 				RefColumns: []*schema.Column{SysPermissionGroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2275,17 +2289,17 @@ var (
 			{
 				Name:    "idx_perm_group_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionGroupsColumns[13]},
+				Columns: []*schema.Column{SysPermissionGroupsColumns[14]},
 			},
 			{
 				Name:    "idx_perm_group_name",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionGroupsColumns[11]},
+				Columns: []*schema.Column{SysPermissionGroupsColumns[12]},
 			},
 			{
 				Name:    "idx_perm_group_module",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionGroupsColumns[12]},
+				Columns: []*schema.Column{SysPermissionGroupsColumns[13]},
 			},
 		},
 	}
@@ -2298,6 +2312,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
 		{Name: "menu_id", Type: field.TypeUint32, Comment: "菜单ID（关联sys_menus.id）"},
 	}
@@ -2311,17 +2326,17 @@ var (
 			{
 				Name:    "uix_perm_menu_permission_menu_id",
 				Unique:  true,
-				Columns: []*schema.Column{SysPermissionMenusColumns[7], SysPermissionMenusColumns[8]},
+				Columns: []*schema.Column{SysPermissionMenusColumns[8], SysPermissionMenusColumns[9]},
 			},
 			{
 				Name:    "idx_perm_menu_permission_id",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionMenusColumns[7]},
+				Columns: []*schema.Column{SysPermissionMenusColumns[8]},
 			},
 			{
 				Name:    "idx_perm_menu_menu_id",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionMenusColumns[8]},
+				Columns: []*schema.Column{SysPermissionMenusColumns[9]},
 			},
 		},
 	}
@@ -2335,6 +2350,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
 		{Name: "policy_engine", Type: field.TypeEnum, Comment: "策略引擎", Enums: []string{"CEL", "CASBIN", "OPA", "SQL"}, Default: "CASBIN"},
 		{Name: "definition", Type: field.TypeString, Nullable: true, Comment: "策略定义（动态结构）", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
@@ -2352,22 +2368,22 @@ var (
 			{
 				Name:    "idx_perm_policy_perm_version",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionPoliciesColumns[8], SysPermissionPoliciesColumns[11]},
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[9], SysPermissionPoliciesColumns[12]},
 			},
 			{
 				Name:    "idx_perm_policy_perm",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionPoliciesColumns[8]},
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[9]},
 			},
 			{
 				Name:    "idx_perm_policy_engine",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionPoliciesColumns[9]},
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[10]},
 			},
 			{
 				Name:    "idx_perm_policy_version",
 				Unique:  false,
-				Columns: []*schema.Column{SysPermissionPoliciesColumns[11]},
+				Columns: []*schema.Column{SysPermissionPoliciesColumns[12]},
 			},
 		},
 	}
@@ -2597,6 +2613,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "editor_type", Type: field.TypeEnum, Nullable: true, Comment: "编辑器类型", Enums: []string{"EDITOR_TYPE_MARKDOWN", "EDITOR_TYPE_RICH_TEXT", "EDITOR_TYPE_PLAIN_TEXT", "EDITOR_TYPE_CODE", "EDITOR_TYPE_JSON_BLOCK", "EDITOR_TYPE_VISUAL_BUILDER"}, Default: "EDITOR_TYPE_MARKDOWN"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "帖子状态", Enums: []string{"POST_STATUS_DRAFT", "POST_STATUS_PUBLISHED", "POST_STATUS_SCHEDULED", "POST_STATUS_TRASHED"}, Default: "POST_STATUS_DRAFT"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "唯一编码"},
 		{Name: "disallow_comment", Type: field.TypeBool, Nullable: true, Comment: "不允许评论", Default: false},
@@ -2622,7 +2639,7 @@ var (
 			{
 				Name:    "post_status",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[9]},
+				Columns: []*schema.Column{PostsColumns[10]},
 			},
 			{
 				Name:    "post_editor_type",
@@ -2632,42 +2649,42 @@ var (
 			{
 				Name:    "post_code",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[10]},
+				Columns: []*schema.Column{PostsColumns[11]},
 			},
 			{
 				Name:    "post_author_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[18]},
+				Columns: []*schema.Column{PostsColumns[19]},
 			},
 			{
 				Name:    "post_is_featured",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[14]},
+				Columns: []*schema.Column{PostsColumns[15]},
 			},
 			{
 				Name:    "post_in_progress",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[12]},
+				Columns: []*schema.Column{PostsColumns[13]},
 			},
 			{
 				Name:    "post_disallow_comment",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[11]},
+				Columns: []*schema.Column{PostsColumns[12]},
 			},
 			{
 				Name:    "post_status_author_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[9], PostsColumns[18]},
+				Columns: []*schema.Column{PostsColumns[10], PostsColumns[19]},
 			},
 			{
 				Name:    "post_status_is_featured",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[9], PostsColumns[14]},
+				Columns: []*schema.Column{PostsColumns[10], PostsColumns[15]},
 			},
 			{
 				Name:    "post_status_in_progress",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[9], PostsColumns[12]},
+				Columns: []*schema.Column{PostsColumns[10], PostsColumns[13]},
 			},
 		},
 	}
@@ -2675,6 +2692,7 @@ var (
 	PostCategoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "post_id", Type: field.TypeUint32, Comment: "帖子ID"},
 		{Name: "category_id", Type: field.TypeUint32, Comment: "分类ID"},
 	}
@@ -2688,17 +2706,17 @@ var (
 			{
 				Name:    "postcategory_post_id_category_id",
 				Unique:  true,
-				Columns: []*schema.Column{PostCategoriesColumns[2], PostCategoriesColumns[3]},
+				Columns: []*schema.Column{PostCategoriesColumns[3], PostCategoriesColumns[4]},
 			},
 			{
 				Name:    "postcategory_post_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostCategoriesColumns[2]},
+				Columns: []*schema.Column{PostCategoriesColumns[3]},
 			},
 			{
 				Name:    "postcategory_category_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostCategoriesColumns[3]},
+				Columns: []*schema.Column{PostCategoriesColumns[4]},
 			},
 		},
 	}
@@ -2706,6 +2724,7 @@ var (
 	PostTagsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "post_id", Type: field.TypeUint32, Comment: "帖子ID"},
 		{Name: "tag_id", Type: field.TypeUint32, Comment: "标签ID"},
 	}
@@ -2719,17 +2738,17 @@ var (
 			{
 				Name:    "posttag_post_id_tag_id",
 				Unique:  true,
-				Columns: []*schema.Column{PostTagsColumns[2], PostTagsColumns[3]},
+				Columns: []*schema.Column{PostTagsColumns[3], PostTagsColumns[4]},
 			},
 			{
 				Name:    "posttag_post_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostTagsColumns[2]},
+				Columns: []*schema.Column{PostTagsColumns[3]},
 			},
 			{
 				Name:    "posttag_tag_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostTagsColumns[3]},
+				Columns: []*schema.Column{PostTagsColumns[4]},
 			},
 		},
 	}
@@ -2743,6 +2762,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "post_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的帖子ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "帖子标题"},
@@ -2764,37 +2784,37 @@ var (
 			{
 				Name:    "posttranslation_post_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[8]},
+				Columns: []*schema.Column{PostTranslationsColumns[9]},
 			},
 			{
 				Name:    "posttranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[9]},
+				Columns: []*schema.Column{PostTranslationsColumns[10]},
 			},
 			{
 				Name:    "posttranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[11]},
+				Columns: []*schema.Column{PostTranslationsColumns[12]},
 			},
 			{
 				Name:    "posttranslation_full_path",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[16]},
+				Columns: []*schema.Column{PostTranslationsColumns[17]},
 			},
 			{
 				Name:    "posttranslation_post_id_language_code_slug",
 				Unique:  true,
-				Columns: []*schema.Column{PostTranslationsColumns[8], PostTranslationsColumns[9], PostTranslationsColumns[11]},
+				Columns: []*schema.Column{PostTranslationsColumns[9], PostTranslationsColumns[10], PostTranslationsColumns[12]},
 			},
 			{
 				Name:    "posttranslation_post_id_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[8], PostTranslationsColumns[9]},
+				Columns: []*schema.Column{PostTranslationsColumns[9], PostTranslationsColumns[10]},
 			},
 			{
 				Name:    "posttranslation_language_code_slug",
 				Unique:  false,
-				Columns: []*schema.Column{PostTranslationsColumns[9], PostTranslationsColumns[11]},
+				Columns: []*schema.Column{PostTranslationsColumns[10], PostTranslationsColumns[12]},
 			},
 		},
 	}
@@ -3010,6 +3030,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "所属页面ID"},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "区块类型", Enums: []string{"SECTION_TYPE_RICH_TEXT", "SECTION_TYPE_MARKDOWN", "SECTION_TYPE_TITLE", "SECTION_TYPE_IMAGE", "SECTION_TYPE_GALLERY", "SECTION_TYPE_VIDEO", "SECTION_TYPE_BUTTON", "SECTION_TYPE_DIVIDER", "SECTION_TYPE_SPACER", "SECTION_TYPE_CODE", "SECTION_TYPE_HTML", "SECTION_TYPE_FORM", "SECTION_TYPE_CAROUSEL", "SECTION_TYPE_CUSTOM"}, Default: "SECTION_TYPE_RICH_TEXT"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "区块名称（后台标识用，语言无关）"},
@@ -3025,12 +3046,12 @@ var (
 			{
 				Name:    "section_page_id",
 				Unique:  false,
-				Columns: []*schema.Column{SectionsColumns[8]},
+				Columns: []*schema.Column{SectionsColumns[9]},
 			},
 			{
 				Name:    "section_page_id_sort_order",
 				Unique:  false,
-				Columns: []*schema.Column{SectionsColumns[8], SectionsColumns[7]},
+				Columns: []*schema.Column{SectionsColumns[9], SectionsColumns[7]},
 			},
 		},
 	}
@@ -3043,6 +3064,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "section_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的区块ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "content", Type: field.TypeJSON, Nullable: true, Comment: "区块内容（键值对，适配不同类型区块，随语言变化）"},
@@ -3057,17 +3079,17 @@ var (
 			{
 				Name:    "sectiontranslation_section_id",
 				Unique:  false,
-				Columns: []*schema.Column{SectionTranslationsColumns[7]},
+				Columns: []*schema.Column{SectionTranslationsColumns[8]},
 			},
 			{
 				Name:    "sectiontranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{SectionTranslationsColumns[8]},
+				Columns: []*schema.Column{SectionTranslationsColumns[9]},
 			},
 			{
 				Name:    "sectiontranslation_section_id_language_code",
 				Unique:  true,
-				Columns: []*schema.Column{SectionTranslationsColumns[7], SectionTranslationsColumns[8]},
+				Columns: []*schema.Column{SectionTranslationsColumns[8], SectionTranslationsColumns[9]},
 			},
 		},
 	}
@@ -3130,6 +3152,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "site_id", Type: field.TypeUint32, Nullable: true, Comment: "站点ID"},
 		{Name: "locale", Type: field.TypeString, Nullable: true, Comment: "语言区域"},
 		{Name: "group", Type: field.TypeString, Nullable: true, Comment: "配置分组标识"},
@@ -3153,42 +3176,42 @@ var (
 			{
 				Name:    "sitesetting_site_id",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[7]},
+				Columns: []*schema.Column{SiteSettingsColumns[8]},
 			},
 			{
 				Name:    "sitesetting_locale",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[8]},
+				Columns: []*schema.Column{SiteSettingsColumns[9]},
 			},
 			{
 				Name:    "sitesetting_group",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[9]},
+				Columns: []*schema.Column{SiteSettingsColumns[10]},
 			},
 			{
 				Name:    "sitesetting_key",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[10]},
+				Columns: []*schema.Column{SiteSettingsColumns[11]},
 			},
 			{
 				Name:    "sitesetting_type",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[12]},
+				Columns: []*schema.Column{SiteSettingsColumns[13]},
 			},
 			{
 				Name:    "sitesetting_site_id_locale",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[7], SiteSettingsColumns[8]},
+				Columns: []*schema.Column{SiteSettingsColumns[8], SiteSettingsColumns[9]},
 			},
 			{
 				Name:    "sitesetting_site_id_group_key",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[7], SiteSettingsColumns[9], SiteSettingsColumns[10]},
+				Columns: []*schema.Column{SiteSettingsColumns[8], SiteSettingsColumns[10], SiteSettingsColumns[11]},
 			},
 			{
 				Name:    "sitesetting_locale_group_key",
 				Unique:  false,
-				Columns: []*schema.Column{SiteSettingsColumns[8], SiteSettingsColumns[9], SiteSettingsColumns[10]},
+				Columns: []*schema.Column{SiteSettingsColumns[9], SiteSettingsColumns[10], SiteSettingsColumns[11]},
 			},
 		},
 	}
@@ -3202,6 +3225,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "标签状态", Enums: []string{"TAG_STATUS_ACTIVE", "TAG_STATUS_HIDDEN", "TAG_STATUS_ARCHIVED"}, Default: "TAG_STATUS_ACTIVE"},
 		{Name: "color", Type: field.TypeString, Nullable: true, Comment: "标签颜色"},
 		{Name: "icon", Type: field.TypeString, Nullable: true, Comment: "标签图标"},
@@ -3220,27 +3244,27 @@ var (
 			{
 				Name:    "tag_status",
 				Unique:  false,
-				Columns: []*schema.Column{TagsColumns[8]},
+				Columns: []*schema.Column{TagsColumns[9]},
 			},
 			{
 				Name:    "tag_group",
 				Unique:  false,
-				Columns: []*schema.Column{TagsColumns[11]},
+				Columns: []*schema.Column{TagsColumns[12]},
 			},
 			{
 				Name:    "tag_is_featured",
 				Unique:  false,
-				Columns: []*schema.Column{TagsColumns[13]},
+				Columns: []*schema.Column{TagsColumns[14]},
 			},
 			{
 				Name:    "tag_status_group",
 				Unique:  false,
-				Columns: []*schema.Column{TagsColumns[8], TagsColumns[11]},
+				Columns: []*schema.Column{TagsColumns[9], TagsColumns[12]},
 			},
 			{
 				Name:    "tag_status_is_featured",
 				Unique:  false,
-				Columns: []*schema.Column{TagsColumns[8], TagsColumns[13]},
+				Columns: []*schema.Column{TagsColumns[9], TagsColumns[14]},
 			},
 		},
 	}
@@ -3254,6 +3278,7 @@ var (
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "seo", Type: field.TypeJSON, Nullable: true, Comment: "SEO 结构化元数据"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "tag_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的标签ID"},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "标签名称"},
@@ -3272,32 +3297,32 @@ var (
 			{
 				Name:    "tagtranslation_tag_id",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[8]},
+				Columns: []*schema.Column{TagTranslationsColumns[9]},
 			},
 			{
 				Name:    "tagtranslation_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[9]},
+				Columns: []*schema.Column{TagTranslationsColumns[10]},
 			},
 			{
 				Name:    "tagtranslation_slug",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[11]},
+				Columns: []*schema.Column{TagTranslationsColumns[12]},
 			},
 			{
 				Name:    "tagtranslation_full_path",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[14]},
+				Columns: []*schema.Column{TagTranslationsColumns[15]},
 			},
 			{
 				Name:    "tagtranslation_tag_id_language_code",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[8], TagTranslationsColumns[9]},
+				Columns: []*schema.Column{TagTranslationsColumns[9], TagTranslationsColumns[10]},
 			},
 			{
 				Name:    "tagtranslation_language_code_slug",
 				Unique:  false,
-				Columns: []*schema.Column{TagTranslationsColumns[9], TagTranslationsColumns[11]},
+				Columns: []*schema.Column{TagTranslationsColumns[10], TagTranslationsColumns[12]},
 			},
 		},
 	}

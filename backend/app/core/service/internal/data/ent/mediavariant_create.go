@@ -36,6 +36,20 @@ func (_c *MediaVariantCreate) SetNillableCreatedAt(v *time.Time) *MediaVariantCr
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *MediaVariantCreate) SetTenantID(v uint32) *MediaVariantCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *MediaVariantCreate) SetNillableTenantID(v *uint32) *MediaVariantCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetMediaID sets the "media_id" field.
 func (_c *MediaVariantCreate) SetMediaID(v uint32) *MediaVariantCreate {
 	_c.mutation.SetMediaID(v)
@@ -75,6 +89,9 @@ func (_c *MediaVariantCreate) Mutation() *MediaVariantMutation {
 
 // Save creates the MediaVariant in the database.
 func (_c *MediaVariantCreate) Save(ctx context.Context) (*MediaVariant, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -98,6 +115,15 @@ func (_c *MediaVariantCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *MediaVariantCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := mediavariant.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -149,6 +175,10 @@ func (_c *MediaVariantCreate) createSpec() (*MediaVariant, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(mediavariant.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(mediavariant.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.MediaID(); ok {
 		_spec.SetField(mediavariant.FieldMediaID, field.TypeUint32, value)
@@ -293,6 +323,9 @@ func (u *MediaVariantUpsertOne) UpdateNewValues() *MediaVariantUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(mediavariant.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(mediavariant.FieldTenantID)
 		}
 	}))
 	return u
@@ -447,6 +480,7 @@ func (_c *MediaVariantCreateBulk) Save(ctx context.Context) ([]*MediaVariant, er
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*MediaVariantMutation)
 				if !ok {
@@ -578,6 +612,9 @@ func (u *MediaVariantUpsertBulk) UpdateNewValues() *MediaVariantUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(mediavariant.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(mediavariant.FieldTenantID)
 			}
 		}
 	}))

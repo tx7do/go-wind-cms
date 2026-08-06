@@ -34,6 +34,8 @@ type NavigationItem struct {
 	SortOrder *uint32 `json:"sort_order,omitempty"`
 	// 父节点ID
 	ParentID *uint32 `json:"parent_id,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 链接类型
 	LinkType *navigationitem.LinkType `json:"link_type,omitempty"`
 	// 所属导航菜单ID
@@ -98,7 +100,7 @@ func (*NavigationItem) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case navigationitem.FieldIsOpenNewTab, navigationitem.FieldIsInvalid:
 			values[i] = new(sql.NullBool)
-		case navigationitem.FieldID, navigationitem.FieldCreatedBy, navigationitem.FieldUpdatedBy, navigationitem.FieldDeletedBy, navigationitem.FieldSortOrder, navigationitem.FieldParentID, navigationitem.FieldNavigationID, navigationitem.FieldObjectID:
+		case navigationitem.FieldID, navigationitem.FieldCreatedBy, navigationitem.FieldUpdatedBy, navigationitem.FieldDeletedBy, navigationitem.FieldSortOrder, navigationitem.FieldParentID, navigationitem.FieldTenantID, navigationitem.FieldNavigationID, navigationitem.FieldObjectID:
 			values[i] = new(sql.NullInt64)
 		case navigationitem.FieldLinkType, navigationitem.FieldTitle, navigationitem.FieldURL, navigationitem.FieldIcon, navigationitem.FieldDescription, navigationitem.FieldRequiredPermission:
 			values[i] = new(sql.NullString)
@@ -180,6 +182,13 @@ func (_m *NavigationItem) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.ParentID = new(uint32)
 				*_m.ParentID = uint32(value.Int64)
+			}
+		case navigationitem.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case navigationitem.FieldLinkType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -334,6 +343,11 @@ func (_m *NavigationItem) String() string {
 	builder.WriteString(", ")
 	if v := _m.ParentID; v != nil {
 		builder.WriteString("parent_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

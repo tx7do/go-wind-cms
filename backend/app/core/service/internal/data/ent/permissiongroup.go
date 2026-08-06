@@ -40,6 +40,8 @@ type PermissionGroup struct {
 	ParentID *uint32 `json:"parent_id,omitempty"`
 	// 树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。
 	Path *string `json:"path,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 分组名称（如：用户管理、订单操作）
 	Name *string `json:"name,omitempty"`
 	// 业务模块标识（如：opm、order、pay）
@@ -86,7 +88,7 @@ func (*PermissionGroup) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case permissiongroup.FieldID, permissiongroup.FieldCreatedBy, permissiongroup.FieldUpdatedBy, permissiongroup.FieldDeletedBy, permissiongroup.FieldSortOrder, permissiongroup.FieldParentID:
+		case permissiongroup.FieldID, permissiongroup.FieldCreatedBy, permissiongroup.FieldUpdatedBy, permissiongroup.FieldDeletedBy, permissiongroup.FieldSortOrder, permissiongroup.FieldParentID, permissiongroup.FieldTenantID:
 			values[i] = new(sql.NullInt64)
 		case permissiongroup.FieldDescription, permissiongroup.FieldStatus, permissiongroup.FieldPath, permissiongroup.FieldName, permissiongroup.FieldModule:
 			values[i] = new(sql.NullString)
@@ -189,6 +191,13 @@ func (_m *PermissionGroup) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Path = new(string)
 				*_m.Path = value.String
+			}
+		case permissiongroup.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case permissiongroup.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -303,6 +312,11 @@ func (_m *PermissionGroup) String() string {
 	if v := _m.Path; v != nil {
 		builder.WriteString("path=")
 		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	if v := _m.Name; v != nil {

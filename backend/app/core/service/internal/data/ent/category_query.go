@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
@@ -400,6 +401,12 @@ func (_q *CategoryQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if category.Policy == nil {
+		return errors.New("ent: uninitialized category.Policy (forgotten import ent/runtime?)")
+	}
+	if err := category.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

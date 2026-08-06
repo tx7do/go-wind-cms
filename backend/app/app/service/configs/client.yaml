@@ -9,5 +9,5 @@ client:
       enable_circuit_breaker: true
       enable_metadata: true
       auth:
-        method: ""
-        key: "some_api_key"
+        method: "HS256"
+        key: "${jwt_signing_key:dev_only_change_me_in_prod}"

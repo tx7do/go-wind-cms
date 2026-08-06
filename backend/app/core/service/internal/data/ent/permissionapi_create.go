@@ -106,6 +106,20 @@ func (_c *PermissionApiCreate) SetNillableDeletedBy(v *uint32) *PermissionApiCre
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PermissionApiCreate) SetTenantID(v uint32) *PermissionApiCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PermissionApiCreate) SetNillableTenantID(v *uint32) *PermissionApiCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPermissionID sets the "permission_id" field.
 func (_c *PermissionApiCreate) SetPermissionID(v uint32) *PermissionApiCreate {
 	_c.mutation.SetPermissionID(v)
@@ -131,6 +145,9 @@ func (_c *PermissionApiCreate) Mutation() *PermissionApiMutation {
 
 // Save creates the PermissionApi in the database.
 func (_c *PermissionApiCreate) Save(ctx context.Context) (*PermissionApi, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -154,6 +171,15 @@ func (_c *PermissionApiCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *PermissionApiCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := permissionapi.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -225,6 +251,10 @@ func (_c *PermissionApiCreate) createSpec() (*PermissionApi, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.DeletedBy(); ok {
 		_spec.SetField(permissionapi.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(permissionapi.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PermissionID(); ok {
 		_spec.SetField(permissionapi.FieldPermissionID, field.TypeUint32, value)
@@ -449,6 +479,9 @@ func (u *PermissionApiUpsertOne) UpdateNewValues() *PermissionApiUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(permissionapi.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(permissionapi.FieldTenantID)
 		}
 	}))
 	return u
@@ -701,6 +734,7 @@ func (_c *PermissionApiCreateBulk) Save(ctx context.Context) ([]*PermissionApi, 
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PermissionApiMutation)
 				if !ok {
@@ -832,6 +866,9 @@ func (u *PermissionApiUpsertBulk) UpdateNewValues() *PermissionApiUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(permissionapi.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(permissionapi.FieldTenantID)
 			}
 		}
 	}))

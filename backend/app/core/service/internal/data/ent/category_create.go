@@ -148,6 +148,20 @@ func (_c *CategoryCreate) SetNillableParentID(v *uint32) *CategoryCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *CategoryCreate) SetTenantID(v uint32) *CategoryCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableTenantID(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *CategoryCreate) SetStatus(v category.Status) *CategoryCreate {
 	_c.mutation.SetStatus(v)
@@ -285,7 +299,9 @@ func (_c *CategoryCreate) Mutation() *CategoryMutation {
 
 // Save creates the Category in the database.
 func (_c *CategoryCreate) Save(ctx context.Context) (*Category, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -312,10 +328,14 @@ func (_c *CategoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *CategoryCreate) defaults() {
+func (_c *CategoryCreate) defaults() error {
 	if _, ok := _c.mutation.SortOrder(); !ok {
 		v := category.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
+	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := category.DefaultTenantID
+		_c.mutation.SetTenantID(v)
 	}
 	if _, ok := _c.mutation.IsNav(); !ok {
 		v := category.DefaultIsNav
@@ -333,6 +353,7 @@ func (_c *CategoryCreate) defaults() {
 		v := category.DefaultDepth
 		_c.mutation.SetDepth(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -416,6 +437,10 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Path(); ok {
 		_spec.SetField(category.FieldPath, field.TypeString, value)
 		_node.Path = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(category.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(category.FieldStatus, field.TypeEnum, value)
@@ -883,6 +908,9 @@ func (u *CategoryUpsertOne) UpdateNewValues() *CategoryUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(category.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(category.FieldTenantID)
 		}
 	}))
 	return u
@@ -1484,6 +1512,9 @@ func (u *CategoryUpsertBulk) UpdateNewValues() *CategoryUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(category.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(category.FieldTenantID)
 			}
 		}
 	}))

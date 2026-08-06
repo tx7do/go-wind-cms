@@ -81,6 +81,7 @@ func (CategoryTranslation) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 		appMixin.Seo{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

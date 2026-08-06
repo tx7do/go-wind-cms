@@ -5,6 +5,7 @@ package comment
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -28,6 +29,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldParentID holds the string denoting the parent_id field in the database.
 	FieldParentID = "parent_id"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldContentType holds the string denoting the content_type field in the database.
 	FieldContentType = "content_type"
 	// FieldObjectID holds the string denoting the object_id field in the database.
@@ -92,6 +95,7 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedBy,
 	FieldParentID,
+	FieldTenantID,
 	FieldContentType,
 	FieldObjectID,
 	FieldContent,
@@ -123,7 +127,16 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// DefaultAuthorID holds the default value on creation for the "author_id" field.
 	DefaultAuthorID uint32
 	// DefaultLikeCount holds the default value on creation for the "like_count" field.
@@ -255,6 +268,11 @@ func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByParentID orders the results by the parent_id field.
 func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentID, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByContentType orders the results by the content_type field.

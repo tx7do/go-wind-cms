@@ -405,6 +405,9 @@ func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(pagetranslation.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
 	}
@@ -876,6 +879,9 @@ func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTra
 	}
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(pagetranslation.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)

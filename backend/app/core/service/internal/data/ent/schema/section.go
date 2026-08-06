@@ -75,6 +75,7 @@ func (Section) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 		mixin.SortOrder{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
@@ -329,6 +330,12 @@ func (_q *PostTagQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if posttag.Policy == nil {
+		return errors.New("ent: uninitialized posttag.Policy (forgotten import ent/runtime?)")
+	}
+	if err := posttag.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

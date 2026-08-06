@@ -147,6 +147,9 @@ func (_u *MediaVariantUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(mediavariant.FieldCreatedAt, field.TypeTime)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(mediavariant.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.MediaID(); ok {
 		_spec.SetField(mediavariant.FieldMediaID, field.TypeUint32, value)
 	}
@@ -338,6 +341,9 @@ func (_u *MediaVariantUpdateOne) sqlSave(ctx context.Context) (_node *MediaVaria
 	}
 	if _u.mutation.CreatedAtCleared() {
 		_spec.ClearField(mediavariant.FieldCreatedAt, field.TypeTime)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(mediavariant.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.MediaID(); ok {
 		_spec.SetField(mediavariant.FieldMediaID, field.TypeUint32, value)

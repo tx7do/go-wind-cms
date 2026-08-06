@@ -472,6 +472,9 @@ func (_u *PostTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(posttranslation.FieldSeo, field.TypeJSON)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(posttranslation.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(posttranslation.FieldPostID, field.TypeUint32, value)
 	}
@@ -1031,6 +1034,9 @@ func (_u *PostTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PostTra
 	}
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(posttranslation.FieldSeo, field.TypeJSON)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(posttranslation.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
 		_spec.SetField(posttranslation.FieldPostID, field.TypeUint32, value)

@@ -686,6 +686,9 @@ func (_u *MediaAssetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(mediaasset.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(mediaasset.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Filename(); ok {
 		_spec.SetField(mediaasset.FieldFilename, field.TypeString, value)
 	}
@@ -1529,6 +1532,9 @@ func (_u *MediaAssetUpdateOne) sqlSave(ctx context.Context) (_node *MediaAsset, 
 	}
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(mediaasset.FieldDeletedBy, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(mediaasset.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Filename(); ok {
 		_spec.SetField(mediaasset.FieldFilename, field.TypeString, value)

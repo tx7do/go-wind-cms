@@ -559,6 +559,9 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.PathCleared() {
 		_spec.ClearField(category.FieldPath, field.TypeString)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(category.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(category.FieldStatus, field.TypeEnum, value)
 	}
@@ -1271,6 +1274,9 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 	}
 	if _u.mutation.PathCleared() {
 		_spec.ClearField(category.FieldPath, field.TypeString)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(category.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(category.FieldStatus, field.TypeEnum, value)

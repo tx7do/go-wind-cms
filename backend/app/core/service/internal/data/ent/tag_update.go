@@ -435,6 +435,9 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(tag.FieldSortOrder, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(tag.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(tag.FieldStatus, field.TypeEnum, value)
 	}
@@ -937,6 +940,9 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	}
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(tag.FieldSortOrder, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(tag.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(tag.FieldStatus, field.TypeEnum, value)

@@ -51,6 +51,7 @@ func (Permission) Mixin() []ent.Mixin {
 		mixin.OperatorID{},
 		mixin.SwitchStatus{},
 		mixin.Description{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

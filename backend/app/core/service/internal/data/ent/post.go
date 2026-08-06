@@ -35,6 +35,8 @@ type Post struct {
 	SortOrder *uint32 `json:"sort_order,omitempty"`
 	// 编辑器类型
 	EditorType *post.EditorType `json:"editor_type,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 帖子状态
 	Status *post.Status `json:"status,omitempty"`
 	// 唯一编码
@@ -75,7 +77,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case post.FieldDisallowComment, post.FieldInProgress, post.FieldAutoSummary, post.FieldIsFeatured:
 			values[i] = new(sql.NullBool)
-		case post.FieldID, post.FieldCreatedBy, post.FieldUpdatedBy, post.FieldDeletedBy, post.FieldSortOrder, post.FieldVisits, post.FieldLikes, post.FieldCommentCount, post.FieldAuthorID:
+		case post.FieldID, post.FieldCreatedBy, post.FieldUpdatedBy, post.FieldDeletedBy, post.FieldSortOrder, post.FieldTenantID, post.FieldVisits, post.FieldLikes, post.FieldCommentCount, post.FieldAuthorID:
 			values[i] = new(sql.NullInt64)
 		case post.FieldEditorType, post.FieldStatus, post.FieldCode, post.FieldAuthorName, post.FieldPasswordHash:
 			values[i] = new(sql.NullString)
@@ -157,6 +159,13 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.EditorType = new(post.EditorType)
 				*_m.EditorType = post.EditorType(value.String)
+			}
+		case post.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case post.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -330,6 +339,11 @@ func (_m *Post) String() string {
 	builder.WriteString(", ")
 	if v := _m.EditorType; v != nil {
 		builder.WriteString("editor_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

@@ -423,10 +423,20 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 用户和凭证创建必须在同一事务中，避免凭证创建失败时产生孤立用户行
+	tx, cleanup, err := s.userRepo.BeginTx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if cleanup != nil {
+			cleanup()
+		}
+	}()
+
 	// 创建用户
 	var user *identityV1.User
-	var err error
-	if user, err = s.userRepo.Create(ctx, req); err != nil {
+	if user, err = s.userRepo.CreateWithTx(ctx, tx, req.GetData()); err != nil {
 		return nil, err
 	}
 
@@ -436,20 +446,18 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 	}
 
 	if len(req.GetPassword()) > 0 {
-		if err = s.userCredentialRepo.Create(ctx, &authenticationV1.CreateUserCredentialRequest{
-			Data: &authenticationV1.UserCredential{
-				UserId:   user.Id,
-				TenantId: user.TenantId,
+		if err = s.userCredentialRepo.CreateWithTx(ctx, tx, &authenticationV1.UserCredential{
+			UserId:   user.Id,
+			TenantId: user.TenantId,
 
-				IdentityType: authenticationV1.UserCredential_USERNAME.Enum(),
-				Identifier:   req.Data.Username,
+			IdentityType: authenticationV1.UserCredential_USERNAME.Enum(),
+			Identifier:   req.Data.Username,
 
-				CredentialType: authenticationV1.UserCredential_PASSWORD_HASH.Enum(),
-				Credential:     req.Password,
+			CredentialType: authenticationV1.UserCredential_PASSWORD_HASH.Enum(),
+			Credential:     req.Password,
 
-				IsPrimary: trans.Ptr(true),
-				Status:    authenticationV1.UserCredential_ENABLED.Enum(),
-			},
+			IsPrimary: trans.Ptr(true),
+			Status:    authenticationV1.UserCredential_ENABLED.Enum(),
 		}); err != nil {
 			return nil, err
 		}

@@ -32,6 +32,8 @@ type Api struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 状态
 	Status *api.Status `json:"status,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 描述
 	Description *string `json:"description,omitempty"`
 	// 所属业务模块
@@ -54,7 +56,7 @@ func (*Api) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case api.FieldID, api.FieldCreatedBy, api.FieldUpdatedBy, api.FieldDeletedBy:
+		case api.FieldID, api.FieldCreatedBy, api.FieldUpdatedBy, api.FieldDeletedBy, api.FieldTenantID:
 			values[i] = new(sql.NullInt64)
 		case api.FieldStatus, api.FieldDescription, api.FieldModule, api.FieldModuleDescription, api.FieldOperation, api.FieldPath, api.FieldMethod, api.FieldScope:
 			values[i] = new(sql.NullString)
@@ -129,6 +131,13 @@ func (_m *Api) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Status = new(api.Status)
 				*_m.Status = api.Status(value.String)
+			}
+		case api.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case api.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -247,6 +256,11 @@ func (_m *Api) String() string {
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

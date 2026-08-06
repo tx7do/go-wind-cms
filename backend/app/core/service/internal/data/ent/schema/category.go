@@ -89,6 +89,7 @@ func (Category) Mixin() []ent.Mixin {
 		mixin.SortOrder{},
 		mixin.TreePath{},
 		mixin.Tree[Category]{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

@@ -106,6 +106,20 @@ func (_c *PermissionMenuCreate) SetNillableDeletedBy(v *uint32) *PermissionMenuC
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PermissionMenuCreate) SetTenantID(v uint32) *PermissionMenuCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PermissionMenuCreate) SetNillableTenantID(v *uint32) *PermissionMenuCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPermissionID sets the "permission_id" field.
 func (_c *PermissionMenuCreate) SetPermissionID(v uint32) *PermissionMenuCreate {
 	_c.mutation.SetPermissionID(v)
@@ -131,6 +145,9 @@ func (_c *PermissionMenuCreate) Mutation() *PermissionMenuMutation {
 
 // Save creates the PermissionMenu in the database.
 func (_c *PermissionMenuCreate) Save(ctx context.Context) (*PermissionMenu, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -154,6 +171,15 @@ func (_c *PermissionMenuCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *PermissionMenuCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := permissionmenu.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -225,6 +251,10 @@ func (_c *PermissionMenuCreate) createSpec() (*PermissionMenu, *sqlgraph.CreateS
 	if value, ok := _c.mutation.DeletedBy(); ok {
 		_spec.SetField(permissionmenu.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(permissionmenu.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PermissionID(); ok {
 		_spec.SetField(permissionmenu.FieldPermissionID, field.TypeUint32, value)
@@ -449,6 +479,9 @@ func (u *PermissionMenuUpsertOne) UpdateNewValues() *PermissionMenuUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(permissionmenu.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(permissionmenu.FieldTenantID)
 		}
 	}))
 	return u
@@ -701,6 +734,7 @@ func (_c *PermissionMenuCreateBulk) Save(ctx context.Context) ([]*PermissionMenu
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PermissionMenuMutation)
 				if !ok {
@@ -832,6 +866,9 @@ func (u *PermissionMenuUpsertBulk) UpdateNewValues() *PermissionMenuUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(permissionmenu.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(permissionmenu.FieldTenantID)
 			}
 		}
 	}))

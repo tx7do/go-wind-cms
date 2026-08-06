@@ -120,6 +120,20 @@ func (_c *SectionCreate) SetNillableSortOrder(v *uint32) *SectionCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *SectionCreate) SetTenantID(v uint32) *SectionCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *SectionCreate) SetNillableTenantID(v *uint32) *SectionCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPageID sets the "page_id" field.
 func (_c *SectionCreate) SetPageID(v uint32) *SectionCreate {
 	_c.mutation.SetPageID(v)
@@ -181,7 +195,9 @@ func (_c *SectionCreate) Mutation() *SectionMutation {
 
 // Save creates the Section in the database.
 func (_c *SectionCreate) Save(ctx context.Context) (*Section, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -208,15 +224,20 @@ func (_c *SectionCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *SectionCreate) defaults() {
+func (_c *SectionCreate) defaults() error {
 	if _, ok := _c.mutation.SortOrder(); !ok {
 		v := section.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
+	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := section.DefaultTenantID
+		_c.mutation.SetTenantID(v)
 	}
 	if _, ok := _c.mutation.GetType(); !ok {
 		v := section.DefaultType
 		_c.mutation.SetType(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -291,6 +312,10 @@ func (_c *SectionCreate) createSpec() (*Section, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.SortOrder(); ok {
 		_spec.SetField(section.FieldSortOrder, field.TypeUint32, value)
 		_node.SortOrder = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(section.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PageID(); ok {
 		_spec.SetField(section.FieldPageID, field.TypeUint32, value)
@@ -589,6 +614,9 @@ func (u *SectionUpsertOne) UpdateNewValues() *SectionUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(section.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(section.FieldTenantID)
 		}
 	}))
 	return u
@@ -1050,6 +1078,9 @@ func (u *SectionUpsertBulk) UpdateNewValues() *SectionUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(section.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(section.FieldTenantID)
 			}
 		}
 	}))

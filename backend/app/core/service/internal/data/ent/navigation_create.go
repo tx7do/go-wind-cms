@@ -106,6 +106,20 @@ func (_c *NavigationCreate) SetNillableDeletedBy(v *uint32) *NavigationCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *NavigationCreate) SetTenantID(v uint32) *NavigationCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *NavigationCreate) SetNillableTenantID(v *uint32) *NavigationCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *NavigationCreate) SetName(v string) *NavigationCreate {
 	_c.mutation.SetName(v)
@@ -175,7 +189,9 @@ func (_c *NavigationCreate) Mutation() *NavigationMutation {
 
 // Save creates the Navigation in the database.
 func (_c *NavigationCreate) Save(ctx context.Context) (*Navigation, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -202,7 +218,11 @@ func (_c *NavigationCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *NavigationCreate) defaults() {
+func (_c *NavigationCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := navigation.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Location(); !ok {
 		v := navigation.DefaultLocation
 		_c.mutation.SetLocation(v)
@@ -211,6 +231,7 @@ func (_c *NavigationCreate) defaults() {
 		v := navigation.DefaultIsActive
 		_c.mutation.SetIsActive(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -281,6 +302,10 @@ func (_c *NavigationCreate) createSpec() (*Navigation, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.DeletedBy(); ok {
 		_spec.SetField(navigation.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(navigation.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(navigation.FieldName, field.TypeString, value)
@@ -549,6 +574,9 @@ func (u *NavigationUpsertOne) UpdateNewValues() *NavigationUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(navigation.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(navigation.FieldTenantID)
 		}
 	}))
 	return u
@@ -975,6 +1003,9 @@ func (u *NavigationUpsertBulk) UpdateNewValues() *NavigationUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(navigation.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(navigation.FieldTenantID)
 			}
 		}
 	}))

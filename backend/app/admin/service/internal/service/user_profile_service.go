@@ -95,3 +95,23 @@ func (s *UserProfileService) ChangePassword(ctx context.Context, req *identityV1
 		NewCredential: req.GetNewPassword(),
 	})
 }
+
+// UploadAvatar 上传头像 — 尚未实现
+func (s *UserProfileService) UploadAvatar(_ context.Context, _ *identityV1.UploadAvatarRequest) (*identityV1.UploadAvatarResponse, error) {
+	return nil, adminV1.ErrorBadRequest("avatar upload is not implemented")
+}
+
+// DeleteAvatar 删除头像 — 尚未实现
+func (s *UserProfileService) DeleteAvatar(_ context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, adminV1.ErrorBadRequest("avatar deletion is not implemented")
+}
+
+// BindContact 绑定手机号码/邮箱 — 尚未实现
+func (s *UserProfileService) BindContact(_ context.Context, _ *identityV1.BindContactRequest) (*emptypb.Empty, error) {
+	return nil, adminV1.ErrorBadRequest("contact binding is not implemented")
+}
+
+// VerifyContact 验证手机号码/邮箱 — 尚未实现
+func (s *UserProfileService) VerifyContact(_ context.Context, _ *identityV1.VerifyContactRequest) (*emptypb.Empty, error) {
+	return nil, adminV1.ErrorBadRequest("contact verification is not implemented")
+}

@@ -134,6 +134,20 @@ func (_c *PermissionCreate) SetNillableDescription(v *string) *PermissionCreate 
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PermissionCreate) SetTenantID(v uint32) *PermissionCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PermissionCreate) SetNillableTenantID(v *uint32) *PermissionCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *PermissionCreate) SetName(v string) *PermissionCreate {
 	_c.mutation.SetName(v)
@@ -173,7 +187,9 @@ func (_c *PermissionCreate) Mutation() *PermissionMutation {
 
 // Save creates the Permission in the database.
 func (_c *PermissionCreate) Save(ctx context.Context) (*Permission, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -200,11 +216,16 @@ func (_c *PermissionCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *PermissionCreate) defaults() {
+func (_c *PermissionCreate) defaults() error {
 	if _, ok := _c.mutation.Status(); !ok {
 		v := permission.DefaultStatus
 		_c.mutation.SetStatus(v)
 	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := permission.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -297,6 +318,10 @@ func (_c *PermissionCreate) createSpec() (*Permission, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(permission.FieldDescription, field.TypeString, value)
 		_node.Description = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(permission.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(permission.FieldName, field.TypeString, value)
@@ -567,6 +592,9 @@ func (u *PermissionUpsertOne) UpdateNewValues() *PermissionUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(permission.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(permission.FieldTenantID)
 		}
 	}))
 	return u
@@ -1000,6 +1028,9 @@ func (u *PermissionUpsertBulk) UpdateNewValues() *PermissionUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(permission.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(permission.FieldTenantID)
 			}
 		}
 	}))

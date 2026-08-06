@@ -34,6 +34,8 @@ type TagTranslation struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// SEO 结构化元数据
 	Seo *contentpb.SeoMeta `json:"seo,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 关联的标签ID
 	TagID *uint32 `json:"tag_id,omitempty"`
 	// 语言代码
@@ -58,7 +60,7 @@ func (*TagTranslation) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case tagtranslation.FieldSeo:
 			values[i] = new([]byte)
-		case tagtranslation.FieldID, tagtranslation.FieldCreatedBy, tagtranslation.FieldUpdatedBy, tagtranslation.FieldDeletedBy, tagtranslation.FieldTagID:
+		case tagtranslation.FieldID, tagtranslation.FieldCreatedBy, tagtranslation.FieldUpdatedBy, tagtranslation.FieldDeletedBy, tagtranslation.FieldTenantID, tagtranslation.FieldTagID:
 			values[i] = new(sql.NullInt64)
 		case tagtranslation.FieldLanguageCode, tagtranslation.FieldName, tagtranslation.FieldSlug, tagtranslation.FieldDescription, tagtranslation.FieldCoverImage, tagtranslation.FieldFullPath:
 			values[i] = new(sql.NullString)
@@ -134,6 +136,13 @@ func (_m *TagTranslation) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &_m.Seo); err != nil {
 					return fmt.Errorf("unmarshal field seo: %w", err)
 				}
+			}
+		case tagtranslation.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case tagtranslation.FieldTagID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -252,6 +261,11 @@ func (_m *TagTranslation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("seo=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Seo))
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	if v := _m.TagID; v != nil {
 		builder.WriteString("tag_id=")

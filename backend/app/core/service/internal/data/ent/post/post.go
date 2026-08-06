@@ -5,6 +5,7 @@ package post
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -29,6 +30,8 @@ const (
 	FieldSortOrder = "sort_order"
 	// FieldEditorType holds the string denoting the editor_type field in the database.
 	FieldEditorType = "editor_type"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldCode holds the string denoting the code field in the database.
@@ -72,6 +75,7 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldSortOrder,
 	FieldEditorType,
+	FieldTenantID,
 	FieldStatus,
 	FieldCode,
 	FieldDisallowComment,
@@ -98,9 +102,18 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// DefaultDisallowComment holds the default value on creation for the "disallow_comment" field.
 	DefaultDisallowComment bool
 	// DefaultInProgress holds the default value on creation for the "in_progress" field.
@@ -225,6 +238,11 @@ func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
 // ByEditorType orders the results by the editor_type field.
 func ByEditorType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEditorType, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

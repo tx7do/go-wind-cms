@@ -305,13 +305,22 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *permission
 		return nil, permissionV1.ErrorBadRequest("invalid request")
 	}
 
-	// 清理菜单相关权限
-	_ = s.permissionRepo.TruncateBizPermissions(ctx)
-	_ = s.permissionGroupRepo.TruncateBizGroup(ctx)
+	// 清理菜单相关权限——失败必须返回错误，否则后续 BatchCreate 会产生重复数据
+	if err := s.permissionRepo.TruncateBizPermissions(ctx); err != nil {
+		s.log.Errorf("truncate biz permissions failed: %s", err.Error())
+		return nil, err
+	}
+	if err := s.permissionGroupRepo.TruncateBizGroup(ctx); err != nil {
+		s.log.Errorf("truncate biz permission groups failed: %s", err.Error())
+		return nil, err
+	}
 
 	// 为权限追加对应的 API 资源 ID 列表
 	var mapPermissions = make(map[string][]*permissionV1.Permission)
-	_ = s.appendAPis(ctx, &req.Permissions, &mapPermissions, req.GetOperatorId())
+	if err := s.appendAPis(ctx, &req.Permissions, &mapPermissions, req.GetOperatorId()); err != nil {
+		s.log.Errorf("append apis to permissions failed: %s", err.Error())
+		return nil, err
+	}
 
 	var err error
 

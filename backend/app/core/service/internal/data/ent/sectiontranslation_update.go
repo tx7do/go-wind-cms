@@ -298,6 +298,9 @@ func (_u *SectionTranslationUpdate) sqlSave(ctx context.Context) (_node int, err
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(sectiontranslation.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(sectiontranslation.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.SectionID(); ok {
 		_spec.SetField(sectiontranslation.FieldSectionID, field.TypeUint32, value)
 	}
@@ -639,6 +642,9 @@ func (_u *SectionTranslationUpdateOne) sqlSave(ctx context.Context) (_node *Sect
 	}
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(sectiontranslation.FieldDeletedBy, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(sectiontranslation.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.SectionID(); ok {
 		_spec.SetField(sectiontranslation.FieldSectionID, field.TypeUint32, value)

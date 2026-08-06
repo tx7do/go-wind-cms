@@ -32,6 +32,8 @@ type Tag struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 排序值（越小越靠前）
 	SortOrder *uint32 `json:"sort_order,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 标签状态
 	Status *tag.Status `json:"status,omitempty"`
 	// 标签颜色
@@ -56,7 +58,7 @@ func (*Tag) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case tag.FieldIsFeatured:
 			values[i] = new(sql.NullBool)
-		case tag.FieldID, tag.FieldCreatedBy, tag.FieldUpdatedBy, tag.FieldDeletedBy, tag.FieldSortOrder, tag.FieldPostCount:
+		case tag.FieldID, tag.FieldCreatedBy, tag.FieldUpdatedBy, tag.FieldDeletedBy, tag.FieldSortOrder, tag.FieldTenantID, tag.FieldPostCount:
 			values[i] = new(sql.NullInt64)
 		case tag.FieldStatus, tag.FieldColor, tag.FieldIcon, tag.FieldGroup, tag.FieldCode:
 			values[i] = new(sql.NullString)
@@ -131,6 +133,13 @@ func (_m *Tag) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.SortOrder = new(uint32)
 				*_m.SortOrder = uint32(value.Int64)
+			}
+		case tag.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case tag.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -249,6 +258,11 @@ func (_m *Tag) String() string {
 	builder.WriteString(", ")
 	if v := _m.SortOrder; v != nil {
 		builder.WriteString("sort_order=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

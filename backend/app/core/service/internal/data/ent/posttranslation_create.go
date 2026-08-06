@@ -113,6 +113,20 @@ func (_c *PostTranslationCreate) SetSeo(v *contentpb.SeoMeta) *PostTranslationCr
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PostTranslationCreate) SetTenantID(v uint32) *PostTranslationCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PostTranslationCreate) SetNillableTenantID(v *uint32) *PostTranslationCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPostID sets the "post_id" field.
 func (_c *PostTranslationCreate) SetPostID(v uint32) *PostTranslationCreate {
 	_c.mutation.SetPostID(v)
@@ -266,7 +280,9 @@ func (_c *PostTranslationCreate) Mutation() *PostTranslationMutation {
 
 // Save creates the PostTranslation in the database.
 func (_c *PostTranslationCreate) Save(ctx context.Context) (*PostTranslation, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -293,11 +309,16 @@ func (_c *PostTranslationCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *PostTranslationCreate) defaults() {
+func (_c *PostTranslationCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := posttranslation.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.WordCount(); !ok {
 		v := posttranslation.DefaultWordCount
 		_c.mutation.SetWordCount(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -372,6 +393,10 @@ func (_c *PostTranslationCreate) createSpec() (*PostTranslation, *sqlgraph.Creat
 	if value, ok := _c.mutation.Seo(); ok {
 		_spec.SetField(posttranslation.FieldSeo, field.TypeJSON, value)
 		_node.Seo = value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(posttranslation.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
 		_spec.SetField(posttranslation.FieldPostID, field.TypeUint32, value)
@@ -802,6 +827,9 @@ func (u *PostTranslationUpsertOne) UpdateNewValues() *PostTranslationUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(posttranslation.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(posttranslation.FieldTenantID)
 		}
 	}))
 	return u
@@ -1389,6 +1417,9 @@ func (u *PostTranslationUpsertBulk) UpdateNewValues() *PostTranslationUpsertBulk
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(posttranslation.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(posttranslation.FieldTenantID)
 			}
 		}
 	}))

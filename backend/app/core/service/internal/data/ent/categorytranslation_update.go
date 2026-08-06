@@ -425,6 +425,9 @@ func (_u *CategoryTranslationUpdate) sqlSave(ctx context.Context) (_node int, er
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(categorytranslation.FieldSeo, field.TypeJSON)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(categorytranslation.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.CategoryID(); ok {
 		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint32, value)
 	}
@@ -922,6 +925,9 @@ func (_u *CategoryTranslationUpdateOne) sqlSave(ctx context.Context) (_node *Cat
 	}
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(categorytranslation.FieldSeo, field.TypeJSON)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(categorytranslation.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.CategoryID(); ok {
 		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint32, value)

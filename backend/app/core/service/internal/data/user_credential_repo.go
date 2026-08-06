@@ -350,6 +350,20 @@ func maybeTenantFromViewer(ctx context.Context) (tenantID uint32, hasTenant bool
 	return uint32(tid), true
 }
 
+// viewerUserIDFromContext 从 viewer context 提取操作人的用户 ID。
+// 用于强制按调用者身份过滤（如收件箱只能看到自己的消息）。
+func viewerUserIDFromContext(ctx context.Context) (uint32, bool) {
+	vc, exist := viewer.FromContext(ctx)
+	if !exist || vc == nil {
+		return 0, false
+	}
+	uid := vc.UserID()
+	if uid == 0 {
+		return 0, false
+	}
+	return uint32(uid), true
+}
+
 func (r *UserCredentialRepo) GetByIdentifier(ctx context.Context, req *authenticationV1.GetUserCredentialByIdentifierRequest) (*authenticationV1.UserCredential, error) {
 	builder := r.entClient.Client().UserCredential.Query()
 

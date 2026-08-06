@@ -89,6 +89,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			api.FieldUpdatedBy:         {Type: field.TypeUint32, Column: api.FieldUpdatedBy},
 			api.FieldDeletedBy:         {Type: field.TypeUint32, Column: api.FieldDeletedBy},
 			api.FieldStatus:            {Type: field.TypeEnum, Column: api.FieldStatus},
+			api.FieldTenantID:          {Type: field.TypeUint32, Column: api.FieldTenantID},
 			api.FieldDescription:       {Type: field.TypeString, Column: api.FieldDescription},
 			api.FieldModule:            {Type: field.TypeString, Column: api.FieldModule},
 			api.FieldModuleDescription: {Type: field.TypeString, Column: api.FieldModuleDescription},
@@ -158,6 +159,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			category.FieldSortOrder:       {Type: field.TypeUint32, Column: category.FieldSortOrder},
 			category.FieldPath:            {Type: field.TypeString, Column: category.FieldPath},
 			category.FieldParentID:        {Type: field.TypeUint32, Column: category.FieldParentID},
+			category.FieldTenantID:        {Type: field.TypeUint32, Column: category.FieldTenantID},
 			category.FieldStatus:          {Type: field.TypeEnum, Column: category.FieldStatus},
 			category.FieldIsNav:           {Type: field.TypeBool, Column: category.FieldIsNav},
 			category.FieldIcon:            {Type: field.TypeString, Column: category.FieldIcon},
@@ -186,6 +188,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			categorytranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: categorytranslation.FieldUpdatedBy},
 			categorytranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: categorytranslation.FieldDeletedBy},
 			categorytranslation.FieldSeo:          {Type: field.TypeJSON, Column: categorytranslation.FieldSeo},
+			categorytranslation.FieldTenantID:     {Type: field.TypeUint32, Column: categorytranslation.FieldTenantID},
 			categorytranslation.FieldCategoryID:   {Type: field.TypeUint32, Column: categorytranslation.FieldCategoryID},
 			categorytranslation.FieldLanguageCode: {Type: field.TypeString, Column: categorytranslation.FieldLanguageCode},
 			categorytranslation.FieldName:         {Type: field.TypeString, Column: categorytranslation.FieldName},
@@ -214,6 +217,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			comment.FieldUpdatedBy:        {Type: field.TypeUint32, Column: comment.FieldUpdatedBy},
 			comment.FieldDeletedBy:        {Type: field.TypeUint32, Column: comment.FieldDeletedBy},
 			comment.FieldParentID:         {Type: field.TypeUint32, Column: comment.FieldParentID},
+			comment.FieldTenantID:         {Type: field.TypeUint32, Column: comment.FieldTenantID},
 			comment.FieldContentType:      {Type: field.TypeEnum, Column: comment.FieldContentType},
 			comment.FieldObjectID:         {Type: field.TypeUint32, Column: comment.FieldObjectID},
 			comment.FieldContent:          {Type: field.TypeString, Column: comment.FieldContent},
@@ -552,6 +556,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			mediaasset.FieldCreatedBy:        {Type: field.TypeUint32, Column: mediaasset.FieldCreatedBy},
 			mediaasset.FieldUpdatedBy:        {Type: field.TypeUint32, Column: mediaasset.FieldUpdatedBy},
 			mediaasset.FieldDeletedBy:        {Type: field.TypeUint32, Column: mediaasset.FieldDeletedBy},
+			mediaasset.FieldTenantID:         {Type: field.TypeUint32, Column: mediaasset.FieldTenantID},
 			mediaasset.FieldFilename:         {Type: field.TypeString, Column: mediaasset.FieldFilename},
 			mediaasset.FieldType:             {Type: field.TypeEnum, Column: mediaasset.FieldType},
 			mediaasset.FieldMimeType:         {Type: field.TypeString, Column: mediaasset.FieldMimeType},
@@ -585,6 +590,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "MediaVariant",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			mediavariant.FieldCreatedAt:   {Type: field.TypeTime, Column: mediavariant.FieldCreatedAt},
+			mediavariant.FieldTenantID:    {Type: field.TypeUint32, Column: mediavariant.FieldTenantID},
 			mediavariant.FieldMediaID:     {Type: field.TypeUint32, Column: mediavariant.FieldMediaID},
 			mediavariant.FieldFileID:      {Type: field.TypeUint32, Column: mediavariant.FieldFileID},
 			mediavariant.FieldVariantName: {Type: field.TypeUint32, Column: mediavariant.FieldVariantName},
@@ -730,6 +736,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			menu.FieldParentID:  {Type: field.TypeUint32, Column: menu.FieldParentID},
 			menu.FieldRemark:    {Type: field.TypeString, Column: menu.FieldRemark},
 			menu.FieldStatus:    {Type: field.TypeEnum, Column: menu.FieldStatus},
+			menu.FieldTenantID:  {Type: field.TypeUint32, Column: menu.FieldTenantID},
 			menu.FieldType:      {Type: field.TypeEnum, Column: menu.FieldType},
 			menu.FieldPath:      {Type: field.TypeString, Column: menu.FieldPath},
 			menu.FieldRedirect:  {Type: field.TypeString, Column: menu.FieldRedirect},
@@ -756,6 +763,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			navigation.FieldCreatedBy: {Type: field.TypeUint32, Column: navigation.FieldCreatedBy},
 			navigation.FieldUpdatedBy: {Type: field.TypeUint32, Column: navigation.FieldUpdatedBy},
 			navigation.FieldDeletedBy: {Type: field.TypeUint32, Column: navigation.FieldDeletedBy},
+			navigation.FieldTenantID:  {Type: field.TypeUint32, Column: navigation.FieldTenantID},
 			navigation.FieldName:      {Type: field.TypeString, Column: navigation.FieldName},
 			navigation.FieldLocation:  {Type: field.TypeEnum, Column: navigation.FieldLocation},
 			navigation.FieldLocale:    {Type: field.TypeString, Column: navigation.FieldLocale},
@@ -781,6 +789,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			navigationitem.FieldDeletedBy:          {Type: field.TypeUint32, Column: navigationitem.FieldDeletedBy},
 			navigationitem.FieldSortOrder:          {Type: field.TypeUint32, Column: navigationitem.FieldSortOrder},
 			navigationitem.FieldParentID:           {Type: field.TypeUint32, Column: navigationitem.FieldParentID},
+			navigationitem.FieldTenantID:           {Type: field.TypeUint32, Column: navigationitem.FieldTenantID},
 			navigationitem.FieldLinkType:           {Type: field.TypeEnum, Column: navigationitem.FieldLinkType},
 			navigationitem.FieldNavigationID:       {Type: field.TypeUint32, Column: navigationitem.FieldNavigationID},
 			navigationitem.FieldTitle:              {Type: field.TypeString, Column: navigationitem.FieldTitle},
@@ -893,6 +902,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			page.FieldPath:             {Type: field.TypeString, Column: page.FieldPath},
 			page.FieldParentID:         {Type: field.TypeUint32, Column: page.FieldParentID},
 			page.FieldEditorType:       {Type: field.TypeEnum, Column: page.FieldEditorType},
+			page.FieldTenantID:         {Type: field.TypeUint32, Column: page.FieldTenantID},
 			page.FieldStatus:           {Type: field.TypeEnum, Column: page.FieldStatus},
 			page.FieldType:             {Type: field.TypeEnum, Column: page.FieldType},
 			page.FieldSlug:             {Type: field.TypeString, Column: page.FieldSlug},
@@ -926,6 +936,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pagetranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: pagetranslation.FieldUpdatedBy},
 			pagetranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: pagetranslation.FieldDeletedBy},
 			pagetranslation.FieldSeo:          {Type: field.TypeJSON, Column: pagetranslation.FieldSeo},
+			pagetranslation.FieldTenantID:     {Type: field.TypeUint32, Column: pagetranslation.FieldTenantID},
 			pagetranslation.FieldPageID:       {Type: field.TypeUint32, Column: pagetranslation.FieldPageID},
 			pagetranslation.FieldLanguageCode: {Type: field.TypeString, Column: pagetranslation.FieldLanguageCode},
 			pagetranslation.FieldTitle:        {Type: field.TypeString, Column: pagetranslation.FieldTitle},
@@ -954,6 +965,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			permission.FieldDeletedBy:   {Type: field.TypeUint32, Column: permission.FieldDeletedBy},
 			permission.FieldStatus:      {Type: field.TypeEnum, Column: permission.FieldStatus},
 			permission.FieldDescription: {Type: field.TypeString, Column: permission.FieldDescription},
+			permission.FieldTenantID:    {Type: field.TypeUint32, Column: permission.FieldTenantID},
 			permission.FieldName:        {Type: field.TypeString, Column: permission.FieldName},
 			permission.FieldCode:        {Type: field.TypeString, Column: permission.FieldCode},
 			permission.FieldGroupID:     {Type: field.TypeUint32, Column: permission.FieldGroupID},
@@ -976,6 +988,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			permissionapi.FieldCreatedBy:    {Type: field.TypeUint32, Column: permissionapi.FieldCreatedBy},
 			permissionapi.FieldUpdatedBy:    {Type: field.TypeUint32, Column: permissionapi.FieldUpdatedBy},
 			permissionapi.FieldDeletedBy:    {Type: field.TypeUint32, Column: permissionapi.FieldDeletedBy},
+			permissionapi.FieldTenantID:     {Type: field.TypeUint32, Column: permissionapi.FieldTenantID},
 			permissionapi.FieldPermissionID: {Type: field.TypeUint32, Column: permissionapi.FieldPermissionID},
 			permissionapi.FieldAPIID:        {Type: field.TypeUint32, Column: permissionapi.FieldAPIID},
 		},
@@ -1028,6 +1041,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			permissiongroup.FieldSortOrder:   {Type: field.TypeUint32, Column: permissiongroup.FieldSortOrder},
 			permissiongroup.FieldParentID:    {Type: field.TypeUint32, Column: permissiongroup.FieldParentID},
 			permissiongroup.FieldPath:        {Type: field.TypeString, Column: permissiongroup.FieldPath},
+			permissiongroup.FieldTenantID:    {Type: field.TypeUint32, Column: permissiongroup.FieldTenantID},
 			permissiongroup.FieldName:        {Type: field.TypeString, Column: permissiongroup.FieldName},
 			permissiongroup.FieldModule:      {Type: field.TypeString, Column: permissiongroup.FieldModule},
 		},
@@ -1049,6 +1063,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			permissionmenu.FieldCreatedBy:    {Type: field.TypeUint32, Column: permissionmenu.FieldCreatedBy},
 			permissionmenu.FieldUpdatedBy:    {Type: field.TypeUint32, Column: permissionmenu.FieldUpdatedBy},
 			permissionmenu.FieldDeletedBy:    {Type: field.TypeUint32, Column: permissionmenu.FieldDeletedBy},
+			permissionmenu.FieldTenantID:     {Type: field.TypeUint32, Column: permissionmenu.FieldTenantID},
 			permissionmenu.FieldPermissionID: {Type: field.TypeUint32, Column: permissionmenu.FieldPermissionID},
 			permissionmenu.FieldMenuID:       {Type: field.TypeUint32, Column: permissionmenu.FieldMenuID},
 		},
@@ -1071,6 +1086,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			permissionpolicy.FieldUpdatedBy:    {Type: field.TypeUint32, Column: permissionpolicy.FieldUpdatedBy},
 			permissionpolicy.FieldDeletedBy:    {Type: field.TypeUint32, Column: permissionpolicy.FieldDeletedBy},
 			permissionpolicy.FieldStatus:       {Type: field.TypeEnum, Column: permissionpolicy.FieldStatus},
+			permissionpolicy.FieldTenantID:     {Type: field.TypeUint32, Column: permissionpolicy.FieldTenantID},
 			permissionpolicy.FieldPermissionID: {Type: field.TypeUint32, Column: permissionpolicy.FieldPermissionID},
 			permissionpolicy.FieldPolicyEngine: {Type: field.TypeEnum, Column: permissionpolicy.FieldPolicyEngine},
 			permissionpolicy.FieldDefinition:   {Type: field.TypeString, Column: permissionpolicy.FieldDefinition},
@@ -1163,6 +1179,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			post.FieldDeletedBy:       {Type: field.TypeUint32, Column: post.FieldDeletedBy},
 			post.FieldSortOrder:       {Type: field.TypeUint32, Column: post.FieldSortOrder},
 			post.FieldEditorType:      {Type: field.TypeEnum, Column: post.FieldEditorType},
+			post.FieldTenantID:        {Type: field.TypeUint32, Column: post.FieldTenantID},
 			post.FieldStatus:          {Type: field.TypeEnum, Column: post.FieldStatus},
 			post.FieldCode:            {Type: field.TypeString, Column: post.FieldCode},
 			post.FieldDisallowComment: {Type: field.TypeBool, Column: post.FieldDisallowComment},
@@ -1191,6 +1208,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "PostCategory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			postcategory.FieldCreatedAt:  {Type: field.TypeTime, Column: postcategory.FieldCreatedAt},
+			postcategory.FieldTenantID:   {Type: field.TypeUint32, Column: postcategory.FieldTenantID},
 			postcategory.FieldPostID:     {Type: field.TypeUint32, Column: postcategory.FieldPostID},
 			postcategory.FieldCategoryID: {Type: field.TypeUint32, Column: postcategory.FieldCategoryID},
 		},
@@ -1207,6 +1225,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "PostTag",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			posttag.FieldCreatedAt: {Type: field.TypeTime, Column: posttag.FieldCreatedAt},
+			posttag.FieldTenantID:  {Type: field.TypeUint32, Column: posttag.FieldTenantID},
 			posttag.FieldPostID:    {Type: field.TypeUint32, Column: posttag.FieldPostID},
 			posttag.FieldTagID:     {Type: field.TypeUint32, Column: posttag.FieldTagID},
 		},
@@ -1229,6 +1248,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			posttranslation.FieldUpdatedBy:       {Type: field.TypeUint32, Column: posttranslation.FieldUpdatedBy},
 			posttranslation.FieldDeletedBy:       {Type: field.TypeUint32, Column: posttranslation.FieldDeletedBy},
 			posttranslation.FieldSeo:             {Type: field.TypeJSON, Column: posttranslation.FieldSeo},
+			posttranslation.FieldTenantID:        {Type: field.TypeUint32, Column: posttranslation.FieldTenantID},
 			posttranslation.FieldPostID:          {Type: field.TypeUint32, Column: posttranslation.FieldPostID},
 			posttranslation.FieldLanguageCode:    {Type: field.TypeString, Column: posttranslation.FieldLanguageCode},
 			posttranslation.FieldTitle:           {Type: field.TypeString, Column: posttranslation.FieldTitle},
@@ -1341,6 +1361,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			section.FieldUpdatedBy: {Type: field.TypeUint32, Column: section.FieldUpdatedBy},
 			section.FieldDeletedBy: {Type: field.TypeUint32, Column: section.FieldDeletedBy},
 			section.FieldSortOrder: {Type: field.TypeUint32, Column: section.FieldSortOrder},
+			section.FieldTenantID:  {Type: field.TypeUint32, Column: section.FieldTenantID},
 			section.FieldPageID:    {Type: field.TypeUint32, Column: section.FieldPageID},
 			section.FieldType:      {Type: field.TypeEnum, Column: section.FieldType},
 			section.FieldName:      {Type: field.TypeString, Column: section.FieldName},
@@ -1364,6 +1385,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			sectiontranslation.FieldCreatedBy:    {Type: field.TypeUint32, Column: sectiontranslation.FieldCreatedBy},
 			sectiontranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: sectiontranslation.FieldUpdatedBy},
 			sectiontranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: sectiontranslation.FieldDeletedBy},
+			sectiontranslation.FieldTenantID:     {Type: field.TypeUint32, Column: sectiontranslation.FieldTenantID},
 			sectiontranslation.FieldSectionID:    {Type: field.TypeUint32, Column: sectiontranslation.FieldSectionID},
 			sectiontranslation.FieldLanguageCode: {Type: field.TypeString, Column: sectiontranslation.FieldLanguageCode},
 			sectiontranslation.FieldContent:      {Type: field.TypeJSON, Column: sectiontranslation.FieldContent},
@@ -1416,6 +1438,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			sitesetting.FieldCreatedBy:       {Type: field.TypeUint32, Column: sitesetting.FieldCreatedBy},
 			sitesetting.FieldUpdatedBy:       {Type: field.TypeUint32, Column: sitesetting.FieldUpdatedBy},
 			sitesetting.FieldDeletedBy:       {Type: field.TypeUint32, Column: sitesetting.FieldDeletedBy},
+			sitesetting.FieldTenantID:        {Type: field.TypeUint32, Column: sitesetting.FieldTenantID},
 			sitesetting.FieldSiteID:          {Type: field.TypeUint32, Column: sitesetting.FieldSiteID},
 			sitesetting.FieldLocale:          {Type: field.TypeString, Column: sitesetting.FieldLocale},
 			sitesetting.FieldGroup:           {Type: field.TypeString, Column: sitesetting.FieldGroup},
@@ -1448,6 +1471,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tag.FieldUpdatedBy:  {Type: field.TypeUint32, Column: tag.FieldUpdatedBy},
 			tag.FieldDeletedBy:  {Type: field.TypeUint32, Column: tag.FieldDeletedBy},
 			tag.FieldSortOrder:  {Type: field.TypeUint32, Column: tag.FieldSortOrder},
+			tag.FieldTenantID:   {Type: field.TypeUint32, Column: tag.FieldTenantID},
 			tag.FieldStatus:     {Type: field.TypeEnum, Column: tag.FieldStatus},
 			tag.FieldColor:      {Type: field.TypeString, Column: tag.FieldColor},
 			tag.FieldIcon:       {Type: field.TypeString, Column: tag.FieldIcon},
@@ -1475,6 +1499,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tagtranslation.FieldUpdatedBy:    {Type: field.TypeUint32, Column: tagtranslation.FieldUpdatedBy},
 			tagtranslation.FieldDeletedBy:    {Type: field.TypeUint32, Column: tagtranslation.FieldDeletedBy},
 			tagtranslation.FieldSeo:          {Type: field.TypeJSON, Column: tagtranslation.FieldSeo},
+			tagtranslation.FieldTenantID:     {Type: field.TypeUint32, Column: tagtranslation.FieldTenantID},
 			tagtranslation.FieldTagID:        {Type: field.TypeUint32, Column: tagtranslation.FieldTagID},
 			tagtranslation.FieldLanguageCode: {Type: field.TypeString, Column: tagtranslation.FieldLanguageCode},
 			tagtranslation.FieldName:         {Type: field.TypeString, Column: tagtranslation.FieldName},
@@ -2000,6 +2025,11 @@ func (f *APIFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(api.FieldStatus))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *APIFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(api.FieldTenantID))
+}
+
 // WhereDescription applies the entql string predicate on the description field.
 func (f *APIFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(api.FieldDescription))
@@ -2295,6 +2325,11 @@ func (f *CategoryFilter) WhereParentID(p entql.Uint32P) {
 	f.Where(p.Field(category.FieldParentID))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CategoryFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(category.FieldTenantID))
+}
+
 // WhereStatus applies the entql string predicate on the status field.
 func (f *CategoryFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(category.FieldStatus))
@@ -2438,6 +2473,11 @@ func (f *CategoryTranslationFilter) WhereSeo(p entql.BytesP) {
 	f.Where(p.Field(categorytranslation.FieldSeo))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CategoryTranslationFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(categorytranslation.FieldTenantID))
+}
+
 // WhereCategoryID applies the entql uint32 predicate on the category_id field.
 func (f *CategoryTranslationFilter) WhereCategoryID(p entql.Uint32P) {
 	f.Where(p.Field(categorytranslation.FieldCategoryID))
@@ -2551,6 +2591,11 @@ func (f *CommentFilter) WhereDeletedBy(p entql.Uint32P) {
 // WhereParentID applies the entql uint32 predicate on the parent_id field.
 func (f *CommentFilter) WhereParentID(p entql.Uint32P) {
 	f.Where(p.Field(comment.FieldParentID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *CommentFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(comment.FieldTenantID))
 }
 
 // WhereContentType applies the entql string predicate on the content_type field.
@@ -4027,6 +4072,11 @@ func (f *MediaAssetFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(mediaasset.FieldDeletedBy))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *MediaAssetFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(mediaasset.FieldTenantID))
+}
+
 // WhereFilename applies the entql string predicate on the filename field.
 func (f *MediaAssetFilter) WhereFilename(p entql.StringP) {
 	f.Where(p.Field(mediaasset.FieldFilename))
@@ -4165,6 +4215,11 @@ func (f *MediaVariantFilter) WhereID(p entql.Uint32P) {
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *MediaVariantFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(mediavariant.FieldCreatedAt))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *MediaVariantFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(mediavariant.FieldTenantID))
 }
 
 // WhereMediaID applies the entql uint32 predicate on the media_id field.
@@ -4767,6 +4822,11 @@ func (f *MenuFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(menu.FieldStatus))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *MenuFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(menu.FieldTenantID))
+}
+
 // WhereType applies the entql string predicate on the type field.
 func (f *MenuFilter) WhereType(p entql.StringP) {
 	f.Where(p.Field(menu.FieldType))
@@ -4900,6 +4960,11 @@ func (f *NavigationFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(navigation.FieldDeletedBy))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *NavigationFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(navigation.FieldTenantID))
+}
+
 // WhereName applies the entql string predicate on the name field.
 func (f *NavigationFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(navigation.FieldName))
@@ -4998,6 +5063,11 @@ func (f *NavigationItemFilter) WhereSortOrder(p entql.Uint32P) {
 // WhereParentID applies the entql uint32 predicate on the parent_id field.
 func (f *NavigationItemFilter) WhereParentID(p entql.Uint32P) {
 	f.Where(p.Field(navigationitem.FieldParentID))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *NavigationItemFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(navigationitem.FieldTenantID))
 }
 
 // WhereLinkType applies the entql string predicate on the link_type field.
@@ -5541,6 +5611,11 @@ func (f *PageFilter) WhereEditorType(p entql.StringP) {
 	f.Where(p.Field(page.FieldEditorType))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PageFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(page.FieldTenantID))
+}
+
 // WhereStatus applies the entql string predicate on the status field.
 func (f *PageFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(page.FieldStatus))
@@ -5709,6 +5784,11 @@ func (f *PageTranslationFilter) WhereSeo(p entql.BytesP) {
 	f.Where(p.Field(pagetranslation.FieldSeo))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PageTranslationFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(pagetranslation.FieldTenantID))
+}
+
 // WherePageID applies the entql uint32 predicate on the page_id field.
 func (f *PageTranslationFilter) WherePageID(p entql.Uint32P) {
 	f.Where(p.Field(pagetranslation.FieldPageID))
@@ -5824,6 +5904,11 @@ func (f *PermissionFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(permission.FieldDescription))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PermissionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(permission.FieldTenantID))
+}
+
 // WhereName applies the entql string predicate on the name field.
 func (f *PermissionFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(permission.FieldName))
@@ -5907,6 +5992,11 @@ func (f *PermissionApiFilter) WhereUpdatedBy(p entql.Uint32P) {
 // WhereDeletedBy applies the entql uint32 predicate on the deleted_by field.
 func (f *PermissionApiFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(permissionapi.FieldDeletedBy))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PermissionApiFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(permissionapi.FieldTenantID))
 }
 
 // WherePermissionID applies the entql uint32 predicate on the permission_id field.
@@ -6119,6 +6209,11 @@ func (f *PermissionGroupFilter) WherePath(p entql.StringP) {
 	f.Where(p.Field(permissiongroup.FieldPath))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PermissionGroupFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(permissiongroup.FieldTenantID))
+}
+
 // WhereName applies the entql string predicate on the name field.
 func (f *PermissionGroupFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(permissiongroup.FieldName))
@@ -6227,6 +6322,11 @@ func (f *PermissionMenuFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(permissionmenu.FieldDeletedBy))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PermissionMenuFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(permissionmenu.FieldTenantID))
+}
+
 // WherePermissionID applies the entql uint32 predicate on the permission_id field.
 func (f *PermissionMenuFilter) WherePermissionID(p entql.Uint32P) {
 	f.Where(p.Field(permissionmenu.FieldPermissionID))
@@ -6310,6 +6410,11 @@ func (f *PermissionPolicyFilter) WhereDeletedBy(p entql.Uint32P) {
 // WhereStatus applies the entql string predicate on the status field.
 func (f *PermissionPolicyFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(permissionpolicy.FieldStatus))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PermissionPolicyFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(permissionpolicy.FieldTenantID))
 }
 
 // WherePermissionID applies the entql uint32 predicate on the permission_id field.
@@ -6697,6 +6802,11 @@ func (f *PostFilter) WhereEditorType(p entql.StringP) {
 	f.Where(p.Field(post.FieldEditorType))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PostFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(post.FieldTenantID))
+}
+
 // WhereStatus applies the entql string predicate on the status field.
 func (f *PostFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(post.FieldStatus))
@@ -6812,6 +6922,11 @@ func (f *PostCategoryFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(postcategory.FieldCreatedAt))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PostCategoryFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(postcategory.FieldTenantID))
+}
+
 // WherePostID applies the entql uint32 predicate on the post_id field.
 func (f *PostCategoryFilter) WherePostID(p entql.Uint32P) {
 	f.Where(p.Field(postcategory.FieldPostID))
@@ -6865,6 +6980,11 @@ func (f *PostTagFilter) WhereID(p entql.Uint32P) {
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *PostTagFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(posttag.FieldCreatedAt))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PostTagFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(posttag.FieldTenantID))
 }
 
 // WherePostID applies the entql uint32 predicate on the post_id field.
@@ -6950,6 +7070,11 @@ func (f *PostTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
 // WhereSeo applies the entql json.RawMessage predicate on the seo field.
 func (f *PostTranslationFilter) WhereSeo(p entql.BytesP) {
 	f.Where(p.Field(posttranslation.FieldSeo))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *PostTranslationFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(posttranslation.FieldTenantID))
 }
 
 // WherePostID applies the entql uint32 predicate on the post_id field.
@@ -7412,6 +7537,11 @@ func (f *SectionFilter) WhereSortOrder(p entql.Uint32P) {
 	f.Where(p.Field(section.FieldSortOrder))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *SectionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(section.FieldTenantID))
+}
+
 // WherePageID applies the entql uint32 predicate on the page_id field.
 func (f *SectionFilter) WherePageID(p entql.Uint32P) {
 	f.Where(p.Field(section.FieldPageID))
@@ -7500,6 +7630,11 @@ func (f *SectionTranslationFilter) WhereUpdatedBy(p entql.Uint32P) {
 // WhereDeletedBy applies the entql uint32 predicate on the deleted_by field.
 func (f *SectionTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(sectiontranslation.FieldDeletedBy))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *SectionTranslationFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(sectiontranslation.FieldTenantID))
 }
 
 // WhereSectionID applies the entql uint32 predicate on the section_id field.
@@ -7712,6 +7847,11 @@ func (f *SiteSettingFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(sitesetting.FieldDeletedBy))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *SiteSettingFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(sitesetting.FieldTenantID))
+}
+
 // WhereSiteID applies the entql uint32 predicate on the site_id field.
 func (f *SiteSettingFilter) WhereSiteID(p entql.Uint32P) {
 	f.Where(p.Field(sitesetting.FieldSiteID))
@@ -7847,6 +7987,11 @@ func (f *TagFilter) WhereSortOrder(p entql.Uint32P) {
 	f.Where(p.Field(tag.FieldSortOrder))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *TagFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(tag.FieldTenantID))
+}
+
 // WhereStatus applies the entql string predicate on the status field.
 func (f *TagFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(tag.FieldStatus))
@@ -7955,6 +8100,11 @@ func (f *TagTranslationFilter) WhereDeletedBy(p entql.Uint32P) {
 // WhereSeo applies the entql json.RawMessage predicate on the seo field.
 func (f *TagTranslationFilter) WhereSeo(p entql.BytesP) {
 	f.Where(p.Field(tagtranslation.FieldSeo))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *TagTranslationFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(tagtranslation.FieldTenantID))
 }
 
 // WhereTagID applies the entql uint32 predicate on the tag_id field.

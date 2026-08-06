@@ -34,6 +34,8 @@ type PostTranslation struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// SEO 结构化元数据
 	Seo *contentpb.SeoMeta `json:"seo,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 关联的帖子ID
 	PostID *uint32 `json:"post_id,omitempty"`
 	// 语言代码
@@ -64,7 +66,7 @@ func (*PostTranslation) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case posttranslation.FieldSeo:
 			values[i] = new([]byte)
-		case posttranslation.FieldID, posttranslation.FieldCreatedBy, posttranslation.FieldUpdatedBy, posttranslation.FieldDeletedBy, posttranslation.FieldPostID, posttranslation.FieldWordCount:
+		case posttranslation.FieldID, posttranslation.FieldCreatedBy, posttranslation.FieldUpdatedBy, posttranslation.FieldDeletedBy, posttranslation.FieldTenantID, posttranslation.FieldPostID, posttranslation.FieldWordCount:
 			values[i] = new(sql.NullInt64)
 		case posttranslation.FieldLanguageCode, posttranslation.FieldTitle, posttranslation.FieldSlug, posttranslation.FieldSummary, posttranslation.FieldContent, posttranslation.FieldOriginalContent, posttranslation.FieldThumbnail, posttranslation.FieldFullPath:
 			values[i] = new(sql.NullString)
@@ -140,6 +142,13 @@ func (_m *PostTranslation) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &_m.Seo); err != nil {
 					return fmt.Errorf("unmarshal field seo: %w", err)
 				}
+			}
+		case posttranslation.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case posttranslation.FieldPostID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -279,6 +288,11 @@ func (_m *PostTranslation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("seo=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Seo))
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	if v := _m.PostID; v != nil {
 		builder.WriteString("post_id=")

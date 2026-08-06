@@ -89,6 +89,11 @@ func Description(v string) predicate.Permission {
 	return predicate.Permission(sql.FieldEQ(FieldDescription, v))
 }
 
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldTenantID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Permission {
 	return predicate.Permission(sql.FieldEQ(FieldName, v))
@@ -497,6 +502,56 @@ func DescriptionEqualFold(v string) predicate.Permission {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.Permission {
 	return predicate.Permission(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDGT applies the GT predicate on the "tenant_id" field.
+func TenantIDGT(v uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldGT(FieldTenantID, v))
+}
+
+// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
+func TenantIDGTE(v uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldGTE(FieldTenantID, v))
+}
+
+// TenantIDLT applies the LT predicate on the "tenant_id" field.
+func TenantIDLT(v uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldLT(FieldTenantID, v))
+}
+
+// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
+func TenantIDLTE(v uint32) predicate.Permission {
+	return predicate.Permission(sql.FieldLTE(FieldTenantID, v))
+}
+
+// TenantIDIsNil applies the IsNil predicate on the "tenant_id" field.
+func TenantIDIsNil() predicate.Permission {
+	return predicate.Permission(sql.FieldIsNull(FieldTenantID))
+}
+
+// TenantIDNotNil applies the NotNil predicate on the "tenant_id" field.
+func TenantIDNotNil() predicate.Permission {
+	return predicate.Permission(sql.FieldNotNull(FieldTenantID))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.

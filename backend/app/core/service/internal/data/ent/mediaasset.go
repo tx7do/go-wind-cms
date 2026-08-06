@@ -30,6 +30,8 @@ type MediaAsset struct {
 	UpdatedBy *uint32 `json:"updated_by,omitempty"`
 	// 删除者ID
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 原始文件名
 	Filename *string `json:"filename,omitempty"`
 	// 媒体类型
@@ -78,7 +80,7 @@ func (*MediaAsset) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case mediaasset.FieldIsPrivate:
 			values[i] = new(sql.NullBool)
-		case mediaasset.FieldID, mediaasset.FieldCreatedBy, mediaasset.FieldUpdatedBy, mediaasset.FieldDeletedBy, mediaasset.FieldSize, mediaasset.FieldWidth, mediaasset.FieldHeight, mediaasset.FieldDuration, mediaasset.FieldFolderID, mediaasset.FieldFileID, mediaasset.FieldReferenceCount:
+		case mediaasset.FieldID, mediaasset.FieldCreatedBy, mediaasset.FieldUpdatedBy, mediaasset.FieldDeletedBy, mediaasset.FieldTenantID, mediaasset.FieldSize, mediaasset.FieldWidth, mediaasset.FieldHeight, mediaasset.FieldDuration, mediaasset.FieldFolderID, mediaasset.FieldFileID, mediaasset.FieldReferenceCount:
 			values[i] = new(sql.NullInt64)
 		case mediaasset.FieldFilename, mediaasset.FieldType, mediaasset.FieldMimeType, mediaasset.FieldStoragePath, mediaasset.FieldURL, mediaasset.FieldAltText, mediaasset.FieldTitle, mediaasset.FieldCaption, mediaasset.FieldProcessingStatus, mediaasset.FieldProcessingError, mediaasset.FieldFileHash:
 			values[i] = new(sql.NullString)
@@ -146,6 +148,13 @@ func (_m *MediaAsset) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.DeletedBy = new(uint32)
 				*_m.DeletedBy = uint32(value.Int64)
+			}
+		case mediaasset.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case mediaasset.FieldFilename:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -343,6 +352,11 @@ func (_m *MediaAsset) String() string {
 	builder.WriteString(", ")
 	if v := _m.DeletedBy; v != nil {
 		builder.WriteString("deleted_by=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

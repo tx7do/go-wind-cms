@@ -332,6 +332,9 @@ func (_u *NavigationUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(navigation.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(navigation.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(navigation.FieldName, field.TypeString, value)
 	}
@@ -710,6 +713,9 @@ func (_u *NavigationUpdateOne) sqlSave(ctx context.Context) (_node *Navigation, 
 	}
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(navigation.FieldDeletedBy, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(navigation.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(navigation.FieldName, field.TypeString, value)

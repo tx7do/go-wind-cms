@@ -3,6 +3,7 @@
 package posttranslation
 
 import (
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -25,6 +26,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldSeo holds the string denoting the seo field in the database.
 	FieldSeo = "seo"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldPostID holds the string denoting the post_id field in the database.
 	FieldPostID = "post_id"
 	// FieldLanguageCode holds the string denoting the language_code field in the database.
@@ -59,6 +62,7 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedBy,
 	FieldSeo,
+	FieldTenantID,
 	FieldPostID,
 	FieldLanguageCode,
 	FieldTitle,
@@ -81,7 +85,16 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// DefaultWordCount holds the default value on creation for the "word_count" field.
 	DefaultWordCount uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -124,6 +137,11 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedBy orders the results by the deleted_by field.
 func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByPostID orders the results by the post_id field.

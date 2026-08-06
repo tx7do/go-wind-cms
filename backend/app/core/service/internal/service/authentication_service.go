@@ -277,7 +277,15 @@ func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req
 	if req == nil {
 		return nil, authenticationV1.ErrorBadRequest("invalid request")
 	}
-	// 获取用户信息
+
+	// 首先验证刷新令牌——在任何数据库查询之前。
+	// user_id 和 jti 必须来自已验证的令牌绑定，而非请求体中不可信的输入。
+	if err := s.authenticator.VerifyRefreshToken(ctx, req.GetClientType(), req.GetUserId(), req.GetJti(), req.GetRefreshToken()); err != nil {
+		s.log.Errorf("verify refresh token failed for user [%d]: [%s]", req.GetUserId(), err)
+		return nil, authenticationV1.ErrorIncorrectRefreshToken("invalid refresh token")
+	}
+
+	// 令牌验证通过后才加载用户信息
 	user, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{
 			Id: req.GetUserId(),
@@ -300,12 +308,6 @@ func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req
 	if err != nil {
 		s.log.Errorf("resolve user [%d] authority failed [%s]", user.GetId(), err.Error())
 		return nil, err
-	}
-
-	// 验证刷新令牌
-	if err = s.authenticator.VerifyRefreshToken(ctx, req.GetClientType(), req.GetUserId(), req.GetJti(), req.GetRefreshToken()); err != nil {
-		s.log.Errorf("verify refresh token failed for user [%d]: [%s]", req.GetUserId(), err)
-		return nil, authenticationV1.ErrorIncorrectRefreshToken("invalid refresh token")
 	}
 
 	roleCodes, err := s.roleRepo.ListRoleCodesByIds(ctx, user.GetRoleIds())
@@ -368,33 +370,40 @@ func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authentic
 		}
 	}
 
-	user, err := s.userRepo.Create(ctx, &identityV1.CreateUserRequest{
-		Data: &identityV1.User{
-			TenantId: tenantId,
-			Username: trans.Ptr(req.Username),
-			Email:    req.Email,
-			Status:   trans.Ptr(identityV1.User_NORMAL),
-		},
+	// 用户和凭证创建必须在同一事务中，避免凭证创建失败时产生孤立用户行
+	tx, cleanup, err := s.userRepo.BeginTx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if cleanup != nil {
+			cleanup()
+		}
+	}()
+
+	user, err := s.userRepo.CreateWithTx(ctx, tx, &identityV1.User{
+		TenantId: tenantId,
+		Username: trans.Ptr(req.Username),
+		Email:    req.Email,
+		Status:   trans.Ptr(identityV1.User_NORMAL),
 	})
 	if err != nil {
 		s.log.Errorf("create user error: %v", err)
 		return nil, err
 	}
 
-	if err = s.userCredentialRepo.Create(ctx, &authenticationV1.CreateUserCredentialRequest{
-		Data: &authenticationV1.UserCredential{
-			UserId:   user.Id,
-			TenantId: user.TenantId,
+	if err = s.userCredentialRepo.CreateWithTx(ctx, tx, &authenticationV1.UserCredential{
+		UserId:   user.Id,
+		TenantId: user.TenantId,
 
-			IdentityType: authenticationV1.UserCredential_USERNAME.Enum(),
-			Identifier:   trans.Ptr(req.GetUsername()),
+		IdentityType: authenticationV1.UserCredential_USERNAME.Enum(),
+		Identifier:   trans.Ptr(req.GetUsername()),
 
-			CredentialType: authenticationV1.UserCredential_PASSWORD_HASH.Enum(),
-			Credential:     trans.Ptr(req.GetPassword()),
+		CredentialType: authenticationV1.UserCredential_PASSWORD_HASH.Enum(),
+		Credential:     trans.Ptr(req.GetPassword()),
 
-			IsPrimary: trans.Ptr(true),
-			Status:    authenticationV1.UserCredential_ENABLED.Enum(),
-		},
+		IsPrimary: trans.Ptr(true),
+		Status:    authenticationV1.UserCredential_ENABLED.Enum(),
 	}); err != nil {
 		s.log.Errorf("create user credentials error: %v", err)
 		return nil, err

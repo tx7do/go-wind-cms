@@ -37,6 +37,8 @@ type Category struct {
 	Path *string `json:"path,omitempty"`
 	// 父节点ID
 	ParentID *uint32 `json:"parent_id,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 分类状态
 	Status *category.Status `json:"status,omitempty"`
 	// 是否显示在导航菜单
@@ -99,7 +101,7 @@ func (*Category) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case category.FieldIsNav:
 			values[i] = new(sql.NullBool)
-		case category.FieldID, category.FieldCreatedBy, category.FieldUpdatedBy, category.FieldDeletedBy, category.FieldSortOrder, category.FieldParentID, category.FieldPostCount, category.FieldDirectPostCount, category.FieldDepth:
+		case category.FieldID, category.FieldCreatedBy, category.FieldUpdatedBy, category.FieldDeletedBy, category.FieldSortOrder, category.FieldParentID, category.FieldTenantID, category.FieldPostCount, category.FieldDirectPostCount, category.FieldDepth:
 			values[i] = new(sql.NullInt64)
 		case category.FieldPath, category.FieldStatus, category.FieldIcon, category.FieldCode:
 			values[i] = new(sql.NullString)
@@ -188,6 +190,13 @@ func (_m *Category) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.ParentID = new(uint32)
 				*_m.ParentID = uint32(value.Int64)
+			}
+		case category.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case category.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -334,6 +343,11 @@ func (_m *Category) String() string {
 	builder.WriteString(", ")
 	if v := _m.ParentID; v != nil {
 		builder.WriteString("parent_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

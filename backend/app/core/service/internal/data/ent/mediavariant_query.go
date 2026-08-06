@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/mediavariant"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
@@ -329,6 +330,12 @@ func (_q *MediaVariantQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if mediavariant.Policy == nil {
+		return errors.New("ent: uninitialized mediavariant.Policy (forgotten import ent/runtime?)")
+	}
+	if err := mediavariant.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

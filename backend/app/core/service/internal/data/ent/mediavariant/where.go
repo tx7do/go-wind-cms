@@ -59,6 +59,11 @@ func CreatedAt(v time.Time) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldCreatedAt, v))
 }
 
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldEQ(FieldTenantID, v))
+}
+
 // MediaID applies equality check predicate on the "media_id" field. It's identical to MediaIDEQ.
 func MediaID(v uint32) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldMediaID, v))
@@ -122,6 +127,56 @@ func CreatedAtIsNil() predicate.MediaVariant {
 // CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
 func CreatedAtNotNil() predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNotNull(FieldCreatedAt))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDGT applies the GT predicate on the "tenant_id" field.
+func TenantIDGT(v uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldGT(FieldTenantID, v))
+}
+
+// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
+func TenantIDGTE(v uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldGTE(FieldTenantID, v))
+}
+
+// TenantIDLT applies the LT predicate on the "tenant_id" field.
+func TenantIDLT(v uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldLT(FieldTenantID, v))
+}
+
+// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
+func TenantIDLTE(v uint32) predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldLTE(FieldTenantID, v))
+}
+
+// TenantIDIsNil applies the IsNil predicate on the "tenant_id" field.
+func TenantIDIsNil() predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldIsNull(FieldTenantID))
+}
+
+// TenantIDNotNil applies the NotNil predicate on the "tenant_id" field.
+func TenantIDNotNil() predicate.MediaVariant {
+	return predicate.MediaVariant(sql.FieldNotNull(FieldTenantID))
 }
 
 // MediaIDEQ applies the EQ predicate on the "media_id" field.

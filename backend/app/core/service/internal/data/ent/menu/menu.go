@@ -5,6 +5,7 @@ package menu
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -32,6 +33,8 @@ const (
 	FieldRemark = "remark"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldPath holds the string denoting the path field in the database.
@@ -74,6 +77,7 @@ var Columns = []string{
 	FieldParentID,
 	FieldRemark,
 	FieldStatus,
+	FieldTenantID,
 	FieldType,
 	FieldPath,
 	FieldRedirect,
@@ -93,7 +97,16 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// DefaultPath holds the default value on creation for the "path" field.
 	DefaultPath string
 	// DefaultComponent holds the default value on creation for the "component" field.
@@ -208,6 +221,11 @@ func ByRemark(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.

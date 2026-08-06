@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/navigation"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
@@ -329,6 +330,12 @@ func (_q *NavigationQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if navigation.Policy == nil {
+		return errors.New("ent: uninitialized navigation.Policy (forgotten import ent/runtime?)")
+	}
+	if err := navigation.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

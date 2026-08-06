@@ -405,6 +405,9 @@ func (_u *TagTranslationUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(tagtranslation.FieldSeo, field.TypeJSON)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(tagtranslation.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.TagID(); ok {
 		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint32, value)
 	}
@@ -876,6 +879,9 @@ func (_u *TagTranslationUpdateOne) sqlSave(ctx context.Context) (_node *TagTrans
 	}
 	if _u.mutation.SeoCleared() {
 		_spec.ClearField(tagtranslation.FieldSeo, field.TypeJSON)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(tagtranslation.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.TagID(); ok {
 		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint32, value)

@@ -31,6 +31,8 @@ type SiteSetting struct {
 	UpdatedBy *uint32 `json:"updated_by,omitempty"`
 	// 删除者ID
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 站点ID
 	SiteID *uint32 `json:"site_id,omitempty"`
 	// 语言区域
@@ -67,7 +69,7 @@ func (*SiteSetting) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case sitesetting.FieldIsRequired:
 			values[i] = new(sql.NullBool)
-		case sitesetting.FieldID, sitesetting.FieldCreatedBy, sitesetting.FieldUpdatedBy, sitesetting.FieldDeletedBy, sitesetting.FieldSiteID:
+		case sitesetting.FieldID, sitesetting.FieldCreatedBy, sitesetting.FieldUpdatedBy, sitesetting.FieldDeletedBy, sitesetting.FieldTenantID, sitesetting.FieldSiteID:
 			values[i] = new(sql.NullInt64)
 		case sitesetting.FieldLocale, sitesetting.FieldGroup, sitesetting.FieldKey, sitesetting.FieldValue, sitesetting.FieldType, sitesetting.FieldLabel, sitesetting.FieldDescription, sitesetting.FieldPlaceholder, sitesetting.FieldValidationRegex:
 			values[i] = new(sql.NullString)
@@ -135,6 +137,13 @@ func (_m *SiteSetting) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.DeletedBy = new(uint32)
 				*_m.DeletedBy = uint32(value.Int64)
+			}
+		case sitesetting.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case sitesetting.FieldSiteID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -284,6 +293,11 @@ func (_m *SiteSetting) String() string {
 	builder.WriteString(", ")
 	if v := _m.DeletedBy; v != nil {
 		builder.WriteString("deleted_by=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

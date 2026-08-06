@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/api"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
@@ -329,6 +330,12 @@ func (_q *APIQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if api.Policy == nil {
+		return errors.New("ent: uninitialized api.Policy (forgotten import ent/runtime?)")
+	}
+	if err := api.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

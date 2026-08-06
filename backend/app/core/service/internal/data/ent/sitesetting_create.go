@@ -106,6 +106,20 @@ func (_c *SiteSettingCreate) SetNillableDeletedBy(v *uint32) *SiteSettingCreate 
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *SiteSettingCreate) SetTenantID(v uint32) *SiteSettingCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *SiteSettingCreate) SetNillableTenantID(v *uint32) *SiteSettingCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetSiteID sets the "site_id" field.
 func (_c *SiteSettingCreate) SetSiteID(v uint32) *SiteSettingCreate {
 	_c.mutation.SetSiteID(v)
@@ -279,7 +293,9 @@ func (_c *SiteSettingCreate) Mutation() *SiteSettingMutation {
 
 // Save creates the SiteSetting in the database.
 func (_c *SiteSettingCreate) Save(ctx context.Context) (*SiteSetting, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -306,7 +322,11 @@ func (_c *SiteSettingCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *SiteSettingCreate) defaults() {
+func (_c *SiteSettingCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := sitesetting.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.GetType(); !ok {
 		v := sitesetting.DefaultType
 		_c.mutation.SetType(v)
@@ -315,6 +335,7 @@ func (_c *SiteSettingCreate) defaults() {
 		v := sitesetting.DefaultIsRequired
 		_c.mutation.SetIsRequired(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -385,6 +406,10 @@ func (_c *SiteSettingCreate) createSpec() (*SiteSetting, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.DeletedBy(); ok {
 		_spec.SetField(sitesetting.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(sitesetting.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.SiteID(); ok {
 		_spec.SetField(sitesetting.FieldSiteID, field.TypeUint32, value)
@@ -835,6 +860,9 @@ func (u *SiteSettingUpsertOne) UpdateNewValues() *SiteSettingUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(sitesetting.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(sitesetting.FieldTenantID)
 		}
 	}))
 	return u
@@ -1436,6 +1464,9 @@ func (u *SiteSettingUpsertBulk) UpdateNewValues() *SiteSettingUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(sitesetting.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(sitesetting.FieldTenantID)
 			}
 		}
 	}))

@@ -619,6 +619,9 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.EditorTypeCleared() {
 		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(post.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
 	}
@@ -1356,6 +1359,9 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	}
 	if _u.mutation.EditorTypeCleared() {
 		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(post.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
@@ -329,6 +330,12 @@ func (_q *TagTranslationQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if tagtranslation.Policy == nil {
+		return errors.New("ent: uninitialized tagtranslation.Policy (forgotten import ent/runtime?)")
+	}
+	if err := tagtranslation.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

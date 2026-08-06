@@ -176,6 +176,20 @@ func (_c *PermissionGroupCreate) SetNillablePath(v *string) *PermissionGroupCrea
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PermissionGroupCreate) SetTenantID(v uint32) *PermissionGroupCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PermissionGroupCreate) SetNillableTenantID(v *uint32) *PermissionGroupCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *PermissionGroupCreate) SetName(v string) *PermissionGroupCreate {
 	_c.mutation.SetName(v)
@@ -229,7 +243,9 @@ func (_c *PermissionGroupCreate) Mutation() *PermissionGroupMutation {
 
 // Save creates the PermissionGroup in the database.
 func (_c *PermissionGroupCreate) Save(ctx context.Context) (*PermissionGroup, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -256,7 +272,7 @@ func (_c *PermissionGroupCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *PermissionGroupCreate) defaults() {
+func (_c *PermissionGroupCreate) defaults() error {
 	if _, ok := _c.mutation.Status(); !ok {
 		v := permissiongroup.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -265,6 +281,11 @@ func (_c *PermissionGroupCreate) defaults() {
 		v := permissiongroup.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
 	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := permissiongroup.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -367,6 +388,10 @@ func (_c *PermissionGroupCreate) createSpec() (*PermissionGroup, *sqlgraph.Creat
 	if value, ok := _c.mutation.Path(); ok {
 		_spec.SetField(permissiongroup.FieldPath, field.TypeString, value)
 		_node.Path = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(permissiongroup.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(permissiongroup.FieldName, field.TypeString, value)
@@ -708,6 +733,9 @@ func (u *PermissionGroupUpsertOne) UpdateNewValues() *PermissionGroupUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(permissiongroup.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(permissiongroup.FieldTenantID)
 		}
 	}))
 	return u
@@ -1190,6 +1218,9 @@ func (u *PermissionGroupUpsertBulk) UpdateNewValues() *PermissionGroupUpsertBulk
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(permissiongroup.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(permissiongroup.FieldTenantID)
 			}
 		}
 	}))

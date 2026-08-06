@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             loginLoading.value = true
 
-            const {access_token} = await apiLogin({
+            const loginResp = await apiLogin({
                 username: params.username,
                 email: params.email,
                 mobile: params.mobile,
@@ -45,8 +45,16 @@ export const useAuthStore = defineStore('auth', () => {
             })
 
             // 如果成功获取到 accessToken
-            if (access_token) {
-                accessStore.setAccessToken(access_token)
+            if (loginResp.access_token) {
+                accessStore.setAccessToken(loginResp.access_token, loginResp.expires_in && loginResp.expires_in !== 0
+                    ? Date.now() + loginResp.expires_in * 1000
+                    : undefined)
+
+                if (loginResp.refresh_token) {
+                    accessStore.setRefreshToken(loginResp.refresh_token, loginResp.refresh_expires_in && loginResp.refresh_expires_in !== 0
+                        ? Date.now() + loginResp.refresh_expires_in * 1000
+                        : undefined)
+                }
 
                 // 获取用户信息并存储到 accessStore 中
                 userInfo = await fetchUserInfo()
@@ -121,9 +129,7 @@ export const useAuthStore = defineStore('auth', () => {
      * 刷新访问令牌
      */
     async function refreshToken() {
-        const refreshTokenValue = typeof accessStore.refreshToken === 'string'
-            ? accessStore.refreshToken
-            : accessStore.refreshToken?.value ?? '';
+        const refreshTokenValue = accessStore.refreshToken?.value ?? ''
         const resp = await apiRefreshToken(refreshTokenValue)
         const newToken = resp.access_token
 

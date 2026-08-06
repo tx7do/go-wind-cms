@@ -12,7 +12,7 @@ services:
       - app-tier
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=*Abcd123456
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dev_only_change_me}
       - POSTGRES_DB=gwc
     ulimits:
       nofile:
@@ -58,7 +58,7 @@ services:
       - app-tier
     environment:
       - ALLOW_EMPTY_PASSWORD=no
-      - REDIS_PASSWORD=*Abcd123456
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-dev_only_change_me}
       - REDIS_AOF_ENABLED=no
       - REDIS_IO_THREADS_DO_READS=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
@@ -99,7 +99,7 @@ services:
       - app-tier
     environment:
       - MINIO_ROOT_USER=root
-      - MINIO_ROOT_PASSWORD=*Abcd123456
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-dev_only_change_me}
       - MINIO_DEFAULT_BUCKETS=images
       - MINIO_FORCE_NEW_KEYS=yes
       - BITNAMI_DEBUG=true

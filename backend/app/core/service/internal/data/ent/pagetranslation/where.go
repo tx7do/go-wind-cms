@@ -84,6 +84,11 @@ func DeletedBy(v uint32) predicate.PageTranslation {
 	return predicate.PageTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldEQ(FieldTenantID, v))
+}
+
 // PageID applies equality check predicate on the "page_id" field. It's identical to PageIDEQ.
 func PageID(v uint32) predicate.PageTranslation {
 	return predicate.PageTranslation(sql.FieldEQ(FieldPageID, v))
@@ -427,6 +432,56 @@ func SeoIsNil() predicate.PageTranslation {
 // SeoNotNil applies the NotNil predicate on the "seo" field.
 func SeoNotNil() predicate.PageTranslation {
 	return predicate.PageTranslation(sql.FieldNotNull(FieldSeo))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDGT applies the GT predicate on the "tenant_id" field.
+func TenantIDGT(v uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldGT(FieldTenantID, v))
+}
+
+// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
+func TenantIDGTE(v uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldGTE(FieldTenantID, v))
+}
+
+// TenantIDLT applies the LT predicate on the "tenant_id" field.
+func TenantIDLT(v uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldLT(FieldTenantID, v))
+}
+
+// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
+func TenantIDLTE(v uint32) predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldLTE(FieldTenantID, v))
+}
+
+// TenantIDIsNil applies the IsNil predicate on the "tenant_id" field.
+func TenantIDIsNil() predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldIsNull(FieldTenantID))
+}
+
+// TenantIDNotNil applies the NotNil predicate on the "tenant_id" field.
+func TenantIDNotNil() predicate.PageTranslation {
+	return predicate.PageTranslation(sql.FieldNotNull(FieldTenantID))
 }
 
 // PageIDEQ applies the EQ predicate on the "page_id" field.

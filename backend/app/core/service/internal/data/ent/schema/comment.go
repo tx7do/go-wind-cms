@@ -156,6 +156,7 @@ func (Comment) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 		mixin.Tree[Comment]{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

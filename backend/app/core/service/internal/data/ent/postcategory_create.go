@@ -36,6 +36,20 @@ func (_c *PostCategoryCreate) SetNillableCreatedAt(v *time.Time) *PostCategoryCr
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PostCategoryCreate) SetTenantID(v uint32) *PostCategoryCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PostCategoryCreate) SetNillableTenantID(v *uint32) *PostCategoryCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPostID sets the "post_id" field.
 func (_c *PostCategoryCreate) SetPostID(v uint32) *PostCategoryCreate {
 	_c.mutation.SetPostID(v)
@@ -61,6 +75,9 @@ func (_c *PostCategoryCreate) Mutation() *PostCategoryMutation {
 
 // Save creates the PostCategory in the database.
 func (_c *PostCategoryCreate) Save(ctx context.Context) (*PostCategory, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -84,6 +101,15 @@ func (_c *PostCategoryCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *PostCategoryCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := postcategory.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -135,6 +161,10 @@ func (_c *PostCategoryCreate) createSpec() (*PostCategory, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(postcategory.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(postcategory.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
 		_spec.SetField(postcategory.FieldPostID, field.TypeUint32, value)
@@ -251,6 +281,9 @@ func (u *PostCategoryUpsertOne) UpdateNewValues() *PostCategoryUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(postcategory.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(postcategory.FieldTenantID)
 		}
 	}))
 	return u
@@ -377,6 +410,7 @@ func (_c *PostCategoryCreateBulk) Save(ctx context.Context) ([]*PostCategory, er
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PostCategoryMutation)
 				if !ok {
@@ -508,6 +542,9 @@ func (u *PostCategoryUpsertBulk) UpdateNewValues() *PostCategoryUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(postcategory.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(postcategory.FieldTenantID)
 			}
 		}
 	}))

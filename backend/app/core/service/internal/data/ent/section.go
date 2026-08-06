@@ -33,6 +33,8 @@ type Section struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 排序值（越小越靠前）
 	SortOrder *uint32 `json:"sort_order,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 所属页面ID
 	PageID *uint32 `json:"page_id,omitempty"`
 	// 区块类型
@@ -51,7 +53,7 @@ func (*Section) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case section.FieldConfig:
 			values[i] = new([]byte)
-		case section.FieldID, section.FieldCreatedBy, section.FieldUpdatedBy, section.FieldDeletedBy, section.FieldSortOrder, section.FieldPageID:
+		case section.FieldID, section.FieldCreatedBy, section.FieldUpdatedBy, section.FieldDeletedBy, section.FieldSortOrder, section.FieldTenantID, section.FieldPageID:
 			values[i] = new(sql.NullInt64)
 		case section.FieldType, section.FieldName:
 			values[i] = new(sql.NullString)
@@ -126,6 +128,13 @@ func (_m *Section) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.SortOrder = new(uint32)
 				*_m.SortOrder = uint32(value.Int64)
+			}
+		case section.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case section.FieldPageID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -224,6 +233,11 @@ func (_m *Section) String() string {
 	builder.WriteString(", ")
 	if v := _m.SortOrder; v != nil {
 		builder.WriteString("sort_order=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

@@ -120,6 +120,20 @@ func (_c *APICreate) SetNillableStatus(v *api.Status) *APICreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *APICreate) SetTenantID(v uint32) *APICreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *APICreate) SetNillableTenantID(v *uint32) *APICreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetDescription sets the "description" field.
 func (_c *APICreate) SetDescription(v string) *APICreate {
 	_c.mutation.SetDescription(v)
@@ -231,7 +245,9 @@ func (_c *APICreate) Mutation() *APIMutation {
 
 // Save creates the Api in the database.
 func (_c *APICreate) Save(ctx context.Context) (*Api, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -258,15 +274,20 @@ func (_c *APICreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *APICreate) defaults() {
+func (_c *APICreate) defaults() error {
 	if _, ok := _c.mutation.Status(); !ok {
 		v := api.DefaultStatus
 		_c.mutation.SetStatus(v)
+	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := api.DefaultTenantID
+		_c.mutation.SetTenantID(v)
 	}
 	if _, ok := _c.mutation.Scope(); !ok {
 		v := api.DefaultScope
 		_c.mutation.SetScope(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -349,6 +370,10 @@ func (_c *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(api.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(api.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(api.FieldDescription, field.TypeString, value)
@@ -695,6 +720,9 @@ func (u *ApiUpsertOne) UpdateNewValues() *ApiUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(api.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(api.FieldTenantID)
 		}
 	}))
 	return u
@@ -1198,6 +1226,9 @@ func (u *ApiUpsertBulk) UpdateNewValues() *ApiUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(api.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(api.FieldTenantID)
 			}
 		}
 	}))

@@ -34,6 +34,8 @@ type CategoryTranslation struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// SEO 结构化元数据
 	Seo *contentpb.SeoMeta `json:"seo,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 关联的分类ID
 	CategoryID *uint32 `json:"category_id,omitempty"`
 	// 语言代码
@@ -60,7 +62,7 @@ func (*CategoryTranslation) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case categorytranslation.FieldSeo:
 			values[i] = new([]byte)
-		case categorytranslation.FieldID, categorytranslation.FieldCreatedBy, categorytranslation.FieldUpdatedBy, categorytranslation.FieldDeletedBy, categorytranslation.FieldCategoryID:
+		case categorytranslation.FieldID, categorytranslation.FieldCreatedBy, categorytranslation.FieldUpdatedBy, categorytranslation.FieldDeletedBy, categorytranslation.FieldTenantID, categorytranslation.FieldCategoryID:
 			values[i] = new(sql.NullInt64)
 		case categorytranslation.FieldLanguageCode, categorytranslation.FieldName, categorytranslation.FieldSlug, categorytranslation.FieldDescription, categorytranslation.FieldThumbnail, categorytranslation.FieldCoverImage, categorytranslation.FieldFullPath:
 			values[i] = new(sql.NullString)
@@ -136,6 +138,13 @@ func (_m *CategoryTranslation) assignValues(columns []string, values []any) erro
 				if err := json.Unmarshal(*value, &_m.Seo); err != nil {
 					return fmt.Errorf("unmarshal field seo: %w", err)
 				}
+			}
+		case categorytranslation.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case categorytranslation.FieldCategoryID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -261,6 +270,11 @@ func (_m *CategoryTranslation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("seo=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Seo))
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	if v := _m.CategoryID; v != nil {
 		builder.WriteString("category_id=")

@@ -36,6 +36,20 @@ func (_c *PostTagCreate) SetNillableCreatedAt(v *time.Time) *PostTagCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PostTagCreate) SetTenantID(v uint32) *PostTagCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PostTagCreate) SetNillableTenantID(v *uint32) *PostTagCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPostID sets the "post_id" field.
 func (_c *PostTagCreate) SetPostID(v uint32) *PostTagCreate {
 	_c.mutation.SetPostID(v)
@@ -61,6 +75,9 @@ func (_c *PostTagCreate) Mutation() *PostTagMutation {
 
 // Save creates the PostTag in the database.
 func (_c *PostTagCreate) Save(ctx context.Context) (*PostTag, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -84,6 +101,15 @@ func (_c *PostTagCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *PostTagCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := posttag.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -135,6 +161,10 @@ func (_c *PostTagCreate) createSpec() (*PostTag, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(posttag.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(posttag.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
 		_spec.SetField(posttag.FieldPostID, field.TypeUint32, value)
@@ -251,6 +281,9 @@ func (u *PostTagUpsertOne) UpdateNewValues() *PostTagUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(posttag.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(posttag.FieldTenantID)
 		}
 	}))
 	return u
@@ -377,6 +410,7 @@ func (_c *PostTagCreateBulk) Save(ctx context.Context) ([]*PostTag, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PostTagMutation)
 				if !ok {
@@ -508,6 +542,9 @@ func (u *PostTagUpsertBulk) UpdateNewValues() *PostTagUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(posttag.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(posttag.FieldTenantID)
 			}
 		}
 	}))

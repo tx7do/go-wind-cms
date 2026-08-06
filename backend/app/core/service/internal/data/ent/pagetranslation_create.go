@@ -113,6 +113,20 @@ func (_c *PageTranslationCreate) SetSeo(v *contentpb.SeoMeta) *PageTranslationCr
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PageTranslationCreate) SetTenantID(v uint32) *PageTranslationCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PageTranslationCreate) SetNillableTenantID(v *uint32) *PageTranslationCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPageID sets the "page_id" field.
 func (_c *PageTranslationCreate) SetPageID(v uint32) *PageTranslationCreate {
 	_c.mutation.SetPageID(v)
@@ -224,6 +238,9 @@ func (_c *PageTranslationCreate) Mutation() *PageTranslationMutation {
 
 // Save creates the PageTranslation in the database.
 func (_c *PageTranslationCreate) Save(ctx context.Context) (*PageTranslation, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -247,6 +264,15 @@ func (_c *PageTranslationCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *PageTranslationCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := pagetranslation.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -321,6 +347,10 @@ func (_c *PageTranslationCreate) createSpec() (*PageTranslation, *sqlgraph.Creat
 	if value, ok := _c.mutation.Seo(); ok {
 		_spec.SetField(pagetranslation.FieldSeo, field.TypeJSON, value)
 		_node.Seo = value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(pagetranslation.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PageID(); ok {
 		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
@@ -679,6 +709,9 @@ func (u *PageTranslationUpsertOne) UpdateNewValues() *PageTranslationUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(pagetranslation.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(pagetranslation.FieldTenantID)
 		}
 	}))
 	return u
@@ -1064,6 +1097,7 @@ func (_c *PageTranslationCreateBulk) Save(ctx context.Context) ([]*PageTranslati
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PageTranslationMutation)
 				if !ok {
@@ -1195,6 +1229,9 @@ func (u *PageTranslationUpsertBulk) UpdateNewValues() *PageTranslationUpsertBulk
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(pagetranslation.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(pagetranslation.FieldTenantID)
 			}
 		}
 	}))

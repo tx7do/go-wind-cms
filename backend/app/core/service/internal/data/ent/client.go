@@ -786,7 +786,8 @@ func (c *APIClient) GetX(ctx context.Context, id uint32) *Api {
 
 // Hooks returns the client hooks.
 func (c *APIClient) Hooks() []Hook {
-	return c.hooks.Api
+	hooks := c.hooks.Api
+	return append(hooks[:len(hooks):len(hooks)], api.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1085,7 +1086,8 @@ func (c *CategoryClient) QueryChildren(_m *Category) *CategoryQuery {
 
 // Hooks returns the client hooks.
 func (c *CategoryClient) Hooks() []Hook {
-	return c.hooks.Category
+	hooks := c.hooks.Category
+	return append(hooks[:len(hooks):len(hooks)], category.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1218,7 +1220,8 @@ func (c *CategoryTranslationClient) GetX(ctx context.Context, id uint32) *Catego
 
 // Hooks returns the client hooks.
 func (c *CategoryTranslationClient) Hooks() []Hook {
-	return c.hooks.CategoryTranslation
+	hooks := c.hooks.CategoryTranslation
+	return append(hooks[:len(hooks):len(hooks)], categorytranslation.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1383,7 +1386,8 @@ func (c *CommentClient) QueryChildren(_m *Comment) *CommentQuery {
 
 // Hooks returns the client hooks.
 func (c *CommentClient) Hooks() []Hook {
-	return c.hooks.Comment
+	hooks := c.hooks.Comment
+	return append(hooks[:len(hooks):len(hooks)], comment.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -3053,7 +3057,8 @@ func (c *MediaAssetClient) GetX(ctx context.Context, id uint32) *MediaAsset {
 
 // Hooks returns the client hooks.
 func (c *MediaAssetClient) Hooks() []Hook {
-	return c.hooks.MediaAsset
+	hooks := c.hooks.MediaAsset
+	return append(hooks[:len(hooks):len(hooks)], mediaasset.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -3186,7 +3191,8 @@ func (c *MediaVariantClient) GetX(ctx context.Context, id uint32) *MediaVariant 
 
 // Hooks returns the client hooks.
 func (c *MediaVariantClient) Hooks() []Hook {
-	return c.hooks.MediaVariant
+	hooks := c.hooks.MediaVariant
+	return append(hooks[:len(hooks):len(hooks)], mediavariant.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -3887,7 +3893,8 @@ func (c *MenuClient) QueryChildren(_m *Menu) *MenuQuery {
 
 // Hooks returns the client hooks.
 func (c *MenuClient) Hooks() []Hook {
-	return c.hooks.Menu
+	hooks := c.hooks.Menu
+	return append(hooks[:len(hooks):len(hooks)], menu.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4020,7 +4027,8 @@ func (c *NavigationClient) GetX(ctx context.Context, id uint32) *Navigation {
 
 // Hooks returns the client hooks.
 func (c *NavigationClient) Hooks() []Hook {
-	return c.hooks.Navigation
+	hooks := c.hooks.Navigation
+	return append(hooks[:len(hooks):len(hooks)], navigation.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4185,7 +4193,8 @@ func (c *NavigationItemClient) QueryChildren(_m *NavigationItem) *NavigationItem
 
 // Hooks returns the client hooks.
 func (c *NavigationItemClient) Hooks() []Hook {
-	return c.hooks.NavigationItem
+	hooks := c.hooks.NavigationItem
+	return append(hooks[:len(hooks):len(hooks)], navigationitem.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4650,7 +4659,8 @@ func (c *PageClient) QueryChildren(_m *Page) *PageQuery {
 
 // Hooks returns the client hooks.
 func (c *PageClient) Hooks() []Hook {
-	return c.hooks.Page
+	hooks := c.hooks.Page
+	return append(hooks[:len(hooks):len(hooks)], page.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4783,7 +4793,8 @@ func (c *PageTranslationClient) GetX(ctx context.Context, id uint32) *PageTransl
 
 // Hooks returns the client hooks.
 func (c *PageTranslationClient) Hooks() []Hook {
-	return c.hooks.PageTranslation
+	hooks := c.hooks.PageTranslation
+	return append(hooks[:len(hooks):len(hooks)], pagetranslation.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -4916,7 +4927,8 @@ func (c *PermissionClient) GetX(ctx context.Context, id uint32) *Permission {
 
 // Hooks returns the client hooks.
 func (c *PermissionClient) Hooks() []Hook {
-	return c.hooks.Permission
+	hooks := c.hooks.Permission
+	return append(hooks[:len(hooks):len(hooks)], permission.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -5049,7 +5061,8 @@ func (c *PermissionApiClient) GetX(ctx context.Context, id uint32) *PermissionAp
 
 // Hooks returns the client hooks.
 func (c *PermissionApiClient) Hooks() []Hook {
-	return c.hooks.PermissionApi
+	hooks := c.hooks.PermissionApi
+	return append(hooks[:len(hooks):len(hooks)], permissionapi.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -5348,7 +5361,8 @@ func (c *PermissionGroupClient) QueryChildren(_m *PermissionGroup) *PermissionGr
 
 // Hooks returns the client hooks.
 func (c *PermissionGroupClient) Hooks() []Hook {
-	return c.hooks.PermissionGroup
+	hooks := c.hooks.PermissionGroup
+	return append(hooks[:len(hooks):len(hooks)], permissiongroup.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -5481,7 +5495,8 @@ func (c *PermissionMenuClient) GetX(ctx context.Context, id uint32) *PermissionM
 
 // Hooks returns the client hooks.
 func (c *PermissionMenuClient) Hooks() []Hook {
-	return c.hooks.PermissionMenu
+	hooks := c.hooks.PermissionMenu
+	return append(hooks[:len(hooks):len(hooks)], permissionmenu.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -5614,7 +5629,8 @@ func (c *PermissionPolicyClient) GetX(ctx context.Context, id uint32) *Permissio
 
 // Hooks returns the client hooks.
 func (c *PermissionPolicyClient) Hooks() []Hook {
-	return c.hooks.PermissionPolicy
+	hooks := c.hooks.PermissionPolicy
+	return append(hooks[:len(hooks):len(hooks)], permissionpolicy.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -6015,7 +6031,8 @@ func (c *PostClient) GetX(ctx context.Context, id uint32) *Post {
 
 // Hooks returns the client hooks.
 func (c *PostClient) Hooks() []Hook {
-	return c.hooks.Post
+	hooks := c.hooks.Post
+	return append(hooks[:len(hooks):len(hooks)], post.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -6148,7 +6165,8 @@ func (c *PostCategoryClient) GetX(ctx context.Context, id uint32) *PostCategory 
 
 // Hooks returns the client hooks.
 func (c *PostCategoryClient) Hooks() []Hook {
-	return c.hooks.PostCategory
+	hooks := c.hooks.PostCategory
+	return append(hooks[:len(hooks):len(hooks)], postcategory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -6281,7 +6299,8 @@ func (c *PostTagClient) GetX(ctx context.Context, id uint32) *PostTag {
 
 // Hooks returns the client hooks.
 func (c *PostTagClient) Hooks() []Hook {
-	return c.hooks.PostTag
+	hooks := c.hooks.PostTag
+	return append(hooks[:len(hooks):len(hooks)], posttag.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -6414,7 +6433,8 @@ func (c *PostTranslationClient) GetX(ctx context.Context, id uint32) *PostTransl
 
 // Hooks returns the client hooks.
 func (c *PostTranslationClient) Hooks() []Hook {
-	return c.hooks.PostTranslation
+	hooks := c.hooks.PostTranslation
+	return append(hooks[:len(hooks):len(hooks)], posttranslation.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -6949,7 +6969,8 @@ func (c *SectionClient) GetX(ctx context.Context, id uint32) *Section {
 
 // Hooks returns the client hooks.
 func (c *SectionClient) Hooks() []Hook {
-	return c.hooks.Section
+	hooks := c.hooks.Section
+	return append(hooks[:len(hooks):len(hooks)], section.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -7082,7 +7103,8 @@ func (c *SectionTranslationClient) GetX(ctx context.Context, id uint32) *Section
 
 // Hooks returns the client hooks.
 func (c *SectionTranslationClient) Hooks() []Hook {
-	return c.hooks.SectionTranslation
+	hooks := c.hooks.SectionTranslation
+	return append(hooks[:len(hooks):len(hooks)], sectiontranslation.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -7349,7 +7371,8 @@ func (c *SiteSettingClient) GetX(ctx context.Context, id uint32) *SiteSetting {
 
 // Hooks returns the client hooks.
 func (c *SiteSettingClient) Hooks() []Hook {
-	return c.hooks.SiteSetting
+	hooks := c.hooks.SiteSetting
+	return append(hooks[:len(hooks):len(hooks)], sitesetting.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -7482,7 +7505,8 @@ func (c *TagClient) GetX(ctx context.Context, id uint32) *Tag {
 
 // Hooks returns the client hooks.
 func (c *TagClient) Hooks() []Hook {
-	return c.hooks.Tag
+	hooks := c.hooks.Tag
+	return append(hooks[:len(hooks):len(hooks)], tag.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -7615,7 +7639,8 @@ func (c *TagTranslationClient) GetX(ctx context.Context, id uint32) *TagTranslat
 
 // Hooks returns the client hooks.
 func (c *TagTranslationClient) Hooks() []Hook {
-	return c.hooks.TagTranslation
+	hooks := c.hooks.TagTranslation
+	return append(hooks[:len(hooks):len(hooks)], tagtranslation.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

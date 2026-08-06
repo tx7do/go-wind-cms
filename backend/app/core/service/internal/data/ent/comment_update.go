@@ -751,6 +751,9 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(comment.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(comment.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.ContentType(); ok {
 		_spec.SetField(comment.FieldContentType, field.TypeEnum, value)
 	}
@@ -1730,6 +1733,9 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 	}
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(comment.FieldDeletedBy, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(comment.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.ContentType(); ok {
 		_spec.SetField(comment.FieldContentType, field.TypeEnum, value)

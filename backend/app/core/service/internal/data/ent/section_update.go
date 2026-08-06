@@ -367,6 +367,9 @@ func (_u *SectionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(section.FieldSortOrder, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(section.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(section.FieldPageID, field.TypeUint32, value)
 	}
@@ -783,6 +786,9 @@ func (_u *SectionUpdateOne) sqlSave(ctx context.Context) (_node *Section, err er
 	}
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(section.FieldSortOrder, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(section.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
 		_spec.SetField(section.FieldPageID, field.TypeUint32, value)

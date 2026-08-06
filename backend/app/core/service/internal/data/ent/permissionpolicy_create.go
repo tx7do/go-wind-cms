@@ -120,6 +120,20 @@ func (_c *PermissionPolicyCreate) SetNillableStatus(v *permissionpolicy.Status) 
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PermissionPolicyCreate) SetTenantID(v uint32) *PermissionPolicyCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PermissionPolicyCreate) SetNillableTenantID(v *uint32) *PermissionPolicyCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetPermissionID sets the "permission_id" field.
 func (_c *PermissionPolicyCreate) SetPermissionID(v uint32) *PermissionPolicyCreate {
 	_c.mutation.SetPermissionID(v)
@@ -209,7 +223,9 @@ func (_c *PermissionPolicyCreate) Mutation() *PermissionPolicyMutation {
 
 // Save creates the PermissionPolicy in the database.
 func (_c *PermissionPolicyCreate) Save(ctx context.Context) (*PermissionPolicy, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -236,10 +252,14 @@ func (_c *PermissionPolicyCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *PermissionPolicyCreate) defaults() {
+func (_c *PermissionPolicyCreate) defaults() error {
 	if _, ok := _c.mutation.Status(); !ok {
 		v := permissionpolicy.DefaultStatus
 		_c.mutation.SetStatus(v)
+	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := permissionpolicy.DefaultTenantID
+		_c.mutation.SetTenantID(v)
 	}
 	if _, ok := _c.mutation.PolicyEngine(); !ok {
 		v := permissionpolicy.DefaultPolicyEngine
@@ -257,6 +277,7 @@ func (_c *PermissionPolicyCreate) defaults() {
 		v := permissionpolicy.DefaultCacheTTL
 		_c.mutation.SetCacheTTL(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -354,6 +375,10 @@ func (_c *PermissionPolicyCreate) createSpec() (*PermissionPolicy, *sqlgraph.Cre
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(permissionpolicy.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(permissionpolicy.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PermissionID(); ok {
 		_spec.SetField(permissionpolicy.FieldPermissionID, field.TypeUint32, value)
@@ -672,6 +697,9 @@ func (u *PermissionPolicyUpsertOne) UpdateNewValues() *PermissionPolicyUpsertOne
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(permissionpolicy.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(permissionpolicy.FieldTenantID)
 		}
 	}))
 	return u
@@ -1147,6 +1175,9 @@ func (u *PermissionPolicyUpsertBulk) UpdateNewValues() *PermissionPolicyUpsertBu
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(permissionpolicy.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(permissionpolicy.FieldTenantID)
 			}
 		}
 	}))

@@ -32,6 +32,8 @@ type PermissionPolicy struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 状态
 	Status *permissionpolicy.Status `json:"status,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 权限ID（关联sys_permissions.id）
 	PermissionID *uint32 `json:"permission_id,omitempty"`
 	// 策略引擎
@@ -52,7 +54,7 @@ func (*PermissionPolicy) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case permissionpolicy.FieldID, permissionpolicy.FieldCreatedBy, permissionpolicy.FieldUpdatedBy, permissionpolicy.FieldDeletedBy, permissionpolicy.FieldPermissionID, permissionpolicy.FieldVersion, permissionpolicy.FieldEvalOrder, permissionpolicy.FieldCacheTTL:
+		case permissionpolicy.FieldID, permissionpolicy.FieldCreatedBy, permissionpolicy.FieldUpdatedBy, permissionpolicy.FieldDeletedBy, permissionpolicy.FieldTenantID, permissionpolicy.FieldPermissionID, permissionpolicy.FieldVersion, permissionpolicy.FieldEvalOrder, permissionpolicy.FieldCacheTTL:
 			values[i] = new(sql.NullInt64)
 		case permissionpolicy.FieldStatus, permissionpolicy.FieldPolicyEngine, permissionpolicy.FieldDefinition:
 			values[i] = new(sql.NullString)
@@ -127,6 +129,13 @@ func (_m *PermissionPolicy) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Status = new(permissionpolicy.Status)
 				*_m.Status = permissionpolicy.Status(value.String)
+			}
+		case permissionpolicy.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case permissionpolicy.FieldPermissionID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -238,6 +247,11 @@ func (_m *PermissionPolicy) String() string {
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

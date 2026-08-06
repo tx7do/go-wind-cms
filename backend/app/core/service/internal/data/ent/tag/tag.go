@@ -5,6 +5,7 @@ package tag
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -27,6 +28,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldSortOrder holds the string denoting the sort_order field in the database.
 	FieldSortOrder = "sort_order"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldColor holds the string denoting the color field in the database.
@@ -55,6 +58,7 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedBy,
 	FieldSortOrder,
+	FieldTenantID,
 	FieldStatus,
 	FieldColor,
 	FieldIcon,
@@ -74,9 +78,18 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// DefaultIsFeatured holds the default value on creation for the "is_featured" field.
 	DefaultIsFeatured bool
 	// DefaultPostCount holds the default value on creation for the "post_count" field.
@@ -153,6 +166,11 @@ func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 // BySortOrder orders the results by the sort_order field.
 func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSortOrder, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

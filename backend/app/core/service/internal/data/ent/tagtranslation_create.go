@@ -113,6 +113,20 @@ func (_c *TagTranslationCreate) SetSeo(v *contentpb.SeoMeta) *TagTranslationCrea
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *TagTranslationCreate) SetTenantID(v uint32) *TagTranslationCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *TagTranslationCreate) SetNillableTenantID(v *uint32) *TagTranslationCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetTagID sets the "tag_id" field.
 func (_c *TagTranslationCreate) SetTagID(v uint32) *TagTranslationCreate {
 	_c.mutation.SetTagID(v)
@@ -224,6 +238,9 @@ func (_c *TagTranslationCreate) Mutation() *TagTranslationMutation {
 
 // Save creates the TagTranslation in the database.
 func (_c *TagTranslationCreate) Save(ctx context.Context) (*TagTranslation, error) {
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -247,6 +264,15 @@ func (_c *TagTranslationCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_c *TagTranslationCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := tagtranslation.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -321,6 +347,10 @@ func (_c *TagTranslationCreate) createSpec() (*TagTranslation, *sqlgraph.CreateS
 	if value, ok := _c.mutation.Seo(); ok {
 		_spec.SetField(tagtranslation.FieldSeo, field.TypeJSON, value)
 		_node.Seo = value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(tagtranslation.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.TagID(); ok {
 		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint32, value)
@@ -679,6 +709,9 @@ func (u *TagTranslationUpsertOne) UpdateNewValues() *TagTranslationUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(tagtranslation.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(tagtranslation.FieldTenantID)
 		}
 	}))
 	return u
@@ -1064,6 +1097,7 @@ func (_c *TagTranslationCreateBulk) Save(ctx context.Context) ([]*TagTranslation
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TagTranslationMutation)
 				if !ok {
@@ -1195,6 +1229,9 @@ func (u *TagTranslationUpsertBulk) UpdateNewValues() *TagTranslationUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(tagtranslation.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(tagtranslation.FieldTenantID)
 			}
 		}
 	}))

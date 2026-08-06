@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/permissiongroup"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
@@ -400,6 +401,12 @@ func (_q *PermissionGroupQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if permissiongroup.Policy == nil {
+		return errors.New("ent: uninitialized permissiongroup.Policy (forgotten import ent/runtime?)")
+	}
+	if err := permissiongroup.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

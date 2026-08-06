@@ -89,6 +89,11 @@ func SortOrder(v uint32) predicate.Section {
 	return predicate.Section(sql.FieldEQ(FieldSortOrder, v))
 }
 
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v uint32) predicate.Section {
+	return predicate.Section(sql.FieldEQ(FieldTenantID, v))
+}
+
 // PageID applies equality check predicate on the "page_id" field. It's identical to PageIDEQ.
 func PageID(v uint32) predicate.Section {
 	return predicate.Section(sql.FieldEQ(FieldPageID, v))
@@ -447,6 +452,56 @@ func SortOrderIsNil() predicate.Section {
 // SortOrderNotNil applies the NotNil predicate on the "sort_order" field.
 func SortOrderNotNil() predicate.Section {
 	return predicate.Section(sql.FieldNotNull(FieldSortOrder))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v uint32) predicate.Section {
+	return predicate.Section(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v uint32) predicate.Section {
+	return predicate.Section(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...uint32) predicate.Section {
+	return predicate.Section(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...uint32) predicate.Section {
+	return predicate.Section(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDGT applies the GT predicate on the "tenant_id" field.
+func TenantIDGT(v uint32) predicate.Section {
+	return predicate.Section(sql.FieldGT(FieldTenantID, v))
+}
+
+// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
+func TenantIDGTE(v uint32) predicate.Section {
+	return predicate.Section(sql.FieldGTE(FieldTenantID, v))
+}
+
+// TenantIDLT applies the LT predicate on the "tenant_id" field.
+func TenantIDLT(v uint32) predicate.Section {
+	return predicate.Section(sql.FieldLT(FieldTenantID, v))
+}
+
+// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
+func TenantIDLTE(v uint32) predicate.Section {
+	return predicate.Section(sql.FieldLTE(FieldTenantID, v))
+}
+
+// TenantIDIsNil applies the IsNil predicate on the "tenant_id" field.
+func TenantIDIsNil() predicate.Section {
+	return predicate.Section(sql.FieldIsNull(FieldTenantID))
+}
+
+// TenantIDNotNil applies the NotNil predicate on the "tenant_id" field.
+func TenantIDNotNil() predicate.Section {
+	return predicate.Section(sql.FieldNotNull(FieldTenantID))
 }
 
 // PageIDEQ applies the EQ predicate on the "page_id" field.

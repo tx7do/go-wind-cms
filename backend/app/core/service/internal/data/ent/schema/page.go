@@ -128,6 +128,7 @@ func (Page) Mixin() []ent.Mixin {
 		mixin.TreePath{},
 		mixin.Tree[Page]{},
 		appMixin.EditorType{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

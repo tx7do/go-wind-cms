@@ -12,6 +12,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/tx7do/go-crud/viewer"
+
 	"go-wind-cms/app/core/service/internal/data"
 
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
@@ -179,6 +181,13 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 	if req == nil {
 		return nil, internalMessageV1.ErrorBadRequest("invalid request")
 	}
+
+	// 从 viewer context 获取发送者的租户 ID，用于限定消息发送范围
+	senderTenantID := uint32(0)
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		senderTenantID = uint32(vc.TenantID())
+	}
+
 	now := time.Now()
 
 	var err error
@@ -198,12 +207,17 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 		return nil, err
 	}
 
+	// 平台管理员（tenant_id=0）可向所有租户用户发送；普通租户用户只能向本租户用户发送
 	if req.GetTargetAll() {
 		users, err := s.userRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: trans.Ptr(true)})
 		if err != nil {
 			s.log.Errorf("send message failed, list users failed, %s", err)
 		} else {
 			for _, user := range users.Items {
+				// 非平台上下文时，跳过其他租户的用户
+				if senderTenantID != 0 && user.GetTenantId() != senderTenantID {
+					continue
+				}
 				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), req.GetSendUserId(), &now, msg.GetTitle(), msg.GetContent())
 			}
 		}

@@ -281,6 +281,9 @@ func (_u *PermissionMenuUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(permissionmenu.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(permissionmenu.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.PermissionID(); ok {
 		_spec.SetField(permissionmenu.FieldPermissionID, field.TypeUint32, value)
 	}
@@ -596,6 +599,9 @@ func (_u *PermissionMenuUpdateOne) sqlSave(ctx context.Context) (_node *Permissi
 	}
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(permissionmenu.FieldDeletedBy, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(permissionmenu.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.PermissionID(); ok {
 		_spec.SetField(permissionmenu.FieldPermissionID, field.TypeUint32, value)

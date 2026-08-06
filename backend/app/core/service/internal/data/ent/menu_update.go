@@ -505,6 +505,9 @@ func (_u *MenuUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(menu.FieldStatus, field.TypeEnum, value)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(menu.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(menu.FieldType, field.TypeEnum, value)
 	}
@@ -1147,6 +1150,9 @@ func (_u *MenuUpdateOne) sqlSave(ctx context.Context) (_node *Menu, err error) {
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(menu.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(menu.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(menu.FieldType, field.TypeEnum, value)

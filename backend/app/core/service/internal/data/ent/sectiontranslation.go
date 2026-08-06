@@ -31,6 +31,8 @@ type SectionTranslation struct {
 	UpdatedBy *uint32 `json:"updated_by,omitempty"`
 	// 删除者ID
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 关联的区块ID
 	SectionID *uint32 `json:"section_id,omitempty"`
 	// 语言代码
@@ -47,7 +49,7 @@ func (*SectionTranslation) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case sectiontranslation.FieldContent:
 			values[i] = new([]byte)
-		case sectiontranslation.FieldID, sectiontranslation.FieldCreatedBy, sectiontranslation.FieldUpdatedBy, sectiontranslation.FieldDeletedBy, sectiontranslation.FieldSectionID:
+		case sectiontranslation.FieldID, sectiontranslation.FieldCreatedBy, sectiontranslation.FieldUpdatedBy, sectiontranslation.FieldDeletedBy, sectiontranslation.FieldTenantID, sectiontranslation.FieldSectionID:
 			values[i] = new(sql.NullInt64)
 		case sectiontranslation.FieldLanguageCode:
 			values[i] = new(sql.NullString)
@@ -115,6 +117,13 @@ func (_m *SectionTranslation) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				_m.DeletedBy = new(uint32)
 				*_m.DeletedBy = uint32(value.Int64)
+			}
+		case sectiontranslation.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case sectiontranslation.FieldSectionID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -201,6 +210,11 @@ func (_m *SectionTranslation) String() string {
 	builder.WriteString(", ")
 	if v := _m.DeletedBy; v != nil {
 		builder.WriteString("deleted_by=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

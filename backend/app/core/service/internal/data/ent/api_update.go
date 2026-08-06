@@ -414,6 +414,9 @@ func (_u *APIUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(api.FieldStatus, field.TypeEnum, value)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(api.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(api.FieldDescription, field.TypeString, value)
 	}
@@ -892,6 +895,9 @@ func (_u *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(api.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(api.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(api.FieldDescription, field.TypeString, value)

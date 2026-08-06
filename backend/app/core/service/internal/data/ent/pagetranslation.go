@@ -34,6 +34,8 @@ type PageTranslation struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// SEO 结构化元数据
 	Seo *contentpb.SeoMeta `json:"seo,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 关联的页面ID
 	PageID *uint32 `json:"page_id,omitempty"`
 	// 语言代码
@@ -58,7 +60,7 @@ func (*PageTranslation) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case pagetranslation.FieldSeo:
 			values[i] = new([]byte)
-		case pagetranslation.FieldID, pagetranslation.FieldCreatedBy, pagetranslation.FieldUpdatedBy, pagetranslation.FieldDeletedBy, pagetranslation.FieldPageID:
+		case pagetranslation.FieldID, pagetranslation.FieldCreatedBy, pagetranslation.FieldUpdatedBy, pagetranslation.FieldDeletedBy, pagetranslation.FieldTenantID, pagetranslation.FieldPageID:
 			values[i] = new(sql.NullInt64)
 		case pagetranslation.FieldLanguageCode, pagetranslation.FieldTitle, pagetranslation.FieldSlug, pagetranslation.FieldThumbnail, pagetranslation.FieldCoverImage, pagetranslation.FieldFullPath:
 			values[i] = new(sql.NullString)
@@ -134,6 +136,13 @@ func (_m *PageTranslation) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &_m.Seo); err != nil {
 					return fmt.Errorf("unmarshal field seo: %w", err)
 				}
+			}
+		case pagetranslation.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case pagetranslation.FieldPageID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -252,6 +261,11 @@ func (_m *PageTranslation) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("seo=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Seo))
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	if v := _m.PageID; v != nil {
 		builder.WriteString("page_id=")

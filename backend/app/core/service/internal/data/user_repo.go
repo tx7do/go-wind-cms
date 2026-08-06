@@ -33,6 +33,7 @@ import (
 )
 
 type UserRepo interface {
+	BeginTx(ctx context.Context) (tx *ent.Tx, cleanup func(), err error)
 	List(ctx context.Context, req *paginationV1.PagingRequest) (*identityV1.ListUserResponse, error)
 
 	Get(ctx context.Context, req *identityV1.GetUserRequest) (*identityV1.User, error)
@@ -562,6 +563,31 @@ func (r *userRepo) CreateWithTx(ctx context.Context, tx *ent.Tx, data *identityV
 	}
 
 	return r.mapper.ToDTO(entity), nil
+}
+
+// BeginTx 启动一个数据库事务，返回事务对象和清理函数。
+// 清理函数根据 err 是否为 nil 决定回滚或提交。
+func (r *userRepo) BeginTx(ctx context.Context) (tx *ent.Tx, cleanup func(), err error) {
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return nil, nil, identityV1.ErrorInternalServerError("start transaction failed")
+	}
+
+	cleanup = func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = identityV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}
+
+	return tx, cleanup, nil
 }
 
 // Update 更新用户

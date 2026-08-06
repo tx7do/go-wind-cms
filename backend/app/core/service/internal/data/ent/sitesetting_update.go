@@ -491,6 +491,9 @@ func (_u *SiteSettingUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(sitesetting.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(sitesetting.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.SiteID(); ok {
 		_spec.SetField(sitesetting.FieldSiteID, field.TypeUint32, value)
 	}
@@ -1079,6 +1082,9 @@ func (_u *SiteSettingUpdateOne) sqlSave(ctx context.Context) (_node *SiteSetting
 	}
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(sitesetting.FieldDeletedBy, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(sitesetting.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.SiteID(); ok {
 		_spec.SetField(sitesetting.FieldSiteID, field.TypeUint32, value)

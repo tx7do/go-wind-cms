@@ -5,6 +5,7 @@ package permissiongroup
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -36,6 +37,8 @@ const (
 	FieldParentID = "parent_id"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldModule holds the string denoting the module field in the database.
@@ -70,6 +73,7 @@ var Columns = []string{
 	FieldSortOrder,
 	FieldParentID,
 	FieldPath,
+	FieldTenantID,
 	FieldName,
 	FieldModule,
 }
@@ -84,11 +88,20 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.
 	PathValidator func(string) error
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint32
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -182,6 +195,11 @@ func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 // ByPath orders the results by the path field.
 func ByPath(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.

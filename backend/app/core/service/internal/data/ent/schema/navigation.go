@@ -67,6 +67,7 @@ func (Navigation) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

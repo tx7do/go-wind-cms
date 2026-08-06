@@ -32,6 +32,8 @@ type Comment struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// 父节点ID
 	ParentID *uint32 `json:"parent_id,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 内容类型
 	ContentType *comment.ContentType `json:"content_type,omitempty"`
 	// 对象ID
@@ -114,7 +116,7 @@ func (*Comment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case comment.FieldIsSpam, comment.FieldIsSticky:
 			values[i] = new(sql.NullBool)
-		case comment.FieldID, comment.FieldCreatedBy, comment.FieldUpdatedBy, comment.FieldDeletedBy, comment.FieldParentID, comment.FieldObjectID, comment.FieldAuthorID, comment.FieldLikeCount, comment.FieldDislikeCount, comment.FieldReplyCount, comment.FieldReplyToID:
+		case comment.FieldID, comment.FieldCreatedBy, comment.FieldUpdatedBy, comment.FieldDeletedBy, comment.FieldParentID, comment.FieldTenantID, comment.FieldObjectID, comment.FieldAuthorID, comment.FieldLikeCount, comment.FieldDislikeCount, comment.FieldReplyCount, comment.FieldReplyToID:
 			values[i] = new(sql.NullInt64)
 		case comment.FieldContentType, comment.FieldContent, comment.FieldAuthorName, comment.FieldAuthorEmail, comment.FieldAuthorURL, comment.FieldAuthorType, comment.FieldStatus, comment.FieldIPAddress, comment.FieldLocation, comment.FieldUserAgent, comment.FieldDetectedLanguage:
 			values[i] = new(sql.NullString)
@@ -189,6 +191,13 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.ParentID = new(uint32)
 				*_m.ParentID = uint32(value.Int64)
+			}
+		case comment.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
 			}
 		case comment.FieldContentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -401,6 +410,11 @@ func (_m *Comment) String() string {
 	builder.WriteString(", ")
 	if v := _m.ParentID; v != nil {
 		builder.WriteString("parent_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

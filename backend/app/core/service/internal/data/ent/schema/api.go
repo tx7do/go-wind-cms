@@ -78,6 +78,7 @@ func (Api) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID{},
 		mixin.SwitchStatus{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

@@ -162,6 +162,20 @@ func (_c *PageCreate) SetNillableEditorType(v *page.EditorType) *PageCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *PageCreate) SetTenantID(v uint32) *PageCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *PageCreate) SetNillableTenantID(v *uint32) *PageCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *PageCreate) SetStatus(v page.Status) *PageCreate {
 	_c.mutation.SetStatus(v)
@@ -369,7 +383,9 @@ func (_c *PageCreate) Mutation() *PageMutation {
 
 // Save creates the Page in the database.
 func (_c *PageCreate) Save(ctx context.Context) (*Page, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -396,7 +412,7 @@ func (_c *PageCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *PageCreate) defaults() {
+func (_c *PageCreate) defaults() error {
 	if _, ok := _c.mutation.SortOrder(); !ok {
 		v := page.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
@@ -404,6 +420,10 @@ func (_c *PageCreate) defaults() {
 	if _, ok := _c.mutation.EditorType(); !ok {
 		v := page.DefaultEditorType
 		_c.mutation.SetEditorType(v)
+	}
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := page.DefaultTenantID
+		_c.mutation.SetTenantID(v)
 	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := page.DefaultStatus
@@ -437,6 +457,7 @@ func (_c *PageCreate) defaults() {
 		v := page.DefaultDepth
 		_c.mutation.SetDepth(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -534,6 +555,10 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.EditorType(); ok {
 		_spec.SetField(page.FieldEditorType, field.TypeEnum, value)
 		_node.EditorType = &value
+	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(page.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(page.FieldStatus, field.TypeEnum, value)
@@ -1129,6 +1154,9 @@ func (u *PageUpsertOne) UpdateNewValues() *PageUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(page.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(page.FieldTenantID)
 		}
 	}))
 	return u
@@ -1856,6 +1884,9 @@ func (u *PageUpsertBulk) UpdateNewValues() *PageUpsertBulk {
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(page.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(page.FieldTenantID)
 			}
 		}
 	}))

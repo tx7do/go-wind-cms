@@ -569,6 +569,9 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(navigationitem.FieldSortOrder, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(navigationitem.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.LinkType(); ok {
 		_spec.SetField(navigationitem.FieldLinkType, field.TypeEnum, value)
 	}
@@ -1300,6 +1303,9 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 	}
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(navigationitem.FieldSortOrder, field.TypeUint32)
+	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(navigationitem.FieldTenantID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.LinkType(); ok {
 		_spec.SetField(navigationitem.FieldLinkType, field.TypeEnum, value)
