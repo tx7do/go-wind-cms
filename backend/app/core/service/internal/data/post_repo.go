@@ -449,9 +449,10 @@ func (r *PostRepo) Create(ctx context.Context, req *contentV1.CreatePostRequest)
 		SetNillableAutoSummary(req.Data.AutoSummary).
 		SetNillableIsFeatured(req.Data.IsFeatured).
 		SetNillableSortOrder(req.Data.SortOrder).
-		SetNillableVisits(req.Data.Visits).
-		SetNillableLikes(req.Data.Likes).
-		SetNillableCommentCount(req.Data.CommentCount).
+		// 服务端计数器初始化为 0，不接受客户端值
+		SetVisits(0).
+		SetLikes(0).
+		SetCommentCount(0).
 		SetNillableAuthorID(req.Data.AuthorId).
 		SetNillableAuthorName(req.Data.AuthorName).
 		SetNillablePasswordHash(req.Data.PasswordHash).
@@ -588,6 +589,8 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 	builder := tx.Post.UpdateOneID(req.GetId())
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Post) {
+			// 服务端计数器（visits/likes/comment_count）不可由客户端通过 Update 设置，
+			// 仅能通过服务端专用的递增接口修改。
 			builder.
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableEditorType(r.editorTypeConverter.ToEntity(req.Data.EditorType)).
@@ -597,9 +600,6 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 				SetNillableAutoSummary(req.Data.AutoSummary).
 				SetNillableIsFeatured(req.Data.IsFeatured).
 				SetNillableSortOrder(req.Data.SortOrder).
-				SetNillableVisits(req.Data.Visits).
-				SetNillableLikes(req.Data.Likes).
-				SetNillableCommentCount(req.Data.CommentCount).
 				SetNillableAuthorID(req.Data.AuthorId).
 				SetNillableAuthorName(req.Data.AuthorName).
 				SetNillablePasswordHash(req.Data.PasswordHash).

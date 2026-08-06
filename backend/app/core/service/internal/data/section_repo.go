@@ -404,3 +404,38 @@ func (r *SectionRepo) DeleteTranslation(ctx context.Context, req *contentV1.Dele
 func (r *SectionRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, sectionID uint32) error {
 	return r.sectionTranslationRepo.CleanTranslations(ctx, tx, sectionID)
 }
+
+// CleanByPageID 删除指定页面下的所有 section 及其翻译。
+// 在页面删除时调用，防止 section 成为孤儿记录。
+func (r *SectionRepo) CleanByPageID(ctx context.Context, tx *ent.Tx, pageID uint32) error {
+	if pageID == 0 {
+		return nil
+	}
+
+	// 先查出所有 section ID，用于清理翻译
+	sectionIDs, err := tx.Section.Query().
+		Where(section.PageIDEQ(pageID)).
+		IDs(ctx)
+	if err != nil {
+		r.log.Errorf("query sections by page id failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("query sections by page id failed")
+	}
+
+	// 清理每个 section 的翻译
+	for _, sid := range sectionIDs {
+		if err := r.sectionTranslationRepo.CleanTranslations(ctx, tx, sid); err != nil {
+			r.log.Errorf("clean section translations failed for section %d: %s", sid, err.Error())
+			return contentV1.ErrorInternalServerError("clean section translations failed")
+		}
+	}
+
+	// 删除所有 section
+	if _, err := tx.Section.Delete().
+		Where(section.PageIDEQ(pageID)).
+		Exec(ctx); err != nil {
+		r.log.Errorf("delete sections by page id failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete sections by page id failed")
+	}
+
+	return nil
+}

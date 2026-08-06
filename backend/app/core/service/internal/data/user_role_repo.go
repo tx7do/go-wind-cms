@@ -20,6 +20,7 @@ type UserRoleRepo struct {
 	log             *log.Helper
 	entClient       *entCrud.EntClient[*ent.Client]
 	statusConverter *mapper.EnumTypeConverter[permissionV1.UserRole_Status, userrole.Status]
+	mapper          *mapper.CopierMapper[permissionV1.UserRole, ent.UserRole]
 }
 
 func NewUserRoleRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *UserRoleRepo {
@@ -30,7 +31,32 @@ func NewUserRoleRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.C
 			permissionV1.UserRole_Status_name,
 			permissionV1.UserRole_Status_value,
 		),
+		mapper: mapper.NewCopierMapper[permissionV1.UserRole, ent.UserRole](),
 	}
+}
+
+// AssignRolesToUser 在独立事务中为用户分配角色（替换旧关联）。
+// 用于 RoleService.AssignRolesToUser RPC，无需调用方提供事务。
+func (r *UserRoleRepo) AssignRolesToUser(ctx context.Context, userID uint32, datas []*permissionV1.UserRole) error {
+	tx, err := r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = permissionV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	return r.AssignUserRoles(ctx, tx, userID, datas)
 }
 
 // CleanRelationsByUserID 删除会员的所有角色关联
@@ -230,6 +256,38 @@ func (r *UserRoleRepo) ListRoleIDs(ctx context.Context, userID uint32, excludeEx
 		ids[i] = uint32(v)
 	}
 	return ids, nil
+}
+
+// ListByUserID 获取指定用户的全部 UserRole 绑定记录（含元数据）。
+func (r *UserRoleRepo) ListByUserID(ctx context.Context, userID uint32, includeExpired bool) ([]*permissionV1.UserRole, error) {
+	if userID == 0 {
+		return nil, nil
+	}
+
+	q := r.entClient.Client().UserRole.Query().
+		Where(userrole.UserIDEQ(userID))
+
+	if !includeExpired {
+		now := time.Now()
+		q = q.Where(
+			userrole.Or(
+				userrole.EndAtIsNil(),
+				userrole.EndAtGT(now),
+			),
+		)
+	}
+
+	entities, err := q.All(ctx)
+	if err != nil {
+		r.log.Errorf("query user roles by user id failed: %s", err.Error())
+		return nil, permissionV1.ErrorInternalServerError("query user roles failed")
+	}
+
+	dtos := make([]*permissionV1.UserRole, 0, len(entities))
+	for _, entity := range entities {
+		dtos = append(dtos, r.mapper.ToDTO(entity))
+	}
+	return dtos, nil
 }
 
 // ListUserIDs 获取角色关联的用户ID列表

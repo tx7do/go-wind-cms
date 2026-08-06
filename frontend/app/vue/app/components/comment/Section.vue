@@ -60,8 +60,7 @@ async function loadComments(reset = false) {
     }
 
     total.value = newTotal
-    const allComments = reset ? newComments : [...comments.value, ...newComments]
-    hasMore.value = allComments.length < newTotal
+    hasMore.value = comments.value.length < newTotal
     currentPage.value++
   } catch (error) {
     console.error('Load comments failed:', error)
@@ -127,9 +126,22 @@ async function handleSubmitComment() {
   }
 }
 
-async function handleReply(comment: any, content: string) {
+async function handleReply(comment: any, content: string, authorName: string, authorEmail: string) {
   if (!content.trim()) {
     alert(t('comment.empty_content'))
+    return
+  }
+  if (!authorName.trim()) {
+    alert(t('comment.invalid_nickname'))
+    return
+  }
+  if (!authorEmail.trim()) {
+    alert(t('comment.invalid_email'))
+    return
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(authorEmail)) {
+    alert(t('comment.invalid_email'))
     return
   }
   if (!props.objectId || submitting.value) return
@@ -140,8 +152,8 @@ async function handleReply(comment: any, content: string) {
       objectId: props.objectId,
       contentType: props.contentType ?? undefined,
       content: content.trim(),
-      authorName: comment.authorName,
-      authorEmail: comment.authorEmail,
+      authorName: authorName,
+      authorEmail: authorEmail,
       parentId: comment.id,
       replyToId: comment.id,
       status: 'STATUS_PENDING',

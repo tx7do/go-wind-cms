@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
+	"github.com/tx7do/go-utils/timeutil"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -298,6 +301,68 @@ func (s *RoleService) ListUserRoleIDs(ctx context.Context, req *permissionV1.Lis
 
 	return &permissionV1.ListUserRoleIDsResponse{
 		RoleIds: roleIDs,
+	}, nil
+}
+
+// AssignRolesToUser 为用户分配角色（替换旧关联）
+func (s *RoleService) AssignRolesToUser(ctx context.Context, req *permissionV1.AssignRolesToUserRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetUserId() == 0 || len(req.GetRoleIds()) == 0 {
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
+	}
+
+	now := time.Now()
+
+	userRoles := make([]*permissionV1.UserRole, 0, len(req.GetRoleIds()))
+	for _, roleID := range req.GetRoleIds() {
+		userRoles = append(userRoles, &permissionV1.UserRole{
+			TenantId:   trans.Ptr(req.GetTenantId()),
+			UserId:     trans.Ptr(req.GetUserId()),
+			RoleId:     trans.Ptr(roleID),
+			Status:     permissionV1.UserRole_ACTIVE.Enum(),
+			AssignedBy: trans.Ptr(req.GetOperatorId()),
+			AssignedAt: timeutil.TimeToTimestamppb(&now),
+			StartAt:    timeutil.TimeToTimestamppb(&now),
+			CreatedBy:  trans.Ptr(req.GetOperatorId()),
+		})
+	}
+
+	if err := s.userRoleRepo.AssignRolesToUser(ctx, req.GetUserId(), userRoles); err != nil {
+		s.log.Errorf("assign roles to user failed: %v", err)
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// GetUserRoles 获取用户的角色绑定列表
+func (s *RoleService) GetUserRoles(ctx context.Context, req *permissionV1.GetUserRolesRequest) (*permissionV1.GetUserRolesResponse, error) {
+	if req == nil || req.GetUserId() == 0 {
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
+	}
+
+	bindings, err := s.userRoleRepo.ListByUserID(ctx, req.GetUserId(), req.GetIncludeExpired())
+	if err != nil {
+		return nil, err
+	}
+
+	return &permissionV1.GetUserRolesResponse{
+		Bindings: bindings,
+	}, nil
+}
+
+// UnassignRolesFromUser 从用户移除指定角色
+func (s *RoleService) UnassignRolesFromUser(ctx context.Context, req *permissionV1.UnassignRolesFromUserRequest) (*permissionV1.UnassignRolesFromUserResponse, error) {
+	if req == nil || req.GetUserId() == 0 || len(req.GetRoleIds()) == 0 {
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
+	}
+
+	if err := s.userRoleRepo.RemoveRolesFromUser(ctx, req.GetUserId(), req.GetRoleIds()); err != nil {
+		s.log.Errorf("unassign roles from user failed: %v", err)
+		return nil, err
+	}
+
+	return &permissionV1.UnassignRolesFromUserResponse{
+		RemovedRoleIds: req.GetRoleIds(),
 	}, nil
 }
 

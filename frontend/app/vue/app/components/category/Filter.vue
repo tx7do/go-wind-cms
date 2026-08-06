@@ -114,6 +114,11 @@ onMounted(() => {
   }
 })
 
+onUnmounted(() => {
+  hideTimers.forEach((timer) => clearTimeout(timer))
+  hideTimers.clear()
+})
+
 // 子菜单 fixed 定位计算
 function submenuStyle(nodeId: number) {
   const el = document.querySelector(`[data-category-id="${nodeId}"]`)

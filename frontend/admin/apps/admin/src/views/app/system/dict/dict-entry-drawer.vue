@@ -286,7 +286,18 @@ function editRowEvent(row: DictEntryI18n) {
 async function saveRowEvent(row: DictEntryI18n) {
   await gridApi.grid?.clearEdit();
 
+  // 确保 data.value 和 data.value.row 存在，防止 create 模式下的 TypeError
+  if (!data.value || !data.value.row) {
+    notification.error({
+      message: $t('ui.notification.save_failed'),
+    });
+    return;
+  }
+
   if (row.languageCode !== undefined) {
+    if (!data.value.row.i18n) {
+      data.value.row.i18n = {};
+    }
     data.value.row.i18n[row.languageCode] = {
       languageCode: row.languageCode,
       entryLabel: row.entryLabel,

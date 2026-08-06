@@ -7,7 +7,7 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { apiClient } from '#/api';
+import { apiClient, makeUpdateMask } from '#/api';
 
 const data = ref();
 
@@ -39,8 +39,6 @@ const [Modal, modalApi] = useVbenModal({
   },
 
   async onConfirm() {
-    console.log('onConfirm');
-
     // 校验输入的数据
     const validate = await baseFormApi.validate();
     if (!validate.valid) {
@@ -52,32 +50,30 @@ const [Modal, modalApi] = useVbenModal({
     // 获取表单数据
     const values = await baseFormApi.getValues();
 
-    if (values.new_password !== values.confirm_password) {
-      notification.error({
-        message: $t('page.notification.password_mismatch'),
-      });
+    const postData = modalApi.getData<any>();
+    if (postData?.id) {
+      const data = {
+        summary: values.summary,
+      };
+      try {
+        await apiClient.postService.Update({
+          id: postData.id,
+          data,
+          updateMask: makeUpdateMask(Object.keys(data)),
+        });
 
-      setLoading(false);
-      modalApi.close();
-      return;
+        notification.success({
+          message: $t('ui.notification.update_success'),
+        });
+      } catch {
+        notification.error({
+          message: $t('ui.notification.update_failed'),
+        });
+      }
     }
 
-    try {
-      await apiClient.postService.Create({ data: values });
-
-      setLoading(false);
-      modalApi.close();
-
-      notification.success({
-        message: $t('ui.notification.create_success'),
-      });
-    } catch {
-      setLoading(false);
-
-      notification.error({
-        message: $t('ui.notification.create_failed'),
-      });
-    }
+    setLoading(false);
+    modalApi.close();
   },
 
   onOpenChange(isOpen: boolean) {

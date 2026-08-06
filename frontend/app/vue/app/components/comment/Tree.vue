@@ -5,7 +5,7 @@ import { formatDate } from '@/utils/date'
 
 const props = defineProps<{
   comments: any[]
-  onReply: (comment: any, content: string) => void
+  onReply: (comment: any, content: string, authorName: string, authorEmail: string) => void
   onLoadChildren: (comment: any) => Promise<void>
 }>()
 
@@ -13,6 +13,8 @@ const { t } = useI18n()
 
 const replyingCommentId = ref<number | null>(null)
 const replyContent = ref('')
+const replyAuthorName = ref('')
+const replyAuthorEmail = ref('')
 const submitting = ref(false)
 const expandedComments = ref<Set<number>>(new Set())
 const loadingChildren = ref<Set<number>>(new Set())
@@ -37,11 +39,15 @@ function isLoading(comment: any): boolean {
 function handleReply(comment: any) {
   replyingCommentId.value = comment.id || 0
   replyContent.value = ''
+  replyAuthorName.value = ''
+  replyAuthorEmail.value = ''
 }
 
 function cancelReply() {
   replyingCommentId.value = null
   replyContent.value = ''
+  replyAuthorName.value = ''
+  replyAuthorEmail.value = ''
 }
 
 async function submitReply(comment: any) {
@@ -49,10 +55,23 @@ async function submitReply(comment: any) {
     alert(t('comment.empty_content'))
     return
   }
+  if (!replyAuthorName.value.trim()) {
+    alert(t('comment.invalid_nickname'))
+    return
+  }
+  if (!replyAuthorEmail.value.trim()) {
+    alert(t('comment.invalid_email'))
+    return
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(replyAuthorEmail.value)) {
+    alert(t('comment.invalid_email'))
+    return
+  }
   if (submitting.value) return
   submitting.value = true
   try {
-    props.onReply(comment, replyContent.value.trim())
+    props.onReply(comment, replyContent.value.trim(), replyAuthorName.value.trim(), replyAuthorEmail.value.trim())
     cancelReply()
   } catch (error) {
     console.error('Submit reply failed:', error)
@@ -191,6 +210,31 @@ async function toggleExpand(comment: any) {
 
           <!-- Reply form -->
           <div v-if="replyingCommentId === comment.id" class="mt-4 border-t border-primary/8 pt-4 max-md:mt-3 max-md:pt-3">
+            <div class="grid grid-cols-2 gap-6 max-md:grid-cols-1 max-md:gap-4">
+              <input
+                v-model="replyAuthorName"
+                :placeholder="t('comment.nickname') + ' *'"
+                :class="cn(
+                  'w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground',
+                  'transition-all duration-300 hover:border-primary',
+                  'focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15',
+                  'disabled:cursor-not-allowed disabled:opacity-60',
+                )"
+                :disabled="submitting"
+              />
+              <input
+                v-model="replyAuthorEmail"
+                type="email"
+                :placeholder="t('comment.email') + ' *'"
+                :class="cn(
+                  'w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground',
+                  'transition-all duration-300 hover:border-primary',
+                  'focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15',
+                  'disabled:cursor-not-allowed disabled:opacity-60',
+                )"
+                :disabled="submitting"
+              />
+            </div>
             <textarea
               v-model="replyContent"
               rows="3"

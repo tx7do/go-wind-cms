@@ -355,6 +355,30 @@ func (r *RoleRepo) Get(ctx context.Context, req *permissionV1.GetRoleRequest) (*
 	return dto, err
 }
 
+// GetTenantRoleByCode 在指定租户内按 code 查找角色。
+// 使用显式 tenantID 而非 viewer context，用于注册流程中为新用户查找其租户的默认角色。
+func (r *RoleRepo) GetTenantRoleByCode(ctx context.Context, tenantID uint32, code string) (*permissionV1.Role, error) {
+	if tenantID == 0 || code == "" {
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
+	}
+
+	builder := r.entClient.Client().Role.Query().
+		Where(
+			role.TenantIDEQ(tenantID),
+			role.CodeEQ(code),
+			role.StatusEQ(role.StatusOn),
+		)
+
+	ret, err := r.repository.Get(ctx, builder, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.fillPermissionIDs(ctx, ret)
+
+	return ret, err
+}
+
 // GetTemplateRole 获取角色模板信息
 func (r *RoleRepo) GetTemplateRole(ctx context.Context, templateCode string) (*permissionV1.Role, error) {
 	if templateCode == "" {

@@ -376,11 +376,23 @@ func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authentic
 	}
 	defer func() { s.userRepo.FinishTx(tx, err) }()
 
+	// 查找租户的管理员角色，分配给新注册用户（否则用户无角色将无法登录）
+	var roleID *uint32
+	if tenantId != nil {
+		tenantRole, roleErr := s.roleRepo.GetTenantRoleByCode(ctx, *tenantId, constants.TenantAdminRoleCode)
+		if roleErr != nil {
+			s.log.Errorf("get tenant role for registration failed: %v", roleErr)
+		} else if tenantRole != nil && tenantRole.Id != nil {
+			roleID = tenantRole.Id
+		}
+	}
+
 	user, err := s.userRepo.CreateWithTx(ctx, tx, &identityV1.User{
 		TenantId: tenantId,
 		Username: trans.Ptr(req.Username),
 		Email:    req.Email,
 		Status:   trans.Ptr(identityV1.User_NORMAL),
+		RoleId:   roleID,
 	})
 	if err != nil {
 		s.log.Errorf("create user error: %v", err)

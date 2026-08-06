@@ -42,12 +42,14 @@ type PageRepo struct {
 	editorTypeConverter *mapper.EnumTypeConverter[contentV1.EditorType, page.EditorType]
 
 	pageTranslationRepo *PageTranslationRepo
+	sectionRepo         *SectionRepo
 }
 
 func NewPageRepo(
 	ctx *bootstrap.Context,
 	entClient *entCrud.EntClient[*ent.Client],
 	pageTranslationRepo *PageTranslationRepo,
+	sectionRepo *SectionRepo,
 ) *PageRepo {
 	repo := &PageRepo{
 		entClient: entClient,
@@ -63,6 +65,7 @@ func NewPageRepo(
 			contentV1.EditorType_name, contentV1.EditorType_value,
 		),
 		pageTranslationRepo: pageTranslationRepo,
+		sectionRepo:         sectionRepo,
 	}
 
 	repo.init()
@@ -234,7 +237,8 @@ func (r *PageRepo) Create(ctx context.Context, req *contentV1.CreatePageRequest)
 		SetNillableSortOrder(req.Data.SortOrder).
 		SetNillableTemplate(req.Data.Template).
 		SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
-		SetNillableVisits(req.Data.Visits).
+		// 服务端计数器初始化为 0，不接受客户端值
+		SetVisits(0).
 		SetNillableParentID(req.Data.ParentId).
 		SetNillableDepth(req.Data.Depth).
 		SetNillablePath(req.Data.Path).
@@ -342,7 +346,7 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 				SetNillableSortOrder(req.Data.SortOrder).
 				SetNillableTemplate(req.Data.Template).
 				SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
-				SetNillableVisits(req.Data.Visits).
+				// 服务端计数器不可由客户端通过 Update 设置
 				SetNillableParentID(req.Data.ParentId).
 				SetNillableDepth(req.Data.Depth).
 				SetNillablePath(req.Data.Path).
@@ -395,6 +399,12 @@ func (r *PageRepo) Delete(ctx context.Context, req *contentV1.DeletePageRequest)
 	if err = r.pageTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
 		r.log.Errorf("clean translations failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("clean translations failed")
+	}
+
+	// 清理该页面下的所有 section 及其翻译，防止孤儿记录
+	if err = r.sectionRepo.CleanByPageID(ctx, tx, req.GetId()); err != nil {
+		r.log.Errorf("clean sections by page id failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("clean sections by page id failed")
 	}
 
 	return nil
