@@ -41,8 +41,9 @@ func NewApiAuditLogService(
 }
 
 func (s *ApiAuditLogService) queryApis(ctx context.Context, path, method string) (*permissionV1.Api, error) {
+	// 双重检查 + 在锁内完成加载与快照，避免锁外读 s.apis 的数据竞争
+	s.apiMutex.Lock()
 	if len(s.apis) == 0 {
-		s.apiMutex.Lock()
 		apis, err := s.apiRepo.List(ctx, &paginationV1.PagingRequest{
 			NoPaging: trans.Ptr(true),
 		})
@@ -51,14 +52,17 @@ func (s *ApiAuditLogService) queryApis(ctx context.Context, path, method string)
 			return nil, err
 		}
 		s.apis = apis.Items
-		s.apiMutex.Unlock()
 	}
+	// 在锁内拷贝一份快照用于后续无锁遍历，避免遍历期间被并发加载修改
+	snapshot := make([]*permissionV1.Api, len(s.apis))
+	copy(snapshot, s.apis)
+	s.apiMutex.Unlock()
 
-	if len(s.apis) == 0 {
+	if len(snapshot) == 0 {
 		return nil, auditV1.ErrorNotFound("no apis found")
 	}
 
-	for _, api := range s.apis {
+	for _, api := range snapshot {
 		if api.GetPath() == path && api.GetMethod() == method {
 			return api, nil
 		}

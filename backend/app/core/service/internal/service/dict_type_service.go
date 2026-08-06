@@ -35,6 +35,17 @@ func (s *DictTypeService) List(ctx context.Context, req *paginationV1.PagingRequ
 	return s.dictTypeRepo.List(ctx, req)
 }
 
+func (s *DictTypeService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*dictV1.CountDictTypeResponse, error) {
+	count, err := s.dictTypeRepo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dictV1.CountDictTypeResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *DictTypeService) Get(ctx context.Context, req *dictV1.GetDictTypeRequest) (*dictV1.DictType, error) {
 	return s.dictTypeRepo.Get(ctx, req)
 }

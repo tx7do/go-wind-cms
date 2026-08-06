@@ -277,21 +277,15 @@ func (r *TenantRepo) Update(ctx context.Context, req *identityV1.UpdateTenantReq
 	builder := r.entClient.Client().Debug().Tenant.Update()
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *identityV1.Tenant) {
+			// 仅允许更新展示性字段；计费/生命周期/管理类字段
+			//（Status/Type/AuditStatus/SubscriptionPlan/ExpiredAt/SubscriptionAt/
+			// UnsubscribeAt/AdminUserID/Code/Domain）须由专门的平台管理端点修改，
+			// 防止租户管理员通过普通 Update 自我续期或提升套餐。
 			builder.
 				SetNillableName(req.Data.Name).
-				SetNillableCode(req.Data.Code).
-				SetNillableDomain(req.Data.Domain).
 				SetNillableLogoURL(req.Data.LogoUrl).
 				SetNillableRemark(req.Data.Remark).
 				SetNillableIndustry(req.Data.Industry).
-				SetNillableAdminUserID(req.Data.AdminUserId).
-				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
-				SetNillableType(r.typeConverter.ToEntity(req.Data.Type)).
-				SetNillableAuditStatus(r.auditStatusConverter.ToEntity(req.Data.AuditStatus)).
-				SetNillableSubscriptionPlan(req.Data.SubscriptionPlan).
-				SetNillableExpiredAt(timeutil.TimestamppbToTime(req.Data.ExpiredAt)).
-				SetNillableSubscriptionAt(timeutil.TimestamppbToTime(req.Data.SubscriptionAt)).
-				SetNillableUnsubscribeAt(timeutil.TimestamppbToTime(req.Data.UnsubscribeAt)).
 				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
 		},

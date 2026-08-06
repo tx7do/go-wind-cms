@@ -43,6 +43,10 @@ func (s *ApiService) List(ctx context.Context, req *paginationV1.PagingRequest) 
 	return s.apiRepo.List(ctx, req)
 }
 
+func (s *ApiService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.CountApiResponse, error) {
+	return s.apiRepo.Count(ctx, req)
+}
+
 func (s *ApiService) Get(ctx context.Context, req *permissionV1.GetApiRequest) (*permissionV1.Api, error) {
 	return s.apiRepo.Get(ctx, req)
 }

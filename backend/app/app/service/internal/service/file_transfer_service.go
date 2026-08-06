@@ -180,6 +180,10 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		req.GetFile(),
 		req.GetSourceFileName(),
 		info, downloadUrl); err != nil {
+		// 元数据写入失败，回滚已上传的对象，避免孤儿文件
+		if delErr := s.mc.DeleteFile(ctx, req.GetStorageObject().GetBucketName(), req.GetStorageObject().GetObjectName()); delErr != nil {
+			s.log.Errorf("cleanup orphaned object after recordFile failure failed: %s", delErr.Error())
+		}
 		return nil, err
 	}
 

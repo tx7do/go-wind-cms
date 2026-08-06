@@ -31,6 +31,17 @@ func (s *CommentService) List(ctx context.Context, req *paginationV1.PagingReque
 	return s.commentRepo.List(ctx, req, true)
 }
 
+func (s *CommentService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*commentV1.CountCommentResponse, error) {
+	count, err := s.commentRepo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &commentV1.CountCommentResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *CommentService) Get(ctx context.Context, req *commentV1.GetCommentRequest) (*commentV1.Comment, error) {
 	return s.commentRepo.Get(ctx, req)
 }

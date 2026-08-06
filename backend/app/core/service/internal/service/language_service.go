@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 
-	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -41,7 +40,7 @@ func NewLanguageService(
 
 func (s *LanguageService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
-	if count, _ := s.languageRepo.Count(ctx, []func(s *sql.Selector){}); count == 0 {
+	if hasAny, _ := s.languageRepo.HasAny(ctx); !hasAny {
 		_ = s.createDefaultLanguage(ctx)
 	}
 }
@@ -53,6 +52,17 @@ func (s *LanguageService) List(ctx context.Context, req *paginationV1.PagingRequ
 	}
 
 	return resp, nil
+}
+
+func (s *LanguageService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*dictV1.CountLanguageResponse, error) {
+	count, err := s.languageRepo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dictV1.CountLanguageResponse{
+		Count: uint64(count),
+	}, nil
 }
 
 func (s *LanguageService) Get(ctx context.Context, req *dictV1.GetLanguageRequest) (*dictV1.Language, error) {

@@ -32,6 +32,17 @@ func (s *InternalMessageCategoryService) List(ctx context.Context, req *paginati
 	return s.repo.List(ctx, req)
 }
 
+func (s *InternalMessageCategoryService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*internalMessageV1.CountInternalMessageCategoryResponse, error) {
+	count, err := s.repo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &internalMessageV1.CountInternalMessageCategoryResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *InternalMessageCategoryService) Get(ctx context.Context, req *internalMessageV1.GetInternalMessageCategoryRequest) (*internalMessageV1.InternalMessageCategory, error) {
 	return s.repo.Get(ctx, req)
 }

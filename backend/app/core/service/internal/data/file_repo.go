@@ -93,10 +93,27 @@ func (r *FileRepo) formatSize(size int64) string {
 	return str + units[i]
 }
 
-func (r *FileRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
+func (r *FileRepo) count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
 	builder := r.entClient.Client().File.Query()
 	if len(whereCond) != 0 {
 		builder.Modify(whereCond...)
+	}
+
+	count, err := builder.Count(ctx)
+	if err != nil {
+		r.log.Errorf("query count failed: %s", err.Error())
+		return 0, storageV1.ErrorInternalServerError("query count failed")
+	}
+
+	return count, nil
+}
+
+func (r *FileRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (int, error) {
+	builder := r.entClient.Client().File.Query()
+
+	whereSelectors, _, err := r.repository.BuildListSelectorWithPaging(builder, req)
+	if len(whereSelectors) != 0 {
+		builder.Modify(whereSelectors...)
 	}
 
 	count, err := builder.Count(ctx)

@@ -40,6 +40,17 @@ func (s *FileService) List(ctx context.Context, req *paginationV1.PagingRequest)
 	return s.fileRepo.List(ctx, req)
 }
 
+func (s *FileService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*storageV1.CountFileResponse, error) {
+	count, err := s.fileRepo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &storageV1.CountFileResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *FileService) Get(ctx context.Context, req *storageV1.GetFileRequest) (*storageV1.File, error) {
 	return s.fileRepo.Get(ctx, req)
 }

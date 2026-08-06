@@ -35,6 +35,17 @@ func (s *DictEntryService) List(ctx context.Context, req *paginationV1.PagingReq
 	return s.dictEntryRepo.List(ctx, req)
 }
 
+func (s *DictEntryService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*dictV1.CountDictEntryResponse, error) {
+	count, err := s.dictEntryRepo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dictV1.CountDictEntryResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *DictEntryService) Create(ctx context.Context, req *dictV1.CreateDictEntryRequest) (*emptypb.Empty, error) {
 	if req == nil || req.Data == nil {
 		return nil, dictV1.ErrorBadRequest("invalid parameter")

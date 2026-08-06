@@ -52,6 +52,17 @@ func (s *MenuService) List(ctx context.Context, req *paginationV1.PagingRequest)
 	return ret, nil
 }
 
+func (s *MenuService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.CountMenuResponse, error) {
+	count, err := s.menuRepo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &permissionV1.CountMenuResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *MenuService) Get(ctx context.Context, req *permissionV1.GetMenuRequest) (*permissionV1.Menu, error) {
 	ret, err := s.menuRepo.Get(ctx, req)
 	if err != nil {

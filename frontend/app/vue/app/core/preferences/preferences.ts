@@ -19,6 +19,9 @@ class PreferenceManager {
   private initialPreferences: Preferences = defaultPreferences;
   private isInitialized: boolean = false;
   private readonly savePreferences: (preference: Preferences) => void;
+  // 系统主题偏好监听器引用，便于后续移除（HMR/卸载场景）
+  private themeMediaQuery: MediaQueryList | null = null;
+  private themeMediaHandler: ((e: MediaQueryListEvent) => void) | null = null;
   private state: Preferences = reactive<Preferences>({
     ...this.loadPreferences(),
   });
@@ -124,15 +127,28 @@ class PreferenceManager {
 
     // 监听系统主题偏好设置变化
     if (typeof window !== "undefined") {
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .addEventListener("change", ({ matches: isDark }) => {
-          // 仅在 auto 模式下跟随系统
-          if (this.state.theme.mode === "auto") {
-            updateCSSVariables(this.state);
-          }
-        });
+      this.themeMediaHandler = ({ matches: _isDark }) => {
+        // 仅在 auto 模式下跟随系统
+        if (this.state.theme.mode === "auto") {
+          updateCSSVariables(this.state);
+        }
+      };
+      this.themeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      this.themeMediaQuery.addEventListener("change", this.themeMediaHandler);
     }
+  }
+
+  /**
+   * 移除系统主题偏好监听器。
+   * preferencesManager 为应用生命周期单例，通常无需手动调用；
+   * 但在 HMR 重载或嵌入式场景下应清理以避免泄漏。
+   */
+  public disposeThemeListener() {
+    if (this.themeMediaQuery && this.themeMediaHandler) {
+      this.themeMediaQuery.removeEventListener("change", this.themeMediaHandler);
+    }
+    this.themeMediaQuery = null;
+    this.themeMediaHandler = null;
   }
 
   clearCache() {

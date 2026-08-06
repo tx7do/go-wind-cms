@@ -63,10 +63,33 @@ func (r *LanguageRepo) init() {
 	r.mapper.AppendConverters(copierutil.NewTimeTimestamppbConverterPair())
 }
 
-func (r *LanguageRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
+func (r *LanguageRepo) count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
 	builder := r.entClient.Client().Language.Query()
 	if len(whereCond) != 0 {
 		builder.Modify(whereCond...)
+	}
+
+	count, err := builder.Count(ctx)
+	if err != nil {
+		r.log.Errorf("query count failed: %s", err.Error())
+		return 0, dictV1.ErrorInternalServerError("query count failed")
+	}
+
+	return count, nil
+}
+
+// HasAny 报告是否存在任意语言记录，用于初始化时判断是否需要写入默认语言。
+func (r *LanguageRepo) HasAny(ctx context.Context) (bool, error) {
+	c, err := r.count(ctx, []func(s *sql.Selector){})
+	return c > 0, err
+}
+
+func (r *LanguageRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (int, error) {
+	builder := r.entClient.Client().Language.Query()
+
+	whereSelectors, _, err := r.repository.BuildListSelectorWithPaging(builder, req)
+	if len(whereSelectors) != 0 {
+		builder.Modify(whereSelectors...)
 	}
 
 	count, err := builder.Count(ctx)

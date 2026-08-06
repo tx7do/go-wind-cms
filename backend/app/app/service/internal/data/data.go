@@ -75,8 +75,15 @@ func NewMinIoClient(ctx *bootstrap.Context) *oss.MinIOClient {
 
 // NewAuthenticator 创建认证器
 func NewAuthenticator(cfg *conf.Bootstrap) authnEngine.Authenticator {
+	// 拒绝已知的开发默认密钥，避免生产环境因未设置 jwt_signing_key 而使用
+	// 公开默认值导致令牌可被离线伪造。
+	signingKey := cfg.Server.Rest.Middleware.Auth.Key
+	if signingKey == "" || signingKey == "dev_only_change_me_in_prod" {
+		panic("jwt signing key must be set to a non-default secret in production")
+	}
+
 	authenticator, _ := jwt.NewAuthenticator(
-		jwt.WithKey([]byte(cfg.Server.Rest.Middleware.Auth.Key)),
+		jwt.WithKey([]byte(signingKey)),
 		jwt.WithSigningMethod(cfg.Server.Rest.Middleware.Auth.Method),
 	)
 	return authenticator

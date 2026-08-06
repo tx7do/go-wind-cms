@@ -94,6 +94,23 @@ func (r *CommentRepo) count(ctx context.Context, whereCond []func(s *sql.Selecto
 	return count, err
 }
 
+func (r *CommentRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (int, error) {
+	builder := r.entClient.Client().Comment.Query()
+
+	whereSelectors, _, err := r.repository.BuildListSelectorWithPaging(builder, req)
+	if len(whereSelectors) != 0 {
+		builder.Modify(whereSelectors...)
+	}
+
+	count, err := builder.Count(ctx)
+	if err != nil {
+		r.log.Errorf("query count failed: %s", err.Error())
+		return 0, commentV1.ErrorInternalServerError("query count failed")
+	}
+
+	return count, nil
+}
+
 func (r *CommentRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
 	exist, err := r.entClient.Client().Comment.Query().
 		Where(comment.IDEQ(id)).
