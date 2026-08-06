@@ -348,11 +348,10 @@ func (s *AuthenticationService) Logout(ctx context.Context, req *authenticationV
 }
 
 // RegisterUser 注册用户
-func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authenticationV1.RegisterUserRequest) (*authenticationV1.RegisterUserResponse, error) {
+func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authenticationV1.RegisterUserRequest) (resp *authenticationV1.RegisterUserResponse, err error) {
 	if req == nil {
 		return nil, authenticationV1.ErrorBadRequest("invalid request")
 	}
-	var err error
 
 	var tenantId *uint32
 	if constants.IsTenantModeEnabled {
@@ -371,15 +370,11 @@ func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authentic
 	}
 
 	// 用户和凭证创建必须在同一事务中，避免凭证创建失败时产生孤立用户行
-	tx, cleanup, err := s.userRepo.BeginTx(ctx)
+	tx, err := s.userRepo.BeginTx(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		if cleanup != nil {
-			cleanup()
-		}
-	}()
+	defer func() { s.userRepo.FinishTx(tx, err) }()
 
 	user, err := s.userRepo.CreateWithTx(ctx, tx, &identityV1.User{
 		TenantId: tenantId,

@@ -418,21 +418,17 @@ func (s *UserService) Get(ctx context.Context, req *identityV1.GetUserRequest) (
 	return resp, nil
 }
 
-func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequest) (*identityV1.User, error) {
+func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequest) (result *identityV1.User, err error) {
 	if req == nil || req.Data == nil {
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
 	// 用户和凭证创建必须在同一事务中，避免凭证创建失败时产生孤立用户行
-	tx, cleanup, err := s.userRepo.BeginTx(ctx)
+	tx, err := s.userRepo.BeginTx(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		if cleanup != nil {
-			cleanup()
-		}
-	}()
+	defer func() { s.userRepo.FinishTx(tx, err) }()
 
 	// 创建用户
 	var user *identityV1.User

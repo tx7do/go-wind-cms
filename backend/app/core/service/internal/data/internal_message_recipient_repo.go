@@ -127,8 +127,14 @@ func (r *InternalMessageRecipientRepo) Get(ctx context.Context, req *internalMes
 	if req == nil {
 		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
+	// 强制按调用者 user_id 过滤——只能获取自己的收件箱记录
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return nil, internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
 
-	builder := r.entClient.Client().InternalMessageRecipient.Query()
+	builder := r.entClient.Client().InternalMessageRecipient.Query().
+		Where(internalmessagerecipient.RecipientUserIDEQ(callerUserID))
 
 	var whereCond []func(s *sql.Selector)
 	switch req.QueryBy.(type) {
@@ -230,15 +236,17 @@ func (r *InternalMessageRecipientRepo) MarkNotificationAsRead(ctx context.Contex
 	if len(req.GetRecipientIds()) == 0 {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
-	if req.GetUserId() == 0 {
-		return internalMessageV1.ErrorBadRequest("invalid parameter")
+	// 强制使用调用者 user_id，忽略请求体中的 user_id
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return internalMessageV1.ErrorBadRequest("missing viewer context")
 	}
 
 	now := time.Now()
 	_, err := r.entClient.Client().InternalMessageRecipient.Update().
 		Where(
 			internalmessagerecipient.IDIn(req.GetRecipientIds()...),
-			internalmessagerecipient.RecipientUserIDEQ(req.GetUserId()),
+			internalmessagerecipient.RecipientUserIDEQ(callerUserID),
 			internalmessagerecipient.StatusNEQ(internalmessagerecipient.StatusRead),
 		).
 		SetStatus(internalmessagerecipient.StatusRead).
@@ -253,8 +261,10 @@ func (r *InternalMessageRecipientRepo) MarkNotificationsStatus(ctx context.Conte
 	if len(req.GetRecipientIds()) == 0 {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
-	if req.GetUserId() == 0 {
-		return internalMessageV1.ErrorBadRequest("invalid parameter")
+	// 强制使用调用者 user_id，忽略请求体中的 user_id
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return internalMessageV1.ErrorBadRequest("missing viewer context")
 	}
 
 	now := time.Now()
@@ -270,7 +280,7 @@ func (r *InternalMessageRecipientRepo) MarkNotificationsStatus(ctx context.Conte
 	_, err := r.entClient.Client().InternalMessageRecipient.Update().
 		Where(
 			internalmessagerecipient.IDIn(req.GetRecipientIds()...),
-			internalmessagerecipient.RecipientUserIDEQ(req.GetUserId()),
+			internalmessagerecipient.RecipientUserIDEQ(callerUserID),
 			internalmessagerecipient.StatusNEQ(*r.statusConverter.ToEntity(trans.Ptr(req.GetNewStatus()))),
 		).
 		SetNillableStatus(r.statusConverter.ToEntity(trans.Ptr(req.GetNewStatus()))).
@@ -283,20 +293,30 @@ func (r *InternalMessageRecipientRepo) MarkNotificationsStatus(ctx context.Conte
 
 // RevokeMessage 撤销某条消息
 func (r *InternalMessageRecipientRepo) RevokeMessage(ctx context.Context, req *internalMessageV1.RevokeMessageRequest) error {
+	// 强制使用调用者 user_id，忽略请求体中的 user_id
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
 	_, err := r.entClient.Client().InternalMessageRecipient.Delete().
 		Where(
 			internalmessagerecipient.MessageIDEQ(req.GetMessageId()),
-			internalmessagerecipient.RecipientUserIDEQ(req.GetUserId()),
+			internalmessagerecipient.RecipientUserIDEQ(callerUserID),
 		).
 		Exec(ctx)
 	return err
 }
 
 func (r *InternalMessageRecipientRepo) DeleteNotificationFromInbox(ctx context.Context, req *internalMessageV1.DeleteNotificationFromInboxRequest) error {
+	// 强制使用调用者 user_id，忽略请求体中的 user_id
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
 	_, err := r.entClient.Client().InternalMessageRecipient.Delete().
 		Where(
 			internalmessagerecipient.IDIn(req.GetRecipientIds()...),
-			internalmessagerecipient.RecipientUserIDEQ(req.GetUserId()),
+			internalmessagerecipient.RecipientUserIDEQ(callerUserID),
 		).
 		Exec(ctx)
 	return err

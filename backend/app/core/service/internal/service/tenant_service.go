@@ -176,13 +176,11 @@ func (s *TenantService) TenantExists(ctx context.Context, req *identityV1.Tenant
 }
 
 // CreateTenantWithAdminUser 创建租户及其管理员用户
-func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *identityV1.CreateTenantWithAdminUserRequest) (*emptypb.Empty, error) {
+func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *identityV1.CreateTenantWithAdminUserRequest) (ret *emptypb.Empty, err error) {
 	if req == nil || req.Tenant == nil || req.User == nil {
 		s.log.Error("invalid parameter: tenant or user is nil", req)
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
-
-	var err error
 
 	// Check if tenant code or admin username already exists
 	if _, err = s.tenantRepo.TenantExists(ctx, &identityV1.TenantExistsRequest{
@@ -196,18 +194,14 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 	// 注意：此处不再做 admin username 的全局查重。
 	// username 仅在 (tenant_id, username) 维度唯一（见 ent/schema/user.go 唯一索引），
 	// 不同租户允许使用相同 username。此前按 username 跨租户全局查重会误判冲突、
-	// 且在平台上下文(tid=0)下跨租户泄露用户名存在性。租户内唯一性由 DB 唯一索引保证。
+	// 且在平台上下文（tid=0)下跨租户泄露用户名存在性。租户内唯一性由 DB 唯一索引保证。
 
-	tx, cleanup, err := s.tenantRepo.BeginTx(ctx)
+	tx, err := s.tenantRepo.BeginTx(ctx)
 	if err != nil {
 		s.log.Errorf("begin tx err: %v", err)
 		return nil, err
 	}
-	defer func() {
-		if cleanup != nil {
-			cleanup()
-		}
-	}()
+	defer func() { s.tenantRepo.FinishTx(tx, err) }()
 
 	// CreateTranslation tenant
 	var tenant *identityV1.Tenant

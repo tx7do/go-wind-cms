@@ -33,7 +33,8 @@ import (
 )
 
 type UserRepo interface {
-	BeginTx(ctx context.Context) (tx *ent.Tx, cleanup func(), err error)
+	BeginTx(ctx context.Context) (tx *ent.Tx, err error)
+	FinishTx(tx *ent.Tx, err error)
 	List(ctx context.Context, req *paginationV1.PagingRequest) (*identityV1.ListUserResponse, error)
 
 	Get(ctx context.Context, req *identityV1.GetUserRequest) (*identityV1.User, error)
@@ -565,29 +566,35 @@ func (r *userRepo) CreateWithTx(ctx context.Context, tx *ent.Tx, data *identityV
 	return r.mapper.ToDTO(entity), nil
 }
 
-// BeginTx 启动一个数据库事务，返回事务对象和清理函数。
-// 清理函数根据 err 是否为 nil 决定回滚或提交。
-func (r *userRepo) BeginTx(ctx context.Context) (tx *ent.Tx, cleanup func(), err error) {
+// BeginTx 启动一个数据库事务，返回事务对象。
+// 调用方必须使用命名返回值 err，并在 defer 中调用 FinishTx(tx, err)。
+// FinishTx 根据调用方的 err 决定回滚或提交——此时 err 反映的是
+// 调用函数的最终错误状态，而非 BeginTx 自身的 err。
+func (r *userRepo) BeginTx(ctx context.Context) (tx *ent.Tx, err error) {
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
-		return nil, nil, identityV1.ErrorInternalServerError("start transaction failed")
+		return nil, identityV1.ErrorInternalServerError("start transaction failed")
 	}
+	return tx, nil
+}
 
-	cleanup = func() {
-		if err != nil {
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
-			}
-			return
-		}
-		if commitErr := tx.Commit(); commitErr != nil {
-			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
-			err = identityV1.ErrorInternalServerError("transaction commit failed")
-		}
+// FinishTx 根据 err 是否为 nil 决定回滚或提交事务。
+// err 必须是调用方函数的命名返回值，由 defer 传递——这样 Go 的延迟求值
+// 会在函数返回时读取 err 的最终值。
+func (r *userRepo) FinishTx(tx *ent.Tx, err error) {
+	if tx == nil {
+		return
 	}
-
-	return tx, cleanup, nil
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+		}
+		return
+	}
+	if commitErr := tx.Commit(); commitErr != nil {
+		r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+	}
 }
 
 // Update 更新用户

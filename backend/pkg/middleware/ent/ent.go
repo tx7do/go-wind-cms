@@ -17,7 +17,10 @@ import (
 	"go-wind-cms/pkg/metadata"
 )
 
-// Server 设置 Ent Viewer 到 Context 中的中间件
+// Server 设置 Ent Viewer 到 Context 中的中间件。
+// 对于已认证请求（携带 OperatorMetadata），构建对应 UserViewer。
+// 对于未认证请求（白名单路由，如公开内容读取），注入 SystemViewer，
+// 使 TenantPrivacy 的 IsSystemContext 分支放行查询，避免公开 API 全部报错。
 func Server() middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req any) (any, error) {
@@ -37,14 +40,18 @@ func Server() middleware.Middleware {
 				log.Errorf("ent middleware: failed to get metadata from context: %v; req_type=%s; transport=%s; operation=%s; endpoint=%s",
 					err, reqType, kind, operation, endpoint)
 			}
-			if md == nil {
-				return handler(ctx, req)
-			}
 
 			var traceID string
 			spanContext := trace.SpanContextFromContext(ctx)
 			if spanContext.HasTraceID() {
 				traceID = spanContext.TraceID().String()
+			}
+
+			if md == nil {
+				// 未认证请求（白名单路由）：注入 SystemViewer 作为兜底，
+				// 使 ent 隐私层的 IsSystemContext 分支放行公开读取查询。
+				ctx = viewer.WithContext(ctx, appViewer.NewSystemViewer())
+				return handler(ctx, req)
 			}
 
 			ctx = viewer.WithContext(ctx, metaDataToUserViewerContext(md, traceID))

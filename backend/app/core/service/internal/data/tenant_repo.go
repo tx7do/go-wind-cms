@@ -166,27 +166,30 @@ func (r *TenantRepo) Get(ctx context.Context, req *identityV1.GetTenantRequest) 
 	return dto, err
 }
 
-func (r *TenantRepo) BeginTx(ctx context.Context) (tx *ent.Tx, cleanup func(), err error) {
+func (r *TenantRepo) BeginTx(ctx context.Context) (tx *ent.Tx, err error) {
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
-		return nil, nil, identityV1.ErrorInternalServerError("start transaction failed")
+		return nil, identityV1.ErrorInternalServerError("start transaction failed")
 	}
+	return tx, nil
+}
 
-	cleanup = func() {
-		if err != nil {
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
-			}
-			return
-		}
-		if commitErr := tx.Commit(); commitErr != nil {
-			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
-			err = identityV1.ErrorInternalServerError("transaction commit failed")
-		}
+// FinishTx 根据调用方的命名返回值 err 决定回滚或提交。
+// 必须在 defer 中调用：defer func() { r.FinishTx(tx, err) }()
+func (r *TenantRepo) FinishTx(tx *ent.Tx, err error) {
+	if tx == nil {
+		return
 	}
-
-	return tx, cleanup, nil
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+		}
+		return
+	}
+	if commitErr := tx.Commit(); commitErr != nil {
+		r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+	}
 }
 
 func (r *TenantRepo) Create(ctx context.Context, data *identityV1.Tenant) (tenant *identityV1.Tenant, err error) {
