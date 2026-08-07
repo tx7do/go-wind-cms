@@ -17,6 +17,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data"
 
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
+	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 )
 
 type InternalMessageService struct {
@@ -182,6 +183,12 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 		return nil, internalMessageV1.ErrorBadRequest("invalid request")
 	}
 
+	// 发送者身份必须从 viewer context 推导，忽略客户端传入的 send_user_id，防止越权伪造
+	senderUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return nil, internalMessageV1.ErrorBadRequest("sender identity is required")
+	}
+
 	// 从 viewer context 获取发送者的租户 ID，用于限定消息发送范围
 	senderTenantID := uint32(0)
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
@@ -199,7 +206,7 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 			Status:     trans.Ptr(internalMessageV1.InternalMessage_PUBLISHED),
 			Type:       trans.Ptr(req.GetType()),
 			CategoryId: req.CategoryId,
-			CreatedBy:  trans.Ptr(req.GetSendUserId()),
+			CreatedBy:  trans.Ptr(senderUserID),
 			CreatedAt:  timeutil.TimeToTimestamppb(&now),
 		},
 	}); err != nil {
@@ -218,16 +225,20 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 				if senderTenantID != 0 && user.GetTenantId() != senderTenantID {
 					continue
 				}
-				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), req.GetSendUserId(), &now, msg.GetTitle(), msg.GetContent())
+				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), senderUserID, &now, msg.GetTitle(), msg.GetContent())
 			}
 		}
 	} else {
 		if req.RecipientUserId != nil {
-			_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), req.GetSendUserId(), &now, msg.GetTitle(), msg.GetContent())
+			if s.isRecipientAllowed(ctx, req.GetRecipientUserId(), senderTenantID) {
+				_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), senderUserID, &now, msg.GetTitle(), msg.GetContent())
+			}
 		} else {
 			if len(req.TargetUserIds) != 0 {
 				for _, uid := range req.TargetUserIds {
-					_ = s.sendNotification(ctx, msg.GetId(), uid, req.GetSendUserId(), &now, msg.GetTitle(), msg.GetContent())
+					if s.isRecipientAllowed(ctx, uid, senderTenantID) {
+						_ = s.sendNotification(ctx, msg.GetId(), uid, senderUserID, &now, msg.GetTitle(), msg.GetContent())
+					}
 				}
 			}
 		}
@@ -236,6 +247,24 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 	return &internalMessageV1.SendMessageResponse{
 		MessageId: msg.GetId(),
 	}, nil
+}
+
+// isRecipientAllowed 校验收件人是否在发送者的可发送范围内。
+// 平台管理员（senderTenantID==0）可向任意租户用户发送；
+// 普通租户用户只能向本租户用户发送。收件人不存在或跨租户时拒绝。
+func (s *InternalMessageService) isRecipientAllowed(ctx context.Context, recipientUserID uint32, senderTenantID uint32) bool {
+	recipient, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: recipientUserID},
+	})
+	if err != nil || recipient == nil {
+		s.log.Errorf("send message failed, recipient not found [%d]: %v", recipientUserID, err)
+		return false
+	}
+	if senderTenantID != 0 && recipient.GetTenantId() != senderTenantID {
+		s.log.Errorf("send message forbidden, tenant mismatch: sender tenant [%d], recipient [%d] tenant [%d]", senderTenantID, recipientUserID, recipient.GetTenantId())
+		return false
+	}
+	return true
 }
 
 // sendNotification 向客户端发送通知消息

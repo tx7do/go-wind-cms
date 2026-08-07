@@ -487,7 +487,7 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 		info, downloadUrl,
 	); err != nil {
 		// 元数据写入失败，回滚已上传的对象，避免孤儿文件
-		if delErr := s.mc.DeleteFile(ctx, bucketName, ""); delErr != nil {
+		if delErr := s.mc.DeleteFile(ctx, bucketName, info.Key); delErr != nil {
 			s.log.Errorf("cleanup orphaned object after recordFile failure failed: %s", delErr.Error())
 		}
 		return nil, err
@@ -511,7 +511,7 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 		},
 	}); err != nil {
 		// MediaAsset 创建失败，回滚已上传的对象，避免孤儿文件
-		if delErr := s.mc.DeleteFile(ctx, bucketName, ""); delErr != nil {
+		if delErr := s.mc.DeleteFile(ctx, bucketName, info.Key); delErr != nil {
 			s.log.Errorf("cleanup orphaned object after mediaasset failure failed: %s", delErr.Error())
 		}
 		return nil, err

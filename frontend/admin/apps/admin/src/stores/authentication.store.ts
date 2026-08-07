@@ -302,15 +302,17 @@ export const useAuthStore = defineStore('auth', () => {
       // 停止定时刷新并清理回调，防止继续触发刷新请求
       _stopRefreshTimer();
 
+      // 先记录进入时是否已完成访问检查，用于决定后续弹窗/登出策略。
+      // 必须在 setIsAccessChecked(false) 之前读取，否则条件恒为 false，
+      // 导致 modal 模式分支成为死代码，过期会话一律走 _doLogout。
+      const wasAccessChecked = accessStore.isAccessChecked;
+
       accessStore.setAccessToken(null);
       accessStore.setRefreshToken(null);
       accessStore.setIsAccessChecked(false);
       accessStore.setAccessCodes([]);
 
-      if (
-        preferences.app.loginExpiredMode === 'modal' &&
-        accessStore.isAccessChecked
-      ) {
+      if (preferences.app.loginExpiredMode === 'modal' && wasAccessChecked) {
         accessStore.setLoginExpired(true);
       } else {
         // 非 modal 模式直接清理并跳转登录页

@@ -324,6 +324,7 @@ func (r *SectionRepo) Delete(ctx context.Context, req *contentV1.DeleteSectionRe
 		DeleteOneID(req.GetId()).
 		Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete one data failed")
 	}
 
 	if err = r.sectionTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
@@ -331,7 +332,7 @@ func (r *SectionRepo) Delete(ctx context.Context, req *contentV1.DeleteSectionRe
 		return contentV1.ErrorInternalServerError("clean translations failed")
 	}
 
-	return err
+	return nil
 }
 
 func (r *SectionRepo) TranslationExists(ctx context.Context, sectionId uint32, languageCode string) (bool, error) {

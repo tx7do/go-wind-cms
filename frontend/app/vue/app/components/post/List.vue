@@ -41,6 +41,7 @@ async function fetchPosts(page: number, pageSize: number) {
         ...props.queryParams,
         ...(props.categoryId && { category_ids__in: [props.categoryId] }),
         ...(props.tagId && { tag_ids__in: [props.tagId] }),
+        status: 'POST_STATUS_PUBLISHED',
       },
       fieldMask: props.fieldMask,
       orderBy: props.orderBy,

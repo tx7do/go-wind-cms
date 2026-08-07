@@ -319,6 +319,7 @@ func (r *NavigationRepo) Delete(ctx context.Context, req *siteV1.DeleteNavigatio
 
 	if err = tx.Navigation.DeleteOneID(req.GetId()).Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
+		return siteV1.ErrorInternalServerError("delete one data failed")
 	}
 
 	if err = r.navigationItemRepo.CleanItems(ctx, tx, req.GetId()); err != nil {
@@ -326,5 +327,5 @@ func (r *NavigationRepo) Delete(ctx context.Context, req *siteV1.DeleteNavigatio
 		return siteV1.ErrorInternalServerError("clean navigation items failed")
 	}
 
-	return err
+	return nil
 }

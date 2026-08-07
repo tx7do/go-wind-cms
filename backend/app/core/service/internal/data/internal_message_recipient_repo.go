@@ -324,6 +324,27 @@ func (r *InternalMessageRecipientRepo) MarkNotificationsStatus(ctx context.Conte
 }
 
 // RevokeMessage 撤销某条消息
+// CleanByMessageID 事务级联清理：删除某条消息的所有收件人记录。
+// 仅在消息删除事务中调用，保证与主删除一起提交/回滚，避免留下悬空收件人行。
+func (r *InternalMessageRecipientRepo) CleanByMessageID(
+	ctx context.Context,
+	tx *ent.Tx,
+	messageID uint32,
+) error {
+	if messageID == 0 {
+		return nil
+	}
+	if _, err := tx.InternalMessageRecipient.Delete().
+		Where(
+			internalmessagerecipient.MessageIDEQ(messageID),
+		).
+		Exec(ctx); err != nil {
+		r.log.Errorf("delete recipients by message id [%d] failed: %s", messageID, err.Error())
+		return internalMessageV1.ErrorInternalServerError("delete recipients by message id failed")
+	}
+	return nil
+}
+
 func (r *InternalMessageRecipientRepo) RevokeMessage(ctx context.Context, req *internalMessageV1.RevokeMessageRequest) error {
 	// 强制使用调用者 user_id，忽略请求体中的 user_id
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)

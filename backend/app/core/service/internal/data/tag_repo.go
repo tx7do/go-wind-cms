@@ -424,6 +424,7 @@ func (r *TagRepo) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (
 		DeleteOneID(req.GetId()).
 		Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete one data failed")
 	}
 
 	if err = r.tagTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
@@ -431,7 +432,7 @@ func (r *TagRepo) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (
 		return contentV1.ErrorInternalServerError("clean translations failed")
 	}
 
-	return err
+	return nil
 }
 
 func (r *TagRepo) TranslationExists(ctx context.Context, tagId uint32, languageCode string) (bool, error) {

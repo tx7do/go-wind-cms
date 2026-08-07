@@ -37,15 +37,22 @@ type InternalMessageRepo struct {
 		predicate.InternalMessage,
 		internalMessageV1.InternalMessage, ent.InternalMessage,
 	]
+
+	internalMessageRecipientRepo *InternalMessageRecipientRepo
 }
 
-func NewInternalMessageRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *InternalMessageRepo {
+func NewInternalMessageRepo(
+	ctx *bootstrap.Context,
+	entClient *entCrud.EntClient[*ent.Client],
+	internalMessageRecipientRepo *InternalMessageRecipientRepo,
+) *InternalMessageRepo {
 	repo := &InternalMessageRepo{
 		log:             ctx.NewLoggerHelper("internal-message/repo/core-service"),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[internalMessageV1.InternalMessage, ent.InternalMessage](),
 		statusConverter: mapper.NewEnumTypeConverter[internalMessageV1.InternalMessage_Status, internalmessage.Status](internalMessageV1.InternalMessage_Status_name, internalMessageV1.InternalMessage_Status_value),
 		typeConverter:   mapper.NewEnumTypeConverter[internalMessageV1.InternalMessage_Type, internalmessage.Type](internalMessageV1.InternalMessage_Type_name, internalMessageV1.InternalMessage_Type_value),
+		internalMessageRecipientRepo: internalMessageRecipientRepo,
 	}
 
 	repo.init()
@@ -210,12 +217,32 @@ func (r *InternalMessageRepo) Update(ctx context.Context, req *internalMessageV1
 	return err
 }
 
-func (r *InternalMessageRepo) Delete(ctx context.Context, id uint32) error {
+func (r *InternalMessageRepo) Delete(ctx context.Context, id uint32) (err error) {
 	if id == 0 {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err := r.entClient.Client().InternalMessage.DeleteOneID(id).Exec(ctx); err != nil {
+	// 主删除与收件人级联清理必须在同一事务内，避免中途失败留下悬空收件人行
+	var tx *ent.Tx
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return internalMessageV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = internalMessageV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	if err = tx.InternalMessage.DeleteOneID(id).Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return internalMessageV1.ErrorNotFound("internal message not found")
 		}
@@ -223,6 +250,11 @@ func (r *InternalMessageRepo) Delete(ctx context.Context, id uint32) error {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 
 		return internalMessageV1.ErrorInternalServerError("delete failed")
+	}
+
+	if err = r.internalMessageRecipientRepo.CleanByMessageID(ctx, tx, id); err != nil {
+		r.log.Errorf("clean message recipients failed: %s", err.Error())
+		return internalMessageV1.ErrorInternalServerError("clean message recipients failed")
 	}
 
 	return nil

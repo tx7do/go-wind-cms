@@ -183,6 +183,27 @@ func (r *PermissionMenuRepo) DeleteByPermissionIDs(ctx context.Context, permissi
 	return nil
 }
 
+// CleanByPermissionIDs 事务级联清理：删除与给定权限关联的 permission_menu 行。
+// 仅在权限删除事务中调用，保证与主删除一起提交/回滚。
+func (r *PermissionMenuRepo) CleanByPermissionIDs(
+	ctx context.Context,
+	tx *ent.Tx,
+	permissionIDs []uint32,
+) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+	if _, err := tx.PermissionMenu.Delete().
+		Where(
+			permissionmenu.PermissionIDIn(permissionIDs...),
+		).
+		Exec(ctx); err != nil {
+		r.log.Errorf("delete permission menus by permission ids failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("delete permission menus by permission ids failed")
+	}
+	return nil
+}
+
 // AssignMenu 给权限分配菜单
 func (r *PermissionMenuRepo) AssignMenu(ctx context.Context, permissionID uint32, menuID uint32) error {
 	now := time.Now()

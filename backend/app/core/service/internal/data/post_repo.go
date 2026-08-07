@@ -648,6 +648,7 @@ func (r *PostRepo) Delete(ctx context.Context, req *contentV1.DeletePostRequest)
 		DeleteOneID(req.GetId()).
 		Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete one data failed")
 	}
 
 	// 删除关联数据
@@ -668,7 +669,7 @@ func (r *PostRepo) Delete(ctx context.Context, req *contentV1.DeletePostRequest)
 		return contentV1.ErrorInternalServerError("clean tags failed")
 	}
 
-	return err
+	return nil
 }
 
 func (r *PostRepo) TranslationExists(ctx context.Context, postId uint32, languageCode string) (bool, error) {

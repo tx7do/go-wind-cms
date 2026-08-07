@@ -67,7 +67,11 @@ const [BaseForm, baseFormApi] = useVbenForm({
         passwordStrength: true,
         placeholder: $t('ui.placeholder.input'),
       },
-      // rules: 'required',
+      rules: z.string().min(1, { message: $t('ui.formRules.required') }),
+      dependencies: {
+        disabled: () => !data.value?.create,
+        triggerFields: ['username'],
+      },
     },
     {
       component: 'ApiTreeSelect',

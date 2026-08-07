@@ -123,35 +123,15 @@ const [Drawer, drawerApi] = useVbenDrawer({
     setLoading(true);
 
     const values = await baseFormApi.getValues();
-    let items: any[] = [];
-
-    if (values.itemsJson && String(values.itemsJson).trim()) {
-      try {
-        const parsed = JSON.parse(values.itemsJson);
-        if (Array.isArray(parsed)) {
-          items = parsed;
-        } else {
-          notification.error({
-            message: $t('page.navigationItem.validation.itemsJsonInvalid'),
-          });
-          setLoading(false);
-          return;
-        }
-      } catch {
-        notification.error({
-          message: $t('page.navigationItem.validation.itemsJsonInvalid'),
-        });
-        setLoading(false);
-        return;
-      }
-    }
 
     const payload = {
-      isActive: values.isActive,
-      items,
-      locale: values.locale,
-      location: values.location,
-      name: values.name,
+      title: values.title,
+      description: values.description,
+      icon: values.icon,
+      url: values.url,
+      linkType: values.linkType,
+      isOpenNewTab: values.isOpenNewTab,
+      isInvalid: values.isInvalid,
     };
 
     try {
@@ -201,7 +181,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
 });
 
 function setLoading(loading: boolean) {
-  drawerApi.setState({ loading });
+  drawerApi.setState({ confirmLoading: loading });
 }
 </script>
 <template>

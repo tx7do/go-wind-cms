@@ -72,6 +72,27 @@ func (r *RolePermissionRepo) CleanPermissions(
 	return nil
 }
 
+// CleanByPermissionIDs 清理与给定权限关联的所有 role_permission 行。
+// 用于权限删除时的事务级联清理，避免留下指向已删除权限的悬空关联。
+func (r *RolePermissionRepo) CleanByPermissionIDs(
+	ctx context.Context,
+	tx *ent.Tx,
+	permissionIDs []uint32,
+) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+	if _, err := tx.RolePermission.Delete().
+		Where(
+			rolepermission.PermissionIDIn(permissionIDs...),
+		).
+		Exec(ctx); err != nil {
+		r.log.Errorf("delete role permissions by permission ids failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("delete role permissions by permission ids failed")
+	}
+	return nil
+}
+
 func (r *RolePermissionRepo) BatchCreate(ctx context.Context, tx *ent.Tx, datas []*permissionV1.RolePermission) error {
 	if len(datas) == 0 {
 		return nil

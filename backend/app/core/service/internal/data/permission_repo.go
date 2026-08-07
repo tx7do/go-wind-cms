@@ -43,8 +43,9 @@ type PermissionRepo struct {
 		permissionV1.Permission, ent.Permission,
 	]
 
-	permissionApiRepo  *PermissionApiRepo
-	permissionMenuRepo *PermissionMenuRepo
+	permissionApiRepo   *PermissionApiRepo
+	permissionMenuRepo  *PermissionMenuRepo
+	rolePermissionRepo  *RolePermissionRepo
 }
 
 func NewPermissionRepo(
@@ -52,16 +53,18 @@ func NewPermissionRepo(
 	entClient *entCrud.EntClient[*ent.Client],
 	permissionApiRepo *PermissionApiRepo,
 	permissionMenuRepo *PermissionMenuRepo,
+	rolePermissionRepo *RolePermissionRepo,
 ) *PermissionRepo {
 	repo := &PermissionRepo{
 		log:       ctx.NewLoggerHelper("permission/repo/core-service"),
 		entClient: entClient,
-		mapper:    mapper.NewCopierMapper[permissionV1.Permission, ent.Permission](),
+		mapper: mapper.NewCopierMapper[permissionV1.Permission, ent.Permission](),
 		statusConverter: mapper.NewEnumTypeConverter[permissionV1.Permission_Status, permission.Status](
 			permissionV1.Permission_Status_name, permissionV1.Permission_Status_value,
 		),
-		permissionApiRepo:  permissionApiRepo,
-		permissionMenuRepo: permissionMenuRepo,
+		permissionApiRepo:   permissionApiRepo,
+		permissionMenuRepo:  permissionMenuRepo,
+		rolePermissionRepo:  rolePermissionRepo,
 	}
 
 	repo.init()
@@ -468,6 +471,7 @@ func (r *PermissionRepo) Delete(ctx context.Context, req *permissionV1.DeletePer
 		return permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 先解析受影响的权限 ID（用于级联清理），解析阶段使用非事务读
 	var permissionIDs []uint32
 	switch req.QueryBy.(type) {
 	default:
@@ -495,29 +499,57 @@ func (r *PermissionRepo) Delete(ctx context.Context, req *permissionV1.DeletePer
 		}
 	}
 
-	builder := r.entClient.Client().Permission.Delete()
+	// 主删除 + 级联清理必须在同一事务内，避免中途失败留下悬空关联
+	var tx *ent.Tx
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = permissionV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	// 主删除：按 QueryBy 选择对应谓词，全部在同一事务内执行
+	var primaryBuilder *ent.PermissionDelete
 	switch req.QueryBy.(type) {
 	default:
 	case *permissionV1.DeletePermissionRequest_Id:
-		builder.Where(permission.IDEQ(req.GetId()))
+		primaryBuilder = tx.Permission.Delete().Where(permission.IDEQ(req.GetId()))
 	case *permissionV1.DeletePermissionRequest_Code:
-		builder.Where(permission.CodeEQ(req.GetCode()))
+		primaryBuilder = tx.Permission.Delete().Where(permission.CodeEQ(req.GetCode()))
 	case *permissionV1.DeletePermissionRequest_GroupId:
-		builder.Where(permission.GroupIDEQ(req.GetGroupId()))
+		primaryBuilder = tx.Permission.Delete().Where(permission.GroupIDEQ(req.GetGroupId()))
 	}
-
-	_, err = builder.Exec(ctx)
-	if err != nil {
+	if _, err = primaryBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete permission failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete permission failed")
 	}
 
-	if err = r.permissionApiRepo.DeleteByPermissionIDs(ctx, permissionIDs); err != nil {
-		return err
+	// 级联清理：permission_api / permission_menu / role_permission
+	// 这些关联表必须与主删除一起提交/回滚，否则会留下指向已删除权限的悬空行
+	if err = r.permissionApiRepo.CleanByPermissionIDs(ctx, tx, permissionIDs); err != nil {
+		r.log.Errorf("clean permission apis failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("clean permission apis failed")
 	}
 
-	if err = r.permissionMenuRepo.DeleteByPermissionIDs(ctx, permissionIDs); err != nil {
-		return err
+	if err = r.permissionMenuRepo.CleanByPermissionIDs(ctx, tx, permissionIDs); err != nil {
+		r.log.Errorf("clean permission menus failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("clean permission menus failed")
+	}
+
+	if err = r.rolePermissionRepo.CleanByPermissionIDs(ctx, tx, permissionIDs); err != nil {
+		r.log.Errorf("clean role permissions failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("clean role permissions failed")
 	}
 
 	return nil

@@ -38,7 +38,13 @@ async function loadPost() {
   if (!postId.value) return
   postLoading.value = true
   try {
-    post.value = await fetchPost(postId.value)
+    const fetched = await fetchPost(postId.value)
+    // 仅展示已发布文章，草稿/私有等状态按未找到处理
+    if (!fetched || fetched.status !== 'POST_STATUS_PUBLISHED') {
+      post.value = null
+      return
+    }
+    post.value = fetched
   } catch (e) {
     console.error('[Post Detail] Load failed:', e)
     error.value = t('page.post_detail.load_failed')

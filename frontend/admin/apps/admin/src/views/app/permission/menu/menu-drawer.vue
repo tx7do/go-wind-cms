@@ -363,7 +363,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
 });
 
 function setLoading(loading: boolean) {
-  drawerApi.setState({ loading });
+  drawerApi.setState({ confirmLoading: loading });
 }
 </script>
 

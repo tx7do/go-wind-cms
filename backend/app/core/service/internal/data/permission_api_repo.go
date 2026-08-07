@@ -191,6 +191,27 @@ func (r *PermissionApiRepo) DeleteByPermissionIDs(ctx context.Context, permissio
 	return nil
 }
 
+// CleanByPermissionIDs 事务级联清理：删除与给定权限关联的 permission_api 行。
+// 仅在权限删除事务中调用，保证与主删除一起提交/回滚。
+func (r *PermissionApiRepo) CleanByPermissionIDs(
+	ctx context.Context,
+	tx *ent.Tx,
+	permissionIDs []uint32,
+) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+	if _, err := tx.PermissionApi.Delete().
+		Where(
+			permissionapi.PermissionIDIn(permissionIDs...),
+		).
+		Exec(ctx); err != nil {
+		r.log.Errorf("delete permission apis by permission ids failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("delete permission apis by permission ids failed")
+	}
+	return nil
+}
+
 // AssignApi 给权限分配API资源
 func (r *PermissionApiRepo) AssignApi(ctx context.Context, permissionID uint32, apiID uint32) error {
 	now := time.Now()
