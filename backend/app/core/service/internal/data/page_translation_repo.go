@@ -172,6 +172,10 @@ func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 	}
 
 	builder := r.entClient.Client().PageTranslation.UpdateOneID(id)
+	// 租户作用域：仅更新本租户翻译，避免跨租户改他人翻译（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(pagetranslation.TenantIDEQ(tid))
+	}
 
 	dto, err := r.repository.UpdateOne(ctx, builder, data, updateMask,
 		func(dto *contentV1.PageTranslation) {
@@ -305,6 +309,10 @@ func (r *PageTranslationRepo) DeleteTranslation(ctx context.Context, req *conten
 	}
 
 	builder := r.entClient.Client().PageTranslation.Delete()
+	// 租户作用域：仅删除本租户翻译，避免跨租户删他人翻译（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(pagetranslation.TenantIDEQ(tid))
+	}
 
 	_, err := r.repository.Delete(ctx, builder, func(s *sql.Selector) {
 		switch req.QueryBy.(type) {

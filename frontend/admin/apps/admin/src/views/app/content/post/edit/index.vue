@@ -71,8 +71,6 @@ function goBack() {
  * Handle language switch
  */
 async function handleLanguageChange(newLang: string) {
-  console.log('handleLanguageChange', newLang);
-
   // Update URL query parameter
   await router.replace({
     path: route.path,
@@ -100,7 +98,6 @@ async function handleTranslate() {
       targetLanguage: postEditViewStore.formData.lang,
       content: postEditViewStore.formData.title,
     });
-    console.log('Title translation response:', titleResp);
     postEditViewStore.formData.title =
       titleResp.translatedContent || postEditViewStore.formData.title;
   } catch (error) {
@@ -117,7 +114,6 @@ async function handleTranslate() {
       targetLanguage: postEditViewStore.formData.lang,
       content: postEditViewStore.formData.content,
     });
-    console.log('Content translation response:', contentResp);
     postEditViewStore.formData.content =
       contentResp.translatedContent || postEditViewStore.formData.content;
   } catch (error) {
@@ -167,8 +163,6 @@ async function handlePublish() {
  * 处理图片上传
  */
 async function handleUploadImage(file: File): Promise<string> {
-  console.log('Upload image:', file);
-
   try {
     const resp = await uploadMediaAsset({}, file);
     return resp.objectName || '';
@@ -207,8 +201,6 @@ async function loadPost() {
  * 初始化页面数据
  */
 async function init() {
-  console.log('init');
-
   try {
     await postEditViewStore.fetchLanguageList();
   } catch {

@@ -73,7 +73,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	positionRepo := data.NewPositionRepo(context, entClient)
 	orgUnitRepo := data.NewOrgUnitRepo(context, entClient)
 	userService := service.NewUserService(context, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo)
-	roleService := service.NewRoleService(context, roleRepo, tenantRepo, userRoleRepo)
+	roleService := service.NewRoleService(context, roleRepo, tenantRepo, userRoleRepo, userRepo)
 	positionService := service.NewPositionService(context, positionRepo, orgUnitRepo)
 	orgUnitService := service.NewOrgUnitService(context, orgUnitRepo, userRepo)
 	menuRepo := data.NewMenuRepo(context, entClient)

@@ -144,8 +144,6 @@ const gridOptions: VxeGridProps<ApiAuditLog> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        console.log('query:', formValues);
-
         let startTime: any;
         let endTime: any;
         if (
@@ -158,7 +156,6 @@ const gridOptions: VxeGridProps<ApiAuditLog> = {
           endTime = dayjs(formValues.createdAt[1]).format(
             'YYYY-MM-DD HH:mm:ss',
           );
-          console.log(startTime, endTime);
         }
 
         return await fetchListApiAuditLogs(

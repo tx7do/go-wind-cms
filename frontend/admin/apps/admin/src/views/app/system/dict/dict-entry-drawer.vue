@@ -310,7 +310,11 @@ async function saveRowEvent(row: DictEntryI18n) {
     await apiClient.dictEntryService.Update({
       id: data.value.row.id,
       data: { ...finalValues } as any,
-      updateMask: makeUpdateMask(Object.keys(finalValues)),
+      // i18n 是关联子表数据，由后端单独处理，并非 sys_dict_entry 的列，
+      // 放入 updateMask 会触发“列不存在”或误更新，需排除。
+      updateMask: makeUpdateMask(
+        Object.keys(finalValues).filter((k) => k !== 'i18n'),
+      ),
     });
 
     notification.success({

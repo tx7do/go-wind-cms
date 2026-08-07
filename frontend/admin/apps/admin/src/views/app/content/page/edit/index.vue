@@ -65,8 +65,6 @@ function goBack() {
  * Handle language switch
  */
 async function handleLanguageChange(newLang: string) {
-  console.log('handleLanguageChange', newLang);
-
   // Update URL query parameter
   await router.replace({
     path: route.path,
@@ -94,7 +92,6 @@ async function handleTranslate() {
       targetLanguage: pageEditViewStore.formData.lang,
       content: pageEditViewStore.formData.title,
     });
-    console.log('Title translation response:', titleResp);
     pageEditViewStore.formData.title =
       titleResp.translatedContent || pageEditViewStore.formData.title;
   } catch (error) {
@@ -111,7 +108,6 @@ async function handleTranslate() {
       targetLanguage: pageEditViewStore.formData.lang,
       content: pageEditViewStore.formData.content,
     });
-    console.log('Content translation response:', contentResp);
     pageEditViewStore.formData.content =
       contentResp.translatedContent || pageEditViewStore.formData.content;
   } catch (error) {
@@ -161,8 +157,6 @@ async function handlePublish() {
  * Handle image upload
  */
 async function handleUploadImage(file: File): Promise<string> {
-  console.log('Upload image:', file);
-
   try {
     const resp = await uploadMediaAsset({}, file);
     return resp.objectName || '';
@@ -201,8 +195,6 @@ async function loadPage() {
  * Initialize page data
  */
 async function init() {
-  console.log('init');
-
   try {
     await pageEditViewStore.fetchLanguageList();
   } catch {

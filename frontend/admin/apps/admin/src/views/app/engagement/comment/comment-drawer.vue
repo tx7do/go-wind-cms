@@ -81,7 +81,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
       await apiClient.commentService.Update({
         id: data.value?.row?.id,
         data: values as any,
-        updateMask: makeUpdateMask(Object.keys(values)),
+        // 该抽屉仅用于评论审核，只允许更新审核相关字段；
+        // content（评论原文）不在审核路径中修改，排除以避免误改用户原文。
+        updateMask: makeUpdateMask(
+          Object.keys(values).filter((k) => k !== 'content'),
+        ),
       });
 
       notification.success({

@@ -238,6 +238,10 @@ func (r *PostTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 	data.WordCount = trans.Ptr(uint32(counter.RawChars()))
 
 	builder := r.entClient.Client().PostTranslation.UpdateOneID(id)
+	// 租户作用域：仅更新本租户翻译，避免跨租户改他人翻译（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(posttranslation.TenantIDEQ(tid))
+	}
 
 	dto, err := r.repository.UpdateOne(ctx, builder, data, updateMask,
 		func(dto *contentV1.PostTranslation) {
@@ -345,6 +349,10 @@ func (r *PostTranslationRepo) DeleteTranslation(ctx context.Context, req *conten
 	}
 
 	builder := r.entClient.Client().PostTranslation.Delete()
+	// 租户作用域：仅删除本租户翻译，避免跨租户删他人翻译（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(posttranslation.TenantIDEQ(tid))
+	}
 
 	_, err := r.repository.Delete(ctx, builder, func(s *sql.Selector) {
 		switch req.QueryBy.(type) {

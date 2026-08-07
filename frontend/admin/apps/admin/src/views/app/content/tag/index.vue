@@ -64,8 +64,6 @@ const gridOptions: VxeGridProps<Tag> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        console.log('query:', formValues);
-
         return await fetchListTags(
           new PaginationQuery({
             paging: {
@@ -155,7 +153,6 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
 /* Create */
 function handleCreate() {
-  console.log('Create', i18n.global.locale.value);
   router.push({
     name: 'CreateTag',
     query: { lang: i18n.global.locale.value },
@@ -164,7 +161,6 @@ function handleCreate() {
 
 /* Edit */
 function handleEdit(row: any) {
-  console.log('Edit', row.id, i18n.global.locale.value);
   router.push({
     name: 'EditTag',
     params: { id: String(row.id) },
@@ -174,8 +170,6 @@ function handleEdit(row: any) {
 
 /* Delete */
 async function handleDelete(row: any) {
-  console.log('Delete', row);
-
   try {
     await apiClient.tagService.Delete({ id: row.id });
 

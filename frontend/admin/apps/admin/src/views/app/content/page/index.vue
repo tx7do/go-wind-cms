@@ -82,8 +82,6 @@ const gridOptions: VxeGridProps<PageType> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        console.log('query:', formValues);
-
         return await fetchListPages(
           new PaginationQuery({
             paging: { page: page.currentPage, pageSize: page.pageSize },
@@ -164,7 +162,6 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
 /* Create */
 function handleCreate() {
-  console.log('Create', i18n.global.locale.value);
   router.push({
     name: 'CreatePage',
     query: { lang: i18n.global.locale.value },
@@ -173,7 +170,6 @@ function handleCreate() {
 
 /* Edit */
 function handleEdit(row: any) {
-  console.log('Edit', row, i18n.global.locale.value);
   router.push({
     name: 'EditPage',
     params: { id: Number(row.id || 0) },
@@ -183,8 +179,6 @@ function handleEdit(row: any) {
 
 /* Delete */
 async function handleDelete(row: any) {
-  console.log('Delete', row);
-
   try {
     await apiClient.pageService.Delete({ id: row.id });
 

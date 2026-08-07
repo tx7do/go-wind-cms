@@ -146,10 +146,6 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
         if (!langItem) {
           langItem = item.translations?.[0];
           this.needTranslate = true;
-          console.log(
-            'No translation found for selected language, using first available translation',
-            this.formData.lang,
-          );
         }
 
         if (!langItem) {
@@ -218,7 +214,6 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
         this.isCreateMode,
       );
       storageManager.setItem(cacheKey, this.formData);
-      console.log(`Draft saved with key: ${cacheKey}`);
     },
 
     /**
@@ -232,11 +227,9 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
       );
       const draft = storageManager.getItem<TagEditProps>(cacheKey);
       if (draft) {
-        console.log(`Draft loaded with key: ${cacheKey}`, draft);
         this.formData = draft;
         return true;
       }
-      console.log(`No draft found with key: ${cacheKey}`);
       return false;
     },
 
@@ -250,7 +243,6 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
         this.isCreateMode,
       );
       storageManager.removeItem(cacheKey);
-      console.log(`Draft cleared with key: ${cacheKey}`);
     },
 
     /**
@@ -319,7 +311,6 @@ export const useTagEditViewStore = defineStore('tag-edit-view', {
      * Reset state
      */
     $reset() {
-      console.log('resetting tag edit view state');
       this.loading = false;
       this.needTranslate = false;
       this.isCreateMode = true;

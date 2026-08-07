@@ -78,8 +78,6 @@ const gridOptions: VxeGridProps<Post> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        console.log('query:', formValues);
-
         return await fetchListPosts(
           new PaginationQuery({
             paging: { page: page.currentPage, pageSize: page.pageSize },
@@ -165,7 +163,6 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
 /* 创建 */
 function handleCreate() {
-  console.log('创建', i18n.global.locale.value);
   router.push({
     name: 'CreatePost',
     query: { lang: i18n.global.locale.value },
@@ -174,7 +171,6 @@ function handleCreate() {
 
 /* 编辑 */
 function handleEdit(row: any) {
-  console.log('编辑', row.id, i18n.global.locale.value);
   router.push({
     name: 'EditPost',
     params: { id: String(row.id) },
@@ -184,8 +180,6 @@ function handleEdit(row: any) {
 
 /* 删除 */
 async function handleDelete(row: any) {
-  console.log('删除', row);
-
   try {
     await apiClient.postService.Delete({ id: row.id });
 

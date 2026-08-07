@@ -19,6 +19,7 @@ export class SSEClient {
   private eventSource: EventSource | null = null;
   // 存储事件监听器（键：事件名，值：回调数组）
   private handlers = new Map<SSEEventName, SSEEventHandler[]>();
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private status: SSEConnectionStatus = 'disconnected';
   private readonly transport: SSETransport;
 
@@ -106,7 +107,14 @@ export class SSEClient {
       // 连接关闭时尝试重连（排除手动关闭的情况）
       if (this.eventSource?.readyState === EventSource.CLOSED) {
         this.status = 'disconnected';
-        setTimeout(() => this.connect(), this.config.reconnectDelay);
+        // 跟踪重连定时器，close() 时可取消，避免显式关闭后仍被重连唤醒
+        if (this.reconnectTimer) {
+          clearTimeout(this.reconnectTimer);
+        }
+        this.reconnectTimer = setTimeout(() => {
+          this.reconnectTimer = null;
+          this.connect();
+        }, this.config.reconnectDelay);
       }
     });
   }
@@ -187,6 +195,11 @@ export class SSEClient {
       this.abortController.abort();
       this.abortController = null;
     }
+    // 取消任何挂起的重连定时器，避免显式关闭后仍被自动重连唤醒
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
     this.status = 'disconnected';
   }
 
@@ -198,6 +211,12 @@ export class SSEClient {
     if (this.status === 'connected' || this.status === 'connecting') {
       console.warn('SSE 连接已存在或正在建立中');
       return new Error('SSE 连接已存在或正在建立中');
+    }
+
+    // 显式连接时取消任何挂起的自动重连定时器，避免随后被旧定时器重复唤醒
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
     }
 
     const targetUrl = url === undefined || url === '' ? this.config.url : url;

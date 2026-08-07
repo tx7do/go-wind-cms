@@ -317,6 +317,10 @@ func (r *MembershipRepo) SetUserOrgUnitID(ctx context.Context, userID uint32, or
 		Where(
 			membership.UserIDEQ(userID),
 		)
+	// 租户作用域：仅允许更新本租户成员关系，避免跨租户改他人 org_unit 绑定
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		up.Where(membership.TenantIDEQ(tid))
+	}
 
 	if orgUnitID == 0 {
 		if _, err := up.ClearOrgUnitID().Save(ctx); err != nil {
@@ -341,6 +345,10 @@ func (r *MembershipRepo) SetUserRoleID(ctx context.Context, userID uint32, roleI
 		Where(
 			membership.UserIDEQ(userID),
 		)
+	// 租户作用域：仅允许更新本租户成员关系，避免跨租户改他人 role 绑定
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		up.Where(membership.TenantIDEQ(tid))
+	}
 
 	if roleID == 0 {
 		if _, err := up.ClearRoleID().Save(ctx); err != nil {
@@ -352,7 +360,7 @@ func (r *MembershipRepo) SetUserRoleID(ctx context.Context, userID uint32, roleI
 
 	if _, err := up.SetRoleID(roleID).Save(ctx); err != nil {
 		r.log.Errorf("update membership role_id failed: %s", err.Error())
-		return identityV1.ErrorInternalServerError("update membership role_id failed")
+			return identityV1.ErrorInternalServerError("update membership role_id failed")
 	}
 	return nil
 }
@@ -365,6 +373,10 @@ func (r *MembershipRepo) SetUserPositionID(ctx context.Context, userID uint32, p
 		Where(
 			membership.UserIDEQ(userID),
 		)
+	// 租户作用域：仅允许更新本租户成员关系，避免跨租户改他人 position 绑定
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		up.Where(membership.TenantIDEQ(tid))
+	}
 
 	if positionID == 0 {
 		if _, err := up.ClearPositionID().Save(ctx); err != nil {
@@ -388,6 +400,10 @@ func (r *MembershipRepo) SetUserStatus(ctx context.Context, userID uint32, statu
 		Where(
 			membership.UserIDEQ(userID),
 		)
+	// 租户作用域：仅允许更新本租户成员关系，避免跨租户改他人状态
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		up.Where(membership.TenantIDEQ(tid))
+	}
 
 	if status == nil {
 		if _, err := up.ClearStatus().Save(ctx); err != nil {
@@ -411,6 +427,10 @@ func (r *MembershipRepo) SetUserEndAt(ctx context.Context, userID uint32, endAt 
 		Where(
 			membership.UserIDEQ(userID),
 		)
+	// 租户作用域：仅允许更新本租户成员关系，避免跨租户改他人 end_at
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		up.Where(membership.TenantIDEQ(tid))
+	}
 
 	if endAt == nil {
 		if _, err := up.ClearEndAt().Save(ctx); err != nil {

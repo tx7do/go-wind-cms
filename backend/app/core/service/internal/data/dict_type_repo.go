@@ -249,14 +249,23 @@ func (r *DictTypeRepo) Update(ctx context.Context, req *dictV1.UpdateDictTypeReq
 	}()
 
 	builder := tx.DictType.UpdateOneID(req.GetId())
+	// 租户作用域：仅更新本租户字典类型，避免跨租户改他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(dicttype.TenantIDEQ(tid))
+	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	_, err = r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *dictV1.DictType) {
 			builder.
 				SetNillableTypeName(req.Data.TypeName).
 				SetNillableSortOrder(req.Data.SortOrder).
 				SetNillableIsEnabled(req.Data.IsEnabled).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(dicttype.FieldID, req.GetId()))
@@ -300,7 +309,12 @@ func (r *DictTypeRepo) Delete(ctx context.Context, id uint32) (err error) {
 	}
 
 	// 删除字典类型本身（事务内）
-	if err = tx.DictType.DeleteOneID(id).Exec(ctx); err != nil {
+	delBuilder := tx.DictType.DeleteOneID(id)
+	// 租户作用域：仅删除本租户字典类型，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(dicttype.TenantIDEQ(tid))
+	}
+	if err = delBuilder.Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return dictV1.ErrorNotFound("dict not found")
 		}
@@ -345,9 +359,12 @@ func (r *DictTypeRepo) BatchDelete(ctx context.Context, ids []uint32) (err error
 	}
 
 	// 删除字典类型本身（事务内）
-	if _, err = tx.DictType.Delete().
-		Where(dicttype.IDIn(ids...)).
-		Exec(ctx); err != nil {
+	delBuilder := tx.DictType.Delete().Where(dicttype.IDIn(ids...))
+	// 租户作用域：仅删除本租户字典类型，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(dicttype.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return dictV1.ErrorNotFound("dict not found")
 		}

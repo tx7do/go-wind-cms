@@ -590,6 +590,11 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 
 	var entity *permissionV1.Role
 	builder := tx.Role.UpdateOneID(req.GetId())
+	// 租户作用域：仅更新本租户角色，避免跨租户改他人角色（系统角色 tenant 为 nil，按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(role.TenantIDEQ(tid))
+	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	entity, err = r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *permissionV1.Role) {
 			builder.
@@ -600,8 +605,11 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 				SetNillableType(r.typeConverter.ToEntity(req.Data.Type)).
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableDescription(req.Data.Description).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(role.FieldID, req.GetId()))
@@ -657,7 +665,12 @@ func (r *RoleRepo) Delete(ctx context.Context, req *permissionV1.DeleteRoleReque
 		}
 	}()
 
-	ret, err := tx.Role.Query().Where(role.IDEQ(req.GetId())).Only(ctx)
+	roleQuery := tx.Role.Query().Where(role.IDEQ(req.GetId()))
+	// 租户作用域：仅查询本租户角色，避免跨租户删他人角色（系统角色 tenant 为 nil，按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		roleQuery.Where(role.TenantIDEQ(tid))
+	}
+	ret, err := roleQuery.Only(ctx)
 	if err != nil {
 		r.log.Errorf("get role failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("get role failed")
@@ -669,9 +682,11 @@ func (r *RoleRepo) Delete(ctx context.Context, req *permissionV1.DeleteRoleReque
 	}
 
 	// 删除角色记录
-	if _, err = tx.Role.Delete().
-		Where(role.IDEQ(req.GetId())).
-		Exec(ctx); err != nil {
+	roleDel := tx.Role.Delete().Where(role.IDEQ(req.GetId()))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		roleDel.Where(role.TenantIDEQ(tid))
+	}
+	if _, err = roleDel.Exec(ctx); err != nil {
 		r.log.Errorf("delete role failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete role failed")
 	}

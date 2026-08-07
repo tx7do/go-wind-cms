@@ -671,10 +671,20 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 		"role_ids",
 		"position_ids",
 		"org_unit_ids",
+		// 鉴权/会话/锁止状态为服务端管理字段，不可由客户端经 Update 设置
+		"last_login_at",
+		"last_login_ip",
+		"locked_until",
+		"status",
 	})
 
 	var entity *identityV1.User
 	builder := tx.User.UpdateOneID(req.GetId())
+	// 租户作用域：仅更新本租户用户，避免跨租户改他人账号
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(user.TenantIDEQ(tid))
+	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	entity, err = r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *identityV1.User) {
 			builder.
@@ -688,13 +698,12 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 				SetNillableAddress(req.Data.Address).
 				SetNillableDescription(req.Data.Description).
 				SetNillableRemark(req.Data.Remark).
-				SetNillableLastLoginAt(timeutil.TimestamppbToTime(req.Data.LastLoginAt)).
-				SetNillableLockedUntil(timeutil.TimestamppbToTime(req.Data.LockedUntil)).
-				SetNillableLastLoginIP(req.Data.LastLoginIp).
 				SetNillableGender(r.genderConverter.ToEntity(req.Data.Gender)).
-				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(user.FieldID, req.GetId()))
@@ -768,6 +777,10 @@ func (r *userRepo) Delete(ctx context.Context, req *identityV1.DeleteUserRequest
 	switch req.QueryBy.(type) {
 	case *identityV1.DeleteUserRequest_Id:
 		builder.Where(user.IDEQ(req.GetId()))
+		// 租户作用域：仅删除本租户用户，避免跨租户删他人账号
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			builder.Where(user.TenantIDEQ(tid))
+		}
 	case *identityV1.DeleteUserRequest_Username:
 		// username 仅在 (tenant_id, username) 维度唯一，平台上下文(tid=0)下按 username 删除
 		// 会误删所有租户的同名用户。仅允许在具名租户上下文(tid>0)下按 username 删除。
@@ -779,6 +792,10 @@ func (r *userRepo) Delete(ctx context.Context, req *identityV1.DeleteUserRequest
 		builder.Where(user.UsernameEQ(req.GetUsername()), user.TenantIDEQ(tid))
 	default:
 		builder.Where(user.IDEQ(req.GetId()))
+		// 租户作用域：仅删除本租户用户，避免跨租户删他人账号
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			builder.Where(user.TenantIDEQ(tid))
+		}
 	}
 
 	if _, err = builder.Exec(ctx); err != nil {

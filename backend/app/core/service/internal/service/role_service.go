@@ -31,6 +31,7 @@ type RoleService struct {
 	roleRepo     *data.RoleRepo
 	tenantRepo   *data.TenantRepo
 	userRoleRepo *data.UserRoleRepo
+	userRepo     data.UserRepo
 }
 
 func NewRoleService(
@@ -38,12 +39,14 @@ func NewRoleService(
 	roleRepo *data.RoleRepo,
 	tenantRepo *data.TenantRepo,
 	userRoleRepo *data.UserRoleRepo,
+	userRepo data.UserRepo,
 ) *RoleService {
 	svc := &RoleService{
 		log:          ctx.NewLoggerHelper("role/service/core-service"),
 		roleRepo:     roleRepo,
 		tenantRepo:   tenantRepo,
 		userRoleRepo: userRoleRepo,
+		userRepo:     userRepo,
 	}
 
 	svc.init()
@@ -305,8 +308,34 @@ func (s *RoleService) AssignRolesToUser(ctx context.Context, req *permissionV1.A
 		return nil, permissionV1.ErrorBadRequest("operator identity is required")
 	}
 	var callerTenantID uint32
+	isPlatform := false
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
 		callerTenantID = uint32(vc.TenantID())
+		isPlatform = vc.IsPlatformContext() || vc.IsSystemContext()
+	}
+
+	// 校验目标用户归属当前调用者租户：平台上下文放行；租户用户仅可向本租户用户授权。
+	// (userRepo.Get 经 EvalQuery 注入 tenant 谓词，租户用户取不到他租户用户即自动拒绝)
+	targetUser, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: req.GetUserId()},
+	})
+	if err != nil || targetUser == nil {
+		return nil, permissionV1.ErrorBadRequest("target user not found")
+	}
+	if !isPlatform && targetUser.GetTenantId() != callerTenantID {
+		return nil, permissionV1.ErrorForbidden("cannot assign roles to a user in another tenant")
+	}
+
+	// 逐个校验角色可分配性（启用/非模板/非阻断/非平台管理员模板），CanAssignRole 内部 Get 经
+	// EvalQuery 注入 tenant 谓词，租户用户取不到他租户角色即自动拒绝
+	for _, roleID := range req.GetRoleIds() {
+		ok, err := s.roleRepo.CanAssignRole(ctx, roleID)
+		if err != nil {
+			return nil, err
+		}
+		if !ok {
+			return nil, permissionV1.ErrorForbidden("role %d is not assignable", roleID)
+		}
 	}
 
 	now := time.Now()

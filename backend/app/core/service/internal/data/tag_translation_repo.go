@@ -71,11 +71,12 @@ func (r *TagTranslationRepo) CleanTranslations(
 	tx *ent.Tx,
 	tagID uint32,
 ) error {
-	if _, err := tx.TagTranslation.Delete().
-		Where(
-			tagtranslation.TagIDEQ(tagID),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := tx.TagTranslation.Delete().Where(tagtranslation.TagIDEQ(tagID))
+	// 租户作用域：仅清除本租户翻译，避免跨租户删他人翻译（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(tagtranslation.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete old tag [%d] translations failed: %s", tagID, err.Error())
 		return contentV1.ErrorInternalServerError("delete old tag translations failed")
 	}
@@ -183,6 +184,10 @@ func (r *TagTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, d
 	}
 
 	builder := r.entClient.Client().TagTranslation.UpdateOneID(id)
+	// 租户作用域：仅更新本租户翻译，避免跨租户改他人翻译（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(tagtranslation.TenantIDEQ(tid))
+	}
 
 	dto, err := r.repository.UpdateOne(ctx, builder, data, updateMask,
 		func(dto *contentV1.TagTranslation) {
@@ -301,6 +306,10 @@ func (r *TagTranslationRepo) DeleteTranslation(ctx context.Context, req *content
 	}
 
 	builder := r.entClient.Client().TagTranslation.Delete()
+	// 租户作用域：仅删除本租户翻译，避免跨租户删他人翻译（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(tagtranslation.TenantIDEQ(tid))
+	}
 
 	_, err := r.repository.Delete(ctx, builder, func(s *sql.Selector) {
 		switch req.QueryBy.(type) {

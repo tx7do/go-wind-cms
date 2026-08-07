@@ -144,10 +144,6 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
         if (!langItem) {
           langItem = item.translations?.[0];
           this.needTranslate = true;
-          console.log(
-            'No translation found for selected language, using first available translation',
-            this.formData.lang,
-          );
         }
 
         if (!langItem) {
@@ -219,7 +215,6 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
         this.isCreateMode,
       );
       storageManager.setItem(cacheKey, this.formData);
-      console.log(`Draft saved with key: ${cacheKey}`);
     },
 
     /**
@@ -233,11 +228,9 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
       );
       const draft = storageManager.getItem<PageEditProps>(cacheKey);
       if (draft) {
-        console.log(`Draft loaded with key: ${cacheKey}`, draft);
         this.formData = draft;
         return true;
       }
-      console.log(`No draft found with key: ${cacheKey}`);
       return false;
     },
 
@@ -251,7 +244,6 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
         this.isCreateMode,
       );
       storageManager.removeItem(cacheKey);
-      console.log(`Draft cleared with key: ${cacheKey}`);
     },
 
     /**
@@ -325,7 +317,6 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
      * Reset state
      */
     $reset() {
-      console.log('resetting page edit view state');
       this.loading = false;
       this.needTranslate = false;
       this.isCreateMode = true;

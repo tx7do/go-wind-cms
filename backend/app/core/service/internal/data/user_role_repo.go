@@ -11,6 +11,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-cms/app/core/service/internal/data/ent"
+	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/userrole"
 
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
@@ -133,13 +134,17 @@ func (r *UserRoleRepo) RemoveRolesFromUser(ctx context.Context, userID uint32, r
 		return nil
 	}
 
+	// 租户作用域：仅删除本租户的 user_role 关联，避免跨租户剥权
+	preds := []predicate.UserRole{
+		userrole.UserIDEQ(userID),
+		userrole.RoleIDIn(roleIDs...),
+	}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		preds = append(preds, userrole.TenantIDEQ(tid))
+	}
+
 	_, err := r.entClient.Client().UserRole.Delete().
-		Where(
-			userrole.And(
-				userrole.UserIDEQ(userID),
-				userrole.RoleIDIn(roleIDs...),
-			),
-		).
+		Where(userrole.And(preds...)).
 		Exec(ctx)
 	if err != nil {
 		r.log.Errorf("remove roles from user failed: %s", err.Error())

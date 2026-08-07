@@ -210,8 +210,6 @@ function setLoading(loading: boolean) {
 }
 
 async function handleUploadImage(file: File): Promise<string> {
-  console.log('Upload image:', file);
-
   try {
     return '';
   } catch (error) {

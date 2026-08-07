@@ -31,7 +31,15 @@ func (s *PostService) List(ctx context.Context, req *paginationV1.PagingRequest)
 }
 
 func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.Post, error) {
-	return s.postClient.Get(ctx, req)
+	resp, err := s.postClient.Get(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// 公开端点仅返回已发布文章，草稿/归档/私有等状态按未找到处理
+	if resp == nil || resp.GetStatus() != contentV1.Post_POST_STATUS_PUBLISHED {
+		return nil, contentV1.ErrorNotFound("post not found")
+	}
+	return resp, nil
 }
 
 // Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务，

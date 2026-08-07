@@ -213,8 +213,14 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 	req.User.TenantId = tenant.Id
 
 	// copy tenant manager role to tenant
+	// 操作人身份必须从 viewer context 推导，忽略客户端传入的 operator_user_id，
+	// 防止伪造审计归属
+	var operatorUserID uint32
+	if opID, hasOp := viewerUserIDFromContext(ctx); hasOp {
+		operatorUserID = opID
+	}
 	var role *permissionV1.Role
-	if role, err = s.roleRepo.CreateTenantRoleFromTemplate(ctx, tx, tenant.GetId(), req.GetOperatorUserId()); err != nil {
+	if role, err = s.roleRepo.CreateTenantRoleFromTemplate(ctx, tx, tenant.GetId(), operatorUserID); err != nil {
 		s.log.Errorf("copy tenant admin role template to tenant err: %v", err)
 		return nil, err
 	}

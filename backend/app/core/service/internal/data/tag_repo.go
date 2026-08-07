@@ -359,10 +359,11 @@ func (r *TagRepo) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (
 	}()
 
 	if len(req.Data.Translations) > 0 {
-		//if err = r.tagTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
-		//	r.log.Errorf("clean translations failed: %s", err.Error())
-		//	return nil, contentV1.ErrorInternalServerError("clean translations failed")
-		//}
+		// 替换语义：先清除该标签下的全部旧翻译，再批量写入新翻译，避免残留/重复翻译
+		if err = r.tagTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("clean translations failed")
+		}
 
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].TagId = trans.Ptr(req.GetId())
@@ -375,6 +376,7 @@ func (r *TagRepo) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := tx.Tag.UpdateOneID(req.GetId())
 	builder.Where(tag.IDEQ(req.GetId()))
 	if hasTenant {
@@ -390,8 +392,12 @@ func (r *TagRepo) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (
 				SetNillableCode(req.Data.Code).
 				SetNillableSortOrder(req.Data.SortOrder).
 				SetNillableIsFeatured(req.Data.IsFeatured).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(tag.FieldID, req.GetId()))

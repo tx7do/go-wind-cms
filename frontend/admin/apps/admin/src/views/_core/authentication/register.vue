@@ -81,8 +81,9 @@ const formSchema = computed((): VbenFormSchema[] => {
   ];
 });
 
-function handleSubmit(value: Recordable<any>) {
-  console.log('register submit:', value);
+function handleSubmit(_value: Recordable<any>) {
+  // 注册提交由 AuthenticationRegister 内部处理，此处仅占位；
+  // 不再打印表单值，避免凭据（密码）泄露到控制台。
 }
 </script>
 

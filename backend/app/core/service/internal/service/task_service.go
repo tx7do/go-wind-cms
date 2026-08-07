@@ -86,6 +86,12 @@ func (s *TaskService) Create(ctx context.Context, req *taskV1.CreateTaskRequest)
 		return nil, taskV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 任务类型与命名必须由服务端校验，避免空 type_name/cron_spec 进入调度器导致
+	// 注册失败或以空名注册互相覆盖
+	if err := validateTaskFields(req.Data); err != nil {
+		return nil, err
+	}
+
 	var t *taskV1.Task
 	var err error
 	if t, err = s.taskRepo.Create(ctx, req); err != nil {
@@ -104,6 +110,12 @@ func (s *TaskService) Update(ctx context.Context, req *taskV1.UpdateTaskRequest)
 		return nil, taskV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 任务类型与命名必须由服务端校验，避免空 type_name/cron_spec 进入调度器导致
+	// 注册失败或以空名注册互相覆盖
+	if err := validateTaskFields(req.Data); err != nil {
+		return nil, err
+	}
+
 	// 获取更新前的任务，用于判断调度器中是否有正在运行的注册项
 	oldTask, _ := s.taskRepo.Get(ctx, &taskV1.GetTaskRequest{QueryBy: &taskV1.GetTaskRequest_Id{Id: req.GetId()}})
 
@@ -112,6 +124,11 @@ func (s *TaskService) Update(ctx context.Context, req *taskV1.UpdateTaskRequest)
 	if t, err = s.taskRepo.Update(ctx, req); err != nil {
 
 		return nil, err
+	}
+
+	// 更新结果为空时不可继续访问其字段，避免 nil 解引用
+	if t == nil {
+		return &emptypb.Empty{}, nil
 	}
 
 	// 先移除调度器中旧的注册项（若存在），避免停用后仍运行、或启用时重复注册。
@@ -129,6 +146,21 @@ func (s *TaskService) Update(ctx context.Context, req *taskV1.UpdateTaskRequest)
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+// validateTaskFields 校验任务必填字段：type_name 始终必填；定时任务另需 cron_spec。
+// 避免空值进入调度器导致注册失败或以空名互相覆盖。
+func validateTaskFields(t *taskV1.Task) error {
+	if t == nil {
+		return taskV1.ErrorBadRequest("invalid parameter")
+	}
+	if t.GetTypeName() == "" {
+		return taskV1.ErrorBadRequest("type_name is required")
+	}
+	if t.GetType() == taskV1.Task_PERIODIC && t.GetCronSpec() == "" {
+		return taskV1.ErrorBadRequest("cron_spec is required for periodic task")
+	}
+	return nil
 }
 
 func (s *TaskService) Delete(ctx context.Context, req *taskV1.DeleteTaskRequest) (*emptypb.Empty, error) {

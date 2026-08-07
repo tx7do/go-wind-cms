@@ -78,7 +78,7 @@ func (s *InternalMessageService) HandleSubscribe(streamID sse.StreamID, _ *sse.S
 	s.log.Infof("subscriber [%s] connected", hashToken(string(streamID)))
 }
 
-func (s *InternalMessageService) HandleAuthorize(_ *http.Request, token string) error {
+func (s *InternalMessageService) HandleAuthorize(r *http.Request, token string) error {
 	resp, err := s.authenticationServiceClient.ValidateToken(context.Background(), &authenticationV1.ValidateTokenRequest{
 		ClientType:    s.clientType,
 		Token:         token,
@@ -97,6 +97,19 @@ func (s *InternalMessageService) HandleAuthorize(_ *http.Request, token string) 
 	if !resp.GetIsValid() {
 		s.log.Warnf("token is invalid: %s", tokenHash)
 		return authenticationV1.ErrorUnauthorized("invalid token")
+	}
+
+	// 绑定 stream 到已验证令牌：通知流的 ID 即为接收方访问令牌，
+	// 客户端只能订阅与其自身令牌同名的流，防止用合法令牌订阅他人通知流。
+	// 框架从 Authorization/X-Token/?token= 提取令牌做校验，但 ?stream= 是独立
+	// 提取的，若不在此处绑定，攻击者可携带 A 的令牌订阅 B 的流。
+	if r == nil || r.URL == nil {
+		return authenticationV1.ErrorForbidden("invalid request")
+	}
+	streamID := r.URL.Query().Get("stream")
+	if streamID == "" || streamID != token {
+		s.log.Warnf("stream/token mismatch, token: %s", tokenHash)
+		return authenticationV1.ErrorForbidden("stream does not match token")
 	}
 
 	s.log.Debugf("token authenticated successfully, userId: [%d]", resp.GetPayload().GetUserId())
@@ -205,22 +218,32 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 		return nil, err
 	}
 
+	// 平台上下文(tenant==0)可向任意租户用户发送；普通租户用户只能向本租户用户发送
+	senderTenantID := operator.GetTenantId()
 	if req.GetTargetAll() {
 		users, err := s.userServiceClient.List(ctx, &paginationV1.PagingRequest{NoPaging: trans.Ptr(true)})
 		if err != nil {
 			s.log.Errorf("send message failed, list users failed, %s", err)
 		} else {
 			for _, user := range users.Items {
+				// 非平台上下文时，跳过其他租户的用户
+				if senderTenantID != 0 && user.GetTenantId() != senderTenantID {
+					continue
+				}
 				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
 			}
 		}
 	} else {
 		if req.RecipientUserId != nil {
-			_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
+			if s.isRecipientAllowed(ctx, req.GetRecipientUserId(), senderTenantID) {
+				_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
+			}
 		} else {
 			if len(req.TargetUserIds) != 0 {
 				for _, uid := range req.TargetUserIds {
-					_ = s.sendNotification(ctx, msg.GetId(), uid, operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
+					if s.isRecipientAllowed(ctx, uid, senderTenantID) {
+						_ = s.sendNotification(ctx, msg.GetId(), uid, operator.GetUserId(), &now, msg.GetTitle(), msg.GetContent())
+					}
 				}
 			}
 		}
@@ -229,6 +252,24 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 	return &internalMessageV1.SendMessageResponse{
 		MessageId: msg.GetId(),
 	}, nil
+}
+
+// isRecipientAllowed 校验收件人是否在发送者的可发送范围内。
+// 平台上下文(senderTenantID==0)可向任意租户用户发送；普通租户用户只能向本租户用户发送。
+// 收件人不存在或跨租户时拒绝。与 core InternalMessageService.SendMessage 的实现保持一致。
+func (s *InternalMessageService) isRecipientAllowed(ctx context.Context, recipientUserID uint32, senderTenantID uint32) bool {
+	recipient, err := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: recipientUserID},
+	})
+	if err != nil || recipient == nil {
+		s.log.Errorf("send message failed, recipient not found [%d]: %v", recipientUserID, err)
+		return false
+	}
+	if senderTenantID != 0 && recipient.GetTenantId() != senderTenantID {
+		s.log.Errorf("send message forbidden, tenant mismatch: sender tenant [%d], recipient [%d] tenant [%d]", senderTenantID, recipientUserID, recipient.GetTenantId())
+		return false
+	}
+	return true
 }
 
 // sendNotification 向客户端发送通知消息

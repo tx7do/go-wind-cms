@@ -260,6 +260,10 @@ func (r *MenuRepo) Update(ctx context.Context, req *permissionV1.UpdateMenuReque
 	}
 
 	builder := r.entClient.Client().Debug().Menu.Update()
+	// 租户作用域：仅更新本租户菜单，避免跨租户改他人菜单
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(menu.TenantIDEQ(tid))
+	}
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *permissionV1.Menu) {
 			builder.
@@ -322,9 +326,18 @@ func (r *MenuRepo) Delete(ctx context.Context, req *permissionV1.DeleteMenuReque
 
 	builder := r.entClient.Client().Debug().Menu.Delete()
 
-	_, err = r.repository.Delete(ctx, builder, func(s *sql.Selector) {
-		s.Where(sql.In(menu.FieldID, ids...))
-	})
+	deletePreds := []predicate.Menu{
+		func(s *sql.Selector) {
+			s.Where(sql.In(menu.FieldID, ids...))
+		},
+	}
+	// 租户作用域：仅删除本租户的菜单节点，避免递归 CTE 跨租户误删
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if hasTenant {
+		deletePreds = append(deletePreds, menu.TenantIDEQ(tid))
+	}
+
+	_, err = r.repository.Delete(ctx, builder, deletePreds...)
 	if err != nil {
 		r.log.Errorf("delete menu failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete menu failed")

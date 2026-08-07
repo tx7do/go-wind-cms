@@ -243,6 +243,7 @@ func (r *FileRepo) Update(ctx context.Context, req *storageV1.UpdateFileRequest)
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().Debug().File.Update()
 	builder.Where(file.IDEQ(req.GetId()))
 	if hasTenant {
@@ -262,8 +263,13 @@ func (r *FileRepo) Update(ctx context.Context, req *storageV1.UpdateFileRequest)
 				SetNillableSizeFormat(req.Data.SizeFormat).
 				SetNillableLinkURL(req.Data.LinkUrl).
 				SetNillableContentHash(req.Data.ContentHash).
-				SetNillableCreatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			// （原代码误用 SetNillableCreatedBy(req.Data.UpdatedBy)，会在更新时覆写原始创建者）
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(file.FieldID, req.GetId()))

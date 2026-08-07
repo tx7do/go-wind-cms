@@ -131,8 +131,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
           return result.items;
         },
         onChange: async (orgUnitId: any) => {
-          console.log('org onChange:', orgUnitId);
-
           if (!orgUnitId) {
             await baseFormApi.setValues(
               {
@@ -280,7 +278,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.userService.Update({
             id: data.value.row.id,
             data: { ...values } as any,
-            updateMask: makeUpdateMask(Object.keys(values)),
+            // 凭据/身份字段不在通用更新路径中修改：password 走专用改密流程，
+            // username 创建后不可变。排除它们避免误传/误更新。
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter(
+                (k) => k !== 'password' && k !== 'username',
+              ),
+            ),
           }));
 
       notification.success({

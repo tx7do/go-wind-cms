@@ -68,8 +68,6 @@ const gridOptions: VxeGridProps<Category> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        console.log('query:', formValues);
-
         return await fetchListCategories(
           new PaginationQuery({
             paging: {
@@ -166,7 +164,6 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
 /* Create */
 function handleCreate() {
-  console.log('Create', i18n.global.locale.value);
   router.push({
     name: 'CreateCategory',
     query: { lang: i18n.global.locale.value },
@@ -175,7 +172,6 @@ function handleCreate() {
 
 /* Edit */
 function handleEdit(row: any) {
-  console.log('Edit', row, i18n.global.locale.value);
   router.push({
     name: 'EditCategory',
     params: { id: Number(row.id || 0) },
@@ -185,8 +181,6 @@ function handleEdit(row: any) {
 
 /* Delete */
 async function handleDelete(row: any) {
-  console.log('Delete', row);
-
   try {
     await apiClient.categoryService.Delete({ id: row.id });
 

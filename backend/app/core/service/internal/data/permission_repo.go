@@ -435,6 +435,11 @@ func (r *PermissionRepo) Update(ctx context.Context, req *permissionV1.UpdatePer
 	}
 
 	builder := r.entClient.Client().Debug().Permission.UpdateOneID(req.GetId())
+	// 租户作用域：仅更新本租户权限，避免跨租户改他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(permission.TenantIDEQ(tid))
+	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	perm, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *permissionV1.Permission) {
 			builder.
@@ -443,8 +448,12 @@ func (r *PermissionRepo) Update(ctx context.Context, req *permissionV1.UpdatePer
 				SetNillableGroupID(req.Data.GroupId).
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableDescription(req.Data.Description).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(permission.FieldID, req.GetId()))
@@ -529,6 +538,10 @@ func (r *PermissionRepo) Delete(ctx context.Context, req *permissionV1.DeletePer
 		primaryBuilder = tx.Permission.Delete().Where(permission.CodeEQ(req.GetCode()))
 	case *permissionV1.DeletePermissionRequest_GroupId:
 		primaryBuilder = tx.Permission.Delete().Where(permission.GroupIDEQ(req.GetGroupId()))
+	}
+	// 租户作用域：仅删除本租户权限，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		primaryBuilder.Where(permission.TenantIDEQ(tid))
 	}
 	if _, err = primaryBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete permission failed: %s", err.Error())

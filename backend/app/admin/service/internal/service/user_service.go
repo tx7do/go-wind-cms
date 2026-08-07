@@ -348,7 +348,13 @@ func (s *UserService) UserExists(ctx context.Context, req *identityV1.UserExists
 
 // EditUserPassword 修改用户密码
 func (s *UserService) EditUserPassword(ctx context.Context, req *identityV1.EditUserPasswordRequest) (*emptypb.Empty, error) {
-	// 获取操作者的用户信息
+	// 获取操作者信息，强制校验租户归属，避免跨租户重置他人密码（账号接管）
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 获取目标用户信息
 	u, err := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{
 			Id: req.GetUserId(),
@@ -356,6 +362,11 @@ func (s *UserService) EditUserPassword(ctx context.Context, req *identityV1.Edit
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	// 平台上下文(tenant==0)可重置任意用户；否则仅可重置本租户用户
+	if operator.GetTenantId() != 0 && u.GetTenantId() != operator.GetTenantId() {
+		return nil, identityV1.ErrorForbidden("cannot reset password of a user in another tenant")
 	}
 
 	if _, err = s.userCredentialServiceClient.ResetCredential(ctx, &authenticationV1.ResetCredentialRequest{

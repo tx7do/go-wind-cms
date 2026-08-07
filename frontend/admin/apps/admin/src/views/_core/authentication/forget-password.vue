@@ -28,8 +28,9 @@ const formSchema = computed((): VbenFormSchema[] => {
   ];
 });
 
-function handleSubmit(value: Recordable<any>) {
-  console.log('reset email:', value);
+function handleSubmit(_value: Recordable<any>) {
+  // 重置密码提交由 AuthenticationForgetPassword 内部处理，此处仅占位；
+  // 不再打印表单值，避免邮箱等凭证信息泄露到控制台。
 }
 </script>
 

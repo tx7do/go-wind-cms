@@ -64,8 +64,6 @@ function goBack() {
  * Handle language switch
  */
 async function handleLanguageChange(newLang: string) {
-  console.log('handleLanguageChange', newLang);
-
   // Update URL query parameter
   await router.replace({
     path: route.path,
@@ -147,8 +145,6 @@ async function loadTag() {
  * Initialize page data
  */
 async function init() {
-  console.log('init');
-
   try {
     await tagEditViewStore.fetchLanguageList();
   } catch {
