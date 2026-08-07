@@ -173,7 +173,12 @@ func (r *SiteSettingRepo) Update(ctx context.Context, req *siteV1.UpdateSiteSett
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().SiteSetting.UpdateOneID(req.GetId())
+	builder.Where(sitesetting.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(sitesetting.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *siteV1.SiteSetting) {
 			builder.
@@ -204,9 +209,13 @@ func (r *SiteSettingRepo) Update(ctx context.Context, req *siteV1.UpdateSiteSett
 }
 
 func (r *SiteSettingRepo) Delete(ctx context.Context, req *siteV1.DeleteSiteSettingRequest) (bool, error) {
-	err := r.entClient.Client().SiteSetting.
-		DeleteOneID(req.GetId()).
-		Exec(ctx)
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := r.entClient.Client().SiteSetting.Delete()
+	delBuilder.Where(sitesetting.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(sitesetting.TenantIDEQ(tid))
+	}
+	_, err := delBuilder.Exec(ctx)
 	if err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 	}

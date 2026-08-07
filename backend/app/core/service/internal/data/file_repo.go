@@ -242,7 +242,12 @@ func (r *FileRepo) Update(ctx context.Context, req *storageV1.UpdateFileRequest)
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Debug().File.Update()
+	builder.Where(file.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(file.TenantIDEQ(tid))
+	}
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *storageV1.File) {
 			builder.
@@ -273,7 +278,13 @@ func (r *FileRepo) Delete(ctx context.Context, req *storageV1.DeleteFileRequest)
 		return storageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err := r.entClient.Client().File.DeleteOneID(req.GetId()).Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := r.entClient.Client().File.Delete()
+	delBuilder.Where(file.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(file.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return storageV1.ErrorNotFound("file not found")
 		}

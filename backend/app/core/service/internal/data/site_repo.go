@@ -134,7 +134,7 @@ func (r *SiteRepo) Create(ctx context.Context, req *siteV1.CreateSiteRequest) (*
 		SetNillableDefaultLocale(req.Data.DefaultLocale).
 		SetNillableTemplate(req.Data.Template).
 		SetNillableTheme(req.Data.Theme).
-		SetNillableVisitCount(req.Data.VisitCount).
+		SetVisitCount(0).
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
 
@@ -171,7 +171,12 @@ func (r *SiteRepo) Update(ctx context.Context, req *siteV1.UpdateSiteRequest) (*
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Site.UpdateOneID(req.GetId())
+	builder.Where(site.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(site.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *siteV1.Site) {
 			builder.
@@ -181,11 +186,10 @@ func (r *SiteRepo) Update(ctx context.Context, req *siteV1.UpdateSiteRequest) (*
 				SetNillableDomain(req.Data.Domain).
 				SetNillableIsDefault(req.Data.IsDefault).
 				SetNillableDefaultLocale(req.Data.DefaultLocale).
-				SetNillableTemplate(req.Data.Template).
-				SetNillableTheme(req.Data.Theme).
-				SetNillableVisitCount(req.Data.VisitCount).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
-				SetUpdatedAt(time.Now())
+			SetNillableTemplate(req.Data.Template).
+			SetNillableTheme(req.Data.Theme).
+			SetNillableUpdatedBy(req.Data.UpdatedBy).
+			SetUpdatedAt(time.Now())
 
 			if req.Data.AlternateDomains != nil {
 				builder.SetAlternateDomains(req.Data.GetAlternateDomains())
@@ -200,9 +204,13 @@ func (r *SiteRepo) Update(ctx context.Context, req *siteV1.UpdateSiteRequest) (*
 }
 
 func (r *SiteRepo) Delete(ctx context.Context, req *siteV1.DeleteSiteRequest) (bool, error) {
-	err := r.entClient.Client().Site.
-		DeleteOneID(req.GetId()).
-		Exec(ctx)
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := r.entClient.Client().Site.Delete()
+	delBuilder.Where(site.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(site.TenantIDEQ(tid))
+	}
+	_, err := delBuilder.Exec(ctx)
 	if err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 	}

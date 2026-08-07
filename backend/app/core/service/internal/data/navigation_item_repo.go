@@ -281,7 +281,12 @@ func (r *NavigationItemRepo) Update(ctx context.Context, req *siteV1.UpdateNavig
 		}
 	}()
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.newUpdateOneBuilder(tx, req.Data)
+	builder.Where(navigationitem.IDEQ(*req.Data.Id))
+	if hasTenant {
+		builder.Where(navigationitem.TenantIDEQ(tid))
+	}
 
 	var entity *ent.NavigationItem
 	entity, err = builder.Save(ctx)
@@ -448,7 +453,13 @@ func (r *NavigationItemRepo) Delete(ctx context.Context, req *siteV1.DeleteNavig
 	}()
 
 	// 删除导航项（而非父级 Navigation 表）
-	if err = tx.NavigationItem.DeleteOneID(req.GetId()).Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := tx.NavigationItem.Delete()
+	delBuilder.Where(navigationitem.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(navigationitem.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 	}
 	return err

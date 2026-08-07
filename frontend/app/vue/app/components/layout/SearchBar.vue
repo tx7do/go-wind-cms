@@ -3,7 +3,7 @@ const { t } = useI18n()
 const searchQuery = ref('')
 
 const handleSearch = () => {
-  console.log('Searching for:', searchQuery.value)
+  // 搜索功能尚未接入后端，暂为占位；避免在每次按键时向控制台输出用户输入
 }
 </script>
 

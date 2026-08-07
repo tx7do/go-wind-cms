@@ -510,9 +510,16 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 			ProcessingStatus: trans.Ptr(mediaV1.MediaAsset_PROCESSING_STATUS_COMPLETED),
 		},
 	}); err != nil {
-		// MediaAsset 创建失败，回滚已上传的对象，避免孤儿文件
+		// MediaAsset 创建失败，回滚已上传的对象及其 File 元数据，避免孤儿文件/悬空记录
 		if delErr := s.mc.DeleteFile(ctx, bucketName, info.Key); delErr != nil {
 			s.log.Errorf("cleanup orphaned object after mediaasset failure failed: %s", delErr.Error())
+		}
+		if file != nil && file.Id != nil {
+			if _, delErr := s.fileServiceClient.Delete(ctx, &storageV1.DeleteFileRequest{
+				QueryBy: &storageV1.DeleteFileRequest_Id{Id: file.GetId()},
+			}); delErr != nil {
+				s.log.Errorf("cleanup orphaned file record after mediaasset failure failed: %s", delErr.Error())
+			}
 		}
 		return nil, err
 	}

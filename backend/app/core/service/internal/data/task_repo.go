@@ -197,7 +197,12 @@ func (r *TaskRepo) Update(ctx context.Context, req *taskV1.UpdateTaskRequest) (*
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Debug().Task.UpdateOneID(req.GetId())
+	builder.Where(task.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(task.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *taskV1.Task) {
 			builder.
@@ -227,7 +232,13 @@ func (r *TaskRepo) Delete(ctx context.Context, req *taskV1.DeleteTaskRequest) er
 		return taskV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err := r.entClient.Client().Task.DeleteOneID(req.GetId()).Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := r.entClient.Client().Task.Delete()
+	delBuilder.Where(task.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(task.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return taskV1.ErrorNotFound("task not found")
 		}

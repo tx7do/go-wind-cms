@@ -167,7 +167,7 @@ func (r *MediaAssetRepo) Create(ctx context.Context, req *mediaV1.CreateMediaAss
 		SetNillableProcessingStatus(r.processingStatusConverter.ToEntity(req.Data.ProcessingStatus)).
 		SetNillableProcessingError(req.Data.ProcessingError).
 		SetNillableFileHash(req.Data.FileHash).
-		SetNillableReferenceCount(req.Data.ReferenceCount).
+		SetReferenceCount(0).
 		SetNillableIsPrivate(req.Data.IsPrivate).
 		SetNillableFileID(req.Data.FileId).
 		SetNillableFolderID(req.Data.FolderId).
@@ -203,7 +203,12 @@ func (r *MediaAssetRepo) Update(ctx context.Context, req *mediaV1.UpdateMediaAss
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().MediaAsset.UpdateOneID(req.GetId())
+	builder.Where(mediaasset.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(mediaasset.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *mediaV1.MediaAsset) {
 			builder.
@@ -222,7 +227,6 @@ func (r *MediaAssetRepo) Update(ctx context.Context, req *mediaV1.UpdateMediaAss
 				SetNillableProcessingStatus(r.processingStatusConverter.ToEntity(req.Data.ProcessingStatus)).
 				SetNillableProcessingError(req.Data.ProcessingError).
 				SetNillableFileHash(req.Data.FileHash).
-				SetNillableReferenceCount(req.Data.ReferenceCount).
 				SetNillableIsPrivate(req.Data.IsPrivate).
 				SetNillableFileID(req.Data.FileId).
 				SetNillableFolderID(req.Data.FolderId).
@@ -238,9 +242,13 @@ func (r *MediaAssetRepo) Update(ctx context.Context, req *mediaV1.UpdateMediaAss
 }
 
 func (r *MediaAssetRepo) Delete(ctx context.Context, req *mediaV1.DeleteMediaAssetRequest) (bool, error) {
-	err := r.entClient.Client().MediaAsset.
-		DeleteOneID(req.GetId()).
-		Exec(ctx)
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := r.entClient.Client().MediaAsset.Delete()
+	delBuilder.Where(mediaasset.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(mediaasset.TenantIDEQ(tid))
+	}
+	_, err := delBuilder.Exec(ctx)
 	if err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 	}

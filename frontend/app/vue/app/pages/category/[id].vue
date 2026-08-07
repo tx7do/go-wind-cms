@@ -32,6 +32,12 @@ async function loadCategory() {
       categoryId.value,
       'id,status,sort_order,icon,code,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description,translations.thumbnail,translations.cover_image'
     ) as any
+    // 仅展示处于启用状态的分类，停用/私有状态按未找到处理
+    if (!catData || catData.status !== 'CATEGORY_STATUS_ACTIVE') {
+      category.value = null
+      childCategories.value = []
+      return
+    }
     category.value = catData
     if (catData?.children?.length > 0) {
       childCategories.value = [...catData.children]

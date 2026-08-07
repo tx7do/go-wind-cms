@@ -532,7 +532,12 @@ func (r *CategoryRepo) Update(ctx context.Context, req *contentV1.UpdateCategory
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := tx.Category.UpdateOneID(req.GetId())
+	builder.Where(category.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(category.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Category) {
 			builder.
@@ -583,9 +588,13 @@ func (r *CategoryRepo) Delete(ctx context.Context, req *contentV1.DeleteCategory
 		}
 	}()
 
-	if err = tx.Category.
-		DeleteOneID(req.GetId()).
-		Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := tx.Category.Delete()
+	delBuilder.Where(category.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(category.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("delete one data failed")
 	}

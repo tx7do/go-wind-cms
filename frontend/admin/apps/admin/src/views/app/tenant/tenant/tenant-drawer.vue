@@ -338,11 +338,23 @@ async function createTenantWithAdminUser(values: any) {
 }
 
 async function updateTenant(values: any) {
+  // 更新租户时仅提交 Tenant 自身字段，显式排除创建态才出现的
+  // 管理员凭证字段（user.* / password / passwordConfirm），
+  // 避免把这些字段混入 updateMask（字段污染 / 凭证泄露）。
+  const tenantPayload = {
+    name: values.name,
+    code: values.code,
+    type: values.type,
+    auditStatus: values.auditStatus,
+    status: values.status,
+    remark: values.remark,
+  };
+
   try {
     await apiClient.tenantService.Update({
       id: data.value.row.id,
-      data: { ...values },
-      updateMask: makeUpdateMask(Object.keys(values)),
+      data: { ...tenantPayload },
+      updateMask: makeUpdateMask(Object.keys(tenantPayload)),
     });
 
     notification.success({

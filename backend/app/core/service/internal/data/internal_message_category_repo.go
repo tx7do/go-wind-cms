@@ -218,7 +218,12 @@ func (r *InternalMessageCategoryRepo) Update(ctx context.Context, req *internalM
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Debug().InternalMessageCategory.Update()
+	builder.Where(internalmessagecategory.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(internalmessagecategory.TenantIDEQ(tid))
+	}
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *internalMessageV1.InternalMessageCategory) {
 			builder.
@@ -259,9 +264,17 @@ func (r *InternalMessageCategoryRepo) Delete(ctx context.Context, req *internalM
 
 	builder := r.entClient.Client().Debug().InternalMessageCategory.Delete()
 
-	_, err = r.repository.Delete(ctx, builder, func(s *sql.Selector) {
-		s.Where(sql.In(internalmessagecategory.FieldID, ids...))
-	})
+	deletePreds := []predicate.InternalMessageCategory{
+		func(s *sql.Selector) {
+			s.Where(sql.In(internalmessagecategory.FieldID, ids...))
+		},
+	}
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if hasTenant {
+		deletePreds = append(deletePreds, internalmessagecategory.TenantIDEQ(tid))
+	}
+
+	_, err = r.repository.Delete(ctx, builder, deletePreds...)
 	if err != nil {
 		r.log.Errorf("delete internal message categories failed: %s", err.Error())
 		return internalMessageV1.ErrorInternalServerError("delete internal message categories failed")

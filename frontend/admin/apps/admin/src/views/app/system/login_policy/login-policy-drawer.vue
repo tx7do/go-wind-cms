@@ -45,6 +45,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
         placeholder: $t('ui.placeholder.input'),
         allowClear: true,
       },
+      rules: 'required',
     },
     {
       component: 'Select',

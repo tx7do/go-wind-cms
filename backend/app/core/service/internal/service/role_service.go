@@ -10,6 +10,7 @@ import (
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"github.com/tx7do/go-crud/viewer"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-cms/app/core/service/internal/data"
@@ -297,19 +298,30 @@ func (s *RoleService) AssignRolesToUser(ctx context.Context, req *permissionV1.A
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 操作人身份与租户必须从 viewer context 推导，忽略客户端传入的 operator_id/tenant_id，
+	// 防止越权将角色绑定写入他租户或伪造审计归属
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return nil, permissionV1.ErrorBadRequest("operator identity is required")
+	}
+	var callerTenantID uint32
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		callerTenantID = uint32(vc.TenantID())
+	}
+
 	now := time.Now()
 
 	userRoles := make([]*permissionV1.UserRole, 0, len(req.GetRoleIds()))
 	for _, roleID := range req.GetRoleIds() {
 		userRoles = append(userRoles, &permissionV1.UserRole{
-			TenantId:   trans.Ptr(req.GetTenantId()),
+			TenantId:   trans.Ptr(callerTenantID),
 			UserId:     trans.Ptr(req.GetUserId()),
 			RoleId:     trans.Ptr(roleID),
 			Status:     permissionV1.UserRole_ACTIVE.Enum(),
-			AssignedBy: trans.Ptr(req.GetOperatorId()),
+			AssignedBy: trans.Ptr(callerUserID),
 			AssignedAt: timeutil.TimeToTimestamppb(&now),
 			StartAt:    timeutil.TimeToTimestamppb(&now),
-			CreatedBy:  trans.Ptr(req.GetOperatorId()),
+			CreatedBy:  trans.Ptr(callerUserID),
 		})
 	}
 

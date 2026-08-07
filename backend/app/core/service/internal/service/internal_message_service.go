@@ -165,16 +165,41 @@ func (s *InternalMessageService) DeleteMessage(ctx context.Context, req *interna
 
 // RevokeMessage 撤销某条消息
 func (s *InternalMessageService) RevokeMessage(ctx context.Context, req *internalMessageV1.RevokeMessageRequest) (*emptypb.Empty, error) {
-	var err error
+	// 仅消息发送者本人（或平台/系统上下文）可撤销消息体，防止跨租户/越权删除他人消息
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	isPlatform := false
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil && (vc.IsPlatformContext() || vc.IsSystemContext()) {
+		isPlatform = true
+	}
+	if !hasUser && !isPlatform {
+		return nil, internalMessageV1.ErrorBadRequest("missing viewer context")
+	}
+
+	msg, err := s.internalMessageRepo.Get(ctx, &internalMessageV1.GetInternalMessageRequest{
+		QueryBy: &internalMessageV1.GetInternalMessageRequest_Id{Id: req.GetMessageId()},
+	})
+	if err != nil || msg == nil {
+		return nil, internalMessageV1.ErrorNotFound("internal message not found")
+	}
+	if !isPlatform {
+		sender := msg.GetCreatedBy()
+		if !hasUser || sender == 0 || sender != callerUserID {
+			return nil, internalMessageV1.ErrorForbidden("only the sender can revoke this message")
+		}
+	}
+
+	// 消息体删除失败立即返回，不继续清理收件人，避免不一致状态
 	if err = s.internalMessageRepo.Delete(ctx, req.GetMessageId()); err != nil {
-		s.log.Errorf("delete internal message failed: [%d]", req.GetMessageId())
+		s.log.Errorf("delete internal message failed: [%d] %s", req.GetMessageId(), err.Error())
+		return nil, err
 	}
 
 	if err = s.internalMessageRecipientRepo.RevokeMessage(ctx, req); err != nil {
-		s.log.Errorf("delete internal message inbox failed: [%d][%d]", req.GetMessageId(), req.GetUserId())
+		s.log.Errorf("delete internal message inbox failed: [%d][%d] %s", req.GetMessageId(), req.GetUserId(), err.Error())
+		return nil, err
 	}
 
-	return &emptypb.Empty{}, err
+	return &emptypb.Empty{}, nil
 }
 
 // SendMessage 发送消息

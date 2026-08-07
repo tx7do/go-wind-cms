@@ -216,7 +216,7 @@ func (r *PositionRepo) Create(ctx context.Context, req *identityV1.CreatePositio
 		SetNillableJobGrade(req.Data.JobGrade).
 		SetNillableLevel(req.Data.Level).
 		SetNillableIsKeyPosition(req.Data.IsKeyPosition).
-		SetNillableHeadcount(req.Data.Headcount).
+		SetHeadcount(0).
 		SetNillableDescription(req.Data.Description).
 		SetNillableRemark(req.Data.Remark).
 		SetNillableStartAt(timeutil.TimestamppbToTime(req.Data.StartAt)).
@@ -255,7 +255,12 @@ func (r *PositionRepo) Update(ctx context.Context, req *identityV1.UpdatePositio
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Debug().Position.Update()
+	builder.Where(position.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(position.TenantIDEQ(tid))
+	}
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *identityV1.Position) {
 			builder.
@@ -270,7 +275,6 @@ func (r *PositionRepo) Update(ctx context.Context, req *identityV1.UpdatePositio
 				SetNillableJobGrade(req.Data.JobGrade).
 				SetNillableLevel(req.Data.Level).
 				SetNillableIsKeyPosition(req.Data.IsKeyPosition).
-				SetNillableHeadcount(req.Data.Headcount).
 				SetNillableDescription(req.Data.Description).
 				SetNillableRemark(req.Data.Remark).
 				SetNillableStartAt(timeutil.TimestamppbToTime(req.Data.StartAt)).
@@ -293,10 +297,18 @@ func (r *PositionRepo) Delete(ctx context.Context, req *identityV1.DeletePositio
 
 	builder := r.entClient.Client().Debug().Position.Delete()
 
+	deletePreds := []predicate.Position{
+		func(s *sql.Selector) {
+			s.Where(sql.EQ(position.FieldID, req.GetId()))
+		},
+	}
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if hasTenant {
+		deletePreds = append(deletePreds, position.TenantIDEQ(tid))
+	}
+
 	var err error
-	_, err = r.repository.Delete(ctx, builder, func(s *sql.Selector) {
-		s.Where(sql.EQ(position.FieldID, req.GetId()))
-	})
+	_, err = r.repository.Delete(ctx, builder, deletePreds...)
 	if err != nil {
 		r.log.Errorf("delete position failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("delete position failed")

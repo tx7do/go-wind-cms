@@ -274,7 +274,12 @@ func (r *NavigationRepo) Update(ctx context.Context, req *siteV1.UpdateNavigatio
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := tx.Navigation.UpdateOneID(req.GetId())
+	builder.Where(navigation.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(navigation.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *siteV1.Navigation) {
 			builder.
@@ -317,7 +322,13 @@ func (r *NavigationRepo) Delete(ctx context.Context, req *siteV1.DeleteNavigatio
 		}
 	}()
 
-	if err = tx.Navigation.DeleteOneID(req.GetId()).Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := tx.Navigation.Delete()
+	delBuilder.Where(navigation.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(navigation.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 		return siteV1.ErrorInternalServerError("delete one data failed")
 	}

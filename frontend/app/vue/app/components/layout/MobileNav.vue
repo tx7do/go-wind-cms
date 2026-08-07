@@ -68,10 +68,21 @@ useLanguageChangeEffect(() => {
 }, { immediate: false, autoCleanup: true })
 
 const handleNavigate = (item: siteservicev1_NavigationItem) => {
+  const url = item.url
+  if (!url) {
+    open.value = false
+    return
+  }
+  // 仅允许相对路径或 http(s) 外链，避免 javascript:/data: 等协议注入
+  const isExternal = /^https?:\/\//i.test(url)
   if (item.isOpenNewTab) {
-    window.open(item.url, '_blank')
-  } else if (item.url != null) {
-    navigateTo(localePath(item.url))
+    if (isExternal) {
+      window.open(url, '_blank', 'noopener,noreferrer')
+    } else {
+      navigateTo(localePath(url))
+    }
+  } else {
+    navigateTo(localePath(url))
   }
   open.value = false
 }

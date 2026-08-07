@@ -374,7 +374,12 @@ func (r *TagRepo) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := tx.Tag.UpdateOneID(req.GetId())
+	builder.Where(tag.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(tag.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Tag) {
 			builder.
@@ -420,9 +425,13 @@ func (r *TagRepo) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (
 		}
 	}()
 
-	if err = tx.Tag.
-		DeleteOneID(req.GetId()).
-		Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := tx.Tag.Delete()
+	delBuilder.Where(tag.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(tag.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("delete one data failed")
 	}

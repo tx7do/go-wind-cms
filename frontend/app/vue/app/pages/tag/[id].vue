@@ -29,7 +29,13 @@ async function loadTag() {
   if (!tagId.value) return
   loading.value = true
   try {
-    tag.value = await fetchTag(tagId.value) as any
+    const fetched = await fetchTag(tagId.value) as any
+    // 仅展示处于启用状态的标签，停用/私有状态按未找到处理
+    if (!fetched || fetched.status !== 'TAG_STATUS_ACTIVE') {
+      tag.value = null
+      return
+    }
+    tag.value = fetched
   } catch (e) {
     console.error('[Tag Detail] 加载失败:', e)
   } finally {

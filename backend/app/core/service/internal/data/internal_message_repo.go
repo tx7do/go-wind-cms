@@ -196,7 +196,12 @@ func (r *InternalMessageRepo) Update(ctx context.Context, req *internalMessageV1
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Debug().InternalMessage.Update()
+	builder.Where(internalmessage.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(internalmessage.TenantIDEQ(tid))
+	}
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *internalMessageV1.InternalMessage) {
 			builder.
@@ -242,7 +247,13 @@ func (r *InternalMessageRepo) Delete(ctx context.Context, id uint32) (err error)
 		}
 	}()
 
-	if err = tx.InternalMessage.DeleteOneID(id).Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := tx.InternalMessage.Delete()
+	delBuilder.Where(internalmessage.IDEQ(id))
+	if hasTenant {
+		delBuilder.Where(internalmessage.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
 			return internalMessageV1.ErrorNotFound("internal message not found")
 		}

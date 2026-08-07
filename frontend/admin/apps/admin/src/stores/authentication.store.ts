@@ -203,8 +203,6 @@ export const useAuthStore = defineStore('auth', () => {
    * @param redirect 是否重定向到登录页
    */
   async function _doLogout(redirect: boolean = true) {
-    console.log('_doLogout');
-
     // 停止定时刷新
     _stopRefreshTimer();
 
@@ -223,7 +221,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     loginLoading.value = false;
 
-    console.log('currentRoute', router.currentRoute.value);
     // 如果当前页是登录页，则不处理
     if (router.currentRoute.value.path === LOGIN_PATH) return;
 

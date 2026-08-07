@@ -240,7 +240,12 @@ func (r *CommentRepo) Update(ctx context.Context, req *commentV1.UpdateCommentRe
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Comment.UpdateOneID(req.GetId())
+	builder.Where(comment.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(comment.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *commentV1.Comment) {
 			builder.
@@ -272,9 +277,13 @@ func (r *CommentRepo) Update(ctx context.Context, req *commentV1.UpdateCommentRe
 }
 
 func (r *CommentRepo) Delete(ctx context.Context, req *commentV1.DeleteCommentRequest) error {
-	err := r.entClient.Client().Comment.
-		DeleteOneID(req.GetId()).
-		Exec(ctx)
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := r.entClient.Client().Comment.Delete()
+	delBuilder.Where(comment.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(comment.TenantIDEQ(tid))
+	}
+	_, err := delBuilder.Exec(ctx)
 	if err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 	}

@@ -314,7 +314,12 @@ func (r *OrgUnitRepo) Update(ctx context.Context, req *identityV1.UpdateOrgUnitR
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := r.entClient.Client().Debug().OrgUnit.Update()
+	builder.Where(orgunit.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(orgunit.TenantIDEQ(tid))
+	}
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *identityV1.OrgUnit) {
 			builder.
@@ -382,9 +387,17 @@ func (r *OrgUnitRepo) Delete(ctx context.Context, req *identityV1.DeleteOrgUnitR
 
 	builder := r.entClient.Client().Debug().OrgUnit.Delete()
 
-	_, err = r.repository.Delete(ctx, builder, func(s *sql.Selector) {
-		s.Where(sql.In(orgunit.FieldID, ids...))
-	})
+	deletePreds := []predicate.OrgUnit{
+		func(s *sql.Selector) {
+			s.Where(sql.In(orgunit.FieldID, ids...))
+		},
+	}
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if hasTenant {
+		deletePreds = append(deletePreds, orgunit.TenantIDEQ(tid))
+	}
+
+	_, err = r.repository.Delete(ctx, builder, deletePreds...)
 	if err != nil {
 		r.log.Errorf("delete orgUnit failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("delete orgUnit failed")

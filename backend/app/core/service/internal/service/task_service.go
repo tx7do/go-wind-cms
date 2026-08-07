@@ -177,14 +177,20 @@ func (s *TaskService) ControlTask(ctx context.Context, req *taskV1.ControlTaskRe
 	case taskV1.ControlTaskRequest_Start:
 		err = s.startTask(t)
 		return nil, err
+
+	default:
+		return nil, taskV1.ErrorBadRequest("unknown control type: %v", req.GetControlType())
 	}
 
 	return &emptypb.Empty{}, nil
 }
 
 // StopAllTask 停止所有的调度任务
-func (s *TaskService) StopAllTask(_ context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
-	s.stopAllTask()
+func (s *TaskService) StopAllTask(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
+	if s.taskScheduler == nil {
+		return nil, taskV1.ErrorServiceUnavailable("task scheduler is not available")
+	}
+	s.stopAllTask(ctx)
 	return &emptypb.Empty{}, nil
 }
 
@@ -200,10 +206,13 @@ func (s *TaskService) StartAllTask(ctx context.Context, _ *emptypb.Empty) (*empt
 
 // RestartAllTask 重启所有的调度任务
 func (s *TaskService) RestartAllTask(ctx context.Context, _ *emptypb.Empty) (*taskV1.RestartAllTaskResponse, error) {
-	// 停止所有的任务
-	s.stopAllTask()
+	if s.taskScheduler == nil {
+		return nil, taskV1.ErrorServiceUnavailable("task scheduler is not available")
+	}
+	// 停止当前上下文（租户）范围内的任务
+	s.stopAllTask(ctx)
 
-	// 重新启动所有的任务
+	// 重新启动当前上下文（租户）范围内的任务
 	count, err := s.startAllTask(ctx)
 
 	return &taskV1.RestartAllTaskResponse{
@@ -240,19 +249,36 @@ func (s *TaskService) startAllTask(ctx context.Context) (int32, error) {
 	return count, nil
 }
 
-// stopAllTask 停止所有的任务
-func (s *TaskService) stopAllTask() {
+// stopAllTask 停止当前上下文（租户）范围内的任务。
+// 仅遍历经 List（EvalQuery 已按调用者租户过滤）返回的任务，按 type_name 逐个停止，
+// 避免调用 RemoveAllPeriodicTask() 清空其它租户的任务。
+func (s *TaskService) stopAllTask(ctx context.Context) {
 	// taskScheduler 未注入时跳过，避免 nil 解引用 panic
 	if s.taskScheduler == nil {
 		s.log.Warnf("task scheduler is not available, skip stopAllTask")
 		return
 	}
-	s.log.Infof("开始清除所有的定时任务...")
 
-	// 清除所有的定时任务
-	s.taskScheduler.RemoveAllPeriodicTask()
+	resp, err := s.List(ctx, &paginationV1.PagingRequest{
+		NoPaging: trans.Ptr(true),
+	})
+	if err != nil {
+		s.log.Errorf("获取任务列表失败[%s]", err.Error())
+		return
+	}
 
-	s.log.Infof("完成清除所有的定时任务")
+	s.log.Infof("开始停止当前租户定时任务，总计[%d]个", resp.GetTotal())
+
+	var count int32
+	for _, t := range resp.GetItems() {
+		if s.stopTask(t) != nil {
+			continue
+		} else {
+			count++
+		}
+	}
+
+	s.log.Infof("总共成功停止定时任务[%d]个", count)
 }
 
 // stopTask 停止一个任务

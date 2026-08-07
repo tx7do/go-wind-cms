@@ -330,7 +330,12 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
 	builder := tx.Page.UpdateOneID(req.GetId())
+	builder.Where(page.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(page.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Page) {
 			builder.
@@ -389,9 +394,13 @@ func (r *PageRepo) Delete(ctx context.Context, req *contentV1.DeletePageRequest)
 		}
 	}()
 
-	if err = tx.Page.
-		DeleteOneID(req.GetId()).
-		Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := tx.Page.Delete()
+	delBuilder.Where(page.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(page.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("delete one data failed")
 	}

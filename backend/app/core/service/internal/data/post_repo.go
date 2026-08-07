@@ -586,11 +586,19 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 		}
 	}
 
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := tx.Post.UpdateOneID(req.GetId())
+	builder.Where(post.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(post.TenantIDEQ(tid))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Post) {
 			// 服务端计数器（visits/likes/comment_count）不可由客户端通过 Update 设置，
 			// 仅能通过服务端专用的递增接口修改。
+			// author_id / password_hash 在 Update 时不再接受客户端值（创建时设置），
+			// updated_by 强制取调用者身份，保证审计归属真实。
 			builder.
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableEditorType(r.editorTypeConverter.ToEntity(req.Data.EditorType)).
@@ -600,12 +608,14 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 				SetNillableAutoSummary(req.Data.AutoSummary).
 				SetNillableIsFeatured(req.Data.IsFeatured).
 				SetNillableSortOrder(req.Data.SortOrder).
-				SetNillableAuthorID(req.Data.AuthorId).
 				SetNillableAuthorName(req.Data.AuthorName).
-				SetNillablePasswordHash(req.Data.PasswordHash).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetNillablePublishTime(timeutil.TimestamppbToTime(req.Data.PublishTime)).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if req.Data.CustomFields != nil {
 				builder.SetCustomFields(trans.Ptr(req.Data.GetCustomFields()))
@@ -644,9 +654,13 @@ func (r *PostRepo) Delete(ctx context.Context, req *contentV1.DeletePostRequest)
 	}()
 
 	// 删除帖子数据
-	if err = tx.Post.
-		DeleteOneID(req.GetId()).
-		Exec(ctx); err != nil {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := tx.Post.Delete()
+	delBuilder.Where(post.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(post.TenantIDEQ(tid))
+	}
+	if _, err = delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete one data failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("delete one data failed")
 	}
