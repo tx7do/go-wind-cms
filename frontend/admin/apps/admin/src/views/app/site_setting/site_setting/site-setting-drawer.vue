@@ -165,7 +165,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.siteSettingService.Update({
             id: data.value.row.id,
             data: { ...values } as any,
-            updateMask: makeUpdateMask(Object.keys(values)),
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter((k) =>
+                !['siteId', 'key', 'locale'].includes(k),
+              ),
+            ),
           }));
 
       notification.success({

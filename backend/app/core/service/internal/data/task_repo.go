@@ -198,6 +198,7 @@ func (r *TaskRepo) Update(ctx context.Context, req *taskV1.UpdateTaskRequest) (*
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().Debug().Task.UpdateOneID(req.GetId())
 	builder.Where(task.IDEQ(req.GetId()))
 	if hasTenant {
@@ -212,8 +213,12 @@ func (r *TaskRepo) Update(ctx context.Context, req *taskV1.UpdateTaskRequest) (*
 				SetNillableCronSpec(req.Data.CronSpec).
 				SetNillableEnable(req.Data.Enable).
 				SetNillableRemark(req.Data.Remark).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if req.Data.TaskOptions != nil {
 				builder.SetTaskOptions(req.Data.TaskOptions)

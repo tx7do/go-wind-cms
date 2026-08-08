@@ -168,9 +168,12 @@ func (r *PostCategoryRepo) ListPostIDsByCategoryIDs(ctx context.Context, categor
 
 // CleanCategories 删除指定帖子关联的所有帖子分类关联关系，通常在更新帖子分类时调用
 func (r *PostCategoryRepo) CleanCategories(ctx context.Context, tx *ent.Tx, postID uint32) error {
-	_, err := tx.PostCategory.Delete().
-		Where(postcategory.PostIDEQ(postID)).
-		Exec(ctx)
+	delBuilder := tx.PostCategory.Delete().Where(postcategory.PostIDEQ(postID))
+	// 租户作用域：仅删除本租户关联，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(postcategory.TenantIDEQ(tid))
+	}
+	_, err := delBuilder.Exec(ctx)
 	if err != nil {
 		r.log.Errorf("failed to delete post-category by post ID: %v", err)
 		return err
@@ -180,9 +183,12 @@ func (r *PostCategoryRepo) CleanCategories(ctx context.Context, tx *ent.Tx, post
 
 // CleanPosts 删除指定分类关联的所有帖子分类关联关系，通常在删除分类时调用
 func (r *PostCategoryRepo) CleanPosts(ctx context.Context, tx *ent.Tx, categoryID uint32) error {
-	_, err := tx.PostCategory.Delete().
-		Where(postcategory.CategoryIDEQ(categoryID)).
-		Exec(ctx)
+	delBuilder := tx.PostCategory.Delete().Where(postcategory.CategoryIDEQ(categoryID))
+	// 租户作用域：仅删除本租户关联，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(postcategory.TenantIDEQ(tid))
+	}
+	_, err := delBuilder.Exec(ctx)
 	if err != nil {
 		r.log.Errorf("failed to delete post-category by category ID: %v", err)
 		return err
@@ -231,12 +237,15 @@ func (r *PostCategoryRepo) CountCategories(ctx context.Context, postID uint32) (
 
 // Delete 删除指定帖子和分类的关联关系，通常在更新帖子分类时调用，删除旧的关联关系
 func (r *PostCategoryRepo) Delete(ctx context.Context, tx *ent.Tx, postID, categoryID uint32) error {
-	_, err := tx.PostCategory.Delete().
-		Where(
-			postcategory.PostIDEQ(postID),
-			postcategory.CategoryIDEQ(categoryID),
-		).
-		Exec(ctx)
+	delBuilder := tx.PostCategory.Delete().Where(
+		postcategory.PostIDEQ(postID),
+		postcategory.CategoryIDEQ(categoryID),
+	)
+	// 租户作用域：仅删除本租户关联，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(postcategory.TenantIDEQ(tid))
+	}
+	_, err := delBuilder.Exec(ctx)
 	if err != nil {
 		r.log.Errorf("failed to delete post-category: %v", err)
 		return err

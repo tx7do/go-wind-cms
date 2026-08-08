@@ -143,7 +143,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.navigationService.Update({
             id: data.value?.row?.id,
             data: { ...payload },
-            updateMask: makeUpdateMask(Object.keys(payload)),
+            updateMask: makeUpdateMask(
+              Object.keys(payload).filter((k) => !['items'].includes(k)),
+            ),
           }));
 
       notification.success({

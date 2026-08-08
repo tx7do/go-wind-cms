@@ -315,6 +315,7 @@ func (r *OrgUnitRepo) Update(ctx context.Context, req *identityV1.UpdateOrgUnitR
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().Debug().OrgUnit.Update()
 	builder.Where(orgunit.IDEQ(req.GetId()))
 	if hasTenant {
@@ -348,8 +349,12 @@ func (r *OrgUnitRepo) Update(ctx context.Context, req *identityV1.UpdateOrgUnitR
 				SetNillableStartAt(timeutil.TimestamppbToTime(req.Data.StartAt)).
 				SetNillableEndAt(timeutil.TimestamppbToTime(req.Data.EndAt)).
 				SetNillableContactUserID(req.Data.ContactUserId).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if req.Data.BusinessScopes == nil {
 				builder.SetBusinessScopes(req.Data.GetBusinessScopes())

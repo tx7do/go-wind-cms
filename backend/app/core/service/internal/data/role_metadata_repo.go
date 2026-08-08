@@ -95,6 +95,7 @@ func (r *RoleMetadataRepo) Create(ctx context.Context, tx *ent.Tx, data *permiss
 // Upsert 插入或更新角色元数据
 func (r *RoleMetadataRepo) Upsert(ctx context.Context, data *permissionV1.RoleMetadata) error {
 	now := time.Now()
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().RoleMetadata.Create().
 		SetNillableTenantID(data.TenantId).
 		SetRoleID(data.GetRoleId()).
@@ -112,8 +113,12 @@ func (r *RoleMetadataRepo) Upsert(ctx context.Context, data *permissionV1.RoleMe
 			rolemetadata.FieldRoleID,
 		).
 		AddTemplateVersion(1).
-		SetUpdatedAt(now).
-		SetUpdatedBy(data.GetUpdatedBy())
+		SetUpdatedAt(now)
+
+	// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+	if hasUser {
+		builder.SetUpdatedBy(callerUserID)
+	}
 
 	if data.LastSyncedAt != nil {
 		builder.SetLastSyncedAt(*timeutil.TimestamppbToTime(data.LastSyncedAt))
@@ -179,12 +184,15 @@ func (r *RoleMetadataRepo) IsTemplateRole(ctx context.Context, roleID uint32) (b
 
 // UpgradeTemplateVersion 升级模版版本号
 func (r *RoleMetadataRepo) UpgradeTemplateVersion(ctx context.Context, tx *ent.Tx, roleID uint32) error {
-	err := tx.RoleMetadata.Update().
+	updBuilder := tx.RoleMetadata.Update().
 		Where(
 			rolemetadata.RoleIDEQ(roleID),
 			rolemetadata.IsTemplateEQ(true),
-		).
-		AddTemplateVersion(1).
+		)
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		updBuilder.Where(rolemetadata.TenantIDEQ(tid))
+	}
+	err := updBuilder.AddTemplateVersion(1).
 		SetUpdatedAt(time.Now()).
 		Exec(ctx)
 	if err != nil {

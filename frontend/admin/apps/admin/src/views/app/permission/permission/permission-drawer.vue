@@ -206,7 +206,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.permissionService.Update({
             id: data.value.row.id,
             data: { ...finalValues } as any,
-            updateMask: makeUpdateMask(Object.keys(finalValues)),
+            updateMask: makeUpdateMask(
+              Object.keys(finalValues).filter((k) =>
+                !['code', 'menuIds', 'apiIds'].includes(k),
+              ),
+            ),
           }));
 
       notification.success({

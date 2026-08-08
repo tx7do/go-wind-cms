@@ -100,7 +100,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.dictTypeService.Update({
             id: data.value.row.id,
             data: { ...values },
-            updateMask: makeUpdateMask(Object.keys(values)),
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter((k) =>
+                !['typeCode'].includes(k),
+              ),
+            ),
           }));
 
       notification.success({

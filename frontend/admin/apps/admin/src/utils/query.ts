@@ -206,17 +206,6 @@ export function makeOrderBy(orderBy?: null | string[]): string | undefined {
 }
 
 /**
- * 创建更新字段掩码
- * @param keys
- */
-export function makeUpdateMask(keys: string[]): string {
-  if (keys === undefined || keys.length === 0) {
-    return '';
-  }
-  return keys.join(',');
-}
-
-/**
  * 从对象中省略指定键，返回新对象
  * @example 用法示例
  * const original = { a: 1, b: 2, c: 3 };

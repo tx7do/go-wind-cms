@@ -256,6 +256,7 @@ func (r *PositionRepo) Update(ctx context.Context, req *identityV1.UpdatePositio
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().Debug().Position.Update()
 	builder.Where(position.IDEQ(req.GetId()))
 	if hasTenant {
@@ -279,8 +280,12 @@ func (r *PositionRepo) Update(ctx context.Context, req *identityV1.UpdatePositio
 				SetNillableRemark(req.Data.Remark).
 				SetNillableStartAt(timeutil.TimestamppbToTime(req.Data.StartAt)).
 				SetNillableEndAt(timeutil.TimestamppbToTime(req.Data.EndAt)).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(position.FieldID, req.GetId()))

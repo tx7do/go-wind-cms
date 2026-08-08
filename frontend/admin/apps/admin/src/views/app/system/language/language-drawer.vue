@@ -115,7 +115,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.languageService.Update({
             id: data.value.row.id,
             data: { ...values },
-            updateMask: makeUpdateMask(Object.keys(values)),
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter((k) =>
+                !['languageCode'].includes(k),
+              ),
+            ),
           }));
 
       notification.success({

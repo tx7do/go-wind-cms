@@ -123,7 +123,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.loginPolicyService.Update({
             id: data.value.row.id,
             data: { ...values },
-            updateMask: makeUpdateMask(Object.keys(values)),
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter((k) =>
+                !['targetId', 'type', 'method'].includes(k),
+              ),
+            ),
           }));
 
       notification.success({

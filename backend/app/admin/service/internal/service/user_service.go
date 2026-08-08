@@ -177,6 +177,12 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 
 	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
 	if req.UpdateMask != nil {
+		// 管理端 Update 排除租户/用户名/密码/创建者等敏感字段，
+		// 这些字段不可经通用更新路径修改（租户由后端按操作人强制、用户名创建后不可变、
+		// 密码走专用改密流程、创建者不可改）。updated_by 由上方强制注入。
+		req.UpdateMask.Paths = utils.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
+			"tenant_id", "username", "password", "created_by",
+		})
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 

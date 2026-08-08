@@ -30,11 +30,34 @@ func NewCommentService(ctx *bootstrap.Context, commentClient commentV1.CommentSe
 }
 
 func (s *CommentService) List(ctx context.Context, req *paginationV1.PagingRequest) (*commentV1.ListCommentResponse, error) {
-	return s.commentClient.List(ctx, req)
+	resp, err := s.commentClient.List(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// 公开端点仅返回已批准评论，过滤待审核/拒绝/垃圾等状态
+	if resp != nil {
+		filtered := make([]*commentV1.Comment, 0, len(resp.GetItems()))
+		for _, c := range resp.GetItems() {
+			if c != nil && c.GetStatus() == commentV1.Comment_STATUS_APPROVED {
+				filtered = append(filtered, c)
+			}
+		}
+		resp.Items = filtered
+		resp.Total = uint64(len(filtered))
+	}
+	return resp, nil
 }
 
 func (s *CommentService) Get(ctx context.Context, req *commentV1.GetCommentRequest) (*commentV1.Comment, error) {
-	return s.commentClient.Get(ctx, req)
+	resp, err := s.commentClient.Get(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// 公开端点仅返回已批准评论
+	if resp == nil || resp.GetStatus() != commentV1.Comment_STATUS_APPROVED {
+		return nil, commentV1.ErrorNotFound("comment not found")
+	}
+	return resp, nil
 }
 
 func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommentRequest) (*commentV1.Comment, error) {

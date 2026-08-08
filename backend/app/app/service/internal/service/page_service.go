@@ -27,7 +27,22 @@ func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServ
 }
 
 func (s *PageService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListPageResponse, error) {
-	return s.pageServiceClient.List(ctx, req)
+	resp, err := s.pageServiceClient.List(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// 公开端点仅返回已发布页面，过滤草稿/归档/私有等状态
+	if resp != nil {
+		filtered := make([]*contentV1.Page, 0, len(resp.GetItems()))
+		for _, p := range resp.GetItems() {
+			if p != nil && p.GetStatus() == contentV1.Page_PAGE_STATUS_PUBLISHED {
+				filtered = append(filtered, p)
+			}
+		}
+		resp.Items = filtered
+		resp.Total = uint64(len(filtered))
+	}
+	return resp, nil
 }
 
 func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*contentV1.Page, error) {

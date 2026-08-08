@@ -488,20 +488,24 @@ func (r *PermissionRepo) Delete(ctx context.Context, req *permissionV1.DeletePer
 		permissionIDs = append(permissionIDs, req.GetId())
 
 	case *permissionV1.DeletePermissionRequest_Code:
-		permissionIDs, err = r.entClient.Client().Permission.Query().
-			Where(permission.CodeEQ(req.GetCode())).
-			Select(permission.FieldID).
-			IDs(ctx)
+		codeQuery := r.entClient.Client().Permission.Query().Where(permission.CodeEQ(req.GetCode()))
+		// 租户作用域：仅解析本租户权限，避免按 code 跨租户级联删他人关联（按 hasTenant 条件加）
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			codeQuery.Where(permission.TenantIDEQ(tid))
+		}
+		permissionIDs, err = codeQuery.Select(permission.FieldID).IDs(ctx)
 		if err != nil {
 			r.log.Errorf("get permission ids by code failed: %s", err.Error())
 			return permissionV1.ErrorInternalServerError("get permission ids by code failed")
 		}
 
 	case *permissionV1.DeletePermissionRequest_GroupId:
-		permissionIDs, err = r.entClient.Client().Permission.Query().
-			Where(permission.GroupIDEQ(req.GetGroupId())).
-			Select(permission.FieldID).
-			IDs(ctx)
+		groupQuery := r.entClient.Client().Permission.Query().Where(permission.GroupIDEQ(req.GetGroupId()))
+		// 租户作用域：仅解析本租户权限，避免按 group 跨租户级联删他人关联（按 hasTenant 条件加）
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			groupQuery.Where(permission.TenantIDEQ(tid))
+		}
+		permissionIDs, err = groupQuery.Select(permission.FieldID).IDs(ctx)
 		if err != nil {
 			r.log.Errorf("get permission ids by group id failed: %s", err.Error())
 			return permissionV1.ErrorInternalServerError("get permission ids by group id failed")

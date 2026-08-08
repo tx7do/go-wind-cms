@@ -258,6 +258,10 @@ func (s *RoleService) ListPermissionIds(ctx context.Context, req *permissionV1.L
 		}
 
 	case *permissionV1.ListPermissionIdsRequest_UserId:
+		// 校验目标用户归属当前调用者租户，避免跨租户枚举他人权限 ID
+		if err := s.validateTargetUserTenant(ctx, req.GetUserId()); err != nil {
+			return nil, err
+		}
 		permissionIDs, err = s.roleRepo.ListPermissionIDsByUserID(ctx, req.GetUserId())
 		if err != nil {
 			return nil, err
@@ -285,6 +289,10 @@ func (s *RoleService) ListPermissionIds(ctx context.Context, req *permissionV1.L
 }
 
 func (s *RoleService) ListUserRoleIDs(ctx context.Context, req *permissionV1.ListUserRoleIDsRequest) (*permissionV1.ListUserRoleIDsResponse, error) {
+	// 校验目标用户归属当前调用者租户，避免跨租户枚举他人角色 ID
+	if err := s.validateTargetUserTenant(ctx, req.GetUserId()); err != nil {
+		return nil, err
+	}
 	roleIDs, err := s.userRoleRepo.ListRoleIDs(ctx, req.GetUserId(), false)
 	if err != nil {
 		return nil, err
@@ -368,6 +376,11 @@ func (s *RoleService) GetUserRoles(ctx context.Context, req *permissionV1.GetUse
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 校验目标用户归属当前调用者租户，避免跨租户枚举他人角色绑定
+	if err := s.validateTargetUserTenant(ctx, req.GetUserId()); err != nil {
+		return nil, err
+	}
+
 	bindings, err := s.userRoleRepo.ListByUserID(ctx, req.GetUserId(), req.GetIncludeExpired())
 	if err != nil {
 		return nil, err
@@ -392,6 +405,29 @@ func (s *RoleService) UnassignRolesFromUser(ctx context.Context, req *permission
 	return &permissionV1.UnassignRolesFromUserResponse{
 		RemovedRoleIds: req.GetRoleIds(),
 	}, nil
+}
+
+// validateTargetUserTenant 校验目标用户归属当前调用者租户：
+// 平台/系统上下文放行；租户用户仅可查询本租户用户的数据。
+// userRepo.Get 经 EvalQuery 注入 tenant 谓词，租户用户取不到他租户用户即自动拒绝。
+// 返回 nil 表示放行，非 nil 表示拒绝（调用方应直接返回该错误）。
+func (s *RoleService) validateTargetUserTenant(ctx context.Context, targetUserID uint32) error {
+	var callerTenantID uint32
+	isPlatform := false
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		callerTenantID = uint32(vc.TenantID())
+		isPlatform = vc.IsPlatformContext() || vc.IsSystemContext()
+	}
+	targetUser, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: targetUserID},
+	})
+	if err != nil || targetUser == nil {
+		return permissionV1.ErrorBadRequest("target user not found")
+	}
+	if !isPlatform && targetUser.GetTenantId() != callerTenantID {
+		return permissionV1.ErrorForbidden("cannot access a user in another tenant")
+	}
+	return nil
 }
 
 // createDefaultRoles 创建默认角色(包括超级管理员)

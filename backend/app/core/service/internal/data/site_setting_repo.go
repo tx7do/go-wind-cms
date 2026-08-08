@@ -174,6 +174,7 @@ func (r *SiteSettingRepo) Update(ctx context.Context, req *siteV1.UpdateSiteSett
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().SiteSetting.UpdateOneID(req.GetId())
 	builder.Where(sitesetting.IDEQ(req.GetId()))
 	if hasTenant {
@@ -193,8 +194,12 @@ func (r *SiteSettingRepo) Update(ctx context.Context, req *siteV1.UpdateSiteSett
 				SetNillablePlaceholder(req.Data.Placeholder).
 				SetNillableIsRequired(req.Data.IsRequired).
 				SetNillableValidationRegex(req.Data.ValidationRegex).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if req.Data.Options != nil {
 				builder.SetOptions(trans.Ptr(req.Data.GetOptions()))

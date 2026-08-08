@@ -316,8 +316,13 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *permission
 	}
 
 	// 为权限追加对应的 API 资源 ID 列表
+	// 操作人身份从 viewer context 推导，忽略客户端 operator_id，防止伪造审计归属
+	var operatorUserID uint32
+	if opID, hasOp := viewerUserIDFromContext(ctx); hasOp {
+		operatorUserID = opID
+	}
 	var mapPermissions = make(map[string][]*permissionV1.Permission)
-	if err := s.appendAPis(ctx, &req.Permissions, &mapPermissions, req.GetOperatorId()); err != nil {
+	if err := s.appendAPis(ctx, &req.Permissions, &mapPermissions, operatorUserID); err != nil {
 		s.log.Errorf("append apis to permissions failed: %s", err.Error())
 		return nil, err
 	}

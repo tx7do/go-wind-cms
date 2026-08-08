@@ -74,11 +74,11 @@ func (r *PostTagRepo) BatchCreate(ctx context.Context, tx *ent.Tx, postID uint32
 
 // CleanTags 删除指定帖子关联的所有帖子标签关联关系，通常在更新帖子标签时调用
 func (r *PostTagRepo) CleanTags(ctx context.Context, tx *ent.Tx, postID uint32) error {
-	if _, err := tx.PostTag.Delete().
-		Where(
-			posttag.PostIDEQ(postID),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := tx.PostTag.Delete().Where(posttag.PostIDEQ(postID))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(posttag.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete old post [%d] tags failed: %s", postID, err.Error())
 		return err
 	}
@@ -87,11 +87,11 @@ func (r *PostTagRepo) CleanTags(ctx context.Context, tx *ent.Tx, postID uint32) 
 
 // CleanPosts 删除指定标签关联的所有帖子标签关联关系，通常在删除标签时调用
 func (r *PostTagRepo) CleanPosts(ctx context.Context, tx *ent.Tx, tagID uint32) error {
-	if _, err := tx.PostTag.Delete().
-		Where(
-			posttag.TagIDEQ(tagID),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := tx.PostTag.Delete().Where(posttag.TagIDEQ(tagID))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(posttag.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete old tag [%d] posts failed: %s", tagID, err.Error())
 		return err
 	}
@@ -245,12 +245,15 @@ func (r *PostTagRepo) CountTags(ctx context.Context, postID uint32) (int, error)
 
 // Delete 删除指定帖子和标签的关联关系，通常在更新帖子标签时调用，删除旧的关联关系
 func (r *PostTagRepo) Delete(ctx context.Context, tx *ent.Tx, postID, tagID uint32) error {
-	if _, err := tx.PostTag.Delete().
+	delBuilder := tx.PostTag.Delete().
 		Where(
 			posttag.TagIDEQ(tagID),
 			posttag.PostIDEQ(postID),
-		).
-		Exec(ctx); err != nil {
+		)
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(posttag.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete post-tag failed: %s", err.Error())
 		return err
 	}

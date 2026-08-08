@@ -273,6 +273,11 @@ func (r *ApiRepo) Update(ctx context.Context, req *permissionV1.UpdateApiRequest
 	}
 
 	builder := r.entClient.Client().Debug().Api.Update()
+	// 租户作用域：仅更新本租户 API，避免跨租户改他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(api.TenantIDEQ(tid))
+	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *permissionV1.Api) {
 			builder.
@@ -283,8 +288,12 @@ func (r *ApiRepo) Update(ctx context.Context, req *permissionV1.UpdateApiRequest
 				SetNillablePath(req.Data.Path).
 				SetNillableMethod(req.Data.Method).
 				SetNillableScope(r.scopeConverter.ToEntity(req.Data.Scope)).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(api.FieldID, req.GetId()))
@@ -300,6 +309,10 @@ func (r *ApiRepo) Delete(ctx context.Context, req *permissionV1.DeleteApiRequest
 	}
 
 	builder := r.entClient.Client().Debug().Api.Delete()
+	// 租户作用域：仅删除本租户 API，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(api.TenantIDEQ(tid))
+	}
 
 	_, err := r.repository.Delete(ctx, builder, func(s *sql.Selector) {
 		s.Where(sql.EQ(api.FieldID, req.GetId()))

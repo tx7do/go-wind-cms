@@ -262,7 +262,7 @@ export const useSectionEditViewStore = defineStore('section-edit-view', {
           : apiClient.sectionService.Update({
               id: this.formData.id || 0,
               data: data as any,
-              updateMask: makeUpdateMask(Object.keys(data)),
+              updateMask: makeUpdateMask(Object.keys(data).filter((k) => k !== 'translations')),
             }));
 
         // Clear draft after successful save

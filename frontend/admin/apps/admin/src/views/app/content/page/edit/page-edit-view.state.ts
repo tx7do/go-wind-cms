@@ -300,7 +300,7 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
           : apiClient.pageService.Update({
               id: this.formData.id || 0,
               data,
-              updateMask: makeUpdateMask(Object.keys(data)),
+              updateMask: makeUpdateMask(Object.keys(data).filter((k) => k !== 'translations')),
             }));
 
         // Clear draft after successful publish

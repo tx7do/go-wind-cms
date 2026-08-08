@@ -287,7 +287,7 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
           : apiClient.categoryService.Update({
               id: this.formData.id || 0,
               data,
-              updateMask: makeUpdateMask(Object.keys(data)),
+              updateMask: makeUpdateMask(Object.keys(data).filter((k) => k !== 'translations')),
             }));
 
         // Clear draft after successful publish

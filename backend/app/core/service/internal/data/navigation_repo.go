@@ -275,6 +275,7 @@ func (r *NavigationRepo) Update(ctx context.Context, req *siteV1.UpdateNavigatio
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := tx.Navigation.UpdateOneID(req.GetId())
 	builder.Where(navigation.IDEQ(req.GetId()))
 	if hasTenant {
@@ -287,8 +288,12 @@ func (r *NavigationRepo) Update(ctx context.Context, req *siteV1.UpdateNavigatio
 				SetNillableLocation(r.locationConverter.ToEntity(req.Data.Location)).
 				SetNillableIsActive(req.Data.IsActive).
 				SetNillableLocale(req.Data.Locale).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(navigation.FieldID, req.GetId()))

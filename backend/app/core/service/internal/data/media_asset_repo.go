@@ -204,6 +204,7 @@ func (r *MediaAssetRepo) Update(ctx context.Context, req *mediaV1.UpdateMediaAss
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().MediaAsset.UpdateOneID(req.GetId())
 	builder.Where(mediaasset.IDEQ(req.GetId()))
 	if hasTenant {
@@ -230,8 +231,12 @@ func (r *MediaAssetRepo) Update(ctx context.Context, req *mediaV1.UpdateMediaAss
 				SetNillableIsPrivate(req.Data.IsPrivate).
 				SetNillableFileID(req.Data.FileId).
 				SetNillableFolderID(req.Data.FolderId).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(mediaasset.FieldID, req.GetId()))

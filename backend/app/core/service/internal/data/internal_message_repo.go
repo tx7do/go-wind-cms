@@ -98,6 +98,10 @@ func (r *InternalMessageRepo) List(ctx context.Context, req *paginationV1.Paging
 	}
 
 	builder := r.entClient.Client().InternalMessage.Query()
+	// 租户作用域：仅查询本租户站内消息，避免跨租户读他人消息（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(internalmessage.TenantIDEQ(tid))
+	}
 
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
@@ -130,6 +134,10 @@ func (r *InternalMessageRepo) Get(ctx context.Context, req *internalMessageV1.Ge
 	}
 
 	builder := r.entClient.Client().InternalMessage.Query()
+	// 租户作用域：仅查询本租户站内消息，避免跨租户读他人消息（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(internalmessage.TenantIDEQ(tid))
+	}
 
 	var whereCond []func(s *sql.Selector)
 	switch req.QueryBy.(type) {
@@ -197,6 +205,7 @@ func (r *InternalMessageRepo) Update(ctx context.Context, req *internalMessageV1
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().Debug().InternalMessage.Update()
 	builder.Where(internalmessage.IDEQ(req.GetId()))
 	if hasTenant {
@@ -211,8 +220,12 @@ func (r *InternalMessageRepo) Update(ctx context.Context, req *internalMessageV1
 				SetNillableCategoryID(req.Data.CategoryId).
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableType(r.typeConverter.ToEntity(req.Data.Type)).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(internalmessage.FieldID, req.GetId()))

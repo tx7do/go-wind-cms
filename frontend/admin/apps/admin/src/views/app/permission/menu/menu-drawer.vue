@@ -325,7 +325,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.menuService.Update({
             id: data.value.row.id,
             data: { ...values } as any,
-            updateMask: makeUpdateMask(Object.keys(values)),
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter((k) => !['divider1'].includes(k)),
+            ),
           }));
 
       notification.success({

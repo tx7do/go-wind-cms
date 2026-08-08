@@ -112,7 +112,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.internalMessageCategoryService.Update({
             id: data.value.row.id,
             data: values,
-            updateMask: makeUpdateMask(Object.keys(values)),
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter((k) => !['code'].includes(k)),
+            ),
           }));
 
       notification.success({

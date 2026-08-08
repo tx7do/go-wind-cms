@@ -299,6 +299,11 @@ func (r *PermissionGroupRepo) Update(ctx context.Context, req *permissionV1.Upda
 	}
 
 	builder := r.entClient.Client().PermissionGroup.UpdateOneID(req.GetId())
+	// 租户作用域：仅更新本租户权限组，避免跨租户改他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(permissiongroup.TenantIDEQ(tid))
+	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	_, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *permissionV1.PermissionGroup) {
 			builder.
@@ -308,8 +313,12 @@ func (r *PermissionGroupRepo) Update(ctx context.Context, req *permissionV1.Upda
 				SetNillableSortOrder(req.Data.SortOrder).
 				SetNillableDescription(req.Data.Description).
 				SetNillableParentID(req.Data.ParentId).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(permissiongroup.FieldID, req.GetId()))
@@ -351,6 +360,10 @@ func (r *PermissionGroupRepo) UpdateParentIDs(ctx context.Context, parentIDs map
 		builder := tx.PermissionGroup.Update().
 			SetParentID(parentID).
 			Where(permissiongroup.IDEQ(permID))
+		// 租户作用域：仅更新本租户权限组的父级，避免跨租户改他人数据（按 hasTenant 条件加）
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			builder.Where(permissiongroup.TenantIDEQ(tid))
+		}
 
 		if err = builder.Exec(ctx); err != nil {
 			r.log.Errorf("update permission parent_id failed: %s", err.Error())
@@ -368,6 +381,10 @@ func (r *PermissionGroupRepo) Delete(ctx context.Context, req *permissionV1.Dele
 	}
 
 	builder := r.entClient.Client().PermissionGroup.Delete()
+	// 租户作用域：仅删除本租户权限组，避免跨租户删他人数据（按 hasTenant 条件加）
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(permissiongroup.TenantIDEQ(tid))
+	}
 
 	_, err := r.repository.Delete(ctx, builder, func(s *sql.Selector) {
 		s.Where(sql.EQ(permissiongroup.FieldID, req.GetId()))

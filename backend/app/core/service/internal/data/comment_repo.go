@@ -241,6 +241,7 @@ func (r *CommentRepo) Update(ctx context.Context, req *commentV1.UpdateCommentRe
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.entClient.Client().Comment.UpdateOneID(req.GetId())
 	builder.Where(comment.IDEQ(req.GetId()))
 	if hasTenant {
@@ -265,8 +266,12 @@ func (r *CommentRepo) Update(ctx context.Context, req *commentV1.UpdateCommentRe
 				SetNillableIsSpam(req.Data.IsSpam).
 				SetNillableIsSticky(req.Data.IsSticky).
 				SetNillableParentID(req.Data.ParentId).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(comment.FieldID, req.GetId()))

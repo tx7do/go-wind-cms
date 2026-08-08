@@ -119,7 +119,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.mediaAssetService.Update({
             id: data.value.row.id,
             data: { ...values } as MediaAsset,
-            updateMask: makeUpdateMask(Object.keys(values)),
+            updateMask: makeUpdateMask(
+              Object.keys(values).filter((k) => !['filename'].includes(k)),
+            ),
           }));
 
       notification.success({

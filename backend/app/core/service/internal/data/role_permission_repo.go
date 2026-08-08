@@ -61,11 +61,11 @@ func (r *RolePermissionRepo) CleanPermissions(
 	tx *ent.Tx,
 	roleID uint32,
 ) error {
-	if _, err := tx.RolePermission.Delete().
-		Where(
-			rolepermission.RoleIDEQ(roleID),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := tx.RolePermission.Delete().Where(rolepermission.RoleIDEQ(roleID))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(rolepermission.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete old role [%d] permissions failed: %s", roleID, err.Error())
 		return permissionV1.ErrorInternalServerError("delete old role permissions failed")
 	}

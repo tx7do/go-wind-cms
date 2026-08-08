@@ -274,6 +274,7 @@ func (r *SectionRepo) Update(ctx context.Context, req *contentV1.UpdateSectionRe
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := tx.Section.UpdateOneID(req.GetId())
 	builder.Where(section.IDEQ(req.GetId()))
 	if hasTenant {
@@ -286,8 +287,12 @@ func (r *SectionRepo) Update(ctx context.Context, req *contentV1.UpdateSectionRe
 				SetNillableType(r.typeConverter.ToEntity(req.Data.Type)).
 				SetNillableName(req.Data.Name).
 				SetNillableSortOrder(req.Data.SortOrder).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if req.Data.Config != nil {
 				builder.SetConfig(trans.Ptr(req.Data.GetConfig()))
@@ -423,9 +428,11 @@ func (r *SectionRepo) CleanByPageID(ctx context.Context, tx *ent.Tx, pageID uint
 	}
 
 	// 先查出所有 section ID，用于清理翻译
-	sectionIDs, err := tx.Section.Query().
-		Where(section.PageIDEQ(pageID)).
-		IDs(ctx)
+	queryBuilder := tx.Section.Query().Where(section.PageIDEQ(pageID))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		queryBuilder.Where(section.TenantIDEQ(tid))
+	}
+	sectionIDs, err := queryBuilder.IDs(ctx)
 	if err != nil {
 		r.log.Errorf("query sections by page id failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("query sections by page id failed")
@@ -440,9 +447,11 @@ func (r *SectionRepo) CleanByPageID(ctx context.Context, tx *ent.Tx, pageID uint
 	}
 
 	// 删除所有 section
-	if _, err := tx.Section.Delete().
-		Where(section.PageIDEQ(pageID)).
-		Exec(ctx); err != nil {
+	delBuilder := tx.Section.Delete().Where(section.PageIDEQ(pageID))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(section.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete sections by page id failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("delete sections by page id failed")
 	}

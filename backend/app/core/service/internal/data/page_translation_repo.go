@@ -176,6 +176,7 @@ func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		builder.Where(pagetranslation.TenantIDEQ(tid))
 	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 
 	dto, err := r.repository.UpdateOne(ctx, builder, data, updateMask,
 		func(dto *contentV1.PageTranslation) {
@@ -184,8 +185,12 @@ func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 				SetNillableThumbnail(data.Thumbnail).
 				SetNillableCoverImage(data.CoverImage).
 				SetNillableFullPath(data.FullPath).
-				SetNillableUpdatedBy(data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if data.Seo != nil {
 				builder.SetSeo(data.Seo)

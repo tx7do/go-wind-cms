@@ -264,6 +264,7 @@ func (r *MenuRepo) Update(ctx context.Context, req *permissionV1.UpdateMenuReque
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		builder.Where(menu.TenantIDEQ(tid))
 	}
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *permissionV1.Menu) {
 			builder.
@@ -275,8 +276,12 @@ func (r *MenuRepo) Update(ctx context.Context, req *permissionV1.UpdateMenuReque
 				SetNillableName(req.Data.Name).
 				SetNillableComponent(req.Data.Component).
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if req.Data.Meta != nil {
 				r.updateMetaField(builder, req.Data.Meta, metaPaths)

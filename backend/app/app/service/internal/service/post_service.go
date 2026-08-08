@@ -27,7 +27,22 @@ func NewPostService(ctx *bootstrap.Context, postClient contentV1.PostServiceClie
 }
 
 func (s *PostService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListPostResponse, error) {
-	return s.postClient.List(ctx, req)
+	resp, err := s.postClient.List(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// 公开端点仅返回已发布文章，过滤草稿/归档/私有等状态
+	if resp != nil {
+		filtered := make([]*contentV1.Post, 0, len(resp.GetItems()))
+		for _, p := range resp.GetItems() {
+			if p != nil && p.GetStatus() == contentV1.Post_POST_STATUS_PUBLISHED {
+				filtered = append(filtered, p)
+			}
+		}
+		resp.Items = filtered
+		resp.Total = uint64(len(filtered))
+	}
+	return resp, nil
 }
 
 func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.Post, error) {

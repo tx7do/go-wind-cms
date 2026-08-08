@@ -32,11 +32,11 @@ func (r *PermissionMenuRepo) CleanMenus(
 	tx *ent.Tx,
 	permissionIDs []uint32,
 ) error {
-	if _, err := tx.PermissionMenu.Delete().
-		Where(
-			permissionmenu.PermissionIDIn(permissionIDs...),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := tx.PermissionMenu.Delete().Where(permissionmenu.PermissionIDIn(permissionIDs...))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionmenu.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete old permission menus failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete old permission menus failed")
 	}
@@ -50,12 +50,15 @@ func (r *PermissionMenuRepo) CleanNotExistMenus(
 	permissionID uint32,
 	menuIDs []uint32,
 ) error {
-	if _, err := tx.PermissionMenu.Delete().
+	delBuilder := tx.PermissionMenu.Delete().
 		Where(
 			permissionmenu.MenuIDNotIn(menuIDs...),
 			permissionmenu.PermissionIDEQ(permissionID),
-		).
-		Exec(ctx); err != nil {
+		)
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionmenu.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("clean not exists permission menus failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("clean not exists permission menus failed")
 	}
@@ -159,11 +162,11 @@ func (r *PermissionMenuRepo) Truncate(ctx context.Context) error {
 
 // Delete 删除权限关联的菜单
 func (r *PermissionMenuRepo) Delete(ctx context.Context, permissionID uint32) error {
-	if _, err := r.entClient.Client().PermissionMenu.Delete().
-		Where(
-			permissionmenu.PermissionIDEQ(permissionID),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := r.entClient.Client().PermissionMenu.Delete().Where(permissionmenu.PermissionIDEQ(permissionID))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionmenu.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("failed to delete permission menu by permission id: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete failed")
 	}
@@ -172,11 +175,11 @@ func (r *PermissionMenuRepo) Delete(ctx context.Context, permissionID uint32) er
 }
 
 func (r *PermissionMenuRepo) DeleteByPermissionIDs(ctx context.Context, permissionIDs []uint32) error {
-	if _, err := r.entClient.Client().PermissionMenu.Delete().
-		Where(
-			permissionmenu.PermissionIDIn(permissionIDs...),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := r.entClient.Client().PermissionMenu.Delete().Where(permissionmenu.PermissionIDIn(permissionIDs...))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionmenu.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete permission menus by permission ids failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete permission menus by permission ids failed")
 	}

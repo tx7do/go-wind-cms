@@ -32,11 +32,11 @@ func (r *PermissionApiRepo) CleanApis(
 	tx *ent.Tx,
 	permissionIDs []uint32,
 ) error {
-	if _, err := tx.PermissionApi.Delete().
-		Where(
-			permissionapi.PermissionIDIn(permissionIDs...),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := tx.PermissionApi.Delete().Where(permissionapi.PermissionIDIn(permissionIDs...))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionapi.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete old permission apis failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete old permission apis failed")
 	}
@@ -50,12 +50,15 @@ func (r *PermissionApiRepo) CleanNotExistApis(
 	permissionID uint32,
 	apiIDs []uint32,
 ) error {
-	if _, err := tx.PermissionApi.Delete().
+	delBuilder := tx.PermissionApi.Delete().
 		Where(
 			permissionapi.APIIDNotIn(apiIDs...),
 			permissionapi.PermissionIDEQ(permissionID),
-		).
-		Exec(ctx); err != nil {
+		)
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionapi.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("clean not exists permission apis failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("clean not exists permission apis failed")
 	}
@@ -168,11 +171,11 @@ func (r *PermissionApiRepo) Truncate(ctx context.Context) error {
 
 // Delete 删除权限关联的API资源
 func (r *PermissionApiRepo) Delete(ctx context.Context, permissionID uint32) error {
-	if _, err := r.entClient.Client().PermissionApi.Delete().
-		Where(
-			permissionapi.PermissionIDEQ(permissionID),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := r.entClient.Client().PermissionApi.Delete().Where(permissionapi.PermissionIDEQ(permissionID))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionapi.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete permission apis by permission id failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete permission apis by permission id failed")
 	}
@@ -180,11 +183,11 @@ func (r *PermissionApiRepo) Delete(ctx context.Context, permissionID uint32) err
 }
 
 func (r *PermissionApiRepo) DeleteByPermissionIDs(ctx context.Context, permissionIDs []uint32) error {
-	if _, err := r.entClient.Client().PermissionApi.Delete().
-		Where(
-			permissionapi.PermissionIDIn(permissionIDs...),
-		).
-		Exec(ctx); err != nil {
+	delBuilder := r.entClient.Client().PermissionApi.Delete().Where(permissionapi.PermissionIDIn(permissionIDs...))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		delBuilder.Where(permissionapi.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
 		r.log.Errorf("delete permission apis by permission ids failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete permission apis by permission ids failed")
 	}

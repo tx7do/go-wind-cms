@@ -331,6 +331,7 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 	}
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := tx.Page.UpdateOneID(req.GetId())
 	builder.Where(page.IDEQ(req.GetId()))
 	if hasTenant {
@@ -355,8 +356,12 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 				SetNillableParentID(req.Data.ParentId).
 				SetNillableDepth(req.Data.Depth).
 				SetNillablePath(req.Data.Path).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 
 			if req.Data.CustomFields != nil {
 				builder.SetCustomFields(trans.Ptr(req.Data.GetCustomFields()))

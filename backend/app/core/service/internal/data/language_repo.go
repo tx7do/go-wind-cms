@@ -227,6 +227,7 @@ func (r *LanguageRepo) Update(ctx context.Context, req *dictV1.UpdateLanguageReq
 	}
 
 	builder := r.entClient.Client().Debug().Language.Update()
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *dictV1.Language) {
 			builder.
@@ -236,8 +237,12 @@ func (r *LanguageRepo) Update(ctx context.Context, req *dictV1.UpdateLanguageReq
 				SetNillableIsEnabled(req.Data.IsEnabled).
 				SetNillableIsDefault(req.Data.IsDefault).
 				SetNillableSortOrder(req.Data.SortOrder).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(language.FieldID, req.GetId()))

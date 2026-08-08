@@ -237,7 +237,6 @@ func (r *NavigationItemRepo) newUpdateOneBuilder(tx *ent.Tx, data *siteV1.Naviga
 		SetNillableIsInvalid(data.IsInvalid).
 		SetNillableRequiredPermission(data.RequiredPermission).
 		SetNillableParentID(data.ParentId).
-			SetNillableUpdatedBy(data.UpdatedBy).
 			SetUpdatedAt(now)
 	return builder
 }
@@ -282,10 +281,15 @@ func (r *NavigationItemRepo) Update(ctx context.Context, req *siteV1.UpdateNavig
 	}()
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	builder := r.newUpdateOneBuilder(tx, req.Data)
 	builder.Where(navigationitem.IDEQ(*req.Data.Id))
 	if hasTenant {
 		builder.Where(navigationitem.TenantIDEQ(tid))
+	}
+	// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+	if hasUser {
+		builder.SetUpdatedBy(callerUserID)
 	}
 
 	var entity *ent.NavigationItem

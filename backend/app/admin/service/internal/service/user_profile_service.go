@@ -78,6 +78,27 @@ func (s *UserProfileService) UpdateUser(ctx context.Context, req *identityV1.Upd
 	req.Data.Id = trans.Ptr(operator.UserId)
 	req.Id = operator.UserId
 
+	// 自服务更新仅允许修改个人资料字段，排除租户/身份/权限/审计等敏感字段，
+	// 防止自服务用户越权改租户、改用户名、改角色绑定等。
+	if req.UpdateMask != nil && len(req.UpdateMask.Paths) > 0 {
+		allowed := map[string]struct{}{
+			"nickname": {},
+			"avatar":   {},
+			"realname": {},
+			"mobile":   {},
+			"email":    {},
+			"remark":   {},
+			"gender":   {},
+		}
+		filtered := req.UpdateMask.Paths[:0]
+		for _, p := range req.UpdateMask.Paths {
+			if _, ok := allowed[p]; ok {
+				filtered = append(filtered, p)
+			}
+		}
+		req.UpdateMask.Paths = filtered
+	}
+
 	return s.userServiceClient.Update(ctx, req)
 }
 

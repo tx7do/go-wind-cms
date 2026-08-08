@@ -61,7 +61,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	sseServer := server.NewSseServer(context)
+	sseServer := server.NewSseServer(context, authenticationServiceClient)
 	app := newApp(context, httpServer, grpcServer, sseServer)
 	return app, func() {
 	}, nil

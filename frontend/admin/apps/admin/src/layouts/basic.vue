@@ -188,9 +188,9 @@ function hasMessage(data: InternalMessageRecipient): boolean {
 
 function handleSseNotification(
   data: InternalMessageRecipient,
-  event: MessageEvent,
+  _event: MessageEvent,
 ) {
-  console.log('SSE', event, data);
+  // 不打印 SSE 通知 payload，避免消息内容泄露到控制台
 
   if (!hasMessage(data)) {
     notifications.value.unshift(convertInternalMessageRecipient(data));

@@ -275,6 +275,7 @@ func (r *TenantRepo) Update(ctx context.Context, req *identityV1.UpdateTenantReq
 	}
 
 	builder := r.entClient.Client().Debug().Tenant.Update()
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *identityV1.Tenant) {
 			// 仅允许更新展示性字段；计费/生命周期/管理类字段
@@ -286,8 +287,12 @@ func (r *TenantRepo) Update(ctx context.Context, req *identityV1.UpdateTenantReq
 				SetNillableLogoURL(req.Data.LogoUrl).
 				SetNillableRemark(req.Data.Remark).
 				SetNillableIndustry(req.Data.Industry).
-				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+
+			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(tenant.FieldID, req.GetId()))

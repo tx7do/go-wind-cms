@@ -314,7 +314,7 @@ export const usePostEditViewStore = defineStore('post-edit-view', {
           : apiClient.postService.Update({
               id: this.formData.id || 0,
               data,
-              updateMask: makeUpdateMask(Object.keys(data)),
+              updateMask: makeUpdateMask(Object.keys(data).filter((k) => k !== 'translations')),
             }));
 
         // 发布成功后清除草稿
