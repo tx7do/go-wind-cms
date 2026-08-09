@@ -67,9 +67,15 @@ export default defineNuxtConfig({
     },
     i18n: {
         langDir: '../locales',
+        // 注意：dir 由 @nuxtjs/i18n 运行时读取 LocaleObject.dir 并自动写入 <html dir>。
+        //   - 未声明 dir 的 locale 回落到 defaultDirection: 'ltr'（见 @nuxtjs/i18n 模块默认值）
+        //   - 阿拉伯语必须显式声明 dir: 'rtl'，否则 HTML 方向不会翻转
+        // `language` 为 BCP47 语言标签（@nuxtjs/i18n v10 字段名，旧版叫 `iso`），
+        // 运行时用它写入 <html lang>，因此必须设置，否则 <html lang> 不会注入。
         locales: [
-            {code: 'zh-CN', iso: 'zh-CN', name: '中文', file: 'zh-CN/index.ts'},
-            {code: 'en-US', iso: 'en-US', name: 'English', file: 'en-US/index.ts'}
+            {code: 'zh-CN', language: 'zh-CN', name: '中文', file: 'zh-CN/index.ts'},
+            {code: 'en-US', language: 'en-US', name: 'English', file: 'en-US/index.ts'},
+            {code: 'ar', language: 'ar', name: 'العربية', file: 'ar/index.ts', dir: 'rtl'},
         ],
         defaultLocale: 'zh-CN',
         strategy: 'prefix',

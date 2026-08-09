@@ -120,7 +120,7 @@ const handleAction = (action: () => void) => {
             <button
               type="button"
               :class="cn(
-                'flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium',
+                'flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium',
                 'text-foreground/80 transition-colors',
                 'hover:bg-primary/10 hover:text-primary',
               )"
@@ -147,13 +147,13 @@ const handleAction = (action: () => void) => {
             <!-- 子菜单 -->
             <div
               v-if="(item.children?.length ?? 0) > 0 && expandedId === (item.id ?? 0)"
-              class="ml-3 mt-0.5 space-y-0.5 border-l border-border pl-3"
+              class="ms-3 mt-0.5 space-y-0.5 border-s border-border ps-3"
             >
               <button
                 v-for="child in item.children"
                 :key="child.id?.toString()"
                 type="button"
-                class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-foreground/70 transition-colors hover:bg-primary/10 hover:text-primary"
+                class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-start text-sm text-foreground/70 transition-colors hover:bg-primary/10 hover:text-primary"
                 @click="handleNavigate(child)"
               >
                 <XIcon v-if="child.icon" :icon="`carbon:${child.icon}`" :size="14" />
@@ -171,7 +171,7 @@ const handleAction = (action: () => void) => {
           <template v-if="isLogin">
             <button
               type="button"
-              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
+              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/user')))"
             >
               <XIcon icon="lucide:home" width="16" height="16" />
@@ -179,7 +179,7 @@ const handleAction = (action: () => void) => {
             </button>
             <button
               type="button"
-              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
+              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/settings')))"
             >
               <XIcon icon="lucide:user" width="16" height="16" />
@@ -187,7 +187,7 @@ const handleAction = (action: () => void) => {
             </button>
             <button
               type="button"
-              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/10"
+              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium text-destructive hover:bg-destructive/10"
               @click="handleAction(async () => { await authStore.logout() })"
             >
               <XIcon icon="lucide:log-out" width="16" height="16" />
@@ -197,7 +197,7 @@ const handleAction = (action: () => void) => {
           <template v-else>
             <button
               type="button"
-              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
+              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/login')))"
             >
               <XIcon icon="lucide:user" width="16" height="16" />
@@ -205,7 +205,7 @@ const handleAction = (action: () => void) => {
             </button>
             <button
               type="button"
-              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
+              class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
               @click="handleAction(() => navigateTo(localePath('/register')))"
             >
               <XIcon icon="lucide:user" width="16" height="16" />
@@ -219,14 +219,14 @@ const handleAction = (action: () => void) => {
 
         <!-- 语言切换 -->
         <div class="mb-2 px-3 py-1 text-xs font-semibold text-muted-foreground">
-          <XIcon icon="lucide:globe" width="12" height="12" class="mr-1 inline" />
+          <XIcon icon="lucide:globe" width="12" height="12" class="me-1 inline" />
           {{ t('navbar.language.title') }}
         </div>
         <div class="space-y-0.5">
           <button
             type="button"
             :class="cn(
-              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
+              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium transition-colors',
               locale === 'zh-CN' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
             @click="handleAction(() => navigateTo(switchLocalePath('zh-CN')))"
@@ -236,12 +236,22 @@ const handleAction = (action: () => void) => {
           <button
             type="button"
             :class="cn(
-              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
+              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium transition-colors',
               locale === 'en-US' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
             @click="handleAction(() => navigateTo(switchLocalePath('en-US')))"
           >
             <span>English</span>
+          </button>
+          <button
+            type="button"
+            :class="cn(
+              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium transition-colors',
+              locale === 'ar' ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
+            )"
+            @click="handleAction(() => navigateTo(switchLocalePath('ar')))"
+          >
+            <span>العربية</span>
           </button>
         </div>
 
@@ -253,7 +263,7 @@ const handleAction = (action: () => void) => {
           <XIcon             :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
             width="16" height="16"
           />
-          <span class="ml-1">{{ t('navbar.theme.title') || 'Theme' }}</span>
+          <span class="ms-1">{{ t('navbar.theme.title') || 'Theme' }}</span>
         </div>
         <div class="space-y-0.5">
           <button
@@ -265,7 +275,7 @@ const handleAction = (action: () => void) => {
             :key="mode.key"
             type="button"
             :class="cn(
-              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
+              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium transition-colors',
               currentMode === mode.key ? 'bg-primary/10 text-primary' : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             )"
             @click="handleAction(() => setThemeMode(mode.key as any))"

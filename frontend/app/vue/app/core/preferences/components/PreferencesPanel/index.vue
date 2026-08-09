@@ -53,6 +53,7 @@ const themeModes: { label: string; value: ThemeModeType; icon: typeof Monitor }[
 const locales = [
   { label: '中文', value: 'zh-CN' },
   { label: 'English', value: 'en-US' },
+  { label: 'العربية', value: 'ar' },
 ]
 
 // 页面切换动画选项

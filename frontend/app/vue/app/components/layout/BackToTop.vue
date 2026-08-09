@@ -36,7 +36,7 @@ const scrollToTop = () => {
   <button
     v-if="isVisible"
     :class="cn(
-      'fixed bottom-10 right-10 z-999 flex h-14 w-14 items-center justify-center',
+      'fixed bottom-10 end-10 z-999 flex h-14 w-14 items-center justify-center',
       'rounded-full border-none bg-primary text-white cursor-pointer',
       'text-2xl shadow-lg transition-all duration-300',
       'hover:-translate-y-1 hover:shadow-xl hover:bg-primary/80',

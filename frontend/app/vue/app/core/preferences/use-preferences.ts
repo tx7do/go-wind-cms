@@ -30,7 +30,7 @@ function usePreferences() {
 
   /**
    * 当前语言的 ISO 代码（供 API 调用使用）
-   * 与 @nuxtjs/i18n 的 locale.iso 保持同步
+   * 与 @nuxtjs/i18n 的 locale 保持同步（v10 起 locale 对象用 `language` 字段表示 BCP47 标签）
    */
   const localeIso = computed(() => preferences.app.locale);
 

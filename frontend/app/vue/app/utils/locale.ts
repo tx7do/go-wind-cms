@@ -10,7 +10,9 @@ export function getCurrentLocale(): SupportedLanguagesType {
     const nuxtApp = useNuxtApp();
     const locale = (nuxtApp.$i18n as any)?.locale?.value as string;
     if (locale?.includes('-')) return locale as SupportedLanguagesType;
-    const map: Record<string, SupportedLanguagesType> = { zh: 'zh-CN', en: 'en-US' };
+    // 注意：'ar' 为无地区后缀的宏语言代码，需在此显式映射，否则会落入
+    // 下方 fallback 被错误地拼成 'ar-CN'。
+    const map: Record<string, SupportedLanguagesType> = { zh: 'zh-CN', en: 'en-US', ar: 'ar' };
     return (map[locale] || 'zh-CN') as SupportedLanguagesType;
   } catch {
     return 'zh-CN';

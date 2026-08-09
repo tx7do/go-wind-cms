@@ -4,7 +4,9 @@ import type { SupportedLanguagesType } from '@/core/preferences/types';
 
 function normalizeLocale(code: string): SupportedLanguagesType {
   if (code.includes('-')) return code as SupportedLanguagesType;
-  const map: Record<string, SupportedLanguagesType> = { zh: 'zh-CN', en: 'en-US' };
+  // 'ar' 为无地区后缀的宏语言代码，需显式映射，否则会落入 fallback
+  // 被错误地拼成 'ar-CN'。
+  const map: Record<string, SupportedLanguagesType> = { zh: 'zh-CN', en: 'en-US', ar: 'ar' };
   return (map[code] || code + '-CN') as SupportedLanguagesType;
 }
 
