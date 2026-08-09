@@ -25,11 +25,11 @@ export default function ControlPanel() {
 
     return (
         <div className={cn(
-            'fixed top-8 right-8 z-100 flex gap-3 rounded-2xl border border-border bg-card p-2.5 px-3.5',
+            'fixed top-8 end-8 z-100 flex gap-3 rounded-2xl border border-border bg-card p-2.5 px-3.5',
             'backdrop-blur-md shadow-lg transition-all duration-300',
             'hover:-translate-y-0.5 hover:shadow-xl',
-            'max-lg:top-4 max-lg:right-4 max-lg:p-1.5 max-lg:gap-1.5',
-            'max-md:top-3 max-md:right-3 max-md:p-1 max-md:gap-1',
+            'max-lg:top-4 max-lg:end-4 max-lg:p-1.5 max-lg:gap-1.5',
+            'max-md:top-3 max-md:end-3 max-md:p-1 max-md:gap-1',
         )}>
             <select
                 className={cn(

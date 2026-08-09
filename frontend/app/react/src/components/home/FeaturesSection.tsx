@@ -53,7 +53,7 @@ export default function FeaturesSection() {
             <div className="w-full max-w-300 mx-auto px-8 max-md:px-4">
                 <div className="mb-12 text-center">
                     <h2 className="inline-flex items-center gap-2 text-[2.25rem] font-extrabold leading-tight tracking-tight text-foreground">
-                        <XIcon name="carbon:rocket" size={28} className="mr-2 text-primary"/>
+                        <XIcon name="carbon:rocket" size={28} className="me-2 text-primary"/>
                         {t('platform_features')}
                     </h2>
                 </div>

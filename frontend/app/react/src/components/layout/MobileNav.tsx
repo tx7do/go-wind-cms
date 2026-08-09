@@ -156,7 +156,7 @@ export default function MobileNav() {
                                             <button
                                                 type="button"
                                                 className={cn(
-                                                    'flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium',
+                                                    'flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium',
                                                     'text-foreground/80 transition-colors',
                                                     'hover:bg-primary/10 hover:text-primary',
                                                 )}
@@ -179,12 +179,12 @@ export default function MobileNav() {
 
                                             {/* 子菜单 */}
                                             {hasChildren && isExpanded && (
-                                                <div className="ml-3 mt-0.5 space-y-0.5 border-l border-border pl-3">
+                                                <div className="ms-3 mt-0.5 space-y-0.5 border-s border-border ps-3">
                                                     {item.children!.map((child: siteservicev1_NavigationItem) => (
                                                         <button
                                                             key={child.id?.toString()}
                                                             type="button"
-                                                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-foreground/70 transition-colors hover:bg-primary/10 hover:text-primary"
+                                                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-start text-sm text-foreground/70 transition-colors hover:bg-primary/10 hover:text-primary"
                                                             onClick={() => handleNavigate(child)}
                                                         >
                                                             {child.icon && <XIcon name={`carbon:${child.icon}`} size={14}/>}
@@ -246,7 +246,7 @@ export default function MobileNav() {
 
                         {/* 语言切换 */}
                         <div className="mb-2 px-3 py-1 text-xs font-semibold text-muted-foreground">
-                            <Globe className="mr-1 inline h-3 w-3"/>
+                            <Globe className="me-1 inline h-3 w-3"/>
                             {t('language.title')}
                         </div>
                         <div className="space-y-0.5">
@@ -268,7 +268,7 @@ export default function MobileNav() {
                         {/* 主题切换 */}
                         <div className="mb-2 px-3 py-1 text-xs font-semibold text-muted-foreground">
                             {themeIcon}
-                            <span className="ml-1">{t('theme.title') || 'Theme'}</span>
+                            <span className="ms-1">{t('theme.title') || 'Theme'}</span>
                         </div>
                         <div className="space-y-0.5">
                             <SheetNavItem
@@ -315,7 +315,7 @@ function SheetNavItem({
         <button
             type="button"
             className={cn(
-                'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
+                'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm font-medium transition-colors',
                 active
                     ? 'bg-primary/10 text-primary'
                     : destructive

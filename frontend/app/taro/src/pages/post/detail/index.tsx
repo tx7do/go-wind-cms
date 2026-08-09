@@ -258,8 +258,7 @@ export default function PostDetailPage() {
                 borderTop: isDark ? '1rpx solid rgba(255, 255, 255, 0.08)' : '1rpx solid rgba(0, 0, 0, 0.06)',
                 paddingTop: '16rpx',
                 paddingBottom: 'calc(32rpx + env(safe-area-inset-bottom))',
-                paddingLeft: '16rpx',
-                paddingRight: '16rpx',
+                paddingInline: '16rpx',
               }}
             >
                 <View

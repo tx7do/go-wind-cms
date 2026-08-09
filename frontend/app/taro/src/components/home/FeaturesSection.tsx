@@ -67,7 +67,7 @@ export default function FeaturesSection() {
                         </View>
                         {/* 标题 */}
                         <Text
-                          className='text-desc font-semibold text-textMain ml-[16rpx] flex-1'
+                          className='text-desc font-semibold text-textMain ms-[16rpx] flex-1'
                           style={{
                             lineHeight: '1.5',
                           }}

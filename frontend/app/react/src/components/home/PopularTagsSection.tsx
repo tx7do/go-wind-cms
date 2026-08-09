@@ -95,7 +95,7 @@ export default function PopularTagsSection() {
         <section className="w-full max-w-300 mx-auto px-8 py-12 max-md:px-4">
             <div className="mb-8 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl">
-                    <XIcon name="carbon:fire" size={28} className="mr-2 text-primary"/>
+                    <XIcon name="carbon:fire" size={28} className="me-2 text-primary"/>
                     {t('popular_tags')}
                 </h2>
                 <Button variant="ghost" onClick={() => router.push('/tag')}>

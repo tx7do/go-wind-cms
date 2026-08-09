@@ -135,7 +135,7 @@
             content: attr(data-lang);
             position: absolute;
             top: 10px;
-            right: 14px;
+            inset-inline-end: 14px;
             font-size: 11px;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.4);
@@ -240,12 +240,15 @@
 
     /* Blockquotes */
     :global(blockquote) {
-        border-left: 4px solid hsl(var(--primary));
+        border-inline-start: 4px solid hsl(var(--primary));
         padding: 20px 24px;
         margin: 32px 0;
         background: hsl(var(--primary) /  0.06);
         color: hsl(var(--muted-foreground));
-        border-radius: 0 8px 8px 0;
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+        border-start-end-radius: 8px;
+        border-end-end-radius: 8px;
         font-style: italic;
         position: relative;
         letter-spacing: 0.2px;
@@ -255,7 +258,7 @@
             content: '"';
             position: absolute;
             top: -10px;
-            left: 12px;
+            inset-inline-start: 12px;
             font-size: 56px;
             color: hsl(var(--primary));
             opacity: 0.2;
@@ -266,7 +269,7 @@
         :global(p) {
             margin: 14px 0;
             text-indent: 0;
-            text-align: left;
+            text-align: start;
 
             &:first-child {
                 margin-top: 0;
@@ -280,7 +283,7 @@
 
     /* Lists */
     :global(ul), :global(ol) {
-        padding-left: 2em;
+        padding-inline-start: 2em;
         margin: 28px 0;
 
         :global(li) {
@@ -361,7 +364,7 @@
         :global(th), :global(td) {
             padding: 14px 16px;
             border: 1px solid hsl(var(--border));
-            text-align: left;
+            text-align: start;
         }
 
         :global(th) {

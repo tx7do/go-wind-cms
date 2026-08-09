@@ -128,7 +128,7 @@ async function toggleExpand(comment: any) {
         'max-md:p-6 max-md:gap-4',
         'max-sm:p-4 max-sm:gap-3',
       )">
-        <div class="absolute top-0 left-0 h-full w-1 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div class="absolute top-0 start-0 h-full w-1 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         <div class="shrink-0">
           <UiAvatar class="h-12 w-12 ring-2 ring-border/30 shadow-md">
@@ -163,7 +163,7 @@ async function toggleExpand(comment: any) {
           </div>
 
           <!-- Content -->
-          <div class="mb-4 pl-1 text-[15px] leading-relaxed text-foreground max-md:text-sm max-sm:text-[13px]">
+          <div class="mb-4 ps-1 text-[15px] leading-relaxed text-foreground max-md:text-sm max-sm:text-[13px]">
             {{ comment.content }}
           </div>
 
@@ -244,7 +244,7 @@ async function toggleExpand(comment: any) {
               @keydown.ctrl.enter="submitReply(comment)"
               @keydown.meta.enter="submitReply(comment)"
             />
-            <div class="mt-2 mb-3 text-right text-xs text-muted-foreground">
+            <div class="mt-2 mb-3 text-end text-xs text-muted-foreground">
               {{ replyContent.length }} / 1000
             </div>
             <div class="flex justify-end gap-3 max-md:flex-col max-md:gap-2">
@@ -261,11 +261,11 @@ async function toggleExpand(comment: any) {
 
       <!-- Recursive children -->
       <div v-if="hasChildren(comment) && isExpanded(comment)" :class="cn(
-        'relative mt-5 pl-16',
-        'max-md:pl-12 max-md:mt-4',
-        'max-sm:pl-9 max-sm:mt-3',
+        'relative mt-5 ps-16',
+        'max-md:ps-12 max-md:mt-4',
+        'max-sm:ps-9 max-sm:mt-3',
       )">
-        <div class="absolute top-0 left-8 h-full w-0.5 bg-linear-to-b from-primary/20 to-primary/5 max-md:left-6 max-sm:left-4.5 max-sm:w-[1.5px]" />
+        <div class="absolute top-0 start-8 h-full w-0.5 bg-linear-to-b from-primary/20 to-primary/5 max-md:start-6 max-sm:start-4.5 max-sm:w-[1.5px]" />
         <div v-if="isLoading(comment)" class="flex items-center justify-center gap-3 py-5 text-sm text-muted-foreground">
           <UiSpinner size="sm" class="text-primary" />
           <span>{{ t('comment.loading') }}</span>

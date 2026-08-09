@@ -32,7 +32,7 @@ const PostFloatingActions: React.FC<PostFloatingActionsProps> = ({
     const btnBase = 'flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-border bg-card shadow-md transition-all hover:border-primary hover:bg-primary/5 hover:shadow-lg';
 
     return (
-        <div className="fixed top-1/2 right-8 z-10 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
+        <div className="fixed top-1/2 end-8 z-10 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
             <button
                 onClick={onLike}
                 className={`${btnBase} ${isLiked ? 'border-primary bg-primary/10 text-primary' : 'text-muted-foreground'}`}

@@ -98,7 +98,7 @@ const linkBtn = 'text-sm text-primary font-medium underline underline-offset-4 t
                   {{ t('authentication.login.terms_of_service') }}
                 </button>
                 {{ t('authentication.login.terms_and') }}
-                <button :class="[linkBtn, 'ml-1 text-xs']" @click="navigateTo(localePath('/privacy'))">
+                <button :class="[linkBtn, 'ms-1 text-xs']" @click="navigateTo(localePath('/privacy'))">
                   {{ t('authentication.login.privacy_policy') }}
                 </button>
               </small>

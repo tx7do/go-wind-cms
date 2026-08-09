@@ -19,7 +19,7 @@ const features = [
     <div class="w-full max-w-300 mx-auto px-8 max-md:px-4">
       <div class="mb-12 text-center">
         <h2 class="inline-flex items-center gap-2 text-[2.25rem] font-extrabold leading-tight tracking-tight text-foreground">
-          <XIcon icon="carbon:rocket" :size="28" class="mr-2 text-primary" />
+          <XIcon icon="carbon:rocket" :size="28" class="me-2 text-primary" />
           {{ t('page.home.platform_features') }}
         </h2>
       </div>

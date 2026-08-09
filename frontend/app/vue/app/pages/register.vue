@@ -33,7 +33,7 @@ const textBtn = 'cursor-pointer border-none bg-transparent text-sm text-primary 
 
     <template #switchLink>
       {{ t('authentication.register.already_have_account') }}
-      <button :class="textBtn" class="ml-1" @click="navigateTo(localePath('/login'))">
+      <button :class="textBtn" class="ms-1" @click="navigateTo(localePath('/login'))">
         {{ t('authentication.register.login_now') }}
       </button>
     </template>

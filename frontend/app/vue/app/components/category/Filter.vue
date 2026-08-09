@@ -120,13 +120,20 @@ onUnmounted(() => {
 })
 
 // 子菜单 fixed 定位计算
+// 说明：子菜单的 inline-start 边对齐触发元素的 inline-start 边。
+// LTR 下用 rect.left；RTL 下用 rect.right（元素右边即其 inline-start 边）。
+// 通过 insetInlineStart 设置，该属性在 LTR 解析为 left、RTL 解析为 right，
+// 从而保证子菜单在两种方向下都正确贴齐触发元素的起始边。
 function submenuStyle(nodeId: number) {
   const el = document.querySelector(`[data-category-id="${nodeId}"]`)
   if (!el) return {}
   const rect = el.getBoundingClientRect()
+  const isRtl =
+    typeof getComputedStyle === 'function' &&
+    getComputedStyle(document.documentElement).direction === 'rtl'
   return {
     top: `${rect.bottom + 6}px`,
-    left: `${rect.left}px`,
+    insetInlineStart: `${isRtl ? rect.right : rect.left}px`,
   }
 }
 
@@ -195,7 +202,7 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
               v-if="hasChildren(node.id || 0)"
               icon="carbon:chevron-down"
               :size="14"
-              class="ml-0.5 opacity-60"
+              class="ms-0.5 opacity-60"
             />
           </button>
         </div>
@@ -239,7 +246,7 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
           :key="child.id"
           type="button"
           :class="cn(
-            'flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm',
+            'flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-start text-sm',
             'transition-colors duration-150 cursor-pointer',
             selectedCategory === child.id
               ? 'bg-primary/10 text-primary font-medium'
@@ -251,7 +258,7 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
           <span class="truncate">{{ getCategoryName(child) }}</span>
           <span
             v-if="child.postCount !== undefined && child.postCount > 0"
-            class="ml-auto text-xs text-muted-foreground"
+            class="ms-auto text-xs text-muted-foreground"
           >
             {{ child.postCount }}
           </span>

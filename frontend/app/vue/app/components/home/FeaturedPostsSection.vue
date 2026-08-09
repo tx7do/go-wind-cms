@@ -35,7 +35,7 @@ onMounted(async () => {
   <section class="w-full max-w-300 mx-auto scroll-reveal px-8 py-12 max-md:px-4">
     <div class="mb-8 flex items-center justify-between">
       <h2 class="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl">
-        <XIcon icon="carbon:star-filled" :size="28" class="mr-2 text-primary" />
+        <XIcon icon="carbon:star-filled" :size="28" class="me-2 text-primary" />
         {{ t('page.home.featured_posts') }}
       </h2>
       <UiButton variant="ghost" @click="navigateTo(localePath('/post'))">

@@ -81,7 +81,7 @@ const HomeCategoryCard: React.FC<{
               style={{
                     width: '72rpx',
                     height: '72rpx',
-                    marginRight: '20rpx',
+                    marginInlineEnd: '20rpx',
                     backgroundColor: 'rgba(22,119,255,0.08)',
                 }}
             >
@@ -102,7 +102,7 @@ const HomeCategoryCard: React.FC<{
                     </Text>
                 )}
             </View>
-            <Text className='text-tips text-textThird flex-shrink-0' style={{marginLeft: '16rpx'}}>
+            <Text className='text-tips text-textThird flex-shrink-0' style={{marginInlineStart: '16rpx'}}>
                 <Text className='text-primary'>{count}</Text> {t('articles_unit')}
             </Text>
         </View>

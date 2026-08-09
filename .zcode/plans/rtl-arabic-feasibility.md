@@ -154,7 +154,113 @@
 
 ## 7. 待你确认
 
-- [ ] 试点前端选哪个？（默认建议 `app/vue`）
-- [ ] 翻译来源？（默认建议：先占位，翻译后排期）
-- [ ] 是否顺带修 `app/react` 的 `<html lang>` bug？（默认建议：修）
+- [ ] 试点前端选哪个？（默认建议 `app/vue`）—— **已选 app/vue（占位方案），第一轮已实施**
+- [ ] 翻译来源？（默认建议：先占位，翻译后排期）—— **已采用占位方案**
+- [x] 是否顺带修 `app/react` 的 `<html lang>` bug？—— **已修（<html> 移入 [locale]/layout.tsx，附带修复 /post 静态导出报错）**
 - [ ] Taro 小程序端是否纳入？（默认建议：先只做 h5，小程序标注不支持）
+
+---
+
+## 8. 第一轮实施记录（已完成并提交 main，commit 28900100）
+
+### app/vue（试点，占位）
+- 新增 `locales/ar/`（13 JSON + `index.ts` 聚合器，en-US 占位）
+- `nuxt.config.ts` 注册 `ar`（`dir:'rtl'`，`iso`→`language` 字段修正）
+- `app.vue` 接入 `useLocaleHead({dir,lang})` + `useHead`，`<html dir>/<html lang>` 按 locale 注入
+- `SupportedLanguagesType` 加 `'ar'`；两处 locale 归一化映射加 `ar:'ar'`
+- 两个语言选择器加"العربية"选项
+- 布局外壳（components/layout/）方向敏感物理类改逻辑属性
+
+### app/react（修既有 bug）
+- `<html>` 从根布局移入 `[locale]/layout.tsx`，按 `validLocale` 设 `lang`，`Intl.Locale.textInfo.direction` 设 `dir`
+- 修复所有页面 `<html lang>` 误标 `zh-CN`（含 en-US）
+- 附带修复 `/[locale]/post` 因 `headers()` 触发的静态导出报错
+
+### 验证
+- app/vue：`ar` 页 `<html dir="rtl" lang="ar">`，en-US/zh-CN 为 `ltr` ✅
+- app/react：en-US 页 `lang="en-US"`，zh-CN 页 `lang="zh-CN"`，均 `dir="ltr"` ✅
+
+---
+
+## 9. 第二轮 RTL 适配清单（物理方向类扫描结果）
+
+> 三端合计约 170 处。物理→逻辑属性映射：
+> `ml-/mr-`→`ms-/me-`、`pl-/pr-`→`ps-/pe-`、`border-l/border-r`→`border-s/border-e`、
+> `left-/right-`→`start-/end-`、`text-left/text-right`→`text-start/text-end`、
+> CSS `margin-left/right`→`margin-inline-*`、`padding-left/right`→`padding-inline-*`、
+> `border-left/right`→`border-inline-*`、`text-align:left/right`→`text-align:start/end`、
+> `left:/right:`→`inset-inline-start/end`。
+
+### 9.1 app/vue（53 处，i18n 已就绪，可立即适配）
+
+| 文件 | 数量 | 类型 |
+|---|---|---|
+| components/auth/Layout.vue | 1 | ml- |
+| components/category/Filter.vue | 4 | ml-/text-left/left定位 |
+| components/category/Tree.vue | 8 | ml-树缩进/border-l/left定位/rotate |
+| components/comment/RichTextEditor.vue | 3 | ml-auto/float/padding-left(CSS) |
+| components/comment/Tree.vue | 7 | left定位/pl-/text-right |
+| components/content/Viewer.vue | 3+2bonus | CSS border-left/left/padding-left + text-align:left(2) |
+| components/home/{PopularTags,LatestPosts,FeaturedPosts,Features}Section.vue | 4×1 | mr- |
+| components/home/CategoryListSection.vue | 3 | mr-/mr-×2 |
+| components/post/Toc.vue | 3 | pr-/border-r/pl-树缩进/left定位 |
+| components/post/FloatingActions.vue | 1 | right-定位 |
+| components/ui/carousel/{CarouselContent,CarouselItem,CarouselNext,CarouselPrevious}.vue | 1+1+2+2 | ml-/pl-/left-/right定位/rotate |
+| components/ui/dropdown-menu/DropdownMenuContent.vue | 1 | slide动画物理方向 |
+| components/ui/select/SelectItem.vue | 2 | pl-/right定位 |
+| components/ui/sheet/{SheetContent,SheetHeader}.vue | 3+1 | right/border-l/slide动画 + text-left |
+| pages/login.vue / pages/register.vue | 1+1 | ml- |
+| pages/post/[id].vue | 1 | lg:pl-12 |
+
+### 9.2 app/react（89 处，ar 未注册，需先定是否注册）
+
+| 文件 | 数量 | 备注 |
+|---|---|---|
+| components/ui/dropdown-menu.tsx | 9 | shadcn 基元，pl-/left定位/ml-auto |
+| components/home/home.module.css | 10 | 装饰shape/snippet/shimmer，left/right物理定位 |
+| components/ui/sheet.tsx | 6 | side变体物理定位/slide动画 |
+| components/content/ContentViewer.module.css | 6 | blockquote border-left/text-align:left/padding-left |
+| components/comment/CommentTree.tsx | 7 | left定位/pl-树缩进/text-right |
+| components/category/CategoryTree.tsx | 7 | ml-树缩进/border-l/right定位 |
+| components/ui/carousel.tsx | 4 | ml-/pl-/left-/right定位 |
+| components/layout/MobileNav.tsx | 6 | text-left×3/ml-/border-l/mr- |
+| components/layout/ControlPanel.tsx | 3 | right-定位×3 |
+| components/ui/navigation-menu.tsx | 3 | slide动画物理方向/left定位 |
+| components/post/TableOfContents.tsx | 3 | pr-/border-r/pl-/left定位 |
+| components/category/CategoryFilter.tsx | 4 | ml-/left定位/text-left/ml-auto |
+| components/ui/select.tsx | 2 | pl-/right定位 |
+| components/layout/SearchBar.tsx | 2 | left-定位/pl- |
+| components/layout/TopNavbar.tsx | 2 | left定位/text-left |
+| components/home/{CategoryList,FeaturedPosts,LatestPosts,PopularTags,Features}Section.tsx | 5×1 | mr- |
+| components/home/HomeCategoryCard.tsx | 2 | mr-×2 |
+| app/[locale]/post/detail/client-page.tsx | 1 | lg:pl-12 |
+| app/[locale]/{login,register,user}/page.tsx | 1×3 | ml- |
+| components/auth/AuthLayout.tsx | 1 | ml- |
+| components/comment/RichTextEditor.tsx | 1 | ml-auto |
+| components/layout/BackToTop.tsx | 1 | right-定位 |
+
+bonus（非列表模式，但同样方向敏感）：switch.tsx:22（toggle knob translate-x）、select.tsx:70（popper offset translate-x）、navigation-menu.tsx:107（rounded-tl-sm）、ContentViewer.module.css:248（border-radius 0 8px 8px 0）、BackButton.tsx:33（-translate-x-1 on ArrowLeft）。
+
+### 9.3 app/taro（27 处 + 3 bonus CSS，无任何 RTL 基础设施）
+
+| 文件 | 数量 | 备注 |
+|---|---|---|
+| components/layout/MobileNav.tsx | 9 | 抽屉 border-l/right:0/margin×多 |
+| components/comment/CommentTree.tsx | 6 | ml-树缩进/border-l/pl- |
+| components/category/CategoryTree.tsx | 3 | ml-树缩进/border-l/pl- |
+| components/category/CategoryFilter.tsx | 3 | ml-/left定位/text-right |
+| components/home/HomeCategoryCard.tsx | 2 | inline margin |
+| pages/post/detail/index.tsx | 2 | inline padding-left/right |
+| components/home/FeaturesSection.tsx | 1 | ml- |
+| app.css（.content-viewer markdown renderer） | 1+3bonus | padding-left/border-left/border-radius/text-align:left |
+
+⚠️ taro 多端：h5 可做 RTL；小程序平台（weapp/swan/alipay/tt/qq/jd）对 `dir`/逻辑属性支持参差，i18n 层解决不了。建议只做 h5，小程序端标注不支持。
+
+---
+
+## 10. 第二轮待你确认
+
+- [ ] app/vue 53 处 RTL 适配——可直接做（i18n 已就绪），建议做
+- [ ] app/react 89 处 RTL 适配——需先定是否同时注册 ar locale（即 react 是否上线阿拉伯语）。若仅修 `<html dir>` 而不注册 ar，适配无实际触发场景，意义有限
+- [ ] app/taro 27+3 处——需先定是否注册 ar，以及是否只做 h5
+

@@ -561,12 +561,15 @@ watch([renderedContent, shikiReady], () => {
 
 /* Blockquotes */
 .content-viewer :deep(blockquote) {
-  border-left: 4px solid hsl(var(--primary));
+  border-inline-start: 4px solid hsl(var(--primary));
   padding: 20px 24px;
   margin: 32px 0;
   background: hsl(var(--primary) / 0.06);
   color: hsl(var(--muted-foreground));
-  border-radius: 0 8px 8px 0;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: 8px;
+  border-end-end-radius: 8px;
   font-style: italic;
   position: relative;
   letter-spacing: 0.2px;
@@ -577,7 +580,7 @@ watch([renderedContent, shikiReady], () => {
   content: '\201C';
   position: absolute;
   top: -10px;
-  left: 12px;
+  inset-inline-start: 12px;
   font-size: 56px;
   color: hsl(var(--primary));
   opacity: 0.2;
@@ -588,7 +591,7 @@ watch([renderedContent, shikiReady], () => {
 .content-viewer :deep(blockquote p) {
   margin: 14px 0;
   text-indent: 0;
-  text-align: left;
+  text-align: start;
 }
 
 .content-viewer :deep(blockquote p:first-child) {
@@ -602,7 +605,7 @@ watch([renderedContent, shikiReady], () => {
 /* Lists */
 .content-viewer :deep(ul),
 .content-viewer :deep(ol) {
-  padding-left: 2em;
+  padding-inline-start: 2em;
   margin: 28px 0;
 }
 
@@ -685,7 +688,7 @@ watch([renderedContent, shikiReady], () => {
 .content-viewer :deep(table.markdown-table td) {
   padding: 14px 16px;
   border: 1px solid hsl(var(--border));
-  text-align: left;
+  text-align: start;
 }
 
 .content-viewer :deep(table.markdown-table th) {

@@ -147,7 +147,7 @@
     height: 350px;
     background: hsl(var(--primary));
     top: -150px;
-    right: -100px;
+    inset-inline-end: -100px;
     animation: float 8s ease-in-out infinite;
 }
 
@@ -156,7 +156,7 @@
     height: 450px;
     background: hsl(var(--primary));
     bottom: -200px;
-    left: -150px;
+    inset-inline-start: -150px;
     animation: float 10s ease-in-out infinite reverse;
 }
 
@@ -165,7 +165,7 @@
     height: 250px;
     background: hsl(var(--primary));
     top: 50%;
-    left: 50%;
+    inset-inline-start: 50%;
     animation: float 12s ease-in-out infinite;
 }
 
@@ -237,19 +237,19 @@
 
 .snippet1 {
     top: 15%;
-    right: 8%;
+    inset-inline-end: 8%;
     animation: floatRotate3D 8s ease-in-out infinite, glowPulseSnippet 4s ease-in-out infinite;
 }
 
 .snippet2 {
     top: 55%;
-    left: 5%;
+    inset-inline-start: 5%;
     animation: floatRotate3D 10s ease-in-out infinite reverse, glowPulseSnippet 5s ease-in-out infinite 1s;
 }
 
 .snippet3 {
     bottom: 20%;
-    right: 12%;
+    inset-inline-end: 12%;
     animation: floatRotate3D 12s ease-in-out infinite, glowPulseSnippet 6s ease-in-out infinite 2s;
 }
 
@@ -435,11 +435,11 @@
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    inset-inline-start: -100%;
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.2), transparent);
-    transition: left 0.5s;
+    transition: inset-inline-start 0.5s;
     pointer-events: none;
 }
 
@@ -455,7 +455,7 @@
 }
 
 .btnPrimary:hover::before {
-    left: 100%;
+    inset-inline-start: 100%;
 }
 
 .btnSecondary {
@@ -483,11 +483,11 @@
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    inset-inline-start: -100%;
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.15), transparent);
-    transition: left 0.5s;
+    transition: inset-inline-start 0.5s;
     pointer-events: none;
 }
 
@@ -503,7 +503,7 @@
 }
 
 .btnSecondary:hover::before {
-    left: 100%;
+    inset-inline-start: 100%;
 }
 
 /* ========== Mobile Responsive for Hero ========== */

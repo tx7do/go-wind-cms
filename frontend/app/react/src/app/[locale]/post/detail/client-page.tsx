@@ -177,7 +177,7 @@ export default function PostDetailPage() {
                     </div>
                 )}
 
-                <div className={`flex gap-6 max-md:flex-col ${!isTocExpanded ? 'lg:pl-12' : ''}`}>
+                <div className={`flex gap-6 max-md:flex-col ${!isTocExpanded ? 'lg:ps-12' : ''}`}>
                     {/* Table of Contents */}
                     <TableOfContents
                         contentRef={contentRef}

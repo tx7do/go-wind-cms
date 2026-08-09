@@ -22,9 +22,9 @@ interface CategoryTreeProps {
 
 const levelMarginClass: Record<number, string> = {
     0: '',
-    1: 'ml-8 max-md:ml-4',
-    2: 'ml-16 max-md:ml-8',
-    3: 'ml-24 max-md:ml-12',
+    1: 'ms-8 max-md:ms-4',
+    2: 'ms-16 max-md:ms-8',
+    3: 'ms-24 max-md:ms-12',
 };
 
 const CategoryTree: React.FC<CategoryTreeProps> = ({
@@ -137,12 +137,12 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                 <button
                                     className={cn(
                                         'flex items-center justify-center px-3',
-                                        'border-l border-border text-muted-foreground',
+                                        'border-s border-border text-muted-foreground',
                                         'transition-colors duration-200',
                                         'hover:bg-primary/5 hover:text-primary',
-                                        'max-md:absolute max-md:top-2 max-md:right-2 max-md:z-10',
+                                        'max-md:absolute max-md:top-2 max-md:end-2 max-md:z-10',
                                         'max-md:h-8 max-md:w-8 max-md:rounded-full max-md:border max-md:border-border',
-                                        'max-md:bg-card/90 max-md:shadow-sm max-md:border-l',
+                                        'max-md:bg-card/90 max-md:shadow-sm max-md:border-s',
                                         'max-md:hover:bg-primary max-md:hover:text-white max-md:hover:scale-110',
                                     )}
                                     onClick={(e) => toggleExpand(e, category)}
@@ -160,7 +160,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                         {hasChildren && expanded && (
                             <div className={cn(
                                 'mt-2 overflow-hidden',
-                                'border-l-2 border-primary/20 ml-3',
+                                'border-s-2 border-primary/20 ms-3',
                             )}>
                                 <CategoryTree
                                     categories={category.children!}

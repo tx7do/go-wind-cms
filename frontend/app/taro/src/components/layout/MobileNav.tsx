@@ -112,8 +112,8 @@ function MobileNavDrawer() {
 
             {/* 右侧抽屉面板 */}
             <View
-              className='fixed top-0 bottom-0 bg-cardBg text-textMain border-l-[1rpx] border-splitLine flex flex-col'
-              style={{right: 0, width: '560rpx', zIndex: 2}}
+              className='fixed top-0 bottom-0 bg-cardBg text-textMain border-s-[1rpx] border-splitLine flex flex-col'
+              style={{insetInlineEnd: 0, width: '560rpx', zIndex: 2}}
             >
                 {/* 顶部关闭按钮区 */}
                 <View
@@ -156,7 +156,7 @@ function MobileNavDrawer() {
                                         >
                                             <View className='flex items-center'>
                                                 {item.icon && (
-                                                    <View style={{marginRight: '16rpx'}}>
+                                                    <View style={{marginInlineEnd: '16rpx'}}>
                                                         <XIcon name={`carbon:${item.icon}`} size={18} className='text-primary' />
                                                     </View>
                                                 )}
@@ -175,8 +175,8 @@ function MobileNavDrawer() {
                                         {/* 子导航 */}
                                         {hasChildren && isExpanded && (
                                             <View
-                                              className='border-l-[2rpx] border-splitLine'
-                                              style={{marginLeft: '32rpx'}}
+                                              className='border-s-[2rpx] border-splitLine'
+                                              style={{marginInlineStart: '32rpx'}}
                                             >
                                                 {item.children!.map((child: siteservicev1_NavigationItem) => (
                                                     <View
@@ -187,7 +187,7 @@ function MobileNavDrawer() {
                                                       hoverClass='tap-active'
                                                     >
                                                         {child.icon && (
-                                                            <View style={{marginRight: '16rpx'}}>
+                                                            <View style={{marginInlineEnd: '16rpx'}}>
                                                                 <XIcon name={`carbon:${child.icon}`} size={16} className='text-textThird' />
                                                             </View>
                                                         )}
@@ -218,7 +218,7 @@ function MobileNavDrawer() {
                     <View className='py-[8rpx]'>
                         <View className='flex items-center px-[32rpx]' style={{height: '56rpx'}}>
                             <XIcon name='carbon:earth' size={12} className='text-textThird' />
-                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>{t('language.title')}</Text>
+                            <Text className='text-xs text-textThird' style={{marginInlineStart: '6rpx'}}>{t('language.title')}</Text>
                         </View>
                         <DrawerItem label={t('language.zh-CN')} onClick={() => handleAction(() => changeLocale('zh-CN'))} active={locale === 'zh-CN'} />
                         <DrawerItem label={t('language.en-US')} onClick={() => handleAction(() => changeLocale('en-US'))} active={locale === 'en-US'} />
@@ -235,7 +235,7 @@ function MobileNavDrawer() {
                               size={12}
                               className='text-textThird'
                             />
-                            <Text className='text-xs text-textThird' style={{marginLeft: '6rpx'}}>{t('theme.title')}</Text>
+                            <Text className='text-xs text-textThird' style={{marginInlineStart: '6rpx'}}>{t('theme.title')}</Text>
                         </View>
                         <DrawerItem icon='carbon:sun' label={t('theme.light')} onClick={() => handleAction(() => setThemeMode('light'))} active={currentMode === 'light'} />
                         <DrawerItem icon='carbon:moon' label={t('theme.dark')} onClick={() => handleAction(() => setThemeMode('dark'))} active={currentMode === 'dark'} />
@@ -266,7 +266,7 @@ function DrawerItem({icon, label, onClick, active, destructive}: {
           hoverClass='tap-active'
         >
             {icon && (
-                <View style={{marginRight: '16rpx'}}>
+                <View style={{marginInlineEnd: '16rpx'}}>
                     <XIcon
                       name={icon}
                       size={18}

@@ -141,7 +141,7 @@ export default function AuthLayout({
                                         {t('login.terms_of_service')}
                                     </button>
                                     {t('login.terms_and')}
-                                    <button className={`${linkBtn} ml-1 text-xs`} onClick={() => router.push('/privacy')}>
+                                    <button className={`${linkBtn} ms-1 text-xs`} onClick={() => router.push('/privacy')}>
                                         {t('login.privacy_policy')}
                                     </button>
                                 </small>

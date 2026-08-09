@@ -226,7 +226,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                     <XIcon name={node.icon || 'carbon:folder'} size={15}/>
                                     {getCategoryName(node)}
                                     {hasChildren(node.id || 0) && (
-                                        <XIcon name="carbon:chevron-down" size={14} className="ml-0.5 opacity-60"/>
+                                        <XIcon name="carbon:chevron-down" size={14} className="ms-0.5 opacity-60"/>
                                     )}
                                 </button>
 
@@ -234,7 +234,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                 {hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && (
                                     <div
                                         className={cn(
-                                            'absolute left-0 top-full z-50 mt-1.5',
+                                            'absolute start-0 top-full z-50 mt-1.5',
                                             'min-w-[200px] max-w-[320px]',
                                             'rounded-lg border border-border bg-popover p-1.5',
                                             'shadow-lg shadow-black/5',
@@ -252,7 +252,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                                     handleCategoryChange(child.id || 0);
                                                 }}
                                                 className={cn(
-                                                    'flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm',
+                                                    'flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-start text-sm',
                                                     'transition-colors duration-150 cursor-pointer',
                                                     selectedCategory === child.id
                                                         ? 'bg-primary/10 text-primary font-medium'
@@ -262,7 +262,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                                 <XIcon name={child.icon || 'carbon:folder'} size={14}/>
                                                 <span className="truncate">{getCategoryName(child)}</span>
                                                 {child.postCount !== undefined && child.postCount > 0 && (
-                                                    <span className="ml-auto text-xs text-muted-foreground">
+                                                    <span className="ms-auto text-xs text-muted-foreground">
                                                         {child.postCount}
                                                     </span>
                                                 )}

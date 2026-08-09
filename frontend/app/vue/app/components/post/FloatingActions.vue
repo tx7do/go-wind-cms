@@ -19,7 +19,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="fixed top-1/2 right-8 z-10 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
+  <div class="fixed top-1/2 end-8 z-10 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
     <button
       :class="[
         'flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-border bg-card shadow-md transition-all hover:border-primary hover:bg-primary/5 hover:shadow-lg',

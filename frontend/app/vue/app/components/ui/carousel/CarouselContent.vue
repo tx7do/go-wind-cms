@@ -12,7 +12,7 @@ const { orientation } = useCarousel()
 
 <template>
   <div class="overflow-hidden">
-    <div :class="cn('flex', orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col', props.class)">
+    <div :class="cn('flex', orientation === 'horizontal' ? '-ms-4' : '-mt-4 flex-col', props.class)">
       <slot />
     </div>
   </div>

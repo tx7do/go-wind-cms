@@ -27,7 +27,7 @@ export default function LoginPage() {
             switchLink={
                 <p>
                     {t('login.no_account')}
-                    <button className={`${textBtn} ml-1`} onClick={() => router.push('/register')}>
+                    <button className={`${textBtn} ms-1`} onClick={() => router.push('/register')}>
                         {t('login.register_now')}
                     </button>
                 </p>

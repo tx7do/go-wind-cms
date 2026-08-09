@@ -21,7 +21,7 @@ const BackToTop: React.FC<{
 
     return (
         <View
-          className='fixed bottom-[40rpx] right-[40rpx] z-[999] flex w-[88rpx] h-[88rpx] items-center justify-center rounded-full bg-primary'
+          className='fixed bottom-[40rpx] end-[40rpx] z-[999] flex w-[88rpx] h-[88rpx] items-center justify-center rounded-full bg-primary'
           onClick={() => {
                 Taro.pageScrollTo({scrollTop: 0, duration: 300});
                 onClick?.();

@@ -166,7 +166,7 @@ export default function TableOfContents({
             {/* 侧边栏 */}
             {isExpanded && (
                 <aside className="w-60 shrink-0 max-md:hidden">
-                    <nav className="sticky top-24 rounded-lg border border-border bg-card p-4 pr-5 border-r border-r-border/50">
+                    <nav className="sticky top-24 rounded-lg border border-border bg-card p-4 pe-5 border-e border-e-border/50">
                         <div className="mb-3 flex items-center justify-between">
                             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
                                 <XIcon name="carbon:list"/>
@@ -188,7 +188,7 @@ export default function TableOfContents({
                                         activeHeading === item.id
                                             ? 'bg-primary/10 font-medium text-primary'
                                             : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-                                    } ${item.level === 3 ? 'pl-6 text-[13px]' : ''}`}
+                                    } ${item.level === 3 ? 'ps-6 text-[13px]' : ''}`}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setTimeout(() => scrollToHeading(item.id), 10);
@@ -204,7 +204,7 @@ export default function TableOfContents({
 
             {/* 折叠时的展开按钮 */}
             {!isExpanded && (
-                <div className="fixed top-1/2 left-4 z-10 -translate-y-1/2">
+                <div className="fixed top-1/2 start-4 z-10 -translate-y-1/2">
                     <button
                         onClick={onExpand}
                         className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-md transition-all hover:border-primary hover:bg-primary/5"

@@ -159,7 +159,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
 
                         {/* 递归渲染子分类 */}
                         {hasChildren && expanded && (
-                            <View className='mt-[16rpx] ml-[32rpx] border-l-[2rpx] border-primary/20 pl-[16rpx]'>
+                            <View className='mt-[16rpx] ms-[32rpx] border-s-[2rpx] border-primary/20 ps-[16rpx]'>
                                 <CategoryTree
                                   categories={category.children!}
                                   level={0}

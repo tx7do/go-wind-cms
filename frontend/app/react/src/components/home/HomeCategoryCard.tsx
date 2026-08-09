@@ -67,7 +67,7 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick, m
                             {getCategoryName(category)}
                         </h3>
                         <p className="text-xs text-slate-500 dark:text-muted-foreground">
-                            <span className="mr-1 font-medium text-emerald-600 dark:text-primary">{category.postCount || 0}</span>
+                            <span className="me-1 font-medium text-emerald-600 dark:text-primary">{category.postCount || 0}</span>
                             {t('articles_unit')}
                         </p>
                     </div>
@@ -103,7 +103,7 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick, m
                                 {getCategoryName(category)}
                             </h3>
                             <p className="text-xs text-slate-500 dark:text-muted-foreground mt-1">
-                                <span className="mr-1 font-medium text-emerald-600 dark:text-primary">{category.postCount || 0}</span>
+                                <span className="me-1 font-medium text-emerald-600 dark:text-primary">{category.postCount || 0}</span>
                                 {t('articles_unit')}
                             </p>
                         </div>

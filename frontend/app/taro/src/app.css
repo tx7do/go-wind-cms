@@ -183,9 +183,12 @@ textarea::placeholder,
 .content-viewer blockquote {
     margin: 24rpx 0;
     padding: 16rpx 24rpx;
-    border-left: 6rpx solid #1677ff;
+    border-inline-start: 6rpx solid #1677ff;
     background-color: var(--color-page-bg);
-    border-radius: 0 8rpx 8rpx 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    border-start-end-radius: 8rpx;
+    border-end-end-radius: 8rpx;
     color: var(--color-text-sec);
 }
 .content-viewer blockquote Text,
@@ -198,7 +201,7 @@ textarea::placeholder,
 .content-viewer ul,
 .content-viewer ol {
     margin: 16rpx 0;
-    padding-left: 40rpx;
+    padding-inline-start: 40rpx;
 }
 .content-viewer ul { list-style-type: disc; }
 .content-viewer ol { list-style-type: decimal; }
@@ -239,7 +242,7 @@ textarea::placeholder,
 .content-viewer td {
     border: 2rpx solid var(--color-split-line);
     padding: 12rpx 16rpx;
-    text-align: left;
+    text-align: start;
 }
 .content-viewer th {
     font-weight: 600;

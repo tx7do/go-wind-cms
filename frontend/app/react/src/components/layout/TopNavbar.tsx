@@ -161,7 +161,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                         {hasChildren && isOpen && (
                             <div
                                 className={cn(
-                                    'absolute left-0 top-full z-1001 mt-1.5',
+                                    'absolute start-0 top-full z-1001 mt-1.5',
                                     'min-w-50 rounded-lg border border-border bg-popover p-1.5',
                                     'shadow-lg shadow-black/5',
                                     'animate-in fade-in-0 zoom-in-95 duration-150',
@@ -173,7 +173,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                                     <button
                                         key={child.id?.toString()}
                                         type="button"
-                                        className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm text-foreground/80 transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+                                        className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-start text-sm text-foreground/80 transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
                                         onClick={() => {
                                             handleNavigate(child);
                                             onClick?.(Number(child.id));

@@ -123,7 +123,7 @@ export default function RichTextEditor({
                     <List className="h-4 w-4"/>
                 </Toggle>
 
-                <div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="ms-auto flex items-center gap-2 text-xs text-muted-foreground">
                     <XIcon name="carbon:keyboard" size={14}/>
                     <span className="max-sm:hidden">Ctrl + Enter</span>
                 </div>

@@ -141,7 +141,7 @@ onBeforeUnmount(() => {
         <List class="h-4 w-4" />
       </button>
 
-      <div class="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
+      <div class="ms-auto flex items-center gap-2 text-xs text-muted-foreground">
         <XIcon icon="carbon:keyboard" :size="14" />
         <span class="max-sm:hidden">Ctrl + Enter</span>
       </div>
@@ -176,7 +176,7 @@ onBeforeUnmount(() => {
 
 :deep(.tiptap p.is-editor-empty:first-child::before) {
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start;
   color: hsl(var(--muted-foreground));
   pointer-events: none;
   height: 0;
@@ -221,7 +221,7 @@ onBeforeUnmount(() => {
 
 :deep(.tiptap ul) {
   list-style-type: disc;
-  padding-left: 1.5em;
+  padding-inline-start: 1.5em;
 }
 
 :deep(.tiptap li) {

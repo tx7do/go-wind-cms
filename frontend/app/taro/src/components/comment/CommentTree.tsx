@@ -211,7 +211,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     {/* 查看回复 */}
                                     {comment.replyCount && comment.replyCount > 0 ? (
                                         <View
-                                          className='flex items-center gap-[4rpx] ml-auto'
+                                          className='flex items-center gap-[4rpx] ms-auto'
                                           onClick={() => toggleExpand(comment)}
                                           hoverClass='tap-active'
                                         >
@@ -234,7 +234,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                         {/* 回复表单 - 内嵌在评论下方 */}
                         {replyingCommentId === comment.id && (
-                            <View className='mt-[12rpx] ml-[60rpx] rounded-[8rpx] p-[16rpx]'>
+                            <View className='mt-[12rpx] ms-[60rpx] rounded-[8rpx] p-[16rpx]'>
                                 <View className='rounded-[8rpx] bg-pageBg border border-splitLine/60 p-[12rpx]'>
                                     <Textarea
                                       value={replyContent}
@@ -277,7 +277,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                     {/* 子评论区域 */}
                     {hasChildren(comment) && isExpanded(comment) && (
-                        <View className='ml-[60rpx] border-l-[2rpx] border-primary/20 pl-[16rpx]'>
+                        <View className='ms-[60rpx] border-s-[2rpx] border-primary/20 ps-[16rpx]'>
                             {/* 加载中 */}
                             {isLoading(comment) && (
                                 <View className='flex items-center gap-[8rpx] py-[24rpx]'>
@@ -298,7 +298,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
 
                     {/* 评论间分割线 */}
                     {index < comments.length - 1 && (
-                        <View className='h-[1rpx] bg-splitLine ml-[24rpx]' />
+                        <View className='h-[1rpx] bg-splitLine ms-[24rpx]' />
                     )}
                 </View>
             ))}

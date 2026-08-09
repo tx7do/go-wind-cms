@@ -156,7 +156,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                         'max-sm:p-4 max-sm:gap-3',
                     )}>
                         {/* Left accent bar on hover */}
-                        <div className="absolute top-0 left-0 h-full w-1 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100"/>
+                        <div className="absolute top-0 start-0 h-full w-1 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100"/>
 
                         <div className="shrink-0">
                             <Avatar className="h-12 w-12 ring-2 ring-border/30 shadow-md">
@@ -195,7 +195,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                             </div>
 
                             {/* Content */}
-                            <div className="mb-4 pl-1 text-[15px] leading-relaxed text-foreground max-md:text-sm max-sm:text-[13px]">
+                            <div className="mb-4 ps-1 text-[15px] leading-relaxed text-foreground max-md:text-sm max-sm:text-[13px]">
                                 {comment.content}
                             </div>
 
@@ -275,7 +275,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                             }
                                         }}
                                     />
-                                    <div className="mt-2 mb-3 text-right text-xs text-muted-foreground">
+                                    <div className="mt-2 mb-3 text-end text-xs text-muted-foreground">
                                         {replyContent.length} / 1000
                                     </div>
                                     <div className="flex justify-end gap-3 max-md:flex-col max-md:gap-2">
@@ -303,12 +303,12 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                     {/* 递归渲染子评论 */}
                     {hasChildren(comment) && isExpanded(comment) && (
                         <div className={cn(
-                            'relative mt-5 pl-16',
-                            'max-md:pl-12 max-md:mt-4',
-                            'max-sm:pl-9 max-sm:mt-3',
+                            'relative mt-5 ps-16',
+                            'max-md:ps-12 max-md:mt-4',
+                            'max-sm:ps-9 max-sm:mt-3',
                         )}>
                             {/* Vertical line */}
-                            <div className="absolute top-0 left-8 h-full w-0.5 bg-linear-to-b from-primary/20 to-primary/5 max-md:left-6 max-sm:left-4.5 max-sm:w-[1.5px]"/>
+                            <div className="absolute top-0 start-8 h-full w-0.5 bg-linear-to-b from-primary/20 to-primary/5 max-md:start-6 max-sm:start-4.5 max-sm:w-[1.5px]"/>
 
                             {/* 加载中提示 */}
                             {isLoading(comment) && (

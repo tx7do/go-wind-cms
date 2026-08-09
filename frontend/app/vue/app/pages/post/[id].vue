@@ -173,7 +173,7 @@ onMounted(() => {
           <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"/>
         </div>
 
-        <div :class="[!isTocExpanded ? 'lg:pl-12' : '', 'flex gap-6 max-md:flex-col']">
+        <div :class="[!isTocExpanded ? 'lg:ps-12' : '', 'flex gap-6 max-md:flex-col']">
           <!-- Table of Contents -->
           <PostToc
               :content-ref="contentRef"

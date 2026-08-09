@@ -52,7 +52,7 @@ const getCategoryName = (category: any): string => {
     <!-- Section Header -->
     <div class="mb-8 flex items-center justify-between">
       <h2 class="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground max-md:text-xl">
-        <XIcon icon="carbon:folder-details" :size="28" class="mr-2 text-primary" />
+        <XIcon icon="carbon:folder-details" :size="28" class="me-2 text-primary" />
         {{ t('page.home.categories') }}
       </h2>
       <UiButton variant="ghost" @click="navigateTo(localePath('/category'))">
@@ -86,7 +86,7 @@ const getCategoryName = (category: any): string => {
                   {{ getCategoryName(category) }}
                 </h3>
                 <p class="text-xs text-muted-foreground mt-1">
-                  <span class="mr-1 font-medium text-primary">{{ category.postCount || 0 }}</span>
+                  <span class="me-1 font-medium text-primary">{{ category.postCount || 0 }}</span>
                   {{ t('page.home.articles_unit') }}
                 </p>
               </div>
@@ -116,7 +116,7 @@ const getCategoryName = (category: any): string => {
                 {{ getCategoryName(category) }}
               </h3>
               <p class="text-xs text-muted-foreground">
-                <span class="mr-1 font-medium text-primary">{{ category.postCount || 0 }}</span>
+                <span class="me-1 font-medium text-primary">{{ category.postCount || 0 }}</span>
                 {{ t('page.home.articles_unit') }}
               </p>
             </div>

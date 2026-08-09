@@ -228,7 +228,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                     <XIcon name={node.icon || 'carbon:folder'} size={15} />
                                     {getCategoryName(node)}
                                     {hasChildren(node.id || 0) && (
-                                        <XIcon name='carbon:chevron-down' size={14} className='ml-0.5 opacity-60' />
+                                        <XIcon name='carbon:chevron-down' size={14} className='ms-0.5 opacity-60' />
                                     )}
                                 </View>
                             </View>
@@ -260,7 +260,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                             <View
                               key={`dropdown-${node.id}`}
                               className={cn(
-                                    'absolute left-4 top-full z-[999] mt-2',
+                                    'absolute start-4 top-full z-[999] mt-2',
                                     'min-w-[240px] max-w-[400px]',
                                     'rounded-lg border border-border bg-popover p-1.5',
                                     'shadow-lg shadow-black/10',
@@ -289,7 +289,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                             <Text className='truncate'>{getCategoryName(child)}</Text>
                                         </View>
                                         {child.postCount !== undefined && child.postCount > 0 && (
-                                            <View className='flex-shrink-0 text-right' style={{ minWidth: '24px' }}>
+                                            <View className='flex-shrink-0 text-end' style={{ minWidth: '24px' }}>
                                                 <Text className='text-xs text-textThird'>
                                                     {child.postCount}
                                                 </Text>
