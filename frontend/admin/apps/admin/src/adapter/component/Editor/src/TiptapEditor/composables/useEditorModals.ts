@@ -2,6 +2,8 @@ import type { Editor } from '@tiptap/vue-3';
 
 import { nextTick, type Ref, ref, watch } from 'vue';
 
+import { isSafeHref } from '#/utils';
+
 /**
  * 管理 Tiptap 编辑器中所有 Modal 的状态与操作
  * - Link: 插入/取消链接
@@ -21,7 +23,8 @@ export function useEditorModals(editor: Ref<Editor | undefined>) {
 
   const handleLinkOk = () => {
     const url = linkUrl.value.trim();
-    if (url && editor.value) {
+    // 校验协议，拒绝 javascript:/data: 等危险协议（修复 AUD9-M2）
+    if (url && isSafeHref(url) && editor.value) {
       editor.value
         .chain()
         .focus()
@@ -123,7 +126,10 @@ export function useEditorModals(editor: Ref<Editor | undefined>) {
 
   const handleIframeOk = () => {
     const url = iframeUrl.value.trim();
-    if (url && editor.value) {
+    // iframe src 必须 http(s)，拒绝 javascript:/data:/协议相对/相对路径
+    // （修复 AUD9-M2：iframe 可加载任意页面，协议收口比 link 更严格）
+    const isSafeIframeSrc = !!url && /^https?:\/\//i.test(url);
+    if (isSafeIframeSrc && editor.value) {
       (editor.value.chain().focus() as any)
         .setIframe({
           src: url,

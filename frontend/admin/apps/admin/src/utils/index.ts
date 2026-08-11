@@ -116,3 +116,19 @@ export function filterNumbers(arr: unknown[]): number[] {
 
   return arr.filter((element) => is_valid_number(element));
 }
+
+/**
+ * URL 安全工具（修复 AUD9-M2）
+ *
+ * 判断 url 是否可安全地用于编辑器产出的 href/src。
+ * 仅允许 http(s)、协议相对（//）和站点内相对路径/锚点，
+ * 拒绝 javascript:/data:/vbscript:/file: 等危险协议，防止富文本存储型 XSS。
+ */
+const SAFE_HREF_REGEXP = /^(?:https?:\/\/|\/\/|[/?#]|[^:/?#]+$)/i;
+
+export function isSafeHref(url: string | null | undefined): boolean {
+  if (!url) return false;
+  // 显式拒绝危险协议（双重保险）
+  if (/^\s*(javascript|data|vbscript|file):/i.test(url)) return false;
+  return SAFE_HREF_REGEXP.test(url);
+}

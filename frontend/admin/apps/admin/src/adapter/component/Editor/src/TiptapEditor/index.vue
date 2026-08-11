@@ -171,7 +171,14 @@ const handleMarkdownImport = async (event: Event) => {
 
   try {
     const markdown = await file.text();
-    const html = marked.parse(markdown);
+    // 先剥离危险协议（javascript:/vbscript:/data:text/html），再交给 marked。
+    // 纵深防御（修复 AUD9-M2）：Tiptap schema 会过滤 <script>，但 link/iframe
+    // 扩展仍可能接受危险协议；C 端 ContentViewer 还会再 sanitize 一道。
+    const sanitizedMarkdown = markdown.replace(
+      /(javascript|vbscript|data:text\/html)\s*:/gi,
+      'blocked:',
+    );
+    const html = marked.parse(sanitizedMarkdown);
     if (editor.value) {
       editor.value.commands.setContent(String(html));
     }
