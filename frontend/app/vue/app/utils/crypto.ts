@@ -26,12 +26,13 @@ export function encryptByAES(data: string, key: string): string {
  * 使用 AES 解密
  * @param encryptedData 加密的字符串
  * @param key 密钥
- * @returns 解密后的原始数据
+ * @returns 解密的原始数据
  */
 export function decryptByAES(encryptedData: string, key: string): string {
     try {
         const decrypted = CryptoJS.AES.decrypt(encryptedData, CryptoJS.enc.Utf8.parse(key), {
-            mode: CryptoJS.mode.ECB,
+            iv: CryptoJS.enc.Utf8.parse(key),
+            mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7,
         });
         return decrypted.toString(CryptoJS.enc.Utf8);

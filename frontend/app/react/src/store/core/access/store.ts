@@ -1,6 +1,7 @@
 import {create, type StoreApi, useStore} from 'zustand';
 import {createContext, useContext, type Context} from 'react';
 import {StorageManager} from '@/core/storage';
+import {encryptByAES, decryptByAES} from '@/utils/crypto';
 
 // ==============================
 // 类型定义
@@ -29,6 +30,13 @@ const storage = new StorageManager({prefix: appNamespace, storageType: 'localSto
 export const ACCESS_TOKEN_KEY = 'access-token';
 export const REFRESH_TOKEN_KEY = 'refresh-token';
 
+/**
+ * AES 密钥，与密码加密同源（NEXT_PUBLIC_AES_KEY）。
+ * 修复 AUD9-M5：access store 持久化时对 token 字段做 AES 加密，
+ * 使 localStorage 落盘的值为密文而非明文。
+ */
+const AES_KEY = process.env.NEXT_PUBLIC_AES_KEY || '';
+
 // ==============================
 // 初始状态
 // ==============================
@@ -36,8 +44,8 @@ export const REFRESH_TOKEN_KEY = 'refresh-token';
 function getInitialState(): AccessState {
     return {
         permissions: [],
-        accessToken: (typeof window !== 'undefined') ? storage.getItem<TokenPayload>(ACCESS_TOKEN_KEY, null) : null,
-        refreshToken: (typeof window !== 'undefined') ? storage.getItem<TokenPayload>(REFRESH_TOKEN_KEY, null) : null,
+        accessToken: (typeof window !== 'undefined') ? decryptToken(storage.getItem<TokenPayload>(ACCESS_TOKEN_KEY, null)) : null,
+        refreshToken: (typeof window !== 'undefined') ? decryptToken(storage.getItem<TokenPayload>(REFRESH_TOKEN_KEY, null)) : null,
         isAccessChecked: false,
         loginExpired: false,
     };
@@ -47,10 +55,41 @@ function getInitialState(): AccessState {
 // 辅助函数
 // ==============================
 
+/**
+ * 加密 token 落盘（AUD9-M5）：仅加密 value 字段，expiresAt 明文保留。
+ * 加密失败返回 null，避免明文落盘。
+ */
+function encryptToken(token: TokenPayload | null): TokenPayload | null {
+    if (!token || !token.value || !AES_KEY) return token;
+    try {
+        return {...token, value: encryptByAES(token.value, AES_KEY)};
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * 解密 token 读盘（AUD9-M5）。解密失败返回 null，迫使重新登录。
+ */
+function decryptToken(token: TokenPayload | null): TokenPayload | null {
+    if (!token || !token.value || !AES_KEY) return token;
+    try {
+        return {...token, value: decryptByAES(token.value, AES_KEY)};
+    } catch {
+        return null;
+    }
+}
+
 function persistToken(key: string, token: TokenPayload | null) {
     if (typeof window === 'undefined') return;
     if (token) {
-        storage.setItem(key, token, token.expiresAt ? token.expiresAt - Date.now() : undefined);
+        const enc = encryptToken(token);
+        // 加密失败时不落盘明文，改为清除旧值
+        if (enc) {
+            storage.setItem(key, enc, token.expiresAt ? token.expiresAt - Date.now() : undefined);
+        } else {
+            storage.removeItem(key);
+        }
     } else {
         storage.removeItem(key);
     }

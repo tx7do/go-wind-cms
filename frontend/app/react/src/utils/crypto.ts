@@ -31,7 +31,8 @@ export function encryptByAES(data: string, key: string): string {
 export function decryptByAES(encryptedData: string, key: string): string {
     try {
         const decrypted = CryptoJS.AES.decrypt(encryptedData, CryptoJS.enc.Utf8.parse(key), {
-            mode: CryptoJS.mode.ECB,
+            iv: CryptoJS.enc.Utf8.parse(key),
+            mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7,
         });
         return decrypted.toString(CryptoJS.enc.Utf8);

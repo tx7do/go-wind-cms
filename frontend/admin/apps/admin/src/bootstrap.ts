@@ -16,6 +16,7 @@ import { initComponentAdapter } from './adapter/component';
 import App from './app.vue';
 import { registerGlobComp } from './registerGlobComp';
 import { router } from './router';
+import { setupTokenSerializer } from './stores/token-serializer';
 import { useAuthStore } from './stores';
 
 async function bootstrap(namespace: string) {
@@ -35,6 +36,10 @@ async function bootstrap(namespace: string) {
 
   // 配置 pinia-store
   await initStores(app, { namespace });
+
+  // AUD9-M5: 注入 token 持久化加解密序列化器。
+  // 必须在 useAccessStore() 首次实例化（下方）之前，否则首次 hydration 用明文默认序列化器。
+  setupTokenSerializer();
 
   // 注入 RequestClient 回调（业务层 → 基础设施层）
   // 必须在 initStores 之后，因为 getToken 依赖 accessStore

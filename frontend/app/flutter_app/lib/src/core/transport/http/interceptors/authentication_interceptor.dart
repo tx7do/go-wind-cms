@@ -25,17 +25,18 @@ abstract class AuthService extends BaseService {
 
 /// 认证拦截器
 class AuthenticationInterceptor extends Interceptor {
-  final AuthService _authService;
+  final AuthService Function() _authServiceFactory;
   final bool _autoRefreshToken;
   late Completer _refreshLock = Completer();
 
   /// 创建认证拦截器实例
-  /// [authService] - 认证服务实现
+  /// [authServiceFactory] - 认证服务的懒工厂（推迟到首次请求时解析，
+  ///   以规避 transport 初始化早于 repository 注册的顺序依赖）
   /// [autoRefreshToken] - 是否自动刷新令牌，默认为true
   AuthenticationInterceptor({
-    required AuthService authService,
+    required AuthService Function() authServiceFactory,
     bool autoRefreshToken = true,
-  }) : _authService = authService,
+  }) : _authServiceFactory = authServiceFactory,
        _autoRefreshToken = autoRefreshToken;
 
   @override
@@ -44,7 +45,7 @@ class AuthenticationInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     if (options.path != AppRoutePath.login) {
-      final token = _authService.getAccessToken();
+      final token = _authServiceFactory().getAccessToken();
 
       if (token != null && token.isNotEmpty) {
         options.headers['Authorization'] = _makeBearerToken(accessToken: token);
@@ -75,7 +76,7 @@ class AuthenticationInterceptor extends Interceptor {
       final newToken = await _refreshToken();
       if (newToken == null) {
         // 刷新令牌失败，清除令牌并返回错误
-        // await _authService.authenticationFailed();
+        // await _authServiceFactory().authenticationFailed();
         return handler.next(err);
       }
 
@@ -101,17 +102,18 @@ class AuthenticationInterceptor extends Interceptor {
     } catch (e) {
       fatal('Error refreshing token: $e');
       // 发生异常时清除令牌并传递错误
-      await _authService.authenticationFailed();
+      await _authServiceFactory().authenticationFailed();
       return handler.next(err);
     }
   }
 
   /// 刷新令牌的方法，使用锁机制防止并发刷新
   Future<String?> _refreshToken() async {
+    final auth = _authServiceFactory();
     // 如果已经有刷新请求在进行，等待它完成
     if (!_refreshLock.isCompleted) {
       await _refreshLock.future;
-      return _authService.getAccessToken();
+      return auth.getAccessToken();
     }
 
     // 创建新的锁
@@ -121,7 +123,7 @@ class AuthenticationInterceptor extends Interceptor {
 
     try {
       // 尝试刷新令牌
-      final newToken = await _authService.refreshToken();
+      final newToken = await auth.refreshToken();
       if (newToken != null) {
         _refreshLock.complete();
         return newToken;

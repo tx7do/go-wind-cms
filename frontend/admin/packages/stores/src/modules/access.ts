@@ -4,6 +4,35 @@ import type { RouteRecordRaw } from 'vue-router';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 /**
+ * 令牌持久化序列化器接口。
+ *
+ * AUD9-M5：access store 持久化时对 token 字段做加密，使 localStorage 落盘的值为密文而非明文。
+ * 由于 @vben/stores 是不依赖任何加密库的共享包，具体的加解密实现由各 app 在启动时
+ * 通过 {@link setTokenSerializer} 注入（如 admin app 注入基于 VITE_AES_KEY 的 AES-CBC 实现）。
+ * 默认使用明文 JSON，仅在开发期告警以提示注入遗漏。
+ */
+export interface TokenSerializer {
+  serialize: (data: any) => string;
+  deserialize: (data: string) => any;
+}
+
+const plainSerializer: TokenSerializer = {
+  serialize: (data) => JSON.stringify(data),
+  deserialize: (data) => JSON.parse(data),
+};
+
+let tokenSerializer: TokenSerializer = plainSerializer;
+
+/**
+ * 注入 token 持久化序列化器。
+ * 必须在 access store 首次实例化（useAccessStore()）之前调用，
+ * 否则首次 hydration 仍使用明文默认序列化器。
+ */
+export function setTokenSerializer(s: TokenSerializer): void {
+  tokenSerializer = s;
+}
+
+/**
  * @zh_CN 访问令牌类型
  */
 type AccessToken = null | string;
@@ -128,6 +157,12 @@ export const useAccessStore = defineStore('core-access', {
       'refreshTokenExpireTime',
       'accessTokenExpireTime',
     ],
+    // AUD9-M5: 通过 setTokenSerializer 注入的加解密序列化器（call-time 查询），
+    // 默认明文 JSON。各 app 应在启动时注入加密实现。
+    serializer: {
+      serialize: (data: any) => tokenSerializer.serialize(data),
+      deserialize: (data: string) => tokenSerializer.deserialize(data),
+    },
   },
   state: (): AccessState => ({
     accessCodes: [],
