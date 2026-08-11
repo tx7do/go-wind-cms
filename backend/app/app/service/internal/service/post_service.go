@@ -74,3 +74,12 @@ func (s *PostService) Delete(_ context.Context, _ *contentV1.DeletePostRequest) 
 func (s *PostService) GetTranslation(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.PostTranslation, error) {
 	return s.postClient.GetTranslation(ctx, req)
 }
+
+// SearchPosts 全文搜索帖子，纯透传到 core 服务。
+//
+// core 端会从登录用户上下文（viewer）注入 tenant_id，并硬编码 status=PUBLISHED，
+// 仅返回 postId/language/title 最小字段集。本端点需登录（不在鉴权白名单中），
+// 以保证 tenant_id 非零——匿名请求会被 core 端拒绝或返回空。
+func (s *PostService) SearchPosts(ctx context.Context, req *contentV1.SearchPostsRequest) (*contentV1.SearchPostsResponse, error) {
+	return s.postClient.SearchPosts(ctx, req)
+}

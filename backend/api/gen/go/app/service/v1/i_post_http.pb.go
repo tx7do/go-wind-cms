@@ -27,6 +27,7 @@ const OperationPostServiceDelete = "/app.service.v1.PostService/Delete"
 const OperationPostServiceGet = "/app.service.v1.PostService/Get"
 const OperationPostServiceGetTranslation = "/app.service.v1.PostService/GetTranslation"
 const OperationPostServiceList = "/app.service.v1.PostService/List"
+const OperationPostServiceSearchPosts = "/app.service.v1.PostService/SearchPosts"
 const OperationPostServiceUpdate = "/app.service.v1.PostService/Update"
 
 type PostServiceHTTPServer interface {
@@ -40,6 +41,11 @@ type PostServiceHTTPServer interface {
 	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
 	// List 获取帖子列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
+	// SearchPosts 全文搜索帖子（前台，基于 OpenSearch）
+	//
+	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+	SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error)
 	// Update 更新帖子
 	Update(context.Context, *v11.UpdatePostRequest) (*v11.Post, error)
 }
@@ -52,6 +58,7 @@ func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r.PUT("/app/v1/posts/{id}", _PostService_Update4_HTTP_Handler(srv))
 	r.DELETE("/app/v1/posts/{id}", _PostService_Delete4_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/{id}/translation", _PostService_GetTranslation2_HTTP_Handler(srv))
+	r.GET("/app/v1/posts/search", _PostService_SearchPosts0_HTTP_Handler(srv))
 }
 
 func _PostService_List4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
@@ -186,6 +193,25 @@ func _PostService_GetTranslation2_HTTP_Handler(srv PostServiceHTTPServer) func(c
 	}
 }
 
+func _PostService_SearchPosts0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.SearchPostsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceSearchPosts)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SearchPosts(ctx, req.(*v11.SearchPostsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.SearchPostsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PostServiceHTTPClient interface {
 	// Create 创建帖子
 	Create(ctx context.Context, req *v11.CreatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
@@ -197,6 +223,11 @@ type PostServiceHTTPClient interface {
 	GetTranslation(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.PostTranslation, err error)
 	// List 获取帖子列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPostResponse, err error)
+	// SearchPosts 全文搜索帖子（前台，基于 OpenSearch）
+	//
+	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+	SearchPosts(ctx context.Context, req *v11.SearchPostsRequest, opts ...http.CallOption) (rsp *v11.SearchPostsResponse, err error)
 	// Update 更新帖子
 	Update(ctx context.Context, req *v11.UpdatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 }
@@ -271,6 +302,23 @@ func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingReque
 	pattern := "/app/v1/posts"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SearchPosts 全文搜索帖子（前台，基于 OpenSearch）
+//
+// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+func (c *PostServiceHTTPClientImpl) SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...http.CallOption) (*v11.SearchPostsResponse, error) {
+	var out v11.SearchPostsResponse
+	pattern := "/app/v1/posts/search"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPostServiceSearchPosts))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

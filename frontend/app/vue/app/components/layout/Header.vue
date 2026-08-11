@@ -53,6 +53,9 @@ const handleClickLogout = async () => {
         <LayoutTopNavbar />
       </div>
 
+      <!-- 桌面端搜索框 -->
+      <LayoutSearchBar />
+
       <!-- 桌面端功能按钮区 -->
       <div class="flex shrink-0 items-center gap-1 max-md:hidden">
         <!-- 用户菜单 -->

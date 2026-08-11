@@ -79,6 +79,26 @@ export async function deletePost(id: number) {
   return apiClient.postService.Delete({id});
 }
 
+/**
+ * 全文搜索文章（基于 OpenSearch，仅返回已发布内容）
+ *
+ * 返回最小字段集：postId / language / title。
+ * language 自动取当前 locale（仅返回该语言的命中）。
+ */
+export async function searchPostsRaw(params: {
+  query: string;
+  page?: number;
+  pageSize?: number;
+}) {
+  const language = currentLocaleLanguageCode();
+  return apiClient.postService.SearchPosts({
+    query: params.query,
+    language,
+    page: params.page,
+    pageSize: params.pageSize,
+  });
+}
+
 // ==============================
 // 文章列表 Hook
 // ==============================
@@ -135,6 +155,29 @@ export async function fetchPost(id: number) {
   return queryClient.fetchQuery({
     queryKey: ['getPost', id],
     queryFn: () => getPost(id),
+    retry: 0,
+  });
+}
+
+// ==============================
+// 搜索文章 Hook
+// ==============================
+export function useSearchPosts(
+  options?: UseMutationOptions<any, Error, { query: string; page?: number; pageSize?: number }>,
+) {
+  return useMutation({
+    mutationFn: (params) => searchPostsRaw(params),
+    ...options,
+  });
+}
+
+// ==============================================
+// 搜索文章 【给 Store / 外部调用】不带 Hook 的方法
+// ==============================================
+export async function fetchSearchPosts(params: { query: string; page?: number; pageSize?: number }) {
+  return queryClient.fetchQuery({
+    queryKey: ['searchPosts', params],
+    queryFn: () => searchPostsRaw(params),
     retry: 0,
   });
 }

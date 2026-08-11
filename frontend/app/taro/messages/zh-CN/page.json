@@ -64,7 +64,10 @@
     "author": "作者",
     "date": "日期",
     "views_count": "{{count}} 阅读",
-    "total_articles": "共 {{total}} 篇文章"
+    "total_articles": "共 {{total}} 篇文章",
+    "search_placeholder": "请输入关键词进行搜索",
+    "no_search_results": "未找到与 \"{{query}}\" 相关的结果",
+    "search_results_count": "找到 {{count}} 条结果"
   },
   "categories": {
     "categories_list": "内容分类",

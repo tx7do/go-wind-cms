@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show ContentServiceV1Post, ContentServiceV1Tag;
+    show ContentServiceV1Post, ContentServiceV1Tag, ContentServiceV1SearchPostHit;
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
-import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
 /// 搜索页
 class SearchPage extends StatefulWidget {
@@ -28,8 +28,13 @@ class _SearchPageState extends State<SearchPage> {
   bool _hasSearched = false;
   bool _isLoading = true;
 
+  // suggestions 数据（热门搜索 + 推荐阅读）仍用 list 接口加载
   List<ContentServiceV1Post> _posts = [];
   List<ContentServiceV1Tag> _tags = [];
+
+  // 真实搜索结果（来自 OpenSearch）
+  List<ContentServiceV1SearchPostHit> _searchHits = [];
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -49,6 +54,23 @@ class _SearchPageState extends State<SearchPage> {
       _posts = (results[0] as ListPostResponse?)?.items ?? [];
       _tags = (results[1] as ListTagResponse?)?.items ?? [];
       _isLoading = false;
+    });
+  }
+
+  /// 执行真实全文搜索（调用 OpenSearch）
+  Future<void> _runSearch(String query) async {
+    final q = query.trim();
+    if (q.isEmpty) return;
+    setState(() {
+      _query = q;
+      _hasSearched = true;
+      _isSearching = true;
+    });
+    final resp = await _postService.search(q);
+    if (!mounted) return;
+    setState(() {
+      _searchHits = resp?.items ?? [];
+      _isSearching = false;
     });
   }
 
@@ -86,18 +108,16 @@ class _SearchPageState extends State<SearchPage> {
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(vertical: 10),
         ),
-        onSubmitted: (value) {
-          setState(() { _query = value.trim(); _hasSearched = true; });
-        },
+        onSubmitted: (value) => _runSearch(value.trim()),
       ),
       actions: [
         if (_searchController.text.isNotEmpty)
           IconButton(icon: const Icon(Icons.clear, size: 20), onPressed: () {
             _searchController.clear();
-            setState(() { _query = ''; _hasSearched = false; });
+            setState(() { _query = ''; _hasSearched = false; _searchHits = []; });
           }),
         TextButton(
-          onPressed: () { setState(() { _query = _searchController.text.trim(); _hasSearched = true; }); },
+          onPressed: () => _runSearch(_searchController.text.trim()),
           child: Text(S.of(context).search, style: const TextStyle(fontSize: 14)),
         ),
       ],
@@ -159,10 +179,7 @@ class _SearchPageState extends State<SearchPage> {
                   return ActionChip(
                     onPressed: () {
                       _searchController.text = name;
-                      setState(() {
-                        _query = name;
-                        _hasSearched = true;
-                      });
+                      _runSearch(name);
                     },
                     label: Text(name, style: const TextStyle(fontSize: 13)),
                   );
@@ -196,10 +213,12 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildResults(BuildContext context, bool isMobile) {
     final theme = Theme.of(context);
     final hPad = isMobile ? 16.0 : 24.0;
-    final filteredPosts = _filteredPosts;
-    final filteredTags = _filteredTags;
 
-    if (filteredPosts.isEmpty && filteredTags.isEmpty) {
+    if (_isSearching) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_searchHits.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -237,46 +256,21 @@ class _SearchPageState extends State<SearchPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (filteredTags.isNotEmpty) ...[
-                      Text(
-                        S.of(context).relatedTags,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                    Text(
+                      S.of(context).relatedPostsCount(_searchHits.length),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
                       ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: filteredTags.map((tag) {
-                          return TagChip(
-                            tag: tag,
-                            isMobile: isMobile,
-                            showPostCount: true,
-                          );
-                        }).toList(),
+                    ),
+                    const SizedBox(height: 8),
+                    ..._searchHits.map(
+                      (hit) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _SearchHitCard(hit: hit),
                       ),
-                      const SizedBox(height: 16),
-                    ],
-                    if (filteredPosts.isNotEmpty) ...[
-                      Text(
-                        S.of(context).relatedPostsCount(filteredPosts.length),
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      ...filteredPosts.map(
-                        (post) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _SimplePostCard(post: post),
-                        ),
-                      ),
-                    ],
+                    ),
                   ],
                 ),
               ),
@@ -288,49 +282,81 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   // =================== 搜索逻辑 ===================
+  // （真实搜索在 _runSearch 中调用 PostService.search，命中结果存入 _searchHits）
+}
 
-  List get _filteredPosts {
-    if (_query.isEmpty) return [];
-    final q = _query.toLowerCase();
-    return _posts.where((post) {
-      final title = (post.translations ?? []).isNotEmpty
-          ? (post.translations ?? []).first.title ?? ''
-          : '';
-      final summary = (post.translations ?? []).isNotEmpty
-          ? (post.translations ?? []).first.summary ?? ''
-          : '';
-      final tagNames = _tags
-          .where(
-            (t) =>
-                post.tagIds != null &&
-                t.id != null &&
-                (post.tagIds as List).contains(t.id!),
-          )
-          .map(
-            (t) => (t.translations ?? []).isNotEmpty
-                ? (t.translations ?? []).first.name ?? ''
-                : '',
-          )
-          .toList();
-      return title.toLowerCase().contains(q) ||
-          summary.toLowerCase().contains(q) ||
-          tagNames.any((n) => n.toLowerCase().contains(q));
-    }).toList();
-  }
+/// 搜索结果卡片（基于 OpenSearch 命中，仅含 title + postId）
+class _SearchHitCard extends StatefulWidget {
+  final ContentServiceV1SearchPostHit hit;
 
-  List get _filteredTags {
-    if (_query.isEmpty) return [];
-    final q = _query.toLowerCase();
-    return _tags.where((tag) {
-      final name = (tag.translations ?? []).isNotEmpty
-          ? (tag.translations ?? []).first.name ?? ''
-          : '';
-      return name.toLowerCase().contains(q);
-    }).toList();
+  const _SearchHitCard({required this.hit});
+
+  @override
+  State<_SearchHitCard> createState() => _SearchHitCardState();
+}
+
+class _SearchHitCardState extends State<_SearchHitCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hit = widget.hit;
+    final title = hit.title ?? '';
+    final isMobile = ResponsiveUtils.isMobile(context);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: () {
+          final id = hit.postId;
+          if (id != null) context.push('/post/$id');
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: _isHovered && !isMobile
+                ? theme.colorScheme.surfaceContainerLow
+                : theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _isHovered && !isMobile
+                  ? theme.colorScheme.primary.withAlpha((0.2 * 255).round())
+                  : theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: theme.colorScheme.onSurface.withAlpha(100),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
-/// 简化版文章卡片（搜索结果用）
+/// 简化版文章卡片（推荐阅读用，基于完整 Post 数据）
 class _SimplePostCard extends StatefulWidget {
   final ContentServiceV1Post post;
 

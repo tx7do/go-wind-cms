@@ -48,7 +48,11 @@
     "author": "Author",
     "date": "Date",
     "views_count": "{count} views",
-    "total_articles": "{total} articles in total"
+    "total_articles": "{total} articles in total",
+    "search_placeholder": "Enter keywords to search",
+    "search_failed": "Search failed, please try again later",
+    "no_search_results": "No results found for \"{query}\"",
+    "search_results_count": "{count} results found"
   },
   "categories": {
     "categories": "Categories",

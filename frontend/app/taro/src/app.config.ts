@@ -5,6 +5,7 @@ export default defineAppConfig({
     'pages/category/detail/index',
     'pages/post/index',
     'pages/post/detail/index',
+    'pages/search/index',
     'pages/tag/index',
     'pages/tag/detail/index',
     'pages/about/index',

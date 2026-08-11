@@ -1,9 +1,12 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const localePath = useLocalePath()
 const searchQuery = ref('')
 
 const handleSearch = () => {
-  // 搜索功能尚未接入后端，暂为占位；避免在每次按键时向控制台输出用户输入
+  const q = searchQuery.value.trim()
+  if (!q) return
+  navigateTo(localePath(`/search?q=${encodeURIComponent(q)}`))
 }
 </script>
 
@@ -14,7 +17,7 @@ const handleSearch = () => {
       <UiInput
         class="h-full w-full ps-8"
         v-model="searchQuery"
-        @keyup="handleSearch"
+        @keyup.enter="handleSearch"
         :placeholder="t('navbar.top.search_placeholder')"
       />
     </div>

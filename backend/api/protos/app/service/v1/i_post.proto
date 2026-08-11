@@ -54,4 +54,14 @@ service PostService {
       get: "/app/v1/posts/{id}/translation"
     };
   }
+
+  // 全文搜索帖子（前台，基于 OpenSearch）
+  //
+  // 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+  // 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+  rpc SearchPosts (content.service.v1.SearchPostsRequest) returns (content.service.v1.SearchPostsResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/posts/search"
+    };
+  }
 }

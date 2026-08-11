@@ -1081,6 +1081,42 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.Post'
+    /app/v1/posts/search:
+        get:
+            tags:
+                - PostService
+            description: "全文搜索帖子（前台，基于 OpenSearch）\r\n\r\n 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，\r\n 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。"
+            operationId: PostService_SearchPosts
+            parameters:
+                - name: query
+                  in: query
+                  description: 搜索查询词
+                  schema:
+                    type: string
+                - name: language
+                  in: query
+                  description: 语言代码（必填，仅返回该语言的翻译命中）
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  description: 页码（0-based）
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（服务端封顶 50）
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.SearchPostsResponse'
     /app/v1/posts/{id}:
         get:
             tags:
@@ -1687,6 +1723,9 @@ components:
                 jti:
                     type: string
                     description: 建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击
+                tenant_code:
+                    type: string
+                    description: 租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户
             description: 用户登录 - 请求
         authentication.service.v1.LoginResponse:
             type: object
@@ -2486,6 +2525,31 @@ components:
                     description: 删除时间
                     format: date-time
             description: 帖子翻译
+        content.service.v1.SearchPostHit:
+            type: object
+            properties:
+                postId:
+                    type: integer
+                    description: 帖子 ID（用于后续 GetPost 详情查询）
+                    format: uint32
+                language:
+                    type: string
+                    description: 语言代码
+                title:
+                    type: string
+                    description: 标题（来自翻译，用于搜索结果展示）
+            description: 搜索命中条目（最小字段集）
+        content.service.v1.SearchPostsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.SearchPostHit'
+                total:
+                    type: integer
+                    format: int32
+            description: "回应 - 帖子搜索\r\n\r\n 仅返回最小字段集：post_id / language / title。\r\n 不含 content / tenant_id / status——这些字段不向前台暴露。"
         content.service.v1.Section:
             type: object
             properties:

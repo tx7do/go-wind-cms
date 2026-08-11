@@ -19,6 +19,7 @@ import {usePreferences} from '@/core/preferences';
 
 import TopNavbar from './TopNavbar';
 import MobileNav from './MobileNav';
+import SearchBar from './SearchBar';
 
 import {useAccessStore} from '@/store/core/access/store';
 import {useAuth} from '@/api/hooks/auth';
@@ -90,6 +91,9 @@ export default function Header() {
                 <div className="min-w-0 flex-1 max-md:hidden">
                     <TopNavbar/>
                 </div>
+
+                {/* 桌面端搜索框 */}
+                <SearchBar/>
 
                 {/* 桌面端功能按钮区 */}
                 <div className="flex shrink-0 items-center gap-1 max-md:hidden">

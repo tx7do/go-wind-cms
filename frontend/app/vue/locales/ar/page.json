@@ -48,7 +48,11 @@
     "author": "Author",
     "date": "Date",
     "views_count": "{count} views",
-    "total_articles": "{total} articles in total"
+    "total_articles": "{total} articles in total",
+    "search_placeholder": "أدخل الكلمات الرئيسية للبحث",
+    "search_failed": "فشل البحث، يرجى المحاولة مرة أخرى لاحقًا",
+    "no_search_results": "لا توجد نتائج لـ \"{query}\"",
+    "search_results_count": "تم العثور على {count} نتيجة"
   },
   "categories": {
     "categories": "Categories",

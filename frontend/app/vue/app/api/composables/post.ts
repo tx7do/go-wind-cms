@@ -83,6 +83,25 @@ export async function deletePost(id: number) {
   return await apiClient.postService.Delete({ id });
 }
 
+/**
+ * 全文搜索帖子（基于 OpenSearch，仅返回已发布内容）
+ *
+ * 返回最小字段集：postId / language / title。
+ * language 自动取当前 locale（仅返回该语言的命中）。
+ */
+export async function searchPosts(
+  query: string,
+  options?: { page?: number; pageSize?: number; language?: string },
+) {
+  const language = options?.language ?? getCurrentLocale();
+  return await apiClient.postService.SearchPosts({
+    query,
+    language,
+    page: options?.page,
+    pageSize: options?.pageSize,
+  });
+}
+
 /** 列表查询参数 */
 export interface ListPostParams {
   paging?: Paging;
@@ -146,6 +165,31 @@ export async function fetchPost(id: number) {
   return queryClient.fetchQuery({
     queryKey: ['getPost', id, locale],
     queryFn: () => getPost(id, locale),
+    retry: 0,
+  });
+}
+
+/** 搜索参数 */
+export interface SearchPostsParams {
+  query: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export function useSearchPosts(
+  options?: UseMutationOptions<any, Error, SearchPostsParams>,
+) {
+  return useMutation({
+    mutationFn: (params) => searchPosts(params.query, params),
+    ...options,
+  });
+}
+
+export async function fetchSearchPosts(params: SearchPostsParams) {
+  const locale = getCurrentLocale();
+  return queryClient.fetchQuery({
+    queryKey: ['searchPosts', params, locale],
+    queryFn: () => searchPosts(params.query, { ...params, language: locale }),
     retry: 0,
   });
 }

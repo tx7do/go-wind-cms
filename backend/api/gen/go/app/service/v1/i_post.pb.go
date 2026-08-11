@@ -29,46 +29,51 @@ var File_app_service_v1_i_post_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_post_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapp/service/v1/i_post.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto2\x86\x05\n" +
+	"\x1bapp/service/v1/i_post.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto2\x84\x06\n" +
 	"\vPostService\x12^\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/app/v1/posts\x12_\n" +
 	"\x03Get\x12\".content.service.v1.GetPostRequest\x1a\x18.content.service.v1.Post\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/app/v1/posts/{id}\x12c\n" +
 	"\x06Create\x12%.content.service.v1.CreatePostRequest\x1a\x18.content.service.v1.Post\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/posts\x12h\n" +
 	"\x06Update\x12%.content.service.v1.UpdatePostRequest\x1a\x18.content.service.v1.Post\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/app/v1/posts/{id}\x12c\n" +
 	"\x06Delete\x12%.content.service.v1.DeletePostRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/app/v1/posts/{id}\x12\x81\x01\n" +
-	"\x0eGetTranslation\x12\".content.service.v1.GetPostRequest\x1a#.content.service.v1.PostTranslation\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/posts/{id}/translationB\xab\x01\n" +
+	"\x0eGetTranslation\x12\".content.service.v1.GetPostRequest\x1a#.content.service.v1.PostTranslation\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/posts/{id}/translation\x12|\n" +
+	"\vSearchPosts\x12&.content.service.v1.SearchPostsRequest\x1a'.content.service.v1.SearchPostsResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/app/v1/posts/searchB\xab\x01\n" +
 	"\x12com.app.service.v1B\n" +
 	"IPostProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_post_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),      // 0: pagination.PagingRequest
-	(*v11.GetPostRequest)(nil),    // 1: content.service.v1.GetPostRequest
-	(*v11.CreatePostRequest)(nil), // 2: content.service.v1.CreatePostRequest
-	(*v11.UpdatePostRequest)(nil), // 3: content.service.v1.UpdatePostRequest
-	(*v11.DeletePostRequest)(nil), // 4: content.service.v1.DeletePostRequest
-	(*v11.ListPostResponse)(nil),  // 5: content.service.v1.ListPostResponse
-	(*v11.Post)(nil),              // 6: content.service.v1.Post
-	(*emptypb.Empty)(nil),         // 7: google.protobuf.Empty
-	(*v11.PostTranslation)(nil),   // 8: content.service.v1.PostTranslation
+	(*v1.PagingRequest)(nil),        // 0: pagination.PagingRequest
+	(*v11.GetPostRequest)(nil),      // 1: content.service.v1.GetPostRequest
+	(*v11.CreatePostRequest)(nil),   // 2: content.service.v1.CreatePostRequest
+	(*v11.UpdatePostRequest)(nil),   // 3: content.service.v1.UpdatePostRequest
+	(*v11.DeletePostRequest)(nil),   // 4: content.service.v1.DeletePostRequest
+	(*v11.SearchPostsRequest)(nil),  // 5: content.service.v1.SearchPostsRequest
+	(*v11.ListPostResponse)(nil),    // 6: content.service.v1.ListPostResponse
+	(*v11.Post)(nil),                // 7: content.service.v1.Post
+	(*emptypb.Empty)(nil),           // 8: google.protobuf.Empty
+	(*v11.PostTranslation)(nil),     // 9: content.service.v1.PostTranslation
+	(*v11.SearchPostsResponse)(nil), // 10: content.service.v1.SearchPostsResponse
 }
 var file_app_service_v1_i_post_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.PostService.List:input_type -> pagination.PagingRequest
-	1, // 1: app.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
-	2, // 2: app.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
-	3, // 3: app.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
-	4, // 4: app.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
-	1, // 5: app.service.v1.PostService.GetTranslation:input_type -> content.service.v1.GetPostRequest
-	5, // 6: app.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
-	6, // 7: app.service.v1.PostService.Get:output_type -> content.service.v1.Post
-	6, // 8: app.service.v1.PostService.Create:output_type -> content.service.v1.Post
-	6, // 9: app.service.v1.PostService.Update:output_type -> content.service.v1.Post
-	7, // 10: app.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
-	8, // 11: app.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: app.service.v1.PostService.List:input_type -> pagination.PagingRequest
+	1,  // 1: app.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
+	2,  // 2: app.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
+	3,  // 3: app.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
+	4,  // 4: app.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
+	1,  // 5: app.service.v1.PostService.GetTranslation:input_type -> content.service.v1.GetPostRequest
+	5,  // 6: app.service.v1.PostService.SearchPosts:input_type -> content.service.v1.SearchPostsRequest
+	6,  // 7: app.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
+	7,  // 8: app.service.v1.PostService.Get:output_type -> content.service.v1.Post
+	7,  // 9: app.service.v1.PostService.Create:output_type -> content.service.v1.Post
+	7,  // 10: app.service.v1.PostService.Update:output_type -> content.service.v1.Post
+	8,  // 11: app.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
+	9,  // 12: app.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
+	10, // 13: app.service.v1.PostService.SearchPosts:output_type -> content.service.v1.SearchPostsResponse
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_app_service_v1_i_post_proto_init() }

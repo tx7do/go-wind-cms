@@ -188,6 +188,7 @@ export type authenticationservicev1_LoginRequest = {
   redirect_uri?: string;
   refresh_token?: string;
   scope?: string;
+  tenant_code?: string;
   user_id?: number;
   username?: string;
 };
@@ -1828,6 +1829,13 @@ export interface PostService {
   GetTranslation(
     request: contentservicev1_GetPostRequest,
   ): Promise<contentservicev1_PostTranslation>;
+  // 全文搜索帖子（前台，基于 OpenSearch）
+  // 
+  // 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+  // 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+  SearchPosts(
+    request: contentservicev1_SearchPostsRequest,
+  ): Promise<contentservicev1_SearchPostsResponse>;
 }
 
 export function createPostServiceClient(
@@ -2041,6 +2049,39 @@ export function createPostServiceClient(
         method: 'GetTranslation',
       }) as Promise<contentservicev1_PostTranslation>;
     },
+    SearchPosts(request) {
+      const path = `app/v1/posts/search`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.language) {
+        queryParams.push(
+          `language=${encodeURIComponent(request.language.toString())}`,
+        );
+      }
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PostService',
+        method: 'SearchPosts',
+      }) as Promise<contentservicev1_SearchPostsResponse>;
+    },
   };
 }
 // 回应 - 帖子列表
@@ -2133,6 +2174,40 @@ export type contentservicev1_UpdatePostRequest = {
 // 请求 - 删除帖子
 export type contentservicev1_DeletePostRequest = {
   id?: number;
+};
+
+// 请求 - 帖子搜索
+// 
+// tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
+// 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
+export type contentservicev1_SearchPostsRequest = {
+  // 语言代码（必填，仅返回该语言的翻译命中）
+  language: string | undefined;
+  // 页码（0-based）
+  page: number | undefined;
+  // 每页条数（服务端封顶 50）
+  pageSize: number | undefined;
+  // 搜索查询词
+  query: string | undefined;
+};
+
+// 回应 - 帖子搜索
+// 
+// 仅返回最小字段集：post_id / language / title。
+// 不含 content / tenant_id / status——这些字段不向前台暴露。
+export type contentservicev1_SearchPostsResponse = {
+  items: contentservicev1_SearchPostHit[] | undefined;
+  total: number | undefined;
+};
+
+// 搜索命中条目（最小字段集）
+export type contentservicev1_SearchPostHit = {
+  // 语言代码
+  language: string | undefined;
+  // 帖子 ID（用于后续 GetPost 详情查询）
+  postId: number | undefined;
+  // 标题（来自翻译，用于搜索结果展示）
+  title: string | undefined;
 };
 
 // 页面区块服务

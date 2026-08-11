@@ -4,13 +4,17 @@ import React, {useState} from 'react';
 import {Input} from '@/components/ui/input';
 import {Search} from 'lucide-react';
 import {useTranslations} from 'next-intl';
+import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
 
 export default function SearchBar() {
     const t = useTranslations('navbar.top');
+    const router = useI18nRouter();
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
-        console.log('Searching for:', searchQuery);
+        const q = searchQuery.trim();
+        if (!q) return;
+        router.push(`/search?q=${encodeURIComponent(q)}`);
     };
 
     return (
@@ -21,7 +25,9 @@ export default function SearchBar() {
                     className="h-full w-full ps-8"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyUp={handleSearch}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSearch();
+                    }}
                     placeholder={t('search_placeholder')}
                 />
             </div>

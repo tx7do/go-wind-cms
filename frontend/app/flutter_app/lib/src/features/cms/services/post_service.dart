@@ -8,9 +8,11 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1PostTranslation,
     ContentServiceV1CreatePostRequest, ContentServiceV1ListPostResponse,
     ContentServiceV1UpdatePostRequest, ContentServiceV1GetPostRequest,
-    ContentServiceV1DeletePostRequest;
+    ContentServiceV1DeletePostRequest,
+    ContentServiceV1SearchPostsRequest, ContentServiceV1SearchPostsResponse;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
+import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 import 'package:flutter_app/src/core/transport/http/index.dart';
 
 typedef Post = ContentServiceV1Post;
@@ -18,6 +20,7 @@ typedef PostTranslation = ContentServiceV1PostTranslation;
 typedef CreatePostRequest = ContentServiceV1CreatePostRequest;
 typedef UpdatePostRequest = ContentServiceV1UpdatePostRequest;
 typedef ListPostResponse = ContentServiceV1ListPostResponse;
+typedef SearchPostsResponse = ContentServiceV1SearchPostsResponse;
 
 /// 帖子服务
 ///
@@ -195,6 +198,38 @@ class PostService extends BaseService {
       );
     } on DioException catch (e) {
       return handleDioError(e);
+    }
+  }
+
+  /// 全文搜索帖子（基于 OpenSearch，仅返回已发布内容）
+  ///
+  /// [query] 搜索关键词；[language] 语言代码（不传则取当前用户语言）；
+  /// [page] 页码（0-based，默认 0）；[pageSize] 每页条数（服务端封顶 50，默认 10）。
+  /// 返回最小字段集：postId / language / title。
+  Future<SearchPostsResponse?> search(
+    String query, {
+    String? language,
+    int page = 0,
+    int pageSize = 10,
+  }) async {
+    String? lang = language;
+    if (lang == null) {
+      try {
+        lang = GetIt.instance<UserPreferenceCache>().language;
+      } catch (_) {
+        lang = null;
+      }
+    }
+    try {
+      return await _api.searchPosts(ContentServiceV1SearchPostsRequest(
+        query: query,
+        language: lang,
+        page: page,
+        pageSize: pageSize,
+      ));
+    } on DioException catch (e) {
+      handleDioError(e);
+      return null;
     }
   }
 }
