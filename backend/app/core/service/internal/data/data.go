@@ -1,6 +1,8 @@
 package data
 
 import (
+	"errors"
+
 	"github.com/go-kratos/kratos/v2/registry"
 
 	"github.com/tx7do/go-utils/password"
@@ -43,6 +45,17 @@ func NewElasticSearchClient(ctx *bootstrap.Context) (*elasticsearchCrud.Client, 
 	cfg := ctx.GetConfig()
 	if cfg == nil {
 		return nil, func() {}, nil
+	}
+
+	// AUD9-M7: 拒绝使用仓库内硬编码的默认 fallback 密码启动。
+	// 生产环境必须通过 OPENSEARCH_PASSWORD 环境变量注入强密码；
+	// 若落到 fallback "@Abcd#123456" 说明环境变量未设置，启动即失败，
+	// 避免 ES admin 凭据以弱默认值暴露。
+	if cfg.Data != nil && cfg.Data.Elasticsearch != nil {
+		pw := cfg.Data.Elasticsearch.GetPassword()
+		if pw == "" || pw == "@Abcd#123456" || pw == "dev_only_change_me" {
+			return nil, func() {}, errors.New("elasticsearch password must be set via OPENSEARCH_PASSWORD environment variable; refusing to start with default/empty password")
+		}
 	}
 
 	cli, err := elasticsearch.NewClient(ctx.GetLogger(), cfg)

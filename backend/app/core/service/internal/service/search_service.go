@@ -85,6 +85,9 @@ func (s *SearchService) ReindexPost(taskType string, payload *task.SearchReindex
 		return nil
 	}
 
+	// 注意：payload.TenantID 仅用于此日志行，ES 文档的 tenant_id 取自 DB 记录
+	// （PostRepo.GetReindexDocuments 内部从 ent 取），不可用 payload 值覆盖。
+	// Deprecated: payload.TenantID 仅供日志展示，后续应从 payload 移除以避免误用。
 	s.log.Infof("reindex post: entity=%s id=%d tenant=%d op=%s",
 		payload.Entity, payload.ID, payload.TenantID, payload.Op)
 

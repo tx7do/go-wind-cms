@@ -44,11 +44,12 @@ withDefaults(defineProps<Props>(), {
               <p class="text-foreground text-sm font-semibold leading-6">
                 {{ item.title }}
               </p>
-              <!-- eslint-disable vue/no-v-html -->
+              <!-- AUD9-M3: v-html 改文本插值，避免后端 content 存储型 XSS -->
               <p
                 class="text-foreground/80 *:text-primary mt-1 truncate text-xs leading-5"
-                v-html="item.content"
-              ></p>
+              >
+                {{ item.content }}
+              </p>
             </div>
           </div>
           <div class="hidden h-full shrink-0 sm:flex sm:flex-col sm:items-end">

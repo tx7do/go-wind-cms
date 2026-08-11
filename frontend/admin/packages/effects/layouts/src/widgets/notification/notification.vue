@@ -112,10 +112,12 @@ function handleClick(item: NotificationItem) {
               </span>
               <div class="flex flex-col gap-1 leading-none">
                 <p class="font-semibold">{{ item.title }}</p>
+                <!-- AUD9-M3: v-html 改文本插值，避免后端 message 存储型 XSS -->
                 <p
                   class="text-muted-foreground my-1 line-clamp-2 text-xs"
-                  v-html="item.message"
-                ></p>
+                >
+                  {{ item.message }}
+                </p>
                 <p class="text-muted-foreground line-clamp-2 text-xs">
                   {{ item.date }}
                 </p>

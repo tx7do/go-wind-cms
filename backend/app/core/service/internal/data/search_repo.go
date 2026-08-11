@@ -106,6 +106,10 @@ func (r *SearchRepo) EnsureIndexTemplate(ctx context.Context) error {
 		"priority":       searchTemplatePrio,
 		"template": map[string]any{
 			"mappings": map[string]any{
+				// AUD9-L3: 严格化 mapping，禁止动态字段。
+				// 仅显式声明的 properties 可被索引；任何未声明字段被静默忽略，
+				// 防止脏数据或注入的额外字段进入索引。
+				"dynamic":    false,
 				"properties": properties,
 			},
 		},
