@@ -107,7 +107,15 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	postCategoryRepo := data.NewPostCategoryRepo(context, entClient)
 	postTagRepo := data.NewPostTagRepo(context, entClient)
 	postRepo := data.NewPostRepo(context, entClient, postTranslationRepo, postCategoryRepo, postTagRepo)
-	postService := service.NewPostService(context, postRepo)
+	elasticsearchClient, cleanup3, err := data.NewElasticSearchClient(context)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	searchRepo := data.NewSearchRepo(context, elasticsearchClient)
+	searchService := service.NewSearchService(context, searchRepo, postRepo)
+	postService := service.NewPostService(context, postRepo, searchService, taskService)
 	categoryTranslationRepo := data.NewCategoryTranslationRepo(context, entClient)
 	categoryRepo := data.NewCategoryRepo(context, entClient, categoryTranslationRepo)
 	categoryService := service.NewCategoryService(context, categoryRepo)
@@ -133,13 +141,15 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	mediaAssetService := service.NewMediaAssetService(context, mediaAssetRepo)
 	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, fileService, dictTypeService, dictEntryService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, commentService, postService, categoryService, tagService, pageService, sectionService, siteService, siteSettingService, navigationService, navigationItemService, mediaAssetService)
 	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	asynqServer := server.NewAsynqServer(context, taskService)
+	asynqServer := server.NewAsynqServer(context, taskService, searchService)
 	app := newApp(context, grpcServer, asynqServer)
 	return app, func() {
+		cleanup3()
 		cleanup2()
 		cleanup()
 	}, nil

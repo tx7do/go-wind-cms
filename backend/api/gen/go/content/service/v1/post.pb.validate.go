@@ -2158,3 +2158,357 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeletePostTranslationRequestValidationError{}
+
+// Validate checks the field values on SearchPostsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchPostsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchPostsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchPostsRequestMultiError, or nil if none found.
+func (m *SearchPostsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchPostsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Query
+
+	// no validation rules for Language
+
+	// no validation rules for Page
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return SearchPostsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchPostsRequestMultiError is an error wrapping multiple validation errors
+// returned by SearchPostsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SearchPostsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchPostsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchPostsRequestMultiError) AllErrors() []error { return m }
+
+// SearchPostsRequestValidationError is the validation error returned by
+// SearchPostsRequest.Validate if the designated constraints aren't met.
+type SearchPostsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchPostsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchPostsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchPostsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchPostsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchPostsRequestValidationError) ErrorName() string {
+	return "SearchPostsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchPostsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchPostsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchPostsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchPostsRequestValidationError{}
+
+// Validate checks the field values on SearchPostsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchPostsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchPostsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchPostsResponseMultiError, or nil if none found.
+func (m *SearchPostsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchPostsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SearchPostsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SearchPostsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SearchPostsResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return SearchPostsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchPostsResponseMultiError is an error wrapping multiple validation
+// errors returned by SearchPostsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SearchPostsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchPostsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchPostsResponseMultiError) AllErrors() []error { return m }
+
+// SearchPostsResponseValidationError is the validation error returned by
+// SearchPostsResponse.Validate if the designated constraints aren't met.
+type SearchPostsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchPostsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchPostsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchPostsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchPostsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchPostsResponseValidationError) ErrorName() string {
+	return "SearchPostsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchPostsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchPostsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchPostsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchPostsResponseValidationError{}
+
+// Validate checks the field values on SearchPostHit with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SearchPostHit) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchPostHit with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SearchPostHitMultiError, or
+// nil if none found.
+func (m *SearchPostHit) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchPostHit) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	// no validation rules for Language
+
+	// no validation rules for Title
+
+	if len(errors) > 0 {
+		return SearchPostHitMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchPostHitMultiError is an error wrapping multiple validation errors
+// returned by SearchPostHit.ValidateAll() if the designated constraints
+// aren't met.
+type SearchPostHitMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchPostHitMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchPostHitMultiError) AllErrors() []error { return m }
+
+// SearchPostHitValidationError is the validation error returned by
+// SearchPostHit.Validate if the designated constraints aren't met.
+type SearchPostHitValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchPostHitValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchPostHitValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchPostHitValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchPostHitValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchPostHitValidationError) ErrorName() string { return "SearchPostHitValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SearchPostHitValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchPostHit.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchPostHitValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchPostHitValidationError{}

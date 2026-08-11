@@ -34,6 +34,11 @@ var ProviderSet = wire.NewSet(
 
 	data.NewMinIoClient,
 
+	// OpenSearch：ES 客户端 + 搜索 Repo。
+	// NewElasticSearchClient 返回 (*Client, func(), error)，cleanup 由 wire 线程。
+	data.NewElasticSearchClient,
+	data.NewSearchRepo,
+
 	data.NewDictTypeRepo,
 	data.NewDictEntryRepo,
 	data.NewDictEntryI18nRepo,

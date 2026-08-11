@@ -26,6 +26,7 @@ const (
 	PostService_Create_FullMethodName            = "/content.service.v1.PostService/Create"
 	PostService_Update_FullMethodName            = "/content.service.v1.PostService/Update"
 	PostService_Delete_FullMethodName            = "/content.service.v1.PostService/Delete"
+	PostService_SearchPosts_FullMethodName       = "/content.service.v1.PostService/SearchPosts"
 	PostService_TranslationExists_FullMethodName = "/content.service.v1.PostService/TranslationExists"
 	PostService_GetTranslation_FullMethodName    = "/content.service.v1.PostService/GetTranslation"
 	PostService_CreateTranslation_FullMethodName = "/content.service.v1.PostService/CreateTranslation"
@@ -49,6 +50,12 @@ type PostServiceClient interface {
 	Update(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*Post, error)
 	// 删除帖子
 	Delete(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 搜索帖子（前台全文检索）
+	//
+	// 基于 OpenSearch 实现，强制按调用方租户上下文过滤（tenant_id 由 viewer
+	// 注入，不可由客户端指定）。仅返回 PUBLISHED 且匹配请求 language 的帖子
+	// 的最小字段集（post_id / language / title），不含 content / tenant_id。
+	SearchPosts(ctx context.Context, in *SearchPostsRequest, opts ...grpc.CallOption) (*SearchPostsResponse, error)
 	// 检查翻译是否存在
 	TranslationExists(ctx context.Context, in *PostTranslationExistsRequest, opts ...grpc.CallOption) (*PostTranslationExistsResponse, error)
 	// 获取翻译数据
@@ -113,6 +120,16 @@ func (c *postServiceClient) Delete(ctx context.Context, in *DeletePostRequest, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, PostService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) SearchPosts(ctx context.Context, in *SearchPostsRequest, opts ...grpc.CallOption) (*SearchPostsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchPostsResponse)
+	err := c.cc.Invoke(ctx, PostService_SearchPosts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -185,6 +202,12 @@ type PostServiceServer interface {
 	Update(context.Context, *UpdatePostRequest) (*Post, error)
 	// 删除帖子
 	Delete(context.Context, *DeletePostRequest) (*emptypb.Empty, error)
+	// 搜索帖子（前台全文检索）
+	//
+	// 基于 OpenSearch 实现，强制按调用方租户上下文过滤（tenant_id 由 viewer
+	// 注入，不可由客户端指定）。仅返回 PUBLISHED 且匹配请求 language 的帖子
+	// 的最小字段集（post_id / language / title），不含 content / tenant_id。
+	SearchPosts(context.Context, *SearchPostsRequest) (*SearchPostsResponse, error)
 	// 检查翻译是否存在
 	TranslationExists(context.Context, *PostTranslationExistsRequest) (*PostTranslationExistsResponse, error)
 	// 获取翻译数据
@@ -219,6 +242,9 @@ func (UnimplementedPostServiceServer) Update(context.Context, *UpdatePostRequest
 }
 func (UnimplementedPostServiceServer) Delete(context.Context, *DeletePostRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedPostServiceServer) SearchPosts(context.Context, *SearchPostsRequest) (*SearchPostsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchPosts not implemented")
 }
 func (UnimplementedPostServiceServer) TranslationExists(context.Context, *PostTranslationExistsRequest) (*PostTranslationExistsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TranslationExists not implemented")
@@ -346,6 +372,24 @@ func _PostService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_SearchPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchPostsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).SearchPosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_SearchPosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).SearchPosts(ctx, req.(*SearchPostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PostService_TranslationExists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PostTranslationExistsRequest)
 	if err := dec(in); err != nil {
@@ -462,6 +506,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _PostService_Delete_Handler,
+		},
+		{
+			MethodName: "SearchPosts",
+			Handler:    _PostService_SearchPosts_Handler,
 		},
 		{
 			MethodName: "TranslationExists",

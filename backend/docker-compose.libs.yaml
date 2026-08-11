@@ -66,7 +66,10 @@ services:
 #      - ${APP_ROOT:-/root/app}/redis/data:/bitnami/redis/data
 
   opensearch:
-    image: docker.io/opensearchproject/opensearch:latest
+    build:
+      context: ./scripts/docker/opensearch
+      dockerfile: Dockerfile
+    image: go-wind-cms/opensearch-smartcn:2.19.6
     container_name: opensearch
     hostname: opensearch
     restart: always

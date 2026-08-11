@@ -760,3 +760,115 @@ func (r *PostRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, postID uin
 func (r *PostRepo) CleanCategories(ctx context.Context, tx *ent.Tx, postID uint32) error {
 	return r.postCategoryRepo.CleanCategories(ctx, tx, postID)
 }
+
+// ============================================================================
+// OpenSearch 重索引辅助方法
+//
+// 仅供 SearchService.ReindexPost / ReindexAll 调用。这两个方法的 ctx 由
+// SearchService 注入 SystemViewer（跨租户读 DB 的特权上下文），但写入 ES 的
+// tenant_id 取自 ent.Post.TenantID（DB 记录真实值），不取自 viewer。
+// 参考 search_repo.go 的安全模型注释。
+// ============================================================================
+
+// PostReindexDocument 是 PostRepo 返回给 SearchService 的单条 ES 文档数据。
+// TenantID 取自 ent.Post.TenantID（DB 真实值）。
+type PostReindexDocument struct {
+	TenantID uint32
+	PostID   uint32
+	Language string
+	Status   string
+	Title    string
+	Summary  string
+	Content  string
+}
+
+// GetReindexDocuments 取指定帖子及其所有翻译，组装成 ES 文档数据。
+//
+// 安全：
+//   - tenant_id 取自 ent.Post.TenantID（DB 记录），非 viewer
+//   - 跳过非 PUBLISHED 状态的帖子（不入索引）
+//   - 跳过 title/content 均空的翻译（避免索引无意义文档）
+//   - 调用方须以 SystemViewer ctx 调用，方能跨租户读取
+func (r *PostRepo) GetReindexDocuments(ctx context.Context, postID uint32) ([]PostReindexDocument, error) {
+	if postID == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid post id")
+	}
+
+	entity, err := r.entClient.Client().Post.Query().
+		Where(post.IDEQ(postID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, contentV1.ErrorFileNotFound("post not found")
+		}
+		r.log.Errorf("query post for reindex failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query post for reindex failed")
+	}
+
+	// tenant_id 取自 DB 记录，非 viewer
+	var tenantID uint32
+	if entity.TenantID != nil {
+		tenantID = *entity.TenantID
+	}
+	if tenantID == 0 {
+		// tenant_id 为 0 的记录不应进入搜索索引
+		return nil, nil
+	}
+
+	// 仅索引 PUBLISHED 状态
+	if entity.Status == nil || string(*entity.Status) != "POST_STATUS_PUBLISHED" {
+		return nil, nil
+	}
+
+	// 取所有翻译（ent privacy 自动过滤软删）
+	translations, err := r.postTranslationRepo.ListTranslations(ctx, postID, "", nil)
+	if err != nil {
+		r.log.Errorf("query translations for reindex failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query translations for reindex failed")
+	}
+
+	docs := make([]PostReindexDocument, 0, len(translations))
+	for _, tr := range translations {
+		if tr == nil {
+			continue
+		}
+		// 跳过 title 和 content 均空的翻译
+		if tr.GetTitle() == "" && tr.GetContent() == "" {
+			continue
+		}
+		docs = append(docs, PostReindexDocument{
+			TenantID: tenantID,
+			PostID:   postID,
+			Language: tr.GetLanguageCode(),
+			Status:   "POST_STATUS_PUBLISHED",
+			Title:    tr.GetTitle(),
+			Summary:  tr.GetSummary(),
+			Content:  tr.GetContent(),
+		})
+	}
+
+	return docs, nil
+}
+
+// ListPublishedPostIDs 列出所有 PUBLISHED 状态帖子的 ID。
+// 供 SearchService.ReindexAll 周期全量重索引使用。
+func (r *PostRepo) ListPublishedPostIDs(ctx context.Context) ([]uint32, error) {
+	entities, err := r.entClient.Client().Post.Query().
+		Select(post.FieldID).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list post ids for reindex failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("list post ids for reindex failed")
+	}
+
+	ids := make([]uint32, 0, len(entities))
+	for _, e := range entities {
+		if e == nil || e.Status == nil {
+			continue
+		}
+		if string(*e.Status) == "POST_STATUS_PUBLISHED" {
+			ids = append(ids, e.ID)
+		}
+	}
+	return ids, nil
+}

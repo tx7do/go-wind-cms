@@ -15,8 +15,13 @@ data:
     read_timeout: 0.4s
     write_timeout: 0.6s
 
-  elastic_search:
+  # 键名必须为 `elasticsearch`（无下划线），与 bootstrap proto 字段名一致；
+  # 否则 kratos 的 protojson 加载器（DiscardUnknown:true）会静默丢弃此段，
+  # 导致 cfg.Data.Elasticsearch==nil，NewElasticSearchClient 启动即报 "config is nil"。
+  # 凭据须与 docker-compose 中 opensearch 容器的 OPENSEARCH_INITIAL_ADMIN_PASSWORD 一致
+  # （OpenSearch 强制强密码策略，不能用 dev_only_change_me）。
+  elasticsearch:
     addresses:
-      - "http://elasticsearch:9200"
-    username: "elastic"
-    password: "${elastic_password:dev_only_change_me}"
+      - "http://opensearch:9200"
+    username: "admin"
+    password: "${opensearch_password:@Abcd#123456}"

@@ -433,3 +433,33 @@ func (s *TaskService) AsyncBackup(taskType string, taskData *task.BackupTaskData
 	s.log.Infof("AsyncBackup [%s] [%+v] [%s]", taskType, taskData, taskData.Name)
 	return nil
 }
+
+// EnqueueSearchReindex 入队一个 OpenSearch 单条重索引任务。
+//
+// 由 PostService / PostTranslationRepo 在 DB 事务提交成功后调用，
+// 用于把 post / post_translation 的变更同步到 ES。
+//
+// 入队是 best-effort：失败仅记日志、不回滚 DB。崩溃窗口内漏掉的文档由
+// SearchService.ReindexAll 周期任务修复（最长 1 小时滞后）。
+//
+// 安全：payload 只含 id，不含文档内容；ES 文档 tenant_id 由 worker 从 DB
+// 记录取（GetReindexDocuments 内部从 ent.Post.TenantID 取），非 payload。
+func (s *TaskService) EnqueueSearchReindex(payload *task.SearchReindexPayload) error {
+	if payload == nil {
+		return errors.New("nil search reindex payload")
+	}
+	if s.taskScheduler == nil {
+		// 调度器未注入（如开发环境未起 asynq）→ 静默跳过，不阻断主业务
+		s.log.Warnf("search reindex skipped: task scheduler not available (entity=%s id=%d op=%s)",
+			payload.Entity, payload.ID, payload.Op)
+		return nil
+	}
+	if err := s.taskScheduler.NewTask(task.SearchReindexTaskType, payload); err != nil {
+		s.log.Errorf("enqueue search reindex failed (entity=%s id=%d op=%s): %v",
+			payload.Entity, payload.ID, payload.Op, err)
+		return err
+	}
+	s.log.Infof("enqueued search reindex (entity=%s id=%d op=%s)",
+		payload.Entity, payload.ID, payload.Op)
+	return nil
+}

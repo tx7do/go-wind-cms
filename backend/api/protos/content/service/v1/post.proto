@@ -27,6 +27,13 @@ service PostService {
   // 删除帖子
   rpc Delete (DeletePostRequest) returns (google.protobuf.Empty) {}
 
+  // 搜索帖子（前台全文检索）
+  //
+  // 基于 OpenSearch 实现，强制按调用方租户上下文过滤（tenant_id 由 viewer
+  // 注入，不可由客户端指定）。仅返回 PUBLISHED 且匹配请求 language 的帖子
+  // 的最小字段集（post_id / language / title），不含 content / tenant_id。
+  rpc SearchPosts (SearchPostsRequest) returns (SearchPostsResponse) {}
+
 
   // 检查翻译是否存在
   rpc TranslationExists(PostTranslationExistsRequest) returns (PostTranslationExistsResponse) {}
@@ -391,4 +398,43 @@ message DeletePostTranslationRequest {
       (gnostic.openapi.v3.property) = {description: "通过 post_id 和 language_code 组合查询"}
     ]; // 通过 post_id 和 language_code 组合查询
   }
+}
+
+// 请求 - 帖子搜索
+//
+// tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
+// 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
+message SearchPostsRequest {
+  // 搜索查询词
+  string query = 1 [json_name = "query"];
+
+  // 语言代码（必填，仅返回该语言的翻译命中）
+  string language = 2 [json_name = "language"];
+
+  // 页码（0-based）
+  int32 page = 3 [json_name = "page"];
+
+  // 每页条数（服务端封顶 50）
+  int32 page_size = 4 [json_name = "pageSize"];
+}
+
+// 回应 - 帖子搜索
+//
+// 仅返回最小字段集：post_id / language / title。
+// 不含 content / tenant_id / status——这些字段不向前台暴露。
+message SearchPostsResponse {
+  repeated SearchPostHit items = 1 [json_name = "items"];
+  int32 total = 2 [json_name = "total"];
+}
+
+// 搜索命中条目（最小字段集）
+message SearchPostHit {
+  // 帖子 ID（用于后续 GetPost 详情查询）
+  uint32 post_id = 1 [json_name = "postId"];
+
+  // 语言代码
+  string language = 2 [json_name = "language"];
+
+  // 标题（来自翻译，用于搜索结果展示）
+  string title = 3 [json_name = "title"];
 }
