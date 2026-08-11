@@ -9,6 +9,7 @@ import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import {usePreferences} from '@/core/preferences';
 import {cn} from '@/lib/utils';
 import {Skeleton} from '@/components/ui/skeleton';
+import {isSafeNavUrl} from '@/utils';
 
 import type {siteservicev1_Navigation, siteservicev1_NavigationItem} from '@/api/generated/app/service/v1';
 
@@ -86,8 +87,10 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
     }, []);
 
     const handleNavigate = (item: siteservicev1_NavigationItem) => {
+        // 校验 URL 协议，拒绝 javascript:/data: 等危险协议（修复 AUD9-M1）
+        if (!isSafeNavUrl(item.url)) return;
         if (item.isOpenNewTab) {
-            window.open(item.url, '_blank');
+            window.open(item.url, '_blank', 'noopener,noreferrer');
         } else if (item.url != null) {
             router.push(item.url);
         }

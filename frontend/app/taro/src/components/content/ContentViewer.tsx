@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import {View} from '@tarojs/components';
 import {marked} from 'marked';
+import DOMPurify from 'dompurify';
 import type {ContentViewerProps} from './types';
 
 // 语言别名
@@ -45,18 +46,50 @@ renderer.heading = (heading) => {
 
 renderer.link = (link) => {
     const isExternal = link.href.startsWith('http') || link.href.startsWith('//');
-    return `<View href="${link.href}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="markdown-link">${escapeHtml(link.text)}</View>`;
+    // 转义 href 防止属性逃逸；DOMPurify 仍会随后过滤 javascript: 等危险协议
+    const safeHref = escapeHtml(link.href);
+    return `<a href="${safeHref}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="markdown-link">${escapeHtml(link.text)}</a>`;
 };
 
 renderer.image = (image) => {
-    return `<figure class="markdown-image"><Image src="${image.href}" alt="${image.text}" class="md-img" />${image.text ? `<figcaption>${image.text}</figcaption>` : ''}</figure>`;
+    const safeSrc = escapeHtml(image.href);
+    const safeAlt = escapeHtml(image.text);
+    return `<figure class="markdown-image"><img src="${safeSrc}" alt="${safeAlt}" class="md-img" />${image.text ? `<figcaption>${escapeHtml(image.text)}</figcaption>` : ''}</figure>`;
 };
 
 renderer.paragraph = (token) => {
-    return `<Text>${marked.parseInline(token.text)}</Text>\n`;
+    return `<p>${marked.parseInline(token.text)}</p>\n`;
 };
 
 marked.setOptions({renderer});
+
+// ========== HTML 消毒 ==========
+// 仅允许 http(s)、mailto、tel 以及相对路径/锚点的 URI，拒绝 javascript:/data: 等危险协议。
+// 对齐 Vue 端 Viewer.vue 的安全基线，修复存储型 XSS（AUD9-C1）。
+const SAFE_URI_REGEXP = /^(?:(?:https?|mailto|tel):|[/#.])/i;
+
+function sanitizeHtml(html: string): string {
+    return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: [
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'p', 'br', 'hr', 'pre', 'code',
+            'strong', 'b', 'em', 'i', 'u', 'del', 's',
+            'a', 'img', 'blockquote', 'ul', 'ol', 'li',
+            'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+            'video', 'figure', 'figcaption',
+            'mark', 'sub', 'sup', 'span', 'div',
+        ],
+        ALLOWED_ATTR: [
+            'href', 'title', 'target', 'rel',
+            'src', 'alt', 'width', 'height',
+            'class', 'id', 'data-lang',
+            'data-*',
+            'tabindex',
+        ],
+        KEEP_CONTENT: true,
+        ALLOWED_URI_REGEXP: SAFE_URI_REGEXP,
+    }) as unknown as string;
+}
 
 const ContentViewer: React.FC<ContentViewerProps> = ({
     content = '',
@@ -71,17 +104,18 @@ const ContentViewer: React.FC<ContentViewerProps> = ({
             switch (type) {
                 case 'markdown':
                     html = marked.parse(content) as string;
-                    return html;
+                    return sanitizeHtml(html);
                 case 'html':
-                    return content;
+                    // html 类型同样必须经过 sanitize —— 原文不可信（来自 admin 富文本）
+                    return sanitizeHtml(content);
                 case 'text':
                     return `<pre class="plain-text-block">${escapeHtml(content)}</pre>`;
                 default:
-                    return content;
+                    return sanitizeHtml(content);
             }
         } catch (error) {
             console.error('Error rendering content:', error);
-            return `<Text class="content-error">Failed to render content</Text>`;
+            return `<p class="content-error">Failed to render content</p>`;
         }
     }, [content, type]);
 

@@ -19,6 +19,7 @@ import {usePreferences} from '@/core/preferences';
 import {fetchListNavigations} from '@/api/hooks/navigation';
 import {useLanguageChangeEffect} from '@/hooks/useLanguageChangeEffect';
 import {cn} from '@/lib/utils';
+import {isSafeNavUrl} from '@/utils';
 
 import {useAccessStore} from '@/store/core/access/store';
 import {useAuth} from '@/api/hooks/auth';
@@ -97,8 +98,13 @@ export default function MobileNav() {
     }, {immediate: false, autoCleanup: true});
 
     const handleNavigate = (item: siteservicev1_NavigationItem) => {
+        // 校验 URL 协议，拒绝 javascript:/data: 等危险协议（修复 AUD9-M1）
+        if (!isSafeNavUrl(item.url)) {
+            setOpen(false);
+            return;
+        }
         if (item.isOpenNewTab) {
-            window.open(item.url, '_blank');
+            window.open(item.url, '_blank', 'noopener,noreferrer');
         } else if (item.url != null) {
             router.push(item.url);
         }

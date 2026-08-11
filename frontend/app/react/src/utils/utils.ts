@@ -70,3 +70,19 @@ export function scrollToBottom() {
 export function scrollTo(element: HTMLElement) {
     element.scrollIntoView({behavior: 'smooth'})
 }
+
+/**
+ * URL 安全工具（修复 AUD9-M1）
+ *
+ * 判断 url 是否为可安全导航的外部/内部地址。
+ * 仅允许 http(s)、协议相对（//）和站点内绝对/相对路径，
+ * 拒绝 javascript:/data:/vbscript: 等危险协议，防止导航注入导致的 XSS。
+ */
+const SAFE_NAV_URL_REGEXP = /^(?:https?:\/\/|\/\/|[/#]|[^:/?#]*\.|[^:/?#]+$)/i;
+
+export function isSafeNavUrl(url: string | null | undefined): boolean {
+    if (!url) return false;
+    // 显式拒绝危险协议（双重保险，即便正则漏过）
+    if (/^\s*(javascript|data|vbscript|file):/i.test(url)) return false;
+    return SAFE_NAV_URL_REGEXP.test(url);
+}
