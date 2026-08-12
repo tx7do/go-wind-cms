@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "interaction/service/v1/interaction.proto";
+import "content/service/v1/post.proto";
+
+// 交互服务（点赞/收藏）
+service InteractionService {
+  // 点赞
+  rpc Like (interaction.service.v1.LikeRequest) returns (interaction.service.v1.LikeResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/like"
+      body: "*"
+    };
+  }
+
+  // 取消点赞
+  rpc Unlike (interaction.service.v1.LikeRequest) returns (interaction.service.v1.LikeResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/unlike"
+      body: "*"
+    };
+  }
+
+  // 收藏 post
+  rpc Watch (interaction.service.v1.WatchRequest) returns (interaction.service.v1.WatchResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/watch"
+      body: "*"
+    };
+  }
+
+  // 取消收藏 post
+  rpc Unwatch (interaction.service.v1.WatchRequest) returns (interaction.service.v1.WatchResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/unwatch"
+      body: "*"
+    };
+  }
+
+  // 批量查询交互状态
+  rpc GetInteractionStatus (interaction.service.v1.GetInteractionStatusRequest) returns (interaction.service.v1.GetInteractionStatusResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/status"
+      body: "*"
+    };
+  }
+
+  // 列出当前 viewer 收藏的 post
+  rpc ListWatchedPosts (pagination.PagingRequest) returns (content.service.v1.ListPostResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/interactions/watched-posts"
+    };
+  }
+}

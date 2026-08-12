@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package interaction.service.v1;
+
+import "pagination/v1/pagination.proto";
+import "content/service/v1/post.proto";
+
+// 交互服务（点赞/收藏计数内聚子系统）
+//
+// 作为 post/comment 计数列（likes / like_count）的唯一写入方，集中管理点赞与收藏的
+// ledger 记录及计数缓存递增。viewer 用户身份由鉴权上下文注入，请求体不接受 user_id。
+//
+// 注意：ListWatchedPosts 复用 content.service.v1.ListPostResponse，因此本 proto
+// import content/service/v1/post.proto。这是仓库内首个跨模块 L1 import，权衡是
+// 让网关转发器保持纯透传（参照其余转发器），并避免收藏列表的 N 次 PostService.Get 聚合调用。
+service InteractionService {
+  // 点赞（post 或 comment）。幂等：已点赞则 no-op。
+  rpc Like (LikeRequest) returns (LikeResponse) {}
+
+  // 取消点赞。幂等：未点赞则 no-op。
+  rpc Unlike (LikeRequest) returns (LikeResponse) {}
+
+  // 收藏 post。
+  rpc Watch (WatchRequest) returns (WatchResponse) {}
+
+  // 取消收藏 post。
+  rpc Unwatch (WatchRequest) returns (WatchResponse) {}
+
+  // 批量查询当前 viewer 对指定目标的交互状态（供前端渲染按钮态，不含计数）。
+  rpc GetInteractionStatus (GetInteractionStatusRequest) returns (GetInteractionStatusResponse) {}
+
+  // 列出当前 viewer 收藏的 post。
+  rpc ListWatchedPosts (pagination.PagingRequest) returns (content.service.v1.ListPostResponse) {}
+}
+
+// 交互目标类型
+enum TargetType {
+  TARGET_TYPE_UNSPECIFIED = 0;
+  TARGET_TYPE_POST = 1;
+  TARGET_TYPE_COMMENT = 2;
+}
+
+message LikeRequest {
+  TargetType target_type = 1;
+  uint32 target_id = 2;
+}
+
+message LikeResponse {
+  bool liked = 1;       // 操作后的当前点赞状态
+  int32 like_count = 2; // 操作后的最新点赞计数
+}
+
+message WatchRequest {
+  uint32 post_id = 1;
+}
+
+message WatchResponse {
+  bool watched = 1; // 操作后的当前收藏状态
+}
+
+message GetInteractionStatusRequest {
+  TargetType target_type = 1;
+  repeated uint32 target_ids = 2;
+}
+
+message InteractionStatus {
+  bool liked = 1;
+  bool watched = 2; // 仅对 post 目标有意义；comment 目标永远为 false
+}
+
+message GetInteractionStatusResponse {
+  map<uint32, InteractionStatus> statuses = 1;
+}

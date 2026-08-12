@@ -231,6 +231,30 @@ func (f CommentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CommentMutation", m)
 }
 
+// The CommentLikeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CommentLikeQueryRuleFunc func(context.Context, *ent.CommentLikeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CommentLikeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CommentLikeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CommentLikeQuery", q)
+}
+
+// The CommentLikeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CommentLikeMutationRuleFunc func(context.Context, *ent.CommentLikeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CommentLikeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CommentLikeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CommentLikeMutation", m)
+}
+
 // The DataAccessAuditLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type DataAccessAuditLogQueryRuleFunc func(context.Context, *ent.DataAccessAuditLogQuery) error
@@ -1047,6 +1071,30 @@ func (f PostCategoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PostCategoryMutation", m)
 }
 
+// The PostLikeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PostLikeQueryRuleFunc func(context.Context, *ent.PostLikeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PostLikeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostLikeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PostLikeQuery", q)
+}
+
+// The PostLikeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PostLikeMutationRuleFunc func(context.Context, *ent.PostLikeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PostLikeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PostLikeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PostLikeMutation", m)
+}
+
 // The PostTagQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PostTagQueryRuleFunc func(context.Context, *ent.PostTagQuery) error
@@ -1093,6 +1141,30 @@ func (f PostTranslationMutationRuleFunc) EvalMutation(ctx context.Context, m ent
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PostTranslationMutation", m)
+}
+
+// The PostWatchQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PostWatchQueryRuleFunc func(context.Context, *ent.PostWatchQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PostWatchQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostWatchQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PostWatchQuery", q)
+}
+
+// The PostWatchMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PostWatchMutationRuleFunc func(context.Context, *ent.PostWatchMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PostWatchMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PostWatchMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PostWatchMutation", m)
 }
 
 // The RoleQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1524,6 +1596,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CommentQuery:
 		return q.Filter(), nil
+	case *ent.CommentLikeQuery:
+		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
 		return q.Filter(), nil
 	case *ent.DictEntryQuery:
@@ -1592,9 +1666,13 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PostCategoryQuery:
 		return q.Filter(), nil
+	case *ent.PostLikeQuery:
+		return q.Filter(), nil
 	case *ent.PostTagQuery:
 		return q.Filter(), nil
 	case *ent.PostTranslationQuery:
+		return q.Filter(), nil
+	case *ent.PostWatchQuery:
 		return q.Filter(), nil
 	case *ent.RoleQuery:
 		return q.Filter(), nil
@@ -1644,6 +1722,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.CategoryTranslationMutation:
 		return m.Filter(), nil
 	case *ent.CommentMutation:
+		return m.Filter(), nil
+	case *ent.CommentLikeMutation:
 		return m.Filter(), nil
 	case *ent.DataAccessAuditLogMutation:
 		return m.Filter(), nil
@@ -1713,9 +1793,13 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.PostCategoryMutation:
 		return m.Filter(), nil
+	case *ent.PostLikeMutation:
+		return m.Filter(), nil
 	case *ent.PostTagMutation:
 		return m.Filter(), nil
 	case *ent.PostTranslationMutation:
+		return m.Filter(), nil
+	case *ent.PostWatchMutation:
 		return m.Filter(), nil
 	case *ent.RoleMutation:
 		return m.Filter(), nil

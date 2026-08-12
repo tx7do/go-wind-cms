@@ -60,6 +60,9 @@ managed:
       path: comment/service/v1
       value: go-wind-cms/api/gen/go/comment/service/v1;commentpb
     - file_option: go_package
+      path: interaction/service/v1
+      value: go-wind-cms/api/gen/go/interaction/service/v1;interactionpb
+    - file_option: go_package
       path: media/service/v1
       value: go-wind-cms/api/gen/go/media/service/v1;mediapb
 

@@ -48,6 +48,8 @@ var ProviderSet = wire.NewSet(
 
 	data.NewCommentServiceClient,
 
+	data.NewInteractionServiceClient,
+
 	data.NewNavigationServiceClient,
 	data.NewSiteSettingServiceClient,
 

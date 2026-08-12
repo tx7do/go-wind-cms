@@ -68,6 +68,18 @@ func (f CommentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentMutation", m)
 }
 
+// The CommentLikeFunc type is an adapter to allow the use of ordinary
+// function as CommentLike mutator.
+type CommentLikeFunc func(context.Context, *ent.CommentLikeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CommentLikeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CommentLikeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentLikeMutation", m)
+}
+
 // The DataAccessAuditLogFunc type is an adapter to allow the use of ordinary
 // function as DataAccessAuditLog mutator.
 type DataAccessAuditLogFunc func(context.Context, *ent.DataAccessAuditLogMutation) (ent.Value, error)
@@ -476,6 +488,18 @@ func (f PostCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostCategoryMutation", m)
 }
 
+// The PostLikeFunc type is an adapter to allow the use of ordinary
+// function as PostLike mutator.
+type PostLikeFunc func(context.Context, *ent.PostLikeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostLikeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostLikeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostLikeMutation", m)
+}
+
 // The PostTagFunc type is an adapter to allow the use of ordinary
 // function as PostTag mutator.
 type PostTagFunc func(context.Context, *ent.PostTagMutation) (ent.Value, error)
@@ -498,6 +522,18 @@ func (f PostTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostTranslationMutation", m)
+}
+
+// The PostWatchFunc type is an adapter to allow the use of ordinary
+// function as PostWatch mutator.
+type PostWatchFunc func(context.Context, *ent.PostWatchMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostWatchFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostWatchMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostWatchMutation", m)
 }
 
 // The RoleFunc type is an adapter to allow the use of ordinary

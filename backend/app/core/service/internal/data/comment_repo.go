@@ -19,6 +19,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
+
+	"go-wind-cms/pkg/utils"
 )
 
 type CommentRepo struct {
@@ -198,9 +200,8 @@ func (r *CommentRepo) Create(ctx context.Context, req *commentV1.CreateCommentRe
 		SetNillableAuthorURL(req.Data.AuthorUrl).
 		SetNillableAuthorType(r.authorTypeConverter.ToEntity(req.Data.AuthorType)).
 		SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
-		SetLikeCount(0).
-		SetDislikeCount(0).
-		SetReplyCount(0).
+		// 计数列（like_count/dislike_count/reply_count）由 schema Default(0) 兜底，
+		// 由 InteractionService 独占递增，Create 路径不再显式设置。
 		SetNillableIPAddress(req.Data.IpAddress).
 		SetNillableLocation(req.Data.Location).
 		SetNillableUserAgent(req.Data.UserAgent).
@@ -242,6 +243,15 @@ func (r *CommentRepo) Update(ctx context.Context, req *commentV1.UpdateCommentRe
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	// 计数列（like_count/dislike_count/reply_count）由 InteractionService 独占写入。
+	// 经 FilterBlacklist 剥离客户端通过 update_mask 写入计数列的尝试，同时关闭
+	// go-crud applyUpdateOneNilFieldMask 在“mask 命中且未传值”时下发 SET NULL 的通道，
+	// 避免客户端把计数列 NULL 化造成数据丢失。
+	req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
+		"like_count",
+		"dislike_count",
+		"reply_count",
+	})
 	builder := r.entClient.Client().Comment.UpdateOneID(req.GetId())
 	builder.Where(comment.IDEQ(req.GetId()))
 	if hasTenant {

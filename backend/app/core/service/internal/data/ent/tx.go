@@ -22,6 +22,8 @@ type Tx struct {
 	CategoryTranslation *CategoryTranslationClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// CommentLike is the client for interacting with the CommentLike builders.
+	CommentLike *CommentLikeClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -90,10 +92,14 @@ type Tx struct {
 	Post *PostClient
 	// PostCategory is the client for interacting with the PostCategory builders.
 	PostCategory *PostCategoryClient
+	// PostLike is the client for interacting with the PostLike builders.
+	PostLike *PostLikeClient
 	// PostTag is the client for interacting with the PostTag builders.
 	PostTag *PostTagClient
 	// PostTranslation is the client for interacting with the PostTranslation builders.
 	PostTranslation *PostTranslationClient
+	// PostWatch is the client for interacting with the PostWatch builders.
+	PostWatch *PostWatchClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -262,6 +268,7 @@ func (tx *Tx) init() {
 	tx.Category = NewCategoryClient(tx.config)
 	tx.CategoryTranslation = NewCategoryTranslationClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
+	tx.CommentLike = NewCommentLikeClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
@@ -296,8 +303,10 @@ func (tx *Tx) init() {
 	tx.Position = NewPositionClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
 	tx.PostCategory = NewPostCategoryClient(tx.config)
+	tx.PostLike = NewPostLikeClient(tx.config)
 	tx.PostTag = NewPostTagClient(tx.config)
 	tx.PostTranslation = NewPostTranslationClient(tx.config)
+	tx.PostWatch = NewPostWatchClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)

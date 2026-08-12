@@ -28,6 +28,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+
+	"go-wind-cms/pkg/utils"
 )
 
 type PostRepo struct {
@@ -449,10 +451,8 @@ func (r *PostRepo) Create(ctx context.Context, req *contentV1.CreatePostRequest)
 		SetNillableAutoSummary(req.Data.AutoSummary).
 		SetNillableIsFeatured(req.Data.IsFeatured).
 		SetNillableSortOrder(req.Data.SortOrder).
-		// 服务端计数器初始化为 0，不接受客户端值
-		SetVisits(0).
-		SetLikes(0).
-		SetCommentCount(0).
+		// 计数列（visits/likes/comment_count）由 schema Default(0) 兜底，
+		// 由 InteractionService 独占递增，Create 路径不再显式设置。
 		SetNillableAuthorID(req.Data.AuthorId).
 		SetNillableAuthorName(req.Data.AuthorName).
 		SetNillablePasswordHash(req.Data.PasswordHash).
@@ -588,6 +588,15 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	// 计数列（visits/likes/comment_count）由 InteractionService 独占写入。
+	// 经 FilterBlacklist 剥离客户端通过 update_mask 写入计数列的尝试，同时关闭
+	// go-crud applyUpdateOneNilFieldMask 在“mask 命中且未传值”时下发 SET NULL 的通道，
+	// 避免客户端把计数列 NULL 化造成数据丢失。
+	req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
+		"visits",
+		"likes",
+		"comment_count",
+	})
 	builder := tx.Post.UpdateOneID(req.GetId())
 	builder.Where(post.IDEQ(req.GetId()))
 	if hasTenant {
@@ -595,8 +604,8 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Post) {
-			// 服务端计数器（visits/likes/comment_count）不可由客户端通过 Update 设置，
-			// 仅能通过服务端专用的递增接口修改。
+			// 计数列（visits/likes/comment_count）由 InteractionService 独占写入，
+			// 经 Update 前 FilterBlacklist 剥离客户端通过 update_mask 的写入尝试。
 			// author_id / password_hash 在 Update 时不再接受客户端值（创建时设置），
 			// updated_by 强制取调用者身份，保证审计归属真实。
 			builder.

@@ -21,6 +21,9 @@ type CategoryTranslation func(*sql.Selector)
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
+// CommentLike is the predicate function for commentlike builders.
+type CommentLike func(*sql.Selector)
+
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
 
@@ -123,11 +126,17 @@ type Post func(*sql.Selector)
 // PostCategory is the predicate function for postcategory builders.
 type PostCategory func(*sql.Selector)
 
+// PostLike is the predicate function for postlike builders.
+type PostLike func(*sql.Selector)
+
 // PostTag is the predicate function for posttag builders.
 type PostTag func(*sql.Selector)
 
 // PostTranslation is the predicate function for posttranslation builders.
 type PostTranslation func(*sql.Selector)
+
+// PostWatch is the predicate function for postwatch builders.
+type PostWatch func(*sql.Selector)
 
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)

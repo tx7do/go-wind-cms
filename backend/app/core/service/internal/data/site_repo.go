@@ -17,6 +17,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
+
+	"go-wind-cms/pkg/utils"
 )
 
 type SiteRepo struct {
@@ -134,7 +136,8 @@ func (r *SiteRepo) Create(ctx context.Context, req *siteV1.CreateSiteRequest) (*
 		SetNillableDefaultLocale(req.Data.DefaultLocale).
 		SetNillableTemplate(req.Data.Template).
 		SetNillableTheme(req.Data.Theme).
-		SetVisitCount(0).
+		// 计数列（visit_count）由 schema Default(0) 兜底，
+		// 由 InteractionService 独占递增，Create 路径不再显式设置。
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
 
@@ -173,6 +176,13 @@ func (r *SiteRepo) Update(ctx context.Context, req *siteV1.UpdateSiteRequest) (*
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	// 计数列（visit_count）由 InteractionService 独占写入。
+	// 经 FilterBlacklist 剥离客户端通过 update_mask 写入计数列的尝试，同时关闭
+	// go-crud applyUpdateNieldMask 在“mask 命中且未传值”时下发 SET NULL 的通道，
+	// 避免客户端把计数列 NULL 化造成数据丢失。
+	req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
+		"visit_count",
+	})
 	builder := r.entClient.Client().Site.UpdateOneID(req.GetId())
 	builder.Where(site.IDEQ(req.GetId()))
 	if hasTenant {

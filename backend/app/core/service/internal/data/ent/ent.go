@@ -11,6 +11,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
+	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -45,8 +46,10 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/position"
 	"go-wind-cms/app/core/service/internal/data/ent/post"
 	"go-wind-cms/app/core/service/internal/data/ent/postcategory"
+	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
@@ -134,6 +137,7 @@ func checkColumn(t, c string) error {
 			category.Table:                 category.ValidColumn,
 			categorytranslation.Table:      categorytranslation.ValidColumn,
 			comment.Table:                  comment.ValidColumn,
+			commentlike.Table:              commentlike.ValidColumn,
 			dataaccessauditlog.Table:       dataaccessauditlog.ValidColumn,
 			dictentry.Table:                dictentry.ValidColumn,
 			dictentryi18n.Table:            dictentryi18n.ValidColumn,
@@ -168,8 +172,10 @@ func checkColumn(t, c string) error {
 			position.Table:                 position.ValidColumn,
 			post.Table:                     post.ValidColumn,
 			postcategory.Table:             postcategory.ValidColumn,
+			postlike.Table:                 postlike.ValidColumn,
 			posttag.Table:                  posttag.ValidColumn,
 			posttranslation.Table:          posttranslation.ValidColumn,
+			postwatch.Table:                postwatch.ValidColumn,
 			role.Table:                     role.ValidColumn,
 			rolemetadata.Table:             rolemetadata.ValidColumn,
 			rolepermission.Table:           rolepermission.ValidColumn,

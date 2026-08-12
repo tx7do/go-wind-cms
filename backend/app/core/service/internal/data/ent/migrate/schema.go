@@ -343,6 +343,30 @@ var (
 			},
 		},
 	}
+	// CommentLikesColumns holds the columns for the "comment_likes" table.
+	CommentLikesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "点赞用户ID"},
+		{Name: "comment_id", Type: field.TypeUint32, Nullable: true, Comment: "被点赞评论ID"},
+	}
+	// CommentLikesTable holds the schema information for the "comment_likes" table.
+	CommentLikesTable = &schema.Table{
+		Name:       "comment_likes",
+		Comment:    "评论点赞 ledger 表",
+		Columns:    CommentLikesColumns,
+		PrimaryKey: []*schema.Column{CommentLikesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "commentlike_tenant_id_user_id_comment_id",
+				Unique:  true,
+				Columns: []*schema.Column{CommentLikesColumns[4], CommentLikesColumns[5], CommentLikesColumns[6]},
+			},
+		},
+	}
 	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
 	SysDataAccessAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2720,6 +2744,30 @@ var (
 			},
 		},
 	}
+	// PostLikesColumns holds the columns for the "post_likes" table.
+	PostLikesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "点赞用户ID"},
+		{Name: "post_id", Type: field.TypeUint32, Nullable: true, Comment: "被点赞帖子ID"},
+	}
+	// PostLikesTable holds the schema information for the "post_likes" table.
+	PostLikesTable = &schema.Table{
+		Name:       "post_likes",
+		Comment:    "帖子点赞 ledger 表",
+		Columns:    PostLikesColumns,
+		PrimaryKey: []*schema.Column{PostLikesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "postlike_tenant_id_user_id_post_id",
+				Unique:  true,
+				Columns: []*schema.Column{PostLikesColumns[4], PostLikesColumns[5], PostLikesColumns[6]},
+			},
+		},
+	}
 	// PostTagsColumns holds the columns for the "post_tags" table.
 	PostTagsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2815,6 +2863,30 @@ var (
 				Name:    "posttranslation_language_code_slug",
 				Unique:  false,
 				Columns: []*schema.Column{PostTranslationsColumns[10], PostTranslationsColumns[12]},
+			},
+		},
+	}
+	// PostWatchesColumns holds the columns for the "post_watches" table.
+	PostWatchesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "收藏用户ID"},
+		{Name: "post_id", Type: field.TypeUint32, Nullable: true, Comment: "被收藏帖子ID"},
+	}
+	// PostWatchesTable holds the schema information for the "post_watches" table.
+	PostWatchesTable = &schema.Table{
+		Name:       "post_watches",
+		Comment:    "帖子收藏 ledger 表",
+		Columns:    PostWatchesColumns,
+		PrimaryKey: []*schema.Column{PostWatchesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "postwatch_tenant_id_user_id_post_id",
+				Unique:  true,
+				Columns: []*schema.Column{PostWatchesColumns[4], PostWatchesColumns[5], PostWatchesColumns[6]},
 			},
 		},
 	}
@@ -3889,6 +3961,7 @@ var (
 		CategoriesTable,
 		CategoryTranslationsTable,
 		CommentsTable,
+		CommentLikesTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
@@ -3923,8 +3996,10 @@ var (
 		SysPositionsTable,
 		PostsTable,
 		PostCategoriesTable,
+		PostLikesTable,
 		PostTagsTable,
 		PostTranslationsTable,
+		PostWatchesTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
@@ -3969,6 +4044,11 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = CommentsTable
 	CommentsTable.Annotation = &entsql.Annotation{
 		Table:     "comments",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	CommentLikesTable.Annotation = &entsql.Annotation{
+		Table:     "comment_likes",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -4149,6 +4229,11 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	PostLikesTable.Annotation = &entsql.Annotation{
+		Table:     "post_likes",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	PostTagsTable.Annotation = &entsql.Annotation{
 		Table:     "post_tags",
 		Charset:   "utf8mb4",
@@ -4156,6 +4241,11 @@ func init() {
 	}
 	PostTranslationsTable.Annotation = &entsql.Annotation{
 		Table:     "post_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PostWatchesTable.Annotation = &entsql.Annotation{
+		Table:     "post_watches",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

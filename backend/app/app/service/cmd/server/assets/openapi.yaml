@@ -477,6 +477,179 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
+    /app/v1/interactions/like:
+        post:
+            tags:
+                - InteractionService
+            description: 点赞
+            operationId: InteractionService_Like
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.LikeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.LikeResponse'
+    /app/v1/interactions/status:
+        post:
+            tags:
+                - InteractionService
+            description: 批量查询交互状态
+            operationId: InteractionService_GetInteractionStatus
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.GetInteractionStatusRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.GetInteractionStatusResponse'
+    /app/v1/interactions/unlike:
+        post:
+            tags:
+                - InteractionService
+            description: 取消点赞
+            operationId: InteractionService_Unlike
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.LikeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.LikeResponse'
+    /app/v1/interactions/unwatch:
+        post:
+            tags:
+                - InteractionService
+            description: 取消收藏 post
+            operationId: InteractionService_Unwatch
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.WatchRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.WatchResponse'
+    /app/v1/interactions/watch:
+        post:
+            tags:
+                - InteractionService
+            description: 收藏 post
+            operationId: InteractionService_Watch
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.WatchRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.WatchResponse'
+    /app/v1/interactions/watched-posts:
+        get:
+            tags:
+                - InteractionService
+            description: 列出当前 viewer 收藏的 post
+            operationId: InteractionService_ListWatchedPosts
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListPostResponse'
     /app/v1/login:
         post:
             tags:
@@ -3193,6 +3366,67 @@ components:
                 verificationId:
                     type: string
                     description: 服务端生成的验证码会话ID（可选）
+        interaction.service.v1.GetInteractionStatusRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_POST
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+        interaction.service.v1.GetInteractionStatusResponse:
+            type: object
+            properties:
+                statuses:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/interaction.service.v1.InteractionStatus'
+        interaction.service.v1.InteractionStatus:
+            type: object
+            properties:
+                liked:
+                    type: boolean
+                watched:
+                    type: boolean
+        interaction.service.v1.LikeRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_POST
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetId:
+                    type: integer
+                    format: uint32
+        interaction.service.v1.LikeResponse:
+            type: object
+            properties:
+                liked:
+                    type: boolean
+                likeCount:
+                    type: integer
+                    format: int32
+        interaction.service.v1.WatchRequest:
+            type: object
+            properties:
+                postId:
+                    type: integer
+                    format: uint32
+        interaction.service.v1.WatchResponse:
+            type: object
+            properties:
+                watched:
+                    type: boolean
         site.service.v1.CreateNavigationRequest:
             type: object
             properties:
@@ -3491,6 +3725,8 @@ tags:
       description: 评论服务
     - name: FileTransferService
       description: 文件传输服务
+    - name: InteractionService
+      description: 交互服务（点赞/收藏）
     - name: NavigationService
       description: 导航服务
     - name: PageService

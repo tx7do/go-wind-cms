@@ -10,6 +10,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
+	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -44,8 +45,10 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/position"
 	"go-wind-cms/app/core/service/internal/data/ent/post"
 	"go-wind-cms/app/core/service/internal/data/ent/postcategory"
+	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
@@ -246,6 +249,30 @@ func init() {
 	commentDescID := commentMixinFields0[0].Descriptor()
 	// comment.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	comment.IDValidator = commentDescID.Validators[0].(func(uint32) error)
+	commentlikeMixin := schema.CommentLike{}.Mixin()
+	commentlike.Policy = privacy.NewPolicies(commentlikeMixin[2], schema.CommentLike{})
+	commentlike.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := commentlike.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	commentlikeMixinFields0 := commentlikeMixin[0].Fields()
+	_ = commentlikeMixinFields0
+	commentlikeMixinFields2 := commentlikeMixin[2].Fields()
+	_ = commentlikeMixinFields2
+	commentlikeFields := schema.CommentLike{}.Fields()
+	_ = commentlikeFields
+	// commentlikeDescTenantID is the schema descriptor for tenant_id field.
+	commentlikeDescTenantID := commentlikeMixinFields2[0].Descriptor()
+	// commentlike.DefaultTenantID holds the default value on creation for the tenant_id field.
+	commentlike.DefaultTenantID = commentlikeDescTenantID.Default.(uint32)
+	// commentlikeDescID is the schema descriptor for id field.
+	commentlikeDescID := commentlikeMixinFields0[0].Descriptor()
+	// commentlike.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	commentlike.IDValidator = commentlikeDescID.Validators[0].(func(uint32) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1383,6 +1410,30 @@ func init() {
 	postcategoryDescID := postcategoryMixinFields0[0].Descriptor()
 	// postcategory.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	postcategory.IDValidator = postcategoryDescID.Validators[0].(func(uint32) error)
+	postlikeMixin := schema.PostLike{}.Mixin()
+	postlike.Policy = privacy.NewPolicies(postlikeMixin[2], schema.PostLike{})
+	postlike.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := postlike.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	postlikeMixinFields0 := postlikeMixin[0].Fields()
+	_ = postlikeMixinFields0
+	postlikeMixinFields2 := postlikeMixin[2].Fields()
+	_ = postlikeMixinFields2
+	postlikeFields := schema.PostLike{}.Fields()
+	_ = postlikeFields
+	// postlikeDescTenantID is the schema descriptor for tenant_id field.
+	postlikeDescTenantID := postlikeMixinFields2[0].Descriptor()
+	// postlike.DefaultTenantID holds the default value on creation for the tenant_id field.
+	postlike.DefaultTenantID = postlikeDescTenantID.Default.(uint32)
+	// postlikeDescID is the schema descriptor for id field.
+	postlikeDescID := postlikeMixinFields0[0].Descriptor()
+	// postlike.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	postlike.IDValidator = postlikeDescID.Validators[0].(func(uint32) error)
 	posttagMixin := schema.PostTag{}.Mixin()
 	posttag.Policy = privacy.NewPolicies(posttagMixin[2], schema.PostTag{})
 	posttag.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1435,6 +1486,30 @@ func init() {
 	posttranslationDescID := posttranslationMixinFields0[0].Descriptor()
 	// posttranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	posttranslation.IDValidator = posttranslationDescID.Validators[0].(func(uint32) error)
+	postwatchMixin := schema.PostWatch{}.Mixin()
+	postwatch.Policy = privacy.NewPolicies(postwatchMixin[2], schema.PostWatch{})
+	postwatch.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := postwatch.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	postwatchMixinFields0 := postwatchMixin[0].Fields()
+	_ = postwatchMixinFields0
+	postwatchMixinFields2 := postwatchMixin[2].Fields()
+	_ = postwatchMixinFields2
+	postwatchFields := schema.PostWatch{}.Fields()
+	_ = postwatchFields
+	// postwatchDescTenantID is the schema descriptor for tenant_id field.
+	postwatchDescTenantID := postwatchMixinFields2[0].Descriptor()
+	// postwatch.DefaultTenantID holds the default value on creation for the tenant_id field.
+	postwatch.DefaultTenantID = postwatchDescTenantID.Default.(uint32)
+	// postwatchDescID is the schema descriptor for id field.
+	postwatchDescID := postwatchMixinFields0[0].Descriptor()
+	// postwatch.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	postwatch.IDValidator = postwatchDescID.Validators[0].(func(uint32) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {

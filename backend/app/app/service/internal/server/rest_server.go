@@ -98,6 +98,7 @@ func NewRestServer(
 	postService *service.PostService,
 	categoryService *service.CategoryService,
 	commentService *service.CommentService,
+	interactionService *service.InteractionService,
 	tagService *service.TagService,
 	pageService *service.PageService,
 	sectionService *service.SectionService,
@@ -127,6 +128,8 @@ func NewRestServer(
 	appV1.RegisterSectionServiceHTTPServer(srv, sectionService)
 
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
+
+	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

@@ -16,6 +16,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
+	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -50,8 +51,10 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/position"
 	"go-wind-cms/app/core/service/internal/data/ent/post"
 	"go-wind-cms/app/core/service/internal/data/ent/postcategory"
+	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
@@ -90,6 +93,8 @@ type Client struct {
 	CategoryTranslation *CategoryTranslationClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// CommentLike is the client for interacting with the CommentLike builders.
+	CommentLike *CommentLikeClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -158,10 +163,14 @@ type Client struct {
 	Post *PostClient
 	// PostCategory is the client for interacting with the PostCategory builders.
 	PostCategory *PostCategoryClient
+	// PostLike is the client for interacting with the PostLike builders.
+	PostLike *PostLikeClient
 	// PostTag is the client for interacting with the PostTag builders.
 	PostTag *PostTagClient
 	// PostTranslation is the client for interacting with the PostTranslation builders.
 	PostTranslation *PostTranslationClient
+	// PostWatch is the client for interacting with the PostWatch builders.
+	PostWatch *PostWatchClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -210,6 +219,7 @@ func (c *Client) init() {
 	c.Category = NewCategoryClient(c.config)
 	c.CategoryTranslation = NewCategoryTranslationClient(c.config)
 	c.Comment = NewCommentClient(c.config)
+	c.CommentLike = NewCommentLikeClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.DictEntry = NewDictEntryClient(c.config)
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
@@ -244,8 +254,10 @@ func (c *Client) init() {
 	c.Position = NewPositionClient(c.config)
 	c.Post = NewPostClient(c.config)
 	c.PostCategory = NewPostCategoryClient(c.config)
+	c.PostLike = NewPostLikeClient(c.config)
 	c.PostTag = NewPostTagClient(c.config)
 	c.PostTranslation = NewPostTranslationClient(c.config)
+	c.PostWatch = NewPostWatchClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
@@ -359,6 +371,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Category:                 NewCategoryClient(cfg),
 		CategoryTranslation:      NewCategoryTranslationClient(cfg),
 		Comment:                  NewCommentClient(cfg),
+		CommentLike:              NewCommentLikeClient(cfg),
 		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
 		DictEntry:                NewDictEntryClient(cfg),
 		DictEntryI18n:            NewDictEntryI18nClient(cfg),
@@ -393,8 +406,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Position:                 NewPositionClient(cfg),
 		Post:                     NewPostClient(cfg),
 		PostCategory:             NewPostCategoryClient(cfg),
+		PostLike:                 NewPostLikeClient(cfg),
 		PostTag:                  NewPostTagClient(cfg),
 		PostTranslation:          NewPostTranslationClient(cfg),
+		PostWatch:                NewPostWatchClient(cfg),
 		Role:                     NewRoleClient(cfg),
 		RoleMetadata:             NewRoleMetadataClient(cfg),
 		RolePermission:           NewRolePermissionClient(cfg),
@@ -435,6 +450,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Category:                 NewCategoryClient(cfg),
 		CategoryTranslation:      NewCategoryTranslationClient(cfg),
 		Comment:                  NewCommentClient(cfg),
+		CommentLike:              NewCommentLikeClient(cfg),
 		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
 		DictEntry:                NewDictEntryClient(cfg),
 		DictEntryI18n:            NewDictEntryI18nClient(cfg),
@@ -469,8 +485,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Position:                 NewPositionClient(cfg),
 		Post:                     NewPostClient(cfg),
 		PostCategory:             NewPostCategoryClient(cfg),
+		PostLike:                 NewPostLikeClient(cfg),
 		PostTag:                  NewPostTagClient(cfg),
 		PostTranslation:          NewPostTranslationClient(cfg),
+		PostWatch:                NewPostWatchClient(cfg),
 		Role:                     NewRoleClient(cfg),
 		RoleMetadata:             NewRoleMetadataClient(cfg),
 		RolePermission:           NewRolePermissionClient(cfg),
@@ -517,17 +535,18 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiAuditLog, c.Category, c.CategoryTranslation, c.Comment,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.File,
-		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
-		c.Language, c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
-		c.PageTranslation, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.Post, c.PostCategory, c.PostTag, c.PostTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.CommentLike, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
+		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -538,17 +557,18 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiAuditLog, c.Category, c.CategoryTranslation, c.Comment,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.File,
-		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
-		c.Language, c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
-		c.PageTranslation, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.Post, c.PostCategory, c.PostTag, c.PostTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.CommentLike, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
+		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -567,6 +587,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.CategoryTranslation.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
+	case *CommentLikeMutation:
+		return c.CommentLike.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
 		return c.DataAccessAuditLog.mutate(ctx, m)
 	case *DictEntryMutation:
@@ -635,10 +657,14 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Post.mutate(ctx, m)
 	case *PostCategoryMutation:
 		return c.PostCategory.mutate(ctx, m)
+	case *PostLikeMutation:
+		return c.PostLike.mutate(ctx, m)
 	case *PostTagMutation:
 		return c.PostTag.mutate(ctx, m)
 	case *PostTranslationMutation:
 		return c.PostTranslation.mutate(ctx, m)
+	case *PostWatchMutation:
+		return c.PostWatch.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
 	case *RoleMetadataMutation:
@@ -1407,6 +1433,140 @@ func (c *CommentClient) mutate(ctx context.Context, m *CommentMutation) (Value, 
 		return (&CommentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Comment mutation op: %q", m.Op())
+	}
+}
+
+// CommentLikeClient is a client for the CommentLike schema.
+type CommentLikeClient struct {
+	config
+}
+
+// NewCommentLikeClient returns a client for the CommentLike from the given config.
+func NewCommentLikeClient(c config) *CommentLikeClient {
+	return &CommentLikeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `commentlike.Hooks(f(g(h())))`.
+func (c *CommentLikeClient) Use(hooks ...Hook) {
+	c.hooks.CommentLike = append(c.hooks.CommentLike, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `commentlike.Intercept(f(g(h())))`.
+func (c *CommentLikeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CommentLike = append(c.inters.CommentLike, interceptors...)
+}
+
+// Create returns a builder for creating a CommentLike entity.
+func (c *CommentLikeClient) Create() *CommentLikeCreate {
+	mutation := newCommentLikeMutation(c.config, OpCreate)
+	return &CommentLikeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CommentLike entities.
+func (c *CommentLikeClient) CreateBulk(builders ...*CommentLikeCreate) *CommentLikeCreateBulk {
+	return &CommentLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CommentLikeClient) MapCreateBulk(slice any, setFunc func(*CommentLikeCreate, int)) *CommentLikeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CommentLikeCreateBulk{err: fmt.Errorf("calling to CommentLikeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CommentLikeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CommentLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CommentLike.
+func (c *CommentLikeClient) Update() *CommentLikeUpdate {
+	mutation := newCommentLikeMutation(c.config, OpUpdate)
+	return &CommentLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CommentLikeClient) UpdateOne(_m *CommentLike) *CommentLikeUpdateOne {
+	mutation := newCommentLikeMutation(c.config, OpUpdateOne, withCommentLike(_m))
+	return &CommentLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CommentLikeClient) UpdateOneID(id uint32) *CommentLikeUpdateOne {
+	mutation := newCommentLikeMutation(c.config, OpUpdateOne, withCommentLikeID(id))
+	return &CommentLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CommentLike.
+func (c *CommentLikeClient) Delete() *CommentLikeDelete {
+	mutation := newCommentLikeMutation(c.config, OpDelete)
+	return &CommentLikeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CommentLikeClient) DeleteOne(_m *CommentLike) *CommentLikeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CommentLikeClient) DeleteOneID(id uint32) *CommentLikeDeleteOne {
+	builder := c.Delete().Where(commentlike.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CommentLikeDeleteOne{builder}
+}
+
+// Query returns a query builder for CommentLike.
+func (c *CommentLikeClient) Query() *CommentLikeQuery {
+	return &CommentLikeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCommentLike},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CommentLike entity by its id.
+func (c *CommentLikeClient) Get(ctx context.Context, id uint32) (*CommentLike, error) {
+	return c.Query().Where(commentlike.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CommentLikeClient) GetX(ctx context.Context, id uint32) *CommentLike {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CommentLikeClient) Hooks() []Hook {
+	hooks := c.hooks.CommentLike
+	return append(hooks[:len(hooks):len(hooks)], commentlike.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *CommentLikeClient) Interceptors() []Interceptor {
+	return c.inters.CommentLike
+}
+
+func (c *CommentLikeClient) mutate(ctx context.Context, m *CommentLikeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CommentLikeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CommentLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CommentLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CommentLikeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CommentLike mutation op: %q", m.Op())
 	}
 }
 
@@ -6189,6 +6349,140 @@ func (c *PostCategoryClient) mutate(ctx context.Context, m *PostCategoryMutation
 	}
 }
 
+// PostLikeClient is a client for the PostLike schema.
+type PostLikeClient struct {
+	config
+}
+
+// NewPostLikeClient returns a client for the PostLike from the given config.
+func NewPostLikeClient(c config) *PostLikeClient {
+	return &PostLikeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `postlike.Hooks(f(g(h())))`.
+func (c *PostLikeClient) Use(hooks ...Hook) {
+	c.hooks.PostLike = append(c.hooks.PostLike, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `postlike.Intercept(f(g(h())))`.
+func (c *PostLikeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PostLike = append(c.inters.PostLike, interceptors...)
+}
+
+// Create returns a builder for creating a PostLike entity.
+func (c *PostLikeClient) Create() *PostLikeCreate {
+	mutation := newPostLikeMutation(c.config, OpCreate)
+	return &PostLikeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PostLike entities.
+func (c *PostLikeClient) CreateBulk(builders ...*PostLikeCreate) *PostLikeCreateBulk {
+	return &PostLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PostLikeClient) MapCreateBulk(slice any, setFunc func(*PostLikeCreate, int)) *PostLikeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PostLikeCreateBulk{err: fmt.Errorf("calling to PostLikeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PostLikeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PostLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PostLike.
+func (c *PostLikeClient) Update() *PostLikeUpdate {
+	mutation := newPostLikeMutation(c.config, OpUpdate)
+	return &PostLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PostLikeClient) UpdateOne(_m *PostLike) *PostLikeUpdateOne {
+	mutation := newPostLikeMutation(c.config, OpUpdateOne, withPostLike(_m))
+	return &PostLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PostLikeClient) UpdateOneID(id uint32) *PostLikeUpdateOne {
+	mutation := newPostLikeMutation(c.config, OpUpdateOne, withPostLikeID(id))
+	return &PostLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PostLike.
+func (c *PostLikeClient) Delete() *PostLikeDelete {
+	mutation := newPostLikeMutation(c.config, OpDelete)
+	return &PostLikeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PostLikeClient) DeleteOne(_m *PostLike) *PostLikeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PostLikeClient) DeleteOneID(id uint32) *PostLikeDeleteOne {
+	builder := c.Delete().Where(postlike.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PostLikeDeleteOne{builder}
+}
+
+// Query returns a query builder for PostLike.
+func (c *PostLikeClient) Query() *PostLikeQuery {
+	return &PostLikeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePostLike},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PostLike entity by its id.
+func (c *PostLikeClient) Get(ctx context.Context, id uint32) (*PostLike, error) {
+	return c.Query().Where(postlike.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PostLikeClient) GetX(ctx context.Context, id uint32) *PostLike {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PostLikeClient) Hooks() []Hook {
+	hooks := c.hooks.PostLike
+	return append(hooks[:len(hooks):len(hooks)], postlike.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PostLikeClient) Interceptors() []Interceptor {
+	return c.inters.PostLike
+}
+
+func (c *PostLikeClient) mutate(ctx context.Context, m *PostLikeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PostLikeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PostLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PostLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PostLikeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PostLike mutation op: %q", m.Op())
+	}
+}
+
 // PostTagClient is a client for the PostTag schema.
 type PostTagClient struct {
 	config
@@ -6454,6 +6748,140 @@ func (c *PostTranslationClient) mutate(ctx context.Context, m *PostTranslationMu
 		return (&PostTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown PostTranslation mutation op: %q", m.Op())
+	}
+}
+
+// PostWatchClient is a client for the PostWatch schema.
+type PostWatchClient struct {
+	config
+}
+
+// NewPostWatchClient returns a client for the PostWatch from the given config.
+func NewPostWatchClient(c config) *PostWatchClient {
+	return &PostWatchClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `postwatch.Hooks(f(g(h())))`.
+func (c *PostWatchClient) Use(hooks ...Hook) {
+	c.hooks.PostWatch = append(c.hooks.PostWatch, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `postwatch.Intercept(f(g(h())))`.
+func (c *PostWatchClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PostWatch = append(c.inters.PostWatch, interceptors...)
+}
+
+// Create returns a builder for creating a PostWatch entity.
+func (c *PostWatchClient) Create() *PostWatchCreate {
+	mutation := newPostWatchMutation(c.config, OpCreate)
+	return &PostWatchCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PostWatch entities.
+func (c *PostWatchClient) CreateBulk(builders ...*PostWatchCreate) *PostWatchCreateBulk {
+	return &PostWatchCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PostWatchClient) MapCreateBulk(slice any, setFunc func(*PostWatchCreate, int)) *PostWatchCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PostWatchCreateBulk{err: fmt.Errorf("calling to PostWatchClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PostWatchCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PostWatchCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PostWatch.
+func (c *PostWatchClient) Update() *PostWatchUpdate {
+	mutation := newPostWatchMutation(c.config, OpUpdate)
+	return &PostWatchUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PostWatchClient) UpdateOne(_m *PostWatch) *PostWatchUpdateOne {
+	mutation := newPostWatchMutation(c.config, OpUpdateOne, withPostWatch(_m))
+	return &PostWatchUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PostWatchClient) UpdateOneID(id uint32) *PostWatchUpdateOne {
+	mutation := newPostWatchMutation(c.config, OpUpdateOne, withPostWatchID(id))
+	return &PostWatchUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PostWatch.
+func (c *PostWatchClient) Delete() *PostWatchDelete {
+	mutation := newPostWatchMutation(c.config, OpDelete)
+	return &PostWatchDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PostWatchClient) DeleteOne(_m *PostWatch) *PostWatchDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PostWatchClient) DeleteOneID(id uint32) *PostWatchDeleteOne {
+	builder := c.Delete().Where(postwatch.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PostWatchDeleteOne{builder}
+}
+
+// Query returns a query builder for PostWatch.
+func (c *PostWatchClient) Query() *PostWatchQuery {
+	return &PostWatchQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePostWatch},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PostWatch entity by its id.
+func (c *PostWatchClient) Get(ctx context.Context, id uint32) (*PostWatch, error) {
+	return c.Query().Where(postwatch.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PostWatchClient) GetX(ctx context.Context, id uint32) *PostWatch {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PostWatchClient) Hooks() []Hook {
+	hooks := c.hooks.PostWatch
+	return append(hooks[:len(hooks):len(hooks)], postwatch.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PostWatchClient) Interceptors() []Interceptor {
+	return c.inters.PostWatch
+}
+
+func (c *PostWatchClient) mutate(ctx context.Context, m *PostWatchMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PostWatchCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PostWatchUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PostWatchUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PostWatchDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PostWatch mutation op: %q", m.Op())
 	}
 }
 
@@ -8603,29 +9031,29 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, ApiAuditLog, Category, CategoryTranslation, Comment, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, File, InternalMessage,
+		Api, ApiAuditLog, Category, CategoryTranslation, Comment, CommentLike,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
 		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
 		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
 		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
 		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostTag, PostTranslation,
-		Role, RoleMetadata, RolePermission, Section, SectionTranslation, Site,
-		SiteSetting, Tag, TagTranslation, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole []ent.Hook
+		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
+		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
+		SectionTranslation, Site, SiteSetting, Tag, TagTranslation, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
-		Api, ApiAuditLog, Category, CategoryTranslation, Comment, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, File, InternalMessage,
+		Api, ApiAuditLog, Category, CategoryTranslation, Comment, CommentLike,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
 		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
 		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
 		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
 		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostTag, PostTranslation,
-		Role, RoleMetadata, RolePermission, Section, SectionTranslation, Site,
-		SiteSetting, Tag, TagTranslation, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
+		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
+		SectionTranslation, Site, SiteSetting, Tag, TagTranslation, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

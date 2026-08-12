@@ -15,6 +15,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
+	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -49,8 +50,10 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/position"
 	"go-wind-cms/app/core/service/internal/data/ent/post"
 	"go-wind-cms/app/core/service/internal/data/ent/postcategory"
+	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
@@ -89,6 +92,7 @@ const (
 	TypeCategory                 = "Category"
 	TypeCategoryTranslation      = "CategoryTranslation"
 	TypeComment                  = "Comment"
+	TypeCommentLike              = "CommentLike"
 	TypeDataAccessAuditLog       = "DataAccessAuditLog"
 	TypeDictEntry                = "DictEntry"
 	TypeDictEntryI18n            = "DictEntryI18n"
@@ -123,8 +127,10 @@ const (
 	TypePosition                 = "Position"
 	TypePost                     = "Post"
 	TypePostCategory             = "PostCategory"
+	TypePostLike                 = "PostLike"
 	TypePostTag                  = "PostTag"
 	TypePostTranslation          = "PostTranslation"
+	TypePostWatch                = "PostWatch"
 	TypeRole                     = "Role"
 	TypeRoleMetadata             = "RoleMetadata"
 	TypeRolePermission           = "RolePermission"
@@ -10393,6 +10399,830 @@ func (m *CommentMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Comment edge %s", name)
+}
+
+// CommentLikeMutation represents an operation that mutates the CommentLike nodes in the graph.
+type CommentLikeMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	tenant_id     *uint32
+	addtenant_id  *int32
+	user_id       *uint32
+	adduser_id    *int32
+	comment_id    *uint32
+	addcomment_id *int32
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CommentLike, error)
+	predicates    []predicate.CommentLike
+}
+
+var _ ent.Mutation = (*CommentLikeMutation)(nil)
+
+// commentlikeOption allows management of the mutation configuration using functional options.
+type commentlikeOption func(*CommentLikeMutation)
+
+// newCommentLikeMutation creates new mutation for the CommentLike entity.
+func newCommentLikeMutation(c config, op Op, opts ...commentlikeOption) *CommentLikeMutation {
+	m := &CommentLikeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCommentLike,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCommentLikeID sets the ID field of the mutation.
+func withCommentLikeID(id uint32) commentlikeOption {
+	return func(m *CommentLikeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CommentLike
+		)
+		m.oldValue = func(ctx context.Context) (*CommentLike, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CommentLike.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCommentLike sets the old CommentLike of the mutation.
+func withCommentLike(node *CommentLike) commentlikeOption {
+	return func(m *CommentLikeMutation) {
+		m.oldValue = func(context.Context) (*CommentLike, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CommentLikeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CommentLikeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CommentLike entities.
+func (m *CommentLikeMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CommentLikeMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CommentLikeMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CommentLike.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CommentLikeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CommentLikeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *CommentLikeMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[commentlike.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *CommentLikeMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CommentLikeMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, commentlike.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CommentLikeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CommentLikeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *CommentLikeMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[commentlike.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *CommentLikeMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CommentLikeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, commentlike.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CommentLikeMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CommentLikeMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *CommentLikeMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[commentlike.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *CommentLikeMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CommentLikeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, commentlike.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CommentLikeMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CommentLikeMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CommentLikeMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CommentLikeMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CommentLikeMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[commentlike.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CommentLikeMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CommentLikeMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, commentlike.FieldTenantID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *CommentLikeMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *CommentLikeMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *CommentLikeMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *CommentLikeMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *CommentLikeMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[commentlike.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *CommentLikeMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *CommentLikeMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, commentlike.FieldUserID)
+}
+
+// SetCommentID sets the "comment_id" field.
+func (m *CommentLikeMutation) SetCommentID(u uint32) {
+	m.comment_id = &u
+	m.addcomment_id = nil
+}
+
+// CommentID returns the value of the "comment_id" field in the mutation.
+func (m *CommentLikeMutation) CommentID() (r uint32, exists bool) {
+	v := m.comment_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommentID returns the old "comment_id" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldCommentID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCommentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCommentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommentID: %w", err)
+	}
+	return oldValue.CommentID, nil
+}
+
+// AddCommentID adds u to the "comment_id" field.
+func (m *CommentLikeMutation) AddCommentID(u int32) {
+	if m.addcomment_id != nil {
+		*m.addcomment_id += u
+	} else {
+		m.addcomment_id = &u
+	}
+}
+
+// AddedCommentID returns the value that was added to the "comment_id" field in this mutation.
+func (m *CommentLikeMutation) AddedCommentID() (r int32, exists bool) {
+	v := m.addcomment_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCommentID clears the value of the "comment_id" field.
+func (m *CommentLikeMutation) ClearCommentID() {
+	m.comment_id = nil
+	m.addcomment_id = nil
+	m.clearedFields[commentlike.FieldCommentID] = struct{}{}
+}
+
+// CommentIDCleared returns if the "comment_id" field was cleared in this mutation.
+func (m *CommentLikeMutation) CommentIDCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldCommentID]
+	return ok
+}
+
+// ResetCommentID resets all changes to the "comment_id" field.
+func (m *CommentLikeMutation) ResetCommentID() {
+	m.comment_id = nil
+	m.addcomment_id = nil
+	delete(m.clearedFields, commentlike.FieldCommentID)
+}
+
+// Where appends a list predicates to the CommentLikeMutation builder.
+func (m *CommentLikeMutation) Where(ps ...predicate.CommentLike) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CommentLikeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CommentLikeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CommentLike, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CommentLikeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CommentLikeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CommentLike).
+func (m *CommentLikeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CommentLikeMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, commentlike.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, commentlike.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, commentlike.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, commentlike.FieldTenantID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, commentlike.FieldUserID)
+	}
+	if m.comment_id != nil {
+		fields = append(fields, commentlike.FieldCommentID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CommentLikeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		return m.CreatedAt()
+	case commentlike.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case commentlike.FieldDeletedAt:
+		return m.DeletedAt()
+	case commentlike.FieldTenantID:
+		return m.TenantID()
+	case commentlike.FieldUserID:
+		return m.UserID()
+	case commentlike.FieldCommentID:
+		return m.CommentID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CommentLikeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case commentlike.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case commentlike.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case commentlike.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case commentlike.FieldUserID:
+		return m.OldUserID(ctx)
+	case commentlike.FieldCommentID:
+		return m.OldCommentID(ctx)
+	}
+	return nil, fmt.Errorf("unknown CommentLike field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CommentLikeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case commentlike.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case commentlike.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case commentlike.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case commentlike.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case commentlike.FieldCommentID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CommentLikeMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, commentlike.FieldTenantID)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, commentlike.FieldUserID)
+	}
+	if m.addcomment_id != nil {
+		fields = append(fields, commentlike.FieldCommentID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CommentLikeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case commentlike.FieldTenantID:
+		return m.AddedTenantID()
+	case commentlike.FieldUserID:
+		return m.AddedUserID()
+	case commentlike.FieldCommentID:
+		return m.AddedCommentID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CommentLikeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case commentlike.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case commentlike.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	case commentlike.FieldCommentID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCommentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CommentLikeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(commentlike.FieldCreatedAt) {
+		fields = append(fields, commentlike.FieldCreatedAt)
+	}
+	if m.FieldCleared(commentlike.FieldUpdatedAt) {
+		fields = append(fields, commentlike.FieldUpdatedAt)
+	}
+	if m.FieldCleared(commentlike.FieldDeletedAt) {
+		fields = append(fields, commentlike.FieldDeletedAt)
+	}
+	if m.FieldCleared(commentlike.FieldTenantID) {
+		fields = append(fields, commentlike.FieldTenantID)
+	}
+	if m.FieldCleared(commentlike.FieldUserID) {
+		fields = append(fields, commentlike.FieldUserID)
+	}
+	if m.FieldCleared(commentlike.FieldCommentID) {
+		fields = append(fields, commentlike.FieldCommentID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CommentLikeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CommentLikeMutation) ClearField(name string) error {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case commentlike.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case commentlike.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case commentlike.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case commentlike.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case commentlike.FieldCommentID:
+		m.ClearCommentID()
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CommentLikeMutation) ResetField(name string) error {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case commentlike.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case commentlike.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case commentlike.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case commentlike.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case commentlike.FieldCommentID:
+		m.ResetCommentID()
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CommentLikeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CommentLikeMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CommentLikeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CommentLikeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CommentLikeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CommentLikeMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CommentLikeMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CommentLike unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CommentLikeMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CommentLike edge %s", name)
 }
 
 // DataAccessAuditLogMutation represents an operation that mutates the DataAccessAuditLog nodes in the graph.
@@ -65615,6 +66445,830 @@ func (m *PostCategoryMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PostCategory edge %s", name)
 }
 
+// PostLikeMutation represents an operation that mutates the PostLike nodes in the graph.
+type PostLikeMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	tenant_id     *uint32
+	addtenant_id  *int32
+	user_id       *uint32
+	adduser_id    *int32
+	post_id       *uint32
+	addpost_id    *int32
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*PostLike, error)
+	predicates    []predicate.PostLike
+}
+
+var _ ent.Mutation = (*PostLikeMutation)(nil)
+
+// postlikeOption allows management of the mutation configuration using functional options.
+type postlikeOption func(*PostLikeMutation)
+
+// newPostLikeMutation creates new mutation for the PostLike entity.
+func newPostLikeMutation(c config, op Op, opts ...postlikeOption) *PostLikeMutation {
+	m := &PostLikeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePostLike,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPostLikeID sets the ID field of the mutation.
+func withPostLikeID(id uint32) postlikeOption {
+	return func(m *PostLikeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PostLike
+		)
+		m.oldValue = func(ctx context.Context) (*PostLike, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PostLike.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPostLike sets the old PostLike of the mutation.
+func withPostLike(node *PostLike) postlikeOption {
+	return func(m *PostLikeMutation) {
+		m.oldValue = func(context.Context) (*PostLike, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PostLikeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PostLikeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PostLike entities.
+func (m *PostLikeMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PostLikeMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PostLikeMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PostLike.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PostLikeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PostLikeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PostLike entity.
+// If the PostLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostLikeMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PostLikeMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[postlike.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PostLikeMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[postlike.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PostLikeMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, postlike.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PostLikeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PostLikeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PostLike entity.
+// If the PostLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostLikeMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PostLikeMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[postlike.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PostLikeMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[postlike.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PostLikeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, postlike.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PostLikeMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PostLikeMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PostLike entity.
+// If the PostLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostLikeMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PostLikeMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[postlike.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PostLikeMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[postlike.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PostLikeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, postlike.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PostLikeMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PostLikeMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the PostLike entity.
+// If the PostLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostLikeMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PostLikeMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PostLikeMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PostLikeMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[postlike.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PostLikeMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[postlike.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PostLikeMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, postlike.FieldTenantID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PostLikeMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PostLikeMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PostLike entity.
+// If the PostLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostLikeMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *PostLikeMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *PostLikeMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *PostLikeMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[postlike.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *PostLikeMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[postlike.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PostLikeMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, postlike.FieldUserID)
+}
+
+// SetPostID sets the "post_id" field.
+func (m *PostLikeMutation) SetPostID(u uint32) {
+	m.post_id = &u
+	m.addpost_id = nil
+}
+
+// PostID returns the value of the "post_id" field in the mutation.
+func (m *PostLikeMutation) PostID() (r uint32, exists bool) {
+	v := m.post_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostID returns the old "post_id" field's value of the PostLike entity.
+// If the PostLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostLikeMutation) OldPostID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostID: %w", err)
+	}
+	return oldValue.PostID, nil
+}
+
+// AddPostID adds u to the "post_id" field.
+func (m *PostLikeMutation) AddPostID(u int32) {
+	if m.addpost_id != nil {
+		*m.addpost_id += u
+	} else {
+		m.addpost_id = &u
+	}
+}
+
+// AddedPostID returns the value that was added to the "post_id" field in this mutation.
+func (m *PostLikeMutation) AddedPostID() (r int32, exists bool) {
+	v := m.addpost_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPostID clears the value of the "post_id" field.
+func (m *PostLikeMutation) ClearPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	m.clearedFields[postlike.FieldPostID] = struct{}{}
+}
+
+// PostIDCleared returns if the "post_id" field was cleared in this mutation.
+func (m *PostLikeMutation) PostIDCleared() bool {
+	_, ok := m.clearedFields[postlike.FieldPostID]
+	return ok
+}
+
+// ResetPostID resets all changes to the "post_id" field.
+func (m *PostLikeMutation) ResetPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	delete(m.clearedFields, postlike.FieldPostID)
+}
+
+// Where appends a list predicates to the PostLikeMutation builder.
+func (m *PostLikeMutation) Where(ps ...predicate.PostLike) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PostLikeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PostLikeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PostLike, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PostLikeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PostLikeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PostLike).
+func (m *PostLikeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PostLikeMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, postlike.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, postlike.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, postlike.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, postlike.FieldTenantID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, postlike.FieldUserID)
+	}
+	if m.post_id != nil {
+		fields = append(fields, postlike.FieldPostID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PostLikeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case postlike.FieldCreatedAt:
+		return m.CreatedAt()
+	case postlike.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case postlike.FieldDeletedAt:
+		return m.DeletedAt()
+	case postlike.FieldTenantID:
+		return m.TenantID()
+	case postlike.FieldUserID:
+		return m.UserID()
+	case postlike.FieldPostID:
+		return m.PostID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PostLikeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case postlike.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case postlike.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case postlike.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case postlike.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case postlike.FieldUserID:
+		return m.OldUserID(ctx)
+	case postlike.FieldPostID:
+		return m.OldPostID(ctx)
+	}
+	return nil, fmt.Errorf("unknown PostLike field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostLikeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case postlike.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case postlike.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case postlike.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case postlike.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case postlike.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case postlike.FieldPostID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostLike field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PostLikeMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, postlike.FieldTenantID)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, postlike.FieldUserID)
+	}
+	if m.addpost_id != nil {
+		fields = append(fields, postlike.FieldPostID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PostLikeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case postlike.FieldTenantID:
+		return m.AddedTenantID()
+	case postlike.FieldUserID:
+		return m.AddedUserID()
+	case postlike.FieldPostID:
+		return m.AddedPostID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostLikeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case postlike.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case postlike.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	case postlike.FieldPostID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPostID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostLike numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PostLikeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(postlike.FieldCreatedAt) {
+		fields = append(fields, postlike.FieldCreatedAt)
+	}
+	if m.FieldCleared(postlike.FieldUpdatedAt) {
+		fields = append(fields, postlike.FieldUpdatedAt)
+	}
+	if m.FieldCleared(postlike.FieldDeletedAt) {
+		fields = append(fields, postlike.FieldDeletedAt)
+	}
+	if m.FieldCleared(postlike.FieldTenantID) {
+		fields = append(fields, postlike.FieldTenantID)
+	}
+	if m.FieldCleared(postlike.FieldUserID) {
+		fields = append(fields, postlike.FieldUserID)
+	}
+	if m.FieldCleared(postlike.FieldPostID) {
+		fields = append(fields, postlike.FieldPostID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PostLikeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PostLikeMutation) ClearField(name string) error {
+	switch name {
+	case postlike.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case postlike.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case postlike.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case postlike.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case postlike.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case postlike.FieldPostID:
+		m.ClearPostID()
+		return nil
+	}
+	return fmt.Errorf("unknown PostLike nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PostLikeMutation) ResetField(name string) error {
+	switch name {
+	case postlike.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case postlike.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case postlike.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case postlike.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case postlike.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case postlike.FieldPostID:
+		m.ResetPostID()
+		return nil
+	}
+	return fmt.Errorf("unknown PostLike field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PostLikeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PostLikeMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PostLikeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PostLikeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PostLikeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PostLikeMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PostLikeMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PostLike unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PostLikeMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PostLike edge %s", name)
+}
+
 // PostTagMutation represents an operation that mutates the PostTag nodes in the graph.
 type PostTagMutation struct {
 	config
@@ -68053,6 +69707,830 @@ func (m *PostTranslationMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PostTranslationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PostTranslation edge %s", name)
+}
+
+// PostWatchMutation represents an operation that mutates the PostWatch nodes in the graph.
+type PostWatchMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	tenant_id     *uint32
+	addtenant_id  *int32
+	user_id       *uint32
+	adduser_id    *int32
+	post_id       *uint32
+	addpost_id    *int32
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*PostWatch, error)
+	predicates    []predicate.PostWatch
+}
+
+var _ ent.Mutation = (*PostWatchMutation)(nil)
+
+// postwatchOption allows management of the mutation configuration using functional options.
+type postwatchOption func(*PostWatchMutation)
+
+// newPostWatchMutation creates new mutation for the PostWatch entity.
+func newPostWatchMutation(c config, op Op, opts ...postwatchOption) *PostWatchMutation {
+	m := &PostWatchMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePostWatch,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPostWatchID sets the ID field of the mutation.
+func withPostWatchID(id uint32) postwatchOption {
+	return func(m *PostWatchMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PostWatch
+		)
+		m.oldValue = func(ctx context.Context) (*PostWatch, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PostWatch.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPostWatch sets the old PostWatch of the mutation.
+func withPostWatch(node *PostWatch) postwatchOption {
+	return func(m *PostWatchMutation) {
+		m.oldValue = func(context.Context) (*PostWatch, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PostWatchMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PostWatchMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PostWatch entities.
+func (m *PostWatchMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PostWatchMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PostWatchMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PostWatch.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PostWatchMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PostWatchMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PostWatch entity.
+// If the PostWatch object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostWatchMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PostWatchMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[postwatch.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PostWatchMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[postwatch.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PostWatchMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, postwatch.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PostWatchMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PostWatchMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PostWatch entity.
+// If the PostWatch object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostWatchMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PostWatchMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[postwatch.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PostWatchMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[postwatch.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PostWatchMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, postwatch.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PostWatchMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PostWatchMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PostWatch entity.
+// If the PostWatch object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostWatchMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PostWatchMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[postwatch.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PostWatchMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[postwatch.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PostWatchMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, postwatch.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PostWatchMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PostWatchMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the PostWatch entity.
+// If the PostWatch object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostWatchMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PostWatchMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PostWatchMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PostWatchMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[postwatch.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PostWatchMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[postwatch.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PostWatchMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, postwatch.FieldTenantID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PostWatchMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PostWatchMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PostWatch entity.
+// If the PostWatch object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostWatchMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *PostWatchMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *PostWatchMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *PostWatchMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[postwatch.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *PostWatchMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[postwatch.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PostWatchMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, postwatch.FieldUserID)
+}
+
+// SetPostID sets the "post_id" field.
+func (m *PostWatchMutation) SetPostID(u uint32) {
+	m.post_id = &u
+	m.addpost_id = nil
+}
+
+// PostID returns the value of the "post_id" field in the mutation.
+func (m *PostWatchMutation) PostID() (r uint32, exists bool) {
+	v := m.post_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostID returns the old "post_id" field's value of the PostWatch entity.
+// If the PostWatch object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostWatchMutation) OldPostID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostID: %w", err)
+	}
+	return oldValue.PostID, nil
+}
+
+// AddPostID adds u to the "post_id" field.
+func (m *PostWatchMutation) AddPostID(u int32) {
+	if m.addpost_id != nil {
+		*m.addpost_id += u
+	} else {
+		m.addpost_id = &u
+	}
+}
+
+// AddedPostID returns the value that was added to the "post_id" field in this mutation.
+func (m *PostWatchMutation) AddedPostID() (r int32, exists bool) {
+	v := m.addpost_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPostID clears the value of the "post_id" field.
+func (m *PostWatchMutation) ClearPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	m.clearedFields[postwatch.FieldPostID] = struct{}{}
+}
+
+// PostIDCleared returns if the "post_id" field was cleared in this mutation.
+func (m *PostWatchMutation) PostIDCleared() bool {
+	_, ok := m.clearedFields[postwatch.FieldPostID]
+	return ok
+}
+
+// ResetPostID resets all changes to the "post_id" field.
+func (m *PostWatchMutation) ResetPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	delete(m.clearedFields, postwatch.FieldPostID)
+}
+
+// Where appends a list predicates to the PostWatchMutation builder.
+func (m *PostWatchMutation) Where(ps ...predicate.PostWatch) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PostWatchMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PostWatchMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PostWatch, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PostWatchMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PostWatchMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PostWatch).
+func (m *PostWatchMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PostWatchMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, postwatch.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, postwatch.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, postwatch.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, postwatch.FieldTenantID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, postwatch.FieldUserID)
+	}
+	if m.post_id != nil {
+		fields = append(fields, postwatch.FieldPostID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PostWatchMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case postwatch.FieldCreatedAt:
+		return m.CreatedAt()
+	case postwatch.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case postwatch.FieldDeletedAt:
+		return m.DeletedAt()
+	case postwatch.FieldTenantID:
+		return m.TenantID()
+	case postwatch.FieldUserID:
+		return m.UserID()
+	case postwatch.FieldPostID:
+		return m.PostID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PostWatchMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case postwatch.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case postwatch.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case postwatch.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case postwatch.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case postwatch.FieldUserID:
+		return m.OldUserID(ctx)
+	case postwatch.FieldPostID:
+		return m.OldPostID(ctx)
+	}
+	return nil, fmt.Errorf("unknown PostWatch field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostWatchMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case postwatch.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case postwatch.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case postwatch.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case postwatch.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case postwatch.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case postwatch.FieldPostID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostWatch field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PostWatchMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, postwatch.FieldTenantID)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, postwatch.FieldUserID)
+	}
+	if m.addpost_id != nil {
+		fields = append(fields, postwatch.FieldPostID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PostWatchMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case postwatch.FieldTenantID:
+		return m.AddedTenantID()
+	case postwatch.FieldUserID:
+		return m.AddedUserID()
+	case postwatch.FieldPostID:
+		return m.AddedPostID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostWatchMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case postwatch.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case postwatch.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	case postwatch.FieldPostID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPostID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostWatch numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PostWatchMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(postwatch.FieldCreatedAt) {
+		fields = append(fields, postwatch.FieldCreatedAt)
+	}
+	if m.FieldCleared(postwatch.FieldUpdatedAt) {
+		fields = append(fields, postwatch.FieldUpdatedAt)
+	}
+	if m.FieldCleared(postwatch.FieldDeletedAt) {
+		fields = append(fields, postwatch.FieldDeletedAt)
+	}
+	if m.FieldCleared(postwatch.FieldTenantID) {
+		fields = append(fields, postwatch.FieldTenantID)
+	}
+	if m.FieldCleared(postwatch.FieldUserID) {
+		fields = append(fields, postwatch.FieldUserID)
+	}
+	if m.FieldCleared(postwatch.FieldPostID) {
+		fields = append(fields, postwatch.FieldPostID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PostWatchMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PostWatchMutation) ClearField(name string) error {
+	switch name {
+	case postwatch.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case postwatch.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case postwatch.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case postwatch.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case postwatch.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case postwatch.FieldPostID:
+		m.ClearPostID()
+		return nil
+	}
+	return fmt.Errorf("unknown PostWatch nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PostWatchMutation) ResetField(name string) error {
+	switch name {
+	case postwatch.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case postwatch.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case postwatch.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case postwatch.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case postwatch.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case postwatch.FieldPostID:
+		m.ResetPostID()
+		return nil
+	}
+	return fmt.Errorf("unknown PostWatch field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PostWatchMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PostWatchMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PostWatchMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PostWatchMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PostWatchMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PostWatchMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PostWatchMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PostWatch unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PostWatchMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PostWatch edge %s", name)
 }
 
 // RoleMutation represents an operation that mutates the Role nodes in the graph.

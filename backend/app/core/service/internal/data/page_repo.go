@@ -20,6 +20,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+
+	"go-wind-cms/pkg/utils"
 )
 
 type PageRepo struct {
@@ -237,8 +239,8 @@ func (r *PageRepo) Create(ctx context.Context, req *contentV1.CreatePageRequest)
 		SetNillableSortOrder(req.Data.SortOrder).
 		SetNillableTemplate(req.Data.Template).
 		SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
-		// 服务端计数器初始化为 0，不接受客户端值
-		SetVisits(0).
+		// 计数列（visits）由 schema Default(0) 兜底，
+		// 由 InteractionService 独占递增，Create 路径不再显式设置。
 		SetNillableParentID(req.Data.ParentId).
 		SetNillableDepth(req.Data.Depth).
 		SetNillablePath(req.Data.Path).
@@ -332,6 +334,13 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	// 计数列（visits）由 InteractionService 独占写入。
+	// 经 FilterBlacklist 剥离客户端通过 update_mask 写入计数列的尝试，同时关闭
+	// go-crud applyUpdateOneNilFieldMask 在“mask 命中且未传值”时下发 SET NULL 的通道，
+	// 避免客户端把计数列 NULL 化造成数据丢失。
+	req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
+		"visits",
+	})
 	builder := tx.Page.UpdateOneID(req.GetId())
 	builder.Where(page.IDEQ(req.GetId()))
 	if hasTenant {
@@ -350,10 +359,11 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 				SetNillableRedirectURL(req.Data.RedirectUrl).
 				SetNillableShowInNavigation(req.Data.ShowInNavigation).
 				SetNillableSortOrder(req.Data.SortOrder).
-				SetNillableTemplate(req.Data.Template).
-				SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
-				// 服务端计数器不可由客户端通过 Update 设置
-				SetNillableParentID(req.Data.ParentId).
+		SetNillableTemplate(req.Data.Template).
+		SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
+		// 计数列（visits）由 InteractionService 独占写入，
+		// 经 Update 前 FilterBlacklist 剥离客户端通过 update_mask 的写入尝试。
+		SetNillableParentID(req.Data.ParentId).
 				SetNillableDepth(req.Data.Depth).
 				SetNillablePath(req.Data.Path).
 				SetUpdatedAt(time.Now())
