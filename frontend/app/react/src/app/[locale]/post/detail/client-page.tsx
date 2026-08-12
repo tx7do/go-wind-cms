@@ -20,6 +20,13 @@ import {
     getPostContent,
     getPostThumbnail,
 } from '@/api/hooks/post';
+import {
+    useInteractionStatus,
+    useLike,
+    useUnlike,
+    useWatch,
+    useUnwatch,
+} from '@/api/hooks/interaction';
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
@@ -34,8 +41,8 @@ export default function PostDetailPage() {
     const [postLoading, setPostLoading] = useState(false);
     const [localLoading, setLocalLoading] = useState(true);
     const isLoading = localLoading || (postLoading && !post);
-    const [isLiked, setIsLiked] = useState(false);
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    // likeCount：点赞计数缓存。初始读 post.likes，点赞/取消后用 RPC 返回的最新值更新。
+    const [likeCount, setLikeCount] = useState<number | undefined>(undefined);
     const [isTocExpanded, setIsTocExpanded] = useState(true);
 
     const contentRef = useRef<HTMLDivElement>(null);
@@ -44,6 +51,22 @@ export default function PostDetailPage() {
         const id = searchParams.get('id');
         return id ? parseInt(id) : null;
     }, [searchParams]);
+
+    // 点赞/收藏状态：由 interaction 子系统提供。
+    // useInteractionStatus 取当前 viewer 对此 post 的 {liked, watched} 初始态；
+    // useLike/useUnlike/useWatch/useUnwatch 做写操作，后端在同事务内更新 ledger 与计数缓存。
+    const interactionStatus = useInteractionStatus(
+        'TARGET_TYPE_POST',
+        postId ? [postId] : [],
+    );
+    const likeMutation = useLike();
+    const unlikeMutation = useUnlike();
+    const watchMutation = useWatch();
+    const unwatchMutation = useUnwatch();
+
+    // 从 interaction 状态派生 liked/watched（默认 false，加载中或无数据时为 false）
+    const isLiked = postId ? (interactionStatus.data?.statuses?.[postId]?.liked ?? false) : false;
+    const isBookmarked = postId ? (interactionStatus.data?.statuses?.[postId]?.watched ?? false) : false;
 
     const displayTitle = useMemo(() => post ? getPostTitle(post) : '', [post]);
     const displayContent = useMemo(() => post ? getPostContent(post) : '', [post]);
@@ -70,6 +93,8 @@ export default function PostDetailPage() {
                 setPost(fetchedPost);
                 if (fetchedPost) {
                     document.title = `${getPostTitle(fetchedPost)} - GoWind Content Hub`;
+                    // 初始化点赞计数缓存（来自 post.likes）
+                    setLikeCount(fetchedPost.likes);
                 }
             } catch (error) {
                 console.error('Load post failed:', error);
@@ -198,7 +223,7 @@ export default function PostDetailPage() {
                                 authorName={post.authorName}
                                 createdAt={post.createdAt}
                                 visits={post.visits}
-                                likes={post.likes}
+                                likes={likeCount ?? post.likes}
                             />
                         </header>
 
@@ -211,8 +236,28 @@ export default function PostDetailPage() {
                         <PostFloatingActions
                             isLiked={isLiked}
                             isBookmarked={isBookmarked}
-                            onLike={() => setIsLiked(!isLiked)}
-                            onBookmark={() => setIsBookmarked(!isBookmarked)}
+                            onLike={async () => {
+                                if (!postId) return;
+                                try {
+                                    if (isLiked) {
+                                        const r = await unlikeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId});
+                                        if (r?.likeCount !== undefined) setLikeCount(r.likeCount);
+                                    } else {
+                                        const r = await likeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId});
+                                        if (r?.likeCount !== undefined) setLikeCount(r.likeCount);
+                                    }
+                                } catch (e) { console.error('toggle like failed:', e); }
+                            }}
+                            onBookmark={async () => {
+                                if (!postId) return;
+                                try {
+                                    if (isBookmarked) {
+                                        await unwatchMutation.mutateAsync({postId});
+                                    } else {
+                                        await watchMutation.mutateAsync({postId});
+                                    }
+                                } catch (e) { console.error('toggle bookmark failed:', e); }
+                            }}
                             onShare={handleShare}
                             labels={{
                                 likes: t('post_detail.likes'),

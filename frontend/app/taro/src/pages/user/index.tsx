@@ -2,8 +2,10 @@ import {useState, useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
 import XIcon from '@/plugins/xicon';
-import {identityservicev1_User} from '@/api/generated/app/service/v1';
+import {identityservicev1_User, contentservicev1_Post, contentservicev1_ListPostResponse} from '@/api/generated/app/service/v1';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
+import {listWatchedPosts} from '@/api/hooks/interaction';
+import {PostCard} from '@/components/post';
 import {useI18nRouter} from '@/i18n/helpers';
 import {usePageTitle} from '@/hooks/usePageTitle';
 
@@ -13,6 +15,8 @@ export default function UserProfilePage() {
     const router = useI18nRouter();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<identityservicev1_User | null>(null);
+    const [collections, setCollections] = useState<contentservicev1_Post[]>([]);
+    const [collectionsLoading, setCollectionsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<'posts' | 'activities' | 'collections'>('posts');
 
     const stats = useMemo(() => ({
@@ -35,6 +39,28 @@ export default function UserProfilePage() {
             }
         })();
     }, []);
+
+    async function loadCollections() {
+        // 收藏列表：由 InteractionService.ListWatchedPosts 返回当前 viewer 收藏的 post。
+        // viewer 身份由后端鉴权上下文确定，需登录态；未登录时后端返回 401，列表为空。
+        setCollectionsLoading(true);
+        try {
+            const result = await listWatchedPosts(1, 10) as unknown as contentservicev1_ListPostResponse;
+            setCollections(result?.items || []);
+        } catch (error) {
+            console.error('Load collections failed:', error);
+            setCollections([]);
+        } finally {
+            setCollectionsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (activeTab === 'collections' && collections.length === 0) {
+            loadCollections();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab]);
 
     if (loading) {
         return (
@@ -133,9 +159,25 @@ export default function UserProfilePage() {
                     </View>
                 )}
                 {activeTab === 'collections' && (
-                    <View className='text-center py-[64rpx]'>
-                        <XIcon name='carbon:bookmark' size={48} className='text-textWeak' />
-                        <Text className='text-body text-textThird block mt-[16rpx]'>{t('page.user.no_collections')}</Text>
+                    <View className='flex flex-col gap-[24rpx]'>
+                        {collectionsLoading ? (
+                            <View className='text-center py-[64rpx]'>
+                                <Text className='text-body text-textThird'>{t('page.user.loading') || 'Loading...'}</Text>
+                            </View>
+                        ) : collections.length > 0 ? (
+                            collections.map((post, index) => (
+                                <PostCard
+                                  key={`${post.id}-${index}`}
+                                  post={post}
+                                  from='user-collections'
+                                />
+                            ))
+                        ) : (
+                            <View className='text-center py-[64rpx]'>
+                                <XIcon name='carbon:bookmark' size={48} className='text-textWeak' />
+                                <Text className='text-body text-textThird block mt-[16rpx]'>{t('page.user.no_collections')}</Text>
+                            </View>
+                        )}
                     </View>
                 )}
             </View>

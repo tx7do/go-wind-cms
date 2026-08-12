@@ -3,12 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show ContentServiceV1Post;
-import 'package:flutter_app/src/features/cms/services/post_service.dart';
+    show ContentServiceV1Post, ContentServiceV1ListPostResponse;
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
+
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
+
+typedef ListPostResponse = ContentServiceV1ListPostResponse;
 
 /// 收藏页
 class BookmarksPage extends StatefulWidget {
@@ -19,14 +22,14 @@ class BookmarksPage extends StatefulWidget {
 }
 
 class _BookmarksPageState extends State<BookmarksPage> {
-  final _postService = PostService();
+  final _interactionService = InteractionService();
 
   List<ContentServiceV1Post> _posts = [];
   bool _isLoading = true;
 
-  // TODO: 等待收藏 API 实现后，替换为真实的收藏列表
-  // 当前暂从 API 获取文章列表，取前3篇作为占位
-  List<ContentServiceV1Post> get _bookmarkedPosts => _posts.take(3).toList();
+  // 收藏列表由 InteractionService.ListWatchedPosts 返回当前 viewer 收藏的 post。
+  // viewer 身份由后端鉴权上下文确定，需登录态；未登录时后端返回 401，列表为空。
+  List<ContentServiceV1Post> get _bookmarkedPosts => _posts;
 
   @override
   void initState() {
@@ -35,7 +38,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
   }
 
   Future<void> _loadData() async {
-    final result = await _postService.list();
+    final result = await _interactionService.listWatchedPosts();
 
     if (!mounted) return;
 

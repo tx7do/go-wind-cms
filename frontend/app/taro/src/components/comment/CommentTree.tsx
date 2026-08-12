@@ -7,6 +7,7 @@ import {XIcon} from '@/plugins/xicon';
 import type {commentservicev1_Comment} from '@/api/generated/app/service/v1';
 import {formatDate} from '@/utils/date';
 import {cn} from '@/lib/utils';
+import {useInteractionStatus, useLike, useUnlike} from '@/api/hooks/interaction';
 
 interface CommentTreeProps {
     comments: commentservicev1_Comment[];
@@ -25,7 +26,20 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     const [submitting, setSubmitting] = useState(false);
     const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
     const [loadingChildren, setLoadingChildren] = useState<Set<number>>(new Set());
-    const [likedComments, setLikedComments] = useState<Set<number>>(new Set());
+
+    const commentIds = comments
+        .map(c => c.id)
+        .filter((id): id is number => typeof id === 'number');
+    const statusQuery = useInteractionStatus('TARGET_TYPE_COMMENT', commentIds);
+    const likeMutation = useLike();
+    const unlikeMutation = useUnlike();
+
+    function isLiked(commentId?: number): boolean {
+        if (typeof commentId !== 'number') return false;
+        const map = statusQuery.data?.statuses;
+        if (!map) return false;
+        return map[String(commentId)]?.liked === true;
+    }
 
     function hasChildren(comment: commentservicev1_Comment): boolean {
         return !!comment.children || (comment.replyCount !== undefined && comment.replyCount > 0);
@@ -77,16 +91,18 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         }
     }
 
-    function handleLike(comment: commentservicev1_Comment) {
-        const commentId = comment.id || 0;
-        if (likedComments.has(commentId)) {
-            setLikedComments(prev => {
-                const next = new Set(prev);
-                next.delete(commentId);
-                return next;
-            });
-        } else {
-            setLikedComments(prev => new Set(prev).add(commentId));
+    async function handleLike(comment: commentservicev1_Comment) {
+        const commentId = comment.id;
+        if (typeof commentId !== 'number') return;
+        const liked = isLiked(commentId);
+        try {
+            if (liked) {
+                await unlikeMutation.mutateAsync({targetType: 'TARGET_TYPE_COMMENT', targetId: commentId});
+            } else {
+                await likeMutation.mutateAsync({targetType: 'TARGET_TYPE_COMMENT', targetId: commentId});
+            }
+        } catch (e) {
+            console.error('toggle like failed:', e);
         }
     }
 
@@ -174,17 +190,17 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                       hoverClass='tap-active'
                                     >
                                         <XIcon
-                                          name={likedComments.has(comment.id || 0) ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'}
+                                          name={isLiked(comment.id) ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'}
                                           size={14}
-                                          className={likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textSec'}
+                                          className={isLiked(comment.id) ? 'text-primary' : 'text-textSec'}
                                         />
                                         <Text
                                           className={cn(
                                             'text-tips',
-                                            likedComments.has(comment.id || 0) ? 'text-primary' : 'text-textSec',
+                                            isLiked(comment.id) ? 'text-primary' : 'text-textSec',
                                           )}
                                         >
-                                            {(comment.likeCount || 0) + (likedComments.has(comment.id || 0) ? 1 : 0)}
+                                            {comment.likeCount || 0}
                                         </Text>
                                     </View>
 

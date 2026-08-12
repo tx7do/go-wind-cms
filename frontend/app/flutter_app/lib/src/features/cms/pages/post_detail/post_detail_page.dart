@@ -152,10 +152,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
           icon: const Icon(Icons.share_outlined, size: 22),
           onPressed: () {},
         ),
-        IconButton(
-          icon: const Icon(Icons.bookmark_border, size: 22),
-          onPressed: () {},
-        ),
         const SizedBox(width: 4),
       ],
     );
@@ -202,10 +198,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       const Spacer(),
                       IconButton(
                         icon: Icon(Icons.share_outlined, size: 20, color: theme.colorScheme.onSurface.withAlpha(150)),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.bookmark_border, size: 20, color: theme.colorScheme.onSurface.withAlpha(150)),
                         onPressed: () {},
                       ),
                     ],

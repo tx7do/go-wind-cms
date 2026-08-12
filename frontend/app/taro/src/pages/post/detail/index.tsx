@@ -12,6 +12,13 @@ import {useI18nRouter} from '@/i18n/helpers';
 import {usePreferences} from '@/core/preferences';
 import {contentservicev1_Post} from '@/api/generated/app/service/v1';
 import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
+import {
+    useInteractionStatus,
+    useLike,
+    useUnlike,
+    useWatch,
+    useUnwatch,
+} from '@/api/hooks/interaction';
 import {Skeleton} from '@/components/ui/skeleton';
 
 export default function PostDetailPage() {
@@ -20,8 +27,8 @@ export default function PostDetailPage() {
     const {isDark} = usePreferences();
     const [post, setPost] = useState<contentservicev1_Post | null>(null);
     const [loading, setLoading] = useState(true);
-    const [isLiked, setIsLiked] = useState(false);
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    // likeCount：点赞计数缓存。初始读 post.likes，点赞/取消后用 RPC 返回的最新值更新。
+    const [likeCount, setLikeCount] = useState<number | undefined>(undefined);
 
     const postId = useMemo(() => {
         let id: string | null = null;
@@ -37,6 +44,21 @@ export default function PostDetailPage() {
         }
         return id ? parseInt(id) : null;
     }, []);
+
+    // 点赞/收藏状态：由 interaction 子系统提供。
+    // useInteractionStatus 取当前 viewer 对此 post 的 {liked, watched} 初始态；
+    // useLike/useUnlike/useWatch/useUnwatch 做写操作，后端在同事务内更新 ledger 与计数缓存。
+    const interactionStatus = useInteractionStatus(
+        'TARGET_TYPE_POST',
+        postId ? [postId] : [],
+    );
+    const likeMutation = useLike();
+    const unlikeMutation = useUnlike();
+    const watchMutation = useWatch();
+    const unwatchMutation = useUnwatch();
+
+    const isLiked = postId ? (interactionStatus.data?.statuses?.[postId]?.liked ?? false) : false;
+    const isBookmarked = postId ? (interactionStatus.data?.statuses?.[postId]?.watched ?? false) : false;
 
     const displayTitle = useMemo(() => post ? getPostTitle(post) : '', [post]);
 
@@ -62,7 +84,10 @@ export default function PostDetailPage() {
             setLoading(true);
             try {
                 const fetchedPost = await fetchPost(postId);
-                if (fetchedPost) setPost(fetchedPost);
+                if (fetchedPost) {
+                    setPost(fetchedPost);
+                    setLikeCount(fetchedPost.likes);
+                }
             } catch (error) {
                 console.error('Load post failed:', error);
             } finally {
@@ -177,7 +202,7 @@ export default function PostDetailPage() {
                     </View>
                     <View className='flex items-center gap-[4rpx] px-[14rpx] py-[4rpx] rounded-full bg-pageBg'>
                         <XIcon name='carbon:thumbs-up' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textSec'>{post.likes || 0} {t('page.post_detail.likes')}</Text>
+                        <Text className='text-tips text-textSec'>{likeCount ?? post.likes ?? 0} {t('page.post_detail.likes')}</Text>
                     </View>
                 </View>
             </View>
@@ -263,7 +288,18 @@ export default function PostDetailPage() {
             >
                 <View
                   className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
-                  onClick={() => setIsLiked(!isLiked)}
+                  onClick={async () => {
+                    if (!postId) return;
+                    try {
+                        if (isLiked) {
+                            const r = await unlikeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId});
+                            if (r?.likeCount !== undefined) setLikeCount(r.likeCount);
+                        } else {
+                            const r = await likeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId});
+                            if (r?.likeCount !== undefined) setLikeCount(r.likeCount);
+                        }
+                    } catch (e) { console.error('toggle like failed:', e); }
+                  }}
                   hoverClass='tap-active'
                 >
                     <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} size={20}
@@ -275,7 +311,16 @@ export default function PostDetailPage() {
                 </View>
                 <View
                   className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
-                  onClick={() => setIsBookmarked(!isBookmarked)}
+                  onClick={async () => {
+                    if (!postId) return;
+                    try {
+                        if (isBookmarked) {
+                            await unwatchMutation.mutateAsync({postId});
+                        } else {
+                            await watchMutation.mutateAsync({postId});
+                        }
+                    } catch (e) { console.error('toggle bookmark failed:', e); }
+                  }}
                   hoverClass='tap-active'
                 >
                     <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} size={20}

@@ -11,6 +11,7 @@ import type {commentservicev1_Comment} from "@/api/generated/app/service/v1";
 import {formatDate} from "@/utils/date";
 
 import {cn} from '@/lib/utils';
+import {useInteractionStatus, useLike, useUnlike} from '@/api/hooks/interaction';
 
 interface CommentTreeProps {
     comments: commentservicev1_Comment[];
@@ -29,7 +30,22 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     const [submitting, setSubmitting] = useState(false);
     const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
     const [loadingChildren, setLoadingChildren] = useState<Set<number>>(new Set());
-    const [likedComments, setLikedComments] = useState<Set<number>>(new Set());
+
+    // 点赞状态：通过 interaction 子系统批量查询当前 viewer 对这些评论的点赞态。
+    // targetIds 取当前渲染的顶层评论 id（children 由递归子组件自行查询）。
+    const commentIds = comments
+        .map(c => c.id)
+        .filter((id): id is number => typeof id === 'number');
+    const statusQuery = useInteractionStatus('TARGET_TYPE_COMMENT', commentIds);
+    const likeMutation = useLike();
+    const unlikeMutation = useUnlike();
+
+    function isLiked(commentId?: number): boolean {
+        if (typeof commentId !== 'number') return false;
+        const map = statusQuery.data?.statuses;
+        if (!map) return false;
+        return map[String(commentId)]?.liked === true;
+    }
 
     function hasChildren(comment: commentservicev1_Comment): boolean {
         return !!comment.children || (comment.replyCount !== undefined && comment.replyCount > 0);
@@ -77,22 +93,20 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         }
     }
 
-    // 处理点赞
-    function handleLike(comment: commentservicev1_Comment) {
-        const commentId = comment.id || 0;
-
-        if (likedComments.has(commentId)) {
-            // 取消点赞
-            setLikedComments(prev => {
-                const next = new Set(prev);
-                next.delete(commentId);
-                return next;
-            });
-        } else {
-            // 点赞
-            setLikedComments(prev => new Set(prev).add(commentId));
-            // 这里可以调用 API 更新点赞数
-            // comment.likeCount = (comment.likeCount || 0) + 1;
+    // 处理点赞：调用 interaction 子系统，服务端在同一事务内更新 ledger 与计数缓存。
+    // 幂等由后端保证；前端按当前态决定 Like/Unlike。计数直读 comment.likeCount（缓存）。
+    async function handleLike(comment: commentservicev1_Comment) {
+        const commentId = comment.id;
+        if (typeof commentId !== 'number') return;
+        const liked = isLiked(commentId);
+        try {
+            if (liked) {
+                await unlikeMutation.mutateAsync({targetType: 'TARGET_TYPE_COMMENT', targetId: commentId});
+            } else {
+                await likeMutation.mutateAsync({targetType: 'TARGET_TYPE_COMMENT', targetId: commentId});
+            }
+        } catch (e) {
+            console.error('toggle like failed:', e);
         }
     }
 
@@ -209,10 +223,10 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     className={cn(
                                         'flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5',
                                         'max-md:text-xs max-sm:text-[11px]',
-                                        likedComments.has(comment.id || 0) && 'text-primary font-semibold',
+                                        isLiked(comment.id) && 'text-primary font-semibold',
                                     )}
                                     onClick={() => handleLike(comment)}
-                                    title={likedComments.has(comment.id || 0) ? t('unlike') : t('like')}
+                                    title={isLiked(comment.id) ? t('unlike') : t('like')}
                                 >
                                     <XIcon name="carbon:thumbs-up" size={16}/>
                                     {comment.likeCount || 0}

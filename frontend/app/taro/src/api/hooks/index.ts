@@ -27,6 +27,9 @@ export {
 // 评论管理
 export * from './comment';
 
+// 交互（点赞/收藏）
+export * from './interaction';
+
 // 文件传输
 export * from './file-transfer';
 

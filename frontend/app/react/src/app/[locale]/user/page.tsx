@@ -9,6 +9,7 @@ import {
     identityservicev1_User
 } from "@/api/generated/app/service/v1";
 import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
+import {listWatchedPosts} from "@/api/hooks/interaction";
 import {fetchUserProfile} from "@/api/hooks/user-profile";
 
 import {formatDateTime} from "@/utils";
@@ -23,10 +24,13 @@ export default function UserProfilePage() {
 
     const [loading, setLoading] = useState(false);
     const [postsLoading, setPostsLoading] = useState(false);
+    const [collectionsLoading, setCollectionsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<'posts' | 'activities' | 'collections'>('posts');
     const [user, setUser] = useState<identityservicev1_User | null>(null);
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [postsTotal, setPostsTotal] = useState(0);
+    const [collections, setCollections] = useState<contentservicev1_Post[]>([]);
+    const [collectionsTotal, setCollectionsTotal] = useState(0);
 
     // 统计数据
     const stats = useMemo(() => [
@@ -144,9 +148,29 @@ export default function UserProfilePage() {
         }
     }
 
+    async function loadCollections() {
+        // 收藏列表：由 InteractionService.ListWatchedPosts 返回当前 viewer 收藏的 post。
+        // viewer 身份由后端鉴权上下文确定，前端无需传 user_id。需登录态，未登录时后端返回 401。
+        setCollectionsLoading(true);
+        try {
+            const result = await listWatchedPosts(1, 10) as unknown as contentservicev1_ListPostResponse;
+            setCollections(result.items || []);
+            setCollectionsTotal(result.total || 0);
+        } catch (error) {
+            console.error('Load collections failed:', error);
+            setCollections([]);
+            setCollectionsTotal(0);
+        } finally {
+            setCollectionsLoading(false);
+        }
+    }
+
     useEffect(() => {
         if (activeTab === 'posts' && posts.length === 0 && user) {
             loadUserPosts();
+        }
+        if (activeTab === 'collections' && collections.length === 0) {
+            loadCollections();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, user]);
@@ -321,7 +345,36 @@ export default function UserProfilePage() {
                             )}
 
                             {activeTab === 'collections' && (
-                                <EmptyTab icon="🔖" text={t('no_collections')}/>
+                                <>
+                                    {collectionsLoading ? (
+                                        <div className="space-y-3">
+                                            <div className="h-16 w-full animate-pulse rounded bg-muted"/>
+                                            <div className="h-16 w-full animate-pulse rounded bg-muted"/>
+                                        </div>
+                                    ) : collections.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {collections.map((post) => (
+                                                <div key={post.id} className="flex items-start justify-between gap-4 rounded-lg border border-border bg-background p-4 transition-all hover:border-primary hover:shadow-sm">
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="mb-1 font-semibold text-foreground">{getPostTitle(post)}</h3>
+                                                        <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{getPostSummary(post)}</p>
+                                                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                                                            <MetaDataItem icon="carbon:view" text={`${post.visits || 0} ${t('views')}`}/>
+                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${post.likes || 0} ${t('likes')}`}/>
+                                                            <MetaDataItem icon="carbon:chat" text={`${post.commentCount || 0} ${t('comments')}`}/>
+                                                            <MetaDataItem icon="carbon:time" text={formatDateTime(post.createdAt)}/>
+                                                        </div>
+                                                    </div>
+                                                    <button className="shrink-0 cursor-pointer text-sm text-primary transition-colors hover:text-primary/80 hover:underline">
+                                                        {t('view_post')} →
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <EmptyTab icon="🔖" text={t('no_collections')}/>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
