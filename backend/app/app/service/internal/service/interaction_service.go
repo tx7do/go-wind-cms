@@ -18,9 +18,10 @@ import (
 // 作为纯透传层，把 HTTP 请求转发给 core 服务的 InteractionService。所有鉴权、
 // viewer 身份提取、幂等、计数一致性均在 core 侧完成。本层不做业务过滤。
 //
-// 安全说明：Interaction 的全部 RPC（Like/Unlike/Watch/Unwatch/
-// GetInteractionStatus/ListWatchedPosts/GetCounts）均需登录，故在 rest_server 的
-// rpc.AddWhiteList 中刻意不登记，强制走鉴权中间件。
+// 安全说明：Interaction 的写操作（Like/Unlike/Watch/Unwatch）及含 viewer 个人
+// 状态的查询（GetInteractionStatus/ListWatchedPosts）均需登录，在 rest_server 的
+// rpc.AddWhiteList 中刻意不登记，强制走鉴权中间件。仅 GetCounts（公开计数，按
+// tenant 隔离、不依赖 viewer 身份）登记为白名单，供文章列表/详情匿名展示点赞数。
 type InteractionService struct {
 	appV1.InteractionServiceHTTPServer
 

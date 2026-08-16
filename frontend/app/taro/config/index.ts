@@ -77,6 +77,10 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
+      // H5 dev server 端口，取自 .env.development 的 VITE_PORT
+      devServer: {
+        port: Number(process.env.VITE_PORT) || 10086,
+      },
       router: {
         mode: 'browser',
         customRoutes: {

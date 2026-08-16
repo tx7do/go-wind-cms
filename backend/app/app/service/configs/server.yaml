@@ -17,8 +17,8 @@ server:
         - "HEAD"
         - "OPTIONS"
       origins:
-        - "http://localhost:5670"
-        - "http://127.0.0.1:5670"
+        - "http://localhost:5001"
+        - "https://api.cms.gowind.cloud"
     middleware:
       auth:
         method: "HS256"

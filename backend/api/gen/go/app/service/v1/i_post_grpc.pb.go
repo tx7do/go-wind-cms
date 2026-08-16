@@ -23,12 +23,12 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	PostService_List_FullMethodName           = "/app.service.v1.PostService/List"
+	PostService_SearchPosts_FullMethodName    = "/app.service.v1.PostService/SearchPosts"
 	PostService_Get_FullMethodName            = "/app.service.v1.PostService/Get"
 	PostService_Create_FullMethodName         = "/app.service.v1.PostService/Create"
 	PostService_Update_FullMethodName         = "/app.service.v1.PostService/Update"
 	PostService_Delete_FullMethodName         = "/app.service.v1.PostService/Delete"
 	PostService_GetTranslation_FullMethodName = "/app.service.v1.PostService/GetTranslation"
-	PostService_SearchPosts_FullMethodName    = "/app.service.v1.PostService/SearchPosts"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -39,6 +39,11 @@ const (
 type PostServiceClient interface {
 	// 获取帖子列表
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListPostResponse, error)
+	// 全文搜索帖子（前台，基于 OpenSearch）
+	//
+	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+	SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...grpc.CallOption) (*v11.SearchPostsResponse, error)
 	// 获取帖子数据
 	Get(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.Post, error)
 	// 创建帖子
@@ -49,11 +54,6 @@ type PostServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.PostTranslation, error)
-	// 全文搜索帖子（前台，基于 OpenSearch）
-	//
-	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
-	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-	SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...grpc.CallOption) (*v11.SearchPostsResponse, error)
 }
 
 type postServiceClient struct {
@@ -68,6 +68,16 @@ func (c *postServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.ListPostResponse)
 	err := c.cc.Invoke(ctx, PostService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...grpc.CallOption) (*v11.SearchPostsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.SearchPostsResponse)
+	err := c.cc.Invoke(ctx, PostService_SearchPosts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -124,16 +134,6 @@ func (c *postServiceClient) GetTranslation(ctx context.Context, in *v11.GetPostR
 	return out, nil
 }
 
-func (c *postServiceClient) SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...grpc.CallOption) (*v11.SearchPostsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.SearchPostsResponse)
-	err := c.cc.Invoke(ctx, PostService_SearchPosts_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
@@ -142,6 +142,11 @@ func (c *postServiceClient) SearchPosts(ctx context.Context, in *v11.SearchPosts
 type PostServiceServer interface {
 	// 获取帖子列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
+	// 全文搜索帖子（前台，基于 OpenSearch）
+	//
+	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+	SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error)
 	// 获取帖子数据
 	Get(context.Context, *v11.GetPostRequest) (*v11.Post, error)
 	// 创建帖子
@@ -152,11 +157,6 @@ type PostServiceServer interface {
 	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
-	// 全文搜索帖子（前台，基于 OpenSearch）
-	//
-	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
-	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-	SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -169,6 +169,9 @@ type UnimplementedPostServiceServer struct{}
 
 func (UnimplementedPostServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedPostServiceServer) SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchPosts not implemented")
 }
 func (UnimplementedPostServiceServer) Get(context.Context, *v11.GetPostRequest) (*v11.Post, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
@@ -184,9 +187,6 @@ func (UnimplementedPostServiceServer) Delete(context.Context, *v11.DeletePostReq
 }
 func (UnimplementedPostServiceServer) GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
-}
-func (UnimplementedPostServiceServer) SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SearchPosts not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -223,6 +223,24 @@ func _PostService_List_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PostServiceServer).List(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_SearchPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.SearchPostsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).SearchPosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_SearchPosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).SearchPosts(ctx, req.(*v11.SearchPostsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -317,24 +335,6 @@ func _PostService_GetTranslation_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostService_SearchPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.SearchPostsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PostServiceServer).SearchPosts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PostService_SearchPosts_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).SearchPosts(ctx, req.(*v11.SearchPostsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -345,6 +345,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _PostService_List_Handler,
+		},
+		{
+			MethodName: "SearchPosts",
+			Handler:    _PostService_SearchPosts_Handler,
 		},
 		{
 			MethodName: "Get",
@@ -365,10 +369,6 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTranslation",
 			Handler:    _PostService_GetTranslation_Handler,
-		},
-		{
-			MethodName: "SearchPosts",
-			Handler:    _PostService_SearchPosts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

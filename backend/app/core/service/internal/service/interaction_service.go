@@ -117,13 +117,13 @@ func (s *InteractionService) ListWatchedPosts(ctx context.Context, req *paginati
 	return s.interactionRepo.ListWatchedPosts(ctx, viewerUserID, s.postRepo, req)
 }
 
-// GetCounts 批量查询指定目标的计数（如点赞数）。需登录。
+// GetCounts 批量查询指定目标的计数（如点赞数）。
+//
+// 计数查询本身不依赖 viewer 用户身份，仅按 tenant 隔离。登录用户由 repo 层
+// 从 viewer context 提取 tenant_id 过滤；未登录（SystemViewer，tenant_id==0）
+// 由 repo 层返回空结果，避免跨租户泄漏的同时不抛 401 打断公开页渲染。
+// Like/Unlike/Watch 等写操作仍强制登录。
 func (s *InteractionService) GetCounts(ctx context.Context, req *interactionV1.GetCountsRequest) (*interactionV1.GetCountsResponse, error) {
-	viewerUserID, ok := viewerUserIDFromContext(ctx)
-	if !ok {
-		return nil, interactionV1.ErrorUnauthorized("login required")
-	}
-	_ = viewerUserID // viewer 仅用于租户隔离断言，计数查询本身按 tenant_id 过滤
 	counts, err := s.interactionRepo.GetCounts(ctx, req.GetTargetType(), req.GetTargetIds(), req.GetMetrics())
 	if err != nil {
 		return nil, err

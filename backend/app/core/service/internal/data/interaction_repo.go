@@ -431,7 +431,10 @@ func (r *InteractionRepo) adjustCounterRow(ctx context.Context, tx *ent.Tx, tid,
 func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV1.TargetType, targetIDs []uint32, metrics []interactionV1.CounterMetric) (map[uint32]*interactionV1.CountMap, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	if !hasTenant {
-		return nil, interactionV1.ErrorUnauthorized("viewer identity required")
+		// 未登录（SystemViewer，tenant_id==0）或无 viewer context：返回空结果
+		// 而非 401。计数查询按 tenant 隔离，无 tenant 时无数据可返回，不抛错
+		// 以免打断公开页渲染。登录用户由 hasTenant==true 分支按 tenant 过滤。
+		return map[uint32]*interactionV1.CountMap{}, nil
 	}
 	if len(targetIDs) == 0 || len(metrics) == 0 {
 		return map[uint32]*interactionV1.CountMap{}, nil

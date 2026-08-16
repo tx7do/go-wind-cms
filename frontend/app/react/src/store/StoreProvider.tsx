@@ -22,8 +22,6 @@ import {
 import {RequestClient} from '@/core/transport/rest/request-client';
 import {env} from '@/config';
 import {refreshToken as apiRefreshToken} from '@/api/hooks/auth';
-import type {IUser} from '@/store/core/user/store';
-import {fetchUserProfile} from '@/api/hooks/user-profile';
 import {queryClient} from '@/core';
 
 /**
@@ -116,22 +114,6 @@ export default function StoreProvider({children}: { children: ReactNode }) {
                 }
             },
         });
-
-        // 同步预加载用户信息（如果有 token 且未过期）
-        const state = accessStore.getState();
-        if (state.accessToken?.value && !state.loginExpired) {
-            const expiresAt = state.accessToken.expiresAt;
-            const isValid = !expiresAt || expiresAt > Date.now();
-            if (isValid) {
-                fetchUserProfile()
-                    .then((user) => {
-                        userStore.getState().setUser(user as unknown as IUser);
-                    })
-                    .catch(() => {
-                        // 静默处理（token 可能已过期，后续请求会触发刷新或重新认证）
-                    });
-            }
-        }
     }, [accessStore, userStore, preferencesStore]);
 
     return (

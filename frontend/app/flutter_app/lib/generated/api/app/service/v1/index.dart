@@ -6019,6 +6019,36 @@ class PostServiceClient {
     return ContentServiceV1ListPostResponse.fromJson(result as Map<String, dynamic>);
   }
 
+  /// 全文搜索帖子（前台，基于 OpenSearch）
+  /// 
+  /// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+  /// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+  Future<ContentServiceV1SearchPostsResponse> searchPosts(ContentServiceV1SearchPostsRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/posts/search';
+    final queryParams = <String>[];
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.language != null) {
+      queryParams.add('language=${Uri.encodeComponent(request.language!.toString())}');
+    }
+    if (request.page != null) {
+      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PostService',
+      method: 'SearchPosts',
+    ), headers: headers);
+    return ContentServiceV1SearchPostsResponse.fromJson(result as Map<String, dynamic>);
+  }
+
   /// 获取帖子数据
   Future<ContentServiceV1Post> get(ContentServiceV1GetPostRequest request, {Map<String, String>? headers}) async {
     if (request.id == null) {
@@ -6110,35 +6140,207 @@ class PostServiceClient {
     ), headers: headers);
     return ContentServiceV1PostTranslation.fromJson(result as Map<String, dynamic>);
   }
+}
 
-  /// 全文搜索帖子（前台，基于 OpenSearch）
-  /// 
-  /// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
-  /// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-  Future<ContentServiceV1SearchPostsResponse> searchPosts(ContentServiceV1SearchPostsRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/posts/search';
-    final queryParams = <String>[];
-    if (request.query != null) {
-      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
-    }
-    if (request.language != null) {
-      queryParams.add('language=${Uri.encodeComponent(request.language!.toString())}');
-    }
-    if (request.page != null) {
-      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
-    }
-    if (request.pageSize != null) {
-      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
-    }
-    var uri = path;
-    if (queryParams.isNotEmpty) {
-      uri += '?${queryParams.join("&")}';
-    }
-    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'PostService',
-      method: 'SearchPosts',
-    ), headers: headers);
-    return ContentServiceV1SearchPostsResponse.fromJson(result as Map<String, dynamic>);
+/// 请求 - 帖子搜索
+/// 
+/// tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
+/// 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
+class ContentServiceV1SearchPostsRequest {
+  /// 语言代码（必填，仅返回该语言的翻译命中）
+  String? language;
+  /// 页码（0-based）
+  int? page;
+  /// 每页条数（服务端封顶 50）
+  int? pageSize;
+  /// 搜索查询词
+  String? query;
+
+  ContentServiceV1SearchPostsRequest({
+    this.language,
+    this.page,
+    this.pageSize,
+    this.query,
+  });
+
+  factory ContentServiceV1SearchPostsRequest.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1SearchPostsRequest(
+      language: json['language'] as String?,
+      page: json['page'] as int?,
+      pageSize: json['pageSize'] as int?,
+      query: json['query'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (language != null) json['language'] = language;
+    if (page != null) json['page'] = page;
+    if (pageSize != null) json['pageSize'] = pageSize;
+    if (query != null) json['query'] = query;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1SearchPostsRequest(language: $language, page: $page, pageSize: $pageSize, query: $query)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1SearchPostsRequest &&
+      runtimeType == other.runtimeType
+      && language == other.language
+      && page == other.page
+      && pageSize == other.pageSize
+      && query == other.query
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    language,
+    page,
+    pageSize,
+    query,
+  ]);
+
+  ContentServiceV1SearchPostsRequest copyWith({
+    String? language,
+    int? page,
+    int? pageSize,
+    String? query,
+  }) {
+    return ContentServiceV1SearchPostsRequest(
+      language: language ?? this.language,
+      page: page ?? this.page,
+      pageSize: pageSize ?? this.pageSize,
+      query: query ?? this.query,
+    );
+  }
+}
+
+/// 回应 - 帖子搜索
+/// 
+/// 仅返回最小字段集：post_id / language / title。
+/// 不含 content / tenant_id / status——这些字段不向前台暴露。
+class ContentServiceV1SearchPostsResponse {
+  List<ContentServiceV1SearchPostHit>? items;
+  int? total;
+
+  ContentServiceV1SearchPostsResponse({
+    this.items,
+    this.total,
+  });
+
+  factory ContentServiceV1SearchPostsResponse.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1SearchPostsResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => ContentServiceV1SearchPostHit.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1SearchPostsResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1SearchPostsResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  ContentServiceV1SearchPostsResponse copyWith({
+    List<ContentServiceV1SearchPostHit>? items,
+    int? total,
+  }) {
+    return ContentServiceV1SearchPostsResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+}
+
+/// 搜索命中条目（最小字段集）
+class ContentServiceV1SearchPostHit {
+  /// 语言代码
+  String? language;
+  /// 帖子 ID（用于后续 GetPost 详情查询）
+  int? postId;
+  /// 标题（来自翻译，用于搜索结果展示）
+  String? title;
+
+  ContentServiceV1SearchPostHit({
+    this.language,
+    this.postId,
+    this.title,
+  });
+
+  factory ContentServiceV1SearchPostHit.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1SearchPostHit(
+      language: json['language'] as String?,
+      postId: json['postId'] as int?,
+      title: json['title'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (language != null) json['language'] = language;
+    if (postId != null) json['postId'] = postId;
+    if (title != null) json['title'] = title;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1SearchPostHit(language: $language, postId: $postId, title: $title)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1SearchPostHit &&
+      runtimeType == other.runtimeType
+      && language == other.language
+      && postId == other.postId
+      && title == other.title
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    language,
+    postId,
+    title,
+  ]);
+
+  ContentServiceV1SearchPostHit copyWith({
+    String? language,
+    int? postId,
+    String? title,
+  }) {
+    return ContentServiceV1SearchPostHit(
+      language: language ?? this.language,
+      postId: postId ?? this.postId,
+      title: title ?? this.title,
+    );
   }
 }
 
@@ -6374,208 +6576,6 @@ class ContentServiceV1DeletePostRequest {
   }) {
     return ContentServiceV1DeletePostRequest(
       id: id ?? this.id,
-    );
-  }
-}
-
-/// 请求 - 帖子搜索
-/// 
-/// tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
-/// 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
-class ContentServiceV1SearchPostsRequest {
-  /// 语言代码（必填，仅返回该语言的翻译命中）
-  String? language;
-  /// 页码（0-based）
-  int? page;
-  /// 每页条数（服务端封顶 50）
-  int? pageSize;
-  /// 搜索查询词
-  String? query;
-
-  ContentServiceV1SearchPostsRequest({
-    this.language,
-    this.page,
-    this.pageSize,
-    this.query,
-  });
-
-  factory ContentServiceV1SearchPostsRequest.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1SearchPostsRequest(
-      language: json['language'] as String?,
-      page: json['page'] as int?,
-      pageSize: json['pageSize'] as int?,
-      query: json['query'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (language != null) json['language'] = language;
-    if (page != null) json['page'] = page;
-    if (pageSize != null) json['pageSize'] = pageSize;
-    if (query != null) json['query'] = query;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1SearchPostsRequest(language: $language, page: $page, pageSize: $pageSize, query: $query)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1SearchPostsRequest &&
-      runtimeType == other.runtimeType
-      && language == other.language
-      && page == other.page
-      && pageSize == other.pageSize
-      && query == other.query
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    language,
-    page,
-    pageSize,
-    query,
-  ]);
-
-  ContentServiceV1SearchPostsRequest copyWith({
-    String? language,
-    int? page,
-    int? pageSize,
-    String? query,
-  }) {
-    return ContentServiceV1SearchPostsRequest(
-      language: language ?? this.language,
-      page: page ?? this.page,
-      pageSize: pageSize ?? this.pageSize,
-      query: query ?? this.query,
-    );
-  }
-}
-
-/// 回应 - 帖子搜索
-/// 
-/// 仅返回最小字段集：post_id / language / title。
-/// 不含 content / tenant_id / status——这些字段不向前台暴露。
-class ContentServiceV1SearchPostsResponse {
-  List<ContentServiceV1SearchPostHit>? items;
-  int? total;
-
-  ContentServiceV1SearchPostsResponse({
-    this.items,
-    this.total,
-  });
-
-  factory ContentServiceV1SearchPostsResponse.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1SearchPostsResponse(
-      items: (json['items'] as List<dynamic>?)?.map((e) => ContentServiceV1SearchPostHit.fromJson(e as Map<String, dynamic>)).toList(),
-      total: json['total'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
-    if (total != null) json['total'] = total;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1SearchPostsResponse(items: $items, total: $total)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1SearchPostsResponse &&
-      runtimeType == other.runtimeType
-      && items == other.items
-      && total == other.total
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    items,
-    total,
-  ]);
-
-  ContentServiceV1SearchPostsResponse copyWith({
-    List<ContentServiceV1SearchPostHit>? items,
-    int? total,
-  }) {
-    return ContentServiceV1SearchPostsResponse(
-      items: items ?? this.items,
-      total: total ?? this.total,
-    );
-  }
-}
-
-/// 搜索命中条目（最小字段集）
-class ContentServiceV1SearchPostHit {
-  /// 语言代码
-  String? language;
-  /// 帖子 ID（用于后续 GetPost 详情查询）
-  int? postId;
-  /// 标题（来自翻译，用于搜索结果展示）
-  String? title;
-
-  ContentServiceV1SearchPostHit({
-    this.language,
-    this.postId,
-    this.title,
-  });
-
-  factory ContentServiceV1SearchPostHit.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1SearchPostHit(
-      language: json['language'] as String?,
-      postId: json['postId'] as int?,
-      title: json['title'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (language != null) json['language'] = language;
-    if (postId != null) json['postId'] = postId;
-    if (title != null) json['title'] = title;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1SearchPostHit(language: $language, postId: $postId, title: $title)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1SearchPostHit &&
-      runtimeType == other.runtimeType
-      && language == other.language
-      && postId == other.postId
-      && title == other.title
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    language,
-    postId,
-    title,
-  ]);
-
-  ContentServiceV1SearchPostHit copyWith({
-    String? language,
-    int? postId,
-    String? title,
-  }) {
-    return ContentServiceV1SearchPostHit(
-      language: language ?? this.language,
-      postId: postId ?? this.postId,
-      title: title ?? this.title,
     );
   }
 }

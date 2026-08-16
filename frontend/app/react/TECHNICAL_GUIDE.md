@@ -544,4 +544,4 @@ const summary = getPostSummary(post);
 
 ---
 
-> **快速开始**：`pnpm install && pnpm dev`，打开 `http://localhost:3000` 即可运行。
+> **快速开始**：`pnpm install && pnpm dev`，打开 `http://localhost:5001` 即可运行。

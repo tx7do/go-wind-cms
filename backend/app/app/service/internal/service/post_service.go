@@ -77,9 +77,10 @@ func (s *PostService) GetTranslation(ctx context.Context, req *contentV1.GetPost
 
 // SearchPosts 全文搜索帖子，纯透传到 core 服务。
 //
-// core 端会从登录用户上下文（viewer）注入 tenant_id，并硬编码 status=PUBLISHED，
-// 仅返回 postId/language/title 最小字段集。本端点需登录（不在鉴权白名单中），
-// 以保证 tenant_id 非零——匿名请求会被 core 端拒绝或返回空。
+// core 端从 viewer 上下文注入 tenant_id（匿名经路线2 的 AnonymousTenantViewer
+// 解析 Host 得到，登录为 UserViewer），并硬编码 status=PUBLISHED，仅返回
+// postId/language/title 最小字段集。tenant_id 非零由 viewer 保证，调用方无法
+// 指定或绕过。与文章列表/详情一致，本端点在鉴权白名单中，允许匿名搜索。
 func (s *PostService) SearchPosts(ctx context.Context, req *contentV1.SearchPostsRequest) (*contentV1.SearchPostsResponse, error) {
 	return s.postClient.SearchPosts(ctx, req)
 }

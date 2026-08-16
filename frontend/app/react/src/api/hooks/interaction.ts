@@ -16,6 +16,7 @@ import {
 } from '@/api/generated/app/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
+import {useIsLogin} from '@/store/core/access/store';
 
 // ==============================
 // 交互服务 API（点赞 / 收藏）
@@ -134,8 +135,9 @@ export function useInteractionStatus(
 
 /**
  * useGetCounts —— 批量查询指定目标的计数（如点赞数）。
- * 仅当 targetIds 非空且 metrics 非空时启用查询。用于列表/详情渲染计数展示。
- * 响应中未出现的 (target, metric) 组合按 0 兜底。
+ * 仅当 targetIds 非空、metrics 非空、且当前已登录时启用查询。登录态与后端
+ * viewer tenant 注入对齐：未登录时后端无 tenant 返回空，前端不发请求避免
+ * 无意义的空响应与潜在报错。响应中未出现的 (target, metric) 组合按 0 兜底。
  */
 export function useGetCounts(
   targetType: interactionservicev1_TargetType,
@@ -146,10 +148,11 @@ export function useGetCounts(
     'queryKey' | 'queryFn' | 'enabled'
   >,
 ) {
+  const isLogin = useIsLogin();
   return useQuery({
     queryKey: ['interaction-counts', targetType, targetIds, metrics],
     queryFn: () => getCounts(targetType, targetIds, metrics),
-    enabled: targetIds.length > 0 && metrics.length > 0,
+    enabled: isLogin && targetIds.length > 0 && metrics.length > 0,
     staleTime: 0,
     ...options,
   });

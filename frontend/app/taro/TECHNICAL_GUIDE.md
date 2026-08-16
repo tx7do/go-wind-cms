@@ -757,7 +757,7 @@ const summary = getPostSummary(post);
 
 ### 6.5 环境变量
 
-Taro 环境变量必须以 `TARO_APP_` 前缀开头（Taro 规范），通过 `config/index.ts` 的 `defineConstants` 注入。修改 `.env` 文件后需重启开发服务器。
+Taro 环境变量必须以 `TARO_APP_` 前缀开头（Taro 规范），通过 `config/index.ts` 的 `defineConstants` 注入。例外：H5 dev server 端口由 `config/index.ts` 直接读取环境变量 `VITE_PORT`（未设置时回退 10086），不走 `defineConstants`。修改 `.env` 文件后需重启开发服务器。
 
 ### 6.6 样式优先级
 

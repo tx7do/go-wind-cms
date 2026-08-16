@@ -171,16 +171,20 @@ class RequestClient {
   }
 
   /**
-   * 401 认证拦截器：自动刷新 Token 或跳转登录页
+   * 401 认证拦截器：自动刷新 Token 或失败后静默失效
+   *
+   * 失败处理不强制跳转登录页。`onReAuthenticate(false)` 仅清除本地 token
+   * 并标记 loginExpired，由应用层（Header/MobileNav 等据 loginExpired 渲染
+   * 未登录视图）决定后续展示。避免首页等匿名场景因偶发 401 被强制弹去登录页。
    */
   private useAuthInterceptor(callbacks: RequestClientCallbacks) {
     this.addResponseInterceptor(
       authenticateResponseInterceptor({
         client: this,
         doReAuthenticate: async () => {
-          console.warn('Token expired, redirecting to login...');
+          console.warn('Authentication expired, clearing local credentials.');
           if (callbacks.onReAuthenticate) {
-            await callbacks.onReAuthenticate(true);
+            await callbacks.onReAuthenticate(false);
           } else {
             console.error(
               'onReAuthenticate callback not set. Call RequestClient.init() during bootstrap.',

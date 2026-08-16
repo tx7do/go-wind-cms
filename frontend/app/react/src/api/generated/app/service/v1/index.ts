@@ -2137,6 +2137,13 @@ export interface PostService {
   List(
     request: pagination_PagingRequest,
   ): Promise<contentservicev1_ListPostResponse>;
+  // 全文搜索帖子（前台，基于 OpenSearch）
+  // 
+  // 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+  // 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
+  SearchPosts(
+    request: contentservicev1_SearchPostsRequest,
+  ): Promise<contentservicev1_SearchPostsResponse>;
   // 获取帖子数据
   Get(
     request: contentservicev1_GetPostRequest,
@@ -2157,13 +2164,6 @@ export interface PostService {
   GetTranslation(
     request: contentservicev1_GetPostRequest,
   ): Promise<contentservicev1_PostTranslation>;
-  // 全文搜索帖子（前台，基于 OpenSearch）
-  // 
-  // 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
-  // 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-  SearchPosts(
-    request: contentservicev1_SearchPostsRequest,
-  ): Promise<contentservicev1_SearchPostsResponse>;
 }
 
 export function createPostServiceClient(
@@ -2285,6 +2285,39 @@ export function createPostServiceClient(
         method: 'List',
       }) as Promise<contentservicev1_ListPostResponse>;
     },
+    SearchPosts(request) {
+      const path = `app/v1/posts/search`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.language) {
+        queryParams.push(
+          `language=${encodeURIComponent(request.language.toString())}`,
+        );
+      }
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PostService',
+        method: 'SearchPosts',
+      }) as Promise<contentservicev1_SearchPostsResponse>;
+    },
     Get(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
@@ -2377,67 +2410,8 @@ export function createPostServiceClient(
         method: 'GetTranslation',
       }) as Promise<contentservicev1_PostTranslation>;
     },
-    SearchPosts(request) {
-      const path = `app/v1/posts/search`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.query) {
-        queryParams.push(
-          `query=${encodeURIComponent(request.query.toString())}`,
-        );
-      }
-      if (request.language) {
-        queryParams.push(
-          `language=${encodeURIComponent(request.language.toString())}`,
-        );
-      }
-      if (request.page) {
-        queryParams.push(
-          `page=${encodeURIComponent(request.page.toString())}`,
-        );
-      }
-      if (request.pageSize) {
-        queryParams.push(
-          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'GET', body, {
-        service: 'PostService',
-        method: 'SearchPosts',
-      }) as Promise<contentservicev1_SearchPostsResponse>;
-    },
   };
 }
-// 请求 - 帖子数据
-export type contentservicev1_GetPostRequest = {
-  code?: string;
-  id?: number;
-  locale?: string;
-  viewMask?: wellKnownFieldMask;
-};
-
-// 请求 - 创建帖子
-export type contentservicev1_CreatePostRequest = {
-  data: contentservicev1_Post | undefined;
-};
-
-// 请求 - 更新帖子
-export type contentservicev1_UpdatePostRequest = {
-  allowMissing?: boolean;
-  data: contentservicev1_Post | undefined;
-  id: number | undefined;
-  updateMask: undefined | wellKnownFieldMask;
-};
-
-// 请求 - 删除帖子
-export type contentservicev1_DeletePostRequest = {
-  id?: number;
-};
-
 // 请求 - 帖子搜索
 // 
 // tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
@@ -2470,6 +2444,32 @@ export type contentservicev1_SearchPostHit = {
   postId: number | undefined;
   // 标题（来自翻译，用于搜索结果展示）
   title: string | undefined;
+};
+
+// 请求 - 帖子数据
+export type contentservicev1_GetPostRequest = {
+  code?: string;
+  id?: number;
+  locale?: string;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 请求 - 创建帖子
+export type contentservicev1_CreatePostRequest = {
+  data: contentservicev1_Post | undefined;
+};
+
+// 请求 - 更新帖子
+export type contentservicev1_UpdatePostRequest = {
+  allowMissing?: boolean;
+  data: contentservicev1_Post | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除帖子
+export type contentservicev1_DeletePostRequest = {
+  id?: number;
 };
 
 // 页面区块服务

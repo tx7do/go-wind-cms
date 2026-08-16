@@ -32,6 +32,7 @@ func NewRestMiddleware(
 	ctx *bootstrap.Context,
 	accessTokenChecker auth.AccessTokenChecker,
 	authorizer authzEngine.Engine,
+	tenantResolver entmiddleware.TenantResolver,
 ) []middleware.Middleware {
 	var ms []middleware.Middleware
 	ms = append(ms, logging.Server(ctx.GetLogger()))
@@ -55,6 +56,17 @@ func NewRestMiddleware(
 		appV1.OperationCategoryServiceGet,
 		appV1.OperationCommentServiceGet,
 		appV1.OperationTagServiceGet,
+
+		// PostService.SearchPosts：公开全文搜索，与文章列表/详情的匿名可见性一致。
+		// tenant_id 由 core 端从 viewer（匿名经路线2 注入的 AnonymousTenantViewer，
+		// 登录为 UserViewer）提取，按 tenant 隔离，仅返回 PUBLISHED。调用方无法
+		// 指定或绕过 tenant。
+		appV1.OperationPostServiceSearchPosts,
+
+		// InteractionService.GetCounts：公开计数（如点赞数）随文章列表展示，
+		// 仅按 tenant 隔离、不依赖 viewer 身份。Like/Unlike/Watch 等写操作
+		// 及 GetInteractionStatus（含 viewer 个人状态）仍需登录，故不在此登记。
+		appV1.OperationInteractionServiceGetCounts,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -79,8 +91,10 @@ func NewRestMiddleware(
 	).Match(rpc.NewRestWhiteListMatcher()).Build())
 
 	// ent.Server() 必须在 auth.Server 之后：此时非白名单请求已注入 OperatorMetadata，
-	// 可构建 UserViewer；白名单请求（登录/公开内容）md==nil 但在白名单内，兜底 SystemViewer。
-	ms = append(ms, entmiddleware.Server())
+	// 可构建 UserViewer；白名单请求（公开内容）md==nil，由注入的 TenantResolver 按
+	// Host 解析 tenant_id 并注入只读 AnonymousTenantViewer（按 tenant 隔离）；解析失败
+	// fail-closed 注入 noopContext（拒绝），不再回退 SystemViewer 避免跨租户泄漏。
+	ms = append(ms, entmiddleware.Server(entmiddleware.WithTenantResolver(tenantResolver)))
 
 	return ms
 }

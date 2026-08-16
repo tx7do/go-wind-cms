@@ -53,12 +53,12 @@ type PostServiceHTTPServer interface {
 func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/app/v1/posts", _PostService_List4_HTTP_Handler(srv))
+	r.GET("/app/v1/posts/search", _PostService_SearchPosts0_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/{id}", _PostService_Get4_HTTP_Handler(srv))
 	r.POST("/app/v1/posts", _PostService_Create4_HTTP_Handler(srv))
 	r.PUT("/app/v1/posts/{id}", _PostService_Update4_HTTP_Handler(srv))
 	r.DELETE("/app/v1/posts/{id}", _PostService_Delete4_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/{id}/translation", _PostService_GetTranslation2_HTTP_Handler(srv))
-	r.GET("/app/v1/posts/search", _PostService_SearchPosts0_HTTP_Handler(srv))
 }
 
 func _PostService_List4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
@@ -76,6 +76,25 @@ func _PostService_List4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Co
 			return err
 		}
 		reply := out.(*v11.ListPostResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_SearchPosts0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.SearchPostsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceSearchPosts)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SearchPosts(ctx, req.(*v11.SearchPostsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.SearchPostsResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -189,25 +208,6 @@ func _PostService_GetTranslation2_HTTP_Handler(srv PostServiceHTTPServer) func(c
 			return err
 		}
 		reply := out.(*v11.PostTranslation)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _PostService_SearchPosts0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.SearchPostsRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationPostServiceSearchPosts)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.SearchPosts(ctx, req.(*v11.SearchPostsRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*v11.SearchPostsResponse)
 		return ctx.Result(200, reply)
 	}
 }
