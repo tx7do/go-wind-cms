@@ -1,4 +1,4 @@
-package data
+package client
 
 import (
 	"github.com/go-kratos/kratos/v2/log"

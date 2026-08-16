@@ -16,12 +16,14 @@ class WebPostGrid extends StatelessWidget {
   final List<Post> posts;
   final List<Category> categories;
   final List<Tag> tags;
+  final Map<int, int> likeCounts;
 
   const WebPostGrid({
     super.key,
     required this.posts,
     required this.categories,
     required this.tags,
+    required this.likeCounts,
   });
 
   @override
@@ -48,6 +50,7 @@ class WebPostGrid extends StatelessWidget {
                 height: childHeight,
                 child: PostCard(
                   post: posts[i + j],
+                  likeCount: likeCounts[posts[i + j].id] ?? 0,
                   categories: categories,
                   tags: tags,
                 ),

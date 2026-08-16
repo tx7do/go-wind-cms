@@ -127,11 +127,6 @@ const gridOptions: VxeGridProps<PageType> = {
       field: 'authorName',
     },
     {
-      title: $t('page.page.visits'),
-      field: 'visits',
-      width: 80,
-    },
-    {
       title: $t('page.page.status'),
       field: 'status',
       slots: { default: 'status' },

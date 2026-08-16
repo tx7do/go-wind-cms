@@ -31,7 +31,7 @@ export default function FeaturedPostsSection() {
             <div className="w-full">
                 <PostList
                     queryParams={{status: 'POST_STATUS_PUBLISHED', isFeatured: true}}
-                    fieldMask="id,status,sortOrder,isFeatured,visits,likes,commentCount,authorName,availableLanguages,createdAt,translations.id,translations.postId,translations.languageCode,translations.title,translations.summary,translations.thumbnail"
+                    fieldMask="id,status,sortOrder,isFeatured,authorName,availableLanguages,createdAt,translations.id,translations.postId,translations.languageCode,translations.title,translations.summary,translations.thumbnail"
                     orderBy={['-sortOrder']}
                     page={1}
                     pageSize={3}

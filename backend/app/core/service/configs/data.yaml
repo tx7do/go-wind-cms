@@ -1,7 +1,7 @@
 data:
   database:
     driver: "postgres"
-    source: "host=postgres port=5432 user=postgres password=${db_password:dev_only_change_me} dbname=gwc sslmode=disable"
+    source: "host=postgres port=5432 user=postgres password=*Abcd123456 dbname=gwc sslmode=disable"
     migrate: true
     debug: false
     max_idle_connections: 25
@@ -10,18 +10,13 @@ data:
 
   redis:
     addr: "redis:6379"
-    password: "${redis_password:dev_only_change_me}"
+    password: "*Abcd123456"
     dial_timeout: 10s
     read_timeout: 0.4s
     write_timeout: 0.6s
 
-  # 键名必须为 `elasticsearch`（无下划线），与 bootstrap proto 字段名一致；
-  # 否则 kratos 的 protojson 加载器（DiscardUnknown:true）会静默丢弃此段，
-  # 导致 cfg.Data.Elasticsearch==nil，NewElasticSearchClient 启动即报 "config is nil"。
-  # 凭据须与 docker-compose 中 opensearch 容器的 OPENSEARCH_INITIAL_ADMIN_PASSWORD 一致
-  # （OpenSearch 强制强密码策略，不能用 dev_only_change_me）。
-  elasticsearch:
+  opensearch:
     addresses:
-      - "http://opensearch:9200"
+      - "http://localhost:9200"
     username: "admin"
-    password: "${opensearch_password:@Abcd#123456}"
+    password: "@Abcd#123456"

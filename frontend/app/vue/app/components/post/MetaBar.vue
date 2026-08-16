@@ -1,12 +1,17 @@
 <script setup lang="ts">
+/**
+ * 文章元数据条 — 作者 / 日期 / 点赞数 / 收藏数
+ *
+ * 用于 post/[id] 详情页 header 区域
+ */
 import { XIcon } from '@/plugins/xicon'
 import { formatDate } from '@/utils/date'
 
 defineProps<{
   authorName?: string
   createdAt?: string
-  visits?: number | string
   likes?: number | string
+  watchCount?: number | string
 }>()
 </script>
 
@@ -20,13 +25,13 @@ defineProps<{
       <XIcon icon="carbon:calendar" :size="16" />
       <span>{{ formatDate(createdAt) }}</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <XIcon icon="carbon:view" :size="16" />
-      <span>{{ visits || 0 }}</span>
-    </div>
-    <div class="flex items-center gap-1.5">
-      <XIcon icon="carbon:thumbs-up" :size="16" />
-      <span>{{ likes || 0 }}</span>
-    </div>
+            <div class="flex items-center gap-1.5">
+                <XIcon icon="carbon:thumbs-up" :size="16" />
+                <span>{{ likes || 0 }}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <XIcon icon="carbon:bookmark" :size="16" />
+                <span>{{ watchCount || 0 }}</span>
+            </div>
   </div>
 </template>

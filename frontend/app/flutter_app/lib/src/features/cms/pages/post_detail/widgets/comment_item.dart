@@ -10,14 +10,18 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show InteractionServiceV1TargetType, InteractionServiceV1LikeResponse;
 
 /// 评论项。点赞由 interaction 子系统提供：initState 取初始态，
-/// 点击调 like/unlike，后端在同事务内更新 ledger 与 comment.like_count 缓存并回读，
+/// 点击调 like/unlike，后端在同事务内更新 ledger 与 interaction_counter 计数表并回读，
 /// 前端用返回值更新本地显示。
+///
+/// 初始点赞计数由父页批量查询 GetCounts(COMMENT, LIKE) 后通过 [likeCount] 注入
+/// （comment.like_count 列已移除）；点赞/取消后由 LikeResponse.likeCount 乐观更新。
 class CommentItem extends StatefulWidget {
   final CommentServiceV1Comment comment;
   final bool isMobile;
   final int depth;
   final List<CommentServiceV1Comment> allComments;
   final void Function(CommentServiceV1Comment comment)? onReply;
+  final int likeCount;
 
   const CommentItem({
     super.key,
@@ -26,6 +30,7 @@ class CommentItem extends StatefulWidget {
     this.depth = 0,
     required this.allComments,
     this.onReply,
+    required this.likeCount,
   });
 
   @override
@@ -35,13 +40,21 @@ class CommentItem extends StatefulWidget {
 class _CommentItemState extends State<CommentItem> {
   final _interactionService = InteractionService();
   bool _isLiked = false;
-  int _likeCount = 0;
+  late int _likeCount;
 
   @override
   void initState() {
     super.initState();
-    _likeCount = widget.comment.likeCount ?? 0;
+    _likeCount = widget.likeCount;
     _loadStatus();
+  }
+
+  @override
+  void didUpdateWidget(covariant CommentItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.likeCount != widget.likeCount) {
+      _likeCount = widget.likeCount;
+    }
   }
 
   Future<void> _loadStatus() async {
@@ -192,7 +205,7 @@ class _CommentItemState extends State<CommentItem> {
                       ),
                       SizedBox(width: widget.isMobile ? 3.w : 3),
                       Text(
-                        '${widget.comment.replyCount ?? realChildren.length}',
+                        '${realChildren.length}',
                         style: TextStyle(
                           fontSize: widget.isMobile ? 11.sp : 11,
                           color: theme.colorScheme.onSurface.withAlpha(80),

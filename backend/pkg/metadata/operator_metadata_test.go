@@ -68,7 +68,8 @@ func TestNewContext_FromContext_InvalidData(t *testing.T) {
 	assert.Equal(t, info.RoleIds, got.RoleIds)
 }
 
-func TestNewOperatorMetadataContext_WriteAndRead(t *testing.T) {
+func TestNewContext_FromServerContext_RoundTrip(t *testing.T) {
+	// NewContext 写入 server context，FromServerContext 应读回相同的操作员字段。
 	info := &authenticationV1.OperatorMetadata{
 		UserId:    uint64(123),
 		TenantId:  uint64(456),
@@ -79,28 +80,27 @@ func TestNewOperatorMetadataContext_WriteAndRead(t *testing.T) {
 	ctx, err := NewContext(context.Background(), info)
 	assert.NoError(t, err)
 
-	md, ok := metadata.FromClientContext(ctx)
-	assert.True(t, ok)
+	got, err := FromServerContext(ctx)
+	assert.NoError(t, err)
+	assert.NotNil(t, got)
+	assert.Equal(t, info.UserId, got.UserId)
+	assert.Equal(t, info.TenantId, got.TenantId)
+	assert.Equal(t, info.OrgUnitId, got.OrgUnitId)
+	assert.Equal(t, info.DataScope, got.DataScope)
+	assert.Equal(t, info.RoleIds, got.RoleIds)
+}
 
-	op := md.Get(mdOperatorKey)
-	assert.NotEmpty(t, op)
-
-	got, err := DecodeOperatorMetadata(op)
+func TestNewContext_PreservesExistingServerMetadata(t *testing.T) {
+	// NewContext 采用合并语义：不得覆盖 server context 中已有的其它元数据键。
+	pre := metadata.NewServerContext(context.Background(), metadata.Metadata{
+		"x-md-global-other": []string{"keep"},
+	})
+	info := &authenticationV1.OperatorMetadata{UserId: 1}
+	ctx, err := NewContext(pre, info)
 	assert.NoError(t, err)
 
-	if assert.NotNil(t, got.UserId) {
-		assert.Equal(t, info.UserId, got.UserId)
-	}
-	if assert.NotNil(t, got.TenantId) {
-		assert.Equal(t, info.TenantId, got.TenantId)
-	}
-	if assert.NotNil(t, got.OrgUnitId) {
-		assert.Equal(t, info.OrgUnitId, got.OrgUnitId)
-	}
-	if assert.NotNil(t, got.DataScope) {
-		assert.Equal(t, info.DataScope, got.DataScope)
-	}
-	if assert.NotNil(t, got.RoleIds) {
-		assert.Equal(t, info.RoleIds, got.RoleIds)
-	}
+	md, ok := metadata.FromServerContext(ctx)
+	assert.True(t, ok)
+	assert.Equal(t, "keep", md.Get("x-md-global-other"))
+	assert.NotEmpty(t, md.Get(mdOperatorKey))
 }

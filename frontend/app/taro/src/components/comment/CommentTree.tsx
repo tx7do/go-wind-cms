@@ -7,7 +7,7 @@ import {XIcon} from '@/plugins/xicon';
 import type {commentservicev1_Comment} from '@/api/generated/app/service/v1';
 import {formatDate} from '@/utils/date';
 import {cn} from '@/lib/utils';
-import {useInteractionStatus, useLike, useUnlike} from '@/api/hooks/interaction';
+import {useInteractionStatus, useLike, useUnlike, useGetCounts, extractCount} from '@/api/hooks/interaction';
 
 interface CommentTreeProps {
     comments: commentservicev1_Comment[];
@@ -31,6 +31,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         .map(c => c.id)
         .filter((id): id is number => typeof id === 'number');
     const statusQuery = useInteractionStatus('TARGET_TYPE_COMMENT', commentIds);
+    // 点赞计数：通过 interaction_counter 表批量查询（comment.like_count 列已移除）。
+    const countsQuery = useGetCounts('TARGET_TYPE_COMMENT', commentIds, ['COUNTER_METRIC_LIKE']);
     const likeMutation = useLike();
     const unlikeMutation = useUnlike();
 
@@ -42,7 +44,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     }
 
     function hasChildren(comment: commentservicev1_Comment): boolean {
-        return !!comment.children || (comment.replyCount !== undefined && comment.replyCount > 0);
+        return !!comment.children && comment.children.length > 0;
     }
 
     function isOwnerReply(comment: commentservicev1_Comment): boolean {
@@ -124,7 +126,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                 return next;
             });
         } else {
-            if (!comment.children && comment.replyCount && comment.replyCount > 0) {
+            if (!comment.children) {
+                // 需要动态加载子评论
                 setLoadingChildren(prev => new Set(prev).add(id));
                 try {
                     await onLoadChildren(comment);
@@ -200,7 +203,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                             isLiked(comment.id) ? 'text-primary' : 'text-textSec',
                                           )}
                                         >
-                                            {comment.likeCount || 0}
+                                            {extractCount(countsQuery.data, comment.id as number, 'COUNTER_METRIC_LIKE')}
                                         </Text>
                                     </View>
 
@@ -224,8 +227,11 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                         <Text className='text-tips text-textSec'>{t('share')}</Text>
                                     </View>
 
-                                    {/* 查看回复 */}
-                                    {comment.replyCount && comment.replyCount > 0 ? (
+                                    {/* 查看回复按钮：计数用已加载的 children 长度（reply_count 列已移除） */}
+                                    {(() => {
+                                    const childCount = comment.children?.length ?? 0;
+                                    if (childCount === 0 && !isExpanded(comment)) return null;
+                                    return (
                                         <View
                                           className='flex items-center gap-[4rpx] ms-auto'
                                           onClick={() => toggleExpand(comment)}
@@ -239,11 +245,12 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                             <Text className='text-tips text-primary'>
                                                 {isExpanded(comment)
                                                     ? t('hide_replies')
-                                                    : t('view_replies', {count: comment.replyCount})
+                                                    : t('view_replies', {count: childCount})
                                                 }
                                             </Text>
                                         </View>
-                                    ) : null}
+                                    );
+                                    })()}
                                 </View>
                             </View>
                         </View>

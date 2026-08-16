@@ -8,6 +8,7 @@ const props = withDefaults(defineProps<{
   post: any
   from?: string
   categoryId?: number
+  likeCount?: number
 }>(), {
   from: 'post-list',
 })
@@ -75,12 +76,8 @@ function handleViewPost() {
         </div>
         <div class="flex flex-wrap gap-4">
           <div class="flex items-center gap-1.5 whitespace-nowrap">
-            <XIcon icon="carbon:view" :size="16" />
-            <span>{{ post.visits || 0 }}</span>
-          </div>
-          <div class="flex items-center gap-1.5 whitespace-nowrap">
             <XIcon icon="carbon:thumbs-up" :size="16" />
-            <span>{{ post.likes || 0 }}</span>
+            <span>{{ likeCount || 0 }}</span>
           </div>
         </div>
       </div>

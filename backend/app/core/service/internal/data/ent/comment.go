@@ -52,12 +52,6 @@ type Comment struct {
 	AuthorType *comment.AuthorType `json:"author_type,omitempty"`
 	// 评论状态
 	Status *comment.Status `json:"status,omitempty"`
-	// 点赞数
-	LikeCount *uint32 `json:"like_count,omitempty"`
-	// 点踩数
-	DislikeCount *uint32 `json:"dislike_count,omitempty"`
-	// 回复数
-	ReplyCount *uint32 `json:"reply_count,omitempty"`
 	// 评论者 IP
 	IPAddress *string `json:"ip_address,omitempty"`
 	// 评论者地理位置
@@ -116,7 +110,7 @@ func (*Comment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case comment.FieldIsSpam, comment.FieldIsSticky:
 			values[i] = new(sql.NullBool)
-		case comment.FieldID, comment.FieldCreatedBy, comment.FieldUpdatedBy, comment.FieldDeletedBy, comment.FieldParentID, comment.FieldTenantID, comment.FieldObjectID, comment.FieldAuthorID, comment.FieldLikeCount, comment.FieldDislikeCount, comment.FieldReplyCount, comment.FieldReplyToID:
+		case comment.FieldID, comment.FieldCreatedBy, comment.FieldUpdatedBy, comment.FieldDeletedBy, comment.FieldParentID, comment.FieldTenantID, comment.FieldObjectID, comment.FieldAuthorID, comment.FieldReplyToID:
 			values[i] = new(sql.NullInt64)
 		case comment.FieldContentType, comment.FieldContent, comment.FieldAuthorName, comment.FieldAuthorEmail, comment.FieldAuthorURL, comment.FieldAuthorType, comment.FieldStatus, comment.FieldIPAddress, comment.FieldLocation, comment.FieldUserAgent, comment.FieldDetectedLanguage:
 			values[i] = new(sql.NullString)
@@ -261,27 +255,6 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Status = new(comment.Status)
 				*_m.Status = comment.Status(value.String)
-			}
-		case comment.FieldLikeCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field like_count", values[i])
-			} else if value.Valid {
-				_m.LikeCount = new(uint32)
-				*_m.LikeCount = uint32(value.Int64)
-			}
-		case comment.FieldDislikeCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field dislike_count", values[i])
-			} else if value.Valid {
-				_m.DislikeCount = new(uint32)
-				*_m.DislikeCount = uint32(value.Int64)
-			}
-		case comment.FieldReplyCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field reply_count", values[i])
-			} else if value.Valid {
-				_m.ReplyCount = new(uint32)
-				*_m.ReplyCount = uint32(value.Int64)
 			}
 		case comment.FieldIPAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -460,21 +433,6 @@ func (_m *Comment) String() string {
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.LikeCount; v != nil {
-		builder.WriteString("like_count=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.DislikeCount; v != nil {
-		builder.WriteString("dislike_count=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.ReplyCount; v != nil {
-		builder.WriteString("reply_count=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

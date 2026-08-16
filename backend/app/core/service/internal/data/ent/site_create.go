@@ -238,20 +238,6 @@ func (_c *SiteCreate) SetNillableTheme(v *string) *SiteCreate {
 	return _c
 }
 
-// SetVisitCount sets the "visit_count" field.
-func (_c *SiteCreate) SetVisitCount(v uint64) *SiteCreate {
-	_c.mutation.SetVisitCount(v)
-	return _c
-}
-
-// SetNillableVisitCount sets the "visit_count" field if the given value is not nil.
-func (_c *SiteCreate) SetNillableVisitCount(v *uint64) *SiteCreate {
-	if v != nil {
-		_c.SetVisitCount(*v)
-	}
-	return _c
-}
-
 // SetID sets the "id" field.
 func (_c *SiteCreate) SetID(v uint32) *SiteCreate {
 	_c.mutation.SetID(v)
@@ -306,10 +292,6 @@ func (_c *SiteCreate) defaults() error {
 	if _, ok := _c.mutation.Status(); !ok {
 		v := site.DefaultStatus
 		_c.mutation.SetStatus(v)
-	}
-	if _, ok := _c.mutation.VisitCount(); !ok {
-		v := site.DefaultVisitCount
-		_c.mutation.SetVisitCount(v)
 	}
 	return nil
 }
@@ -422,10 +404,6 @@ func (_c *SiteCreate) createSpec() (*Site, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Theme(); ok {
 		_spec.SetField(site.FieldTheme, field.TypeString, value)
 		_node.Theme = &value
-	}
-	if value, ok := _c.mutation.VisitCount(); ok {
-		_spec.SetField(site.FieldVisitCount, field.TypeUint64, value)
-		_node.VisitCount = &value
 	}
 	return _node, _spec
 }
@@ -746,30 +724,6 @@ func (u *SiteUpsert) UpdateTheme() *SiteUpsert {
 // ClearTheme clears the value of the "theme" field.
 func (u *SiteUpsert) ClearTheme() *SiteUpsert {
 	u.SetNull(site.FieldTheme)
-	return u
-}
-
-// SetVisitCount sets the "visit_count" field.
-func (u *SiteUpsert) SetVisitCount(v uint64) *SiteUpsert {
-	u.Set(site.FieldVisitCount, v)
-	return u
-}
-
-// UpdateVisitCount sets the "visit_count" field to the value that was provided on create.
-func (u *SiteUpsert) UpdateVisitCount() *SiteUpsert {
-	u.SetExcluded(site.FieldVisitCount)
-	return u
-}
-
-// AddVisitCount adds v to the "visit_count" field.
-func (u *SiteUpsert) AddVisitCount(v uint64) *SiteUpsert {
-	u.Add(site.FieldVisitCount, v)
-	return u
-}
-
-// ClearVisitCount clears the value of the "visit_count" field.
-func (u *SiteUpsert) ClearVisitCount() *SiteUpsert {
-	u.SetNull(site.FieldVisitCount)
 	return u
 }
 
@@ -1139,34 +1093,6 @@ func (u *SiteUpsertOne) UpdateTheme() *SiteUpsertOne {
 func (u *SiteUpsertOne) ClearTheme() *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.ClearTheme()
-	})
-}
-
-// SetVisitCount sets the "visit_count" field.
-func (u *SiteUpsertOne) SetVisitCount(v uint64) *SiteUpsertOne {
-	return u.Update(func(s *SiteUpsert) {
-		s.SetVisitCount(v)
-	})
-}
-
-// AddVisitCount adds v to the "visit_count" field.
-func (u *SiteUpsertOne) AddVisitCount(v uint64) *SiteUpsertOne {
-	return u.Update(func(s *SiteUpsert) {
-		s.AddVisitCount(v)
-	})
-}
-
-// UpdateVisitCount sets the "visit_count" field to the value that was provided on create.
-func (u *SiteUpsertOne) UpdateVisitCount() *SiteUpsertOne {
-	return u.Update(func(s *SiteUpsert) {
-		s.UpdateVisitCount()
-	})
-}
-
-// ClearVisitCount clears the value of the "visit_count" field.
-func (u *SiteUpsertOne) ClearVisitCount() *SiteUpsertOne {
-	return u.Update(func(s *SiteUpsert) {
-		s.ClearVisitCount()
 	})
 }
 
@@ -1702,34 +1628,6 @@ func (u *SiteUpsertBulk) UpdateTheme() *SiteUpsertBulk {
 func (u *SiteUpsertBulk) ClearTheme() *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.ClearTheme()
-	})
-}
-
-// SetVisitCount sets the "visit_count" field.
-func (u *SiteUpsertBulk) SetVisitCount(v uint64) *SiteUpsertBulk {
-	return u.Update(func(s *SiteUpsert) {
-		s.SetVisitCount(v)
-	})
-}
-
-// AddVisitCount adds v to the "visit_count" field.
-func (u *SiteUpsertBulk) AddVisitCount(v uint64) *SiteUpsertBulk {
-	return u.Update(func(s *SiteUpsert) {
-		s.AddVisitCount(v)
-	})
-}
-
-// UpdateVisitCount sets the "visit_count" field to the value that was provided on create.
-func (u *SiteUpsertBulk) UpdateVisitCount() *SiteUpsertBulk {
-	return u.Update(func(s *SiteUpsert) {
-		s.UpdateVisitCount()
-	})
-}
-
-// ClearVisitCount clears the value of the "visit_count" field.
-func (u *SiteUpsertBulk) ClearVisitCount() *SiteUpsertBulk {
-	return u.Update(func(s *SiteUpsert) {
-		s.ClearVisitCount()
 	})
 }
 

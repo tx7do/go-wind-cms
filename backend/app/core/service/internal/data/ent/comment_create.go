@@ -260,48 +260,6 @@ func (_c *CommentCreate) SetNillableStatus(v *comment.Status) *CommentCreate {
 	return _c
 }
 
-// SetLikeCount sets the "like_count" field.
-func (_c *CommentCreate) SetLikeCount(v uint32) *CommentCreate {
-	_c.mutation.SetLikeCount(v)
-	return _c
-}
-
-// SetNillableLikeCount sets the "like_count" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableLikeCount(v *uint32) *CommentCreate {
-	if v != nil {
-		_c.SetLikeCount(*v)
-	}
-	return _c
-}
-
-// SetDislikeCount sets the "dislike_count" field.
-func (_c *CommentCreate) SetDislikeCount(v uint32) *CommentCreate {
-	_c.mutation.SetDislikeCount(v)
-	return _c
-}
-
-// SetNillableDislikeCount sets the "dislike_count" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableDislikeCount(v *uint32) *CommentCreate {
-	if v != nil {
-		_c.SetDislikeCount(*v)
-	}
-	return _c
-}
-
-// SetReplyCount sets the "reply_count" field.
-func (_c *CommentCreate) SetReplyCount(v uint32) *CommentCreate {
-	_c.mutation.SetReplyCount(v)
-	return _c
-}
-
-// SetNillableReplyCount sets the "reply_count" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableReplyCount(v *uint32) *CommentCreate {
-	if v != nil {
-		_c.SetReplyCount(*v)
-	}
-	return _c
-}
-
 // SetIPAddress sets the "ip_address" field.
 func (_c *CommentCreate) SetIPAddress(v string) *CommentCreate {
 	_c.mutation.SetIPAddress(v)
@@ -471,18 +429,6 @@ func (_c *CommentCreate) defaults() error {
 		v := comment.DefaultAuthorID
 		_c.mutation.SetAuthorID(v)
 	}
-	if _, ok := _c.mutation.LikeCount(); !ok {
-		v := comment.DefaultLikeCount
-		_c.mutation.SetLikeCount(v)
-	}
-	if _, ok := _c.mutation.DislikeCount(); !ok {
-		v := comment.DefaultDislikeCount
-		_c.mutation.SetDislikeCount(v)
-	}
-	if _, ok := _c.mutation.ReplyCount(); !ok {
-		v := comment.DefaultReplyCount
-		_c.mutation.SetReplyCount(v)
-	}
 	if _, ok := _c.mutation.IsSpam(); !ok {
 		v := comment.DefaultIsSpam
 		_c.mutation.SetIsSpam(v)
@@ -612,18 +558,6 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(comment.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
-	}
-	if value, ok := _c.mutation.LikeCount(); ok {
-		_spec.SetField(comment.FieldLikeCount, field.TypeUint32, value)
-		_node.LikeCount = &value
-	}
-	if value, ok := _c.mutation.DislikeCount(); ok {
-		_spec.SetField(comment.FieldDislikeCount, field.TypeUint32, value)
-		_node.DislikeCount = &value
-	}
-	if value, ok := _c.mutation.ReplyCount(); ok {
-		_spec.SetField(comment.FieldReplyCount, field.TypeUint32, value)
-		_node.ReplyCount = &value
 	}
 	if value, ok := _c.mutation.IPAddress(); ok {
 		_spec.SetField(comment.FieldIPAddress, field.TypeString, value)
@@ -1035,78 +969,6 @@ func (u *CommentUpsert) UpdateStatus() *CommentUpsert {
 // ClearStatus clears the value of the "status" field.
 func (u *CommentUpsert) ClearStatus() *CommentUpsert {
 	u.SetNull(comment.FieldStatus)
-	return u
-}
-
-// SetLikeCount sets the "like_count" field.
-func (u *CommentUpsert) SetLikeCount(v uint32) *CommentUpsert {
-	u.Set(comment.FieldLikeCount, v)
-	return u
-}
-
-// UpdateLikeCount sets the "like_count" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateLikeCount() *CommentUpsert {
-	u.SetExcluded(comment.FieldLikeCount)
-	return u
-}
-
-// AddLikeCount adds v to the "like_count" field.
-func (u *CommentUpsert) AddLikeCount(v uint32) *CommentUpsert {
-	u.Add(comment.FieldLikeCount, v)
-	return u
-}
-
-// ClearLikeCount clears the value of the "like_count" field.
-func (u *CommentUpsert) ClearLikeCount() *CommentUpsert {
-	u.SetNull(comment.FieldLikeCount)
-	return u
-}
-
-// SetDislikeCount sets the "dislike_count" field.
-func (u *CommentUpsert) SetDislikeCount(v uint32) *CommentUpsert {
-	u.Set(comment.FieldDislikeCount, v)
-	return u
-}
-
-// UpdateDislikeCount sets the "dislike_count" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateDislikeCount() *CommentUpsert {
-	u.SetExcluded(comment.FieldDislikeCount)
-	return u
-}
-
-// AddDislikeCount adds v to the "dislike_count" field.
-func (u *CommentUpsert) AddDislikeCount(v uint32) *CommentUpsert {
-	u.Add(comment.FieldDislikeCount, v)
-	return u
-}
-
-// ClearDislikeCount clears the value of the "dislike_count" field.
-func (u *CommentUpsert) ClearDislikeCount() *CommentUpsert {
-	u.SetNull(comment.FieldDislikeCount)
-	return u
-}
-
-// SetReplyCount sets the "reply_count" field.
-func (u *CommentUpsert) SetReplyCount(v uint32) *CommentUpsert {
-	u.Set(comment.FieldReplyCount, v)
-	return u
-}
-
-// UpdateReplyCount sets the "reply_count" field to the value that was provided on create.
-func (u *CommentUpsert) UpdateReplyCount() *CommentUpsert {
-	u.SetExcluded(comment.FieldReplyCount)
-	return u
-}
-
-// AddReplyCount adds v to the "reply_count" field.
-func (u *CommentUpsert) AddReplyCount(v uint32) *CommentUpsert {
-	u.Add(comment.FieldReplyCount, v)
-	return u
-}
-
-// ClearReplyCount clears the value of the "reply_count" field.
-func (u *CommentUpsert) ClearReplyCount() *CommentUpsert {
-	u.SetNull(comment.FieldReplyCount)
 	return u
 }
 
@@ -1643,90 +1505,6 @@ func (u *CommentUpsertOne) UpdateStatus() *CommentUpsertOne {
 func (u *CommentUpsertOne) ClearStatus() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.ClearStatus()
-	})
-}
-
-// SetLikeCount sets the "like_count" field.
-func (u *CommentUpsertOne) SetLikeCount(v uint32) *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetLikeCount(v)
-	})
-}
-
-// AddLikeCount adds v to the "like_count" field.
-func (u *CommentUpsertOne) AddLikeCount(v uint32) *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.AddLikeCount(v)
-	})
-}
-
-// UpdateLikeCount sets the "like_count" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateLikeCount() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateLikeCount()
-	})
-}
-
-// ClearLikeCount clears the value of the "like_count" field.
-func (u *CommentUpsertOne) ClearLikeCount() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearLikeCount()
-	})
-}
-
-// SetDislikeCount sets the "dislike_count" field.
-func (u *CommentUpsertOne) SetDislikeCount(v uint32) *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetDislikeCount(v)
-	})
-}
-
-// AddDislikeCount adds v to the "dislike_count" field.
-func (u *CommentUpsertOne) AddDislikeCount(v uint32) *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.AddDislikeCount(v)
-	})
-}
-
-// UpdateDislikeCount sets the "dislike_count" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateDislikeCount() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateDislikeCount()
-	})
-}
-
-// ClearDislikeCount clears the value of the "dislike_count" field.
-func (u *CommentUpsertOne) ClearDislikeCount() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearDislikeCount()
-	})
-}
-
-// SetReplyCount sets the "reply_count" field.
-func (u *CommentUpsertOne) SetReplyCount(v uint32) *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetReplyCount(v)
-	})
-}
-
-// AddReplyCount adds v to the "reply_count" field.
-func (u *CommentUpsertOne) AddReplyCount(v uint32) *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.AddReplyCount(v)
-	})
-}
-
-// UpdateReplyCount sets the "reply_count" field to the value that was provided on create.
-func (u *CommentUpsertOne) UpdateReplyCount() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateReplyCount()
-	})
-}
-
-// ClearReplyCount clears the value of the "reply_count" field.
-func (u *CommentUpsertOne) ClearReplyCount() *CommentUpsertOne {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearReplyCount()
 	})
 }
 
@@ -2451,90 +2229,6 @@ func (u *CommentUpsertBulk) UpdateStatus() *CommentUpsertBulk {
 func (u *CommentUpsertBulk) ClearStatus() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.ClearStatus()
-	})
-}
-
-// SetLikeCount sets the "like_count" field.
-func (u *CommentUpsertBulk) SetLikeCount(v uint32) *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetLikeCount(v)
-	})
-}
-
-// AddLikeCount adds v to the "like_count" field.
-func (u *CommentUpsertBulk) AddLikeCount(v uint32) *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.AddLikeCount(v)
-	})
-}
-
-// UpdateLikeCount sets the "like_count" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateLikeCount() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateLikeCount()
-	})
-}
-
-// ClearLikeCount clears the value of the "like_count" field.
-func (u *CommentUpsertBulk) ClearLikeCount() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearLikeCount()
-	})
-}
-
-// SetDislikeCount sets the "dislike_count" field.
-func (u *CommentUpsertBulk) SetDislikeCount(v uint32) *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetDislikeCount(v)
-	})
-}
-
-// AddDislikeCount adds v to the "dislike_count" field.
-func (u *CommentUpsertBulk) AddDislikeCount(v uint32) *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.AddDislikeCount(v)
-	})
-}
-
-// UpdateDislikeCount sets the "dislike_count" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateDislikeCount() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateDislikeCount()
-	})
-}
-
-// ClearDislikeCount clears the value of the "dislike_count" field.
-func (u *CommentUpsertBulk) ClearDislikeCount() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearDislikeCount()
-	})
-}
-
-// SetReplyCount sets the "reply_count" field.
-func (u *CommentUpsertBulk) SetReplyCount(v uint32) *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.SetReplyCount(v)
-	})
-}
-
-// AddReplyCount adds v to the "reply_count" field.
-func (u *CommentUpsertBulk) AddReplyCount(v uint32) *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.AddReplyCount(v)
-	})
-}
-
-// UpdateReplyCount sets the "reply_count" field to the value that was provided on create.
-func (u *CommentUpsertBulk) UpdateReplyCount() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.UpdateReplyCount()
-	})
-}
-
-// ClearReplyCount clears the value of the "reply_count" field.
-func (u *CommentUpsertBulk) ClearReplyCount() *CommentUpsertBulk {
-	return u.Update(func(s *CommentUpsert) {
-		s.ClearReplyCount()
 	})
 }
 

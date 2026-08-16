@@ -1,12 +1,13 @@
 'use client';
 
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import {Skeleton} from '@/components/ui/skeleton';
 import {Button} from '@/components/ui/button';
 import {useTranslations} from 'next-intl';
 import {AppEmpty} from '@/components/ui';
 
 import {fetchListPosts} from '@/api/hooks/post';
+import {useGetCounts, extractCount} from '@/api/hooks/interaction';
 import type {
     contentservicev1_ListPostResponse,
     contentservicev1_Post
@@ -51,6 +52,15 @@ const PostList: React.FC<PostListProps> = ({
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState<number>(page);
     const [currentPageSize, setCurrentPageSize] = useState<number>(pageSize ?? initialPageSize);
+
+    // 收集当前页 post 的 ID，用于批量查询点赞计数。
+    // 计数由 interaction_counter 表提供（post.likes 列已移除）。
+    const postIds = useMemo(() => posts.map(p => p.id).filter((id): id is number => typeof id === 'number'), [posts]);
+    const countsResp = useGetCounts(
+        'TARGET_TYPE_POST',
+        postIds,
+        ['COUNTER_METRIC_LIKE'],
+    );
 
     // 同步外部 page 变化（只在首次渲染或外部 page 真正变化时）
     useEffect(() => {
@@ -161,6 +171,7 @@ const PostList: React.FC<PostListProps> = ({
                                 post={post}
                                 from={from}
                                 categoryId={categoryId}
+                                likeCount={extractCount(countsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')}
                             />
                         ))}
                     </div>

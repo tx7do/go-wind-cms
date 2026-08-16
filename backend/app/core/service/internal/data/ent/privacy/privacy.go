@@ -375,6 +375,30 @@ func (f FileMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FileMutation", m)
 }
 
+// The InteractionCounterQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type InteractionCounterQueryRuleFunc func(context.Context, *ent.InteractionCounterQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f InteractionCounterQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.InteractionCounterQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.InteractionCounterQuery", q)
+}
+
+// The InteractionCounterMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type InteractionCounterMutationRuleFunc func(context.Context, *ent.InteractionCounterMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f InteractionCounterMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.InteractionCounterMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InteractionCounterMutation", m)
+}
+
 // The InternalMessageQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type InternalMessageQueryRuleFunc func(context.Context, *ent.InternalMessageQuery) error
@@ -1608,6 +1632,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.FileQuery:
 		return q.Filter(), nil
+	case *ent.InteractionCounterQuery:
+		return q.Filter(), nil
 	case *ent.InternalMessageQuery:
 		return q.Filter(), nil
 	case *ent.InternalMessageCategoryQuery:
@@ -1734,6 +1760,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.DictTypeMutation:
 		return m.Filter(), nil
 	case *ent.FileMutation:
+		return m.Filter(), nil
+	case *ent.InteractionCounterMutation:
 		return m.Filter(), nil
 	case *ent.InternalMessageMutation:
 		return m.Filter(), nil

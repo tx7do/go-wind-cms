@@ -50,9 +50,7 @@ type Site struct {
 	// 站点模板
 	Template *string `json:"template,omitempty"`
 	// 主题名称
-	Theme *string `json:"theme,omitempty"`
-	// 访问次数
-	VisitCount   *uint64 `json:"visit_count,omitempty"`
+	Theme        *string `json:"theme,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -65,7 +63,7 @@ func (*Site) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case site.FieldIsDefault:
 			values[i] = new(sql.NullBool)
-		case site.FieldID, site.FieldCreatedBy, site.FieldUpdatedBy, site.FieldDeletedBy, site.FieldTenantID, site.FieldVisitCount:
+		case site.FieldID, site.FieldCreatedBy, site.FieldUpdatedBy, site.FieldDeletedBy, site.FieldTenantID:
 			values[i] = new(sql.NullInt64)
 		case site.FieldName, site.FieldSlug, site.FieldDomain, site.FieldStatus, site.FieldDefaultLocale, site.FieldTemplate, site.FieldTheme:
 			values[i] = new(sql.NullString)
@@ -205,13 +203,6 @@ func (_m *Site) assignValues(columns []string, values []any) error {
 				_m.Theme = new(string)
 				*_m.Theme = value.String
 			}
-		case site.FieldVisitCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field visit_count", values[i])
-			} else if value.Valid {
-				_m.VisitCount = new(uint64)
-				*_m.VisitCount = uint64(value.Int64)
-			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -324,11 +315,6 @@ func (_m *Site) String() string {
 	if v := _m.Theme; v != nil {
 		builder.WriteString("theme=")
 		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := _m.VisitCount; v != nil {
-		builder.WriteString("visit_count=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')
 	return builder.String()

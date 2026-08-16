@@ -11,7 +11,7 @@ import type {commentservicev1_Comment} from "@/api/generated/app/service/v1";
 import {formatDate} from "@/utils/date";
 
 import {cn} from '@/lib/utils';
-import {useInteractionStatus, useLike, useUnlike} from '@/api/hooks/interaction';
+import {useInteractionStatus, useLike, useUnlike, useGetCounts, extractCount} from '@/api/hooks/interaction';
 
 interface CommentTreeProps {
     comments: commentservicev1_Comment[];
@@ -37,6 +37,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         .map(c => c.id)
         .filter((id): id is number => typeof id === 'number');
     const statusQuery = useInteractionStatus('TARGET_TYPE_COMMENT', commentIds);
+    // 点赞计数：通过 interaction_counter 表批量查询（comment.like_count 列已移除）。
+    const countsQuery = useGetCounts('TARGET_TYPE_COMMENT', commentIds, ['COUNTER_METRIC_LIKE']);
     const likeMutation = useLike();
     const unlikeMutation = useUnlike();
 
@@ -48,7 +50,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     }
 
     function hasChildren(comment: commentservicev1_Comment): boolean {
-        return !!comment.children || (comment.replyCount !== undefined && comment.replyCount > 0);
+        return !!comment.children && comment.children.length > 0;
     }
 
     function isOwnerReply(comment: commentservicev1_Comment): boolean {
@@ -93,8 +95,8 @@ const CommentTree: React.FC<CommentTreeProps> = ({
         }
     }
 
-    // 处理点赞：调用 interaction 子系统，服务端在同一事务内更新 ledger 与计数缓存。
-    // 幂等由后端保证；前端按当前态决定 Like/Unlike。计数直读 comment.likeCount（缓存）。
+    // 处理点赞：调用 interaction 子系统，服务端在同一事务内更新 ledger 与 interaction_counter 计数表。
+    // 幂等由后端保证；前端按当前态决定 Like/Unlike。计数由 GetCounts 返回（comment.like_count 列已移除）。
     async function handleLike(comment: commentservicev1_Comment) {
         const commentId = comment.id;
         if (typeof commentId !== 'number') return;
@@ -133,7 +135,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
             });
         } else {
             // 展开
-            if (!comment.children && comment.replyCount && comment.replyCount > 0) {
+            if (!comment.children) {
                 // 需要动态加载子评论
                 setLoadingChildren(prev => new Set(prev).add(comment.id || 0));
                 try {
@@ -229,7 +231,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     title={isLiked(comment.id) ? t('unlike') : t('like')}
                                 >
                                     <XIcon name="carbon:thumbs-up" size={16}/>
-                                    {comment.likeCount || 0}
+                                    {extractCount(countsQuery.data, comment.id as number, 'COUNTER_METRIC_LIKE')}
                                 </span>
                                 <span
                                     className="flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5 max-md:text-xs max-sm:text-[11px]"
@@ -247,12 +249,15 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     <XIcon name="carbon:share" size={16}/>
                                     {t('share')}
                                 </span>
-                                {/* 查看回复按钮 */}
-                                {comment.replyCount && comment.replyCount > 0 ? (
+                                {/* 查看回复按钮：计数用已加载的 children 长度（reply_count 列已移除） */}
+                                {(() => {
+                                    const childCount = comment.children?.length ?? 0;
+                                    if (childCount === 0 && !isExpanded(comment)) return null;
+                                    return (
                                     <span
                                         className="flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-primary transition-all duration-200 select-none hover:text-primary max-md:text-xs max-sm:text-[11px]"
                                         onClick={() => toggleExpand(comment)}
-                                        title={isExpanded(comment) ? t('hide_replies') : t('view_replies', {count: comment.replyCount})}
+                                        title={isExpanded(comment) ? t('hide_replies') : t('view_replies', {count: childCount})}
                                     >
                                         <XIcon
                                             name={isExpanded(comment) ? 'carbon:chevron-up' : 'carbon:chevron-down'}
@@ -260,10 +265,11 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                         />
                                         {isExpanded(comment)
                                             ? t('hide_replies')
-                                            : t('view_replies', {count: comment.replyCount})
+                                            : t('view_replies', {count: childCount})
                                         }
                                     </span>
-                                ) : null}
+                                    );
+                                })()}
                             </div>
 
                             {/* 回复表单 */}

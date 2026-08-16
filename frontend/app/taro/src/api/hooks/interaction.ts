@@ -9,7 +9,9 @@ import {
   type interactionservicev1_LikeResponse,
   type interactionservicev1_WatchResponse,
   type interactionservicev1_GetInteractionStatusResponse,
+  type interactionservicev1_GetCountsResponse,
   type interactionservicev1_TargetType,
+  type interactionservicev1_CounterMetric,
   type contentservicev1_ListPostResponse,
 } from '@/api/generated/app/service/v1';
 import { apiClient } from '@/api/client';
@@ -21,7 +23,8 @@ import { queryClient } from '@/core';
 //
 // 说明：所有写操作（Like/Unlike/Watch/Unwatch）的服务端鉴权由后端 InteractionService
 // 强制，viewer 身份取自鉴权上下文，客户端无需也不可传 user_id。
-// 计数（likes）由后端在 ledger 写入的同一事务内递增/递减并回读，前端直读返回值即可。
+// 点赞计数统一存于 interaction_counter 表（post/comment 表的散落计数列已移除），
+// 列表/详情渲染计数改读 GetCounts；点赞/取消后由 LikeResponse.likeCount 乐观更新。
 
 /**
  * 点赞（post 或 comment）。幂等。
@@ -75,6 +78,21 @@ export async function getInteractionStatus(
 }
 
 /**
+ * 批量查询指定目标的计数（如点赞数）。供列表/详情渲染计数展示。
+ */
+export async function getCounts(
+  targetType: interactionservicev1_TargetType,
+  targetIds: number[],
+  metrics: interactionservicev1_CounterMetric[],
+) {
+  return apiClient.interactionService.GetCounts({
+    targetType,
+    targetIds,
+    metrics,
+  });
+}
+
+/**
  * 列出当前 viewer 收藏的 post。
  */
 export async function listWatchedPosts(page?: number, pageSize?: number) {
@@ -111,12 +129,58 @@ export function useInteractionStatus(
 }
 
 // ==============================
+// 计数查询 Hook
+// ==============================
+
+/**
+ * useGetCounts —— 批量查询指定目标的计数（如点赞数）。
+ * 仅当 targetIds 非空且 metrics 非空时启用查询。用于列表/详情渲染计数展示。
+ * 响应中未出现的 (target, metric) 组合按 0 兜底。
+ */
+export function useGetCounts(
+  targetType: interactionservicev1_TargetType,
+  targetIds: number[],
+  metrics: interactionservicev1_CounterMetric[],
+  options?: Omit<
+    UseQueryOptions<interactionservicev1_GetCountsResponse, Error>,
+    'queryKey' | 'queryFn' | 'enabled'
+  >,
+) {
+  return useQuery({
+    queryKey: ['interaction-counts', targetType, targetIds, metrics],
+    queryFn: () => getCounts(targetType, targetIds, metrics),
+    enabled: targetIds.length > 0 && metrics.length > 0,
+    staleTime: 0,
+    ...options,
+  });
+}
+
+/**
+ * extractCount —— 从 GetCounts 响应中提取单个 (targetId, metric) 的计数。
+ * 未出现则返回 0。
+ */
+export function extractCount(
+  resp: interactionservicev1_GetCountsResponse | undefined,
+  targetId: number,
+  metric: interactionservicev1_CounterMetric,
+): number {
+  if (!resp?.counts) return 0;
+  const cm = resp.counts[String(targetId)];
+  if (!cm?.counts) return 0;
+  for (const mc of cm.counts) {
+    if (mc.metric === metric && mc.count !== undefined) {
+      return mc.count;
+    }
+  }
+  return 0;
+}
+
+// ==============================
 // 点赞 / 收藏 写操作 Hooks
 // ==============================
 //
-// 写操作成功后主动 invalidate 对应的 interaction-status 查询，使列表中相关按钮态
-// 立即刷新。点赞同时 invalidate post 详情（likes 计数变化），收藏同时 invalidate
-// watched-posts 列表。
+// 写操作成功后主动 invalidate 对应的 interaction-status / interaction-counts 查询，
+// 使列表中相关按钮态与计数立即刷新。
 
 export function useLike(
   options?: UseMutationOptions<
@@ -130,6 +194,7 @@ export function useLike(
     mutationFn: ({targetType, targetId}) => likePost(targetType, targetId),
     onSettled: (_d, _e, vars) => {
       qc.invalidateQueries({queryKey: ['interaction-status', vars.targetType]});
+      qc.invalidateQueries({queryKey: ['interaction-counts', vars.targetType]});
     },
     ...options,
   });
@@ -147,6 +212,7 @@ export function useUnlike(
     mutationFn: ({targetType, targetId}) => unlikePost(targetType, targetId),
     onSettled: (_d, _e, vars) => {
       qc.invalidateQueries({queryKey: ['interaction-status', vars.targetType]});
+      qc.invalidateQueries({queryKey: ['interaction-counts', vars.targetType]});
     },
     ...options,
   });
@@ -165,8 +231,9 @@ export function useWatch(
     onSettled: () => {
       // 收藏列表需刷新
       qc.invalidateQueries({queryKey: ['watched-posts']});
-      // post 列表/详情的收藏按钮态
+      // post 列表/详情的收藏按钮态与收藏计数
       qc.invalidateQueries({queryKey: ['interaction-status', 'TARGET_TYPE_POST' as interactionservicev1_TargetType]});
+      qc.invalidateQueries({queryKey: ['interaction-counts', 'TARGET_TYPE_POST' as interactionservicev1_TargetType]});
     },
     ...options,
   });
@@ -185,6 +252,7 @@ export function useUnwatch(
     onSettled: () => {
       qc.invalidateQueries({queryKey: ['watched-posts']});
       qc.invalidateQueries({queryKey: ['interaction-status', 'TARGET_TYPE_POST' as interactionservicev1_TargetType]});
+      qc.invalidateQueries({queryKey: ['interaction-counts', 'TARGET_TYPE_POST' as interactionservicev1_TargetType]});
     },
     ...options,
   });

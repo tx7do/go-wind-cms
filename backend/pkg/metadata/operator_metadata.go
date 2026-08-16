@@ -27,8 +27,20 @@ func NewContext(ctx context.Context, info *authenticationV1.OperatorMetadata) (c
 	if err != nil {
 		return ctx, err
 	}
-	//log.Debugf("metadata: adding operator metadata to context: %s", str)
-	return metadata.AppendToClientContext(ctx, mdOperatorKey, str), nil
+	// 写入 server context，使同进程的 ent.Server 可经 FromServerContext 读到操作员
+	// 身份并构建 UserViewer。出站 gRPC 调用由 kratos metadata.Client() 按
+	// x-md-global- 前缀从 server context 自动传播，行为与原先 client context 一致。
+	// 采用合并语义以保留 server context 中已有的其它元数据键（例如 core 侧由
+	// metadata.Server() 读入的入站头），避免覆盖。
+	existing, ok := metadata.FromServerContext(ctx)
+	var md metadata.Metadata
+	if ok {
+		md = existing.Clone()
+	} else {
+		md = metadata.New()
+	}
+	md.Set(mdOperatorKey, str)
+	return metadata.NewServerContext(ctx, md), nil
 }
 
 func FromServerContext(ctx context.Context) (*authenticationV1.OperatorMetadata, error) {

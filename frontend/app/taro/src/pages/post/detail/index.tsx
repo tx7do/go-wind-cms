@@ -14,6 +14,8 @@ import {contentservicev1_Post} from '@/api/generated/app/service/v1';
 import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
 import {
     useInteractionStatus,
+    useGetCounts,
+    extractCount,
     useLike,
     useUnlike,
     useWatch,
@@ -27,8 +29,9 @@ export default function PostDetailPage() {
     const {isDark} = usePreferences();
     const [post, setPost] = useState<contentservicev1_Post | null>(null);
     const [loading, setLoading] = useState(true);
-    // likeCount：点赞计数缓存。初始读 post.likes，点赞/取消后用 RPC 返回的最新值更新。
+    // likeCount/watchCount：点赞/收藏计数缓存。初始读 GetCounts，写操作后用 RPC 返回的最新值更新。
     const [likeCount, setLikeCount] = useState<number | undefined>(undefined);
+    const [watchCount, setWatchCount] = useState<number | undefined>(undefined);
 
     const postId = useMemo(() => {
         let id: string | null = null;
@@ -47,10 +50,16 @@ export default function PostDetailPage() {
 
     // 点赞/收藏状态：由 interaction 子系统提供。
     // useInteractionStatus 取当前 viewer 对此 post 的 {liked, watched} 初始态；
-    // useLike/useUnlike/useWatch/useUnwatch 做写操作，后端在同事务内更新 ledger 与计数缓存。
+    // useGetCounts 取此 post 的点赞与收藏计数（来自 interaction_counter 表，post 表的 likes 列已移除）；
+    // useLike/useUnlike/useWatch/useUnwatch 做写操作，后端在同事务内更新 ledger 与计数表。
     const interactionStatus = useInteractionStatus(
         'TARGET_TYPE_POST',
         postId ? [postId] : [],
+    );
+    const countsResp = useGetCounts(
+        'TARGET_TYPE_POST',
+        postId ? [postId] : [],
+        ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_WATCH'],
     );
     const likeMutation = useLike();
     const unlikeMutation = useUnlike();
@@ -86,7 +95,6 @@ export default function PostDetailPage() {
                 const fetchedPost = await fetchPost(postId);
                 if (fetchedPost) {
                     setPost(fetchedPost);
-                    setLikeCount(fetchedPost.likes);
                 }
             } catch (error) {
                 console.error('Load post failed:', error);
@@ -96,6 +104,15 @@ export default function PostDetailPage() {
         }
         loadPost();
     }, [postId]);
+
+    // 从 GetCounts 响应同步点赞/收藏计数到缓存。
+    // 计数由 interaction_counter 表提供（post 表的散落计数列已移除）。
+    useEffect(() => {
+        if (countsResp.data && postId) {
+            setLikeCount(extractCount(countsResp.data, postId, 'COUNTER_METRIC_LIKE'));
+            setWatchCount(extractCount(countsResp.data, postId, 'COUNTER_METRIC_WATCH'));
+        }
+    }, [countsResp.data, postId]);
 
     // 分享功能
     function handleShare() {
@@ -197,12 +214,12 @@ export default function PostDetailPage() {
                 {/* 统计标签 */}
                 <View className='flex items-center gap-[16rpx] flex-wrap'>
                     <View className='flex items-center gap-[4rpx] px-[14rpx] py-[4rpx] rounded-full bg-pageBg'>
-                        <XIcon name='carbon:view' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textSec'>{post.visits || 0} {t('page.post_detail.views')}</Text>
+                        <XIcon name='carbon:thumbs-up' size={12} className='text-textThird' />
+                        <Text className='text-tips text-textSec'>{likeCount ?? 0} {t('page.post_detail.likes')}</Text>
                     </View>
                     <View className='flex items-center gap-[4rpx] px-[14rpx] py-[4rpx] rounded-full bg-pageBg'>
-                        <XIcon name='carbon:thumbs-up' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textSec'>{likeCount ?? post.likes ?? 0} {t('page.post_detail.likes')}</Text>
+                        <XIcon name='carbon:bookmark' size={12} className='text-textThird' />
+                        <Text className='text-tips text-textSec'>{watchCount ?? 0} {t('page.post_detail.bookmark')}</Text>
                     </View>
                 </View>
             </View>
@@ -249,7 +266,7 @@ export default function PostDetailPage() {
                     <View className='px-[32rpx] py-[16rpx]'>
                         <PostList
                           queryParams={relatedPostsQuery}
-                          fieldMask='id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'
+                          fieldMask='id,status,sort_order,is_featured,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail'
                           orderBy={['-sortOrder']}
                           page={1}
                           pageSize={4}
@@ -315,9 +332,11 @@ export default function PostDetailPage() {
                     if (!postId) return;
                     try {
                         if (isBookmarked) {
-                            await unwatchMutation.mutateAsync({postId});
+                            const r = await unwatchMutation.mutateAsync({postId});
+                            if (r?.watchCount !== undefined) setWatchCount(r.watchCount);
                         } else {
-                            await watchMutation.mutateAsync({postId});
+                            const r = await watchMutation.mutateAsync({postId});
+                            if (r?.watchCount !== undefined) setWatchCount(r.watchCount);
                         }
                     } catch (e) { console.error('toggle bookmark failed:', e); }
                   }}

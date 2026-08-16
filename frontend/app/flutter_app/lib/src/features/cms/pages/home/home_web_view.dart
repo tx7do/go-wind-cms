@@ -9,7 +9,9 @@ import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Category,
-        ContentServiceV1Tag;
+        ContentServiceV1Tag, InteractionServiceV1TargetType,
+        InteractionServiceV1CounterMetric;
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 
 import 'widgets/section_header.dart';
 import 'widgets/web_post_grid.dart';
@@ -41,6 +43,33 @@ class _HomeWebViewState extends State<HomeWebView> {
   bool _hasMorePosts = true;
   int _currentPage = 1;
   static const int _pageSize = 10;
+
+  // 点赞计数缓存：key 为 post.id。计数来自 interaction_counter 表
+  // （post.likes 列已移除），由 InteractionService.GetCounts 批量查询。
+  // 分页追加新 post 后整体重查，保证 _likeCounts 覆盖当前 _posts 全集。
+  Map<int, int> _likeCounts = {};
+
+  final _interactionService = InteractionService();
+
+  /// 刷新当前 _posts 全集的点赞计数到 _likeCounts。
+  Future<void> _refreshLikeCounts() async {
+    final ids = _posts
+        .where((p) => p.id != null)
+        .map((p) => p.id!)
+        .toList(growable: false);
+    if (ids.isEmpty) {
+      _likeCounts = {};
+      return;
+    }
+    final countsResp = await _interactionService.getCounts(
+        InteractionServiceV1TargetType.targetTypePost,
+        ids,
+        [InteractionServiceV1CounterMetric.counterMetricLike]);
+    _likeCounts = InteractionService.extractCountMap(
+        countsResp,
+        ids,
+        InteractionServiceV1CounterMetric.counterMetricLike);
+  }
 
   @override
   void initState() {
@@ -82,8 +111,11 @@ class _HomeWebViewState extends State<HomeWebView> {
     final items = postResponse?.items ?? [];
     final total = postResponse?.total ?? 0;
 
+    _posts = items;
+    await _refreshLikeCounts();
+    if (!mounted) return;
+
     setState(() {
-      _posts = items;
       _categories = (results[1] as ListCategoryResponse?)?.items ?? [];
       _tags = (results[2] as ListTagResponse?)?.items ?? [];
       _hasMorePosts = items.length >= _pageSize && _posts.length < total;
@@ -106,9 +138,12 @@ class _HomeWebViewState extends State<HomeWebView> {
     final items = response?.items ?? [];
     final total = response?.total ?? 0;
 
+    _posts.addAll(items);
+    await _refreshLikeCounts();
+    if (!mounted) return;
+
     setState(() {
       _currentPage++;
-      _posts.addAll(items);
       _hasMorePosts = items.length >= _pageSize && _posts.length < total;
       _isLoadingMore = false;
     });
@@ -156,6 +191,7 @@ class _HomeWebViewState extends State<HomeWebView> {
                           posts: _posts,
                           categories: _categories,
                           tags: _tags,
+                          likeCounts: _likeCounts,
                         ),
                         // 加载更多指示器
                         if (_isLoadingMore)

@@ -28,6 +28,9 @@ service SiteService {
 
 // 站点
 message Site {
+  reserved 12;
+  reserved "visit_count";
+
   // 站点状态
   enum Status {
     SITE_STATUS_UNSPECIFIED = 0;
@@ -91,12 +94,6 @@ message Site {
     json_name = "theme",
     (gnostic.openapi.v3.property) = {description: "主题名称"}
   ]; // 主题名称
-
-  optional uint64 visit_count = 12 [
-    json_name = "visitCount",
-    (gnostic.openapi.v3.property) = {description: "访问次数"}
-  ]; // 访问次数
-
 
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
   optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID

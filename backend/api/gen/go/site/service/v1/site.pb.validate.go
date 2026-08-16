@@ -96,10 +96,6 @@ func (m *Site) validate(all bool) error {
 		// no validation rules for Theme
 	}
 
-	if m.VisitCount != nil {
-		// no validation rules for VisitCount
-	}
-
 	if m.CreatedBy != nil {
 		// no validation rules for CreatedBy
 	}

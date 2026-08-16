@@ -7002,18 +7002,6 @@ components:
                     type: string
                     description: 评论状态
                     format: enum
-                likeCount:
-                    type: integer
-                    description: 点赞数
-                    format: uint32
-                dislikeCount:
-                    type: integer
-                    description: 点踩数
-                    format: uint32
-                replyCount:
-                    type: integer
-                    description: 回复数
-                    format: uint32
                 ipAddress:
                     type: string
                     description: 评论者 IP（脱敏存储，如 192.168.1.*）
@@ -7404,10 +7392,6 @@ components:
                 isCustomTemplate:
                     type: boolean
                     description: 是否使用自定义模板代码（而非预设模板）
-                visits:
-                    type: integer
-                    description: 页面访问次数
-                    format: uint32
                 customFields:
                     type: object
                     additionalProperties:
@@ -7569,18 +7553,6 @@ components:
                     type: integer
                     description: 排序优先级（数值越小越靠前，同组内排序）
                     format: uint32
-                visits:
-                    type: integer
-                    description: 帖子访问次数
-                    format: int32
-                likes:
-                    type: integer
-                    description: 帖子点赞次数
-                    format: int32
-                commentCount:
-                    type: integer
-                    description: 帖子评论数
-                    format: int32
                 authorId:
                     type: integer
                     description: 评论作者ID，0表示游客
@@ -10661,9 +10633,6 @@ components:
                 theme:
                     type: string
                     description: 主题名称
-                visitCount:
-                    type: string
-                    description: 访问次数
                 createdBy:
                     type: integer
                     description: 创建者用户ID

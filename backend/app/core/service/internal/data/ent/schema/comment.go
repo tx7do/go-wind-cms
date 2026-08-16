@@ -92,24 +92,6 @@ func (Comment) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("like_count").
-			Comment("点赞数").
-			Default(0).
-			Optional().
-			Nillable(),
-
-		field.Uint32("dislike_count").
-			Comment("点踩数").
-			Default(0).
-			Optional().
-			Nillable(),
-
-		field.Uint32("reply_count").
-			Comment("回复数").
-			Default(0).
-			Optional().
-			Nillable(),
-
 		field.String("ip_address").
 			Comment("评论者 IP").
 			Optional().

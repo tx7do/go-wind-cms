@@ -7,16 +7,16 @@ import {formatDate} from '@/utils';
 export interface PostMetaBarProps {
     authorName?: string;
     createdAt?: string;
-    visits?: number | string;
     likes?: number | string;
+    watchCount?: number | string;
 }
 
 /**
- * 文章元数据条 — 作者 / 日期 / 浏览量 / 点赞数
+ * 文章元数据条 — 作者 / 日期 / 点赞数 / 收藏数
  *
  * 用于 post/[id] 详情页 header 区域
  */
-const PostMetaBar: React.FC<PostMetaBarProps> = ({authorName, createdAt, visits, likes}) => {
+const PostMetaBar: React.FC<PostMetaBarProps> = ({authorName, createdAt, likes, watchCount}) => {
     return (
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pb-5 text-sm font-medium text-muted-foreground border-b border-border/40">
             {authorName && (
@@ -32,12 +32,12 @@ const PostMetaBar: React.FC<PostMetaBarProps> = ({authorName, createdAt, visits,
                 </div>
             )}
             <div className="flex items-center gap-1.5">
-                <XIcon name="carbon:view" size={16}/>
-                <span>{visits || 0}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
                 <XIcon name="carbon:thumbs-up" size={16}/>
                 <span>{likes || 0}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+                <XIcon name="carbon:bookmark" size={16}/>
+                <span>{watchCount || 0}</span>
             </div>
         </div>
     );

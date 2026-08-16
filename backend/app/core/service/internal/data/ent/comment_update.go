@@ -364,87 +364,6 @@ func (_u *CommentUpdate) ClearStatus() *CommentUpdate {
 	return _u
 }
 
-// SetLikeCount sets the "like_count" field.
-func (_u *CommentUpdate) SetLikeCount(v uint32) *CommentUpdate {
-	_u.mutation.ResetLikeCount()
-	_u.mutation.SetLikeCount(v)
-	return _u
-}
-
-// SetNillableLikeCount sets the "like_count" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableLikeCount(v *uint32) *CommentUpdate {
-	if v != nil {
-		_u.SetLikeCount(*v)
-	}
-	return _u
-}
-
-// AddLikeCount adds value to the "like_count" field.
-func (_u *CommentUpdate) AddLikeCount(v int32) *CommentUpdate {
-	_u.mutation.AddLikeCount(v)
-	return _u
-}
-
-// ClearLikeCount clears the value of the "like_count" field.
-func (_u *CommentUpdate) ClearLikeCount() *CommentUpdate {
-	_u.mutation.ClearLikeCount()
-	return _u
-}
-
-// SetDislikeCount sets the "dislike_count" field.
-func (_u *CommentUpdate) SetDislikeCount(v uint32) *CommentUpdate {
-	_u.mutation.ResetDislikeCount()
-	_u.mutation.SetDislikeCount(v)
-	return _u
-}
-
-// SetNillableDislikeCount sets the "dislike_count" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableDislikeCount(v *uint32) *CommentUpdate {
-	if v != nil {
-		_u.SetDislikeCount(*v)
-	}
-	return _u
-}
-
-// AddDislikeCount adds value to the "dislike_count" field.
-func (_u *CommentUpdate) AddDislikeCount(v int32) *CommentUpdate {
-	_u.mutation.AddDislikeCount(v)
-	return _u
-}
-
-// ClearDislikeCount clears the value of the "dislike_count" field.
-func (_u *CommentUpdate) ClearDislikeCount() *CommentUpdate {
-	_u.mutation.ClearDislikeCount()
-	return _u
-}
-
-// SetReplyCount sets the "reply_count" field.
-func (_u *CommentUpdate) SetReplyCount(v uint32) *CommentUpdate {
-	_u.mutation.ResetReplyCount()
-	_u.mutation.SetReplyCount(v)
-	return _u
-}
-
-// SetNillableReplyCount sets the "reply_count" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableReplyCount(v *uint32) *CommentUpdate {
-	if v != nil {
-		_u.SetReplyCount(*v)
-	}
-	return _u
-}
-
-// AddReplyCount adds value to the "reply_count" field.
-func (_u *CommentUpdate) AddReplyCount(v int32) *CommentUpdate {
-	_u.mutation.AddReplyCount(v)
-	return _u
-}
-
-// ClearReplyCount clears the value of the "reply_count" field.
-func (_u *CommentUpdate) ClearReplyCount() *CommentUpdate {
-	_u.mutation.ClearReplyCount()
-	return _u
-}
-
 // SetIPAddress sets the "ip_address" field.
 func (_u *CommentUpdate) SetIPAddress(v string) *CommentUpdate {
 	_u.mutation.SetIPAddress(v)
@@ -813,33 +732,6 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(comment.FieldStatus, field.TypeEnum)
-	}
-	if value, ok := _u.mutation.LikeCount(); ok {
-		_spec.SetField(comment.FieldLikeCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedLikeCount(); ok {
-		_spec.AddField(comment.FieldLikeCount, field.TypeUint32, value)
-	}
-	if _u.mutation.LikeCountCleared() {
-		_spec.ClearField(comment.FieldLikeCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.DislikeCount(); ok {
-		_spec.SetField(comment.FieldDislikeCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedDislikeCount(); ok {
-		_spec.AddField(comment.FieldDislikeCount, field.TypeUint32, value)
-	}
-	if _u.mutation.DislikeCountCleared() {
-		_spec.ClearField(comment.FieldDislikeCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.ReplyCount(); ok {
-		_spec.SetField(comment.FieldReplyCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedReplyCount(); ok {
-		_spec.AddField(comment.FieldReplyCount, field.TypeUint32, value)
-	}
-	if _u.mutation.ReplyCountCleared() {
-		_spec.ClearField(comment.FieldReplyCount, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.IPAddress(); ok {
 		_spec.SetField(comment.FieldIPAddress, field.TypeString, value)
@@ -1317,87 +1209,6 @@ func (_u *CommentUpdateOne) ClearStatus() *CommentUpdateOne {
 	return _u
 }
 
-// SetLikeCount sets the "like_count" field.
-func (_u *CommentUpdateOne) SetLikeCount(v uint32) *CommentUpdateOne {
-	_u.mutation.ResetLikeCount()
-	_u.mutation.SetLikeCount(v)
-	return _u
-}
-
-// SetNillableLikeCount sets the "like_count" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableLikeCount(v *uint32) *CommentUpdateOne {
-	if v != nil {
-		_u.SetLikeCount(*v)
-	}
-	return _u
-}
-
-// AddLikeCount adds value to the "like_count" field.
-func (_u *CommentUpdateOne) AddLikeCount(v int32) *CommentUpdateOne {
-	_u.mutation.AddLikeCount(v)
-	return _u
-}
-
-// ClearLikeCount clears the value of the "like_count" field.
-func (_u *CommentUpdateOne) ClearLikeCount() *CommentUpdateOne {
-	_u.mutation.ClearLikeCount()
-	return _u
-}
-
-// SetDislikeCount sets the "dislike_count" field.
-func (_u *CommentUpdateOne) SetDislikeCount(v uint32) *CommentUpdateOne {
-	_u.mutation.ResetDislikeCount()
-	_u.mutation.SetDislikeCount(v)
-	return _u
-}
-
-// SetNillableDislikeCount sets the "dislike_count" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableDislikeCount(v *uint32) *CommentUpdateOne {
-	if v != nil {
-		_u.SetDislikeCount(*v)
-	}
-	return _u
-}
-
-// AddDislikeCount adds value to the "dislike_count" field.
-func (_u *CommentUpdateOne) AddDislikeCount(v int32) *CommentUpdateOne {
-	_u.mutation.AddDislikeCount(v)
-	return _u
-}
-
-// ClearDislikeCount clears the value of the "dislike_count" field.
-func (_u *CommentUpdateOne) ClearDislikeCount() *CommentUpdateOne {
-	_u.mutation.ClearDislikeCount()
-	return _u
-}
-
-// SetReplyCount sets the "reply_count" field.
-func (_u *CommentUpdateOne) SetReplyCount(v uint32) *CommentUpdateOne {
-	_u.mutation.ResetReplyCount()
-	_u.mutation.SetReplyCount(v)
-	return _u
-}
-
-// SetNillableReplyCount sets the "reply_count" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableReplyCount(v *uint32) *CommentUpdateOne {
-	if v != nil {
-		_u.SetReplyCount(*v)
-	}
-	return _u
-}
-
-// AddReplyCount adds value to the "reply_count" field.
-func (_u *CommentUpdateOne) AddReplyCount(v int32) *CommentUpdateOne {
-	_u.mutation.AddReplyCount(v)
-	return _u
-}
-
-// ClearReplyCount clears the value of the "reply_count" field.
-func (_u *CommentUpdateOne) ClearReplyCount() *CommentUpdateOne {
-	_u.mutation.ClearReplyCount()
-	return _u
-}
-
 // SetIPAddress sets the "ip_address" field.
 func (_u *CommentUpdateOne) SetIPAddress(v string) *CommentUpdateOne {
 	_u.mutation.SetIPAddress(v)
@@ -1796,33 +1607,6 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(comment.FieldStatus, field.TypeEnum)
-	}
-	if value, ok := _u.mutation.LikeCount(); ok {
-		_spec.SetField(comment.FieldLikeCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedLikeCount(); ok {
-		_spec.AddField(comment.FieldLikeCount, field.TypeUint32, value)
-	}
-	if _u.mutation.LikeCountCleared() {
-		_spec.ClearField(comment.FieldLikeCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.DislikeCount(); ok {
-		_spec.SetField(comment.FieldDislikeCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedDislikeCount(); ok {
-		_spec.AddField(comment.FieldDislikeCount, field.TypeUint32, value)
-	}
-	if _u.mutation.DislikeCountCleared() {
-		_spec.ClearField(comment.FieldDislikeCount, field.TypeUint32)
-	}
-	if value, ok := _u.mutation.ReplyCount(); ok {
-		_spec.SetField(comment.FieldReplyCount, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedReplyCount(); ok {
-		_spec.AddField(comment.FieldReplyCount, field.TypeUint32, value)
-	}
-	if _u.mutation.ReplyCountCleared() {
-		_spec.ClearField(comment.FieldReplyCount, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.IPAddress(); ok {
 		_spec.SetField(comment.FieldIPAddress, field.TypeString, value)

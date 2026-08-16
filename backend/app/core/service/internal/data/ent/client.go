@@ -22,6 +22,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
@@ -105,6 +106,8 @@ type Client struct {
 	DictType *DictTypeClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// InteractionCounter is the client for interacting with the InteractionCounter builders.
+	InteractionCounter *InteractionCounterClient
 	// InternalMessage is the client for interacting with the InternalMessage builders.
 	InternalMessage *InternalMessageClient
 	// InternalMessageCategory is the client for interacting with the InternalMessageCategory builders.
@@ -225,6 +228,7 @@ func (c *Client) init() {
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.InteractionCounter = NewInteractionCounterClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
 	c.InternalMessageCategory = NewInternalMessageCategoryClient(c.config)
 	c.InternalMessageRecipient = NewInternalMessageRecipientClient(c.config)
@@ -377,6 +381,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		DictEntryI18n:            NewDictEntryI18nClient(cfg),
 		DictType:                 NewDictTypeClient(cfg),
 		File:                     NewFileClient(cfg),
+		InteractionCounter:       NewInteractionCounterClient(cfg),
 		InternalMessage:          NewInternalMessageClient(cfg),
 		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
@@ -456,6 +461,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		DictEntryI18n:            NewDictEntryI18nClient(cfg),
 		DictType:                 NewDictTypeClient(cfg),
 		File:                     NewFileClient(cfg),
+		InteractionCounter:       NewInteractionCounterClient(cfg),
 		InternalMessage:          NewInternalMessageClient(cfg),
 		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
@@ -536,7 +542,7 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiAuditLog, c.Category, c.CategoryTranslation, c.Comment,
 		c.CommentLike, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.File, c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
 		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
 		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
@@ -558,7 +564,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiAuditLog, c.Category, c.CategoryTranslation, c.Comment,
 		c.CommentLike, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.File, c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
 		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
 		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
@@ -599,6 +605,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DictType.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
+	case *InteractionCounterMutation:
+		return c.InteractionCounter.mutate(ctx, m)
 	case *InternalMessageMutation:
 		return c.InternalMessage.mutate(ctx, m)
 	case *InternalMessageCategoryMutation:
@@ -2301,6 +2309,140 @@ func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error)
 		return (&FileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown File mutation op: %q", m.Op())
+	}
+}
+
+// InteractionCounterClient is a client for the InteractionCounter schema.
+type InteractionCounterClient struct {
+	config
+}
+
+// NewInteractionCounterClient returns a client for the InteractionCounter from the given config.
+func NewInteractionCounterClient(c config) *InteractionCounterClient {
+	return &InteractionCounterClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `interactioncounter.Hooks(f(g(h())))`.
+func (c *InteractionCounterClient) Use(hooks ...Hook) {
+	c.hooks.InteractionCounter = append(c.hooks.InteractionCounter, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `interactioncounter.Intercept(f(g(h())))`.
+func (c *InteractionCounterClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InteractionCounter = append(c.inters.InteractionCounter, interceptors...)
+}
+
+// Create returns a builder for creating a InteractionCounter entity.
+func (c *InteractionCounterClient) Create() *InteractionCounterCreate {
+	mutation := newInteractionCounterMutation(c.config, OpCreate)
+	return &InteractionCounterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InteractionCounter entities.
+func (c *InteractionCounterClient) CreateBulk(builders ...*InteractionCounterCreate) *InteractionCounterCreateBulk {
+	return &InteractionCounterCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InteractionCounterClient) MapCreateBulk(slice any, setFunc func(*InteractionCounterCreate, int)) *InteractionCounterCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InteractionCounterCreateBulk{err: fmt.Errorf("calling to InteractionCounterClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InteractionCounterCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InteractionCounterCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InteractionCounter.
+func (c *InteractionCounterClient) Update() *InteractionCounterUpdate {
+	mutation := newInteractionCounterMutation(c.config, OpUpdate)
+	return &InteractionCounterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InteractionCounterClient) UpdateOne(_m *InteractionCounter) *InteractionCounterUpdateOne {
+	mutation := newInteractionCounterMutation(c.config, OpUpdateOne, withInteractionCounter(_m))
+	return &InteractionCounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InteractionCounterClient) UpdateOneID(id uint32) *InteractionCounterUpdateOne {
+	mutation := newInteractionCounterMutation(c.config, OpUpdateOne, withInteractionCounterID(id))
+	return &InteractionCounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InteractionCounter.
+func (c *InteractionCounterClient) Delete() *InteractionCounterDelete {
+	mutation := newInteractionCounterMutation(c.config, OpDelete)
+	return &InteractionCounterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InteractionCounterClient) DeleteOne(_m *InteractionCounter) *InteractionCounterDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InteractionCounterClient) DeleteOneID(id uint32) *InteractionCounterDeleteOne {
+	builder := c.Delete().Where(interactioncounter.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InteractionCounterDeleteOne{builder}
+}
+
+// Query returns a query builder for InteractionCounter.
+func (c *InteractionCounterClient) Query() *InteractionCounterQuery {
+	return &InteractionCounterQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInteractionCounter},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a InteractionCounter entity by its id.
+func (c *InteractionCounterClient) Get(ctx context.Context, id uint32) (*InteractionCounter, error) {
+	return c.Query().Where(interactioncounter.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InteractionCounterClient) GetX(ctx context.Context, id uint32) *InteractionCounter {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *InteractionCounterClient) Hooks() []Hook {
+	hooks := c.hooks.InteractionCounter
+	return append(hooks[:len(hooks):len(hooks)], interactioncounter.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *InteractionCounterClient) Interceptors() []Interceptor {
+	return c.inters.InteractionCounter
+}
+
+func (c *InteractionCounterClient) mutate(ctx context.Context, m *InteractionCounterMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InteractionCounterCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InteractionCounterUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InteractionCounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InteractionCounterDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown InteractionCounter mutation op: %q", m.Op())
 	}
 }
 
@@ -9032,28 +9174,30 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		Api, ApiAuditLog, Category, CategoryTranslation, Comment, CommentLike,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
-		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
-		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
-		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
-		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, Tag, TagTranslation, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File,
+		InteractionCounter, InternalMessage, InternalMessageCategory,
+		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
+		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
+		MembershipRole, Menu, Navigation, NavigationItem, OperationAuditLog, OrgUnit,
+		Page, PageTranslation, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostWatch,
+		Role, RoleMetadata, RolePermission, Section, SectionTranslation, Site,
+		SiteSetting, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, Category, CategoryTranslation, Comment, CommentLike,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
-		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
-		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
-		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
-		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, Tag, TagTranslation, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File,
+		InteractionCounter, InternalMessage, InternalMessageCategory,
+		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
+		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
+		MembershipRole, Menu, Navigation, NavigationItem, OperationAuditLog, OrgUnit,
+		Page, PageTranslation, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostWatch,
+		Role, RoleMetadata, RolePermission, Section, SectionTranslation, Site,
+		SiteSetting, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

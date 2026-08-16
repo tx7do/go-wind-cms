@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {XIcon} from '@/plugins/xicon'
 import {fetchPost, getPostTitle, getPostContent, getPostThumbnail} from '@/api/composables/post'
+import {useGetCounts, extractCount, useWatch, useUnwatch, useLike, useUnlike} from '@/api/composables/interaction'
 
 const {t} = useI18n()
 const localePath = useLocalePath()
@@ -15,6 +16,30 @@ const isTocExpanded = ref(true)
 const contentRef = ref<HTMLElement | null>(null)
 
 const postId = computed(() => Number(route.params.id))
+
+// useGetCounts 取此 post 的点赞计数（来自 interaction_counter 表，post 表的 likes 列已移除）。
+// 响应中未出现的 (target, metric) 组合按 0 兜底。
+const postIdArray = computed(() => (postId.value ? [postId.value] : []))
+const countsResp = useGetCounts(
+  'TARGET_TYPE_POST',
+  postIdArray,
+  ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_WATCH'],
+)
+const likeCount = ref<number | undefined>(undefined)
+const watchCount = ref<number | undefined>(undefined)
+watch(
+  [() => countsResp.data?.value, () => postId.value],
+  ([data, pid]) => {
+    if (data && pid) {
+      likeCount.value = extractCount(data, pid, 'COUNTER_METRIC_LIKE')
+      watchCount.value = extractCount(data, pid, 'COUNTER_METRIC_WATCH')
+    }
+  },
+)
+const likeMutation = useLike()
+const unlikeMutation = useUnlike()
+const watchMutation = useWatch()
+const unwatchMutation = useUnwatch()
 
 const displayTitle = computed(() => post.value ? getPostTitle(post.value) : '')
 const displayContent = computed(() => post.value ? getPostContent(post.value) : '')
@@ -95,6 +120,38 @@ function handleShare() {
     })
   } else {
     navigator.clipboard.writeText(url)
+  }
+}
+
+async function toggleLike() {
+  if (!postId.value) return
+  try {
+    if (isLiked.value) {
+      const r = await unlikeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId.value})
+      if (r?.likeCount !== undefined) likeCount.value = r.likeCount
+    } else {
+      const r = await likeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId.value})
+      if (r?.likeCount !== undefined) likeCount.value = r.likeCount
+    }
+    isLiked.value = !isLiked.value
+  } catch (e) {
+    console.error('toggle like failed:', e)
+  }
+}
+
+async function toggleBookmark() {
+  if (!postId.value) return
+  try {
+    if (isBookmarked.value) {
+      const r = await unwatchMutation.mutateAsync({postId: postId.value})
+      if (r?.watchCount !== undefined) watchCount.value = r.watchCount
+    } else {
+      const r = await watchMutation.mutateAsync({postId: postId.value})
+      if (r?.watchCount !== undefined) watchCount.value = r.watchCount
+    }
+    isBookmarked.value = !isBookmarked.value
+  } catch (e) {
+    console.error('toggle bookmark failed:', e)
   }
 }
 
@@ -193,8 +250,8 @@ onMounted(() => {
               <PostMetaBar
                   :author-name="post.authorName"
                   :created-at="post.createdAt"
-                  :visits="post.visits"
-                  :likes="post.likes"
+                  :likes="likeCount"
+                  :watch-count="watchCount"
               />
             </header>
 
@@ -212,8 +269,8 @@ onMounted(() => {
                 bookmark: t('page.post_detail.bookmark'),
                 share: t('page.post_detail.share'),
               }"
-                @like="isLiked = !isLiked"
-                @bookmark="isBookmarked = !isBookmarked"
+                @like="toggleLike"
+                @bookmark="toggleBookmark"
                 @share="handleShare"
             />
           </div>
@@ -239,7 +296,7 @@ onMounted(() => {
         <PostList
             v-if="relatedPostsQuery"
             :query-params="relatedPostsQuery"
-            field-mask="id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail"
+            field-mask="id,status,sort_order,is_featured,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail"
             :order-by="['-sortOrder']"
             :page="1"
             :page-size="3"

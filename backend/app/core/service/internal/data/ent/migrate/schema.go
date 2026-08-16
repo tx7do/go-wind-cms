@@ -284,9 +284,6 @@ var (
 		{Name: "author_url", Type: field.TypeString, Nullable: true, Comment: "评论作者网址"},
 		{Name: "author_type", Type: field.TypeEnum, Nullable: true, Comment: "作者类型", Enums: []string{"AUTHOR_TYPE_GUEST", "AUTHOR_TYPE_USER", "AUTHOR_TYPE_ADMIN", "AUTHOR_TYPE_MODERATOR"}},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "评论状态", Enums: []string{"STATUS_PENDING", "STATUS_APPROVED", "STATUS_REJECTED", "STATUS_SPAM"}},
-		{Name: "like_count", Type: field.TypeUint32, Nullable: true, Comment: "点赞数", Default: 0},
-		{Name: "dislike_count", Type: field.TypeUint32, Nullable: true, Comment: "点踩数", Default: 0},
-		{Name: "reply_count", Type: field.TypeUint32, Nullable: true, Comment: "回复数", Default: 0},
 		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "评论者 IP"},
 		{Name: "location", Type: field.TypeString, Nullable: true, Comment: "评论者地理位置"},
 		{Name: "user_agent", Type: field.TypeString, Nullable: true, Comment: "User-Agent"},
@@ -305,7 +302,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "comments_comments_children",
-				Columns:    []*schema.Column{CommentsColumns[27]},
+				Columns:    []*schema.Column{CommentsColumns[24]},
 				RefColumns: []*schema.Column{CommentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -329,17 +326,17 @@ var (
 			{
 				Name:    "comment_reply_to_id",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[26]},
+				Columns: []*schema.Column{CommentsColumns[23]},
 			},
 			{
 				Name:    "comment_is_spam",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[24]},
+				Columns: []*schema.Column{CommentsColumns[21]},
 			},
 			{
 				Name:    "comment_is_sticky",
 				Unique:  false,
-				Columns: []*schema.Column{CommentsColumns[25]},
+				Columns: []*schema.Column{CommentsColumns[22]},
 			},
 		},
 	}
@@ -700,6 +697,32 @@ var (
 				Name:    "idx_files_created_at",
 				Unique:  false,
 				Columns: []*schema.Column{FilesColumns[1]},
+			},
+		},
+	}
+	// InteractionCountersColumns holds the columns for the "interaction_counters" table.
+	InteractionCountersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "target_type", Type: field.TypeUint8, Nullable: true, Comment: "目标类型，对应 interaction.TargetType 枚举"},
+		{Name: "target_id", Type: field.TypeUint32, Nullable: true, Comment: "目标ID"},
+		{Name: "metric", Type: field.TypeUint8, Nullable: true, Comment: "计数指标，对应 interaction.CounterMetric 枚举"},
+		{Name: "count", Type: field.TypeInt64, Nullable: true, Comment: "累计计数", Default: 0},
+	}
+	// InteractionCountersTable holds the schema information for the "interaction_counters" table.
+	InteractionCountersTable = &schema.Table{
+		Name:       "interaction_counters",
+		Comment:    "交互计数内聚表",
+		Columns:    InteractionCountersColumns,
+		PrimaryKey: []*schema.Column{InteractionCountersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "interactioncounter_tenant_id_target_type_target_id_metric",
+				Unique:  true,
+				Columns: []*schema.Column{InteractionCountersColumns[4], InteractionCountersColumns[5], InteractionCountersColumns[6], InteractionCountersColumns[7]},
 			},
 		},
 	}
@@ -2024,7 +2047,6 @@ var (
 		{Name: "show_in_navigation", Type: field.TypeBool, Nullable: true, Comment: "是否在主导航中显示", Default: false},
 		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "页面模板名称"},
 		{Name: "is_custom_template", Type: field.TypeBool, Nullable: true, Comment: "是否使用自定义模板代码", Default: false},
-		{Name: "visits", Type: field.TypeUint32, Nullable: true, Comment: "页面访问次数", Default: 0},
 		{Name: "custom_fields", Type: field.TypeJSON, Nullable: true, Comment: "自定义字段"},
 		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "页面层级深度", Default: 0},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
@@ -2038,7 +2060,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pages_pages_children",
-				Columns:    []*schema.Column{PagesColumns[24]},
+				Columns:    []*schema.Column{PagesColumns[23]},
 				RefColumns: []*schema.Column{PagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2072,7 +2094,7 @@ var (
 			{
 				Name:    "page_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[24]},
+				Columns: []*schema.Column{PagesColumns[23]},
 			},
 			{
 				Name:    "page_disallow_comment",
@@ -2644,9 +2666,6 @@ var (
 		{Name: "in_progress", Type: field.TypeBool, Nullable: true, Comment: "审核中", Default: false},
 		{Name: "auto_summary", Type: field.TypeBool, Nullable: true, Comment: "是否自动生成摘要", Default: true},
 		{Name: "is_featured", Type: field.TypeBool, Nullable: true, Comment: "是否推荐", Default: false},
-		{Name: "visits", Type: field.TypeInt32, Nullable: true, Comment: "帖子访问次数", Default: 0},
-		{Name: "likes", Type: field.TypeInt32, Nullable: true, Comment: "帖子点赞次数", Default: 0},
-		{Name: "comment_count", Type: field.TypeInt32, Nullable: true, Comment: "帖子评论数", Default: 0},
 		{Name: "author_id", Type: field.TypeUint32, Nullable: true, Comment: "评论作者ID，0表示游客", Default: 0},
 		{Name: "author_name", Type: field.TypeString, Nullable: true, Comment: "评论作者名称"},
 		{Name: "password_hash", Type: field.TypeString, Nullable: true, Comment: "密码哈希"},
@@ -2678,7 +2697,7 @@ var (
 			{
 				Name:    "post_author_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[19]},
+				Columns: []*schema.Column{PostsColumns[16]},
 			},
 			{
 				Name:    "post_is_featured",
@@ -2698,7 +2717,7 @@ var (
 			{
 				Name:    "post_status_author_id",
 				Unique:  false,
-				Columns: []*schema.Column{PostsColumns[10], PostsColumns[19]},
+				Columns: []*schema.Column{PostsColumns[10], PostsColumns[16]},
 			},
 			{
 				Name:    "post_status_is_featured",
@@ -3184,7 +3203,6 @@ var (
 		{Name: "default_locale", Type: field.TypeString, Nullable: true, Comment: "默认语言"},
 		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "站点模板"},
 		{Name: "theme", Type: field.TypeString, Nullable: true, Comment: "主题名称"},
-		{Name: "visit_count", Type: field.TypeUint64, Nullable: true, Comment: "访问次数", Default: 0},
 	}
 	// SitesTable holds the schema information for the "sites" table.
 	SitesTable = &schema.Table{
@@ -3967,6 +3985,7 @@ var (
 		SysDictEntryI18nTable,
 		SysDictTypesTable,
 		FilesTable,
+		InteractionCountersTable,
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
 		InternalMessageRecipientsTable,
@@ -4076,6 +4095,11 @@ func init() {
 	}
 	FilesTable.Annotation = &entsql.Annotation{
 		Table:     "files",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InteractionCountersTable.Annotation = &entsql.Annotation{
+		Table:     "interaction_counters",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

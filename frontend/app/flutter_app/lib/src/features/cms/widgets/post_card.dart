@@ -15,17 +15,22 @@ typedef Tag = ContentServiceV1Tag;
 
 /// 文章卡片组件
 ///
-/// 支持响应式布局和 Web 端 Hover 效果
+/// 支持响应式布局和 Web 端 Hover 效果。
+///
+/// likeCount 由父列表组件批量查询 InteractionService.GetCounts 后注入
+/// （post.likes 列已移除，计数来自 interaction_counter 表）。
 class PostCard extends StatefulWidget {
   final Post post;
   final List<Category> categories;
   final List<Tag> tags;
+  final int likeCount;
 
   const PostCard({
     super.key,
     required this.post,
     this.categories = const [],
     this.tags = const [],
+    this.likeCount = 0,
   });
 
   @override
@@ -286,12 +291,10 @@ class _PostCardState extends State<PostCard> {
           ),
         ),
         _buildStat(
-          Icons.comment_outlined,
-          '${widget.post.commentCount ?? 0}',
+          Icons.favorite_outline,
+          '${widget.likeCount}',
           theme,
         ),
-        SizedBox(width: _isMobile ? 14.w : 14),
-        _buildStat(Icons.favorite_outline, '${widget.post.likes ?? 0}', theme),
       ],
     );
   }

@@ -74,11 +74,11 @@ func (s *InteractionService) Watch(ctx context.Context, req *interactionV1.Watch
 	if !ok {
 		return nil, interactionV1.ErrorUnauthorized("login required")
 	}
-	watched, err := s.interactionRepo.Watch(ctx, viewerUserID, req.GetPostId())
+	watched, watchCount, err := s.interactionRepo.Watch(ctx, viewerUserID, req.GetPostId())
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.WatchResponse{Watched: watched}, nil
+	return &interactionV1.WatchResponse{Watched: watched, WatchCount: watchCount}, nil
 }
 
 // Unwatch 取消收藏 post。
@@ -87,11 +87,11 @@ func (s *InteractionService) Unwatch(ctx context.Context, req *interactionV1.Wat
 	if !ok {
 		return nil, interactionV1.ErrorUnauthorized("login required")
 	}
-	watched, err := s.interactionRepo.Unwatch(ctx, viewerUserID, req.GetPostId())
+	watched, watchCount, err := s.interactionRepo.Unwatch(ctx, viewerUserID, req.GetPostId())
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.WatchResponse{Watched: watched}, nil
+	return &interactionV1.WatchResponse{Watched: watched, WatchCount: watchCount}, nil
 }
 
 // GetInteractionStatus 批量查询当前 viewer 对指定目标的交互状态。
@@ -115,4 +115,18 @@ func (s *InteractionService) ListWatchedPosts(ctx context.Context, req *paginati
 		return nil, interactionV1.ErrorUnauthorized("login required")
 	}
 	return s.interactionRepo.ListWatchedPosts(ctx, viewerUserID, s.postRepo, req)
+}
+
+// GetCounts 批量查询指定目标的计数（如点赞数）。需登录。
+func (s *InteractionService) GetCounts(ctx context.Context, req *interactionV1.GetCountsRequest) (*interactionV1.GetCountsResponse, error) {
+	viewerUserID, ok := viewerUserIDFromContext(ctx)
+	if !ok {
+		return nil, interactionV1.ErrorUnauthorized("login required")
+	}
+	_ = viewerUserID // viewer 仅用于租户隔离断言，计数查询本身按 tenant_id 过滤
+	counts, err := s.interactionRepo.GetCounts(ctx, req.GetTargetType(), req.GetTargetIds(), req.GetMetrics())
+	if err != nil {
+		return nil, err
+	}
+	return &interactionV1.GetCountsResponse{Counts: counts}, nil
 }

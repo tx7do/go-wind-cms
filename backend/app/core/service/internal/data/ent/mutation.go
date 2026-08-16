@@ -21,6 +21,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
@@ -98,6 +99,7 @@ const (
 	TypeDictEntryI18n            = "DictEntryI18n"
 	TypeDictType                 = "DictType"
 	TypeFile                     = "File"
+	TypeInteractionCounter       = "InteractionCounter"
 	TypeInternalMessage          = "InternalMessage"
 	TypeInternalMessageCategory  = "InternalMessageCategory"
 	TypeInternalMessageRecipient = "InternalMessageRecipient"
@@ -7695,12 +7697,6 @@ type CommentMutation struct {
 	author_url        *string
 	author_type       *comment.AuthorType
 	status            *comment.Status
-	like_count        *uint32
-	addlike_count     *int32
-	dislike_count     *uint32
-	adddislike_count  *int32
-	reply_count       *uint32
-	addreply_count    *int32
 	ip_address        *string
 	location          *string
 	user_agent        *string
@@ -8783,216 +8779,6 @@ func (m *CommentMutation) ResetStatus() {
 	delete(m.clearedFields, comment.FieldStatus)
 }
 
-// SetLikeCount sets the "like_count" field.
-func (m *CommentMutation) SetLikeCount(u uint32) {
-	m.like_count = &u
-	m.addlike_count = nil
-}
-
-// LikeCount returns the value of the "like_count" field in the mutation.
-func (m *CommentMutation) LikeCount() (r uint32, exists bool) {
-	v := m.like_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLikeCount returns the old "like_count" field's value of the Comment entity.
-// If the Comment object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommentMutation) OldLikeCount(ctx context.Context) (v *uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLikeCount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLikeCount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLikeCount: %w", err)
-	}
-	return oldValue.LikeCount, nil
-}
-
-// AddLikeCount adds u to the "like_count" field.
-func (m *CommentMutation) AddLikeCount(u int32) {
-	if m.addlike_count != nil {
-		*m.addlike_count += u
-	} else {
-		m.addlike_count = &u
-	}
-}
-
-// AddedLikeCount returns the value that was added to the "like_count" field in this mutation.
-func (m *CommentMutation) AddedLikeCount() (r int32, exists bool) {
-	v := m.addlike_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearLikeCount clears the value of the "like_count" field.
-func (m *CommentMutation) ClearLikeCount() {
-	m.like_count = nil
-	m.addlike_count = nil
-	m.clearedFields[comment.FieldLikeCount] = struct{}{}
-}
-
-// LikeCountCleared returns if the "like_count" field was cleared in this mutation.
-func (m *CommentMutation) LikeCountCleared() bool {
-	_, ok := m.clearedFields[comment.FieldLikeCount]
-	return ok
-}
-
-// ResetLikeCount resets all changes to the "like_count" field.
-func (m *CommentMutation) ResetLikeCount() {
-	m.like_count = nil
-	m.addlike_count = nil
-	delete(m.clearedFields, comment.FieldLikeCount)
-}
-
-// SetDislikeCount sets the "dislike_count" field.
-func (m *CommentMutation) SetDislikeCount(u uint32) {
-	m.dislike_count = &u
-	m.adddislike_count = nil
-}
-
-// DislikeCount returns the value of the "dislike_count" field in the mutation.
-func (m *CommentMutation) DislikeCount() (r uint32, exists bool) {
-	v := m.dislike_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDislikeCount returns the old "dislike_count" field's value of the Comment entity.
-// If the Comment object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommentMutation) OldDislikeCount(ctx context.Context) (v *uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDislikeCount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDislikeCount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDislikeCount: %w", err)
-	}
-	return oldValue.DislikeCount, nil
-}
-
-// AddDislikeCount adds u to the "dislike_count" field.
-func (m *CommentMutation) AddDislikeCount(u int32) {
-	if m.adddislike_count != nil {
-		*m.adddislike_count += u
-	} else {
-		m.adddislike_count = &u
-	}
-}
-
-// AddedDislikeCount returns the value that was added to the "dislike_count" field in this mutation.
-func (m *CommentMutation) AddedDislikeCount() (r int32, exists bool) {
-	v := m.adddislike_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearDislikeCount clears the value of the "dislike_count" field.
-func (m *CommentMutation) ClearDislikeCount() {
-	m.dislike_count = nil
-	m.adddislike_count = nil
-	m.clearedFields[comment.FieldDislikeCount] = struct{}{}
-}
-
-// DislikeCountCleared returns if the "dislike_count" field was cleared in this mutation.
-func (m *CommentMutation) DislikeCountCleared() bool {
-	_, ok := m.clearedFields[comment.FieldDislikeCount]
-	return ok
-}
-
-// ResetDislikeCount resets all changes to the "dislike_count" field.
-func (m *CommentMutation) ResetDislikeCount() {
-	m.dislike_count = nil
-	m.adddislike_count = nil
-	delete(m.clearedFields, comment.FieldDislikeCount)
-}
-
-// SetReplyCount sets the "reply_count" field.
-func (m *CommentMutation) SetReplyCount(u uint32) {
-	m.reply_count = &u
-	m.addreply_count = nil
-}
-
-// ReplyCount returns the value of the "reply_count" field in the mutation.
-func (m *CommentMutation) ReplyCount() (r uint32, exists bool) {
-	v := m.reply_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldReplyCount returns the old "reply_count" field's value of the Comment entity.
-// If the Comment object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommentMutation) OldReplyCount(ctx context.Context) (v *uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldReplyCount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldReplyCount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldReplyCount: %w", err)
-	}
-	return oldValue.ReplyCount, nil
-}
-
-// AddReplyCount adds u to the "reply_count" field.
-func (m *CommentMutation) AddReplyCount(u int32) {
-	if m.addreply_count != nil {
-		*m.addreply_count += u
-	} else {
-		m.addreply_count = &u
-	}
-}
-
-// AddedReplyCount returns the value that was added to the "reply_count" field in this mutation.
-func (m *CommentMutation) AddedReplyCount() (r int32, exists bool) {
-	v := m.addreply_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearReplyCount clears the value of the "reply_count" field.
-func (m *CommentMutation) ClearReplyCount() {
-	m.reply_count = nil
-	m.addreply_count = nil
-	m.clearedFields[comment.FieldReplyCount] = struct{}{}
-}
-
-// ReplyCountCleared returns if the "reply_count" field was cleared in this mutation.
-func (m *CommentMutation) ReplyCountCleared() bool {
-	_, ok := m.clearedFields[comment.FieldReplyCount]
-	return ok
-}
-
-// ResetReplyCount resets all changes to the "reply_count" field.
-func (m *CommentMutation) ResetReplyCount() {
-	m.reply_count = nil
-	m.addreply_count = nil
-	delete(m.clearedFields, comment.FieldReplyCount)
-}
-
 // SetIPAddress sets the "ip_address" field.
 func (m *CommentMutation) SetIPAddress(s string) {
 	m.ip_address = &s
@@ -9472,7 +9258,7 @@ func (m *CommentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CommentMutation) Fields() []string {
-	fields := make([]string, 0, 27)
+	fields := make([]string, 0, 24)
 	if m.created_at != nil {
 		fields = append(fields, comment.FieldCreatedAt)
 	}
@@ -9523,15 +9309,6 @@ func (m *CommentMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, comment.FieldStatus)
-	}
-	if m.like_count != nil {
-		fields = append(fields, comment.FieldLikeCount)
-	}
-	if m.dislike_count != nil {
-		fields = append(fields, comment.FieldDislikeCount)
-	}
-	if m.reply_count != nil {
-		fields = append(fields, comment.FieldReplyCount)
 	}
 	if m.ip_address != nil {
 		fields = append(fields, comment.FieldIPAddress)
@@ -9596,12 +9373,6 @@ func (m *CommentMutation) Field(name string) (ent.Value, bool) {
 		return m.AuthorType()
 	case comment.FieldStatus:
 		return m.Status()
-	case comment.FieldLikeCount:
-		return m.LikeCount()
-	case comment.FieldDislikeCount:
-		return m.DislikeCount()
-	case comment.FieldReplyCount:
-		return m.ReplyCount()
 	case comment.FieldIPAddress:
 		return m.IPAddress()
 	case comment.FieldLocation:
@@ -9659,12 +9430,6 @@ func (m *CommentMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldAuthorType(ctx)
 	case comment.FieldStatus:
 		return m.OldStatus(ctx)
-	case comment.FieldLikeCount:
-		return m.OldLikeCount(ctx)
-	case comment.FieldDislikeCount:
-		return m.OldDislikeCount(ctx)
-	case comment.FieldReplyCount:
-		return m.OldReplyCount(ctx)
 	case comment.FieldIPAddress:
 		return m.OldIPAddress(ctx)
 	case comment.FieldLocation:
@@ -9807,27 +9572,6 @@ func (m *CommentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
-	case comment.FieldLikeCount:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetLikeCount(v)
-		return nil
-	case comment.FieldDislikeCount:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDislikeCount(v)
-		return nil
-	case comment.FieldReplyCount:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetReplyCount(v)
-		return nil
 	case comment.FieldIPAddress:
 		v, ok := value.(string)
 		if !ok {
@@ -9903,15 +9647,6 @@ func (m *CommentMutation) AddedFields() []string {
 	if m.addauthor_id != nil {
 		fields = append(fields, comment.FieldAuthorID)
 	}
-	if m.addlike_count != nil {
-		fields = append(fields, comment.FieldLikeCount)
-	}
-	if m.adddislike_count != nil {
-		fields = append(fields, comment.FieldDislikeCount)
-	}
-	if m.addreply_count != nil {
-		fields = append(fields, comment.FieldReplyCount)
-	}
 	if m.addreply_to_id != nil {
 		fields = append(fields, comment.FieldReplyToID)
 	}
@@ -9935,12 +9670,6 @@ func (m *CommentMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedObjectID()
 	case comment.FieldAuthorID:
 		return m.AddedAuthorID()
-	case comment.FieldLikeCount:
-		return m.AddedLikeCount()
-	case comment.FieldDislikeCount:
-		return m.AddedDislikeCount()
-	case comment.FieldReplyCount:
-		return m.AddedReplyCount()
 	case comment.FieldReplyToID:
 		return m.AddedReplyToID()
 	}
@@ -9993,27 +9722,6 @@ func (m *CommentMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAuthorID(v)
-		return nil
-	case comment.FieldLikeCount:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddLikeCount(v)
-		return nil
-	case comment.FieldDislikeCount:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDislikeCount(v)
-		return nil
-	case comment.FieldReplyCount:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddReplyCount(v)
 		return nil
 	case comment.FieldReplyToID:
 		v, ok := value.(int32)
@@ -10080,15 +9788,6 @@ func (m *CommentMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(comment.FieldStatus) {
 		fields = append(fields, comment.FieldStatus)
-	}
-	if m.FieldCleared(comment.FieldLikeCount) {
-		fields = append(fields, comment.FieldLikeCount)
-	}
-	if m.FieldCleared(comment.FieldDislikeCount) {
-		fields = append(fields, comment.FieldDislikeCount)
-	}
-	if m.FieldCleared(comment.FieldReplyCount) {
-		fields = append(fields, comment.FieldReplyCount)
 	}
 	if m.FieldCleared(comment.FieldIPAddress) {
 		fields = append(fields, comment.FieldIPAddress)
@@ -10176,15 +9875,6 @@ func (m *CommentMutation) ClearField(name string) error {
 	case comment.FieldStatus:
 		m.ClearStatus()
 		return nil
-	case comment.FieldLikeCount:
-		m.ClearLikeCount()
-		return nil
-	case comment.FieldDislikeCount:
-		m.ClearDislikeCount()
-		return nil
-	case comment.FieldReplyCount:
-		m.ClearReplyCount()
-		return nil
 	case comment.FieldIPAddress:
 		m.ClearIPAddress()
 		return nil
@@ -10264,15 +9954,6 @@ func (m *CommentMutation) ResetField(name string) error {
 		return nil
 	case comment.FieldStatus:
 		m.ResetStatus()
-		return nil
-	case comment.FieldLikeCount:
-		m.ResetLikeCount()
-		return nil
-	case comment.FieldDislikeCount:
-		m.ResetDislikeCount()
-		return nil
-	case comment.FieldReplyCount:
-		m.ResetReplyCount()
 		return nil
 	case comment.FieldIPAddress:
 		m.ResetIPAddress()
@@ -19480,6 +19161,1044 @@ func (m *FileMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FileMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown File edge %s", name)
+}
+
+// InteractionCounterMutation represents an operation that mutates the InteractionCounter nodes in the graph.
+type InteractionCounterMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *uint32
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	tenant_id      *uint32
+	addtenant_id   *int32
+	target_type    *uint8
+	addtarget_type *int8
+	target_id      *uint32
+	addtarget_id   *int32
+	metric         *uint8
+	addmetric      *int8
+	count          *int64
+	addcount       *int64
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*InteractionCounter, error)
+	predicates     []predicate.InteractionCounter
+}
+
+var _ ent.Mutation = (*InteractionCounterMutation)(nil)
+
+// interactioncounterOption allows management of the mutation configuration using functional options.
+type interactioncounterOption func(*InteractionCounterMutation)
+
+// newInteractionCounterMutation creates new mutation for the InteractionCounter entity.
+func newInteractionCounterMutation(c config, op Op, opts ...interactioncounterOption) *InteractionCounterMutation {
+	m := &InteractionCounterMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeInteractionCounter,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withInteractionCounterID sets the ID field of the mutation.
+func withInteractionCounterID(id uint32) interactioncounterOption {
+	return func(m *InteractionCounterMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *InteractionCounter
+		)
+		m.oldValue = func(ctx context.Context) (*InteractionCounter, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().InteractionCounter.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withInteractionCounter sets the old InteractionCounter of the mutation.
+func withInteractionCounter(node *InteractionCounter) interactioncounterOption {
+	return func(m *InteractionCounterMutation) {
+		m.oldValue = func(context.Context) (*InteractionCounter, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m InteractionCounterMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m InteractionCounterMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of InteractionCounter entities.
+func (m *InteractionCounterMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *InteractionCounterMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *InteractionCounterMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().InteractionCounter.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *InteractionCounterMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *InteractionCounterMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *InteractionCounterMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[interactioncounter.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *InteractionCounterMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *InteractionCounterMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, interactioncounter.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *InteractionCounterMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *InteractionCounterMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *InteractionCounterMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[interactioncounter.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *InteractionCounterMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *InteractionCounterMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, interactioncounter.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *InteractionCounterMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *InteractionCounterMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *InteractionCounterMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[interactioncounter.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *InteractionCounterMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *InteractionCounterMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, interactioncounter.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *InteractionCounterMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *InteractionCounterMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *InteractionCounterMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *InteractionCounterMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *InteractionCounterMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[interactioncounter.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *InteractionCounterMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *InteractionCounterMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, interactioncounter.FieldTenantID)
+}
+
+// SetTargetType sets the "target_type" field.
+func (m *InteractionCounterMutation) SetTargetType(u uint8) {
+	m.target_type = &u
+	m.addtarget_type = nil
+}
+
+// TargetType returns the value of the "target_type" field in the mutation.
+func (m *InteractionCounterMutation) TargetType() (r uint8, exists bool) {
+	v := m.target_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetType returns the old "target_type" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldTargetType(ctx context.Context) (v *uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetType: %w", err)
+	}
+	return oldValue.TargetType, nil
+}
+
+// AddTargetType adds u to the "target_type" field.
+func (m *InteractionCounterMutation) AddTargetType(u int8) {
+	if m.addtarget_type != nil {
+		*m.addtarget_type += u
+	} else {
+		m.addtarget_type = &u
+	}
+}
+
+// AddedTargetType returns the value that was added to the "target_type" field in this mutation.
+func (m *InteractionCounterMutation) AddedTargetType() (r int8, exists bool) {
+	v := m.addtarget_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTargetType clears the value of the "target_type" field.
+func (m *InteractionCounterMutation) ClearTargetType() {
+	m.target_type = nil
+	m.addtarget_type = nil
+	m.clearedFields[interactioncounter.FieldTargetType] = struct{}{}
+}
+
+// TargetTypeCleared returns if the "target_type" field was cleared in this mutation.
+func (m *InteractionCounterMutation) TargetTypeCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldTargetType]
+	return ok
+}
+
+// ResetTargetType resets all changes to the "target_type" field.
+func (m *InteractionCounterMutation) ResetTargetType() {
+	m.target_type = nil
+	m.addtarget_type = nil
+	delete(m.clearedFields, interactioncounter.FieldTargetType)
+}
+
+// SetTargetID sets the "target_id" field.
+func (m *InteractionCounterMutation) SetTargetID(u uint32) {
+	m.target_id = &u
+	m.addtarget_id = nil
+}
+
+// TargetID returns the value of the "target_id" field in the mutation.
+func (m *InteractionCounterMutation) TargetID() (r uint32, exists bool) {
+	v := m.target_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetID returns the old "target_id" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldTargetID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetID: %w", err)
+	}
+	return oldValue.TargetID, nil
+}
+
+// AddTargetID adds u to the "target_id" field.
+func (m *InteractionCounterMutation) AddTargetID(u int32) {
+	if m.addtarget_id != nil {
+		*m.addtarget_id += u
+	} else {
+		m.addtarget_id = &u
+	}
+}
+
+// AddedTargetID returns the value that was added to the "target_id" field in this mutation.
+func (m *InteractionCounterMutation) AddedTargetID() (r int32, exists bool) {
+	v := m.addtarget_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTargetID clears the value of the "target_id" field.
+func (m *InteractionCounterMutation) ClearTargetID() {
+	m.target_id = nil
+	m.addtarget_id = nil
+	m.clearedFields[interactioncounter.FieldTargetID] = struct{}{}
+}
+
+// TargetIDCleared returns if the "target_id" field was cleared in this mutation.
+func (m *InteractionCounterMutation) TargetIDCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldTargetID]
+	return ok
+}
+
+// ResetTargetID resets all changes to the "target_id" field.
+func (m *InteractionCounterMutation) ResetTargetID() {
+	m.target_id = nil
+	m.addtarget_id = nil
+	delete(m.clearedFields, interactioncounter.FieldTargetID)
+}
+
+// SetMetric sets the "metric" field.
+func (m *InteractionCounterMutation) SetMetric(u uint8) {
+	m.metric = &u
+	m.addmetric = nil
+}
+
+// Metric returns the value of the "metric" field in the mutation.
+func (m *InteractionCounterMutation) Metric() (r uint8, exists bool) {
+	v := m.metric
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetric returns the old "metric" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldMetric(ctx context.Context) (v *uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetric is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetric requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetric: %w", err)
+	}
+	return oldValue.Metric, nil
+}
+
+// AddMetric adds u to the "metric" field.
+func (m *InteractionCounterMutation) AddMetric(u int8) {
+	if m.addmetric != nil {
+		*m.addmetric += u
+	} else {
+		m.addmetric = &u
+	}
+}
+
+// AddedMetric returns the value that was added to the "metric" field in this mutation.
+func (m *InteractionCounterMutation) AddedMetric() (r int8, exists bool) {
+	v := m.addmetric
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMetric clears the value of the "metric" field.
+func (m *InteractionCounterMutation) ClearMetric() {
+	m.metric = nil
+	m.addmetric = nil
+	m.clearedFields[interactioncounter.FieldMetric] = struct{}{}
+}
+
+// MetricCleared returns if the "metric" field was cleared in this mutation.
+func (m *InteractionCounterMutation) MetricCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldMetric]
+	return ok
+}
+
+// ResetMetric resets all changes to the "metric" field.
+func (m *InteractionCounterMutation) ResetMetric() {
+	m.metric = nil
+	m.addmetric = nil
+	delete(m.clearedFields, interactioncounter.FieldMetric)
+}
+
+// SetCount sets the "count" field.
+func (m *InteractionCounterMutation) SetCount(i int64) {
+	m.count = &i
+	m.addcount = nil
+}
+
+// Count returns the value of the "count" field in the mutation.
+func (m *InteractionCounterMutation) Count() (r int64, exists bool) {
+	v := m.count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCount returns the old "count" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldCount(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCount: %w", err)
+	}
+	return oldValue.Count, nil
+}
+
+// AddCount adds i to the "count" field.
+func (m *InteractionCounterMutation) AddCount(i int64) {
+	if m.addcount != nil {
+		*m.addcount += i
+	} else {
+		m.addcount = &i
+	}
+}
+
+// AddedCount returns the value that was added to the "count" field in this mutation.
+func (m *InteractionCounterMutation) AddedCount() (r int64, exists bool) {
+	v := m.addcount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCount clears the value of the "count" field.
+func (m *InteractionCounterMutation) ClearCount() {
+	m.count = nil
+	m.addcount = nil
+	m.clearedFields[interactioncounter.FieldCount] = struct{}{}
+}
+
+// CountCleared returns if the "count" field was cleared in this mutation.
+func (m *InteractionCounterMutation) CountCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldCount]
+	return ok
+}
+
+// ResetCount resets all changes to the "count" field.
+func (m *InteractionCounterMutation) ResetCount() {
+	m.count = nil
+	m.addcount = nil
+	delete(m.clearedFields, interactioncounter.FieldCount)
+}
+
+// Where appends a list predicates to the InteractionCounterMutation builder.
+func (m *InteractionCounterMutation) Where(ps ...predicate.InteractionCounter) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the InteractionCounterMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InteractionCounterMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.InteractionCounter, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *InteractionCounterMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InteractionCounterMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (InteractionCounter).
+func (m *InteractionCounterMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *InteractionCounterMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, interactioncounter.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, interactioncounter.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, interactioncounter.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, interactioncounter.FieldTenantID)
+	}
+	if m.target_type != nil {
+		fields = append(fields, interactioncounter.FieldTargetType)
+	}
+	if m.target_id != nil {
+		fields = append(fields, interactioncounter.FieldTargetID)
+	}
+	if m.metric != nil {
+		fields = append(fields, interactioncounter.FieldMetric)
+	}
+	if m.count != nil {
+		fields = append(fields, interactioncounter.FieldCount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *InteractionCounterMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		return m.CreatedAt()
+	case interactioncounter.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case interactioncounter.FieldDeletedAt:
+		return m.DeletedAt()
+	case interactioncounter.FieldTenantID:
+		return m.TenantID()
+	case interactioncounter.FieldTargetType:
+		return m.TargetType()
+	case interactioncounter.FieldTargetID:
+		return m.TargetID()
+	case interactioncounter.FieldMetric:
+		return m.Metric()
+	case interactioncounter.FieldCount:
+		return m.Count()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *InteractionCounterMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case interactioncounter.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case interactioncounter.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case interactioncounter.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case interactioncounter.FieldTargetType:
+		return m.OldTargetType(ctx)
+	case interactioncounter.FieldTargetID:
+		return m.OldTargetID(ctx)
+	case interactioncounter.FieldMetric:
+		return m.OldMetric(ctx)
+	case interactioncounter.FieldCount:
+		return m.OldCount(ctx)
+	}
+	return nil, fmt.Errorf("unknown InteractionCounter field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InteractionCounterMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case interactioncounter.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case interactioncounter.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case interactioncounter.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case interactioncounter.FieldTargetType:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetType(v)
+		return nil
+	case interactioncounter.FieldTargetID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetID(v)
+		return nil
+	case interactioncounter.FieldMetric:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetric(v)
+		return nil
+	case interactioncounter.FieldCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *InteractionCounterMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, interactioncounter.FieldTenantID)
+	}
+	if m.addtarget_type != nil {
+		fields = append(fields, interactioncounter.FieldTargetType)
+	}
+	if m.addtarget_id != nil {
+		fields = append(fields, interactioncounter.FieldTargetID)
+	}
+	if m.addmetric != nil {
+		fields = append(fields, interactioncounter.FieldMetric)
+	}
+	if m.addcount != nil {
+		fields = append(fields, interactioncounter.FieldCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *InteractionCounterMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case interactioncounter.FieldTenantID:
+		return m.AddedTenantID()
+	case interactioncounter.FieldTargetType:
+		return m.AddedTargetType()
+	case interactioncounter.FieldTargetID:
+		return m.AddedTargetID()
+	case interactioncounter.FieldMetric:
+		return m.AddedMetric()
+	case interactioncounter.FieldCount:
+		return m.AddedCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InteractionCounterMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case interactioncounter.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case interactioncounter.FieldTargetType:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetType(v)
+		return nil
+	case interactioncounter.FieldTargetID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetID(v)
+		return nil
+	case interactioncounter.FieldMetric:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMetric(v)
+		return nil
+	case interactioncounter.FieldCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *InteractionCounterMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(interactioncounter.FieldCreatedAt) {
+		fields = append(fields, interactioncounter.FieldCreatedAt)
+	}
+	if m.FieldCleared(interactioncounter.FieldUpdatedAt) {
+		fields = append(fields, interactioncounter.FieldUpdatedAt)
+	}
+	if m.FieldCleared(interactioncounter.FieldDeletedAt) {
+		fields = append(fields, interactioncounter.FieldDeletedAt)
+	}
+	if m.FieldCleared(interactioncounter.FieldTenantID) {
+		fields = append(fields, interactioncounter.FieldTenantID)
+	}
+	if m.FieldCleared(interactioncounter.FieldTargetType) {
+		fields = append(fields, interactioncounter.FieldTargetType)
+	}
+	if m.FieldCleared(interactioncounter.FieldTargetID) {
+		fields = append(fields, interactioncounter.FieldTargetID)
+	}
+	if m.FieldCleared(interactioncounter.FieldMetric) {
+		fields = append(fields, interactioncounter.FieldMetric)
+	}
+	if m.FieldCleared(interactioncounter.FieldCount) {
+		fields = append(fields, interactioncounter.FieldCount)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *InteractionCounterMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *InteractionCounterMutation) ClearField(name string) error {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case interactioncounter.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case interactioncounter.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case interactioncounter.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case interactioncounter.FieldTargetType:
+		m.ClearTargetType()
+		return nil
+	case interactioncounter.FieldTargetID:
+		m.ClearTargetID()
+		return nil
+	case interactioncounter.FieldMetric:
+		m.ClearMetric()
+		return nil
+	case interactioncounter.FieldCount:
+		m.ClearCount()
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *InteractionCounterMutation) ResetField(name string) error {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case interactioncounter.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case interactioncounter.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case interactioncounter.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case interactioncounter.FieldTargetType:
+		m.ResetTargetType()
+		return nil
+	case interactioncounter.FieldTargetID:
+		m.ResetTargetID()
+		return nil
+	case interactioncounter.FieldMetric:
+		m.ResetMetric()
+		return nil
+	case interactioncounter.FieldCount:
+		m.ResetCount()
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *InteractionCounterMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *InteractionCounterMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *InteractionCounterMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *InteractionCounterMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *InteractionCounterMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *InteractionCounterMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *InteractionCounterMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown InteractionCounter unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *InteractionCounterMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown InteractionCounter edge %s", name)
 }
 
 // InternalMessageMutation represents an operation that mutates the InternalMessage nodes in the graph.
@@ -48133,8 +48852,6 @@ type PageMutation struct {
 	show_in_navigation *bool
 	template           *string
 	is_custom_template *bool
-	visits             *uint32
-	addvisits          *int32
 	custom_fields      **map[string]string
 	depth              *int32
 	adddepth           *int32
@@ -49408,76 +50125,6 @@ func (m *PageMutation) ResetIsCustomTemplate() {
 	delete(m.clearedFields, page.FieldIsCustomTemplate)
 }
 
-// SetVisits sets the "visits" field.
-func (m *PageMutation) SetVisits(u uint32) {
-	m.visits = &u
-	m.addvisits = nil
-}
-
-// Visits returns the value of the "visits" field in the mutation.
-func (m *PageMutation) Visits() (r uint32, exists bool) {
-	v := m.visits
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldVisits returns the old "visits" field's value of the Page entity.
-// If the Page object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PageMutation) OldVisits(ctx context.Context) (v *uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVisits is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVisits requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVisits: %w", err)
-	}
-	return oldValue.Visits, nil
-}
-
-// AddVisits adds u to the "visits" field.
-func (m *PageMutation) AddVisits(u int32) {
-	if m.addvisits != nil {
-		*m.addvisits += u
-	} else {
-		m.addvisits = &u
-	}
-}
-
-// AddedVisits returns the value that was added to the "visits" field in this mutation.
-func (m *PageMutation) AddedVisits() (r int32, exists bool) {
-	v := m.addvisits
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (m *PageMutation) ClearVisits() {
-	m.visits = nil
-	m.addvisits = nil
-	m.clearedFields[page.FieldVisits] = struct{}{}
-}
-
-// VisitsCleared returns if the "visits" field was cleared in this mutation.
-func (m *PageMutation) VisitsCleared() bool {
-	_, ok := m.clearedFields[page.FieldVisits]
-	return ok
-}
-
-// ResetVisits resets all changes to the "visits" field.
-func (m *PageMutation) ResetVisits() {
-	m.visits = nil
-	m.addvisits = nil
-	delete(m.clearedFields, page.FieldVisits)
-}
-
 // SetCustomFields sets the "custom_fields" field.
 func (m *PageMutation) SetCustomFields(value *map[string]string) {
 	m.custom_fields = &value
@@ -49712,7 +50359,7 @@ func (m *PageMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PageMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, page.FieldCreatedAt)
 	}
@@ -49776,9 +50423,6 @@ func (m *PageMutation) Fields() []string {
 	if m.is_custom_template != nil {
 		fields = append(fields, page.FieldIsCustomTemplate)
 	}
-	if m.visits != nil {
-		fields = append(fields, page.FieldVisits)
-	}
 	if m.custom_fields != nil {
 		fields = append(fields, page.FieldCustomFields)
 	}
@@ -49835,8 +50479,6 @@ func (m *PageMutation) Field(name string) (ent.Value, bool) {
 		return m.Template()
 	case page.FieldIsCustomTemplate:
 		return m.IsCustomTemplate()
-	case page.FieldVisits:
-		return m.Visits()
 	case page.FieldCustomFields:
 		return m.CustomFields()
 	case page.FieldDepth:
@@ -49892,8 +50534,6 @@ func (m *PageMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTemplate(ctx)
 	case page.FieldIsCustomTemplate:
 		return m.OldIsCustomTemplate(ctx)
-	case page.FieldVisits:
-		return m.OldVisits(ctx)
 	case page.FieldCustomFields:
 		return m.OldCustomFields(ctx)
 	case page.FieldDepth:
@@ -50054,13 +50694,6 @@ func (m *PageMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsCustomTemplate(v)
 		return nil
-	case page.FieldVisits:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetVisits(v)
-		return nil
 	case page.FieldCustomFields:
 		v, ok := value.(*map[string]string)
 		if !ok {
@@ -50101,9 +50734,6 @@ func (m *PageMutation) AddedFields() []string {
 	if m.addauthor_id != nil {
 		fields = append(fields, page.FieldAuthorID)
 	}
-	if m.addvisits != nil {
-		fields = append(fields, page.FieldVisits)
-	}
 	if m.adddepth != nil {
 		fields = append(fields, page.FieldDepth)
 	}
@@ -50127,8 +50757,6 @@ func (m *PageMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedTenantID()
 	case page.FieldAuthorID:
 		return m.AddedAuthorID()
-	case page.FieldVisits:
-		return m.AddedVisits()
 	case page.FieldDepth:
 		return m.AddedDepth()
 	}
@@ -50181,13 +50809,6 @@ func (m *PageMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAuthorID(v)
-		return nil
-	case page.FieldVisits:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddVisits(v)
 		return nil
 	case page.FieldDepth:
 		v, ok := value.(int32)
@@ -50266,9 +50887,6 @@ func (m *PageMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(page.FieldIsCustomTemplate) {
 		fields = append(fields, page.FieldIsCustomTemplate)
-	}
-	if m.FieldCleared(page.FieldVisits) {
-		fields = append(fields, page.FieldVisits)
 	}
 	if m.FieldCleared(page.FieldCustomFields) {
 		fields = append(fields, page.FieldCustomFields)
@@ -50353,9 +50971,6 @@ func (m *PageMutation) ClearField(name string) error {
 	case page.FieldIsCustomTemplate:
 		m.ClearIsCustomTemplate()
 		return nil
-	case page.FieldVisits:
-		m.ClearVisits()
-		return nil
 	case page.FieldCustomFields:
 		m.ClearCustomFields()
 		return nil
@@ -50432,9 +51047,6 @@ func (m *PageMutation) ResetField(name string) error {
 		return nil
 	case page.FieldIsCustomTemplate:
 		m.ResetIsCustomTemplate()
-		return nil
-	case page.FieldVisits:
-		m.ResetVisits()
 		return nil
 	case page.FieldCustomFields:
 		m.ResetCustomFields()
@@ -63564,12 +64176,6 @@ type PostMutation struct {
 	in_progress      *bool
 	auto_summary     *bool
 	is_featured      *bool
-	visits           *int32
-	addvisits        *int32
-	likes            *int32
-	addlikes         *int32
-	comment_count    *int32
-	addcomment_count *int32
 	author_id        *uint32
 	addauthor_id     *int32
 	author_name      *string
@@ -64526,216 +65132,6 @@ func (m *PostMutation) ResetIsFeatured() {
 	delete(m.clearedFields, post.FieldIsFeatured)
 }
 
-// SetVisits sets the "visits" field.
-func (m *PostMutation) SetVisits(i int32) {
-	m.visits = &i
-	m.addvisits = nil
-}
-
-// Visits returns the value of the "visits" field in the mutation.
-func (m *PostMutation) Visits() (r int32, exists bool) {
-	v := m.visits
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldVisits returns the old "visits" field's value of the Post entity.
-// If the Post object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldVisits(ctx context.Context) (v *int32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVisits is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVisits requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVisits: %w", err)
-	}
-	return oldValue.Visits, nil
-}
-
-// AddVisits adds i to the "visits" field.
-func (m *PostMutation) AddVisits(i int32) {
-	if m.addvisits != nil {
-		*m.addvisits += i
-	} else {
-		m.addvisits = &i
-	}
-}
-
-// AddedVisits returns the value that was added to the "visits" field in this mutation.
-func (m *PostMutation) AddedVisits() (r int32, exists bool) {
-	v := m.addvisits
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (m *PostMutation) ClearVisits() {
-	m.visits = nil
-	m.addvisits = nil
-	m.clearedFields[post.FieldVisits] = struct{}{}
-}
-
-// VisitsCleared returns if the "visits" field was cleared in this mutation.
-func (m *PostMutation) VisitsCleared() bool {
-	_, ok := m.clearedFields[post.FieldVisits]
-	return ok
-}
-
-// ResetVisits resets all changes to the "visits" field.
-func (m *PostMutation) ResetVisits() {
-	m.visits = nil
-	m.addvisits = nil
-	delete(m.clearedFields, post.FieldVisits)
-}
-
-// SetLikes sets the "likes" field.
-func (m *PostMutation) SetLikes(i int32) {
-	m.likes = &i
-	m.addlikes = nil
-}
-
-// Likes returns the value of the "likes" field in the mutation.
-func (m *PostMutation) Likes() (r int32, exists bool) {
-	v := m.likes
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLikes returns the old "likes" field's value of the Post entity.
-// If the Post object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldLikes(ctx context.Context) (v *int32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLikes is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLikes requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLikes: %w", err)
-	}
-	return oldValue.Likes, nil
-}
-
-// AddLikes adds i to the "likes" field.
-func (m *PostMutation) AddLikes(i int32) {
-	if m.addlikes != nil {
-		*m.addlikes += i
-	} else {
-		m.addlikes = &i
-	}
-}
-
-// AddedLikes returns the value that was added to the "likes" field in this mutation.
-func (m *PostMutation) AddedLikes() (r int32, exists bool) {
-	v := m.addlikes
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (m *PostMutation) ClearLikes() {
-	m.likes = nil
-	m.addlikes = nil
-	m.clearedFields[post.FieldLikes] = struct{}{}
-}
-
-// LikesCleared returns if the "likes" field was cleared in this mutation.
-func (m *PostMutation) LikesCleared() bool {
-	_, ok := m.clearedFields[post.FieldLikes]
-	return ok
-}
-
-// ResetLikes resets all changes to the "likes" field.
-func (m *PostMutation) ResetLikes() {
-	m.likes = nil
-	m.addlikes = nil
-	delete(m.clearedFields, post.FieldLikes)
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (m *PostMutation) SetCommentCount(i int32) {
-	m.comment_count = &i
-	m.addcomment_count = nil
-}
-
-// CommentCount returns the value of the "comment_count" field in the mutation.
-func (m *PostMutation) CommentCount() (r int32, exists bool) {
-	v := m.comment_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCommentCount returns the old "comment_count" field's value of the Post entity.
-// If the Post object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldCommentCount(ctx context.Context) (v *int32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCommentCount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCommentCount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCommentCount: %w", err)
-	}
-	return oldValue.CommentCount, nil
-}
-
-// AddCommentCount adds i to the "comment_count" field.
-func (m *PostMutation) AddCommentCount(i int32) {
-	if m.addcomment_count != nil {
-		*m.addcomment_count += i
-	} else {
-		m.addcomment_count = &i
-	}
-}
-
-// AddedCommentCount returns the value that was added to the "comment_count" field in this mutation.
-func (m *PostMutation) AddedCommentCount() (r int32, exists bool) {
-	v := m.addcomment_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (m *PostMutation) ClearCommentCount() {
-	m.comment_count = nil
-	m.addcomment_count = nil
-	m.clearedFields[post.FieldCommentCount] = struct{}{}
-}
-
-// CommentCountCleared returns if the "comment_count" field was cleared in this mutation.
-func (m *PostMutation) CommentCountCleared() bool {
-	_, ok := m.clearedFields[post.FieldCommentCount]
-	return ok
-}
-
-// ResetCommentCount resets all changes to the "comment_count" field.
-func (m *PostMutation) ResetCommentCount() {
-	m.comment_count = nil
-	m.addcomment_count = nil
-	delete(m.clearedFields, post.FieldCommentCount)
-}
-
 // SetAuthorID sets the "author_id" field.
 func (m *PostMutation) SetAuthorID(u uint32) {
 	m.author_id = &u
@@ -65036,7 +65432,7 @@ func (m *PostMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, post.FieldCreatedAt)
 	}
@@ -65081,15 +65477,6 @@ func (m *PostMutation) Fields() []string {
 	}
 	if m.is_featured != nil {
 		fields = append(fields, post.FieldIsFeatured)
-	}
-	if m.visits != nil {
-		fields = append(fields, post.FieldVisits)
-	}
-	if m.likes != nil {
-		fields = append(fields, post.FieldLikes)
-	}
-	if m.comment_count != nil {
-		fields = append(fields, post.FieldCommentCount)
 	}
 	if m.author_id != nil {
 		fields = append(fields, post.FieldAuthorID)
@@ -65144,12 +65531,6 @@ func (m *PostMutation) Field(name string) (ent.Value, bool) {
 		return m.AutoSummary()
 	case post.FieldIsFeatured:
 		return m.IsFeatured()
-	case post.FieldVisits:
-		return m.Visits()
-	case post.FieldLikes:
-		return m.Likes()
-	case post.FieldCommentCount:
-		return m.CommentCount()
 	case post.FieldAuthorID:
 		return m.AuthorID()
 	case post.FieldAuthorName:
@@ -65199,12 +65580,6 @@ func (m *PostMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAutoSummary(ctx)
 	case post.FieldIsFeatured:
 		return m.OldIsFeatured(ctx)
-	case post.FieldVisits:
-		return m.OldVisits(ctx)
-	case post.FieldLikes:
-		return m.OldLikes(ctx)
-	case post.FieldCommentCount:
-		return m.OldCommentCount(ctx)
 	case post.FieldAuthorID:
 		return m.OldAuthorID(ctx)
 	case post.FieldAuthorName:
@@ -65329,27 +65704,6 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsFeatured(v)
 		return nil
-	case post.FieldVisits:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetVisits(v)
-		return nil
-	case post.FieldLikes:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetLikes(v)
-		return nil
-	case post.FieldCommentCount:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCommentCount(v)
-		return nil
 	case post.FieldAuthorID:
 		v, ok := value.(uint32)
 		if !ok {
@@ -65408,15 +65762,6 @@ func (m *PostMutation) AddedFields() []string {
 	if m.addtenant_id != nil {
 		fields = append(fields, post.FieldTenantID)
 	}
-	if m.addvisits != nil {
-		fields = append(fields, post.FieldVisits)
-	}
-	if m.addlikes != nil {
-		fields = append(fields, post.FieldLikes)
-	}
-	if m.addcomment_count != nil {
-		fields = append(fields, post.FieldCommentCount)
-	}
 	if m.addauthor_id != nil {
 		fields = append(fields, post.FieldAuthorID)
 	}
@@ -65438,12 +65783,6 @@ func (m *PostMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedSortOrder()
 	case post.FieldTenantID:
 		return m.AddedTenantID()
-	case post.FieldVisits:
-		return m.AddedVisits()
-	case post.FieldLikes:
-		return m.AddedLikes()
-	case post.FieldCommentCount:
-		return m.AddedCommentCount()
 	case post.FieldAuthorID:
 		return m.AddedAuthorID()
 	}
@@ -65489,27 +65828,6 @@ func (m *PostMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTenantID(v)
-		return nil
-	case post.FieldVisits:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddVisits(v)
-		return nil
-	case post.FieldLikes:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddLikes(v)
-		return nil
-	case post.FieldCommentCount:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddCommentCount(v)
 		return nil
 	case post.FieldAuthorID:
 		v, ok := value.(int32)
@@ -65570,15 +65888,6 @@ func (m *PostMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(post.FieldIsFeatured) {
 		fields = append(fields, post.FieldIsFeatured)
-	}
-	if m.FieldCleared(post.FieldVisits) {
-		fields = append(fields, post.FieldVisits)
-	}
-	if m.FieldCleared(post.FieldLikes) {
-		fields = append(fields, post.FieldLikes)
-	}
-	if m.FieldCleared(post.FieldCommentCount) {
-		fields = append(fields, post.FieldCommentCount)
 	}
 	if m.FieldCleared(post.FieldAuthorID) {
 		fields = append(fields, post.FieldAuthorID)
@@ -65654,15 +65963,6 @@ func (m *PostMutation) ClearField(name string) error {
 	case post.FieldIsFeatured:
 		m.ClearIsFeatured()
 		return nil
-	case post.FieldVisits:
-		m.ClearVisits()
-		return nil
-	case post.FieldLikes:
-		m.ClearLikes()
-		return nil
-	case post.FieldCommentCount:
-		m.ClearCommentCount()
-		return nil
 	case post.FieldAuthorID:
 		m.ClearAuthorID()
 		return nil
@@ -65730,15 +66030,6 @@ func (m *PostMutation) ResetField(name string) error {
 		return nil
 	case post.FieldIsFeatured:
 		m.ResetIsFeatured()
-		return nil
-	case post.FieldVisits:
-		m.ResetVisits()
-		return nil
-	case post.FieldLikes:
-		m.ResetLikes()
-		return nil
-	case post.FieldCommentCount:
-		m.ResetCommentCount()
 		return nil
 	case post.FieldAuthorID:
 		m.ResetAuthorID()
@@ -77610,8 +77901,6 @@ type SiteMutation struct {
 	default_locale          *string
 	template                *string
 	theme                   *string
-	visit_count             *uint64
-	addvisit_count          *int64
 	clearedFields           map[string]struct{}
 	done                    bool
 	oldValue                func(context.Context) (*Site, error)
@@ -78606,76 +78895,6 @@ func (m *SiteMutation) ResetTheme() {
 	delete(m.clearedFields, site.FieldTheme)
 }
 
-// SetVisitCount sets the "visit_count" field.
-func (m *SiteMutation) SetVisitCount(u uint64) {
-	m.visit_count = &u
-	m.addvisit_count = nil
-}
-
-// VisitCount returns the value of the "visit_count" field in the mutation.
-func (m *SiteMutation) VisitCount() (r uint64, exists bool) {
-	v := m.visit_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldVisitCount returns the old "visit_count" field's value of the Site entity.
-// If the Site object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SiteMutation) OldVisitCount(ctx context.Context) (v *uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldVisitCount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldVisitCount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldVisitCount: %w", err)
-	}
-	return oldValue.VisitCount, nil
-}
-
-// AddVisitCount adds u to the "visit_count" field.
-func (m *SiteMutation) AddVisitCount(u int64) {
-	if m.addvisit_count != nil {
-		*m.addvisit_count += u
-	} else {
-		m.addvisit_count = &u
-	}
-}
-
-// AddedVisitCount returns the value that was added to the "visit_count" field in this mutation.
-func (m *SiteMutation) AddedVisitCount() (r int64, exists bool) {
-	v := m.addvisit_count
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearVisitCount clears the value of the "visit_count" field.
-func (m *SiteMutation) ClearVisitCount() {
-	m.visit_count = nil
-	m.addvisit_count = nil
-	m.clearedFields[site.FieldVisitCount] = struct{}{}
-}
-
-// VisitCountCleared returns if the "visit_count" field was cleared in this mutation.
-func (m *SiteMutation) VisitCountCleared() bool {
-	_, ok := m.clearedFields[site.FieldVisitCount]
-	return ok
-}
-
-// ResetVisitCount resets all changes to the "visit_count" field.
-func (m *SiteMutation) ResetVisitCount() {
-	m.visit_count = nil
-	m.addvisit_count = nil
-	delete(m.clearedFields, site.FieldVisitCount)
-}
-
 // Where appends a list predicates to the SiteMutation builder.
 func (m *SiteMutation) Where(ps ...predicate.Site) {
 	m.predicates = append(m.predicates, ps...)
@@ -78710,7 +78929,7 @@ func (m *SiteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SiteMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, site.FieldCreatedAt)
 	}
@@ -78759,9 +78978,6 @@ func (m *SiteMutation) Fields() []string {
 	if m.theme != nil {
 		fields = append(fields, site.FieldTheme)
 	}
-	if m.visit_count != nil {
-		fields = append(fields, site.FieldVisitCount)
-	}
 	return fields
 }
 
@@ -78802,8 +79018,6 @@ func (m *SiteMutation) Field(name string) (ent.Value, bool) {
 		return m.Template()
 	case site.FieldTheme:
 		return m.Theme()
-	case site.FieldVisitCount:
-		return m.VisitCount()
 	}
 	return nil, false
 }
@@ -78845,8 +79059,6 @@ func (m *SiteMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTemplate(ctx)
 	case site.FieldTheme:
 		return m.OldTheme(ctx)
-	case site.FieldVisitCount:
-		return m.OldVisitCount(ctx)
 	}
 	return nil, fmt.Errorf("unknown Site field %s", name)
 }
@@ -78968,13 +79180,6 @@ func (m *SiteMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTheme(v)
 		return nil
-	case site.FieldVisitCount:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetVisitCount(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Site field %s", name)
 }
@@ -78995,9 +79200,6 @@ func (m *SiteMutation) AddedFields() []string {
 	if m.addtenant_id != nil {
 		fields = append(fields, site.FieldTenantID)
 	}
-	if m.addvisit_count != nil {
-		fields = append(fields, site.FieldVisitCount)
-	}
 	return fields
 }
 
@@ -79014,8 +79216,6 @@ func (m *SiteMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeletedBy()
 	case site.FieldTenantID:
 		return m.AddedTenantID()
-	case site.FieldVisitCount:
-		return m.AddedVisitCount()
 	}
 	return nil, false
 }
@@ -79052,13 +79252,6 @@ func (m *SiteMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTenantID(v)
-		return nil
-	case site.FieldVisitCount:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddVisitCount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Site numeric field %s", name)
@@ -79115,9 +79308,6 @@ func (m *SiteMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(site.FieldTheme) {
 		fields = append(fields, site.FieldTheme)
-	}
-	if m.FieldCleared(site.FieldVisitCount) {
-		fields = append(fields, site.FieldVisitCount)
 	}
 	return fields
 }
@@ -79181,9 +79371,6 @@ func (m *SiteMutation) ClearField(name string) error {
 	case site.FieldTheme:
 		m.ClearTheme()
 		return nil
-	case site.FieldVisitCount:
-		m.ClearVisitCount()
-		return nil
 	}
 	return fmt.Errorf("unknown Site nullable field %s", name)
 }
@@ -79239,9 +79426,6 @@ func (m *SiteMutation) ResetField(name string) error {
 		return nil
 	case site.FieldTheme:
 		m.ResetTheme()
-		return nil
-	case site.FieldVisitCount:
-		m.ResetVisitCount()
 		return nil
 	}
 	return fmt.Errorf("unknown Site field %s", name)

@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show ContentServiceV1Post, ContentServiceV1Tag;
+    show ContentServiceV1Post, ContentServiceV1Tag, InteractionServiceV1TargetType,
+        InteractionServiceV1CounterMetric;
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
@@ -32,6 +34,12 @@ class _TagFeedPageState extends State<TagFeedPage> {
   List<ContentServiceV1Tag> _tags = [];
   bool _isLoading = true;
 
+  // 点赞计数缓存：key 为 post.id。计数来自 interaction_counter 表
+  // （post.likes 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _likeCounts = {};
+
+  final _interactionService = InteractionService();
+
   @override
   void initState() {
     super.initState();
@@ -46,8 +54,27 @@ class _TagFeedPageState extends State<TagFeedPage> {
 
     if (!mounted) return;
 
+    final posts = (results[0] as ListPostResponse?)?.items ?? [];
+    final ids = posts
+        .where((p) => p.id != null)
+        .map((p) => p.id!)
+        .toList(growable: false);
+    Map<int, int> likeCounts = {};
+    if (ids.isNotEmpty) {
+      final countsResp = await _interactionService.getCounts(
+          InteractionServiceV1TargetType.targetTypePost,
+          ids,
+          [InteractionServiceV1CounterMetric.counterMetricLike]);
+      likeCounts = InteractionService.extractCountMap(
+          countsResp,
+          ids,
+          InteractionServiceV1CounterMetric.counterMetricLike);
+    }
+    if (!mounted) return;
+
     setState(() {
-      _posts = (results[0] as ListPostResponse?)?.items ?? [];
+      _posts = posts;
+      _likeCounts = likeCounts;
       _tags = (results[1] as ListTagResponse?)?.items ?? [];
       _isLoading = false;
     });
@@ -139,7 +166,8 @@ class _TagFeedPageState extends State<TagFeedPage> {
                   child: Column(
                     children: posts.map((post) => Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: PostCard(post: post),
+                      child: PostCard(
+                          post: post, likeCount: _likeCounts[post.id] ?? 0),
                     )).toList(),
                   ),
                 ),
@@ -156,7 +184,9 @@ class _TagFeedPageState extends State<TagFeedPage> {
       itemCount: posts.length,
       itemBuilder: (context, index) => Padding(
         padding: EdgeInsets.only(bottom: 12.h),
-        child: PostCard(post: posts[index]),
+        child: PostCard(
+            post: posts[index],
+            likeCount: _likeCounts[posts[index].id] ?? 0),
       ),
     );
   }

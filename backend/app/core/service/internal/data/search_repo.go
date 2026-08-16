@@ -11,7 +11,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	elasticsearchCrud "github.com/tx7do/go-crud/elasticsearch"
+	opensearchapiV4 "github.com/opensearch-project/opensearch-go/v4/opensearchapi"
+	opensearchCrud "github.com/tx7do/go-crud/opensearch"
 )
 
 // ============================================================================
@@ -72,11 +73,11 @@ type PostSearchResult struct {
 }
 
 type SearchRepo struct {
-	esClient *elasticsearchCrud.Client
+	esClient *opensearchCrud.Client
 	log      *log.Helper
 }
 
-func NewSearchRepo(ctx *bootstrap.Context, esClient *elasticsearchCrud.Client) *SearchRepo {
+func NewSearchRepo(ctx *bootstrap.Context, esClient *opensearchCrud.Client) *SearchRepo {
 	return &SearchRepo{
 		log:      ctx.NewLoggerHelper("search/repo/core-service"),
 		esClient: esClient,
@@ -106,9 +107,6 @@ func (r *SearchRepo) EnsureIndexTemplate(ctx context.Context) error {
 		"priority":       searchTemplatePrio,
 		"template": map[string]any{
 			"mappings": map[string]any{
-				// AUD9-L3: 严格化 mapping，禁止动态字段。
-				// 仅显式声明的 properties 可被索引；任何未声明字段被静默忽略，
-				// 防止脏数据或注入的额外字段进入索引。
 				"dynamic":    false,
 				"properties": properties,
 			},
@@ -182,11 +180,12 @@ func (r *SearchRepo) DeletePost(ctx context.Context, postID uint32) error {
 		return err
 	}
 
-	resp, err := r.esClient.Client.DeleteByQuery(
-		[]string{searchIndexName},
-		bytes.NewReader(bodyBytes),
-		r.esClient.Client.DeleteByQuery.WithContext(ctx),
-	)
+	delReq := opensearchapiV4.DocumentDeleteByQueryReq{
+		Indices: []string{searchIndexName},
+		Body:    bytes.NewReader(bodyBytes),
+	}
+	var delResp opensearchapiV4.DocumentDeleteByQueryResp
+	resp, err := r.esClient.Client.Do(ctx, delReq, &delResp)
 	if err != nil {
 		r.log.Errorf("delete-by-query failed (post_id=%s): %v", pidStr, err)
 		return err
@@ -289,15 +288,18 @@ func (r *SearchRepo) SearchPosts(
 		return result, err
 	}
 
-	// 调用 raw ES client（绕过 go-crud Search 的 Lucene query string 封装，
+	// 调用 raw OpenSearch client（绕过 go-crud Search 的 Lucene query string 封装，
 	// 因为后者不支持 multi_match 且注入风险高）
-	resp, err := r.esClient.Client.Search(
-		r.esClient.Client.Search.WithContext(ctx),
-		r.esClient.Client.Search.WithIndex(searchIndexName),
-		r.esClient.Client.Search.WithBody(bytes.NewReader(bodyBytes)),
-		// 仅回传最小字段集，content/tenant_id/status 不返回
-		r.esClient.Client.Search.WithSource("post_id", "language", "title"),
-	)
+	searchReq := &opensearchapiV4.SearchReq{
+		Indices: []string{searchIndexName},
+		Body:    bytes.NewReader(bodyBytes),
+		Params: opensearchapiV4.SearchParams{
+			// 仅回传最小字段集，content/tenant_id/status 不返回
+			Source: []string{"post_id", "language", "title"},
+		},
+	}
+	var searchResult opensearchapiV4.SearchResp
+	resp, err := r.esClient.Client.Do(ctx, searchReq, &searchResult)
 	if err != nil {
 		r.log.Errorf("search failed: %v", err)
 		return result, err
@@ -312,12 +314,6 @@ func (r *SearchRepo) SearchPosts(
 		errBody, _ := io.ReadAll(resp.Body)
 		r.log.Errorf("search error [%d]: %s", resp.StatusCode, string(errBody))
 		return result, errors.New("search request failed")
-	}
-
-	var searchResult elasticsearchCrud.SearchResult
-	if err := json.NewDecoder(resp.Body).Decode(&searchResult); err != nil {
-		r.log.Errorf("decode search result failed: %v", err)
-		return result, err
 	}
 
 	hits := searchResult.Hits.Hits
@@ -339,7 +335,7 @@ func (r *SearchRepo) SearchPosts(
 			PostID:   src.PostID,
 			Language: src.Language,
 			Title:    src.Title,
-			Score:    hit.Score,
+			Score:    float64(hit.Score),
 		})
 	}
 

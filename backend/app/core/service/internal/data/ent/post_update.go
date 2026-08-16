@@ -317,87 +317,6 @@ func (_u *PostUpdate) ClearIsFeatured() *PostUpdate {
 	return _u
 }
 
-// SetVisits sets the "visits" field.
-func (_u *PostUpdate) SetVisits(v int32) *PostUpdate {
-	_u.mutation.ResetVisits()
-	_u.mutation.SetVisits(v)
-	return _u
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableVisits(v *int32) *PostUpdate {
-	if v != nil {
-		_u.SetVisits(*v)
-	}
-	return _u
-}
-
-// AddVisits adds value to the "visits" field.
-func (_u *PostUpdate) AddVisits(v int32) *PostUpdate {
-	_u.mutation.AddVisits(v)
-	return _u
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (_u *PostUpdate) ClearVisits() *PostUpdate {
-	_u.mutation.ClearVisits()
-	return _u
-}
-
-// SetLikes sets the "likes" field.
-func (_u *PostUpdate) SetLikes(v int32) *PostUpdate {
-	_u.mutation.ResetLikes()
-	_u.mutation.SetLikes(v)
-	return _u
-}
-
-// SetNillableLikes sets the "likes" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableLikes(v *int32) *PostUpdate {
-	if v != nil {
-		_u.SetLikes(*v)
-	}
-	return _u
-}
-
-// AddLikes adds value to the "likes" field.
-func (_u *PostUpdate) AddLikes(v int32) *PostUpdate {
-	_u.mutation.AddLikes(v)
-	return _u
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (_u *PostUpdate) ClearLikes() *PostUpdate {
-	_u.mutation.ClearLikes()
-	return _u
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (_u *PostUpdate) SetCommentCount(v int32) *PostUpdate {
-	_u.mutation.ResetCommentCount()
-	_u.mutation.SetCommentCount(v)
-	return _u
-}
-
-// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableCommentCount(v *int32) *PostUpdate {
-	if v != nil {
-		_u.SetCommentCount(*v)
-	}
-	return _u
-}
-
-// AddCommentCount adds value to the "comment_count" field.
-func (_u *PostUpdate) AddCommentCount(v int32) *PostUpdate {
-	_u.mutation.AddCommentCount(v)
-	return _u
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (_u *PostUpdate) ClearCommentCount() *PostUpdate {
-	_u.mutation.ClearCommentCount()
-	return _u
-}
-
 // SetAuthorID sets the "author_id" field.
 func (_u *PostUpdate) SetAuthorID(v uint32) *PostUpdate {
 	_u.mutation.ResetAuthorID()
@@ -657,33 +576,6 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.IsFeaturedCleared() {
 		_spec.ClearField(post.FieldIsFeatured, field.TypeBool)
-	}
-	if value, ok := _u.mutation.Visits(); ok {
-		_spec.SetField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if value, ok := _u.mutation.AddedVisits(); ok {
-		_spec.AddField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if _u.mutation.VisitsCleared() {
-		_spec.ClearField(post.FieldVisits, field.TypeInt32)
-	}
-	if value, ok := _u.mutation.Likes(); ok {
-		_spec.SetField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if value, ok := _u.mutation.AddedLikes(); ok {
-		_spec.AddField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if _u.mutation.LikesCleared() {
-		_spec.ClearField(post.FieldLikes, field.TypeInt32)
-	}
-	if value, ok := _u.mutation.CommentCount(); ok {
-		_spec.SetField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if value, ok := _u.mutation.AddedCommentCount(); ok {
-		_spec.AddField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if _u.mutation.CommentCountCleared() {
-		_spec.ClearField(post.FieldCommentCount, field.TypeInt32)
 	}
 	if value, ok := _u.mutation.AuthorID(); ok {
 		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)
@@ -1028,87 +920,6 @@ func (_u *PostUpdateOne) ClearIsFeatured() *PostUpdateOne {
 	return _u
 }
 
-// SetVisits sets the "visits" field.
-func (_u *PostUpdateOne) SetVisits(v int32) *PostUpdateOne {
-	_u.mutation.ResetVisits()
-	_u.mutation.SetVisits(v)
-	return _u
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableVisits(v *int32) *PostUpdateOne {
-	if v != nil {
-		_u.SetVisits(*v)
-	}
-	return _u
-}
-
-// AddVisits adds value to the "visits" field.
-func (_u *PostUpdateOne) AddVisits(v int32) *PostUpdateOne {
-	_u.mutation.AddVisits(v)
-	return _u
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (_u *PostUpdateOne) ClearVisits() *PostUpdateOne {
-	_u.mutation.ClearVisits()
-	return _u
-}
-
-// SetLikes sets the "likes" field.
-func (_u *PostUpdateOne) SetLikes(v int32) *PostUpdateOne {
-	_u.mutation.ResetLikes()
-	_u.mutation.SetLikes(v)
-	return _u
-}
-
-// SetNillableLikes sets the "likes" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableLikes(v *int32) *PostUpdateOne {
-	if v != nil {
-		_u.SetLikes(*v)
-	}
-	return _u
-}
-
-// AddLikes adds value to the "likes" field.
-func (_u *PostUpdateOne) AddLikes(v int32) *PostUpdateOne {
-	_u.mutation.AddLikes(v)
-	return _u
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (_u *PostUpdateOne) ClearLikes() *PostUpdateOne {
-	_u.mutation.ClearLikes()
-	return _u
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (_u *PostUpdateOne) SetCommentCount(v int32) *PostUpdateOne {
-	_u.mutation.ResetCommentCount()
-	_u.mutation.SetCommentCount(v)
-	return _u
-}
-
-// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableCommentCount(v *int32) *PostUpdateOne {
-	if v != nil {
-		_u.SetCommentCount(*v)
-	}
-	return _u
-}
-
-// AddCommentCount adds value to the "comment_count" field.
-func (_u *PostUpdateOne) AddCommentCount(v int32) *PostUpdateOne {
-	_u.mutation.AddCommentCount(v)
-	return _u
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (_u *PostUpdateOne) ClearCommentCount() *PostUpdateOne {
-	_u.mutation.ClearCommentCount()
-	return _u
-}
-
 // SetAuthorID sets the "author_id" field.
 func (_u *PostUpdateOne) SetAuthorID(v uint32) *PostUpdateOne {
 	_u.mutation.ResetAuthorID()
@@ -1398,33 +1209,6 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	}
 	if _u.mutation.IsFeaturedCleared() {
 		_spec.ClearField(post.FieldIsFeatured, field.TypeBool)
-	}
-	if value, ok := _u.mutation.Visits(); ok {
-		_spec.SetField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if value, ok := _u.mutation.AddedVisits(); ok {
-		_spec.AddField(post.FieldVisits, field.TypeInt32, value)
-	}
-	if _u.mutation.VisitsCleared() {
-		_spec.ClearField(post.FieldVisits, field.TypeInt32)
-	}
-	if value, ok := _u.mutation.Likes(); ok {
-		_spec.SetField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if value, ok := _u.mutation.AddedLikes(); ok {
-		_spec.AddField(post.FieldLikes, field.TypeInt32, value)
-	}
-	if _u.mutation.LikesCleared() {
-		_spec.ClearField(post.FieldLikes, field.TypeInt32)
-	}
-	if value, ok := _u.mutation.CommentCount(); ok {
-		_spec.SetField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if value, ok := _u.mutation.AddedCommentCount(); ok {
-		_spec.AddField(post.FieldCommentCount, field.TypeInt32, value)
-	}
-	if _u.mutation.CommentCountCleared() {
-		_spec.ClearField(post.FieldCommentCount, field.TypeInt32)
 	}
 	if value, ok := _u.mutation.AuthorID(); ok {
 		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)

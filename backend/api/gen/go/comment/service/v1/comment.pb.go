@@ -204,9 +204,6 @@ type Comment struct {
 	AuthorUrl        *string                `protobuf:"bytes,13,opt,name=author_url,json=authorUrl,proto3,oneof" json:"author_url,omitempty"`                                                   // 评论作者网址（游客填写）
 	AuthorType       *Comment_AuthorType    `protobuf:"varint,14,opt,name=author_type,json=authorType,proto3,enum=comment.service.v1.Comment_AuthorType,oneof" json:"author_type,omitempty"`    // 作者类型
 	Status           *Comment_Status        `protobuf:"varint,20,opt,name=status,proto3,enum=comment.service.v1.Comment_Status,oneof" json:"status,omitempty"`                                  // 评论状态
-	LikeCount        *uint32                `protobuf:"varint,21,opt,name=like_count,json=likeCount,proto3,oneof" json:"like_count,omitempty"`                                                  // 点赞数
-	DislikeCount     *uint32                `protobuf:"varint,22,opt,name=dislike_count,json=dislikeCount,proto3,oneof" json:"dislike_count,omitempty"`                                         // 点踩数
-	ReplyCount       *uint32                `protobuf:"varint,23,opt,name=reply_count,json=replyCount,proto3,oneof" json:"reply_count,omitempty"`                                               // 回复数
 	IpAddress        *string                `protobuf:"bytes,24,opt,name=ip_address,json=ipAddress,proto3,oneof" json:"ip_address,omitempty"`                                                   // 评论者 IP
 	Location         *string                `protobuf:"bytes,25,opt,name=location,proto3,oneof" json:"location,omitempty"`                                                                      // 评论者地理位置（根据 IP 反查，可能不准确）
 	UserAgent        *string                `protobuf:"bytes,26,opt,name=user_agent,json=userAgent,proto3,oneof" json:"user_agent,omitempty"`                                                   // User-Agent
@@ -324,27 +321,6 @@ func (x *Comment) GetStatus() Comment_Status {
 		return *x.Status
 	}
 	return Comment_STATUS_UNSPECIFIED
-}
-
-func (x *Comment) GetLikeCount() uint32 {
-	if x != nil && x.LikeCount != nil {
-		return *x.LikeCount
-	}
-	return 0
-}
-
-func (x *Comment) GetDislikeCount() uint32 {
-	if x != nil && x.DislikeCount != nil {
-		return *x.DislikeCount
-	}
-	return 0
-}
-
-func (x *Comment) GetReplyCount() uint32 {
-	if x != nil && x.ReplyCount != nil {
-		return *x.ReplyCount
-	}
-	return 0
 }
 
 func (x *Comment) GetIpAddress() string {
@@ -787,7 +763,7 @@ var File_comment_service_v1_comment_proto protoreflect.FileDescriptor
 
 const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"\n" +
-	" comment/service/v1/comment.proto\x12\x12comment.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xd6\x16\n" +
+	" comment/service/v1/comment.proto\x12\x12comment.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xb8\x15\n" +
 	"\aComment\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b评论IDH\x00R\x02id\x88\x01\x01\x12c\n" +
 	"\fcontent_type\x18\x02 \x01(\x0e2'.comment.service.v1.Comment.ContentTypeB\x12\xbaG\x0f\x92\x02\f内容类型H\x01R\vcontentType\x88\x01\x01\x120\n" +
@@ -802,37 +778,32 @@ const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"author_url\x18\r \x01(\tB*\xbaG'\x92\x02$评论作者网址（游客填写）H\aR\tauthorUrl\x88\x01\x01\x12\x87\x01\n" +
 	"\vauthor_type\x18\x0e \x01(\x0e2&.comment.service.v1.Comment.AuthorTypeB9\xbaG6\x92\x023作者类型（用于前端高亮管理员回复）H\bR\n" +
 	"authorType\x88\x01\x01\x12S\n" +
-	"\x06status\x18\x14 \x01(\x0e2\".comment.service.v1.Comment.StatusB\x12\xbaG\x0f\x92\x02\f评论状态H\tR\x06status\x88\x01\x01\x123\n" +
+	"\x06status\x18\x14 \x01(\x0e2\".comment.service.v1.Comment.StatusB\x12\xbaG\x0f\x92\x02\f评论状态H\tR\x06status\x88\x01\x01\x12Z\n" +
 	"\n" +
-	"like_count\x18\x15 \x01(\rB\x0f\xbaG\f\x92\x02\t点赞数H\n" +
-	"R\tlikeCount\x88\x01\x01\x129\n" +
-	"\rdislike_count\x18\x16 \x01(\rB\x0f\xbaG\f\x92\x02\t点踩数H\vR\fdislikeCount\x88\x01\x01\x125\n" +
-	"\vreply_count\x18\x17 \x01(\rB\x0f\xbaG\f\x92\x02\t回复数H\fR\n" +
-	"replyCount\x88\x01\x01\x12Z\n" +
-	"\n" +
-	"ip_address\x18\x18 \x01(\tB6\xbaG3\x92\x020评论者 IP（脱敏存储，如 192.168.1.*）H\rR\tipAddress\x88\x01\x01\x12d\n" +
-	"\blocation\x18\x19 \x01(\tBC\xbaG@\x92\x02=评论者地理位置（根据 IP 反查，可能不准确）H\x0eR\blocation\x88\x01\x01\x124\n" +
+	"ip_address\x18\x18 \x01(\tB6\xbaG3\x92\x020评论者 IP（脱敏存储，如 192.168.1.*）H\n" +
+	"R\tipAddress\x88\x01\x01\x12d\n" +
+	"\blocation\x18\x19 \x01(\tBC\xbaG@\x92\x02=评论者地理位置（根据 IP 反查，可能不准确）H\vR\blocation\x88\x01\x01\x124\n" +
 	"\n" +
 	"user_agent\x18\x1a \x01(\tB\x10\xbaG\r\x92\x02\n" +
-	"User-AgentH\x0fR\tuserAgent\x88\x01\x01\x12s\n" +
-	"\x11detected_language\x18\x1b \x01(\tBA\xbaG>\x92\x02;自动检测的语言代码（ISO 639-1，如 'zh', 'en'）H\x10R\x10detectedLanguage\x88\x01\x01\x12?\n" +
-	"\ais_spam\x18\x1e \x01(\bB!\xbaG\x1e\x92\x02\x1b是否标记为垃圾评论H\x11R\x06isSpam\x88\x01\x01\x12:\n" +
-	"\tis_sticky\x18\x1f \x01(\bB\x18\xbaG\x15\x92\x02\x12是否置顶评论H\x12R\bisSticky\x88\x01\x01\x123\n" +
-	"\tparent_id\x182 \x01(\rB\x11\xbaG\x0e\x92\x02\v父节点IDH\x13R\bparentId\x88\x01\x01\x12K\n" +
+	"User-AgentH\fR\tuserAgent\x88\x01\x01\x12s\n" +
+	"\x11detected_language\x18\x1b \x01(\tBA\xbaG>\x92\x02;自动检测的语言代码（ISO 639-1，如 'zh', 'en'）H\rR\x10detectedLanguage\x88\x01\x01\x12?\n" +
+	"\ais_spam\x18\x1e \x01(\bB!\xbaG\x1e\x92\x02\x1b是否标记为垃圾评论H\x0eR\x06isSpam\x88\x01\x01\x12:\n" +
+	"\tis_sticky\x18\x1f \x01(\bB\x18\xbaG\x15\x92\x02\x12是否置顶评论H\x0fR\bisSticky\x88\x01\x01\x123\n" +
+	"\tparent_id\x182 \x01(\rB\x11\xbaG\x0e\x92\x02\v父节点IDH\x10R\bparentId\x88\x01\x01\x12K\n" +
 	"\bchildren\x183 \x03(\v2\x1b.comment.service.v1.CommentB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12v\n" +
-	"\vreply_to_id\x184 \x01(\rBQ\xbaGN\x92\x02K回复的评论ID（记录 '@某人' 关系，可能与 parent_id 不同）H\x14R\treplyToId\x88\x01\x01\x12;\n" +
+	"\vreply_to_id\x184 \x01(\rBQ\xbaGN\x92\x02K回复的评论ID（记录 '@某人' 关系，可能与 parent_id 不同）H\x11R\treplyToId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x15R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x12R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x16R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x13R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x17R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x14R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x18R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x15R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x19R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x16R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x1aR\tdeletedAt\x88\x01\x01\"o\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x17R\tdeletedAt\x88\x01\x01\"o\n" +
 	"\x06Status\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSTATUS_PENDING\x10\x01\x12\x13\n" +
@@ -864,9 +835,6 @@ const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"\v_author_urlB\x0e\n" +
 	"\f_author_typeB\t\n" +
 	"\a_statusB\r\n" +
-	"\v_like_countB\x10\n" +
-	"\x0e_dislike_countB\x0e\n" +
-	"\f_reply_countB\r\n" +
 	"\v_ip_addressB\v\n" +
 	"\t_locationB\r\n" +
 	"\v_user_agentB\x14\n" +
@@ -883,7 +851,8 @@ const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"^\n" +
+	"\v_deleted_atJ\x04\b\x15\x10\x16J\x04\b\x16\x10\x17J\x04\b\x17\x10\x18R\n" +
+	"like_countR\rdislike_countR\vreply_count\"^\n" +
 	"\x13ListCommentResponse\x121\n" +
 	"\x05items\x18\x01 \x03(\v2\x1b.comment.service.v1.CommentR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x04R\x05total\"\xaa\x01\n" +

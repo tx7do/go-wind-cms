@@ -257,7 +257,7 @@ SELECT setval('internal_message_categories_id_seq', (SELECT MAX(id) FROM interna
 INSERT INTO public.comments (
     id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by,
     content_type, object_id, content, author_id, author_name, author_email,
-    author_url, author_type, status, like_count, dislike_count, reply_count,
+    author_url, author_type, status,
     ip_address, location, user_agent, detected_language, is_spam, is_sticky,
     reply_to_id, parent_id
 ) VALUES
@@ -270,7 +270,6 @@ INSERT INTO public.comments (
  '非常好的文章，学到了很多！',
  0, '王五', 'wangwu@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 5, 0, 2,
  '192.168.1.1', '北京', '', 'zh-CN', false, false,
  NULL, NULL),
 -- 评论2：赵六（顶级）
@@ -281,7 +280,6 @@ INSERT INTO public.comments (
  'Composition API 确实很强大，感谢分享！',
  0, '赵六', 'zhaoliu@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 3, 0, 1,
  '192.168.1.2', '上海', '', 'zh-CN', false, false,
  NULL, NULL),
 -- 评论3：孙七（顶级）
@@ -292,7 +290,6 @@ INSERT INTO public.comments (
  '期待更多关于 Vue 3 的文章',
  0, '孙七', 'sunqi@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 2, 0, 0,
  '192.168.1.3', '深圳', '', 'zh-CN', false, false,
  NULL, NULL),
 -- ========== 文章 ID=2 的顶级评论 ==========
@@ -304,7 +301,6 @@ INSERT INTO public.comments (
  'TypeScript 的类型系统真的很强大',
  0, '周八', 'zhouba@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 8, 0, 2,
  '192.168.1.4', '杭州', '', 'zh-CN', false, false,
  NULL, NULL),
 -- 评论5：冯十一（顶级）
@@ -315,7 +311,6 @@ INSERT INTO public.comments (
  '推倒类型这个概念很有意思',
  0, '冯十一', 'fengshiyi@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 3, 0, 0,
  '192.168.1.11', '重庆', '', 'zh-CN', false, false,
  NULL, NULL),
 -- ========== 文章 ID=3 的顶级评论 ==========
@@ -327,7 +322,6 @@ INSERT INTO public.comments (
  '内容中台是未来的趋势',
  0, '郑十', 'zhengshi@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 6, 0, 3,
  '192.168.1.6', '西安', '', 'zh-CN', false, false,
  NULL, NULL),
 
@@ -340,7 +334,6 @@ INSERT INTO public.comments (
  '确实很不错，尤其是关于 Composition API 的部分',
  0, '张三', 'zhangsan@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 2, 0, 0,
  '192.168.1.7', '广州', '', 'zh-CN', false, false,
  1, 1),  -- reply_to_id=1, parent_id=1
 
@@ -352,7 +345,6 @@ INSERT INTO public.comments (
  '@王五 同意！博主写得很用心',
  0, '李四', 'lisi@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 1, 0, 1,
  '192.168.1.8', '武汉', '', 'zh-CN', false, false,
  1, 1),  -- reply_to_id=1, parent_id=1
 
@@ -365,7 +357,6 @@ INSERT INTO public.comments (
  '@李四 谢谢支持！会继续努力的',
  1, '博主', 'admin@example.com',
  'https://example.com', 'AUTHOR_TYPE_ADMIN', 'STATUS_APPROVED',
- 3, 0, 0,
  '192.168.1.100', '北京', '', 'zh-CN', false, false,
  8, 8),  -- reply_to_id=8, parent_id=8
 
@@ -378,7 +369,6 @@ INSERT INTO public.comments (
  '@赵六 对，比 Options API 灵活多了',
  0, '孙七', 'sunqi@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 1, 0, 0,
  '192.168.1.9', '南京', '', 'zh-CN', false, false,
  2, 2),  -- reply_to_id=2, parent_id=2
 
@@ -391,7 +381,6 @@ INSERT INTO public.comments (
  '条件类型的部分能再详细讲讲吗？',
  0, '吴九', 'wujiu@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 1, 0, 1,
  '192.168.1.5', '成都', '', 'zh-CN', false, false,
  4, 4),  -- reply_to_id=4, parent_id=4
 
@@ -403,7 +392,6 @@ INSERT INTO public.comments (
  '泛型约束也很有用',
  0, '郑十', 'zhengshi@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 2, 0, 0,
  '192.168.1.10', '西安', '', 'zh-CN', false, false,
  4, 4),  -- reply_to_id=4, parent_id=4
 
@@ -416,7 +404,6 @@ INSERT INTO public.comments (
  '@吴九 好的，下期专门讲讲条件类型和分布式条件类型',
  1, '博主', 'admin@example.com',
  'https://example.com', 'AUTHOR_TYPE_ADMIN', 'STATUS_APPROVED',
- 4, 0, 0,
  '192.168.1.100', '北京', '', 'zh-CN', false, false,
  10, 10),  -- reply_to_id=10, parent_id=10
 
@@ -429,7 +416,6 @@ INSERT INTO public.comments (
  '确实，前后端分离更灵活',
  0, '钱十二', 'qianshier@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 2, 0, 0,
  '192.168.1.12', '苏州', '', 'zh-CN', false, false,
  6, 6),  -- reply_to_id=6, parent_id=6
 
@@ -441,7 +427,6 @@ INSERT INTO public.comments (
  'Strapi 和 Contentful 哪个更好用？',
  0, '孔十三', 'kongshisan@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 1, 0, 1,
  '192.168.1.13', '长沙', '', 'zh-CN', false, false,
  6, 6),  -- reply_to_id=6, parent_id=6
 
@@ -453,7 +438,6 @@ INSERT INTO public.comments (
  'GoWind Content Hub 也很不错',
  0, '白十四', 'baisishi@example.com',
  '', 'AUTHOR_TYPE_GUEST', 'STATUS_APPROVED',
- 4, 0, 0,
  '192.168.1.14', '郑州', '', 'zh-CN', false, false,
  6, 6),  -- reply_to_id=6, parent_id=6
 
@@ -466,7 +450,6 @@ INSERT INTO public.comments (
  '@孔十三 看需求，Strapi 开源免费，Contentful 功能更强大',
  1, '博主', 'admin@example.com',
  'https://example.com', 'AUTHOR_TYPE_ADMIN', 'STATUS_APPROVED',
- 5, 0, 0,
  '192.168.1.100', '北京', '', 'zh-CN', false, false,
  15, 15)
 ;
@@ -686,7 +669,7 @@ SELECT setval('site_settings_id_seq', (SELECT MAX(id) FROM site_settings));
 INSERT INTO public.sites (
     created_at, updated_at, deleted_at, created_by, updated_by, deleted_by,
     tenant_id, name, slug, domain, alternate_domains, is_default,
-    status, default_locale, template, theme, visit_count
+    status, default_locale, template, theme
 ) VALUES
 -- 1. 主站点（默认站点，活跃状态）
 (
@@ -694,7 +677,6 @@ INSERT INTO public.sites (
     1, '企业官网主站', 'main-site', 'https://www.example.com',
     '["https://example.com", "https://www.example.cn"]'::jsonb, true,
     'SITE_STATUS_ACTIVE', 'zh-CN', 'enterprise', 'default-dark',
-    158920
 ),
 -- 2. 英文站点（租户1，活跃状态）
 (
@@ -702,7 +684,6 @@ INSERT INTO public.sites (
     1, 'Enterprise English Site', 'english-site', 'https://en.example.com',
     '["https://english.example.com"]'::jsonb, false,
     'SITE_STATUS_ACTIVE', 'en-US', 'enterprise', 'default-light',
-    85640
 ),
 -- 3. 营销活动站点（租户1，暂存状态）
 (
@@ -710,7 +691,6 @@ INSERT INTO public.sites (
     1, '2026春季促销活动站', 'spring-2026-promotion', 'https://promo2026.example.com',
     '[]'::jsonb, false,
     'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'spring-theme',
-    0
 ),
 -- 4. 租户2的电商站点（独立租户，活跃状态）
 (
@@ -718,7 +698,6 @@ INSERT INTO public.sites (
     2, '优品电商平台', 'youpin-shop', 'https://www.youpin.com',
     '["https://youpin.com", "https://m.youpin.com"]'::jsonb, true,
     'SITE_STATUS_ACTIVE', 'zh-CN', 'ecommerce', 'youpin-default',
-    987540
 ),
 -- 5. 废弃站点（租户1，已归档）
 (
@@ -726,7 +705,6 @@ INSERT INTO public.sites (
     1, '2025夏季活动站', 'summer-2025', 'https://summer2025.example.com',
     '[]'::jsonb, false,
     'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'summer-theme',
-    45210
 ),
 -- 6. 测试站点（租户1，禁用状态）
 (
@@ -734,7 +712,6 @@ INSERT INTO public.sites (
     1, '内部测试站点', 'test-site', 'https://test.example.com',
     '["https://dev.example.com"]'::jsonb, false,
     'SITE_STATUS_INACTIVE', 'zh-CN', 'test', 'test-theme',
-    1250
 ),
 -- 7. 软删除的站点（租户2，已删除）
 (
@@ -743,7 +720,6 @@ INSERT INTO public.sites (
     2, '旧版移动端站点', 'old-mobile-site', 'https://m.old.youpin.com',
     '[]'::jsonb, false,
     'SITE_STATUS_MAINTENANCE', 'zh-CN', 'mobile', 'old-mobile-theme',
-    256800
 );
 SELECT setval('sites_id_seq', (SELECT MAX(id) FROM sites));
 
@@ -929,7 +905,7 @@ INSERT INTO public.pages (
     created_at, updated_at, sort_order, path, editor_type,
     status, type, slug, author_id, author_name,
     disallow_comment, redirect_url, show_in_navigation,
-    template, is_custom_template, visits, custom_fields,
+    template, is_custom_template, custom_fields,
     custom_head, custom_foot, depth, parent_id
 ) VALUES
 -- 页面1：首页（PAGE_TYPE_HOME=2）
@@ -939,7 +915,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_HOME', 'home',
     1, 'GoWind 官方',
     false, '', true,
-    'default-home', false, 15890,
+    'default-home', false,
     '{"banner_show": "true", "banner_delay": "3000", "show_hot_articles": "true"}'::jsonb,
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
     '<script src="/js/home-footer.js"></script>',
@@ -952,7 +928,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'about',
     1, 'GoWind 官方',
     true, '', true,
-    'default-static', false, 8760,
+    'default-static', false,
     '{"show_team_avatar": "true", "team_size": "15", "founded_year": "2024"}'::jsonb,
     '', '',
     0, NULL
@@ -964,7 +940,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'docs',
     1, 'GoWind 官方',
     false, '', true,
-    'default-docs', false, 12540,
+    'default-docs', false,
     '{"sidebar_collapse": "false", "edit_on_github": "true", "github_repo": "gowind/cms-docs"}'::jsonb,
     '<link rel="stylesheet" href="/css/docs.css">',
     '<script src="/js/docs-sidebar.js"></script>',
@@ -977,7 +953,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'quick-start',
     1, 'GoWind 官方',
     false, '', true,
-    'default-docs', false, 9870,
+    'default-docs', false,
     '{"difficulty": "beginner", "estimated_time": "5分钟"}'::jsonb,
     '', '',
     1, 3
@@ -989,7 +965,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_ERROR_404', '404',
     1, 'GoWind 官方',
     true, '', false,
-    'default-error', false, 5680,
+    'default-error', false,
     '{"show_search": "true", "show_home_button": "true", "custom_message": "您访问的页面不存在～"}'::jsonb,
     '', '<script src="/js/404-tracking.js"></script>',
     0, NULL
@@ -1001,7 +977,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_ERROR_500', '500',
     1, 'GoWind 官方',
     true, '', false,
-    'default-error', false, 1230,
+    'default-error', false,
     '{"show_contact_button": "true", "maintenance_phone": "400-123-4567"}'::jsonb,
     '', '',
     0, NULL
@@ -1013,7 +989,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_CUSTOM', 'login',
     1, 'GoWind 官方',
     true, '', false,
-    'custom-login', true, 8920,
+    'custom-login', true,
     '{"show_captcha": "true", "remember_me_days": "7", "oauth_github": "true", "oauth_google": "false"}'::jsonb,
     '<link rel="stylesheet" href="/css/login.css">',
     '<script src="/js/login-validation.js"></script>',
@@ -1026,7 +1002,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'privacy-policy',
     1, 'GoWind 官方',
     true, '', true,
-    'default-static', false, 4320,
+    'default-static', false,
     '{"last_updated": "2024-03-01", "version": "1.0"}'::jsonb,
     '', '',
     0, NULL
@@ -1038,7 +1014,7 @@ INSERT INTO public.pages (
     'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_CUSTOM', 'register',
     1, 'GoWind 官方',
     true, '', false,
-    'custom-register', true, 5430,
+    'custom-register', true,
     '{"need_email_verify": "true", "default_role": "user", "invite_code_required": "false"}'::jsonb,
     '<link rel="stylesheet" href="/css/register.css">',
     '<script src="/js/register-verify.js"></script>',
@@ -1908,8 +1884,8 @@ SELECT setval('tag_translations_id_seq', (SELECT MAX(id) FROM tag_translations))
 INSERT INTO public.posts (
     created_at, updated_at, sort_order, editor_type,
     status, code, disallow_comment, in_progress,
-    auto_summary, is_featured, visits, likes,
-    comment_count, author_id, author_name, password_hash,
+    auto_summary, is_featured,
+    author_id, author_name, password_hash,
     custom_fields
 ) VALUES
 -- 文章1：风行内容中台 快速上手（已发布、精选）
@@ -1918,7 +1894,6 @@ INSERT INTO public.posts (
     1, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_PUBLISHED', 'gowind-cms-quick-start',
     false, false, true, true,
-    15890, 892, 156,
     1, 'GoWind 官方', '',
     '{"show_toc": "true", "toc_depth": "3", "allow_copy": "true", "copyright_notice": "GoWind 官方原创"}'::jsonb
 ),
@@ -1928,7 +1903,6 @@ INSERT INTO public.posts (
     2, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_PUBLISHED', 'gowind-v2-0-release',
     false, false, true, true,
-    9870, 654, 89,
     1, 'GoWind 官方', '',
     '{"show_changelog": "true", "release_date": "2024-03-01", "upgrade_guide_url": "/docs/upgrade/v2.0"}'::jsonb
 ),
@@ -1938,7 +1912,6 @@ INSERT INTO public.posts (
     3, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_PUBLISHED', 'deploy-gowind-on-linux',
     false, false, true, false,
-    7650, 432, 78,
     1001, '张三', '',
     '{"os_type": "Linux", "distro": "Ubuntu, CentOS", "tested_version": "v1.9.0"}'::jsonb
 ),
@@ -1948,7 +1921,6 @@ INSERT INTO public.posts (
     4, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_PUBLISHED', '2024-cms-industry-trends',
     false, false, true, false,
-    6540, 389, 67,
     1002, '李四', '',
     '{"data_source": "IDC 2024 行业报告", "chart_support": "true", "downloadable": "true"}'::jsonb
 ),
@@ -1958,7 +1930,6 @@ INSERT INTO public.posts (
     5, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_DRAFT', 'gowind-custom-template-dev',
     true, true, false, false,
-    1230, 0, 0,
     1001, '张三', '',
     '{"dev_status": "50%", "expected_release": "2024-04-01", "required_skills": "Go, Vue3, HTML/CSS"}'::jsonb
 ),
@@ -1968,7 +1939,6 @@ INSERT INTO public.posts (
     6, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_PUBLISHED', 'gowind-enterprise-features',
     true, false, true, false,
-    4320, 256, 0,
     1, 'GoWind 官方', '$2a$10$89jZk54G89sdkf89sdf89sd89sdf89sdf89sdf',
     '{"is_enterprise": "true", "price_range": "¥9999-¥19999", "trial_available": "true"}'::jsonb
 ),
@@ -1978,7 +1948,6 @@ INSERT INTO public.posts (
     7, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_DRAFT', 'gowind-faq',
     true, false, true, false,
-    890, 0, 0,
     1, 'GoWind 官方', '',
     '{"faq_category": "installation, configuration, performance", "update_frequency": "monthly"}'::jsonb
 ),
@@ -1988,7 +1957,6 @@ INSERT INTO public.posts (
     8, 'EDITOR_TYPE_MARKDOWN',
     'POST_STATUS_PUBLISHED', 'gowind-cms-performance-optimization',
     false, false, true, true,
-    5680, 789, 123,
     1003, '王五', '',
     '{"benchmark_data": "true", "qps_before": "50000", "qps_after": "100000", "optimization_points": "DB, Cache, Code"}'::jsonb
 );

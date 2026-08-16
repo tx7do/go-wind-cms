@@ -83,7 +83,7 @@ const gridOptions: VxeGridProps<Post> = {
             paging: { page: page.currentPage, pageSize: page.pageSize },
             formValues,
             fieldMask:
-              'id,status,sort_order,is_featured,visits,likes,comment_count,author_name,available_languages,created_at,code,editor_type,disallow_comment,in_progress,auto_summary,is_featured,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail',
+              'id,status,sort_order,is_featured,author_name,available_languages,created_at,code,editor_type,disallow_comment,in_progress,auto_summary,is_featured,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,translations.thumbnail',
           }),
         );
       },
@@ -116,13 +116,6 @@ const gridOptions: VxeGridProps<Post> = {
       field: 'authorName',
       align: 'left',
       minWidth: 140,
-    },
-    { title: $t('page.post.visits'), field: 'visits', minWidth: 80 },
-    { title: $t('page.post.likes'), field: 'likes', minWidth: 80 },
-    {
-      title: $t('page.post.commentCount'),
-      field: 'commentCount',
-      minWidth: 80,
     },
     {
       title: $t('page.post.status'),

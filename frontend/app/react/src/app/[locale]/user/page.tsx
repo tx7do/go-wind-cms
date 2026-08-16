@@ -9,7 +9,7 @@ import {
     identityservicev1_User
 } from "@/api/generated/app/service/v1";
 import {fetchListPosts, getPostTitle, getPostSummary} from "@/api/hooks/post";
-import {listWatchedPosts} from "@/api/hooks/interaction";
+import {listWatchedPosts, useGetCounts, extractCount} from "@/api/hooks/interaction";
 import {fetchUserProfile} from "@/api/hooks/user-profile";
 
 import {formatDateTime} from "@/utils";
@@ -31,6 +31,13 @@ export default function UserProfilePage() {
     const [postsTotal, setPostsTotal] = useState(0);
     const [collections, setCollections] = useState<contentservicev1_Post[]>([]);
     const [collectionsTotal, setCollectionsTotal] = useState(0);
+
+    // 收集当前页 post/collection 的 ID，用于批量查询点赞计数。
+    // 计数由 interaction_counter 表提供（post.likes 列已移除）。
+    const postIds = useMemo(() => posts.map(p => p.id).filter((id): id is number => typeof id === 'number'), [posts]);
+    const collectionIds = useMemo(() => collections.map(p => p.id).filter((id): id is number => typeof id === 'number'), [collections]);
+    const postsCountsResp = useGetCounts('TARGET_TYPE_POST', postIds, ['COUNTER_METRIC_LIKE']);
+    const collectionsCountsResp = useGetCounts('TARGET_TYPE_POST', collectionIds, ['COUNTER_METRIC_LIKE']);
 
     // 统计数据
     const stats = useMemo(() => [
@@ -322,9 +329,7 @@ export default function UserProfilePage() {
                                                         <h3 className="mb-1 font-semibold text-foreground">{getPostTitle(post)}</h3>
                                                         <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{getPostSummary(post)}</p>
                                                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                                            <MetaDataItem icon="carbon:view" text={`${post.visits || 0} ${t('views')}`}/>
-                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${post.likes || 0} ${t('likes')}`}/>
-                                                            <MetaDataItem icon="carbon:chat" text={`${post.commentCount || 0} ${t('comments')}`}/>
+                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${extractCount(postsCountsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')} ${t('likes')}`}/>
                                                             <MetaDataItem icon="carbon:time" text={formatDateTime(post.createdAt)}/>
                                                         </div>
                                                     </div>
@@ -359,9 +364,7 @@ export default function UserProfilePage() {
                                                         <h3 className="mb-1 font-semibold text-foreground">{getPostTitle(post)}</h3>
                                                         <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{getPostSummary(post)}</p>
                                                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                                            <MetaDataItem icon="carbon:view" text={`${post.visits || 0} ${t('views')}`}/>
-                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${post.likes || 0} ${t('likes')}`}/>
-                                                            <MetaDataItem icon="carbon:chat" text={`${post.commentCount || 0} ${t('comments')}`}/>
+                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${extractCount(collectionsCountsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')} ${t('likes')}`}/>
                                                             <MetaDataItem icon="carbon:time" text={formatDateTime(post.createdAt)}/>
                                                         </div>
                                                     </div>

@@ -14,15 +14,17 @@ import (
 	"github.com/google/wire"
 
 	"go-wind-cms/app/core/service/internal/data"
-
+	"go-wind-cms/app/core/service/internal/data/client"
 	"go-wind-cms/pkg/authorizer"
 )
 
 // ProviderSet is the Wire provider set for data layer.
 var ProviderSet = wire.NewSet(
-	data.NewRedisClient,
-	data.NewEntClient,
-	data.NewDiscovery,
+	client.NewRedisClient,
+	client.NewEntClient,
+	client.NewDiscovery,
+	client.NewMinIoClient,
+	client.NewElasticSearchClient,
 
 	authorizer.NewAuthorizer,
 
@@ -32,11 +34,6 @@ var ProviderSet = wire.NewSet(
 
 	data.NewPasswordCrypto,
 
-	data.NewMinIoClient,
-
-	// OpenSearch：ES 客户端 + 搜索 Repo。
-	// NewElasticSearchClient 返回 (*Client, func(), error)，cleanup 由 wire 线程。
-	data.NewElasticSearchClient,
 	data.NewSearchRepo,
 
 	data.NewDictTypeRepo,

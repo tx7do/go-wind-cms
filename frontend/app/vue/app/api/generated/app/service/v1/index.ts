@@ -942,16 +942,13 @@ export type commentservicev1_Comment = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   detectedLanguage?: string;
-  dislikeCount?: number;
   id?: number;
   ipAddress?: string;
   isSpam?: boolean;
   isSticky?: boolean;
-  likeCount?: number;
   location?: string;
   objectId?: number;
   parentId?: number;
-  replyCount?: number;
   replyToId?: number;
   status?: commentservicev1_Comment_Status;
   updatedAt?: wellKnownTimestamp;
@@ -1163,6 +1160,348 @@ export type storageservicev1_PresignOption = {
 export type storageservicev1_UploadFileResponse = {
   objectName?: string;
   presignedUrl?: string;
+};
+
+// 交互服务（点赞/收藏）
+export interface InteractionService {
+  // 点赞
+  Like(
+    request: interactionservicev1_LikeRequest,
+  ): Promise<interactionservicev1_LikeResponse>;
+  // 取消点赞
+  Unlike(
+    request: interactionservicev1_LikeRequest,
+  ): Promise<interactionservicev1_LikeResponse>;
+  // 收藏 post
+  Watch(
+    request: interactionservicev1_WatchRequest,
+  ): Promise<interactionservicev1_WatchResponse>;
+  // 取消收藏 post
+  Unwatch(
+    request: interactionservicev1_WatchRequest,
+  ): Promise<interactionservicev1_WatchResponse>;
+  // 批量查询交互状态
+  GetInteractionStatus(
+    request: interactionservicev1_GetInteractionStatusRequest,
+  ): Promise<interactionservicev1_GetInteractionStatusResponse>;
+  // 列出当前 viewer 收藏的 post
+  ListWatchedPosts(
+    request: pagination_PagingRequest,
+  ): Promise<contentservicev1_ListPostResponse>;
+  // 批量查询计数
+  GetCounts(
+    request: interactionservicev1_GetCountsRequest,
+  ): Promise<interactionservicev1_GetCountsResponse>;
+}
+
+export function createInteractionServiceClient(
+  transport: ClientTransport,
+): InteractionService {
+  return {
+    Like(request) {
+      const path = `app/v1/interactions/like`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'Like',
+      }) as Promise<interactionservicev1_LikeResponse>;
+    },
+    Unlike(request) {
+      const path = `app/v1/interactions/unlike`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'Unlike',
+      }) as Promise<interactionservicev1_LikeResponse>;
+    },
+    Watch(request) {
+      const path = `app/v1/interactions/watch`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'Watch',
+      }) as Promise<interactionservicev1_WatchResponse>;
+    },
+    Unwatch(request) {
+      const path = `app/v1/interactions/unwatch`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'Unwatch',
+      }) as Promise<interactionservicev1_WatchResponse>;
+    },
+    GetInteractionStatus(request) {
+      const path = `app/v1/interactions/status`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'GetInteractionStatus',
+      }) as Promise<interactionservicev1_GetInteractionStatusResponse>;
+    },
+    ListWatchedPosts(request) {
+      const path = `app/v1/interactions/watched-posts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'InteractionService',
+        method: 'ListWatchedPosts',
+      }) as Promise<contentservicev1_ListPostResponse>;
+    },
+    GetCounts(request) {
+      const path = `app/v1/interactions/counts:list`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'GetCounts',
+      }) as Promise<interactionservicev1_GetCountsResponse>;
+    },
+  };
+}
+export type interactionservicev1_LikeRequest = {
+  targetId: number | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 交互目标类型
+export type interactionservicev1_TargetType =
+  | 'TARGET_TYPE_COMMENT'
+  | 'TARGET_TYPE_POST'
+  | 'TARGET_TYPE_UNSPECIFIED';
+export type interactionservicev1_LikeResponse = {
+  likeCount: number | undefined;
+  liked: boolean | undefined;
+};
+
+export type interactionservicev1_WatchRequest = {
+  postId: number | undefined;
+};
+
+export type interactionservicev1_WatchResponse = {
+  watchCount: number | undefined;
+  watched: boolean | undefined;
+};
+
+export type interactionservicev1_GetInteractionStatusRequest = {
+  targetIds: number[] | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+export type interactionservicev1_GetInteractionStatusResponse = {
+  statuses: { [key: string]: interactionservicev1_InteractionStatus } | undefined;
+};
+
+export type interactionservicev1_InteractionStatus = {
+  liked: boolean | undefined;
+  watched: boolean | undefined;
+};
+
+// 回应 - 帖子列表
+export type contentservicev1_ListPostResponse = {
+  items: contentservicev1_Post[] | undefined;
+  total: number | undefined;
+};
+
+// 帖子
+export type contentservicev1_Post = {
+  authorId?: number;
+  authorName?: string;
+  autoSummary?: boolean;
+  availableLanguages: string[] | undefined;
+  categoryIds: number[] | undefined;
+  code?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  customFields: { [key: string]: string } | undefined;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  disallowComment?: boolean;
+  editorType?: contentservicev1_EditorType;
+  id?: number;
+  inProgress?: boolean;
+  isFeatured?: boolean;
+  passwordHash?: string;
+  publishTime?: wellKnownTimestamp;
+  sortOrder?: number;
+  status?: contentservicev1_Post_PostStatus;
+  tagIds: number[] | undefined;
+  translations: contentservicev1_PostTranslation[] | undefined;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 帖子状态
+export type contentservicev1_Post_PostStatus =
+  | 'POST_STATUS_DRAFT'
+  | 'POST_STATUS_PUBLISHED'
+  | 'POST_STATUS_SCHEDULED'
+  | 'POST_STATUS_TRASHED'
+  | 'POST_STATUS_UNSPECIFIED';
+// 编辑器类型
+export type contentservicev1_EditorType =
+  | 'EDITOR_TYPE_CODE'
+  // 扩展类型（预留，默认不展示，供高级功能扩展）
+  | 'EDITOR_TYPE_JSON_BLOCK'
+  | 'EDITOR_TYPE_MARKDOWN'
+  | 'EDITOR_TYPE_PLAIN_TEXT'
+  | 'EDITOR_TYPE_RICH_TEXT'
+  | 'EDITOR_TYPE_UNSPECIFIED'
+  | 'EDITOR_TYPE_VISUAL_BUILDER';
+// 帖子翻译
+export type contentservicev1_PostTranslation = {
+  content?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  fullPath?: string;
+  id?: number;
+  languageCode?: string;
+  originalContent?: string;
+  postId?: number;
+  seo?: contentservicev1_SeoMeta;
+  slug?: string;
+  summary?: string;
+  thumbnail?: string;
+  title?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  wordCount?: number;
+};
+
+export type interactionservicev1_GetCountsRequest = {
+  metrics: interactionservicev1_CounterMetric[] | undefined;
+  targetIds: number[] | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 计数指标类型。与 interaction_counter 表的 metric 列对应。
+// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+export type interactionservicev1_CounterMetric =
+  | 'COUNTER_METRIC_LIKE'
+  | 'COUNTER_METRIC_UNSPECIFIED'
+  | 'COUNTER_METRIC_WATCH';
+// target_id → 该目标下各 metric 的计数集合。
+// 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
+export type interactionservicev1_GetCountsResponse = {
+  counts: { [key: string]: interactionservicev1_CountMap } | undefined;
+};
+
+// 单个目标下所有请求 metric 的计数集合。
+export type interactionservicev1_CountMap = {
+  counts: interactionservicev1_MetricCount[] | undefined;
+};
+
+// 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
+// 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
+export type interactionservicev1_MetricCount = {
+  count: number | undefined;
+  metric: interactionservicev1_CounterMetric | undefined;
 };
 
 // 导航服务
@@ -1731,7 +2070,6 @@ export type contentservicev1_Page = {
   type?: contentservicev1_Page_PageType;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
-  visits?: number;
 };
 
 // 页面状态
@@ -1748,16 +2086,6 @@ export type contentservicev1_Page_PageType =
   | 'PAGE_TYPE_ERROR_500'
   | 'PAGE_TYPE_HOME'
   | 'PAGE_TYPE_UNSPECIFIED';
-// 编辑器类型
-export type contentservicev1_EditorType =
-  | 'EDITOR_TYPE_CODE'
-  // 扩展类型（预留，默认不展示，供高级功能扩展）
-  | 'EDITOR_TYPE_JSON_BLOCK'
-  | 'EDITOR_TYPE_MARKDOWN'
-  | 'EDITOR_TYPE_PLAIN_TEXT'
-  | 'EDITOR_TYPE_RICH_TEXT'
-  | 'EDITOR_TYPE_UNSPECIFIED'
-  | 'EDITOR_TYPE_VISUAL_BUILDER';
 // 页面翻译
 export type contentservicev1_PageTranslation = {
   coverImage?: string;
@@ -2084,72 +2412,6 @@ export function createPostServiceClient(
     },
   };
 }
-// 回应 - 帖子列表
-export type contentservicev1_ListPostResponse = {
-  items: contentservicev1_Post[] | undefined;
-  total: number | undefined;
-};
-
-// 帖子
-export type contentservicev1_Post = {
-  authorId?: number;
-  authorName?: string;
-  autoSummary?: boolean;
-  availableLanguages: string[] | undefined;
-  categoryIds: number[] | undefined;
-  code?: string;
-  commentCount?: number;
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  customFields: { [key: string]: string } | undefined;
-  deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  disallowComment?: boolean;
-  editorType?: contentservicev1_EditorType;
-  id?: number;
-  inProgress?: boolean;
-  isFeatured?: boolean;
-  likes?: number;
-  passwordHash?: string;
-  publishTime?: wellKnownTimestamp;
-  sortOrder?: number;
-  status?: contentservicev1_Post_PostStatus;
-  tagIds: number[] | undefined;
-  translations: contentservicev1_PostTranslation[] | undefined;
-  updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  visits?: number;
-};
-
-// 帖子状态
-export type contentservicev1_Post_PostStatus =
-  | 'POST_STATUS_DRAFT'
-  | 'POST_STATUS_PUBLISHED'
-  | 'POST_STATUS_SCHEDULED'
-  | 'POST_STATUS_TRASHED'
-  | 'POST_STATUS_UNSPECIFIED';
-// 帖子翻译
-export type contentservicev1_PostTranslation = {
-  content?: string;
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  fullPath?: string;
-  id?: number;
-  languageCode?: string;
-  originalContent?: string;
-  postId?: number;
-  seo?: contentservicev1_SeoMeta;
-  slug?: string;
-  summary?: string;
-  thumbnail?: string;
-  title?: string;
-  updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  wordCount?: number;
-};
-
 // 请求 - 帖子数据
 export type contentservicev1_GetPostRequest = {
   code?: string;
@@ -3062,6 +3324,7 @@ export class ApiClient {
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
   private _fileTransferService?: FileTransferService;
+  private _interactionService?: InteractionService;
   private _navigationService?: NavigationService;
   private _pageService?: PageService;
   private _postService?: PostService;
@@ -3088,6 +3351,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get interactionService(): InteractionService {
+    return this._interactionService ??= createInteractionServiceClient(this._transport);
   }
 
   get navigationService(): NavigationService {

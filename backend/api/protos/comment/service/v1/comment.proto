@@ -31,6 +31,9 @@ service CommentService {
 
 // 评论
 message Comment {
+  reserved 21, 22, 23;
+  reserved "like_count", "dislike_count", "reply_count";
+
   // 评论状态
   enum Status {
     STATUS_UNSPECIFIED = 0;
@@ -111,21 +114,6 @@ message Comment {
     json_name = "status",
     (gnostic.openapi.v3.property) = {description: "评论状态"}
   ]; // 评论状态
-
-  optional uint32 like_count = 21 [
-    json_name = "likeCount",
-    (gnostic.openapi.v3.property) = {description: "点赞数"}
-  ]; // 点赞数
-
-  optional uint32 dislike_count = 22 [
-    json_name = "dislikeCount",
-    (gnostic.openapi.v3.property) = {description: "点踩数"}
-  ]; // 点踩数
-
-  optional uint32 reply_count = 23 [
-    json_name = "replyCount",
-    (gnostic.openapi.v3.property) = {description: "回复数"}
-  ]; // 回复数
 
   optional string ip_address = 24 [
     json_name = "ipAddress",

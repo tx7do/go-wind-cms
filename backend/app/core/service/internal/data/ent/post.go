@@ -49,12 +49,6 @@ type Post struct {
 	AutoSummary *bool `json:"auto_summary,omitempty"`
 	// 是否推荐
 	IsFeatured *bool `json:"is_featured,omitempty"`
-	// 帖子访问次数
-	Visits *int32 `json:"visits,omitempty"`
-	// 帖子点赞次数
-	Likes *int32 `json:"likes,omitempty"`
-	// 帖子评论数
-	CommentCount *int32 `json:"comment_count,omitempty"`
 	// 评论作者ID，0表示游客
 	AuthorID *uint32 `json:"author_id,omitempty"`
 	// 评论作者名称
@@ -77,7 +71,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case post.FieldDisallowComment, post.FieldInProgress, post.FieldAutoSummary, post.FieldIsFeatured:
 			values[i] = new(sql.NullBool)
-		case post.FieldID, post.FieldCreatedBy, post.FieldUpdatedBy, post.FieldDeletedBy, post.FieldSortOrder, post.FieldTenantID, post.FieldVisits, post.FieldLikes, post.FieldCommentCount, post.FieldAuthorID:
+		case post.FieldID, post.FieldCreatedBy, post.FieldUpdatedBy, post.FieldDeletedBy, post.FieldSortOrder, post.FieldTenantID, post.FieldAuthorID:
 			values[i] = new(sql.NullInt64)
 		case post.FieldEditorType, post.FieldStatus, post.FieldCode, post.FieldAuthorName, post.FieldPasswordHash:
 			values[i] = new(sql.NullString)
@@ -208,27 +202,6 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.IsFeatured = new(bool)
 				*_m.IsFeatured = value.Bool
-			}
-		case post.FieldVisits:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field visits", values[i])
-			} else if value.Valid {
-				_m.Visits = new(int32)
-				*_m.Visits = int32(value.Int64)
-			}
-		case post.FieldLikes:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field likes", values[i])
-			} else if value.Valid {
-				_m.Likes = new(int32)
-				*_m.Likes = int32(value.Int64)
-			}
-		case post.FieldCommentCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field comment_count", values[i])
-			} else if value.Valid {
-				_m.CommentCount = new(int32)
-				*_m.CommentCount = int32(value.Int64)
 			}
 		case post.FieldAuthorID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -374,21 +347,6 @@ func (_m *Post) String() string {
 	builder.WriteString(", ")
 	if v := _m.IsFeatured; v != nil {
 		builder.WriteString("is_featured=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.Visits; v != nil {
-		builder.WriteString("visits=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.Likes; v != nil {
-		builder.WriteString("likes=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.CommentCount; v != nil {
-		builder.WriteString("comment_count=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

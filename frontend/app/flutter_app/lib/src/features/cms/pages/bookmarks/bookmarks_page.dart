@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show ContentServiceV1Post, ContentServiceV1ListPostResponse;
+    show ContentServiceV1Post, ContentServiceV1ListPostResponse,
+        InteractionServiceV1TargetType, InteractionServiceV1CounterMetric;
 import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 
@@ -27,6 +28,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
   List<ContentServiceV1Post> _posts = [];
   bool _isLoading = true;
 
+  // 点赞计数缓存：key 为 post.id。计数来自 interaction_counter 表
+  // （post.likes 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _likeCounts = {};
+
   // 收藏列表由 InteractionService.ListWatchedPosts 返回当前 viewer 收藏的 post。
   // viewer 身份由后端鉴权上下文确定，需登录态；未登录时后端返回 401，列表为空。
   List<ContentServiceV1Post> get _bookmarkedPosts => _posts;
@@ -42,8 +47,27 @@ class _BookmarksPageState extends State<BookmarksPage> {
 
     if (!mounted) return;
 
+    final posts = (result as ListPostResponse?)?.items ?? [];
+    final ids = posts
+        .where((p) => p.id != null)
+        .map((p) => p.id!)
+        .toList(growable: false);
+    Map<int, int> likeCounts = {};
+    if (ids.isNotEmpty) {
+      final countsResp = await _interactionService.getCounts(
+          InteractionServiceV1TargetType.targetTypePost,
+          ids,
+          [InteractionServiceV1CounterMetric.counterMetricLike]);
+      likeCounts = InteractionService.extractCountMap(
+          countsResp,
+          ids,
+          InteractionServiceV1CounterMetric.counterMetricLike);
+    }
+    if (!mounted) return;
+
     setState(() {
-      _posts = (result as ListPostResponse?)?.items ?? [];
+      _posts = posts;
+      _likeCounts = likeCounts;
       _isLoading = false;
     });
   }
@@ -142,6 +166,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                   child: _WebPostGrid(
                     posts: bookmarked,
                     crossAxisCount: crossCount,
+                    likeCounts: _likeCounts,
                   ),
                 ),
               ),
@@ -197,7 +222,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
           delegate: SliverChildBuilderDelegate(
             (context, index) => Padding(
               padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
-              child: PostCard(post: bookmarked[index]),
+              child: PostCard(
+                  post: bookmarked[index],
+                  likeCount:
+                      _likeCounts[bookmarked[index].id] ?? 0),
             ),
             childCount: bookmarked.length,
           ),
@@ -242,10 +270,12 @@ class _BookmarksPageState extends State<BookmarksPage> {
 class _WebPostGrid extends StatelessWidget {
   final List<ContentServiceV1Post> posts;
   final int crossAxisCount;
+  final Map<int, int> likeCounts;
 
   const _WebPostGrid({
     required this.posts,
     required this.crossAxisCount,
+    required this.likeCounts,
   });
 
   @override
@@ -267,7 +297,9 @@ class _WebPostGrid extends StatelessWidget {
               SizedBox(
                 width: childWidth,
                 height: childHeight,
-                child: PostCard(post: posts[i + j]),
+                child: PostCard(
+                    post: posts[i + j],
+                    likeCount: likeCounts[posts[i + j].id] ?? 0),
               ),
             );
             if (j < crossAxisCount - 1 && i + j + 1 < posts.length) {

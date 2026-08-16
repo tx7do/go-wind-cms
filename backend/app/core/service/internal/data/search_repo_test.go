@@ -22,7 +22,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	elasticsearchCrud "github.com/tx7do/go-crud/elasticsearch"
+	opensearchCrud "github.com/tx7do/go-crud/opensearch"
 )
 
 // newTestSearchRepo 构造一个连本地 OpenSearch 的 SearchRepo。
@@ -30,11 +30,11 @@ import (
 func newTestSearchRepo(t *testing.T) *SearchRepo {
 	t.Helper()
 
-	esClient, err := elasticsearchCrud.NewElasticsearchClient(
-		elasticsearchCrud.WithAddresses("http://localhost:9200"),
-		elasticsearchCrud.WithUsername("admin"),
-		elasticsearchCrud.WithPassword("@Abcd#123456"),
-		elasticsearchCrud.WithLogger(log.DefaultLogger),
+	esClient, err := opensearchCrud.NewElasticsearchClient(
+		opensearchCrud.WithAddresses("http://localhost:9200"),
+		opensearchCrud.WithUsername("admin"),
+		opensearchCrud.WithPassword("@Abcd#123456"),
+		opensearchCrud.WithLogger(log.DefaultLogger),
 	)
 	require.NoError(t, err, "连接 OpenSearch 失败，请确认 docker-compose up opensearch 已启动")
 

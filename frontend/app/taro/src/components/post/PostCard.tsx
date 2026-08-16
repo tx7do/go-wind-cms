@@ -19,6 +19,7 @@ interface PostCardProps {
     post: contentservicev1_Post;
     from?: string;
     categoryId?: number;
+    likeCount?: number;
     /** 紧凑模式：横向卡片（缩略图左+文字右） */
     compact?: boolean;
 }
@@ -27,6 +28,7 @@ const PostCard: React.FC<PostCardProps> = ({
     post,
     from = 'post-list',
     categoryId,
+    likeCount,
     compact = false,
 }) => {
     const router = useI18nRouter();
@@ -77,10 +79,6 @@ const PostCard: React.FC<PostCardProps> = ({
                         <View className='flex items-center gap-[6rpx]'>
                             <XIcon name='carbon:calendar' size={14} className='text-textSec' />
                             <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
-                        </View>
-                        <View className='flex items-center gap-[6rpx]'>
-                            <XIcon name='carbon:view' size={14} className='text-textSec' />
-                            <Text className='text-tips text-textSec'>{post.visits || 0}</Text>
                         </View>
                     </View>
                 </View>
@@ -152,12 +150,8 @@ const PostCard: React.FC<PostCardProps> = ({
                         <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
                     </View>
                     <View className='flex items-center gap-[6rpx]'>
-                        <XIcon name='carbon:view' size={12} className='text-textSec' />
-                        <Text className='text-tips text-textSec'>{post.visits || 0}</Text>
-                    </View>
-                    <View className='flex items-center gap-[6rpx]'>
                         <XIcon name='carbon:thumbs-up' size={12} className='text-textSec' />
-                        <Text className='text-tips text-textSec'>{post.likes || 0}</Text>
+                        <Text className='text-tips text-textSec'>{likeCount || 0}</Text>
                     </View>
                 </View>
             </View>

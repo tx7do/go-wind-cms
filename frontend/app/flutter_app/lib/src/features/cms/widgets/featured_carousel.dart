@@ -319,24 +319,6 @@ class _FeaturedCard extends StatelessWidget {
                                   : theme.colorScheme.onSurface.withAlpha(160),
                             ),
                           ),
-                          SizedBox(width: isMobile ? 12.w : 12),
-                          Icon(
-                            Icons.remove_red_eye_outlined,
-                            size: isMobile ? 14.sp : 14,
-                            color: _coverImage != null
-                                ? Colors.white.withAlpha((0.7 * 255).round())
-                                : theme.colorScheme.onSurface.withAlpha(120),
-                          ),
-                          SizedBox(width: isMobile ? 3.w : 3),
-                          Text(
-                            '${post.visits}',
-                            style: TextStyle(
-                              fontSize: isMobile ? 12.sp : 12,
-                              color: _coverImage != null
-                                  ? Colors.white.withAlpha((0.7 * 255).round())
-                                  : theme.colorScheme.onSurface.withAlpha(120),
-                            ),
-                          ),
                         ],
                       ),
                     ],

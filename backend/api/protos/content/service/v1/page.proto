@@ -46,6 +46,9 @@ service PageService {
 
 // 页面
 message Page {
+  reserved 20;
+  reserved "visits";
+
   // 页面状态
   enum PageStatus {
     PAGE_STATUS_UNSPECIFIED = 0;
@@ -146,10 +149,6 @@ message Page {
   ]; // 是否使用自定义模板代码
 
 
-  optional uint32 visits = 20 [
-    json_name = "visits",
-    (gnostic.openapi.v3.property) = {description: "页面访问次数"}
-  ]; // 页面访问次数
   map<string, string> custom_fields = 21 [
     json_name = "customFields",
     (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}

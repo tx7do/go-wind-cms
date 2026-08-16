@@ -366,6 +366,8 @@ func (m *WatchResponse) validate(all bool) error {
 
 	// no validation rules for Watched
 
+	// no validation rules for WatchCount
+
 	if len(errors) > 0 {
 		return WatchResponseMultiError(errors)
 	}
@@ -803,3 +805,489 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetInteractionStatusResponseValidationError{}
+
+// Validate checks the field values on MetricCount with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *MetricCount) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MetricCount with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in MetricCountMultiError, or
+// nil if none found.
+func (m *MetricCount) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MetricCount) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Metric
+
+	// no validation rules for Count
+
+	if len(errors) > 0 {
+		return MetricCountMultiError(errors)
+	}
+
+	return nil
+}
+
+// MetricCountMultiError is an error wrapping multiple validation errors
+// returned by MetricCount.ValidateAll() if the designated constraints aren't met.
+type MetricCountMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MetricCountMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MetricCountMultiError) AllErrors() []error { return m }
+
+// MetricCountValidationError is the validation error returned by
+// MetricCount.Validate if the designated constraints aren't met.
+type MetricCountValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MetricCountValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MetricCountValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MetricCountValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MetricCountValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MetricCountValidationError) ErrorName() string { return "MetricCountValidationError" }
+
+// Error satisfies the builtin error interface
+func (e MetricCountValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMetricCount.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MetricCountValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MetricCountValidationError{}
+
+// Validate checks the field values on CountMap with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CountMap) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CountMap with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CountMapMultiError, or nil
+// if none found.
+func (m *CountMap) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CountMap) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCounts() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CountMapValidationError{
+						field:  fmt.Sprintf("Counts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CountMapValidationError{
+						field:  fmt.Sprintf("Counts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CountMapValidationError{
+					field:  fmt.Sprintf("Counts[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CountMapMultiError(errors)
+	}
+
+	return nil
+}
+
+// CountMapMultiError is an error wrapping multiple validation errors returned
+// by CountMap.ValidateAll() if the designated constraints aren't met.
+type CountMapMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CountMapMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CountMapMultiError) AllErrors() []error { return m }
+
+// CountMapValidationError is the validation error returned by
+// CountMap.Validate if the designated constraints aren't met.
+type CountMapValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CountMapValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CountMapValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CountMapValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CountMapValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CountMapValidationError) ErrorName() string { return "CountMapValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CountMapValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCountMap.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CountMapValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CountMapValidationError{}
+
+// Validate checks the field values on GetCountsRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetCountsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCountsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCountsRequestMultiError, or nil if none found.
+func (m *GetCountsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCountsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TargetType
+
+	if len(errors) > 0 {
+		return GetCountsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCountsRequestMultiError is an error wrapping multiple validation errors
+// returned by GetCountsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetCountsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCountsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCountsRequestMultiError) AllErrors() []error { return m }
+
+// GetCountsRequestValidationError is the validation error returned by
+// GetCountsRequest.Validate if the designated constraints aren't met.
+type GetCountsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCountsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCountsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCountsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCountsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCountsRequestValidationError) ErrorName() string { return "GetCountsRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetCountsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCountsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCountsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCountsRequestValidationError{}
+
+// Validate checks the field values on GetCountsResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetCountsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCountsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCountsResponseMultiError, or nil if none found.
+func (m *GetCountsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCountsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	{
+		sorted_keys := make([]uint32, len(m.GetCounts()))
+		i := 0
+		for key := range m.GetCounts() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetCounts()[key]
+			_ = val
+
+			// no validation rules for Counts[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, GetCountsResponseValidationError{
+							field:  fmt.Sprintf("Counts[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, GetCountsResponseValidationError{
+							field:  fmt.Sprintf("Counts[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return GetCountsResponseValidationError{
+						field:  fmt.Sprintf("Counts[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCountsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCountsResponseMultiError is an error wrapping multiple validation errors
+// returned by GetCountsResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GetCountsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCountsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCountsResponseMultiError) AllErrors() []error { return m }
+
+// GetCountsResponseValidationError is the validation error returned by
+// GetCountsResponse.Validate if the designated constraints aren't met.
+type GetCountsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCountsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCountsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCountsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCountsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCountsResponseValidationError) ErrorName() string {
+	return "GetCountsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCountsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCountsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCountsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCountsResponseValidationError{}

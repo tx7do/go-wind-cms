@@ -10,9 +10,8 @@ import (
 	entCrud "github.com/tx7do/go-crud/entgo"
 
 	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
-	"go-wind-cms/app/core/service/internal/data/ent/post"
+	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 
@@ -20,15 +19,17 @@ import (
 	interactionV1 "go-wind-cms/api/gen/go/interaction/service/v1"
 )
 
-// InteractionRepo 是点赞/收藏 ledger 与计数缓存的唯一写入方。
+// InteractionRepo 是点赞/收藏 ledger 与 interaction_counter 计数表的唯一写入方。
 //
 // 设计要点：
 //   - viewer 用户身份由 service 层从鉴权上下文提取后传入，repo 不接受客户端
 //     传入的 user_id。
-//   - Like/Unlike 在单个 ent.Tx 内同时操作 ledger 表与 post/comment 计数缓存，
-//     保证原子性（沿用 post_repo 的跨表事务惯例）。
+//   - Like/Unlike 在单个 ent.Tx 内同时操作 ledger 表与 interaction_counter 计数
+//     表（upsert 计数行），保证原子性（沿用 post_repo 的跨表事务惯例）。
+//   - 计数统一存于 interaction_counter 表（target_type/target_id/metric/count），
+//     post/comment 表上的散落计数列已移除。
 //   - 重复点赞/收藏走幂等：先 Exist 检查，已存在则 no-op，不依赖约束错误判断。
-//   - Watch/Unwatch 仅维护 post_watch ledger，不触碰任何计数列（收藏无缓存列）。
+//   - Watch/Unwatch 仅维护 post_watch ledger，不触碰任何计数表（收藏无计数语义）。
 //   - 跨租户隔离由 mixin + 查询带 tenant_id 保证。
 type InteractionRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
@@ -74,15 +75,8 @@ func (r *InteractionRepo) Like(ctx context.Context, viewerUserID uint32, targetT
 	}
 
 	switch targetType {
-	case interactionV1.TargetType_TARGET_TYPE_POST:
-		likeCount, liked, err := r.likePost(ctx, tid, viewerUserID, targetID)
-		if err != nil {
-			return false, 0, err
-		}
-		return liked, likeCount, nil
-
-	case interactionV1.TargetType_TARGET_TYPE_COMMENT:
-		likeCount, liked, err := r.likeComment(ctx, tid, viewerUserID, targetID)
+	case interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.TargetType_TARGET_TYPE_COMMENT:
+		likeCount, liked, err := r.likeTarget(ctx, tid, viewerUserID, targetID, targetType)
 		if err != nil {
 			return false, 0, err
 		}
@@ -101,15 +95,8 @@ func (r *InteractionRepo) Unlike(ctx context.Context, viewerUserID uint32, targe
 	}
 
 	switch targetType {
-	case interactionV1.TargetType_TARGET_TYPE_POST:
-		likeCount, liked, err := r.unlikePost(ctx, tid, viewerUserID, targetID)
-		if err != nil {
-			return false, 0, err
-		}
-		return liked, likeCount, nil
-
-	case interactionV1.TargetType_TARGET_TYPE_COMMENT:
-		likeCount, liked, err := r.unlikeComment(ctx, tid, viewerUserID, targetID)
+	case interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.TargetType_TARGET_TYPE_COMMENT:
+		likeCount, liked, err := r.unlikeTarget(ctx, tid, viewerUserID, targetID, targetType)
 		if err != nil {
 			return false, 0, err
 		}
@@ -120,54 +107,40 @@ func (r *InteractionRepo) Unlike(ctx context.Context, viewerUserID uint32, targe
 	}
 }
 
-// readPostLikeCount 读取 post.likes 当前值（int32）。
-func (r *InteractionRepo) readPostLikeCount(ctx context.Context, postID uint32) (int32, error) {
-	entity, err := r.entClient.Client().Post.Query().
-		Where(post.IDEQ(postID)).
-		Only(ctx)
-	if err != nil {
-		r.log.Errorf("query post likes failed: %s", err.Error())
-		return 0, interactionV1.ErrorInternalServerError("query post likes failed")
-	}
-	if entity.Likes == nil {
-		return 0, nil
-	}
-	return *entity.Likes, nil
-}
-
-// readCommentLikeCount 读取 comment.like_count 当前值（uint32 → int32）。
-func (r *InteractionRepo) readCommentLikeCount(ctx context.Context, commentID uint32) (int32, error) {
-	entity, err := r.entClient.Client().Comment.Query().
-		Where(comment.IDEQ(commentID)).
-		Only(ctx)
-	if err != nil {
-		r.log.Errorf("query comment like_count failed: %s", err.Error())
-		return 0, interactionV1.ErrorInternalServerError("query comment like_count failed")
-	}
-	if entity.LikeCount == nil {
-		return 0, nil
-	}
-	return int32(*entity.LikeCount), nil
-}
-
-// likePost 在单个 tx 内：写 post_like ledger + 递增 post.likes。
-// 幂等：若 ledger 行已存在则 no-op（不重复递增）。
-func (r *InteractionRepo) likePost(ctx context.Context, tid, viewerUserID, postID uint32) (int32, bool, error) {
-	exists, err := r.entClient.Client().PostLike.Query().
+// readCount 读取 interaction_counter 表中 (tenant, target_type, target_id, metric) 的当前计数。
+// 不存在行则返回 0。
+func (r *InteractionRepo) readCount(ctx context.Context, tid, targetID uint32, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (int32, error) {
+	entity, err := r.entClient.Client().InteractionCounter.Query().
 		Where(
-			postlike.TenantIDEQ(tid),
-			postlike.UserIDEQ(viewerUserID),
-			postlike.PostIDEQ(postID),
+			interactioncounter.TenantIDEQ(tid),
+			interactioncounter.TargetTypeEQ(uint8(targetType)),
+			interactioncounter.TargetIDEQ(targetID),
+			interactioncounter.MetricEQ(uint8(metric)),
 		).
-		Exist(ctx)
+		Only(ctx)
 	if err != nil {
-		r.log.Errorf("query post_like exist failed: %s", err.Error())
-		return 0, false, interactionV1.ErrorInternalServerError("query post_like exist failed")
+		if ent.IsNotFound(err) {
+			return 0, nil
+		}
+		r.log.Errorf("query interaction_counter count failed: %s", err.Error())
+		return 0, interactionV1.ErrorInternalServerError("query interaction_counter count failed")
 	}
+	if entity.Count == nil {
+		return 0, nil
+	}
+	return int32(*entity.Count), nil
+}
 
+// likeTarget 在单个 tx 内：写 ledger（post_like 或 comment_like）+ 在 interaction_counter
+// 表中 upsert 计数（LIKE 指标 +1）。幂等：若 ledger 行已存在则 no-op。
+func (r *InteractionRepo) likeTarget(ctx context.Context, tid, viewerUserID, targetID uint32, targetType interactionV1.TargetType) (int32, bool, error) {
+	exists, err := r.ledgerExists(ctx, tid, viewerUserID, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	if err != nil {
+		return 0, false, err
+	}
 	if exists {
 		// 幂等：已点赞，no-op，但仍返回当前状态
-		likeCount, qerr := r.readPostLikeCount(ctx, postID)
+		likeCount, qerr := r.readCount(ctx, tid, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 		if qerr != nil {
 			return 0, false, qerr
 		}
@@ -175,54 +148,36 @@ func (r *InteractionRepo) likePost(ctx context.Context, tid, viewerUserID, postI
 	}
 
 	txErr := r.txn(ctx, func(tx *ent.Tx) error {
-		if _, err := tx.PostLike.Create().
-			SetTenantID(tid).
-			SetUserID(viewerUserID).
-			SetPostID(postID).
-			Save(ctx); err != nil {
-			r.log.Errorf("insert post_like failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("insert post_like failed")
+		if err := r.createLedgerRow(ctx, tx, tid, viewerUserID, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE); err != nil {
+			return err
 		}
-
-		// 递增 post.likes 缓存
-		if _, err := tx.Post.UpdateOneID(postID).
-			AddLikes(1).
-			Save(ctx); err != nil {
-			r.log.Errorf("increment post likes failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("increment post likes failed")
+		// 在 interaction_counter 表中 upsert 计数（+1）
+		if err := r.adjustCounterRow(ctx, tx, tid, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, 1); err != nil {
+			return err
 		}
-
 		return nil
 	})
 	if txErr != nil {
 		return 0, false, txErr
 	}
 
-	likeCount, err := r.readPostLikeCount(ctx, postID)
+	likeCount, err := r.readCount(ctx, tid, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 	if err != nil {
 		return 0, false, err
 	}
 	return likeCount, true, nil
 }
 
-// unlikePost 在单个 tx 内：删 post_like ledger + 递减 post.likes。
+// unlikeTarget 在单个 tx 内：删 ledger + 在 interaction_counter 表中递减计数。
 // 幂等：若 ledger 行不存在则 no-op。
-func (r *InteractionRepo) unlikePost(ctx context.Context, tid, viewerUserID, postID uint32) (int32, bool, error) {
-	exists, err := r.entClient.Client().PostLike.Query().
-		Where(
-			postlike.TenantIDEQ(tid),
-			postlike.UserIDEQ(viewerUserID),
-			postlike.PostIDEQ(postID),
-		).
-		Exist(ctx)
+func (r *InteractionRepo) unlikeTarget(ctx context.Context, tid, viewerUserID, targetID uint32, targetType interactionV1.TargetType) (int32, bool, error) {
+	exists, err := r.ledgerExists(ctx, tid, viewerUserID, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 	if err != nil {
-		r.log.Errorf("query post_like exist failed: %s", err.Error())
-		return 0, false, interactionV1.ErrorInternalServerError("query post_like exist failed")
+		return 0, false, err
 	}
-
 	if !exists {
 		// 幂等：未点赞，no-op
-		likeCount, qerr := r.readPostLikeCount(ctx, postID)
+		likeCount, qerr := r.readCount(ctx, tid, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 		if qerr != nil {
 			return 0, false, qerr
 		}
@@ -230,28 +185,17 @@ func (r *InteractionRepo) unlikePost(ctx context.Context, tid, viewerUserID, pos
 	}
 
 	txErr := r.txn(ctx, func(tx *ent.Tx) error {
-		affected, err := tx.PostLike.Delete().
-			Where(
-				postlike.TenantIDEQ(tid),
-				postlike.UserIDEQ(viewerUserID),
-				postlike.PostIDEQ(postID),
-			).
-			Exec(ctx)
+		affected, err := r.deleteLedgerRow(ctx, tx, tid, viewerUserID, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 		if err != nil {
-			r.log.Errorf("delete post_like failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("delete post_like failed")
+			return err
 		}
 		if affected == 0 {
 			// 并发删除，幂等处理
 			return nil
 		}
-
-		// 递减 post.likes 缓存
-		if _, err := tx.Post.UpdateOneID(postID).
-			AddLikes(-1).
-			Save(ctx); err != nil {
-			r.log.Errorf("decrement post likes failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("decrement post likes failed")
+		// 在 interaction_counter 表中递减计数（-1）
+		if err := r.adjustCounterRow(ctx, tx, tid, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, -1); err != nil {
+			return err
 		}
 		return nil
 	})
@@ -259,178 +203,374 @@ func (r *InteractionRepo) unlikePost(ctx context.Context, tid, viewerUserID, pos
 		return 0, false, txErr
 	}
 
-	likeCount, err := r.readPostLikeCount(ctx, postID)
+	likeCount, err := r.readCount(ctx, tid, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 	if err != nil {
 		return 0, false, err
 	}
 	return likeCount, false, nil
 }
 
-// likeComment 在单个 tx 内：写 comment_like ledger + 递增 comment.like_count。
-func (r *InteractionRepo) likeComment(ctx context.Context, tid, viewerUserID, commentID uint32) (int32, bool, error) {
-	exists, err := r.entClient.Client().CommentLike.Query().
-		Where(
-			commentlike.TenantIDEQ(tid),
-			commentlike.UserIDEQ(viewerUserID),
-			commentlike.CommentIDEQ(commentID),
-		).
-		Exist(ctx)
-	if err != nil {
-		r.log.Errorf("query comment_like exist failed: %s", err.Error())
-		return 0, false, interactionV1.ErrorInternalServerError("query comment_like exist failed")
-	}
+// ledgerExists 查询 (tenant, viewer, target) 的 ledger 行是否存在。
+// metric 决定查哪张 ledger 表：LIKE→post_like/comment_like，WATCH→post_watch。
+func (r *InteractionRepo) ledgerExists(ctx context.Context, tid, viewerUserID, targetID uint32, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (bool, error) {
+	switch metric {
+	case interactionV1.CounterMetric_COUNTER_METRIC_LIKE:
+		switch targetType {
+		case interactionV1.TargetType_TARGET_TYPE_POST:
+			exists, err := r.entClient.Client().PostLike.Query().
+				Where(
+					postlike.TenantIDEQ(tid),
+					postlike.UserIDEQ(viewerUserID),
+					postlike.PostIDEQ(targetID),
+				).
+				Exist(ctx)
+			if err != nil {
+				r.log.Errorf("query post_like exist failed: %s", err.Error())
+				return false, interactionV1.ErrorInternalServerError("query post_like exist failed")
+			}
+			return exists, nil
 
-	if exists {
-		// 幂等：已点赞，no-op
-		likeCount, qerr := r.readCommentLikeCount(ctx, commentID)
-		if qerr != nil {
-			return 0, false, qerr
+		case interactionV1.TargetType_TARGET_TYPE_COMMENT:
+			exists, err := r.entClient.Client().CommentLike.Query().
+				Where(
+					commentlike.TenantIDEQ(tid),
+					commentlike.UserIDEQ(viewerUserID),
+					commentlike.CommentIDEQ(targetID),
+				).
+				Exist(ctx)
+			if err != nil {
+				r.log.Errorf("query comment_like exist failed: %s", err.Error())
+				return false, interactionV1.ErrorInternalServerError("query comment_like exist failed")
+			}
+			return exists, nil
+
+		default:
+			return false, interactionV1.ErrorBadRequest("invalid target type")
 		}
-		return likeCount, true, nil
-	}
 
-	txErr := r.txn(ctx, func(tx *ent.Tx) error {
-		if _, err := tx.CommentLike.Create().
-			SetTenantID(tid).
-			SetUserID(viewerUserID).
-			SetCommentID(commentID).
-			Save(ctx); err != nil {
-			r.log.Errorf("insert comment_like failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("insert comment_like failed")
+	case interactionV1.CounterMetric_COUNTER_METRIC_WATCH:
+		// WATCH 仅作用于 post
+		exists, err := r.entClient.Client().PostWatch.Query().
+			Where(
+				postwatch.TenantIDEQ(tid),
+				postwatch.UserIDEQ(viewerUserID),
+				postwatch.PostIDEQ(targetID),
+			).
+			Exist(ctx)
+		if err != nil {
+			r.log.Errorf("query post_watch exist failed: %s", err.Error())
+			return false, interactionV1.ErrorInternalServerError("query post_watch exist failed")
 		}
+		return exists, nil
 
-		if _, err := tx.Comment.UpdateOneID(commentID).
-			AddLikeCount(1).
-			Save(ctx); err != nil {
-			r.log.Errorf("increment comment like_count failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("increment comment like_count failed")
-		}
-		return nil
-	})
-	if txErr != nil {
-		return 0, false, txErr
+	default:
+		return false, interactionV1.ErrorBadRequest("invalid metric")
 	}
-
-	likeCount, err := r.readCommentLikeCount(ctx, commentID)
-	if err != nil {
-		return 0, false, err
-	}
-	return likeCount, true, nil
 }
 
-// unlikeComment 在单个 tx 内：删 comment_like ledger + 递减 comment.like_count。
-func (r *InteractionRepo) unlikeComment(ctx context.Context, tid, viewerUserID, commentID uint32) (int32, bool, error) {
-	exists, err := r.entClient.Client().CommentLike.Query().
-		Where(
-			commentlike.TenantIDEQ(tid),
-			commentlike.UserIDEQ(viewerUserID),
-			commentlike.CommentIDEQ(commentID),
-		).
-		Exist(ctx)
-	if err != nil {
-		r.log.Errorf("query comment_like exist failed: %s", err.Error())
-		return 0, false, interactionV1.ErrorInternalServerError("query comment_like exist failed")
-	}
+// createLedgerRow 在 tx 内创建 ledger 行。
+// metric 决定写哪张 ledger 表。
+func (r *InteractionRepo) createLedgerRow(ctx context.Context, tx *ent.Tx, tid, viewerUserID, targetID uint32, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) error {
+	switch metric {
+	case interactionV1.CounterMetric_COUNTER_METRIC_LIKE:
+		switch targetType {
+		case interactionV1.TargetType_TARGET_TYPE_POST:
+			if _, err := tx.PostLike.Create().
+				SetTenantID(tid).
+				SetUserID(viewerUserID).
+				SetPostID(targetID).
+				Save(ctx); err != nil {
+				r.log.Errorf("insert post_like failed: %s", err.Error())
+				return interactionV1.ErrorInternalServerError("insert post_like failed")
+			}
+			return nil
 
-	if !exists {
-		// 幂等：未点赞，no-op
-		likeCount, qerr := r.readCommentLikeCount(ctx, commentID)
-		if qerr != nil {
-			return 0, false, qerr
+		case interactionV1.TargetType_TARGET_TYPE_COMMENT:
+			if _, err := tx.CommentLike.Create().
+				SetTenantID(tid).
+				SetUserID(viewerUserID).
+				SetCommentID(targetID).
+				Save(ctx); err != nil {
+				r.log.Errorf("insert comment_like failed: %s", err.Error())
+				return interactionV1.ErrorInternalServerError("insert comment_like failed")
+			}
+			return nil
+
+		default:
+			return interactionV1.ErrorBadRequest("invalid target type")
 		}
-		return likeCount, false, nil
-	}
 
-	txErr := r.txn(ctx, func(tx *ent.Tx) error {
-		affected, err := tx.CommentLike.Delete().
+	case interactionV1.CounterMetric_COUNTER_METRIC_WATCH:
+		if _, err := tx.PostWatch.Create().
+			SetTenantID(tid).
+			SetUserID(viewerUserID).
+			SetPostID(targetID).
+			Save(ctx); err != nil {
+			r.log.Errorf("insert post_watch failed: %s", err.Error())
+			return interactionV1.ErrorInternalServerError("insert post_watch failed")
+		}
+		return nil
+
+	default:
+		return interactionV1.ErrorBadRequest("invalid metric")
+	}
+}
+
+// deleteLedgerRow 在 tx 内删除 ledger 行，返回受影响行数。
+// metric 决定删哪张 ledger 表。
+func (r *InteractionRepo) deleteLedgerRow(ctx context.Context, tx *ent.Tx, tid, viewerUserID, targetID uint32, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (int, error) {
+	switch metric {
+	case interactionV1.CounterMetric_COUNTER_METRIC_LIKE:
+		switch targetType {
+		case interactionV1.TargetType_TARGET_TYPE_POST:
+			affected, err := tx.PostLike.Delete().
+				Where(
+					postlike.TenantIDEQ(tid),
+					postlike.UserIDEQ(viewerUserID),
+					postlike.PostIDEQ(targetID),
+				).
+				Exec(ctx)
+			if err != nil {
+				r.log.Errorf("delete post_like failed: %s", err.Error())
+				return 0, interactionV1.ErrorInternalServerError("delete post_like failed")
+			}
+			return affected, nil
+
+		case interactionV1.TargetType_TARGET_TYPE_COMMENT:
+			affected, err := tx.CommentLike.Delete().
+				Where(
+					commentlike.TenantIDEQ(tid),
+					commentlike.UserIDEQ(viewerUserID),
+					commentlike.CommentIDEQ(targetID),
+				).
+				Exec(ctx)
+			if err != nil {
+				r.log.Errorf("delete comment_like failed: %s", err.Error())
+				return 0, interactionV1.ErrorInternalServerError("delete comment_like failed")
+			}
+			return affected, nil
+
+		default:
+			return 0, interactionV1.ErrorBadRequest("invalid target type")
+		}
+
+	case interactionV1.CounterMetric_COUNTER_METRIC_WATCH:
+		affected, err := tx.PostWatch.Delete().
 			Where(
-				commentlike.TenantIDEQ(tid),
-				commentlike.UserIDEQ(viewerUserID),
-				commentlike.CommentIDEQ(commentID),
+				postwatch.TenantIDEQ(tid),
+				postwatch.UserIDEQ(viewerUserID),
+				postwatch.PostIDEQ(targetID),
 			).
 			Exec(ctx)
 		if err != nil {
-			r.log.Errorf("delete comment_like failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("delete comment_like failed")
+			r.log.Errorf("delete post_watch failed: %s", err.Error())
+			return 0, interactionV1.ErrorInternalServerError("delete post_watch failed")
 		}
-		if affected == 0 {
+		return affected, nil
+
+	default:
+		return 0, interactionV1.ErrorBadRequest("invalid metric")
+	}
+}
+
+// adjustCounterRow 在 tx 内 upsert interaction_counter 表的计数行。
+//
+// 行不存在时按 delta 创建（仅当 delta>0）；存在时按 delta 递增，归 0 则删行。
+// 复合 unique 索引 (tenant, target_type, target_id, metric) 保证单目标单 metric 仅一行。
+func (r *InteractionRepo) adjustCounterRow(ctx context.Context, tx *ent.Tx, tid, targetID uint32, targetType interactionV1.TargetType, metric interactionV1.CounterMetric, delta int64) error {
+	existing, err := tx.InteractionCounter.Query().
+		Where(
+			interactioncounter.TenantIDEQ(tid),
+			interactioncounter.TargetTypeEQ(uint8(targetType)),
+			interactioncounter.TargetIDEQ(targetID),
+			interactioncounter.MetricEQ(uint8(metric)),
+		).
+		Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			r.log.Errorf("query interaction_counter row failed: %s", err.Error())
+			return interactionV1.ErrorInternalServerError("query interaction_counter row failed")
+		}
+		// 行不存在
+		if delta <= 0 {
+			// 无行可递减，幂等 no-op
 			return nil
 		}
+		if _, cerr := tx.InteractionCounter.Create().
+			SetTenantID(tid).
+			SetTargetType(uint8(targetType)).
+			SetTargetID(targetID).
+			SetMetric(uint8(metric)).
+			SetCount(delta).
+			Save(ctx); cerr != nil {
+			r.log.Errorf("create interaction_counter row failed: %s", cerr.Error())
+			return interactionV1.ErrorInternalServerError("create interaction_counter row failed")
+		}
+		return nil
+	}
 
-		if _, err := tx.Comment.UpdateOneID(commentID).
-			AddLikeCount(-1).
-			Save(ctx); err != nil {
-			r.log.Errorf("decrement comment like_count failed: %s", err.Error())
-			return interactionV1.ErrorInternalServerError("decrement comment like_count failed")
+	// 行存在，递增
+	newVal := *existing.Count + delta
+	if newVal <= 0 {
+		// 计数归 0，删行
+		if derr := tx.InteractionCounter.DeleteOneID(existing.ID).Exec(ctx); derr != nil {
+			r.log.Errorf("delete interaction_counter row failed: %s", derr.Error())
+			return interactionV1.ErrorInternalServerError("delete interaction_counter row failed")
+		}
+		return nil
+	}
+	if _, uerr := tx.InteractionCounter.UpdateOneID(existing.ID).SetCount(newVal).Save(ctx); uerr != nil {
+		r.log.Errorf("update interaction_counter row failed: %s", uerr.Error())
+		return interactionV1.ErrorInternalServerError("update interaction_counter row failed")
+	}
+	return nil
+}
+
+// GetCounts 批量查询 interaction_counter 表中指定 (target_type, target_ids, metrics) 的计数。
+// 返回 target_id → metric → count 的嵌套 map。未记录的 (target, metric) 不出现在响应中。
+func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV1.TargetType, targetIDs []uint32, metrics []interactionV1.CounterMetric) (map[uint32]*interactionV1.CountMap, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return nil, interactionV1.ErrorUnauthorized("viewer identity required")
+	}
+	if len(targetIDs) == 0 || len(metrics) == 0 {
+		return map[uint32]*interactionV1.CountMap{}, nil
+	}
+
+	// 转换 metrics 为 uint8 谓词列表
+	metricPreds := make([]uint8, 0, len(metrics))
+	for _, m := range metrics {
+		if m == interactionV1.CounterMetric_COUNTER_METRIC_UNSPECIFIED {
+			continue
+		}
+		metricPreds = append(metricPreds, uint8(m))
+	}
+	if len(metricPreds) == 0 {
+		return map[uint32]*interactionV1.CountMap{}, nil
+	}
+
+	rows, err := r.entClient.Client().InteractionCounter.Query().
+		Where(
+			interactioncounter.TenantIDEQ(tid),
+			interactioncounter.TargetTypeEQ(uint8(targetType)),
+			interactioncounter.TargetIDIn(targetIDs...),
+			interactioncounter.MetricIn(metricPreds...),
+		).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query interaction_counter batch failed: %s", err.Error())
+		return nil, interactionV1.ErrorInternalServerError("query interaction_counter batch failed")
+	}
+
+	result := make(map[uint32]*interactionV1.CountMap, len(rows))
+	for _, row := range rows {
+		if row.TargetID == nil || row.Metric == nil || row.Count == nil {
+			continue
+		}
+		tidVal := *row.TargetID
+		metricVal := interactionV1.CounterMetric(*row.Metric)
+		countVal := *row.Count
+		cm, ok := result[tidVal]
+		if !ok {
+			cm = &interactionV1.CountMap{}
+			result[tidVal] = cm
+		}
+		cm.Counts = append(cm.Counts, &interactionV1.MetricCount{
+			Metric: metricVal,
+			Count:  countVal,
+		})
+	}
+	return result, nil
+}
+
+// Watch 收藏 post。幂等：已收藏则 no-op。
+// 在单个 tx 内写 post_watch ledger + 在 interaction_counter 表中 upsert 计数（WATCH 指标 +1）。
+// 返回操作后的收藏状态与最新收藏计数。
+func (r *InteractionRepo) Watch(ctx context.Context, viewerUserID uint32, postID uint32) (bool, int32, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant || viewerUserID == 0 {
+		return false, 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	}
+
+	exists, err := r.ledgerExists(ctx, tid, viewerUserID, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+	if err != nil {
+		return false, 0, err
+	}
+	if exists {
+		// 幂等：已收藏，no-op，但仍返回当前状态与计数
+		watchCount, qerr := r.readCount(ctx, tid, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+		if qerr != nil {
+			return false, 0, qerr
+		}
+		return true, watchCount, nil
+	}
+
+	txErr := r.txn(ctx, func(tx *ent.Tx) error {
+		if err := r.createLedgerRow(ctx, tx, tid, viewerUserID, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH); err != nil {
+			return err
+		}
+		// 在 interaction_counter 表中 upsert 计数（WATCH +1）
+		if err := r.adjustCounterRow(ctx, tx, tid, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH, 1); err != nil {
+			return err
 		}
 		return nil
 	})
 	if txErr != nil {
-		return 0, false, txErr
+		return false, 0, txErr
 	}
 
-	likeCount, err := r.readCommentLikeCount(ctx, commentID)
+	watchCount, err := r.readCount(ctx, tid, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
 	if err != nil {
-		return 0, false, err
+		return false, 0, err
 	}
-	return likeCount, false, nil
-}
-
-// Watch 收藏 post。幂等：已收藏则 no-op。不触碰任何计数列。
-func (r *InteractionRepo) Watch(ctx context.Context, viewerUserID uint32, postID uint32) (bool, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
-		return false, interactionV1.ErrorUnauthorized("viewer identity required")
-	}
-
-	exists, err := r.entClient.Client().PostWatch.Query().
-		Where(
-			postwatch.TenantIDEQ(tid),
-			postwatch.UserIDEQ(viewerUserID),
-			postwatch.PostIDEQ(postID),
-		).
-		Exist(ctx)
-	if err != nil {
-		r.log.Errorf("query post_watch exist failed: %s", err.Error())
-		return false, interactionV1.ErrorInternalServerError("query post_watch exist failed")
-	}
-	if exists {
-		// 幂等：已收藏，no-op
-		return true, nil
-	}
-
-	_, err = r.entClient.Client().PostWatch.Create().
-		SetTenantID(tid).
-		SetUserID(viewerUserID).
-		SetPostID(postID).
-		Save(ctx)
-	if err != nil {
-		r.log.Errorf("insert post_watch failed: %s", err.Error())
-		return false, interactionV1.ErrorInternalServerError("insert post_watch failed")
-	}
-	return true, nil
+	return true, watchCount, nil
 }
 
 // Unwatch 取消收藏 post。幂等。
-func (r *InteractionRepo) Unwatch(ctx context.Context, viewerUserID uint32, postID uint32) (bool, error) {
+// 在单个 tx 内删 post_watch ledger + 在 interaction_counter 表中递减计数。
+func (r *InteractionRepo) Unwatch(ctx context.Context, viewerUserID uint32, postID uint32) (bool, int32, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	if !hasTenant || viewerUserID == 0 {
-		return false, interactionV1.ErrorUnauthorized("viewer identity required")
+		return false, 0, interactionV1.ErrorUnauthorized("viewer identity required")
 	}
 
-	affected, err := r.entClient.Client().PostWatch.Delete().
-		Where(
-			postwatch.TenantIDEQ(tid),
-			postwatch.UserIDEQ(viewerUserID),
-			postwatch.PostIDEQ(postID),
-		).
-		Exec(ctx)
+	exists, err := r.ledgerExists(ctx, tid, viewerUserID, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
 	if err != nil {
-		r.log.Errorf("delete post_watch failed: %s", err.Error())
-		return false, interactionV1.ErrorInternalServerError("delete post_watch failed")
+		return false, 0, err
 	}
-	// affected==0 视为未收藏的幂等 no-op
-	return affected > 0, nil
+	if !exists {
+		// 幂等：未收藏，no-op
+		watchCount, qerr := r.readCount(ctx, tid, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+		if qerr != nil {
+			return false, 0, qerr
+		}
+		return false, watchCount, nil
+	}
+
+	txErr := r.txn(ctx, func(tx *ent.Tx) error {
+		affected, err := r.deleteLedgerRow(ctx, tx, tid, viewerUserID, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+		if err != nil {
+			return err
+		}
+		if affected == 0 {
+			// 并发删除，幂等处理
+			return nil
+		}
+		// 在 interaction_counter 表中递减计数（WATCH -1）
+		if err := r.adjustCounterRow(ctx, tx, tid, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH, -1); err != nil {
+			return err
+		}
+		return nil
+	})
+	if txErr != nil {
+		return false, 0, txErr
+	}
+
+	watchCount, err := r.readCount(ctx, tid, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+	if err != nil {
+		return false, 0, err
+	}
+	return false, watchCount, nil
 }
 
 // GetInteractionStatus 批量查询当前 viewer 对指定目标的 {liked, watched} 状态。

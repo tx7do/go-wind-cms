@@ -316,20 +316,6 @@ func (_c *PageCreate) SetNillableIsCustomTemplate(v *bool) *PageCreate {
 	return _c
 }
 
-// SetVisits sets the "visits" field.
-func (_c *PageCreate) SetVisits(v uint32) *PageCreate {
-	_c.mutation.SetVisits(v)
-	return _c
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (_c *PageCreate) SetNillableVisits(v *uint32) *PageCreate {
-	if v != nil {
-		_c.SetVisits(*v)
-	}
-	return _c
-}
-
 // SetCustomFields sets the "custom_fields" field.
 func (_c *PageCreate) SetCustomFields(v *map[string]string) *PageCreate {
 	_c.mutation.SetCustomFields(v)
@@ -448,10 +434,6 @@ func (_c *PageCreate) defaults() error {
 	if _, ok := _c.mutation.IsCustomTemplate(); !ok {
 		v := page.DefaultIsCustomTemplate
 		_c.mutation.SetIsCustomTemplate(v)
-	}
-	if _, ok := _c.mutation.Visits(); !ok {
-		v := page.DefaultVisits
-		_c.mutation.SetVisits(v)
 	}
 	if _, ok := _c.mutation.Depth(); !ok {
 		v := page.DefaultDepth
@@ -599,10 +581,6 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsCustomTemplate(); ok {
 		_spec.SetField(page.FieldIsCustomTemplate, field.TypeBool, value)
 		_node.IsCustomTemplate = &value
-	}
-	if value, ok := _c.mutation.Visits(); ok {
-		_spec.SetField(page.FieldVisits, field.TypeUint32, value)
-		_node.Visits = &value
 	}
 	if value, ok := _c.mutation.CustomFields(); ok {
 		_spec.SetField(page.FieldCustomFields, field.TypeJSON, value)
@@ -1066,30 +1044,6 @@ func (u *PageUpsert) UpdateIsCustomTemplate() *PageUpsert {
 // ClearIsCustomTemplate clears the value of the "is_custom_template" field.
 func (u *PageUpsert) ClearIsCustomTemplate() *PageUpsert {
 	u.SetNull(page.FieldIsCustomTemplate)
-	return u
-}
-
-// SetVisits sets the "visits" field.
-func (u *PageUpsert) SetVisits(v uint32) *PageUpsert {
-	u.Set(page.FieldVisits, v)
-	return u
-}
-
-// UpdateVisits sets the "visits" field to the value that was provided on create.
-func (u *PageUpsert) UpdateVisits() *PageUpsert {
-	u.SetExcluded(page.FieldVisits)
-	return u
-}
-
-// AddVisits adds v to the "visits" field.
-func (u *PageUpsert) AddVisits(v uint32) *PageUpsert {
-	u.Add(page.FieldVisits, v)
-	return u
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (u *PageUpsert) ClearVisits() *PageUpsert {
-	u.SetNull(page.FieldVisits)
 	return u
 }
 
@@ -1620,34 +1574,6 @@ func (u *PageUpsertOne) UpdateIsCustomTemplate() *PageUpsertOne {
 func (u *PageUpsertOne) ClearIsCustomTemplate() *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearIsCustomTemplate()
-	})
-}
-
-// SetVisits sets the "visits" field.
-func (u *PageUpsertOne) SetVisits(v uint32) *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.SetVisits(v)
-	})
-}
-
-// AddVisits adds v to the "visits" field.
-func (u *PageUpsertOne) AddVisits(v uint32) *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.AddVisits(v)
-	})
-}
-
-// UpdateVisits sets the "visits" field to the value that was provided on create.
-func (u *PageUpsertOne) UpdateVisits() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateVisits()
-	})
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (u *PageUpsertOne) ClearVisits() *PageUpsertOne {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearVisits()
 	})
 }
 
@@ -2351,34 +2277,6 @@ func (u *PageUpsertBulk) UpdateIsCustomTemplate() *PageUpsertBulk {
 func (u *PageUpsertBulk) ClearIsCustomTemplate() *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearIsCustomTemplate()
-	})
-}
-
-// SetVisits sets the "visits" field.
-func (u *PageUpsertBulk) SetVisits(v uint32) *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.SetVisits(v)
-	})
-}
-
-// AddVisits adds v to the "visits" field.
-func (u *PageUpsertBulk) AddVisits(v uint32) *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.AddVisits(v)
-	})
-}
-
-// UpdateVisits sets the "visits" field to the value that was provided on create.
-func (u *PageUpsertBulk) UpdateVisits() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.UpdateVisits()
-	})
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (u *PageUpsertBulk) ClearVisits() *PageUpsertBulk {
-	return u.Update(func(s *PageUpsert) {
-		s.ClearVisits()
 	})
 }
 

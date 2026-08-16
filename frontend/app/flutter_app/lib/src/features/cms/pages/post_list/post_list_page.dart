@@ -5,10 +5,12 @@ import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Category,
         ContentServiceV1Tag, ContentServiceV1ListPostResponse,
-        ContentServiceV1ListCategoryResponse, ContentServiceV1ListTagResponse;
+        ContentServiceV1ListCategoryResponse, ContentServiceV1ListTagResponse,
+        InteractionServiceV1TargetType, InteractionServiceV1CounterMetric;
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
@@ -45,6 +47,12 @@ class _PostListPageState extends State<PostListPage> {
   List<ContentServiceV1Tag> _tags = [];
   bool _isLoading = true;
 
+  // 点赞计数缓存：key 为 post.id。计数来自 interaction_counter 表
+  // （post.likes 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _likeCounts = {};
+
+  final _interactionService = InteractionService();
+
   /// 当前选中的分类（可为 null 表示全部）
   int? _selectedCategoryId;
 
@@ -72,8 +80,27 @@ class _PostListPageState extends State<PostListPage> {
 
     if (!mounted) return;
 
+    final posts = (results[0] as ContentServiceV1ListPostResponse?)?.items ?? [];
+    final ids = posts
+        .where((p) => p.id != null)
+        .map((p) => p.id!)
+        .toList(growable: false);
+    Map<int, int> likeCounts = {};
+    if (ids.isNotEmpty) {
+      final countsResp = await _interactionService.getCounts(
+          InteractionServiceV1TargetType.targetTypePost,
+          ids,
+          [InteractionServiceV1CounterMetric.counterMetricLike]);
+      likeCounts = InteractionService.extractCountMap(
+          countsResp,
+          ids,
+          InteractionServiceV1CounterMetric.counterMetricLike);
+    }
+    if (!mounted) return;
+
     setState(() {
-      _posts = (results[0] as ContentServiceV1ListPostResponse?)?.items ?? [];
+      _posts = posts;
+      _likeCounts = likeCounts;
       _categories =
           (results[1] as ContentServiceV1ListCategoryResponse?)?.items ?? [];
       // 按 sortOrder 排序
@@ -236,6 +263,7 @@ class _PostListPageState extends State<PostListPage> {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: PostCard(
                         post: post,
+                        likeCount: _likeCounts[post.id] ?? 0,
                         categories: _categories,
                         tags: _tags,
                       ),
@@ -257,6 +285,7 @@ class _PostListPageState extends State<PostListPage> {
         padding: EdgeInsets.only(bottom: 12.h),
         child: PostCard(
           post: _posts[index],
+          likeCount: _likeCounts[_posts[index].id] ?? 0,
           categories: _categories,
           tags: _tags,
         ),

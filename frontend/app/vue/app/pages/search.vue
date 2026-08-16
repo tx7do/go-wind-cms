@@ -30,7 +30,7 @@ function openPost(postId?: number) {
   <div class="w-full">
     <LayoutPageHero
       :title="t('page.posts.search')"
-      :description="query ? `"${query}"` : ''"
+      :description='query ? `"${query}"` : ""'
       icon="lucide:search"
       size="md"
     />

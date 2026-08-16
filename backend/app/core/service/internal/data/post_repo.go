@@ -28,8 +28,6 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
-
-	"go-wind-cms/pkg/utils"
 )
 
 type PostRepo struct {
@@ -588,15 +586,8 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
-	// 计数列（visits/likes/comment_count）由 InteractionService 独占写入。
-	// 经 FilterBlacklist 剥离客户端通过 update_mask 写入计数列的尝试，同时关闭
-	// go-crud applyUpdateOneNilFieldMask 在“mask 命中且未传值”时下发 SET NULL 的通道，
-	// 避免客户端把计数列 NULL 化造成数据丢失。
-	req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
-		"visits",
-		"likes",
-		"comment_count",
-	})
+	// 计数列已从 Post 表移除，统一存于 interaction_counter 表（由 InteractionService 独占写入），
+	// 故此处不再需要 FilterBlacklist 保护计数列。
 	builder := tx.Post.UpdateOneID(req.GetId())
 	builder.Where(post.IDEQ(req.GetId()))
 	if hasTenant {
@@ -604,8 +595,6 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Post) {
-			// 计数列（visits/likes/comment_count）由 InteractionService 独占写入，
-			// 经 Update 前 FilterBlacklist 剥离客户端通过 update_mask 的写入尝试。
 			// author_id / password_hash 在 Update 时不再接受客户端值（创建时设置），
 			// updated_by 强制取调用者身份，保证审计归属真实。
 			builder.

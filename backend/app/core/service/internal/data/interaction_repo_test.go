@@ -14,6 +14,7 @@ import (
 	"github.com/tx7do/go-crud/viewer" //nolint:goimports -- sqlite3 driver registered via blank import below
 
 	"go-wind-cms/app/core/service/internal/data/ent"
+	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/post"
 	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
@@ -72,8 +73,33 @@ func createTestPost(t *testing.T, db *ent.Client, tid uint32) uint32 {
 	return p.ID
 }
 
-// TestLike_IncrementsPostLikes 验证点赞后 post.likes +1 且 ledger 行存在。
-func TestLike_IncrementsPostLikes(t *testing.T) {
+// readCounterRow 直接查 interaction_counter 表中 (tenant, target_type, target_id, metric=LIKE) 的行，
+// 返回当前计数。不存在行返回 (0, false)。
+func readCounterRow(t *testing.T, db *ent.Client, tid, targetID uint32, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (int64, bool) {
+	t.Helper()
+	row, err := db.InteractionCounter.Query().
+		Where(
+			interactioncounter.TenantIDEQ(tid),
+			interactioncounter.TargetTypeEQ(uint8(targetType)),
+			interactioncounter.TargetIDEQ(targetID),
+			interactioncounter.MetricEQ(uint8(metric)),
+		).
+		Only(viewerCtx(tid, 1))
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, false
+		}
+		require.NoError(t, err, "query interaction_counter row failed")
+	}
+	if row.Count == nil {
+		return 0, true
+	}
+	return *row.Count, true
+}
+
+// TestLike_IncrementsCounter 验证点赞后 interaction_counter 表出现 count=1 的行，
+// 且 ledger 行存在，GetCounts 返回 1。
+func TestLike_IncrementsCounter(t *testing.T) {
 	repo, db, cleanup := newTestInteractionRepo(t)
 	defer cleanup()
 
@@ -83,7 +109,7 @@ func TestLike_IncrementsPostLikes(t *testing.T) {
 	liked, likeCount, err := repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
 	require.NoError(t, err)
 	assert.True(t, liked, "点赞后应返回 liked=true")
-	assert.Equal(t, int32(1), likeCount, "点赞后 likes 计数应为 1")
+	assert.Equal(t, int32(1), likeCount, "点赞后计数应为 1")
 
 	// ledger 行存在（需 viewer context，因 PostLike 表受 tenant privacy 保护）
 	exists, err := db.PostLike.Query().
@@ -96,15 +122,23 @@ func TestLike_IncrementsPostLikes(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, exists, "点赞后 ledger 行应存在")
 
-	// post.likes 在 DB 中确实为 1（需 viewer context）
-	entity, err := db.Post.Query().Where(post.IDEQ(pid)).Only(viewerCtx(1, 100))
+	// interaction_counter 表出现 count=1 的行
+	cnt, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.True(t, exists, "点赞后 interaction_counter 应有行")
+	assert.Equal(t, int64(1), cnt, "interaction_counter 行 count 应为 1")
+
+	// GetCounts 返回 1
+	counts, err := repo.GetCounts(viewerCtx(1, 100), interactionV1.TargetType_TARGET_TYPE_POST, []uint32{pid}, []interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_LIKE})
 	require.NoError(t, err)
-	require.NotNil(t, entity.Likes)
-	assert.Equal(t, int32(1), *entity.Likes, "DB 中 post.likes 应为 1")
+	cm, ok := counts[pid]
+	if assert.True(t, ok, "GetCounts 应返回该 pid 的条目") {
+		assert.Equal(t, int64(1), cm.Counts[0].Count, "GetCounts 返回的计数应为 1")
+		assert.Equal(t, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, cm.Counts[0].Metric)
+	}
 }
 
-// TestUnlike_DecrementsPostLikes 验证取消点赞后 post.likes -1 且 ledger 行删除。
-func TestUnlike_DecrementsPostLikes(t *testing.T) {
+// TestUnlike_DecrementsCounter 验证取消点赞后 counter 行删除（count→0→删行），ledger 行删除。
+func TestUnlike_DecrementsCounter(t *testing.T) {
 	repo, db, cleanup := newTestInteractionRepo(t)
 	defer cleanup()
 
@@ -119,7 +153,7 @@ func TestUnlike_DecrementsPostLikes(t *testing.T) {
 	liked, likeCount, err := repo.Unlike(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
 	require.NoError(t, err)
 	assert.False(t, liked, "取消后应返回 liked=false")
-	assert.Equal(t, int32(0), likeCount, "取消后 likes 计数应为 0")
+	assert.Equal(t, int32(0), likeCount, "取消后计数应为 0")
 
 	// ledger 行已删
 	exists, err := db.PostLike.Query().
@@ -132,13 +166,19 @@ func TestUnlike_DecrementsPostLikes(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, exists, "取消后 ledger 行应不存在")
 
-	entity, err := db.Post.Query().Where(post.IDEQ(pid)).Only(viewerCtx(1, 100))
+	// interaction_counter 行应已删（count 归 0 触发删行）
+	cnt, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.False(t, exists, "取消后 interaction_counter 行应删除")
+	assert.Equal(t, int64(0), cnt, "无行时计数为 0")
+
+	// GetCounts 不返回该 pid 的条目
+	counts, err := repo.GetCounts(viewerCtx(1, 100), interactionV1.TargetType_TARGET_TYPE_POST, []uint32{pid}, []interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_LIKE})
 	require.NoError(t, err)
-	require.NotNil(t, entity.Likes)
-	assert.Equal(t, int32(0), *entity.Likes, "DB 中 post.likes 应为 0")
+	_, ok := counts[pid]
+	assert.False(t, ok, "取消后 GetCounts 不应返回该 pid 的条目")
 }
 
-// TestLike_Idempotent 验证重复点赞幂等：likes 不变 2，ledger 仍单行。
+// TestLike_Idempotent 验证重复点赞幂等：counter 不变 2，ledger 仍单行。
 func TestLike_Idempotent(t *testing.T) {
 	repo, db, cleanup := newTestInteractionRepo(t)
 	defer cleanup()
@@ -155,10 +195,14 @@ func TestLike_Idempotent(t *testing.T) {
 	liked2, likeCount2, err := repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
 	require.NoError(t, err)
 	assert.True(t, liked2, "已点赞应返回 liked=true")
-	assert.Equal(t, int32(1), likeCount2, "重复点赞 likes 不应变 2")
+	assert.Equal(t, int32(1), likeCount2, "重复点赞计数不变 2")
+
+	// counter 仍 count=1
+	cnt, _ := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.Equal(t, int64(1), cnt, "重复点赞后 counter 仍应为 1")
 
 	// ledger 仍单行
-	cnt, err := db.PostLike.Query().
+	cntLedger, err := db.PostLike.Query().
 		Where(
 			postlike.TenantIDEQ(1),
 			postlike.UserIDEQ(100),
@@ -166,10 +210,7 @@ func TestLike_Idempotent(t *testing.T) {
 		).
 		Count(viewerCtx(1, 100))
 	require.NoError(t, err)
-	assert.Equal(t, 0, cnt%1, "ledger 应保持单行（幂等不新增）")
-	if cnt > 1 {
-		t.Fatalf("ledger 行数 %d > 1，幂等失败", cnt)
-	}
+	assert.Equal(t, 1, cntLedger, "ledger 应保持单行（幂等不新增）")
 }
 
 // TestLike_CrossTenantInvisible 验证 tenant A 的点赞对 tenant B 不可见。
@@ -191,79 +232,145 @@ func TestLike_CrossTenantInvisible(t *testing.T) {
 	st := statuses[pid]
 	require.NotNil(t, st)
 	assert.False(t, st.Liked, "跨租户点赞状态应不可见（false）")
+
+	// 跨租户 GetCounts 也不可见
+	counts, err := repo.GetCounts(ctxB, interactionV1.TargetType_TARGET_TYPE_POST, []uint32{pid}, []interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_LIKE})
+	require.NoError(t, err)
+	_, ok := counts[pid]
+	assert.False(t, ok, "跨租户 GetCounts 不应返回该 pid 的条目")
 }
 
-// TestWatch_DoesNotTouchLikes 验证收藏不递增 likes 计数。
-func TestWatch_DoesNotTouchLikes(t *testing.T) {
+// TestWatch_DoesNotTouchCounter 验证收藏不在 counter 表中产生行。
+// TestWatch_IncrementsWatchCounter 验证收藏后 interaction_counter 表出现 WATCH metric 行 count=1，
+// 返回 watchCount=1，且不影响 LIKE metric 行（LIKE 行不存在）。
+func TestWatch_IncrementsWatchCounter(t *testing.T) {
 	repo, db, cleanup := newTestInteractionRepo(t)
 	defer cleanup()
 
 	pid := createTestPost(t, db, 1)
 	ctx := viewerCtx(1, 100)
 
-	watched, err := repo.Watch(ctx, 100, pid)
+	watched, watchCount, err := repo.Watch(ctx, 100, pid)
 	require.NoError(t, err)
 	assert.True(t, watched, "收藏后应返回 watched=true")
+	assert.Equal(t, int32(1), watchCount, "收藏后 watchCount 应为 1")
 
-	// likes 计数应仍为 0（收藏不触碰 likes）
-	entity, err := db.Post.Query().Where(post.IDEQ(pid)).Only(viewerCtx(1, 100))
-	require.NoError(t, err)
-	require.NotNil(t, entity.Likes)
-	assert.Equal(t, int32(0), *entity.Likes, "收藏不应改变 likes 计数")
+	// WATCH metric 行存在，count=1
+	watchCnt, watchExists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+	assert.True(t, watchExists, "收藏后 interaction_counter 应有 WATCH 行")
+	assert.Equal(t, int64(1), watchCnt, "WATCH 行 count 应为 1")
+
+	// LIKE metric 行不应存在（收藏不影响点赞计数）
+	likeCnt, likeExists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.False(t, likeExists, "收藏不应产生 LIKE 行")
+	assert.Equal(t, int64(0), likeCnt, "LIKE 行不存在时计数为 0")
 }
 
-// TestSetNullSecurity_ViaFilterBlacklist 验证：
-// 当客户端把 "likes" 塞进 update_mask 但不传值时，post.likes 不被 SET NULL 清空。
-// 这是 Phase A 修复的核心安全回归。
-func TestSetNullSecurity_ViaFilterBlacklist(t *testing.T) {
+// TestUnwatch_DecrementsWatchCounter 验证取消收藏后 WATCH metric 行删除，watchCount=0。
+func TestUnwatch_DecrementsWatchCounter(t *testing.T) {
 	repo, db, cleanup := newTestInteractionRepo(t)
 	defer cleanup()
-	_ = repo
 
 	pid := createTestPost(t, db, 1)
 	ctx := viewerCtx(1, 100)
 
-	// 先点赞使 likes=1
-	_, _, err := repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	// 先收藏
+	_, _, err := repo.Watch(ctx, 100, pid)
 	require.NoError(t, err)
 
-	// 验证 likes=1
-	entity, err := db.Post.Query().Where(post.IDEQ(pid)).Only(viewerCtx(1, 100))
+	// 取消收藏
+	watched, watchCount, err := repo.Unwatch(ctx, 100, pid)
 	require.NoError(t, err)
-	require.NotNil(t, entity.Likes)
-	require.Equal(t, int32(1), *entity.Likes, "前置：likes 应为 1")
+	assert.False(t, watched, "取消后应返回 watched=false")
+	assert.Equal(t, int32(0), watchCount, "取消后 watchCount 应为 0")
 
-	// 模拟 go-crud applyUpdateOneNilFieldMask 的行为：若 "likes" 未被
-	// FilterBlacklist 剥离，且 mask 命中 + 值为 nil，会下发 SET NULL。
-	// Phase A 的修复在 PostRepo.Update 中用 FilterBlacklist 剥离了 "likes"，
-	// 此处直接断言：经 FilterBlacklist 后 "likes" 不在 mask.paths 中。
-	paths := []string{"likes", "title"}
-	filtered := filterBlacklistForTest(paths, []string{"visits", "likes", "comment_count"})
-	for _, p := range filtered {
-		assert.NotEqual(t, "likes", p, "FilterBlacklist 应剥离 likes，避免 SET NULL")
-	}
-
-	// likes 仍为 1（未被清空）
-	entity2, err := db.Post.Query().Where(post.IDEQ(pid)).Only(viewerCtx(1, 100))
-	require.NoError(t, err)
-	require.NotNil(t, entity2.Likes)
-	assert.Equal(t, int32(1), *entity2.Likes, "likes 不应被 SET NULL 清空")
+	// WATCH 行应已删
+	watchCnt, watchExists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+	assert.False(t, watchExists, "取消后 WATCH 行应删除")
+	assert.Equal(t, int64(0), watchCnt, "无行时计数为 0")
 }
 
-// filterBlacklistForTest 复用 utils.FilterBlacklist 逻辑，用于测试断言。
-func filterBlacklistForTest(data, blacklist []string) []string {
-	bm := make(map[string]struct{}, len(blacklist))
-	for _, s := range blacklist {
-		bm[s] = struct{}{}
-	}
-	n := 0
-	for _, x := range data {
-		if _, found := bm[x]; !found {
-			data[n] = x
-			n++
+// TestWatch_Idempotent 验证重复收藏幂等：WATCH 行 count 不变 2，ledger 仍单行。
+func TestWatch_Idempotent(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid := createTestPost(t, db, 1)
+	ctx := viewerCtx(1, 100)
+
+	// 第一次收藏
+	_, watchCount1, err := repo.Watch(ctx, 100, pid)
+	require.NoError(t, err)
+	assert.Equal(t, int32(1), watchCount1)
+
+	// 第二次收藏（幂等）
+	watched2, watchCount2, err := repo.Watch(ctx, 100, pid)
+	require.NoError(t, err)
+	assert.True(t, watched2, "已收藏应返回 watched=true")
+	assert.Equal(t, int32(1), watchCount2, "重复收藏 watchCount 不变 2")
+
+	// WATCH 行仍 count=1
+	watchCnt, _ := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
+	assert.Equal(t, int64(1), watchCnt, "重复收藏后 WATCH 行仍应为 1")
+}
+
+// TestGetCounts_Batch 验证多目标批量查询返回正确的 map。
+func TestGetCounts_Batch(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid1 := createTestPost(t, db, 1)
+	pid2 := createTestPost(t, db, 1)
+	ctx := viewerCtx(1, 100)
+
+	// 给 pid1 点赞 2 次（幂等，仍 count=1），pid2 点赞 1 次
+	_, _, err := repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid1)
+	require.NoError(t, err)
+	_, _, err = repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid2)
+	require.NoError(t, err)
+
+	// 批量查 [pid1, pid2]：应都返回 count=1
+	counts, err := repo.GetCounts(ctx, interactionV1.TargetType_TARGET_TYPE_POST, []uint32{pid1, pid2}, []interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_LIKE})
+	require.NoError(t, err)
+	assert.Len(t, counts, 2, "应返回两个目标的条目")
+	for _, tid := range []uint32{pid1, pid2} {
+		cm, ok := counts[tid]
+		if !assert.True(t, ok, "目标 %d 应有条目", tid) {
+			continue
+		}
+		assert.Len(t, cm.Counts, 1, "目标 %d 应有 1 个 metric 条目", tid)
+		if assert.Len(t, cm.Counts, 1, "目标 %d 应有 1 个 metric 条目", tid) {
+			assert.Equal(t, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, cm.Counts[0].Metric)
+			assert.Equal(t, int64(1), cm.Counts[0].Count, "目标 %d 计数应为 1", tid)
 		}
 	}
-	return data[:n]
+}
+
+// TestGetCounts_Unauthenticated 验证无 viewer context 时返回 Unauthorized。
+func TestGetCounts_Unauthenticated(t *testing.T) {
+	repo, _, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	// 无 viewer context（context.Background 无 tenant）
+	_, err := repo.GetCounts(context.Background(), interactionV1.TargetType_TARGET_TYPE_POST, []uint32{1}, []interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_LIKE})
+	assert.Error(t, err, "无 viewer context 应返回错误")
+}
+
+// TestGetCounts_EmptyRequest 验证空 target_ids 或 metrics 返回空 map。
+func TestGetCounts_EmptyRequest(t *testing.T) {
+	repo, _, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+	ctx := viewerCtx(1, 100)
+
+	// 空 target_ids
+	counts, err := repo.GetCounts(ctx, interactionV1.TargetType_TARGET_TYPE_POST, []uint32{}, []interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_LIKE})
+	require.NoError(t, err)
+	assert.Empty(t, counts, "空 target_ids 应返回空 map")
+
+	// 空 metrics
+	counts2, err := repo.GetCounts(ctx, interactionV1.TargetType_TARGET_TYPE_POST, []uint32{1}, []interactionV1.CounterMetric{})
+	require.NoError(t, err)
+	assert.Empty(t, counts2, "空 metrics 应返回空 map")
 }
 
 // 引入 entSql 以防 go vet 报未使用（driver 实际由 entCrud 管理）

@@ -140,6 +140,18 @@ func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
 }
 
+// The InteractionCounterFunc type is an adapter to allow the use of ordinary
+// function as InteractionCounter mutator.
+type InteractionCounterFunc func(context.Context, *ent.InteractionCounterMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InteractionCounterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.InteractionCounterMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InteractionCounterMutation", m)
+}
+
 // The InternalMessageFunc type is an adapter to allow the use of ordinary
 // function as InternalMessage mutator.
 type InternalMessageFunc func(context.Context, *ent.InternalMessageMutation) (ent.Value, error)

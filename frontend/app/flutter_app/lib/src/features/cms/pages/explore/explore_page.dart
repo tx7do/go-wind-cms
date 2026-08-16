@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Category,
-        ContentServiceV1Tag;
+        ContentServiceV1Tag, InteractionServiceV1TargetType,
+        InteractionServiceV1CounterMetric;
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart'
     show TagService, ListTagResponse;
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
@@ -38,6 +40,12 @@ class _ExplorePageState extends State<ExplorePage> {
   List<ContentServiceV1Tag> _tags = [];
   bool _isLoading = true;
 
+  // 点赞计数缓存：key 为 post.id。计数来自 interaction_counter 表
+  // （post.likes 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _likeCounts = {};
+
+  final _interactionService = InteractionService();
+
   @override
   void initState() {
     super.initState();
@@ -53,12 +61,32 @@ class _ExplorePageState extends State<ExplorePage> {
 
     if (!mounted) return;
 
+    final posts = (results[1] as ListPostResponse?)?.items ?? [];
+    final ids = posts
+        .where((p) => p.id != null)
+        .map((p) => p.id!)
+        .toList(growable: false);
+    Map<int, int> likeCounts = {};
+    if (ids.isNotEmpty) {
+      final countsResp = await _interactionService.getCounts(
+          InteractionServiceV1TargetType.targetTypePost,
+          ids,
+          [InteractionServiceV1CounterMetric.counterMetricLike]);
+      likeCounts = InteractionService.extractCountMap(
+          countsResp,
+          ids,
+          InteractionServiceV1CounterMetric.counterMetricLike);
+    }
+    if (!mounted) return;
+
     setState(() {
       _categories = (results[0] as ListCategoryResponse?)?.items ?? [];
       // 按 sortOrder 排序
       _categories.sort((a, b) => (a.sortOrder ?? 0).compareTo(b.sortOrder ?? 0));
-      
-      _posts = (results[1] as ListPostResponse?)?.items ?? [];
+
+
+      _posts = posts;
+      _likeCounts = likeCounts;
       _tags = (results[2] as ListTagResponse?)?.items ?? [];
       _isLoading = false;
     });
@@ -202,6 +230,7 @@ class _ExplorePageState extends State<ExplorePage> {
                   categories: _categories,
                   tags: _tags,
                   crossAxisCount: crossCount,
+                  likeCounts: _likeCounts,
                 ),
               ),
             ),
@@ -328,6 +357,7 @@ class _ExplorePageState extends State<ExplorePage> {
               padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
               child: PostCard(
                 post: posts[index],
+                likeCount: _likeCounts[posts[index].id] ?? 0,
                 categories: _categories,
                 tags: _tags,
               ),
@@ -533,12 +563,14 @@ class _WebPostGrid extends StatelessWidget {
   final List<Category> categories;
   final List<ContentServiceV1Tag> tags;
   final int crossAxisCount;
+  final Map<int, int> likeCounts;
 
   const _WebPostGrid({
     required this.posts,
     required this.categories,
     required this.tags,
     required this.crossAxisCount,
+    required this.likeCounts,
   });
 
   @override
@@ -562,7 +594,7 @@ class _WebPostGrid extends StatelessWidget {
               SizedBox(
                 width: childWidth,
                 height: childHeight,
-                child: PostCard(post: posts[i + j], categories: categories, tags: tags),
+                child: PostCard(post: posts[i + j], likeCount: likeCounts[posts[i + j].id] ?? 0, categories: categories, tags: tags),
               ),
             );
             if (j < crossAxisCount - 1 && i + j + 1 < posts.length) {

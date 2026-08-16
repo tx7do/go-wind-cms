@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show CommentServiceV1Comment, ContentServiceV1Post,
-        ContentServiceV1Category, ContentServiceV1Tag;
+        ContentServiceV1Category, ContentServiceV1Tag,
+        InteractionServiceV1TargetType, InteractionServiceV1CounterMetric;
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
@@ -48,6 +50,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
   CommentServiceV1Comment? _replyTo;
   bool _isLoading = true;
 
+  // 评论点赞计数缓存：key 为 comment.id。计数来自 interaction_counter 表
+  // （comment.like_count 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _commentLikeCounts = {};
+
+  final _interactionService = InteractionService();
+
   @override
   void initState() {
     super.initState();
@@ -73,12 +81,29 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final categories = (results[1] as ListCategoryResponse?)?.items ?? [];
     final tags = (results[2] as ListTagResponse?)?.items ?? [];
     final comments = (results[3] as ListCommentResponse?)?.items ?? [];
+    final cids = comments
+        .where((c) => c.id != null)
+        .map((c) => c.id!)
+        .toList(growable: false);
+    Map<int, int> ccounts = {};
+    if (cids.isNotEmpty) {
+      final cresp = await _interactionService.getCounts(
+          InteractionServiceV1TargetType.targetTypeComment,
+          cids,
+          [InteractionServiceV1CounterMetric.counterMetricLike]);
+      ccounts = InteractionService.extractCountMap(
+          cresp,
+          cids,
+          InteractionServiceV1CounterMetric.counterMetricLike);
+    }
+    if (!mounted) return;
 
     setState(() {
       _post = post;
       _categories = categories;
       _tags = tags;
       _comments = comments;
+      _commentLikeCounts = ccounts;
       _commentTree = buildCommentTree(comments);
       _isLoading = false;
     });
@@ -118,9 +143,27 @@ class _PostDetailPageState extends State<PostDetailPage> {
     );
     if (!mounted) return;
     if (result is ListCommentResponse) {
+      final comments = result.items ?? [];
+      final cids = comments
+          .where((c) => c.id != null)
+          .map((c) => c.id!)
+          .toList(growable: false);
+      Map<int, int> ccounts = {};
+      if (cids.isNotEmpty) {
+        final cresp = await _interactionService.getCounts(
+            InteractionServiceV1TargetType.targetTypeComment,
+            cids,
+            [InteractionServiceV1CounterMetric.counterMetricLike]);
+        ccounts = InteractionService.extractCountMap(
+            cresp,
+            cids,
+            InteractionServiceV1CounterMetric.counterMetricLike);
+      }
+      if (!mounted) return;
       setState(() {
-        _comments = result.items ?? [];
-        _commentTree = buildCommentTree(_comments);
+        _comments = comments;
+        _commentLikeCounts = ccounts;
+        _commentTree = buildCommentTree(comments);
       });
     }
   }
@@ -140,7 +183,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget _buildView(BuildContext context, {required bool isMobile}) {
     final theme = Theme.of(context);
     final post = _post!;
-    final commentCount = post.commentCount ?? _comments.length;
+    final commentCount = _comments.length;
 
     final appBar = AppBar(
       backgroundColor: theme.colorScheme.surface,
@@ -251,6 +294,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           isMobile: true,
           asSliver: true,
           onReply: (c) => setState(() => _replyTo = c),
+          commentLikeCounts: _commentLikeCounts,
         ),
         SliverToBoxAdapter(child: SizedBox(height: 16.h)),
       ],
@@ -291,6 +335,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       allComments: _comments,
                       isMobile: false,
                       onReply: (c) => setState(() => _replyTo = c),
+                      commentLikeCounts: _commentLikeCounts,
                     ),
                     const SizedBox(height: 16),
                   ],

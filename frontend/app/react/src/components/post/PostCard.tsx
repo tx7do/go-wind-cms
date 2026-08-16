@@ -20,12 +20,14 @@ interface PostCardProps {
     post: contentservicev1_Post;
     from?: string;
     categoryId?: number;
+    likeCount?: number;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
                                                post,
                                                from = 'post-list',
-                                               categoryId
+                                               categoryId,
+                                               likeCount
                                            }) => {
     const router = useI18nRouter();
 
@@ -100,12 +102,8 @@ const PostCard: React.FC<PostCardProps> = ({
                     </div>
                     <div className="flex flex-wrap gap-4">
                         <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <XIcon name="carbon:view" size={16}/>
-                            <span>{post.visits || 0}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 whitespace-nowrap">
                             <XIcon name="carbon:thumbs-up" size={16}/>
-                            <span>{post.likes || 0}</span>
+                            <span>{likeCount || 0}</span>
                         </div>
                     </div>
                 </div>

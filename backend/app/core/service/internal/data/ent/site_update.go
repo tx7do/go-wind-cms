@@ -329,33 +329,6 @@ func (_u *SiteUpdate) ClearTheme() *SiteUpdate {
 	return _u
 }
 
-// SetVisitCount sets the "visit_count" field.
-func (_u *SiteUpdate) SetVisitCount(v uint64) *SiteUpdate {
-	_u.mutation.ResetVisitCount()
-	_u.mutation.SetVisitCount(v)
-	return _u
-}
-
-// SetNillableVisitCount sets the "visit_count" field if the given value is not nil.
-func (_u *SiteUpdate) SetNillableVisitCount(v *uint64) *SiteUpdate {
-	if v != nil {
-		_u.SetVisitCount(*v)
-	}
-	return _u
-}
-
-// AddVisitCount adds value to the "visit_count" field.
-func (_u *SiteUpdate) AddVisitCount(v int64) *SiteUpdate {
-	_u.mutation.AddVisitCount(v)
-	return _u
-}
-
-// ClearVisitCount clears the value of the "visit_count" field.
-func (_u *SiteUpdate) ClearVisitCount() *SiteUpdate {
-	_u.mutation.ClearVisitCount()
-	return _u
-}
-
 // Mutation returns the SiteMutation object of the builder.
 func (_u *SiteUpdate) Mutation() *SiteMutation {
 	return _u.mutation
@@ -519,15 +492,6 @@ func (_u *SiteUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ThemeCleared() {
 		_spec.ClearField(site.FieldTheme, field.TypeString)
-	}
-	if value, ok := _u.mutation.VisitCount(); ok {
-		_spec.SetField(site.FieldVisitCount, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.AddedVisitCount(); ok {
-		_spec.AddField(site.FieldVisitCount, field.TypeUint64, value)
-	}
-	if _u.mutation.VisitCountCleared() {
-		_spec.ClearField(site.FieldVisitCount, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -850,33 +814,6 @@ func (_u *SiteUpdateOne) ClearTheme() *SiteUpdateOne {
 	return _u
 }
 
-// SetVisitCount sets the "visit_count" field.
-func (_u *SiteUpdateOne) SetVisitCount(v uint64) *SiteUpdateOne {
-	_u.mutation.ResetVisitCount()
-	_u.mutation.SetVisitCount(v)
-	return _u
-}
-
-// SetNillableVisitCount sets the "visit_count" field if the given value is not nil.
-func (_u *SiteUpdateOne) SetNillableVisitCount(v *uint64) *SiteUpdateOne {
-	if v != nil {
-		_u.SetVisitCount(*v)
-	}
-	return _u
-}
-
-// AddVisitCount adds value to the "visit_count" field.
-func (_u *SiteUpdateOne) AddVisitCount(v int64) *SiteUpdateOne {
-	_u.mutation.AddVisitCount(v)
-	return _u
-}
-
-// ClearVisitCount clears the value of the "visit_count" field.
-func (_u *SiteUpdateOne) ClearVisitCount() *SiteUpdateOne {
-	_u.mutation.ClearVisitCount()
-	return _u
-}
-
 // Mutation returns the SiteMutation object of the builder.
 func (_u *SiteUpdateOne) Mutation() *SiteMutation {
 	return _u.mutation
@@ -1070,15 +1007,6 @@ func (_u *SiteUpdateOne) sqlSave(ctx context.Context) (_node *Site, err error) {
 	}
 	if _u.mutation.ThemeCleared() {
 		_spec.ClearField(site.FieldTheme, field.TypeString)
-	}
-	if value, ok := _u.mutation.VisitCount(); ok {
-		_spec.SetField(site.FieldVisitCount, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.AddedVisitCount(); ok {
-		_spec.AddField(site.FieldVisitCount, field.TypeUint64, value)
-	}
-	if _u.mutation.VisitCountCleared() {
-		_spec.ClearField(site.FieldVisitCount, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Site{config: _u.config}

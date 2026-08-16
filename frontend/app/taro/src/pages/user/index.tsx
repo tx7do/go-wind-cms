@@ -4,7 +4,7 @@ import {View, Text, Image} from '@tarojs/components';
 import XIcon from '@/plugins/xicon';
 import {identityservicev1_User, contentservicev1_Post, contentservicev1_ListPostResponse} from '@/api/generated/app/service/v1';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
-import {listWatchedPosts} from '@/api/hooks/interaction';
+import {listWatchedPosts, useGetCounts, extractCount} from '@/api/hooks/interaction';
 import {PostCard} from '@/components/post';
 import {useI18nRouter} from '@/i18n/helpers';
 import {usePageTitle} from '@/hooks/usePageTitle';
@@ -18,6 +18,11 @@ export default function UserProfilePage() {
     const [collections, setCollections] = useState<contentservicev1_Post[]>([]);
     const [collectionsLoading, setCollectionsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<'posts' | 'activities' | 'collections'>('posts');
+
+    // 收集当前页 collection 的 ID，用于批量查询点赞计数。
+    // 计数由 interaction_counter 表提供（post.likes 列已移除）。
+    const collectionIds = useMemo(() => collections.map(p => p.id).filter((id): id is number => typeof id === 'number'), [collections]);
+    const collectionsCountsResp = useGetCounts('TARGET_TYPE_POST', collectionIds, ['COUNTER_METRIC_LIKE']);
 
     const stats = useMemo(() => ({
         followers: user?.followers ?? 0,
@@ -170,6 +175,7 @@ export default function UserProfilePage() {
                                   key={`${post.id}-${index}`}
                                   post={post}
                                   from='user-collections'
+                                  likeCount={extractCount(collectionsCountsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')}
                                 />
                             ))
                         ) : (

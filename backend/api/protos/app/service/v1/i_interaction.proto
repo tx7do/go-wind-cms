@@ -56,4 +56,12 @@ service InteractionService {
       get: "/app/v1/interactions/watched-posts"
     };
   }
+
+  // 批量查询计数
+  rpc GetCounts (interaction.service.v1.GetCountsRequest) returns (interaction.service.v1.GetCountsResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/counts:list"
+      body: "*"
+    };
+  }
 }

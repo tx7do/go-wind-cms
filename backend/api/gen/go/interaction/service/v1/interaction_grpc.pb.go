@@ -27,6 +27,7 @@ const (
 	InteractionService_Unwatch_FullMethodName              = "/interaction.service.v1.InteractionService/Unwatch"
 	InteractionService_GetInteractionStatus_FullMethodName = "/interaction.service.v1.InteractionService/GetInteractionStatus"
 	InteractionService_ListWatchedPosts_FullMethodName     = "/interaction.service.v1.InteractionService/ListWatchedPosts"
+	InteractionService_GetCounts_FullMethodName            = "/interaction.service.v1.InteractionService/GetCounts"
 )
 
 // InteractionServiceClient is the client API for InteractionService service.
@@ -35,8 +36,9 @@ const (
 //
 // 交互服务（点赞/收藏计数内聚子系统）
 //
-// 作为 post/comment 计数列（likes / like_count）的唯一写入方，集中管理点赞与收藏的
-// ledger 记录及计数缓存递增。viewer 用户身份由鉴权上下文注入，请求体不接受 user_id。
+// 作为点赞/收藏计数的唯一写入方，集中管理 ledger 记录及 interaction_counter 表的
+// 计数 upsert。post/comment 表上的散落计数列已移除，计数统一存于 counter 表。
+// viewer 用户身份由鉴权上下文注入，请求体不接受 user_id。
 //
 // 注意：ListWatchedPosts 复用 content.service.v1.ListPostResponse，因此本 proto
 // import content/service/v1/post.proto。这是仓库内首个跨模块 L1 import，权衡是
@@ -54,6 +56,8 @@ type InteractionServiceClient interface {
 	GetInteractionStatus(ctx context.Context, in *GetInteractionStatusRequest, opts ...grpc.CallOption) (*GetInteractionStatusResponse, error)
 	// 列出当前 viewer 收藏的 post。
 	ListWatchedPosts(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListPostResponse, error)
+	// 批量查询指定目标的计数（如点赞数）。供前端列表/详情渲染计数展示。
+	GetCounts(ctx context.Context, in *GetCountsRequest, opts ...grpc.CallOption) (*GetCountsResponse, error)
 }
 
 type interactionServiceClient struct {
@@ -124,14 +128,25 @@ func (c *interactionServiceClient) ListWatchedPosts(ctx context.Context, in *v1.
 	return out, nil
 }
 
+func (c *interactionServiceClient) GetCounts(ctx context.Context, in *GetCountsRequest, opts ...grpc.CallOption) (*GetCountsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCountsResponse)
+	err := c.cc.Invoke(ctx, InteractionService_GetCounts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InteractionServiceServer is the server API for InteractionService service.
 // All implementations must embed UnimplementedInteractionServiceServer
 // for forward compatibility.
 //
 // 交互服务（点赞/收藏计数内聚子系统）
 //
-// 作为 post/comment 计数列（likes / like_count）的唯一写入方，集中管理点赞与收藏的
-// ledger 记录及计数缓存递增。viewer 用户身份由鉴权上下文注入，请求体不接受 user_id。
+// 作为点赞/收藏计数的唯一写入方，集中管理 ledger 记录及 interaction_counter 表的
+// 计数 upsert。post/comment 表上的散落计数列已移除，计数统一存于 counter 表。
+// viewer 用户身份由鉴权上下文注入，请求体不接受 user_id。
 //
 // 注意：ListWatchedPosts 复用 content.service.v1.ListPostResponse，因此本 proto
 // import content/service/v1/post.proto。这是仓库内首个跨模块 L1 import，权衡是
@@ -149,6 +164,8 @@ type InteractionServiceServer interface {
 	GetInteractionStatus(context.Context, *GetInteractionStatusRequest) (*GetInteractionStatusResponse, error)
 	// 列出当前 viewer 收藏的 post。
 	ListWatchedPosts(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
+	// 批量查询指定目标的计数（如点赞数）。供前端列表/详情渲染计数展示。
+	GetCounts(context.Context, *GetCountsRequest) (*GetCountsResponse, error)
 	mustEmbedUnimplementedInteractionServiceServer()
 }
 
@@ -176,6 +193,9 @@ func (UnimplementedInteractionServiceServer) GetInteractionStatus(context.Contex
 }
 func (UnimplementedInteractionServiceServer) ListWatchedPosts(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWatchedPosts not implemented")
+}
+func (UnimplementedInteractionServiceServer) GetCounts(context.Context, *GetCountsRequest) (*GetCountsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCounts not implemented")
 }
 func (UnimplementedInteractionServiceServer) mustEmbedUnimplementedInteractionServiceServer() {}
 func (UnimplementedInteractionServiceServer) testEmbeddedByValue()                            {}
@@ -306,6 +326,24 @@ func _InteractionService_ListWatchedPosts_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InteractionService_GetCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InteractionServiceServer).GetCounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InteractionService_GetCounts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InteractionServiceServer).GetCounts(ctx, req.(*GetCountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InteractionService_ServiceDesc is the grpc.ServiceDesc for InteractionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -336,6 +374,10 @@ var InteractionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWatchedPosts",
 			Handler:    _InteractionService_ListWatchedPosts_Handler,
+		},
+		{
+			MethodName: "GetCounts",
+			Handler:    _InteractionService_GetCounts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

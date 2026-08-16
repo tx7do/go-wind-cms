@@ -20,6 +20,10 @@ class CommentSection extends StatelessWidget {
   final bool asSliver;
   final void Function(CommentServiceV1Comment comment)? onReply;
 
+  /// 评论点赞计数映射：key 为 comment.id。计数来自 interaction_counter 表
+  /// （comment.like_count 列已移除），由父页批量查询 GetCounts(COMMENT, LIKE)。
+  final Map<int, int> commentLikeCounts;
+
   const CommentSection({
     super.key,
     required this.commentCount,
@@ -28,6 +32,7 @@ class CommentSection extends StatelessWidget {
     required this.isMobile,
     this.asSliver = false,
     this.onReply,
+    required this.commentLikeCounts,
   });
 
   /// 评论区标题栏（蓝色竖条 + "评论 (N)"）
@@ -72,6 +77,7 @@ class CommentSection extends StatelessWidget {
       depth: depth,
       allComments: allComments,
       onReply: onReply,
+      likeCount: commentLikeCounts[comment.id] ?? 0,
     );
     final children = findChildren(comment, allComments);
     for (final child in children) {

@@ -46,8 +46,6 @@ const (
 	FieldTemplate = "template"
 	// FieldTheme holds the string denoting the theme field in the database.
 	FieldTheme = "theme"
-	// FieldVisitCount holds the string denoting the visit_count field in the database.
-	FieldVisitCount = "visit_count"
 	// Table holds the table name of the site in the database.
 	Table = "sites"
 )
@@ -71,7 +69,6 @@ var Columns = []string{
 	FieldDefaultLocale,
 	FieldTemplate,
 	FieldTheme,
-	FieldVisitCount,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -96,8 +93,6 @@ var (
 	DefaultTenantID uint32
 	// DefaultIsDefault holds the default value on creation for the "is_default" field.
 	DefaultIsDefault bool
-	// DefaultVisitCount holds the default value on creation for the "visit_count" field.
-	DefaultVisitCount uint64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -210,9 +205,4 @@ func ByTemplate(opts ...sql.OrderTermOption) OrderOption {
 // ByTheme orders the results by the theme field.
 func ByTheme(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTheme, opts...).ToFunc()
-}
-
-// ByVisitCount orders the results by the visit_count field.
-func ByVisitCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldVisitCount, opts...).ToFunc()
 }

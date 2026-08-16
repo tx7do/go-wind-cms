@@ -73,24 +73,6 @@ func (Post) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Int32("visits").
-			Comment("帖子访问次数").
-			Default(0).
-			Optional().
-			Nillable(),
-
-		field.Int32("likes").
-			Comment("帖子点赞次数").
-			Default(0).
-			Optional().
-			Nillable(),
-
-		field.Int32("comment_count").
-			Comment("帖子评论数").
-			Default(0).
-			Optional().
-			Nillable(),
-
 		field.Uint32("author_id").
 			Comment("评论作者ID，0表示游客").
 			Default(0).

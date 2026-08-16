@@ -44,12 +44,6 @@ const (
 	FieldAutoSummary = "auto_summary"
 	// FieldIsFeatured holds the string denoting the is_featured field in the database.
 	FieldIsFeatured = "is_featured"
-	// FieldVisits holds the string denoting the visits field in the database.
-	FieldVisits = "visits"
-	// FieldLikes holds the string denoting the likes field in the database.
-	FieldLikes = "likes"
-	// FieldCommentCount holds the string denoting the comment_count field in the database.
-	FieldCommentCount = "comment_count"
 	// FieldAuthorID holds the string denoting the author_id field in the database.
 	FieldAuthorID = "author_id"
 	// FieldAuthorName holds the string denoting the author_name field in the database.
@@ -82,9 +76,6 @@ var Columns = []string{
 	FieldInProgress,
 	FieldAutoSummary,
 	FieldIsFeatured,
-	FieldVisits,
-	FieldLikes,
-	FieldCommentCount,
 	FieldAuthorID,
 	FieldAuthorName,
 	FieldPasswordHash,
@@ -122,12 +113,6 @@ var (
 	DefaultAutoSummary bool
 	// DefaultIsFeatured holds the default value on creation for the "is_featured" field.
 	DefaultIsFeatured bool
-	// DefaultVisits holds the default value on creation for the "visits" field.
-	DefaultVisits int32
-	// DefaultLikes holds the default value on creation for the "likes" field.
-	DefaultLikes int32
-	// DefaultCommentCount holds the default value on creation for the "comment_count" field.
-	DefaultCommentCount int32
 	// DefaultAuthorID holds the default value on creation for the "author_id" field.
 	DefaultAuthorID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -273,21 +258,6 @@ func ByAutoSummary(opts ...sql.OrderTermOption) OrderOption {
 // ByIsFeatured orders the results by the is_featured field.
 func ByIsFeatured(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsFeatured, opts...).ToFunc()
-}
-
-// ByVisits orders the results by the visits field.
-func ByVisits(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldVisits, opts...).ToFunc()
-}
-
-// ByLikes orders the results by the likes field.
-func ByLikes(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLikes, opts...).ToFunc()
-}
-
-// ByCommentCount orders the results by the comment_count field.
-func ByCommentCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCommentCount, opts...).ToFunc()
 }
 
 // ByAuthorID orders the results by the author_id field.

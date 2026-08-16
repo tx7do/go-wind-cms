@@ -232,48 +232,6 @@ func (_c *PostCreate) SetNillableIsFeatured(v *bool) *PostCreate {
 	return _c
 }
 
-// SetVisits sets the "visits" field.
-func (_c *PostCreate) SetVisits(v int32) *PostCreate {
-	_c.mutation.SetVisits(v)
-	return _c
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (_c *PostCreate) SetNillableVisits(v *int32) *PostCreate {
-	if v != nil {
-		_c.SetVisits(*v)
-	}
-	return _c
-}
-
-// SetLikes sets the "likes" field.
-func (_c *PostCreate) SetLikes(v int32) *PostCreate {
-	_c.mutation.SetLikes(v)
-	return _c
-}
-
-// SetNillableLikes sets the "likes" field if the given value is not nil.
-func (_c *PostCreate) SetNillableLikes(v *int32) *PostCreate {
-	if v != nil {
-		_c.SetLikes(*v)
-	}
-	return _c
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (_c *PostCreate) SetCommentCount(v int32) *PostCreate {
-	_c.mutation.SetCommentCount(v)
-	return _c
-}
-
-// SetNillableCommentCount sets the "comment_count" field if the given value is not nil.
-func (_c *PostCreate) SetNillableCommentCount(v *int32) *PostCreate {
-	if v != nil {
-		_c.SetCommentCount(*v)
-	}
-	return _c
-}
-
 // SetAuthorID sets the "author_id" field.
 func (_c *PostCreate) SetAuthorID(v uint32) *PostCreate {
 	_c.mutation.SetAuthorID(v)
@@ -411,18 +369,6 @@ func (_c *PostCreate) defaults() error {
 		v := post.DefaultIsFeatured
 		_c.mutation.SetIsFeatured(v)
 	}
-	if _, ok := _c.mutation.Visits(); !ok {
-		v := post.DefaultVisits
-		_c.mutation.SetVisits(v)
-	}
-	if _, ok := _c.mutation.Likes(); !ok {
-		v := post.DefaultLikes
-		_c.mutation.SetLikes(v)
-	}
-	if _, ok := _c.mutation.CommentCount(); !ok {
-		v := post.DefaultCommentCount
-		_c.mutation.SetCommentCount(v)
-	}
 	if _, ok := _c.mutation.AuthorID(); !ok {
 		v := post.DefaultAuthorID
 		_c.mutation.SetAuthorID(v)
@@ -539,18 +485,6 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsFeatured(); ok {
 		_spec.SetField(post.FieldIsFeatured, field.TypeBool, value)
 		_node.IsFeatured = &value
-	}
-	if value, ok := _c.mutation.Visits(); ok {
-		_spec.SetField(post.FieldVisits, field.TypeInt32, value)
-		_node.Visits = &value
-	}
-	if value, ok := _c.mutation.Likes(); ok {
-		_spec.SetField(post.FieldLikes, field.TypeInt32, value)
-		_node.Likes = &value
-	}
-	if value, ok := _c.mutation.CommentCount(); ok {
-		_spec.SetField(post.FieldCommentCount, field.TypeInt32, value)
-		_node.CommentCount = &value
 	}
 	if value, ok := _c.mutation.AuthorID(); ok {
 		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)
@@ -879,78 +813,6 @@ func (u *PostUpsert) UpdateIsFeatured() *PostUpsert {
 // ClearIsFeatured clears the value of the "is_featured" field.
 func (u *PostUpsert) ClearIsFeatured() *PostUpsert {
 	u.SetNull(post.FieldIsFeatured)
-	return u
-}
-
-// SetVisits sets the "visits" field.
-func (u *PostUpsert) SetVisits(v int32) *PostUpsert {
-	u.Set(post.FieldVisits, v)
-	return u
-}
-
-// UpdateVisits sets the "visits" field to the value that was provided on create.
-func (u *PostUpsert) UpdateVisits() *PostUpsert {
-	u.SetExcluded(post.FieldVisits)
-	return u
-}
-
-// AddVisits adds v to the "visits" field.
-func (u *PostUpsert) AddVisits(v int32) *PostUpsert {
-	u.Add(post.FieldVisits, v)
-	return u
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (u *PostUpsert) ClearVisits() *PostUpsert {
-	u.SetNull(post.FieldVisits)
-	return u
-}
-
-// SetLikes sets the "likes" field.
-func (u *PostUpsert) SetLikes(v int32) *PostUpsert {
-	u.Set(post.FieldLikes, v)
-	return u
-}
-
-// UpdateLikes sets the "likes" field to the value that was provided on create.
-func (u *PostUpsert) UpdateLikes() *PostUpsert {
-	u.SetExcluded(post.FieldLikes)
-	return u
-}
-
-// AddLikes adds v to the "likes" field.
-func (u *PostUpsert) AddLikes(v int32) *PostUpsert {
-	u.Add(post.FieldLikes, v)
-	return u
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (u *PostUpsert) ClearLikes() *PostUpsert {
-	u.SetNull(post.FieldLikes)
-	return u
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (u *PostUpsert) SetCommentCount(v int32) *PostUpsert {
-	u.Set(post.FieldCommentCount, v)
-	return u
-}
-
-// UpdateCommentCount sets the "comment_count" field to the value that was provided on create.
-func (u *PostUpsert) UpdateCommentCount() *PostUpsert {
-	u.SetExcluded(post.FieldCommentCount)
-	return u
-}
-
-// AddCommentCount adds v to the "comment_count" field.
-func (u *PostUpsert) AddCommentCount(v int32) *PostUpsert {
-	u.Add(post.FieldCommentCount, v)
-	return u
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (u *PostUpsert) ClearCommentCount() *PostUpsert {
-	u.SetNull(post.FieldCommentCount)
 	return u
 }
 
@@ -1402,90 +1264,6 @@ func (u *PostUpsertOne) UpdateIsFeatured() *PostUpsertOne {
 func (u *PostUpsertOne) ClearIsFeatured() *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearIsFeatured()
-	})
-}
-
-// SetVisits sets the "visits" field.
-func (u *PostUpsertOne) SetVisits(v int32) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetVisits(v)
-	})
-}
-
-// AddVisits adds v to the "visits" field.
-func (u *PostUpsertOne) AddVisits(v int32) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.AddVisits(v)
-	})
-}
-
-// UpdateVisits sets the "visits" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateVisits() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateVisits()
-	})
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (u *PostUpsertOne) ClearVisits() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearVisits()
-	})
-}
-
-// SetLikes sets the "likes" field.
-func (u *PostUpsertOne) SetLikes(v int32) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetLikes(v)
-	})
-}
-
-// AddLikes adds v to the "likes" field.
-func (u *PostUpsertOne) AddLikes(v int32) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.AddLikes(v)
-	})
-}
-
-// UpdateLikes sets the "likes" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateLikes() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateLikes()
-	})
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (u *PostUpsertOne) ClearLikes() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearLikes()
-	})
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (u *PostUpsertOne) SetCommentCount(v int32) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetCommentCount(v)
-	})
-}
-
-// AddCommentCount adds v to the "comment_count" field.
-func (u *PostUpsertOne) AddCommentCount(v int32) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.AddCommentCount(v)
-	})
-}
-
-// UpdateCommentCount sets the "comment_count" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateCommentCount() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateCommentCount()
-	})
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (u *PostUpsertOne) ClearCommentCount() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearCommentCount()
 	})
 }
 
@@ -2119,90 +1897,6 @@ func (u *PostUpsertBulk) UpdateIsFeatured() *PostUpsertBulk {
 func (u *PostUpsertBulk) ClearIsFeatured() *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearIsFeatured()
-	})
-}
-
-// SetVisits sets the "visits" field.
-func (u *PostUpsertBulk) SetVisits(v int32) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetVisits(v)
-	})
-}
-
-// AddVisits adds v to the "visits" field.
-func (u *PostUpsertBulk) AddVisits(v int32) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.AddVisits(v)
-	})
-}
-
-// UpdateVisits sets the "visits" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateVisits() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateVisits()
-	})
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (u *PostUpsertBulk) ClearVisits() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearVisits()
-	})
-}
-
-// SetLikes sets the "likes" field.
-func (u *PostUpsertBulk) SetLikes(v int32) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetLikes(v)
-	})
-}
-
-// AddLikes adds v to the "likes" field.
-func (u *PostUpsertBulk) AddLikes(v int32) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.AddLikes(v)
-	})
-}
-
-// UpdateLikes sets the "likes" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateLikes() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateLikes()
-	})
-}
-
-// ClearLikes clears the value of the "likes" field.
-func (u *PostUpsertBulk) ClearLikes() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearLikes()
-	})
-}
-
-// SetCommentCount sets the "comment_count" field.
-func (u *PostUpsertBulk) SetCommentCount(v int32) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetCommentCount(v)
-	})
-}
-
-// AddCommentCount adds v to the "comment_count" field.
-func (u *PostUpsertBulk) AddCommentCount(v int32) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.AddCommentCount(v)
-	})
-}
-
-// UpdateCommentCount sets the "comment_count" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateCommentCount() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateCommentCount()
-	})
-}
-
-// ClearCommentCount clears the value of the "comment_count" field.
-func (u *PostUpsertBulk) ClearCommentCount() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearCommentCount()
 	})
 }
 

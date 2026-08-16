@@ -193,9 +193,6 @@ final mockPosts = [
   Post(
     id: 1,
     isFeatured: true,
-    visits: 3420,
-    likes: 186,
-    commentCount: 24,
     authorName: '张明',
     translations: [
       PostTranslation(
@@ -215,9 +212,6 @@ final mockPosts = [
   Post(
     id: 2,
     isFeatured: true,
-    visits: 2180,
-    likes: 145,
-    commentCount: 18,
     authorName: '李华',
     translations: [
       PostTranslation(
@@ -236,9 +230,6 @@ final mockPosts = [
   Post(
     id: 3,
     isFeatured: true,
-    visits: 5100,
-    likes: 267,
-    commentCount: 32,
     authorName: '王芳',
     translations: [
       PostTranslation(
@@ -257,9 +248,6 @@ final mockPosts = [
   Post(
     id: 4,
     isFeatured: true,
-    visits: 6780,
-    likes: 312,
-    commentCount: 45,
     authorName: '陈晨',
     translations: [
       PostTranslation(
@@ -278,9 +266,6 @@ final mockPosts = [
   Post(
     id: 5,
     isFeatured: true,
-    visits: 1560,
-    likes: 98,
-    commentCount: 12,
     authorName: '赵伟',
     translations: [
       PostTranslation(
@@ -298,9 +283,6 @@ final mockPosts = [
   ),
   Post(
     id: 6,
-    visits: 4320,
-    likes: 201,
-    commentCount: 28,
     authorName: '林小美',
     translations: [
       PostTranslation(
@@ -318,9 +300,6 @@ final mockPosts = [
   ),
   Post(
     id: 7,
-    visits: 8900,
-    likes: 389,
-    commentCount: 56,
     authorName: '张明',
     translations: [
       PostTranslation(
@@ -338,9 +317,6 @@ final mockPosts = [
   ),
   Post(
     id: 8,
-    visits: 3210,
-    likes: 156,
-    commentCount: 19,
     authorName: '周影',
     translations: [
       PostTranslation(
@@ -358,9 +334,6 @@ final mockPosts = [
   ),
   Post(
     id: 9,
-    visits: 2340,
-    likes: 112,
-    commentCount: 14,
     authorName: '李华',
     translations: [
       PostTranslation(
@@ -378,9 +351,6 @@ final mockPosts = [
   ),
   Post(
     id: 10,
-    visits: 9870,
-    likes: 425,
-    commentCount: 38,
     authorName: '行者无疆',
     translations: [
       PostTranslation(
@@ -406,7 +376,6 @@ final mockComments = [
     objectId: 1,
     content: '写得太好了！Impeller 那部分分析得很到位，期待更多 Flutter 相关内容。',
     authorName: '小王',
-    likeCount: 12,
     createdAt: _ts(2025, 12, 28, 14, 30),
   ),
   Comment(
@@ -415,7 +384,6 @@ final mockComments = [
     objectId: 1,
     content: 'Material 3 的适配确实需要花一些功夫，不过效果还是很不错的。',
     authorName: '阿飞',
-    likeCount: 8,
     createdAt: _ts(2025, 12, 28, 15, 45),
   ),
   Comment(
@@ -425,7 +393,6 @@ final mockComments = [
     content: '有没有关于 Flutter Web 的性能优化建议？',
     authorName: '前端新手',
     parentId: 2,
-    likeCount: 3,
     createdAt: _ts(2025, 12, 28, 16, 20),
   ),
   Comment(
@@ -434,7 +401,6 @@ final mockComments = [
     objectId: 2,
     content: '微服务架构确实更适合大型 CMS 系统，我们公司最近也在做类似的迁移。',
     authorName: '架构师A',
-    likeCount: 15,
     createdAt: _ts(2025, 12, 27, 10, 0),
   ),
   Comment(
@@ -443,7 +409,6 @@ final mockComments = [
     objectId: 2,
     content: '缓存策略那部分可以再详细讲讲吗？Redis + CDN 的方案如何？',
     authorName: '运维老李',
-    likeCount: 7,
     createdAt: _ts(2025, 12, 27, 11, 30),
   ),
   Comment(
@@ -452,7 +417,6 @@ final mockComments = [
     objectId: 4,
     content: '那家小店我也去过！老板人超好，推荐他们的招牌牛肉面。',
     authorName: '吃货一号',
-    likeCount: 22,
     createdAt: _ts(2025, 12, 25, 19, 0),
   ),
 ];

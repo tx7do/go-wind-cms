@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { fetchListPost } from '@/api/composables/post'
+import { useGetCounts, extractCount } from '@/api/composables/interaction'
 
 const props = withDefaults(defineProps<{
   queryParams?: object
@@ -56,6 +57,24 @@ async function fetchPosts(page: number, pageSize: number) {
   }
 }
 
+// 收集当前页 post 的 ID，用于批量查询点赞计数。
+// 计数由 interaction_counter 表提供（post.likes 列已移除）。
+const postIds = computed(() =>
+  (posts.value ?? [])
+    .map(p => p.id)
+    .filter((id): id is number => typeof id === 'number'),
+)
+const countsResp = useGetCounts('TARGET_TYPE_POST', postIds, ['COUNTER_METRIC_LIKE'])
+
+// 将 post 与其点赞计数配对，供渲染使用。
+// extractCount 对未出现在响应中的 (target, metric) 返回 0。
+const postsWithLikeCounts = computed(() =>
+  (posts.value ?? []).map(p => ({
+    post: p,
+    likeCount: extractCount(countsResp.data?.value, p.id, 'COUNTER_METRIC_LIKE'),
+  })),
+)
+
 function handlePageChange(newPage: number) {
   currentPage.value = newPage
 }
@@ -110,11 +129,12 @@ onMounted(() => {
         :style="{ gridTemplateColumns: `repeat(${columns}, 1fr)` }"
       >
         <PostCard
-          v-for="(post, index) in posts"
+          v-for="({ post, likeCount }, index) in postsWithLikeCounts"
           :key="`${post.id}-${index}`"
           :post="post"
           :from="from"
           :category-id="categoryId"
+          :like-count="likeCount"
         />
       </div>
 

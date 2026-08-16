@@ -53,6 +53,9 @@ service PostService {
 
 // 帖子
 message Post {
+  reserved 10, 11, 12;
+  reserved "visits", "likes", "comment_count";
+
   // 帖子状态
   enum PostStatus {
     POST_STATUS_UNSPECIFIED = 0;
@@ -105,20 +108,6 @@ message Post {
     json_name = "sortOrder",
     (gnostic.openapi.v3.property) = {description: "排序优先级（数值越小越靠前，同组内排序）"}
   ]; // 排序优先级（数值越小越靠前，同组内排序）
-
-  optional int32 visits = 10 [
-    json_name = "visits",
-    (gnostic.openapi.v3.property) = {description: "帖子访问次数"}
-  ]; // 帖子访问次数
-  optional int32 likes = 11 [
-    json_name = "likes",
-    (gnostic.openapi.v3.property) = {description: "帖子点赞次数"}
-  ]; // 帖子点赞次数
-  optional int32 comment_count = 12 [
-    json_name = "commentCount",
-    (gnostic.openapi.v3.property) = {description: "帖子评论数"}
-  ]; // 帖子评论数
-
 
   optional uint32 author_id = 20 [
     json_name = "authorId",

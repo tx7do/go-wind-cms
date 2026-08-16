@@ -94,9 +94,6 @@ type Post struct {
 	AutoSummary        *bool                  `protobuf:"varint,7,opt,name=auto_summary,json=autoSummary,proto3,oneof" json:"auto_summary,omitempty"`                                                                        // 是否自动生成摘要（如果 content 发生变化且 summary 为空，则自动生成摘要）
 	IsFeatured         *bool                  `protobuf:"varint,8,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"`                                                                           // 是否推荐（前台可用来突出显示，如列表中加大字体或特殊标识）
 	SortOrder          *uint32                `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                                                              // 排序优先级（数值越小越靠前，同组内排序）
-	Visits             *int32                 `protobuf:"varint,10,opt,name=visits,proto3,oneof" json:"visits,omitempty"`                                                                                                    // 帖子访问次数
-	Likes              *int32                 `protobuf:"varint,11,opt,name=likes,proto3,oneof" json:"likes,omitempty"`                                                                                                      // 帖子点赞次数
-	CommentCount       *int32                 `protobuf:"varint,12,opt,name=comment_count,json=commentCount,proto3,oneof" json:"comment_count,omitempty"`                                                                    // 帖子评论数
 	AuthorId           *uint32                `protobuf:"varint,20,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                // 帖子作者ID，0表示游客
 	AuthorName         *string                `protobuf:"bytes,21,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                           // 帖子作者名称（游客填写）
 	CustomFields       map[string]string      `protobuf:"bytes,30,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
@@ -205,27 +202,6 @@ func (x *Post) GetIsFeatured() bool {
 func (x *Post) GetSortOrder() uint32 {
 	if x != nil && x.SortOrder != nil {
 		return *x.SortOrder
-	}
-	return 0
-}
-
-func (x *Post) GetVisits() int32 {
-	if x != nil && x.Visits != nil {
-		return *x.Visits
-	}
-	return 0
-}
-
-func (x *Post) GetLikes() int32 {
-	if x != nil && x.Likes != nil {
-		return *x.Likes
-	}
-	return 0
-}
-
-func (x *Post) GetCommentCount() int32 {
-	if x != nil && x.CommentCount != nil {
-		return *x.CommentCount
 	}
 	return 0
 }
@@ -1399,7 +1375,7 @@ var File_content_service_v1_post_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_post_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcontent/service/v1/post.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xc2\x15\n" +
+	"\x1dcontent/service/v1/post.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\x9e\x14\n" +
 	"\x04Post\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Post.PostStatusB\x12\xbaG\x0f\x92\x02\f帖子状态H\x01R\x06status\x88\x01\x01\x12[\n" +
@@ -1413,34 +1389,30 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\vis_featured\x18\b \x01(\bB\x12\xbaG\x0f\x92\x02\f是否推荐H\aR\n" +
 	"isFeatured\x88\x01\x01\x12f\n" +
 	"\n" +
-	"sort_order\x18\t \x01(\rBB\xbaG?\x92\x02<排序优先级（数值越小越靠前，同组内排序）H\bR\tsortOrder\x88\x01\x01\x125\n" +
-	"\x06visits\x18\n" +
-	" \x01(\x05B\x18\xbaG\x15\x92\x02\x12帖子访问次数H\tR\x06visits\x88\x01\x01\x123\n" +
-	"\x05likes\x18\v \x01(\x05B\x18\xbaG\x15\x92\x02\x12帖子点赞次数H\n" +
-	"R\x05likes\x88\x01\x01\x12?\n" +
-	"\rcomment_count\x18\f \x01(\x05B\x15\xbaG\x12\x92\x02\x0f帖子评论数H\vR\fcommentCount\x88\x01\x01\x12F\n" +
-	"\tauthor_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e评论作者ID，0表示游客H\fR\bauthorId\x88\x01\x01\x12P\n" +
-	"\vauthor_name\x18\x15 \x01(\tB*\xbaG'\x92\x02$帖子作者名称（游客填写）H\rR\n" +
+	"sort_order\x18\t \x01(\rBB\xbaG?\x92\x02<排序优先级（数值越小越靠前，同组内排序）H\bR\tsortOrder\x88\x01\x01\x12F\n" +
+	"\tauthor_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e评论作者ID，0表示游客H\tR\bauthorId\x88\x01\x01\x12P\n" +
+	"\vauthor_name\x18\x15 \x01(\tB*\xbaG'\x92\x02$帖子作者名称（游客填写）H\n" +
+	"R\n" +
 	"authorName\x88\x01\x01\x12\x87\x01\n" +
 	"\rcustom_fields\x18\x1e \x03(\v2*.content.service.v1.Post.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12d\n" +
 	"\ftranslations\x18( \x03(\v2#.content.service.v1.PostTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
 	"\x13available_languages\x18) \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12L\n" +
 	"\fcategory_ids\x182 \x03(\rB)\xbaG&\x92\x02#关联的分类ID列表（多选）R\vcategoryIds\x12B\n" +
 	"\atag_ids\x183 \x03(\rB)\xbaG&\x92\x02#关联的标签ID列表（多选）R\x06tagIds\x12<\n" +
-	"\rpassword_hash\x18< \x01(\tB\x12\xbaG\x0f\x92\x02\f密码哈希H\x0eR\fpasswordHash\x88\x01\x01\x12;\n" +
+	"\rpassword_hash\x18< \x01(\tB\x12\xbaG\x0f\x92\x02\f密码哈希H\vR\fpasswordHash\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x0fR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x10R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x11R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x12R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x13R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x14R\tdeletedAt\x88\x01\x01\x12W\n" +
-	"\fpublish_time\x18\xcb\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f发布时间H\x15R\vpublishTime\x88\x01\x01\x1a?\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\x12W\n" +
+	"\fpublish_time\x18\xcb\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f发布时间H\x12R\vpublishTime\x88\x01\x01\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x8f\x01\n" +
@@ -1459,10 +1431,7 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\f_in_progressB\x0f\n" +
 	"\r_auto_summaryB\x0e\n" +
 	"\f_is_featuredB\r\n" +
-	"\v_sort_orderB\t\n" +
-	"\a_visitsB\b\n" +
-	"\x06_likesB\x10\n" +
-	"\x0e_comment_countB\f\n" +
+	"\v_sort_orderB\f\n" +
 	"\n" +
 	"_author_idB\x0e\n" +
 	"\f_author_nameB\x10\n" +
@@ -1473,7 +1442,8 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0f\n" +
-	"\r_publish_time\"\x98\f\n" +
+	"\r_publish_timeJ\x04\b\n" +
+	"\x10\vJ\x04\b\v\x10\fJ\x04\b\f\x10\rR\x06visitsR\x05likesR\rcomment_count\"\x98\f\n" +
 	"\x0fPostTranslation\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e帖子翻译IDH\x00R\x02id\x88\x01\x01\x125\n" +
 	"\apost_id\x18\x02 \x01(\rB\x17\xbaG\x14\x92\x02\x11关联的帖子IDH\x01R\x06postId\x88\x01\x01\x12<\n" +

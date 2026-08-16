@@ -22,6 +22,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationInteractionServiceGetCounts = "/app.service.v1.InteractionService/GetCounts"
 const OperationInteractionServiceGetInteractionStatus = "/app.service.v1.InteractionService/GetInteractionStatus"
 const OperationInteractionServiceLike = "/app.service.v1.InteractionService/Like"
 const OperationInteractionServiceListWatchedPosts = "/app.service.v1.InteractionService/ListWatchedPosts"
@@ -30,6 +31,8 @@ const OperationInteractionServiceUnwatch = "/app.service.v1.InteractionService/U
 const OperationInteractionServiceWatch = "/app.service.v1.InteractionService/Watch"
 
 type InteractionServiceHTTPServer interface {
+	// GetCounts 批量查询计数
+	GetCounts(context.Context, *v1.GetCountsRequest) (*v1.GetCountsResponse, error)
 	// GetInteractionStatus 批量查询交互状态
 	GetInteractionStatus(context.Context, *v1.GetInteractionStatusRequest) (*v1.GetInteractionStatusResponse, error)
 	// Like 点赞
@@ -52,6 +55,7 @@ func RegisterInteractionServiceHTTPServer(s *http.Server, srv InteractionService
 	r.POST("/app/v1/interactions/unwatch", _InteractionService_Unwatch0_HTTP_Handler(srv))
 	r.POST("/app/v1/interactions/status", _InteractionService_GetInteractionStatus0_HTTP_Handler(srv))
 	r.GET("/app/v1/interactions/watched-posts", _InteractionService_ListWatchedPosts0_HTTP_Handler(srv))
+	r.POST("/app/v1/interactions/counts:list", _InteractionService_GetCounts0_HTTP_Handler(srv))
 }
 
 func _InteractionService_Like0_HTTP_Handler(srv InteractionServiceHTTPServer) func(ctx http.Context) error {
@@ -183,7 +187,31 @@ func _InteractionService_ListWatchedPosts0_HTTP_Handler(srv InteractionServiceHT
 	}
 }
 
+func _InteractionService_GetCounts0_HTTP_Handler(srv InteractionServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GetCountsRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationInteractionServiceGetCounts)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetCounts(ctx, req.(*v1.GetCountsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetCountsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type InteractionServiceHTTPClient interface {
+	// GetCounts 批量查询计数
+	GetCounts(ctx context.Context, req *v1.GetCountsRequest, opts ...http.CallOption) (rsp *v1.GetCountsResponse, err error)
 	// GetInteractionStatus 批量查询交互状态
 	GetInteractionStatus(ctx context.Context, req *v1.GetInteractionStatusRequest, opts ...http.CallOption) (rsp *v1.GetInteractionStatusResponse, err error)
 	// Like 点赞
@@ -204,6 +232,20 @@ type InteractionServiceHTTPClientImpl struct {
 
 func NewInteractionServiceHTTPClient(client *http.Client) InteractionServiceHTTPClient {
 	return &InteractionServiceHTTPClientImpl{client}
+}
+
+// GetCounts 批量查询计数
+func (c *InteractionServiceHTTPClientImpl) GetCounts(ctx context.Context, in *v1.GetCountsRequest, opts ...http.CallOption) (*v1.GetCountsResponse, error) {
+	var out v1.GetCountsResponse
+	pattern := "/app/v1/interactions/counts:list"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationInteractionServiceGetCounts))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // GetInteractionStatus 批量查询交互状态

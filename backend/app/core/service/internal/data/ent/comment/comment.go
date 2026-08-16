@@ -49,12 +49,6 @@ const (
 	FieldAuthorType = "author_type"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldLikeCount holds the string denoting the like_count field in the database.
-	FieldLikeCount = "like_count"
-	// FieldDislikeCount holds the string denoting the dislike_count field in the database.
-	FieldDislikeCount = "dislike_count"
-	// FieldReplyCount holds the string denoting the reply_count field in the database.
-	FieldReplyCount = "reply_count"
 	// FieldIPAddress holds the string denoting the ip_address field in the database.
 	FieldIPAddress = "ip_address"
 	// FieldLocation holds the string denoting the location field in the database.
@@ -105,9 +99,6 @@ var Columns = []string{
 	FieldAuthorURL,
 	FieldAuthorType,
 	FieldStatus,
-	FieldLikeCount,
-	FieldDislikeCount,
-	FieldReplyCount,
 	FieldIPAddress,
 	FieldLocation,
 	FieldUserAgent,
@@ -139,12 +130,6 @@ var (
 	DefaultTenantID uint32
 	// DefaultAuthorID holds the default value on creation for the "author_id" field.
 	DefaultAuthorID uint32
-	// DefaultLikeCount holds the default value on creation for the "like_count" field.
-	DefaultLikeCount uint32
-	// DefaultDislikeCount holds the default value on creation for the "dislike_count" field.
-	DefaultDislikeCount uint32
-	// DefaultReplyCount holds the default value on creation for the "reply_count" field.
-	DefaultReplyCount uint32
 	// DefaultIsSpam holds the default value on creation for the "is_spam" field.
 	DefaultIsSpam bool
 	// DefaultIsSticky holds the default value on creation for the "is_sticky" field.
@@ -318,21 +303,6 @@ func ByAuthorType(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
-}
-
-// ByLikeCount orders the results by the like_count field.
-func ByLikeCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLikeCount, opts...).ToFunc()
-}
-
-// ByDislikeCount orders the results by the dislike_count field.
-func ByDislikeCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDislikeCount, opts...).ToFunc()
-}
-
-// ByReplyCount orders the results by the reply_count field.
-func ByReplyCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldReplyCount, opts...).ToFunc()
 }
 
 // ByIPAddress orders the results by the ip_address field.

@@ -1626,16 +1626,13 @@ export type commentservicev1_Comment = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   detectedLanguage?: string;
-  dislikeCount?: number;
   id?: number;
   ipAddress?: string;
   isSpam?: boolean;
   isSticky?: boolean;
-  likeCount?: number;
   location?: string;
   objectId?: number;
   parentId?: number;
-  replyCount?: number;
   replyToId?: number;
   status?: commentservicev1_Comment_Status;
   updatedAt?: wellKnownTimestamp;
@@ -6166,7 +6163,6 @@ export type contentservicev1_Page = {
   type?: contentservicev1_Page_PageType;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
-  visits?: number;
 };
 
 // 页面状态
@@ -7681,7 +7677,6 @@ export type contentservicev1_Post = {
   availableLanguages: string[] | undefined;
   categoryIds: number[] | undefined;
   code?: string;
-  commentCount?: number;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   customFields: { [key: string]: string } | undefined;
@@ -7692,7 +7687,6 @@ export type contentservicev1_Post = {
   id?: number;
   inProgress?: boolean;
   isFeatured?: boolean;
-  likes?: number;
   passwordHash?: string;
   publishTime?: wellKnownTimestamp;
   sortOrder?: number;
@@ -7701,7 +7695,6 @@ export type contentservicev1_Post = {
   translations: contentservicev1_PostTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
-  visits?: number;
 };
 
 // 帖子状态
@@ -8555,7 +8548,6 @@ export type siteservicev1_Site = {
   theme?: string;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
-  visitCount?: number;
 };
 
 // 站点状态

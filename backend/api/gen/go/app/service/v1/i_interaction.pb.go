@@ -28,14 +28,15 @@ var File_app_service_v1_i_interaction_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_interaction_proto_rawDesc = "" +
 	"\n" +
-	"\"app/service/v1/i_interaction.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a(interaction/service/v1/interaction.proto\x1a\x1dcontent/service/v1/post.proto2\xb5\x06\n" +
+	"\"app/service/v1/i_interaction.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a(interaction/service/v1/interaction.proto\x1a\x1dcontent/service/v1/post.proto2\xc5\a\n" +
 	"\x12InteractionService\x12w\n" +
 	"\x04Like\x12#.interaction.service.v1.LikeRequest\x1a$.interaction.service.v1.LikeResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/app/v1/interactions/like\x12{\n" +
 	"\x06Unlike\x12#.interaction.service.v1.LikeRequest\x1a$.interaction.service.v1.LikeResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/app/v1/interactions/unlike\x12{\n" +
 	"\x05Watch\x12$.interaction.service.v1.WatchRequest\x1a%.interaction.service.v1.WatchResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/app/v1/interactions/watch\x12\x7f\n" +
 	"\aUnwatch\x12$.interaction.service.v1.WatchRequest\x1a%.interaction.service.v1.WatchResponse\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/app/v1/interactions/unwatch\x12\xa9\x01\n" +
 	"\x14GetInteractionStatus\x123.interaction.service.v1.GetInteractionStatusRequest\x1a4.interaction.service.v1.GetInteractionStatusResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/app/v1/interactions/status\x12\x7f\n" +
-	"\x10ListWatchedPosts\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/app/v1/interactions/watched-postsB\xb2\x01\n" +
+	"\x10ListWatchedPosts\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/app/v1/interactions/watched-posts\x12\x8d\x01\n" +
+	"\tGetCounts\x12(.interaction.service.v1.GetCountsRequest\x1a).interaction.service.v1.GetCountsResponse\"+\x82\xd3\xe4\x93\x02%:\x01*\" /app/v1/interactions/counts:listB\xb2\x01\n" +
 	"\x12com.app.service.v1B\x11IInteractionProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_interaction_proto_goTypes = []any{
@@ -43,10 +44,12 @@ var file_app_service_v1_i_interaction_proto_goTypes = []any{
 	(*v1.WatchRequest)(nil),                 // 1: interaction.service.v1.WatchRequest
 	(*v1.GetInteractionStatusRequest)(nil),  // 2: interaction.service.v1.GetInteractionStatusRequest
 	(*v11.PagingRequest)(nil),               // 3: pagination.PagingRequest
-	(*v1.LikeResponse)(nil),                 // 4: interaction.service.v1.LikeResponse
-	(*v1.WatchResponse)(nil),                // 5: interaction.service.v1.WatchResponse
-	(*v1.GetInteractionStatusResponse)(nil), // 6: interaction.service.v1.GetInteractionStatusResponse
-	(*v12.ListPostResponse)(nil),            // 7: content.service.v1.ListPostResponse
+	(*v1.GetCountsRequest)(nil),             // 4: interaction.service.v1.GetCountsRequest
+	(*v1.LikeResponse)(nil),                 // 5: interaction.service.v1.LikeResponse
+	(*v1.WatchResponse)(nil),                // 6: interaction.service.v1.WatchResponse
+	(*v1.GetInteractionStatusResponse)(nil), // 7: interaction.service.v1.GetInteractionStatusResponse
+	(*v12.ListPostResponse)(nil),            // 8: content.service.v1.ListPostResponse
+	(*v1.GetCountsResponse)(nil),            // 9: interaction.service.v1.GetCountsResponse
 }
 var file_app_service_v1_i_interaction_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.InteractionService.Like:input_type -> interaction.service.v1.LikeRequest
@@ -55,14 +58,16 @@ var file_app_service_v1_i_interaction_proto_depIdxs = []int32{
 	1, // 3: app.service.v1.InteractionService.Unwatch:input_type -> interaction.service.v1.WatchRequest
 	2, // 4: app.service.v1.InteractionService.GetInteractionStatus:input_type -> interaction.service.v1.GetInteractionStatusRequest
 	3, // 5: app.service.v1.InteractionService.ListWatchedPosts:input_type -> pagination.PagingRequest
-	4, // 6: app.service.v1.InteractionService.Like:output_type -> interaction.service.v1.LikeResponse
-	4, // 7: app.service.v1.InteractionService.Unlike:output_type -> interaction.service.v1.LikeResponse
-	5, // 8: app.service.v1.InteractionService.Watch:output_type -> interaction.service.v1.WatchResponse
-	5, // 9: app.service.v1.InteractionService.Unwatch:output_type -> interaction.service.v1.WatchResponse
-	6, // 10: app.service.v1.InteractionService.GetInteractionStatus:output_type -> interaction.service.v1.GetInteractionStatusResponse
-	7, // 11: app.service.v1.InteractionService.ListWatchedPosts:output_type -> content.service.v1.ListPostResponse
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
+	4, // 6: app.service.v1.InteractionService.GetCounts:input_type -> interaction.service.v1.GetCountsRequest
+	5, // 7: app.service.v1.InteractionService.Like:output_type -> interaction.service.v1.LikeResponse
+	5, // 8: app.service.v1.InteractionService.Unlike:output_type -> interaction.service.v1.LikeResponse
+	6, // 9: app.service.v1.InteractionService.Watch:output_type -> interaction.service.v1.WatchResponse
+	6, // 10: app.service.v1.InteractionService.Unwatch:output_type -> interaction.service.v1.WatchResponse
+	7, // 11: app.service.v1.InteractionService.GetInteractionStatus:output_type -> interaction.service.v1.GetInteractionStatusResponse
+	8, // 12: app.service.v1.InteractionService.ListWatchedPosts:output_type -> content.service.v1.ListPostResponse
+	9, // 13: app.service.v1.InteractionService.GetCounts:output_type -> interaction.service.v1.GetCountsResponse
+	7, // [7:14] is the sub-list for method output_type
+	0, // [0:7] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

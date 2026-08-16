@@ -93,7 +93,6 @@ type Site struct {
 	DefaultLocale    *string                `protobuf:"bytes,9,opt,name=default_locale,json=defaultLocale,proto3,oneof" json:"default_locale,omitempty"`    // 默认语言（如'zh-CN'、'en-US'）
 	Template         *string                `protobuf:"bytes,10,opt,name=template,proto3,oneof" json:"template,omitempty"`                                  // 站点模板（如'blog'、'portfolio'）
 	Theme            *string                `protobuf:"bytes,11,opt,name=theme,proto3,oneof" json:"theme,omitempty"`                                        // 主题名称
-	VisitCount       *uint64                `protobuf:"varint,12,opt,name=visit_count,json=visitCount,proto3,oneof" json:"visit_count,omitempty"`           // 访问次数
 	CreatedBy        *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`             // 创建者用户ID
 	UpdatedBy        *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`             // 更新者用户ID
 	DeletedBy        *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`             // 删除者用户ID
@@ -209,13 +208,6 @@ func (x *Site) GetTheme() string {
 		return *x.Theme
 	}
 	return ""
-}
-
-func (x *Site) GetVisitCount() uint64 {
-	if x != nil && x.VisitCount != nil {
-		return *x.VisitCount
-	}
-	return 0
 }
 
 func (x *Site) GetCreatedBy() uint32 {
@@ -551,7 +543,7 @@ var File_site_service_v1_site_proto protoreflect.FileDescriptor
 
 const file_site_service_v1_site_proto_rawDesc = "" +
 	"\n" +
-	"\x1asite/service/v1/site.proto\x12\x0fsite.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xab\f\n" +
+	"\x1asite/service/v1/site.proto\x12\x0fsite.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xf4\v\n" +
 	"\x04Site\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b站点IDH\x00R\x02id\x88\x01\x01\x120\n" +
 	"\ttenant_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x01R\btenantId\x88\x01\x01\x12G\n" +
@@ -565,22 +557,20 @@ const file_site_service_v1_site_proto_rawDesc = "" +
 	"\x0edefault_locale\x18\t \x01(\tB,\xbaG)\x92\x02&默认语言（如'zh-CN'、'en-US'）H\aR\rdefaultLocale\x88\x01\x01\x12P\n" +
 	"\btemplate\x18\n" +
 	" \x01(\tB/\xbaG,\x92\x02)站点模板（如'blog'、'portfolio'）H\bR\btemplate\x88\x01\x01\x12-\n" +
-	"\x05theme\x18\v \x01(\tB\x12\xbaG\x0f\x92\x02\f主题名称H\tR\x05theme\x88\x01\x01\x128\n" +
-	"\vvisit_count\x18\f \x01(\x04B\x12\xbaG\x0f\x92\x02\f访问次数H\n" +
-	"R\n" +
-	"visitCount\x88\x01\x01\x12;\n" +
+	"\x05theme\x18\v \x01(\tB\x12\xbaG\x0f\x92\x02\f主题名称H\tR\x05theme\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
+	"R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\vR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\rR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0eR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01\"t\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0fR\tdeletedAt\x88\x01\x01\"t\n" +
 	"\x06Status\x12\x1b\n" +
 	"\x17SITE_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12SITE_STATUS_ACTIVE\x10\x01\x12\x18\n" +
@@ -596,14 +586,13 @@ const file_site_service_v1_site_proto_rawDesc = "" +
 	"\a_statusB\x11\n" +
 	"\x0f_default_localeB\v\n" +
 	"\t_templateB\b\n" +
-	"\x06_themeB\x0e\n" +
-	"\f_visit_countB\r\n" +
+	"\x06_themeB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"U\n" +
+	"\v_deleted_atJ\x04\b\f\x10\rR\vvisit_count\"U\n" +
 	"\x10ListSiteResponse\x12+\n" +
 	"\x05items\x18\x01 \x03(\v2\x15.site.service.v1.SiteR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x04R\x05total\"\xa7\x01\n" +

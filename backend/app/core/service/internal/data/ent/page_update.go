@@ -444,33 +444,6 @@ func (_u *PageUpdate) ClearIsCustomTemplate() *PageUpdate {
 	return _u
 }
 
-// SetVisits sets the "visits" field.
-func (_u *PageUpdate) SetVisits(v uint32) *PageUpdate {
-	_u.mutation.ResetVisits()
-	_u.mutation.SetVisits(v)
-	return _u
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableVisits(v *uint32) *PageUpdate {
-	if v != nil {
-		_u.SetVisits(*v)
-	}
-	return _u
-}
-
-// AddVisits adds value to the "visits" field.
-func (_u *PageUpdate) AddVisits(v int32) *PageUpdate {
-	_u.mutation.AddVisits(v)
-	return _u
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (_u *PageUpdate) ClearVisits() *PageUpdate {
-	_u.mutation.ClearVisits()
-	return _u
-}
-
 // SetCustomFields sets the "custom_fields" field.
 func (_u *PageUpdate) SetCustomFields(v *map[string]string) *PageUpdate {
 	_u.mutation.SetCustomFields(v)
@@ -760,15 +733,6 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.IsCustomTemplateCleared() {
 		_spec.ClearField(page.FieldIsCustomTemplate, field.TypeBool)
-	}
-	if value, ok := _u.mutation.Visits(); ok {
-		_spec.SetField(page.FieldVisits, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedVisits(); ok {
-		_spec.AddField(page.FieldVisits, field.TypeUint32, value)
-	}
-	if _u.mutation.VisitsCleared() {
-		_spec.ClearField(page.FieldVisits, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.CustomFields(); ok {
 		_spec.SetField(page.FieldCustomFields, field.TypeJSON, value)
@@ -1296,33 +1260,6 @@ func (_u *PageUpdateOne) ClearIsCustomTemplate() *PageUpdateOne {
 	return _u
 }
 
-// SetVisits sets the "visits" field.
-func (_u *PageUpdateOne) SetVisits(v uint32) *PageUpdateOne {
-	_u.mutation.ResetVisits()
-	_u.mutation.SetVisits(v)
-	return _u
-}
-
-// SetNillableVisits sets the "visits" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableVisits(v *uint32) *PageUpdateOne {
-	if v != nil {
-		_u.SetVisits(*v)
-	}
-	return _u
-}
-
-// AddVisits adds value to the "visits" field.
-func (_u *PageUpdateOne) AddVisits(v int32) *PageUpdateOne {
-	_u.mutation.AddVisits(v)
-	return _u
-}
-
-// ClearVisits clears the value of the "visits" field.
-func (_u *PageUpdateOne) ClearVisits() *PageUpdateOne {
-	_u.mutation.ClearVisits()
-	return _u
-}
-
 // SetCustomFields sets the "custom_fields" field.
 func (_u *PageUpdateOne) SetCustomFields(v *map[string]string) *PageUpdateOne {
 	_u.mutation.SetCustomFields(v)
@@ -1642,15 +1579,6 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 	}
 	if _u.mutation.IsCustomTemplateCleared() {
 		_spec.ClearField(page.FieldIsCustomTemplate, field.TypeBool)
-	}
-	if value, ok := _u.mutation.Visits(); ok {
-		_spec.SetField(page.FieldVisits, field.TypeUint32, value)
-	}
-	if value, ok := _u.mutation.AddedVisits(); ok {
-		_spec.AddField(page.FieldVisits, field.TypeUint32, value)
-	}
-	if _u.mutation.VisitsCleared() {
-		_spec.ClearField(page.FieldVisits, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.CustomFields(); ok {
 		_spec.SetField(page.FieldCustomFields, field.TypeJSON, value)

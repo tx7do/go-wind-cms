@@ -124,11 +124,6 @@ func Theme(v string) predicate.Site {
 	return predicate.Site(sql.FieldEQ(FieldTheme, v))
 }
 
-// VisitCount applies equality check predicate on the "visit_count" field. It's identical to VisitCountEQ.
-func VisitCount(v uint64) predicate.Site {
-	return predicate.Site(sql.FieldEQ(FieldVisitCount, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Site {
 	return predicate.Site(sql.FieldEQ(FieldCreatedAt, v))
@@ -987,56 +982,6 @@ func ThemeEqualFold(v string) predicate.Site {
 // ThemeContainsFold applies the ContainsFold predicate on the "theme" field.
 func ThemeContainsFold(v string) predicate.Site {
 	return predicate.Site(sql.FieldContainsFold(FieldTheme, v))
-}
-
-// VisitCountEQ applies the EQ predicate on the "visit_count" field.
-func VisitCountEQ(v uint64) predicate.Site {
-	return predicate.Site(sql.FieldEQ(FieldVisitCount, v))
-}
-
-// VisitCountNEQ applies the NEQ predicate on the "visit_count" field.
-func VisitCountNEQ(v uint64) predicate.Site {
-	return predicate.Site(sql.FieldNEQ(FieldVisitCount, v))
-}
-
-// VisitCountIn applies the In predicate on the "visit_count" field.
-func VisitCountIn(vs ...uint64) predicate.Site {
-	return predicate.Site(sql.FieldIn(FieldVisitCount, vs...))
-}
-
-// VisitCountNotIn applies the NotIn predicate on the "visit_count" field.
-func VisitCountNotIn(vs ...uint64) predicate.Site {
-	return predicate.Site(sql.FieldNotIn(FieldVisitCount, vs...))
-}
-
-// VisitCountGT applies the GT predicate on the "visit_count" field.
-func VisitCountGT(v uint64) predicate.Site {
-	return predicate.Site(sql.FieldGT(FieldVisitCount, v))
-}
-
-// VisitCountGTE applies the GTE predicate on the "visit_count" field.
-func VisitCountGTE(v uint64) predicate.Site {
-	return predicate.Site(sql.FieldGTE(FieldVisitCount, v))
-}
-
-// VisitCountLT applies the LT predicate on the "visit_count" field.
-func VisitCountLT(v uint64) predicate.Site {
-	return predicate.Site(sql.FieldLT(FieldVisitCount, v))
-}
-
-// VisitCountLTE applies the LTE predicate on the "visit_count" field.
-func VisitCountLTE(v uint64) predicate.Site {
-	return predicate.Site(sql.FieldLTE(FieldVisitCount, v))
-}
-
-// VisitCountIsNil applies the IsNil predicate on the "visit_count" field.
-func VisitCountIsNil() predicate.Site {
-	return predicate.Site(sql.FieldIsNull(FieldVisitCount))
-}
-
-// VisitCountNotNil applies the NotNil predicate on the "visit_count" field.
-func VisitCountNotNil() predicate.Site {
-	return predicate.Site(sql.FieldNotNull(FieldVisitCount))
 }
 
 // And groups predicates with the AND operator between them.

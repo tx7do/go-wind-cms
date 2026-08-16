@@ -7,8 +7,9 @@ import "content/service/v1/post.proto";
 
 // 交互服务（点赞/收藏计数内聚子系统）
 //
-// 作为 post/comment 计数列（likes / like_count）的唯一写入方，集中管理点赞与收藏的
-// ledger 记录及计数缓存递增。viewer 用户身份由鉴权上下文注入，请求体不接受 user_id。
+// 作为点赞/收藏计数的唯一写入方，集中管理 ledger 记录及 interaction_counter 表的
+// 计数 upsert。post/comment 表上的散落计数列已移除，计数统一存于 counter 表。
+// viewer 用户身份由鉴权上下文注入，请求体不接受 user_id。
 //
 // 注意：ListWatchedPosts 复用 content.service.v1.ListPostResponse，因此本 proto
 // import content/service/v1/post.proto。这是仓库内首个跨模块 L1 import，权衡是
@@ -31,6 +32,9 @@ service InteractionService {
 
   // 列出当前 viewer 收藏的 post。
   rpc ListWatchedPosts (pagination.PagingRequest) returns (content.service.v1.ListPostResponse) {}
+
+  // 批量查询指定目标的计数（如点赞数）。供前端列表/详情渲染计数展示。
+  rpc GetCounts (GetCountsRequest) returns (GetCountsResponse) {}
 }
 
 // 交互目标类型
@@ -38,6 +42,14 @@ enum TargetType {
   TARGET_TYPE_UNSPECIFIED = 0;
   TARGET_TYPE_POST = 1;
   TARGET_TYPE_COMMENT = 2;
+}
+
+// 计数指标类型。与 interaction_counter 表的 metric 列对应。
+// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+enum CounterMetric {
+  COUNTER_METRIC_UNSPECIFIED = 0;
+  COUNTER_METRIC_LIKE = 1;
+  COUNTER_METRIC_WATCH = 2;
 }
 
 message LikeRequest {
@@ -55,7 +67,8 @@ message WatchRequest {
 }
 
 message WatchResponse {
-  bool watched = 1; // 操作后的当前收藏状态
+  bool watched = 1;     // 操作后的当前收藏状态
+  int32 watch_count = 2; // 操作后的最新收藏计数
 }
 
 message GetInteractionStatusRequest {
@@ -70,4 +83,28 @@ message InteractionStatus {
 
 message GetInteractionStatusResponse {
   map<uint32, InteractionStatus> statuses = 1;
+}
+
+// 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
+// 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
+message MetricCount {
+  CounterMetric metric = 1;
+  int64 count = 2;
+}
+
+// 单个目标下所有请求 metric 的计数集合。
+message CountMap {
+  repeated MetricCount counts = 1;
+}
+
+message GetCountsRequest {
+  TargetType target_type = 1;
+  repeated uint32 target_ids = 2;
+  repeated CounterMetric metrics = 3;
+}
+
+// target_id → 该目标下各 metric 的计数集合。
+// 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
+message GetCountsResponse {
+  map<uint32, CountMap> counts = 1;
 }

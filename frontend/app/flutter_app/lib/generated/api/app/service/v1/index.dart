@@ -2016,16 +2016,13 @@ class CommentServiceV1Comment {
   String? deletedAt;
   int? deletedBy;
   String? detectedLanguage;
-  int? dislikeCount;
   int? id;
   String? ipAddress;
   bool? isSpam;
   bool? isSticky;
-  int? likeCount;
   String? location;
   int? objectId;
   int? parentId;
-  int? replyCount;
   int? replyToId;
   CommentServiceV1Comment$Status? status;
   String? updatedAt;
@@ -2046,16 +2043,13 @@ class CommentServiceV1Comment {
     this.deletedAt,
     this.deletedBy,
     this.detectedLanguage,
-    this.dislikeCount,
     this.id,
     this.ipAddress,
     this.isSpam,
     this.isSticky,
-    this.likeCount,
     this.location,
     this.objectId,
     this.parentId,
-    this.replyCount,
     this.replyToId,
     this.status,
     this.updatedAt,
@@ -2078,16 +2072,13 @@ class CommentServiceV1Comment {
       deletedAt: json['deletedAt'] as String?,
       deletedBy: json['deletedBy'] as int?,
       detectedLanguage: json['detectedLanguage'] as String?,
-      dislikeCount: json['dislikeCount'] as int?,
       id: json['id'] as int?,
       ipAddress: json['ipAddress'] as String?,
       isSpam: json['isSpam'] as bool?,
       isSticky: json['isSticky'] as bool?,
-      likeCount: json['likeCount'] as int?,
       location: json['location'] as String?,
       objectId: json['objectId'] as int?,
       parentId: json['parentId'] as int?,
-      replyCount: json['replyCount'] as int?,
       replyToId: json['replyToId'] as int?,
       status: json['status'] != null ? CommentServiceV1Comment$Status.fromString(json['status'] as String) : null,
       updatedAt: json['updatedAt'] as String?,
@@ -2111,16 +2102,13 @@ class CommentServiceV1Comment {
     if (deletedAt != null) json['deletedAt'] = deletedAt;
     if (deletedBy != null) json['deletedBy'] = deletedBy;
     if (detectedLanguage != null) json['detectedLanguage'] = detectedLanguage;
-    if (dislikeCount != null) json['dislikeCount'] = dislikeCount;
     if (id != null) json['id'] = id;
     if (ipAddress != null) json['ipAddress'] = ipAddress;
     if (isSpam != null) json['isSpam'] = isSpam;
     if (isSticky != null) json['isSticky'] = isSticky;
-    if (likeCount != null) json['likeCount'] = likeCount;
     if (location != null) json['location'] = location;
     if (objectId != null) json['objectId'] = objectId;
     if (parentId != null) json['parentId'] = parentId;
-    if (replyCount != null) json['replyCount'] = replyCount;
     if (replyToId != null) json['replyToId'] = replyToId;
     if (status != null) json['status'] = status!.value;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
@@ -2131,7 +2119,7 @@ class CommentServiceV1Comment {
 
   @override
   String toString() {
-    return 'CommentServiceV1Comment(authorEmail: $authorEmail, authorId: $authorId, authorName: $authorName, authorType: $authorType, authorUrl: $authorUrl, children: $children, content: $content, contentType: $contentType, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, detectedLanguage: $detectedLanguage, dislikeCount: $dislikeCount, id: $id, ipAddress: $ipAddress, isSpam: $isSpam, isSticky: $isSticky, likeCount: $likeCount, location: $location, objectId: $objectId, parentId: $parentId, replyCount: $replyCount, replyToId: $replyToId, status: $status, updatedAt: $updatedAt, updatedBy: $updatedBy, userAgent: $userAgent)';
+    return 'CommentServiceV1Comment(authorEmail: $authorEmail, authorId: $authorId, authorName: $authorName, authorType: $authorType, authorUrl: $authorUrl, children: $children, content: $content, contentType: $contentType, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, detectedLanguage: $detectedLanguage, id: $id, ipAddress: $ipAddress, isSpam: $isSpam, isSticky: $isSticky, location: $location, objectId: $objectId, parentId: $parentId, replyToId: $replyToId, status: $status, updatedAt: $updatedAt, updatedBy: $updatedBy, userAgent: $userAgent)';
   }
 
   @override
@@ -2152,16 +2140,13 @@ class CommentServiceV1Comment {
       && deletedAt == other.deletedAt
       && deletedBy == other.deletedBy
       && detectedLanguage == other.detectedLanguage
-      && dislikeCount == other.dislikeCount
       && id == other.id
       && ipAddress == other.ipAddress
       && isSpam == other.isSpam
       && isSticky == other.isSticky
-      && likeCount == other.likeCount
       && location == other.location
       && objectId == other.objectId
       && parentId == other.parentId
-      && replyCount == other.replyCount
       && replyToId == other.replyToId
       && status == other.status
       && updatedAt == other.updatedAt
@@ -2184,16 +2169,13 @@ class CommentServiceV1Comment {
     deletedAt,
     deletedBy,
     detectedLanguage,
-    dislikeCount,
     id,
     ipAddress,
     isSpam,
     isSticky,
-    likeCount,
     location,
     objectId,
     parentId,
-    replyCount,
     replyToId,
     status,
     updatedAt,
@@ -2215,16 +2197,13 @@ class CommentServiceV1Comment {
     String? deletedAt,
     int? deletedBy,
     String? detectedLanguage,
-    int? dislikeCount,
     int? id,
     String? ipAddress,
     bool? isSpam,
     bool? isSticky,
-    int? likeCount,
     String? location,
     int? objectId,
     int? parentId,
-    int? replyCount,
     int? replyToId,
     CommentServiceV1Comment$Status? status,
     String? updatedAt,
@@ -2245,16 +2224,13 @@ class CommentServiceV1Comment {
       deletedAt: deletedAt ?? this.deletedAt,
       deletedBy: deletedBy ?? this.deletedBy,
       detectedLanguage: detectedLanguage ?? this.detectedLanguage,
-      dislikeCount: dislikeCount ?? this.dislikeCount,
       id: id ?? this.id,
       ipAddress: ipAddress ?? this.ipAddress,
       isSpam: isSpam ?? this.isSpam,
       isSticky: isSticky ?? this.isSticky,
-      likeCount: likeCount ?? this.likeCount,
       location: location ?? this.location,
       objectId: objectId ?? this.objectId,
       parentId: parentId ?? this.parentId,
-      replyCount: replyCount ?? this.replyCount,
       replyToId: replyToId ?? this.replyToId,
       status: status ?? this.status,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -3216,6 +3192,17 @@ class InteractionServiceClient {
     ), headers: headers);
     return ContentServiceV1ListPostResponse.fromJson(result as Map<String, dynamic>);
   }
+
+  /// 批量查询计数
+  Future<InteractionServiceV1GetCountsResponse> getCounts(InteractionServiceV1GetCountsRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/interactions/counts:list';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'InteractionService',
+      method: 'GetCounts',
+    ), headers: headers);
+    return InteractionServiceV1GetCountsResponse.fromJson(result as Map<String, dynamic>);
+  }
 }
 
 class InteractionServiceV1LikeRequest {
@@ -3388,27 +3375,31 @@ class InteractionServiceV1WatchRequest {
 }
 
 class InteractionServiceV1WatchResponse {
+  int? watchCount;
   bool? watched;
 
   InteractionServiceV1WatchResponse({
+    this.watchCount,
     this.watched,
   });
 
   factory InteractionServiceV1WatchResponse.fromJson(Map<String, dynamic> json) {
     return InteractionServiceV1WatchResponse(
+      watchCount: json['watchCount'] as int?,
       watched: json['watched'] as bool?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+    if (watchCount != null) json['watchCount'] = watchCount;
     if (watched != null) json['watched'] = watched;
     return json;
   }
 
   @override
   String toString() {
-    return 'InteractionServiceV1WatchResponse(watched: $watched)';
+    return 'InteractionServiceV1WatchResponse(watchCount: $watchCount, watched: $watched)';
   }
 
   @override
@@ -3416,18 +3407,22 @@ class InteractionServiceV1WatchResponse {
     identical(this, other) ||
     other is InteractionServiceV1WatchResponse &&
       runtimeType == other.runtimeType
+      && watchCount == other.watchCount
       && watched == other.watched
     ;
 
   @override
   int get hashCode => Object.hashAll([
+    watchCount,
     watched,
   ]);
 
   InteractionServiceV1WatchResponse copyWith({
+    int? watchCount,
     bool? watched,
   }) {
     return InteractionServiceV1WatchResponse(
+      watchCount: watchCount ?? this.watchCount,
       watched: watched ?? this.watched,
     );
   }
@@ -3650,7 +3645,6 @@ class ContentServiceV1Post {
   List<String>? availableLanguages;
   List<int>? categoryIds;
   String? code;
-  int? commentCount;
   String? createdAt;
   int? createdBy;
   Map<String, String>? customFields;
@@ -3661,7 +3655,6 @@ class ContentServiceV1Post {
   int? id;
   bool? inProgress;
   bool? isFeatured;
-  int? likes;
   String? passwordHash;
   String? publishTime;
   int? sortOrder;
@@ -3670,7 +3663,6 @@ class ContentServiceV1Post {
   List<ContentServiceV1PostTranslation>? translations;
   String? updatedAt;
   int? updatedBy;
-  int? visits;
 
   ContentServiceV1Post({
     this.authorId,
@@ -3679,7 +3671,6 @@ class ContentServiceV1Post {
     this.availableLanguages,
     this.categoryIds,
     this.code,
-    this.commentCount,
     this.createdAt,
     this.createdBy,
     this.customFields,
@@ -3690,7 +3681,6 @@ class ContentServiceV1Post {
     this.id,
     this.inProgress,
     this.isFeatured,
-    this.likes,
     this.passwordHash,
     this.publishTime,
     this.sortOrder,
@@ -3699,7 +3689,6 @@ class ContentServiceV1Post {
     this.translations,
     this.updatedAt,
     this.updatedBy,
-    this.visits,
   });
 
   factory ContentServiceV1Post.fromJson(Map<String, dynamic> json) {
@@ -3710,7 +3699,6 @@ class ContentServiceV1Post {
       availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
       categoryIds: (json['categoryIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
       code: json['code'] as String?,
-      commentCount: json['commentCount'] as int?,
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
       customFields: (json['customFields'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
@@ -3721,7 +3709,6 @@ class ContentServiceV1Post {
       id: json['id'] as int?,
       inProgress: json['inProgress'] as bool?,
       isFeatured: json['isFeatured'] as bool?,
-      likes: json['likes'] as int?,
       passwordHash: json['passwordHash'] as String?,
       publishTime: json['publishTime'] as String?,
       sortOrder: json['sortOrder'] as int?,
@@ -3730,7 +3717,6 @@ class ContentServiceV1Post {
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1PostTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
-      visits: json['visits'] as int?,
     );
   }
 
@@ -3742,7 +3728,6 @@ class ContentServiceV1Post {
     if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
     if (categoryIds != null) json['categoryIds'] = categoryIds;
     if (code != null) json['code'] = code;
-    if (commentCount != null) json['commentCount'] = commentCount;
     if (createdAt != null) json['createdAt'] = createdAt;
     if (createdBy != null) json['createdBy'] = createdBy;
     if (customFields != null) json['customFields'] = customFields;
@@ -3753,7 +3738,6 @@ class ContentServiceV1Post {
     if (id != null) json['id'] = id;
     if (inProgress != null) json['inProgress'] = inProgress;
     if (isFeatured != null) json['isFeatured'] = isFeatured;
-    if (likes != null) json['likes'] = likes;
     if (passwordHash != null) json['passwordHash'] = passwordHash;
     if (publishTime != null) json['publishTime'] = publishTime;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
@@ -3762,13 +3746,12 @@ class ContentServiceV1Post {
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
-    if (visits != null) json['visits'] = visits;
     return json;
   }
 
   @override
   String toString() {
-    return 'ContentServiceV1Post(authorId: $authorId, authorName: $authorName, autoSummary: $autoSummary, availableLanguages: $availableLanguages, categoryIds: $categoryIds, code: $code, commentCount: $commentCount, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, disallowComment: $disallowComment, editorType: $editorType, id: $id, inProgress: $inProgress, isFeatured: $isFeatured, likes: $likes, passwordHash: $passwordHash, publishTime: $publishTime, sortOrder: $sortOrder, status: $status, tagIds: $tagIds, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy, visits: $visits)';
+    return 'ContentServiceV1Post(authorId: $authorId, authorName: $authorName, autoSummary: $autoSummary, availableLanguages: $availableLanguages, categoryIds: $categoryIds, code: $code, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, disallowComment: $disallowComment, editorType: $editorType, id: $id, inProgress: $inProgress, isFeatured: $isFeatured, passwordHash: $passwordHash, publishTime: $publishTime, sortOrder: $sortOrder, status: $status, tagIds: $tagIds, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -3782,7 +3765,6 @@ class ContentServiceV1Post {
       && availableLanguages == other.availableLanguages
       && categoryIds == other.categoryIds
       && code == other.code
-      && commentCount == other.commentCount
       && createdAt == other.createdAt
       && createdBy == other.createdBy
       && customFields == other.customFields
@@ -3793,7 +3775,6 @@ class ContentServiceV1Post {
       && id == other.id
       && inProgress == other.inProgress
       && isFeatured == other.isFeatured
-      && likes == other.likes
       && passwordHash == other.passwordHash
       && publishTime == other.publishTime
       && sortOrder == other.sortOrder
@@ -3802,7 +3783,6 @@ class ContentServiceV1Post {
       && translations == other.translations
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
-      && visits == other.visits
     ;
 
   @override
@@ -3813,7 +3793,6 @@ class ContentServiceV1Post {
     availableLanguages,
     categoryIds,
     code,
-    commentCount,
     createdAt,
     createdBy,
     customFields,
@@ -3824,7 +3803,6 @@ class ContentServiceV1Post {
     id,
     inProgress,
     isFeatured,
-    likes,
     passwordHash,
     publishTime,
     sortOrder,
@@ -3833,7 +3811,6 @@ class ContentServiceV1Post {
     translations,
     updatedAt,
     updatedBy,
-    visits,
   ]);
 
   ContentServiceV1Post copyWith({
@@ -3843,7 +3820,6 @@ class ContentServiceV1Post {
     List<String>? availableLanguages,
     List<int>? categoryIds,
     String? code,
-    int? commentCount,
     String? createdAt,
     int? createdBy,
     Map<String, String>? customFields,
@@ -3854,7 +3830,6 @@ class ContentServiceV1Post {
     int? id,
     bool? inProgress,
     bool? isFeatured,
-    int? likes,
     String? passwordHash,
     String? publishTime,
     int? sortOrder,
@@ -3863,7 +3838,6 @@ class ContentServiceV1Post {
     List<ContentServiceV1PostTranslation>? translations,
     String? updatedAt,
     int? updatedBy,
-    int? visits,
   }) {
     return ContentServiceV1Post(
       authorId: authorId ?? this.authorId,
@@ -3872,7 +3846,6 @@ class ContentServiceV1Post {
       availableLanguages: availableLanguages ?? this.availableLanguages,
       categoryIds: categoryIds ?? this.categoryIds,
       code: code ?? this.code,
-      commentCount: commentCount ?? this.commentCount,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       customFields: customFields ?? this.customFields,
@@ -3883,7 +3856,6 @@ class ContentServiceV1Post {
       id: id ?? this.id,
       inProgress: inProgress ?? this.inProgress,
       isFeatured: isFeatured ?? this.isFeatured,
-      likes: likes ?? this.likes,
       passwordHash: passwordHash ?? this.passwordHash,
       publishTime: publishTime ?? this.publishTime,
       sortOrder: sortOrder ?? this.sortOrder,
@@ -3892,7 +3864,6 @@ class ContentServiceV1Post {
       translations: translations ?? this.translations,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
-      visits: visits ?? this.visits,
     );
   }
 }
@@ -4112,6 +4083,235 @@ class ContentServiceV1PostTranslation {
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
       wordCount: wordCount ?? this.wordCount,
+    );
+  }
+}
+
+class InteractionServiceV1GetCountsRequest {
+  List<InteractionServiceV1CounterMetric>? metrics;
+  List<int>? targetIds;
+  InteractionServiceV1TargetType? targetType;
+
+  InteractionServiceV1GetCountsRequest({
+    this.metrics,
+    this.targetIds,
+    this.targetType,
+  });
+
+  factory InteractionServiceV1GetCountsRequest.fromJson(Map<String, dynamic> json) {
+    return InteractionServiceV1GetCountsRequest(
+      metrics: (json['metrics'] as List<dynamic>?)?.map((e) => InteractionServiceV1CounterMetric.fromString(e as String)).toList(),
+      targetIds: (json['targetIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      targetType: json['targetType'] != null ? InteractionServiceV1TargetType.fromString(json['targetType'] as String) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (metrics != null) json['metrics'] = metrics!.map((e) => e.value).toList();
+    if (targetIds != null) json['targetIds'] = targetIds;
+    if (targetType != null) json['targetType'] = targetType!.value;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InteractionServiceV1GetCountsRequest(metrics: $metrics, targetIds: $targetIds, targetType: $targetType)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InteractionServiceV1GetCountsRequest &&
+      runtimeType == other.runtimeType
+      && metrics == other.metrics
+      && targetIds == other.targetIds
+      && targetType == other.targetType
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    metrics,
+    targetIds,
+    targetType,
+  ]);
+
+  InteractionServiceV1GetCountsRequest copyWith({
+    List<InteractionServiceV1CounterMetric>? metrics,
+    List<int>? targetIds,
+    InteractionServiceV1TargetType? targetType,
+  }) {
+    return InteractionServiceV1GetCountsRequest(
+      metrics: metrics ?? this.metrics,
+      targetIds: targetIds ?? this.targetIds,
+      targetType: targetType ?? this.targetType,
+    );
+  }
+}
+
+/// 计数指标类型。与 interaction_counter 表的 metric 列对应。
+/// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+enum InteractionServiceV1CounterMetric {
+  counterMetricLike('COUNTER_METRIC_LIKE'),
+  counterMetricUnspecified('COUNTER_METRIC_UNSPECIFIED'),
+  counterMetricWatch('COUNTER_METRIC_WATCH');
+
+  final String value;
+  const InteractionServiceV1CounterMetric(this.value);
+
+  static InteractionServiceV1CounterMetric fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InteractionServiceV1CounterMetric value: ' + v));
+  @override
+  String toString() => value;
+}
+
+/// target_id → 该目标下各 metric 的计数集合。
+/// 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
+class InteractionServiceV1GetCountsResponse {
+  Map<String, InteractionServiceV1CountMap>? counts;
+
+  InteractionServiceV1GetCountsResponse({
+    this.counts,
+  });
+
+  factory InteractionServiceV1GetCountsResponse.fromJson(Map<String, dynamic> json) {
+    return InteractionServiceV1GetCountsResponse(
+      counts: (json['counts'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, InteractionServiceV1CountMap.fromJson(v as Map<String, dynamic>))),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (counts != null) json['counts'] = counts!.map((k, v) => MapEntry(k, v.toJson()));
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InteractionServiceV1GetCountsResponse(counts: $counts)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InteractionServiceV1GetCountsResponse &&
+      runtimeType == other.runtimeType
+      && counts == other.counts
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    counts,
+  ]);
+
+  InteractionServiceV1GetCountsResponse copyWith({
+    Map<String, InteractionServiceV1CountMap>? counts,
+  }) {
+    return InteractionServiceV1GetCountsResponse(
+      counts: counts ?? this.counts,
+    );
+  }
+}
+
+/// 单个目标下所有请求 metric 的计数集合。
+class InteractionServiceV1CountMap {
+  List<InteractionServiceV1MetricCount>? counts;
+
+  InteractionServiceV1CountMap({
+    this.counts,
+  });
+
+  factory InteractionServiceV1CountMap.fromJson(Map<String, dynamic> json) {
+    return InteractionServiceV1CountMap(
+      counts: (json['counts'] as List<dynamic>?)?.map((e) => InteractionServiceV1MetricCount.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (counts != null) json['counts'] = counts!.map((e) => e.toJson()).toList();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InteractionServiceV1CountMap(counts: $counts)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InteractionServiceV1CountMap &&
+      runtimeType == other.runtimeType
+      && counts == other.counts
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    counts,
+  ]);
+
+  InteractionServiceV1CountMap copyWith({
+    List<InteractionServiceV1MetricCount>? counts,
+  }) {
+    return InteractionServiceV1CountMap(
+      counts: counts ?? this.counts,
+    );
+  }
+}
+
+/// 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
+/// 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
+class InteractionServiceV1MetricCount {
+  int? count;
+  InteractionServiceV1CounterMetric? metric;
+
+  InteractionServiceV1MetricCount({
+    this.count,
+    this.metric,
+  });
+
+  factory InteractionServiceV1MetricCount.fromJson(Map<String, dynamic> json) {
+    return InteractionServiceV1MetricCount(
+      count: json['count'] != null ? int.parse(json['count'].toString()) : null,
+      metric: json['metric'] != null ? InteractionServiceV1CounterMetric.fromString(json['metric'] as String) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (count != null) json['count'] = count.toString();
+    if (metric != null) json['metric'] = metric!.value;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InteractionServiceV1MetricCount(count: $count, metric: $metric)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InteractionServiceV1MetricCount &&
+      runtimeType == other.runtimeType
+      && count == other.count
+      && metric == other.metric
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    count,
+    metric,
+  ]);
+
+  InteractionServiceV1MetricCount copyWith({
+    int? count,
+    InteractionServiceV1CounterMetric? metric,
+  }) {
+    return InteractionServiceV1MetricCount(
+      count: count ?? this.count,
+      metric: metric ?? this.metric,
     );
   }
 }
@@ -5117,7 +5317,6 @@ class ContentServiceV1Page {
   ContentServiceV1Page$PageType? type;
   String? updatedAt;
   int? updatedBy;
-  int? visits;
 
   ContentServiceV1Page({
     this.authorId,
@@ -5146,7 +5345,6 @@ class ContentServiceV1Page {
     this.type,
     this.updatedAt,
     this.updatedBy,
-    this.visits,
   });
 
   factory ContentServiceV1Page.fromJson(Map<String, dynamic> json) {
@@ -5177,7 +5375,6 @@ class ContentServiceV1Page {
       type: json['type'] != null ? ContentServiceV1Page$PageType.fromString(json['type'] as String) : null,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
-      visits: json['visits'] as int?,
     );
   }
 
@@ -5209,13 +5406,12 @@ class ContentServiceV1Page {
     if (type != null) json['type'] = type!.value;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
-    if (visits != null) json['visits'] = visits;
     return json;
   }
 
   @override
   String toString() {
-    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy, visits: $visits)';
+    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -5249,7 +5445,6 @@ class ContentServiceV1Page {
       && type == other.type
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
-      && visits == other.visits
     ;
 
   @override
@@ -5280,7 +5475,6 @@ class ContentServiceV1Page {
     type,
     updatedAt,
     updatedBy,
-    visits,
   ]);
 
   ContentServiceV1Page copyWith({
@@ -5310,7 +5504,6 @@ class ContentServiceV1Page {
     ContentServiceV1Page$PageType? type,
     String? updatedAt,
     int? updatedBy,
-    int? visits,
   }) {
     return ContentServiceV1Page(
       authorId: authorId ?? this.authorId,
@@ -5339,7 +5532,6 @@ class ContentServiceV1Page {
       type: type ?? this.type,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
-      visits: visits ?? this.visits,
     );
   }
 }

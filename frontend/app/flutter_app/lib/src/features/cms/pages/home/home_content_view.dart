@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Category,
-        ContentServiceV1Tag;
+        ContentServiceV1Tag, InteractionServiceV1TargetType,
+        InteractionServiceV1CounterMetric;
 import 'package:flutter_app/src/features/cms/widgets/featured_carousel.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_cloud.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_app/src/features/cms/widgets/category_tabs.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -41,6 +43,12 @@ class _HomeContentViewState extends State<HomeContentView>
   List<Post> _posts = [];
   List<Tag> _tags = [];
 
+  // 点赞计数缓存：key 为 post.id。计数来自 interaction_counter 表
+  // （post.likes 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _likeCounts = {};
+
+  final _interactionService = InteractionService();
+
   @override
   void initState() {
     super.initState();
@@ -62,12 +70,31 @@ class _HomeContentViewState extends State<HomeContentView>
 
     if (!mounted) return;
 
+    final posts = (results[1] as ListPostResponse?)?.items ?? [];
+    final ids = posts
+        .where((p) => p.id != null)
+        .map((p) => p.id!)
+        .toList(growable: false);
+    Map<int, int> likeCounts = {};
+    if (ids.isNotEmpty) {
+      final countsResp = await _interactionService.getCounts(
+          InteractionServiceV1TargetType.targetTypePost,
+          ids,
+          [InteractionServiceV1CounterMetric.counterMetricLike]);
+      likeCounts = InteractionService.extractCountMap(
+          countsResp,
+          ids,
+          InteractionServiceV1CounterMetric.counterMetricLike);
+    }
+    if (!mounted) return;
+
     setState(() {
       _categories = (results[0] as ListCategoryResponse?)?.items ?? [];
       // 按 sortOrder 排序
       _categories.sort((a, b) => (a.sortOrder ?? 0).compareTo(b.sortOrder ?? 0));
-      
-      _posts = (results[1] as ListPostResponse?)?.items ?? [];
+
+      _posts = posts;
+      _likeCounts = likeCounts;
       _tags = (results[2] as ListTagResponse?)?.items ?? [];
 
       // 插入"推荐"虚拟分类
@@ -237,6 +264,7 @@ class _HomeContentViewState extends State<HomeContentView>
                 padding: EdgeInsets.only(bottom: 12.h),
                 child: PostCard(
                   post: posts[index],
+                  likeCount: _likeCounts[posts[index].id] ?? 0,
                   categories: _categories,
                   tags: _tags,
                 ),

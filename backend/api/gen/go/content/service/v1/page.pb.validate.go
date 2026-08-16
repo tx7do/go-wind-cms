@@ -178,10 +178,6 @@ func (m *Page) validate(all bool) error {
 		// no validation rules for IsCustomTemplate
 	}
 
-	if m.Visits != nil {
-		// no validation rules for Visits
-	}
-
 	if m.ParentId != nil {
 		// no validation rules for ParentId
 	}

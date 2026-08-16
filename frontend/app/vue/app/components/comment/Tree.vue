@@ -2,6 +2,13 @@
 import { XIcon } from '@/plugins/xicon'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/utils/date'
+import {
+  useInteractionStatus,
+  useGetCounts,
+  extractCount,
+  useLike,
+  useUnlike,
+} from '@/api/composables/interaction'
 
 const props = defineProps<{
   comments: any[]
@@ -18,10 +25,29 @@ const replyAuthorEmail = ref('')
 const submitting = ref(false)
 const expandedComments = ref<Set<number>>(new Set())
 const loadingChildren = ref<Set<number>>(new Set())
-const likedComments = ref<Set<number>>(new Set())
+
+// 点赞状态：通过 interaction 子系统批量查询当前 viewer 对这些评论的点赞态。
+// targetIds 取当前渲染的顶层评论 id（children 由递归子组件自行查询）。
+const commentIds = computed(() =>
+  (props.comments ?? [])
+    .map(c => c.id)
+    .filter((id): id is number => typeof id === 'number'),
+)
+const statusQuery = useInteractionStatus('TARGET_TYPE_COMMENT', commentIds)
+// 点赞计数：通过 interaction_counter 表批量查询（comment.like_count 列已移除）。
+const countsQuery = useGetCounts('TARGET_TYPE_COMMENT', commentIds, ['COUNTER_METRIC_LIKE'])
+const likeMutation = useLike()
+const unlikeMutation = useUnlike()
+
+function isLiked(comment: any): boolean {
+  if (typeof comment.id !== 'number') return false
+  const map = statusQuery.data?.value?.statuses
+  if (!map) return false
+  return map[String(comment.id)]?.liked === true
+}
 
 function hasChildren(comment: any): boolean {
-  return !!comment.children || (comment.replyCount !== undefined && comment.replyCount > 0)
+  return !!comment.children && comment.children.length > 0
 }
 
 function isOwnerReply(comment: any): boolean {
@@ -81,12 +107,20 @@ async function submitReply(comment: any) {
   }
 }
 
-function handleLike(comment: any) {
-  const commentId = comment.id || 0
-  if (likedComments.value.has(commentId)) {
-    likedComments.value.delete(commentId)
-  } else {
-    likedComments.value.add(commentId)
+// 处理点赞：调用 interaction 子系统，服务端在同一事务内更新 ledger 与 interaction_counter 计数表。
+// 幂等由后端保证；前端按当前态决定 Like/Unlike。计数由 GetCounts 返回（comment.like_count 列已移除）。
+async function handleLike(comment: any) {
+  const commentId = comment.id
+  if (typeof commentId !== 'number') return
+  const liked = isLiked(comment)
+  try {
+    if (liked) {
+      await unlikeMutation.mutateAsync({targetType: 'TARGET_TYPE_COMMENT', targetId: commentId})
+    } else {
+      await likeMutation.mutateAsync({targetType: 'TARGET_TYPE_COMMENT', targetId: commentId})
+    }
+  } catch (e) {
+    console.error('toggle like failed:', e)
   }
 }
 
@@ -96,11 +130,13 @@ function handleShare(comment: any) {
   navigator.clipboard.writeText(commentUrl).catch(() => {})
 }
 
+// 切换展开/收起子评论
 async function toggleExpand(comment: any) {
   if (isExpanded(comment)) {
     expandedComments.value.delete(comment.id || 0)
   } else {
-    if (!comment.children && comment.replyCount && comment.replyCount > 0) {
+    if (!comment.children) {
+      // 需要动态加载子评论
       loadingChildren.value.add(comment.id || 0)
       try {
         await props.onLoadChildren(comment)
@@ -111,6 +147,7 @@ async function toggleExpand(comment: any) {
         loadingChildren.value.delete(comment.id || 0)
       }
     } else {
+      // 已经有子评论数据，直接展开
       expandedComments.value.add(comment.id || 0)
     }
   }
@@ -177,12 +214,12 @@ async function toggleExpand(comment: any) {
               :class="cn(
                 'flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5',
                 'max-md:text-xs max-sm:text-[11px]',
-                likedComments.has(comment.id || 0) && 'text-primary font-semibold',
+                isLiked(comment) && 'text-primary font-semibold',
               )"
               @click="handleLike(comment)"
             >
               <XIcon icon="carbon:thumbs-up" :size="16" />
-              {{ comment.likeCount || 0 }}
+              {{ extractCount(countsQuery.data?.value, comment.id, 'COUNTER_METRIC_LIKE') }}
             </span>
             <span
               class="flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5 max-md:text-xs max-sm:text-[11px]"
@@ -199,12 +236,12 @@ async function toggleExpand(comment: any) {
               {{ t('comment.share') }}
             </span>
             <span
-              v-if="comment.replyCount && comment.replyCount > 0"
+              v-if="(comment.children?.length ?? 0) > 0 || isExpanded(comment)"
               class="flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-primary transition-all duration-200 select-none hover:text-primary max-md:text-xs max-sm:text-[11px]"
               @click="toggleExpand(comment)"
             >
               <XIcon :icon="isExpanded(comment) ? 'carbon:chevron-up' : 'carbon:chevron-down'" :size="18" />
-              {{ isExpanded(comment) ? t('comment.hide_replies') : t('comment.view_replies', { count: comment.replyCount }) }}
+              {{ isExpanded(comment) ? t('comment.hide_replies') : t('comment.view_replies', { count: comment.children?.length ?? 0 }) }}
             </span>
           </div>
 

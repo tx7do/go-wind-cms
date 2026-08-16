@@ -39,6 +39,9 @@ type DictType func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// InteractionCounter is the predicate function for interactioncounter builders.
+type InteractionCounter func(*sql.Selector)
+
 // InternalMessage is the predicate function for internalmessage builders.
 type InternalMessage func(*sql.Selector)
 

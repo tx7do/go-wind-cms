@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useMemo, type ReactNode} from 'react';
+import {QueryClientProvider} from '@tanstack/react-query';
 
 import {
     createAccessStore,
@@ -23,6 +24,7 @@ import {env} from '@/config';
 import {refreshToken as apiRefreshToken} from '@/api/hooks/auth';
 import type {IUser} from '@/store/core/user/store';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
+import {queryClient} from '@/core';
 
 /**
  * 应用 Store Provider（聚合）
@@ -133,14 +135,16 @@ export default function StoreProvider({children}: { children: ReactNode }) {
     }, [accessStore, userStore, preferencesStore]);
 
     return (
-        <PreferencesStoreContext.Provider value={preferencesStore}>
-            <AccessStoreContext.Provider value={accessStore}>
-                <UserStoreContext.Provider value={userStore}>
-                    <LoadingStoreContext.Provider value={loadingStore}>
-                        {children}
-                    </LoadingStoreContext.Provider>
-                </UserStoreContext.Provider>
-            </AccessStoreContext.Provider>
-        </PreferencesStoreContext.Provider>
+        <QueryClientProvider client={queryClient}>
+            <PreferencesStoreContext.Provider value={preferencesStore}>
+                <AccessStoreContext.Provider value={accessStore}>
+                    <UserStoreContext.Provider value={userStore}>
+                        <LoadingStoreContext.Provider value={loadingStore}>
+                            {children}
+                        </LoadingStoreContext.Provider>
+                    </UserStoreContext.Provider>
+                </AccessStoreContext.Provider>
+            </PreferencesStoreContext.Provider>
+        </QueryClientProvider>
     );
 }

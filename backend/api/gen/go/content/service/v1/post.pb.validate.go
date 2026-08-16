@@ -128,18 +128,6 @@ func (m *Post) validate(all bool) error {
 		// no validation rules for SortOrder
 	}
 
-	if m.Visits != nil {
-		// no validation rules for Visits
-	}
-
-	if m.Likes != nil {
-		// no validation rules for Likes
-	}
-
-	if m.CommentCount != nil {
-		// no validation rules for CommentCount
-	}
-
 	if m.AuthorId != nil {
 		// no validation rules for AuthorId
 	}

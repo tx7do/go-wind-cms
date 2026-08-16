@@ -61,8 +61,6 @@ type Page struct {
 	Template *string `json:"template,omitempty"`
 	// 是否使用自定义模板代码
 	IsCustomTemplate *bool `json:"is_custom_template,omitempty"`
-	// 页面访问次数
-	Visits *uint32 `json:"visits,omitempty"`
 	// 自定义字段
 	CustomFields *map[string]string `json:"custom_fields,omitempty"`
 	// 页面层级深度
@@ -113,7 +111,7 @@ func (*Page) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case page.FieldDisallowComment, page.FieldShowInNavigation, page.FieldIsCustomTemplate:
 			values[i] = new(sql.NullBool)
-		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldTenantID, page.FieldAuthorID, page.FieldVisits, page.FieldDepth:
+		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldTenantID, page.FieldAuthorID, page.FieldDepth:
 			values[i] = new(sql.NullInt64)
 		case page.FieldPath, page.FieldEditorType, page.FieldStatus, page.FieldType, page.FieldSlug, page.FieldAuthorName, page.FieldRedirectURL, page.FieldTemplate:
 			values[i] = new(sql.NullString)
@@ -287,13 +285,6 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 				_m.IsCustomTemplate = new(bool)
 				*_m.IsCustomTemplate = value.Bool
 			}
-		case page.FieldVisits:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field visits", values[i])
-			} else if value.Valid {
-				_m.Visits = new(uint32)
-				*_m.Visits = uint32(value.Int64)
-			}
 		case page.FieldCustomFields:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field custom_fields", values[i])
@@ -457,11 +448,6 @@ func (_m *Page) String() string {
 	builder.WriteString(", ")
 	if v := _m.IsCustomTemplate; v != nil {
 		builder.WriteString("is_custom_template=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.Visits; v != nil {
-		builder.WriteString("visits=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

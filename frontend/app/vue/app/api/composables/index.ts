@@ -16,6 +16,9 @@ export * from './page';
 export * from './tag';
 export * from './comment';
 
+// 交互服务（点赞 / 收藏 / 交互状态 / 计数）
+export * from './interaction';
+
 // 站点配置
 export * from './navigation';
 

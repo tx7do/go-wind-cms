@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show CommentServiceV1Comment;
+    show CommentServiceV1Comment, InteractionServiceV1TargetType,
+        InteractionServiceV1CounterMetric;
 import 'package:flutter_app/src/features/cms/services/comment_service.dart';
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 
@@ -27,6 +29,12 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
   List<Comment> _comments = [];
   bool _isLoading = true;
 
+  // 评论点赞计数缓存：key 为 comment.id。计数来自 interaction_counter 表
+  // （comment.like_count 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _likeCounts = {};
+
+  final _interactionService = InteractionService();
+
   @override
   void initState() {
     super.initState();
@@ -38,8 +46,26 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
     if (!mounted) return;
 
     if (result is ListCommentResponse) {
+      final comments = result.items ?? [];
+      final cids = comments
+          .where((c) => c.id != null)
+          .map((c) => c.id!)
+          .toList(growable: false);
+      Map<int, int> ccounts = {};
+      if (cids.isNotEmpty) {
+        final cresp = await _interactionService.getCounts(
+            InteractionServiceV1TargetType.targetTypeComment,
+            cids,
+            [InteractionServiceV1CounterMetric.counterMetricLike]);
+        ccounts = InteractionService.extractCountMap(
+            cresp,
+            cids,
+            InteractionServiceV1CounterMetric.counterMetricLike);
+      }
+      if (!mounted) return;
       setState(() {
-        _comments = result.items ?? [];
+        _comments = comments;
+        _likeCounts = ccounts;
         _isLoading = false;
       });
     } else {
@@ -90,6 +116,8 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
                         return _CommentCard(
                           comment: _comments[index],
                           isMobile: isMobile,
+                          likeCount:
+                              _likeCounts[_comments[index].id] ?? 0,
                           onTap: () {
                             final objectId = _comments[index].objectId;
                             if (objectId != null) {
@@ -115,6 +143,8 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
                                       _CommentCard(
                                         comment: _comments[index],
                                         isMobile: false,
+                                        likeCount:
+                                            _likeCounts[_comments[index].id] ?? 0,
                                         onTap: () {
                                           final objectId = _comments[index].objectId;
                                           if (objectId != null) {
@@ -167,11 +197,13 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
 class _CommentCard extends StatelessWidget {
   final Comment comment;
   final bool isMobile;
+  final int likeCount;
   final VoidCallback? onTap;
 
   const _CommentCard({
     required this.comment,
     required this.isMobile,
+    required this.likeCount,
     this.onTap,
   });
 
@@ -251,46 +283,27 @@ class _CommentCard extends StatelessWidget {
             ),
           ),
 
-          // 底部：互动信息
-          if (comment.likeCount != null || comment.replyCount != null)
-            Padding(
-              padding: EdgeInsets.only(top: isMobile ? 8.h : 8),
-              child: Row(
-                children: [
-                  if (comment.likeCount != null) ...[
-                    Icon(
-                      Icons.favorite_outline,
-                      size: 14,
-                      color: theme.colorScheme.onSurface.withAlpha(100),
-                    ),
-                    SizedBox(width: isMobile ? 3.w : 3),
-                    Text(
-                      '${comment.likeCount}',
-                      style: TextStyle(
-                        fontSize: isMobile ? 11.sp : 11,
-                        color: theme.colorScheme.onSurface.withAlpha(100),
-                      ),
-                    ),
-                    SizedBox(width: isMobile ? 12.w : 12),
-                  ],
-                  if (comment.replyCount != null) ...[
-                    Icon(
-                      Icons.chat_bubble_outline,
-                      size: 14,
-                      color: theme.colorScheme.onSurface.withAlpha(100),
-                    ),
-                    SizedBox(width: isMobile ? 3.w : 3),
-                    Text(
-                      '${comment.replyCount}',
-                      style: TextStyle(
-                        fontSize: isMobile ? 11.sp : 11,
-                        color: theme.colorScheme.onSurface.withAlpha(100),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+          // 底部：互动信息（点赞计数由 interaction_counter 表提供，comment.like_count 列已移除）
+          Padding(
+            padding: EdgeInsets.only(top: isMobile ? 8.h : 8),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.favorite_outline,
+                  size: 14,
+                  color: theme.colorScheme.onSurface.withAlpha(100),
+                ),
+                SizedBox(width: isMobile ? 3.w : 3),
+                Text(
+                  '${likeCount}',
+                  style: TextStyle(
+                    fontSize: isMobile ? 11.sp : 11,
+                    color: theme.colorScheme.onSurface.withAlpha(100),
+                  ),
+                ),
+              ],
             ),
+          ),
         ],
       ),
     );

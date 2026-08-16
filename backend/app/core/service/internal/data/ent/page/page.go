@@ -57,8 +57,6 @@ const (
 	FieldTemplate = "template"
 	// FieldIsCustomTemplate holds the string denoting the is_custom_template field in the database.
 	FieldIsCustomTemplate = "is_custom_template"
-	// FieldVisits holds the string denoting the visits field in the database.
-	FieldVisits = "visits"
 	// FieldCustomFields holds the string denoting the custom_fields field in the database.
 	FieldCustomFields = "custom_fields"
 	// FieldDepth holds the string denoting the depth field in the database.
@@ -103,7 +101,6 @@ var Columns = []string{
 	FieldShowInNavigation,
 	FieldTemplate,
 	FieldIsCustomTemplate,
-	FieldVisits,
 	FieldCustomFields,
 	FieldDepth,
 }
@@ -140,8 +137,6 @@ var (
 	DefaultShowInNavigation bool
 	// DefaultIsCustomTemplate holds the default value on creation for the "is_custom_template" field.
 	DefaultIsCustomTemplate bool
-	// DefaultVisits holds the default value on creation for the "visits" field.
-	DefaultVisits uint32
 	// DefaultDepth holds the default value on creation for the "depth" field.
 	DefaultDepth int32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -345,11 +340,6 @@ func ByTemplate(opts ...sql.OrderTermOption) OrderOption {
 // ByIsCustomTemplate orders the results by the is_custom_template field.
 func ByIsCustomTemplate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsCustomTemplate, opts...).ToFunc()
-}
-
-// ByVisits orders the results by the visits field.
-func ByVisits(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldVisits, opts...).ToFunc()
 }
 
 // ByDepth orders the results by the depth field.

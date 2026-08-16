@@ -30,7 +30,7 @@ export default function LatestPostsSection() {
         const res = await fetchListPosts({
           paging: {page: 1, pageSize: 5},
           formValues: {status: 'POST_STATUS_PUBLISHED', isFeatured: false},
-          fieldMask: 'id,status,sortOrder,isFeatured,visits,likes,commentCount,authorName,availableLanguages,createdAt,translations.id,translations.postId,translations.languageCode,translations.title,translations.summary,translations.thumbnail',
+          fieldMask: 'id,status,sortOrder,isFeatured,authorName,availableLanguages,createdAt,translations.id,translations.postId,translations.languageCode,translations.title,translations.summary,translations.thumbnail',
           orderBy: ['-createdAt'],
         });
         setPosts(res.items || []);

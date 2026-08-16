@@ -130,18 +130,6 @@ func (m *Comment) validate(all bool) error {
 		// no validation rules for Status
 	}
 
-	if m.LikeCount != nil {
-		// no validation rules for LikeCount
-	}
-
-	if m.DislikeCount != nil {
-		// no validation rules for DislikeCount
-	}
-
-	if m.ReplyCount != nil {
-		// no validation rules for ReplyCount
-	}
-
 	if m.IpAddress != nil {
 		// no validation rules for IpAddress
 	}

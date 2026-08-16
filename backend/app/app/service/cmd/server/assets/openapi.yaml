@@ -477,6 +477,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
+    /app/v1/interactions/counts:list:
+        post:
+            tags:
+                - InteractionService
+            description: 批量查询计数
+            operationId: InteractionService_GetCounts
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.GetCountsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.GetCountsResponse'
     /app/v1/interactions/like:
         post:
             tags:
@@ -1986,18 +2005,6 @@ components:
                     type: string
                     description: 评论状态
                     format: enum
-                likeCount:
-                    type: integer
-                    description: 点赞数
-                    format: uint32
-                dislikeCount:
-                    type: integer
-                    description: 点踩数
-                    format: uint32
-                replyCount:
-                    type: integer
-                    description: 回复数
-                    format: uint32
                 ipAddress:
                     type: string
                     description: 评论者 IP（脱敏存储，如 192.168.1.*）
@@ -2388,10 +2395,6 @@ components:
                 isCustomTemplate:
                     type: boolean
                     description: 是否使用自定义模板代码（而非预设模板）
-                visits:
-                    type: integer
-                    description: 页面访问次数
-                    format: uint32
                 customFields:
                     type: object
                     additionalProperties:
@@ -2553,18 +2556,6 @@ components:
                     type: integer
                     description: 排序优先级（数值越小越靠前，同组内排序）
                     format: uint32
-                visits:
-                    type: integer
-                    description: 帖子访问次数
-                    format: int32
-                likes:
-                    type: integer
-                    description: 帖子点赞次数
-                    format: int32
-                commentCount:
-                    type: integer
-                    description: 帖子评论数
-                    format: int32
                 authorId:
                     type: integer
                     description: 评论作者ID，0表示游客
@@ -3366,6 +3357,48 @@ components:
                 verificationId:
                     type: string
                     description: 服务端生成的验证码会话ID（可选）
+        interaction.service.v1.CountMap:
+            type: object
+            properties:
+                counts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/interaction.service.v1.MetricCount'
+            description: 单个目标下所有请求 metric 的计数集合。
+        interaction.service.v1.GetCountsRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_POST
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                metrics:
+                    type: array
+                    items:
+                        enum:
+                            - COUNTER_METRIC_UNSPECIFIED
+                            - COUNTER_METRIC_LIKE
+                            - COUNTER_METRIC_WATCH
+                        type: string
+                        format: enum
+        interaction.service.v1.GetCountsResponse:
+            type: object
+            properties:
+                counts:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/interaction.service.v1.CountMap'
+            description: |-
+                target_id → 该目标下各 metric 的计数集合。
+                 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
         interaction.service.v1.GetInteractionStatusRequest:
             type: object
             properties:
@@ -3416,6 +3449,21 @@ components:
                 likeCount:
                     type: integer
                     format: int32
+        interaction.service.v1.MetricCount:
+            type: object
+            properties:
+                metric:
+                    enum:
+                        - COUNTER_METRIC_UNSPECIFIED
+                        - COUNTER_METRIC_LIKE
+                        - COUNTER_METRIC_WATCH
+                    type: string
+                    format: enum
+                count:
+                    type: string
+            description: |-
+                单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
+                 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
         interaction.service.v1.WatchRequest:
             type: object
             properties:
@@ -3427,6 +3475,9 @@ components:
             properties:
                 watched:
                     type: boolean
+                watchCount:
+                    type: integer
+                    format: int32
         site.service.v1.CreateNavigationRequest:
             type: object
             properties:

@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-cms/app/core/service/internal/data/client"
 	"go-wind-cms/app/core/service/internal/server"
 	"go-wind-cms/app/core/service/internal/service"
 )
@@ -25,13 +26,13 @@ import (
 func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	v := server.NewGrpcMiddleware(context)
 	authenticatorOption := data.NewAuthenticatorConfig(context)
-	client, cleanup, err := data.NewRedisClient(context)
+	redisClient, cleanup, err := client.NewRedisClient(context)
 	if err != nil {
 		return nil, nil, err
 	}
-	userTokenCache := data.NewUserTokenCache(context, client)
+	userTokenCache := data.NewUserTokenCache(context, redisClient)
 	authenticator := data.NewAuthenticator(context, authenticatorOption, userTokenCache)
-	entClient, cleanup2, err := data.NewEntClient(context)
+	entClient, cleanup2, err := client.NewEntClient(context)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
@@ -60,7 +61,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	taskRepo := data.NewTaskRepo(context, entClient)
 	taskService := service.NewTaskService(context, taskRepo, userRepo)
 	fileRepo := data.NewFileRepo(context, entClient)
-	minIOClient := data.NewMinIoClient(context)
+	minIOClient := client.NewMinIoClient(context)
 	fileService := service.NewFileService(context, fileRepo, minIOClient)
 	dictEntryI18nRepo := data.NewDictEntryI18nRepo(context, entClient)
 	dictEntryRepo := data.NewDictEntryRepo(context, entClient, dictEntryI18nRepo)
@@ -109,13 +110,13 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	postTagRepo := data.NewPostTagRepo(context, entClient)
 	postRepo := data.NewPostRepo(context, entClient, postTranslationRepo, postCategoryRepo, postTagRepo)
 	interactionService := service.NewInteractionService(context, interactionRepo, postRepo)
-	elasticsearchClient, cleanup3, err := data.NewElasticSearchClient(context)
+	opensearchClient, cleanup3, err := client.NewElasticSearchClient(context)
 	if err != nil {
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	searchRepo := data.NewSearchRepo(context, elasticsearchClient)
+	searchRepo := data.NewSearchRepo(context, opensearchClient)
 	searchService := service.NewSearchService(context, searchRepo, postRepo)
 	postService := service.NewPostService(context, postRepo, searchService, taskService)
 	categoryTranslationRepo := data.NewCategoryTranslationRepo(context, entClient)

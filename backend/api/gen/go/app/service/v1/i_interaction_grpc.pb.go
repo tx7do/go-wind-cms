@@ -28,6 +28,7 @@ const (
 	InteractionService_Unwatch_FullMethodName              = "/app.service.v1.InteractionService/Unwatch"
 	InteractionService_GetInteractionStatus_FullMethodName = "/app.service.v1.InteractionService/GetInteractionStatus"
 	InteractionService_ListWatchedPosts_FullMethodName     = "/app.service.v1.InteractionService/ListWatchedPosts"
+	InteractionService_GetCounts_FullMethodName            = "/app.service.v1.InteractionService/GetCounts"
 )
 
 // InteractionServiceClient is the client API for InteractionService service.
@@ -48,6 +49,8 @@ type InteractionServiceClient interface {
 	GetInteractionStatus(ctx context.Context, in *v1.GetInteractionStatusRequest, opts ...grpc.CallOption) (*v1.GetInteractionStatusResponse, error)
 	// 列出当前 viewer 收藏的 post
 	ListWatchedPosts(ctx context.Context, in *v11.PagingRequest, opts ...grpc.CallOption) (*v12.ListPostResponse, error)
+	// 批量查询计数
+	GetCounts(ctx context.Context, in *v1.GetCountsRequest, opts ...grpc.CallOption) (*v1.GetCountsResponse, error)
 }
 
 type interactionServiceClient struct {
@@ -118,6 +121,16 @@ func (c *interactionServiceClient) ListWatchedPosts(ctx context.Context, in *v11
 	return out, nil
 }
 
+func (c *interactionServiceClient) GetCounts(ctx context.Context, in *v1.GetCountsRequest, opts ...grpc.CallOption) (*v1.GetCountsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.GetCountsResponse)
+	err := c.cc.Invoke(ctx, InteractionService_GetCounts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InteractionServiceServer is the server API for InteractionService service.
 // All implementations must embed UnimplementedInteractionServiceServer
 // for forward compatibility.
@@ -136,6 +149,8 @@ type InteractionServiceServer interface {
 	GetInteractionStatus(context.Context, *v1.GetInteractionStatusRequest) (*v1.GetInteractionStatusResponse, error)
 	// 列出当前 viewer 收藏的 post
 	ListWatchedPosts(context.Context, *v11.PagingRequest) (*v12.ListPostResponse, error)
+	// 批量查询计数
+	GetCounts(context.Context, *v1.GetCountsRequest) (*v1.GetCountsResponse, error)
 	mustEmbedUnimplementedInteractionServiceServer()
 }
 
@@ -163,6 +178,9 @@ func (UnimplementedInteractionServiceServer) GetInteractionStatus(context.Contex
 }
 func (UnimplementedInteractionServiceServer) ListWatchedPosts(context.Context, *v11.PagingRequest) (*v12.ListPostResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWatchedPosts not implemented")
+}
+func (UnimplementedInteractionServiceServer) GetCounts(context.Context, *v1.GetCountsRequest) (*v1.GetCountsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCounts not implemented")
 }
 func (UnimplementedInteractionServiceServer) mustEmbedUnimplementedInteractionServiceServer() {}
 func (UnimplementedInteractionServiceServer) testEmbeddedByValue()                            {}
@@ -293,6 +311,24 @@ func _InteractionService_ListWatchedPosts_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InteractionService_GetCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.GetCountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InteractionServiceServer).GetCounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InteractionService_GetCounts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InteractionServiceServer).GetCounts(ctx, req.(*v1.GetCountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InteractionService_ServiceDesc is the grpc.ServiceDesc for InteractionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -323,6 +359,10 @@ var InteractionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWatchedPosts",
 			Handler:    _InteractionService_ListWatchedPosts_Handler,
+		},
+		{
+			MethodName: "GetCounts",
+			Handler:    _InteractionService_GetCounts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

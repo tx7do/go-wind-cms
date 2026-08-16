@@ -3,9 +3,11 @@ import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show ContentServiceV1Post, ContentServiceV1Tag, ContentServiceV1SearchPostHit;
+    show ContentServiceV1Post, ContentServiceV1Tag, ContentServiceV1SearchPostHit,
+        InteractionServiceV1TargetType, InteractionServiceV1CounterMetric;
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
@@ -32,6 +34,12 @@ class _SearchPageState extends State<SearchPage> {
   List<ContentServiceV1Post> _posts = [];
   List<ContentServiceV1Tag> _tags = [];
 
+  // 点赞计数缓存：key 为 post.id。计数来自 interaction_counter 表
+  // （post.likes 列已移除），由 InteractionService.GetCounts 批量查询。
+  Map<int, int> _likeCounts = {};
+
+  final _interactionService = InteractionService();
+
   // 真实搜索结果（来自 OpenSearch）
   List<ContentServiceV1SearchPostHit> _searchHits = [];
   bool _isSearching = false;
@@ -50,8 +58,27 @@ class _SearchPageState extends State<SearchPage> {
 
     if (!mounted) return;
 
+    final posts = (results[0] as ListPostResponse?)?.items ?? [];
+    final ids = posts
+        .where((p) => p.id != null)
+        .map((p) => p.id!)
+        .toList(growable: false);
+    Map<int, int> likeCounts = {};
+    if (ids.isNotEmpty) {
+      final countsResp = await _interactionService.getCounts(
+          InteractionServiceV1TargetType.targetTypePost,
+          ids,
+          [InteractionServiceV1CounterMetric.counterMetricLike]);
+      likeCounts = InteractionService.extractCountMap(
+          countsResp,
+          ids,
+          InteractionServiceV1CounterMetric.counterMetricLike);
+    }
+    if (!mounted) return;
+
     setState(() {
-      _posts = (results[0] as ListPostResponse?)?.items ?? [];
+      _posts = posts;
+      _likeCounts = likeCounts;
       _tags = (results[1] as ListTagResponse?)?.items ?? [];
       _isLoading = false;
     });
@@ -200,7 +227,9 @@ class _SearchPageState extends State<SearchPage> {
                   .map(
                     (post) => Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _SimplePostCard(post: post),
+                      child: _SimplePostCard(
+                          post: post,
+                          likeCount: _likeCounts[post.id] ?? 0),
                     ),
                   ),
             ],
@@ -359,8 +388,9 @@ class _SearchHitCardState extends State<_SearchHitCard> {
 /// 简化版文章卡片（推荐阅读用，基于完整 Post 数据）
 class _SimplePostCard extends StatefulWidget {
   final ContentServiceV1Post post;
+  final int likeCount;
 
-  const _SimplePostCard({required this.post});
+  const _SimplePostCard({required this.post, required this.likeCount});
 
   @override
   State<_SimplePostCard> createState() => _SimplePostCardState();
@@ -441,7 +471,7 @@ class _SimplePostCardState extends State<_SimplePostCard> {
                 ),
                 const SizedBox(width: 3),
                 Text(
-                  '${post.likes ?? 0}',
+                  '${widget.likeCount}',
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.colorScheme.onSurface.withAlpha(100),

@@ -16,6 +16,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
@@ -225,24 +226,12 @@ func init() {
 	commentDescAuthorID := commentFields[3].Descriptor()
 	// comment.DefaultAuthorID holds the default value on creation for the author_id field.
 	comment.DefaultAuthorID = commentDescAuthorID.Default.(uint32)
-	// commentDescLikeCount is the schema descriptor for like_count field.
-	commentDescLikeCount := commentFields[9].Descriptor()
-	// comment.DefaultLikeCount holds the default value on creation for the like_count field.
-	comment.DefaultLikeCount = commentDescLikeCount.Default.(uint32)
-	// commentDescDislikeCount is the schema descriptor for dislike_count field.
-	commentDescDislikeCount := commentFields[10].Descriptor()
-	// comment.DefaultDislikeCount holds the default value on creation for the dislike_count field.
-	comment.DefaultDislikeCount = commentDescDislikeCount.Default.(uint32)
-	// commentDescReplyCount is the schema descriptor for reply_count field.
-	commentDescReplyCount := commentFields[11].Descriptor()
-	// comment.DefaultReplyCount holds the default value on creation for the reply_count field.
-	comment.DefaultReplyCount = commentDescReplyCount.Default.(uint32)
 	// commentDescIsSpam is the schema descriptor for is_spam field.
-	commentDescIsSpam := commentFields[16].Descriptor()
+	commentDescIsSpam := commentFields[13].Descriptor()
 	// comment.DefaultIsSpam holds the default value on creation for the is_spam field.
 	comment.DefaultIsSpam = commentDescIsSpam.Default.(bool)
 	// commentDescIsSticky is the schema descriptor for is_sticky field.
-	commentDescIsSticky := commentFields[17].Descriptor()
+	commentDescIsSticky := commentFields[14].Descriptor()
 	// comment.DefaultIsSticky holds the default value on creation for the is_sticky field.
 	comment.DefaultIsSticky = commentDescIsSticky.Default.(bool)
 	// commentDescID is the schema descriptor for id field.
@@ -443,6 +432,34 @@ func init() {
 	fileDescID := fileMixinFields0[0].Descriptor()
 	// file.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	file.IDValidator = fileDescID.Validators[0].(func(uint32) error)
+	interactioncounterMixin := schema.InteractionCounter{}.Mixin()
+	interactioncounter.Policy = privacy.NewPolicies(interactioncounterMixin[2], schema.InteractionCounter{})
+	interactioncounter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := interactioncounter.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	interactioncounterMixinFields0 := interactioncounterMixin[0].Fields()
+	_ = interactioncounterMixinFields0
+	interactioncounterMixinFields2 := interactioncounterMixin[2].Fields()
+	_ = interactioncounterMixinFields2
+	interactioncounterFields := schema.InteractionCounter{}.Fields()
+	_ = interactioncounterFields
+	// interactioncounterDescTenantID is the schema descriptor for tenant_id field.
+	interactioncounterDescTenantID := interactioncounterMixinFields2[0].Descriptor()
+	// interactioncounter.DefaultTenantID holds the default value on creation for the tenant_id field.
+	interactioncounter.DefaultTenantID = interactioncounterDescTenantID.Default.(uint32)
+	// interactioncounterDescCount is the schema descriptor for count field.
+	interactioncounterDescCount := interactioncounterFields[3].Descriptor()
+	// interactioncounter.DefaultCount holds the default value on creation for the count field.
+	interactioncounter.DefaultCount = interactioncounterDescCount.Default.(int64)
+	// interactioncounterDescID is the schema descriptor for id field.
+	interactioncounterDescID := interactioncounterMixinFields0[0].Descriptor()
+	// interactioncounter.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	interactioncounter.IDValidator = interactioncounterDescID.Validators[0].(func(uint32) error)
 	internalmessageMixin := schema.InternalMessage{}.Mixin()
 	internalmessage.Policy = privacy.NewPolicies(internalmessageMixin[3], schema.InternalMessage{})
 	internalmessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1028,12 +1045,8 @@ func init() {
 	pageDescIsCustomTemplate := pageFields[9].Descriptor()
 	// page.DefaultIsCustomTemplate holds the default value on creation for the is_custom_template field.
 	page.DefaultIsCustomTemplate = pageDescIsCustomTemplate.Default.(bool)
-	// pageDescVisits is the schema descriptor for visits field.
-	pageDescVisits := pageFields[10].Descriptor()
-	// page.DefaultVisits holds the default value on creation for the visits field.
-	page.DefaultVisits = pageDescVisits.Default.(uint32)
 	// pageDescDepth is the schema descriptor for depth field.
-	pageDescDepth := pageFields[12].Descriptor()
+	pageDescDepth := pageFields[11].Descriptor()
 	// page.DefaultDepth holds the default value on creation for the depth field.
 	page.DefaultDepth = pageDescDepth.Default.(int32)
 	// pageDescID is the schema descriptor for id field.
@@ -1366,20 +1379,8 @@ func init() {
 	postDescIsFeatured := postFields[5].Descriptor()
 	// post.DefaultIsFeatured holds the default value on creation for the is_featured field.
 	post.DefaultIsFeatured = postDescIsFeatured.Default.(bool)
-	// postDescVisits is the schema descriptor for visits field.
-	postDescVisits := postFields[6].Descriptor()
-	// post.DefaultVisits holds the default value on creation for the visits field.
-	post.DefaultVisits = postDescVisits.Default.(int32)
-	// postDescLikes is the schema descriptor for likes field.
-	postDescLikes := postFields[7].Descriptor()
-	// post.DefaultLikes holds the default value on creation for the likes field.
-	post.DefaultLikes = postDescLikes.Default.(int32)
-	// postDescCommentCount is the schema descriptor for comment_count field.
-	postDescCommentCount := postFields[8].Descriptor()
-	// post.DefaultCommentCount holds the default value on creation for the comment_count field.
-	post.DefaultCommentCount = postDescCommentCount.Default.(int32)
 	// postDescAuthorID is the schema descriptor for author_id field.
-	postDescAuthorID := postFields[9].Descriptor()
+	postDescAuthorID := postFields[6].Descriptor()
 	// post.DefaultAuthorID holds the default value on creation for the author_id field.
 	post.DefaultAuthorID = postDescAuthorID.Default.(uint32)
 	// postDescID is the schema descriptor for id field.
@@ -1698,10 +1699,6 @@ func init() {
 	siteDescIsDefault := siteFields[4].Descriptor()
 	// site.DefaultIsDefault holds the default value on creation for the is_default field.
 	site.DefaultIsDefault = siteDescIsDefault.Default.(bool)
-	// siteDescVisitCount is the schema descriptor for visit_count field.
-	siteDescVisitCount := siteFields[9].Descriptor()
-	// site.DefaultVisitCount holds the default value on creation for the visit_count field.
-	site.DefaultVisitCount = siteDescVisitCount.Default.(uint64)
 	// siteDescID is the schema descriptor for id field.
 	siteDescID := siteMixinFields0[0].Descriptor()
 	// site.IDValidator is a validator for the "id" field. It is called by the builders before save.

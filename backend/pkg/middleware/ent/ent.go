@@ -2,7 +2,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"reflect"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -10,7 +9,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 
 	"github.com/tx7do/go-crud/viewer"
-	"github.com/tx7do/kratos-bootstrap/rpc"
 	"go.opentelemetry.io/otel/trace"
 
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
@@ -19,14 +17,10 @@ import (
 	"go-wind-cms/pkg/metadata"
 )
 
-// ErrMissingOperatorMetadata 非白名单请求未携带 OperatorMetadata 时返回，
-// 防止无身份请求以 SystemViewer 获得全租户访问。
-var ErrMissingOperatorMetadata = errors.New("missing operator metadata for non-whitelisted request")
-
 // Server 设置 Ent Viewer 到 Context 中的中间件。
 // 对于已认证请求（携带 OperatorMetadata），构建对应 UserViewer。
-// 对于未认证请求（白名单路由，如公开内容读取），注入 SystemViewer，
-// 使 TenantPrivacy 的 IsSystemContext 分支放行查询，避免公开 API 全部报错。
+// 对于未认证请求（无 OperatorMetadata），注入 SystemViewer 兜底，
+// 使 TenantPrivacy 的 IsSystemContext 分支放行查询。
 func Server() middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req any) (any, error) {
@@ -53,27 +47,12 @@ func Server() middleware.Middleware {
 				traceID = spanContext.TraceID().String()
 			}
 
-				if md == nil {
-					// 无 OperatorMetadata 的请求：
-					// - 白名单路由（登录/验证码/公开内容）：注入 SystemViewer 兜底，由 TenantPrivacy 放行；
-					// - 其余路由（含直连 core gRPC 的无 metadata 请求）：fail-closed 拒绝，
-					//   避免无身份请求以 SystemViewer 获得全租户访问。
-					t, _ := transport.FromServerContext(ctx)
-					op := ""
-					if t != nil {
-						op = t.Operation()
-					}
-					if op != "" && rpc.DefaultWhiteList.IsWhitelisted(op) {
-						ctx = viewer.WithContext(ctx, appViewer.NewSystemViewer())
-						return handler(ctx, req)
-					}
-					reqType := "<nil>"
-					if req != nil {
-						reqType = reflect.TypeOf(req).String()
-					}
-					log.Errorf("ent middleware: missing OperatorMetadata for non-whitelisted op [%s]; req_type=%s", op, reqType)
-					return nil, ErrMissingOperatorMetadata
-				}
+			if md == nil {
+				// 无 OperatorMetadata 的请求（白名单路由，如登录/验证码/公开内容读取）：
+				// 注入 SystemViewer 兜底，由 TenantPrivacy 放行。
+				ctx = viewer.WithContext(ctx, appViewer.NewSystemViewer())
+				return handler(ctx, req)
+			}
 
 			ctx = viewer.WithContext(ctx, metaDataToUserViewerContext(md, traceID))
 

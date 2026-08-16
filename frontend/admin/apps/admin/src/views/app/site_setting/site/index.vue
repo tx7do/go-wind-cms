@@ -154,14 +154,6 @@ const gridOptions: VxeGridProps<Site> = {
         cellValue ? $t('ui.button.yes') : $t('ui.button.no'),
     },
     {
-      title: $t('page.site.visitCount'),
-      field: 'visitCount',
-      width: 90,
-      align: 'right',
-      headerAlign: 'right',
-      sortable: true,
-    },
-    {
       title: $t('ui.table.action'),
       field: 'action',
       fixed: 'right',

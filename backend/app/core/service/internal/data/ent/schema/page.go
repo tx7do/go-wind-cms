@@ -100,12 +100,6 @@ func (Page) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("visits").
-			Comment("页面访问次数").
-			Default(0).
-			Optional().
-			Nillable(),
-
 		field.JSON("custom_fields", &map[string]string{}).
 			Comment("自定义字段").
 			Optional(),

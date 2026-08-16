@@ -942,16 +942,13 @@ export type commentservicev1_Comment = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   detectedLanguage?: string;
-  dislikeCount?: number;
   id?: number;
   ipAddress?: string;
   isSpam?: boolean;
   isSticky?: boolean;
-  likeCount?: number;
   location?: string;
   objectId?: number;
   parentId?: number;
-  replyCount?: number;
   replyToId?: number;
   status?: commentservicev1_Comment_Status;
   updatedAt?: wellKnownTimestamp;
@@ -1191,6 +1188,10 @@ export interface InteractionService {
   ListWatchedPosts(
     request: pagination_PagingRequest,
   ): Promise<contentservicev1_ListPostResponse>;
+  // 批量查询计数
+  GetCounts(
+    request: interactionservicev1_GetCountsRequest,
+  ): Promise<interactionservicev1_GetCountsResponse>;
 }
 
 export function createInteractionServiceClient(
@@ -1352,6 +1353,14 @@ export function createInteractionServiceClient(
         method: 'ListWatchedPosts',
       }) as Promise<contentservicev1_ListPostResponse>;
     },
+    GetCounts(request) {
+      const path = `app/v1/interactions/counts:list`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'GetCounts',
+      }) as Promise<interactionservicev1_GetCountsResponse>;
+    },
   };
 }
 export type interactionservicev1_LikeRequest = {
@@ -1374,6 +1383,7 @@ export type interactionservicev1_WatchRequest = {
 };
 
 export type interactionservicev1_WatchResponse = {
+  watchCount: number | undefined;
   watched: boolean | undefined;
 };
 
@@ -1405,7 +1415,6 @@ export type contentservicev1_Post = {
   availableLanguages: string[] | undefined;
   categoryIds: number[] | undefined;
   code?: string;
-  commentCount?: number;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   customFields: { [key: string]: string } | undefined;
@@ -1416,7 +1425,6 @@ export type contentservicev1_Post = {
   id?: number;
   inProgress?: boolean;
   isFeatured?: boolean;
-  likes?: number;
   passwordHash?: string;
   publishTime?: wellKnownTimestamp;
   sortOrder?: number;
@@ -1425,7 +1433,6 @@ export type contentservicev1_Post = {
   translations: contentservicev1_PostTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
-  visits?: number;
 };
 
 // 帖子状态
@@ -1465,6 +1472,36 @@ export type contentservicev1_PostTranslation = {
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
   wordCount?: number;
+};
+
+export type interactionservicev1_GetCountsRequest = {
+  metrics: interactionservicev1_CounterMetric[] | undefined;
+  targetIds: number[] | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 计数指标类型。与 interaction_counter 表的 metric 列对应。
+// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+export type interactionservicev1_CounterMetric =
+  | 'COUNTER_METRIC_LIKE'
+  | 'COUNTER_METRIC_UNSPECIFIED'
+  | 'COUNTER_METRIC_WATCH';
+// target_id → 该目标下各 metric 的计数集合。
+// 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
+export type interactionservicev1_GetCountsResponse = {
+  counts: { [key: string]: interactionservicev1_CountMap } | undefined;
+};
+
+// 单个目标下所有请求 metric 的计数集合。
+export type interactionservicev1_CountMap = {
+  counts: interactionservicev1_MetricCount[] | undefined;
+};
+
+// 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
+// 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
+export type interactionservicev1_MetricCount = {
+  count: number | undefined;
+  metric: interactionservicev1_CounterMetric | undefined;
 };
 
 // 导航服务
@@ -2033,7 +2070,6 @@ export type contentservicev1_Page = {
   type?: contentservicev1_Page_PageType;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
-  visits?: number;
 };
 
 // 页面状态

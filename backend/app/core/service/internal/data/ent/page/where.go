@@ -145,11 +145,6 @@ func IsCustomTemplate(v bool) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldIsCustomTemplate, v))
 }
 
-// Visits applies equality check predicate on the "visits" field. It's identical to VisitsEQ.
-func Visits(v uint32) predicate.Page {
-	return predicate.Page(sql.FieldEQ(FieldVisits, v))
-}
-
 // Depth applies equality check predicate on the "depth" field. It's identical to DepthEQ.
 func Depth(v int32) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldDepth, v))
@@ -1158,56 +1153,6 @@ func IsCustomTemplateIsNil() predicate.Page {
 // IsCustomTemplateNotNil applies the NotNil predicate on the "is_custom_template" field.
 func IsCustomTemplateNotNil() predicate.Page {
 	return predicate.Page(sql.FieldNotNull(FieldIsCustomTemplate))
-}
-
-// VisitsEQ applies the EQ predicate on the "visits" field.
-func VisitsEQ(v uint32) predicate.Page {
-	return predicate.Page(sql.FieldEQ(FieldVisits, v))
-}
-
-// VisitsNEQ applies the NEQ predicate on the "visits" field.
-func VisitsNEQ(v uint32) predicate.Page {
-	return predicate.Page(sql.FieldNEQ(FieldVisits, v))
-}
-
-// VisitsIn applies the In predicate on the "visits" field.
-func VisitsIn(vs ...uint32) predicate.Page {
-	return predicate.Page(sql.FieldIn(FieldVisits, vs...))
-}
-
-// VisitsNotIn applies the NotIn predicate on the "visits" field.
-func VisitsNotIn(vs ...uint32) predicate.Page {
-	return predicate.Page(sql.FieldNotIn(FieldVisits, vs...))
-}
-
-// VisitsGT applies the GT predicate on the "visits" field.
-func VisitsGT(v uint32) predicate.Page {
-	return predicate.Page(sql.FieldGT(FieldVisits, v))
-}
-
-// VisitsGTE applies the GTE predicate on the "visits" field.
-func VisitsGTE(v uint32) predicate.Page {
-	return predicate.Page(sql.FieldGTE(FieldVisits, v))
-}
-
-// VisitsLT applies the LT predicate on the "visits" field.
-func VisitsLT(v uint32) predicate.Page {
-	return predicate.Page(sql.FieldLT(FieldVisits, v))
-}
-
-// VisitsLTE applies the LTE predicate on the "visits" field.
-func VisitsLTE(v uint32) predicate.Page {
-	return predicate.Page(sql.FieldLTE(FieldVisits, v))
-}
-
-// VisitsIsNil applies the IsNil predicate on the "visits" field.
-func VisitsIsNil() predicate.Page {
-	return predicate.Page(sql.FieldIsNull(FieldVisits))
-}
-
-// VisitsNotNil applies the NotNil predicate on the "visits" field.
-func VisitsNotNil() predicate.Page {
-	return predicate.Page(sql.FieldNotNull(FieldVisits))
 }
 
 // CustomFieldsIsNil applies the IsNil predicate on the "custom_fields" field.
