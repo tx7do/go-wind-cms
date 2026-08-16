@@ -14,6 +14,7 @@ import (
 	"github.com/tx7do/go-crud/viewer" //nolint:goimports -- sqlite3 driver registered via blank import below
 
 	"go-wind-cms/app/core/service/internal/data/ent"
+	"go-wind-cms/app/core/service/internal/data/ent/enttest"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/post"
 	"go-wind-cms/app/core/service/internal/data/ent/postlike"
@@ -25,7 +26,10 @@ import (
 )
 
 // newTestInteractionRepo 构造一个连内存 sqlite 的 InteractionRepo。
-// 用 enttest 建 ent.Client，再用 entCrud.NewEntClient 包装为 repo 所需的 EntClient。
+// 必须经 enttest 建客户端：enttest 真实 import ent/runtime（见 enttest.go），
+// 触发其 init() 填充各实体 Hooks[0]，否则任何 mutation 都会报
+// "ent: uninitialized hook (forgotten import ent/runtime?)"。
+// enttest.NewClient 同时自动跑 schema migration，无需手动 Schema.Create。
 func newTestInteractionRepo(t *testing.T) (*InteractionRepo, *ent.Client, func()) {
 	t.Helper()
 
@@ -36,11 +40,10 @@ func newTestInteractionRepo(t *testing.T) (*InteractionRepo, *ent.Client, func()
 	)
 	require.NoError(t, err, "创建 sqlite driver 失败")
 
-	db := ent.NewClient(
+	db := enttest.NewClient(t, enttest.WithOptions(
 		ent.Driver(drv),
 		ent.Log(func(a ...any) { t.Log(a...) }),
-	)
-	require.NoError(t, db.Schema.Create(context.Background()), "schema create 失败")
+	))
 
 	wrapped := entCrud.NewEntClient(db, drv)
 
