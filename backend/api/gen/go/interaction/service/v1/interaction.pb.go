@@ -677,6 +677,294 @@ func (x *GetCountsResponse) GetCounts() map[uint32]*CountMap {
 	return nil
 }
 
+type PurgeTargetInteractionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TargetType    TargetType             `protobuf:"varint,1,opt,name=target_type,json=targetType,proto3,enum=interaction.service.v1.TargetType" json:"target_type,omitempty"`
+	TargetId      uint32                 `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PurgeTargetInteractionsRequest) Reset() {
+	*x = PurgeTargetInteractionsRequest{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PurgeTargetInteractionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PurgeTargetInteractionsRequest) ProtoMessage() {}
+
+func (x *PurgeTargetInteractionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PurgeTargetInteractionsRequest.ProtoReflect.Descriptor instead.
+func (*PurgeTargetInteractionsRequest) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *PurgeTargetInteractionsRequest) GetTargetType() TargetType {
+	if x != nil {
+		return x.TargetType
+	}
+	return TargetType_TARGET_TYPE_UNSPECIFIED
+}
+
+func (x *PurgeTargetInteractionsRequest) GetTargetId() uint32 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+type PurgeTargetInteractionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AffectedRows  uint32                 `protobuf:"varint,1,opt,name=affected_rows,json=affectedRows,proto3" json:"affected_rows,omitempty"` // 被删除的 ledger 行数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PurgeTargetInteractionsResponse) Reset() {
+	*x = PurgeTargetInteractionsResponse{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PurgeTargetInteractionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PurgeTargetInteractionsResponse) ProtoMessage() {}
+
+func (x *PurgeTargetInteractionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PurgeTargetInteractionsResponse.ProtoReflect.Descriptor instead.
+func (*PurgeTargetInteractionsResponse) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *PurgeTargetInteractionsResponse) GetAffectedRows() uint32 {
+	if x != nil {
+		return x.AffectedRows
+	}
+	return 0
+}
+
+type PurgeUserInteractionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        uint32                 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PurgeUserInteractionsRequest) Reset() {
+	*x = PurgeUserInteractionsRequest{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PurgeUserInteractionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PurgeUserInteractionsRequest) ProtoMessage() {}
+
+func (x *PurgeUserInteractionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PurgeUserInteractionsRequest.ProtoReflect.Descriptor instead.
+func (*PurgeUserInteractionsRequest) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *PurgeUserInteractionsRequest) GetUserId() uint32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type PurgeUserInteractionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AffectedRows  uint32                 `protobuf:"varint,1,opt,name=affected_rows,json=affectedRows,proto3" json:"affected_rows,omitempty"` // 被删除的 ledger 行数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PurgeUserInteractionsResponse) Reset() {
+	*x = PurgeUserInteractionsResponse{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PurgeUserInteractionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PurgeUserInteractionsResponse) ProtoMessage() {}
+
+func (x *PurgeUserInteractionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PurgeUserInteractionsResponse.ProtoReflect.Descriptor instead.
+func (*PurgeUserInteractionsResponse) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *PurgeUserInteractionsResponse) GetAffectedRows() uint32 {
+	if x != nil {
+		return x.AffectedRows
+	}
+	return 0
+}
+
+type ResetCounterRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TargetType    TargetType             `protobuf:"varint,1,opt,name=target_type,json=targetType,proto3,enum=interaction.service.v1.TargetType" json:"target_type,omitempty"`
+	TargetId      uint32                 `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	Metric        CounterMetric          `protobuf:"varint,3,opt,name=metric,proto3,enum=interaction.service.v1.CounterMetric" json:"metric,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetCounterRequest) Reset() {
+	*x = ResetCounterRequest{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetCounterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetCounterRequest) ProtoMessage() {}
+
+func (x *ResetCounterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetCounterRequest.ProtoReflect.Descriptor instead.
+func (*ResetCounterRequest) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ResetCounterRequest) GetTargetType() TargetType {
+	if x != nil {
+		return x.TargetType
+	}
+	return TargetType_TARGET_TYPE_UNSPECIFIED
+}
+
+func (x *ResetCounterRequest) GetTargetId() uint32 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+func (x *ResetCounterRequest) GetMetric() CounterMetric {
+	if x != nil {
+		return x.Metric
+	}
+	return CounterMetric_COUNTER_METRIC_UNSPECIFIED
+}
+
+type ResetCounterResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Recount       int64                  `protobuf:"varint,1,opt,name=recount,proto3" json:"recount,omitempty"` // 按 ledger 重算后的真实计数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetCounterResponse) Reset() {
+	*x = ResetCounterResponse{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetCounterResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetCounterResponse) ProtoMessage() {}
+
+func (x *ResetCounterResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetCounterResponse.ProtoReflect.Descriptor instead.
+func (*ResetCounterResponse) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ResetCounterResponse) GetRecount() int64 {
+	if x != nil {
+		return x.Recount
+	}
+	return 0
+}
+
 var File_interaction_service_v1_interaction_proto protoreflect.FileDescriptor
 
 const file_interaction_service_v1_interaction_proto_rawDesc = "" +
@@ -724,7 +1012,24 @@ const file_interaction_service_v1_interaction_proto_rawDesc = "" +
 	"\x06counts\x18\x01 \x03(\v25.interaction.service.v1.GetCountsResponse.CountsEntryR\x06counts\x1a[\n" +
 	"\vCountsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\rR\x03key\x126\n" +
-	"\x05value\x18\x02 \x01(\v2 .interaction.service.v1.CountMapR\x05value:\x028\x01*X\n" +
+	"\x05value\x18\x02 \x01(\v2 .interaction.service.v1.CountMapR\x05value:\x028\x01\"\x82\x01\n" +
+	"\x1ePurgeTargetInteractionsRequest\x12C\n" +
+	"\vtarget_type\x18\x01 \x01(\x0e2\".interaction.service.v1.TargetTypeR\n" +
+	"targetType\x12\x1b\n" +
+	"\ttarget_id\x18\x02 \x01(\rR\btargetId\"F\n" +
+	"\x1fPurgeTargetInteractionsResponse\x12#\n" +
+	"\raffected_rows\x18\x01 \x01(\rR\faffectedRows\"7\n" +
+	"\x1cPurgeUserInteractionsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\rR\x06userId\"D\n" +
+	"\x1dPurgeUserInteractionsResponse\x12#\n" +
+	"\raffected_rows\x18\x01 \x01(\rR\faffectedRows\"\xb6\x01\n" +
+	"\x13ResetCounterRequest\x12C\n" +
+	"\vtarget_type\x18\x01 \x01(\x0e2\".interaction.service.v1.TargetTypeR\n" +
+	"targetType\x12\x1b\n" +
+	"\ttarget_id\x18\x02 \x01(\rR\btargetId\x12=\n" +
+	"\x06metric\x18\x03 \x01(\x0e2%.interaction.service.v1.CounterMetricR\x06metric\"0\n" +
+	"\x14ResetCounterResponse\x12\x18\n" +
+	"\arecount\x18\x01 \x01(\x03R\arecount*X\n" +
 	"\n" +
 	"TargetType\x12\x1b\n" +
 	"\x17TARGET_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
@@ -741,7 +1046,11 @@ const file_interaction_service_v1_interaction_proto_rawDesc = "" +
 	"\aUnwatch\x12$.interaction.service.v1.WatchRequest\x1a%.interaction.service.v1.WatchResponse\"\x00\x12\x83\x01\n" +
 	"\x14GetInteractionStatus\x123.interaction.service.v1.GetInteractionStatusRequest\x1a4.interaction.service.v1.GetInteractionStatusResponse\"\x00\x12U\n" +
 	"\x10ListWatchedPosts\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x00\x12b\n" +
-	"\tGetCounts\x12(.interaction.service.v1.GetCountsRequest\x1a).interaction.service.v1.GetCountsResponse\"\x00B\xe5\x01\n" +
+	"\tGetCounts\x12(.interaction.service.v1.GetCountsRequest\x1a).interaction.service.v1.GetCountsResponse\"\x002\x9e\x03\n" +
+	"\x17InteractionAdminService\x12\x8c\x01\n" +
+	"\x17PurgeTargetInteractions\x126.interaction.service.v1.PurgeTargetInteractionsRequest\x1a7.interaction.service.v1.PurgeTargetInteractionsResponse\"\x00\x12\x86\x01\n" +
+	"\x15PurgeUserInteractions\x124.interaction.service.v1.PurgeUserInteractionsRequest\x1a5.interaction.service.v1.PurgeUserInteractionsResponse\"\x00\x12k\n" +
+	"\fResetCounter\x12+.interaction.service.v1.ResetCounterRequest\x1a,.interaction.service.v1.ResetCounterResponse\"\x00B\xe5\x01\n" +
 	"\x1acom.interaction.service.v1B\x10InteractionProtoP\x01Z;go-wind-cms/api/gen/go/interaction/service/v1;interactionpb\xa2\x02\x03ISX\xaa\x02\x16Interaction.Service.V1\xca\x02\x16Interaction\\Service\\V1\xe2\x02\"Interaction\\Service\\V1\\GPBMetadata\xea\x02\x18Interaction::Service::V1b\x06proto3"
 
 var (
@@ -757,56 +1066,71 @@ func file_interaction_service_v1_interaction_proto_rawDescGZIP() []byte {
 }
 
 var file_interaction_service_v1_interaction_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_interaction_service_v1_interaction_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_interaction_service_v1_interaction_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_interaction_service_v1_interaction_proto_goTypes = []any{
-	(TargetType)(0),                      // 0: interaction.service.v1.TargetType
-	(CounterMetric)(0),                   // 1: interaction.service.v1.CounterMetric
-	(*LikeRequest)(nil),                  // 2: interaction.service.v1.LikeRequest
-	(*LikeResponse)(nil),                 // 3: interaction.service.v1.LikeResponse
-	(*WatchRequest)(nil),                 // 4: interaction.service.v1.WatchRequest
-	(*WatchResponse)(nil),                // 5: interaction.service.v1.WatchResponse
-	(*GetInteractionStatusRequest)(nil),  // 6: interaction.service.v1.GetInteractionStatusRequest
-	(*InteractionStatus)(nil),            // 7: interaction.service.v1.InteractionStatus
-	(*GetInteractionStatusResponse)(nil), // 8: interaction.service.v1.GetInteractionStatusResponse
-	(*MetricCount)(nil),                  // 9: interaction.service.v1.MetricCount
-	(*CountMap)(nil),                     // 10: interaction.service.v1.CountMap
-	(*GetCountsRequest)(nil),             // 11: interaction.service.v1.GetCountsRequest
-	(*GetCountsResponse)(nil),            // 12: interaction.service.v1.GetCountsResponse
-	nil,                                  // 13: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
-	nil,                                  // 14: interaction.service.v1.GetCountsResponse.CountsEntry
-	(*v1.PagingRequest)(nil),             // 15: pagination.PagingRequest
-	(*v11.ListPostResponse)(nil),         // 16: content.service.v1.ListPostResponse
+	(TargetType)(0),                         // 0: interaction.service.v1.TargetType
+	(CounterMetric)(0),                      // 1: interaction.service.v1.CounterMetric
+	(*LikeRequest)(nil),                     // 2: interaction.service.v1.LikeRequest
+	(*LikeResponse)(nil),                    // 3: interaction.service.v1.LikeResponse
+	(*WatchRequest)(nil),                    // 4: interaction.service.v1.WatchRequest
+	(*WatchResponse)(nil),                   // 5: interaction.service.v1.WatchResponse
+	(*GetInteractionStatusRequest)(nil),     // 6: interaction.service.v1.GetInteractionStatusRequest
+	(*InteractionStatus)(nil),               // 7: interaction.service.v1.InteractionStatus
+	(*GetInteractionStatusResponse)(nil),    // 8: interaction.service.v1.GetInteractionStatusResponse
+	(*MetricCount)(nil),                     // 9: interaction.service.v1.MetricCount
+	(*CountMap)(nil),                        // 10: interaction.service.v1.CountMap
+	(*GetCountsRequest)(nil),                // 11: interaction.service.v1.GetCountsRequest
+	(*GetCountsResponse)(nil),               // 12: interaction.service.v1.GetCountsResponse
+	(*PurgeTargetInteractionsRequest)(nil),  // 13: interaction.service.v1.PurgeTargetInteractionsRequest
+	(*PurgeTargetInteractionsResponse)(nil), // 14: interaction.service.v1.PurgeTargetInteractionsResponse
+	(*PurgeUserInteractionsRequest)(nil),    // 15: interaction.service.v1.PurgeUserInteractionsRequest
+	(*PurgeUserInteractionsResponse)(nil),   // 16: interaction.service.v1.PurgeUserInteractionsResponse
+	(*ResetCounterRequest)(nil),             // 17: interaction.service.v1.ResetCounterRequest
+	(*ResetCounterResponse)(nil),            // 18: interaction.service.v1.ResetCounterResponse
+	nil,                                     // 19: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
+	nil,                                     // 20: interaction.service.v1.GetCountsResponse.CountsEntry
+	(*v1.PagingRequest)(nil),                // 21: pagination.PagingRequest
+	(*v11.ListPostResponse)(nil),            // 22: content.service.v1.ListPostResponse
 }
 var file_interaction_service_v1_interaction_proto_depIdxs = []int32{
 	0,  // 0: interaction.service.v1.LikeRequest.target_type:type_name -> interaction.service.v1.TargetType
 	0,  // 1: interaction.service.v1.GetInteractionStatusRequest.target_type:type_name -> interaction.service.v1.TargetType
-	13, // 2: interaction.service.v1.GetInteractionStatusResponse.statuses:type_name -> interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
+	19, // 2: interaction.service.v1.GetInteractionStatusResponse.statuses:type_name -> interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
 	1,  // 3: interaction.service.v1.MetricCount.metric:type_name -> interaction.service.v1.CounterMetric
 	9,  // 4: interaction.service.v1.CountMap.counts:type_name -> interaction.service.v1.MetricCount
 	0,  // 5: interaction.service.v1.GetCountsRequest.target_type:type_name -> interaction.service.v1.TargetType
 	1,  // 6: interaction.service.v1.GetCountsRequest.metrics:type_name -> interaction.service.v1.CounterMetric
-	14, // 7: interaction.service.v1.GetCountsResponse.counts:type_name -> interaction.service.v1.GetCountsResponse.CountsEntry
-	7,  // 8: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry.value:type_name -> interaction.service.v1.InteractionStatus
-	10, // 9: interaction.service.v1.GetCountsResponse.CountsEntry.value:type_name -> interaction.service.v1.CountMap
-	2,  // 10: interaction.service.v1.InteractionService.Like:input_type -> interaction.service.v1.LikeRequest
-	2,  // 11: interaction.service.v1.InteractionService.Unlike:input_type -> interaction.service.v1.LikeRequest
-	4,  // 12: interaction.service.v1.InteractionService.Watch:input_type -> interaction.service.v1.WatchRequest
-	4,  // 13: interaction.service.v1.InteractionService.Unwatch:input_type -> interaction.service.v1.WatchRequest
-	6,  // 14: interaction.service.v1.InteractionService.GetInteractionStatus:input_type -> interaction.service.v1.GetInteractionStatusRequest
-	15, // 15: interaction.service.v1.InteractionService.ListWatchedPosts:input_type -> pagination.PagingRequest
-	11, // 16: interaction.service.v1.InteractionService.GetCounts:input_type -> interaction.service.v1.GetCountsRequest
-	3,  // 17: interaction.service.v1.InteractionService.Like:output_type -> interaction.service.v1.LikeResponse
-	3,  // 18: interaction.service.v1.InteractionService.Unlike:output_type -> interaction.service.v1.LikeResponse
-	5,  // 19: interaction.service.v1.InteractionService.Watch:output_type -> interaction.service.v1.WatchResponse
-	5,  // 20: interaction.service.v1.InteractionService.Unwatch:output_type -> interaction.service.v1.WatchResponse
-	8,  // 21: interaction.service.v1.InteractionService.GetInteractionStatus:output_type -> interaction.service.v1.GetInteractionStatusResponse
-	16, // 22: interaction.service.v1.InteractionService.ListWatchedPosts:output_type -> content.service.v1.ListPostResponse
-	12, // 23: interaction.service.v1.InteractionService.GetCounts:output_type -> interaction.service.v1.GetCountsResponse
-	17, // [17:24] is the sub-list for method output_type
-	10, // [10:17] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	20, // 7: interaction.service.v1.GetCountsResponse.counts:type_name -> interaction.service.v1.GetCountsResponse.CountsEntry
+	0,  // 8: interaction.service.v1.PurgeTargetInteractionsRequest.target_type:type_name -> interaction.service.v1.TargetType
+	0,  // 9: interaction.service.v1.ResetCounterRequest.target_type:type_name -> interaction.service.v1.TargetType
+	1,  // 10: interaction.service.v1.ResetCounterRequest.metric:type_name -> interaction.service.v1.CounterMetric
+	7,  // 11: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry.value:type_name -> interaction.service.v1.InteractionStatus
+	10, // 12: interaction.service.v1.GetCountsResponse.CountsEntry.value:type_name -> interaction.service.v1.CountMap
+	2,  // 13: interaction.service.v1.InteractionService.Like:input_type -> interaction.service.v1.LikeRequest
+	2,  // 14: interaction.service.v1.InteractionService.Unlike:input_type -> interaction.service.v1.LikeRequest
+	4,  // 15: interaction.service.v1.InteractionService.Watch:input_type -> interaction.service.v1.WatchRequest
+	4,  // 16: interaction.service.v1.InteractionService.Unwatch:input_type -> interaction.service.v1.WatchRequest
+	6,  // 17: interaction.service.v1.InteractionService.GetInteractionStatus:input_type -> interaction.service.v1.GetInteractionStatusRequest
+	21, // 18: interaction.service.v1.InteractionService.ListWatchedPosts:input_type -> pagination.PagingRequest
+	11, // 19: interaction.service.v1.InteractionService.GetCounts:input_type -> interaction.service.v1.GetCountsRequest
+	13, // 20: interaction.service.v1.InteractionAdminService.PurgeTargetInteractions:input_type -> interaction.service.v1.PurgeTargetInteractionsRequest
+	15, // 21: interaction.service.v1.InteractionAdminService.PurgeUserInteractions:input_type -> interaction.service.v1.PurgeUserInteractionsRequest
+	17, // 22: interaction.service.v1.InteractionAdminService.ResetCounter:input_type -> interaction.service.v1.ResetCounterRequest
+	3,  // 23: interaction.service.v1.InteractionService.Like:output_type -> interaction.service.v1.LikeResponse
+	3,  // 24: interaction.service.v1.InteractionService.Unlike:output_type -> interaction.service.v1.LikeResponse
+	5,  // 25: interaction.service.v1.InteractionService.Watch:output_type -> interaction.service.v1.WatchResponse
+	5,  // 26: interaction.service.v1.InteractionService.Unwatch:output_type -> interaction.service.v1.WatchResponse
+	8,  // 27: interaction.service.v1.InteractionService.GetInteractionStatus:output_type -> interaction.service.v1.GetInteractionStatusResponse
+	22, // 28: interaction.service.v1.InteractionService.ListWatchedPosts:output_type -> content.service.v1.ListPostResponse
+	12, // 29: interaction.service.v1.InteractionService.GetCounts:output_type -> interaction.service.v1.GetCountsResponse
+	14, // 30: interaction.service.v1.InteractionAdminService.PurgeTargetInteractions:output_type -> interaction.service.v1.PurgeTargetInteractionsResponse
+	16, // 31: interaction.service.v1.InteractionAdminService.PurgeUserInteractions:output_type -> interaction.service.v1.PurgeUserInteractionsResponse
+	18, // 32: interaction.service.v1.InteractionAdminService.ResetCounter:output_type -> interaction.service.v1.ResetCounterResponse
+	23, // [23:33] is the sub-list for method output_type
+	13, // [13:23] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_interaction_service_v1_interaction_proto_init() }
@@ -820,9 +1144,9 @@ func file_interaction_service_v1_interaction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_interaction_service_v1_interaction_proto_rawDesc), len(file_interaction_service_v1_interaction_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   13,
+			NumMessages:   19,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_interaction_service_v1_interaction_proto_goTypes,
 		DependencyIndexes: file_interaction_service_v1_interaction_proto_depIdxs,

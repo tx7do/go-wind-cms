@@ -1291,3 +1291,637 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetCountsResponseValidationError{}
+
+// Validate checks the field values on PurgeTargetInteractionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PurgeTargetInteractionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PurgeTargetInteractionsRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PurgeTargetInteractionsRequestMultiError, or nil if none found.
+func (m *PurgeTargetInteractionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PurgeTargetInteractionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TargetType
+
+	// no validation rules for TargetId
+
+	if len(errors) > 0 {
+		return PurgeTargetInteractionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PurgeTargetInteractionsRequestMultiError is an error wrapping multiple
+// validation errors returned by PurgeTargetInteractionsRequest.ValidateAll()
+// if the designated constraints aren't met.
+type PurgeTargetInteractionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PurgeTargetInteractionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PurgeTargetInteractionsRequestMultiError) AllErrors() []error { return m }
+
+// PurgeTargetInteractionsRequestValidationError is the validation error
+// returned by PurgeTargetInteractionsRequest.Validate if the designated
+// constraints aren't met.
+type PurgeTargetInteractionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PurgeTargetInteractionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PurgeTargetInteractionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PurgeTargetInteractionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PurgeTargetInteractionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PurgeTargetInteractionsRequestValidationError) ErrorName() string {
+	return "PurgeTargetInteractionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PurgeTargetInteractionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPurgeTargetInteractionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PurgeTargetInteractionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PurgeTargetInteractionsRequestValidationError{}
+
+// Validate checks the field values on PurgeTargetInteractionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PurgeTargetInteractionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PurgeTargetInteractionsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PurgeTargetInteractionsResponseMultiError, or nil if none found.
+func (m *PurgeTargetInteractionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PurgeTargetInteractionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for AffectedRows
+
+	if len(errors) > 0 {
+		return PurgeTargetInteractionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PurgeTargetInteractionsResponseMultiError is an error wrapping multiple
+// validation errors returned by PurgeTargetInteractionsResponse.ValidateAll()
+// if the designated constraints aren't met.
+type PurgeTargetInteractionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PurgeTargetInteractionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PurgeTargetInteractionsResponseMultiError) AllErrors() []error { return m }
+
+// PurgeTargetInteractionsResponseValidationError is the validation error
+// returned by PurgeTargetInteractionsResponse.Validate if the designated
+// constraints aren't met.
+type PurgeTargetInteractionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PurgeTargetInteractionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PurgeTargetInteractionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PurgeTargetInteractionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PurgeTargetInteractionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PurgeTargetInteractionsResponseValidationError) ErrorName() string {
+	return "PurgeTargetInteractionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PurgeTargetInteractionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPurgeTargetInteractionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PurgeTargetInteractionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PurgeTargetInteractionsResponseValidationError{}
+
+// Validate checks the field values on PurgeUserInteractionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PurgeUserInteractionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PurgeUserInteractionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PurgeUserInteractionsRequestMultiError, or nil if none found.
+func (m *PurgeUserInteractionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PurgeUserInteractionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return PurgeUserInteractionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PurgeUserInteractionsRequestMultiError is an error wrapping multiple
+// validation errors returned by PurgeUserInteractionsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PurgeUserInteractionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PurgeUserInteractionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PurgeUserInteractionsRequestMultiError) AllErrors() []error { return m }
+
+// PurgeUserInteractionsRequestValidationError is the validation error returned
+// by PurgeUserInteractionsRequest.Validate if the designated constraints
+// aren't met.
+type PurgeUserInteractionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PurgeUserInteractionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PurgeUserInteractionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PurgeUserInteractionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PurgeUserInteractionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PurgeUserInteractionsRequestValidationError) ErrorName() string {
+	return "PurgeUserInteractionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PurgeUserInteractionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPurgeUserInteractionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PurgeUserInteractionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PurgeUserInteractionsRequestValidationError{}
+
+// Validate checks the field values on PurgeUserInteractionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PurgeUserInteractionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PurgeUserInteractionsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PurgeUserInteractionsResponseMultiError, or nil if none found.
+func (m *PurgeUserInteractionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PurgeUserInteractionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for AffectedRows
+
+	if len(errors) > 0 {
+		return PurgeUserInteractionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PurgeUserInteractionsResponseMultiError is an error wrapping multiple
+// validation errors returned by PurgeUserInteractionsResponse.ValidateAll()
+// if the designated constraints aren't met.
+type PurgeUserInteractionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PurgeUserInteractionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PurgeUserInteractionsResponseMultiError) AllErrors() []error { return m }
+
+// PurgeUserInteractionsResponseValidationError is the validation error
+// returned by PurgeUserInteractionsResponse.Validate if the designated
+// constraints aren't met.
+type PurgeUserInteractionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PurgeUserInteractionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PurgeUserInteractionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PurgeUserInteractionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PurgeUserInteractionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PurgeUserInteractionsResponseValidationError) ErrorName() string {
+	return "PurgeUserInteractionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PurgeUserInteractionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPurgeUserInteractionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PurgeUserInteractionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PurgeUserInteractionsResponseValidationError{}
+
+// Validate checks the field values on ResetCounterRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResetCounterRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResetCounterRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ResetCounterRequestMultiError, or nil if none found.
+func (m *ResetCounterRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResetCounterRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TargetType
+
+	// no validation rules for TargetId
+
+	// no validation rules for Metric
+
+	if len(errors) > 0 {
+		return ResetCounterRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResetCounterRequestMultiError is an error wrapping multiple validation
+// errors returned by ResetCounterRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ResetCounterRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResetCounterRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResetCounterRequestMultiError) AllErrors() []error { return m }
+
+// ResetCounterRequestValidationError is the validation error returned by
+// ResetCounterRequest.Validate if the designated constraints aren't met.
+type ResetCounterRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResetCounterRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResetCounterRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResetCounterRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResetCounterRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResetCounterRequestValidationError) ErrorName() string {
+	return "ResetCounterRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResetCounterRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResetCounterRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResetCounterRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResetCounterRequestValidationError{}
+
+// Validate checks the field values on ResetCounterResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResetCounterResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResetCounterResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ResetCounterResponseMultiError, or nil if none found.
+func (m *ResetCounterResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResetCounterResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Recount
+
+	if len(errors) > 0 {
+		return ResetCounterResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResetCounterResponseMultiError is an error wrapping multiple validation
+// errors returned by ResetCounterResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ResetCounterResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResetCounterResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResetCounterResponseMultiError) AllErrors() []error { return m }
+
+// ResetCounterResponseValidationError is the validation error returned by
+// ResetCounterResponse.Validate if the designated constraints aren't met.
+type ResetCounterResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResetCounterResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResetCounterResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResetCounterResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResetCounterResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResetCounterResponseValidationError) ErrorName() string {
+	return "ResetCounterResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResetCounterResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResetCounterResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResetCounterResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResetCounterResponseValidationError{}

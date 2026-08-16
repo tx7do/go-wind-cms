@@ -2872,6 +2872,100 @@ export type storageservicev1_UploadMediaAssetRequest = {
   userId?: number;
 };
 
+// 交互管理服务（运营清数据面）。仅转发至 core InteractionAdminService，
+// 调用方须为平台管理员（由 core 侧运营上下文 guard 校验）。
+export interface InteractionAdminService {
+  // 清除单条目标上的全部交互 ledger 并同步计数
+  PurgeTargetInteractions(
+    request: interactionservicev1_PurgeTargetInteractionsRequest,
+  ): Promise<interactionservicev1_PurgeTargetInteractionsResponse>;
+  // 清除指定用户在全站的全部交互 ledger（分批短事务）
+  PurgeUserInteractions(
+    request: interactionservicev1_PurgeUserInteractionsRequest,
+  ): Promise<interactionservicev1_PurgeUserInteractionsResponse>;
+  // 按 ledger 重算指定 (target, metric) 的计数
+  ResetCounter(
+    request: interactionservicev1_ResetCounterRequest,
+  ): Promise<interactionservicev1_ResetCounterResponse>;
+}
+
+export function createInteractionAdminServiceClient(
+  transport: ClientTransport,
+): InteractionAdminService {
+  return {
+    PurgeTargetInteractions(request) {
+      if (request.targetType === undefined || request.targetType === null) {
+        throw new Error('missing required field request.target_type');
+      }
+      if (request.targetId === undefined || request.targetId === null) {
+        throw new Error('missing required field request.target_id');
+      }
+      const path = `admin/v1/interactions/target/${request.targetType}/${request.targetId}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'InteractionAdminService',
+        method: 'PurgeTargetInteractions',
+      }) as Promise<interactionservicev1_PurgeTargetInteractionsResponse>;
+    },
+    PurgeUserInteractions(request) {
+      if (request.userId === undefined || request.userId === null) {
+        throw new Error('missing required field request.user_id');
+      }
+      const path = `admin/v1/interactions/user/${request.userId}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'InteractionAdminService',
+        method: 'PurgeUserInteractions',
+      }) as Promise<interactionservicev1_PurgeUserInteractionsResponse>;
+    },
+    ResetCounter(request) {
+      const path = `admin/v1/interactions/counter/reset`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionAdminService',
+        method: 'ResetCounter',
+      }) as Promise<interactionservicev1_ResetCounterResponse>;
+    },
+  };
+}
+export type interactionservicev1_PurgeTargetInteractionsRequest = {
+  targetId: number | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 交互目标类型
+export type interactionservicev1_TargetType =
+  | 'TARGET_TYPE_COMMENT'
+  | 'TARGET_TYPE_POST'
+  | 'TARGET_TYPE_UNSPECIFIED';
+export type interactionservicev1_PurgeTargetInteractionsResponse = {
+  affectedRows: number | undefined;
+};
+
+export type interactionservicev1_PurgeUserInteractionsRequest = {
+  userId: number | undefined;
+};
+
+export type interactionservicev1_PurgeUserInteractionsResponse = {
+  affectedRows: number | undefined;
+};
+
+export type interactionservicev1_ResetCounterRequest = {
+  metric: interactionservicev1_CounterMetric | undefined;
+  targetId: number | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 计数指标类型。与 interaction_counter 表的 metric 列对应。
+// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+export type interactionservicev1_CounterMetric =
+  | 'COUNTER_METRIC_LIKE'
+  | 'COUNTER_METRIC_UNSPECIFIED'
+  | 'COUNTER_METRIC_WATCH';
+export type interactionservicev1_ResetCounterResponse = {
+  recount: number | undefined;
+};
+
 // 站内信消息管理服务
 export interface InternalMessageService {
   // 查询站内信消息列表
@@ -10432,6 +10526,7 @@ export class ApiClient {
   private _dictTypeService?: DictTypeService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
+  private _interactionAdminService?: InteractionAdminService;
   private _internalMessageCategoryService?: InternalMessageCategoryService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _internalMessageService?: InternalMessageService;
@@ -10509,6 +10604,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get interactionAdminService(): InteractionAdminService {
+    return this._interactionAdminService ??= createInteractionAdminServiceClient(this._transport);
   }
 
   get internalMessageCategoryService(): InternalMessageCategoryService {

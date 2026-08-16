@@ -1576,6 +1576,75 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/admin.service.v1.InitialContextResponse'
+    /admin/v1/interactions/counter/reset:
+        post:
+            tags:
+                - InteractionAdminService
+            description: 按 ledger 重算指定 (target, metric) 的计数
+            operationId: InteractionAdminService_ResetCounter
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.ResetCounterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.ResetCounterResponse'
+    /admin/v1/interactions/target/{targetType}/{targetId}:
+        delete:
+            tags:
+                - InteractionAdminService
+            description: 清除单条目标上的全部交互 ledger 并同步计数
+            operationId: InteractionAdminService_PurgeTargetInteractions
+            parameters:
+                - name: targetType
+                  in: path
+                  required: true
+                  schema:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_POST
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                - name: targetId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.PurgeTargetInteractionsResponse'
+    /admin/v1/interactions/user/{userId}:
+        delete:
+            tags:
+                - InteractionAdminService
+            description: 清除指定用户在全站的全部交互 ledger（分批短事务）
+            operationId: InteractionAdminService_PurgeUserInteractions
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.PurgeUserInteractionsResponse'
     /admin/v1/internal-message/categories:
         get:
             tags:
@@ -9172,6 +9241,43 @@ components:
                 verificationId:
                     type: string
                     description: 服务端生成的验证码会话ID（可选）
+        interaction.service.v1.PurgeTargetInteractionsResponse:
+            type: object
+            properties:
+                affectedRows:
+                    type: integer
+                    format: uint32
+        interaction.service.v1.PurgeUserInteractionsResponse:
+            type: object
+            properties:
+                affectedRows:
+                    type: integer
+                    format: uint32
+        interaction.service.v1.ResetCounterRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_POST
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetId:
+                    type: integer
+                    format: uint32
+                metric:
+                    enum:
+                        - COUNTER_METRIC_UNSPECIFIED
+                        - COUNTER_METRIC_LIKE
+                        - COUNTER_METRIC_WATCH
+                    type: string
+                    format: enum
+        interaction.service.v1.ResetCounterResponse:
+            type: object
+            properties:
+                recount:
+                    type: string
         internal_message.service.v1.CreateInternalMessageCategoryRequest:
             type: object
             properties:
@@ -11285,6 +11391,10 @@ tags:
       description: 文件管理服务
     - name: FileTransferService
       description: 文件传输服务
+    - name: InteractionAdminService
+      description: |-
+        交互管理服务（运营清数据面）。仅转发至 core InteractionAdminService，
+         调用方须为平台管理员（由 core 侧运营上下文 guard 校验）。
     - name: InternalMessageCategoryService
       description: 站内信消息分类管理服务
     - name: InternalMessageRecipientService

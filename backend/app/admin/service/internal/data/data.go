@@ -26,6 +26,7 @@ import (
 	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
+	interactionV1 "go-wind-cms/api/gen/go/interaction/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
@@ -352,6 +353,15 @@ func NewCommentServiceClient(ctx *bootstrap.Context, r registry.Discovery) comme
 	}
 
 	return commentV1.NewCommentServiceClient(cli)
+}
+
+func NewInteractionAdminServiceClient(ctx *bootstrap.Context, r registry.Discovery) interactionV1.InteractionAdminServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return interactionV1.NewInteractionAdminServiceClient(cli)
 }
 
 func NewCategoryServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.CategoryServiceClient {

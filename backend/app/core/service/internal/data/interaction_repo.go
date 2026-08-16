@@ -727,3 +727,381 @@ func (r *InteractionRepo) ListWatchedPosts(ctx context.Context, viewerUserID uin
 		Total: uint64(total),
 	}, nil
 }
+
+// PurgeTargetInteractions 清除单条目标上的全部交互 ledger（post_like/comment_like/post_watch），
+// 并在同一事务内把对应 interaction_counter 行归零删除。
+// tenant 从 viewer context 提取，targetType/targetID 来自运营请求。
+// 返回被删除的 ledger 行数。
+func (r *InteractionRepo) PurgeTargetInteractions(ctx context.Context, targetType interactionV1.TargetType, targetID uint32) (uint32, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	}
+
+	var affected int
+	txErr := r.txn(ctx, func(tx *ent.Tx) error {
+		// 删该 target 在各 ledger 表的全部行，累计受影响行数
+		// LIKE metric：post 或 comment
+		switch targetType {
+		case interactionV1.TargetType_TARGET_TYPE_POST:
+			n, err := tx.PostLike.Delete().
+				Where(
+					postlike.TenantIDEQ(tid),
+					postlike.PostIDEQ(targetID),
+				).
+				Exec(ctx)
+			if err != nil {
+				r.log.Errorf("purge post_like by target failed: %s", err.Error())
+				return interactionV1.ErrorInternalServerError("purge post_like failed")
+			}
+			affected += n
+		case interactionV1.TargetType_TARGET_TYPE_COMMENT:
+			n, err := tx.CommentLike.Delete().
+				Where(
+					commentlike.TenantIDEQ(tid),
+					commentlike.CommentIDEQ(targetID),
+				).
+				Exec(ctx)
+			if err != nil {
+				r.log.Errorf("purge comment_like by target failed: %s", err.Error())
+				return interactionV1.ErrorInternalServerError("purge comment_like failed")
+			}
+			affected += n
+		default:
+			return interactionV1.ErrorBadRequest("invalid target type")
+		}
+
+		// WATCH metric（仅 post）：删 post_watch 中该 target 的全部行
+		nw, err := tx.PostWatch.Delete().
+			Where(
+				postwatch.TenantIDEQ(tid),
+				postwatch.PostIDEQ(targetID),
+			).
+			Exec(ctx)
+		if err != nil {
+			r.log.Errorf("purge post_watch by target failed: %s", err.Error())
+			return interactionV1.ErrorInternalServerError("purge post_watch failed")
+		}
+		affected += nw
+
+		// 同步 counter：对该 target 涉及的 metric，把计数归零（adjustCounterRow 的
+		// delta = -当前计数 触发“归0删行”分支）。当前计数在 tx 内查（不能混用非 tx
+		// 读，否则 sqlite 下事务中读同表会死锁）。
+		metrics := []interactionV1.CounterMetric{
+			interactionV1.CounterMetric_COUNTER_METRIC_LIKE,
+			interactionV1.CounterMetric_COUNTER_METRIC_WATCH,
+		}
+		for _, m := range metrics {
+			existing, qerr := tx.InteractionCounter.Query().
+				Where(
+					interactioncounter.TenantIDEQ(tid),
+					interactioncounter.TargetTypeEQ(uint8(targetType)),
+					interactioncounter.TargetIDEQ(targetID),
+					interactioncounter.MetricEQ(uint8(m)),
+				).
+				Only(ctx)
+			if qerr != nil {
+				if ent.IsNotFound(qerr) {
+					continue
+				}
+				r.log.Errorf("query counter row for purge failed: %s", qerr.Error())
+				return interactionV1.ErrorInternalServerError("query counter row failed")
+			}
+			if existing.Count == nil || *existing.Count <= 0 {
+				continue
+			}
+			if aerr := r.adjustCounterRow(ctx, tx, tid, targetID, targetType, m, -*existing.Count); aerr != nil {
+				return aerr
+			}
+		}
+		return nil
+	})
+	if txErr != nil {
+		return 0, txErr
+	}
+	return uint32(affected), nil
+}
+
+// purgeBatchSize 是 PurgeUserInteractions 分批删除的批大小。
+// 每批一个独立短事务，避免长事务锁表。
+const purgeBatchSize = 200
+
+// PurgeUserInteractions 清除指定用户在全站的全部交互 ledger，分批短事务。
+// 每批：取一批该用户的 ledger 行 → 在独立事务内删该批 + 对每个受影响 target
+// 回滚 counter（adjustCounterRow delta=-1）。
+// tenant 从 viewer context 提取，userID 来自运营请求。
+// 返回累计被删除的 ledger 行数。中途失败则返回已删行数 + 错误。
+func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint32) (uint32, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	}
+
+	var totalAffected uint32
+
+	// post_likes（LIKE metric, target=post）
+	nPost, err := r.purgeUserBatchFromLedger(ctx, tid, userID, "post_like",
+		func(tx *ent.Tx, tid uint32, uid, targetID uint32) error {
+			return r.adjustCounterRow(ctx, tx, tid, targetID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, -1)
+		},
+		func(ctx context.Context, tid, uid uint32, offset, limit int) (ids []uint32, err error) {
+			rows, qerr := r.entClient.Client().PostLike.Query().
+				Where(
+					postlike.TenantIDEQ(tid),
+					postlike.UserIDEQ(uid),
+				).
+				Limit(limit).
+				Offset(offset).
+				All(ctx)
+			if qerr != nil {
+				return nil, qerr
+			}
+			for _, row := range rows {
+				if row.PostID != nil {
+					ids = append(ids, *row.PostID)
+				}
+			}
+			return ids, nil
+		},
+		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint32) (int, error) {
+			return tx.PostLike.Delete().
+				Where(
+					postlike.TenantIDEQ(tid),
+					postlike.UserIDEQ(uid),
+					postlike.PostIDEQ(targetID),
+				).
+		Exec(ctx)
+	},
+)
+	if err != nil {
+		r.log.Errorf("purge user post_like batch failed: %s", err.Error())
+		return totalAffected, err
+	}
+	totalAffected += nPost
+
+	// comment_likes（LIKE metric, target=comment）
+	nComment, err := r.purgeUserBatchFromLedger(ctx, tid, userID, "comment_like",
+		func(tx *ent.Tx, tid uint32, uid, targetID uint32) error {
+			return r.adjustCounterRow(ctx, tx, tid, targetID, interactionV1.TargetType_TARGET_TYPE_COMMENT, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, -1)
+		},
+		func(ctx context.Context, tid, uid uint32, offset, limit int) (ids []uint32, err error) {
+			rows, qerr := r.entClient.Client().CommentLike.Query().
+				Where(
+					commentlike.TenantIDEQ(tid),
+					commentlike.UserIDEQ(uid),
+				).
+				Limit(limit).
+				Offset(offset).
+				All(ctx)
+			if qerr != nil {
+				return nil, qerr
+			}
+			for _, row := range rows {
+				if row.CommentID != nil {
+					ids = append(ids, *row.CommentID)
+				}
+			}
+			return ids, nil
+		},
+		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint32) (int, error) {
+			return tx.CommentLike.Delete().
+				Where(
+					commentlike.TenantIDEQ(tid),
+					commentlike.UserIDEQ(uid),
+					commentlike.CommentIDEQ(targetID),
+				).
+				Exec(ctx)
+		},
+	)
+	if err != nil {
+		r.log.Errorf("purge user comment_like batch failed: %s", err.Error())
+		return totalAffected, err
+	}
+	totalAffected += nComment
+
+	// post_watches（WATCH metric, target=post）
+	nWatch, err := r.purgeUserBatchFromLedger(ctx, tid, userID, "post_watch",
+		func(tx *ent.Tx, tid uint32, uid, targetID uint32) error {
+			return r.adjustCounterRow(ctx, tx, tid, targetID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH, -1)
+		},
+		func(ctx context.Context, tid, uid uint32, offset, limit int) (ids []uint32, err error) {
+			rows, qerr := r.entClient.Client().PostWatch.Query().
+				Where(
+					postwatch.TenantIDEQ(tid),
+					postwatch.UserIDEQ(uid),
+				).
+				Limit(limit).
+				Offset(offset).
+				All(ctx)
+			if qerr != nil {
+				return nil, qerr
+			}
+			for _, row := range rows {
+				if row.PostID != nil {
+					ids = append(ids, *row.PostID)
+				}
+			}
+			return ids, nil
+		},
+		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint32) (int, error) {
+			return tx.PostWatch.Delete().
+				Where(
+					postwatch.TenantIDEQ(tid),
+					postwatch.UserIDEQ(uid),
+					postwatch.PostIDEQ(targetID),
+				).
+				Exec(ctx)
+		},
+	)
+	if err != nil {
+		r.log.Errorf("purge user post_watch batch failed: %s", err.Error())
+		return totalAffected, err
+	}
+	totalAffected += nWatch
+
+	return totalAffected, nil
+}
+
+// purgeUserBatchFromLedger 分批删除某用户在某 ledger 表的全部行。
+// 返回累计被删除的行数。
+// queryBatch: 取一批行的 targetID 列表（带 tenant+user 谓词，limit/offset 分页）
+// deleteOne: 在 tx 内删单个 (user, target) ledger 行，返回受影响行数
+// counterAdjust: 在同一 tx 内对受影响 target 回滚 counter（delta=-1）
+// 每批一个独立 txn。命中 0 行时停止该表。
+func (r *InteractionRepo) purgeUserBatchFromLedger(
+	ctx context.Context,
+	tid uint32,
+	uid uint32,
+	label string,
+	counterAdjust func(tx *ent.Tx, tid uint32, uid, targetID uint32) error,
+	queryBatch func(ctx context.Context, tid, uid uint32, offset, limit int) ([]uint32, error),
+	deleteOne func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint32) (int, error),
+) (uint32, error) {
+	var affected uint32
+	for {
+		// 每批从头查（offset=0）：上一批删了行后，剩余行前移到头部。
+		ids, qerr := queryBatch(ctx, tid, uid, 0, purgeBatchSize)
+		if qerr != nil {
+			r.log.Errorf("query %s batch failed: %s", label, qerr.Error())
+			return affected, interactionV1.ErrorInternalServerError("query ledger batch failed")
+		}
+		if len(ids) == 0 {
+			return affected, nil
+		}
+		var batchDeleted uint32
+		txErr := r.txn(ctx, func(tx *ent.Tx) error {
+			for _, targetID := range ids {
+				n, derr := deleteOne(tx, ctx, tid, uid, targetID)
+				if derr != nil {
+					return derr
+				}
+				if n > 0 {
+					affected += uint32(n)
+					batchDeleted += uint32(n)
+					if aerr := counterAdjust(tx, tid, uid, targetID); aerr != nil {
+						return aerr
+					}
+				}
+			}
+			return nil
+		})
+		if txErr != nil {
+			return affected, txErr
+		}
+		// 本批未删任何行却仍查到 ids：避免死循环，退出。
+		if batchDeleted == 0 {
+			return affected, nil
+		}
+	}
+}
+
+// ResetCounter 按 ledger 真实计数重算指定 (target, metric) 的 interaction_counter 行。
+// recount==0 → 删行；recount>0 → set 绝对值；行不存在 + recount>0 → 创建。
+// 用于修复 counter 与 ledger 不一致的漂移。
+func (r *InteractionRepo) ResetCounter(ctx context.Context, targetType interactionV1.TargetType, targetID uint32, metric interactionV1.CounterMetric) (int64, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	}
+
+	// 按 ledger 真实计数
+	var recount int64
+	switch metric {
+	case interactionV1.CounterMetric_COUNTER_METRIC_LIKE:
+		switch targetType {
+		case interactionV1.TargetType_TARGET_TYPE_POST:
+			c, err := r.entClient.Client().PostLike.Query().
+				Where(
+					postlike.TenantIDEQ(tid),
+					postlike.PostIDEQ(targetID),
+				).
+				Count(ctx)
+			if err != nil {
+				r.log.Errorf("count post_like for recount failed: %s", err.Error())
+				return 0, interactionV1.ErrorInternalServerError("count ledger failed")
+			}
+			recount = int64(c)
+		case interactionV1.TargetType_TARGET_TYPE_COMMENT:
+			c, err := r.entClient.Client().CommentLike.Query().
+				Where(
+					commentlike.TenantIDEQ(tid),
+					commentlike.CommentIDEQ(targetID),
+				).
+				Count(ctx)
+			if err != nil {
+				r.log.Errorf("count comment_like for recount failed: %s", err.Error())
+				return 0, interactionV1.ErrorInternalServerError("count ledger failed")
+			}
+			recount = int64(c)
+		default:
+			return 0, interactionV1.ErrorBadRequest("invalid target type")
+		}
+	case interactionV1.CounterMetric_COUNTER_METRIC_WATCH:
+		c, err := r.entClient.Client().PostWatch.Query().
+			Where(
+				postwatch.TenantIDEQ(tid),
+				postwatch.PostIDEQ(targetID),
+			).
+			Count(ctx)
+		if err != nil {
+			r.log.Errorf("count post_watch for recount failed: %s", err.Error())
+			return 0, interactionV1.ErrorInternalServerError("count ledger failed")
+		}
+		recount = int64(c)
+	default:
+		return 0, interactionV1.ErrorBadRequest("invalid metric")
+	}
+
+	// 同步 counter 行到 recount。用 adjustCounterRow 把现有计数推到 recount：
+	// delta = recount - 现有计数。现有计数在 tx 内查（不能混用非 tx 读，否则
+	// sqlite 下事务中读同表会死锁）。
+	txErr := r.txn(ctx, func(tx *ent.Tx) error {
+		var cur int64
+		existing, qerr := tx.InteractionCounter.Query().
+			Where(
+				interactioncounter.TenantIDEQ(tid),
+				interactioncounter.TargetTypeEQ(uint8(targetType)),
+				interactioncounter.TargetIDEQ(targetID),
+				interactioncounter.MetricEQ(uint8(metric)),
+			).
+			Only(ctx)
+		if qerr != nil {
+			if !ent.IsNotFound(qerr) {
+				r.log.Errorf("query counter row for reset failed: %s", qerr.Error())
+				return interactionV1.ErrorInternalServerError("query counter row failed")
+			}
+			cur = 0
+		} else if existing.Count != nil {
+			cur = *existing.Count
+		}
+		delta := recount - cur
+		if delta == 0 {
+			return nil
+		}
+		return r.adjustCounterRow(ctx, tx, tid, targetID, targetType, metric, delta)
+	})
+	if txErr != nil {
+		return 0, txErr
+	}
+	return recount, nil
+}

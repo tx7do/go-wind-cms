@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "interaction/service/v1/interaction.proto";
+
+// 交互管理服务（运营清数据面）。仅转发至 core InteractionAdminService，
+// 调用方须为平台管理员（由 core 侧运营上下文 guard 校验）。
+service InteractionAdminService {
+  // 清除单条目标上的全部交互 ledger 并同步计数
+  rpc PurgeTargetInteractions (interaction.service.v1.PurgeTargetInteractionsRequest) returns (interaction.service.v1.PurgeTargetInteractionsResponse) {
+    option (google.api.http) = {
+      delete: "/admin/v1/interactions/target/{target_type}/{target_id}"
+    };
+  }
+
+  // 清除指定用户在全站的全部交互 ledger（分批短事务）
+  rpc PurgeUserInteractions (interaction.service.v1.PurgeUserInteractionsRequest) returns (interaction.service.v1.PurgeUserInteractionsResponse) {
+    option (google.api.http) = {
+      delete: "/admin/v1/interactions/user/{user_id}"
+    };
+  }
+
+  // 按 ledger 重算指定 (target, metric) 的计数
+  rpc ResetCounter (interaction.service.v1.ResetCounterRequest) returns (interaction.service.v1.ResetCounterResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/interactions/counter/reset"
+      body: "*"
+    };
+  }
+}

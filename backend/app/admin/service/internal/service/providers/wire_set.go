@@ -62,6 +62,7 @@ var ProviderSet = wire.NewSet(
 	service.NewPostService,
 
 	service.NewCommentService,
+	service.NewInteractionAdminService,
 
 	service.NewMediaAssetService,
 

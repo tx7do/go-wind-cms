@@ -378,3 +378,211 @@ func TestGetCounts_EmptyRequest(t *testing.T) {
 
 // 引入 entSql 以防 go vet 报未使用（driver 实际由 entCrud 管理）
 var _ = entSql.Dialect
+
+// ==============================
+// 清数据测试（PurgeTargetInteractions / PurgeUserInteractions / ResetCounter）
+// ==============================
+
+// TestPurgeTargetInteractions_DeletesLedgerAndCounter 验证 purge 单条 target：
+// 两个用户给同 post 点赞后，purge 该 post → post_like 行全删 + LIKE counter 行删。
+func TestPurgeTargetInteractions_DeletesLedgerAndCounter(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid := createTestPost(t, db, 1)
+	ctxA := viewerCtx(1, 100)
+	ctxB := viewerCtx(1, 200)
+
+	// 两用户各点赞
+	_, _, err := repo.Like(ctxA, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	require.NoError(t, err)
+	_, _, err = repo.Like(ctxB, 200, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	require.NoError(t, err)
+
+	// counter 行存在 count=2
+	cnt, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.True(t, exists, "两用户点赞后应有 LIKE counter 行")
+	assert.Equal(t, int64(2), cnt, "counter 应为 2")
+
+	// purge 该 target（用 tenant 1 的 viewer context）
+	affected, err := repo.PurgeTargetInteractions(ctxA, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	require.NoError(t, err)
+	assert.Equal(t, uint32(2), affected, "应删 2 行 ledger")
+
+	// ledger 行已删
+	ledgerCnt, err := db.PostLike.Query().
+		Where(
+			postlike.TenantIDEQ(1),
+			postlike.PostIDEQ(pid),
+		).
+		Count(viewerCtx(1, 100))
+	require.NoError(t, err)
+	assert.Equal(t, 0, ledgerCnt, "purge 后 post_like 应无该 post 的行")
+
+	// counter 行已删
+	cnt, exists = readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	_ = cnt
+	assert.False(t, exists, "purge 后 LIKE counter 行应删除")
+}
+
+// TestPurgeTargetInteractions_Idempotent 验证对无交互的 target purge 是 no-op，返回 0。
+func TestPurgeTargetInteractions_Idempotent(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid := createTestPost(t, db, 1)
+	ctx := viewerCtx(1, 100)
+
+	// 无任何交互，直接 purge
+	affected, err := repo.PurgeTargetInteractions(ctx, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	require.NoError(t, err)
+	assert.Equal(t, uint32(0), affected, "无交互的 target purge 应返回 0")
+
+	// counter 行不存在
+	_, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.False(t, exists, "无交互时不应有 counter 行")
+}
+
+// TestPurgeUserInteractions_DeletesAcrossTargets 验证 purge 某用户在全站的交互：
+// 1 用户给 3 个 post 点赞 → purge 该 user → 三 target 的 ledger + counter 全清。
+func TestPurgeUserInteractions_DeletesAcrossTargets(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid1 := createTestPost(t, db, 1)
+	pid2 := createTestPost(t, db, 1)
+	pid3 := createTestPost(t, db, 1)
+	ctx := viewerCtx(1, 100)
+
+	// 用户 100 给 3 个 post 各点赞
+	for _, pid := range []uint32{pid1, pid2, pid3} {
+		_, _, err := repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+		require.NoError(t, err)
+	}
+
+	// 三 target 各有 counter 行 count=1
+	for _, pid := range []uint32{pid1, pid2, pid3} {
+		cnt, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+		assert.True(t, exists, "post %d 应有 counter 行", pid)
+		assert.Equal(t, int64(1), cnt, "post %d counter 应为 1", pid)
+	}
+
+	// purge 该用户
+	affected, err := repo.PurgeUserInteractions(ctx, 100)
+	require.NoError(t, err)
+	assert.Equal(t, uint32(3), affected, "应删 3 行 ledger")
+
+	// 三 target 的 ledger + counter 全清
+	for _, pid := range []uint32{pid1, pid2, pid3} {
+		ledgerCnt, err := db.PostLike.Query().
+			Where(
+				postlike.TenantIDEQ(1),
+				postlike.PostIDEQ(pid),
+			).
+			Count(viewerCtx(1, 100))
+		require.NoError(t, err)
+		assert.Equal(t, 0, ledgerCnt, "post %d 的 post_like 应清空", pid)
+
+		_, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+		assert.False(t, exists, "post %d 的 LIKE counter 行应删除", pid)
+	}
+}
+
+// TestResetCounter_RecountsFromLedger 验证 reset 把 counter 校正为 ledger 真实计数：
+// 点赞 1 次（counter=1）→ 手动把 counter 改高到 5 → reset → recount=1，counter 行 count=1。
+func TestResetCounter_RecountsFromLedger(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid := createTestPost(t, db, 1)
+	ctx := viewerCtx(1, 100)
+
+	// 点赞 1 次，counter=1
+	_, _, err := repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	require.NoError(t, err)
+
+	// 手动把 counter 行改高到 5（模拟漂移）
+	row, err := db.InteractionCounter.Query().
+		Where(
+			interactioncounter.TenantIDEQ(1),
+			interactioncounter.TargetIDEQ(pid),
+			interactioncounter.TargetTypeEQ(uint8(interactionV1.TargetType_TARGET_TYPE_POST)),
+			interactioncounter.MetricEQ(uint8(interactionV1.CounterMetric_COUNTER_METRIC_LIKE)),
+		).
+		Only(viewerCtx(1, 100))
+	require.NoError(t, err)
+	_, err = db.InteractionCounter.UpdateOneID(row.ID).SetCount(5).Save(viewerCtx(1, 100))
+	require.NoError(t, err)
+
+	// reset：应重算为 1（ledger 真实计数）
+	recount, err := repo.ResetCounter(ctx, interactionV1.TargetType_TARGET_TYPE_POST, pid, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	require.NoError(t, err)
+	assert.Equal(t, int64(1), recount, "reset 后 recount 应为 ledger 真实计数 1")
+
+	// counter 行被校正回 1
+	cnt, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.True(t, exists, "reset 后 counter 行应存在（count=1）")
+	assert.Equal(t, int64(1), cnt, "counter 应被校正回 1")
+}
+
+// TestResetCounter_ZeroRecountDeletesRow 验证 ledger 已空时 reset 删除 counter 行：
+// 点赞后 unlike（ledger 空，counter 已删）→ reset → recount=0，无 counter 行。
+func TestResetCounter_ZeroRecountDeletesRow(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid := createTestPost(t, db, 1)
+	ctx := viewerCtx(1, 100)
+
+	// 点赞后取消（counter 行已删）
+	_, _, err := repo.Like(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	require.NoError(t, err)
+	_, _, err = repo.Unlike(ctx, 100, interactionV1.TargetType_TARGET_TYPE_POST, pid)
+	require.NoError(t, err)
+
+	// 此时 counter 行已不存在（unlike 归 0 删行）
+	_, exists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.False(t, exists, "unlike 后 counter 行应已删")
+
+	// reset：recount=0，无行
+	recount, err := repo.ResetCounter(ctx, interactionV1.TargetType_TARGET_TYPE_POST, pid, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	require.NoError(t, err)
+	assert.Equal(t, int64(0), recount, "ledger 空时 recount 应为 0")
+
+	// 仍无 counter 行
+	_, exists = readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.False(t, exists, "reset 后不应有 counter 行")
+}
+
+// TestPurgeTargetInteractions_CrossTenantIsolated 验证 purge tenant A 的 target
+// 不影响 tenant B 的 counter。
+func TestPurgeTargetInteractions_CrossTenantIsolated(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	// tenant 1 与 tenant 2 各建一个 post
+	pidA := createTestPost(t, db, 1)
+	pidB := createTestPost(t, db, 2)
+	ctxA := viewerCtx(1, 100)
+	ctxB := viewerCtx(2, 200)
+
+	// 两租户各点赞自己的 post
+	_, _, err := repo.Like(ctxA, 100, interactionV1.TargetType_TARGET_TYPE_POST, pidA)
+	require.NoError(t, err)
+	_, _, err = repo.Like(ctxB, 200, interactionV1.TargetType_TARGET_TYPE_POST, pidB)
+	require.NoError(t, err)
+
+	// purge tenant 1 的 target
+	affected, err := repo.PurgeTargetInteractions(ctxA, interactionV1.TargetType_TARGET_TYPE_POST, pidA)
+	require.NoError(t, err)
+	assert.Equal(t, uint32(1), affected, "tenant 1 purge 应删 1 行")
+
+	// tenant 1 的 counter 行已删
+	_, existsA := readCounterRow(t, db, 1, pidA, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.False(t, existsA, "tenant 1 的 counter 行应删")
+
+	// tenant 2 的 counter 行仍存在 count=1，不受影响
+	cntB, existsB := readCounterRow(t, db, 2, pidB, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	_ = cntB
+	assert.True(t, existsB, "tenant 2 的 counter 行应仍存在（跨租户隔离）")
+}

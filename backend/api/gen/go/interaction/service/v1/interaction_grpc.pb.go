@@ -383,3 +383,208 @@ var InteractionService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "interaction/service/v1/interaction.proto",
 }
+
+const (
+	InteractionAdminService_PurgeTargetInteractions_FullMethodName = "/interaction.service.v1.InteractionAdminService/PurgeTargetInteractions"
+	InteractionAdminService_PurgeUserInteractions_FullMethodName   = "/interaction.service.v1.InteractionAdminService/PurgeUserInteractions"
+	InteractionAdminService_ResetCounter_FullMethodName            = "/interaction.service.v1.InteractionAdminService/ResetCounter"
+)
+
+// InteractionAdminServiceClient is the client API for InteractionAdminService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 交互管理服务（运营清数据面）
+//
+// 与 viewer-facing 的 InteractionService 相对，本服务面向后台运营，接受
+// target_id / user_id 作为入参，身份从运营上下文（OperatorMetadata）取，
+// 谰用方须为平台管理员（IsPlatformContext || IsSystemContext）。
+// 每次操作写 OperationAuditLog。
+type InteractionAdminServiceClient interface {
+	// 清除单条目标上的全部交互 ledger（post_like/comment_like/post_watch），
+	// 并同步把对应 interaction_counter 行归零删除。
+	PurgeTargetInteractions(ctx context.Context, in *PurgeTargetInteractionsRequest, opts ...grpc.CallOption) (*PurgeTargetInteractionsResponse, error)
+	// 清除指定用户在全站的全部交互 ledger（分批短事务），每批同步回滚对应 counter。
+	// 用于封禁/注销场景。
+	PurgeUserInteractions(ctx context.Context, in *PurgeUserInteractionsRequest, opts ...grpc.CallOption) (*PurgeUserInteractionsResponse, error)
+	// 按 ledger 真实计数重算指定 (target, metric) 的 interaction_counter 行，
+	// 用于修复计数漂移。recount==0 时删行。
+	ResetCounter(ctx context.Context, in *ResetCounterRequest, opts ...grpc.CallOption) (*ResetCounterResponse, error)
+}
+
+type interactionAdminServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewInteractionAdminServiceClient(cc grpc.ClientConnInterface) InteractionAdminServiceClient {
+	return &interactionAdminServiceClient{cc}
+}
+
+func (c *interactionAdminServiceClient) PurgeTargetInteractions(ctx context.Context, in *PurgeTargetInteractionsRequest, opts ...grpc.CallOption) (*PurgeTargetInteractionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PurgeTargetInteractionsResponse)
+	err := c.cc.Invoke(ctx, InteractionAdminService_PurgeTargetInteractions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *interactionAdminServiceClient) PurgeUserInteractions(ctx context.Context, in *PurgeUserInteractionsRequest, opts ...grpc.CallOption) (*PurgeUserInteractionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PurgeUserInteractionsResponse)
+	err := c.cc.Invoke(ctx, InteractionAdminService_PurgeUserInteractions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *interactionAdminServiceClient) ResetCounter(ctx context.Context, in *ResetCounterRequest, opts ...grpc.CallOption) (*ResetCounterResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResetCounterResponse)
+	err := c.cc.Invoke(ctx, InteractionAdminService_ResetCounter_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// InteractionAdminServiceServer is the server API for InteractionAdminService service.
+// All implementations must embed UnimplementedInteractionAdminServiceServer
+// for forward compatibility.
+//
+// 交互管理服务（运营清数据面）
+//
+// 与 viewer-facing 的 InteractionService 相对，本服务面向后台运营，接受
+// target_id / user_id 作为入参，身份从运营上下文（OperatorMetadata）取，
+// 谰用方须为平台管理员（IsPlatformContext || IsSystemContext）。
+// 每次操作写 OperationAuditLog。
+type InteractionAdminServiceServer interface {
+	// 清除单条目标上的全部交互 ledger（post_like/comment_like/post_watch），
+	// 并同步把对应 interaction_counter 行归零删除。
+	PurgeTargetInteractions(context.Context, *PurgeTargetInteractionsRequest) (*PurgeTargetInteractionsResponse, error)
+	// 清除指定用户在全站的全部交互 ledger（分批短事务），每批同步回滚对应 counter。
+	// 用于封禁/注销场景。
+	PurgeUserInteractions(context.Context, *PurgeUserInteractionsRequest) (*PurgeUserInteractionsResponse, error)
+	// 按 ledger 真实计数重算指定 (target, metric) 的 interaction_counter 行，
+	// 用于修复计数漂移。recount==0 时删行。
+	ResetCounter(context.Context, *ResetCounterRequest) (*ResetCounterResponse, error)
+	mustEmbedUnimplementedInteractionAdminServiceServer()
+}
+
+// UnimplementedInteractionAdminServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedInteractionAdminServiceServer struct{}
+
+func (UnimplementedInteractionAdminServiceServer) PurgeTargetInteractions(context.Context, *PurgeTargetInteractionsRequest) (*PurgeTargetInteractionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PurgeTargetInteractions not implemented")
+}
+func (UnimplementedInteractionAdminServiceServer) PurgeUserInteractions(context.Context, *PurgeUserInteractionsRequest) (*PurgeUserInteractionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PurgeUserInteractions not implemented")
+}
+func (UnimplementedInteractionAdminServiceServer) ResetCounter(context.Context, *ResetCounterRequest) (*ResetCounterResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetCounter not implemented")
+}
+func (UnimplementedInteractionAdminServiceServer) mustEmbedUnimplementedInteractionAdminServiceServer() {
+}
+func (UnimplementedInteractionAdminServiceServer) testEmbeddedByValue() {}
+
+// UnsafeInteractionAdminServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InteractionAdminServiceServer will
+// result in compilation errors.
+type UnsafeInteractionAdminServiceServer interface {
+	mustEmbedUnimplementedInteractionAdminServiceServer()
+}
+
+func RegisterInteractionAdminServiceServer(s grpc.ServiceRegistrar, srv InteractionAdminServiceServer) {
+	// If the following call panics, it indicates UnimplementedInteractionAdminServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&InteractionAdminService_ServiceDesc, srv)
+}
+
+func _InteractionAdminService_PurgeTargetInteractions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PurgeTargetInteractionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InteractionAdminServiceServer).PurgeTargetInteractions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InteractionAdminService_PurgeTargetInteractions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InteractionAdminServiceServer).PurgeTargetInteractions(ctx, req.(*PurgeTargetInteractionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InteractionAdminService_PurgeUserInteractions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PurgeUserInteractionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InteractionAdminServiceServer).PurgeUserInteractions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InteractionAdminService_PurgeUserInteractions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InteractionAdminServiceServer).PurgeUserInteractions(ctx, req.(*PurgeUserInteractionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InteractionAdminService_ResetCounter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetCounterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InteractionAdminServiceServer).ResetCounter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InteractionAdminService_ResetCounter_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InteractionAdminServiceServer).ResetCounter(ctx, req.(*ResetCounterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// InteractionAdminService_ServiceDesc is the grpc.ServiceDesc for InteractionAdminService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var InteractionAdminService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "interaction.service.v1.InteractionAdminService",
+	HandlerType: (*InteractionAdminServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "PurgeTargetInteractions",
+			Handler:    _InteractionAdminService_PurgeTargetInteractions_Handler,
+		},
+		{
+			MethodName: "PurgeUserInteractions",
+			Handler:    _InteractionAdminService_PurgeUserInteractions_Handler,
+		},
+		{
+			MethodName: "ResetCounter",
+			Handler:    _InteractionAdminService_ResetCounter_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "interaction/service/v1/interaction.proto",
+}

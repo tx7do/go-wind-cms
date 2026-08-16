@@ -37,6 +37,26 @@ service InteractionService {
   rpc GetCounts (GetCountsRequest) returns (GetCountsResponse) {}
 }
 
+// 交互管理服务（运营清数据面）
+//
+// 与 viewer-facing 的 InteractionService 相对，本服务面向后台运营，接受
+// target_id / user_id 作为入参，身份从运营上下文（OperatorMetadata）取，
+// 谰用方须为平台管理员（IsPlatformContext || IsSystemContext）。
+// 每次操作写 OperationAuditLog。
+service InteractionAdminService {
+  // 清除单条目标上的全部交互 ledger（post_like/comment_like/post_watch），
+  // 并同步把对应 interaction_counter 行归零删除。
+  rpc PurgeTargetInteractions (PurgeTargetInteractionsRequest) returns (PurgeTargetInteractionsResponse) {}
+
+  // 清除指定用户在全站的全部交互 ledger（分批短事务），每批同步回滚对应 counter。
+  // 用于封禁/注销场景。
+  rpc PurgeUserInteractions (PurgeUserInteractionsRequest) returns (PurgeUserInteractionsResponse) {}
+
+  // 按 ledger 真实计数重算指定 (target, metric) 的 interaction_counter 行，
+  // 用于修复计数漂移。recount==0 时删行。
+  rpc ResetCounter (ResetCounterRequest) returns (ResetCounterResponse) {}
+}
+
 // 交互目标类型
 enum TargetType {
   TARGET_TYPE_UNSPECIFIED = 0;
@@ -107,4 +127,33 @@ message GetCountsRequest {
 // 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
 message GetCountsResponse {
   map<uint32, CountMap> counts = 1;
+}
+
+// ===== 清数据请求/响应 =====
+
+message PurgeTargetInteractionsRequest {
+  TargetType target_type = 1;
+  uint32 target_id = 2;
+}
+
+message PurgeTargetInteractionsResponse {
+  uint32 affected_rows = 1; // 被删除的 ledger 行数
+}
+
+message PurgeUserInteractionsRequest {
+  uint32 user_id = 1;
+}
+
+message PurgeUserInteractionsResponse {
+  uint32 affected_rows = 1; // 被删除的 ledger 行数
+}
+
+message ResetCounterRequest {
+  TargetType target_type = 1;
+  uint32 target_id = 2;
+  CounterMetric metric = 3;
+}
+
+message ResetCounterResponse {
+  int64 recount = 1; // 按 ledger 重算后的真实计数
 }

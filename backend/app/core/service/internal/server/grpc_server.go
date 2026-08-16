@@ -76,6 +76,7 @@ func NewGrpcServer(
 	commentService *service.CommentService,
 
 	interactionService *service.InteractionService,
+	interactionAdminService *service.InteractionAdminService,
 
 	postService *service.PostService,
 	categoryService *service.CategoryService,
@@ -139,6 +140,7 @@ func NewGrpcServer(
 	commentV1.RegisterCommentServiceServer(srv, commentService)
 
 	interactionV1.RegisterInteractionServiceServer(srv, interactionService)
+	interactionV1.RegisterInteractionAdminServiceServer(srv, interactionAdminService)
 
 	contentV1.RegisterPostServiceServer(srv, postService)
 	contentV1.RegisterCategoryServiceServer(srv, categoryService)
