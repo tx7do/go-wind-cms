@@ -352,6 +352,31 @@ func (r *TenantRepo) TenantExists(ctx context.Context, req *identityV1.TenantExi
 	}, nil
 }
 
+// GetTenantIdByDomain 按域名解析租户ID。
+//
+// 仅供 app BFF 在匿名（白名单）请求中按 Host 解析 tenant_id。domain 现为全局
+// 唯一索引，至多匹配一行；未匹配到（含 domain 为空）返回 (0, nil)，调用方据此
+// fail-closed。仅返回 id，不映射/泄露其他租户字段。
+func (r *TenantRepo) GetTenantIdByDomain(ctx context.Context, domain string) (uint32, error) {
+	if domain == "" {
+		return 0, nil
+	}
+	entity, err := r.entClient.Client().Tenant.Query().
+		Where(tenant.DomainEQ(domain)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, nil
+		}
+		r.log.Errorf("query tenant by domain failed: %s", err.Error())
+		return 0, identityV1.ErrorInternalServerError("query tenant by domain failed")
+	}
+	if entity == nil || entity.ID == 0 {
+		return 0, nil
+	}
+	return entity.ID, nil
+}
+
 // ListTenantsByIds gets tenants by a list of IDs.
 func (r *TenantRepo) ListTenantsByIds(ctx context.Context, ids []uint32) ([]*identityV1.Tenant, error) {
 	if len(ids) == 0 {

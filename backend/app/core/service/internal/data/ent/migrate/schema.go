@@ -3511,7 +3511,7 @@ var (
 			},
 			{
 				Name:    "idx_sys_tenant_domain",
-				Unique:  false,
+				Unique:  true,
 				Columns: []*schema.Column{SysTenantsColumns[11]},
 			},
 			{

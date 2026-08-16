@@ -137,6 +137,22 @@ func (s *TenantService) Get(ctx context.Context, req *identityV1.GetTenantReques
 	return resp, nil
 }
 
+// ResolveTenantByDomain 按域名解析租户ID。
+//
+// 供 app BFF 在匿名（白名单）请求中按 Host 解析 tenant_id。仅返回 id，不映射
+// 其他租户字段；未匹配到时返回 tenant_id=0，调用方据此 fail-closed（拒绝而非
+// 回退 SystemViewer，避免跨租户泄漏）。
+func (s *TenantService) ResolveTenantByDomain(ctx context.Context, req *identityV1.ResolveTenantByDomainRequest) (*identityV1.ResolveTenantByDomainResponse, error) {
+	if req == nil {
+		return nil, identityV1.ErrorBadRequest("invalid parameter")
+	}
+	tid, err := s.tenantRepo.GetTenantIdByDomain(ctx, req.GetDomain())
+	if err != nil {
+		return nil, err
+	}
+	return &identityV1.ResolveTenantByDomainResponse{TenantId: tid}, nil
+}
+
 func (s *TenantService) Create(ctx context.Context, req *identityV1.CreateTenantRequest) (*identityV1.Tenant, error) {
 	if req == nil || req.Data == nil {
 		return nil, identityV1.ErrorBadRequest("invalid parameter")

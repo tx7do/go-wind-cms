@@ -1587,6 +1587,216 @@ var _ interface {
 	ErrorName() string
 } = TenantExistsResponseValidationError{}
 
+// Validate checks the field values on ResolveTenantByDomainRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResolveTenantByDomainRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResolveTenantByDomainRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ResolveTenantByDomainRequestMultiError, or nil if none found.
+func (m *ResolveTenantByDomainRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResolveTenantByDomainRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Domain
+
+	if len(errors) > 0 {
+		return ResolveTenantByDomainRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResolveTenantByDomainRequestMultiError is an error wrapping multiple
+// validation errors returned by ResolveTenantByDomainRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ResolveTenantByDomainRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResolveTenantByDomainRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResolveTenantByDomainRequestMultiError) AllErrors() []error { return m }
+
+// ResolveTenantByDomainRequestValidationError is the validation error returned
+// by ResolveTenantByDomainRequest.Validate if the designated constraints
+// aren't met.
+type ResolveTenantByDomainRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResolveTenantByDomainRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResolveTenantByDomainRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResolveTenantByDomainRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResolveTenantByDomainRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResolveTenantByDomainRequestValidationError) ErrorName() string {
+	return "ResolveTenantByDomainRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResolveTenantByDomainRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResolveTenantByDomainRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResolveTenantByDomainRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResolveTenantByDomainRequestValidationError{}
+
+// Validate checks the field values on ResolveTenantByDomainResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResolveTenantByDomainResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResolveTenantByDomainResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ResolveTenantByDomainResponseMultiError, or nil if none found.
+func (m *ResolveTenantByDomainResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResolveTenantByDomainResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TenantId
+
+	if len(errors) > 0 {
+		return ResolveTenantByDomainResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResolveTenantByDomainResponseMultiError is an error wrapping multiple
+// validation errors returned by ResolveTenantByDomainResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ResolveTenantByDomainResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResolveTenantByDomainResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResolveTenantByDomainResponseMultiError) AllErrors() []error { return m }
+
+// ResolveTenantByDomainResponseValidationError is the validation error
+// returned by ResolveTenantByDomainResponse.Validate if the designated
+// constraints aren't met.
+type ResolveTenantByDomainResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResolveTenantByDomainResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResolveTenantByDomainResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResolveTenantByDomainResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResolveTenantByDomainResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResolveTenantByDomainResponseValidationError) ErrorName() string {
+	return "ResolveTenantByDomainResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResolveTenantByDomainResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResolveTenantByDomainResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResolveTenantByDomainResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResolveTenantByDomainResponseValidationError{}
+
 // Validate checks the field values on CreateTenantWithAdminUserRequest with
 // the rules defined in the proto definition for this message. If any rules
 // are violated, the first error encountered is returned, or nil if there are

@@ -36,6 +36,12 @@ service TenantService {
   // 租户是否存在
   rpc TenantExists (TenantExistsRequest) returns (TenantExistsResponse) {}
 
+  // 按域名解析租户ID
+  //
+  // 供 app BFF 在匿名（白名单）请求中按 Host 解析 tenant_id，注入只读
+  // tenant-scoped viewer。仅返回 tenant_id，不泄露其他租户字段。
+  rpc ResolveTenantByDomain (ResolveTenantByDomainRequest) returns (ResolveTenantByDomainResponse) {}
+
   // 分配租户管理员
   rpc AssignTenantAdmin(AssignTenantAdminRequest) returns (google.protobuf.Empty) {}
 
@@ -258,6 +264,22 @@ message TenantExistsRequest {
 // 租户是否存在 - 答复
 message TenantExistsResponse {
   bool exist = 1;
+}
+
+// 按域名解析租户ID - 请求
+message ResolveTenantByDomainRequest {
+  string domain = 1 [
+    json_name = "domain",
+    (gnostic.openapi.v3.property) = {description: "租户专属域名"}
+  ]; // 租户专属域名
+}
+
+// 按域名解析租户ID - 答复
+message ResolveTenantByDomainResponse {
+  uint32 tenant_id = 1 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "解析到的租户ID，未匹配到时为 0"}
+  ]; // 解析到的租户ID
 }
 
 

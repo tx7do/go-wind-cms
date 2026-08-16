@@ -36,6 +36,7 @@ var ProviderSet = wire.NewSet(
 
 	data.NewUserServiceClient,
 	data.NewTenantServiceClient,
+	data.NewTenantResolver,
 	data.NewRoleServiceClient,
 	data.NewOrgUnitServiceClient,
 	data.NewPositionServiceClient,

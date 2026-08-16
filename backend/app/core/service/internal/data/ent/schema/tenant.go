@@ -144,8 +144,10 @@ func (Tenant) Indexes() []ent.Index {
 			Unique().
 			StorageKey("idx_sys_tenant_code"),
 
-		// 按域名快速定位租户
-		index.Fields("domain").StorageKey("idx_sys_tenant_domain"),
+		// 按域名快速定位租户；全局唯一，保证 host→tenant 解析结果唯一可靠。
+		index.Fields("domain").
+			Unique().
+			StorageKey("idx_sys_tenant_domain"),
 
 		// 按管理员查询
 		index.Fields("admin_user_id").StorageKey("idx_sys_tenant_admin_user_id"),

@@ -148,3 +148,6 @@ bazel-*
 
 # protobuf generate output
 # gen/
+
+# Playwright MCP test artifacts
+.playwright-mcp/

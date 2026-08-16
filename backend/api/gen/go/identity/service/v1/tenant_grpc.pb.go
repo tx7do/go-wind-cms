@@ -29,6 +29,7 @@ const (
 	TenantService_Update_FullMethodName                    = "/identity.service.v1.TenantService/Update"
 	TenantService_Delete_FullMethodName                    = "/identity.service.v1.TenantService/Delete"
 	TenantService_TenantExists_FullMethodName              = "/identity.service.v1.TenantService/TenantExists"
+	TenantService_ResolveTenantByDomain_FullMethodName     = "/identity.service.v1.TenantService/ResolveTenantByDomain"
 	TenantService_AssignTenantAdmin_FullMethodName         = "/identity.service.v1.TenantService/AssignTenantAdmin"
 	TenantService_CreateTenantWithAdminUser_FullMethodName = "/identity.service.v1.TenantService/CreateTenantWithAdminUser"
 )
@@ -55,6 +56,11 @@ type TenantServiceClient interface {
 	Delete(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 租户是否存在
 	TenantExists(ctx context.Context, in *TenantExistsRequest, opts ...grpc.CallOption) (*TenantExistsResponse, error)
+	// 按域名解析租户ID
+	//
+	// 供 app BFF 在匿名（白名单）请求中按 Host 解析 tenant_id，注入只读
+	// tenant-scoped viewer。仅返回 tenant_id，不泄露其他租户字段。
+	ResolveTenantByDomain(ctx context.Context, in *ResolveTenantByDomainRequest, opts ...grpc.CallOption) (*ResolveTenantByDomainResponse, error)
 	// 分配租户管理员
 	AssignTenantAdmin(ctx context.Context, in *AssignTenantAdminRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 创建租户及管理员用户
@@ -149,6 +155,16 @@ func (c *tenantServiceClient) TenantExists(ctx context.Context, in *TenantExists
 	return out, nil
 }
 
+func (c *tenantServiceClient) ResolveTenantByDomain(ctx context.Context, in *ResolveTenantByDomainRequest, opts ...grpc.CallOption) (*ResolveTenantByDomainResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveTenantByDomainResponse)
+	err := c.cc.Invoke(ctx, TenantService_ResolveTenantByDomain_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tenantServiceClient) AssignTenantAdmin(ctx context.Context, in *AssignTenantAdminRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -191,6 +207,11 @@ type TenantServiceServer interface {
 	Delete(context.Context, *DeleteTenantRequest) (*emptypb.Empty, error)
 	// 租户是否存在
 	TenantExists(context.Context, *TenantExistsRequest) (*TenantExistsResponse, error)
+	// 按域名解析租户ID
+	//
+	// 供 app BFF 在匿名（白名单）请求中按 Host 解析 tenant_id，注入只读
+	// tenant-scoped viewer。仅返回 tenant_id，不泄露其他租户字段。
+	ResolveTenantByDomain(context.Context, *ResolveTenantByDomainRequest) (*ResolveTenantByDomainResponse, error)
 	// 分配租户管理员
 	AssignTenantAdmin(context.Context, *AssignTenantAdminRequest) (*emptypb.Empty, error)
 	// 创建租户及管理员用户
@@ -228,6 +249,9 @@ func (UnimplementedTenantServiceServer) Delete(context.Context, *DeleteTenantReq
 }
 func (UnimplementedTenantServiceServer) TenantExists(context.Context, *TenantExistsRequest) (*TenantExistsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TenantExists not implemented")
+}
+func (UnimplementedTenantServiceServer) ResolveTenantByDomain(context.Context, *ResolveTenantByDomainRequest) (*ResolveTenantByDomainResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveTenantByDomain not implemented")
 }
 func (UnimplementedTenantServiceServer) AssignTenantAdmin(context.Context, *AssignTenantAdminRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method AssignTenantAdmin not implemented")
@@ -400,6 +424,24 @@ func _TenantService_TenantExists_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TenantService_ResolveTenantByDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveTenantByDomainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantServiceServer).ResolveTenantByDomain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TenantService_ResolveTenantByDomain_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantServiceServer).ResolveTenantByDomain(ctx, req.(*ResolveTenantByDomainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TenantService_AssignTenantAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AssignTenantAdminRequest)
 	if err := dec(in); err != nil {
@@ -474,6 +516,10 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TenantExists",
 			Handler:    _TenantService_TenantExists_Handler,
+		},
+		{
+			MethodName: "ResolveTenantByDomain",
+			Handler:    _TenantService_ResolveTenantByDomain_Handler,
 		},
 		{
 			MethodName: "AssignTenantAdmin",
