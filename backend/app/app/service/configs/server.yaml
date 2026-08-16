@@ -18,6 +18,9 @@ server:
         - "OPTIONS"
       origins:
         - "http://localhost:5001"
+        - "http://localhost:5011"
+        - "http://localhost:5021"
+        - "http://localhost:10086"
         - "https://api.cms.gowind.cloud"
     middleware:
       auth:
