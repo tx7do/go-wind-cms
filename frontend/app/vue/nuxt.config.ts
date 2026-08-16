@@ -67,6 +67,10 @@ export default defineNuxtConfig({
     },
     i18n: {
         langDir: '../locales',
+        // seo:false（见 app.vue 的 useLocaleHead）下 baseUrl 不参与 hreflang/canonical 生成，
+        // 但 i18n head 守卫要求其非空，否则每轮 SSR 都打 warn；可由 NUXT_PUBLIC_I18N_BASE_URL 覆盖，
+        // 以备将来启用 SEO 时注入正确生产源。
+        baseUrl: process.env.NUXT_PUBLIC_I18N_BASE_URL || 'http://localhost:3000',
         // 注意：dir 由 @nuxtjs/i18n 运行时读取 LocaleObject.dir 并自动写入 <html dir>。
         //   - 未声明 dir 的 locale 回落到 defaultDirection: 'ltr'（见 @nuxtjs/i18n 模块默认值）
         //   - 阿拉伯语必须显式声明 dir: 'rtl'，否则 HTML 方向不会翻转
