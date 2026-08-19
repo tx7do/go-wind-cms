@@ -23,6 +23,11 @@ const (
 	defaultExpiryTime = time.Minute * 60 // 默认的预签名时间，默认为：1小时
 
 	DefaultContentType = "application/octet-stream"
+
+	// MaxUploadObjectSize 单个上传对象的大小上限（100 MiB）。
+	// minio-go PutObject 按 objectSize 读取，客户端无法上传超过该声明值的字节，
+	// 因此在 UploadFile 入口校验声明大小即可有效阻止超大文件。
+	MaxUploadObjectSize int64 = 100 * 1024 * 1024
 )
 
 // MinIOClient MinIO 客户端封装
@@ -213,6 +218,13 @@ func (c *MinIOClient) UploadFile(
 	if objectSize <= 0 {
 		c.log.Errorf("empty fileContent data")
 		return minio.UploadInfo{}, "", "", storageV1.ErrorUploadFailed("empty fileContent data")
+	}
+
+	// 大小硬限制：阻止超大文件占用存储。minio-go 按 objectSize 读取，
+	// 客户端无法绕过该声明值上传更多字节。
+	if objectSize > MaxUploadObjectSize {
+		c.log.Errorf("upload object too large: %d bytes (max %d)", objectSize, MaxUploadObjectSize)
+		return minio.UploadInfo{}, "", "", storageV1.ErrorUploadFailed("upload object exceeds max size limit")
 	}
 
 	if bucketName == "" {
