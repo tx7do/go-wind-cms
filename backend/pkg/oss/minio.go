@@ -3,6 +3,7 @@ package oss
 import (
 	"bytes"
 	"context"
+	"io"
 	"net/url"
 	"strings"
 	"time"
@@ -207,9 +208,9 @@ func (c *MinIOClient) UploadFile(
 	ctx context.Context,
 	bucketName string, objectName string,
 	mimeType string,
-	fileContent []byte,
+	reader io.Reader, objectSize int64,
 ) (minio.UploadInfo, string, string, error) {
-	if len(fileContent) == 0 {
+	if objectSize <= 0 {
 		c.log.Errorf("empty fileContent data")
 		return minio.UploadInfo{}, "", "", storageV1.ErrorUploadFailed("empty fileContent data")
 	}
@@ -218,20 +219,13 @@ func (c *MinIOClient) UploadFile(
 		bucketName = BucketFiles
 	}
 
-	var ext string
-	if mimeType == "" {
-		mimeType, ext = DetectFileType(fileContent)
-	}
-	if ext == "" {
-		ext = ContentTypeToFileExtension(mimeType)
-		//ext = ".bin"
-	}
+	// 流式上传：不再从文件内容嗅探 MIME，统一按调用方传入的 mimeType 处理，
+	// 缺省回退到 application/octet-stream。
+	ext := ContentTypeToFileExtension(mimeType)
 
 	if objectName == "" {
 		bucketName = ContentTypeToBucketName(mimeType)
-		objectName = GenerateObjectName("", fileContent, ext, GenerateFileNameTypeUUID)
-	} else {
-		ext = ExtractFileExtension(objectName)
+		objectName = GenerateObjectName("", ext, GenerateFileNameTypeUUID)
 	}
 	if mimeType == "" {
 		mimeType = DefaultContentType
@@ -241,16 +235,12 @@ func (c *MinIOClient) UploadFile(
 		return minio.UploadInfo{}, "", "", err
 	}
 
-	reader := bytes.NewReader(fileContent)
-	if reader == nil {
-		c.log.Errorf("invalid fileContent data")
-		return minio.UploadInfo{}, "", "", storageV1.ErrorUploadFailed("invalid fileContent data")
-	}
-
+	// 以流式 reader 喂给 PutObject，minio-go 内部按 size 自动分片（multipart），
+	// 避免整文件载入 []byte 导致 OOM。
 	info, err := c.mc.PutObject(
 		ctx,
 		bucketName, objectName,
-		reader, reader.Size(),
+		reader, objectSize,
 		minio.PutObjectOptions{
 			ContentType: mimeType,
 		},

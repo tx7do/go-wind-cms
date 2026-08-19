@@ -16,6 +16,7 @@ import (
 	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-cms/app/admin/service/internal/service"
+	oss "go-wind-cms/pkg/oss"
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
@@ -45,18 +46,15 @@ func _FileTransferService_PostUploadFile_HTTP_Handler(svc *service.FileTransferS
 		if err == nil {
 			defer file.Close()
 
-			b := new(strings.Builder)
-			_, err = io.Copy(b, file)
-
-			in.Source = &storageV1.UploadFileRequest_File{File: []byte(b.String())}
-
+			// 流式上传：multipart.File 作为 io.Reader 通过 context 注入，
+			// service 侧取出后直接喂给 minio-go PutObject（内部按 size 自动
+			// 分片），避免整文件载入 []byte 导致 OOM。
 			sourceFileName := ctx.Request().FormValue("sourceFileName")
 			if sourceFileName != "" {
 				in.SourceFileName = trans.Ptr(sourceFileName)
 			} else {
 				in.SourceFileName = trans.Ptr(header.Filename)
 			}
-			//log.Debugf("Upload file sourceFileName: %s", sourceFileName)
 
 			mime := ctx.Request().FormValue("mime")
 			if mime != "" {
@@ -64,7 +62,6 @@ func _FileTransferService_PostUploadFile_HTTP_Handler(svc *service.FileTransferS
 			} else {
 				in.Mime = trans.Ptr(header.Header.Get("Content-Type"))
 			}
-			//log.Debugf("Upload file mime: %s", mime)
 
 			size := ctx.Request().FormValue("size")
 			if size != "" {
@@ -76,7 +73,6 @@ func _FileTransferService_PostUploadFile_HTTP_Handler(svc *service.FileTransferS
 			} else {
 				in.Size = trans.Ptr(header.Size)
 			}
-			//log.Debugf("Upload file size: %s", size)
 
 			storageObject := ctx.Request().FormValue("storageObject")
 			if storageObject != "" {
@@ -86,33 +82,45 @@ func _FileTransferService_PostUploadFile_HTTP_Handler(svc *service.FileTransferS
 					return err
 				}
 			}
-			//log.Debugf("Upload file storageObject: %s", storageObject)
+
+			h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+				aReq := req.(*storageV1.UploadFileRequest)
+				// 将上传 reader 注入业务 context，供 service 流式读取
+				ctx = oss.WithUploadReader(ctx, file, header.Size)
+
+				var resp *storageV1.UploadFileResponse
+				resp, err = svc.UploadFile(ctx, aReq)
+				return resp, err
+			})
+
+			out, err := h(ctx, &in)
+			if err != nil {
+				return err
+			}
+
+			reply := out.(*storageV1.UploadFileResponse)
+			return ctx.Result(200, reply)
 		} else {
 			if err = ctx.Bind(&in); err != nil {
 				log.Errorf("Bind upload file request error: %v", err)
 				return err
 			}
+
+			h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+				aReq := req.(*storageV1.UploadFileRequest)
+				var resp *storageV1.UploadFileResponse
+				resp, err = svc.UploadFile(ctx, aReq)
+				return resp, err
+			})
+
+			out, err := h(ctx, &in)
+			if err != nil {
+				return err
+			}
+
+			reply := out.(*storageV1.UploadFileResponse)
+			return ctx.Result(200, reply)
 		}
-
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			aReq := req.(*storageV1.UploadFileRequest)
-
-			var resp *storageV1.UploadFileResponse
-			resp, err = svc.UploadFile(ctx, aReq)
-			in.Source = nil
-
-			return resp, err
-		})
-
-		// 逻辑处理，取数据
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-
-		reply := out.(*storageV1.UploadFileResponse)
-
-		return ctx.Result(200, reply)
 	}
 }
 
@@ -127,18 +135,15 @@ func _FileTransferService_PutUploadFile_HTTP_Handler(svc *service.FileTransferSe
 		if err == nil {
 			defer file.Close()
 
-			b := new(strings.Builder)
-			_, err = io.Copy(b, file)
-
-			in.Source = &storageV1.UploadFileRequest_File{File: []byte(b.String())}
-
+			// 流式上传：multipart.File 作为 io.Reader 通过 context 注入，
+			// service 侧取出后直接喂给 minio-go PutObject（内部按 size 自动
+			// 分片），避免整文件载入 []byte 导致 OOM。
 			sourceFileName := ctx.Request().FormValue("sourceFileName")
 			if sourceFileName != "" {
 				in.SourceFileName = trans.Ptr(sourceFileName)
 			} else {
 				in.SourceFileName = trans.Ptr(header.Filename)
 			}
-			//log.Debugf("Upload file sourceFileName: %s", sourceFileName)
 
 			mime := ctx.Request().FormValue("mime")
 			if mime != "" {
@@ -146,7 +151,6 @@ func _FileTransferService_PutUploadFile_HTTP_Handler(svc *service.FileTransferSe
 			} else {
 				in.Mime = trans.Ptr(header.Header.Get("Content-Type"))
 			}
-			//log.Debugf("Upload file mime: %s", mime)
 
 			size := ctx.Request().FormValue("size")
 			if size != "" {
@@ -158,7 +162,6 @@ func _FileTransferService_PutUploadFile_HTTP_Handler(svc *service.FileTransferSe
 			} else {
 				in.Size = trans.Ptr(header.Size)
 			}
-			//log.Debugf("Upload file size: %s", size)
 
 			storageObject := ctx.Request().FormValue("storageObject")
 			if storageObject != "" {
@@ -168,33 +171,45 @@ func _FileTransferService_PutUploadFile_HTTP_Handler(svc *service.FileTransferSe
 					return err
 				}
 			}
-			//log.Debugf("Upload file storageObject: %s", storageObject)
+
+			h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+				aReq := req.(*storageV1.UploadFileRequest)
+				// 将上传 reader 注入业务 context，供 service 流式读取
+				ctx = oss.WithUploadReader(ctx, file, header.Size)
+
+				var resp *storageV1.UploadFileResponse
+				resp, err = svc.UploadFile(ctx, aReq)
+				return resp, err
+			})
+
+			out, err := h(ctx, &in)
+			if err != nil {
+				return err
+			}
+
+			reply := out.(*storageV1.UploadFileResponse)
+			return ctx.Result(200, reply)
 		} else {
 			if err = ctx.Bind(&in); err != nil {
 				log.Errorf("Bind upload file request error: %v", err)
 				return err
 			}
+
+			h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+				aReq := req.(*storageV1.UploadFileRequest)
+				var resp *storageV1.UploadFileResponse
+				resp, err = svc.UploadFile(ctx, aReq)
+				return resp, err
+			})
+
+			out, err := h(ctx, &in)
+			if err != nil {
+				return err
+			}
+
+			reply := out.(*storageV1.UploadFileResponse)
+			return ctx.Result(200, reply)
 		}
-
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			aReq := req.(*storageV1.UploadFileRequest)
-
-			var resp *storageV1.UploadFileResponse
-			resp, err = svc.UploadFile(ctx, aReq)
-			in.Source = nil
-
-			return resp, err
-		})
-
-		// 逻辑处理，取数据
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-
-		reply := out.(*storageV1.UploadFileResponse)
-
-		return ctx.Result(200, reply)
 	}
 }
 
@@ -327,12 +342,32 @@ func _FileTransferService_UploadMediaAsset_HTTP_Handler(svc *service.FileTransfe
 		if err == nil {
 			defer file.Close()
 
-			b := new(strings.Builder)
-			_, err = io.Copy(b, file)
-
+			// 流式上传：multipart.File 作为 io.Reader 通过 context 注入，
+			// service 侧取出后直接喂给 minio-go PutObject（内部按 size 自动
+			// 分片），避免整文件载入 []byte 导致 OOM。
 			in.SourceFileName = trans.Ptr(header.Filename)
 			in.MimeType = trans.Ptr(header.Header.Get("Content-Type"))
-			in.File = []byte(b.String())
+
+			if err = ctx.BindQuery(&in); err != nil {
+				return err
+			}
+
+			h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+				// 将上传 reader 注入业务 context，供 service 流式读取
+				ctx = oss.WithUploadReader(ctx, file, header.Size)
+
+				var resp *storageV1.UploadFileResponse
+				resp, err = svc.UploadMediaAsset(ctx, req.(*storageV1.UploadMediaAssetRequest))
+				return resp, err
+			})
+
+			out, err := h(ctx, &in)
+			if err != nil {
+				return err
+			}
+
+			reply := out.(*storageV1.UploadFileResponse)
+			return ctx.Result(200, reply)
 		}
 
 		if err = ctx.BindQuery(&in); err != nil {
@@ -341,21 +376,16 @@ func _FileTransferService_UploadMediaAsset_HTTP_Handler(svc *service.FileTransfe
 
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			var resp *storageV1.UploadFileResponse
-
 			resp, err = svc.UploadMediaAsset(ctx, req.(*storageV1.UploadMediaAssetRequest))
-			in.File = nil
-
 			return resp, err
 		})
 
-		// 逻辑处理，取数据
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
 
 		reply := out.(*storageV1.UploadFileResponse)
-
 		return ctx.Result(200, reply)
 	}
 }

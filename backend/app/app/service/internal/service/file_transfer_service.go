@@ -2,8 +2,6 @@ package service
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"io"
 	"net/http"
 	"path"
@@ -89,24 +87,18 @@ func parseKey(key string) (folder, filename, ext string) {
 func (s *FileTransferService) recordFile(
 	ctx context.Context,
 	tenantID, userID uint32,
-	fileData []byte,
 	sourceFileName string,
 	info minio.UploadInfo,
 	downloadUrl string,
 ) error {
 
-	sum := sha256.Sum256(fileData)          // sha256.Sum256 返回 [32]byte
-	sha256Hex := hex.EncodeToString(sum[:]) // 转为十六进制字符串
-
 	dir, fileName, ext := parseKey(info.Key)
-	//s.log.Debugf("Parsed file - Dir: %s, FileName: %s, Ext: %s", dir, fileName, ext)
 
 	if _, err := s.fileServiceClient.Create(ctx, &storageV1.CreateFileRequest{
 		Data: &storageV1.File{
 			Provider:      trans.Ptr(storageV1.OSSProvider_MINIO),
 			BucketName:    trans.Ptr(info.Bucket),
 			SaveFileName:  trans.Ptr(fileName + "." + ext),
-			ContentHash:   trans.Ptr(sha256Hex),
 			FileDirectory: trans.Ptr(dir),
 			FileName:      trans.Ptr(sourceFileName),
 			Extension:     trans.Ptr(ext),
@@ -129,7 +121,9 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		return nil, storageV1.ErrorUploadFailed("unknown storageObject")
 	}
 
-	if req.GetFile() == nil {
+	// 流式上传：reader 由 handler 通过 context 注入，不再从 proto 的 []byte 字段取。
+	reader, objectSize := oss.UploadReaderFromContext(ctx)
+	if reader == nil || objectSize <= 0 {
 		return nil, storageV1.ErrorUploadFailed("unknown fileData")
 	}
 
@@ -157,7 +151,6 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 				req.GetStorageObject().GetFileDirectory(),
 				req.GetSourceFileName(),
 				req.GetMime(),
-				req.GetFile(),
 				oss.GenerateFileNameTypeUUID,
 			),
 		)
@@ -168,7 +161,7 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		req.GetStorageObject().GetBucketName(),
 		req.GetStorageObject().GetObjectName(),
 		req.GetMime(),
-		req.GetFile(),
+		reader, objectSize,
 	)
 	if err != nil {
 		return nil, err
@@ -177,7 +170,6 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 	if err = s.recordFile(
 		ctx,
 		operator.GetTenantId(), operator.GetUserId(),
-		req.GetFile(),
 		req.GetSourceFileName(),
 		info, downloadUrl); err != nil {
 		// 元数据写入失败，回滚已上传的对象，避免孤儿文件

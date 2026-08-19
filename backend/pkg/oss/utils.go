@@ -402,29 +402,21 @@ func GeneraTimeBaseFileName(fileExt string) string {
 }
 
 // GenerateFileName 生成文件名
-func GenerateFileName(fileContent []byte, fileExt string, typ GenerateFileNameType) string {
+func GenerateFileName(fileExt string, typ GenerateFileNameType) string {
 	switch typ {
-	case GenerateFileNameTypeUUID:
-		// 要最大唯一性、低延迟、高并发
-		return GeneraUUIDFileName(fileExt)
-	case GenerateFileNameTypeContentSHA256:
-		// 要去重/验证且不关心能被离线匹配
-		return GeneraContentSHA265FileName(fileContent, fileExt)
-	case GenerateFileNameTypeHMACContent:
-		// 要去重但需防止被猜测
-		return GenerateHMACContentFileName(staticHMACSecret, fileContent, fileExt)
 	case GenerateFileNameTypeTimeBase:
 		// 要可读且按时间排序
 		return GeneraTimeBaseFileName(fileExt)
 	default:
+		// 默认 UUID：最大唯一性、低延迟、高并发，不依赖文件内容
 		return GeneraUUIDFileName(fileExt)
 	}
 }
 
 // GenerateObjectName 生成对象名
-func GenerateObjectName(fileDirectory string, fileContent []byte, fileExt string, typ GenerateFileNameType) string {
+func GenerateObjectName(fileDirectory string, fileExt string, typ GenerateFileNameType) string {
 	// 生成文件名
-	name := GenerateFileName(fileContent, fileExt, typ)
+	name := GenerateFileName(fileExt, typ)
 
 	// 清理首尾斜杠，避免出现双斜杠或以斜杠开头的对象名
 	dir := strings.Trim(fileDirectory, "/")
@@ -435,12 +427,12 @@ func GenerateObjectName(fileDirectory string, fileContent []byte, fileExt string
 	return dir + "/" + name
 }
 
-func EnsureObjectName(fileDirectory, sourceFileName, contentType string, fileContent []byte, typ GenerateFileNameType) string {
+func EnsureObjectName(fileDirectory, sourceFileName, contentType string, typ GenerateFileNameType) string {
 	if typ == "" {
 		typ = GenerateFileNameTypeUUID
 	}
-	fileExt := EnsureFileExtension(sourceFileName, contentType, fileContent)
-	return GenerateObjectName(fileDirectory, fileContent, fileExt, typ)
+	fileExt := EnsureFileExtension(sourceFileName, contentType)
+	return GenerateObjectName(fileDirectory, fileExt, typ)
 }
 
 // JoinObjectName 拼接对象名
@@ -493,8 +485,9 @@ func ExtractFileExtension(fileName string) string {
 	return ext
 }
 
-// EnsureFileExtension 确保文件后缀存在，按顺序从文件名、内容类型、文件内容检测
-func EnsureFileExtension(fileName, contentType string, fileContent []byte) string {
+// EnsureFileExtension 确保文件后缀存在，按顺序从文件名、内容类型推断。
+// 流式上传下不再读取文件内容做嗅探，取不到时回退到 "bin"。
+func EnsureFileExtension(fileName, contentType string) string {
 	ext := ExtractFileExtension(fileName)
 	if ext != "" {
 		return ext
@@ -503,11 +496,6 @@ func EnsureFileExtension(fileName, contentType string, fileContent []byte) strin
 	ext = ContentTypeToFileExtension(contentType)
 	if ext != "" {
 		return ext
-	}
-
-	_, ext = DetectFileType(fileContent)
-	if ext != "" {
-		return strings.TrimPrefix(ext, ".")
 	}
 
 	return "bin"
