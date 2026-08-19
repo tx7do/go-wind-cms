@@ -46,7 +46,6 @@ var ProviderSet = wire.NewSet(
 	data.NewInternalMessageServiceClient,
 	data.NewInternalMessageRecipientServiceClient,
 
-	data.NewOssServiceClient,
 	data.NewFileServiceClient,
 
 	data.NewPermissionGroupServiceClient,

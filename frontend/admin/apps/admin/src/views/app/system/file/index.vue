@@ -123,9 +123,7 @@ const [Drawer] = useVbenDrawer({
 });
 
 async function handleUploadFile(options: any) {
-  const { file, onSuccess, onError } = options;
-
-  console.log('上传文件', options);
+  const { file, onSuccess, onError, onProgress } = options;
 
   try {
     const res = await uploadFile(
@@ -134,12 +132,21 @@ async function handleUploadFile(options: any) {
       file,
       'post',
       (progressEvent: any) => {
-        console.log(progressEvent);
-        // ant-design-vue 要求的进度结构为 { percent: number }
-        try {
-          // onProgress?.({ percent });
-        } catch {
-          // 忽略回调内错误
+        // 上传进度：axios progressEvent 提供已上传/总量，换算成 antd Upload 要求的 { percent }
+        if (
+          onProgress &&
+          progressEvent &&
+          progressEvent.total > 0 &&
+          progressEvent.loaded <= progressEvent.total
+        ) {
+          const percent = Math.round(
+            (progressEvent.loaded / progressEvent.total) * 100,
+          );
+          try {
+            onProgress({ percent });
+          } catch {
+            // 忽略回调内错误
+          }
         }
       },
     );

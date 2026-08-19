@@ -29,7 +29,7 @@ export async function downloadFile(
     const url = (resp as any).downloadUrl || '';
     if (!url) return;
 
-    console.log('Downloading file transfer...', url);
+    // 不打印预签名 URL（含签名凭证），避免泄露到控制台
 
     const a = document.createElement('a');
     a.href = url;

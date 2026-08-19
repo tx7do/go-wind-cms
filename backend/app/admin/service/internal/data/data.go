@@ -202,15 +202,6 @@ func NewInternalMessageRecipientServiceClient(ctx *bootstrap.Context, r registry
 	return internalMessageV1.NewInternalMessageRecipientServiceClient(cli)
 }
 
-func NewOssServiceClient(ctx *bootstrap.Context, r registry.Discovery) storageV1.OssServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
-	if err != nil {
-		return nil
-	}
-
-	return storageV1.NewOssServiceClient(cli)
-}
-
 func NewFileServiceClient(ctx *bootstrap.Context, r registry.Discovery) storageV1.FileServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {
