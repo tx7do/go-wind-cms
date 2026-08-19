@@ -21,6 +21,3 @@ export * from './interaction';
 
 // 站点配置
 export * from './navigation';
-
-// 文件传输
-export * from './file-transfer';

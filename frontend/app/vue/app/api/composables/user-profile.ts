@@ -54,31 +54,6 @@ export async function changePassword(oldPassword: string, newPassword: string) {
 }
 
 /**
- * 上传用户头像（Base64）
- */
-export async function uploadAvatarBase64(imageBase64: string) {
-  return await apiClient.userProfileService.UploadAvatar({
-    imageBase64,
-  });
-}
-
-/**
- * 上传用户头像（图片URL）
- */
-export async function uploadAvatarUrl(imageUrl: string) {
-  return await apiClient.userProfileService.UploadAvatar({
-    imageUrl,
-  });
-}
-
-/**
- * 删除用户头像
- */
-export async function deleteAvatar() {
-  return await apiClient.userProfileService.DeleteAvatar({});
-}
-
-/**
  * 绑定手机号
  */
 export async function bindPhone(phone: string, code: string) {
@@ -177,34 +152,6 @@ export function useChangePassword(
 ) {
   return useMutation({
     mutationFn: ({ oldPassword, newPassword }) => changePassword(oldPassword, newPassword),
-    ...options,
-  });
-}
-
-// ==============================
-// 头像管理（Mutation）
-// ==============================
-export function useUploadAvatarBase64(
-  options?: UseMutationOptions<{}, Error, string>,
-) {
-  return useMutation({
-    mutationFn: (imageBase64) => uploadAvatarBase64(imageBase64),
-    ...options,
-  });
-}
-
-export function useUploadAvatarUrl(
-  options?: UseMutationOptions<{}, Error, string>,
-) {
-  return useMutation({
-    mutationFn: (imageUrl) => uploadAvatarUrl(imageUrl),
-    ...options,
-  });
-}
-
-export function useDeleteAvatar(options?: UseMutationOptions<{}, Error, void>) {
-  return useMutation({
-    mutationFn: () => deleteAvatar(),
     ...options,
   });
 }
