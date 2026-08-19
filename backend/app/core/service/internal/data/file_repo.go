@@ -164,11 +164,18 @@ func (r *FileRepo) Get(ctx context.Context, req *storageV1.GetFileRequest) (*sto
 
 	builder := r.entClient.Client().File.Query()
 
+	// tenant scope：与 Update/Delete 一致，限定调用者所属租户，
+	// 避免跨租户凭 fileId 取到记录（含 bucket/object key）。
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
 	var whereCond []func(s *sql.Selector)
 	switch req.QueryBy.(type) {
 	default:
 	case *storageV1.GetFileRequest_Id:
 		whereCond = append(whereCond, file.IDEQ(req.GetId()))
+		if hasTenant {
+			whereCond = append(whereCond, file.TenantIDEQ(tid))
+		}
 	}
 
 	dto, err := r.repository.Get(ctx, builder, req.GetViewMask(), whereCond...)

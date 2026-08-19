@@ -205,71 +205,15 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 }
 
 // presignedUploadFile 预签名上传文件
+//
+// 预签名直传路径已禁用：与 core 端保持一致。该路径无法在服务端可靠记录
+// 文件元数据（sourceFileName/tenantId/userId/sha256 无法从 MinIO 事件通知
+// 获得，且 x-amz-meta-* 客户端可伪造），会产生不入库的孤儿对象。当前业务
+// 上传统一走 directUploadFile（服务端中转，已正确落库）。待有预签名直传
+// 刚需时，需引入 MinIO 事件通知 + 待确认表 + 回调端点 + 定时清理的完整闭环。
 func (s *FileTransferService) presignedUploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
-	if req == nil || req.StorageObject == nil {
-		return nil, storageV1.ErrorUploadFailed("unknown storageObject")
-	}
-
-	if req.GetPresign() == nil {
-		return nil, storageV1.ErrorUploadFailed("unknown presign data")
-	}
-
-	var contentType string
-	if req.GetPresign().GetContentType() != "" {
-		contentType = req.GetPresign().GetContentType()
-	} else if req.GetMime() != "" {
-		contentType = req.GetMime()
-	} else {
-		return nil, storageV1.ErrorUploadFailed("unknown content type for presign")
-	}
-
-	if req.GetSourceFileName() == "" {
-		return nil, storageV1.ErrorUploadFailed("unknown source file name")
-	}
-
-	if req.StorageObject.BucketName == nil {
-		req.StorageObject.BucketName = trans.Ptr(oss.ContentTypeToBucketName(contentType))
-	}
-	if req.StorageObject.ObjectName == nil {
-		req.StorageObject.ObjectName = trans.Ptr(
-			oss.EnsureObjectName(
-				req.GetStorageObject().GetFileDirectory(),
-				req.GetSourceFileName(),
-				contentType,
-				req.GetFile(),
-				oss.GenerateFileNameTypeUUID,
-			),
-		)
-	}
-
-	var method storageV1.GetUploadPresignedUrlRequest_Method
-	switch strings.ToLower(req.GetPresign().GetMethod()) {
-	case "put":
-		method = storageV1.GetUploadPresignedUrlRequest_Put
-	case "post":
-		method = storageV1.GetUploadPresignedUrlRequest_Post
-	default:
-		method = storageV1.GetUploadPresignedUrlRequest_Post
-	}
-
-	resp, err := s.mc.GetUploadPresignedUrl(
-		ctx,
-		&storageV1.GetUploadPresignedUrlRequest{
-			ContentType:   trans.Ptr(contentType),
-			ExpireSeconds: req.GetPresign().ExpireSeconds,
-			Method:        method,
-			BucketName:    req.StorageObject.BucketName,
-			FileDirectory: req.StorageObject.FileDirectory,
-		})
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO : 记录文件元数据到数据库（待上传完成后再记录更合适？）
-
-	return &storageV1.UploadFileResponse{
-		PresignedUrl: trans.Ptr(resp.UploadUrl),
-	}, nil
+	_ = req
+	return nil, storageV1.ErrorUploadFailed("presigned upload is not implemented, use direct upload instead")
 }
 
 // UploadFile 上传文件
@@ -323,6 +267,13 @@ func (s *FileTransferService) downloadFileFromURL(ctx context.Context, downloadU
 
 // DownloadFile 下载文件
 func (s *FileTransferService) DownloadFile(ctx context.Context, req *storageV1.DownloadFileRequest) (*storageV1.DownloadFileResponse, error) {
+	// 下载须凭 fileId 走归属校验：StorageObject/DownloadUrl 两个 selector
+	// 无法关联到 file 元数据，对外部调用者关闭，避免越权下载与 SSRF。
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	switch req.Selector.(type) {
 	case *storageV1.DownloadFileRequest_FileId:
 		resp, err := s.fileServiceClient.Get(ctx, &storageV1.GetFileRequest{
@@ -330,6 +281,11 @@ func (s *FileTransferService) DownloadFile(ctx context.Context, req *storageV1.D
 		})
 		if err != nil {
 			return nil, storageV1.ErrorDownloadFailed("file not found")
+		}
+
+		// 归属校验：文件 tenant 必须等于调用者 tenant，否则拒绝。
+		if resp.GetTenantId() != operator.GetTenantId() {
+			return nil, storageV1.ErrorDownloadFailed("forbidden: file does not belong to caller's tenant")
 		}
 
 		req.Selector = &storageV1.DownloadFileRequest_StorageObject{
@@ -342,10 +298,10 @@ func (s *FileTransferService) DownloadFile(ctx context.Context, req *storageV1.D
 		return s.mc.DownloadFile(ctx, req)
 
 	case *storageV1.DownloadFileRequest_StorageObject:
-		return s.mc.DownloadFile(ctx, req)
+		return nil, storageV1.ErrorDownloadFailed("storageObject selector is not allowed for external callers, use fileId")
 
 	case *storageV1.DownloadFileRequest_DownloadUrl:
-		return s.downloadFileFromURL(ctx, req.GetDownloadUrl())
+		return nil, storageV1.ErrorDownloadFailed("downloadUrl selector is disabled")
 
 	default:
 		return nil, storageV1.ErrorDownloadFailed("unknown download selector")

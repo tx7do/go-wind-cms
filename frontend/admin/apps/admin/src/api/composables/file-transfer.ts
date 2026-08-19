@@ -5,18 +5,16 @@ import { RequestClient } from '#/transport/rest';
 
 /**
  * 从MinIO下载文件
- * @param bucketName 文件桶名称
- * @param objectName 对象名称
+ * @param fileId 文件元数据 ID（由列表接口返回，后端据此做归属校验）
  * @param preferPresignedUrl 是否优先使用预签名URL下载
  */
 export async function downloadFile(
-  bucketName: string,
-  objectName: string,
+  fileId: number,
   preferPresignedUrl: boolean,
 ) {
   if (preferPresignedUrl) {
     const resp = await apiClient.fileTransferService.DownloadFile({
-      storageObject: { bucketName, objectName },
+      fileId,
       preferPresignedUrl,
     });
 
@@ -28,7 +26,7 @@ export async function downloadFile(
     const a = document.createElement('a');
     a.href = url;
     a.target = '_blank';
-    a.download = objectName || 'download';
+    a.download = 'download';
     document.body.append(a);
     a.click();
     a.remove();
@@ -36,7 +34,7 @@ export async function downloadFile(
   }
 
   const resp = await apiClient.fileTransferService.DownloadFile({
-    storageObject: { bucketName, objectName },
+    fileId,
     preferPresignedUrl,
   });
 
@@ -89,7 +87,7 @@ export async function downloadFile(
   const objectUrl = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = objectUrl;
-  a.download = objectName || 'download';
+  a.download = 'download';
   document.body.append(a);
   a.click();
   a.remove();
@@ -164,19 +162,17 @@ export function useDownloadFile(
     void,
     Error,
     {
-      bucketName: string;
-      objectName: string;
+      fileId: number;
       preferPresignedUrl?: boolean;
     }
   >,
 ) {
   return useMutation({
     mutationFn: async ({
-      bucketName,
-      objectName,
+      fileId,
       preferPresignedUrl = false,
     }) => {
-      return downloadFile(bucketName, objectName, preferPresignedUrl);
+      return downloadFile(fileId, preferPresignedUrl);
     },
     ...options,
   });

@@ -166,8 +166,7 @@ async function handleUploadFile(options: any) {
 
 function handleDownloadFile(row: any) {
   console.log('下载文件', row);
-  const objectName = row ? `${row.fileDirectory}/${row.saveFileName}` : '';
-  downloadFile(row.bucketName, objectName, true);
+  downloadFile(row.id, true);
 }
 
 /* 删除 */

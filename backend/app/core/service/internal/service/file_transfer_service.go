@@ -21,8 +21,15 @@ import (
 
 	"go-wind-cms/pkg/netutil"
 	"go-wind-cms/pkg/oss"
+
+	"github.com/tx7do/go-crud/viewer"
 )
 
+// FileTransferService 是 core 端的文件传输服务实现。
+// 注意：该服务当前未在 grpc_server.go 中注册（仍是死代码），
+// 实际生效的上传链路在 admin/app 端 FileTransferService（已正确使用
+// auth.FromContext）。若日后在此启用，须参照 admin/app 端为 DownloadFile
+// 补做 fileId 归属校验，并禁用裸 StorageObject/DownloadUrl selector。
 type FileTransferService struct {
 	storageV1.UnimplementedFileTransferServiceServer
 
@@ -167,9 +174,22 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		return nil, err
 	}
 
+	// 从 viewer 取操作者身份，而非信任请求体里的 tenantId/userId。
+	// 与 file_repo.go Update/Delete 的取值范式一致。
+	uid, hasUser := viewerUserIDFromContext(ctx)
+	tid := uint32(0)
+	hasTenant := false
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		tid = uint32(vc.TenantID())
+		hasTenant = tid != 0
+	}
+	if !hasTenant || !hasUser {
+		return nil, storageV1.ErrorUploadFailed("missing operator identity")
+	}
+
 	if err = s.recordFile(
 		ctx,
-		req.GetTenantId(), req.GetUserId(),
+		tid, uid,
 		req.GetFile(),
 		req.GetSourceFileName(),
 		info, downloadUrl); err != nil {
