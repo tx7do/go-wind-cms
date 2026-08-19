@@ -18,6 +18,7 @@ import {
   makeUpdateMask,
   PaginationQuery,
   type internal_messageservicev1_SendMessageRequest as SendMessageRequest,
+  uploadMediaAsset,
 } from '#/api';
 
 const storageManager = new StorageManager({
@@ -211,7 +212,8 @@ function setLoading(loading: boolean) {
 
 async function handleUploadImage(file: File): Promise<string> {
   try {
-    return '';
+    const resp = await uploadMediaAsset({}, file);
+    return (resp as any).objectName || '';
   } catch (error) {
     console.error('Image upload failed:', error);
     return '';

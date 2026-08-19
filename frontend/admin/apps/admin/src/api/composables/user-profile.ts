@@ -2,8 +2,6 @@ import type {
   identityservicev1_BindContactRequest,
   identityservicev1_ChangePasswordRequest,
   identityservicev1_UpdateUserRequest,
-  identityservicev1_UploadAvatarRequest,
-  identityservicev1_UploadAvatarResponse,
   identityservicev1_User,
   identityservicev1_VerifyContactRequest,
 } from '#/api/generated/admin/service/v1';
@@ -34,16 +32,6 @@ export async function changeMyPassword(
   request: identityservicev1_ChangePasswordRequest,
 ) {
   return apiClient.userProfileService.ChangePassword(request);
-}
-
-export async function uploadMyAvatar(
-  request: identityservicev1_UploadAvatarRequest,
-) {
-  return apiClient.userProfileService.UploadAvatar(request);
-}
-
-export async function deleteMyAvatar() {
-  return apiClient.userProfileService.DeleteAvatar({});
 }
 
 export async function bindMyContact(
@@ -107,28 +95,6 @@ export function useChangePassword(
 ) {
   return useMutation({
     mutationFn: (data) => changeMyPassword(data),
-    ...options,
-  });
-}
-
-export function useUploadAvatar(
-  options?: UseMutationOptions<
-    identityservicev1_UploadAvatarResponse,
-    Error,
-    identityservicev1_UploadAvatarRequest
-  >,
-) {
-  return useMutation({
-    mutationFn: (data) => uploadMyAvatar(data),
-    ...options,
-  });
-}
-
-export function useDeleteAvatar(
-  options?: UseMutationOptions<object, Error, void>,
-) {
-  return useMutation({
-    mutationFn: () => deleteMyAvatar(),
     ...options,
   });
 }
