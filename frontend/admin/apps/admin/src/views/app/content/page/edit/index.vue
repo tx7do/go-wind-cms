@@ -234,6 +234,12 @@ init();
           size="large"
           class="flex-1"
         />
+        <a-input
+          v-model:value="pageEditViewStore.formData.slug"
+          :placeholder="$t('page.page.placeholder.slug')"
+          size="large"
+          style="width: 200px"
+        />
         <a-select
           :value="pageEditViewStore.formData.lang"
           style="width: 200px"

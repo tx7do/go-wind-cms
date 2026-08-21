@@ -142,6 +142,128 @@ const [BaseForm, baseFormApi] = useVbenForm({
         allowClear: true,
       },
     },
+    {
+      component: 'Input',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_TEXT',
+      },
+    },
+    {
+      component: 'Input',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_URL',
+      },
+    },
+    {
+      component: 'Input',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_EMAIL',
+      },
+    },
+    {
+      component: 'Textarea',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_TEXTAREA',
+      },
+    },
+    {
+      component: 'Textarea',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_JSON',
+      },
+    },
+    {
+      component: 'Input',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_IMAGE',
+      },
+    },
+    {
+      component: 'InputNumber',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+        class: 'w-full',
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_NUMBER',
+      },
+    },
+    {
+      component: 'Switch',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_BOOLEAN',
+      },
+    },
+    {
+      component: 'Select',
+      fieldName: 'value',
+      label: $t('page.siteSetting.value'),
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_SELECT',
+        componentProps: (values) => {
+          const opts = values.options as Record<string, string> | undefined;
+          const options = opts
+            ? Object.entries(opts).map(([v, label]) => ({ label, value: v }))
+            : [];
+          return {
+            options,
+            placeholder: $t('ui.placeholder.select'),
+            allowClear: true,
+            class: 'w-full',
+          };
+        },
+      },
+    },
   ],
 });
 
