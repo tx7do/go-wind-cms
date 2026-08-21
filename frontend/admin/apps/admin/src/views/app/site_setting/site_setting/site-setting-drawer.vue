@@ -143,6 +143,25 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
     },
     {
+      component: 'Switch',
+      fieldName: 'isRequired',
+      label: $t('page.siteSetting.isRequired'),
+    },
+    {
+      component: 'Textarea',
+      fieldName: 'optionsJson',
+      label: $t('page.siteSetting.options'),
+      componentProps: {
+        placeholder: $t('page.siteSetting.options'),
+        allowClear: true,
+        class: 'w-full',
+      },
+      dependencies: {
+        triggerFields: ['type'],
+        if: (values) => values.type === 'SETTING_TYPE_SELECT',
+      },
+    },
+    {
       component: 'Input',
       fieldName: 'value',
       label: $t('page.siteSetting.value'),
@@ -248,13 +267,22 @@ const [BaseForm, baseFormApi] = useVbenForm({
       fieldName: 'value',
       label: $t('page.siteSetting.value'),
       dependencies: {
-        triggerFields: ['type'],
+        triggerFields: ['type', 'optionsJson'],
         if: (values) => values.type === 'SETTING_TYPE_SELECT',
         componentProps: (values) => {
-          const opts = values.options as Record<string, string> | undefined;
-          const options = opts
-            ? Object.entries(opts).map(([v, label]) => ({ label, value: v }))
-            : [];
+          let options: { label: string; value: string }[] = [];
+          try {
+            const parsed = values.optionsJson
+              ? (JSON.parse(values.optionsJson as string) as unknown)
+              : null;
+            if (parsed && typeof parsed === 'object') {
+              options = Object.entries(parsed as Record<string, string>).map(
+                ([v, label]) => ({ label: String(label), value: String(v) }),
+              );
+            }
+          } catch {
+            options = [];
+          }
           return {
             options,
             placeholder: $t('ui.placeholder.select'),
@@ -281,6 +309,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
     setLoading(true);
     const values = await baseFormApi.getValues();
 
+    // optionsJson 是 options 的字符串桥接（前端编辑用），提交前还原回 options 对象。
+    if ('optionsJson' in values) {
+      const options = parseOptionsJson(values.optionsJson as string);
+      (values as Record<string, any>).options = options;
+      delete (values as Record<string, any>).optionsJson;
+    }
+
     try {
       await (data.value?.create
         ? apiClient.siteSettingService.Create({ data: { ...values } as any })
@@ -288,8 +323,8 @@ const [Drawer, drawerApi] = useVbenDrawer({
             id: data.value.row.id,
             data: { ...values } as any,
             updateMask: makeUpdateMask(
-              Object.keys(values).filter((k) =>
-                !['siteId', 'key', 'locale'].includes(k),
+              Object.keys(values).filter(
+                (k) => !['key', 'locale', 'siteId'].includes(k),
               ),
             ),
           }));
@@ -314,7 +349,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
   onOpenChange(isOpen) {
     if (isOpen) {
       data.value = drawerApi.getData<Record<string, any>>();
-      baseFormApi.setValues(data.value?.row);
+      const row = data.value?.row;
+      if (row) {
+        // 记录的 options 对象序列化为 JSON 文本，供 optionsJson 字段编辑。
+        row.optionsJson = serializeOptions(
+          row.options as Record<string, string> | undefined,
+        );
+      }
+      baseFormApi.setValues(row);
 
       setLoading(false);
     }
@@ -323,6 +365,32 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
 function setLoading(loading: boolean) {
   drawerApi.setState({ confirmLoading: loading });
+}
+
+// options 是后端 map<string,string>；前端用 optionsJson（JSON 文本）桥接编辑。
+// 非对象/解析失败一律回退到空对象，避免脏数据落库。
+function serializeOptions(options: Record<string, string> | undefined): string {
+  try {
+    return options ? JSON.stringify(options) : '{}';
+  } catch {
+    return '{}';
+  }
+}
+
+function parseOptionsJson(json: string): Record<string, string> {
+  try {
+    const parsed = json ? (JSON.parse(json) as unknown) : null;
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      const result: Record<string, string> = {};
+      for (const [k, v] of Object.entries(parsed as Record<string, unknown>)) {
+        if (typeof v === 'string') result[k] = v;
+      }
+      return result;
+    }
+  } catch {
+    // 忽略非法 JSON
+  }
+  return {};
 }
 </script>
 

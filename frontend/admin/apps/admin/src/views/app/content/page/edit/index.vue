@@ -10,7 +10,13 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { Editor } from '#/adapter/component/Editor';
-import { apiClient, editorTypeOptions, uploadMediaAsset } from '#/api';
+import {
+  apiClient,
+  editorTypeOptions,
+  pageStatusList,
+  pageTypeList,
+  uploadMediaAsset,
+} from '#/api';
 import { router } from '#/router';
 
 import { usePageEditViewStore } from './page-edit-view.state';
@@ -286,6 +292,30 @@ init();
         >
           <a-select-option
             v-for="option in editorTypeOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </a-select-option>
+        </a-select>
+        <a-select
+          v-model:value="pageEditViewStore.formData.status"
+          style="width: 200px"
+        >
+          <a-select-option
+            v-for="option in pageStatusList"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </a-select-option>
+        </a-select>
+        <a-select
+          v-model:value="pageEditViewStore.formData.type"
+          style="width: 200px"
+        >
+          <a-select-option
+            v-for="option in pageTypeList"
             :key="option.value"
             :value="option.value"
           >

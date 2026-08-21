@@ -59,6 +59,8 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
       content: '',
       lang: 'zh-CN',
       editorType: EditorType.MARKDOWN,
+      type: 'PAGE_TYPE_DEFAULT',
+      status: 'PAGE_STATUS_DRAFT',
     },
     languageOptions: [],
   }),
@@ -87,6 +89,8 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
         content: '',
         lang: initialLang,
         editorType: EditorType.MARKDOWN,
+        type: 'PAGE_TYPE_DEFAULT',
+        status: 'PAGE_STATUS_DRAFT',
       };
 
       // Try to load draft for this language
@@ -300,7 +304,9 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
           : apiClient.pageService.Update({
               id: this.formData.id || 0,
               data,
-              updateMask: makeUpdateMask(Object.keys(data).filter((k) => k !== 'translations')),
+              updateMask: makeUpdateMask(
+                Object.keys(data).filter((k) => k !== 'translations'),
+              ),
             }));
 
         // Clear draft after successful publish
@@ -327,6 +333,8 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
         content: '',
         lang: 'zh-CN',
         editorType: EditorType.MARKDOWN,
+        type: 'PAGE_TYPE_DEFAULT',
+        status: 'PAGE_STATUS_DRAFT',
       };
       this.languageOptions = [];
     },
