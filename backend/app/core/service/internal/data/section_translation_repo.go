@@ -100,10 +100,12 @@ func (r *SectionTranslationRepo) ListTranslations(ctx context.Context, sectionID
 	return dtos, nil
 }
 
-func (r *SectionTranslationRepo) newCreateBuilder(data *contentV1.SectionTranslation) *ent.SectionTranslationCreate {
+// st 必须传与调用方一致的事务/非事务客户端，保证批量插入运行在事务内
+// （见 PostTranslationRepo.PrepareTranslation 注释）。
+func (r *SectionTranslationRepo) newCreateBuilder(st *ent.SectionTranslationClient, data *contentV1.SectionTranslation) *ent.SectionTranslationCreate {
 	now := time.Now()
 
-	builder := r.entClient.Client().SectionTranslation.Create().
+	builder := st.Create().
 		SetNillableSectionID(data.SectionId).
 		SetNillableLanguageCode(data.LanguageCode).
 		SetNillableCreatedBy(data.CreatedBy).
@@ -123,7 +125,7 @@ func (r *SectionTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, it
 
 	builders := make([]*ent.SectionTranslationCreate, 0, len(items))
 	for _, data := range items {
-		builder := r.newCreateBuilder(data)
+		builder := r.newCreateBuilder(tx.SectionTranslation, data)
 		builders = append(builders, builder)
 	}
 
@@ -136,8 +138,79 @@ func (r *SectionTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, it
 	return nil
 }
 
+// UpsertTranslations 按 (section_id, language_code) 逐条 upsert：
+// 已存在则原行就地更新（保留 created_by/created_at），不存在则插入；
+// 同语言历史重复行仅保留 id 最小的一条并更新，其余删除。
+// Update 语义据此从"直插累积"改为按语言合并，删除译文请走 DeleteTranslation。
+func (r *SectionTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, sectionID uint32, items []*contentV1.SectionTranslation) error {
+	if len(items) == 0 {
+		return nil
+	}
+
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	for _, data := range items {
+		if data == nil || len(data.GetLanguageCode()) == 0 {
+			return contentV1.ErrorBadRequest("invalid parameter: language_code is required")
+		}
+		data.SectionId = trans.Ptr(sectionID)
+
+		existings, err := tx.SectionTranslation.Query().
+			Where(
+				sectiontranslation.SectionIDEQ(sectionID),
+				sectiontranslation.LanguageCodeEQ(data.GetLanguageCode()),
+			).
+			Order(ent.Asc(sectiontranslation.FieldID)).
+			All(ctx)
+		if err != nil {
+			r.log.Errorf("query section translations for upsert failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("query section translations for upsert failed")
+		}
+
+		if len(existings) == 0 {
+			builder := r.newCreateBuilder(tx.SectionTranslation, data)
+			if _, err = builder.Save(ctx); err != nil {
+				r.log.Errorf("upsert insert section translation failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("upsert insert section translation failed")
+			}
+			continue
+		}
+
+		keep := existings[0]
+
+		upd := tx.SectionTranslation.UpdateOneID(keep.ID)
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			upd.Where(sectiontranslation.TenantIDEQ(tid))
+		}
+		upd.SetUpdatedAt(time.Now())
+		if hasUser {
+			upd.SetUpdatedBy(callerUserID)
+		}
+		if data.Content != nil {
+			upd.SetContent(trans.Ptr(data.GetContent()))
+		}
+		if _, err = upd.Save(ctx); err != nil {
+			r.log.Errorf("upsert update section translation failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("upsert update section translation failed")
+		}
+
+		if len(existings) > 1 {
+			dupeIDs := make([]uint32, 0, len(existings)-1)
+			for _, e := range existings[1:] {
+				dupeIDs = append(dupeIDs, e.ID)
+			}
+			if _, err = tx.SectionTranslation.Delete().Where(sectiontranslation.IDIn(dupeIDs...)).Exec(ctx); err != nil {
+				r.log.Errorf("clean duplicated section translations failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("clean duplicated section translations failed")
+			}
+		}
+	}
+
+	return nil
+}
+
 func (r *SectionTranslationRepo) CreateTranslation(ctx context.Context, data *contentV1.SectionTranslation) (*contentV1.SectionTranslation, error) {
-	builder := r.newCreateBuilder(data)
+	builder := r.newCreateBuilder(r.entClient.Client().SectionTranslation, data)
 
 	entity, err := builder.Save(ctx)
 	if err != nil {
@@ -223,13 +296,18 @@ func (r *SectionTranslationRepo) ListAvailedLanguages(ctx context.Context, secti
 }
 
 func (r *SectionTranslationRepo) GetTranslation(ctx context.Context, sectionId uint32, languageCode string) (*contentV1.SectionTranslation, error) {
+	// 取 id 最小的一条保证结果确定（防历史重复行）；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().SectionTranslation.Query().
 		Where(
 			sectiontranslation.SectionIDEQ(sectionId),
 			sectiontranslation.LanguageCodeEQ(languageCode),
 		).
-		Only(ctx)
+		Order(ent.Asc(sectiontranslation.FieldID)).
+		First(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, nil
+		}
 		r.log.Errorf("query section translation by section id and language code failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query section translation by section id and language code failed")
 	}

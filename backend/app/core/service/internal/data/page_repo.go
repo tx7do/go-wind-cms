@@ -261,8 +261,6 @@ func (r *PageRepo) Create(ctx context.Context, req *contentV1.CreatePageRequest)
 
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].PageId = trans.Ptr(entity.ID)
-
-			_ = r.pageTranslationRepo.PrepareTranslation(ctx, req.Data.Translations[i])
 		}
 
 		if err = r.pageTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
@@ -313,18 +311,12 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 	}()
 
 	if len(req.Data.Translations) > 0 {
-		if err = r.pageTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
-			r.log.Errorf("clean translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("clean translations failed")
-		}
-
-		for i := range req.Data.Translations {
-			req.Data.Translations[i].PageId = trans.Ptr(req.GetId())
-		}
-
-		if err = r.pageTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
-			r.log.Errorf("batch insert translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("batch insert translations failed")
+		// 按语言 upsert：已存在的语言原行更新，新语言插入。不再先清空全表——
+		// 旧实现会把未随请求提交的其他语言译文一并删掉（编辑器每次只提交
+		// 当前编辑语言），删除译文请走 DeleteTranslation
+		if err = r.pageTranslationRepo.UpsertTranslations(ctx, tx, req.GetId(), req.Data.GetTranslations()); err != nil {
+			r.log.Errorf("upsert translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("upsert translations failed")
 		}
 	}
 

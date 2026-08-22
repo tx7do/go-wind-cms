@@ -104,6 +104,7 @@ func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, category
 	}
 
 	entities, err := builder.
+		Order(ent.Asc(categorytranslation.FieldID)).
 		All(ctx)
 	if err != nil {
 		r.log.Errorf("query translations list failed: %s", err.Error())
@@ -118,10 +119,25 @@ func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, category
 	return dtos, nil
 }
 
-func (r *CategoryTranslationRepo) newCreateBuilder(data *contentV1.CategoryTranslation) *ent.CategoryTranslationCreate {
+// ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
+// 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
+func (r *CategoryTranslationRepo) ListTranslationsWithFallback(ctx context.Context, categoryID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.CategoryTranslation, error) {
+	translations, err := r.ListTranslations(ctx, categoryID, locale, viewMask)
+	if err != nil {
+		return nil, err
+	}
+	if len(translations) == 0 && locale != "" {
+		return r.ListTranslations(ctx, categoryID, "", viewMask)
+	}
+	return translations, nil
+}
+
+// ct 必须传与调用方一致的事务/非事务客户端，事务内用非事务连接读同一张表
+// 在 sqlite 内存库下会死锁（见 PostTranslationRepo.PrepareTranslation 注释）。
+func (r *CategoryTranslationRepo) newCreateBuilder(ct *ent.CategoryTranslationClient, data *contentV1.CategoryTranslation) *ent.CategoryTranslationCreate {
 	now := time.Now()
 
-	builder := r.entClient.Client().CategoryTranslation.Create().
+	builder := ct.Create().
 		SetNillableCategoryID(data.CategoryId).
 		SetNillableLanguageCode(data.LanguageCode).
 		SetNillableName(data.Name).
@@ -147,9 +163,9 @@ func (r *CategoryTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, i
 
 	builders := make([]*ent.CategoryTranslationCreate, 0, len(items))
 	for _, data := range items {
-		_ = r.PrepareTranslation(ctx, data)
+		_ = r.PrepareTranslation(ctx, tx.CategoryTranslation, data)
 
-		builder := r.newCreateBuilder(data)
+		builder := r.newCreateBuilder(tx.CategoryTranslation, data)
 
 		builders = append(builders, builder)
 	}
@@ -163,10 +179,96 @@ func (r *CategoryTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, i
 	return nil
 }
 
-func (r *CategoryTranslationRepo) CreateTranslation(ctx context.Context, data *contentV1.CategoryTranslation) (*contentV1.CategoryTranslation, error) {
-	_ = r.PrepareTranslation(ctx, data)
+// UpsertTranslations 按 (category_id, language_code) 逐条 upsert：
+// 已存在则原行就地更新（保留 created_by/created_at 与未提交字段），
+// 不存在则插入；同语言历史重复行仅保留 id 最小的一条并更新，其余删除。
+// Update 语义据此从"整表替换"改为按语言合并，删除译文请走 DeleteTranslation。
+func (r *CategoryTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, categoryID uint32, items []*contentV1.CategoryTranslation) error {
+	if len(items) == 0 {
+		return nil
+	}
 
-	builder := r.newCreateBuilder(data)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	for _, data := range items {
+		if data == nil || len(data.GetLanguageCode()) == 0 {
+			return contentV1.ErrorBadRequest("invalid parameter: language_code is required")
+		}
+		data.CategoryId = trans.Ptr(categoryID)
+
+		existings, err := tx.CategoryTranslation.Query().
+			Where(
+				categorytranslation.CategoryIDEQ(categoryID),
+				categorytranslation.LanguageCodeEQ(data.GetLanguageCode()),
+			).
+			Order(ent.Asc(categorytranslation.FieldID)).
+			All(ctx)
+		if err != nil {
+			r.log.Errorf("query category translations for upsert failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("query category translations for upsert failed")
+		}
+
+		if len(existings) == 0 {
+			_ = r.PrepareTranslation(ctx, tx.CategoryTranslation, data)
+			builder := r.newCreateBuilder(tx.CategoryTranslation, data)
+			if _, err = builder.Save(ctx); err != nil {
+				r.log.Errorf("upsert insert category translation failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("upsert insert category translation failed")
+			}
+			continue
+		}
+
+		keep := existings[0]
+
+		// 名称未变时保留原 slug，避免每次重发都因前缀计数叠加后缀
+		nameChanged := (keep.Name == nil && data.GetName() != "") ||
+			(keep.Name != nil && *keep.Name != data.GetName())
+		if nameChanged {
+			_ = r.PrepareTranslation(ctx, tx.CategoryTranslation, data)
+		}
+
+		upd := tx.CategoryTranslation.UpdateOneID(keep.ID)
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			upd.Where(categorytranslation.TenantIDEQ(tid))
+		}
+		upd.
+			SetNillableName(data.Name).
+			SetNillableSlug(data.Slug).
+			SetNillableDescription(data.Description).
+			SetNillableThumbnail(data.Thumbnail).
+			SetNillableCoverImage(data.CoverImage).
+			SetNillableFullPath(data.FullPath).
+			SetUpdatedAt(time.Now())
+		if hasUser {
+			upd.SetUpdatedBy(callerUserID)
+		}
+		if data.Seo != nil {
+			upd.SetSeo(data.Seo)
+		}
+		if _, err = upd.Save(ctx); err != nil {
+			r.log.Errorf("upsert update category translation failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("upsert update category translation failed")
+		}
+
+		if len(existings) > 1 {
+			dupeIDs := make([]uint32, 0, len(existings)-1)
+			for _, e := range existings[1:] {
+				dupeIDs = append(dupeIDs, e.ID)
+			}
+			if _, err = tx.CategoryTranslation.Delete().Where(categorytranslation.IDIn(dupeIDs...)).Exec(ctx); err != nil {
+				r.log.Errorf("clean duplicated category translations failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("clean duplicated category translations failed")
+			}
+		}
+	}
+
+	return nil
+}
+
+func (r *CategoryTranslationRepo) CreateTranslation(ctx context.Context, data *contentV1.CategoryTranslation) (*contentV1.CategoryTranslation, error) {
+	_ = r.PrepareTranslation(ctx, r.entClient.Client().CategoryTranslation, data)
+
+	builder := r.newCreateBuilder(r.entClient.Client().CategoryTranslation, data)
 
 	entity, err := builder.Save(ctx)
 	if err != nil {
@@ -224,7 +326,11 @@ func (r *CategoryTranslationRepo) UpdateTranslation(ctx context.Context, id uint
 }
 
 func (r *CategoryTranslationRepo) CountByBaseSlug(ctx context.Context, baseSlug string) (int64, error) {
-	c, err := r.entClient.Client().CategoryTranslation.Query().
+	return r.countByBaseSlug(ctx, r.entClient.Client().CategoryTranslation, baseSlug)
+}
+
+func (r *CategoryTranslationRepo) countByBaseSlug(ctx context.Context, ct *ent.CategoryTranslationClient, baseSlug string) (int64, error) {
+	c, err := ct.Query().
 		Where(
 			categorytranslation.SlugHasPrefix(baseSlug),
 		).
@@ -270,13 +376,18 @@ func (r *CategoryTranslationRepo) ListAvailedLanguages(ctx context.Context, cate
 }
 
 func (r *CategoryTranslationRepo) GetTranslation(ctx context.Context, categoryId uint32, languageCode string) (*contentV1.CategoryTranslation, error) {
+	// 取 id 最小的一条保证结果确定（防历史重复行）；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryId),
 			categorytranslation.LanguageCodeEQ(languageCode),
 		).
-		Only(ctx)
+		Order(ent.Asc(categorytranslation.FieldID)).
+		First(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, nil
+		}
 		r.log.Errorf("query category translation by category id and language code failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query category translation by category id and language code failed")
 	}
@@ -333,9 +444,9 @@ func (r *CategoryTranslationRepo) DeleteTranslation(ctx context.Context, req *co
 	return nil
 }
 
-func (r *CategoryTranslationRepo) PrepareTranslation(ctx context.Context, data *contentV1.CategoryTranslation) error {
+func (r *CategoryTranslationRepo) PrepareTranslation(ctx context.Context, ct *ent.CategoryTranslationClient, data *contentV1.CategoryTranslation) error {
 	baseSlug := slug.Generate(data.GetName())
-	slugCount, err := r.CountByBaseSlug(ctx, baseSlug)
+	slugCount, err := r.countByBaseSlug(ctx, ct, baseSlug)
 	if err != nil {
 		r.log.Errorf("count slug failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("count slug failed")

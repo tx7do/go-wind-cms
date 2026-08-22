@@ -104,10 +104,12 @@ func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID uint3
 	return dtos, nil
 }
 
-func (r *PageTranslationRepo) newCreateBuilder(data *contentV1.PageTranslation) *ent.PageTranslationCreate {
+// pt 必须传与调用方一致的事务/非事务客户端，事务内用非事务连接读同一张表
+// 在 sqlite 内存库下会死锁（见 PostTranslationRepo.PrepareTranslation 注释）。
+func (r *PageTranslationRepo) newCreateBuilder(pt *ent.PageTranslationClient, data *contentV1.PageTranslation) *ent.PageTranslationCreate {
 	now := time.Now()
 
-	builder := r.entClient.Client().PageTranslation.Create().
+	builder := pt.Create().
 		SetNillablePageID(data.PageId).
 		SetNillableLanguageCode(data.LanguageCode).
 		SetNillableTitle(data.Title).
@@ -132,9 +134,9 @@ func (r *PageTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 
 	builders := make([]*ent.PageTranslationCreate, 0, len(items))
 	for _, data := range items {
-		_ = r.PrepareTranslation(ctx, data)
+		_ = r.PrepareTranslation(ctx, tx.PageTranslation, data)
 
-		builder := r.newCreateBuilder(data)
+		builder := r.newCreateBuilder(tx.PageTranslation, data)
 
 		builders = append(builders, builder)
 	}
@@ -148,12 +150,97 @@ func (r *PageTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 	return nil
 }
 
+// UpsertTranslations 按 (page_id, language_code) 逐条 upsert：
+// 已存在则原行就地更新（保留 created_by/created_at 与未提交字段），
+// 不存在则插入；同语言历史重复行仅保留 id 最小的一条并更新，其余删除。
+// Update 语义据此从"整表替换"改为按语言合并，删除译文请走 DeleteTranslation。
+func (r *PageTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, pageID uint32, items []*contentV1.PageTranslation) error {
+	if len(items) == 0 {
+		return nil
+	}
+
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	for _, data := range items {
+		if data == nil || len(data.GetLanguageCode()) == 0 {
+			return contentV1.ErrorBadRequest("invalid parameter: language_code is required")
+		}
+		data.PageId = trans.Ptr(pageID)
+
+		existings, err := tx.PageTranslation.Query().
+			Where(
+				pagetranslation.PageIDEQ(pageID),
+				pagetranslation.LanguageCodeEQ(data.GetLanguageCode()),
+			).
+			Order(ent.Asc(pagetranslation.FieldID)).
+			All(ctx)
+		if err != nil {
+			r.log.Errorf("query page translations for upsert failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("query page translations for upsert failed")
+		}
+
+		if len(existings) == 0 {
+			_ = r.PrepareTranslation(ctx, tx.PageTranslation, data)
+			builder := r.newCreateBuilder(tx.PageTranslation, data)
+			if _, err = builder.Save(ctx); err != nil {
+				r.log.Errorf("upsert insert page translation failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("upsert insert page translation failed")
+			}
+			continue
+		}
+
+		keep := existings[0]
+
+		// 标题未变时保留原 slug，避免每次重发都因前缀计数叠加后缀
+		titleChanged := (keep.Title == nil && data.GetTitle() != "") ||
+			(keep.Title != nil && *keep.Title != data.GetTitle())
+		if titleChanged {
+			_ = r.PrepareTranslation(ctx, tx.PageTranslation, data)
+		}
+
+		upd := tx.PageTranslation.UpdateOneID(keep.ID)
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			upd.Where(pagetranslation.TenantIDEQ(tid))
+		}
+		upd.
+			SetNillableTitle(data.Title).
+			SetNillableSlug(data.Slug).
+			SetNillableThumbnail(data.Thumbnail).
+			SetNillableCoverImage(data.CoverImage).
+			SetNillableFullPath(data.FullPath).
+			SetUpdatedAt(time.Now())
+		if hasUser {
+			upd.SetUpdatedBy(callerUserID)
+		}
+		if data.Seo != nil {
+			upd.SetSeo(data.Seo)
+		}
+		if _, err = upd.Save(ctx); err != nil {
+			r.log.Errorf("upsert update page translation failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("upsert update page translation failed")
+		}
+
+		if len(existings) > 1 {
+			dupeIDs := make([]uint32, 0, len(existings)-1)
+			for _, e := range existings[1:] {
+				dupeIDs = append(dupeIDs, e.ID)
+			}
+			if _, err = tx.PageTranslation.Delete().Where(pagetranslation.IDIn(dupeIDs...)).Exec(ctx); err != nil {
+				r.log.Errorf("clean duplicated page translations failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("clean duplicated page translations failed")
+			}
+		}
+	}
+
+	return nil
+}
+
 func (r *PageTranslationRepo) CreateTranslation(ctx context.Context, data *contentV1.PageTranslation) (*contentV1.PageTranslation, error) {
-	if err := r.PrepareTranslation(ctx, data); err != nil {
+	if err := r.PrepareTranslation(ctx, r.entClient.Client().PageTranslation, data); err != nil {
 		return nil, err
 	}
 
-	builder := r.newCreateBuilder(data)
+	builder := r.newCreateBuilder(r.entClient.Client().PageTranslation, data)
 
 	entity, err := builder.Save(ctx)
 	if err != nil {
@@ -209,7 +296,11 @@ func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 }
 
 func (r *PageTranslationRepo) CountByBaseSlug(ctx context.Context, baseSlug string) (int64, error) {
-	c, err := r.entClient.Client().PageTranslation.Query().
+	return r.countByBaseSlug(ctx, r.entClient.Client().PageTranslation, baseSlug)
+}
+
+func (r *PageTranslationRepo) countByBaseSlug(ctx context.Context, pt *ent.PageTranslationClient, baseSlug string) (int64, error) {
+	c, err := pt.Query().
 		Where(
 			pagetranslation.SlugHasPrefix(baseSlug),
 		).
@@ -254,9 +345,9 @@ func (r *PageTranslationRepo) ListAvailedLanguages(ctx context.Context, pageId u
 	return entities, nil
 }
 
-func (r *PageTranslationRepo) PrepareTranslation(ctx context.Context, data *contentV1.PageTranslation) error {
+func (r *PageTranslationRepo) PrepareTranslation(ctx context.Context, pt *ent.PageTranslationClient, data *contentV1.PageTranslation) error {
 	baseSlug := slug.Generate(data.GetTitle())
-	slugCount, err := r.CountByBaseSlug(ctx, baseSlug)
+	slugCount, err := r.countByBaseSlug(ctx, pt, baseSlug)
 	if err != nil {
 		r.log.Errorf("count slug failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("count slug failed")
@@ -271,13 +362,19 @@ func (r *PageTranslationRepo) PrepareTranslation(ctx context.Context, data *cont
 }
 
 func (r *PageTranslationRepo) GetTranslation(ctx context.Context, pageId uint32, languageCode string) (*contentV1.PageTranslation, error) {
+	// 同 (page_id, language_code) 历史上可能存在重复行（旧 Update 直插遗留），
+	// 取 id 最小的一条保证结果确定；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().PageTranslation.Query().
 		Where(
 			pagetranslation.PageIDEQ(pageId),
 			pagetranslation.LanguageCodeEQ(languageCode),
 		).
-		Only(ctx)
+		Order(ent.Asc(pagetranslation.FieldID)).
+		First(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, nil
+		}
 		r.log.Errorf("query page translation by page id and language code failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query page translation by page id and language code failed")
 	}

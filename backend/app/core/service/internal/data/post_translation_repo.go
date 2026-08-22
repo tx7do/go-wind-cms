@@ -109,6 +109,7 @@ func (r *PostTranslationRepo) ListTranslations(ctx context.Context, postID uint3
 	}
 
 	entities, err := builder.
+		Order(ent.Asc(posttranslation.FieldID)).
 		All(ctx)
 	if err != nil {
 		r.log.Errorf("query post translations failed: %s", err.Error())
@@ -123,15 +124,33 @@ func (r *PostTranslationRepo) ListTranslations(ctx context.Context, postID uint3
 	return dtos, nil
 }
 
+// ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
+// 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
+func (r *PostTranslationRepo) ListTranslationsWithFallback(ctx context.Context, postID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PostTranslation, error) {
+	translations, err := r.ListTranslations(ctx, postID, locale, viewMask)
+	if err != nil {
+		return nil, err
+	}
+	if len(translations) == 0 && locale != "" {
+		return r.ListTranslations(ctx, postID, "", viewMask)
+	}
+	return translations, nil
+}
+
 func (r *PostTranslationRepo) GetTranslation(ctx context.Context, postID uint32, languageCode string) (*contentV1.PostTranslation, error) {
-	q := r.entClient.Client().PostTranslation.Query().
+	// 同 (post_id, language_code) 历史上可能存在重复行（旧 Update 直插遗留），
+	// 取 id 最小的一条保证结果确定；缺译文不是错误，交由调用方按 nil 处理
+	entity, err := r.entClient.Client().PostTranslation.Query().
 		Where(
 			posttranslation.PostIDEQ(postID),
 			posttranslation.LanguageCodeEQ(languageCode),
-		)
-
-	entity, err := q.Only(ctx)
+		).
+		Order(ent.Asc(posttranslation.FieldID)).
+		First(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, nil
+		}
 		r.log.Errorf("query translation by post id and language code failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query translation by post id and language code failed")
 	}
@@ -170,7 +189,7 @@ func (r *PostTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 
 	builders := make([]*ent.PostTranslationCreate, 0, len(items))
 	for _, data := range items {
-		_ = r.PrepareTranslation(ctx, data)
+		_ = r.PrepareTranslation(ctx, tx.PostTranslation, data)
 		builder := r.newCreateBuilder(tx.PostTranslation, data)
 		builders = append(builders, builder)
 	}
@@ -184,10 +203,108 @@ func (r *PostTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 	return nil
 }
 
-// PrepareTranslation 预处理帖子翻译数据，生成slug、摘要、字数等信息
-func (r *PostTranslationRepo) PrepareTranslation(ctx context.Context, data *contentV1.PostTranslation) error {
+// UpsertTranslations 按 (post_id, language_code) 逐条 upsert：
+// 已存在则原行就地更新（保留 created_by/created_at 与未提交字段），
+// 不存在则插入；同语言历史重复行（旧 Update 直插遗留）仅保留 id 最小的
+// 一条并更新，其余删除。Update 语义据此从"整表替换/直插"改为按语言合并，
+// 删除译文请走 DeleteTranslation。
+func (r *PostTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, postID uint32, items []*contentV1.PostTranslation) error {
+	if len(items) == 0 {
+		return nil
+	}
+
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	for _, data := range items {
+		if data == nil || len(data.GetLanguageCode()) == 0 {
+			return contentV1.ErrorBadRequest("invalid parameter: language_code is required")
+		}
+		data.PostId = trans.Ptr(postID)
+
+		existings, err := tx.PostTranslation.Query().
+			Where(
+				posttranslation.PostIDEQ(postID),
+				posttranslation.LanguageCodeEQ(data.GetLanguageCode()),
+			).
+			Order(ent.Asc(posttranslation.FieldID)).
+			All(ctx)
+		if err != nil {
+			r.log.Errorf("query post translations for upsert failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("query post translations for upsert failed")
+		}
+
+		if len(existings) == 0 {
+			_ = r.PrepareTranslation(ctx, tx.PostTranslation, data)
+			builder := r.newCreateBuilder(tx.PostTranslation, data)
+			if _, err = builder.Save(ctx); err != nil {
+				r.log.Errorf("upsert insert post translation failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("upsert insert post translation failed")
+			}
+			continue
+		}
+
+		keep := existings[0]
+
+		// 标题未变时保留原 slug，避免每次重发都因前缀计数叠加后缀
+		titleChanged := (keep.Title == nil && data.GetTitle() != "") ||
+			(keep.Title != nil && *keep.Title != data.GetTitle())
+		if titleChanged {
+			_ = r.PrepareTranslation(ctx, tx.PostTranslation, data)
+		} else if len(data.GetSummary()) == 0 {
+			// 摘要同 word_count 是派生字段：客户端未提交时按最新 content 重算
+			data.Summary = trans.Ptr(summary.GenerateSummaryByRule(data.GetContent(), 100, true))
+		}
+
+		// word_count 为服务端派生字段，始终按 content 重算，忽略客户端传入值
+		counter := count.NewContentCounter(data.GetContent())
+		data.WordCount = trans.Ptr(uint32(counter.RawChars()))
+
+		upd := tx.PostTranslation.UpdateOneID(keep.ID)
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			upd.Where(posttranslation.TenantIDEQ(tid))
+		}
+		upd.
+			SetNillableTitle(data.Title).
+			SetNillableSlug(data.Slug).
+			SetNillableSummary(data.Summary).
+			SetNillableContent(data.Content).
+			SetNillableOriginalContent(data.OriginalContent).
+			SetNillableThumbnail(data.Thumbnail).
+			SetNillableWordCount(data.WordCount).
+			SetNillableFullPath(data.FullPath).
+			SetUpdatedAt(time.Now())
+		if hasUser {
+			upd.SetUpdatedBy(callerUserID)
+		}
+		if data.Seo != nil {
+			upd.SetSeo(data.Seo)
+		}
+		if _, err = upd.Save(ctx); err != nil {
+			r.log.Errorf("upsert update post translation failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("upsert update post translation failed")
+		}
+
+		if len(existings) > 1 {
+			dupeIDs := make([]uint32, 0, len(existings)-1)
+			for _, e := range existings[1:] {
+				dupeIDs = append(dupeIDs, e.ID)
+			}
+			if _, err = tx.PostTranslation.Delete().Where(posttranslation.IDIn(dupeIDs...)).Exec(ctx); err != nil {
+				r.log.Errorf("clean duplicated post translations failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("clean duplicated post translations failed")
+			}
+		}
+	}
+
+	return nil
+}
+
+// PrepareTranslation 预处理帖子翻译数据，生成slug、摘要、字数等信息。
+// pt 必须传与调用方一致的事务/非事务客户端：事务内用非事务连接读同一张表，
+// 在 sqlite 内存库下会死锁，MySQL 下也会读到事务外快照。
+func (r *PostTranslationRepo) PrepareTranslation(ctx context.Context, pt *ent.PostTranslationClient, data *contentV1.PostTranslation) error {
 	baseSlug := slug.Generate(data.GetTitle())
-	slugCount, err := r.CountByBaseSlug(ctx, baseSlug)
+	slugCount, err := r.countByBaseSlug(ctx, pt, baseSlug)
 	if err != nil {
 		r.log.Errorf("count slug failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("count slug failed")
@@ -214,7 +331,7 @@ func (r *PostTranslationRepo) CreateTranslation(ctx context.Context, data *conte
 		return nil, nil
 	}
 
-	_ = r.PrepareTranslation(ctx, data)
+	_ = r.PrepareTranslation(ctx, r.entClient.Client().PostTranslation, data)
 
 	builder := r.newCreateBuilder(r.entClient.Client().PostTranslation, data)
 
@@ -282,7 +399,11 @@ func (r *PostTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, 
 
 // CountByBaseSlug counts the number of post translations with the given base slug (case-insensitive).
 func (r *PostTranslationRepo) CountByBaseSlug(ctx context.Context, baseSlug string) (int64, error) {
-	c, err := r.entClient.Client().PostTranslation.Query().
+	return r.countByBaseSlug(ctx, r.entClient.Client().PostTranslation, baseSlug)
+}
+
+func (r *PostTranslationRepo) countByBaseSlug(ctx context.Context, pt *ent.PostTranslationClient, baseSlug string) (int64, error) {
+	c, err := pt.Query().
 		Where(
 			posttranslation.SlugHasPrefix(baseSlug),
 		).

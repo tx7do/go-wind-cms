@@ -301,7 +301,8 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		}
 
 		for _, item := range ret.Items {
-			translations, err := r.postTranslationRepo.ListTranslations(ctx, item.GetId(), locale, viewMask)
+			// 指定语言缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底
+			translations, err := r.postTranslationRepo.ListTranslationsWithFallback(ctx, item.GetId(), locale, viewMask)
 			if err != nil {
 				r.log.Errorf("query translations failed: %s", err.Error())
 				return nil, contentV1.ErrorInternalServerError("query translations failed")
@@ -377,23 +378,14 @@ func (r *PostRepo) Get(ctx context.Context, req *contentV1.GetPostRequest) (*con
 	}
 	dto.AvailableLanguages = languages
 
-	if req.Locale == nil {
-		translations, err := r.postTranslationRepo.ListTranslations(ctx, dto.GetId(), "", nil)
-		if err != nil {
-			r.log.Errorf("query translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("query translations failed")
-		}
-		dto.Translations = translations
-	} else {
-		translation, err := r.postTranslationRepo.GetTranslation(ctx, dto.GetId(), req.GetLocale())
-		if err != nil {
-			r.log.Errorf("query translation failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("query translation failed")
-		}
-		if translation != nil {
-			dto.Translations = append(dto.Translations, translation)
-		}
+	// 指定语言优先；缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"
+	// 兜底，否则详情页标题/正文将为空
+	translations, err := r.postTranslationRepo.ListTranslationsWithFallback(ctx, dto.GetId(), req.GetLocale(), nil)
+	if err != nil {
+		r.log.Errorf("query translations failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query translations failed")
 	}
+	dto.Translations = translations
 
 	if tagIds, err := r.postTagRepo.ListTagIDs(ctx, dto.GetId()); err != nil {
 		r.log.Errorf("query tag ids failed: %s", err.Error())
@@ -550,13 +542,12 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 	}()
 
 	if len(req.Data.Translations) > 0 {
-		for i := range req.Data.Translations {
-			req.Data.Translations[i].PostId = trans.Ptr(req.GetId())
-		}
-
-		if err = r.postTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
-			r.log.Errorf("batch insert translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("batch insert translations failed")
+		// 按语言 upsert：已存在的语言原行更新，新语言插入；不再整批直插
+		// （旧实现同语言重复发布会累积重复行，进而令 GetTranslation 的
+		// 单行查询报 500）
+		if err = r.postTranslationRepo.UpsertTranslations(ctx, tx, req.GetId(), req.Data.GetTranslations()); err != nil {
+			r.log.Errorf("upsert translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("upsert translations failed")
 		}
 	}
 

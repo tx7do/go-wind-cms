@@ -236,7 +236,8 @@ func (r *CategoryRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 		}
 
 		for _, item := range ret.Items {
-			translations, err := r.categoryTranslationRepo.ListTranslations(ctx, item.GetId(), locale, viewMask)
+			// 指定语言缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底
+			translations, err := r.categoryTranslationRepo.ListTranslationsWithFallback(ctx, item.GetId(), locale, viewMask)
 			if err != nil {
 				r.log.Errorf("query translations failed: %s", err.Error())
 				return nil, contentV1.ErrorInternalServerError("query translations failed")
@@ -294,8 +295,8 @@ func (r *CategoryRepo) getCategoryWithChildren(ctx context.Context, id uint32, l
 		dto.Children = append(dto.Children, childDTO)
 	}
 
-	// 查询翻译和可用语言（可复用原有逻辑）
-	translations, err := r.categoryTranslationRepo.ListTranslations(
+	// 查询翻译和可用语言（可复用原有逻辑）；指定语言缺译时回落全量译文
+	translations, err := r.categoryTranslationRepo.ListTranslationsWithFallback(
 		ctx,
 		dto.GetId(),
 		locale,
@@ -370,7 +371,8 @@ func (r *CategoryRepo) Get(ctx context.Context, req *contentV1.GetCategoryReques
 			return nil, contentV1.ErrorBadRequest("invalid query_by value")
 		}
 
-		translations, err := r.categoryTranslationRepo.ListTranslations(
+		// 指定语言缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底
+		translations, err := r.categoryTranslationRepo.ListTranslationsWithFallback(
 			ctx,
 			dto.GetId(),
 			req.GetLocale(),
@@ -519,18 +521,12 @@ func (r *CategoryRepo) Update(ctx context.Context, req *contentV1.UpdateCategory
 	}()
 
 	if len(req.Data.Translations) > 0 {
-		if err = r.categoryTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
-			r.log.Errorf("clean translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("clean translations failed")
-		}
-
-		for i := range req.Data.Translations {
-			req.Data.Translations[i].CategoryId = trans.Ptr(req.GetId())
-		}
-
-		if err = r.categoryTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
-			r.log.Errorf("batch insert translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("batch insert translations failed")
+		// 按语言 upsert：已存在的语言原行更新，新语言插入。不再先清空全表——
+		// 旧实现会把未随请求提交的其他语言译文一并删掉（编辑器每次只提交
+		// 当前编辑语言），删除译文请走 DeleteTranslation
+		if err = r.categoryTranslationRepo.UpsertTranslations(ctx, tx, req.GetId(), req.Data.GetTranslations()); err != nil {
+			r.log.Errorf("upsert translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("upsert translations failed")
 		}
 	}
 

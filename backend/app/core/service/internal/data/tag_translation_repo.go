@@ -107,6 +107,7 @@ func (r *TagTranslationRepo) ListTranslations(ctx context.Context, tagID uint32,
 	}
 
 	entities, err := builder.
+		Order(ent.Asc(tagtranslation.FieldID)).
 		All(ctx)
 	if err != nil {
 		r.log.Errorf("query translations by tag id failed: %s", err.Error())
@@ -119,6 +120,19 @@ func (r *TagTranslationRepo) ListTranslations(ctx context.Context, tagID uint32,
 	}
 
 	return dtos, nil
+}
+
+// ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
+// 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
+func (r *TagTranslationRepo) ListTranslationsWithFallback(ctx context.Context, tagID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.TagTranslation, error) {
+	translations, err := r.ListTranslations(ctx, tagID, locale, viewMask)
+	if err != nil {
+		return nil, err
+	}
+	if len(translations) == 0 && locale != "" {
+		return r.ListTranslations(ctx, tagID, "", viewMask)
+	}
+	return translations, nil
 }
 
 func (r *TagTranslationRepo) newCreateBuilder(tt *ent.TagTranslationClient, data *contentV1.TagTranslation) *ent.TagTranslationCreate {
@@ -147,9 +161,9 @@ func (r *TagTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items 
 
 	builders := make([]*ent.TagTranslationCreate, 0, len(items))
 	for _, data := range items {
-		_ = r.PrepareTranslation(ctx, data)
+		_ = r.PrepareTranslation(ctx, tx.TagTranslation, data)
 
-		builder := r.newCreateBuilder(r.entClient.Client().TagTranslation, data)
+		builder := r.newCreateBuilder(tx.TagTranslation, data)
 
 		builders = append(builders, builder)
 	}
@@ -163,9 +177,94 @@ func (r *TagTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items 
 	return nil
 }
 
+// UpsertTranslations 按 (tag_id, language_code) 逐条 upsert：
+// 已存在则原行就地更新（保留 created_by/created_at 与未提交字段），
+// 不存在则插入；同语言历史重复行仅保留 id 最小的一条并更新，其余删除。
+// Update 语义据此从"整表替换"改为按语言合并，删除译文请走 DeleteTranslation。
+func (r *TagTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, tagID uint32, items []*contentV1.TagTranslation) error {
+	if len(items) == 0 {
+		return nil
+	}
+
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	for _, data := range items {
+		if data == nil || len(data.GetLanguageCode()) == 0 {
+			return contentV1.ErrorBadRequest("invalid parameter: language_code is required")
+		}
+		data.TagId = trans.Ptr(tagID)
+
+		existings, err := tx.TagTranslation.Query().
+			Where(
+				tagtranslation.TagIDEQ(tagID),
+				tagtranslation.LanguageCodeEQ(data.GetLanguageCode()),
+			).
+			Order(ent.Asc(tagtranslation.FieldID)).
+			All(ctx)
+		if err != nil {
+			r.log.Errorf("query tag translations for upsert failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("query tag translations for upsert failed")
+		}
+
+		if len(existings) == 0 {
+			_ = r.PrepareTranslation(ctx, tx.TagTranslation, data)
+			builder := r.newCreateBuilder(tx.TagTranslation, data)
+			if _, err = builder.Save(ctx); err != nil {
+				r.log.Errorf("upsert insert tag translation failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("upsert insert tag translation failed")
+			}
+			continue
+		}
+
+		keep := existings[0]
+
+		// 名称未变时保留原 slug，避免每次重发都因前缀计数叠加后缀
+		nameChanged := (keep.Name == nil && data.GetName() != "") ||
+			(keep.Name != nil && *keep.Name != data.GetName())
+		if nameChanged {
+			_ = r.PrepareTranslation(ctx, tx.TagTranslation, data)
+		}
+
+		upd := tx.TagTranslation.UpdateOneID(keep.ID)
+		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+			upd.Where(tagtranslation.TenantIDEQ(tid))
+		}
+		upd.
+			SetNillableName(data.Name).
+			SetNillableSlug(data.Slug).
+			SetNillableDescription(data.Description).
+			SetNillableCoverImage(data.CoverImage).
+			SetNillableFullPath(data.FullPath).
+			SetUpdatedAt(time.Now())
+		if hasUser {
+			upd.SetUpdatedBy(callerUserID)
+		}
+		if data.Seo != nil {
+			upd.SetSeo(data.Seo)
+		}
+		if _, err = upd.Save(ctx); err != nil {
+			r.log.Errorf("upsert update tag translation failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("upsert update tag translation failed")
+		}
+
+		if len(existings) > 1 {
+			dupeIDs := make([]uint32, 0, len(existings)-1)
+			for _, e := range existings[1:] {
+				dupeIDs = append(dupeIDs, e.ID)
+			}
+			if _, err = tx.TagTranslation.Delete().Where(tagtranslation.IDIn(dupeIDs...)).Exec(ctx); err != nil {
+				r.log.Errorf("clean duplicated tag translations failed: %s", err.Error())
+				return contentV1.ErrorInternalServerError("clean duplicated tag translations failed")
+			}
+		}
+	}
+
+	return nil
+}
+
 func (r *TagTranslationRepo) CreateTranslation(ctx context.Context, data *contentV1.TagTranslation) (*contentV1.TagTranslation, error) {
 
-	_ = r.PrepareTranslation(ctx, data)
+	_ = r.PrepareTranslation(ctx, r.entClient.Client().TagTranslation, data)
 
 	builder := r.newCreateBuilder(r.entClient.Client().TagTranslation, data)
 
@@ -224,7 +323,11 @@ func (r *TagTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, d
 }
 
 func (r *TagTranslationRepo) CountByBaseSlug(ctx context.Context, baseSlug string) (int64, error) {
-	c, err := r.entClient.Client().TagTranslation.Query().
+	return r.countByBaseSlug(ctx, r.entClient.Client().TagTranslation, baseSlug)
+}
+
+func (r *TagTranslationRepo) countByBaseSlug(ctx context.Context, tt *ent.TagTranslationClient, baseSlug string) (int64, error) {
+	c, err := tt.Query().
 		Where(
 			tagtranslation.SlugHasPrefix(baseSlug),
 		).
@@ -270,13 +373,18 @@ func (r *TagTranslationRepo) ListAvailedLanguages(ctx context.Context, tagId uin
 }
 
 func (r *TagTranslationRepo) GetTranslation(ctx context.Context, tagId uint32, languageCode string) (*contentV1.TagTranslation, error) {
+	// 取 id 最小的一条保证结果确定（防历史重复行）；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().TagTranslation.Query().
 		Where(
 			tagtranslation.TagIDEQ(tagId),
 			tagtranslation.LanguageCodeEQ(languageCode),
 		).
-		Only(ctx)
+		Order(ent.Asc(tagtranslation.FieldID)).
+		First(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, nil
+		}
 		r.log.Errorf("query tag translation by tag id and language code failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query tag translation by tag id and language code failed")
 	}
@@ -343,9 +451,10 @@ func (r *TagTranslationRepo) DeleteTranslation(ctx context.Context, req *content
 	return nil
 }
 
-func (r *TagTranslationRepo) PrepareTranslation(ctx context.Context, data *contentV1.TagTranslation) error {
+// tt 必须传与调用方一致的事务/非事务客户端（见 PostTranslationRepo.PrepareTranslation 注释）。
+func (r *TagTranslationRepo) PrepareTranslation(ctx context.Context, tt *ent.TagTranslationClient, data *contentV1.TagTranslation) error {
 	baseSlug := slug.Generate(data.GetName())
-	slugCount, err := r.CountByBaseSlug(ctx, baseSlug)
+	slugCount, err := r.countByBaseSlug(ctx, tt, baseSlug)
 	if err != nil {
 		r.log.Errorf("count slug failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("count slug failed")

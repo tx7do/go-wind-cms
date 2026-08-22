@@ -263,13 +263,11 @@ func (r *SectionRepo) Update(ctx context.Context, req *contentV1.UpdateSectionRe
 	}()
 
 	if len(req.Data.Translations) > 0 {
-		for i := range req.Data.Translations {
-			req.Data.Translations[i].SectionId = trans.Ptr(req.GetId())
-		}
-
-		if err = r.sectionTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
-			r.log.Errorf("batch insert translations failed: %s", err.Error())
-			return nil, contentV1.ErrorInternalServerError("batch insert translations failed")
+		// 按语言 upsert：已存在的语言原行更新，新语言插入；不再整批直插
+		// （旧实现同语言重复发布会累积重复行）
+		if err = r.sectionTranslationRepo.UpsertTranslations(ctx, tx, req.GetId(), req.Data.GetTranslations()); err != nil {
+			r.log.Errorf("upsert translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("upsert translations failed")
 		}
 	}
 
