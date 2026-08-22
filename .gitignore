@@ -151,3 +151,6 @@ bazel-*
 
 # Playwright MCP test artifacts
 .playwright-mcp/
+
+# ZCode agent artifacts
+.zcode/
