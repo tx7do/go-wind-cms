@@ -1,6 +1,8 @@
 package data
 
 import (
+	"os"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -18,6 +20,8 @@ import (
 	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/translator"
 	"github.com/tx7do/go-utils/translator/google"
+
+	"go-wind-cms/pkg/translator/baidu"
 
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
@@ -91,11 +95,32 @@ func NewMinIoClient(ctx *bootstrap.Context) *oss.MinIOClient {
 	return oss.NewMinIoClient(ctx.GetConfig(), ctx.GetLogger())
 }
 
-// NewTranslator 创建翻译器
+// NewTranslator 创建翻译器（供 admin 一键翻译使用）。
+// 引擎与凭据由环境变量控制，全部缺省时保持原有行为（google 免费接口 v1，
+// 无需凭据，但端点在大陆网络不可达且为非官方接口）：
+//
+//	TRANSLATOR_PROVIDER    = google | baidu（默认 google）
+//	TRANSLATOR_VERSION     = v1 | v2 | v3（google 专用；v2/v3 为官方 API）
+//	TRANSLATOR_API_KEY     = google 官方 API key（v2/v3 必填）
+//	BAIDU_TRANSLATE_APP_ID = 百度通用翻译 appid（provider=baidu 必填）
+//	BAIDU_TRANSLATE_SECRET = 百度通用翻译密钥（provider=baidu 必填）
 func NewTranslator(_ *bootstrap.Context) translator.Translator {
-	return google.NewTranslator(
-		google.WithVersion("v1"),
-	)
+	switch strings.ToLower(strings.TrimSpace(os.Getenv("TRANSLATOR_PROVIDER"))) {
+	case "baidu":
+		return baidu.NewTranslator(
+			baidu.WithAppID(strings.TrimSpace(os.Getenv("BAIDU_TRANSLATE_APP_ID"))),
+			baidu.WithSecret(strings.TrimSpace(os.Getenv("BAIDU_TRANSLATE_SECRET"))),
+		)
+	}
+
+	opts := []google.Option{google.WithVersion("v1")}
+	if v := strings.TrimSpace(os.Getenv("TRANSLATOR_VERSION")); v != "" {
+		opts[0] = google.WithVersion(v)
+	}
+	if k := strings.TrimSpace(os.Getenv("TRANSLATOR_API_KEY")); k != "" {
+		opts = append(opts, google.WithApiKey(k))
+	}
+	return google.NewTranslator(opts...)
 }
 
 // NewAuthorizer 创建权鉴器
