@@ -456,6 +456,33 @@ func (_u *PageUpdate) ClearCustomFields() *PageUpdate {
 	return _u
 }
 
+// SetContentModelID sets the "content_model_id" field.
+func (_u *PageUpdate) SetContentModelID(v uint32) *PageUpdate {
+	_u.mutation.ResetContentModelID()
+	_u.mutation.SetContentModelID(v)
+	return _u
+}
+
+// SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
+func (_u *PageUpdate) SetNillableContentModelID(v *uint32) *PageUpdate {
+	if v != nil {
+		_u.SetContentModelID(*v)
+	}
+	return _u
+}
+
+// AddContentModelID adds value to the "content_model_id" field.
+func (_u *PageUpdate) AddContentModelID(v int32) *PageUpdate {
+	_u.mutation.AddContentModelID(v)
+	return _u
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (_u *PageUpdate) ClearContentModelID() *PageUpdate {
+	_u.mutation.ClearContentModelID()
+	return _u
+}
+
 // SetDepth sets the "depth" field.
 func (_u *PageUpdate) SetDepth(v int32) *PageUpdate {
 	_u.mutation.ResetDepth()
@@ -739,6 +766,15 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.CustomFieldsCleared() {
 		_spec.ClearField(page.FieldCustomFields, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.ContentModelID(); ok {
+		_spec.SetField(page.FieldContentModelID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedContentModelID(); ok {
+		_spec.AddField(page.FieldContentModelID, field.TypeUint32, value)
+	}
+	if _u.mutation.ContentModelIDCleared() {
+		_spec.ClearField(page.FieldContentModelID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)
@@ -1272,6 +1308,33 @@ func (_u *PageUpdateOne) ClearCustomFields() *PageUpdateOne {
 	return _u
 }
 
+// SetContentModelID sets the "content_model_id" field.
+func (_u *PageUpdateOne) SetContentModelID(v uint32) *PageUpdateOne {
+	_u.mutation.ResetContentModelID()
+	_u.mutation.SetContentModelID(v)
+	return _u
+}
+
+// SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
+func (_u *PageUpdateOne) SetNillableContentModelID(v *uint32) *PageUpdateOne {
+	if v != nil {
+		_u.SetContentModelID(*v)
+	}
+	return _u
+}
+
+// AddContentModelID adds value to the "content_model_id" field.
+func (_u *PageUpdateOne) AddContentModelID(v int32) *PageUpdateOne {
+	_u.mutation.AddContentModelID(v)
+	return _u
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (_u *PageUpdateOne) ClearContentModelID() *PageUpdateOne {
+	_u.mutation.ClearContentModelID()
+	return _u
+}
+
 // SetDepth sets the "depth" field.
 func (_u *PageUpdateOne) SetDepth(v int32) *PageUpdateOne {
 	_u.mutation.ResetDepth()
@@ -1585,6 +1648,15 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 	}
 	if _u.mutation.CustomFieldsCleared() {
 		_spec.ClearField(page.FieldCustomFields, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.ContentModelID(); ok {
+		_spec.SetField(page.FieldContentModelID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedContentModelID(); ok {
+		_spec.AddField(page.FieldContentModelID, field.TypeUint32, value)
+	}
+	if _u.mutation.ContentModelIDCleared() {
+		_spec.ClearField(page.FieldContentModelID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)

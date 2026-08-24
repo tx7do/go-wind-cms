@@ -52,6 +52,7 @@ var ProviderSet = wire.NewSet(
 	data.NewInteractionServiceClient,
 
 	data.NewNavigationServiceClient,
+	data.NewSiteServiceClient,
 	data.NewSiteSettingServiceClient,
 
 	data.NewMediaAssetServiceClient,

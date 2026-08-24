@@ -46,6 +46,12 @@ func (InternalMessageCategory) Fields() []ent.Field {
 			Comment("图标URL").
 			Optional().
 			Nillable(),
+
+		field.Int32("depth").
+			Comment("分类层级深度").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -57,6 +63,8 @@ func (InternalMessageCategory) Mixin() []ent.Mixin {
 		mixin.OperatorID{},
 		mixin.IsEnabled{},
 		mixin.SortOrder{},
+		mixin.TreePath{},
+		mixin.Tree[InternalMessageCategory]{},
 		mixin.Remark{},
 		mixin.TenantID[uint32]{},
 	}
@@ -79,5 +87,8 @@ func (InternalMessageCategory) Indexes() []ent.Index {
 
 		// 按租户 + 操作者，用于审计与变更追溯
 		index.Fields("tenant_id", "created_by").StorageKey("idx_internal_msg_cat_tenant_created_by"),
+
+		// 按父节点，用于树形层级查询
+		index.Fields("parent_id"),
 	}
 }

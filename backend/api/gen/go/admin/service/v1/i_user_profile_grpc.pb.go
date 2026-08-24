@@ -24,8 +24,6 @@ const (
 	UserProfileService_GetUser_FullMethodName        = "/admin.service.v1.UserProfileService/GetUser"
 	UserProfileService_UpdateUser_FullMethodName     = "/admin.service.v1.UserProfileService/UpdateUser"
 	UserProfileService_ChangePassword_FullMethodName = "/admin.service.v1.UserProfileService/ChangePassword"
-	UserProfileService_UploadAvatar_FullMethodName   = "/admin.service.v1.UserProfileService/UploadAvatar"
-	UserProfileService_DeleteAvatar_FullMethodName   = "/admin.service.v1.UserProfileService/DeleteAvatar"
 	UserProfileService_BindContact_FullMethodName    = "/admin.service.v1.UserProfileService/BindContact"
 	UserProfileService_VerifyContact_FullMethodName  = "/admin.service.v1.UserProfileService/VerifyContact"
 )
@@ -42,10 +40,6 @@ type UserProfileServiceClient interface {
 	UpdateUser(ctx context.Context, in *v1.UpdateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 修改用户密码
 	ChangePassword(ctx context.Context, in *v1.ChangePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 上传头像
-	UploadAvatar(ctx context.Context, in *v1.UploadAvatarRequest, opts ...grpc.CallOption) (*v1.UploadAvatarResponse, error)
-	// 删除头像
-	DeleteAvatar(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 绑定手机号码/邮箱
 	BindContact(ctx context.Context, in *v1.BindContactRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 验证手机号码/邮箱
@@ -90,26 +84,6 @@ func (c *userProfileServiceClient) ChangePassword(ctx context.Context, in *v1.Ch
 	return out, nil
 }
 
-func (c *userProfileServiceClient) UploadAvatar(ctx context.Context, in *v1.UploadAvatarRequest, opts ...grpc.CallOption) (*v1.UploadAvatarResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v1.UploadAvatarResponse)
-	err := c.cc.Invoke(ctx, UserProfileService_UploadAvatar_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userProfileServiceClient) DeleteAvatar(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, UserProfileService_DeleteAvatar_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userProfileServiceClient) BindContact(ctx context.Context, in *v1.BindContactRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -142,10 +116,6 @@ type UserProfileServiceServer interface {
 	UpdateUser(context.Context, *v1.UpdateUserRequest) (*emptypb.Empty, error)
 	// 修改用户密码
 	ChangePassword(context.Context, *v1.ChangePasswordRequest) (*emptypb.Empty, error)
-	// 上传头像
-	UploadAvatar(context.Context, *v1.UploadAvatarRequest) (*v1.UploadAvatarResponse, error)
-	// 删除头像
-	DeleteAvatar(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 绑定手机号码/邮箱
 	BindContact(context.Context, *v1.BindContactRequest) (*emptypb.Empty, error)
 	// 验证手机号码/邮箱
@@ -168,12 +138,6 @@ func (UnimplementedUserProfileServiceServer) UpdateUser(context.Context, *v1.Upd
 }
 func (UnimplementedUserProfileServiceServer) ChangePassword(context.Context, *v1.ChangePasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangePassword not implemented")
-}
-func (UnimplementedUserProfileServiceServer) UploadAvatar(context.Context, *v1.UploadAvatarRequest) (*v1.UploadAvatarResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UploadAvatar not implemented")
-}
-func (UnimplementedUserProfileServiceServer) DeleteAvatar(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeleteAvatar not implemented")
 }
 func (UnimplementedUserProfileServiceServer) BindContact(context.Context, *v1.BindContactRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method BindContact not implemented")
@@ -256,42 +220,6 @@ func _UserProfileService_ChangePassword_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserProfileService_UploadAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v1.UploadAvatarRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserProfileServiceServer).UploadAvatar(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserProfileService_UploadAvatar_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserProfileServiceServer).UploadAvatar(ctx, req.(*v1.UploadAvatarRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserProfileService_DeleteAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserProfileServiceServer).DeleteAvatar(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserProfileService_DeleteAvatar_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserProfileServiceServer).DeleteAvatar(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserProfileService_BindContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v1.BindContactRequest)
 	if err := dec(in); err != nil {
@@ -346,14 +274,6 @@ var UserProfileService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _UserProfileService_ChangePassword_Handler,
-		},
-		{
-			MethodName: "UploadAvatar",
-			Handler:    _UserProfileService_UploadAvatar_Handler,
-		},
-		{
-			MethodName: "DeleteAvatar",
-			Handler:    _UserProfileService_DeleteAvatar_Handler,
 		},
 		{
 			MethodName: "BindContact",

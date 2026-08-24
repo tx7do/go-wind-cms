@@ -1112,6 +1112,7 @@ class ContentServiceV1Category {
   List<String>? availableLanguages;
   List<ContentServiceV1Category>? children;
   String? code;
+  int? contentModelId;
   String? createdAt;
   int? createdBy;
   Map<String, String>? customFields;
@@ -1135,6 +1136,7 @@ class ContentServiceV1Category {
     this.availableLanguages,
     this.children,
     this.code,
+    this.contentModelId,
     this.createdAt,
     this.createdBy,
     this.customFields,
@@ -1160,6 +1162,7 @@ class ContentServiceV1Category {
       availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
       children: (json['children'] as List<dynamic>?)?.map((e) => ContentServiceV1Category.fromJson(e as Map<String, dynamic>)).toList(),
       code: json['code'] as String?,
+      contentModelId: json['contentModelId'] as int?,
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
       customFields: (json['customFields'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
@@ -1186,6 +1189,7 @@ class ContentServiceV1Category {
     if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
     if (children != null) json['children'] = children!.map((e) => e.toJson()).toList();
     if (code != null) json['code'] = code;
+    if (contentModelId != null) json['contentModelId'] = contentModelId;
     if (createdAt != null) json['createdAt'] = createdAt;
     if (createdBy != null) json['createdBy'] = createdBy;
     if (customFields != null) json['customFields'] = customFields;
@@ -1209,7 +1213,7 @@ class ContentServiceV1Category {
 
   @override
   String toString() {
-    return 'ContentServiceV1Category(availableLanguages: $availableLanguages, children: $children, code: $code, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, directPostCount: $directPostCount, icon: $icon, id: $id, isNav: $isNav, parentId: $parentId, path: $path, postCount: $postCount, sortOrder: $sortOrder, status: $status, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1Category(availableLanguages: $availableLanguages, children: $children, code: $code, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, directPostCount: $directPostCount, icon: $icon, id: $id, isNav: $isNav, parentId: $parentId, path: $path, postCount: $postCount, sortOrder: $sortOrder, status: $status, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -1220,6 +1224,7 @@ class ContentServiceV1Category {
       && availableLanguages == other.availableLanguages
       && children == other.children
       && code == other.code
+      && contentModelId == other.contentModelId
       && createdAt == other.createdAt
       && createdBy == other.createdBy
       && customFields == other.customFields
@@ -1245,6 +1250,7 @@ class ContentServiceV1Category {
     availableLanguages,
     children,
     code,
+    contentModelId,
     createdAt,
     createdBy,
     customFields,
@@ -1269,6 +1275,7 @@ class ContentServiceV1Category {
     List<String>? availableLanguages,
     List<ContentServiceV1Category>? children,
     String? code,
+    int? contentModelId,
     String? createdAt,
     int? createdBy,
     Map<String, String>? customFields,
@@ -1292,6 +1299,7 @@ class ContentServiceV1Category {
       availableLanguages: availableLanguages ?? this.availableLanguages,
       children: children ?? this.children,
       code: code ?? this.code,
+      contentModelId: contentModelId ?? this.contentModelId,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       customFields: customFields ?? this.customFields,
@@ -5295,6 +5303,7 @@ class ContentServiceV1Page {
   String? authorName;
   List<String>? availableLanguages;
   List<ContentServiceV1Page>? children;
+  int? contentModelId;
   String? createdAt;
   int? createdBy;
   Map<String, String>? customFields;
@@ -5323,6 +5332,7 @@ class ContentServiceV1Page {
     this.authorName,
     this.availableLanguages,
     this.children,
+    this.contentModelId,
     this.createdAt,
     this.createdBy,
     this.customFields,
@@ -5353,6 +5363,7 @@ class ContentServiceV1Page {
       authorName: json['authorName'] as String?,
       availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
       children: (json['children'] as List<dynamic>?)?.map((e) => ContentServiceV1Page.fromJson(e as Map<String, dynamic>)).toList(),
+      contentModelId: json['contentModelId'] as int?,
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
       customFields: (json['customFields'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
@@ -5384,6 +5395,7 @@ class ContentServiceV1Page {
     if (authorName != null) json['authorName'] = authorName;
     if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
     if (children != null) json['children'] = children!.map((e) => e.toJson()).toList();
+    if (contentModelId != null) json['contentModelId'] = contentModelId;
     if (createdAt != null) json['createdAt'] = createdAt;
     if (createdBy != null) json['createdBy'] = createdBy;
     if (customFields != null) json['customFields'] = customFields;
@@ -5411,7 +5423,7 @@ class ContentServiceV1Page {
 
   @override
   String toString() {
-    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -5423,6 +5435,7 @@ class ContentServiceV1Page {
       && authorName == other.authorName
       && availableLanguages == other.availableLanguages
       && children == other.children
+      && contentModelId == other.contentModelId
       && createdAt == other.createdAt
       && createdBy == other.createdBy
       && customFields == other.customFields
@@ -5453,6 +5466,7 @@ class ContentServiceV1Page {
     authorName,
     availableLanguages,
     children,
+    contentModelId,
     createdAt,
     createdBy,
     customFields,
@@ -5482,6 +5496,7 @@ class ContentServiceV1Page {
     String? authorName,
     List<String>? availableLanguages,
     List<ContentServiceV1Page>? children,
+    int? contentModelId,
     String? createdAt,
     int? createdBy,
     Map<String, String>? customFields,
@@ -5510,6 +5525,7 @@ class ContentServiceV1Page {
       authorName: authorName ?? this.authorName,
       availableLanguages: availableLanguages ?? this.availableLanguages,
       children: children ?? this.children,
+      contentModelId: contentModelId ?? this.contentModelId,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       customFields: customFields ?? this.customFields,
@@ -7301,6 +7317,588 @@ class ContentServiceV1DeleteSectionRequest {
   }
 }
 
+/// 站点服务（公开端点）
+/// 仅 GetSiteByDomain 对外可用：按请求 Host 解析的域名返回当前站点的渲染必需配置。
+/// List/Create/Update/Delete 在 app（公开站点）服务上禁用，写操作应经由 admin 服务。
+class SiteServiceClient {
+  final ClientTransport _transport;
+
+  SiteServiceClient(this._transport);
+
+  /// 获取站点列表（公开端点禁用）
+  Future<SiteServiceV1ListSiteResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/sites';
+    final queryParams = <String>[];
+    if (request.page != null) {
+      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    if (request.offset != null) {
+      queryParams.add('offset=${Uri.encodeComponent(request.offset!.toString())}');
+    }
+    if (request.limit != null) {
+      queryParams.add('limit=${Uri.encodeComponent(request.limit!.toString())}');
+    }
+    if (request.token != null) {
+      queryParams.add('token=${Uri.encodeComponent(request.token!.toString())}');
+    }
+    if (request.noPaging != null) {
+      queryParams.add('noPaging=${Uri.encodeComponent(request.noPaging!.toString())}');
+    }
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.filter != null) {
+      queryParams.add('filter=${Uri.encodeComponent(request.filter!.toString())}');
+    }
+    if (request.filterExpr?.type != null) {
+      queryParams.add('filterExpr.type=${Uri.encodeComponent(request.filterExpr!.type!.toString())}');
+    }
+    if (request.orderBy != null) {
+      queryParams.add('orderBy=${Uri.encodeComponent(request.orderBy!.toString())}');
+    }
+    if (request.fieldMask != null) {
+      queryParams.add('fieldMask=${Uri.encodeComponent(request.fieldMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'SiteService',
+      method: 'List',
+    ), headers: headers);
+    return SiteServiceV1ListSiteResponse.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 按域名获取当前站点配置（公开：domain 由 BFF 按 Host 填入，调用方不可指定）
+  Future<SiteServiceV1Site> getSiteByDomain(SiteServiceV1GetSiteByDomainRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/site';
+    final queryParams = <String>[];
+    if (request.domain != null) {
+      queryParams.add('domain=${Uri.encodeComponent(request.domain!.toString())}');
+    }
+    if (request.viewMask != null) {
+      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'SiteService',
+      method: 'GetSiteByDomain',
+    ), headers: headers);
+    return SiteServiceV1Site.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 创建站点（公开端点禁用）
+  Future<SiteServiceV1Site> create(SiteServiceV1CreateSiteRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/sites';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'SiteService',
+      method: 'Create',
+    ), headers: headers);
+    return SiteServiceV1Site.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 更新站点（公开端点禁用）
+  Future<SiteServiceV1Site> update(SiteServiceV1UpdateSiteRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/sites/${request.id}';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'PUT', body, TransportMeta(
+      service: 'SiteService',
+      method: 'Update',
+    ), headers: headers);
+    return SiteServiceV1Site.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 删除站点（公开端点禁用）
+  Future<Map<String, dynamic>> delete(SiteServiceV1DeleteSiteRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/sites/${request.id}';
+    final result = await _transport.unary(path, 'DELETE', null, TransportMeta(
+      service: 'SiteService',
+      method: 'Delete',
+    ), headers: headers);
+    return result as Map<String, dynamic>;
+  }
+}
+
+/// 回应 - 站点列表
+class SiteServiceV1ListSiteResponse {
+  List<SiteServiceV1Site>? items;
+  int? total;
+
+  SiteServiceV1ListSiteResponse({
+    this.items,
+    this.total,
+  });
+
+  factory SiteServiceV1ListSiteResponse.fromJson(Map<String, dynamic> json) {
+    return SiteServiceV1ListSiteResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => SiteServiceV1Site.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'SiteServiceV1ListSiteResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is SiteServiceV1ListSiteResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  SiteServiceV1ListSiteResponse copyWith({
+    List<SiteServiceV1Site>? items,
+    int? total,
+  }) {
+    return SiteServiceV1ListSiteResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+}
+
+/// 站点
+class SiteServiceV1Site {
+  List<String>? alternateDomains;
+  String? createdAt;
+  int? createdBy;
+  String? defaultLocale;
+  String? deletedAt;
+  int? deletedBy;
+  String? domain;
+  int? id;
+  bool? isDefault;
+  String? name;
+  String? slug;
+  SiteServiceV1Site$Status? status;
+  String? template;
+  int? tenantId;
+  String? theme;
+  String? updatedAt;
+  int? updatedBy;
+
+  SiteServiceV1Site({
+    this.alternateDomains,
+    this.createdAt,
+    this.createdBy,
+    this.defaultLocale,
+    this.deletedAt,
+    this.deletedBy,
+    this.domain,
+    this.id,
+    this.isDefault,
+    this.name,
+    this.slug,
+    this.status,
+    this.template,
+    this.tenantId,
+    this.theme,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory SiteServiceV1Site.fromJson(Map<String, dynamic> json) {
+    return SiteServiceV1Site(
+      alternateDomains: (json['alternateDomains'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      defaultLocale: json['defaultLocale'] as String?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      domain: json['domain'] as String?,
+      id: json['id'] as int?,
+      isDefault: json['isDefault'] as bool?,
+      name: json['name'] as String?,
+      slug: json['slug'] as String?,
+      status: json['status'] != null ? SiteServiceV1Site$Status.fromString(json['status'] as String) : null,
+      template: json['template'] as String?,
+      tenantId: json['tenantId'] as int?,
+      theme: json['theme'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (alternateDomains != null) json['alternateDomains'] = alternateDomains;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (defaultLocale != null) json['defaultLocale'] = defaultLocale;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (domain != null) json['domain'] = domain;
+    if (id != null) json['id'] = id;
+    if (isDefault != null) json['isDefault'] = isDefault;
+    if (name != null) json['name'] = name;
+    if (slug != null) json['slug'] = slug;
+    if (status != null) json['status'] = status!.value;
+    if (template != null) json['template'] = template;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    if (theme != null) json['theme'] = theme;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'SiteServiceV1Site(alternateDomains: $alternateDomains, createdAt: $createdAt, createdBy: $createdBy, defaultLocale: $defaultLocale, deletedAt: $deletedAt, deletedBy: $deletedBy, domain: $domain, id: $id, isDefault: $isDefault, name: $name, slug: $slug, status: $status, template: $template, tenantId: $tenantId, theme: $theme, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is SiteServiceV1Site &&
+      runtimeType == other.runtimeType
+      && alternateDomains == other.alternateDomains
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && defaultLocale == other.defaultLocale
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && domain == other.domain
+      && id == other.id
+      && isDefault == other.isDefault
+      && name == other.name
+      && slug == other.slug
+      && status == other.status
+      && template == other.template
+      && tenantId == other.tenantId
+      && theme == other.theme
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    alternateDomains,
+    createdAt,
+    createdBy,
+    defaultLocale,
+    deletedAt,
+    deletedBy,
+    domain,
+    id,
+    isDefault,
+    name,
+    slug,
+    status,
+    template,
+    tenantId,
+    theme,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  SiteServiceV1Site copyWith({
+    List<String>? alternateDomains,
+    String? createdAt,
+    int? createdBy,
+    String? defaultLocale,
+    String? deletedAt,
+    int? deletedBy,
+    String? domain,
+    int? id,
+    bool? isDefault,
+    String? name,
+    String? slug,
+    SiteServiceV1Site$Status? status,
+    String? template,
+    int? tenantId,
+    String? theme,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return SiteServiceV1Site(
+      alternateDomains: alternateDomains ?? this.alternateDomains,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      defaultLocale: defaultLocale ?? this.defaultLocale,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      domain: domain ?? this.domain,
+      id: id ?? this.id,
+      isDefault: isDefault ?? this.isDefault,
+      name: name ?? this.name,
+      slug: slug ?? this.slug,
+      status: status ?? this.status,
+      template: template ?? this.template,
+      tenantId: tenantId ?? this.tenantId,
+      theme: theme ?? this.theme,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 站点状态
+enum SiteServiceV1Site$Status {
+  siteStatusActive('SITE_STATUS_ACTIVE'),
+  siteStatusInactive('SITE_STATUS_INACTIVE'),
+  siteStatusMaintenance('SITE_STATUS_MAINTENANCE'),
+  siteStatusUnspecified('SITE_STATUS_UNSPECIFIED');
+
+  final String value;
+  const SiteServiceV1Site$Status(this.value);
+
+  static SiteServiceV1Site$Status fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown SiteServiceV1Site\$Status value: ' + v));
+  @override
+  String toString() => value;
+}
+
+/// 请求 - 按域名获取站点数据
+class SiteServiceV1GetSiteByDomainRequest {
+  String? domain;
+  String? viewMask;
+
+  SiteServiceV1GetSiteByDomainRequest({
+    this.domain,
+    this.viewMask,
+  });
+
+  factory SiteServiceV1GetSiteByDomainRequest.fromJson(Map<String, dynamic> json) {
+    return SiteServiceV1GetSiteByDomainRequest(
+      domain: json['domain'] as String?,
+      viewMask: json['viewMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (domain != null) json['domain'] = domain;
+    if (viewMask != null) json['viewMask'] = viewMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'SiteServiceV1GetSiteByDomainRequest(domain: $domain, viewMask: $viewMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is SiteServiceV1GetSiteByDomainRequest &&
+      runtimeType == other.runtimeType
+      && domain == other.domain
+      && viewMask == other.viewMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    domain,
+    viewMask,
+  ]);
+
+  SiteServiceV1GetSiteByDomainRequest copyWith({
+    String? domain,
+    String? viewMask,
+  }) {
+    return SiteServiceV1GetSiteByDomainRequest(
+      domain: domain ?? this.domain,
+      viewMask: viewMask ?? this.viewMask,
+    );
+  }
+}
+
+/// 请求 - 创建站点
+class SiteServiceV1CreateSiteRequest {
+  SiteServiceV1Site? data;
+
+  SiteServiceV1CreateSiteRequest({
+    this.data,
+  });
+
+  factory SiteServiceV1CreateSiteRequest.fromJson(Map<String, dynamic> json) {
+    return SiteServiceV1CreateSiteRequest(
+      data: json['data'] != null ? SiteServiceV1Site.fromJson(json['data'] as Map<String, dynamic>) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (data != null) json['data'] = data!.toJson();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'SiteServiceV1CreateSiteRequest(data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is SiteServiceV1CreateSiteRequest &&
+      runtimeType == other.runtimeType
+      && data == other.data
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    data,
+  ]);
+
+  SiteServiceV1CreateSiteRequest copyWith({
+    SiteServiceV1Site? data,
+  }) {
+    return SiteServiceV1CreateSiteRequest(
+      data: data ?? this.data,
+    );
+  }
+}
+
+/// 请求 - 更新站点
+class SiteServiceV1UpdateSiteRequest {
+  bool? allowMissing;
+  SiteServiceV1Site? data;
+  int? id;
+  String? updateMask;
+
+  SiteServiceV1UpdateSiteRequest({
+    this.allowMissing,
+    this.data,
+    this.id,
+    this.updateMask,
+  });
+
+  factory SiteServiceV1UpdateSiteRequest.fromJson(Map<String, dynamic> json) {
+    return SiteServiceV1UpdateSiteRequest(
+      allowMissing: json['allowMissing'] as bool?,
+      data: json['data'] != null ? SiteServiceV1Site.fromJson(json['data'] as Map<String, dynamic>) : null,
+      id: json['id'] as int?,
+      updateMask: json['updateMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (allowMissing != null) json['allowMissing'] = allowMissing;
+    if (data != null) json['data'] = data!.toJson();
+    if (id != null) json['id'] = id;
+    if (updateMask != null) json['updateMask'] = updateMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'SiteServiceV1UpdateSiteRequest(allowMissing: $allowMissing, data: $data, id: $id, updateMask: $updateMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is SiteServiceV1UpdateSiteRequest &&
+      runtimeType == other.runtimeType
+      && allowMissing == other.allowMissing
+      && data == other.data
+      && id == other.id
+      && updateMask == other.updateMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    allowMissing,
+    data,
+    id,
+    updateMask,
+  ]);
+
+  SiteServiceV1UpdateSiteRequest copyWith({
+    bool? allowMissing,
+    SiteServiceV1Site? data,
+    int? id,
+    String? updateMask,
+  }) {
+    return SiteServiceV1UpdateSiteRequest(
+      allowMissing: allowMissing ?? this.allowMissing,
+      data: data ?? this.data,
+      id: id ?? this.id,
+      updateMask: updateMask ?? this.updateMask,
+    );
+  }
+}
+
+/// 请求 - 删除站点
+class SiteServiceV1DeleteSiteRequest {
+  int? id;
+
+  SiteServiceV1DeleteSiteRequest({
+    this.id,
+  });
+
+  factory SiteServiceV1DeleteSiteRequest.fromJson(Map<String, dynamic> json) {
+    return SiteServiceV1DeleteSiteRequest(
+      id: json['id'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'SiteServiceV1DeleteSiteRequest(id: $id)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is SiteServiceV1DeleteSiteRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+  ]);
+
+  SiteServiceV1DeleteSiteRequest copyWith({
+    int? id,
+  }) {
+    return SiteServiceV1DeleteSiteRequest(
+      id: id ?? this.id,
+    );
+  }
+}
+
 /// 标签服务
 class TagServiceClient {
   final ClientTransport _transport;
@@ -8127,27 +8725,6 @@ class UserProfileServiceClient {
     return result as Map<String, dynamic>;
   }
 
-  /// 上传头像
-  Future<IdentityServiceV1UploadAvatarResponse> uploadAvatar(IdentityServiceV1UploadAvatarRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/me/avatar';
-    final body = jsonEncode(request.toJson());
-    final result = await _transport.unary(path, 'POST', body, TransportMeta(
-      service: 'UserProfileService',
-      method: 'UploadAvatar',
-    ), headers: headers);
-    return IdentityServiceV1UploadAvatarResponse.fromJson(result as Map<String, dynamic>);
-  }
-
-  /// 删除头像
-  Future<Map<String, dynamic>> deleteAvatar(Map<String, dynamic> _request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/me/avatar';
-    final result = await _transport.unary(path, 'DELETE', null, TransportMeta(
-      service: 'UserProfileService',
-      method: 'DeleteAvatar',
-    ), headers: headers);
-    return result as Map<String, dynamic>;
-  }
-
   /// 绑定手机号码/邮箱
   Future<Map<String, dynamic>> bindContact(IdentityServiceV1BindContactRequest request, {Map<String, String>? headers}) async {
     final path = '/app/v1/me/contact';
@@ -8715,106 +9292,6 @@ class IdentityServiceV1ChangePasswordRequest {
   }
 }
 
-class IdentityServiceV1UploadAvatarRequest {
-  String? imageBase64;
-  String? imageUrl;
-
-  IdentityServiceV1UploadAvatarRequest({
-    this.imageBase64,
-    this.imageUrl,
-  });
-
-  factory IdentityServiceV1UploadAvatarRequest.fromJson(Map<String, dynamic> json) {
-    return IdentityServiceV1UploadAvatarRequest(
-      imageBase64: json['imageBase64'] as String?,
-      imageUrl: json['imageUrl'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (imageBase64 != null) json['imageBase64'] = imageBase64;
-    if (imageUrl != null) json['imageUrl'] = imageUrl;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'IdentityServiceV1UploadAvatarRequest(imageBase64: $imageBase64, imageUrl: $imageUrl)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is IdentityServiceV1UploadAvatarRequest &&
-      runtimeType == other.runtimeType
-      && imageBase64 == other.imageBase64
-      && imageUrl == other.imageUrl
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    imageBase64,
-    imageUrl,
-  ]);
-
-  IdentityServiceV1UploadAvatarRequest copyWith({
-    String? imageBase64,
-    String? imageUrl,
-  }) {
-    return IdentityServiceV1UploadAvatarRequest(
-      imageBase64: imageBase64 ?? this.imageBase64,
-      imageUrl: imageUrl ?? this.imageUrl,
-    );
-  }
-}
-
-class IdentityServiceV1UploadAvatarResponse {
-  String? url;
-
-  IdentityServiceV1UploadAvatarResponse({
-    this.url,
-  });
-
-  factory IdentityServiceV1UploadAvatarResponse.fromJson(Map<String, dynamic> json) {
-    return IdentityServiceV1UploadAvatarResponse(
-      url: json['url'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (url != null) json['url'] = url;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'IdentityServiceV1UploadAvatarResponse(url: $url)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is IdentityServiceV1UploadAvatarResponse &&
-      runtimeType == other.runtimeType
-      && url == other.url
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    url,
-  ]);
-
-  IdentityServiceV1UploadAvatarResponse copyWith({
-    String? url,
-  }) {
-    return IdentityServiceV1UploadAvatarResponse(
-      url: url ?? this.url,
-    );
-  }
-}
-
 class IdentityServiceV1BindContactRequest {
   IdentityServiceV1BindEmailRequest? email;
   IdentityServiceV1BindPhoneRequest? phone;
@@ -9166,6 +9643,7 @@ class ApiClient {
   PageServiceClient? _pageService;
   PostServiceClient? _postService;
   SectionServiceClient? _sectionService;
+  SiteServiceClient? _siteService;
   TagServiceClient? _tagService;
   UserProfileServiceClient? _userProfileService;
 
@@ -9216,6 +9694,11 @@ class ApiClient {
     return _sectionService!;
   }
 
+  SiteServiceClient get siteService {
+    _siteService ??= SiteServiceClient(_transport);
+    return _siteService!;
+  }
+
   TagServiceClient get tagService {
     _tagService ??= TagServiceClient(_transport);
     return _tagService!;
@@ -9237,6 +9720,7 @@ class ApiClient {
     _pageService = null;
     _postService = null;
     _sectionService = null;
+    _siteService = null;
     _tagService = null;
     _userProfileService = null;
   }

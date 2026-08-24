@@ -182,6 +182,7 @@ var (
 		{Name: "direct_post_count", Type: field.TypeUint32, Nullable: true, Comment: "该分类下的直接文章数", Default: 0},
 		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "分类层级深度", Default: 0},
 		{Name: "custom_fields", Type: field.TypeJSON, Nullable: true, Comment: "自定义字段"},
+		{Name: "content_model_id", Type: field.TypeUint32, Nullable: true, Comment: "绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）"},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
 	}
 	// CategoriesTable holds the schema information for the "categories" table.
@@ -193,7 +194,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "categories_categories_children",
-				Columns:    []*schema.Column{CategoriesColumns[18]},
+				Columns:    []*schema.Column{CategoriesColumns[19]},
 				RefColumns: []*schema.Column{CategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -212,7 +213,7 @@ var (
 			{
 				Name:    "category_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{CategoriesColumns[18]},
+				Columns: []*schema.Column{CategoriesColumns[19]},
 			},
 		},
 	}
@@ -361,6 +362,68 @@ var (
 				Name:    "commentlike_tenant_id_user_id_comment_id",
 				Unique:  true,
 				Columns: []*schema.Column{CommentLikesColumns[4], CommentLikesColumns[5], CommentLikesColumns[6]},
+			},
+		},
+	}
+	// ContentModelsColumns holds the columns for the "content_models" table.
+	ContentModelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "模型名称（语言无关，后端标识）"},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "模型编码，租户内唯一"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "模型描述（语言无关）"},
+	}
+	// ContentModelsTable holds the schema information for the "content_models" table.
+	ContentModelsTable = &schema.Table{
+		Name:       "content_models",
+		Comment:    "内容模型表",
+		Columns:    ContentModelsColumns,
+		PrimaryKey: []*schema.Column{ContentModelsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_content_model_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{ContentModelsColumns[8], ContentModelsColumns[10]},
+			},
+		},
+	}
+	// ContentModelTranslationsColumns holds the columns for the "content_model_translations" table.
+	ContentModelTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "content_model_id", Type: field.TypeUint32, Nullable: true, Comment: "内容模型ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码（BCP 47，如 zh-CN）"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "翻译后模型名称"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "翻译后模型描述"},
+	}
+	// ContentModelTranslationsTable holds the schema information for the "content_model_translations" table.
+	ContentModelTranslationsTable = &schema.Table{
+		Name:       "content_model_translations",
+		Comment:    "内容模型翻译表",
+		Columns:    ContentModelTranslationsColumns,
+		PrimaryKey: []*schema.Column{ContentModelTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_content_model_translation_model_lang",
+				Unique:  true,
+				Columns: []*schema.Column{ContentModelTranslationsColumns[7], ContentModelTranslationsColumns[8]},
+			},
+			{
+				Name:    "contentmodeltranslation_content_model_id",
+				Unique:  false,
+				Columns: []*schema.Column{ContentModelTranslationsColumns[7]},
 			},
 		},
 	}
@@ -623,6 +686,81 @@ var (
 			},
 		},
 	}
+	// FieldDefinitionsColumns holds the columns for the "field_definitions" table.
+	FieldDefinitionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "content_model_id", Type: field.TypeUint32, Nullable: true, Comment: "所属内容模型ID"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "字段名（语言无关，作为 custom_fields 的键）"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "字段类型", Enums: []string{"FIELD_TYPE_TEXT", "FIELD_TYPE_NUMBER", "FIELD_TYPE_RICHTEXT", "FIELD_TYPE_IMAGE", "FIELD_TYPE_FILE", "FIELD_TYPE_RELATION"}, Default: "FIELD_TYPE_TEXT"},
+		{Name: "label", Type: field.TypeString, Nullable: true, Comment: "字段标签（默认语言）"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "字段描述（默认语言）"},
+		{Name: "placeholder", Type: field.TypeString, Nullable: true, Comment: "输入框占位符（默认语言）"},
+		{Name: "is_required", Type: field.TypeBool, Nullable: true, Comment: "是否必填", Default: false},
+		{Name: "validation_regex", Type: field.TypeString, Nullable: true, Comment: "校验正则（仅 text 类适用）"},
+		{Name: "options", Type: field.TypeJSON, Nullable: true, Comment: "扩展选项（select 类等，预留）"},
+		{Name: "relation_config", Type: field.TypeJSON, Nullable: true, Comment: "relation 类型字段的引用配置（仅 FIELD_TYPE_RELATION 适用）"},
+	}
+	// FieldDefinitionsTable holds the schema information for the "field_definitions" table.
+	FieldDefinitionsTable = &schema.Table{
+		Name:       "field_definitions",
+		Comment:    "字段定义表",
+		Columns:    FieldDefinitionsColumns,
+		PrimaryKey: []*schema.Column{FieldDefinitionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_field_definition_model_name",
+				Unique:  true,
+				Columns: []*schema.Column{FieldDefinitionsColumns[9], FieldDefinitionsColumns[10]},
+			},
+			{
+				Name:    "fielddefinition_content_model_id",
+				Unique:  false,
+				Columns: []*schema.Column{FieldDefinitionsColumns[9]},
+			},
+		},
+	}
+	// FieldDefinitionTranslationsColumns holds the columns for the "field_definition_translations" table.
+	FieldDefinitionTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "field_definition_id", Type: field.TypeUint32, Nullable: true, Comment: "字段定义ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码（BCP 47，如 zh-CN）"},
+		{Name: "label", Type: field.TypeString, Nullable: true, Comment: "翻译后字段标签"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "翻译后字段描述"},
+		{Name: "placeholder", Type: field.TypeString, Nullable: true, Comment: "翻译后占位符"},
+	}
+	// FieldDefinitionTranslationsTable holds the schema information for the "field_definition_translations" table.
+	FieldDefinitionTranslationsTable = &schema.Table{
+		Name:       "field_definition_translations",
+		Comment:    "字段定义翻译表",
+		Columns:    FieldDefinitionTranslationsColumns,
+		PrimaryKey: []*schema.Column{FieldDefinitionTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_field_definition_translation_field_lang",
+				Unique:  true,
+				Columns: []*schema.Column{FieldDefinitionTranslationsColumns[7], FieldDefinitionTranslationsColumns[8]},
+			},
+			{
+				Name:    "fielddefinitiontranslation_field_definition_id",
+				Unique:  false,
+				Columns: []*schema.Column{FieldDefinitionTranslationsColumns[7]},
+			},
+		},
+	}
 	// FilesColumns holds the columns for the "files" table.
 	FilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -788,11 +926,14 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "名称"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "编码"},
 		{Name: "icon_url", Type: field.TypeString, Nullable: true, Comment: "图标URL"},
+		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "分类层级深度", Default: 0},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
 	}
 	// InternalMessageCategoriesTable holds the schema information for the "internal_message_categories" table.
 	InternalMessageCategoriesTable = &schema.Table{
@@ -800,31 +941,44 @@ var (
 		Comment:    "站内信消息分类表",
 		Columns:    InternalMessageCategoriesColumns,
 		PrimaryKey: []*schema.Column{InternalMessageCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "internal_message_categories_internal_message_categories_children",
+				Columns:    []*schema.Column{InternalMessageCategoriesColumns[16]},
+				RefColumns: []*schema.Column{InternalMessageCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "idx_internal_msg_cat_tenant_code",
 				Unique:  true,
-				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[12]},
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[11], InternalMessageCategoriesColumns[13]},
 			},
 			{
 				Name:    "idx_internal_msg_cat_tenant_name",
 				Unique:  false,
-				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[11]},
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[11], InternalMessageCategoriesColumns[12]},
 			},
 			{
 				Name:    "idx_internal_msg_cat_tenant_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[7]},
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[11], InternalMessageCategoriesColumns[7]},
 			},
 			{
 				Name:    "idx_internal_msg_cat_tenant_created_at",
 				Unique:  false,
-				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[1]},
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[11], InternalMessageCategoriesColumns[1]},
 			},
 			{
 				Name:    "idx_internal_msg_cat_tenant_created_by",
 				Unique:  false,
-				Columns: []*schema.Column{InternalMessageCategoriesColumns[10], InternalMessageCategoriesColumns[4]},
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[11], InternalMessageCategoriesColumns[4]},
+			},
+			{
+				Name:    "internalmessagecategory_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{InternalMessageCategoriesColumns[16]},
 			},
 		},
 	}
@@ -2048,6 +2202,7 @@ var (
 		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "页面模板名称"},
 		{Name: "is_custom_template", Type: field.TypeBool, Nullable: true, Comment: "是否使用自定义模板代码", Default: false},
 		{Name: "custom_fields", Type: field.TypeJSON, Nullable: true, Comment: "自定义字段"},
+		{Name: "content_model_id", Type: field.TypeUint32, Nullable: true, Comment: "绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）"},
 		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "页面层级深度", Default: 0},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
 	}
@@ -2060,7 +2215,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pages_pages_children",
-				Columns:    []*schema.Column{PagesColumns[23]},
+				Columns:    []*schema.Column{PagesColumns[24]},
 				RefColumns: []*schema.Column{PagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2094,7 +2249,7 @@ var (
 			{
 				Name:    "page_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[23]},
+				Columns: []*schema.Column{PagesColumns[24]},
 			},
 			{
 				Name:    "page_disallow_comment",
@@ -3980,10 +4135,14 @@ var (
 		CategoryTranslationsTable,
 		CommentsTable,
 		CommentLikesTable,
+		ContentModelsTable,
+		ContentModelTranslationsTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
 		SysDictTypesTable,
+		FieldDefinitionsTable,
+		FieldDefinitionTranslationsTable,
 		FilesTable,
 		InteractionCountersTable,
 		InternalMessagesTable,
@@ -4071,6 +4230,16 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	ContentModelsTable.Annotation = &entsql.Annotation{
+		Table:     "content_models",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	ContentModelTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "content_model_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysDataAccessAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_data_access_audit_logs",
 		Charset:   "utf8mb4",
@@ -4093,6 +4262,16 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	FieldDefinitionsTable.Annotation = &entsql.Annotation{
+		Table:     "field_definitions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FieldDefinitionTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "field_definition_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	FilesTable.Annotation = &entsql.Annotation{
 		Table:     "files",
 		Charset:   "utf8mb4",
@@ -4108,6 +4287,7 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	InternalMessageCategoriesTable.ForeignKeys[0].RefTable = InternalMessageCategoriesTable
 	InternalMessageCategoriesTable.Annotation = &entsql.Annotation{
 		Table:     "internal_message_categories",
 		Charset:   "utf8mb4",

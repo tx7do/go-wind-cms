@@ -3,8 +3,11 @@ import type {
   taskservicev1_ControlTaskRequest,
   taskservicev1_DeleteTaskRequest,
   taskservicev1_GetTaskRequest,
+  taskservicev1_ListTaskExecutionsRequest,
+  taskservicev1_ListTaskExecutionsResponse,
   taskservicev1_ListTaskResponse,
   taskservicev1_Task,
+  taskservicev1_TaskExecution,
 } from '#/api/generated/admin/service/v1';
 
 import { computed } from 'vue';
@@ -160,6 +163,55 @@ export function useRestartAllTasks(
     ...options,
   });
 }
+
+// ==============================
+// 任务执行记录
+// ==============================
+
+/** 查询任务执行记录（近期完成/失败/进行中实例，来自 asynq Inspector） */
+export async function fetchListTaskExecutions(
+  req: taskservicev1_ListTaskExecutionsRequest,
+) {
+  return queryClient.fetchQuery({
+    queryKey: ['listTaskExecutions', req],
+    queryFn: () => apiClient.taskService.ListTaskExecutions(req),
+    staleTime: 0,
+    retry: 0,
+  }) as Promise<taskservicev1_ListTaskExecutionsResponse>;
+}
+
+/** 执行实例状态展示名 */
+export function taskExecutionStateToName(state?: string) {
+  if (!state) return '';
+  return state.charAt(0).toUpperCase() + state.slice(1);
+}
+
+/** 执行实例状态标签色 */
+export function taskExecutionStateToColor(state?: string) {
+  switch (state) {
+    case 'completed': {
+      return 'green';
+    }
+    case 'active': {
+      return 'blue';
+    }
+    case 'pending':
+    case 'scheduled': {
+      return 'orange';
+    }
+    case 'retry': {
+      return 'gold';
+    }
+    case 'archived': {
+      return 'red';
+    }
+    default: {
+      return 'gray';
+    }
+  }
+}
+
+export type { taskservicev1_TaskExecution };
 
 // ==============================
 // 任务枚举与工具函数

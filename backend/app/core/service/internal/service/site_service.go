@@ -35,6 +35,10 @@ func (s *SiteService) Get(ctx context.Context, req *siteV1.GetSiteRequest) (*sit
 	return s.siteSettingRepo.Get(ctx, req)
 }
 
+func (s *SiteService) GetSiteByDomain(ctx context.Context, req *siteV1.GetSiteByDomainRequest) (*siteV1.Site, error) {
+	return s.siteSettingRepo.GetByDomain(ctx, req)
+}
+
 func (s *SiteService) Create(ctx context.Context, req *siteV1.CreateSiteRequest) (*siteV1.Site, error) {
 	return s.siteSettingRepo.Create(ctx, req)
 }

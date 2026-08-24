@@ -29,21 +29,25 @@ const (
 
 // 站内信消息分类
 type InternalMessageCategory struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                   // 分类ID
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                // 名称
-	Code          *string                `protobuf:"bytes,3,opt,name=code,proto3,oneof" json:"code,omitempty"`                                // 编码
-	IconUrl       *string                `protobuf:"bytes,4,opt,name=icon_url,json=iconUrl,proto3,oneof" json:"icon_url,omitempty"`           // 图标URL
-	SortOrder     *uint32                `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`    // 排序顺序，值越小越靠前
-	IsEnabled     *bool                  `protobuf:"varint,6,opt,name=is_enabled,json=isEnabled,proto3,oneof" json:"is_enabled,omitempty"`    // 是否启用
-	TenantId      *uint32                `protobuf:"varint,40,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`      // 租户ID，0代表系统全局角色
-	TenantName    *string                `protobuf:"bytes,41,opt,name=tenant_name,json=tenantName,proto3,oneof" json:"tenant_name,omitempty"` // 租户名称
-	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`  // 创建者用户ID
-	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`  // 更新者用户ID
-	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`  // 删除者用户ID
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`   // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`   // 更新时间
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`   // 删除时间
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Id            *uint32                    `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                   // 分类ID
+	Name          *string                    `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                // 名称
+	Code          *string                    `protobuf:"bytes,3,opt,name=code,proto3,oneof" json:"code,omitempty"`                                // 编码
+	IconUrl       *string                    `protobuf:"bytes,4,opt,name=icon_url,json=iconUrl,proto3,oneof" json:"icon_url,omitempty"`           // 图标URL
+	SortOrder     *uint32                    `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`    // 排序顺序，值越小越靠前
+	IsEnabled     *bool                      `protobuf:"varint,6,opt,name=is_enabled,json=isEnabled,proto3,oneof" json:"is_enabled,omitempty"`    // 是否启用
+	ParentId      *uint32                    `protobuf:"varint,60,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`      // 父节点ID
+	Children      []*InternalMessageCategory `protobuf:"bytes,61,rep,name=children,proto3" json:"children,omitempty"`                             // 子节点树
+	Depth         *int32                     `protobuf:"varint,62,opt,name=depth,proto3,oneof" json:"depth,omitempty"`                            // 分类层级深度（0=顶级，1=二级，以此类推）
+	Path          *string                    `protobuf:"bytes,63,opt,name=path,proto3,oneof" json:"path,omitempty"`                               // 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
+	TenantId      *uint32                    `protobuf:"varint,40,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`      // 租户ID，0代表系统全局角色
+	TenantName    *string                    `protobuf:"bytes,41,opt,name=tenant_name,json=tenantName,proto3,oneof" json:"tenant_name,omitempty"` // 租户名称
+	CreatedBy     *uint32                    `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`  // 创建者用户ID
+	UpdatedBy     *uint32                    `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`  // 更新者用户ID
+	DeletedBy     *uint32                    `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`  // 删除者用户ID
+	CreatedAt     *timestamppb.Timestamp     `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`   // 创建时间
+	UpdatedAt     *timestamppb.Timestamp     `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`   // 更新时间
+	DeletedAt     *timestamppb.Timestamp     `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`   // 删除时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -118,6 +122,34 @@ func (x *InternalMessageCategory) GetIsEnabled() bool {
 		return *x.IsEnabled
 	}
 	return false
+}
+
+func (x *InternalMessageCategory) GetParentId() uint32 {
+	if x != nil && x.ParentId != nil {
+		return *x.ParentId
+	}
+	return 0
+}
+
+func (x *InternalMessageCategory) GetChildren() []*InternalMessageCategory {
+	if x != nil {
+		return x.Children
+	}
+	return nil
+}
+
+func (x *InternalMessageCategory) GetDepth() int32 {
+	if x != nil && x.Depth != nil {
+		return *x.Depth
+	}
+	return 0
+}
+
+func (x *InternalMessageCategory) GetPath() string {
+	if x != nil && x.Path != nil {
+		return *x.Path
+	}
+	return ""
 }
 
 func (x *InternalMessageCategory) GetTenantId() uint32 {
@@ -533,7 +565,7 @@ var File_internal_message_service_v1_internal_message_category_proto protoreflec
 
 const file_internal_message_service_v1_internal_message_category_proto_rawDesc = "" +
 	"\n" +
-	";internal_message/service/v1/internal_message_category.proto\x12\x1binternal_message.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xbc\b\n" +
+	";internal_message/service/v1/internal_message_category.proto\x12\x1binternal_message.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xbd\v\n" +
 	"\x17InternalMessageCategory\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b分类IDH\x00R\x02id\x88\x01\x01\x12%\n" +
 	"\x04name\x18\x02 \x01(\tB\f\xbaG\t\x92\x02\x06名称H\x01R\x04name\x88\x01\x01\x12%\n" +
@@ -542,29 +574,37 @@ const file_internal_message_service_v1_internal_message_category_proto_rawDesc =
 	"\n" +
 	"sort_order\x18\x05 \x01(\rB'\xbaG$\x92\x02!排序顺序，值越小越靠前H\x04R\tsortOrder\x88\x01\x01\x126\n" +
 	"\n" +
-	"is_enabled\x18\x06 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x05R\tisEnabled\x88\x01\x01\x12L\n" +
-	"\ttenant_id\x18( \x01(\rB*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x06R\btenantId\x88\x01\x01\x128\n" +
-	"\vtenant_name\x18) \x01(\tB\x12\xbaG\x0f\x92\x02\f租户名称H\aR\n" +
+	"is_enabled\x18\x06 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x05R\tisEnabled\x88\x01\x01\x123\n" +
+	"\tparent_id\x18< \x01(\rB\x11\xbaG\x0e\x92\x02\v父节点IDH\x06R\bparentId\x88\x01\x01\x12d\n" +
+	"\bchildren\x18= \x03(\v24.internal_message.service.v1.InternalMessageCategoryB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12[\n" +
+	"\x05depth\x18> \x01(\x05B@\xbaG=\x92\x02:分类层级深度（0=顶级，1=二级，以此类推）H\aR\x05depth\x88\x01\x01\x12f\n" +
+	"\x04path\x18? \x01(\tBM\xbaGJ\x92\x02G物化路径（Materialized Path），如 '1/5/23'，便于层级查询H\bR\x04path\x88\x01\x01\x12L\n" +
+	"\ttenant_id\x18( \x01(\rB*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\tR\btenantId\x88\x01\x01\x128\n" +
+	"\vtenant_name\x18) \x01(\tB\x12\xbaG\x0f\x92\x02\f租户名称H\n" +
+	"R\n" +
 	"tenantName\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
-	"R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\vR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\rR\tdeletedAt\x88\x01\x01B\x05\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\a\n" +
 	"\x05_codeB\v\n" +
 	"\t_icon_urlB\r\n" +
 	"\v_sort_orderB\r\n" +
 	"\v_is_enabledB\f\n" +
+	"\n" +
+	"_parent_idB\b\n" +
+	"\x06_depthB\a\n" +
+	"\x05_pathB\f\n" +
 	"\n" +
 	"_tenant_idB\x0e\n" +
 	"\f_tenant_nameB\r\n" +
@@ -637,31 +677,32 @@ var file_internal_message_service_v1_internal_message_category_proto_goTypes = [
 	(*emptypb.Empty)(nil),                        // 10: google.protobuf.Empty
 }
 var file_internal_message_service_v1_internal_message_category_proto_depIdxs = []int32{
-	7,  // 0: internal_message.service.v1.InternalMessageCategory.created_at:type_name -> google.protobuf.Timestamp
-	7,  // 1: internal_message.service.v1.InternalMessageCategory.updated_at:type_name -> google.protobuf.Timestamp
-	7,  // 2: internal_message.service.v1.InternalMessageCategory.deleted_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: internal_message.service.v1.ListInternalMessageCategoryResponse.items:type_name -> internal_message.service.v1.InternalMessageCategory
-	8,  // 4: internal_message.service.v1.GetInternalMessageCategoryRequest.view_mask:type_name -> google.protobuf.FieldMask
-	0,  // 5: internal_message.service.v1.CreateInternalMessageCategoryRequest.data:type_name -> internal_message.service.v1.InternalMessageCategory
-	0,  // 6: internal_message.service.v1.UpdateInternalMessageCategoryRequest.data:type_name -> internal_message.service.v1.InternalMessageCategory
-	8,  // 7: internal_message.service.v1.UpdateInternalMessageCategoryRequest.update_mask:type_name -> google.protobuf.FieldMask
-	9,  // 8: internal_message.service.v1.InternalMessageCategoryService.List:input_type -> pagination.PagingRequest
-	9,  // 9: internal_message.service.v1.InternalMessageCategoryService.Count:input_type -> pagination.PagingRequest
-	2,  // 10: internal_message.service.v1.InternalMessageCategoryService.Get:input_type -> internal_message.service.v1.GetInternalMessageCategoryRequest
-	3,  // 11: internal_message.service.v1.InternalMessageCategoryService.Create:input_type -> internal_message.service.v1.CreateInternalMessageCategoryRequest
-	4,  // 12: internal_message.service.v1.InternalMessageCategoryService.Update:input_type -> internal_message.service.v1.UpdateInternalMessageCategoryRequest
-	5,  // 13: internal_message.service.v1.InternalMessageCategoryService.Delete:input_type -> internal_message.service.v1.DeleteInternalMessageCategoryRequest
-	1,  // 14: internal_message.service.v1.InternalMessageCategoryService.List:output_type -> internal_message.service.v1.ListInternalMessageCategoryResponse
-	6,  // 15: internal_message.service.v1.InternalMessageCategoryService.Count:output_type -> internal_message.service.v1.CountInternalMessageCategoryResponse
-	0,  // 16: internal_message.service.v1.InternalMessageCategoryService.Get:output_type -> internal_message.service.v1.InternalMessageCategory
-	10, // 17: internal_message.service.v1.InternalMessageCategoryService.Create:output_type -> google.protobuf.Empty
-	10, // 18: internal_message.service.v1.InternalMessageCategoryService.Update:output_type -> google.protobuf.Empty
-	10, // 19: internal_message.service.v1.InternalMessageCategoryService.Delete:output_type -> google.protobuf.Empty
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	0,  // 0: internal_message.service.v1.InternalMessageCategory.children:type_name -> internal_message.service.v1.InternalMessageCategory
+	7,  // 1: internal_message.service.v1.InternalMessageCategory.created_at:type_name -> google.protobuf.Timestamp
+	7,  // 2: internal_message.service.v1.InternalMessageCategory.updated_at:type_name -> google.protobuf.Timestamp
+	7,  // 3: internal_message.service.v1.InternalMessageCategory.deleted_at:type_name -> google.protobuf.Timestamp
+	0,  // 4: internal_message.service.v1.ListInternalMessageCategoryResponse.items:type_name -> internal_message.service.v1.InternalMessageCategory
+	8,  // 5: internal_message.service.v1.GetInternalMessageCategoryRequest.view_mask:type_name -> google.protobuf.FieldMask
+	0,  // 6: internal_message.service.v1.CreateInternalMessageCategoryRequest.data:type_name -> internal_message.service.v1.InternalMessageCategory
+	0,  // 7: internal_message.service.v1.UpdateInternalMessageCategoryRequest.data:type_name -> internal_message.service.v1.InternalMessageCategory
+	8,  // 8: internal_message.service.v1.UpdateInternalMessageCategoryRequest.update_mask:type_name -> google.protobuf.FieldMask
+	9,  // 9: internal_message.service.v1.InternalMessageCategoryService.List:input_type -> pagination.PagingRequest
+	9,  // 10: internal_message.service.v1.InternalMessageCategoryService.Count:input_type -> pagination.PagingRequest
+	2,  // 11: internal_message.service.v1.InternalMessageCategoryService.Get:input_type -> internal_message.service.v1.GetInternalMessageCategoryRequest
+	3,  // 12: internal_message.service.v1.InternalMessageCategoryService.Create:input_type -> internal_message.service.v1.CreateInternalMessageCategoryRequest
+	4,  // 13: internal_message.service.v1.InternalMessageCategoryService.Update:input_type -> internal_message.service.v1.UpdateInternalMessageCategoryRequest
+	5,  // 14: internal_message.service.v1.InternalMessageCategoryService.Delete:input_type -> internal_message.service.v1.DeleteInternalMessageCategoryRequest
+	1,  // 15: internal_message.service.v1.InternalMessageCategoryService.List:output_type -> internal_message.service.v1.ListInternalMessageCategoryResponse
+	6,  // 16: internal_message.service.v1.InternalMessageCategoryService.Count:output_type -> internal_message.service.v1.CountInternalMessageCategoryResponse
+	0,  // 17: internal_message.service.v1.InternalMessageCategoryService.Get:output_type -> internal_message.service.v1.InternalMessageCategory
+	10, // 18: internal_message.service.v1.InternalMessageCategoryService.Create:output_type -> google.protobuf.Empty
+	10, // 19: internal_message.service.v1.InternalMessageCategoryService.Update:output_type -> google.protobuf.Empty
+	10, // 20: internal_message.service.v1.InternalMessageCategoryService.Delete:output_type -> google.protobuf.Empty
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_internal_message_service_v1_internal_message_category_proto_init() }

@@ -21,17 +21,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TaskService_List_FullMethodName             = "/task.service.v1.TaskService/List"
-	TaskService_Count_FullMethodName            = "/task.service.v1.TaskService/Count"
-	TaskService_Get_FullMethodName              = "/task.service.v1.TaskService/Get"
-	TaskService_Create_FullMethodName           = "/task.service.v1.TaskService/Create"
-	TaskService_Update_FullMethodName           = "/task.service.v1.TaskService/Update"
-	TaskService_Delete_FullMethodName           = "/task.service.v1.TaskService/Delete"
-	TaskService_ListTaskTypeName_FullMethodName = "/task.service.v1.TaskService/ListTaskTypeName"
-	TaskService_RestartAllTask_FullMethodName   = "/task.service.v1.TaskService/RestartAllTask"
-	TaskService_StartAllTask_FullMethodName     = "/task.service.v1.TaskService/StartAllTask"
-	TaskService_StopAllTask_FullMethodName      = "/task.service.v1.TaskService/StopAllTask"
-	TaskService_ControlTask_FullMethodName      = "/task.service.v1.TaskService/ControlTask"
+	TaskService_List_FullMethodName               = "/task.service.v1.TaskService/List"
+	TaskService_Count_FullMethodName              = "/task.service.v1.TaskService/Count"
+	TaskService_Get_FullMethodName                = "/task.service.v1.TaskService/Get"
+	TaskService_Create_FullMethodName             = "/task.service.v1.TaskService/Create"
+	TaskService_Update_FullMethodName             = "/task.service.v1.TaskService/Update"
+	TaskService_Delete_FullMethodName             = "/task.service.v1.TaskService/Delete"
+	TaskService_ListTaskTypeName_FullMethodName   = "/task.service.v1.TaskService/ListTaskTypeName"
+	TaskService_RestartAllTask_FullMethodName     = "/task.service.v1.TaskService/RestartAllTask"
+	TaskService_StartAllTask_FullMethodName       = "/task.service.v1.TaskService/StartAllTask"
+	TaskService_StopAllTask_FullMethodName        = "/task.service.v1.TaskService/StopAllTask"
+	TaskService_ControlTask_FullMethodName        = "/task.service.v1.TaskService/ControlTask"
+	TaskService_ListTaskExecutions_FullMethodName = "/task.service.v1.TaskService/ListTaskExecutions"
 )
 
 // TaskServiceClient is the client API for TaskService service.
@@ -62,6 +63,8 @@ type TaskServiceClient interface {
 	StopAllTask(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 控制调度任务
 	ControlTask(ctx context.Context, in *ControlTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 查询任务执行记录（近期的完成/失败/进行中实例，来自 asynq Inspector）
+	ListTaskExecutions(ctx context.Context, in *ListTaskExecutionsRequest, opts ...grpc.CallOption) (*ListTaskExecutionsResponse, error)
 }
 
 type taskServiceClient struct {
@@ -182,6 +185,16 @@ func (c *taskServiceClient) ControlTask(ctx context.Context, in *ControlTaskRequ
 	return out, nil
 }
 
+func (c *taskServiceClient) ListTaskExecutions(ctx context.Context, in *ListTaskExecutionsRequest, opts ...grpc.CallOption) (*ListTaskExecutionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTaskExecutionsResponse)
+	err := c.cc.Invoke(ctx, TaskService_ListTaskExecutions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServiceServer is the server API for TaskService service.
 // All implementations must embed UnimplementedTaskServiceServer
 // for forward compatibility.
@@ -210,6 +223,8 @@ type TaskServiceServer interface {
 	StopAllTask(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 控制调度任务
 	ControlTask(context.Context, *ControlTaskRequest) (*emptypb.Empty, error)
+	// 查询任务执行记录（近期的完成/失败/进行中实例，来自 asynq Inspector）
+	ListTaskExecutions(context.Context, *ListTaskExecutionsRequest) (*ListTaskExecutionsResponse, error)
 	mustEmbedUnimplementedTaskServiceServer()
 }
 
@@ -252,6 +267,9 @@ func (UnimplementedTaskServiceServer) StopAllTask(context.Context, *emptypb.Empt
 }
 func (UnimplementedTaskServiceServer) ControlTask(context.Context, *ControlTaskRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method ControlTask not implemented")
+}
+func (UnimplementedTaskServiceServer) ListTaskExecutions(context.Context, *ListTaskExecutionsRequest) (*ListTaskExecutionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTaskExecutions not implemented")
 }
 func (UnimplementedTaskServiceServer) mustEmbedUnimplementedTaskServiceServer() {}
 func (UnimplementedTaskServiceServer) testEmbeddedByValue()                     {}
@@ -472,6 +490,24 @@ func _TaskService_ControlTask_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskService_ListTaskExecutions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTaskExecutionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).ListTaskExecutions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_ListTaskExecutions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).ListTaskExecutions(ctx, req.(*ListTaskExecutionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaskService_ServiceDesc is the grpc.ServiceDesc for TaskService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -522,6 +558,10 @@ var TaskService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ControlTask",
 			Handler:    _TaskService_ControlTask_Handler,
+		},
+		{
+			MethodName: "ListTaskExecutions",
+			Handler:    _TaskService_ListTaskExecutions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

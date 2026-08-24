@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/hibiken/asynq"
@@ -11,6 +12,7 @@ import (
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"go-wind-cms/app/core/service/internal/data"
 
@@ -42,6 +44,10 @@ type TaskService struct {
 
 	userRepo data.UserRepo
 	taskRepo *data.TaskRepo
+
+	// asynq Redis URI（与 asynq server 同源），用于懒建只读 Inspector 查执行记录
+	asynqRedisURI string
+	asynqInspector *asynq.Inspector
 }
 
 func NewTaskService(
@@ -55,11 +61,128 @@ func NewTaskService(
 		userRepo: userRepo,
 	}
 
+	if cfg := ctx.GetConfig(); cfg != nil && cfg.Server != nil && cfg.Server.Asynq != nil {
+		svc.asynqRedisURI = cfg.Server.Asynq.GetUri()
+	}
+
 	return svc
 }
 
 func (s *TaskService) RegisterTaskScheduler(taskScheduler TaskScheduler) {
 	s.taskScheduler = taskScheduler
+}
+
+// getAsynqInspector 懒建只读 Inspector（与 worker 同一 Redis，来自 server.yaml 同源配置）。
+func (s *TaskService) getAsynqInspector() (*asynq.Inspector, error) {
+	if s.asynqInspector != nil {
+		return s.asynqInspector, nil
+	}
+	if s.asynqRedisURI == "" {
+		return nil, taskV1.ErrorInternalServerError("asynq redis uri is not configured")
+	}
+	connOpt, err := asynq.ParseRedisURI(s.asynqRedisURI)
+	if err != nil {
+		s.log.Errorf("parse asynq redis uri failed: %s", err.Error())
+		return nil, taskV1.ErrorInternalServerError("parse asynq redis uri failed")
+	}
+	s.asynqInspector = asynq.NewInspector(connOpt)
+	return s.asynqInspector, nil
+}
+
+// ListTaskExecutions 查询近期的任务执行实例（完成/归档失败/进行中/待处理），
+// 数据来自 asynq Inspector。完成态深度受 retention 约束（默认 24h，见
+// convertTaskOption），归档态由 asynq janitor 保留（约 7 天）。按 type_name
+// 过滤后在内存分页；Inspector 不支持按类型过滤，故每状态拉取分页窗口量再合并。
+func (s *TaskService) ListTaskExecutions(ctx context.Context, req *taskV1.ListTaskExecutionsRequest) (*taskV1.ListTaskExecutionsResponse, error) {
+	inspector, err := s.getAsynqInspector()
+	if err != nil {
+		return nil, err
+	}
+
+	const queue = "default"
+
+	fetchSize := int(req.GetPageSize()) * int(req.GetPage())
+	if fetchSize <= 0 {
+		fetchSize = 30
+	}
+	if fetchSize > 200 {
+		fetchSize = 200
+	}
+	listOpts := []asynq.ListOption{asynq.Page(1), asynq.PageSize(fetchSize)}
+
+	var infos []*asynq.TaskInfo
+	for _, list := range []func(string, ...asynq.ListOption) ([]*asynq.TaskInfo, error){
+		inspector.ListCompletedTasks,
+		inspector.ListArchivedTasks,
+		inspector.ListActiveTasks,
+		inspector.ListPendingTasks,
+	} {
+		items, listErr := list(queue, listOpts...)
+		if listErr != nil {
+			// 单状态查询失败不致命（如队列键尚未创建），跳过继续
+			s.log.Warnf("list asynq tasks (state query) failed: %s", listErr.Error())
+			continue
+		}
+		infos = append(infos, items...)
+	}
+
+	// 按任务类型过滤
+	if typeName := req.GetTypeName(); typeName != "" {
+		filtered := infos[:0]
+		for _, info := range infos {
+			if info.Type == typeName {
+				filtered = append(filtered, info)
+			}
+		}
+		infos = filtered
+	}
+
+	total := uint64(len(infos))
+
+	// 内存分页
+	page := int(req.GetPage())
+	if page <= 0 {
+		page = 1
+	}
+	pageSize := int(req.GetPageSize())
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+	start := (page - 1) * pageSize
+	if start > len(infos) {
+		start = len(infos)
+	}
+	end := start + pageSize
+	if end > len(infos) {
+		end = len(infos)
+	}
+
+	items := make([]*taskV1.TaskExecution, 0, end-start)
+	for _, info := range infos[start:end] {
+		item := &taskV1.TaskExecution{
+			Id:        trans.Ptr(info.ID),
+			TypeName:  trans.Ptr(info.Type),
+			State:     trans.Ptr(info.State.String()),
+			Payload:   trans.Ptr(string(info.Payload)),
+			Retried:   trans.Ptr(uint32(info.Retried)),
+			LastError: trans.Ptr(info.LastErr),
+		}
+		if !info.LastFailedAt.IsZero() {
+			item.LastFailedAt = timestamppb.New(info.LastFailedAt)
+		}
+		if !info.CompletedAt.IsZero() {
+			item.CompletedAt = timestamppb.New(info.CompletedAt)
+		}
+		if !info.NextProcessAt.IsZero() {
+			item.NextProcessAt = timestamppb.New(info.NextProcessAt)
+		}
+		items = append(items, item)
+	}
+
+	return &taskV1.ListTaskExecutionsResponse{
+		Items: items,
+		Total: total,
+	}, nil
 }
 
 func (s *TaskService) List(ctx context.Context, req *paginationV1.PagingRequest) (*taskV1.ListTaskResponse, error) {
@@ -371,6 +494,10 @@ func (s *TaskService) convertTaskOption(t *taskV1.Task) (opts []asynq.Option, pa
 		}
 		if t.GetTaskOptions().Retention != nil {
 			opts = append(opts, asynq.Retention(t.GetTaskOptions().GetRetention().AsDuration()))
+		} else {
+			// 默认保留 24h：无 retention 的完成任务会被 asynq 立即删除，
+			// ListTaskExecutions 的完成态执行记录将无数据可读
+			opts = append(opts, asynq.Retention(24*time.Hour))
 		}
 		if t.GetTaskOptions().Group != nil {
 			opts = append(opts, asynq.Group(t.GetTaskOptions().GetGroup()))

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { h } from 'vue';
+import { h, ref } from 'vue';
 
 import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
 import {
@@ -12,18 +12,22 @@ import {
   LucideTrash2,
 } from '@vben/icons';
 
-import { notification } from 'ant-design-vue';
+import { notification, Table } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   apiClient,
   type taskservicev1_ControlTaskRequest_ControlType as ControlTaskRequest_ControlType,
   enableList,
+  fetchListTaskExecutions,
   fetchListTasks,
   fetchListTaskTypeNames,
   makeUpdateMask,
   PaginationQuery,
   type taskservicev1_Task as Task,
+  type taskservicev1_TaskExecution as TaskExecution,
+  taskExecutionStateToColor,
+  taskExecutionStateToName,
   taskTypeList,
   taskTypeToColor,
   taskTypeToName,
@@ -300,6 +304,49 @@ async function handleDelete(row: any) {
   }
 }
 
+/* 执行记录：查看该任务类型的近期执行实例（asynq Inspector） */
+const execOpen = ref(false);
+const execLoading = ref(false);
+const execRecords = ref<TaskExecution[]>([]);
+const execRow = ref<any>(null);
+
+const execColumns = [
+  { title: $t('page.task.exec.state'), dataIndex: 'state', key: 'state', width: 110 },
+  { title: $t('page.task.exec.retried'), dataIndex: 'retried', key: 'retried', width: 80 },
+  { title: $t('page.task.exec.lastError'), dataIndex: 'lastError', key: 'lastError', ellipsis: true },
+  { title: $t('page.task.exec.completedAt'), dataIndex: 'completedAt', key: 'completedAt', width: 170 },
+  { title: $t('page.task.exec.nextProcessAt'), dataIndex: 'nextProcessAt', key: 'nextProcessAt', width: 170 },
+];
+
+function handleViewExecutions(row: any) {
+  execRow.value = row;
+  execRecords.value = [];
+  execOpen.value = true;
+  loadExecutions();
+}
+
+async function loadExecutions() {
+  const row = execRow.value;
+  if (!row) return;
+
+  execLoading.value = true;
+  try {
+    const resp = await fetchListTaskExecutions({
+      typeName: row.typeName,
+      page: 1,
+      pageSize: 20,
+    });
+    execRecords.value = (resp?.items ?? []) as TaskExecution[];
+  } catch {
+    execRecords.value = [];
+    notification.error({
+      message: $t('page.task.exec.loadFailed'),
+    });
+  } finally {
+    execLoading.value = false;
+  }
+}
+
 /* 修改状态 */
 async function handleEnableChanged(row: any, checked: boolean) {
   console.log('handleStatusChanged', row.enable, checked);
@@ -402,6 +449,13 @@ async function handleEnableChanged(row: any, checked: boolean) {
       <template #action="{ row }">
         <a-button
           type="link"
+          size="small"
+          @click.stop="handleViewExecutions(row)"
+        >
+          {{ $t('page.task.button.executionRecords') }}
+        </a-button>
+        <a-button
+          type="link"
           :icon="h(LucideFilePenLine)"
           @click.stop="handleEdit(row)"
         />
@@ -460,6 +514,43 @@ async function handleEnableChanged(row: any, checked: boolean) {
       </template>
     </Grid>
     <Drawer />
+
+    <!-- 执行记录：近期完成/失败/进行中实例（asynq Inspector，深度受 retention 约束） -->
+    <a-modal
+      v-model:open="execOpen"
+      :title="
+        $t('page.task.button.executionRecords') +
+        ' - ' +
+        (execRow?.typeName ?? '')
+      "
+      :footer="null"
+      width="720px"
+    >
+      <a-button
+        class="mb-2"
+        size="small"
+        :loading="execLoading"
+        @click="loadExecutions"
+      >
+        {{ $t('ui.button.refresh') }}
+      </a-button>
+      <Table
+        :columns="execColumns"
+        :data-source="execRecords"
+        :loading="execLoading"
+        :pagination="{ pageSize: 10 }"
+        row-key="id"
+        size="small"
+      >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'state'">
+            <a-tag :color="taskExecutionStateToColor(record.state)">
+              {{ taskExecutionStateToName(record.state) }}
+            </a-tag>
+          </template>
+        </template>
+      </Table>
+    </a-modal>
   </Page>
 </template>
 

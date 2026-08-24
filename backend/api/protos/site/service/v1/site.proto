@@ -16,6 +16,9 @@ service SiteService {
   // 获取站点数据
   rpc Get (GetSiteRequest) returns (Site) {}
 
+  // 按域名获取站点数据（公开端点：仅返回渲染必需字段，由调用方/BFF 按 Host 填入 domain）
+  rpc GetSiteByDomain (GetSiteByDomainRequest) returns (Site) {}
+
   // 创建站点
   rpc Create (CreateSiteRequest) returns (Site) {}
 
@@ -113,6 +116,18 @@ message ListSiteResponse {
 // 请求 - 站点数据
 message GetSiteRequest {
   uint32 id = 1;
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 请求 - 按域名获取站点数据
+message GetSiteByDomainRequest {
+  string domain = 1;
 
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",

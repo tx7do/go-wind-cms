@@ -96,8 +96,9 @@ export default function StoreProvider({children}: { children: ReactNode }) {
                 accessStore.getState().clearTokens();
                 userStore.getState().clearUser();
 
+                // 401 失效后跳登录页（原跳 user 页只能看到"请登录"文案，无登录入口）
                 if (redirect && typeof Taro !== 'undefined') {
-                    Taro.redirectTo({url: '/pages/user/index'});
+                    Taro.redirectTo({url: '/pages/login/index'});
                 }
             },
 

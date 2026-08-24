@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 import { useTabs } from '@vben/hooks';
-import { LucideArrowLeft } from '@vben/icons';
+import { LucideArrowLeft, LucideSparkles } from '@vben/icons';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
@@ -12,6 +12,7 @@ import { notification } from 'ant-design-vue';
 import { Editor } from '#/adapter/component/Editor';
 import { EditorType } from '#/adapter/component/Editor';
 import {
+  apiClient,
   editorTypeOptions,
   fetchListPages,
   PaginationQuery,
@@ -87,6 +88,23 @@ async function handleLanguageChange(newLang: string) {
   if (sectionEditViewStore.needTranslate) {
     notification.info({
       message: $t('page.page.validation.translationNotExists'),
+    });
+  }
+}
+
+async function handleTranslate() {
+  try {
+    const contentResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: sectionEditViewStore.formData.lang,
+      content: sectionEditViewStore.formData.content,
+    });
+    sectionEditViewStore.formData.content =
+      contentResp.translatedContent || sectionEditViewStore.formData.content;
+  } catch (error) {
+    console.error('Content translation failed:', error);
+    notification.error({
+      message: $t('page.section.validation.translateContentFailed'),
     });
   }
 }
@@ -321,6 +339,17 @@ onMounted(() => {
                 </span>
               </a-select-option>
             </a-select>
+            <a-button
+              v-show="sectionEditViewStore.needTranslate"
+              type="primary"
+              class="translate-btn"
+              @click="handleTranslate"
+            >
+              <template #icon>
+                <LucideSparkles />
+              </template>
+              {{ $t('page.section.button.oneClickTranslate') }}
+            </a-button>
             <a-select
               v-model:value="contentEditorType"
               style="width: 200px"

@@ -48,6 +48,9 @@ service TaskService {
 
   // 控制调度任务
   rpc ControlTask (ControlTaskRequest) returns (google.protobuf.Empty) {}
+
+  // 查询任务执行记录（近期的完成/失败/进行中实例，来自 asynq Inspector）
+  rpc ListTaskExecutions (ListTaskExecutionsRequest) returns (ListTaskExecutionsResponse) {}
 }
 
 // 任务选项
@@ -312,4 +315,66 @@ message ListTaskTypeNameResponse {
 
 message CountTaskResponse {
   uint64 count = 1;
+}
+
+// 任务执行记录（单次任务实例；来源 asynq Inspector，深度受 retention 窗口约束）
+message TaskExecution {
+  optional string id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "任务实例ID"}
+  ]; // 任务实例ID
+
+  optional string type_name = 2 [
+    json_name = "typeName",
+    (gnostic.openapi.v3.property) = {description: "任务执行类型名"}
+  ]; // 任务执行类型名
+
+  optional string state = 3 [
+    json_name = "state",
+    (gnostic.openapi.v3.property) = {description: "实例状态：active/pending/scheduled/retry/archived/completed"}
+  ]; // 实例状态
+
+  optional string payload = 4 [
+    json_name = "payload",
+    (gnostic.openapi.v3.property) = {description: "任务载荷（JSON）"}
+  ]; // 任务载荷
+
+  optional uint32 retried = 5 [
+    json_name = "retried",
+    (gnostic.openapi.v3.property) = {description: "已重试次数"}
+  ]; // 已重试次数
+
+  optional string last_error = 6 [
+    json_name = "lastError",
+    (gnostic.openapi.v3.property) = {description: "最近一次执行错误"}
+  ]; // 最近一次执行错误
+
+  optional google.protobuf.Timestamp last_failed_at = 7 [json_name = "lastFailedAt", (gnostic.openapi.v3.property) = {description: "最近失败时间"}]; // 最近失败时间
+  optional google.protobuf.Timestamp completed_at = 8 [json_name = "completedAt", (gnostic.openapi.v3.property) = {description: "完成时间"}]; // 完成时间
+  optional google.protobuf.Timestamp next_process_at = 9 [json_name = "nextProcessAt", (gnostic.openapi.v3.property) = {description: "下次处理时间"}]; // 下次处理时间
+}
+
+// 查询任务执行记录 - 请求
+message ListTaskExecutionsRequest {
+  optional string type_name = 1 [
+    json_name = "typeName",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "按任务执行类型名过滤（可选，空则返回全部）"}
+  ]; // 按任务执行类型名过滤
+
+  uint32 page = 2 [
+    json_name = "page",
+    (gnostic.openapi.v3.property) = {description: "页码"}
+  ]; // 页码
+
+  uint32 page_size = 3 [
+    json_name = "pageSize",
+    (gnostic.openapi.v3.property) = {description: "每页数量"}
+  ]; // 每页数量
+}
+
+// 查询任务执行记录 - 回应
+message ListTaskExecutionsResponse {
+  repeated TaskExecution items = 1;
+  uint64 total = 2;
 }

@@ -102,6 +102,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	categoryService := service.NewCategoryService(context, categoryServiceClient)
 	tagServiceClient := data.NewTagServiceClient(context, discovery)
 	tagService := service.NewTagService(context, tagServiceClient)
+	contentModelServiceClient := data.NewContentModelServiceClient(context, discovery)
+	contentModelService := service.NewContentModelService(context, contentModelServiceClient)
 	pageServiceClient := data.NewPageServiceClient(context, discovery)
 	pageService := service.NewPageService(context, pageServiceClient)
 	sectionServiceClient := data.NewSectionServiceClient(context, discovery)
@@ -115,7 +117,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	navigationItemServiceClient := data.NewNavigationItemServiceClient(context, discovery)
 	navigationItemService := service.NewNavigationItemService(context, navigationItemServiceClient)
 	mediaAssetService := service.NewMediaAssetService(context, mediaAssetServiceClient)
-	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, authenticationService, loginPolicyService, dictTypeService, dictEntryService, languageService, fileService, fileTransferService, translatorService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService, commentService, interactionAdminService, postService, categoryService, tagService, pageService, sectionService, siteService, siteSettingService, navigationService, navigationItemService, mediaAssetService)
+	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, authenticationService, loginPolicyService, dictTypeService, dictEntryService, languageService, fileService, fileTransferService, translatorService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService, commentService, interactionAdminService, postService, categoryService, tagService, contentModelService, pageService, sectionService, siteService, siteSettingService, navigationService, navigationItemService, mediaAssetService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

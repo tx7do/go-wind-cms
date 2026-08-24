@@ -16,4 +16,6 @@ export interface PageEditProps {
   customHead?: string;
   customFoot?: string;
   sortOrder?: number;
+  contentModelId?: number;
+  customFields?: Record<string, string>;
 }

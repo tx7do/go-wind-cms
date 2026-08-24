@@ -1,0 +1,289 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 内容模型服务：可视化自定义内容模型（一组字段定义的命名集合），
+// 绑定到 Category 后其下的 Post/Page 继承模型字段。
+service ContentModelService {
+  // 查询内容模型列表
+  rpc List (pagination.PagingRequest) returns (ListContentModelResponse) {}
+
+  // 统计内容模型数量
+  rpc Count (pagination.PagingRequest) returns (CountContentModelResponse) {}
+
+  // 查询内容模型详情
+  rpc Get (GetContentModelRequest) returns (ContentModel) {}
+
+  // 创建内容模型
+  rpc Create (CreateContentModelRequest) returns (ContentModel) {}
+
+  // 更新内容模型
+  rpc Update (UpdateContentModelRequest) returns (ContentModel) {}
+
+  // 删除内容模型
+  rpc Delete (DeleteContentModelRequest) returns (google.protobuf.Empty) {}
+
+  // 列出模型下的字段定义（供内容编辑器拉取动态表单 schema）
+  rpc ListFieldDefinitions (ListFieldDefinitionsRequest) returns (ListFieldDefinitionsResponse) {}
+}
+
+// 内容模型
+message ContentModel {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "模型ID"}
+  ]; // 模型ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "模型名称（语言无关，后端标识）"}
+  ]; // 模型名称
+
+  optional string code = 3 [
+    json_name = "code",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "模型编码，租户内唯一"}
+  ]; // 模型编码
+
+  optional string description = 4 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "模型描述（语言无关）"}
+  ]; // 模型描述
+
+  optional uint32 sort_order = 5 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序顺序"}
+  ]; // 排序顺序
+
+  // 字段定义随模型整体读写（Create/Update 时整体替换，对齐 post 的 translations 惯例）
+  repeated FieldDefinition fields = 10 [
+    json_name = "fields",
+    (gnostic.openapi.v3.property) = {description: "字段定义列表"}
+  ]; // 字段定义列表
+
+  repeated ContentModelTranslation translations = 11 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "名称/描述的多语言翻译"}
+  ]; // 翻译列表
+
+  optional uint32 tenant_id = 40 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID"}
+  ]; // 租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+}
+
+// 字段定义
+message FieldDefinition {
+  // 字段类型
+  enum Type {
+    FIELD_TYPE_TEXT = 0;       // 单行文本
+    FIELD_TYPE_NUMBER = 1;     // 数字
+    FIELD_TYPE_RICHTEXT = 2;   // 富文本
+    FIELD_TYPE_IMAGE = 3;      // 图片（media_asset 引用）
+    FIELD_TYPE_FILE = 4;       // 文件（media_asset 引用）
+    FIELD_TYPE_RELATION = 5;   // 关联（跨实体引用）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "字段定义ID"}
+  ]; // 字段定义ID
+
+  optional uint32 content_model_id = 2 [
+    json_name = "contentModelId",
+    (gnostic.openapi.v3.property) = {description: "所属内容模型ID"}
+  ]; // 所属内容模型ID
+
+  optional string name = 3 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "字段名（语言无关，作为 custom_fields 的键）"}
+  ]; // 字段名
+
+  optional Type type = 4 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {description: "字段类型"}
+  ]; // 字段类型
+
+  optional string label = 5 [
+    json_name = "label",
+    (gnostic.openapi.v3.property) = {description: "字段标签（默认语言）"}
+  ]; // 字段标签
+
+  optional string description = 6 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "字段描述（默认语言）"}
+  ]; // 字段描述
+
+  optional string placeholder = 7 [
+    json_name = "placeholder",
+    (gnostic.openapi.v3.property) = {description: "输入框占位符（默认语言）"}
+  ]; // 占位符
+
+  optional bool is_required = 8 [
+    json_name = "isRequired",
+    (gnostic.openapi.v3.property) = {description: "是否必填"}
+  ]; // 是否必填
+
+  optional string validation_regex = 9 [
+    json_name = "validationRegex",
+    (gnostic.openapi.v3.property) = {description: "校验正则（仅 text 类适用）"}
+  ]; // 校验正则
+
+  map<string, string> options = 10 [
+    json_name = "options",
+    (gnostic.openapi.v3.property) = {description: "扩展选项（select 类等，预留）"}
+  ]; // 扩展选项
+
+  optional RelationConfig relation_config = 11 [
+    json_name = "relationConfig",
+    (gnostic.openapi.v3.property) = {description: "relation 类型字段的引用配置（仅 FIELD_TYPE_RELATION 适用）"}
+  ]; // 引用配置
+
+  optional uint32 sort_order = 12 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序顺序"}
+  ]; // 排序顺序
+
+  repeated FieldDefinitionTranslation translations = 13 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "label/description/placeholder 的多语言翻译"}
+  ]; // 翻译列表
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+}
+
+// relation 类型字段的引用配置
+message RelationConfig {
+  optional string target_entity_type = 1 [
+    json_name = "targetEntityType",
+    (gnostic.openapi.v3.property) = {description: "目标实体类型，白名单：post/page/category/tag"}
+  ]; // 目标实体类型
+
+  optional bool allow_cross_tenant = 2 [
+    json_name = "allowCrossTenant",
+    (gnostic.openapi.v3.property) = {description: "是否允许跨租户引用"}
+  ]; // 是否允许跨租户引用
+
+  optional uint32 filter_category_id = 3 [
+    json_name = "filterCategoryId",
+    (gnostic.openapi.v3.property) = {description: "可选：限定目标 post 所属分类"}
+  ]; // 限定分类
+}
+
+// 内容模型翻译
+message ContentModelTranslation {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "ID"}];
+  optional uint32 content_model_id = 2 [json_name = "contentModelId", (gnostic.openapi.v3.property) = {description: "内容模型ID"}];
+  optional string language_code = 3 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
+  optional string name = 4 [json_name = "name", (gnostic.openapi.v3.property) = {description: "翻译后名称"}];
+  optional string description = 5 [json_name = "description", (gnostic.openapi.v3.property) = {description: "翻译后描述"}];
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+}
+
+// 字段定义翻译
+message FieldDefinitionTranslation {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "ID"}];
+  optional uint32 field_definition_id = 2 [json_name = "fieldDefinitionId", (gnostic.openapi.v3.property) = {description: "字段定义ID"}];
+  optional string language_code = 3 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
+  optional string label = 4 [json_name = "label", (gnostic.openapi.v3.property) = {description: "翻译后标签"}];
+  optional string description = 5 [json_name = "description", (gnostic.openapi.v3.property) = {description: "翻译后描述"}];
+  optional string placeholder = 6 [json_name = "placeholder", (gnostic.openapi.v3.property) = {description: "翻译后占位符"}];
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+}
+
+// 查询内容模型列表 - 回应
+message ListContentModelResponse {
+  repeated ContentModel items = 1;
+  uint64 total = 2;
+}
+
+message CountContentModelResponse {
+  uint64 count = 1;
+}
+
+// 查询内容模型详情 - 请求
+message GetContentModelRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+
+    string code = 2 [
+      json_name = "code",
+      (google.api.field_behavior) = OPTIONAL,
+      (gnostic.openapi.v3.property) = {description: "模型编码"}
+    ]; // 模型编码
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器，用于控制返回的字段"}
+  ]; // 视图字段过滤器
+}
+
+// 创建内容模型 - 请求
+message CreateContentModelRequest {
+  ContentModel data = 1;
+}
+
+// 更新内容模型 - 请求
+message UpdateContentModelRequest {
+  uint32 id = 1;
+
+  ContentModel data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+}
+
+// 删除内容模型 - 请求
+message DeleteContentModelRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+// 查询字段定义列表 - 请求
+message ListFieldDefinitionsRequest {
+  uint32 content_model_id = 1 [
+    json_name = "contentModelId",
+    (gnostic.openapi.v3.property) = {description: "内容模型ID"}
+  ]; // 内容模型ID
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器，用于控制返回的字段"}
+  ]; // 视图字段过滤器
+}
+
+// 查询字段定义列表 - 回应
+message ListFieldDefinitionsResponse {
+  repeated FieldDefinition items = 1;
+  uint64 total = 2;
+}

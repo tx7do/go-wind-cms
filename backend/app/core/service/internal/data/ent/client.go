@@ -17,10 +17,14 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
+	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
+	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
+	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
+	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
@@ -96,6 +100,10 @@ type Client struct {
 	Comment *CommentClient
 	// CommentLike is the client for interacting with the CommentLike builders.
 	CommentLike *CommentLikeClient
+	// ContentModel is the client for interacting with the ContentModel builders.
+	ContentModel *ContentModelClient
+	// ContentModelTranslation is the client for interacting with the ContentModelTranslation builders.
+	ContentModelTranslation *ContentModelTranslationClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -104,6 +112,10 @@ type Client struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
+	// FieldDefinition is the client for interacting with the FieldDefinition builders.
+	FieldDefinition *FieldDefinitionClient
+	// FieldDefinitionTranslation is the client for interacting with the FieldDefinitionTranslation builders.
+	FieldDefinitionTranslation *FieldDefinitionTranslationClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
@@ -223,10 +235,14 @@ func (c *Client) init() {
 	c.CategoryTranslation = NewCategoryTranslationClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.CommentLike = NewCommentLikeClient(c.config)
+	c.ContentModel = NewContentModelClient(c.config)
+	c.ContentModelTranslation = NewContentModelTranslationClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.DictEntry = NewDictEntryClient(c.config)
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
+	c.FieldDefinition = NewFieldDefinitionClient(c.config)
+	c.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.InteractionCounter = NewInteractionCounterClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
@@ -368,69 +384,73 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                      ctx,
-		config:                   cfg,
-		Api:                      NewAPIClient(cfg),
-		ApiAuditLog:              NewApiAuditLogClient(cfg),
-		Category:                 NewCategoryClient(cfg),
-		CategoryTranslation:      NewCategoryTranslationClient(cfg),
-		Comment:                  NewCommentClient(cfg),
-		CommentLike:              NewCommentLikeClient(cfg),
-		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
-		DictEntry:                NewDictEntryClient(cfg),
-		DictEntryI18n:            NewDictEntryI18nClient(cfg),
-		DictType:                 NewDictTypeClient(cfg),
-		File:                     NewFileClient(cfg),
-		InteractionCounter:       NewInteractionCounterClient(cfg),
-		InternalMessage:          NewInternalMessageClient(cfg),
-		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
-		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
-		Language:                 NewLanguageClient(cfg),
-		LoginAuditLog:            NewLoginAuditLogClient(cfg),
-		LoginPolicy:              NewLoginPolicyClient(cfg),
-		MediaAsset:               NewMediaAssetClient(cfg),
-		MediaVariant:             NewMediaVariantClient(cfg),
-		Membership:               NewMembershipClient(cfg),
-		MembershipOrgUnit:        NewMembershipOrgUnitClient(cfg),
-		MembershipPosition:       NewMembershipPositionClient(cfg),
-		MembershipRole:           NewMembershipRoleClient(cfg),
-		Menu:                     NewMenuClient(cfg),
-		Navigation:               NewNavigationClient(cfg),
-		NavigationItem:           NewNavigationItemClient(cfg),
-		OperationAuditLog:        NewOperationAuditLogClient(cfg),
-		OrgUnit:                  NewOrgUnitClient(cfg),
-		Page:                     NewPageClient(cfg),
-		PageTranslation:          NewPageTranslationClient(cfg),
-		Permission:               NewPermissionClient(cfg),
-		PermissionApi:            NewPermissionApiClient(cfg),
-		PermissionAuditLog:       NewPermissionAuditLogClient(cfg),
-		PermissionGroup:          NewPermissionGroupClient(cfg),
-		PermissionMenu:           NewPermissionMenuClient(cfg),
-		PermissionPolicy:         NewPermissionPolicyClient(cfg),
-		PolicyEvaluationLog:      NewPolicyEvaluationLogClient(cfg),
-		Position:                 NewPositionClient(cfg),
-		Post:                     NewPostClient(cfg),
-		PostCategory:             NewPostCategoryClient(cfg),
-		PostLike:                 NewPostLikeClient(cfg),
-		PostTag:                  NewPostTagClient(cfg),
-		PostTranslation:          NewPostTranslationClient(cfg),
-		PostWatch:                NewPostWatchClient(cfg),
-		Role:                     NewRoleClient(cfg),
-		RoleMetadata:             NewRoleMetadataClient(cfg),
-		RolePermission:           NewRolePermissionClient(cfg),
-		Section:                  NewSectionClient(cfg),
-		SectionTranslation:       NewSectionTranslationClient(cfg),
-		Site:                     NewSiteClient(cfg),
-		SiteSetting:              NewSiteSettingClient(cfg),
-		Tag:                      NewTagClient(cfg),
-		TagTranslation:           NewTagTranslationClient(cfg),
-		Task:                     NewTaskClient(cfg),
-		Tenant:                   NewTenantClient(cfg),
-		User:                     NewUserClient(cfg),
-		UserCredential:           NewUserCredentialClient(cfg),
-		UserOrgUnit:              NewUserOrgUnitClient(cfg),
-		UserPosition:             NewUserPositionClient(cfg),
-		UserRole:                 NewUserRoleClient(cfg),
+		ctx:                        ctx,
+		config:                     cfg,
+		Api:                        NewAPIClient(cfg),
+		ApiAuditLog:                NewApiAuditLogClient(cfg),
+		Category:                   NewCategoryClient(cfg),
+		CategoryTranslation:        NewCategoryTranslationClient(cfg),
+		Comment:                    NewCommentClient(cfg),
+		CommentLike:                NewCommentLikeClient(cfg),
+		ContentModel:               NewContentModelClient(cfg),
+		ContentModelTranslation:    NewContentModelTranslationClient(cfg),
+		DataAccessAuditLog:         NewDataAccessAuditLogClient(cfg),
+		DictEntry:                  NewDictEntryClient(cfg),
+		DictEntryI18n:              NewDictEntryI18nClient(cfg),
+		DictType:                   NewDictTypeClient(cfg),
+		FieldDefinition:            NewFieldDefinitionClient(cfg),
+		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
+		File:                       NewFileClient(cfg),
+		InteractionCounter:         NewInteractionCounterClient(cfg),
+		InternalMessage:            NewInternalMessageClient(cfg),
+		InternalMessageCategory:    NewInternalMessageCategoryClient(cfg),
+		InternalMessageRecipient:   NewInternalMessageRecipientClient(cfg),
+		Language:                   NewLanguageClient(cfg),
+		LoginAuditLog:              NewLoginAuditLogClient(cfg),
+		LoginPolicy:                NewLoginPolicyClient(cfg),
+		MediaAsset:                 NewMediaAssetClient(cfg),
+		MediaVariant:               NewMediaVariantClient(cfg),
+		Membership:                 NewMembershipClient(cfg),
+		MembershipOrgUnit:          NewMembershipOrgUnitClient(cfg),
+		MembershipPosition:         NewMembershipPositionClient(cfg),
+		MembershipRole:             NewMembershipRoleClient(cfg),
+		Menu:                       NewMenuClient(cfg),
+		Navigation:                 NewNavigationClient(cfg),
+		NavigationItem:             NewNavigationItemClient(cfg),
+		OperationAuditLog:          NewOperationAuditLogClient(cfg),
+		OrgUnit:                    NewOrgUnitClient(cfg),
+		Page:                       NewPageClient(cfg),
+		PageTranslation:            NewPageTranslationClient(cfg),
+		Permission:                 NewPermissionClient(cfg),
+		PermissionApi:              NewPermissionApiClient(cfg),
+		PermissionAuditLog:         NewPermissionAuditLogClient(cfg),
+		PermissionGroup:            NewPermissionGroupClient(cfg),
+		PermissionMenu:             NewPermissionMenuClient(cfg),
+		PermissionPolicy:           NewPermissionPolicyClient(cfg),
+		PolicyEvaluationLog:        NewPolicyEvaluationLogClient(cfg),
+		Position:                   NewPositionClient(cfg),
+		Post:                       NewPostClient(cfg),
+		PostCategory:               NewPostCategoryClient(cfg),
+		PostLike:                   NewPostLikeClient(cfg),
+		PostTag:                    NewPostTagClient(cfg),
+		PostTranslation:            NewPostTranslationClient(cfg),
+		PostWatch:                  NewPostWatchClient(cfg),
+		Role:                       NewRoleClient(cfg),
+		RoleMetadata:               NewRoleMetadataClient(cfg),
+		RolePermission:             NewRolePermissionClient(cfg),
+		Section:                    NewSectionClient(cfg),
+		SectionTranslation:         NewSectionTranslationClient(cfg),
+		Site:                       NewSiteClient(cfg),
+		SiteSetting:                NewSiteSettingClient(cfg),
+		Tag:                        NewTagClient(cfg),
+		TagTranslation:             NewTagTranslationClient(cfg),
+		Task:                       NewTaskClient(cfg),
+		Tenant:                     NewTenantClient(cfg),
+		User:                       NewUserClient(cfg),
+		UserCredential:             NewUserCredentialClient(cfg),
+		UserOrgUnit:                NewUserOrgUnitClient(cfg),
+		UserPosition:               NewUserPositionClient(cfg),
+		UserRole:                   NewUserRoleClient(cfg),
 	}, nil
 }
 
@@ -448,69 +468,73 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                      ctx,
-		config:                   cfg,
-		Api:                      NewAPIClient(cfg),
-		ApiAuditLog:              NewApiAuditLogClient(cfg),
-		Category:                 NewCategoryClient(cfg),
-		CategoryTranslation:      NewCategoryTranslationClient(cfg),
-		Comment:                  NewCommentClient(cfg),
-		CommentLike:              NewCommentLikeClient(cfg),
-		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
-		DictEntry:                NewDictEntryClient(cfg),
-		DictEntryI18n:            NewDictEntryI18nClient(cfg),
-		DictType:                 NewDictTypeClient(cfg),
-		File:                     NewFileClient(cfg),
-		InteractionCounter:       NewInteractionCounterClient(cfg),
-		InternalMessage:          NewInternalMessageClient(cfg),
-		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
-		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
-		Language:                 NewLanguageClient(cfg),
-		LoginAuditLog:            NewLoginAuditLogClient(cfg),
-		LoginPolicy:              NewLoginPolicyClient(cfg),
-		MediaAsset:               NewMediaAssetClient(cfg),
-		MediaVariant:             NewMediaVariantClient(cfg),
-		Membership:               NewMembershipClient(cfg),
-		MembershipOrgUnit:        NewMembershipOrgUnitClient(cfg),
-		MembershipPosition:       NewMembershipPositionClient(cfg),
-		MembershipRole:           NewMembershipRoleClient(cfg),
-		Menu:                     NewMenuClient(cfg),
-		Navigation:               NewNavigationClient(cfg),
-		NavigationItem:           NewNavigationItemClient(cfg),
-		OperationAuditLog:        NewOperationAuditLogClient(cfg),
-		OrgUnit:                  NewOrgUnitClient(cfg),
-		Page:                     NewPageClient(cfg),
-		PageTranslation:          NewPageTranslationClient(cfg),
-		Permission:               NewPermissionClient(cfg),
-		PermissionApi:            NewPermissionApiClient(cfg),
-		PermissionAuditLog:       NewPermissionAuditLogClient(cfg),
-		PermissionGroup:          NewPermissionGroupClient(cfg),
-		PermissionMenu:           NewPermissionMenuClient(cfg),
-		PermissionPolicy:         NewPermissionPolicyClient(cfg),
-		PolicyEvaluationLog:      NewPolicyEvaluationLogClient(cfg),
-		Position:                 NewPositionClient(cfg),
-		Post:                     NewPostClient(cfg),
-		PostCategory:             NewPostCategoryClient(cfg),
-		PostLike:                 NewPostLikeClient(cfg),
-		PostTag:                  NewPostTagClient(cfg),
-		PostTranslation:          NewPostTranslationClient(cfg),
-		PostWatch:                NewPostWatchClient(cfg),
-		Role:                     NewRoleClient(cfg),
-		RoleMetadata:             NewRoleMetadataClient(cfg),
-		RolePermission:           NewRolePermissionClient(cfg),
-		Section:                  NewSectionClient(cfg),
-		SectionTranslation:       NewSectionTranslationClient(cfg),
-		Site:                     NewSiteClient(cfg),
-		SiteSetting:              NewSiteSettingClient(cfg),
-		Tag:                      NewTagClient(cfg),
-		TagTranslation:           NewTagTranslationClient(cfg),
-		Task:                     NewTaskClient(cfg),
-		Tenant:                   NewTenantClient(cfg),
-		User:                     NewUserClient(cfg),
-		UserCredential:           NewUserCredentialClient(cfg),
-		UserOrgUnit:              NewUserOrgUnitClient(cfg),
-		UserPosition:             NewUserPositionClient(cfg),
-		UserRole:                 NewUserRoleClient(cfg),
+		ctx:                        ctx,
+		config:                     cfg,
+		Api:                        NewAPIClient(cfg),
+		ApiAuditLog:                NewApiAuditLogClient(cfg),
+		Category:                   NewCategoryClient(cfg),
+		CategoryTranslation:        NewCategoryTranslationClient(cfg),
+		Comment:                    NewCommentClient(cfg),
+		CommentLike:                NewCommentLikeClient(cfg),
+		ContentModel:               NewContentModelClient(cfg),
+		ContentModelTranslation:    NewContentModelTranslationClient(cfg),
+		DataAccessAuditLog:         NewDataAccessAuditLogClient(cfg),
+		DictEntry:                  NewDictEntryClient(cfg),
+		DictEntryI18n:              NewDictEntryI18nClient(cfg),
+		DictType:                   NewDictTypeClient(cfg),
+		FieldDefinition:            NewFieldDefinitionClient(cfg),
+		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
+		File:                       NewFileClient(cfg),
+		InteractionCounter:         NewInteractionCounterClient(cfg),
+		InternalMessage:            NewInternalMessageClient(cfg),
+		InternalMessageCategory:    NewInternalMessageCategoryClient(cfg),
+		InternalMessageRecipient:   NewInternalMessageRecipientClient(cfg),
+		Language:                   NewLanguageClient(cfg),
+		LoginAuditLog:              NewLoginAuditLogClient(cfg),
+		LoginPolicy:                NewLoginPolicyClient(cfg),
+		MediaAsset:                 NewMediaAssetClient(cfg),
+		MediaVariant:               NewMediaVariantClient(cfg),
+		Membership:                 NewMembershipClient(cfg),
+		MembershipOrgUnit:          NewMembershipOrgUnitClient(cfg),
+		MembershipPosition:         NewMembershipPositionClient(cfg),
+		MembershipRole:             NewMembershipRoleClient(cfg),
+		Menu:                       NewMenuClient(cfg),
+		Navigation:                 NewNavigationClient(cfg),
+		NavigationItem:             NewNavigationItemClient(cfg),
+		OperationAuditLog:          NewOperationAuditLogClient(cfg),
+		OrgUnit:                    NewOrgUnitClient(cfg),
+		Page:                       NewPageClient(cfg),
+		PageTranslation:            NewPageTranslationClient(cfg),
+		Permission:                 NewPermissionClient(cfg),
+		PermissionApi:              NewPermissionApiClient(cfg),
+		PermissionAuditLog:         NewPermissionAuditLogClient(cfg),
+		PermissionGroup:            NewPermissionGroupClient(cfg),
+		PermissionMenu:             NewPermissionMenuClient(cfg),
+		PermissionPolicy:           NewPermissionPolicyClient(cfg),
+		PolicyEvaluationLog:        NewPolicyEvaluationLogClient(cfg),
+		Position:                   NewPositionClient(cfg),
+		Post:                       NewPostClient(cfg),
+		PostCategory:               NewPostCategoryClient(cfg),
+		PostLike:                   NewPostLikeClient(cfg),
+		PostTag:                    NewPostTagClient(cfg),
+		PostTranslation:            NewPostTranslationClient(cfg),
+		PostWatch:                  NewPostWatchClient(cfg),
+		Role:                       NewRoleClient(cfg),
+		RoleMetadata:               NewRoleMetadataClient(cfg),
+		RolePermission:             NewRolePermissionClient(cfg),
+		Section:                    NewSectionClient(cfg),
+		SectionTranslation:         NewSectionTranslationClient(cfg),
+		Site:                       NewSiteClient(cfg),
+		SiteSetting:                NewSiteSettingClient(cfg),
+		Tag:                        NewTagClient(cfg),
+		TagTranslation:             NewTagTranslationClient(cfg),
+		Task:                       NewTaskClient(cfg),
+		Tenant:                     NewTenantClient(cfg),
+		User:                       NewUserClient(cfg),
+		UserCredential:             NewUserCredentialClient(cfg),
+		UserOrgUnit:                NewUserOrgUnitClient(cfg),
+		UserPosition:               NewUserPositionClient(cfg),
+		UserRole:                   NewUserRoleClient(cfg),
 	}, nil
 }
 
@@ -541,18 +565,19 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiAuditLog, c.Category, c.CategoryTranslation, c.Comment,
-		c.CommentLike, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.File, c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
-		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.CommentLike, c.ContentModel, c.ContentModelTranslation, c.DataAccessAuditLog,
+		c.DictEntry, c.DictEntryI18n, c.DictType, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.PageTranslation, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostWatch, c.Role, c.RoleMetadata, c.RolePermission, c.Section,
+		c.SectionTranslation, c.Site, c.SiteSetting, c.Tag, c.TagTranslation, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -563,18 +588,19 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiAuditLog, c.Category, c.CategoryTranslation, c.Comment,
-		c.CommentLike, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.File, c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
-		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.CommentLike, c.ContentModel, c.ContentModelTranslation, c.DataAccessAuditLog,
+		c.DictEntry, c.DictEntryI18n, c.DictType, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.PageTranslation, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostWatch, c.Role, c.RoleMetadata, c.RolePermission, c.Section,
+		c.SectionTranslation, c.Site, c.SiteSetting, c.Tag, c.TagTranslation, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -595,6 +621,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Comment.mutate(ctx, m)
 	case *CommentLikeMutation:
 		return c.CommentLike.mutate(ctx, m)
+	case *ContentModelMutation:
+		return c.ContentModel.mutate(ctx, m)
+	case *ContentModelTranslationMutation:
+		return c.ContentModelTranslation.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
 		return c.DataAccessAuditLog.mutate(ctx, m)
 	case *DictEntryMutation:
@@ -603,6 +633,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DictEntryI18n.mutate(ctx, m)
 	case *DictTypeMutation:
 		return c.DictType.mutate(ctx, m)
+	case *FieldDefinitionMutation:
+		return c.FieldDefinition.mutate(ctx, m)
+	case *FieldDefinitionTranslationMutation:
+		return c.FieldDefinitionTranslation.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
 	case *InteractionCounterMutation:
@@ -1578,6 +1612,273 @@ func (c *CommentLikeClient) mutate(ctx context.Context, m *CommentLikeMutation) 
 	}
 }
 
+// ContentModelClient is a client for the ContentModel schema.
+type ContentModelClient struct {
+	config
+}
+
+// NewContentModelClient returns a client for the ContentModel from the given config.
+func NewContentModelClient(c config) *ContentModelClient {
+	return &ContentModelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `contentmodel.Hooks(f(g(h())))`.
+func (c *ContentModelClient) Use(hooks ...Hook) {
+	c.hooks.ContentModel = append(c.hooks.ContentModel, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `contentmodel.Intercept(f(g(h())))`.
+func (c *ContentModelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ContentModel = append(c.inters.ContentModel, interceptors...)
+}
+
+// Create returns a builder for creating a ContentModel entity.
+func (c *ContentModelClient) Create() *ContentModelCreate {
+	mutation := newContentModelMutation(c.config, OpCreate)
+	return &ContentModelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ContentModel entities.
+func (c *ContentModelClient) CreateBulk(builders ...*ContentModelCreate) *ContentModelCreateBulk {
+	return &ContentModelCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ContentModelClient) MapCreateBulk(slice any, setFunc func(*ContentModelCreate, int)) *ContentModelCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ContentModelCreateBulk{err: fmt.Errorf("calling to ContentModelClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ContentModelCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ContentModelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ContentModel.
+func (c *ContentModelClient) Update() *ContentModelUpdate {
+	mutation := newContentModelMutation(c.config, OpUpdate)
+	return &ContentModelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ContentModelClient) UpdateOne(_m *ContentModel) *ContentModelUpdateOne {
+	mutation := newContentModelMutation(c.config, OpUpdateOne, withContentModel(_m))
+	return &ContentModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ContentModelClient) UpdateOneID(id uint32) *ContentModelUpdateOne {
+	mutation := newContentModelMutation(c.config, OpUpdateOne, withContentModelID(id))
+	return &ContentModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ContentModel.
+func (c *ContentModelClient) Delete() *ContentModelDelete {
+	mutation := newContentModelMutation(c.config, OpDelete)
+	return &ContentModelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ContentModelClient) DeleteOne(_m *ContentModel) *ContentModelDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ContentModelClient) DeleteOneID(id uint32) *ContentModelDeleteOne {
+	builder := c.Delete().Where(contentmodel.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ContentModelDeleteOne{builder}
+}
+
+// Query returns a query builder for ContentModel.
+func (c *ContentModelClient) Query() *ContentModelQuery {
+	return &ContentModelQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeContentModel},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ContentModel entity by its id.
+func (c *ContentModelClient) Get(ctx context.Context, id uint32) (*ContentModel, error) {
+	return c.Query().Where(contentmodel.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ContentModelClient) GetX(ctx context.Context, id uint32) *ContentModel {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ContentModelClient) Hooks() []Hook {
+	hooks := c.hooks.ContentModel
+	return append(hooks[:len(hooks):len(hooks)], contentmodel.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ContentModelClient) Interceptors() []Interceptor {
+	return c.inters.ContentModel
+}
+
+func (c *ContentModelClient) mutate(ctx context.Context, m *ContentModelMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ContentModelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ContentModelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ContentModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ContentModelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ContentModel mutation op: %q", m.Op())
+	}
+}
+
+// ContentModelTranslationClient is a client for the ContentModelTranslation schema.
+type ContentModelTranslationClient struct {
+	config
+}
+
+// NewContentModelTranslationClient returns a client for the ContentModelTranslation from the given config.
+func NewContentModelTranslationClient(c config) *ContentModelTranslationClient {
+	return &ContentModelTranslationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `contentmodeltranslation.Hooks(f(g(h())))`.
+func (c *ContentModelTranslationClient) Use(hooks ...Hook) {
+	c.hooks.ContentModelTranslation = append(c.hooks.ContentModelTranslation, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `contentmodeltranslation.Intercept(f(g(h())))`.
+func (c *ContentModelTranslationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ContentModelTranslation = append(c.inters.ContentModelTranslation, interceptors...)
+}
+
+// Create returns a builder for creating a ContentModelTranslation entity.
+func (c *ContentModelTranslationClient) Create() *ContentModelTranslationCreate {
+	mutation := newContentModelTranslationMutation(c.config, OpCreate)
+	return &ContentModelTranslationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ContentModelTranslation entities.
+func (c *ContentModelTranslationClient) CreateBulk(builders ...*ContentModelTranslationCreate) *ContentModelTranslationCreateBulk {
+	return &ContentModelTranslationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ContentModelTranslationClient) MapCreateBulk(slice any, setFunc func(*ContentModelTranslationCreate, int)) *ContentModelTranslationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ContentModelTranslationCreateBulk{err: fmt.Errorf("calling to ContentModelTranslationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ContentModelTranslationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ContentModelTranslationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ContentModelTranslation.
+func (c *ContentModelTranslationClient) Update() *ContentModelTranslationUpdate {
+	mutation := newContentModelTranslationMutation(c.config, OpUpdate)
+	return &ContentModelTranslationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ContentModelTranslationClient) UpdateOne(_m *ContentModelTranslation) *ContentModelTranslationUpdateOne {
+	mutation := newContentModelTranslationMutation(c.config, OpUpdateOne, withContentModelTranslation(_m))
+	return &ContentModelTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ContentModelTranslationClient) UpdateOneID(id uint32) *ContentModelTranslationUpdateOne {
+	mutation := newContentModelTranslationMutation(c.config, OpUpdateOne, withContentModelTranslationID(id))
+	return &ContentModelTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ContentModelTranslation.
+func (c *ContentModelTranslationClient) Delete() *ContentModelTranslationDelete {
+	mutation := newContentModelTranslationMutation(c.config, OpDelete)
+	return &ContentModelTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ContentModelTranslationClient) DeleteOne(_m *ContentModelTranslation) *ContentModelTranslationDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ContentModelTranslationClient) DeleteOneID(id uint32) *ContentModelTranslationDeleteOne {
+	builder := c.Delete().Where(contentmodeltranslation.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ContentModelTranslationDeleteOne{builder}
+}
+
+// Query returns a query builder for ContentModelTranslation.
+func (c *ContentModelTranslationClient) Query() *ContentModelTranslationQuery {
+	return &ContentModelTranslationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeContentModelTranslation},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ContentModelTranslation entity by its id.
+func (c *ContentModelTranslationClient) Get(ctx context.Context, id uint32) (*ContentModelTranslation, error) {
+	return c.Query().Where(contentmodeltranslation.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ContentModelTranslationClient) GetX(ctx context.Context, id uint32) *ContentModelTranslation {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ContentModelTranslationClient) Hooks() []Hook {
+	return c.hooks.ContentModelTranslation
+}
+
+// Interceptors returns the client interceptors.
+func (c *ContentModelTranslationClient) Interceptors() []Interceptor {
+	return c.inters.ContentModelTranslation
+}
+
+func (c *ContentModelTranslationClient) mutate(ctx context.Context, m *ContentModelTranslationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ContentModelTranslationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ContentModelTranslationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ContentModelTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ContentModelTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ContentModelTranslation mutation op: %q", m.Op())
+	}
+}
+
 // DataAccessAuditLogClient is a client for the DataAccessAuditLog schema.
 type DataAccessAuditLogClient struct {
 	config
@@ -2178,6 +2479,273 @@ func (c *DictTypeClient) mutate(ctx context.Context, m *DictTypeMutation) (Value
 	}
 }
 
+// FieldDefinitionClient is a client for the FieldDefinition schema.
+type FieldDefinitionClient struct {
+	config
+}
+
+// NewFieldDefinitionClient returns a client for the FieldDefinition from the given config.
+func NewFieldDefinitionClient(c config) *FieldDefinitionClient {
+	return &FieldDefinitionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `fielddefinition.Hooks(f(g(h())))`.
+func (c *FieldDefinitionClient) Use(hooks ...Hook) {
+	c.hooks.FieldDefinition = append(c.hooks.FieldDefinition, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `fielddefinition.Intercept(f(g(h())))`.
+func (c *FieldDefinitionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FieldDefinition = append(c.inters.FieldDefinition, interceptors...)
+}
+
+// Create returns a builder for creating a FieldDefinition entity.
+func (c *FieldDefinitionClient) Create() *FieldDefinitionCreate {
+	mutation := newFieldDefinitionMutation(c.config, OpCreate)
+	return &FieldDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FieldDefinition entities.
+func (c *FieldDefinitionClient) CreateBulk(builders ...*FieldDefinitionCreate) *FieldDefinitionCreateBulk {
+	return &FieldDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FieldDefinitionClient) MapCreateBulk(slice any, setFunc func(*FieldDefinitionCreate, int)) *FieldDefinitionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FieldDefinitionCreateBulk{err: fmt.Errorf("calling to FieldDefinitionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FieldDefinitionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FieldDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FieldDefinition.
+func (c *FieldDefinitionClient) Update() *FieldDefinitionUpdate {
+	mutation := newFieldDefinitionMutation(c.config, OpUpdate)
+	return &FieldDefinitionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FieldDefinitionClient) UpdateOne(_m *FieldDefinition) *FieldDefinitionUpdateOne {
+	mutation := newFieldDefinitionMutation(c.config, OpUpdateOne, withFieldDefinition(_m))
+	return &FieldDefinitionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FieldDefinitionClient) UpdateOneID(id uint32) *FieldDefinitionUpdateOne {
+	mutation := newFieldDefinitionMutation(c.config, OpUpdateOne, withFieldDefinitionID(id))
+	return &FieldDefinitionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FieldDefinition.
+func (c *FieldDefinitionClient) Delete() *FieldDefinitionDelete {
+	mutation := newFieldDefinitionMutation(c.config, OpDelete)
+	return &FieldDefinitionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FieldDefinitionClient) DeleteOne(_m *FieldDefinition) *FieldDefinitionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FieldDefinitionClient) DeleteOneID(id uint32) *FieldDefinitionDeleteOne {
+	builder := c.Delete().Where(fielddefinition.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FieldDefinitionDeleteOne{builder}
+}
+
+// Query returns a query builder for FieldDefinition.
+func (c *FieldDefinitionClient) Query() *FieldDefinitionQuery {
+	return &FieldDefinitionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFieldDefinition},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FieldDefinition entity by its id.
+func (c *FieldDefinitionClient) Get(ctx context.Context, id uint32) (*FieldDefinition, error) {
+	return c.Query().Where(fielddefinition.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FieldDefinitionClient) GetX(ctx context.Context, id uint32) *FieldDefinition {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FieldDefinitionClient) Hooks() []Hook {
+	hooks := c.hooks.FieldDefinition
+	return append(hooks[:len(hooks):len(hooks)], fielddefinition.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *FieldDefinitionClient) Interceptors() []Interceptor {
+	return c.inters.FieldDefinition
+}
+
+func (c *FieldDefinitionClient) mutate(ctx context.Context, m *FieldDefinitionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FieldDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FieldDefinitionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FieldDefinitionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FieldDefinitionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FieldDefinition mutation op: %q", m.Op())
+	}
+}
+
+// FieldDefinitionTranslationClient is a client for the FieldDefinitionTranslation schema.
+type FieldDefinitionTranslationClient struct {
+	config
+}
+
+// NewFieldDefinitionTranslationClient returns a client for the FieldDefinitionTranslation from the given config.
+func NewFieldDefinitionTranslationClient(c config) *FieldDefinitionTranslationClient {
+	return &FieldDefinitionTranslationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `fielddefinitiontranslation.Hooks(f(g(h())))`.
+func (c *FieldDefinitionTranslationClient) Use(hooks ...Hook) {
+	c.hooks.FieldDefinitionTranslation = append(c.hooks.FieldDefinitionTranslation, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `fielddefinitiontranslation.Intercept(f(g(h())))`.
+func (c *FieldDefinitionTranslationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FieldDefinitionTranslation = append(c.inters.FieldDefinitionTranslation, interceptors...)
+}
+
+// Create returns a builder for creating a FieldDefinitionTranslation entity.
+func (c *FieldDefinitionTranslationClient) Create() *FieldDefinitionTranslationCreate {
+	mutation := newFieldDefinitionTranslationMutation(c.config, OpCreate)
+	return &FieldDefinitionTranslationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FieldDefinitionTranslation entities.
+func (c *FieldDefinitionTranslationClient) CreateBulk(builders ...*FieldDefinitionTranslationCreate) *FieldDefinitionTranslationCreateBulk {
+	return &FieldDefinitionTranslationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FieldDefinitionTranslationClient) MapCreateBulk(slice any, setFunc func(*FieldDefinitionTranslationCreate, int)) *FieldDefinitionTranslationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FieldDefinitionTranslationCreateBulk{err: fmt.Errorf("calling to FieldDefinitionTranslationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FieldDefinitionTranslationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FieldDefinitionTranslationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FieldDefinitionTranslation.
+func (c *FieldDefinitionTranslationClient) Update() *FieldDefinitionTranslationUpdate {
+	mutation := newFieldDefinitionTranslationMutation(c.config, OpUpdate)
+	return &FieldDefinitionTranslationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FieldDefinitionTranslationClient) UpdateOne(_m *FieldDefinitionTranslation) *FieldDefinitionTranslationUpdateOne {
+	mutation := newFieldDefinitionTranslationMutation(c.config, OpUpdateOne, withFieldDefinitionTranslation(_m))
+	return &FieldDefinitionTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FieldDefinitionTranslationClient) UpdateOneID(id uint32) *FieldDefinitionTranslationUpdateOne {
+	mutation := newFieldDefinitionTranslationMutation(c.config, OpUpdateOne, withFieldDefinitionTranslationID(id))
+	return &FieldDefinitionTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FieldDefinitionTranslation.
+func (c *FieldDefinitionTranslationClient) Delete() *FieldDefinitionTranslationDelete {
+	mutation := newFieldDefinitionTranslationMutation(c.config, OpDelete)
+	return &FieldDefinitionTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FieldDefinitionTranslationClient) DeleteOne(_m *FieldDefinitionTranslation) *FieldDefinitionTranslationDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FieldDefinitionTranslationClient) DeleteOneID(id uint32) *FieldDefinitionTranslationDeleteOne {
+	builder := c.Delete().Where(fielddefinitiontranslation.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FieldDefinitionTranslationDeleteOne{builder}
+}
+
+// Query returns a query builder for FieldDefinitionTranslation.
+func (c *FieldDefinitionTranslationClient) Query() *FieldDefinitionTranslationQuery {
+	return &FieldDefinitionTranslationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFieldDefinitionTranslation},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FieldDefinitionTranslation entity by its id.
+func (c *FieldDefinitionTranslationClient) Get(ctx context.Context, id uint32) (*FieldDefinitionTranslation, error) {
+	return c.Query().Where(fielddefinitiontranslation.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FieldDefinitionTranslationClient) GetX(ctx context.Context, id uint32) *FieldDefinitionTranslation {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FieldDefinitionTranslationClient) Hooks() []Hook {
+	return c.hooks.FieldDefinitionTranslation
+}
+
+// Interceptors returns the client interceptors.
+func (c *FieldDefinitionTranslationClient) Interceptors() []Interceptor {
+	return c.inters.FieldDefinitionTranslation
+}
+
+func (c *FieldDefinitionTranslationClient) mutate(ctx context.Context, m *FieldDefinitionTranslationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FieldDefinitionTranslationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FieldDefinitionTranslationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FieldDefinitionTranslationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FieldDefinitionTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FieldDefinitionTranslation mutation op: %q", m.Op())
+	}
+}
+
 // FileClient is a client for the File schema.
 type FileClient struct {
 	config
@@ -2686,6 +3254,38 @@ func (c *InternalMessageCategoryClient) GetX(ctx context.Context, id uint32) *In
 		panic(err)
 	}
 	return obj
+}
+
+// QueryParent queries the parent edge of a InternalMessageCategory.
+func (c *InternalMessageCategoryClient) QueryParent(_m *InternalMessageCategory) *InternalMessageCategoryQuery {
+	query := (&InternalMessageCategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(internalmessagecategory.Table, internalmessagecategory.FieldID, id),
+			sqlgraph.To(internalmessagecategory.Table, internalmessagecategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, internalmessagecategory.ParentTable, internalmessagecategory.ParentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryChildren queries the children edge of a InternalMessageCategory.
+func (c *InternalMessageCategoryClient) QueryChildren(_m *InternalMessageCategory) *InternalMessageCategoryQuery {
+	query := (&InternalMessageCategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(internalmessagecategory.Table, internalmessagecategory.FieldID, id),
+			sqlgraph.To(internalmessagecategory.Table, internalmessagecategory.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, internalmessagecategory.ChildrenTable, internalmessagecategory.ChildrenColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -9174,7 +9774,8 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		Api, ApiAuditLog, Category, CategoryTranslation, Comment, CommentLike,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File,
+		ContentModel, ContentModelTranslation, DataAccessAuditLog, DictEntry,
+		DictEntryI18n, DictType, FieldDefinition, FieldDefinitionTranslation, File,
 		InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
@@ -9188,7 +9789,8 @@ type (
 	}
 	inters struct {
 		Api, ApiAuditLog, Category, CategoryTranslation, Comment, CommentLike,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File,
+		ContentModel, ContentModelTranslation, DataAccessAuditLog, DictEntry,
+		DictEntryI18n, DictType, FieldDefinition, FieldDefinitionTranslation, File,
 		InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,

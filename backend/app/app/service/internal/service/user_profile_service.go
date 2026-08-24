@@ -96,16 +96,6 @@ func (s *UserProfileService) ChangePassword(ctx context.Context, req *identityV1
 	})
 }
 
-// UploadAvatar 上传头像 — 尚未实现
-func (s *UserProfileService) UploadAvatar(_ context.Context, _ *identityV1.UploadAvatarRequest) (*identityV1.UploadAvatarResponse, error) {
-	return nil, appV1.ErrorNotImplemented("avatar upload is not implemented")
-}
-
-// DeleteAvatar 删除头像 — 尚未实现
-func (s *UserProfileService) DeleteAvatar(_ context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, appV1.ErrorNotImplemented("avatar deletion is not implemented")
-}
-
 // BindContact 绑定手机号码/邮箱 — 尚未实现
 func (s *UserProfileService) BindContact(_ context.Context, _ *identityV1.BindContactRequest) (*emptypb.Empty, error) {
 	return nil, appV1.ErrorNotImplemented("contact binding is not implemented")

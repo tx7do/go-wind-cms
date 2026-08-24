@@ -66,6 +66,26 @@ message InternalMessageCategory {
     (gnostic.openapi.v3.property) = {description: "是否启用"}
   ];  // 是否启用
 
+  optional uint32 parent_id = 60 [
+    json_name = "parentId",
+    (gnostic.openapi.v3.property) = {description: "父节点ID"}
+  ]; // 父节点ID
+
+  repeated InternalMessageCategory children = 61 [
+    json_name = "children",
+    (gnostic.openapi.v3.property) = {description: "子节点树"}
+  ]; // 子节点树
+
+  optional int32 depth = 62 [
+    json_name = "depth",
+    (gnostic.openapi.v3.property) = {description: "分类层级深度（0=顶级，1=二级，以此类推）"}
+  ]; // 分类层级深度（0=顶级，1=二级，以此类推）
+
+  optional string path = 63 [
+    json_name = "path",
+    (gnostic.openapi.v3.property) = {description: "物化路径（Materialized Path），如 '1/5/23'，便于层级查询"}
+  ]; // 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
+
   optional uint32 tenant_id = 40 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}

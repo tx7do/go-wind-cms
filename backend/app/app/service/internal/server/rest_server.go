@@ -42,6 +42,12 @@ func NewRestMiddleware(
 		appV1.OperationAuthenticationServiceLogin,
 
 		appV1.OperationNavigationServiceList,
+
+		// SiteService.GetSiteByDomain：公开站点配置（template/theme/default_locale 等
+		// 渲染必需字段）。domain 由 BFF 按请求 Host 填入，调用方不可指定；core 端返回前
+		// 已裁剪租户/状态/备用域名等运维字段。其余 SiteService 操作需登录，不在此登记。
+		appV1.OperationSiteServiceGetSiteByDomain,
+
 		appV1.OperationPageServiceList,
 		appV1.OperationPostServiceList,
 		appV1.OperationCategoryServiceList,
@@ -117,6 +123,7 @@ func NewRestServer(
 	pageService *service.PageService,
 	sectionService *service.SectionService,
 	navigationService *service.NavigationService,
+	siteService *service.SiteService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -134,6 +141,8 @@ func NewRestServer(
 	appV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)
 
 	appV1.RegisterNavigationServiceHTTPServer(srv, navigationService)
+
+	appV1.RegisterSiteServiceHTTPServer(srv, siteService)
 
 	appV1.RegisterPostServiceHTTPServer(srv, postService)
 	appV1.RegisterCategoryServiceHTTPServer(srv, categoryService)

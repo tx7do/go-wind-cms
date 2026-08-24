@@ -27,16 +27,14 @@ var File_app_service_v1_i_user_profile_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_user_profile_proto_rawDesc = "" +
 	"\n" +
-	"#app/service/v1/i_user_profile.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto2\x89\x06\n" +
+	"#app/service/v1/i_user_profile.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto2\xaa\x04\n" +
 	"\x12UserProfileService\x12P\n" +
 	"\aGetUser\x12\x16.google.protobuf.Empty\x1a\x19.identity.service.v1.User\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
 	"/app/v1/me\x12c\n" +
 	"\n" +
 	"UpdateUser\x12&.identity.service.v1.UpdateUserRequest\x1a\x16.google.protobuf.Empty\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\x1a\n" +
 	"/app/v1/me\x12t\n" +
-	"\x0eChangePassword\x12*.identity.service.v1.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/app/v1/me/password\x12\x81\x01\n" +
-	"\fUploadAvatar\x12(.identity.service.v1.UploadAvatarRequest\x1a).identity.service.v1.UploadAvatarResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/app/v1/me/avatar\x12Y\n" +
-	"\fDeleteAvatar\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x19\x82\xd3\xe4\x93\x02\x13*\x11/app/v1/me/avatar\x12m\n" +
+	"\x0eChangePassword\x12*.identity.service.v1.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/app/v1/me/password\x12m\n" +
 	"\vBindContact\x12'.identity.service.v1.BindContactRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/app/v1/me/contact\x12x\n" +
 	"\rVerifyContact\x12).identity.service.v1.VerifyContactRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/app/v1/me/contact/verifyB\xb2\x01\n" +
 	"\x12com.app.service.v1B\x11IUserProfileProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
@@ -45,29 +43,23 @@ var file_app_service_v1_i_user_profile_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),            // 0: google.protobuf.Empty
 	(*v1.UpdateUserRequest)(nil),     // 1: identity.service.v1.UpdateUserRequest
 	(*v1.ChangePasswordRequest)(nil), // 2: identity.service.v1.ChangePasswordRequest
-	(*v1.UploadAvatarRequest)(nil),   // 3: identity.service.v1.UploadAvatarRequest
-	(*v1.BindContactRequest)(nil),    // 4: identity.service.v1.BindContactRequest
-	(*v1.VerifyContactRequest)(nil),  // 5: identity.service.v1.VerifyContactRequest
-	(*v1.User)(nil),                  // 6: identity.service.v1.User
-	(*v1.UploadAvatarResponse)(nil),  // 7: identity.service.v1.UploadAvatarResponse
+	(*v1.BindContactRequest)(nil),    // 3: identity.service.v1.BindContactRequest
+	(*v1.VerifyContactRequest)(nil),  // 4: identity.service.v1.VerifyContactRequest
+	(*v1.User)(nil),                  // 5: identity.service.v1.User
 }
 var file_app_service_v1_i_user_profile_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.UserProfileService.GetUser:input_type -> google.protobuf.Empty
 	1, // 1: app.service.v1.UserProfileService.UpdateUser:input_type -> identity.service.v1.UpdateUserRequest
 	2, // 2: app.service.v1.UserProfileService.ChangePassword:input_type -> identity.service.v1.ChangePasswordRequest
-	3, // 3: app.service.v1.UserProfileService.UploadAvatar:input_type -> identity.service.v1.UploadAvatarRequest
-	0, // 4: app.service.v1.UserProfileService.DeleteAvatar:input_type -> google.protobuf.Empty
-	4, // 5: app.service.v1.UserProfileService.BindContact:input_type -> identity.service.v1.BindContactRequest
-	5, // 6: app.service.v1.UserProfileService.VerifyContact:input_type -> identity.service.v1.VerifyContactRequest
-	6, // 7: app.service.v1.UserProfileService.GetUser:output_type -> identity.service.v1.User
-	0, // 8: app.service.v1.UserProfileService.UpdateUser:output_type -> google.protobuf.Empty
-	0, // 9: app.service.v1.UserProfileService.ChangePassword:output_type -> google.protobuf.Empty
-	7, // 10: app.service.v1.UserProfileService.UploadAvatar:output_type -> identity.service.v1.UploadAvatarResponse
-	0, // 11: app.service.v1.UserProfileService.DeleteAvatar:output_type -> google.protobuf.Empty
-	0, // 12: app.service.v1.UserProfileService.BindContact:output_type -> google.protobuf.Empty
-	0, // 13: app.service.v1.UserProfileService.VerifyContact:output_type -> google.protobuf.Empty
-	7, // [7:14] is the sub-list for method output_type
-	0, // [0:7] is the sub-list for method input_type
+	3, // 3: app.service.v1.UserProfileService.BindContact:input_type -> identity.service.v1.BindContactRequest
+	4, // 4: app.service.v1.UserProfileService.VerifyContact:input_type -> identity.service.v1.VerifyContactRequest
+	5, // 5: app.service.v1.UserProfileService.GetUser:output_type -> identity.service.v1.User
+	0, // 6: app.service.v1.UserProfileService.UpdateUser:output_type -> google.protobuf.Empty
+	0, // 7: app.service.v1.UserProfileService.ChangePassword:output_type -> google.protobuf.Empty
+	0, // 8: app.service.v1.UserProfileService.BindContact:output_type -> google.protobuf.Empty
+	0, // 9: app.service.v1.UserProfileService.VerifyContact:output_type -> google.protobuf.Empty
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

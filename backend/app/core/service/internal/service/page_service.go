@@ -16,14 +16,16 @@ import (
 type PageService struct {
 	contentV1.UnimplementedPageServiceServer
 
-	pageRepo *data.PageRepo
-	log      *log.Helper
+	pageRepo         *data.PageRepo
+	contentModelRepo *data.ContentModelRepo
+	log              *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo) *PageService {
+func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo) *PageService {
 	return &PageService{
-		log:      ctx.NewLoggerHelper("page/service/core-service"),
-		pageRepo: uc,
+		log:              ctx.NewLoggerHelper("page/service/core-service"),
+		pageRepo:         uc,
+		contentModelRepo: contentModelRepo,
 	}
 }
 
@@ -36,10 +38,38 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 }
 
 func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageRequest) (*contentV1.Page, error) {
+	// 自定义字段校验：按页面自身绑定的内容模型校验 custom_fields
+	// TenantId 由 viewer 注入（不在此消息中），此处传 0 跳过跨租户检查
+	if req != nil && req.Data != nil {
+		if vErr := s.contentModelRepo.ValidateValues(ctx,
+			req.Data.GetContentModelId(),
+			req.Data.GetCustomFields(),
+			0); vErr != nil {
+			return nil, vErr
+		}
+	}
 	return s.pageRepo.Create(ctx, req)
 }
 
 func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageRequest) (*contentV1.Page, error) {
+	// 自定义字段校验：仅当本次请求携带 custom_fields 时校验。
+	// 模型优先取请求绑定；未携带时查现库绑定，保证换绑后旧值也能被复检。
+	if req != nil && req.Data != nil && req.Data.CustomFields != nil {
+		modelID := req.Data.GetContentModelId()
+		if modelID == 0 {
+			if existing, gErr := s.pageRepo.Get(ctx, &contentV1.GetPageRequest{
+				QueryBy: &contentV1.GetPageRequest_Id{Id: req.GetId()},
+			}); gErr == nil && existing != nil {
+				modelID = existing.GetContentModelId()
+			}
+		}
+		if vErr := s.contentModelRepo.ValidateValues(ctx,
+			modelID,
+			req.Data.GetCustomFields(),
+			0); vErr != nil {
+			return nil, vErr
+		}
+	}
 	return s.pageRepo.Update(ctx, req)
 }
 

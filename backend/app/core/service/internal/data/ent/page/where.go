@@ -145,6 +145,11 @@ func IsCustomTemplate(v bool) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldIsCustomTemplate, v))
 }
 
+// ContentModelID applies equality check predicate on the "content_model_id" field. It's identical to ContentModelIDEQ.
+func ContentModelID(v uint32) predicate.Page {
+	return predicate.Page(sql.FieldEQ(FieldContentModelID, v))
+}
+
 // Depth applies equality check predicate on the "depth" field. It's identical to DepthEQ.
 func Depth(v int32) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldDepth, v))
@@ -1163,6 +1168,56 @@ func CustomFieldsIsNil() predicate.Page {
 // CustomFieldsNotNil applies the NotNil predicate on the "custom_fields" field.
 func CustomFieldsNotNil() predicate.Page {
 	return predicate.Page(sql.FieldNotNull(FieldCustomFields))
+}
+
+// ContentModelIDEQ applies the EQ predicate on the "content_model_id" field.
+func ContentModelIDEQ(v uint32) predicate.Page {
+	return predicate.Page(sql.FieldEQ(FieldContentModelID, v))
+}
+
+// ContentModelIDNEQ applies the NEQ predicate on the "content_model_id" field.
+func ContentModelIDNEQ(v uint32) predicate.Page {
+	return predicate.Page(sql.FieldNEQ(FieldContentModelID, v))
+}
+
+// ContentModelIDIn applies the In predicate on the "content_model_id" field.
+func ContentModelIDIn(vs ...uint32) predicate.Page {
+	return predicate.Page(sql.FieldIn(FieldContentModelID, vs...))
+}
+
+// ContentModelIDNotIn applies the NotIn predicate on the "content_model_id" field.
+func ContentModelIDNotIn(vs ...uint32) predicate.Page {
+	return predicate.Page(sql.FieldNotIn(FieldContentModelID, vs...))
+}
+
+// ContentModelIDGT applies the GT predicate on the "content_model_id" field.
+func ContentModelIDGT(v uint32) predicate.Page {
+	return predicate.Page(sql.FieldGT(FieldContentModelID, v))
+}
+
+// ContentModelIDGTE applies the GTE predicate on the "content_model_id" field.
+func ContentModelIDGTE(v uint32) predicate.Page {
+	return predicate.Page(sql.FieldGTE(FieldContentModelID, v))
+}
+
+// ContentModelIDLT applies the LT predicate on the "content_model_id" field.
+func ContentModelIDLT(v uint32) predicate.Page {
+	return predicate.Page(sql.FieldLT(FieldContentModelID, v))
+}
+
+// ContentModelIDLTE applies the LTE predicate on the "content_model_id" field.
+func ContentModelIDLTE(v uint32) predicate.Page {
+	return predicate.Page(sql.FieldLTE(FieldContentModelID, v))
+}
+
+// ContentModelIDIsNil applies the IsNil predicate on the "content_model_id" field.
+func ContentModelIDIsNil() predicate.Page {
+	return predicate.Page(sql.FieldIsNull(FieldContentModelID))
+}
+
+// ContentModelIDNotNil applies the NotNil predicate on the "content_model_id" field.
+func ContentModelIDNotNil() predicate.Page {
+	return predicate.Page(sql.FieldNotNull(FieldContentModelID))
 }
 
 // DepthEQ applies the EQ predicate on the "depth" field.

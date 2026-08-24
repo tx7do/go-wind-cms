@@ -1,3 +1,4 @@
+import Taro from '@tarojs/taro';
 import {
   useMutation,
   type UseMutationOptions,
@@ -204,8 +205,14 @@ export function useAuth() {
             accessStore.clearTokens();
             accessStore.setLoginExpired(false);
 
-            // 回登录页带上当前路由地址
-            router.replace(redirect ? '/login?redirect=' + encodeURIComponent(window.location.pathname) : '/login');
+            // 回登录页；redirect 参数带当前页面路径（Taro 跨端取路径，
+            // window.location 仅 H5 存在，小程序下会崩溃）
+            const currentPath = Taro.getCurrentInstance().router?.path || '';
+            router.replace(
+                redirect && currentPath
+                    ? '/login?redirect=' + encodeURIComponent(currentPath)
+                    : '/login',
+            );
         }
     }
 

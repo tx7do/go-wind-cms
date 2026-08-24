@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -94,6 +95,16 @@ func SortOrder(v uint32) predicate.InternalMessageCategory {
 	return predicate.InternalMessageCategory(sql.FieldEQ(FieldSortOrder, v))
 }
 
+// Path applies equality check predicate on the "path" field. It's identical to PathEQ.
+func Path(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldEQ(FieldPath, v))
+}
+
+// ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
+func ParentID(v uint32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldEQ(FieldParentID, v))
+}
+
 // Remark applies equality check predicate on the "remark" field. It's identical to RemarkEQ.
 func Remark(v string) predicate.InternalMessageCategory {
 	return predicate.InternalMessageCategory(sql.FieldEQ(FieldRemark, v))
@@ -117,6 +128,11 @@ func Code(v string) predicate.InternalMessageCategory {
 // IconURL applies equality check predicate on the "icon_url" field. It's identical to IconURLEQ.
 func IconURL(v string) predicate.InternalMessageCategory {
 	return predicate.InternalMessageCategory(sql.FieldEQ(FieldIconURL, v))
+}
+
+// Depth applies equality check predicate on the "depth" field. It's identical to DepthEQ.
+func Depth(v int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldEQ(FieldDepth, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -489,6 +505,111 @@ func SortOrderNotNil() predicate.InternalMessageCategory {
 	return predicate.InternalMessageCategory(sql.FieldNotNull(FieldSortOrder))
 }
 
+// PathEQ applies the EQ predicate on the "path" field.
+func PathEQ(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldEQ(FieldPath, v))
+}
+
+// PathNEQ applies the NEQ predicate on the "path" field.
+func PathNEQ(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNEQ(FieldPath, v))
+}
+
+// PathIn applies the In predicate on the "path" field.
+func PathIn(vs ...string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldIn(FieldPath, vs...))
+}
+
+// PathNotIn applies the NotIn predicate on the "path" field.
+func PathNotIn(vs ...string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNotIn(FieldPath, vs...))
+}
+
+// PathGT applies the GT predicate on the "path" field.
+func PathGT(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldGT(FieldPath, v))
+}
+
+// PathGTE applies the GTE predicate on the "path" field.
+func PathGTE(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldGTE(FieldPath, v))
+}
+
+// PathLT applies the LT predicate on the "path" field.
+func PathLT(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldLT(FieldPath, v))
+}
+
+// PathLTE applies the LTE predicate on the "path" field.
+func PathLTE(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldLTE(FieldPath, v))
+}
+
+// PathContains applies the Contains predicate on the "path" field.
+func PathContains(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldContains(FieldPath, v))
+}
+
+// PathHasPrefix applies the HasPrefix predicate on the "path" field.
+func PathHasPrefix(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldHasPrefix(FieldPath, v))
+}
+
+// PathHasSuffix applies the HasSuffix predicate on the "path" field.
+func PathHasSuffix(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldHasSuffix(FieldPath, v))
+}
+
+// PathIsNil applies the IsNil predicate on the "path" field.
+func PathIsNil() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldIsNull(FieldPath))
+}
+
+// PathNotNil applies the NotNil predicate on the "path" field.
+func PathNotNil() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNotNull(FieldPath))
+}
+
+// PathEqualFold applies the EqualFold predicate on the "path" field.
+func PathEqualFold(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldEqualFold(FieldPath, v))
+}
+
+// PathContainsFold applies the ContainsFold predicate on the "path" field.
+func PathContainsFold(v string) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldContainsFold(FieldPath, v))
+}
+
+// ParentIDEQ applies the EQ predicate on the "parent_id" field.
+func ParentIDEQ(v uint32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldEQ(FieldParentID, v))
+}
+
+// ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
+func ParentIDNEQ(v uint32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNEQ(FieldParentID, v))
+}
+
+// ParentIDIn applies the In predicate on the "parent_id" field.
+func ParentIDIn(vs ...uint32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldIn(FieldParentID, vs...))
+}
+
+// ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
+func ParentIDNotIn(vs ...uint32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNotIn(FieldParentID, vs...))
+}
+
+// ParentIDIsNil applies the IsNil predicate on the "parent_id" field.
+func ParentIDIsNil() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldIsNull(FieldParentID))
+}
+
+// ParentIDNotNil applies the NotNil predicate on the "parent_id" field.
+func ParentIDNotNil() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNotNull(FieldParentID))
+}
+
 // RemarkEQ applies the EQ predicate on the "remark" field.
 func RemarkEQ(v string) predicate.InternalMessageCategory {
 	return predicate.InternalMessageCategory(sql.FieldEQ(FieldRemark, v))
@@ -837,6 +958,102 @@ func IconURLEqualFold(v string) predicate.InternalMessageCategory {
 // IconURLContainsFold applies the ContainsFold predicate on the "icon_url" field.
 func IconURLContainsFold(v string) predicate.InternalMessageCategory {
 	return predicate.InternalMessageCategory(sql.FieldContainsFold(FieldIconURL, v))
+}
+
+// DepthEQ applies the EQ predicate on the "depth" field.
+func DepthEQ(v int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldEQ(FieldDepth, v))
+}
+
+// DepthNEQ applies the NEQ predicate on the "depth" field.
+func DepthNEQ(v int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNEQ(FieldDepth, v))
+}
+
+// DepthIn applies the In predicate on the "depth" field.
+func DepthIn(vs ...int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldIn(FieldDepth, vs...))
+}
+
+// DepthNotIn applies the NotIn predicate on the "depth" field.
+func DepthNotIn(vs ...int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNotIn(FieldDepth, vs...))
+}
+
+// DepthGT applies the GT predicate on the "depth" field.
+func DepthGT(v int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldGT(FieldDepth, v))
+}
+
+// DepthGTE applies the GTE predicate on the "depth" field.
+func DepthGTE(v int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldGTE(FieldDepth, v))
+}
+
+// DepthLT applies the LT predicate on the "depth" field.
+func DepthLT(v int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldLT(FieldDepth, v))
+}
+
+// DepthLTE applies the LTE predicate on the "depth" field.
+func DepthLTE(v int32) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldLTE(FieldDepth, v))
+}
+
+// DepthIsNil applies the IsNil predicate on the "depth" field.
+func DepthIsNil() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldIsNull(FieldDepth))
+}
+
+// DepthNotNil applies the NotNil predicate on the "depth" field.
+func DepthNotNil() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(sql.FieldNotNull(FieldDepth))
+}
+
+// HasParent applies the HasEdge predicate on the "parent" edge.
+func HasParent() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasParentWith applies the HasEdge predicate on the "parent" edge with a given conditions (other predicates).
+func HasParentWith(preds ...predicate.InternalMessageCategory) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(func(s *sql.Selector) {
+		step := newParentStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasChildren applies the HasEdge predicate on the "children" edge.
+func HasChildren() predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasChildrenWith applies the HasEdge predicate on the "children" edge with a given conditions (other predicates).
+func HasChildrenWith(preds ...predicate.InternalMessageCategory) predicate.InternalMessageCategory {
+	return predicate.InternalMessageCategory(func(s *sql.Selector) {
+		step := newChildrenStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

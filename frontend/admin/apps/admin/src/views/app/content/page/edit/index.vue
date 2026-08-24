@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
@@ -7,7 +7,7 @@ import { useTabs } from '@vben/hooks';
 import { LucideArrowLeft, LucideSparkles } from '@vben/icons';
 import { $t } from '@vben/locales';
 
-import { notification } from 'ant-design-vue';
+import { notification, Select, Input, Textarea } from 'ant-design-vue';
 
 import { Editor } from '#/adapter/component/Editor';
 import {
@@ -16,12 +16,56 @@ import {
   pageStatusList,
   pageTypeList,
   uploadMediaAsset,
+  fetchListContentModels,
+  fetchListFieldDefinitions,
+  type contentservicev1_FieldDefinition as FieldDefinition,
+  type contentservicev1_ContentModel as ContentModel,
 } from '#/api';
 import { router } from '#/router';
+import { PaginationQuery } from '#/transport/rest';
 
 import { usePageEditViewStore } from './page-edit-view.state';
+import RelationFieldSelect from '../../model/RelationFieldSelect.vue';
 
 const pageEditViewStore = usePageEditViewStore();
+
+// 内容模型绑定 + 动态字段表单
+const contentModelOptions = ref<{ label: string; value: number }[]>([]);
+const fieldDefinitions = ref<FieldDefinition[]>([]);
+
+watchEffect(async () => {
+  try {
+    const resp = await fetchListContentModels(
+      new PaginationQuery({
+        paging: { page: 1, pageSize: 100 },
+        orderBy: ['sort_order'],
+      }),
+    );
+    contentModelOptions.value = (resp?.items ?? []).map((m: ContentModel) => ({
+      label: m.name || m.code || `#${m.id}`,
+      value: m.id as number,
+    }));
+  } catch {
+    contentModelOptions.value = [];
+  }
+});
+
+watch(
+  () => pageEditViewStore.formData.contentModelId,
+  async (modelId) => {
+    if (!modelId) {
+      fieldDefinitions.value = [];
+      return;
+    }
+    try {
+      const resp = await fetchListFieldDefinitions({ contentModelId: modelId });
+      fieldDefinitions.value = (resp?.items ?? []) as FieldDefinition[];
+    } catch {
+      fieldDefinitions.value = [];
+    }
+  },
+  { immediate: true },
+);
 
 const route = useRoute();
 const { closeCurrentTab } = useTabs();
@@ -324,6 +368,45 @@ init();
         </a-select>
       </div>
     </template>
+
+    <!-- 内容模型绑定 + 动态字段表单 -->
+    <div v-if="contentModelOptions.length > 0 || fieldDefinitions.length > 0" class="px-4 py-2 border-b border-splitLine">
+      <div class="mb-2">
+        <label class="text-xs text-textSec block mb-1">{{ $t('page.contentModel.moduleName') }}</label>
+        <Select
+          v-model:value="pageEditViewStore.formData.contentModelId"
+          :options="contentModelOptions"
+          allow-clear
+          size="small"
+          style="width: 100%"
+        />
+      </div>
+      <a-form-item
+        v-for="field in fieldDefinitions"
+        :key="field.id"
+        :label="field.label || field.name"
+        class="mb-2"
+      >
+        <Input
+          v-if="field.type === 'FIELD_TYPE_TEXT' || field.type === 'FIELD_TYPE_NUMBER' || field.type === 'FIELD_TYPE_IMAGE' || field.type === 'FIELD_TYPE_FILE'"
+          v-model:value="(pageEditViewStore.formData.customFields ?? (pageEditViewStore.formData.customFields = {}))[field.name ?? '']"
+          size="small"
+        />
+        <Textarea
+          v-else-if="field.type === 'FIELD_TYPE_RICHTEXT'"
+          v-model:value="(pageEditViewStore.formData.customFields ?? (pageEditViewStore.formData.customFields = {}))[field.name ?? '']"
+          :rows="2"
+          size="small"
+        />
+        <RelationFieldSelect
+          v-else-if="field.type === 'FIELD_TYPE_RELATION'"
+          :target-entity-type="field.relationConfig?.targetEntityType"
+          :model-value="(pageEditViewStore.formData.customFields ?? (pageEditViewStore.formData.customFields = {}))[field.name ?? '']"
+          @update:model-value="(pageEditViewStore.formData.customFields ?? (pageEditViewStore.formData.customFields = {}))[field.name ?? ''] = $event"
+          :size="'small'"
+        />
+      </a-form-item>
+    </div>
 
     <div class="page-edit-container min-h-0 flex-1">
       <Editor

@@ -23,7 +23,7 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 
 - **API First** — Complete RESTful / gRPC dual-protocol interfaces with auto-generated OpenAPI docs
 - **Multi-platform** — Frontend support for Vue, React, Taro (Mini Program), and Flutter
-- **Multi-tenant** — Tenant data isolation with auto-initialized departments, roles, and admins
+- **Multi-tenant** — Tenant data isolation with auto-initialized roles and admins
 - **Fine-grained Permissions** — Three-level access control: menu, API, and data permissions with button-level granularity
 - **Native i18n** — Unified translation management for content, menus, and UI text
 - **Microservices** — Built on go-kratos with service discovery, distributed tracing, and distributed transactions
@@ -85,8 +85,8 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 
 | Feature | Description |
 |:---|:---|
-| Multi-tenant Management | Tenant creation, enable/disable, package config & data isolation; auto-init departments, roles & admin |
-| User Management | Full lifecycle management, multi-role/dept binding, proxy login, advanced queries |
+| Multi-tenant Management | Tenant creation, enable/disable, package config & data isolation; auto-init roles & admin |
+| User Management | Full lifecycle management, multi-role/dept binding, advanced queries |
 | Role Management | Role & role group management with fine-grained menu, API & data permissions |
 | Permission Management | Permission groups, menu nodes & permission points with button-level control |
 | Menu Management | Visual menu config with directory/page/button levels, dynamic rendering by permission |
@@ -103,7 +103,7 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Comment Management | Comment audit, delete, reply, block; filter by content, user, time |
 | Multi-language Management | Language management, unified translation for content, menus & UI text |
 | Site Management | Multi-site config with independent domain, title, logo, SEO & style |
-| Site Configuration | Basic info, SEO, upload limits, cache policy, email/SMS global params |
+| Site Configuration | Basic info, SEO, upload limits, email/SMS global params |
 
 ### System & Operations
 
@@ -115,7 +115,6 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Task Scheduling | Cron job management, start/pause/execute, execution history & logs |
 | Message Notification | Multi-level message categories, targeted messaging, read status tracking |
 | Internal Messages | Personal inbox, view/delete, single/batch mark as read |
-| Cache Management | Real-time cache query, precise key-based or batch cleanup |
 | Login Logs | Login success/failure logs with account, IP, location, device, time |
 | Operation Logs | Full-link audit trail with operator, IP, params & results |
 | Personal Center | Profile editing, avatar, password reset, login history |

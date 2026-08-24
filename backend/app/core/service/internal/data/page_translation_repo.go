@@ -83,13 +83,31 @@ func (r *PageTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID uint32) ([]*contentV1.PageTranslation, error) {
-	q := r.entClient.Client().PageTranslation.Query().
+func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
+	builder := r.entClient.Client().PageTranslation.Query().
 		Where(
 			pagetranslation.PageIDEQ(pageID),
 		)
 
-	entities, err := q.
+	if len(locale) > 0 {
+		builder.Where(
+			pagetranslation.LanguageCodeEQ(locale),
+		)
+	}
+
+	if viewMask != nil {
+		selectSelector, err := r.repository.BuildSelector(viewMask.GetPaths())
+		if err != nil {
+			r.log.Errorf("build page translation selector failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("build page translation selector failed")
+		}
+		if selectSelector != nil {
+			builder.Modify(selectSelector)
+		}
+	}
+
+	entities, err := builder.
+		Order(ent.Asc(pagetranslation.FieldID)).
 		All(ctx)
 	if err != nil {
 		r.log.Errorf("query translations by page id failed: %s", err.Error())
@@ -102,6 +120,19 @@ func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID uint3
 	}
 
 	return dtos, nil
+}
+
+// ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
+// 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
+func (r *PageTranslationRepo) ListTranslationsWithFallback(ctx context.Context, pageID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
+	translations, err := r.ListTranslations(ctx, pageID, locale, viewMask)
+	if err != nil {
+		return nil, err
+	}
+	if len(translations) == 0 && locale != "" {
+		return r.ListTranslations(ctx, pageID, "", viewMask)
+	}
+	return translations, nil
 }
 
 // pt 必须传与调用方一致的事务/非事务客户端，事务内用非事务连接读同一张表

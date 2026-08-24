@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { h } from 'vue';
+import { h, ref } from 'vue';
 
 import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
 import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
+import { useUserStore } from '@vben/stores';
 
 import { notification } from 'ant-design-vue';
 import dayjs from 'dayjs';
@@ -24,10 +25,14 @@ import {
   commentStatusToName,
   fetchListComments,
   PaginationQuery,
+  useCreateComment,
 } from '#/api';
 import { $t } from '#/locales';
 
 import CommentDrawer from './comment-drawer.vue';
+
+const userStore = useUserStore();
+const { mutateAsync: createComment } = useCreateComment();
 
 const formOptions: VbenFormProps = {
   collapsed: false,
@@ -236,7 +241,7 @@ const gridOptions: VxeGridProps<Comment> = {
       field: 'action',
       fixed: 'right',
       slots: { default: 'action' },
-      width: 100,
+      width: 130,
     },
   ],
 };
@@ -272,6 +277,54 @@ function handleDelete(row: any) {
     }
   })();
 }
+
+/* 回复：以管理员身份对选中评论发表回复 */
+const replyOpen = ref(false);
+const replySubmitting = ref(false);
+const replyContent = ref('');
+const replyRow = ref<any>(null);
+
+function handleReply(row: any) {
+  replyRow.value = row;
+  replyContent.value = '';
+  replyOpen.value = true;
+}
+
+async function submitReply() {
+  const row = replyRow.value;
+  if (!row || !replyContent.value.trim()) {
+    return;
+  }
+
+  replySubmitting.value = true;
+  try {
+    await createComment({
+      // 树形绑定 + 目标对象沿用父评论；replyToId 驱动前台"作者回复"徽章
+      parentId: row.id,
+      replyToId: row.id,
+      contentType: row.contentType,
+      objectId: row.objectId,
+      content: replyContent.value,
+      // BFF 只盖 created_by，作者字段需前端提供；管理员回复直接以 APPROVED 发布
+      authorType: 'AUTHOR_TYPE_ADMIN',
+      authorId: userStore.userInfo?.id ?? 0,
+      authorName: userStore.userInfo?.username,
+      status: 'STATUS_APPROVED',
+    });
+
+    notification.success({
+      message: $t('ui.notification.create_success'),
+    });
+    replyOpen.value = false;
+    await gridApi.reload();
+  } catch {
+    notification.error({
+      message: $t('ui.notification.create_failed'),
+    });
+  } finally {
+    replySubmitting.value = false;
+  }
+}
 </script>
 
 <template>
@@ -295,6 +348,13 @@ function handleDelete(row: any) {
       <template #action="{ row }">
         <a-button
           type="link"
+          size="small"
+          @click.stop="handleReply(row)"
+        >
+          {{ $t('page.comment.button.reply') }}
+        </a-button>
+        <a-button
+          type="link"
           :icon="h(LucideFilePenLine)"
           @click.stop="handleEdit(row)"
         />
@@ -313,5 +373,25 @@ function handleDelete(row: any) {
       </template>
     </Grid>
     <Drawer />
+
+    <!-- 回复弹窗：以管理员身份回复选中评论 -->
+    <a-modal
+      v-model:open="replyOpen"
+      :title="$t('page.comment.button.reply')"
+      :confirm-loading="replySubmitting"
+      :ok-text="$t('page.comment.button.reply')"
+      :cancel-text="$t('ui.button.cancel')"
+      @ok="submitReply"
+    >
+      <a-form layout="vertical">
+        <a-form-item :label="$t('page.comment.content')" required>
+          <a-textarea
+            v-model:value="replyContent"
+            :rows="4"
+            :placeholder="$t('ui.placeholder.input')"
+          />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </Page>
 </template>

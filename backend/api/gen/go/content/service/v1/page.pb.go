@@ -155,6 +155,7 @@ type Page struct {
 	Template           *string                `protobuf:"bytes,12,opt,name=template,proto3,oneof" json:"template,omitempty"`                                                                                                 // 页面模板名称
 	IsCustomTemplate   *bool                  `protobuf:"varint,13,opt,name=is_custom_template,json=isCustomTemplate,proto3,oneof" json:"is_custom_template,omitempty"`                                                      // 是否使用自定义模板代码
 	CustomFields       map[string]string      `protobuf:"bytes,21,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
+	ContentModelId     *uint32                `protobuf:"varint,22,opt,name=content_model_id,json=contentModelId,proto3,oneof" json:"content_model_id,omitempty"`                                                            // 绑定的内容模型ID
 	Translations       []*PageTranslation     `protobuf:"bytes,30,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
 	AvailableLanguages []string               `protobuf:"bytes,31,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
 	ParentId           *uint32                `protobuf:"varint,50,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                                                                // 父页面ID
@@ -297,6 +298,13 @@ func (x *Page) GetCustomFields() map[string]string {
 		return x.CustomFields
 	}
 	return nil
+}
+
+func (x *Page) GetContentModelId() uint32 {
+	if x != nil && x.ContentModelId != nil {
+		return *x.ContentModelId
+	}
+	return 0
 }
 
 func (x *Page) GetTranslations() []*PageTranslation {
@@ -1227,7 +1235,7 @@ var File_content_service_v1_page_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\x86\x18\n" +
+	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\x9e\x19\n" +
 	"\x04Page\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b页面IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Page.PageStatusB\x12\xbaG\x0f\x92\x02\f页面状态H\x01R\x06status\x88\x01\x01\x12\x8c\x01\n" +
@@ -1247,25 +1255,26 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"R\tsortOrder\x88\x01\x01\x12s\n" +
 	"\btemplate\x18\f \x01(\tBR\xbaGO\x92\x02L页面模板名称（如 'about-us', 'contact'，覆盖全局默认模板）H\vR\btemplate\x88\x01\x01\x12r\n" +
 	"\x12is_custom_template\x18\r \x01(\bB?\xbaG<\x92\x029是否使用自定义模板代码（而非预设模板）H\fR\x10isCustomTemplate\x88\x01\x01\x12\x87\x01\n" +
-	"\rcustom_fields\x18\x15 \x03(\v2*.content.service.v1.Page.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12d\n" +
+	"\rcustom_fields\x18\x15 \x03(\v2*.content.service.v1.Page.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12\x80\x01\n" +
+	"\x10content_model_id\x18\x16 \x01(\rBQ\xbaGN\x92\x02K绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）H\rR\x0econtentModelId\x88\x01\x01\x12d\n" +
 	"\ftranslations\x18\x1e \x03(\v2#.content.service.v1.PageTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
 	"\x13available_languages\x18\x1f \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12n\n" +
-	"\tparent_id\x182 \x01(\rBL\xbaGI\x92\x02F父页面ID（0 表示顶级页面，用于构建站点树形结构）H\rR\bparentId\x88\x01\x01\x12H\n" +
+	"\tparent_id\x182 \x01(\rBL\xbaGI\x92\x02F父页面ID（0 表示顶级页面，用于构建站点树形结构）H\x0eR\bparentId\x88\x01\x01\x12H\n" +
 	"\bchildren\x18= \x03(\v2\x18.content.service.v1.PageB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12d\n" +
-	"\x05depth\x184 \x01(\x05BI\xbaGF\x92\x02C页面层级深度（0=顶级，1=二级，用于面包屑导航）H\x0eR\x05depth\x88\x01\x01\x12R\n" +
-	"\x04path\x185 \x01(\tB9\xbaG6\x92\x023物化路径（如 '1/5/23'，便于层级查询）H\x0fR\x04path\x88\x01\x01\x12;\n" +
+	"\x05depth\x184 \x01(\x05BI\xbaGF\x92\x02C页面层级深度（0=顶级，1=二级，用于面包屑导航）H\x0fR\x05depth\x88\x01\x01\x12R\n" +
+	"\x04path\x185 \x01(\tB9\xbaG6\x92\x023物化路径（如 '1/5/23'，便于层级查询）H\x10R\x04path\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x10R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x11R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x11R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x12R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x12R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x13R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x13R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x14R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x14R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x15R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x15R\tdeletedAt\x88\x01\x01\x1a?\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x16R\tdeletedAt\x88\x01\x01\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"u\n" +
@@ -1295,7 +1304,8 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\x13_show_in_navigationB\r\n" +
 	"\v_sort_orderB\v\n" +
 	"\t_templateB\x15\n" +
-	"\x13_is_custom_templateB\f\n" +
+	"\x13_is_custom_templateB\x13\n" +
+	"\x11_content_model_idB\f\n" +
 	"\n" +
 	"_parent_idB\b\n" +
 	"\x06_depthB\a\n" +

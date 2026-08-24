@@ -44,7 +44,6 @@ var ProviderSet = wire.NewSet(
 	service.NewPermissionAuditLogService,
 	service.NewDataAccessAuditLogService,
 	service.NewOperationAuditLogService,
-	service.NewFileTransferService,
 
 	service.NewCategoryService,
 	service.NewPostService,
@@ -67,4 +66,5 @@ var ProviderSet = wire.NewSet(
 	service.NewNavigationItemService,
 	service.NewSiteSettingService,
 	service.NewSiteService,
+	service.NewContentModelService,
 )

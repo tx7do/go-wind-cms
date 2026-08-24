@@ -43,14 +43,14 @@ type SectionServiceHTTPServer interface {
 
 func RegisterSectionServiceHTTPServer(s *http.Server, srv SectionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/sections", _SectionService_List26_HTTP_Handler(srv))
-	r.GET("/admin/v1/sections/{id}", _SectionService_Get26_HTTP_Handler(srv))
-	r.POST("/admin/v1/sections", _SectionService_Create20_HTTP_Handler(srv))
-	r.PUT("/admin/v1/sections/{id}", _SectionService_Update20_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/sections/{id}", _SectionService_Delete20_HTTP_Handler(srv))
+	r.GET("/admin/v1/sections", _SectionService_List27_HTTP_Handler(srv))
+	r.GET("/admin/v1/sections/{id}", _SectionService_Get28_HTTP_Handler(srv))
+	r.POST("/admin/v1/sections", _SectionService_Create21_HTTP_Handler(srv))
+	r.PUT("/admin/v1/sections/{id}", _SectionService_Update21_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/sections/{id}", _SectionService_Delete21_HTTP_Handler(srv))
 }
 
-func _SectionService_List26_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
+func _SectionService_List27_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _SectionService_List26_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx 
 	}
 }
 
-func _SectionService_Get26_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
+func _SectionService_Get28_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSectionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _SectionService_Get26_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx h
 	}
 }
 
-func _SectionService_Create20_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
+func _SectionService_Create21_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateSectionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _SectionService_Create20_HTTP_Handler(srv SectionServiceHTTPServer) func(ct
 	}
 }
 
-func _SectionService_Update20_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
+func _SectionService_Update21_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateSectionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _SectionService_Update20_HTTP_Handler(srv SectionServiceHTTPServer) func(ct
 	}
 }
 
-func _SectionService_Delete20_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
+func _SectionService_Delete21_HTTP_Handler(srv SectionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteSectionRequest
 		if err := ctx.BindQuery(&in); err != nil {

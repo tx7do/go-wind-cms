@@ -2,14 +2,18 @@ package data
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-crud/pagination"
+	paginationFilter "github.com/tx7do/go-crud/pagination/filter"
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -91,6 +95,50 @@ func (r *PageRepo) init() {
 	r.mapper.AppendConverters(r.editorTypeConverter.NewConverterPair())
 }
 
+func (r *PageRepo) prepareTranslationMaskFields(req *paginationV1.PagingRequest) (
+	excludeConditions []*paginationV1.FilterCondition,
+	translationMaskFields []string,
+	needQueryTranslation bool,
+	err error,
+) {
+	var filterExpr *paginationV1.FilterExpr
+	filterExpr, err = paginationFilter.ConvertFilterByPagingRequest(req)
+	if err != nil {
+		r.log.Errorf("convert filter by paging request failed: %s", err.Error())
+		return
+	}
+
+	excludeFields := []string{"translations", "available_languages"}
+	if req.FieldMask != nil && len(req.FieldMask.Paths) > 0 {
+		for _, path := range req.FieldMask.Paths {
+			path = strings.TrimSpace(path)
+
+			if path == "translations" || strings.HasPrefix(path, "translations.") {
+				needQueryTranslation = true
+			}
+			if strings.HasPrefix(path, "translations.") {
+				excludeFields = append(excludeFields, path)
+				path = strings.TrimPrefix(path, "translations.")
+				if len(path) > 0 {
+					translationMaskFields = append(translationMaskFields, path)
+				}
+			}
+		}
+
+		req.FieldMask = FilterViewMask(excludeFields, req.FieldMask)
+
+	} else {
+		needQueryTranslation = true
+	}
+
+	excludeConditions = pagination.FilterFields(filterExpr, []string{
+		"locale",
+	})
+	req.FilteringType = &paginationV1.PagingRequest_FilterExpr{FilterExpr: filterExpr}
+
+	return
+}
+
 func (r *PageRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
 	exist, err := r.entClient.Client().Page.Query().
 		Where(page.IDEQ(id)).
@@ -122,6 +170,23 @@ func (r *PageRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 
 	builder := r.entClient.Client().Page.Query()
 
+	excludeConditions, translationMaskFields, needQueryTranslation, err := r.prepareTranslationMaskFields(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.FieldMask != nil && len(req.FieldMask.Paths) > 0 {
+		whereSelectors, err := r.repository.BuildSelectorWithTable(page.Table, req.FieldMask.Paths)
+		if err != nil {
+			r.log.Errorf("build selector with table failed: %s", err.Error())
+			return nil, err
+		}
+
+		builder.Modify(whereSelectors)
+
+		req.FieldMask = nil
+	}
+
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
 		return nil, err
@@ -130,14 +195,31 @@ func (r *PageRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		return &contentV1.ListPageResponse{Total: 0, Items: nil}, nil
 	}
 
-	//for _, item := range ret.Items {
-	//	translations, err := r.pageTranslationRepo.ListTranslations(ctx, item.GetId())
-	//	if err != nil {
-	//		r.log.Errorf("query translations failed: %s", err.Error())
-	//		return nil, contentV1.ErrorInternalServerError("query translations failed")
-	//	}
-	//	item.Translations = translations
-	//}
+	if needQueryTranslation {
+		viewMask := &fieldmaskpb.FieldMask{
+			Paths: translationMaskFields,
+		}
+
+		var locale string
+		if len(excludeConditions) > 0 {
+			for _, cond := range excludeConditions {
+				if cond.GetField() == "locale" {
+					locale = cond.GetValue()
+					break
+				}
+			}
+		}
+
+		for _, item := range ret.Items {
+			// 指定语言缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底
+			translations, err := r.pageTranslationRepo.ListTranslationsWithFallback(ctx, item.GetId(), locale, viewMask)
+			if err != nil {
+				r.log.Errorf("query translations failed: %s", err.Error())
+				return nil, contentV1.ErrorInternalServerError("query translations failed")
+			}
+			item.Translations = translations
+		}
+	}
 
 	for _, item := range ret.Items {
 		languages, err := r.pageTranslationRepo.ListAvailedLanguages(ctx, item.GetId())
@@ -183,7 +265,9 @@ func (r *PageRepo) Get(ctx context.Context, req *contentV1.GetPageRequest) (*con
 
 	dto := r.mapper.ToDTO(entity)
 
-	translations, err := r.pageTranslationRepo.ListTranslations(ctx, dto.GetId())
+	// 指定语言优先；缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底，
+	// 否则详情页标题/正文将为空
+	translations, err := r.pageTranslationRepo.ListTranslationsWithFallback(ctx, dto.GetId(), req.GetLocale(), nil)
 	if err != nil {
 		r.log.Errorf("query translations failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query translations failed")
@@ -246,6 +330,8 @@ func (r *PageRepo) Create(ctx context.Context, req *contentV1.CreatePageRequest)
 	if req.Data.CustomFields != nil {
 		builder.SetCustomFields(trans.Ptr(req.Data.GetCustomFields()))
 	}
+
+	builder.SetNillableContentModelID(req.Data.ContentModelId)
 
 	var entity *ent.Page
 	if entity, err = builder.Save(ctx); err != nil {
@@ -356,6 +442,10 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 
 			if req.Data.CustomFields != nil {
 				builder.SetCustomFields(trans.Ptr(req.Data.GetCustomFields()))
+			}
+
+			if req.Data.ContentModelId != nil {
+				builder.SetNillableContentModelID(req.Data.ContentModelId)
 			}
 		},
 		func(s *sql.Selector) {
@@ -474,8 +564,8 @@ func (r *PageRepo) GetTranslation(ctx context.Context, req *contentV1.GetPageReq
 	return r.pageTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *PageRepo) ListTranslations(ctx context.Context, pageID uint32) ([]*contentV1.PageTranslation, error) {
-	return r.pageTranslationRepo.ListTranslations(ctx, pageID)
+func (r *PageRepo) ListTranslations(ctx context.Context, pageID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
+	return r.pageTranslationRepo.ListTranslations(ctx, pageID, locale, viewMask)
 }
 
 func (r *PageRepo) DeleteTranslation(ctx context.Context, req *contentV1.DeletePageTranslationRequest) error {

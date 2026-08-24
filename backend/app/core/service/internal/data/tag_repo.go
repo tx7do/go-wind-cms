@@ -245,7 +245,9 @@ func (r *TagRepo) Get(ctx context.Context, req *contentV1.GetTagRequest) (*conte
 
 	dto := r.mapper.ToDTO(entity)
 
-	translations, err := r.tagTranslationRepo.ListTranslations(ctx, dto.GetId(), "", nil)
+	// 指定语言优先；缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底，
+	// 否则详情页标题/正文将为空
+	translations, err := r.tagTranslationRepo.ListTranslationsWithFallback(ctx, dto.GetId(), req.GetLocale(), nil)
 	if err != nil {
 		r.log.Errorf("query translations failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query translations failed")

@@ -24,6 +24,12 @@ type Comment func(*sql.Selector)
 // CommentLike is the predicate function for commentlike builders.
 type CommentLike func(*sql.Selector)
 
+// ContentModel is the predicate function for contentmodel builders.
+type ContentModel func(*sql.Selector)
+
+// ContentModelTranslation is the predicate function for contentmodeltranslation builders.
+type ContentModelTranslation func(*sql.Selector)
+
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
 
@@ -35,6 +41,12 @@ type DictEntryI18n func(*sql.Selector)
 
 // DictType is the predicate function for dicttype builders.
 type DictType func(*sql.Selector)
+
+// FieldDefinition is the predicate function for fielddefinition builders.
+type FieldDefinition func(*sql.Selector)
+
+// FieldDefinitionTranslation is the predicate function for fielddefinitiontranslation builders.
+type FieldDefinitionTranslation func(*sql.Selector)
 
 // File is the predicate function for file builders.
 type File func(*sql.Selector)

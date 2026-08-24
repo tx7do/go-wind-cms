@@ -80,13 +80,32 @@ func (r *SectionTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *SectionTranslationRepo) ListTranslations(ctx context.Context, sectionID uint32) ([]*contentV1.SectionTranslation, error) {
-	q := r.entClient.Client().SectionTranslation.Query().
+func (r *SectionTranslationRepo) ListTranslations(ctx context.Context, sectionID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.SectionTranslation, error) {
+	builder := r.entClient.Client().SectionTranslation.Query().
 		Where(
 			sectiontranslation.SectionIDEQ(sectionID),
 		)
 
-	entities, err := q.All(ctx)
+	if len(locale) > 0 {
+		builder.Where(
+			sectiontranslation.LanguageCodeEQ(locale),
+		)
+	}
+
+	if viewMask != nil {
+		selectSelector, err := r.repository.BuildSelector(viewMask.GetPaths())
+		if err != nil {
+			r.log.Errorf("build section translation selector failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("build section translation selector failed")
+		}
+		if selectSelector != nil {
+			builder.Modify(selectSelector)
+		}
+	}
+
+	entities, err := builder.
+		Order(ent.Asc(sectiontranslation.FieldID)).
+		All(ctx)
 	if err != nil {
 		r.log.Errorf("query translations by section id failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query translations by section id failed")
@@ -98,6 +117,19 @@ func (r *SectionTranslationRepo) ListTranslations(ctx context.Context, sectionID
 	}
 
 	return dtos, nil
+}
+
+// ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
+// 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
+func (r *SectionTranslationRepo) ListTranslationsWithFallback(ctx context.Context, sectionID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.SectionTranslation, error) {
+	translations, err := r.ListTranslations(ctx, sectionID, locale, viewMask)
+	if err != nil {
+		return nil, err
+	}
+	if len(translations) == 0 && locale != "" {
+		return r.ListTranslations(ctx, sectionID, "", viewMask)
+	}
+	return translations, nil
 }
 
 // st 必须传与调用方一致的事务/非事务客户端，保证批量插入运行在事务内

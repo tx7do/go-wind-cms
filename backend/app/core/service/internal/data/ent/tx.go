@@ -24,6 +24,10 @@ type Tx struct {
 	Comment *CommentClient
 	// CommentLike is the client for interacting with the CommentLike builders.
 	CommentLike *CommentLikeClient
+	// ContentModel is the client for interacting with the ContentModel builders.
+	ContentModel *ContentModelClient
+	// ContentModelTranslation is the client for interacting with the ContentModelTranslation builders.
+	ContentModelTranslation *ContentModelTranslationClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -32,6 +36,10 @@ type Tx struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
+	// FieldDefinition is the client for interacting with the FieldDefinition builders.
+	FieldDefinition *FieldDefinitionClient
+	// FieldDefinitionTranslation is the client for interacting with the FieldDefinitionTranslation builders.
+	FieldDefinitionTranslation *FieldDefinitionTranslationClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
@@ -271,10 +279,14 @@ func (tx *Tx) init() {
 	tx.CategoryTranslation = NewCategoryTranslationClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.CommentLike = NewCommentLikeClient(tx.config)
+	tx.ContentModel = NewContentModelClient(tx.config)
+	tx.ContentModelTranslation = NewContentModelTranslationClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
 	tx.DictType = NewDictTypeClient(tx.config)
+	tx.FieldDefinition = NewFieldDefinitionClient(tx.config)
+	tx.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.InteractionCounter = NewInteractionCounterClient(tx.config)
 	tx.InternalMessage = NewInternalMessageClient(tx.config)

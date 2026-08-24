@@ -2,12 +2,13 @@
 import { Page } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import AccountBindPage from './account-bind-page.vue';
 import BaseSettingPage from './base-setting-page.vue';
 import EditPasswordPage from './edit-password-page.vue';
-import MsgNotifyPage from './msg-notify-page.vue';
-import SecureSettingPage from './secure-setting-page.vue';
+import LoginRecordsPage from './login-records-page.vue';
 
+// securitySettings/accountBind/notification 三个原占位 tab 已移除：
+// 均为无 API 的纯静态假数据（安全设置/账号绑定后端为 501 未实现，
+// 通知开关无持久化），保留只会误导用户。待后端能力就绪再恢复。
 const settingList = [
   {
     key: '1',
@@ -21,18 +22,8 @@ const settingList = [
   },
   {
     key: '3',
-    name: $t('page.user.profile.tab.securitySettings'),
-    component: SecureSettingPage,
-  },
-  {
-    key: '4',
-    name: $t('page.user.profile.tab.accountBind'),
-    component: AccountBindPage,
-  },
-  {
-    key: '5',
-    name: $t('page.user.profile.tab.notification'),
-    component: MsgNotifyPage,
+    name: $t('page.user.profile.tab.loginRecords'),
+    component: LoginRecordsPage,
   },
 ];
 </script>

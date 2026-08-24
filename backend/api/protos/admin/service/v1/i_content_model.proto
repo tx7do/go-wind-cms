@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "content/service/v1/content_model.proto";
+
+// 内容模型管理服务
+service ContentModelService {
+  // 查询内容模型列表
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListContentModelResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/content-models"
+    };
+  }
+
+  // 查询内容模型详情
+  rpc Get (content.service.v1.GetContentModelRequest) returns (content.service.v1.ContentModel) {
+    option (google.api.http) = {
+      get: "/admin/v1/content-models/{id}"
+      additional_bindings {
+        get: "/admin/v1/content-models/code/{code}"
+      }
+    };
+  }
+
+  // 创建内容模型
+  rpc Create (content.service.v1.CreateContentModelRequest) returns (content.service.v1.ContentModel) {
+    option (google.api.http) = {
+      post: "/admin/v1/content-models"
+      body: "*"
+    };
+  }
+
+  // 更新内容模型
+  rpc Update (content.service.v1.UpdateContentModelRequest) returns (content.service.v1.ContentModel) {
+    option (google.api.http) = {
+      put: "/admin/v1/content-models/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除内容模型
+  rpc Delete (content.service.v1.DeleteContentModelRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/content-models/{id}"
+    };
+  }
+
+  // 列出模型下的字段定义
+  rpc ListFieldDefinitions (content.service.v1.ListFieldDefinitionsRequest) returns (content.service.v1.ListFieldDefinitionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/content-models/{content_model_id}/field-definitions"
+    };
+  }
+}

@@ -1,9 +1,0 @@
-pubName: flutter_app
-skipRequestBodyValidation: true
-disallowAdditionalPropertiesIfNotPresent: false
-allowSingleRequestParameter: true
-nullableReturnType: true
-apiTests: false
-modelTests: false
-apiDocs: false
-modelDocs: false

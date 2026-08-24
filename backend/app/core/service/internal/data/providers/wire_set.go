@@ -86,6 +86,7 @@ var ProviderSet = wire.NewSet(
 
 	data.NewCategoryRepo,
 	data.NewCategoryTranslationRepo,
+	data.NewContentModelRepo,
 
 	data.NewCommentRepo,
 

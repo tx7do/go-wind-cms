@@ -205,6 +205,7 @@ func (r *CommentRepo) Create(ctx context.Context, req *commentV1.CreateCommentRe
 		SetNillableIsSpam(req.Data.IsSpam).
 		SetNillableIsSticky(req.Data.IsSticky).
 		SetNillableParentID(req.Data.ParentId).
+		SetNillableReplyToID(req.Data.ReplyToId).
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
 
@@ -265,6 +266,7 @@ func (r *CommentRepo) Update(ctx context.Context, req *commentV1.UpdateCommentRe
 				SetNillableIsSpam(req.Data.IsSpam).
 				SetNillableIsSticky(req.Data.IsSticky).
 				SetNillableParentID(req.Data.ParentId).
+				SetNillableReplyToID(req.Data.ReplyToId).
 				SetUpdatedAt(time.Now())
 
 			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值

@@ -43,14 +43,14 @@ type PageServiceHTTPServer interface {
 
 func RegisterPageServiceHTTPServer(s *http.Server, srv PageServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/pages", _PageService_List18_HTTP_Handler(srv))
-	r.GET("/admin/v1/pages/{id}", _PageService_Get18_HTTP_Handler(srv))
-	r.POST("/admin/v1/pages", _PageService_Create14_HTTP_Handler(srv))
-	r.PUT("/admin/v1/pages/{id}", _PageService_Update14_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/pages/{id}", _PageService_Delete14_HTTP_Handler(srv))
+	r.GET("/admin/v1/pages", _PageService_List19_HTTP_Handler(srv))
+	r.GET("/admin/v1/pages/{id}", _PageService_Get20_HTTP_Handler(srv))
+	r.POST("/admin/v1/pages", _PageService_Create15_HTTP_Handler(srv))
+	r.PUT("/admin/v1/pages/{id}", _PageService_Update15_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/pages/{id}", _PageService_Delete15_HTTP_Handler(srv))
 }
 
-func _PageService_List18_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+func _PageService_List19_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _PageService_List18_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _PageService_Get18_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+func _PageService_Get20_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPageRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _PageService_Get18_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Co
 	}
 }
 
-func _PageService_Create14_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+func _PageService_Create15_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePageRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _PageService_Create14_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http
 	}
 }
 
-func _PageService_Update14_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+func _PageService_Update15_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePageRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _PageService_Update14_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http
 	}
 }
 
-func _PageService_Delete14_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+func _PageService_Delete15_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePageRequest
 		if err := ctx.BindQuery(&in); err != nil {

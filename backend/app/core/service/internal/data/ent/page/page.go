@@ -59,6 +59,8 @@ const (
 	FieldIsCustomTemplate = "is_custom_template"
 	// FieldCustomFields holds the string denoting the custom_fields field in the database.
 	FieldCustomFields = "custom_fields"
+	// FieldContentModelID holds the string denoting the content_model_id field in the database.
+	FieldContentModelID = "content_model_id"
 	// FieldDepth holds the string denoting the depth field in the database.
 	FieldDepth = "depth"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
@@ -102,6 +104,7 @@ var Columns = []string{
 	FieldTemplate,
 	FieldIsCustomTemplate,
 	FieldCustomFields,
+	FieldContentModelID,
 	FieldDepth,
 }
 
@@ -340,6 +343,11 @@ func ByTemplate(opts ...sql.OrderTermOption) OrderOption {
 // ByIsCustomTemplate orders the results by the is_custom_template field.
 func ByIsCustomTemplate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsCustomTemplate, opts...).ToFunc()
+}
+
+// ByContentModelID orders the results by the content_model_id field.
+func ByContentModelID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContentModelID, opts...).ToFunc()
 }
 
 // ByDepth orders the results by the depth field.

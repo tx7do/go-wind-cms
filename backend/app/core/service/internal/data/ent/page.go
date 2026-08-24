@@ -63,6 +63,8 @@ type Page struct {
 	IsCustomTemplate *bool `json:"is_custom_template,omitempty"`
 	// 自定义字段
 	CustomFields *map[string]string `json:"custom_fields,omitempty"`
+	// 绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）
+	ContentModelID *uint32 `json:"content_model_id,omitempty"`
 	// 页面层级深度
 	Depth *int32 `json:"depth,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -111,7 +113,7 @@ func (*Page) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case page.FieldDisallowComment, page.FieldShowInNavigation, page.FieldIsCustomTemplate:
 			values[i] = new(sql.NullBool)
-		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldTenantID, page.FieldAuthorID, page.FieldDepth:
+		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldTenantID, page.FieldAuthorID, page.FieldContentModelID, page.FieldDepth:
 			values[i] = new(sql.NullInt64)
 		case page.FieldPath, page.FieldEditorType, page.FieldStatus, page.FieldType, page.FieldSlug, page.FieldAuthorName, page.FieldRedirectURL, page.FieldTemplate:
 			values[i] = new(sql.NullString)
@@ -293,6 +295,13 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field custom_fields: %w", err)
 				}
 			}
+		case page.FieldContentModelID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field content_model_id", values[i])
+			} else if value.Valid {
+				_m.ContentModelID = new(uint32)
+				*_m.ContentModelID = uint32(value.Int64)
+			}
 		case page.FieldDepth:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field depth", values[i])
@@ -453,6 +462,11 @@ func (_m *Page) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("custom_fields=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CustomFields))
+	builder.WriteString(", ")
+	if v := _m.ContentModelID; v != nil {
+		builder.WriteString("content_model_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	if v := _m.Depth; v != nil {
 		builder.WriteString("depth=")

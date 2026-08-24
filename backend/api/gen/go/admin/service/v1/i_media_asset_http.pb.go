@@ -43,14 +43,14 @@ type MediaAssetServiceHTTPServer interface {
 
 func RegisterMediaAssetServiceHTTPServer(s *http.Server, srv MediaAssetServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/media-assets", _MediaAssetService_List12_HTTP_Handler(srv))
-	r.GET("/admin/v1/media-assets/{id}", _MediaAssetService_Get12_HTTP_Handler(srv))
-	r.POST("/admin/v1/media-assets", _MediaAssetService_Create9_HTTP_Handler(srv))
-	r.PUT("/admin/v1/media-assets/{id}", _MediaAssetService_Update9_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/media-assets/{id}", _MediaAssetService_Delete9_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-assets", _MediaAssetService_List13_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-assets/{id}", _MediaAssetService_Get14_HTTP_Handler(srv))
+	r.POST("/admin/v1/media-assets", _MediaAssetService_Create10_HTTP_Handler(srv))
+	r.PUT("/admin/v1/media-assets/{id}", _MediaAssetService_Update10_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/media-assets/{id}", _MediaAssetService_Delete10_HTTP_Handler(srv))
 }
 
-func _MediaAssetService_List12_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_List13_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _MediaAssetService_List12_HTTP_Handler(srv MediaAssetServiceHTTPServer) fun
 	}
 }
 
-func _MediaAssetService_Get12_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_Get14_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetMediaAssetRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _MediaAssetService_Get12_HTTP_Handler(srv MediaAssetServiceHTTPServer) func
 	}
 }
 
-func _MediaAssetService_Create9_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_Create10_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateMediaAssetRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _MediaAssetService_Create9_HTTP_Handler(srv MediaAssetServiceHTTPServer) fu
 	}
 }
 
-func _MediaAssetService_Update9_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_Update10_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateMediaAssetRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _MediaAssetService_Update9_HTTP_Handler(srv MediaAssetServiceHTTPServer) fu
 	}
 }
 
-func _MediaAssetService_Delete9_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_Delete10_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteMediaAssetRequest
 		if err := ctx.BindQuery(&in); err != nil {

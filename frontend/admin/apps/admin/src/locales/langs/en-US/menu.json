@@ -63,7 +63,8 @@
     "tag": "Tags",
     "section": "Sections",
     "createSection": "Create Section",
-    "editSection": "Edit Section"
+    "editSection": "Edit Section",
+    "model": "Content Models"
   },
   "media": {
     "moduleName": "Media",

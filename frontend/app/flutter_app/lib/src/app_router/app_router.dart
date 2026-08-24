@@ -14,6 +14,7 @@ import 'package:flutter_app/src/features/cms/pages/post_list/post_list_page.dart
 import 'package:flutter_app/src/features/cms/pages/tag_feed/tag_feed_page.dart';
 import 'package:flutter_app/src/features/cms/pages/tag_list/tag_list_page.dart';
 import 'package:flutter_app/src/features/cms/pages/category_list/category_list_page.dart';
+import 'package:flutter_app/src/features/cms/pages/category_detail/category_detail_page.dart';
 import 'package:flutter_app/src/features/cms/pages/search/search_page.dart';
 import 'package:flutter_app/src/features/auth/pages/login_page.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
@@ -71,6 +72,16 @@ class AppRouter {
                   final tagId =
                       int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
                   return TagFeedPage(tagId: tagId);
+                },
+              ),
+              // 分类详情
+              GoRoute(
+                name: RouteNames.categoryDetail,
+                path: 'category/:id',
+                builder: (context, state) {
+                  final categoryId =
+                      int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
+                  return CategoryDetailPage(categoryId: categoryId);
                 },
               ),
               // 搜索

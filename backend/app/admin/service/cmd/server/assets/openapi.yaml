@@ -668,6 +668,226 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/content-models:
+        get:
+            tags:
+                - ContentModelService
+            description: 查询内容模型列表
+            operationId: ContentModelService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListContentModelResponse'
+        post:
+            tags:
+                - ContentModelService
+            description: 创建内容模型
+            operationId: ContentModelService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.CreateContentModelRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ContentModel'
+    /admin/v1/content-models/code/{code}:
+        get:
+            tags:
+                - ContentModelService
+            description: 查询内容模型详情
+            operationId: ContentModelService_Get
+            parameters:
+                - name: code
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ContentModel'
+    /admin/v1/content-models/{contentModelId}/field-definitions:
+        get:
+            tags:
+                - ContentModelService
+            description: 列出模型下的字段定义
+            operationId: ContentModelService_ListFieldDefinitions
+            parameters:
+                - name: contentModelId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListFieldDefinitionsResponse'
+    /admin/v1/content-models/{id}:
+        get:
+            tags:
+                - ContentModelService
+            description: 查询内容模型详情
+            operationId: ContentModelService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: code
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ContentModel'
+        put:
+            tags:
+                - ContentModelService
+            description: 更新内容模型
+            operationId: ContentModelService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.UpdateContentModelRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ContentModel'
+        delete:
+            tags:
+                - ContentModelService
+            description: 删除内容模型
+            operationId: ContentModelService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/data-access-audit-logs:
         get:
             tags:
@@ -2405,34 +2625,6 @@ paths:
                         schema:
                             $ref: '#/components/schemas/identity.service.v1.UpdateUserRequest'
                 required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
-    /admin/v1/me/avatar:
-        post:
-            tags:
-                - UserProfileService
-            description: 上传头像
-            operationId: UserProfileService_UploadAvatar
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/identity.service.v1.UploadAvatarRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/identity.service.v1.UploadAvatarResponse'
-        delete:
-            tags:
-                - UserProfileService
-            description: 删除头像
-            operationId: UserProfileService_DeleteAvatar
             responses:
                 "200":
                     description: OK
@@ -5556,6 +5748,34 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/tasks:executions:
+        get:
+            tags:
+                - TaskService
+            description: 查询任务执行记录
+            operationId: TaskService_ListTaskExecutions
+            parameters:
+                - name: typeName
+                  in: query
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/task.service.v1.ListTaskExecutionsResponse'
     /admin/v1/tasks:restart:
         post:
             tags:
@@ -7213,6 +7433,10 @@ components:
                     additionalProperties:
                         type: string
                     description: 自定义字段，键值对形式，便于扩展
+                contentModelId:
+                    type: integer
+                    description: 绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）
+                    format: uint32
                 parentId:
                     type: integer
                     description: 父节点ID
@@ -7313,12 +7537,98 @@ components:
                     description: 删除时间
                     format: date-time
             description: 类别翻译
+        content.service.v1.ContentModel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 模型ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 模型名称（语言无关，后端标识）
+                code:
+                    type: string
+                    description: 模型编码，租户内唯一
+                description:
+                    type: string
+                    description: 模型描述（语言无关）
+                sortOrder:
+                    type: integer
+                    description: 排序顺序
+                    format: uint32
+                fields:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinition'
+                    description: 字段定义列表
+                translations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ContentModelTranslation'
+                    description: 名称/描述的多语言翻译
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+            description: 内容模型
+        content.service.v1.ContentModelTranslation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: ID
+                    format: uint32
+                contentModelId:
+                    type: integer
+                    description: 内容模型ID
+                    format: uint32
+                languageCode:
+                    type: string
+                    description: 语言代码
+                name:
+                    type: string
+                    description: 翻译后名称
+                description:
+                    type: string
+                    description: 翻译后描述
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 内容模型翻译
         content.service.v1.CreateCategoryRequest:
             type: object
             properties:
                 data:
                     $ref: '#/components/schemas/content.service.v1.Category'
             description: 请求 - 创建类别
+        content.service.v1.CreateContentModelRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/content.service.v1.ContentModel'
+            description: 创建内容模型 - 请求
         content.service.v1.CreatePageRequest:
             type: object
             properties:
@@ -7343,6 +7653,103 @@ components:
                 data:
                     $ref: '#/components/schemas/content.service.v1.Tag'
             description: 请求 - 创建标签
+        content.service.v1.FieldDefinition:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 字段定义ID
+                    format: uint32
+                contentModelId:
+                    type: integer
+                    description: 所属内容模型ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 字段名（语言无关，作为 custom_fields 的键）
+                type:
+                    enum:
+                        - FIELD_TYPE_TEXT
+                        - FIELD_TYPE_NUMBER
+                        - FIELD_TYPE_RICHTEXT
+                        - FIELD_TYPE_IMAGE
+                        - FIELD_TYPE_FILE
+                        - FIELD_TYPE_RELATION
+                    type: string
+                    description: 字段类型
+                    format: enum
+                label:
+                    type: string
+                    description: 字段标签（默认语言）
+                description:
+                    type: string
+                    description: 字段描述（默认语言）
+                placeholder:
+                    type: string
+                    description: 输入框占位符（默认语言）
+                isRequired:
+                    type: boolean
+                    description: 是否必填
+                validationRegex:
+                    type: string
+                    description: 校验正则（仅 text 类适用）
+                options:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 扩展选项（select 类等，预留）
+                relationConfig:
+                    $ref: '#/components/schemas/content.service.v1.RelationConfig'
+                sortOrder:
+                    type: integer
+                    description: 排序顺序
+                    format: uint32
+                translations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinitionTranslation'
+                    description: label/description/placeholder 的多语言翻译
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 字段定义
+        content.service.v1.FieldDefinitionTranslation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: ID
+                    format: uint32
+                fieldDefinitionId:
+                    type: integer
+                    description: 字段定义ID
+                    format: uint32
+                languageCode:
+                    type: string
+                    description: 语言代码
+                label:
+                    type: string
+                    description: 翻译后标签
+                description:
+                    type: string
+                    description: 翻译后描述
+                placeholder:
+                    type: string
+                    description: 翻译后占位符
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 字段定义翻译
         content.service.v1.ListCategoryResponse:
             type: object
             properties:
@@ -7353,6 +7760,26 @@ components:
                 total:
                     type: string
             description: 回应 - 类别列表
+        content.service.v1.ListContentModelResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ContentModel'
+                total:
+                    type: string
+            description: 查询内容模型列表 - 回应
+        content.service.v1.ListFieldDefinitionsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinition'
+                total:
+                    type: string
+            description: 查询字段定义列表 - 回应
         content.service.v1.ListPageResponse:
             type: object
             properties:
@@ -7466,6 +7893,10 @@ components:
                     additionalProperties:
                         type: string
                     description: 自定义字段，键值对形式，便于扩展
+                contentModelId:
+                    type: integer
+                    description: 绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）
+                    format: uint32
                 translations:
                     type: array
                     items:
@@ -7761,6 +8192,20 @@ components:
                 exists:
                     type: boolean
                     description: 翻译是否存在
+        content.service.v1.RelationConfig:
+            type: object
+            properties:
+                targetEntityType:
+                    type: string
+                    description: 目标实体类型，白名单：post/page/category/tag
+                allowCrossTenant:
+                    type: boolean
+                    description: 是否允许跨租户引用
+                filterCategoryId:
+                    type: integer
+                    description: 可选：限定目标 post 所属分类
+                    format: uint32
+            description: relation 类型字段的引用配置
         content.service.v1.Section:
             type: object
             properties:
@@ -8057,6 +8502,19 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新类别
+        content.service.v1.UpdateContentModelRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/content.service.v1.ContentModel'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+            description: 更新内容模型 - 请求
         content.service.v1.UpdatePageRequest:
             type: object
             properties:
@@ -9038,20 +9496,6 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新用户 - 请求
-        identity.service.v1.UploadAvatarRequest:
-            type: object
-            properties:
-                imageBase64:
-                    type: string
-                    description: 图片的Base64编码
-                imageUrl:
-                    type: string
-                    description: 图片的URL地址
-        identity.service.v1.UploadAvatarResponse:
-            type: object
-            properties:
-                url:
-                    type: string
         identity.service.v1.User:
             type: object
             properties:
@@ -9398,6 +9842,22 @@ components:
                 isEnabled:
                     type: boolean
                     description: 是否启用
+                parentId:
+                    type: integer
+                    description: 父节点ID
+                    format: uint32
+                children:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/internal_message.service.v1.InternalMessageCategory'
+                    description: 子节点树
+                depth:
+                    type: integer
+                    description: 分类层级深度（0=顶级，1=二级，以此类推）
+                    format: int32
+                path:
+                    type: string
+                    description: 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
                 tenantId:
                     type: integer
                     description: 租户ID，0代表系统全局角色
@@ -11188,6 +11648,16 @@ components:
                 data:
                     $ref: '#/components/schemas/task.service.v1.Task'
             description: 创建调度任务 - 请求
+        task.service.v1.ListTaskExecutionsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.TaskExecution'
+                total:
+                    type: string
+            description: 查询任务执行记录 - 回应
         task.service.v1.ListTaskResponse:
             type: object
             properties:
@@ -11275,6 +11745,41 @@ components:
                     description: 删除时间
                     format: date-time
             description: 调度任务
+        task.service.v1.TaskExecution:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 任务实例ID
+                typeName:
+                    type: string
+                    description: 任务执行类型名
+                state:
+                    type: string
+                    description: 实例状态：active/pending/scheduled/retry/archived/completed
+                payload:
+                    type: string
+                    description: 任务载荷（JSON）
+                retried:
+                    type: integer
+                    description: 已重试次数
+                    format: uint32
+                lastError:
+                    type: string
+                    description: 最近一次执行错误
+                lastFailedAt:
+                    type: string
+                    description: 最近失败时间
+                    format: date-time
+                completedAt:
+                    type: string
+                    description: 完成时间
+                    format: date-time
+                nextProcessAt:
+                    type: string
+                    description: 下次处理时间
+                    format: date-time
+            description: 任务执行记录（单次任务实例；来源 asynq Inspector，深度受 retention 窗口约束）
         task.service.v1.TaskOption:
             type: object
             properties:
@@ -11381,6 +11886,8 @@ tags:
       description: 类别服务
     - name: CommentService
       description: 评论服务
+    - name: ContentModelService
+      description: 内容模型管理服务
     - name: DataAccessAuditLogService
       description: 数据访问审计日志管理服务
     - name: DictEntryService

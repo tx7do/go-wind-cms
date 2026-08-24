@@ -51,6 +51,8 @@ const (
 	FieldDepth = "depth"
 	// FieldCustomFields holds the string denoting the custom_fields field in the database.
 	FieldCustomFields = "custom_fields"
+	// FieldContentModelID holds the string denoting the content_model_id field in the database.
+	FieldContentModelID = "content_model_id"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
@@ -88,6 +90,7 @@ var Columns = []string{
 	FieldDirectPostCount,
 	FieldDepth,
 	FieldCustomFields,
+	FieldContentModelID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -241,6 +244,11 @@ func ByDirectPostCount(opts ...sql.OrderTermOption) OrderOption {
 // ByDepth orders the results by the depth field.
 func ByDepth(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDepth, opts...).ToFunc()
+}
+
+// ByContentModelID orders the results by the content_model_id field.
+func ByContentModelID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContentModelID, opts...).ToFunc()
 }
 
 // ByParentField orders the results by parent field.

@@ -14,6 +14,7 @@ export * from './auth';
 export * from './category';
 
 export * from './comment';
+export * from './content-model';
 
 export * from './data-access-audit-log';
 

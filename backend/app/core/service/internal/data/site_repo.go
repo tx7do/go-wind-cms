@@ -119,6 +119,47 @@ func (r *SiteRepo) Get(ctx context.Context, req *siteV1.GetSiteRequest) (*siteV1
 	return r.mapper.ToDTO(entity), nil
 }
 
+// GetByDomain 按主域名查询站点。
+//
+// 仅用于公开端点：返回前裁剪掉非渲染必需字段（租户/状态/域名/备用域名/审计字段），
+// 只保留 name/slug/default_locale/template/theme/id。新增 Site 字段时须同步评估是否
+// 加入裁剪白名单，避免向匿名调用方泄漏运维信息。
+func (r *SiteRepo) GetByDomain(ctx context.Context, req *siteV1.GetSiteByDomainRequest) (*siteV1.Site, error) {
+	if req == nil || req.GetDomain() == "" {
+		return nil, siteV1.ErrorBadRequest("invalid parameter")
+	}
+
+	entity, err := r.entClient.Client().Site.Query().
+		Where(site.DomainEQ(req.GetDomain())).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, siteV1.ErrorFileNotFound("site not found")
+		}
+
+		r.log.Errorf("query site by domain failed: %s", err.Error())
+
+		return nil, siteV1.ErrorInternalServerError("query site by domain failed")
+	}
+
+	dto := r.mapper.ToDTO(entity)
+
+	// 公开端点字段裁剪：清空一切非渲染必需字段。
+	dto.TenantId = nil
+	dto.Domain = nil
+	dto.AlternateDomains = nil
+	dto.IsDefault = nil
+	dto.Status = nil
+	dto.CreatedBy = nil
+	dto.UpdatedBy = nil
+	dto.DeletedBy = nil
+	dto.CreatedAt = nil
+	dto.UpdatedAt = nil
+	dto.DeletedAt = nil
+
+	return dto, nil
+}
+
 func (r *SiteRepo) Create(ctx context.Context, req *siteV1.CreateSiteRequest) (*siteV1.Site, error) {
 	if req == nil || req.Data == nil {
 		return nil, siteV1.ErrorBadRequest("invalid parameter")

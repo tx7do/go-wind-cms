@@ -197,6 +197,46 @@ func (_u *InternalMessageCategoryUpdate) ClearSortOrder() *InternalMessageCatego
 	return _u
 }
 
+// SetPath sets the "path" field.
+func (_u *InternalMessageCategoryUpdate) SetPath(v string) *InternalMessageCategoryUpdate {
+	_u.mutation.SetPath(v)
+	return _u
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_u *InternalMessageCategoryUpdate) SetNillablePath(v *string) *InternalMessageCategoryUpdate {
+	if v != nil {
+		_u.SetPath(*v)
+	}
+	return _u
+}
+
+// ClearPath clears the value of the "path" field.
+func (_u *InternalMessageCategoryUpdate) ClearPath() *InternalMessageCategoryUpdate {
+	_u.mutation.ClearPath()
+	return _u
+}
+
+// SetParentID sets the "parent_id" field.
+func (_u *InternalMessageCategoryUpdate) SetParentID(v uint32) *InternalMessageCategoryUpdate {
+	_u.mutation.SetParentID(v)
+	return _u
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_u *InternalMessageCategoryUpdate) SetNillableParentID(v *uint32) *InternalMessageCategoryUpdate {
+	if v != nil {
+		_u.SetParentID(*v)
+	}
+	return _u
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (_u *InternalMessageCategoryUpdate) ClearParentID() *InternalMessageCategoryUpdate {
+	_u.mutation.ClearParentID()
+	return _u
+}
+
 // SetRemark sets the "remark" field.
 func (_u *InternalMessageCategoryUpdate) SetRemark(v string) *InternalMessageCategoryUpdate {
 	_u.mutation.SetRemark(v)
@@ -277,9 +317,83 @@ func (_u *InternalMessageCategoryUpdate) ClearIconURL() *InternalMessageCategory
 	return _u
 }
 
+// SetDepth sets the "depth" field.
+func (_u *InternalMessageCategoryUpdate) SetDepth(v int32) *InternalMessageCategoryUpdate {
+	_u.mutation.ResetDepth()
+	_u.mutation.SetDepth(v)
+	return _u
+}
+
+// SetNillableDepth sets the "depth" field if the given value is not nil.
+func (_u *InternalMessageCategoryUpdate) SetNillableDepth(v *int32) *InternalMessageCategoryUpdate {
+	if v != nil {
+		_u.SetDepth(*v)
+	}
+	return _u
+}
+
+// AddDepth adds value to the "depth" field.
+func (_u *InternalMessageCategoryUpdate) AddDepth(v int32) *InternalMessageCategoryUpdate {
+	_u.mutation.AddDepth(v)
+	return _u
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (_u *InternalMessageCategoryUpdate) ClearDepth() *InternalMessageCategoryUpdate {
+	_u.mutation.ClearDepth()
+	return _u
+}
+
+// SetParent sets the "parent" edge to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdate) SetParent(v *InternalMessageCategory) *InternalMessageCategoryUpdate {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the InternalMessageCategory entity by IDs.
+func (_u *InternalMessageCategoryUpdate) AddChildIDs(ids ...uint32) *InternalMessageCategoryUpdate {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdate) AddChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // Mutation returns the InternalMessageCategoryMutation object of the builder.
 func (_u *InternalMessageCategoryUpdate) Mutation() *InternalMessageCategoryMutation {
 	return _u.mutation
+}
+
+// ClearParent clears the "parent" edge to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdate) ClearParent() *InternalMessageCategoryUpdate {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdate) ClearChildren() *InternalMessageCategoryUpdate {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to InternalMessageCategory entities by IDs.
+func (_u *InternalMessageCategoryUpdate) RemoveChildIDs(ids ...uint32) *InternalMessageCategoryUpdate {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to InternalMessageCategory entities.
+func (_u *InternalMessageCategoryUpdate) RemoveChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -311,6 +425,11 @@ func (_u *InternalMessageCategoryUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *InternalMessageCategoryUpdate) check() error {
+	if v, ok := _u.mutation.Path(); ok {
+		if err := internalmessagecategory.PathValidator(v); err != nil {
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "InternalMessageCategory.path": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := internalmessagecategory.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "InternalMessageCategory.name": %w`, err)}
@@ -399,6 +518,12 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(internalmessagecategory.FieldSortOrder, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Path(); ok {
+		_spec.SetField(internalmessagecategory.FieldPath, field.TypeString, value)
+	}
+	if _u.mutation.PathCleared() {
+		_spec.ClearField(internalmessagecategory.FieldPath, field.TypeString)
+	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(internalmessagecategory.FieldRemark, field.TypeString, value)
 	}
@@ -425,6 +550,89 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 	}
 	if _u.mutation.IconURLCleared() {
 		_spec.ClearField(internalmessagecategory.FieldIconURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.Depth(); ok {
+		_spec.SetField(internalmessagecategory.FieldDepth, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedDepth(); ok {
+		_spec.AddField(internalmessagecategory.FieldDepth, field.TypeInt32, value)
+	}
+	if _u.mutation.DepthCleared() {
+		_spec.ClearField(internalmessagecategory.FieldDepth, field.TypeInt32)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   internalmessagecategory.ParentTable,
+			Columns: []string{internalmessagecategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   internalmessagecategory.ParentTable,
+			Columns: []string{internalmessagecategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   internalmessagecategory.ChildrenTable,
+			Columns: []string{internalmessagecategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   internalmessagecategory.ChildrenTable,
+			Columns: []string{internalmessagecategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   internalmessagecategory.ChildrenTable,
+			Columns: []string{internalmessagecategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -616,6 +824,46 @@ func (_u *InternalMessageCategoryUpdateOne) ClearSortOrder() *InternalMessageCat
 	return _u
 }
 
+// SetPath sets the "path" field.
+func (_u *InternalMessageCategoryUpdateOne) SetPath(v string) *InternalMessageCategoryUpdateOne {
+	_u.mutation.SetPath(v)
+	return _u
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_u *InternalMessageCategoryUpdateOne) SetNillablePath(v *string) *InternalMessageCategoryUpdateOne {
+	if v != nil {
+		_u.SetPath(*v)
+	}
+	return _u
+}
+
+// ClearPath clears the value of the "path" field.
+func (_u *InternalMessageCategoryUpdateOne) ClearPath() *InternalMessageCategoryUpdateOne {
+	_u.mutation.ClearPath()
+	return _u
+}
+
+// SetParentID sets the "parent_id" field.
+func (_u *InternalMessageCategoryUpdateOne) SetParentID(v uint32) *InternalMessageCategoryUpdateOne {
+	_u.mutation.SetParentID(v)
+	return _u
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_u *InternalMessageCategoryUpdateOne) SetNillableParentID(v *uint32) *InternalMessageCategoryUpdateOne {
+	if v != nil {
+		_u.SetParentID(*v)
+	}
+	return _u
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (_u *InternalMessageCategoryUpdateOne) ClearParentID() *InternalMessageCategoryUpdateOne {
+	_u.mutation.ClearParentID()
+	return _u
+}
+
 // SetRemark sets the "remark" field.
 func (_u *InternalMessageCategoryUpdateOne) SetRemark(v string) *InternalMessageCategoryUpdateOne {
 	_u.mutation.SetRemark(v)
@@ -696,9 +944,83 @@ func (_u *InternalMessageCategoryUpdateOne) ClearIconURL() *InternalMessageCateg
 	return _u
 }
 
+// SetDepth sets the "depth" field.
+func (_u *InternalMessageCategoryUpdateOne) SetDepth(v int32) *InternalMessageCategoryUpdateOne {
+	_u.mutation.ResetDepth()
+	_u.mutation.SetDepth(v)
+	return _u
+}
+
+// SetNillableDepth sets the "depth" field if the given value is not nil.
+func (_u *InternalMessageCategoryUpdateOne) SetNillableDepth(v *int32) *InternalMessageCategoryUpdateOne {
+	if v != nil {
+		_u.SetDepth(*v)
+	}
+	return _u
+}
+
+// AddDepth adds value to the "depth" field.
+func (_u *InternalMessageCategoryUpdateOne) AddDepth(v int32) *InternalMessageCategoryUpdateOne {
+	_u.mutation.AddDepth(v)
+	return _u
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (_u *InternalMessageCategoryUpdateOne) ClearDepth() *InternalMessageCategoryUpdateOne {
+	_u.mutation.ClearDepth()
+	return _u
+}
+
+// SetParent sets the "parent" edge to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdateOne) SetParent(v *InternalMessageCategory) *InternalMessageCategoryUpdateOne {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the InternalMessageCategory entity by IDs.
+func (_u *InternalMessageCategoryUpdateOne) AddChildIDs(ids ...uint32) *InternalMessageCategoryUpdateOne {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdateOne) AddChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdateOne {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // Mutation returns the InternalMessageCategoryMutation object of the builder.
 func (_u *InternalMessageCategoryUpdateOne) Mutation() *InternalMessageCategoryMutation {
 	return _u.mutation
+}
+
+// ClearParent clears the "parent" edge to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdateOne) ClearParent() *InternalMessageCategoryUpdateOne {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the InternalMessageCategory entity.
+func (_u *InternalMessageCategoryUpdateOne) ClearChildren() *InternalMessageCategoryUpdateOne {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to InternalMessageCategory entities by IDs.
+func (_u *InternalMessageCategoryUpdateOne) RemoveChildIDs(ids ...uint32) *InternalMessageCategoryUpdateOne {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to InternalMessageCategory entities.
+func (_u *InternalMessageCategoryUpdateOne) RemoveChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdateOne {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // Where appends a list predicates to the InternalMessageCategoryUpdate builder.
@@ -743,6 +1065,11 @@ func (_u *InternalMessageCategoryUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *InternalMessageCategoryUpdateOne) check() error {
+	if v, ok := _u.mutation.Path(); ok {
+		if err := internalmessagecategory.PathValidator(v); err != nil {
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "InternalMessageCategory.path": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := internalmessagecategory.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "InternalMessageCategory.name": %w`, err)}
@@ -848,6 +1175,12 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 	if _u.mutation.SortOrderCleared() {
 		_spec.ClearField(internalmessagecategory.FieldSortOrder, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.Path(); ok {
+		_spec.SetField(internalmessagecategory.FieldPath, field.TypeString, value)
+	}
+	if _u.mutation.PathCleared() {
+		_spec.ClearField(internalmessagecategory.FieldPath, field.TypeString)
+	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(internalmessagecategory.FieldRemark, field.TypeString, value)
 	}
@@ -874,6 +1207,89 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 	}
 	if _u.mutation.IconURLCleared() {
 		_spec.ClearField(internalmessagecategory.FieldIconURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.Depth(); ok {
+		_spec.SetField(internalmessagecategory.FieldDepth, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedDepth(); ok {
+		_spec.AddField(internalmessagecategory.FieldDepth, field.TypeInt32, value)
+	}
+	if _u.mutation.DepthCleared() {
+		_spec.ClearField(internalmessagecategory.FieldDepth, field.TypeInt32)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   internalmessagecategory.ParentTable,
+			Columns: []string{internalmessagecategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   internalmessagecategory.ParentTable,
+			Columns: []string{internalmessagecategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   internalmessagecategory.ChildrenTable,
+			Columns: []string{internalmessagecategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   internalmessagecategory.ChildrenTable,
+			Columns: []string{internalmessagecategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   internalmessagecategory.ChildrenTable,
+			Columns: []string{internalmessagecategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &InternalMessageCategory{config: _u.config}

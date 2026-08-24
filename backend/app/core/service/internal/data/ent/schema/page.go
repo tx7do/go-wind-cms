@@ -104,6 +104,11 @@ func (Page) Fields() []ent.Field {
 			Comment("自定义字段").
 			Optional(),
 
+		field.Uint32("content_model_id").
+			Comment("绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）").
+			Optional().
+			Nillable(),
+
 		field.Int32("depth").
 			Comment("页面层级深度").
 			Default(0).

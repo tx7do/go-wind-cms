@@ -9,4 +9,6 @@ export interface CategoryEditProps {
   isNav?: boolean;
   sortOrder?: number;
   status?: string;
+  contentModelId?: number;
+  customFields?: Record<string, string>;
 }

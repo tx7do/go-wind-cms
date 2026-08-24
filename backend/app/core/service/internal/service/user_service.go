@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -318,8 +317,62 @@ func (s *UserService) queryUserIDsByRelationIDs(ctx context.Context, roleIDs []u
 	}
 }
 
-func (s *UserService) queryUserIDsByRelationIDsUserTenantRelationOneToMany(_ context.Context, _, _, _ []uint32) ([]uint32, error) {
-	return nil, fmt.Errorf("not implemented")
+func (s *UserService) queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx context.Context, roleIDs, orgUnitIDs, positionIDs []uint32) ([]uint32, error) {
+	if len(roleIDs) == 0 && len(orgUnitIDs) == 0 && len(positionIDs) == 0 {
+		return nil, nil
+	}
+
+	var err error
+
+	var orgUnitUserIDs []uint32
+	var positionUserIDs []uint32
+	var roleUserIDs []uint32
+	if len(orgUnitIDs) > 0 {
+		orgUnitUserIDs, err = s.userRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, true)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if len(positionIDs) > 0 {
+		positionUserIDs, err = s.userRepo.ListUserIDsByPositionIDs(ctx, positionIDs, true)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if len(roleIDs) > 0 {
+		roleUserIDs, err = s.userRepo.ListUserIDsByRoleIDs(ctx, roleIDs, true)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// 收集所有非空列表用于求交集
+	lists := make([][]uint32, 0, 3)
+	if orgUnitUserIDs != nil {
+		lists = append(lists, orgUnitUserIDs)
+	}
+	if positionUserIDs != nil {
+		lists = append(lists, positionUserIDs)
+	}
+	if roleUserIDs != nil {
+		lists = append(lists, roleUserIDs)
+	}
+
+	// 如果没有任何实际列表（例如对应 ids 为空导致查询未执行），返回空
+	if len(lists) == 0 {
+		return []uint32{}, nil
+	}
+
+	// 逐步求交集
+	result := lists[0]
+	for i := 1; i < len(lists); i++ {
+		result = sliceutil.Intersection(result, lists[i])
+		if len(result) == 0 {
+			break
+		}
+	}
+
+	return result, nil
 }
 
 func (s *UserService) queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx context.Context, roleIDs, orgUnitIDs, positionIDs []uint32) ([]uint32, error) {

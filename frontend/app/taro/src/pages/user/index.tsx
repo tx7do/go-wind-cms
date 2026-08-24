@@ -77,8 +77,16 @@ export default function UserProfilePage() {
 
     if (!user) {
         return (
-            <View className='w-full bg-pageBg min-h-screen flex items-center justify-center'>
+            <View className='w-full bg-pageBg min-h-screen flex flex-col items-center justify-center gap-[32rpx] px-[48rpx]'>
+                <XIcon name='carbon:user-avatar' size={64} className='text-textWeak' />
                 <Text className='text-body text-textThird'>{t('page.user.please_login')}</Text>
+                <View
+                    className='px-[64rpx] h-[88rpx] rounded-[16rpx] bg-primary flex items-center justify-center'
+                    hoverClass='tap-active'
+                    onClick={() => router.push('/login')}
+                >
+                    <Text className='text-body text-white font-bold'>{t('authentication.login.login')}</Text>
+                </View>
             </View>
         );
     }

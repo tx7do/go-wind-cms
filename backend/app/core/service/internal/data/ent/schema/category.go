@@ -77,6 +77,11 @@ func (Category) Fields() []ent.Field {
 		field.JSON("custom_fields", &map[string]string{}).
 			Comment("自定义字段").
 			Optional(),
+
+		field.Uint32("content_model_id").
+			Comment("绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）").
+			Optional().
+			Nillable(),
 	}
 }
 

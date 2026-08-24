@@ -2,14 +2,18 @@ package data
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-crud/pagination"
+	paginationFilter "github.com/tx7do/go-crud/pagination/filter"
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -78,6 +82,50 @@ func (r *SectionRepo) init() {
 	r.mapper.AppendConverters(r.typeConverter.NewConverterPair())
 }
 
+func (r *SectionRepo) prepareTranslationMaskFields(req *paginationV1.PagingRequest) (
+	excludeConditions []*paginationV1.FilterCondition,
+	translationMaskFields []string,
+	needQueryTranslation bool,
+	err error,
+) {
+	var filterExpr *paginationV1.FilterExpr
+	filterExpr, err = paginationFilter.ConvertFilterByPagingRequest(req)
+	if err != nil {
+		r.log.Errorf("convert filter by paging request failed: %s", err.Error())
+		return
+	}
+
+	excludeFields := []string{"translations", "available_languages"}
+	if req.FieldMask != nil && len(req.FieldMask.Paths) > 0 {
+		for _, path := range req.FieldMask.Paths {
+			path = strings.TrimSpace(path)
+
+			if path == "translations" || strings.HasPrefix(path, "translations.") {
+				needQueryTranslation = true
+			}
+			if strings.HasPrefix(path, "translations.") {
+				excludeFields = append(excludeFields, path)
+				path = strings.TrimPrefix(path, "translations.")
+				if len(path) > 0 {
+					translationMaskFields = append(translationMaskFields, path)
+				}
+			}
+		}
+
+		req.FieldMask = FilterViewMask(excludeFields, req.FieldMask)
+
+	} else {
+		needQueryTranslation = true
+	}
+
+	excludeConditions = pagination.FilterFields(filterExpr, []string{
+		"locale",
+	})
+	req.FilteringType = &paginationV1.PagingRequest_FilterExpr{FilterExpr: filterExpr}
+
+	return
+}
+
 func (r *SectionRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
 	exist, err := r.entClient.Client().Section.Query().
 		Where(section.IDEQ(id)).
@@ -96,12 +144,55 @@ func (r *SectionRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 
 	builder := r.entClient.Client().Section.Query()
 
+	excludeConditions, translationMaskFields, needQueryTranslation, err := r.prepareTranslationMaskFields(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.FieldMask != nil && len(req.FieldMask.Paths) > 0 {
+		whereSelectors, err := r.repository.BuildSelectorWithTable(section.Table, req.FieldMask.Paths)
+		if err != nil {
+			r.log.Errorf("build selector with table failed: %s", err.Error())
+			return nil, err
+		}
+
+		builder.Modify(whereSelectors)
+
+		req.FieldMask = nil
+	}
+
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
 		return nil, err
 	}
 	if ret == nil {
 		return &contentV1.ListSectionResponse{Total: 0, Items: nil}, nil
+	}
+
+	if needQueryTranslation {
+		viewMask := &fieldmaskpb.FieldMask{
+			Paths: translationMaskFields,
+		}
+
+		var locale string
+		if len(excludeConditions) > 0 {
+			for _, cond := range excludeConditions {
+				if cond.GetField() == "locale" {
+					locale = cond.GetValue()
+					break
+				}
+			}
+		}
+
+		for _, item := range ret.Items {
+			// 指定语言缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底
+			translations, err := r.sectionTranslationRepo.ListTranslationsWithFallback(ctx, item.GetId(), locale, viewMask)
+			if err != nil {
+				r.log.Errorf("query translations failed: %s", err.Error())
+				return nil, contentV1.ErrorInternalServerError("query translations failed")
+			}
+			item.Translations = translations
+		}
 	}
 
 	for _, item := range ret.Items {
@@ -146,7 +237,9 @@ func (r *SectionRepo) Get(ctx context.Context, req *contentV1.GetSectionRequest)
 
 	dto := r.mapper.ToDTO(entity)
 
-	translations, err := r.sectionTranslationRepo.ListTranslations(ctx, dto.GetId())
+	// 指定语言优先；缺译时回落全量译文，让前端按"匹配当前语言→回退第一条"兜底，
+	// 否则详情页标题/正文将为空
+	translations, err := r.sectionTranslationRepo.ListTranslationsWithFallback(ctx, dto.GetId(), req.GetLocale(), nil)
 	if err != nil {
 		r.log.Errorf("query translations failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query translations failed")
@@ -406,8 +499,8 @@ func (r *SectionRepo) GetTranslation(ctx context.Context, req *contentV1.GetSect
 	return r.sectionTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *SectionRepo) ListTranslations(ctx context.Context, sectionID uint32) ([]*contentV1.SectionTranslation, error) {
-	return r.sectionTranslationRepo.ListTranslations(ctx, sectionID)
+func (r *SectionRepo) ListTranslations(ctx context.Context, sectionID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.SectionTranslation, error) {
+	return r.sectionTranslationRepo.ListTranslations(ctx, sectionID, locale, viewMask)
 }
 
 func (r *SectionRepo) DeleteTranslation(ctx context.Context, req *contentV1.DeleteSectionTranslationRequest) error {

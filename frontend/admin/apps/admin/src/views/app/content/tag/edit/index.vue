@@ -4,12 +4,12 @@ import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 import { useTabs } from '@vben/hooks';
-import { LucideArrowLeft } from '@vben/icons';
+import { LucideArrowLeft, LucideSparkles } from '@vben/icons';
 import { $t } from '@vben/locales';
 
 import { Col, InputNumber, notification, Row } from 'ant-design-vue';
 
-import { tagStatusList } from '#/api';
+import { apiClient, tagStatusList } from '#/api';
 import { router } from '#/router';
 
 import { useTagEditViewStore } from './tag-edit-view.state';
@@ -77,6 +77,40 @@ async function handleLanguageChange(newLang: string) {
   if (tagEditViewStore.needTranslate) {
     notification.info({
       message: $t('page.tag.validation.translationNotExists'),
+    });
+  }
+}
+
+async function handleTranslate() {
+  try {
+    const nameResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: tagEditViewStore.formData.lang,
+      content: tagEditViewStore.formData.name,
+    });
+    tagEditViewStore.formData.name =
+      nameResp.translatedContent || tagEditViewStore.formData.name;
+  } catch (error) {
+    console.error('Name translation failed:', error);
+    notification.error({
+      message: $t('page.tag.validation.translateNameFailed'),
+    });
+    return;
+  }
+
+  try {
+    const descriptionResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: tagEditViewStore.formData.lang,
+      content: tagEditViewStore.formData.description,
+    });
+    tagEditViewStore.formData.description =
+      descriptionResp.translatedContent ||
+      tagEditViewStore.formData.description;
+  } catch (error) {
+    console.error('Description translation failed:', error);
+    notification.error({
+      message: $t('page.tag.validation.translateDescriptionFailed'),
     });
   }
 }
@@ -213,6 +247,17 @@ init();
             </span>
           </a-select-option>
         </a-select>
+        <a-button
+          v-show="tagEditViewStore.needTranslate"
+          type="primary"
+          class="translate-btn"
+          @click="handleTranslate"
+        >
+          <template #icon>
+            <LucideSparkles />
+          </template>
+          {{ $t('page.tag.button.oneClickTranslate') }}
+        </a-button>
       </div>
     </template>
 

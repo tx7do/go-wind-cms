@@ -80,6 +80,30 @@ func (f CommentLikeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentLikeMutation", m)
 }
 
+// The ContentModelFunc type is an adapter to allow the use of ordinary
+// function as ContentModel mutator.
+type ContentModelFunc func(context.Context, *ent.ContentModelMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContentModelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ContentModelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContentModelMutation", m)
+}
+
+// The ContentModelTranslationFunc type is an adapter to allow the use of ordinary
+// function as ContentModelTranslation mutator.
+type ContentModelTranslationFunc func(context.Context, *ent.ContentModelTranslationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContentModelTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ContentModelTranslationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContentModelTranslationMutation", m)
+}
+
 // The DataAccessAuditLogFunc type is an adapter to allow the use of ordinary
 // function as DataAccessAuditLog mutator.
 type DataAccessAuditLogFunc func(context.Context, *ent.DataAccessAuditLogMutation) (ent.Value, error)
@@ -126,6 +150,30 @@ func (f DictTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictTypeMutation", m)
+}
+
+// The FieldDefinitionFunc type is an adapter to allow the use of ordinary
+// function as FieldDefinition mutator.
+type FieldDefinitionFunc func(context.Context, *ent.FieldDefinitionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FieldDefinitionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FieldDefinitionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FieldDefinitionMutation", m)
+}
+
+// The FieldDefinitionTranslationFunc type is an adapter to allow the use of ordinary
+// function as FieldDefinitionTranslation mutator.
+type FieldDefinitionTranslationFunc func(context.Context, *ent.FieldDefinitionTranslationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FieldDefinitionTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FieldDefinitionTranslationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FieldDefinitionTranslationMutation", m)
 }
 
 // The FileFunc type is an adapter to allow the use of ordinary

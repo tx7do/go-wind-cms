@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -102,6 +103,20 @@ func (r *InternalMessageCategoryRepo) List(ctx context.Context, req *paginationV
 
 	builder := r.entClient.Client().InternalMessageCategory.Query()
 
+	// field mask 含 children 时以树形结构返回（参照 CategoryRepo 的 treeTravel）
+	treeTravel := false
+	if req.FieldMask != nil && len(req.FieldMask.Paths) > 0 {
+		excludeFields := []string{"children"}
+		for _, p := range req.FieldMask.Paths {
+			if strings.TrimSpace(p) == "children" {
+				treeTravel = true
+			}
+		}
+		if treeTravel {
+			req.FieldMask = FilterViewMask(excludeFields, req.FieldMask)
+		}
+	}
+
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
 		return nil, err
@@ -110,10 +125,32 @@ func (r *InternalMessageCategoryRepo) List(ctx context.Context, req *paginationV
 		return &internalMessageV1.ListInternalMessageCategoryResponse{Total: 0, Items: nil}, nil
 	}
 
+	if treeTravel {
+		roots := r.buildTree(ret.Items, 0) // 根节点 ParentId 为 0
+		return &internalMessageV1.ListInternalMessageCategoryResponse{
+			Total: ret.Total,
+			Items: roots,
+		}, nil
+	}
+
 	return &internalMessageV1.ListInternalMessageCategoryResponse{
 		Total: ret.Total,
 		Items: ret.Items,
 	}, nil
+}
+
+// buildTree 递归组装树形结构（参照 CategoryRepo.buildCategoryTree）
+func (r *InternalMessageCategoryRepo) buildTree(items []*internalMessageV1.InternalMessageCategory, parentId uint32) []*internalMessageV1.InternalMessageCategory {
+	var tree []*internalMessageV1.InternalMessageCategory
+	for _, item := range items {
+		if item.GetParentId() == parentId {
+			// 递归查找子节点
+			children := r.buildTree(items, item.GetId())
+			item.Children = children
+			tree = append(tree, item)
+		}
+	}
+	return tree
 }
 
 func (r *InternalMessageCategoryRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
@@ -141,12 +178,64 @@ func (r *InternalMessageCategoryRepo) Get(ctx context.Context, req *internalMess
 		whereCond = append(whereCond, internalmessagecategory.IDEQ(req.GetId()))
 	}
 
+	// view mask 含 children 时递归填充子树（参照 CategoryRepo 的 treeTravel）
+	treeTravel := false
+	if req.ViewMask != nil && len(req.ViewMask.Paths) > 0 {
+		excludeFields := []string{"children"}
+		for _, p := range req.ViewMask.Paths {
+			if strings.TrimSpace(p) == "children" {
+				treeTravel = true
+			}
+		}
+		if treeTravel {
+			req.ViewMask = FilterViewMask(excludeFields, req.ViewMask)
+		}
+	}
+
 	dto, err := r.repository.Get(ctx, builder, req.GetViewMask(), whereCond...)
 	if err != nil {
 		return nil, err
 	}
 
+	if treeTravel {
+		return r.getWithChildren(ctx, dto.GetId())
+	}
+
 	return dto, err
+}
+
+// getWithChildren 递归查询节点及其子树（参照 CategoryRepo.getCategoryWithChildren，无翻译层）
+func (r *InternalMessageCategoryRepo) getWithChildren(ctx context.Context, id uint32) (*internalMessageV1.InternalMessageCategory, error) {
+	entity, err := r.entClient.Client().InternalMessageCategory.Query().
+		Where(internalmessagecategory.IDEQ(id)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, internalMessageV1.ErrorNotFound("internal message category not found")
+		}
+		r.log.Errorf("query internal message category failed: %s", err.Error())
+		return nil, internalMessageV1.ErrorInternalServerError("query internal message category failed")
+	}
+
+	dto := r.mapper.ToDTO(entity)
+
+	// 查询子节点
+	childrenEntities, err := r.entClient.Client().InternalMessageCategory.Query().
+		Where(internalmessagecategory.ParentIDEQ(id)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query children failed: %s", err.Error())
+		return nil, internalMessageV1.ErrorInternalServerError("query children failed")
+	}
+	for _, child := range childrenEntities {
+		childDTO, err := r.getWithChildren(ctx, child.ID)
+		if err != nil {
+			return nil, err
+		}
+		dto.Children = append(dto.Children, childDTO)
+	}
+
+	return dto, nil
 }
 
 // ListCategoriesByIds 根据ID列表获取分类列表
@@ -172,9 +261,48 @@ func (r *InternalMessageCategoryRepo) ListCategoriesByIds(ctx context.Context, i
 	return dtos, nil
 }
 
+// ensureParentAcyclic 校验 parentId 不构成环：沿 parent 链上溯，命中 selfID 即拒绝。
+// 数据成环会让 buildTree/getWithChildren 的递归无限循环，参照实现（content Category）
+// 没有此防护，这里补上。
+func (r *InternalMessageCategoryRepo) ensureParentAcyclic(ctx context.Context, selfID, parentID uint32) error {
+	if parentID == 0 {
+		return nil
+	}
+	if parentID == selfID {
+		return internalMessageV1.ErrorBadRequest("parent cannot be itself")
+	}
+	current := parentID
+	for current != 0 {
+		entity, err := r.entClient.Client().InternalMessageCategory.Query().
+			Where(internalmessagecategory.IDEQ(current)).
+			Only(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				// 父节点不存在，交由外键约束/后续查询兜底
+				return nil
+			}
+			r.log.Errorf("query parent for cycle check failed: %s", err.Error())
+			return internalMessageV1.ErrorInternalServerError("query parent failed")
+		}
+		if entity.ParentID != nil {
+			if *entity.ParentID == selfID {
+				return internalMessageV1.ErrorBadRequest("parent cannot be itself or its descendant")
+			}
+			current = *entity.ParentID
+		} else {
+			return nil
+		}
+	}
+	return nil
+}
+
 func (r *InternalMessageCategoryRepo) Create(ctx context.Context, req *internalMessageV1.CreateInternalMessageCategoryRequest) error {
 	if req == nil || req.Data == nil {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
+	}
+
+	if err := r.ensureParentAcyclic(ctx, req.GetData().GetId(), req.Data.GetParentId()); err != nil {
+		return err
 	}
 
 	builder := r.entClient.Client().InternalMessageCategory.Create().
@@ -184,6 +312,9 @@ func (r *InternalMessageCategoryRepo) Create(ctx context.Context, req *internalM
 		SetNillableIconURL(req.Data.IconUrl).
 		SetNillableSortOrder(req.Data.SortOrder).
 		SetNillableIsEnabled(req.Data.IsEnabled).
+		SetNillableParentID(req.Data.ParentId).
+		SetNillableDepth(req.Data.Depth).
+		SetNillablePath(req.Data.Path).
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
 
@@ -220,6 +351,14 @@ func (r *InternalMessageCategoryRepo) Update(ctx context.Context, req *internalM
 
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	// 变更 parentId 时校验不成环
+	if req.Data.ParentId != nil {
+		if err := r.ensureParentAcyclic(ctx, req.GetId(), req.Data.GetParentId()); err != nil {
+			return err
+		}
+	}
+
 	builder := r.entClient.Client().Debug().InternalMessageCategory.Update()
 	builder.Where(internalmessagecategory.IDEQ(req.GetId()))
 	if hasTenant {
@@ -233,6 +372,9 @@ func (r *InternalMessageCategoryRepo) Update(ctx context.Context, req *internalM
 				SetNillableIconURL(req.Data.IconUrl).
 				SetNillableSortOrder(req.Data.SortOrder).
 				SetNillableIsEnabled(req.Data.IsEnabled).
+				SetNillableParentID(req.Data.ParentId).
+				SetNillableDepth(req.Data.Depth).
+				SetNillablePath(req.Data.Path).
 				SetUpdatedAt(time.Now())
 
 			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值

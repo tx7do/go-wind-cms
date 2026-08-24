@@ -146,6 +146,18 @@ const content: RouteRecordRaw[] = [
       },
 
       {
+        path: 'models',
+        name: 'ContentModelManagement',
+        meta: {
+          order: 9,
+          icon: 'lucide:database',
+          title: $t('menu.content.model'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+        component: () => import('#/views/app/content/model/index.vue'),
+      },
+
+      {
         path: 'tags',
         name: 'TagManagement',
         meta: {

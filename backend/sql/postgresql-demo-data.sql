@@ -116,13 +116,13 @@ SELECT setval('sys_login_policies_id_seq', (SELECT MAX(id) FROM sys_login_polici
 -- 插入 sys_dict_types 字典类型
 -- ----------------------------
 INSERT INTO public.sys_dict_types (
-    id, type_code, sort_order, is_enabled, created_at, updated_at
+    id, type_code, type_name, sort_order, is_enabled, created_at, updated_at
 ) VALUES
-      (1, 'USER_STATUS', 10, true, now(), now()),
-      (2, 'DEVICE_TYPE', 20, true, now(), now()),
-      (3, 'ORDER_STATUS', 30, true, now(), now()),
-      (4, 'GENDER', 40, true, now(), now()),
-      (5, 'PAYMENT_METHOD', 50, true, now(), now())
+      (1, 'USER_STATUS', '用户状态', 10, true, now(), now()),
+      (2, 'DEVICE_TYPE', '设备类型', 20, true, now(), now()),
+      (3, 'ORDER_STATUS', '订单状态', 30, true, now(), now()),
+      (4, 'GENDER', '性别', 40, true, now(), now()),
+      (5, 'PAYMENT_METHOD', '支付方式', 50, true, now(), now())
 ;
 SELECT setval('sys_dict_types_id_seq', (SELECT MAX(id) FROM sys_dict_types));
 

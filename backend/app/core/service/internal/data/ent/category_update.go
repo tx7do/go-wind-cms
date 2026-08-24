@@ -390,6 +390,33 @@ func (_u *CategoryUpdate) ClearCustomFields() *CategoryUpdate {
 	return _u
 }
 
+// SetContentModelID sets the "content_model_id" field.
+func (_u *CategoryUpdate) SetContentModelID(v uint32) *CategoryUpdate {
+	_u.mutation.ResetContentModelID()
+	_u.mutation.SetContentModelID(v)
+	return _u
+}
+
+// SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableContentModelID(v *uint32) *CategoryUpdate {
+	if v != nil {
+		_u.SetContentModelID(*v)
+	}
+	return _u
+}
+
+// AddContentModelID adds value to the "content_model_id" field.
+func (_u *CategoryUpdate) AddContentModelID(v int32) *CategoryUpdate {
+	_u.mutation.AddContentModelID(v)
+	return _u
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (_u *CategoryUpdate) ClearContentModelID() *CategoryUpdate {
+	_u.mutation.ClearContentModelID()
+	return _u
+}
+
 // SetParent sets the "parent" edge to the Category entity.
 func (_u *CategoryUpdate) SetParent(v *Category) *CategoryUpdate {
 	return _u.SetParentID(v.ID)
@@ -618,6 +645,15 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.CustomFieldsCleared() {
 		_spec.ClearField(category.FieldCustomFields, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.ContentModelID(); ok {
+		_spec.SetField(category.FieldContentModelID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedContentModelID(); ok {
+		_spec.AddField(category.FieldContentModelID, field.TypeUint32, value)
+	}
+	if _u.mutation.ContentModelIDCleared() {
+		_spec.ClearField(category.FieldContentModelID, field.TypeUint32)
 	}
 	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1076,6 +1112,33 @@ func (_u *CategoryUpdateOne) ClearCustomFields() *CategoryUpdateOne {
 	return _u
 }
 
+// SetContentModelID sets the "content_model_id" field.
+func (_u *CategoryUpdateOne) SetContentModelID(v uint32) *CategoryUpdateOne {
+	_u.mutation.ResetContentModelID()
+	_u.mutation.SetContentModelID(v)
+	return _u
+}
+
+// SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableContentModelID(v *uint32) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetContentModelID(*v)
+	}
+	return _u
+}
+
+// AddContentModelID adds value to the "content_model_id" field.
+func (_u *CategoryUpdateOne) AddContentModelID(v int32) *CategoryUpdateOne {
+	_u.mutation.AddContentModelID(v)
+	return _u
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (_u *CategoryUpdateOne) ClearContentModelID() *CategoryUpdateOne {
+	_u.mutation.ClearContentModelID()
+	return _u
+}
+
 // SetParent sets the "parent" edge to the Category entity.
 func (_u *CategoryUpdateOne) SetParent(v *Category) *CategoryUpdateOne {
 	return _u.SetParentID(v.ID)
@@ -1334,6 +1397,15 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 	}
 	if _u.mutation.CustomFieldsCleared() {
 		_spec.ClearField(category.FieldCustomFields, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.ContentModelID(); ok {
+		_spec.SetField(category.FieldContentModelID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedContentModelID(); ok {
+		_spec.AddField(category.FieldContentModelID, field.TypeUint32, value)
+	}
+	if _u.mutation.ContentModelIDCleared() {
+		_spec.ClearField(category.FieldContentModelID, field.TypeUint32)
 	}
 	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{

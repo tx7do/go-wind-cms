@@ -11,10 +11,14 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
+	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
+	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
+	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
+	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
@@ -262,6 +266,57 @@ func init() {
 	commentlikeDescID := commentlikeMixinFields0[0].Descriptor()
 	// commentlike.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	commentlike.IDValidator = commentlikeDescID.Validators[0].(func(uint32) error)
+	contentmodelMixin := schema.ContentModel{}.Mixin()
+	contentmodel.Policy = privacy.NewPolicies(contentmodelMixin[4], schema.ContentModel{})
+	contentmodel.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := contentmodel.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	contentmodelMixinFields0 := contentmodelMixin[0].Fields()
+	_ = contentmodelMixinFields0
+	contentmodelMixinFields3 := contentmodelMixin[3].Fields()
+	_ = contentmodelMixinFields3
+	contentmodelMixinFields4 := contentmodelMixin[4].Fields()
+	_ = contentmodelMixinFields4
+	contentmodelFields := schema.ContentModel{}.Fields()
+	_ = contentmodelFields
+	// contentmodelDescSortOrder is the schema descriptor for sort_order field.
+	contentmodelDescSortOrder := contentmodelMixinFields3[0].Descriptor()
+	// contentmodel.DefaultSortOrder holds the default value on creation for the sort_order field.
+	contentmodel.DefaultSortOrder = contentmodelDescSortOrder.Default.(uint32)
+	// contentmodelDescTenantID is the schema descriptor for tenant_id field.
+	contentmodelDescTenantID := contentmodelMixinFields4[0].Descriptor()
+	// contentmodel.DefaultTenantID holds the default value on creation for the tenant_id field.
+	contentmodel.DefaultTenantID = contentmodelDescTenantID.Default.(uint32)
+	// contentmodelDescName is the schema descriptor for name field.
+	contentmodelDescName := contentmodelFields[0].Descriptor()
+	// contentmodel.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	contentmodel.NameValidator = contentmodelDescName.Validators[0].(func(string) error)
+	// contentmodelDescCode is the schema descriptor for code field.
+	contentmodelDescCode := contentmodelFields[1].Descriptor()
+	// contentmodel.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	contentmodel.CodeValidator = contentmodelDescCode.Validators[0].(func(string) error)
+	// contentmodelDescID is the schema descriptor for id field.
+	contentmodelDescID := contentmodelMixinFields0[0].Descriptor()
+	// contentmodel.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	contentmodel.IDValidator = contentmodelDescID.Validators[0].(func(uint32) error)
+	contentmodeltranslationMixin := schema.ContentModelTranslation{}.Mixin()
+	contentmodeltranslationMixinFields0 := contentmodeltranslationMixin[0].Fields()
+	_ = contentmodeltranslationMixinFields0
+	contentmodeltranslationFields := schema.ContentModelTranslation{}.Fields()
+	_ = contentmodeltranslationFields
+	// contentmodeltranslationDescLanguageCode is the schema descriptor for language_code field.
+	contentmodeltranslationDescLanguageCode := contentmodeltranslationFields[1].Descriptor()
+	// contentmodeltranslation.LanguageCodeValidator is a validator for the "language_code" field. It is called by the builders before save.
+	contentmodeltranslation.LanguageCodeValidator = contentmodeltranslationDescLanguageCode.Validators[0].(func(string) error)
+	// contentmodeltranslationDescID is the schema descriptor for id field.
+	contentmodeltranslationDescID := contentmodeltranslationMixinFields0[0].Descriptor()
+	// contentmodeltranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	contentmodeltranslation.IDValidator = contentmodeltranslationDescID.Validators[0].(func(uint32) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -408,6 +463,57 @@ func init() {
 	dicttypeDescID := dicttypeMixinFields0[0].Descriptor()
 	// dicttype.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	dicttype.IDValidator = dicttypeDescID.Validators[0].(func(uint32) error)
+	fielddefinitionMixin := schema.FieldDefinition{}.Mixin()
+	fielddefinition.Policy = privacy.NewPolicies(fielddefinitionMixin[4], schema.FieldDefinition{})
+	fielddefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := fielddefinition.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	fielddefinitionMixinFields0 := fielddefinitionMixin[0].Fields()
+	_ = fielddefinitionMixinFields0
+	fielddefinitionMixinFields3 := fielddefinitionMixin[3].Fields()
+	_ = fielddefinitionMixinFields3
+	fielddefinitionMixinFields4 := fielddefinitionMixin[4].Fields()
+	_ = fielddefinitionMixinFields4
+	fielddefinitionFields := schema.FieldDefinition{}.Fields()
+	_ = fielddefinitionFields
+	// fielddefinitionDescSortOrder is the schema descriptor for sort_order field.
+	fielddefinitionDescSortOrder := fielddefinitionMixinFields3[0].Descriptor()
+	// fielddefinition.DefaultSortOrder holds the default value on creation for the sort_order field.
+	fielddefinition.DefaultSortOrder = fielddefinitionDescSortOrder.Default.(uint32)
+	// fielddefinitionDescTenantID is the schema descriptor for tenant_id field.
+	fielddefinitionDescTenantID := fielddefinitionMixinFields4[0].Descriptor()
+	// fielddefinition.DefaultTenantID holds the default value on creation for the tenant_id field.
+	fielddefinition.DefaultTenantID = fielddefinitionDescTenantID.Default.(uint32)
+	// fielddefinitionDescName is the schema descriptor for name field.
+	fielddefinitionDescName := fielddefinitionFields[1].Descriptor()
+	// fielddefinition.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	fielddefinition.NameValidator = fielddefinitionDescName.Validators[0].(func(string) error)
+	// fielddefinitionDescIsRequired is the schema descriptor for is_required field.
+	fielddefinitionDescIsRequired := fielddefinitionFields[6].Descriptor()
+	// fielddefinition.DefaultIsRequired holds the default value on creation for the is_required field.
+	fielddefinition.DefaultIsRequired = fielddefinitionDescIsRequired.Default.(bool)
+	// fielddefinitionDescID is the schema descriptor for id field.
+	fielddefinitionDescID := fielddefinitionMixinFields0[0].Descriptor()
+	// fielddefinition.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	fielddefinition.IDValidator = fielddefinitionDescID.Validators[0].(func(uint32) error)
+	fielddefinitiontranslationMixin := schema.FieldDefinitionTranslation{}.Mixin()
+	fielddefinitiontranslationMixinFields0 := fielddefinitiontranslationMixin[0].Fields()
+	_ = fielddefinitiontranslationMixinFields0
+	fielddefinitiontranslationFields := schema.FieldDefinitionTranslation{}.Fields()
+	_ = fielddefinitiontranslationFields
+	// fielddefinitiontranslationDescLanguageCode is the schema descriptor for language_code field.
+	fielddefinitiontranslationDescLanguageCode := fielddefinitiontranslationFields[1].Descriptor()
+	// fielddefinitiontranslation.LanguageCodeValidator is a validator for the "language_code" field. It is called by the builders before save.
+	fielddefinitiontranslation.LanguageCodeValidator = fielddefinitiontranslationDescLanguageCode.Validators[0].(func(string) error)
+	// fielddefinitiontranslationDescID is the schema descriptor for id field.
+	fielddefinitiontranslationDescID := fielddefinitiontranslationMixinFields0[0].Descriptor()
+	// fielddefinitiontranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	fielddefinitiontranslation.IDValidator = fielddefinitiontranslationDescID.Validators[0].(func(uint32) error)
 	fileMixin := schema.File{}.Mixin()
 	file.Policy = privacy.NewPolicies(fileMixin[4], schema.File{})
 	file.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -485,7 +591,7 @@ func init() {
 	// internalmessage.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	internalmessage.IDValidator = internalmessageDescID.Validators[0].(func(uint32) error)
 	internalmessagecategoryMixin := schema.InternalMessageCategory{}.Mixin()
-	internalmessagecategory.Policy = privacy.NewPolicies(internalmessagecategoryMixin[6], schema.InternalMessageCategory{})
+	internalmessagecategory.Policy = privacy.NewPolicies(internalmessagecategoryMixin[8], schema.InternalMessageCategory{})
 	internalmessagecategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := internalmessagecategory.Policy.EvalMutation(ctx, m); err != nil {
@@ -500,8 +606,10 @@ func init() {
 	_ = internalmessagecategoryMixinFields3
 	internalmessagecategoryMixinFields4 := internalmessagecategoryMixin[4].Fields()
 	_ = internalmessagecategoryMixinFields4
-	internalmessagecategoryMixinFields6 := internalmessagecategoryMixin[6].Fields()
-	_ = internalmessagecategoryMixinFields6
+	internalmessagecategoryMixinFields5 := internalmessagecategoryMixin[5].Fields()
+	_ = internalmessagecategoryMixinFields5
+	internalmessagecategoryMixinFields8 := internalmessagecategoryMixin[8].Fields()
+	_ = internalmessagecategoryMixinFields8
 	internalmessagecategoryFields := schema.InternalMessageCategory{}.Fields()
 	_ = internalmessagecategoryFields
 	// internalmessagecategoryDescIsEnabled is the schema descriptor for is_enabled field.
@@ -512,8 +620,12 @@ func init() {
 	internalmessagecategoryDescSortOrder := internalmessagecategoryMixinFields4[0].Descriptor()
 	// internalmessagecategory.DefaultSortOrder holds the default value on creation for the sort_order field.
 	internalmessagecategory.DefaultSortOrder = internalmessagecategoryDescSortOrder.Default.(uint32)
+	// internalmessagecategoryDescPath is the schema descriptor for path field.
+	internalmessagecategoryDescPath := internalmessagecategoryMixinFields5[0].Descriptor()
+	// internalmessagecategory.PathValidator is a validator for the "path" field. It is called by the builders before save.
+	internalmessagecategory.PathValidator = internalmessagecategoryDescPath.Validators[0].(func(string) error)
 	// internalmessagecategoryDescTenantID is the schema descriptor for tenant_id field.
-	internalmessagecategoryDescTenantID := internalmessagecategoryMixinFields6[0].Descriptor()
+	internalmessagecategoryDescTenantID := internalmessagecategoryMixinFields8[0].Descriptor()
 	// internalmessagecategory.DefaultTenantID holds the default value on creation for the tenant_id field.
 	internalmessagecategory.DefaultTenantID = internalmessagecategoryDescTenantID.Default.(uint32)
 	// internalmessagecategoryDescName is the schema descriptor for name field.
@@ -524,6 +636,10 @@ func init() {
 	internalmessagecategoryDescCode := internalmessagecategoryFields[1].Descriptor()
 	// internalmessagecategory.CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	internalmessagecategory.CodeValidator = internalmessagecategoryDescCode.Validators[0].(func(string) error)
+	// internalmessagecategoryDescDepth is the schema descriptor for depth field.
+	internalmessagecategoryDescDepth := internalmessagecategoryFields[3].Descriptor()
+	// internalmessagecategory.DefaultDepth holds the default value on creation for the depth field.
+	internalmessagecategory.DefaultDepth = internalmessagecategoryDescDepth.Default.(int32)
 	// internalmessagecategoryDescID is the schema descriptor for id field.
 	internalmessagecategoryDescID := internalmessagecategoryMixinFields0[0].Descriptor()
 	// internalmessagecategory.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1046,7 +1162,7 @@ func init() {
 	// page.DefaultIsCustomTemplate holds the default value on creation for the is_custom_template field.
 	page.DefaultIsCustomTemplate = pageDescIsCustomTemplate.Default.(bool)
 	// pageDescDepth is the schema descriptor for depth field.
-	pageDescDepth := pageFields[11].Descriptor()
+	pageDescDepth := pageFields[12].Descriptor()
 	// page.DefaultDepth holds the default value on creation for the depth field.
 	page.DefaultDepth = pageDescDepth.Default.(int32)
 	// pageDescID is the schema descriptor for id field.

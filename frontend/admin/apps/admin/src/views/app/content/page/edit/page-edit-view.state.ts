@@ -177,6 +177,8 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
         this.formData.customHead = item.customHead;
         this.formData.customFoot = item.customFoot;
         this.formData.sortOrder = item.sortOrder;
+        this.formData.contentModelId = item.contentModelId;
+        this.formData.customFields = item.customFields ?? {};
 
         // Try to load draft after fetching backend data
         // Draft will override backend data if exists
@@ -290,6 +292,8 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
           customHead: this.formData.customHead,
           customFoot: this.formData.customFoot,
           sortOrder: this.formData.sortOrder,
+          contentModelId: this.formData.contentModelId,
+          customFields: this.formData.customFields,
           translations: [
             {
               title: this.formData.title,
@@ -298,7 +302,7 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
               languageCode: this.formData.lang,
             },
           ],
-        };
+        } as any;
         await (this.isCreateMode
           ? apiClient.pageService.Create({ data })
           : apiClient.pageService.Update({

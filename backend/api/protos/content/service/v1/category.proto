@@ -115,6 +115,11 @@ message Category {
     (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}
   ]; // 自定义字段，键值对形式，便于扩展
 
+  optional uint32 content_model_id = 31 [
+    json_name = "contentModelId",
+    (gnostic.openapi.v3.property) = {description: "绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）"}
+  ]; // 绑定的内容模型ID
+
 
   optional uint32 parent_id = 60 [
     json_name = "parentId",

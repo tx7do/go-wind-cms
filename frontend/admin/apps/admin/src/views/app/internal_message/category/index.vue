@@ -66,6 +66,11 @@ const gridOptions: VxeGridProps<InternalMessageCategory> = {
     isHover: true,
   },
   height: 'auto',
+  treeConfig: {
+    rowField: 'id',
+    childrenField: 'children',
+    expandAll: true,
+  },
 
   proxyConfig: {
     ajax: {
@@ -74,6 +79,8 @@ const gridOptions: VxeGridProps<InternalMessageCategory> = {
           new PaginationQuery({
             paging: { page: page.currentPage, pageSize: page.pageSize },
             formValues,
+            fieldMask:
+              'id,name,code,sort_order,is_enabled,parent_id,children,created_by,created_at,remark',
           }),
         );
       },
@@ -84,6 +91,7 @@ const gridOptions: VxeGridProps<InternalMessageCategory> = {
     {
       title: $t('page.internalMessageCategory.name'),
       field: 'name',
+      treeNode: true,
     },
     {
       title: $t('page.internalMessageCategory.code'),
@@ -163,6 +171,16 @@ async function handleDelete(row: any) {
     });
   }
 }
+
+/* 展开全部树节点 */
+function handleExpandAll() {
+  gridApi.grid?.setAllTreeExpand(true);
+}
+
+/* 折叠全部树节点 */
+function handleCollapseAll() {
+  gridApi.grid?.setAllTreeExpand(false);
+}
 </script>
 
 <template>
@@ -171,6 +189,12 @@ async function handleDelete(row: any) {
       <template #toolbar-tools>
         <a-button class="mr-2" type="primary" @click="handleCreate">
           {{ $t('page.internalMessageCategory.button.create') }}
+        </a-button>
+        <a-button class="mr-2" @click="handleExpandAll">
+          {{ $t('ui.tree.expand_all') }}
+        </a-button>
+        <a-button class="mr-2" @click="handleCollapseAll">
+          {{ $t('ui.tree.collapse_all') }}
         </a-button>
       </template>
       <template #isEnabled="{ row }">

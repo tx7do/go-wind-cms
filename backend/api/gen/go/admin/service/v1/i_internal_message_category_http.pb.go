@@ -43,14 +43,14 @@ type InternalMessageCategoryServiceHTTPServer interface {
 
 func RegisterInternalMessageCategoryServiceHTTPServer(s *http.Server, srv InternalMessageCategoryServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/internal-message/categories", _InternalMessageCategoryService_List8_HTTP_Handler(srv))
-	r.GET("/admin/v1/internal-message/categories/{id}", _InternalMessageCategoryService_Get8_HTTP_Handler(srv))
-	r.POST("/admin/v1/internal-message/categories", _InternalMessageCategoryService_Create6_HTTP_Handler(srv))
-	r.PUT("/admin/v1/internal-message/categories/{id}", _InternalMessageCategoryService_Update6_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/internal-message/categories/{id}", _InternalMessageCategoryService_Delete6_HTTP_Handler(srv))
+	r.GET("/admin/v1/internal-message/categories", _InternalMessageCategoryService_List9_HTTP_Handler(srv))
+	r.GET("/admin/v1/internal-message/categories/{id}", _InternalMessageCategoryService_Get10_HTTP_Handler(srv))
+	r.POST("/admin/v1/internal-message/categories", _InternalMessageCategoryService_Create7_HTTP_Handler(srv))
+	r.PUT("/admin/v1/internal-message/categories/{id}", _InternalMessageCategoryService_Update7_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/internal-message/categories/{id}", _InternalMessageCategoryService_Delete7_HTTP_Handler(srv))
 }
 
-func _InternalMessageCategoryService_List8_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _InternalMessageCategoryService_List9_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _InternalMessageCategoryService_List8_HTTP_Handler(srv InternalMessageCateg
 	}
 }
 
-func _InternalMessageCategoryService_Get8_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _InternalMessageCategoryService_Get10_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetInternalMessageCategoryRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _InternalMessageCategoryService_Get8_HTTP_Handler(srv InternalMessageCatego
 	}
 }
 
-func _InternalMessageCategoryService_Create6_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _InternalMessageCategoryService_Create7_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateInternalMessageCategoryRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _InternalMessageCategoryService_Create6_HTTP_Handler(srv InternalMessageCat
 	}
 }
 
-func _InternalMessageCategoryService_Update6_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _InternalMessageCategoryService_Update7_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateInternalMessageCategoryRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _InternalMessageCategoryService_Update6_HTTP_Handler(srv InternalMessageCat
 	}
 }
 
-func _InternalMessageCategoryService_Delete6_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _InternalMessageCategoryService_Delete7_HTTP_Handler(srv InternalMessageCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteInternalMessageCategoryRequest
 		if err := ctx.BindQuery(&in); err != nil {

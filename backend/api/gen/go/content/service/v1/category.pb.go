@@ -93,6 +93,7 @@ type Category struct {
 	Translations       []*CategoryTranslation   `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`
 	AvailableLanguages []string                 `protobuf:"bytes,21,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
 	CustomFields       map[string]string        `protobuf:"bytes,30,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
+	ContentModelId     *uint32                  `protobuf:"varint,31,opt,name=content_model_id,json=contentModelId,proto3,oneof" json:"content_model_id,omitempty"`                                                            // 绑定的内容模型ID
 	ParentId           *uint32                  `protobuf:"varint,60,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                                                                                // 父节点ID
 	Children           []*Category              `protobuf:"bytes,61,rep,name=children,proto3" json:"children,omitempty"`                                                                                                       // 子节点树
 	Depth              *int32                   `protobuf:"varint,62,opt,name=depth,proto3,oneof" json:"depth,omitempty"`                                                                                                      // 分类层级深度（0=顶级，1=二级，以此类推）
@@ -212,6 +213,13 @@ func (x *Category) GetCustomFields() map[string]string {
 		return x.CustomFields
 	}
 	return nil
+}
+
+func (x *Category) GetContentModelId() uint32 {
+	if x != nil && x.ContentModelId != nil {
+		return *x.ContentModelId
+	}
+	return 0
 }
 
 func (x *Category) GetParentId() uint32 {
@@ -1136,7 +1144,7 @@ var File_content_service_v1_category_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_category_proto_rawDesc = "" +
 	"\n" +
-	"!content/service/v1/category.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xd8\x11\n" +
+	"!content/service/v1/category.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\xfc\x12\n" +
 	"\bCategory\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b类别IDH\x00R\x02id\x88\x01\x01\x12\\\n" +
 	"\x06status\x18\x02 \x01(\x0e2+.content.service.v1.Category.CategoryStatusB\x12\xbaG\x0f\x92\x02\f分类状态H\x01R\x06status\x88\x01\x01\x12l\n" +
@@ -1151,24 +1159,25 @@ const file_content_service_v1_category_proto_rawDesc = "" +
 	"\x11direct_post_count\x18\v \x01(\rB9\xbaG6\x92\x023该分类下的直接文章数（不含子分类）H\aR\x0fdirectPostCount\x88\x01\x01\x12h\n" +
 	"\ftranslations\x18\x14 \x03(\v2'.content.service.v1.CategoryTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
 	"\x13available_languages\x18\x15 \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12\x8b\x01\n" +
-	"\rcustom_fields\x18\x1e \x03(\v2..content.service.v1.Category.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x123\n" +
-	"\tparent_id\x18< \x01(\rB\x11\xbaG\x0e\x92\x02\v父节点IDH\bR\bparentId\x88\x01\x01\x12L\n" +
+	"\rcustom_fields\x18\x1e \x03(\v2..content.service.v1.Category.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12\x8c\x01\n" +
+	"\x10content_model_id\x18\x1f \x01(\rB]\xbaGZ\x92\x02W绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）H\bR\x0econtentModelId\x88\x01\x01\x123\n" +
+	"\tparent_id\x18< \x01(\rB\x11\xbaG\x0e\x92\x02\v父节点IDH\tR\bparentId\x88\x01\x01\x12L\n" +
 	"\bchildren\x18= \x03(\v2\x1c.content.service.v1.CategoryB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12[\n" +
-	"\x05depth\x18> \x01(\x05B@\xbaG=\x92\x02:分类层级深度（0=顶级，1=二级，以此类推）H\tR\x05depth\x88\x01\x01\x12f\n" +
-	"\x04path\x18? \x01(\tBM\xbaGJ\x92\x02G物化路径（Materialized Path），如 '1/5/23'，便于层级查询H\n" +
-	"R\x04path\x88\x01\x01\x12;\n" +
+	"\x05depth\x18> \x01(\x05B@\xbaG=\x92\x02:分类层级深度（0=顶级，1=二级，以此类推）H\n" +
+	"R\x05depth\x88\x01\x01\x12f\n" +
+	"\x04path\x18? \x01(\tBM\xbaGJ\x92\x02G物化路径（Materialized Path），如 '1/5/23'，便于层级查询H\vR\x04path\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01\x1a?\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x87\x01\n" +
@@ -1184,7 +1193,8 @@ const file_content_service_v1_category_proto_rawDesc = "" +
 	"\x05_iconB\a\n" +
 	"\x05_codeB\r\n" +
 	"\v_post_countB\x14\n" +
-	"\x12_direct_post_countB\f\n" +
+	"\x12_direct_post_countB\x13\n" +
+	"\x11_content_model_idB\f\n" +
 	"\n" +
 	"_parent_idB\b\n" +
 	"\x06_depthB\a\n" +

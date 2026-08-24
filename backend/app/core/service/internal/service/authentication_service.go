@@ -162,16 +162,15 @@ func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRela
 // authorizeAndEnrichUserTokenPayload 授权并丰富用户令牌载荷
 func (s *AuthenticationService) authorizeAndEnrichUserTokenPayload(ctx context.Context, userID, tenantID uint32, tokenPayload *authenticationV1.UserTokenPayload) error {
 	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
 	case constants.UserTenantRelationOneToOne:
 		return s.authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx, userID, tenantID, tokenPayload)
 
+	// OneToMany 与 OneToOne 的授权流程一致：userRepo.ListRoleIDsByUserID 已按关系类型
+	// 分流（OneToMany 走 membershipRepo.ListMembershipRoleIDs），故复用同一实现。
 	case constants.UserTenantRelationOneToMany:
-		s.log.Errorf("user-tenant relation type one-to-many is not implemented yet")
-		return authenticationV1.ErrorServiceUnavailable("user-tenant relation type one-to-many is not implemented yet")
-
-	default:
-		s.log.Errorf("unsupported user-tenant relation type: %d", constants.DefaultUserTenantRelationType)
-		return authenticationV1.ErrorServiceUnavailable("unsupported user-tenant relation type")
+		return s.authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx, userID, tenantID, tokenPayload)
 	}
 }
 

@@ -55,6 +55,8 @@ type Category struct {
 	Depth *int32 `json:"depth,omitempty"`
 	// 自定义字段
 	CustomFields *map[string]string `json:"custom_fields,omitempty"`
+	// 绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）
+	ContentModelID *uint32 `json:"content_model_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CategoryQuery when eager-loading is set.
 	Edges        CategoryEdges `json:"edges"`
@@ -101,7 +103,7 @@ func (*Category) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case category.FieldIsNav:
 			values[i] = new(sql.NullBool)
-		case category.FieldID, category.FieldCreatedBy, category.FieldUpdatedBy, category.FieldDeletedBy, category.FieldSortOrder, category.FieldParentID, category.FieldTenantID, category.FieldPostCount, category.FieldDirectPostCount, category.FieldDepth:
+		case category.FieldID, category.FieldCreatedBy, category.FieldUpdatedBy, category.FieldDeletedBy, category.FieldSortOrder, category.FieldParentID, category.FieldTenantID, category.FieldPostCount, category.FieldDirectPostCount, category.FieldDepth, category.FieldContentModelID:
 			values[i] = new(sql.NullInt64)
 		case category.FieldPath, category.FieldStatus, category.FieldIcon, category.FieldCode:
 			values[i] = new(sql.NullString)
@@ -255,6 +257,13 @@ func (_m *Category) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field custom_fields: %w", err)
 				}
 			}
+		case category.FieldContentModelID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field content_model_id", values[i])
+			} else if value.Valid {
+				_m.ContentModelID = new(uint32)
+				*_m.ContentModelID = uint32(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -388,6 +397,11 @@ func (_m *Category) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("custom_fields=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CustomFields))
+	builder.WriteString(", ")
+	if v := _m.ContentModelID; v != nil {
+		builder.WriteString("content_model_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

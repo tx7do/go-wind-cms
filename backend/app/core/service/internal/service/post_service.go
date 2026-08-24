@@ -20,18 +20,20 @@ import (
 type PostService struct {
 	contentV1.UnimplementedPostServiceServer
 
-	postRepo      *data.PostRepo
-	searchService *SearchService
-	taskService   *TaskService
-	log           *log.Helper
+	postRepo          *data.PostRepo
+	searchService     *SearchService
+	taskService       *TaskService
+	contentModelRepo  *data.ContentModelRepo
+	log               *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService) *PostService {
+func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo) *PostService {
 	return &PostService{
-		log:           ctx.NewLoggerHelper("post/service/core-service"),
-		postRepo:      uc,
-		searchService: searchService,
-		taskService:   taskService,
+		log:              ctx.NewLoggerHelper("post/service/core-service"),
+		postRepo:         uc,
+		searchService:    searchService,
+		taskService:      taskService,
+		contentModelRepo: contentModelRepo,
 	}
 }
 
@@ -102,6 +104,15 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 		req.Data.Status = trans.Ptr(contentV1.Post_POST_STATUS_DRAFT)
 	}
 
+	// 自定义字段校验：按所属分类绑定的内容模型校验 custom_fields
+	// TenantId 由 viewer 注入（不在此消息中），此处传 0 跳过跨租户检查
+	if vErr := s.contentModelRepo.ValidateValues(ctx,
+		s.contentModelRepo.ResolveModelIDByCategories(ctx, req.Data.GetCategoryIds()),
+		req.Data.GetCustomFields(),
+		0); vErr != nil {
+		return nil, vErr
+	}
+
 	dto, err := s.postRepo.Create(ctx, req)
 	if err != nil {
 		return nil, err
@@ -115,6 +126,25 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 }
 
 func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostRequest) (*contentV1.Post, error) {
+	// 自定义字段校验：仅当本次请求携带 custom_fields 时校验（部分更新不带则跳过）。
+	// 分类取请求值；未携带分类时查现库归属，保证换绑模型后旧值也能被复检。
+	if req != nil && req.Data != nil && req.Data.CustomFields != nil {
+		categoryIds := req.Data.GetCategoryIds()
+		if len(categoryIds) == 0 {
+			if existing, gErr := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+				QueryBy: &contentV1.GetPostRequest_Id{Id: req.GetId()},
+			}); gErr == nil && existing != nil {
+				categoryIds = existing.GetCategoryIds()
+			}
+		}
+		if vErr := s.contentModelRepo.ValidateValues(ctx,
+			s.contentModelRepo.ResolveModelIDByCategories(ctx, categoryIds),
+			req.Data.GetCustomFields(),
+			0); vErr != nil {
+			return nil, vErr
+		}
+	}
+
 	dto, err := s.postRepo.Update(ctx, req)
 	if err != nil {
 		return nil, err

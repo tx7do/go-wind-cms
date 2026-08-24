@@ -5,6 +5,7 @@ package internalmessagecategory
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -28,6 +29,10 @@ const (
 	FieldIsEnabled = "is_enabled"
 	// FieldSortOrder holds the string denoting the sort_order field in the database.
 	FieldSortOrder = "sort_order"
+	// FieldPath holds the string denoting the path field in the database.
+	FieldPath = "path"
+	// FieldParentID holds the string denoting the parent_id field in the database.
+	FieldParentID = "parent_id"
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
 	// FieldTenantID holds the string denoting the tenant_id field in the database.
@@ -38,8 +43,22 @@ const (
 	FieldCode = "code"
 	// FieldIconURL holds the string denoting the icon_url field in the database.
 	FieldIconURL = "icon_url"
+	// FieldDepth holds the string denoting the depth field in the database.
+	FieldDepth = "depth"
+	// EdgeParent holds the string denoting the parent edge name in mutations.
+	EdgeParent = "parent"
+	// EdgeChildren holds the string denoting the children edge name in mutations.
+	EdgeChildren = "children"
 	// Table holds the table name of the internalmessagecategory in the database.
 	Table = "internal_message_categories"
+	// ParentTable is the table that holds the parent relation/edge.
+	ParentTable = "internal_message_categories"
+	// ParentColumn is the table column denoting the parent relation/edge.
+	ParentColumn = "parent_id"
+	// ChildrenTable is the table that holds the children relation/edge.
+	ChildrenTable = "internal_message_categories"
+	// ChildrenColumn is the table column denoting the children relation/edge.
+	ChildrenColumn = "parent_id"
 )
 
 // Columns holds all SQL columns for internalmessagecategory fields.
@@ -53,11 +72,14 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldIsEnabled,
 	FieldSortOrder,
+	FieldPath,
+	FieldParentID,
 	FieldRemark,
 	FieldTenantID,
 	FieldName,
 	FieldCode,
 	FieldIconURL,
+	FieldDepth,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -82,12 +104,16 @@ var (
 	DefaultIsEnabled bool
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
+	// PathValidator is a validator for the "path" field. It is called by the builders before save.
+	PathValidator func(string) error
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
 	DefaultTenantID uint32
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	CodeValidator func(string) error
+	// DefaultDepth holds the default value on creation for the "depth" field.
+	DefaultDepth int32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -140,6 +166,16 @@ func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSortOrder, opts...).ToFunc()
 }
 
+// ByPath orders the results by the path field.
+func ByPath(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
+// ByParentID orders the results by the parent_id field.
+func ByParentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldParentID, opts...).ToFunc()
+}
+
 // ByRemark orders the results by the remark field.
 func ByRemark(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRemark, opts...).ToFunc()
@@ -163,4 +199,44 @@ func ByCode(opts ...sql.OrderTermOption) OrderOption {
 // ByIconURL orders the results by the icon_url field.
 func ByIconURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIconURL, opts...).ToFunc()
+}
+
+// ByDepth orders the results by the depth field.
+func ByDepth(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDepth, opts...).ToFunc()
+}
+
+// ByParentField orders the results by parent field.
+func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByChildrenCount orders the results by children count.
+func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newChildrenStep(), opts...)
+	}
+}
+
+// ByChildren orders the results by children terms.
+func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newParentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+	)
+}
+func newChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+	)
 }

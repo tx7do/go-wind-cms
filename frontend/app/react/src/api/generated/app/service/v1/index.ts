@@ -637,6 +637,7 @@ export type contentservicev1_Category = {
   availableLanguages: string[] | undefined;
   children: contentservicev1_Category[] | undefined;
   code?: string;
+  contentModelId?: number;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   customFields: { [key: string]: string } | undefined;
@@ -2048,6 +2049,7 @@ export type contentservicev1_Page = {
   authorName?: string;
   availableLanguages: string[] | undefined;
   children: contentservicev1_Page[] | undefined;
+  contentModelId?: number;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   customFields: { [key: string]: string } | undefined;
@@ -2783,6 +2785,263 @@ export type contentservicev1_DeleteSectionRequest = {
   id?: number;
 };
 
+// 站点服务（公开端点）
+// 仅 GetSiteByDomain 对外可用：按请求 Host 解析的域名返回当前站点的渲染必需配置。
+// List/Create/Update/Delete 在 app（公开站点）服务上禁用，写操作应经由 admin 服务。
+export interface SiteService {
+  // 获取站点列表（公开端点禁用）
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<siteservicev1_ListSiteResponse>;
+  // 按域名获取当前站点配置（公开：domain 由 BFF 按 Host 填入，调用方不可指定）
+  GetSiteByDomain(
+    request: siteservicev1_GetSiteByDomainRequest,
+  ): Promise<siteservicev1_Site>;
+  // 创建站点（公开端点禁用）
+  Create(
+    request: siteservicev1_CreateSiteRequest,
+  ): Promise<siteservicev1_Site>;
+  // 更新站点（公开端点禁用）
+  Update(
+    request: siteservicev1_UpdateSiteRequest,
+  ): Promise<siteservicev1_Site>;
+  // 删除站点（公开端点禁用）
+  Delete(
+    request: siteservicev1_DeleteSiteRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createSiteServiceClient(
+  transport: ClientTransport,
+): SiteService {
+  return {
+    List(request) {
+      const path = `app/v1/sites`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SiteService',
+        method: 'List',
+      }) as Promise<siteservicev1_ListSiteResponse>;
+    },
+    GetSiteByDomain(request) {
+      const path = `app/v1/site`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.domain) {
+        queryParams.push(
+          `domain=${encodeURIComponent(request.domain.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SiteService',
+        method: 'GetSiteByDomain',
+      }) as Promise<siteservicev1_Site>;
+    },
+    Create(request) {
+      const path = `app/v1/sites`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SiteService',
+        method: 'Create',
+      }) as Promise<siteservicev1_Site>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/sites/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'SiteService',
+        method: 'Update',
+      }) as Promise<siteservicev1_Site>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/sites/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'SiteService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 回应 - 站点列表
+export type siteservicev1_ListSiteResponse = {
+  items: siteservicev1_Site[] | undefined;
+  total: number | undefined;
+};
+
+// 站点
+export type siteservicev1_Site = {
+  alternateDomains: string[] | undefined;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  defaultLocale?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  domain?: string;
+  id?: number;
+  isDefault?: boolean;
+  name?: string;
+  slug?: string;
+  status?: siteservicev1_Site_Status;
+  template?: string;
+  tenantId?: number;
+  theme?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 站点状态
+export type siteservicev1_Site_Status =
+  | 'SITE_STATUS_ACTIVE'
+  | 'SITE_STATUS_INACTIVE'
+  | 'SITE_STATUS_MAINTENANCE'
+  | 'SITE_STATUS_UNSPECIFIED';
+// 请求 - 按域名获取站点数据
+export type siteservicev1_GetSiteByDomainRequest = {
+  domain: string | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 请求 - 创建站点
+export type siteservicev1_CreateSiteRequest = {
+  data: siteservicev1_Site | undefined;
+};
+
+// 请求 - 更新站点
+export type siteservicev1_UpdateSiteRequest = {
+  allowMissing?: boolean;
+  data: siteservicev1_Site | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除站点
+export type siteservicev1_DeleteSiteRequest = {
+  id?: number;
+};
+
 // 标签服务
 export interface TagService {
   // 获取标签列表
@@ -3116,14 +3375,6 @@ export interface UserProfileService {
   ChangePassword(
     request: identityservicev1_ChangePasswordRequest,
   ): Promise<wellKnownEmpty>;
-  // 上传头像
-  UploadAvatar(
-    request: identityservicev1_UploadAvatarRequest,
-  ): Promise<identityservicev1_UploadAvatarResponse>;
-  // 删除头像
-  DeleteAvatar(
-    request: wellKnownEmpty,
-  ): Promise<wellKnownEmpty>;
   // 绑定手机号码/邮箱
   BindContact(
     request: identityservicev1_BindContactRequest,
@@ -3160,22 +3411,6 @@ export function createUserProfileServiceClient(
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
         method: 'ChangePassword',
-      }) as Promise<wellKnownEmpty>;
-    },
-    UploadAvatar(request) {
-      const path = `app/v1/me/avatar`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'POST', body, {
-        service: 'UserProfileService',
-        method: 'UploadAvatar',
-      }) as Promise<identityservicev1_UploadAvatarResponse>;
-    },
-    DeleteAvatar(_request) {
-      const path = `app/v1/me/avatar`;
-      const body = null;
-      return transport.unary(path, 'DELETE', body, {
-        service: 'UserProfileService',
-        method: 'DeleteAvatar',
       }) as Promise<wellKnownEmpty>;
     },
     BindContact(request) {
@@ -3272,15 +3507,6 @@ export type identityservicev1_ChangePasswordRequest = {
   oldPassword: string | undefined;
 };
 
-export type identityservicev1_UploadAvatarRequest = {
-  imageBase64?: string;
-  imageUrl?: string;
-};
-
-export type identityservicev1_UploadAvatarResponse = {
-  url: string | undefined;
-};
-
 export type identityservicev1_BindContactRequest = {
   email?: identityservicev1_BindEmailRequest;
   phone?: identityservicev1_BindPhoneRequest;
@@ -3329,6 +3555,7 @@ export class ApiClient {
   private _pageService?: PageService;
   private _postService?: PostService;
   private _sectionService?: SectionService;
+  private _siteService?: SiteService;
   private _tagService?: TagService;
   private readonly _transport: ClientTransport;
   private _userProfileService?: UserProfileService;
@@ -3371,6 +3598,10 @@ export class ApiClient {
 
   get sectionService(): SectionService {
     return this._sectionService ??= createSectionServiceClient(this._transport);
+  }
+
+  get siteService(): SiteService {
+    return this._siteService ??= createSiteServiceClient(this._transport);
   }
 
   get tagService(): TagService {

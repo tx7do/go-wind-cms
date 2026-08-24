@@ -88,4 +88,11 @@ service TaskService {
       body: "*"
     };
   }
+
+  // 查询任务执行记录
+  rpc ListTaskExecutions (task.service.v1.ListTaskExecutionsRequest) returns (task.service.v1.ListTaskExecutionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/tasks:executions"
+    };
+  }
 }

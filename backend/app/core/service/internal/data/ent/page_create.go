@@ -322,6 +322,20 @@ func (_c *PageCreate) SetCustomFields(v *map[string]string) *PageCreate {
 	return _c
 }
 
+// SetContentModelID sets the "content_model_id" field.
+func (_c *PageCreate) SetContentModelID(v uint32) *PageCreate {
+	_c.mutation.SetContentModelID(v)
+	return _c
+}
+
+// SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
+func (_c *PageCreate) SetNillableContentModelID(v *uint32) *PageCreate {
+	if v != nil {
+		_c.SetContentModelID(*v)
+	}
+	return _c
+}
+
 // SetDepth sets the "depth" field.
 func (_c *PageCreate) SetDepth(v int32) *PageCreate {
 	_c.mutation.SetDepth(v)
@@ -585,6 +599,10 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.CustomFields(); ok {
 		_spec.SetField(page.FieldCustomFields, field.TypeJSON, value)
 		_node.CustomFields = value
+	}
+	if value, ok := _c.mutation.ContentModelID(); ok {
+		_spec.SetField(page.FieldContentModelID, field.TypeUint32, value)
+		_node.ContentModelID = &value
 	}
 	if value, ok := _c.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)
@@ -1062,6 +1080,30 @@ func (u *PageUpsert) UpdateCustomFields() *PageUpsert {
 // ClearCustomFields clears the value of the "custom_fields" field.
 func (u *PageUpsert) ClearCustomFields() *PageUpsert {
 	u.SetNull(page.FieldCustomFields)
+	return u
+}
+
+// SetContentModelID sets the "content_model_id" field.
+func (u *PageUpsert) SetContentModelID(v uint32) *PageUpsert {
+	u.Set(page.FieldContentModelID, v)
+	return u
+}
+
+// UpdateContentModelID sets the "content_model_id" field to the value that was provided on create.
+func (u *PageUpsert) UpdateContentModelID() *PageUpsert {
+	u.SetExcluded(page.FieldContentModelID)
+	return u
+}
+
+// AddContentModelID adds v to the "content_model_id" field.
+func (u *PageUpsert) AddContentModelID(v uint32) *PageUpsert {
+	u.Add(page.FieldContentModelID, v)
+	return u
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (u *PageUpsert) ClearContentModelID() *PageUpsert {
+	u.SetNull(page.FieldContentModelID)
 	return u
 }
 
@@ -1595,6 +1637,34 @@ func (u *PageUpsertOne) UpdateCustomFields() *PageUpsertOne {
 func (u *PageUpsertOne) ClearCustomFields() *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearCustomFields()
+	})
+}
+
+// SetContentModelID sets the "content_model_id" field.
+func (u *PageUpsertOne) SetContentModelID(v uint32) *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.SetContentModelID(v)
+	})
+}
+
+// AddContentModelID adds v to the "content_model_id" field.
+func (u *PageUpsertOne) AddContentModelID(v uint32) *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.AddContentModelID(v)
+	})
+}
+
+// UpdateContentModelID sets the "content_model_id" field to the value that was provided on create.
+func (u *PageUpsertOne) UpdateContentModelID() *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.UpdateContentModelID()
+	})
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (u *PageUpsertOne) ClearContentModelID() *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.ClearContentModelID()
 	})
 }
 
@@ -2298,6 +2368,34 @@ func (u *PageUpsertBulk) UpdateCustomFields() *PageUpsertBulk {
 func (u *PageUpsertBulk) ClearCustomFields() *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearCustomFields()
+	})
+}
+
+// SetContentModelID sets the "content_model_id" field.
+func (u *PageUpsertBulk) SetContentModelID(v uint32) *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.SetContentModelID(v)
+	})
+}
+
+// AddContentModelID adds v to the "content_model_id" field.
+func (u *PageUpsertBulk) AddContentModelID(v uint32) *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.AddContentModelID(v)
+	})
+}
+
+// UpdateContentModelID sets the "content_model_id" field to the value that was provided on create.
+func (u *PageUpsertBulk) UpdateContentModelID() *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.UpdateContentModelID()
+	})
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (u *PageUpsertBulk) ClearContentModelID() *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.ClearContentModelID()
 	})
 }
 

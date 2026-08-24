@@ -168,6 +168,8 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
         this.formData.isNav = item.isNav;
         this.formData.sortOrder = item.sortOrder;
         this.formData.status = item.status;
+        this.formData.contentModelId = item.contentModelId;
+        this.formData.customFields = item.customFields ?? {};
 
         // Try to load draft after fetching backend data
         // Draft will override backend data if exists
@@ -272,6 +274,8 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
           isNav: this.formData.isNav,
           sortOrder: this.formData.sortOrder,
           status: this.formData.status,
+          contentModelId: this.formData.contentModelId,
+          customFields: this.formData.customFields,
           translations: [
             {
               name: this.formData.name,
@@ -280,14 +284,16 @@ export const useCategoryEditViewStore = defineStore('category-edit-view', {
               languageCode: this.formData.lang,
             },
           ],
-        };
+        } as any;
 
         await (this.isCreateMode
           ? apiClient.categoryService.Create({ data })
           : apiClient.categoryService.Update({
               id: this.formData.id || 0,
               data,
-              updateMask: makeUpdateMask(Object.keys(data).filter((k) => k !== 'translations')),
+              updateMask: makeUpdateMask(
+                Object.keys(data).filter((k) => k !== 'translations'),
+              ),
             }));
 
         // Clear draft after successful publish

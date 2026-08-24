@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "site/service/v1/site.proto";
+
+// 站点服务（公开端点）
+//
+// 仅 GetSiteByDomain 对外可用：按请求 Host 解析的域名返回当前站点的渲染必需配置。
+// List/Create/Update/Delete 在 app（公开站点）服务上禁用，写操作应经由 admin 服务。
+service SiteService {
+  // 获取站点列表（公开端点禁用）
+  rpc List (pagination.PagingRequest) returns (site.service.v1.ListSiteResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/sites"
+    };
+  }
+
+  // 按域名获取当前站点配置（公开：domain 由 BFF 按 Host 填入，调用方不可指定）
+  rpc GetSiteByDomain (site.service.v1.GetSiteByDomainRequest) returns (site.service.v1.Site) {
+    option (google.api.http) = {
+      get: "/app/v1/site"
+    };
+  }
+
+  // 创建站点（公开端点禁用）
+  rpc Create (site.service.v1.CreateSiteRequest) returns (site.service.v1.Site) {
+    option (google.api.http) = {
+      post: "/app/v1/sites"
+      body: "*"
+    };
+  }
+
+  // 更新站点（公开端点禁用）
+  rpc Update (site.service.v1.UpdateSiteRequest) returns (site.service.v1.Site) {
+    option (google.api.http) = {
+      put: "/app/v1/sites/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除站点（公开端点禁用）
+  rpc Delete (site.service.v1.DeleteSiteRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/sites/{id}"
+    };
+  }
+}

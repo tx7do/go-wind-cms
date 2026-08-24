@@ -1,20 +1,67 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 import { useTabs } from '@vben/hooks';
-import { LucideArrowLeft } from '@vben/icons';
+import { LucideArrowLeft, LucideSparkles } from '@vben/icons';
 import { $t } from '@vben/locales';
 
-import { Col, InputNumber, notification, Row } from 'ant-design-vue';
+import { Col, InputNumber, notification, Row, Select, Input, Textarea } from 'ant-design-vue';
 
-import { categoryStatusList } from '#/api';
+import {
+  apiClient,
+  categoryStatusList,
+  fetchListContentModels,
+  fetchListFieldDefinitions,
+  type contentservicev1_FieldDefinition as FieldDefinition,
+  type contentservicev1_ContentModel as ContentModel,
+} from '#/api';
 import { router } from '#/router';
 
 import { useCategoryEditViewStore } from './category-edit-view.state';
+import RelationFieldSelect from '../../model/RelationFieldSelect.vue';
 
 const categoryEditViewStore = useCategoryEditViewStore();
+
+// 内容模型绑定 + 动态字段表单
+const contentModelOptions = ref<{ label: string; value: number }[]>([]);
+const fieldDefinitions = ref<FieldDefinition[]>([]);
+
+watchEffect(async () => {
+  // 拉取可选内容模型列表（供绑定下拉）
+  try {
+    const resp = await fetchListContentModels(
+      new (await import('#/transport/rest')).PaginationQuery({
+        paging: { page: 1, pageSize: 100 },
+        orderBy: ['sort_order'],
+      }),
+    );
+    contentModelOptions.value = (resp?.items ?? []).map((m: ContentModel) => ({
+      label: m.name || m.code || `#${m.id}`,
+      value: m.id as number,
+    }));
+  } catch {
+    contentModelOptions.value = [];
+  }
+});
+
+watch(
+  () => categoryEditViewStore.formData.contentModelId,
+  async (modelId) => {
+    if (!modelId) {
+      fieldDefinitions.value = [];
+      return;
+    }
+    try {
+      const resp = await fetchListFieldDefinitions({ contentModelId: modelId });
+      fieldDefinitions.value = (resp?.items ?? []) as FieldDefinition[];
+    } catch {
+      fieldDefinitions.value = [];
+    }
+  },
+  { immediate: true },
+);
 
 const route = useRoute();
 const { closeCurrentTab } = useTabs();
@@ -77,6 +124,40 @@ async function handleLanguageChange(newLang: string) {
   if (categoryEditViewStore.needTranslate) {
     notification.info({
       message: $t('page.category.validation.translationNotExists'),
+    });
+  }
+}
+
+async function handleTranslate() {
+  try {
+    const nameResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: categoryEditViewStore.formData.lang,
+      content: categoryEditViewStore.formData.name,
+    });
+    categoryEditViewStore.formData.name =
+      nameResp.translatedContent || categoryEditViewStore.formData.name;
+  } catch (error) {
+    console.error('Name translation failed:', error);
+    notification.error({
+      message: $t('page.category.validation.translateNameFailed'),
+    });
+    return;
+  }
+
+  try {
+    const descriptionResp = await apiClient.translatorService.Translate({
+      sourceLanguage: 'auto',
+      targetLanguage: categoryEditViewStore.formData.lang,
+      content: categoryEditViewStore.formData.description,
+    });
+    categoryEditViewStore.formData.description =
+      descriptionResp.translatedContent ||
+      categoryEditViewStore.formData.description;
+  } catch (error) {
+    console.error('Description translation failed:', error);
+    notification.error({
+      message: $t('page.category.validation.translateDescriptionFailed'),
     });
   }
 }
@@ -216,6 +297,17 @@ init();
             </span>
           </a-select-option>
         </a-select>
+        <a-button
+          v-show="categoryEditViewStore.needTranslate"
+          type="primary"
+          class="translate-btn"
+          @click="handleTranslate"
+        >
+          <template #icon>
+            <LucideSparkles />
+          </template>
+          {{ $t('page.category.button.oneClickTranslate') }}
+        </a-button>
       </div>
     </template>
 
@@ -284,6 +376,39 @@ init();
             v-model:value="categoryEditViewStore.formData.description"
             :placeholder="$t('page.category.placeholder.description')"
             :rows="4"
+          />
+        </a-form-item>
+
+        <!-- 内容模型绑定 -->
+        <a-form-item :label="$t('page.contentModel.moduleName')">
+          <Select
+            v-model:value="categoryEditViewStore.formData.contentModelId"
+            :options="contentModelOptions"
+            allow-clear
+            :placeholder="$t('ui.placeholder.select')"
+          />
+        </a-form-item>
+
+        <!-- 动态字段表单：由绑定的内容模型字段定义驱动 -->
+        <a-form-item
+          v-for="field in fieldDefinitions"
+          :key="field.id"
+          :label="field.label || field.name"
+        >
+          <Input
+            v-if="field.type === 'FIELD_TYPE_TEXT' || field.type === 'FIELD_TYPE_NUMBER' || field.type === 'FIELD_TYPE_IMAGE' || field.type === 'FIELD_TYPE_FILE'"
+            v-model:value="(categoryEditViewStore.formData.customFields ?? (categoryEditViewStore.formData.customFields = {}))[field.name ?? '']"
+          />
+          <Textarea
+            v-else-if="field.type === 'FIELD_TYPE_RICHTEXT'"
+            v-model:value="(categoryEditViewStore.formData.customFields ?? (categoryEditViewStore.formData.customFields = {}))[field.name ?? '']"
+            :rows="4"
+          />
+          <RelationFieldSelect
+            v-else-if="field.type === 'FIELD_TYPE_RELATION'"
+            :target-entity-type="field.relationConfig?.targetEntityType"
+            :model-value="(categoryEditViewStore.formData.customFields ?? (categoryEditViewStore.formData.customFields = {}))[field.name ?? '']"
+            @update:model-value="(categoryEditViewStore.formData.customFields ?? (categoryEditViewStore.formData.customFields = {}))[field.name ?? ''] = $event"
           />
         </a-form-item>
       </a-form>

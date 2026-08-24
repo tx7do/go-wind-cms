@@ -43,6 +43,10 @@ func (s *TaskService) Get(ctx context.Context, req *taskV1.GetTaskRequest) (*tas
 	return s.taskServiceClient.Get(ctx, req)
 }
 
+func (s *TaskService) ListTaskExecutions(ctx context.Context, req *taskV1.ListTaskExecutionsRequest) (*taskV1.ListTaskExecutionsResponse, error) {
+	return s.taskServiceClient.ListTaskExecutions(ctx, req)
+}
+
 func (s *TaskService) ListTaskTypeName(ctx context.Context, req *emptypb.Empty) (*taskV1.ListTaskTypeNameResponse, error) {
 	return s.taskServiceClient.ListTaskTypeName(ctx, req)
 }

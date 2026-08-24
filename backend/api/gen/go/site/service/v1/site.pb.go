@@ -358,6 +358,59 @@ func (x *GetSiteRequest) GetViewMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// 请求 - 按域名获取站点数据
+type GetSiteByDomainRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Domain        string                 `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSiteByDomainRequest) Reset() {
+	*x = GetSiteByDomainRequest{}
+	mi := &file_site_service_v1_site_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSiteByDomainRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSiteByDomainRequest) ProtoMessage() {}
+
+func (x *GetSiteByDomainRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_site_service_v1_site_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSiteByDomainRequest.ProtoReflect.Descriptor instead.
+func (*GetSiteByDomainRequest) Descriptor() ([]byte, []int) {
+	return file_site_service_v1_site_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetSiteByDomainRequest) GetDomain() string {
+	if x != nil {
+		return x.Domain
+	}
+	return ""
+}
+
+func (x *GetSiteByDomainRequest) GetViewMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.ViewMask
+	}
+	return nil
+}
+
 // 请求 - 创建站点
 type CreateSiteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -368,7 +421,7 @@ type CreateSiteRequest struct {
 
 func (x *CreateSiteRequest) Reset() {
 	*x = CreateSiteRequest{}
-	mi := &file_site_service_v1_site_proto_msgTypes[3]
+	mi := &file_site_service_v1_site_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -380,7 +433,7 @@ func (x *CreateSiteRequest) String() string {
 func (*CreateSiteRequest) ProtoMessage() {}
 
 func (x *CreateSiteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_site_service_v1_site_proto_msgTypes[3]
+	mi := &file_site_service_v1_site_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -393,7 +446,7 @@ func (x *CreateSiteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSiteRequest.ProtoReflect.Descriptor instead.
 func (*CreateSiteRequest) Descriptor() ([]byte, []int) {
-	return file_site_service_v1_site_proto_rawDescGZIP(), []int{3}
+	return file_site_service_v1_site_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateSiteRequest) GetData() *Site {
@@ -416,7 +469,7 @@ type UpdateSiteRequest struct {
 
 func (x *UpdateSiteRequest) Reset() {
 	*x = UpdateSiteRequest{}
-	mi := &file_site_service_v1_site_proto_msgTypes[4]
+	mi := &file_site_service_v1_site_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -428,7 +481,7 @@ func (x *UpdateSiteRequest) String() string {
 func (*UpdateSiteRequest) ProtoMessage() {}
 
 func (x *UpdateSiteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_site_service_v1_site_proto_msgTypes[4]
+	mi := &file_site_service_v1_site_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -441,7 +494,7 @@ func (x *UpdateSiteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSiteRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSiteRequest) Descriptor() ([]byte, []int) {
-	return file_site_service_v1_site_proto_rawDescGZIP(), []int{4}
+	return file_site_service_v1_site_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateSiteRequest) GetId() uint32 {
@@ -485,7 +538,7 @@ type DeleteSiteRequest struct {
 
 func (x *DeleteSiteRequest) Reset() {
 	*x = DeleteSiteRequest{}
-	mi := &file_site_service_v1_site_proto_msgTypes[5]
+	mi := &file_site_service_v1_site_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -497,7 +550,7 @@ func (x *DeleteSiteRequest) String() string {
 func (*DeleteSiteRequest) ProtoMessage() {}
 
 func (x *DeleteSiteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_site_service_v1_site_proto_msgTypes[5]
+	mi := &file_site_service_v1_site_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -510,7 +563,7 @@ func (x *DeleteSiteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSiteRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSiteRequest) Descriptor() ([]byte, []int) {
-	return file_site_service_v1_site_proto_rawDescGZIP(), []int{5}
+	return file_site_service_v1_site_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteSiteRequest) GetQueryBy() isDeleteSiteRequest_QueryBy {
@@ -600,6 +653,11 @@ const file_site_service_v1_site_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12w\n" +
 	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
 	"\n" +
+	"_view_mask\"\xb7\x01\n" +
+	"\x16GetSiteByDomainRequest\x12\x16\n" +
+	"\x06domain\x18\x01 \x01(\tR\x06domain\x12w\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
+	"\n" +
 	"_view_mask\">\n" +
 	"\x11CreateSiteRequest\x12)\n" +
 	"\x04data\x18\x01 \x01(\v2\x15.site.service.v1.SiteR\x04data\"\x8c\x03\n" +
@@ -614,10 +672,11 @@ const file_site_service_v1_site_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
-	"\bquery_by2\xec\x02\n" +
+	"\bquery_by2\xc1\x03\n" +
 	"\vSiteService\x12F\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a!.site.service.v1.ListSiteResponse\"\x00\x12?\n" +
-	"\x03Get\x12\x1f.site.service.v1.GetSiteRequest\x1a\x15.site.service.v1.Site\"\x00\x12E\n" +
+	"\x03Get\x12\x1f.site.service.v1.GetSiteRequest\x1a\x15.site.service.v1.Site\"\x00\x12S\n" +
+	"\x0fGetSiteByDomain\x12'.site.service.v1.GetSiteByDomainRequest\x1a\x15.site.service.v1.Site\"\x00\x12E\n" +
 	"\x06Create\x12\".site.service.v1.CreateSiteRequest\x1a\x15.site.service.v1.Site\"\x00\x12E\n" +
 	"\x06Update\x12\".site.service.v1.UpdateSiteRequest\x1a\x15.site.service.v1.Site\"\x00\x12F\n" +
 	"\x06Delete\x12\".site.service.v1.DeleteSiteRequest\x1a\x16.google.protobuf.Empty\"\x00B\xb0\x01\n" +
@@ -636,45 +695,49 @@ func file_site_service_v1_site_proto_rawDescGZIP() []byte {
 }
 
 var file_site_service_v1_site_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_site_service_v1_site_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_site_service_v1_site_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_site_service_v1_site_proto_goTypes = []any{
-	(Site_Status)(0),              // 0: site.service.v1.Site.Status
-	(*Site)(nil),                  // 1: site.service.v1.Site
-	(*ListSiteResponse)(nil),      // 2: site.service.v1.ListSiteResponse
-	(*GetSiteRequest)(nil),        // 3: site.service.v1.GetSiteRequest
-	(*CreateSiteRequest)(nil),     // 4: site.service.v1.CreateSiteRequest
-	(*UpdateSiteRequest)(nil),     // 5: site.service.v1.UpdateSiteRequest
-	(*DeleteSiteRequest)(nil),     // 6: site.service.v1.DeleteSiteRequest
-	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil), // 8: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),      // 9: pagination.PagingRequest
-	(*emptypb.Empty)(nil),         // 10: google.protobuf.Empty
+	(Site_Status)(0),               // 0: site.service.v1.Site.Status
+	(*Site)(nil),                   // 1: site.service.v1.Site
+	(*ListSiteResponse)(nil),       // 2: site.service.v1.ListSiteResponse
+	(*GetSiteRequest)(nil),         // 3: site.service.v1.GetSiteRequest
+	(*GetSiteByDomainRequest)(nil), // 4: site.service.v1.GetSiteByDomainRequest
+	(*CreateSiteRequest)(nil),      // 5: site.service.v1.CreateSiteRequest
+	(*UpdateSiteRequest)(nil),      // 6: site.service.v1.UpdateSiteRequest
+	(*DeleteSiteRequest)(nil),      // 7: site.service.v1.DeleteSiteRequest
+	(*timestamppb.Timestamp)(nil),  // 8: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),  // 9: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),       // 10: pagination.PagingRequest
+	(*emptypb.Empty)(nil),          // 11: google.protobuf.Empty
 }
 var file_site_service_v1_site_proto_depIdxs = []int32{
 	0,  // 0: site.service.v1.Site.status:type_name -> site.service.v1.Site.Status
-	7,  // 1: site.service.v1.Site.created_at:type_name -> google.protobuf.Timestamp
-	7,  // 2: site.service.v1.Site.updated_at:type_name -> google.protobuf.Timestamp
-	7,  // 3: site.service.v1.Site.deleted_at:type_name -> google.protobuf.Timestamp
+	8,  // 1: site.service.v1.Site.created_at:type_name -> google.protobuf.Timestamp
+	8,  // 2: site.service.v1.Site.updated_at:type_name -> google.protobuf.Timestamp
+	8,  // 3: site.service.v1.Site.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: site.service.v1.ListSiteResponse.items:type_name -> site.service.v1.Site
-	8,  // 5: site.service.v1.GetSiteRequest.view_mask:type_name -> google.protobuf.FieldMask
-	1,  // 6: site.service.v1.CreateSiteRequest.data:type_name -> site.service.v1.Site
-	1,  // 7: site.service.v1.UpdateSiteRequest.data:type_name -> site.service.v1.Site
-	8,  // 8: site.service.v1.UpdateSiteRequest.update_mask:type_name -> google.protobuf.FieldMask
-	9,  // 9: site.service.v1.SiteService.List:input_type -> pagination.PagingRequest
-	3,  // 10: site.service.v1.SiteService.Get:input_type -> site.service.v1.GetSiteRequest
-	4,  // 11: site.service.v1.SiteService.Create:input_type -> site.service.v1.CreateSiteRequest
-	5,  // 12: site.service.v1.SiteService.Update:input_type -> site.service.v1.UpdateSiteRequest
-	6,  // 13: site.service.v1.SiteService.Delete:input_type -> site.service.v1.DeleteSiteRequest
-	2,  // 14: site.service.v1.SiteService.List:output_type -> site.service.v1.ListSiteResponse
-	1,  // 15: site.service.v1.SiteService.Get:output_type -> site.service.v1.Site
-	1,  // 16: site.service.v1.SiteService.Create:output_type -> site.service.v1.Site
-	1,  // 17: site.service.v1.SiteService.Update:output_type -> site.service.v1.Site
-	10, // 18: site.service.v1.SiteService.Delete:output_type -> google.protobuf.Empty
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	9,  // 5: site.service.v1.GetSiteRequest.view_mask:type_name -> google.protobuf.FieldMask
+	9,  // 6: site.service.v1.GetSiteByDomainRequest.view_mask:type_name -> google.protobuf.FieldMask
+	1,  // 7: site.service.v1.CreateSiteRequest.data:type_name -> site.service.v1.Site
+	1,  // 8: site.service.v1.UpdateSiteRequest.data:type_name -> site.service.v1.Site
+	9,  // 9: site.service.v1.UpdateSiteRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 10: site.service.v1.SiteService.List:input_type -> pagination.PagingRequest
+	3,  // 11: site.service.v1.SiteService.Get:input_type -> site.service.v1.GetSiteRequest
+	4,  // 12: site.service.v1.SiteService.GetSiteByDomain:input_type -> site.service.v1.GetSiteByDomainRequest
+	5,  // 13: site.service.v1.SiteService.Create:input_type -> site.service.v1.CreateSiteRequest
+	6,  // 14: site.service.v1.SiteService.Update:input_type -> site.service.v1.UpdateSiteRequest
+	7,  // 15: site.service.v1.SiteService.Delete:input_type -> site.service.v1.DeleteSiteRequest
+	2,  // 16: site.service.v1.SiteService.List:output_type -> site.service.v1.ListSiteResponse
+	1,  // 17: site.service.v1.SiteService.Get:output_type -> site.service.v1.Site
+	1,  // 18: site.service.v1.SiteService.GetSiteByDomain:output_type -> site.service.v1.Site
+	1,  // 19: site.service.v1.SiteService.Create:output_type -> site.service.v1.Site
+	1,  // 20: site.service.v1.SiteService.Update:output_type -> site.service.v1.Site
+	11, // 21: site.service.v1.SiteService.Delete:output_type -> google.protobuf.Empty
+	16, // [16:22] is the sub-list for method output_type
+	10, // [10:16] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_site_service_v1_site_proto_init() }
@@ -684,8 +747,9 @@ func file_site_service_v1_site_proto_init() {
 	}
 	file_site_service_v1_site_proto_msgTypes[0].OneofWrappers = []any{}
 	file_site_service_v1_site_proto_msgTypes[2].OneofWrappers = []any{}
-	file_site_service_v1_site_proto_msgTypes[4].OneofWrappers = []any{}
-	file_site_service_v1_site_proto_msgTypes[5].OneofWrappers = []any{
+	file_site_service_v1_site_proto_msgTypes[3].OneofWrappers = []any{}
+	file_site_service_v1_site_proto_msgTypes[5].OneofWrappers = []any{}
+	file_site_service_v1_site_proto_msgTypes[6].OneofWrappers = []any{
 		(*DeleteSiteRequest_Id)(nil),
 	}
 	type x struct{}
@@ -694,7 +758,7 @@ func file_site_service_v1_site_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_site_service_v1_site_proto_rawDesc), len(file_site_service_v1_site_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

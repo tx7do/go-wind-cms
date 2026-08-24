@@ -416,6 +416,15 @@ func NewPostServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV
 	return contentV1.NewPostServiceClient(cli)
 }
 
+func NewContentModelServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.ContentModelServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return contentV1.NewContentModelServiceClient(cli)
+}
+
 func NewTagServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.TagServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

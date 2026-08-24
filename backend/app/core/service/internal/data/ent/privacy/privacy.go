@@ -255,6 +255,54 @@ func (f CommentLikeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CommentLikeMutation", m)
 }
 
+// The ContentModelQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ContentModelQueryRuleFunc func(context.Context, *ent.ContentModelQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ContentModelQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ContentModelQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ContentModelQuery", q)
+}
+
+// The ContentModelMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ContentModelMutationRuleFunc func(context.Context, *ent.ContentModelMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ContentModelMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ContentModelMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ContentModelMutation", m)
+}
+
+// The ContentModelTranslationQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ContentModelTranslationQueryRuleFunc func(context.Context, *ent.ContentModelTranslationQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ContentModelTranslationQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ContentModelTranslationQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ContentModelTranslationQuery", q)
+}
+
+// The ContentModelTranslationMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ContentModelTranslationMutationRuleFunc func(context.Context, *ent.ContentModelTranslationMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ContentModelTranslationMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ContentModelTranslationMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ContentModelTranslationMutation", m)
+}
+
 // The DataAccessAuditLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type DataAccessAuditLogQueryRuleFunc func(context.Context, *ent.DataAccessAuditLogQuery) error
@@ -349,6 +397,54 @@ func (f DictTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.DictTypeMutation", m)
+}
+
+// The FieldDefinitionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FieldDefinitionQueryRuleFunc func(context.Context, *ent.FieldDefinitionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FieldDefinitionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.FieldDefinitionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.FieldDefinitionQuery", q)
+}
+
+// The FieldDefinitionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FieldDefinitionMutationRuleFunc func(context.Context, *ent.FieldDefinitionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FieldDefinitionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.FieldDefinitionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FieldDefinitionMutation", m)
+}
+
+// The FieldDefinitionTranslationQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FieldDefinitionTranslationQueryRuleFunc func(context.Context, *ent.FieldDefinitionTranslationQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FieldDefinitionTranslationQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.FieldDefinitionTranslationQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.FieldDefinitionTranslationQuery", q)
+}
+
+// The FieldDefinitionTranslationMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FieldDefinitionTranslationMutationRuleFunc func(context.Context, *ent.FieldDefinitionTranslationMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FieldDefinitionTranslationMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.FieldDefinitionTranslationMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FieldDefinitionTranslationMutation", m)
 }
 
 // The FileQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1622,6 +1718,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CommentLikeQuery:
 		return q.Filter(), nil
+	case *ent.ContentModelQuery:
+		return q.Filter(), nil
+	case *ent.ContentModelTranslationQuery:
+		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
 		return q.Filter(), nil
 	case *ent.DictEntryQuery:
@@ -1629,6 +1729,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.DictEntryI18nQuery:
 		return q.Filter(), nil
 	case *ent.DictTypeQuery:
+		return q.Filter(), nil
+	case *ent.FieldDefinitionQuery:
+		return q.Filter(), nil
+	case *ent.FieldDefinitionTranslationQuery:
 		return q.Filter(), nil
 	case *ent.FileQuery:
 		return q.Filter(), nil
@@ -1751,6 +1855,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.CommentLikeMutation:
 		return m.Filter(), nil
+	case *ent.ContentModelMutation:
+		return m.Filter(), nil
+	case *ent.ContentModelTranslationMutation:
+		return m.Filter(), nil
 	case *ent.DataAccessAuditLogMutation:
 		return m.Filter(), nil
 	case *ent.DictEntryMutation:
@@ -1758,6 +1866,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.DictEntryI18nMutation:
 		return m.Filter(), nil
 	case *ent.DictTypeMutation:
+		return m.Filter(), nil
+	case *ent.FieldDefinitionMutation:
+		return m.Filter(), nil
+	case *ent.FieldDefinitionTranslationMutation:
 		return m.Filter(), nil
 	case *ent.FileMutation:
 		return m.Filter(), nil

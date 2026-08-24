@@ -248,6 +248,15 @@ func NewSiteSettingServiceClient(ctx *bootstrap.Context, r registry.Discovery) s
 	return siteV1.NewSiteSettingServiceClient(cli)
 }
 
+func NewSiteServiceClient(ctx *bootstrap.Context, r registry.Discovery) siteV1.SiteServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return siteV1.NewSiteServiceClient(cli)
+}
+
 func NewMediaAssetServiceClient(ctx *bootstrap.Context, r registry.Discovery) mediaV1.MediaAssetServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

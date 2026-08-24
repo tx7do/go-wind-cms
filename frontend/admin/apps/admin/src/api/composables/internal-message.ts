@@ -209,7 +209,7 @@ export function useUpdateMessageCategory(
     mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
       apiClient.internalMessageCategoryService.Update({
         id,
-        data: { ...values },
+        data: { ...values } as internal_messageservicev1_InternalMessageCategory,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
     ...options,

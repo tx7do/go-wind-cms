@@ -134,6 +134,34 @@ func (_c *InternalMessageCategoryCreate) SetNillableSortOrder(v *uint32) *Intern
 	return _c
 }
 
+// SetPath sets the "path" field.
+func (_c *InternalMessageCategoryCreate) SetPath(v string) *InternalMessageCategoryCreate {
+	_c.mutation.SetPath(v)
+	return _c
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (_c *InternalMessageCategoryCreate) SetNillablePath(v *string) *InternalMessageCategoryCreate {
+	if v != nil {
+		_c.SetPath(*v)
+	}
+	return _c
+}
+
+// SetParentID sets the "parent_id" field.
+func (_c *InternalMessageCategoryCreate) SetParentID(v uint32) *InternalMessageCategoryCreate {
+	_c.mutation.SetParentID(v)
+	return _c
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_c *InternalMessageCategoryCreate) SetNillableParentID(v *uint32) *InternalMessageCategoryCreate {
+	if v != nil {
+		_c.SetParentID(*v)
+	}
+	return _c
+}
+
 // SetRemark sets the "remark" field.
 func (_c *InternalMessageCategoryCreate) SetRemark(v string) *InternalMessageCategoryCreate {
 	_c.mutation.SetRemark(v)
@@ -204,10 +232,44 @@ func (_c *InternalMessageCategoryCreate) SetNillableIconURL(v *string) *Internal
 	return _c
 }
 
+// SetDepth sets the "depth" field.
+func (_c *InternalMessageCategoryCreate) SetDepth(v int32) *InternalMessageCategoryCreate {
+	_c.mutation.SetDepth(v)
+	return _c
+}
+
+// SetNillableDepth sets the "depth" field if the given value is not nil.
+func (_c *InternalMessageCategoryCreate) SetNillableDepth(v *int32) *InternalMessageCategoryCreate {
+	if v != nil {
+		_c.SetDepth(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *InternalMessageCategoryCreate) SetID(v uint32) *InternalMessageCategoryCreate {
 	_c.mutation.SetID(v)
 	return _c
+}
+
+// SetParent sets the "parent" edge to the InternalMessageCategory entity.
+func (_c *InternalMessageCategoryCreate) SetParent(v *InternalMessageCategory) *InternalMessageCategoryCreate {
+	return _c.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the InternalMessageCategory entity by IDs.
+func (_c *InternalMessageCategoryCreate) AddChildIDs(ids ...uint32) *InternalMessageCategoryCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
+}
+
+// AddChildren adds the "children" edges to the InternalMessageCategory entity.
+func (_c *InternalMessageCategoryCreate) AddChildren(v ...*InternalMessageCategory) *InternalMessageCategoryCreate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddChildIDs(ids...)
 }
 
 // Mutation returns the InternalMessageCategoryMutation object of the builder.
@@ -259,11 +321,20 @@ func (_c *InternalMessageCategoryCreate) defaults() error {
 		v := internalmessagecategory.DefaultTenantID
 		_c.mutation.SetTenantID(v)
 	}
+	if _, ok := _c.mutation.Depth(); !ok {
+		v := internalmessagecategory.DefaultDepth
+		_c.mutation.SetDepth(v)
+	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *InternalMessageCategoryCreate) check() error {
+	if v, ok := _c.mutation.Path(); ok {
+		if err := internalmessagecategory.PathValidator(v); err != nil {
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "InternalMessageCategory.path": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.Name(); ok {
 		if err := internalmessagecategory.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "InternalMessageCategory.name": %w`, err)}
@@ -344,6 +415,10 @@ func (_c *InternalMessageCategoryCreate) createSpec() (*InternalMessageCategory,
 		_spec.SetField(internalmessagecategory.FieldSortOrder, field.TypeUint32, value)
 		_node.SortOrder = &value
 	}
+	if value, ok := _c.mutation.Path(); ok {
+		_spec.SetField(internalmessagecategory.FieldPath, field.TypeString, value)
+		_node.Path = &value
+	}
 	if value, ok := _c.mutation.Remark(); ok {
 		_spec.SetField(internalmessagecategory.FieldRemark, field.TypeString, value)
 		_node.Remark = &value
@@ -363,6 +438,43 @@ func (_c *InternalMessageCategoryCreate) createSpec() (*InternalMessageCategory,
 	if value, ok := _c.mutation.IconURL(); ok {
 		_spec.SetField(internalmessagecategory.FieldIconURL, field.TypeString, value)
 		_node.IconURL = &value
+	}
+	if value, ok := _c.mutation.Depth(); ok {
+		_spec.SetField(internalmessagecategory.FieldDepth, field.TypeInt32, value)
+		_node.Depth = &value
+	}
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   internalmessagecategory.ParentTable,
+			Columns: []string{internalmessagecategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ParentID = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   internalmessagecategory.ChildrenTable,
+			Columns: []string{internalmessagecategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -566,6 +678,42 @@ func (u *InternalMessageCategoryUpsert) ClearSortOrder() *InternalMessageCategor
 	return u
 }
 
+// SetPath sets the "path" field.
+func (u *InternalMessageCategoryUpsert) SetPath(v string) *InternalMessageCategoryUpsert {
+	u.Set(internalmessagecategory.FieldPath, v)
+	return u
+}
+
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsert) UpdatePath() *InternalMessageCategoryUpsert {
+	u.SetExcluded(internalmessagecategory.FieldPath)
+	return u
+}
+
+// ClearPath clears the value of the "path" field.
+func (u *InternalMessageCategoryUpsert) ClearPath() *InternalMessageCategoryUpsert {
+	u.SetNull(internalmessagecategory.FieldPath)
+	return u
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *InternalMessageCategoryUpsert) SetParentID(v uint32) *InternalMessageCategoryUpsert {
+	u.Set(internalmessagecategory.FieldParentID, v)
+	return u
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsert) UpdateParentID() *InternalMessageCategoryUpsert {
+	u.SetExcluded(internalmessagecategory.FieldParentID)
+	return u
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *InternalMessageCategoryUpsert) ClearParentID() *InternalMessageCategoryUpsert {
+	u.SetNull(internalmessagecategory.FieldParentID)
+	return u
+}
+
 // SetRemark sets the "remark" field.
 func (u *InternalMessageCategoryUpsert) SetRemark(v string) *InternalMessageCategoryUpsert {
 	u.Set(internalmessagecategory.FieldRemark, v)
@@ -635,6 +783,30 @@ func (u *InternalMessageCategoryUpsert) UpdateIconURL() *InternalMessageCategory
 // ClearIconURL clears the value of the "icon_url" field.
 func (u *InternalMessageCategoryUpsert) ClearIconURL() *InternalMessageCategoryUpsert {
 	u.SetNull(internalmessagecategory.FieldIconURL)
+	return u
+}
+
+// SetDepth sets the "depth" field.
+func (u *InternalMessageCategoryUpsert) SetDepth(v int32) *InternalMessageCategoryUpsert {
+	u.Set(internalmessagecategory.FieldDepth, v)
+	return u
+}
+
+// UpdateDepth sets the "depth" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsert) UpdateDepth() *InternalMessageCategoryUpsert {
+	u.SetExcluded(internalmessagecategory.FieldDepth)
+	return u
+}
+
+// AddDepth adds v to the "depth" field.
+func (u *InternalMessageCategoryUpsert) AddDepth(v int32) *InternalMessageCategoryUpsert {
+	u.Add(internalmessagecategory.FieldDepth, v)
+	return u
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (u *InternalMessageCategoryUpsert) ClearDepth() *InternalMessageCategoryUpsert {
+	u.SetNull(internalmessagecategory.FieldDepth)
 	return u
 }
 
@@ -867,6 +1039,48 @@ func (u *InternalMessageCategoryUpsertOne) ClearSortOrder() *InternalMessageCate
 	})
 }
 
+// SetPath sets the "path" field.
+func (u *InternalMessageCategoryUpsertOne) SetPath(v string) *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.SetPath(v)
+	})
+}
+
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsertOne) UpdatePath() *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.UpdatePath()
+	})
+}
+
+// ClearPath clears the value of the "path" field.
+func (u *InternalMessageCategoryUpsertOne) ClearPath() *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.ClearPath()
+	})
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *InternalMessageCategoryUpsertOne) SetParentID(v uint32) *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.SetParentID(v)
+	})
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsertOne) UpdateParentID() *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.UpdateParentID()
+	})
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *InternalMessageCategoryUpsertOne) ClearParentID() *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.ClearParentID()
+	})
+}
+
 // SetRemark sets the "remark" field.
 func (u *InternalMessageCategoryUpsertOne) SetRemark(v string) *InternalMessageCategoryUpsertOne {
 	return u.Update(func(s *InternalMessageCategoryUpsert) {
@@ -948,6 +1162,34 @@ func (u *InternalMessageCategoryUpsertOne) UpdateIconURL() *InternalMessageCateg
 func (u *InternalMessageCategoryUpsertOne) ClearIconURL() *InternalMessageCategoryUpsertOne {
 	return u.Update(func(s *InternalMessageCategoryUpsert) {
 		s.ClearIconURL()
+	})
+}
+
+// SetDepth sets the "depth" field.
+func (u *InternalMessageCategoryUpsertOne) SetDepth(v int32) *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.SetDepth(v)
+	})
+}
+
+// AddDepth adds v to the "depth" field.
+func (u *InternalMessageCategoryUpsertOne) AddDepth(v int32) *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.AddDepth(v)
+	})
+}
+
+// UpdateDepth sets the "depth" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsertOne) UpdateDepth() *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.UpdateDepth()
+	})
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (u *InternalMessageCategoryUpsertOne) ClearDepth() *InternalMessageCategoryUpsertOne {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.ClearDepth()
 	})
 }
 
@@ -1346,6 +1588,48 @@ func (u *InternalMessageCategoryUpsertBulk) ClearSortOrder() *InternalMessageCat
 	})
 }
 
+// SetPath sets the "path" field.
+func (u *InternalMessageCategoryUpsertBulk) SetPath(v string) *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.SetPath(v)
+	})
+}
+
+// UpdatePath sets the "path" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsertBulk) UpdatePath() *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.UpdatePath()
+	})
+}
+
+// ClearPath clears the value of the "path" field.
+func (u *InternalMessageCategoryUpsertBulk) ClearPath() *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.ClearPath()
+	})
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *InternalMessageCategoryUpsertBulk) SetParentID(v uint32) *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.SetParentID(v)
+	})
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsertBulk) UpdateParentID() *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.UpdateParentID()
+	})
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *InternalMessageCategoryUpsertBulk) ClearParentID() *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.ClearParentID()
+	})
+}
+
 // SetRemark sets the "remark" field.
 func (u *InternalMessageCategoryUpsertBulk) SetRemark(v string) *InternalMessageCategoryUpsertBulk {
 	return u.Update(func(s *InternalMessageCategoryUpsert) {
@@ -1427,6 +1711,34 @@ func (u *InternalMessageCategoryUpsertBulk) UpdateIconURL() *InternalMessageCate
 func (u *InternalMessageCategoryUpsertBulk) ClearIconURL() *InternalMessageCategoryUpsertBulk {
 	return u.Update(func(s *InternalMessageCategoryUpsert) {
 		s.ClearIconURL()
+	})
+}
+
+// SetDepth sets the "depth" field.
+func (u *InternalMessageCategoryUpsertBulk) SetDepth(v int32) *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.SetDepth(v)
+	})
+}
+
+// AddDepth adds v to the "depth" field.
+func (u *InternalMessageCategoryUpsertBulk) AddDepth(v int32) *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.AddDepth(v)
+	})
+}
+
+// UpdateDepth sets the "depth" field to the value that was provided on create.
+func (u *InternalMessageCategoryUpsertBulk) UpdateDepth() *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.UpdateDepth()
+	})
+}
+
+// ClearDepth clears the value of the "depth" field.
+func (u *InternalMessageCategoryUpsertBulk) ClearDepth() *InternalMessageCategoryUpsertBulk {
+	return u.Update(func(s *InternalMessageCategoryUpsert) {
+		s.ClearDepth()
 	})
 }
 

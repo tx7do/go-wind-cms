@@ -14,7 +14,8 @@ export default defineAppConfig({
     'pages/privacy/index',
     'pages/settings/index',
     'pages/terms/index',
-    'pages/user/index'
+    'pages/user/index',
+    'pages/login/index'
   ],
   window: {
     backgroundTextStyle: 'light',

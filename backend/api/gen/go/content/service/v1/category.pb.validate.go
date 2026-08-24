@@ -159,6 +159,10 @@ func (m *Category) validate(all bool) error {
 		// no validation rules for DirectPostCount
 	}
 
+	if m.ContentModelId != nil {
+		// no validation rules for ContentModelId
+	}
+
 	if m.ParentId != nil {
 		// no validation rules for ParentId
 	}

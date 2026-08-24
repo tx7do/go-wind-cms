@@ -84,6 +84,8 @@ func NewGrpcServer(
 	pageService *service.PageService,
 	sectionService *service.SectionService,
 
+	contentModelService *service.ContentModelService,
+
 	siteService *service.SiteService,
 	siteSettingService *service.SiteSettingService,
 	navigationService *service.NavigationService,
@@ -149,6 +151,8 @@ func NewGrpcServer(
 	contentV1.RegisterSectionServiceServer(srv, sectionService)
 
 	siteV1.RegisterSiteSettingServiceServer(srv, siteSettingService)
+	contentV1.RegisterContentModelServiceServer(srv, contentModelService)
+
 	siteV1.RegisterSiteServiceServer(srv, siteService)
 	siteV1.RegisterNavigationServiceServer(srv, navigationService)
 	siteV1.RegisterNavigationItemServiceServer(srv, navigationItemService)

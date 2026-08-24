@@ -82,10 +82,8 @@
     "profile": {
       "tab": {
         "basicSettings": "基本设置",
-        "securitySettings": "安全设置",
         "editPassword": "修改密码",
-        "accountBind": "账号绑定",
-        "notification": "消息通知"
+        "loginRecords": "登录记录"
       }
     },
     "detail": {
@@ -302,7 +300,16 @@
       "stop": "停止任务",
       "startAll": "启动全部任务",
       "restartAll": "重启全部任务",
-      "stopAll": "停止全部任务"
+      "stopAll": "停止全部任务",
+      "executionRecords": "执行记录"
+    },
+    "exec": {
+      "state": "状态",
+      "retried": "重试次数",
+      "lastError": "最近错误",
+      "completedAt": "完成时间",
+      "nextProcessAt": "下次执行",
+      "loadFailed": "加载执行记录失败"
     },
     "text": {
       "do_you_want_start_all_task": "您确定要启动全部任务吗？",
@@ -324,7 +331,10 @@
     "categoryId": "消息分类",
     "readAt": "读取时间",
     "button": {
-      "create": "发布消息"
+      "create": "发布消息",
+      "markAllRead": "全部标记已读",
+      "markRead": "标记已读",
+      "delete": "删除"
     },
     "drawer": {
       "create": "发布消息",
@@ -477,7 +487,8 @@
     "button": {
       "create": "创建分类",
       "saveDraft": "保存草稿",
-      "publish": "发布分类"
+      "publish": "发布分类",
+      "oneClickTranslate": "一键翻译"
     },
     "title": {
       "create": "创建分类",
@@ -499,6 +510,8 @@
       "saveDraftSuccess": "保存草稿成功",
       "saveDraftFailed": "保存草稿失败，请稍后再试",
       "translationNotExists": "翻译内容不存在，请先进行翻译",
+      "translateNameFailed": "翻译名称失败，请稍后再试",
+      "translateDescriptionFailed": "翻译描述失败，请稍后再试",
       "loadLanguageFailed": "加载语言列表失败，请稍后再试"
     }
   },
@@ -628,7 +641,8 @@
     "button": {
       "create": "创建标签",
       "saveDraft": "保存草稿",
-      "publish": "发布标签"
+      "publish": "发布标签",
+      "oneClickTranslate": "一键翻译"
     },
     "title": {
       "create": "创建标签",
@@ -652,6 +666,8 @@
       "saveDraftSuccess": "保存草稿成功",
       "saveDraftFailed": "保存草稿失败，请稍后再试",
       "translationNotExists": "翻译内容不存在，请先进行翻译",
+      "translateNameFailed": "翻译名称失败，请稍后再试",
+      "translateDescriptionFailed": "翻译描述失败，请稍后再试",
       "loadFailed": "加载标签数据失败，请稍后再试",
       "loadLanguageFailed": "加载语言列表失败，请稍后再试"
     }
@@ -700,6 +716,9 @@
     "isSticky": "是否置顶",
     "replyToId": "回复的评论ID",
     "parentId": "父评论ID",
+    "button": {
+      "reply": "回复"
+    },
     "help": {
       "isSpam": "标记为垃圾评论后，该评论将被隐藏",
       "isSticky": "置顶后，该评论将显示在列表顶部"
@@ -786,7 +805,8 @@
     "content": "区块内容",
     "button": {
       "create": "创建区块",
-      "save": "保存区块"
+      "save": "保存区块",
+      "oneClickTranslate": "一键翻译"
     },
     "title": {
       "create": "创建区块",
@@ -802,7 +822,36 @@
       "pageIdRequired": "所属页面不能为空",
       "contentRequired": "区块内容不能为空",
       "saveFailed": "保存失败,请稍后重试",
-      "saveSuccess": "保存成功"
+      "saveSuccess": "保存成功",
+      "translateContentFailed": "翻译内容失败，请稍后再试"
+    }
+  },
+  "contentModel": {
+    "moduleName": "内容模型",
+    "name": "模型名称",
+    "code": "模型编码",
+    "description": "模型描述",
+    "fields": {
+      "title": "字段定义",
+      "add": "添加字段",
+      "remove": "删除",
+      "unnamed": "未命名字段",
+      "empty": "暂无字段定义，点击上方按钮添加",
+      "name": "字段名",
+      "type": "字段类型",
+      "label": "字段标签",
+      "description": "字段描述",
+      "placeholder": "占位符",
+      "isRequired": "是否必填",
+      "validationRegex": "校验正则",
+      "relation": {
+        "targetEntityType": "引用目标实体类型",
+        "allowCrossTenant": "允许跨租户引用"
+      }
+    },
+    "title": {
+      "create": "创建内容模型",
+      "edit": "编辑内容模型"
     }
   }
 }

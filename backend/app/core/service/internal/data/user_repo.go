@@ -1145,15 +1145,36 @@ func (r *userRepo) ListUsersByIds(ctx context.Context, ids []uint32) ([]*identit
 }
 
 func (r *userRepo) ListRoleIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error) {
-	return r.userRoleRepo.ListRoleIDs(ctx, userID, false)
+	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
+	case constants.UserTenantRelationNone, constants.UserTenantRelationOneToOne:
+		return r.userRoleRepo.ListRoleIDs(ctx, userID, false)
+	case constants.UserTenantRelationOneToMany:
+		return r.membershipRepo.ListMembershipRoleIDs(ctx, userID)
+	}
 }
 
 func (r *userRepo) ListPositionIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error) {
-	return r.userPositionRepo.ListPositionIDs(ctx, userID, false)
+	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
+	case constants.UserTenantRelationNone, constants.UserTenantRelationOneToOne:
+		return r.userPositionRepo.ListPositionIDs(ctx, userID, false)
+	case constants.UserTenantRelationOneToMany:
+		return r.membershipRepo.ListMembershipPositionIDs(ctx, userID)
+	}
 }
 
 func (r *userRepo) ListOrgUnitIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error) {
-	return r.userOrgUnitRepo.ListOrgUnitIDs(ctx, userID, false)
+	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
+	case constants.UserTenantRelationNone, constants.UserTenantRelationOneToOne:
+		return r.userOrgUnitRepo.ListOrgUnitIDs(ctx, userID, false)
+	case constants.UserTenantRelationOneToMany:
+		return r.membershipRepo.ListMembershipOrgUnitIDs(ctx, userID)
+	}
 }
 
 // ListUserRelationIDs 列出用户关联的角色、岗位、组织单元ID列表
@@ -1200,13 +1221,34 @@ func (r *userRepo) listUserRelationIDs(ctx context.Context, userID uint32) (role
 }
 
 func (r *userRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint32, excludeExpired bool) ([]uint32, error) {
-	return r.userOrgUnitRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, excludeExpired)
+	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
+	case constants.UserTenantRelationNone, constants.UserTenantRelationOneToOne:
+		return r.userOrgUnitRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, excludeExpired)
+	case constants.UserTenantRelationOneToMany:
+		return r.membershipRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, excludeExpired)
+	}
 }
 
 func (r *userRepo) ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint32, excludeExpired bool) ([]uint32, error) {
-	return r.userPositionRepo.ListUserIDsByPositionIDs(ctx, positionIDs, excludeExpired)
+	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
+	case constants.UserTenantRelationNone, constants.UserTenantRelationOneToOne:
+		return r.userPositionRepo.ListUserIDsByPositionIDs(ctx, positionIDs, excludeExpired)
+	case constants.UserTenantRelationOneToMany:
+		return r.membershipRepo.ListUserIDsByPositionIDs(ctx, positionIDs, excludeExpired)
+	}
 }
 
 func (r *userRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint32, excludeExpired bool) ([]uint32, error) {
-	return r.userRoleRepo.ListUserIDsByRoleIDs(ctx, roleIDs, excludeExpired)
+	switch constants.DefaultUserTenantRelationType {
+	default:
+		fallthrough
+	case constants.UserTenantRelationNone, constants.UserTenantRelationOneToOne:
+		return r.userRoleRepo.ListUserIDsByRoleIDs(ctx, roleIDs, excludeExpired)
+	case constants.UserTenantRelationOneToMany:
+		return r.membershipRepo.ListUserIDsByRoleIDs(ctx, roleIDs, excludeExpired)
+	}
 }

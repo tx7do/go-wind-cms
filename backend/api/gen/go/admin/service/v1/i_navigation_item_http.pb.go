@@ -43,14 +43,14 @@ type NavigationItemServiceHTTPServer interface {
 
 func RegisterNavigationItemServiceHTTPServer(s *http.Server, srv NavigationItemServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/navigation-items", _NavigationItemService_List15_HTTP_Handler(srv))
-	r.GET("/admin/v1/navigation-items/{id}", _NavigationItemService_Get15_HTTP_Handler(srv))
-	r.POST("/admin/v1/navigation-items", _NavigationItemService_Create12_HTTP_Handler(srv))
-	r.PUT("/admin/v1/navigation-items/{id}", _NavigationItemService_Update12_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/navigation-items/{id}", _NavigationItemService_Delete12_HTTP_Handler(srv))
+	r.GET("/admin/v1/navigation-items", _NavigationItemService_List16_HTTP_Handler(srv))
+	r.GET("/admin/v1/navigation-items/{id}", _NavigationItemService_Get17_HTTP_Handler(srv))
+	r.POST("/admin/v1/navigation-items", _NavigationItemService_Create13_HTTP_Handler(srv))
+	r.PUT("/admin/v1/navigation-items/{id}", _NavigationItemService_Update13_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/navigation-items/{id}", _NavigationItemService_Delete13_HTTP_Handler(srv))
 }
 
-func _NavigationItemService_List15_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationItemService_List16_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _NavigationItemService_List15_HTTP_Handler(srv NavigationItemServiceHTTPSer
 	}
 }
 
-func _NavigationItemService_Get15_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationItemService_Get17_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetNavigationItemRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _NavigationItemService_Get15_HTTP_Handler(srv NavigationItemServiceHTTPServ
 	}
 }
 
-func _NavigationItemService_Create12_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationItemService_Create13_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateNavigationItemRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _NavigationItemService_Create12_HTTP_Handler(srv NavigationItemServiceHTTPS
 	}
 }
 
-func _NavigationItemService_Update12_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationItemService_Update13_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateNavigationItemRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _NavigationItemService_Update12_HTTP_Handler(srv NavigationItemServiceHTTPS
 	}
 }
 
-func _NavigationItemService_Delete12_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationItemService_Delete13_HTTP_Handler(srv NavigationItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteNavigationItemRequest
 		if err := ctx.BindQuery(&in); err != nil {

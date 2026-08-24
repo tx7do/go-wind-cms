@@ -70,7 +70,8 @@
     "editTag": "标签编辑",
     "section": "区块管理",
     "createSection": "区块创建",
-    "editSection": "区块编辑"
+    "editSection": "区块编辑",
+    "model": "内容模型"
   },
   "media": {
     "moduleName": "媒体中心",

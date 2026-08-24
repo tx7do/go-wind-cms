@@ -457,6 +457,8 @@ func (r *CategoryRepo) Create(ctx context.Context, req *contentV1.CreateCategory
 		builder.SetCustomFields(trans.Ptr(req.Data.GetCustomFields()))
 	}
 
+	builder.SetNillableContentModelID(req.Data.ContentModelId)
+
 	var entity *ent.Category
 	if entity, err = builder.Save(ctx); err != nil {
 		r.log.Errorf("insert category failed: %s", err.Error())
@@ -564,6 +566,10 @@ func (r *CategoryRepo) Update(ctx context.Context, req *contentV1.UpdateCategory
 
 			if req.Data.CustomFields != nil {
 				builder.SetCustomFields(trans.Ptr(req.Data.GetCustomFields()))
+			}
+
+			if req.Data.ContentModelId != nil {
+				builder.SetNillableContentModelID(req.Data.ContentModelId)
 			}
 		},
 		func(s *sql.Selector) {

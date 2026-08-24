@@ -82,10 +82,8 @@
     "profile": {
       "tab": {
         "basicSettings": "Basic Settings",
-        "securitySettings": "Security Settings",
         "editPassword": "Change Password",
-        "accountBind": "Account Bindings",
-        "notification": "Notifications"
+        "loginRecords": "Login Records"
       }
     },
     "detail": {
@@ -302,7 +300,16 @@
       "stop": "Stop Task",
       "startAll": "Start All",
       "restartAll": "Restart All",
-      "stopAll": "Stop All"
+      "stopAll": "Stop All",
+      "executionRecords": "Records"
+    },
+    "exec": {
+      "state": "State",
+      "retried": "Retried",
+      "lastError": "Last Error",
+      "completedAt": "Completed At",
+      "nextProcessAt": "Next Run",
+      "loadFailed": "Failed to load execution records"
     },
     "text": {
       "do_you_want_start_all_task": "Are you sure you want to start all tasks?",
@@ -324,7 +331,10 @@
     "categoryId": "Category",
     "readAt": "Read At",
     "button": {
-      "create": "Publish Message"
+      "create": "Publish Message",
+      "markAllRead": "Mark All Read",
+      "markRead": "Mark Read",
+      "delete": "Delete"
     },
     "drawer": {
       "create": "Publish Message",
@@ -461,7 +471,8 @@
     "button": {
       "create": "Create Category",
       "saveDraft": "Save Draft",
-      "publish": "Publish Category"
+      "publish": "Publish Category",
+      "oneClickTranslate": "One-Click Translate"
     },
     "title": {
       "create": "Create Category",
@@ -483,6 +494,8 @@
       "saveDraftSuccess": "Draft saved successfully",
       "saveDraftFailed": "Failed to save draft, please try again later",
       "translationNotExists": "Translation does not exist, please translate first",
+      "translateNameFailed": "Failed to translate name, please try again later",
+      "translateDescriptionFailed": "Failed to translate description, please try again later",
       "loadLanguageFailed": "Failed to load language list, please try again later"
     }
   },
@@ -605,7 +618,8 @@
     "button": {
       "create": "Create Tag",
       "saveDraft": "Save Draft",
-      "publish": "Publish Tag"
+      "publish": "Publish Tag",
+      "oneClickTranslate": "One-Click Translate"
     },
     "title": {
       "create": "Create Tag",
@@ -629,6 +643,8 @@
       "saveDraftSuccess": "Draft saved successfully",
       "saveDraftFailed": "Failed to save draft, please try again later",
       "translationNotExists": "Translation does not exist, please translate first",
+      "translateNameFailed": "Failed to translate name, please try again later",
+      "translateDescriptionFailed": "Failed to translate description, please try again later",
       "loadFailed": "Failed to load tag data, please try again later",
       "loadLanguageFailed": "Failed to load language list, please try again later"
     }
@@ -677,6 +693,9 @@
     "isSticky": "Sticky",
     "replyToId": "Reply To ID",
     "parentId": "Parent ID",
+    "button": {
+      "reply": "Reply"
+    },
     "help": {
       "isSpam": "Marked spam comments will be hidden",
       "isSticky": "Sticky comments will be displayed at the top of the list"
@@ -746,7 +765,8 @@
     "content": "Section Content",
     "button": {
       "create": "Create Section",
-      "save": "Save Section"
+      "save": "Save Section",
+      "oneClickTranslate": "One-Click Translate"
     },
     "title": {
       "create": "Create Section",
@@ -762,7 +782,36 @@
       "pageIdRequired": "Page is required",
       "contentRequired": "Section content is required",
       "saveFailed": "Save failed, please try again later",
-      "saveSuccess": "Saved successfully"
+      "saveSuccess": "Saved successfully",
+      "translateContentFailed": "Failed to translate content, please try again later"
+    }
+  },
+  "contentModel": {
+    "moduleName": "Content Model",
+    "name": "Model Name",
+    "code": "Model Code",
+    "description": "Description",
+    "fields": {
+      "title": "Field Definitions",
+      "add": "Add Field",
+      "remove": "Remove",
+      "unnamed": "Unnamed Field",
+      "empty": "No field definitions yet. Click the button above to add one.",
+      "name": "Field Name",
+      "type": "Field Type",
+      "label": "Field Label",
+      "description": "Field Description",
+      "placeholder": "Placeholder",
+      "isRequired": "Required",
+      "validationRegex": "Validation Regex",
+      "relation": {
+        "targetEntityType": "Target Entity Type",
+        "allowCrossTenant": "Allow Cross-Tenant Reference"
+      }
+    },
+    "title": {
+      "create": "Create Content Model",
+      "edit": "Edit Content Model"
     }
   }
 }

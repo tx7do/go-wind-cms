@@ -135,6 +135,11 @@ func Depth(v int32) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldDepth, v))
 }
 
+// ContentModelID applies equality check predicate on the "content_model_id" field. It's identical to ContentModelIDEQ.
+func ContentModelID(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldContentModelID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldCreatedAt, v))
@@ -998,6 +1003,56 @@ func CustomFieldsIsNil() predicate.Category {
 // CustomFieldsNotNil applies the NotNil predicate on the "custom_fields" field.
 func CustomFieldsNotNil() predicate.Category {
 	return predicate.Category(sql.FieldNotNull(FieldCustomFields))
+}
+
+// ContentModelIDEQ applies the EQ predicate on the "content_model_id" field.
+func ContentModelIDEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldEQ(FieldContentModelID, v))
+}
+
+// ContentModelIDNEQ applies the NEQ predicate on the "content_model_id" field.
+func ContentModelIDNEQ(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldNEQ(FieldContentModelID, v))
+}
+
+// ContentModelIDIn applies the In predicate on the "content_model_id" field.
+func ContentModelIDIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldIn(FieldContentModelID, vs...))
+}
+
+// ContentModelIDNotIn applies the NotIn predicate on the "content_model_id" field.
+func ContentModelIDNotIn(vs ...uint32) predicate.Category {
+	return predicate.Category(sql.FieldNotIn(FieldContentModelID, vs...))
+}
+
+// ContentModelIDGT applies the GT predicate on the "content_model_id" field.
+func ContentModelIDGT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGT(FieldContentModelID, v))
+}
+
+// ContentModelIDGTE applies the GTE predicate on the "content_model_id" field.
+func ContentModelIDGTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldGTE(FieldContentModelID, v))
+}
+
+// ContentModelIDLT applies the LT predicate on the "content_model_id" field.
+func ContentModelIDLT(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLT(FieldContentModelID, v))
+}
+
+// ContentModelIDLTE applies the LTE predicate on the "content_model_id" field.
+func ContentModelIDLTE(v uint32) predicate.Category {
+	return predicate.Category(sql.FieldLTE(FieldContentModelID, v))
+}
+
+// ContentModelIDIsNil applies the IsNil predicate on the "content_model_id" field.
+func ContentModelIDIsNil() predicate.Category {
+	return predicate.Category(sql.FieldIsNull(FieldContentModelID))
+}
+
+// ContentModelIDNotNil applies the NotNil predicate on the "content_model_id" field.
+func ContentModelIDNotNil() predicate.Category {
+	return predicate.Category(sql.FieldNotNull(FieldContentModelID))
 }
 
 // HasParent applies the HasEdge predicate on the "parent" edge.

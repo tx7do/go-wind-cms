@@ -21,11 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SiteService_List_FullMethodName   = "/site.service.v1.SiteService/List"
-	SiteService_Get_FullMethodName    = "/site.service.v1.SiteService/Get"
-	SiteService_Create_FullMethodName = "/site.service.v1.SiteService/Create"
-	SiteService_Update_FullMethodName = "/site.service.v1.SiteService/Update"
-	SiteService_Delete_FullMethodName = "/site.service.v1.SiteService/Delete"
+	SiteService_List_FullMethodName            = "/site.service.v1.SiteService/List"
+	SiteService_Get_FullMethodName             = "/site.service.v1.SiteService/Get"
+	SiteService_GetSiteByDomain_FullMethodName = "/site.service.v1.SiteService/GetSiteByDomain"
+	SiteService_Create_FullMethodName          = "/site.service.v1.SiteService/Create"
+	SiteService_Update_FullMethodName          = "/site.service.v1.SiteService/Update"
+	SiteService_Delete_FullMethodName          = "/site.service.v1.SiteService/Delete"
 )
 
 // SiteServiceClient is the client API for SiteService service.
@@ -38,6 +39,8 @@ type SiteServiceClient interface {
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListSiteResponse, error)
 	// 获取站点数据
 	Get(ctx context.Context, in *GetSiteRequest, opts ...grpc.CallOption) (*Site, error)
+	// 按域名获取站点数据（公开端点：仅返回渲染必需字段，由调用方/BFF 按 Host 填入 domain）
+	GetSiteByDomain(ctx context.Context, in *GetSiteByDomainRequest, opts ...grpc.CallOption) (*Site, error)
 	// 创建站点
 	Create(ctx context.Context, in *CreateSiteRequest, opts ...grpc.CallOption) (*Site, error)
 	// 更新站点
@@ -68,6 +71,16 @@ func (c *siteServiceClient) Get(ctx context.Context, in *GetSiteRequest, opts ..
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Site)
 	err := c.cc.Invoke(ctx, SiteService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *siteServiceClient) GetSiteByDomain(ctx context.Context, in *GetSiteByDomainRequest, opts ...grpc.CallOption) (*Site, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Site)
+	err := c.cc.Invoke(ctx, SiteService_GetSiteByDomain_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,6 +127,8 @@ type SiteServiceServer interface {
 	List(context.Context, *v1.PagingRequest) (*ListSiteResponse, error)
 	// 获取站点数据
 	Get(context.Context, *GetSiteRequest) (*Site, error)
+	// 按域名获取站点数据（公开端点：仅返回渲染必需字段，由调用方/BFF 按 Host 填入 domain）
+	GetSiteByDomain(context.Context, *GetSiteByDomainRequest) (*Site, error)
 	// 创建站点
 	Create(context.Context, *CreateSiteRequest) (*Site, error)
 	// 更新站点
@@ -135,6 +150,9 @@ func (UnimplementedSiteServiceServer) List(context.Context, *v1.PagingRequest) (
 }
 func (UnimplementedSiteServiceServer) Get(context.Context, *GetSiteRequest) (*Site, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedSiteServiceServer) GetSiteByDomain(context.Context, *GetSiteByDomainRequest) (*Site, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSiteByDomain not implemented")
 }
 func (UnimplementedSiteServiceServer) Create(context.Context, *CreateSiteRequest) (*Site, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
@@ -198,6 +216,24 @@ func _SiteService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SiteServiceServer).Get(ctx, req.(*GetSiteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SiteService_GetSiteByDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSiteByDomainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SiteServiceServer).GetSiteByDomain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SiteService_GetSiteByDomain_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SiteServiceServer).GetSiteByDomain(ctx, req.(*GetSiteByDomainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -270,6 +306,10 @@ var SiteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _SiteService_Get_Handler,
+		},
+		{
+			MethodName: "GetSiteByDomain",
+			Handler:    _SiteService_GetSiteByDomain_Handler,
 		},
 		{
 			MethodName: "Create",

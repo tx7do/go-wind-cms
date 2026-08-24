@@ -266,6 +266,20 @@ func (_c *CategoryCreate) SetCustomFields(v *map[string]string) *CategoryCreate 
 	return _c
 }
 
+// SetContentModelID sets the "content_model_id" field.
+func (_c *CategoryCreate) SetContentModelID(v uint32) *CategoryCreate {
+	_c.mutation.SetContentModelID(v)
+	return _c
+}
+
+// SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableContentModelID(v *uint32) *CategoryCreate {
+	if v != nil {
+		_c.SetContentModelID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *CategoryCreate) SetID(v uint32) *CategoryCreate {
 	_c.mutation.SetID(v)
@@ -473,6 +487,10 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.CustomFields(); ok {
 		_spec.SetField(category.FieldCustomFields, field.TypeJSON, value)
 		_node.CustomFields = value
+	}
+	if value, ok := _c.mutation.ContentModelID(); ok {
+		_spec.SetField(category.FieldContentModelID, field.TypeUint32, value)
+		_node.ContentModelID = &value
 	}
 	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -886,6 +904,30 @@ func (u *CategoryUpsert) UpdateCustomFields() *CategoryUpsert {
 // ClearCustomFields clears the value of the "custom_fields" field.
 func (u *CategoryUpsert) ClearCustomFields() *CategoryUpsert {
 	u.SetNull(category.FieldCustomFields)
+	return u
+}
+
+// SetContentModelID sets the "content_model_id" field.
+func (u *CategoryUpsert) SetContentModelID(v uint32) *CategoryUpsert {
+	u.Set(category.FieldContentModelID, v)
+	return u
+}
+
+// UpdateContentModelID sets the "content_model_id" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateContentModelID() *CategoryUpsert {
+	u.SetExcluded(category.FieldContentModelID)
+	return u
+}
+
+// AddContentModelID adds v to the "content_model_id" field.
+func (u *CategoryUpsert) AddContentModelID(v uint32) *CategoryUpsert {
+	u.Add(category.FieldContentModelID, v)
+	return u
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (u *CategoryUpsert) ClearContentModelID() *CategoryUpsert {
+	u.SetNull(category.FieldContentModelID)
 	return u
 }
 
@@ -1325,6 +1367,34 @@ func (u *CategoryUpsertOne) UpdateCustomFields() *CategoryUpsertOne {
 func (u *CategoryUpsertOne) ClearCustomFields() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.ClearCustomFields()
+	})
+}
+
+// SetContentModelID sets the "content_model_id" field.
+func (u *CategoryUpsertOne) SetContentModelID(v uint32) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetContentModelID(v)
+	})
+}
+
+// AddContentModelID adds v to the "content_model_id" field.
+func (u *CategoryUpsertOne) AddContentModelID(v uint32) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.AddContentModelID(v)
+	})
+}
+
+// UpdateContentModelID sets the "content_model_id" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateContentModelID() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateContentModelID()
+	})
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (u *CategoryUpsertOne) ClearContentModelID() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearContentModelID()
 	})
 }
 
@@ -1930,6 +2000,34 @@ func (u *CategoryUpsertBulk) UpdateCustomFields() *CategoryUpsertBulk {
 func (u *CategoryUpsertBulk) ClearCustomFields() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.ClearCustomFields()
+	})
+}
+
+// SetContentModelID sets the "content_model_id" field.
+func (u *CategoryUpsertBulk) SetContentModelID(v uint32) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetContentModelID(v)
+	})
+}
+
+// AddContentModelID adds v to the "content_model_id" field.
+func (u *CategoryUpsertBulk) AddContentModelID(v uint32) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.AddContentModelID(v)
+	})
+}
+
+// UpdateContentModelID sets the "content_model_id" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateContentModelID() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateContentModelID()
+	})
+}
+
+// ClearContentModelID clears the value of the "content_model_id" field.
+func (u *CategoryUpsertBulk) ClearContentModelID() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearContentModelID()
 	})
 }
 

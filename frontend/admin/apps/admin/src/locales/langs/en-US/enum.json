@@ -35,6 +35,16 @@
       "LINK": "External Link"
     }
   },
+  "fieldDefinition": {
+    "type": {
+      "text": "Text",
+      "number": "Number",
+      "richtext": "Rich Text",
+      "image": "Image",
+      "file": "File",
+      "relation": "Relation"
+    }
+  },
   "task": {
     "type": {
       "Periodic": "Periodic",
