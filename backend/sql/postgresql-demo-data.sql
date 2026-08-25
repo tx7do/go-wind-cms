@@ -676,42 +676,42 @@ INSERT INTO public.sites (
     '2026-01-01 09:00:00+08', '2026-02-01 10:00:00+08', NULL, 1, 1, NULL,
     1, '企业官网主站', 'main-site', 'https://www.example.com',
     '["https://example.com", "https://www.example.cn"]'::jsonb, true,
-    'SITE_STATUS_ACTIVE', 'zh-CN', 'enterprise', 'default-dark',
+    'SITE_STATUS_ACTIVE', 'zh-CN', 'enterprise', 'default-dark'
 ),
 -- 2. 英文站点（租户1，活跃状态）
 (
     '2026-01-05 10:00:00+08', '2026-02-01 11:00:00+08', NULL, 1, 1, NULL,
     1, 'Enterprise English Site', 'english-site', 'https://en.example.com',
     '["https://english.example.com"]'::jsonb, false,
-    'SITE_STATUS_ACTIVE', 'en-US', 'enterprise', 'default-light',
+    'SITE_STATUS_ACTIVE', 'en-US', 'enterprise', 'default-light'
 ),
 -- 3. 营销活动站点（租户1，暂存状态）
 (
     '2026-01-10 14:00:00+08', '2026-02-01 12:00:00+08', NULL, 1, 1, NULL,
     1, '2026春季促销活动站', 'spring-2026-promotion', 'https://promo2026.example.com',
     '[]'::jsonb, false,
-    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'spring-theme',
+    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'spring-theme'
 ),
 -- 4. 租户2的电商站点（独立租户，活跃状态）
 (
     '2026-01-15 09:30:00+08', '2026-02-01 13:00:00+08', NULL, 2, 2, NULL,
     2, '优品电商平台', 'youpin-shop', 'https://www.youpin.com',
     '["https://youpin.com", "https://m.youpin.com"]'::jsonb, true,
-    'SITE_STATUS_ACTIVE', 'zh-CN', 'ecommerce', 'youpin-default',
+    'SITE_STATUS_ACTIVE', 'zh-CN', 'ecommerce', 'youpin-default'
 ),
 -- 5. 废弃站点（租户1，已归档）
 (
     '2025-06-01 08:00:00+08', '2026-01-20 15:00:00+08', NULL, 1, 1, NULL,
     1, '2025夏季活动站', 'summer-2025', 'https://summer2025.example.com',
     '[]'::jsonb, false,
-    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'summer-theme',
+    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'promotion', 'summer-theme'
 ),
 -- 6. 测试站点（租户1，禁用状态）
 (
     '2026-01-20 16:00:00+08', '2026-02-01 14:00:00+08', NULL, 1, 1, NULL,
     1, '内部测试站点', 'test-site', 'https://test.example.com',
     '["https://dev.example.com"]'::jsonb, false,
-    'SITE_STATUS_INACTIVE', 'zh-CN', 'test', 'test-theme',
+    'SITE_STATUS_INACTIVE', 'zh-CN', 'test', 'test-theme'
 ),
 -- 7. 软删除的站点（租户2，已删除）
 (
@@ -719,7 +719,7 @@ INSERT INTO public.sites (
     2, 2, 2,
     2, '旧版移动端站点', 'old-mobile-site', 'https://m.old.youpin.com',
     '[]'::jsonb, false,
-    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'mobile', 'old-mobile-theme',
+    'SITE_STATUS_MAINTENANCE', 'zh-CN', 'mobile', 'old-mobile-theme'
 );
 SELECT setval('sites_id_seq', (SELECT MAX(id) FROM sites));
 
@@ -842,183 +842,849 @@ SELECT setval('navigations_id_seq', (SELECT MAX(id) FROM navigations));
 -- ----------------------------
 -- 注意：按 parentId 顺序插入（先父后子），确保外键约束有效
 INSERT INTO public.navigation_items (
-    id, created_at, updated_at, sort_order, link_type, navigation_id,
-    title, url, object_id, icon, description, is_open_new_tab,
-    is_invalid, css_class, required_permission, parent_id, created_by, updated_by
+    id, created_at, updated_at, sort_order,
+    link_type, navigation_id, title, url,
+    object_id, icon, description, is_open_new_tab,
+    is_invalid, required_permission, parent_id, created_by,
+    updated_by
 ) VALUES
--- ========== 导航组 101（zh-CN 主导航） ==========
--- 首页（顶级）
-(1001, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 101, '首页', '/', 0, 'home', '返回首页', false, false, 'nav-item header-nav', '', NULL, 1, 1),
--- 文章（顶级）
-(1002, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 101, '文章', '/post', 0, 'document', '浏览所有文章', false, false, 'nav-item header-nav', '', NULL, 1, 1),
--- 分类（顶级，有子菜单）
-(1003, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 101, '分类', '/category', 0, 'folder', '浏览所有分类', false, false, 'nav-item header-nav has-children', '', NULL, 1, 1),
--- 标签（顶级）
-(1004, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 101, '标签', '/tag', 0, 'tag', '浏览所有标签', false, false, 'nav-item header-nav', '', NULL, 1, 1),
--- 关于（顶级）
-(1005, NOW(), NOW(), 5, 'LINK_TYPE_PAGE', 101, '关于', '/about', 1, 'information', '关于我们', false, false, 'nav-item header-nav', '', NULL, 1, 1),
--- 分类子菜单：技术分享（parentId = 1003）
-(1006, NOW(), NOW(), 1, 'LINK_TYPE_CATEGORY', 101, '技术分享', '/category/1', 1, 'code', '技术文章分类', false, false, 'nav-item child-nav', '', 1003, 1, 1),
--- 分类子菜单：生活随笔（parentId = 1003）
-(1007, NOW(), NOW(), 2, 'LINK_TYPE_CATEGORY', 101, '生活随笔', '/category/2', 2, 'blog', '生活文章分类', false, false, 'nav-item child-nav', '', 1003, 1, 1),
--- ========== 导航组 102（zh-CN 页脚导航） ==========
-(1008, NOW(), NOW(), 1, 'LINK_TYPE_PAGE', 102, '联系我们', '/contact', 2, 'email', '联系我们', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(1009, NOW(), NOW(), 2, 'LINK_TYPE_PAGE', 102, '隐私政策', '/privacy', 3, 'shield-checkmark', '隐私政策', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(1010, NOW(), NOW(), 3, 'LINK_TYPE_PAGE', 102, '服务条款', '/terms', 4, 'document', '服务条款', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(1011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 102, 'GitHub', 'https://github.com/tx7do/go-wind-cms', 0, 'logo-github', '访问我们的GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
--- ========== 导航组 103（zh-CN 侧边栏导航） ==========
-(1012, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 103, '热门标签', '/tag', 0, 'pricetag', '浏览热门标签', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
-(1013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 103, '归档', '/archive', 0, 'archive', '文章归档', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
--- ========== 导航组 201（en-US Main Navigation） ==========
-(2001, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 201, 'Home', '/', 0, 'home', 'Back to homepage', false, false, 'nav-item header-nav', '', NULL, 1, 1),
-(2002, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 201, 'Posts', '/post', 0, 'document', 'Browse all posts', false, false, 'nav-item header-nav', '', NULL, 1, 1),
-(2003, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 201, 'Categories', '/category', 0, 'folder', 'Browse all categories', false, false, 'nav-item header-nav has-children', '', NULL, 1, 1),
-(2004, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 201, 'Tags', '/tag', 0, 'tag', 'Browse all tags', false, false, 'nav-item header-nav', '', NULL, 1, 1),
-(2005, NOW(), NOW(), 5, 'LINK_TYPE_PAGE', 201, 'About', '/about', 1, 'information', 'About us', false, false, 'nav-item header-nav', '', NULL, 1, 1),
--- Categories 子菜单
-(2006, NOW(), NOW(), 1, 'LINK_TYPE_CATEGORY', 201, 'Tech Sharing', '/category/1', 1, 'code', 'Tech article category', false, false, 'nav-item child-nav', '', 2003, 1, 1),
-(2007, NOW(), NOW(), 2, 'LINK_TYPE_CATEGORY', 201, 'Life Notes', '/category/2', 2, 'blog', 'Life article category', false, false, 'nav-item child-nav', '', 2003, 1, 1),
--- ========== 导航组 202（en-US Footer Navigation） ==========
-(2008, NOW(), NOW(), 1, 'LINK_TYPE_PAGE', 202, 'Contact', '/contact', 2, 'email', 'Contact us', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(2009, NOW(), NOW(), 2, 'LINK_TYPE_PAGE', 202, 'Privacy Policy', '/privacy', 3, 'shield-checkmark', 'Privacy policy', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(2010, NOW(), NOW(), 3, 'LINK_TYPE_PAGE', 202, 'Terms of Service', '/terms', 4, 'document', 'Terms of service', false, false, 'nav-item footer-nav', '', NULL, 1, 1),
-(2011, NOW(), NOW(), 4, 'LINK_TYPE_EXTERNAL', 202, 'GitHub', 'https://github.com/tx7do/go-wind-cms', 0, 'logo-github', 'Visit our GitHub', true, false, 'nav-item footer-nav', '', NULL, 1, 1),
--- ========== 导航组 203（en-US Sidebar Navigation） ==========
-(2012, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 203, 'Popular Tags', '/tag', 0, 'pricetag', 'Browse popular tags', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
-(2013, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 203, 'Archive', '/archive', 0, 'archive', 'Post archive', false, false, 'nav-item sidebar-nav', '', NULL, 1, 1),
--- ========== 导航组 104（zh-CN 手机底部导航） ==========
-(1014, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 104, '首页', '/', 0, 'home', '返回首页', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(1015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 104, '发现', '/explore', 0, 'explore', '发现内容', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(1016, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 104, '收藏', '/bookmarks', 0, 'bookmark', '我的收藏', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(1017, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 104, '我的', '/profile', 0, 'person', '个人中心', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
--- ========== 导航组 204（en-US Mobile Bottom Navigation） ==========
-(2014, NOW(), NOW(), 1, 'LINK_TYPE_CUSTOM', 204, 'Home', '/', 0, 'home', 'Back to homepage', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(2015, NOW(), NOW(), 2, 'LINK_TYPE_CUSTOM', 204, 'Discover', '/explore', 0, 'explore', 'Discover content', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(2016, NOW(), NOW(), 3, 'LINK_TYPE_CUSTOM', 204, 'Bookmarks', '/bookmarks', 0, 'bookmark', 'My bookmarks', false, false, 'nav-item mobile-nav', '', NULL, 1, 1),
-(2017, NOW(), NOW(), 4, 'LINK_TYPE_CUSTOM', 204, 'Me', '/profile', 0, 'person', 'Personal center', false, false, 'nav-item mobile-nav', '', NULL, 1, 1);
+(
+    1001,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CUSTOM',
+    101,
+    '首页',
+    '/',
+    0,
+    'home',
+    '返回首页',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1002,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CUSTOM',
+    101,
+    '文章',
+    '/post',
+    0,
+    'document',
+    '浏览所有文章',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1003,
+    NOW(),
+    NOW(),
+    3,
+    'LINK_TYPE_CUSTOM',
+    101,
+    '分类',
+    '/category',
+    0,
+    'folder',
+    '浏览所有分类',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1004,
+    NOW(),
+    NOW(),
+    4,
+    'LINK_TYPE_CUSTOM',
+    101,
+    '标签',
+    '/tag',
+    0,
+    'tag',
+    '浏览所有标签',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1005,
+    NOW(),
+    NOW(),
+    5,
+    'LINK_TYPE_PAGE',
+    101,
+    '关于',
+    '/about',
+    1,
+    'information',
+    '关于我们',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1006,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CATEGORY',
+    101,
+    '技术分享',
+    '/category/1',
+    1,
+    'code',
+    '技术文章分类',
+    false,
+    false,
+    '',
+    1003,
+    1,
+    1
+),
+(
+    1007,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CATEGORY',
+    101,
+    '生活随笔',
+    '/category/2',
+    2,
+    'blog',
+    '生活文章分类',
+    false,
+    false,
+    '',
+    1003,
+    1,
+    1
+),
+(
+    1008,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_PAGE',
+    102,
+    '联系我们',
+    '/contact',
+    2,
+    'email',
+    '联系我们',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1009,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_PAGE',
+    102,
+    '隐私政策',
+    '/privacy',
+    3,
+    'shield-checkmark',
+    '隐私政策',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1010,
+    NOW(),
+    NOW(),
+    3,
+    'LINK_TYPE_PAGE',
+    102,
+    '服务条款',
+    '/terms',
+    4,
+    'document',
+    '服务条款',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1011,
+    NOW(),
+    NOW(),
+    4,
+    'LINK_TYPE_EXTERNAL',
+    102,
+    'GitHub',
+    'https://github.com/tx7do/go-wind-cms',
+    0,
+    'logo-github',
+    '访问我们的GitHub',
+    true,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1012,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CUSTOM',
+    103,
+    '热门标签',
+    '/tag',
+    0,
+    'pricetag',
+    '浏览热门标签',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1013,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CUSTOM',
+    103,
+    '归档',
+    '/archive',
+    0,
+    'archive',
+    '文章归档',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2001,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CUSTOM',
+    201,
+    'Home',
+    '/',
+    0,
+    'home',
+    'Back to homepage',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2002,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CUSTOM',
+    201,
+    'Posts',
+    '/post',
+    0,
+    'document',
+    'Browse all posts',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2003,
+    NOW(),
+    NOW(),
+    3,
+    'LINK_TYPE_CUSTOM',
+    201,
+    'Categories',
+    '/category',
+    0,
+    'folder',
+    'Browse all categories',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2004,
+    NOW(),
+    NOW(),
+    4,
+    'LINK_TYPE_CUSTOM',
+    201,
+    'Tags',
+    '/tag',
+    0,
+    'tag',
+    'Browse all tags',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2005,
+    NOW(),
+    NOW(),
+    5,
+    'LINK_TYPE_PAGE',
+    201,
+    'About',
+    '/about',
+    1,
+    'information',
+    'About us',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2006,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CATEGORY',
+    201,
+    'Tech Sharing',
+    '/category/1',
+    1,
+    'code',
+    'Tech article category',
+    false,
+    false,
+    '',
+    2003,
+    1,
+    1
+),
+(
+    2007,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CATEGORY',
+    201,
+    'Life Notes',
+    '/category/2',
+    2,
+    'blog',
+    'Life article category',
+    false,
+    false,
+    '',
+    2003,
+    1,
+    1
+),
+(
+    2008,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_PAGE',
+    202,
+    'Contact',
+    '/contact',
+    2,
+    'email',
+    'Contact us',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2009,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_PAGE',
+    202,
+    'Privacy Policy',
+    '/privacy',
+    3,
+    'shield-checkmark',
+    'Privacy policy',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2010,
+    NOW(),
+    NOW(),
+    3,
+    'LINK_TYPE_PAGE',
+    202,
+    'Terms of Service',
+    '/terms',
+    4,
+    'document',
+    'Terms of service',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2011,
+    NOW(),
+    NOW(),
+    4,
+    'LINK_TYPE_EXTERNAL',
+    202,
+    'GitHub',
+    'https://github.com/tx7do/go-wind-cms',
+    0,
+    'logo-github',
+    'Visit our GitHub',
+    true,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2012,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CUSTOM',
+    203,
+    'Popular Tags',
+    '/tag',
+    0,
+    'pricetag',
+    'Browse popular tags',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2013,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CUSTOM',
+    203,
+    'Archive',
+    '/archive',
+    0,
+    'archive',
+    'Post archive',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1014,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CUSTOM',
+    104,
+    '首页',
+    '/',
+    0,
+    'home',
+    '返回首页',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1015,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CUSTOM',
+    104,
+    '发现',
+    '/explore',
+    0,
+    'explore',
+    '发现内容',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1016,
+    NOW(),
+    NOW(),
+    3,
+    'LINK_TYPE_CUSTOM',
+    104,
+    '收藏',
+    '/bookmarks',
+    0,
+    'bookmark',
+    '我的收藏',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    1017,
+    NOW(),
+    NOW(),
+    4,
+    'LINK_TYPE_CUSTOM',
+    104,
+    '我的',
+    '/profile',
+    0,
+    'person',
+    '个人中心',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2014,
+    NOW(),
+    NOW(),
+    1,
+    'LINK_TYPE_CUSTOM',
+    204,
+    'Home',
+    '/',
+    0,
+    'home',
+    'Back to homepage',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2015,
+    NOW(),
+    NOW(),
+    2,
+    'LINK_TYPE_CUSTOM',
+    204,
+    'Discover',
+    '/explore',
+    0,
+    'explore',
+    'Discover content',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2016,
+    NOW(),
+    NOW(),
+    3,
+    'LINK_TYPE_CUSTOM',
+    204,
+    'Bookmarks',
+    '/bookmarks',
+    0,
+    'bookmark',
+    'My bookmarks',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+),
+(
+    2017,
+    NOW(),
+    NOW(),
+    4,
+    'LINK_TYPE_CUSTOM',
+    204,
+    'Me',
+    '/profile',
+    0,
+    'person',
+    'Personal center',
+    false,
+    false,
+    '',
+    NULL,
+    1,
+    1
+);
 SELECT setval('navigation_items_id_seq', (SELECT MAX(id) FROM navigation_items));
 
 -- ----------------------------
 -- 插入 pages 表（页面主表）测试数据
 -- ----------------------------
 INSERT INTO public.pages (
-    created_at, updated_at, sort_order, path, editor_type,
-    status, type, slug, author_id, author_name,
-    disallow_comment, redirect_url, show_in_navigation,
-    template, is_custom_template, custom_fields,
-    custom_head, custom_foot, depth, parent_id
+    created_at, updated_at, sort_order, path,
+    editor_type, status, type, slug,
+    author_id, author_name, disallow_comment, redirect_url,
+    show_in_navigation, template, is_custom_template, custom_fields,
+    depth, parent_id
 ) VALUES
--- 页面1：首页（PAGE_TYPE_HOME=2）
 (
-    NOW() - INTERVAL '30 days', NOW(),
-    1, '/', 'EDITOR_TYPE_MARKDOWN',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_HOME', 'home',
-    1, 'GoWind 官方',
-    false, '', true,
-    'default-home', false,
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    1,
+    '/',
+    'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_HOME',
+    'home',
+    1,
+    'GoWind 官方',
+    false,
+    '',
+    true,
+    'default-home',
+    false,
     '{"banner_show": "true", "banner_delay": "3000", "show_hot_articles": "true"}'::jsonb,
-    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
-    '<script src="/js/home-footer.js"></script>',
-    0, NULL
+    0,
+    NULL
 ),
--- 页面2：关于我们（普通页面 PAGE_TYPE_DEFAULT=1）
 (
-    NOW() - INTERVAL '25 days', NOW(),
-    2, '/about', 'EDITOR_TYPE_RICH_TEXT',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'about',
-    1, 'GoWind 官方',
-    true, '', true,
-    'default-static', false,
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    '/about',
+    'EDITOR_TYPE_RICH_TEXT',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_DEFAULT',
+    'about',
+    1,
+    'GoWind 官方',
+    true,
+    '',
+    true,
+    'default-static',
+    false,
     '{"show_team_avatar": "true", "team_size": "15", "founded_year": "2024"}'::jsonb,
-    '', '',
-    0, NULL
+    0,
+    NULL
 ),
--- 页面3：文档中心（普通页面 PAGE_TYPE_DEFAULT=1）
 (
-    NOW() - INTERVAL '20 days', NOW(),
-    3, '/docs', 'EDITOR_TYPE_MARKDOWN',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'docs',
-    1, 'GoWind 官方',
-    false, '', true,
-    'default-docs', false,
+    NOW() - INTERVAL '20 days',
+    NOW(),
+    3,
+    '/docs',
+    'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_DEFAULT',
+    'docs',
+    1,
+    'GoWind 官方',
+    false,
+    '',
+    true,
+    'default-docs',
+    false,
     '{"sidebar_collapse": "false", "edit_on_github": "true", "github_repo": "gowind/cms-docs"}'::jsonb,
-    '<link rel="stylesheet" href="/css/docs.css">',
-    '<script src="/js/docs-sidebar.js"></script>',
-    0, NULL
+    0,
+    NULL
 ),
--- 页面4：快速开始（普通页面 PAGE_TYPE_DEFAULT=1，二级）
 (
-    NOW() - INTERVAL '18 days', NOW(),
-    1, '/docs/quick-start', 'EDITOR_TYPE_MARKDOWN',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'quick-start',
-    1, 'GoWind 官方',
-    false, '', true,
-    'default-docs', false,
+    NOW() - INTERVAL '18 days',
+    NOW(),
+    1,
+    '/docs/quick-start',
+    'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_DEFAULT',
+    'quick-start',
+    1,
+    'GoWind 官方',
+    false,
+    '',
+    true,
+    'default-docs',
+    false,
     '{"difficulty": "beginner", "estimated_time": "5分钟"}'::jsonb,
-    '', '',
-    1, 3
+    1,
+    3
 ),
--- 页面5：404错误页（PAGE_TYPE_ERROR_404=3，特殊页面）
 (
-    NOW() - INTERVAL '15 days', NOW(),
-    0, '/404', 'EDITOR_TYPE_MARKDOWN',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_ERROR_404', '404',
-    1, 'GoWind 官方',
-    true, '', false,
-    'default-error', false,
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    0,
+    '/404',
+    'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_ERROR_404',
+    '404',
+    1,
+    'GoWind 官方',
+    true,
+    '',
+    false,
+    'default-error',
+    false,
     '{"show_search": "true", "show_home_button": "true", "custom_message": "您访问的页面不存在～"}'::jsonb,
-    '', '<script src="/js/404-tracking.js"></script>',
-    0, NULL
+    0,
+    NULL
 ),
--- 页面6：500错误页（PAGE_TYPE_ERROR_500=4，特殊页面）
 (
-    NOW() - INTERVAL '15 days', NOW(),
-    0, '/500', 'EDITOR_TYPE_MARKDOWN',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_ERROR_500', '500',
-    1, 'GoWind 官方',
-    true, '', false,
-    'default-error', false,
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    0,
+    '/500',
+    'EDITOR_TYPE_MARKDOWN',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_ERROR_500',
+    '500',
+    1,
+    'GoWind 官方',
+    true,
+    '',
+    false,
+    'default-error',
+    false,
     '{"show_contact_button": "true", "maintenance_phone": "400-123-4567"}'::jsonb,
-    '', '',
-    0, NULL
+    0,
+    NULL
 ),
--- 页面7：登录页（自定义逻辑页 PAGE_TYPE_CUSTOM=5）
 (
-    NOW() - INTERVAL '12 days', NOW(),
-    0, '/login', 'EDITOR_TYPE_RICH_TEXT', -- 自定义编辑器（无内容编辑）
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_CUSTOM', 'login',
-    1, 'GoWind 官方',
-    true, '', false,
-    'custom-login', true,
+    NOW() - INTERVAL '12 days',
+    NOW(),
+    0,
+    '/login',
+    'EDITOR_TYPE_RICH_TEXT',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_CUSTOM',
+    'login',
+    1,
+    'GoWind 官方',
+    true,
+    '',
+    false,
+    'custom-login',
+    true,
     '{"show_captcha": "true", "remember_me_days": "7", "oauth_github": "true", "oauth_google": "false"}'::jsonb,
-    '<link rel="stylesheet" href="/css/login.css">',
-    '<script src="/js/login-validation.js"></script>',
-    0, NULL
+    0,
+    NULL
 ),
--- 页面8：隐私政策（普通页面 PAGE_TYPE_DEFAULT=1）
 (
-    NOW() - INTERVAL '12 days', NOW(),
-    4, '/privacy', 'EDITOR_TYPE_RICH_TEXT',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_DEFAULT', 'privacy-policy',
-    1, 'GoWind 官方',
-    true, '', true,
-    'default-static', false,
+    NOW() - INTERVAL '12 days',
+    NOW(),
+    4,
+    '/privacy',
+    'EDITOR_TYPE_RICH_TEXT',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_DEFAULT',
+    'privacy-policy',
+    1,
+    'GoWind 官方',
+    true,
+    '',
+    true,
+    'default-static',
+    false,
     '{"last_updated": "2024-03-01", "version": "1.0"}'::jsonb,
-    '', '',
-    0, NULL
+    0,
+    NULL
 ),
--- 页面9：注册页（自定义逻辑页 PAGE_TYPE_CUSTOM=5）
 (
-    NOW() - INTERVAL '10 days', NOW(),
-    0, '/register', 'EDITOR_TYPE_RICH_TEXT',
-    'PAGE_STATUS_PUBLISHED', 'PAGE_TYPE_CUSTOM', 'register',
-    1, 'GoWind 官方',
-    true, '', false,
-    'custom-register', true,
+    NOW() - INTERVAL '10 days',
+    NOW(),
+    0,
+    '/register',
+    'EDITOR_TYPE_RICH_TEXT',
+    'PAGE_STATUS_PUBLISHED',
+    'PAGE_TYPE_CUSTOM',
+    'register',
+    1,
+    'GoWind 官方',
+    true,
+    '',
+    false,
+    'custom-register',
+    true,
     '{"need_email_verify": "true", "default_role": "user", "invite_code_required": "false"}'::jsonb,
-    '<link rel="stylesheet" href="/css/register.css">',
-    '<script src="/js/register-verify.js"></script>',
-    0, NULL
+    0,
+    NULL
 );
 SELECT setval('pages_id_seq', (SELECT MAX(id) FROM pages));
 
@@ -1026,168 +1692,75 @@ SELECT setval('pages_id_seq', (SELECT MAX(id) FROM pages));
 -- 插入 page_translations 表（页面多语言翻译）测试数据
 -- ----------------------------
 INSERT INTO public.page_translations (
-    created_at, updated_at, page_id, language_code, title,
-    slug, summary, content, original_content, thumbnail,
-    cover_image, full_path, word_count, meta_keywords,
-    meta_description, seo_title
+    created_at, updated_at, page_id, language_code,
+    title, slug, thumbnail, cover_image,
+    full_path
 ) VALUES
--- ========== 页面1（首页） - 中文翻译（真实换行） ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 1, 'zh-CN',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    1,
+    'zh-CN',
     '风行内容中台 - 高性能Go语言多站点多语言Content Hub系统',
     'home',
-    '风行内容中台 是基于Go+Vue3开发的高性能、轻量级Content Hub系统，支持多站点、多语言、多租户，开箱即用。',
-    '# 风行内容中台
-
-## 核心特性
-- 多站点管理：一个系统管理多个独立站点
-- 多语言支持：内置多语言翻译体系
-- 高性能：基于Go语言开发，QPS可达10万+
-- 易扩展：插件化架构，支持自定义模板/主题',
-    '# 风行内容中台
-
-## 核心特性
-- 多站点管理：一个系统管理多个独立站点
-- 多语言支持：内置多语言翻译体系
-- 高性能：基于Go语言开发，QPS可达10万+
-- 易扩展：插件化架构，支持自定义模板/主题',
     '/images/thumbnails/home-zh.jpg',
     '/images/covers/home-zh.jpg',
-    '/',
-    520,
-    'GoWind,Content Hub,Go语言,多站点,多语言,高性能',
-    '风行内容中台 是基于Go+Vue3开发的高性能Content Hub系统，支持多站点、多语言、多租户，开箱即用。',
-    '风行内容中台 - 高性能Go语言多站点多语言Content Hub系统'
+    '/'
 ),
--- ========== 页面1（首页） - 英文翻译（真实换行） ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 1, 'en-US',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    1,
+    'en-US',
     'GoWind Content Hub - High Performance Go Content Hub for Multi-site & Multi-language',
     'home',
-    'GoWind Content Hub is a high-performance, lightweight Content Hub built with Go+Vue3, supporting multi-site, multi-language, and multi-tenant features, ready to use out of the box.',
-    '# GoWind Content Hub
-
-## Core Features
-- Multi-site Management: Manage multiple independent sites with one system
-- Multi-language Support: Built-in multi-language translation system
-- High Performance: Developed with Go, QPS up to 100,000+
-- Extensible: Plugin-based architecture, support custom templates/themes',
-    '# GoWind Content Hub
-
-## Core Features
-- Multi-site Management: Manage multiple independent sites with one system
-- Multi-language Support: Built-in multi-language translation system
-- High Performance: Developed with Go, QPS up to 100,000+
-- Extensible: Plugin-based architecture, support custom templates/themes',
     '/images/thumbnails/home-en.jpg',
     '/images/covers/home-en.jpg',
-    '/en',
-    480,
-    'GoWind,Content Hub,Go,Multi-site,Multi-language,High Performance',
-    'GoWind Content Hub is a high-performance Content Hub built with Go+Vue3, supporting multi-site, multi-language, and multi-tenant features, ready to use out of the box.',
-    'GoWind Content Hub - High Performance Go Content Hub for Multi-site & Multi-language'
+    '/en'
 ),
--- ========== 页面5（404错误页） - 中文翻译（真实换行） ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 5, 'zh-CN',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    5,
+    'zh-CN',
     '404 - 页面不存在',
     '404',
-    '您访问的页面不存在或已被删除，可返回首页或使用搜索功能查找相关内容。',
-    '# 404 - 页面不存在
-
-抱歉，您访问的页面不存在或已被删除。
-
-### 您可以：
-- 点击 <a href="/">首页</a> 返回网站首页
-- 使用下方搜索框查找相关内容
-- 联系客服：400-123-4567',
-    '# 404 - 页面不存在
-
-抱歉，您访问的页面不存在或已被删除。
-
-### 您可以：
-- 点击 <a href="/">首页</a> 返回网站首页
-- 使用下方搜索框查找相关内容
-- 联系客服：400-123-4567',
     '/images/thumbnails/404-zh.jpg',
     '/images/covers/404-zh.jpg',
-    '/404',
-    280,
-    '404,页面不存在,返回首页',
-    '您访问的页面不存在或已被删除，可返回首页或使用搜索功能查找相关内容。',
-    '404 - 页面不存在 | 风行内容中台'
+    '/404'
 ),
--- ========== 页面5（404错误页） - 英文翻译（真实换行） ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 5, 'en-US',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    5,
+    'en-US',
     '404 - Page Not Found',
     '404',
-    'The page you are looking for does not exist or has been deleted. You can return to the homepage or use the search function to find relevant content.',
-    '# 404 - Page Not Found
-
-Sorry, the page you are looking for does not exist or has been deleted.
-
-### You can:
-- Click <a href="/en">Home</a> to return to the homepage
-- Use the search box below to find relevant content
-- Contact support: 400-123-4567',
-    '# 404 - Page Not Found
-
-Sorry, the page you are looking for does not exist or has been deleted.
-
-### You can:
-- Click <a href="/en">Home</a> to return to the homepage
-- Use the search box below to find relevant content
-- Contact support: 400-123-4567',
     '/images/thumbnails/404-en.jpg',
     '/images/covers/404-en.jpg',
-    '/en/404',
-    260,
-    '404,Page Not Found,Return Home',
-    'The page you are looking for does not exist or has been deleted. You can return to the homepage or use the search function to find relevant content.',
-    '404 - Page Not Found | GoWind Content Hub'
+    '/en/404'
 ),
--- ========== 页面7（登录页） - 中文翻译 ==========
 (
-    NOW() - INTERVAL '12 days', NOW(), 7, 'zh-CN',
+    NOW() - INTERVAL '12 days',
+    NOW(),
+    7,
+    'zh-CN',
     '登录 - 风行内容中台',
     'login',
-    '登录风行内容中台，管理您的站点内容、配置和用户。',
-    '', -- 自定义逻辑页无Markdown/富文本内容
-    '',
     '/images/thumbnails/login-zh.jpg',
     '/images/covers/login-zh.jpg',
-    '/login',
-    0,
-    '登录,风行内容中台,账号登录,用户中心',
-    '登录风行内容中台，管理您的站点内容、配置和用户。',
-    '登录 - 风行内容中台'
+    '/login'
 ),
--- ========== 页面2（关于我们） - 中文翻译 ==========
 (
-    NOW() - INTERVAL '25 days', NOW(), 2, 'zh-CN',
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    'zh-CN',
     '关于我们 - 风行内容中台',
     'about',
-    'GoWind 团队成立于2024年，专注于高性能开源Content Hub系统的研发，致力于为开发者提供简单、高效的内容管理解决方案。',
-    '<h1>关于 风行内容中台</h1>
-<p>GoWind 团队成立于2024年，核心成员均有10年以上互联网研发经验，专注于高性能开源Content Hub系统的研发。</p>
-<h2>我们的使命</h2>
-<p>让内容管理更简单，让开发者更高效。</p>
-<h2>团队规模</h2>
-<p>目前团队共15人，涵盖后端、前端、产品、设计等多个领域。</p>',
-    '<h1>关于 风行内容中台</h1>
-<p>GoWind 团队成立于2024年，核心成员均有10年以上互联网研发经验，专注于高性能开源Content Hub系统的研发。</p>
-<h2>我们的使命</h2>
-<p>让内容管理更简单，让开发者更高效。</p>
-<h2>团队规模</h2>
-<p>目前团队共15人，涵盖后端、前端、产品、设计等多个领域。</p>',
     '/images/thumbnails/about-zh.jpg',
     '/images/covers/about-zh.jpg',
-    '/about',
-    850,
-    'GoWind,关于我们,团队介绍,Content Hub研发',
-    'GoWind 团队成立于2024年，专注于高性能开源Content Hub系统的研发，致力于为开发者提供简单、高效的内容管理解决方案。',
-    '关于我们 - 风行内容中台'
+    '/about'
 );
 SELECT setval('page_translations_id_seq', (SELECT MAX(id) FROM page_translations));
 
@@ -1237,63 +1810,401 @@ SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));
 -- 插入 category_translations 表（分类翻译）
 -- ----------------------------
 INSERT INTO public.category_translations (
-    id, created_at, updated_at, category_id, language_code,
-    name, slug, description, thumbnail, cover_image,
-    template, full_path, meta_keywords, meta_description, seo_title,
-    created_by, updated_by
+    id, created_at, updated_at, category_id,
+    language_code, name, slug, description,
+    thumbnail, cover_image, full_path, created_by,
+    updated_by
 ) VALUES
--- ========== 分类1（技术分享）- 中文 ==========
-(1, NOW() - INTERVAL '30 days', NOW() - INTERVAL '15 days', 1, 'zh-CN', '技术分享', 'tech', '分享最新的技术文章和教程', 'https://picsum.photos/400/300?random=1', 'https://picsum.photos/1200/400?random=1', NULL, '/tech', '技术分享,教程,开发', '分享最新的技术文章和教程', '技术分享 | 风行内容中台', 1, 1),
--- ========== 分类1（技术分享）- 英文 ==========
-(101, NOW() - INTERVAL '30 days', NOW() - INTERVAL '15 days', 1, 'en-US', 'Tech Sharing', 'tech', 'Share the latest technical articles and tutorials', 'https://picsum.photos/400/300?random=1', 'https://picsum.photos/1200/400?random=1', NULL, '/en/tech', 'Tech Sharing,Tutorials,Development', 'Share the latest technical articles and tutorials', 'Tech Sharing | GoWind Content Hub', 1, 1),
--- ========== 分类2（生活随笔）- 中文 ==========
-(2, NOW() - INTERVAL '25 days', NOW() - INTERVAL '12 days', 2, 'zh-CN', '生活随笔', 'life', '记录生活中的点点滴滴', 'https://picsum.photos/400/300?random=2', 'https://picsum.photos/1200/400?random=2', NULL, '/life', '生活随笔,记录,日常', '记录生活中的点点滴滴', '生活随笔 | 风行内容中台', 1, 1),
--- ========== 分类2（生活随笔）- 英文 ==========
-(102, NOW() - INTERVAL '25 days', NOW() - INTERVAL '12 days', 2, 'en-US', 'Life Notes', 'life', 'Record moments and thoughts from daily life', 'https://picsum.photos/400/300?random=2', 'https://picsum.photos/1200/400?random=2', NULL, '/en/life', 'Life Notes,Records,Daily', 'Record moments and thoughts from daily life', 'Life Notes | GoWind Content Hub', 1, 1),
--- ========== 分类3（产品设计）- 中文 ==========
-(3, NOW() - INTERVAL '20 days', NOW() - INTERVAL '10 days', 3, 'zh-CN', '产品设计', 'design', '产品设计理念与实践', 'https://picsum.photos/400/300?random=3', 'https://picsum.photos/1200/400?random=3', NULL, '/design', '产品设计,理念,实践', '产品设计理念与实践', '产品设计 | 风行内容中台', 1, 1),
--- ========== 分类3（产品设计）- 英文 ==========
-(103, NOW() - INTERVAL '20 days', NOW() - INTERVAL '10 days', 3, 'en-US', 'Product Design', 'design', 'Product design concepts and practices', 'https://picsum.photos/400/300?random=3', 'https://picsum.photos/1200/400?random=3', NULL, '/en/design', 'Product Design,Concepts,Practices', 'Product design concepts and practices', 'Product Design | GoWind Content Hub', 1, 1),
--- ========== 分类4（创业思考）- 中文 ==========
-(4, NOW() - INTERVAL '15 days', NOW() - INTERVAL '8 days', 4, 'zh-CN', '创业思考', 'startup', '创业路上的思考与总结', 'https://picsum.photos/400/300?random=4', 'https://picsum.photos/1200/400?random=4', NULL, '/startup', '创业思考,总结,经验', '创业路上的思考与总结', '创业思考 | 风行内容中台', 1, 1),
--- ========== 分类4（创业思考）- 英文 ==========
-(104, NOW() - INTERVAL '15 days', NOW() - INTERVAL '8 days', 4, 'en-US', 'Startup Insights', 'startup', 'Reflections and summaries from startup journey', 'https://picsum.photos/400/300?random=4', 'https://picsum.photos/1200/400?random=4', NULL, '/en/startup', 'Startup Insights,Reflections,Journey', 'Reflections and summaries from startup journey', 'Startup Insights | GoWind Content Hub', 1, 1),
--- ========== 分类11（前端开发）- 中文 ==========
-(11, NOW() - INTERVAL '25 days', NOW() - INTERVAL '10 days', 11, 'zh-CN', '前端开发', 'frontend', '前端开发技术和框架', 'https://picsum.photos/400/300?random=11', 'https://picsum.photos/1200/400?random=11', NULL, '/tech/frontend', '前端开发,框架,技术', '前端开发技术和框架', '前端开发 | 技术分享', 1, 1),
--- ========== 分类11（前端开发）- 英文 ==========
-(111, NOW() - INTERVAL '25 days', NOW() - INTERVAL '10 days', 11, 'en-US', 'Frontend Development', 'frontend', 'Frontend development technologies and frameworks', 'https://picsum.photos/400/300?random=11', 'https://picsum.photos/1200/400?random=11', NULL, '/en/tech/frontend', 'Frontend Development,Frameworks,Technologies', 'Frontend development technologies and frameworks', 'Frontend Development | Tech Sharing', 1, 1),
--- ========== 分类12（后端开发）- 中文 ==========
-(12, NOW() - INTERVAL '24 days', NOW() - INTERVAL '9 days', 12, 'zh-CN', '后端开发', 'backend', '后端开发技术和架构', 'https://picsum.photos/400/300?random=12', 'https://picsum.photos/1200/400?random=12', NULL, '/tech/backend', '后端开发,架构,技术', '后端开发技术和架构', '后端开发 | 技术分享', 1, 1),
--- ========== 分类12（后端开发）- 英文 ==========
-(112, NOW() - INTERVAL '24 days', NOW() - INTERVAL '9 days', 12, 'en-US', 'Backend Development', 'backend', 'Backend development technologies and architecture', 'https://picsum.photos/400/300?random=12', 'https://picsum.photos/1200/400?random=12', NULL, '/en/tech/backend', 'Backend Development,Architecture,Technologies', 'Backend development technologies and architecture', 'Backend Development | Tech Sharing', 1, 1),
--- ========== 分类13（移动开发）- 中文 ==========
-(13, NOW() - INTERVAL '23 days', NOW() - INTERVAL '8 days', 13, 'zh-CN', '移动开发', 'mobile', '移动端开发技术', 'https://picsum.photos/400/300?random=13', 'https://picsum.photos/1200/400?random=13', NULL, '/tech/mobile', '移动开发,技术,移动端', '移动端开发技术', '移动开发 | 技术分享', 1, 1),
--- ========== 分类13（移动开发）- 英文 ==========
-(113, NOW() - INTERVAL '23 days', NOW() - INTERVAL '8 days', 13, 'en-US', 'Mobile Development', 'mobile', 'Mobile development technologies', 'https://picsum.photos/400/300?random=13', 'https://picsum.photos/1200/400?random=13', NULL, '/en/tech/mobile', 'Mobile Development,Technologies', 'Mobile development technologies', 'Mobile Development | Tech Sharing', 1, 1),
--- ========== 分类21（旅行游记）- 中文 ==========
-(21, NOW() - INTERVAL '20 days', NOW() - INTERVAL '7 days', 21, 'zh-CN', '旅行游记', 'travel', '旅行见闻和游记', 'https://picsum.photos/400/300?random=21', 'https://picsum.photos/1200/400?random=21', NULL, '/life/travel', '旅行游记,见闻,游记', '旅行见闻和游记', '旅行游记 | 生活随笔', 1, 1),
--- ========== 分类21（旅行游记）- 英文 ==========
-(121, NOW() - INTERVAL '20 days', NOW() - INTERVAL '7 days', 21, 'en-US', 'Travel', 'travel', 'Travel experiences and journals', 'https://picsum.photos/400/300?random=21', 'https://picsum.photos/1200/400?random=21', NULL, '/en/life/travel', 'Travel,Experiences,Journals', 'Travel experiences and journals', 'Travel | Life Notes', 1, 1),
--- ========== 分类22（美食探店）- 中文 ==========
-(22, NOW() - INTERVAL '19 days', NOW() - INTERVAL '6 days', 22, 'zh-CN', '美食探店', 'food', '探索城市美食', 'https://picsum.photos/400/300?random=22', 'https://picsum.photos/1200/400?random=22', NULL, '/life/food', '美食探店,城市美食,探索', '探索城市美食', '美食探店 | 生活随笔', 1, 1),
--- ========== 分类22（美食探店）- 英文 ==========
-(122, NOW() - INTERVAL '19 days', NOW() - INTERVAL '6 days', 22, 'en-US', 'Food Exploration', 'food', 'Explore city delicacies', 'https://picsum.photos/400/300?random=22', 'https://picsum.photos/1200/400?random=22', NULL, '/en/life/food', 'Food Exploration,Delicacies,City', 'Explore city delicacies', 'Food Exploration | Life Notes', 1, 1),
--- ========== 分类31（UI 设计）- 中文 ==========
-(31, NOW() - INTERVAL '18 days', NOW() - INTERVAL '5 days', 31, 'zh-CN', 'UI 设计', 'ui-design', '用户界面设计', 'https://picsum.photos/400/300?random=31', 'https://picsum.photos/1200/400?random=31', NULL, '/design/ui-design', 'UI设计,用户界面,设计', '用户界面设计', 'UI 设计 | 产品设计', 1, 1),
--- ========== 分类31（UI 设计）- 英文 ==========
-(131, NOW() - INTERVAL '18 days', NOW() - INTERVAL '5 days', 31, 'en-US', 'UI Design', 'ui-design', 'User Interface Design', 'https://picsum.photos/400/300?random=31', 'https://picsum.photos/1200/400?random=31', NULL, '/en/design/ui-design', 'UI Design,User Interface', 'User Interface Design', 'UI Design | Product Design', 1, 1),
--- ========== 分类32（UX 设计）- 中文 ==========
-(32, NOW() - INTERVAL '17 days', NOW() - INTERVAL '4 days', 32, 'zh-CN', 'UX 设计', 'ux-design', '用户体验设计', 'https://picsum.photos/400/300?random=32', 'https://picsum.photos/1200/400?random=32', NULL, '/design/ux-design', 'UX设计,用户体验,设计', '用户体验设计', 'UX 设计 | 产品设计', 1, 1),
--- ========== 分类32（UX 设计）- 英文 ==========
-(132, NOW() - INTERVAL '17 days', NOW() - INTERVAL '4 days', 32, 'en-US', 'UX Design', 'ux-design', 'User Experience Design', 'https://picsum.photos/400/300?random=32', 'https://picsum.photos/1200/400?random=32', NULL, '/en/design/ux-design', 'UX Design,User Experience', 'User Experience Design', 'UX Design | Product Design', 1, 1),
--- ========== 分类41（团队管理）- 中文 ==========
-(41, NOW() - INTERVAL '14 days', NOW() - INTERVAL '3 days', 41, 'zh-CN', '团队管理', 'team-management', '团队建设和管理经验', 'https://picsum.photos/400/300?random=41', 'https://picsum.photos/1200/400?random=41', NULL, '/startup/team-management', '团队管理,建设,经验', '团队建设和管理经验', '团队管理 | 创业思考', 1, 1),
--- ========== 分类41（团队管理）- 英文 ==========
-(141, NOW() - INTERVAL '14 days', NOW() - INTERVAL '3 days', 41, 'en-US', 'Team Management', 'team-management', 'Team building and management experience', 'https://picsum.photos/400/300?random=41', 'https://picsum.photos/1200/400?random=41', NULL, '/en/startup/team-management', 'Team Management,Building,Experience', 'Team building and management experience', 'Team Management | Startup Insights', 1, 1),
--- ========== 分类42（产品思考）- 中文 ==========
-(42, NOW() - INTERVAL '13 days', NOW() - INTERVAL '2 days', 42, 'zh-CN', '产品思考', 'product-thinking', '产品规划和思考', 'https://picsum.photos/400/300?random=42', 'https://picsum.photos/1200/400?random=42', NULL, '/startup/product-thinking', '产品思考,规划,产品', '产品规划和思考', '产品思考 | 创业思考', 1, 1),
--- ========== 分类42（产品思考）- 英文 ==========
-(142, NOW() - INTERVAL '13 days', NOW() - INTERVAL '2 days', 42, 'en-US', 'Product Thinking', 'product-thinking', 'Product planning and thinking', 'https://picsum.photos/400/300?random=42', 'https://picsum.photos/1200/400?random=42', NULL, '/en/startup/product-thinking', 'Product Thinking,Planning', 'Product planning and thinking', 'Product Thinking | Startup Insights', 1, 1);
+(
+    1,
+    NOW() - INTERVAL '30 days',
+    NOW() - INTERVAL '15 days',
+    1,
+    'zh-CN',
+    '技术分享',
+    'tech',
+    '分享最新的技术文章和教程',
+    'https://picsum.photos/400/300?random=1',
+    'https://picsum.photos/1200/400?random=1',
+    '/tech',
+    1,
+    1
+),
+(
+    101,
+    NOW() - INTERVAL '30 days',
+    NOW() - INTERVAL '15 days',
+    1,
+    'en-US',
+    'Tech Sharing',
+    'tech',
+    'Share the latest technical articles and tutorials',
+    'https://picsum.photos/400/300?random=1',
+    'https://picsum.photos/1200/400?random=1',
+    '/en/tech',
+    1,
+    1
+),
+(
+    2,
+    NOW() - INTERVAL '25 days',
+    NOW() - INTERVAL '12 days',
+    2,
+    'zh-CN',
+    '生活随笔',
+    'life',
+    '记录生活中的点点滴滴',
+    'https://picsum.photos/400/300?random=2',
+    'https://picsum.photos/1200/400?random=2',
+    '/life',
+    1,
+    1
+),
+(
+    102,
+    NOW() - INTERVAL '25 days',
+    NOW() - INTERVAL '12 days',
+    2,
+    'en-US',
+    'Life Notes',
+    'life',
+    'Record moments and thoughts from daily life',
+    'https://picsum.photos/400/300?random=2',
+    'https://picsum.photos/1200/400?random=2',
+    '/en/life',
+    1,
+    1
+),
+(
+    3,
+    NOW() - INTERVAL '20 days',
+    NOW() - INTERVAL '10 days',
+    3,
+    'zh-CN',
+    '产品设计',
+    'design',
+    '产品设计理念与实践',
+    'https://picsum.photos/400/300?random=3',
+    'https://picsum.photos/1200/400?random=3',
+    '/design',
+    1,
+    1
+),
+(
+    103,
+    NOW() - INTERVAL '20 days',
+    NOW() - INTERVAL '10 days',
+    3,
+    'en-US',
+    'Product Design',
+    'design',
+    'Product design concepts and practices',
+    'https://picsum.photos/400/300?random=3',
+    'https://picsum.photos/1200/400?random=3',
+    '/en/design',
+    1,
+    1
+),
+(
+    4,
+    NOW() - INTERVAL '15 days',
+    NOW() - INTERVAL '8 days',
+    4,
+    'zh-CN',
+    '创业思考',
+    'startup',
+    '创业路上的思考与总结',
+    'https://picsum.photos/400/300?random=4',
+    'https://picsum.photos/1200/400?random=4',
+    '/startup',
+    1,
+    1
+),
+(
+    104,
+    NOW() - INTERVAL '15 days',
+    NOW() - INTERVAL '8 days',
+    4,
+    'en-US',
+    'Startup Insights',
+    'startup',
+    'Reflections and summaries from startup journey',
+    'https://picsum.photos/400/300?random=4',
+    'https://picsum.photos/1200/400?random=4',
+    '/en/startup',
+    1,
+    1
+),
+(
+    11,
+    NOW() - INTERVAL '25 days',
+    NOW() - INTERVAL '10 days',
+    11,
+    'zh-CN',
+    '前端开发',
+    'frontend',
+    '前端开发技术和框架',
+    'https://picsum.photos/400/300?random=11',
+    'https://picsum.photos/1200/400?random=11',
+    '/tech/frontend',
+    1,
+    1
+),
+(
+    111,
+    NOW() - INTERVAL '25 days',
+    NOW() - INTERVAL '10 days',
+    11,
+    'en-US',
+    'Frontend Development',
+    'frontend',
+    'Frontend development technologies and frameworks',
+    'https://picsum.photos/400/300?random=11',
+    'https://picsum.photos/1200/400?random=11',
+    '/en/tech/frontend',
+    1,
+    1
+),
+(
+    12,
+    NOW() - INTERVAL '24 days',
+    NOW() - INTERVAL '9 days',
+    12,
+    'zh-CN',
+    '后端开发',
+    'backend',
+    '后端开发技术和架构',
+    'https://picsum.photos/400/300?random=12',
+    'https://picsum.photos/1200/400?random=12',
+    '/tech/backend',
+    1,
+    1
+),
+(
+    112,
+    NOW() - INTERVAL '24 days',
+    NOW() - INTERVAL '9 days',
+    12,
+    'en-US',
+    'Backend Development',
+    'backend',
+    'Backend development technologies and architecture',
+    'https://picsum.photos/400/300?random=12',
+    'https://picsum.photos/1200/400?random=12',
+    '/en/tech/backend',
+    1,
+    1
+),
+(
+    13,
+    NOW() - INTERVAL '23 days',
+    NOW() - INTERVAL '8 days',
+    13,
+    'zh-CN',
+    '移动开发',
+    'mobile',
+    '移动端开发技术',
+    'https://picsum.photos/400/300?random=13',
+    'https://picsum.photos/1200/400?random=13',
+    '/tech/mobile',
+    1,
+    1
+),
+(
+    113,
+    NOW() - INTERVAL '23 days',
+    NOW() - INTERVAL '8 days',
+    13,
+    'en-US',
+    'Mobile Development',
+    'mobile',
+    'Mobile development technologies',
+    'https://picsum.photos/400/300?random=13',
+    'https://picsum.photos/1200/400?random=13',
+    '/en/tech/mobile',
+    1,
+    1
+),
+(
+    21,
+    NOW() - INTERVAL '20 days',
+    NOW() - INTERVAL '7 days',
+    21,
+    'zh-CN',
+    '旅行游记',
+    'travel',
+    '旅行见闻和游记',
+    'https://picsum.photos/400/300?random=21',
+    'https://picsum.photos/1200/400?random=21',
+    '/life/travel',
+    1,
+    1
+),
+(
+    121,
+    NOW() - INTERVAL '20 days',
+    NOW() - INTERVAL '7 days',
+    21,
+    'en-US',
+    'Travel',
+    'travel',
+    'Travel experiences and journals',
+    'https://picsum.photos/400/300?random=21',
+    'https://picsum.photos/1200/400?random=21',
+    '/en/life/travel',
+    1,
+    1
+),
+(
+    22,
+    NOW() - INTERVAL '19 days',
+    NOW() - INTERVAL '6 days',
+    22,
+    'zh-CN',
+    '美食探店',
+    'food',
+    '探索城市美食',
+    'https://picsum.photos/400/300?random=22',
+    'https://picsum.photos/1200/400?random=22',
+    '/life/food',
+    1,
+    1
+),
+(
+    122,
+    NOW() - INTERVAL '19 days',
+    NOW() - INTERVAL '6 days',
+    22,
+    'en-US',
+    'Food Exploration',
+    'food',
+    'Explore city delicacies',
+    'https://picsum.photos/400/300?random=22',
+    'https://picsum.photos/1200/400?random=22',
+    '/en/life/food',
+    1,
+    1
+),
+(
+    31,
+    NOW() - INTERVAL '18 days',
+    NOW() - INTERVAL '5 days',
+    31,
+    'zh-CN',
+    'UI 设计',
+    'ui-design',
+    '用户界面设计',
+    'https://picsum.photos/400/300?random=31',
+    'https://picsum.photos/1200/400?random=31',
+    '/design/ui-design',
+    1,
+    1
+),
+(
+    131,
+    NOW() - INTERVAL '18 days',
+    NOW() - INTERVAL '5 days',
+    31,
+    'en-US',
+    'UI Design',
+    'ui-design',
+    'User Interface Design',
+    'https://picsum.photos/400/300?random=31',
+    'https://picsum.photos/1200/400?random=31',
+    '/en/design/ui-design',
+    1,
+    1
+),
+(
+    32,
+    NOW() - INTERVAL '17 days',
+    NOW() - INTERVAL '4 days',
+    32,
+    'zh-CN',
+    'UX 设计',
+    'ux-design',
+    '用户体验设计',
+    'https://picsum.photos/400/300?random=32',
+    'https://picsum.photos/1200/400?random=32',
+    '/design/ux-design',
+    1,
+    1
+),
+(
+    132,
+    NOW() - INTERVAL '17 days',
+    NOW() - INTERVAL '4 days',
+    32,
+    'en-US',
+    'UX Design',
+    'ux-design',
+    'User Experience Design',
+    'https://picsum.photos/400/300?random=32',
+    'https://picsum.photos/1200/400?random=32',
+    '/en/design/ux-design',
+    1,
+    1
+),
+(
+    41,
+    NOW() - INTERVAL '14 days',
+    NOW() - INTERVAL '3 days',
+    41,
+    'zh-CN',
+    '团队管理',
+    'team-management',
+    '团队建设和管理经验',
+    'https://picsum.photos/400/300?random=41',
+    'https://picsum.photos/1200/400?random=41',
+    '/startup/team-management',
+    1,
+    1
+),
+(
+    141,
+    NOW() - INTERVAL '14 days',
+    NOW() - INTERVAL '3 days',
+    41,
+    'en-US',
+    'Team Management',
+    'team-management',
+    'Team building and management experience',
+    'https://picsum.photos/400/300?random=41',
+    'https://picsum.photos/1200/400?random=41',
+    '/en/startup/team-management',
+    1,
+    1
+),
+(
+    42,
+    NOW() - INTERVAL '13 days',
+    NOW() - INTERVAL '2 days',
+    42,
+    'zh-CN',
+    '产品思考',
+    'product-thinking',
+    '产品规划和思考',
+    'https://picsum.photos/400/300?random=42',
+    'https://picsum.photos/1200/400?random=42',
+    '/startup/product-thinking',
+    1,
+    1
+),
+(
+    142,
+    NOW() - INTERVAL '13 days',
+    NOW() - INTERVAL '2 days',
+    42,
+    'en-US',
+    'Product Thinking',
+    'product-thinking',
+    'Product planning and thinking',
+    'https://picsum.photos/400/300?random=42',
+    'https://picsum.photos/1200/400?random=42',
+    '/en/startup/product-thinking',
+    1,
+    1
+);
 SELECT setval('category_translations_id_seq', (SELECT MAX(id) FROM category_translations));
 
 -- ----------------------------
@@ -1432,450 +2343,448 @@ SELECT setval('tags_id_seq', (SELECT MAX(id) FROM tags));
 INSERT INTO public.tag_translations (
     created_at, updated_at, tag_id, language_code,
     name, slug, description, cover_image,
-    template, full_path, canonical_url,
-    meta_keywords, meta_description, seo_title
+    full_path
 ) VALUES
--- ========== 标签1：Go语言 - 中文 ==========
 (
-    NOW() - INTERVAL '60 days', NOW(), 1, 'zh-CN',
-    'Go语言', 'go',
+    NOW() - INTERVAL '60 days',
+    NOW(),
+    1,
+    'zh-CN',
+    'Go语言',
+    'go',
     'Go（Golang）是Google开发的开源编程语言，简洁、高效、高并发，风行内容中台核心开发语言。',
     '/images/tags/go-zh.jpg',
-    'tag-default', '/tags/go', 'https://gowind.com/tags/go',
-    'Go语言,Golang,GoWind,高并发,编程语言',
-    'Go（Golang）是Google开发的开源编程语言，简洁、高效、高并发，风行内容中台核心开发语言。',
-    'Go语言 | GoWind 标签'
+    '/tags/go'
 ),
--- ========== 标签1：Go语言 - 英文 ==========
 (
-    NOW() - INTERVAL '60 days', NOW(), 1, 'en-US',
-    'Go Language', 'go',
+    NOW() - INTERVAL '60 days',
+    NOW(),
+    1,
+    'en-US',
+    'Go Language',
+    'go',
     'Go (Golang) is an open-source programming language developed by Google, concise, efficient, and high-concurrency, the core development language of GoWind Content Hub.',
     '/images/tags/go-en.jpg',
-    'tag-default', '/en/tags/go', 'https://gowind.com/en/tags/go',
-    'Go Language,Golang,GoWind,High Concurrency,Programming Language',
-    'Go (Golang) is an open-source programming language developed by Google, concise, efficient, and high-concurrency, the core development language of GoWind Content Hub.',
-    'Go Language | GoWind Tags'
+    '/en/tags/go'
 ),
--- ========== 标签2：Content Hub - 中文 ==========
 (
-    NOW() - INTERVAL '60 days', NOW(), 2, 'zh-CN',
-    'Content Hub', 'cms',
+    NOW() - INTERVAL '60 days',
+    NOW(),
+    2,
+    'zh-CN',
+    'Content Hub',
+    'cms',
     '内容管理系统（Content Hub）是用于创建和管理数字内容的软件应用，风行内容中台是轻量级高性能Content Hub系统。',
     '/images/tags/cms-zh.jpg',
-    'tag-default', '/tags/cms', 'https://gowind.com/tags/cms',
-    'Content Hub,内容管理系统,GoWind,轻量级,高性能',
-    '内容管理系统（Content Hub）是用于创建和管理数字内容的软件应用，风行内容中台是轻量级高性能Content Hub系统。',
-    'Content Hub | GoWind 标签'
+    '/tags/cms'
 ),
--- ========== 标签2：Content Hub - 英文 ==========
 (
-    NOW() - INTERVAL '60 days', NOW(), 2, 'en-US',
-    'Content Hub', 'cms',
+    NOW() - INTERVAL '60 days',
+    NOW(),
+    2,
+    'en-US',
+    'Content Hub',
+    'cms',
     'Content Management System (Content Hub) is a software application for creating and managing digital content, GoWind Content Hub is a lightweight and high-performance Content Hub system.',
     '/images/tags/cms-en.jpg',
-    'tag-default', '/en/tags/cms', 'https://gowind.com/en/tags/cms',
-    'Content Hub,Content Management System,GoWind,Lightweight,High Performance',
-    'Content Management System (Content Hub) is a software application for creating and managing digital content, GoWind Content Hub is a lightweight and high-performance Content Hub system.',
-    'Content Hub | GoWind Tags'
+    '/en/tags/cms'
 ),
--- ========== 标签3：快速上手 - 中文 ==========
 (
-    NOW() - INTERVAL '55 days', NOW(), 3, 'zh-CN',
-    '快速上手', 'quick-start',
+    NOW() - INTERVAL '55 days',
+    NOW(),
+    3,
+    'zh-CN',
+    '快速上手',
+    'quick-start',
     '风行内容中台 快速上手指南，帮助用户在 5 分钟内完成环境搭建、代码克隆、配置启动和初始登录。',
     '/images/tags/quick-start-zh.jpg',
-    'tag-default', '/tags/quick-start', 'https://gowind.com/tags/quick-start',
-    '快速上手,GoWind,风行内容中台,安装部署,入门指南',
-    '风行内容中台 快速上手指南，帮助用户在 5 分钟内完成环境搭建、代码克隆、配置启动和初始登录。',
-    '快速上手 | GoWind 标签'
+    '/tags/quick-start'
 ),
--- ========== 标签3：快速上手 - 英文 ==========
 (
-    NOW() - INTERVAL '55 days', NOW(), 3, 'en-US',
-    'Quick Start', 'quick-start',
+    NOW() - INTERVAL '55 days',
+    NOW(),
+    3,
+    'en-US',
+    'Quick Start',
+    'quick-start',
     'Quick start guide for GoWind Content Hub, helping users complete environment setup, code cloning, configuration startup and initial login within 5 minutes.',
     '/images/tags/quick-start-en.jpg',
-    'tag-default', '/en/tags/quick-start', 'https://gowind.com/en/tags/quick-start',
-    'Quick Start,GoWind,Content Hub,Installation,Setup Guide',
-    'Quick start guide for GoWind Content Hub, helping users complete environment setup, code cloning, configuration startup and initial login within 5 minutes.',
-    'Quick Start | GoWind Tags'
+    '/en/tags/quick-start'
 ),
--- ========== 标签4：版本更新 - 中文 ==========
 (
-    NOW() - INTERVAL '50 days', NOW(), 4, 'zh-CN',
-    '版本更新', 'version-update',
+    NOW() - INTERVAL '50 days',
+    NOW(),
+    4,
+    'zh-CN',
+    '版本更新',
+    'version-update',
     '风行内容中台 版本更新记录与变更日志，包含功能新增、问题修复及兼容性改进。',
     '/images/tags/version-update-zh.jpg',
-    'tag-default', '/tags/version-update', 'https://gowind.com/tags/version-update',
-    '版本更新,GoWind,风行内容中台,变更日志,发布说明',
-    '风行内容中台 版本更新记录与变更日志，包含功能新增、问题修复及兼容性改进。',
-    '版本更新 | GoWind 标签'
+    '/tags/version-update'
 ),
--- ========== 标签4：版本更新 - 英文 ==========
 (
-    NOW() - INTERVAL '50 days', NOW(), 4, 'en-US',
-    'Version Update', 'version-update',
+    NOW() - INTERVAL '50 days',
+    NOW(),
+    4,
+    'en-US',
+    'Version Update',
+    'version-update',
     'Version update records and changelogs for GoWind Content Hub, including feature additions, bug fixes, and compatibility improvements.',
     '/images/tags/version-update-en.jpg',
-    'tag-default', '/en/tags/version-update', 'https://gowind.com/en/tags/version-update',
-    'Version Update,GoWind,Content Hub,Changelog,Release Notes',
-    'Version update records and changelogs for GoWind Content Hub, including feature additions, bug fixes, and compatibility improvements.',
-    'Version Update | GoWind Tags'
+    '/en/tags/version-update'
 ),
--- ========== 标签5：新功能 - 中文 ==========
 (
-    NOW() - INTERVAL '50 days', NOW(), 5, 'zh-CN',
-    '新功能', 'new-features',
+    NOW() - INTERVAL '50 days',
+    NOW(),
+    5,
+    'zh-CN',
+    '新功能',
+    'new-features',
     '风行内容中台 新增功能模块，包含多租户、AI内容生成、性能优化等核心新特性。',
     '/images/tags/new-features-zh.jpg',
-    'tag-default', '/tags/new-features', 'https://gowind.com/tags/new-features',
-    '新功能,GoWind,Content Hub,多租户,AI内容生成',
-    '风行内容中台 新增功能模块，包含多租户、AI内容生成、性能优化等核心新特性。',
-    '新功能 | GoWind 标签'
+    '/tags/new-features'
 ),
--- ========== 标签5：新功能 - 英文 ==========
 (
-    NOW() - INTERVAL '50 days', NOW(), 5, 'en-US',
-    'New Features', 'new-features',
+    NOW() - INTERVAL '50 days',
+    NOW(),
+    5,
+    'en-US',
+    'New Features',
+    'new-features',
     'New feature modules of GoWind Content Hub, including multi-tenancy, AI content generation, performance optimization and other core new features.',
     '/images/tags/new-features-en.jpg',
-    'tag-default', '/en/tags/new-features', 'https://gowind.com/en/tags/new-features',
-    'New Features,GoWind,Content Hub,Multi-tenancy,AI Content Generation',
-    'New feature modules of GoWind Content Hub, including multi-tenancy, AI content generation, performance optimization and other core new features.',
-    'New Features | GoWind Tags'
+    '/en/tags/new-features'
 ),
--- ========== 标签6：升级指南 - 中文 ==========
 (
-    NOW() - INTERVAL '45 days', NOW(), 6, 'zh-CN',
-    '升级指南', 'upgrade-guide',
+    NOW() - INTERVAL '45 days',
+    NOW(),
+    6,
+    'zh-CN',
+    '升级指南',
+    'upgrade-guide',
     '风行内容中台 逐步升级指南，涵盖版本兼容性检查、数据库迁移、配置更新及回滚流程。',
     '/images/tags/upgrade-guide-zh.jpg',
-    'tag-default', '/tags/upgrade-guide', 'https://gowind.com/tags/upgrade-guide',
-    '升级指南,GoWind,风行内容中台,迁移,版本兼容',
-    '风行内容中台 逐步升级指南，涵盖版本兼容性检查、数据库迁移、配置更新及回滚流程。',
-    '升级指南 | GoWind 标签'
+    '/tags/upgrade-guide'
 ),
--- ========== 标签6：升级指南 - 英文 ==========
 (
-    NOW() - INTERVAL '45 days', NOW(), 6, 'en-US',
-    'Upgrade Guide', 'upgrade-guide',
+    NOW() - INTERVAL '45 days',
+    NOW(),
+    6,
+    'en-US',
+    'Upgrade Guide',
+    'upgrade-guide',
     'Step-by-step upgrade guide for GoWind Content Hub, covering version compatibility checks, database migration, configuration updates and rollback procedures.',
     '/images/tags/upgrade-guide-en.jpg',
-    'tag-default', '/en/tags/upgrade-guide', 'https://gowind.com/en/tags/upgrade-guide',
-    'Upgrade Guide,GoWind,Content Hub,Migration,Version Compatibility',
-    'Step-by-step upgrade guide for GoWind Content Hub, covering version compatibility checks, database migration, configuration updates and rollback procedures.',
-    'Upgrade Guide | GoWind Tags'
+    '/en/tags/upgrade-guide'
 ),
--- ========== 标签7：Linux - 中文 ==========
 (
-    NOW() - INTERVAL '45 days', NOW(), 7, 'zh-CN',
-    'Linux', 'linux',
+    NOW() - INTERVAL '45 days',
+    NOW(),
+    7,
+    'zh-CN',
+    'Linux',
+    'linux',
     '风行内容中台 在 Linux 系统下的部署与运维内容，包含 Ubuntu/CentOS 系统配置、服务管理及性能调优。',
     '/images/tags/linux-zh.jpg',
-    'tag-default', '/tags/linux', 'https://gowind.com/tags/linux',
-    'Linux,GoWind,风行内容中台,部署,Ubuntu,CentOS',
-    '风行内容中台 在 Linux 系统下的部署与运维内容，包含 Ubuntu/CentOS 系统配置、服务管理及性能调优。',
-    'Linux | GoWind 标签'
+    '/tags/linux'
 ),
--- ========== 标签7：Linux - 英文 ==========
 (
-    NOW() - INTERVAL '45 days', NOW(), 7, 'en-US',
-    'Linux', 'linux',
+    NOW() - INTERVAL '45 days',
+    NOW(),
+    7,
+    'en-US',
+    'Linux',
+    'linux',
     'Linux-related content for GoWind Content Hub deployment and operation, including Ubuntu/CentOS system configuration, service management and performance tuning.',
     '/images/tags/linux-en.jpg',
-    'tag-default', '/en/tags/linux', 'https://gowind.com/en/tags/linux',
-    'Linux,GoWind,Content Hub,Deployment,Ubuntu,CentOS',
-    'Linux-related content for GoWind Content Hub deployment and operation, including Ubuntu/CentOS system configuration, service management and performance tuning.',
-    'Linux | GoWind Tags'
+    '/en/tags/linux'
 ),
--- ========== 标签8：部署教程 - 中文 ==========
 (
-    NOW() - INTERVAL '40 days', NOW(), 8, 'zh-CN',
-    '部署教程', 'deployment-tutorial',
+    NOW() - INTERVAL '40 days',
+    NOW(),
+    8,
+    'zh-CN',
+    '部署教程',
+    'deployment-tutorial',
     '风行内容中台 全平台部署教程，涵盖云服务器、Docker 容器及 Kubernetes 集群等多种部署方式。',
     '/images/tags/deployment-tutorial-zh.jpg',
-    'tag-default', '/tags/deployment-tutorial', 'https://gowind.com/tags/deployment-tutorial',
-    '部署教程,GoWind,风行内容中台,Docker,Kubernetes,云服务器',
-    '风行内容中台 全平台部署教程，涵盖云服务器、Docker 容器及 Kubernetes 集群等多种部署方式。',
-    '部署教程 | GoWind 标签'
+    '/tags/deployment-tutorial'
 ),
--- ========== 标签8：部署教程 - 英文 ==========
 (
-    NOW() - INTERVAL '40 days', NOW(), 8, 'en-US',
-    'Deployment Tutorial', 'deployment-tutorial',
+    NOW() - INTERVAL '40 days',
+    NOW(),
+    8,
+    'en-US',
+    'Deployment Tutorial',
+    'deployment-tutorial',
     'Comprehensive deployment tutorials for GoWind Content Hub on various platforms, including cloud servers, Docker containers and Kubernetes clusters.',
     '/images/tags/deployment-tutorial-en.jpg',
-    'tag-default', '/en/tags/deployment-tutorial', 'https://gowind.com/en/tags/deployment-tutorial',
-    'Deployment Tutorial,GoWind,Content Hub,Docker,Kubernetes,Cloud',
-    'Comprehensive deployment tutorials for GoWind Content Hub on various platforms, including cloud servers, Docker containers and Kubernetes clusters.',
-    'Deployment Tutorial | GoWind Tags'
+    '/en/tags/deployment-tutorial'
 ),
--- ========== 标签9：行业分析 - 中文 ==========
 (
-    NOW() - INTERVAL '40 days', NOW(), 9, 'zh-CN',
-    '行业分析', 'industry-analysis',
+    NOW() - INTERVAL '40 days',
+    NOW(),
+    9,
+    'zh-CN',
+    '行业分析',
+    'industry-analysis',
     'Content Hub行业发展趋势、市场规模、技术方向分析，基于IDC、艾瑞等权威机构数据。',
     '/images/tags/industry-analysis-zh.jpg',
-    'tag-default', '/tags/industry-analysis', 'https://gowind.com/tags/industry-analysis',
-    '行业分析,Content Hub,2024趋势,市场规模,技术方向',
-    'Content Hub行业发展趋势、市场规模、技术方向分析，基于IDC、艾瑞等权威机构数据。',
-    '行业分析 | GoWind 标签'
+    '/tags/industry-analysis'
 ),
--- ========== 标签9：行业分析 - 英文 ==========
 (
-    NOW() - INTERVAL '40 days', NOW(), 9, 'en-US',
-    'Industry Analysis', 'industry-analysis',
+    NOW() - INTERVAL '40 days',
+    NOW(),
+    9,
+    'en-US',
+    'Industry Analysis',
+    'industry-analysis',
     'Content Hub industry development trends, market size, and technology direction analysis based on authoritative data from IDC, iResearch and other institutions.',
     '/images/tags/industry-analysis-en.jpg',
-    'tag-default', '/en/tags/industry-analysis', 'https://gowind.com/en/tags/industry-analysis',
-    'Industry Analysis,Content Hub,2024 Trends,Market Size,Technology Direction',
-    'Content Hub industry development trends, market size, and technology direction analysis based on authoritative data from IDC, iResearch and other institutions.',
-    'Industry Analysis | GoWind Tags'
+    '/en/tags/industry-analysis'
 ),
--- ========== 标签10：2024趋势 - 中文 ==========
 (
-    NOW() - INTERVAL '35 days', NOW(), 10, 'zh-CN',
-    '2024趋势', '2024-trends',
+    NOW() - INTERVAL '35 days',
+    NOW(),
+    10,
+    'zh-CN',
+    '2024趋势',
+    '2024-trends',
     '2024 年 Content Hub 行业趋势分析，涵盖轻量化架构、私有化部署、AI 赋能及市场增长预测。',
     '/images/tags/2024-trends-zh.jpg',
-    'tag-default', '/tags/2024-trends', 'https://gowind.com/tags/2024-trends',
-    '2024趋势,Content Hub,行业预测,轻量化,AI赋能',
-    '2024 年 Content Hub 行业趋势分析，涵盖轻量化架构、私有化部署、AI 赋能及市场增长预测。',
-    '2024趋势 | GoWind 标签'
+    '/tags/2024-trends'
 ),
--- ========== 标签10：2024趋势 - 英文 ==========
 (
-    NOW() - INTERVAL '35 days', NOW(), 10, 'en-US',
-    '2024 Trends', '2024-trends',
+    NOW() - INTERVAL '35 days',
+    NOW(),
+    10,
+    'en-US',
+    '2024 Trends',
+    '2024-trends',
     'Analysis of Content Hub industry trends in 2024, including lightweight architecture, private deployment, AI empowerment and market growth forecasts.',
     '/images/tags/2024-trends-en.jpg',
-    'tag-default', '/en/tags/2024-trends', 'https://gowind.com/en/tags/2024-trends',
-    '2024 Trends,Content Hub,Industry Forecast,Lightweight,AI',
-    'Analysis of Content Hub industry trends in 2024, including lightweight architecture, private deployment, AI empowerment and market growth forecasts.',
-    '2024 Trends | GoWind Tags'
+    '/en/tags/2024-trends'
 ),
--- ========== 标签11：轻量化 - 中文 ==========
 (
-    NOW() - INTERVAL '35 days', NOW(), 11, 'zh-CN',
-    '轻量化', 'lightweight',
+    NOW() - INTERVAL '35 days',
+    NOW(),
+    11,
+    'zh-CN',
+    '轻量化',
+    'lightweight',
     '风行内容中台 轻量化架构设计理念，聚焦资源消耗最小化、快速启动及高效运行。',
     '/images/tags/lightweight-zh.jpg',
-    'tag-default', '/tags/lightweight', 'https://gowind.com/tags/lightweight',
-    '轻量化,GoWind,风行内容中台,架构设计,资源优化',
-    '风行内容中台 轻量化架构设计理念，聚焦资源消耗最小化、快速启动及高效运行。',
-    '轻量化 | GoWind 标签'
+    '/tags/lightweight'
 ),
--- ========== 标签11：轻量化 - 英文 ==========
 (
-    NOW() - INTERVAL '35 days', NOW(), 11, 'en-US',
-    'Lightweight', 'lightweight',
+    NOW() - INTERVAL '35 days',
+    NOW(),
+    11,
+    'en-US',
+    'Lightweight',
+    'lightweight',
     'Lightweight architecture design philosophy of GoWind Content Hub, focusing on minimal resource consumption, fast startup and efficient operation.',
     '/images/tags/lightweight-en.jpg',
-    'tag-default', '/en/tags/lightweight', 'https://gowind.com/en/tags/lightweight',
-    'Lightweight,GoWind,Content Hub,Architecture,Minimal Resource',
-    'Lightweight architecture design philosophy of GoWind Content Hub, focusing on minimal resource consumption, fast startup and efficient operation.',
-    'Lightweight | GoWind Tags'
+    '/en/tags/lightweight'
 ),
--- ========== 标签12：自定义模板 - 中文 ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 12, 'zh-CN',
-    '自定义模板', 'custom-template',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    12,
+    'zh-CN',
+    '自定义模板',
+    'custom-template',
     '风行内容中台 自定义模板开发指南，涵盖模板语法、数据绑定、组件开发及样式定制。',
     '/images/tags/custom-template-zh.jpg',
-    'tag-default', '/tags/custom-template', 'https://gowind.com/tags/custom-template',
-    '自定义模板,GoWind,Content Hub,模板引擎,前端开发',
-    '风行内容中台 自定义模板开发指南，涵盖模板语法、数据绑定、组件开发及样式定制。',
-    '自定义模板 | GoWind 标签'
+    '/tags/custom-template'
 ),
--- ========== 标签12：自定义模板 - 英文 ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 12, 'en-US',
-    'Custom Template', 'custom-template',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    12,
+    'en-US',
+    'Custom Template',
+    'custom-template',
     'Custom template development guide for GoWind Content Hub, covering template syntax, data binding, component development and style customization.',
     '/images/tags/custom-template-en.jpg',
-    'tag-default', '/en/tags/custom-template', 'https://gowind.com/en/tags/custom-template',
-    'Custom Template,GoWind,Content Hub,Template Engine,Frontend Development',
-    'Custom template development guide for GoWind Content Hub, covering template syntax, data binding, component development and style customization.',
-    'Custom Template | GoWind Tags'
+    '/en/tags/custom-template'
 ),
--- ========== 标签13：开发教程 - 中文 ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 13, 'zh-CN',
-    '开发教程', 'development-tutorial',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    13,
+    'zh-CN',
+    '开发教程',
+    'development-tutorial',
     '风行内容中台 扩展与定制开发教程，包含插件开发、API 集成及主题定制。',
     '/images/tags/development-tutorial-zh.jpg',
-    'tag-default', '/tags/development-tutorial', 'https://gowind.com/tags/development-tutorial',
-    '开发教程,GoWind,Content Hub,插件开发,API集成',
-    '风行内容中台 扩展与定制开发教程，包含插件开发、API 集成及主题定制。',
-    '开发教程 | GoWind 标签'
+    '/tags/development-tutorial'
 ),
--- ========== 标签13：开发教程 - 英文 ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 13, 'en-US',
-    'Development Tutorial', 'development-tutorial',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    13,
+    'en-US',
+    'Development Tutorial',
+    'development-tutorial',
     'Development tutorials for GoWind Content Hub extension and customization, including plugin development, API integration and theme customization.',
     '/images/tags/development-tutorial-en.jpg',
-    'tag-default', '/en/tags/development-tutorial', 'https://gowind.com/en/tags/development-tutorial',
-    'Development Tutorial,GoWind,Content Hub,Plugin Development,API Integration',
-    'Development tutorials for GoWind Content Hub extension and customization, including plugin development, API integration and theme customization.',
-    'Development Tutorial | GoWind Tags'
+    '/en/tags/development-tutorial'
 ),
--- ========== 标签14：企业版 - 中文 ==========
 (
-    NOW() - INTERVAL '25 days', NOW(), 14, 'zh-CN',
-    '企业版', 'enterprise',
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    14,
+    'zh-CN',
+    '企业版',
+    'enterprise',
     '风行内容中台 企业版，包含多租户、高级权限、数据备份、专属客服等付费专属功能。',
     '/images/tags/enterprise-zh.jpg',
-    'tag-default', '/tags/enterprise', 'https://gowind.com/tags/enterprise',
-    '企业版,GoWind,风行内容中台,付费功能,多租户',
-    '风行内容中台 企业版，包含多租户、高级权限、数据备份、专属客服等付费专属功能。',
-    '企业版 | GoWind 标签'
+    '/tags/enterprise'
 ),
--- ========== 标签14：企业版 - 英文 ==========
 (
-    NOW() - INTERVAL '25 days', NOW(), 14, 'en-US',
-    'Enterprise Edition', 'enterprise',
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    14,
+    'en-US',
+    'Enterprise Edition',
+    'enterprise',
     'GoWind Content Hub Enterprise Edition, including paid exclusive features such as multi-tenancy, advanced permissions, data backup, and dedicated customer service.',
     '/images/tags/enterprise-en.jpg',
-    'tag-default', '/en/tags/enterprise', 'https://gowind.com/en/tags/enterprise',
-    'Enterprise Edition,GoWind,Content Hub,Paid Features,Multi-tenancy',
-    'GoWind Content Hub Enterprise Edition, including paid exclusive features such as multi-tenancy, advanced permissions, data backup, and dedicated customer service.',
-    'Enterprise Edition | GoWind Tags'
+    '/en/tags/enterprise'
 ),
--- ========== 标签15：付费功能 - 中文 ==========
 (
-    NOW() - INTERVAL '25 days', NOW(), 15, 'zh-CN',
-    '付费功能', 'paid-features',
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    15,
+    'zh-CN',
+    '付费功能',
+    'paid-features',
     '风行内容中台 企业版专属付费功能，包含高级分析、自定义域名、优先支持及 SLA 保障。',
     '/images/tags/paid-features-zh.jpg',
-    'tag-default', '/tags/paid-features', 'https://gowind.com/tags/paid-features',
-    '付费功能,GoWind,风行内容中台,企业版,商业化',
-    '风行内容中台 企业版专属付费功能，包含高级分析、自定义域名、优先支持及 SLA 保障。',
-    '付费功能 | GoWind 标签'
+    '/tags/paid-features'
 ),
--- ========== 标签15：付费功能 - 英文 ==========
 (
-    NOW() - INTERVAL '25 days', NOW(), 15, 'en-US',
-    'Paid Features', 'paid-features',
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    15,
+    'en-US',
+    'Paid Features',
+    'paid-features',
     'Exclusive paid features of GoWind Content Hub Enterprise Edition, including advanced analytics, custom domains, priority support and SLA guarantees.',
     '/images/tags/paid-features-en.jpg',
-    'tag-default', '/en/tags/paid-features', 'https://gowind.com/en/tags/paid-features',
-    'Paid Features,GoWind,Content Hub,Enterprise,Monetization',
-    'Exclusive paid features of GoWind Content Hub Enterprise Edition, including advanced analytics, custom domains, priority support and SLA guarantees.',
-    'Paid Features | GoWind Tags'
+    '/en/tags/paid-features'
 ),
--- ========== 标签16：FAQ - 中文 ==========
 (
-    NOW() - INTERVAL '20 days', NOW(), 16, 'zh-CN',
-    'FAQ', 'faq',
+    NOW() - INTERVAL '20 days',
+    NOW(),
+    16,
+    'zh-CN',
+    'FAQ',
+    'faq',
     '风行内容中台 常见问题解答，涵盖安装部署、配置使用、性能优化、升级迁移等方向。',
     '/images/tags/faq-zh.jpg',
-    'tag-default', '/tags/faq', 'https://gowind.com/tags/faq',
-    'FAQ,常见问题,GoWind,风行内容中台,问题解答',
-    '风行内容中台 常见问题解答，涵盖安装部署、配置使用、性能优化、升级迁移等方向。',
-    'FAQ | GoWind 标签'
+    '/tags/faq'
 ),
--- ========== 标签16：FAQ - 英文 ==========
 (
-    NOW() - INTERVAL '20 days', NOW(), 16, 'en-US',
-    'FAQ', 'faq',
+    NOW() - INTERVAL '20 days',
+    NOW(),
+    16,
+    'en-US',
+    'FAQ',
+    'faq',
     'Frequently Asked Questions about GoWind Content Hub, covering installation and deployment, configuration usage, performance optimization, upgrade and migration.',
     '/images/tags/faq-en.jpg',
-    'tag-default', '/en/tags/faq', 'https://gowind.com/en/tags/faq',
-    'FAQ,Frequently Asked Questions,GoWind,Content Hub,Problem Solving',
-    'Frequently Asked Questions about GoWind Content Hub, covering installation and deployment, configuration usage, performance optimization, upgrade and migration.',
-    'FAQ | GoWind Tags'
+    '/en/tags/faq'
 ),
--- ========== 标签17：问题解答 - 中文 ==========
 (
-    NOW() - INTERVAL '20 days', NOW(), 17, 'zh-CN',
-    '问题解答', 'problem-solving',
+    NOW() - INTERVAL '20 days',
+    NOW(),
+    17,
+    'zh-CN',
+    '问题解答',
+    'problem-solving',
     '风行内容中台 使用过程中常见问题的解决方案，提供分步排查指南及配置示例。',
     '/images/tags/problem-solving-zh.jpg',
-    'tag-default', '/tags/problem-solving', 'https://gowind.com/tags/problem-solving',
-    '问题解答,GoWind,风行内容中台,故障排查,配置',
-    '风行内容中台 使用过程中常见问题的解决方案，提供分步排查指南及配置示例。',
-    '问题解答 | GoWind 标签'
+    '/tags/problem-solving'
 ),
--- ========== 标签17：问题解答 - 英文 ==========
 (
-    NOW() - INTERVAL '20 days', NOW(), 17, 'en-US',
-    'Problem Solving', 'problem-solving',
+    NOW() - INTERVAL '20 days',
+    NOW(),
+    17,
+    'en-US',
+    'Problem Solving',
+    'problem-solving',
     'Solutions to common problems encountered when using GoWind Content Hub, with step-by-step troubleshooting guides and configuration examples.',
     '/images/tags/problem-solving-en.jpg',
-    'tag-default', '/en/tags/problem-solving', 'https://gowind.com/en/tags/problem-solving',
-    'Problem Solving,GoWind,Content Hub,Troubleshooting,Configuration',
-    'Solutions to common problems encountered when using GoWind Content Hub, with step-by-step troubleshooting guides and configuration examples.',
-    'Problem Solving | GoWind Tags'
+    '/en/tags/problem-solving'
 ),
--- ========== 标签18：故障排除 - 中文 ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 18, 'zh-CN',
-    '故障排除', 'troubleshooting',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    18,
+    'zh-CN',
+    '故障排除',
+    'troubleshooting',
     '风行内容中台 高级故障排除技术，包含日志分析、性能剖析、数据库调试及网络诊断。',
     '/images/tags/troubleshooting-zh.jpg',
-    'tag-default', '/tags/troubleshooting', 'https://gowind.com/tags/troubleshooting',
-    '故障排除,GoWind,风行内容中台,调试,日志分析',
-    '风行内容中台 高级故障排除技术，包含日志分析、性能剖析、数据库调试及网络诊断。',
-    '故障排除 | GoWind 标签'
+    '/tags/troubleshooting'
 ),
--- ========== 标签18：故障排除 - 英文 ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 18, 'en-US',
-    'Troubleshooting', 'troubleshooting',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    18,
+    'en-US',
+    'Troubleshooting',
+    'troubleshooting',
     'Advanced troubleshooting techniques for GoWind Content Hub, including log analysis, performance profiling, database debugging and network diagnostics.',
     '/images/tags/troubleshooting-en.jpg',
-    'tag-default', '/en/tags/troubleshooting', 'https://gowind.com/en/tags/troubleshooting',
-    'Troubleshooting,GoWind,Content Hub,Debugging,Log Analysis',
-    'Advanced troubleshooting techniques for GoWind Content Hub, including log analysis, performance profiling, database debugging and network diagnostics.',
-    'Troubleshooting | GoWind Tags'
+    '/en/tags/troubleshooting'
 ),
--- ========== 标签19：性能优化 - 中文 ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 19, 'zh-CN',
-    '性能优化', 'performance-optimization',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    19,
+    'zh-CN',
+    '性能优化',
+    'performance-optimization',
     '风行内容中台 性能优化相关内容，涵盖数据库优化、缓存策略、代码层面优化，提升QPS和响应速度。',
     '/images/tags/performance-zh.jpg',
-    'tag-default', '/tags/performance-optimization', 'https://gowind.com/tags/performance-optimization',
-    '性能优化,QPS,数据库优化,缓存策略,高并发',
-    '风行内容中台 性能优化相关内容，涵盖数据库优化、缓存策略、代码层面优化，提升QPS和响应速度。',
-    '性能优化 | GoWind 标签'
+    '/tags/performance-optimization'
 ),
--- ========== 标签19：性能优化 - 英文 ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 19, 'en-US',
-    'Performance Optimization', 'performance-optimization',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    19,
+    'en-US',
+    'Performance Optimization',
+    'performance-optimization',
     'Performance optimization content for GoWind Content Hub, covering database optimization, caching strategies, code-level optimization to improve QPS and response speed.',
     '/images/tags/performance-en.jpg',
-    'tag-default', '/en/tags/performance-optimization', 'https://gowind.com/en/tags/performance-optimization',
-    'Performance Optimization,QPS,Database Optimization,Caching Strategy,High Concurrency',
-    'Performance optimization content for GoWind Content Hub, covering database optimization, caching strategies, code-level optimization to improve QPS and response speed.',
-    'Performance Optimization | GoWind Tags'
+    '/en/tags/performance-optimization'
 ),
--- ========== 标签20：高并发 - 中文 ==========
 (
-    NOW() - INTERVAL '10 days', NOW(), 20, 'zh-CN',
-    '高并发', 'high-concurrency',
+    NOW() - INTERVAL '10 days',
+    NOW(),
+    20,
+    'zh-CN',
+    '高并发',
+    'high-concurrency',
     '风行内容中台 高并发处理能力，包含负载均衡、连接池、请求队列及水平扩展策略。',
     '/images/tags/high-concurrency-zh.jpg',
-    'tag-default', '/tags/high-concurrency', 'https://gowind.com/tags/high-concurrency',
-    '高并发,GoWind,风行内容中台,负载均衡,扩展性',
-    '风行内容中台 高并发处理能力，包含负载均衡、连接池、请求队列及水平扩展策略。',
-    '高并发 | GoWind 标签'
+    '/tags/high-concurrency'
 ),
--- ========== 标签20：高并发 - 英文 ==========
 (
-    NOW() - INTERVAL '10 days', NOW(), 20, 'en-US',
-    'High Concurrency', 'high-concurrency',
+    NOW() - INTERVAL '10 days',
+    NOW(),
+    20,
+    'en-US',
+    'High Concurrency',
+    'high-concurrency',
     'High concurrency handling capabilities of GoWind Content Hub, including load balancing, connection pooling, request queuing and horizontal scaling strategies.',
     '/images/tags/high-concurrency-en.jpg',
-    'tag-default', '/en/tags/high-concurrency', 'https://gowind.com/en/tags/high-concurrency',
-    'High Concurrency,GoWind,Content Hub,Load Balancing,Scaling',
-    'High concurrency handling capabilities of GoWind Content Hub, including load balancing, connection pooling, request queuing and horizontal scaling strategies.',
-    'High Concurrency | GoWind Tags'
-)
-;
+    '/en/tags/high-concurrency'
+);
 SELECT setval('tag_translations_id_seq', (SELECT MAX(id) FROM tag_translations));
 
 -- ----------------------------
@@ -1966,14 +2875,15 @@ SELECT setval('posts_id_seq', (SELECT MAX(id) FROM posts));
 -- 插入 post_translations 表
 -- ----------------------------
 INSERT INTO public.post_translations (
-    created_at, updated_at, post_id, language_code, title,
-    slug, summary, content, original_content, thumbnail,
-    template, full_path, word_count, meta_keywords,
-    meta_description, seo_title
+    created_at, updated_at, post_id, language_code,
+    title, slug, summary, content,
+    original_content, thumbnail, full_path, word_count
 ) VALUES
--- ========== 文章1：风行内容中台 快速上手 - 中文 ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 1, 'zh-CN',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    1,
+    'zh-CN',
     '风行内容中台 快速上手：5分钟搭建你的第一个内容中台',
     'gowind-content-hub-quick-start',
     '本文带你5分钟快速搭建风行内容中台，涵盖环境准备、代码克隆、配置启动、初始登录全流程。',
@@ -2010,15 +2920,14 @@ INSERT INTO public.post_translations (
 
 > 首次登录请立即修改密码！',
     'https://picsum.photos/800/450?random=1',
-    'post-default', '/blog/gowind-content-hub-quick-start',
-    2580,
-    'GoWind,风行内容中台,快速上手,安装部署,Go语言,PostgreSQL',
-    '本文带你5分钟快速搭建风行内容中台，涵盖环境准备、代码克隆、配置启动、初始登录全流程。',
-    '风行内容中台 快速上手：5分钟搭建你的第一个内容中台 | GoWind 官方文档'
+    '/blog/gowind-content-hub-quick-start',
+    2580
 ),
--- ========== 文章2：GoWind v2.0 版本发布公告 - 中文 ==========
 (
-    NOW() - INTERVAL '25 days', NOW(), 2, 'zh-CN',
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    'zh-CN',
     '风行内容中台 v2.0 正式发布：新增多租户、性能提升100%',
     'gowind-v2-0-release',
     'GoWind Content Hub v2.0版本发布，核心更新多租户支持、性能优化、UI重构，QPS突破10万。',
@@ -2049,15 +2958,14 @@ GoWind Content Hub v2.0于2024年3月1日发布，是开源以来的重大版本
 - 从v1.9升级：备份数据库后执行go run scripts/upgrade/v2.0.go
 - 全新安装：直接克隆v2.0分支代码部署',
     'https://picsum.photos/800/450?random=2',
-    'post-announcement', '/blog/gowind-v2-0-release',
-    3200,
-    'GoWind,Content Hub,v2.0,版本发布,多租户,性能优化,UI重构',
-    'GoWind Content Hub v2.0版本发布，核心更新多租户支持、性能优化、UI重构，QPS突破10万。',
-    'GoWind Content Hub v2.0 正式发布：新增多租户、性能提升100% | GoWind 官方公告'
+    '/blog/gowind-v2-0-release',
+    3200
 ),
--- ========== 文章3：Linux 环境下部署 GoWind Content Hub - 中文 ==========
 (
-    NOW() - INTERVAL '22 days', NOW(), 3, 'zh-CN',
+    NOW() - INTERVAL '22 days',
+    NOW(),
+    3,
+    'zh-CN',
     'Linux 环境下部署 GoWind Content Hub（Ubuntu/CentOS通用）',
     'deploy-gowind-on-linux',
     '详解Linux环境（Ubuntu/CentOS）下GoWind Content Hub的部署步骤，含依赖安装、端口配置、开机自启。',
@@ -2102,15 +3010,14 @@ yum install -y golang postgresql git
 ## 开机自启
 创建systemd服务文件：/etc/systemd/system/gowind.service',
     'https://picsum.photos/800/450?random=3',
-    'post-tech', '/blog/deploy-gowind-on-linux',
-    2800,
-    'GoWind,Content Hub,Linux部署,Ubuntu,CentOS,Go语言',
-    '详解Linux环境（Ubuntu/CentOS）下GoWind Content Hub的部署步骤，含依赖安装、端口配置、开机自启。',
-    'Linux 环境下部署 GoWind Content Hub（Ubuntu/CentOS通用） | GoWind 技术博客'
+    '/blog/deploy-gowind-on-linux',
+    2800
 ),
--- ========== 文章4：2024 Content Hub 行业发展趋势分析 - 中文 ==========
 (
-    NOW() - INTERVAL '20 days', NOW(), 4, 'zh-CN',
+    NOW() - INTERVAL '20 days',
+    NOW(),
+    4,
+    'zh-CN',
     '2024 Content Hub 行业发展趋势：轻量化、私有化、AI赋能',
     '2024-cms-industry-trends',
     '基于IDC 2024行业报告，分析Content Hub行业三大趋势：轻量化、私有化部署、AI智能赋能。',
@@ -2145,15 +3052,14 @@ IDC 2024年全球Content Hub市场研究报告
 ## 国内趋势
 国产化替代加速，Go/Java语言开发的Content Hub占比提升。',
     'https://picsum.photos/800/450?random=4',
-    'post-analysis', '/blog/2024-cms-industry-trends',
-    2600,
-    'Content Hub,2024趋势,行业分析,轻量化,私有化,AI赋能',
-    '基于IDC 2024行业报告，分析Content Hub行业三大趋势：轻量化、私有化部署、AI智能赋能。',
-    '2024 Content Hub 行业发展趋势：轻量化、私有化、AI赋能 | GoWind 行业洞察'
+    '/blog/2024-cms-industry-trends',
+    2600
 ),
--- ========== 文章5：GoWind Content Hub 自定义模板开发 - 中文（草稿） ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 5, 'zh-CN',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    5,
+    'zh-CN',
     'GoWind Content Hub 自定义模板开发教程（草稿）',
     'gowind-custom-template-dev',
     'GoWind Content Hub自定义模板开发教程，涵盖模板语法、数据调用、样式定制，当前开发进度50%。',
@@ -2198,15 +3104,14 @@ IDC 2024年全球Content Hub市场研究报告
 2. 数据调用示例
 3. 自定义组件开发',
     'https://picsum.photos/800/450?random=5',
-    'post-draft', '/blog/gowind-custom-template-dev',
-    1800,
-    'GoWind,Content Hub,自定义模板,开发教程,Go,Vue3',
-    'GoWind Content Hub自定义模板开发教程，涵盖模板语法、数据调用、样式定制，当前开发进度50%。',
-    'GoWind Content Hub 自定义模板开发教程（草稿） | GoWind 开发文档'
+    '/blog/gowind-custom-template-dev',
+    1800
 ),
--- ========== 文章6：GoWind 企业版功能详解 - 中文（加密） ==========
 (
-    NOW() - INTERVAL '12 days', NOW(), 6, 'zh-CN',
+    NOW() - INTERVAL '12 days',
+    NOW(),
+    6,
+    'zh-CN',
     'GoWind Content Hub 企业版功能详解（付费专属）',
     'gowind-enterprise-features',
     'GoWind企业版专属功能：多租户管理、高级权限、数据备份、专属客服，价格9999-19999元/年。',
@@ -2243,15 +3148,14 @@ IDC 2024年全球Content Hub市场研究报告
 ## 试用申请
 联系客服：400-123-4567，可申请15天免费试用。',
     'https://picsum.photos/800/450?random=6',
-    'post-enterprise', '/blog/gowind-enterprise-features',
-    2200,
-    'GoWind,Content Hub,企业版,付费功能,多租户,高级权限',
-    'GoWind企业版专属功能：多租户管理、高级权限、数据备份、专属客服，价格9999-19999元/年。',
-    'GoWind Content Hub 企业版功能详解（付费专属） | GoWind 企业服务'
+    '/blog/gowind-enterprise-features',
+    2200
 ),
--- ========== 文章7：常见问题解答 - 中文（草稿） ==========
 (
-    NOW() - INTERVAL '10 days', NOW(), 7, 'zh-CN',
+    NOW() - INTERVAL '10 days',
+    NOW(),
+    7,
+    'zh-CN',
     'GoWind Content Hub 常见问题解答（FAQ）',
     'gowind-faq',
     'GoWind Content Hub常见问题汇总，涵盖安装、配置、性能、升级等方向，每月更新。',
@@ -2288,15 +3192,14 @@ A3：在后台设置-多语言中启用，上传翻译文件。
 - 性能优化相关问题
 - 升级相关问题',
     'https://picsum.photos/800/450?random=7',
-    'post-faq', '/blog/gowind-faq',
-    1500,
-    'GoWind,Content Hub,FAQ,常见问题,安装,配置,性能',
-    'GoWind Content Hub常见问题汇总，涵盖安装、配置、性能、升级等方向，每月更新。',
-    'GoWind Content Hub 常见问题解答（FAQ） | GoWind 帮助中心'
+    '/blog/gowind-faq',
+    1500
 ),
--- ========== 文章8：GoWind Content Hub 性能优化指南 - 中文 ==========
 (
-    NOW() - INTERVAL '8 days', NOW(), 8, 'zh-CN',
+    NOW() - INTERVAL '8 days',
+    NOW(),
+    8,
+    'zh-CN',
     'GoWind Content Hub 性能优化指南：从5万QPS到10万的实战经验',
     'gowind-cms-performance-optimization',
     '分享GoWind Content Hub性能优化实战经验，涵盖数据库优化、缓存策略、代码层面，QPS提升100%。',
@@ -2333,15 +3236,14 @@ v1.9版本QPS仅5万，响应时间200ms，无法满足高并发需求。
 2. 缓存：Redis缓存分类/文章，动态过期策略
 3. 代码：优化Goroutine、JSON序列化、静态资源压缩',
     'https://picsum.photos/800/450?random=8',
-    'post-tech', '/blog/gowind-cms-performance-optimization',
-    3000,
-    'GoWind,Content Hub,性能优化,QPS,数据库优化,缓存策略,Go语言',
-    '分享GoWind Content Hub性能优化实战经验，涵盖数据库优化、缓存策略、代码层面，QPS提升100%。',
-    'GoWind Content Hub 性能优化指南：从5万QPS到10万的实战经验 | GoWind 技术博客'
+    '/blog/gowind-cms-performance-optimization',
+    3000
 ),
--- ========== 文章1：GoWind Content Hub 快速上手 - 英文 ==========
 (
-    NOW() - INTERVAL '30 days', NOW(), 1, 'en-US',
+    NOW() - INTERVAL '30 days',
+    NOW(),
+    1,
+    'en-US',
     'GoWind Content Hub Quick Start: Build Your First Content Hub Site in 5 Minutes',
     'gowind-cms-quick-start',
     'This guide helps you set up a GoWind Content Hub site in 5 minutes, covering environment preparation, code cloning, configuration startup, and initial login.',
@@ -2378,15 +3280,14 @@ v1.9版本QPS仅5万，响应时间200ms，无法满足高并发需求。
 
 > Please change password immediately after first login!',
     'https://picsum.photos/800/450?random=9',
-    'post-default', '/en/blog/gowind-cms-quick-start',
-    2580,
-    'GoWind,Content Hub,Quick Start,Installation,Go Language,PostgreSQL',
-    'This guide helps you set up a GoWind Content Hub site in 5 minutes, covering environment preparation, code cloning, configuration startup, and initial login.',
-    'GoWind Content Hub Quick Start: Build Your First Content Hub Site in 5 Minutes | GoWind Official Documentation'
+    '/en/blog/gowind-cms-quick-start',
+    2580
 ),
--- ========== 文章2：GoWind v2.0 版本发布公告 - 英文 ==========
 (
-    NOW() - INTERVAL '25 days', NOW(), 2, 'en-US',
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    'en-US',
     'GoWind Content Hub v2.0 Official Release: Multi-tenancy Support, 100% Performance Boost',
     'gowind-v2-0-release',
     'GoWind Content Hub v2.0 release introduces core updates including multi-tenancy support, performance optimization, UI refactoring, with QPS exceeding 100,000.',
@@ -2417,15 +3318,14 @@ GoWind Content Hub v2.0 was released on March 1, 2024, marking the most signific
 - Upgrade from v1.9: Backup database and execute go run scripts/upgrade/v2.0.go
 - Fresh installation: Clone v2.0 branch code directly for deployment',
     'https://picsum.photos/800/450?random=10',
-    'post-announcement', '/en/blog/gowind-v2-0-release',
-    3200,
-    'GoWind,Content Hub,v2.0,Release Notes,Multi-tenancy,Performance Optimization,UI Refactoring',
-    'GoWind Content Hub v2.0 release introduces core updates including multi-tenancy support, performance optimization, UI refactoring, with QPS exceeding 100,000.',
-    'GoWind Content Hub v2.0 Official Release: Multi-tenancy Support, 100% Performance Boost | GoWind Official Announcement'
+    '/en/blog/gowind-v2-0-release',
+    3200
 ),
--- ========== 文章3：Linux 环境下部署 GoWind Content Hub - 英文 ==========
 (
-    NOW() - INTERVAL '22 days', NOW(), 3, 'en-US',
+    NOW() - INTERVAL '22 days',
+    NOW(),
+    3,
+    'en-US',
     'Deploy GoWind Content Hub on Linux (Ubuntu/CentOS Universal Guide)',
     'deploy-gowind-on-linux',
     'Detailed deployment guide for GoWind Content Hub on Linux environments (Ubuntu/CentOS), including dependency installation, port configuration, and auto-start setup.',
@@ -2470,15 +3370,14 @@ yum install -y golang postgresql git
 ## Auto-start on Boot
 Create systemd service file: /etc/systemd/system/gowind.service',
     'https://picsum.photos/800/450?random=11',
-    'post-tech', '/en/blog/deploy-gowind-on-linux',
-    2800,
-    'GoWind,Content Hub,Linux Deployment,Ubuntu,CentOS,Go Language',
-    'Detailed deployment guide for GoWind Content Hub on Linux environments (Ubuntu/CentOS), including dependency installation, port configuration, and auto-start setup.',
-    'Deploy GoWind Content Hub on Linux (Ubuntu/CentOS Universal Guide) | GoWind Technical Blog'
+    '/en/blog/deploy-gowind-on-linux',
+    2800
 ),
--- ========== 文章4：2024 Content Hub 行业发展趋势分析 - 英文 ==========
 (
-    NOW() - INTERVAL '20 days', NOW(), 4, 'en-US',
+    NOW() - INTERVAL '20 days',
+    NOW(),
+    4,
+    'en-US',
     '2024 Content Hub Industry Trend Analysis: Lightweight, Private Deployment, AI Empowerment',
     '2024-cms-industry-trends',
     'Based on IDC 2024 industry report, analysis of three major Content Hub industry trends: lightweight architecture, private deployment, and AI-powered features.',
@@ -2513,15 +3412,14 @@ Global Content Hub market size expected to reach $8.9 billion in 2024, with 18% 
 ## Domestic Trends
 Accelerated domestic substitution, Content Hub developed with Go/Java languages gaining market share.',
     'https://picsum.photos/800/450?random=12',
-    'post-analysis', '/en/blog/2024-cms-industry-trends',
-    2600,
-    'Content Hub,2024 Trends,Industry Analysis,Lightweight,Private Deployment,AI Empowerment',
-    'Based on IDC 2024 industry report, analysis of three major Content Hub industry trends: lightweight architecture, private deployment, and AI-powered features.',
-    '2024 Content Hub Industry Trend Analysis: Lightweight, Private Deployment, AI Empowerment | GoWind Industry Insights'
+    '/en/blog/2024-cms-industry-trends',
+    2600
 ),
--- ========== 文章5：GoWind Content Hub 自定义模板开发 - 英文（草稿） ==========
 (
-    NOW() - INTERVAL '15 days', NOW(), 5, 'en-US',
+    NOW() - INTERVAL '15 days',
+    NOW(),
+    5,
+    'en-US',
     'GoWind Content Hub Custom Template Development Tutorial (Draft)',
     'gowind-custom-template-dev',
     'GoWind Content Hub custom template development tutorial covering template syntax, data binding, style customization, current progress 50%.',
@@ -2566,15 +3464,14 @@ Accelerated domestic substitution, Content Hub developed with Go/Java languages 
 2. Data binding examples
 3. Custom component development',
     'https://picsum.photos/800/450?random=13',
-    'post-draft', '/en/blog/gowind-custom-template-dev',
-    1800,
-    'GoWind,Content Hub,Custom Template,Development Tutorial,Go,Vue3',
-    'GoWind Content Hub custom template development tutorial covering template syntax, data binding, style customization, current progress 50%.',
-    'GoWind Content Hub Custom Template Development Tutorial (Draft) | GoWind Development Documentation'
+    '/en/blog/gowind-custom-template-dev',
+    1800
 ),
--- ========== 文章6：GoWind 企业版功能详解 - 英文（加密） ==========
 (
-    NOW() - INTERVAL '12 days', NOW(), 6, 'en-US',
+    NOW() - INTERVAL '12 days',
+    NOW(),
+    6,
+    'en-US',
     'GoWind Content Hub Enterprise Edition Feature Details (Paid Exclusive)',
     'gowind-enterprise-features',
     'GoWind Enterprise Edition exclusive features: multi-tenancy management, advanced permissions, data backup, dedicated support, pricing ¥9999-19999/year.',
@@ -2611,15 +3508,14 @@ Contact support: 400-123-4567, 15-day free trial available.',
 ## Trial Application
 Contact support: 400-123-4567, 15-day free trial available.',
     'https://picsum.photos/800/450?random=14',
-    'post-enterprise', '/en/blog/gowind-enterprise-features',
-    2200,
-    'GoWind,Content Hub,Enterprise Edition,Paid Features,Multi-tenancy,Advanced Permissions',
-    'GoWind Enterprise Edition exclusive features: multi-tenancy management, advanced permissions, data backup, dedicated support, pricing ¥9999-19999/year.',
-    'GoWind Content Hub Enterprise Edition Feature Details (Paid Exclusive) | GoWind Enterprise Services'
+    '/en/blog/gowind-enterprise-features',
+    2200
 ),
--- ========== 文章7：常见问题解答 - 英文（草稿） ==========
 (
-    NOW() - INTERVAL '10 days', NOW(), 7, 'en-US',
+    NOW() - INTERVAL '10 days',
+    NOW(),
+    7,
+    'en-US',
     'GoWind Content Hub FAQ (Frequently Asked Questions)',
     'gowind-faq',
     'GoWind Content Hub common questions summary covering installation, configuration, performance, upgrade topics, updated monthly.',
@@ -2656,15 +3552,14 @@ A3: Enable in backend Settings > Multi-language, upload translation files.
 - Performance optimization questions
 - Upgrade related questions',
     'https://picsum.photos/800/450?random=15',
-    'post-faq', '/en/blog/gowind-faq',
-    1500,
-    'GoWind,Content Hub,FAQ,Frequently Asked Questions,Installation,Configuration,Performance',
-    'GoWind Content Hub common questions summary covering installation, configuration, performance, upgrade topics, updated monthly.',
-    'GoWind Content Hub FAQ (Frequently Asked Questions) | GoWind Help Center'
+    '/en/blog/gowind-faq',
+    1500
 ),
--- ========== 文章8：GoWind Content Hub 性能优化指南 - 英文 ==========
 (
-    NOW() - INTERVAL '8 days', NOW(), 8, 'en-US',
+    NOW() - INTERVAL '8 days',
+    NOW(),
+    8,
+    'en-US',
     'GoWind Content Hub Performance Optimization Guide: Practical Experience from 50K to 100K QPS',
     'gowind-cms-performance-optimization',
     'Share GoWind Content Hub performance optimization practical experience covering database optimization, caching strategies, code-level improvements, achieving 100% QPS increase.',
@@ -2701,11 +3596,8 @@ v1.9 version had only 50K QPS with 200ms response time, unable to meet high-conc
 2. Caching: Redis cache for categories/articles with dynamic expiration strategy
 3. Code: Goroutine optimization, JSON serialization improvement, static resource compression',
     'https://picsum.photos/800/450?random=16',
-    'post-tech', '/en/blog/gowind-cms-performance-optimization',
-    3000,
-    'GoWind,Content Hub,Performance Optimization,QPS,Database Optimization,Caching Strategy,Go Language',
-    'Share GoWind Content Hub performance optimization practical experience covering database optimization, caching strategies, code-level improvements, achieving 100% QPS increase.',
-    'GoWind Content Hub Performance Optimization Guide: Practical Experience from 50K to 100K QPS | GoWind Technical Blog'
+    '/en/blog/gowind-cms-performance-optimization',
+    3000
 );
 SELECT setval('post_translations_id_seq', (SELECT MAX(id) FROM post_translations));
 
