@@ -98,14 +98,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
         class: 'w-auto',
       },
     },
-    {
-      component: 'Textarea',
-      fieldName: 'cssClass',
-      label: $t('page.navigationItem.cssClass'),
-      componentProps: {
-        rows: 12,
-      },
-    },
   ],
 });
 
@@ -132,7 +124,18 @@ const [Drawer, drawerApi] = useVbenDrawer({
       linkType: values.linkType,
       isOpenNewTab: values.isOpenNewTab,
       isInvalid: values.isInvalid,
+      // 父级导航归属：Create 时由列表上下文注入（当前选中导航），
+      // 不在表单渲染；缺则拒绝创建以避免产生无归属的孤儿导航项。
+      navigationId: data.value?.navigationId,
     };
+
+    if (data.value?.create && !payload.navigationId) {
+      notification.error({
+        message: $t('page.navigationItem.validation.navigationIdRequired'),
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       await (data.value?.create

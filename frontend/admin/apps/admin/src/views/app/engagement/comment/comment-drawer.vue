@@ -53,12 +53,18 @@ const [BaseForm, baseFormApi] = useVbenForm({
       fieldName: 'isSpam',
       label: $t('page.comment.isSpam'),
       help: $t('page.comment.help.isSpam'),
+      componentProps: {
+        class: 'w-auto',
+      },
     },
     {
       component: 'Switch',
       fieldName: 'isSticky',
       label: $t('page.comment.isSticky'),
       help: $t('page.comment.help.isSticky'),
+      componentProps: {
+        class: 'w-auto',
+      },
     },
   ],
 });

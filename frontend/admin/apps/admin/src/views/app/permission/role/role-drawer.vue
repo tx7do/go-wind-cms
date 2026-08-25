@@ -161,11 +161,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
         : apiClient.roleService.Update({
             id: data.value.row.id,
             data: { ...finalValues } as any,
-            updateMask: makeUpdateMask(
-              Object.keys(finalValues).filter((k) =>
-                !['code', 'permissions'].includes(k),
-              ),
-            ),
+            updateMask: makeUpdateMask(Object.keys(finalValues)),
           }));
 
       notification.success({

@@ -38,15 +38,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
       rules: 'required',
     },
-    {
-      component: 'Textarea',
-      fieldName: 'remark',
-      label: $t('ui.table.remark'),
-      componentProps: {
-        placeholder: $t('ui.placeholder.input'),
-        allowClear: true,
-      },
-    },
   ],
 });
 

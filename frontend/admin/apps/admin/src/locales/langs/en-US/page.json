@@ -108,6 +108,9 @@
         "lastLoginAt": "Last Login Time",
         "lastLoginIp": "Last Login IP"
       }
+    },
+    "validation": {
+      "passwordRequired": "Password is required when creating a user"
     }
   },
   "role": {
@@ -145,7 +148,8 @@
     "parentId": "Parent Group",
     "button": {
       "create": "Create Group"
-    }
+    },
+    "description": "Description"
   },
   "dict": {
     "moduleName": "Dictionary",
@@ -316,7 +320,11 @@
       "do_you_want_start_task": "Are you sure you want to start this task?",
       "do_you_want_restart_task": "Are you sure you want to restart this task?",
       "do_you_want_stop_task": "Are you sure you want to stop this task?"
-    }
+    },
+    "taskOptionsUniqueTTL": "Unique TTL (seconds, e.g. 300s)",
+    "taskOptionsRetention": "Retention (seconds, e.g. 300s)",
+    "taskOptionsGroup": "Task Group",
+    "taskOptionsTaskID": "Task ID"
   },
   "internalMessage": {
     "moduleName": "Messages",
@@ -346,6 +354,10 @@
     "parentId": "Parent",
     "button": {
       "create": "Create Category"
+    },
+    "iconUrl": "Icon URL",
+    "placeholder": {
+      "iconUrl": "Enter icon URL"
     }
   },
   "privateMessage": {
@@ -734,6 +746,25 @@
       "itemsJsonInvalid": "Invalid navigation items JSON. Please provide an array format."
     }
   },
+  "navigationItem": {
+    "moduleName": "Navigation Item",
+    "title": "Display Text",
+    "description": "Description",
+    "icon": "Icon",
+    "url": "Link URL",
+    "linkType": "Link Type",
+    "objectId": "Associated Object",
+    "sortOrder": "Sort Order",
+    "isOpenNewTab": "Open in New Tab",
+    "isInvalid": "Is Invalid",
+    "requiredPermission": "Access Permission",
+    "button": {
+      "create": "Create Navigation Item"
+    },
+    "validation": {
+      "navigationIdRequired": "Please select a navigation on the left before creating a navigation item."
+    }
+  },
   "site": {
     "moduleName": "Sites",
     "name": "Site Name",
@@ -750,7 +781,11 @@
     },
     "help": {
       "isDefault": "Setting as default site will unset other sites as default",
-      "defaultLocale": "Format: zh-CN, en-US etc. (BCP 47 language tag)"
+      "defaultLocale": "Format: zh-CN, en-US etc. (BCP 47 language tag)",
+      "alternateDomains": "Alternate domains, one per line (independent from primary domain, for multi-domain pointing to the same site)"
+    },
+    "placeholder": {
+      "alternateDomains": "Enter one domain per line, e.g.\nexample.com\nwww.example.com"
     }
   },
   "section": {
@@ -804,8 +839,10 @@
       "validationRegex": "Validation Regex",
       "relation": {
         "targetEntityType": "Target Entity Type",
-        "allowCrossTenant": "Allow Cross-Tenant Reference"
-      }
+        "allowCrossTenant": "Allow Cross-Tenant Reference",
+        "filterCategoryId": "Filter Category ID"
+      },
+      "options": "Options (JSON)"
     },
     "title": {
       "create": "Create Content Model",

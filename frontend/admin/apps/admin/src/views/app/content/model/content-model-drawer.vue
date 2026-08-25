@@ -29,6 +29,8 @@ interface FieldPanel {
   hasRelationConfig: boolean;
   relationTargetEntityType: string;
   relationAllowCrossTenant: boolean;
+  relationFilterCategoryId: string;
+  optionsJson: string;
 }
 
 interface ModelFormData {
@@ -57,7 +59,36 @@ function makeEmptyField(): FieldPanel {
     hasRelationConfig: false,
     relationTargetEntityType: '',
     relationAllowCrossTenant: false,
+    relationFilterCategoryId: '',
+    optionsJson: '{}',
   };
+}
+
+// options 桥接：FieldDefinition.options 是后端 map<string,string>，
+// 前端面板用 JSON 文本编辑（与 site-setting 的 optionsJson 同模式）。
+// 非对象/解析失败一律回退空对象，避免脏数据落库。
+function serializeOptions(options: Record<string, string> | undefined): string {
+  try {
+    return options ? JSON.stringify(options) : '{}';
+  } catch {
+    return '{}';
+  }
+}
+
+function parseOptionsJson(json: string | undefined): Record<string, string> {
+  try {
+    const parsed = json ? (JSON.parse(json) as unknown) : null;
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      const result: Record<string, string> = {};
+      for (const [k, v] of Object.entries(parsed as Record<string, unknown>)) {
+        if (typeof v === 'string') result[k] = v;
+      }
+      return result;
+    }
+  } catch {
+    // 忽略非法 JSON
+  }
+  return {};
 }
 
 const formData = reactive<ModelFormData>({
@@ -90,10 +121,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
           validationRegex: f.validationRegex,
           sortOrder: f.sortOrder,
         };
+        if (f.type === 'FIELD_TYPE_SELECT') {
+          field.options = parseOptionsJson(f.optionsJson);
+        }
         if (f.type === 'FIELD_TYPE_RELATION' && f.hasRelationConfig) {
           field.relationConfig = {
             targetEntityType: f.relationTargetEntityType,
             allowCrossTenant: f.relationAllowCrossTenant,
+            filterCategoryId: f.relationFilterCategoryId,
           };
         }
         return field;
@@ -152,6 +187,8 @@ const [Drawer, drawerApi] = useVbenDrawer({
             hasRelationConfig: !!f.relationConfig,
             relationTargetEntityType: f.relationConfig?.targetEntityType ?? '',
             relationAllowCrossTenant: f.relationConfig?.allowCrossTenant ?? false,
+            relationFilterCategoryId: f.relationConfig?.filterCategoryId ?? '',
+            optionsJson: serializeOptions(f.options),
           };
         });
       } else {
@@ -268,6 +305,12 @@ function removeField(clientKey: string) {
               <Input v-model:value="field.validationRegex" />
             </div>
 
+            <!-- select 类型：选项 JSON 编辑（与 site-setting optionsJson 同模式） -->
+            <div v-if="field.type === 'FIELD_TYPE_SELECT'" class="flex flex-col gap-2">
+              <label class="text-sm">{{ $t('page.contentModel.fields.options') }}</label>
+              <Textarea v-model:value="field.optionsJson" :rows="4" />
+            </div>
+
             <!-- relation 配置 -->
             <div v-if="field.type === 'FIELD_TYPE_RELATION'" class="flex flex-col gap-2 border-t pt-3 mt-2">
               <label class="text-sm">{{ $t('page.contentModel.fields.relation.targetEntityType') }}</label>
@@ -278,6 +321,10 @@ function removeField(clientKey: string) {
               <div class="flex items-center gap-2 mt-2">
                 <Switch v-model:checked="field.relationAllowCrossTenant" />
                 <span class="text-sm">{{ $t('page.contentModel.fields.relation.allowCrossTenant') }}</span>
+              </div>
+              <div class="flex flex-col gap-2 mt-2">
+                <label class="text-sm">{{ $t('page.contentModel.fields.relation.filterCategoryId') }}</label>
+                <Input v-model:value="field.relationFilterCategoryId" />
               </div>
             </div>
           </div>

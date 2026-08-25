@@ -110,7 +110,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
     },
 
     {
-      component: 'InputNumber',
+      component: 'Input',
       fieldName: 'taskOptions.timeout',
       label: $t('page.task.taskOptionsTimeout'),
       componentProps: {
@@ -143,13 +143,12 @@ const [BaseForm, baseFormApi] = useVbenForm({
     },
 
     {
-      component: 'DatePicker',
+      component: 'Input',
       fieldName: 'taskOptions.processIn',
       label: $t('page.task.taskOptionsProcessIn'),
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
         allowClear: true,
-        showTime: true,
       },
       dependencies: {
         show: (values) => {
@@ -173,6 +172,46 @@ const [BaseForm, baseFormApi] = useVbenForm({
           return ['DELAY'].includes(values.type);
         },
         triggerFields: ['type'],
+      },
+    },
+
+    {
+      component: 'Input',
+      fieldName: 'taskOptions.uniqueTTL',
+      label: $t('page.task.taskOptionsUniqueTTL'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+    },
+
+    {
+      component: 'Input',
+      fieldName: 'taskOptions.retention',
+      label: $t('page.task.taskOptionsRetention'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+    },
+
+    {
+      component: 'Input',
+      fieldName: 'taskOptions.group',
+      label: $t('page.task.taskOptionsGroup'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+    },
+
+    {
+      component: 'Input',
+      fieldName: 'taskOptions.taskID',
+      label: $t('page.task.taskOptionsTaskID'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
       },
     },
 

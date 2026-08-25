@@ -89,7 +89,7 @@ const validateAndFormat = (value: string) => {
     return { parsed, formatted };
   } catch (error) {
     const err = error as Error;
-    parseError.value = `${$t('common.editor.json_parse_error')}: ${err.message || $t('common.editor.unknown_error')}`;
+    parseError.value = `${$t('ui.editor.json_parse_error')}: ${err.message || $t('ui.editor.unknown_error')}`;
     isValidJson.value = false;
     emit('error', err);
     return { parsed: null, formatted: value };
@@ -157,7 +157,7 @@ watch(
       isValidJson.value = true;
     } catch (error) {
       const err = error as Error;
-      parseError.value = `${$t('common.editor.json_serialize_error')}: ${err.message || $t('common.editor.unknown_error')}`;
+      parseError.value = `${$t('ui.editor.json_serialize_error')}: ${err.message || $t('ui.editor.unknown_error')}`;
       isValidJson.value = false;
       emit('error', err);
     }

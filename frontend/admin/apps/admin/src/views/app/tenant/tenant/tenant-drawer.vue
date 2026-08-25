@@ -53,6 +53,12 @@ const [BaseForm, baseFormApi] = useVbenForm({
         allowClear: true,
       },
       rules: 'required',
+      dependencies: {
+        show: (_values) => {
+          return data.value?.create;
+        },
+        triggerFields: ['type'],
+      },
     },
     {
       component: 'Select',
@@ -68,6 +74,12 @@ const [BaseForm, baseFormApi] = useVbenForm({
         showSearch: true,
       },
       rules: 'selectRequired',
+      dependencies: {
+        show: (_values) => {
+          return data.value?.create;
+        },
+        triggerFields: ['type'],
+      },
     },
     {
       component: 'Select',
@@ -83,6 +95,12 @@ const [BaseForm, baseFormApi] = useVbenForm({
         showSearch: true,
       },
       rules: 'selectRequired',
+      dependencies: {
+        show: (_values) => {
+          return data.value?.create;
+        },
+        triggerFields: ['type'],
+      },
     },
     {
       component: 'Select',
@@ -90,6 +108,12 @@ const [BaseForm, baseFormApi] = useVbenForm({
       defaultValue: 'ON',
       label: $t('ui.table.status'),
       rules: 'selectRequired',
+      dependencies: {
+        show: (_values) => {
+          return data.value?.create;
+        },
+        triggerFields: ['type'],
+      },
       componentProps: {
         options: tenantStatusList,
         filterOption: (input: string, option: any) =>
@@ -102,6 +126,24 @@ const [BaseForm, baseFormApi] = useVbenForm({
       component: 'Textarea',
       fieldName: 'remark',
       label: $t('ui.table.remark'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+    },
+    {
+      component: 'Input',
+      fieldName: 'logoUrl',
+      label: $t('page.tenant.logoUrl'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+    },
+    {
+      component: 'Input',
+      fieldName: 'industry',
+      label: $t('page.tenant.industry'),
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
         allowClear: true,
@@ -338,16 +380,14 @@ async function createTenantWithAdminUser(values: any) {
 }
 
 async function updateTenant(values: any) {
-  // 更新租户时仅提交 Tenant 自身字段，显式排除创建态才出现的
-  // 管理员凭证字段（user.* / password / passwordConfirm），
-  // 避免把这些字段混入 updateMask（字段污染 / 凭证泄露）。
+  // 更新租户时仅提交后端 Update 回调实际可写的展示性字段。
+  // code/type/auditStatus/status 后端经专门平台端点修改（见 tenant_repo.go Update 注释），
+  // 普通更新不写——若混入 payload 会被静默丢弃，故排除以避免“已保存”假反馈。
   const tenantPayload = {
     name: values.name,
-    code: values.code,
-    type: values.type,
-    auditStatus: values.auditStatus,
-    status: values.status,
     remark: values.remark,
+    logoUrl: values.logoUrl,
+    industry: values.industry,
   };
 
   try {

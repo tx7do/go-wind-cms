@@ -163,10 +163,15 @@ const [Drawer, drawerApi] = useVbenDrawer({
 });
 
 function openDrawer(create: boolean, row?: any) {
-  console.log('open drawer:', create, row);
+  // 创建导航项必须归属一个父级导航：当前导航列表已选中哪个导航，
+  // 新建项就挂到它下面。编辑模式下 navigationId 以行数据为准。
+  const navigationId = create
+    ? navigationViewStore.currentNavigationId
+    : row?.navigationId;
   drawerApi.setData({
     create,
     row,
+    navigationId,
   });
   drawerApi.open();
 }

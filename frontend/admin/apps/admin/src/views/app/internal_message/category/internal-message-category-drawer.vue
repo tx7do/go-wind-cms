@@ -93,11 +93,11 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
     },
     {
-      component: 'Textarea',
-      fieldName: 'remark',
-      label: $t('ui.table.remark'),
+      component: 'Input',
+      fieldName: 'iconUrl',
+      label: $t('page.internalMessageCategory.iconUrl'),
       componentProps: {
-        placeholder: $t('ui.placeholder.input'),
+        placeholder: $t('page.internalMessageCategory.placeholder.iconUrl'),
         allowClear: true,
       },
     },

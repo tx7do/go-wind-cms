@@ -123,6 +123,15 @@ const [BaseForm, baseFormApi] = useVbenForm({
         options: statusList,
       },
     },
+    {
+      component: 'Textarea',
+      fieldName: 'description',
+      label: $t('page.permissionGroup.description'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+    },
   ],
 });
 

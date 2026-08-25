@@ -18,10 +18,12 @@ import {
   PaginationQuery,
   type identityservicev1_Position as Position,
   userStatusList,
+  useEditUserPassword,
 } from '#/api';
 import { useUserViewStore } from '#/views/app/opm/user/user-view.state';
 
 const userViewStore = useUserViewStore();
+const { mutateAsync: editUserPassword } = useEditUserPassword();
 
 const data = ref();
 
@@ -66,11 +68,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
       componentProps: {
         passwordStrength: true,
         placeholder: $t('ui.placeholder.input'),
-      },
-      rules: z.string().min(1, { message: $t('ui.formRules.required') }),
-      dependencies: {
-        disabled: () => !data.value?.create,
-        triggerFields: ['username'],
       },
     },
     {
@@ -238,6 +235,12 @@ const [BaseForm, baseFormApi] = useVbenForm({
         class: 'flex flex-wrap', // 如果选项过多，可以添加class来自动折叠
         options: userStatusList,
       },
+      dependencies: {
+        show: (_values) => {
+          return data.value?.create;
+        },
+        triggerFields: ['username'],
+      },
     },
 
     {
@@ -271,21 +274,40 @@ const [Drawer, drawerApi] = useVbenDrawer({
     // 获取表单数据
     const values = await baseFormApi.getValues();
 
+    // password 是 CreateUserRequest 的兄弟字段（非 User 字段），
+    // 不可塞进 data(User)——Create 时作兄弟字段传，Update 时走专用 EditUserPassword。
+    const { password, ...rest } = values as any;
 
     try {
-      await (data.value?.create
-        ? apiClient.userService.Create({ data: { ...values } as any })
-        : apiClient.userService.Update({
-            id: data.value.row.id,
-            data: { ...values } as any,
-            // 凭据/身份字段不在通用更新路径中修改：password 走专用改密流程，
-            // username 创建后不可变。排除它们避免误传/误更新。
-            updateMask: makeUpdateMask(
-              Object.keys(values).filter(
-                (k) => k !== 'password' && k !== 'username',
-              ),
-            ),
-          }));
+      if (data.value?.create) {
+        if (!password) {
+          notification.error({
+            message: $t('page.user.validation.passwordRequired'),
+          });
+          setLoading(false);
+          return;
+        }
+        await apiClient.userService.Create({
+          data: { ...rest } as any,
+          password,
+        });
+      } else {
+        // 改密走专用 RPC（与通用 Update 解耦，后端 UserRepo.Update 不写 password）
+        if (password) {
+          await editUserPassword({
+            userId: data.value.row.id,
+            newPassword: password,
+          });
+        }
+        await apiClient.userService.Update({
+          id: data.value.row.id,
+          data: { ...rest } as any,
+          // username 创建后不可变（Immutable），排除避免误传
+          updateMask: makeUpdateMask(
+            Object.keys(rest).filter((k) => k !== 'username'),
+          ),
+        });
+      }
 
       notification.success({
         message: data.value?.create

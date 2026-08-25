@@ -97,17 +97,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
     },
     {
       component: 'InputNumber',
-      fieldName: 'headcount',
-      label: $t('page.position.headcount'),
-      componentProps: {
-        placeholder: $t('ui.placeholder.input'),
-        allowClear: true,
-        defaultValue: 1,
-      },
-      rules: 'required',
-    },
-    {
-      component: 'InputNumber',
       fieldName: 'sortOrder',
       defaultValue: 1,
       label: $t('ui.table.sortOrder'),

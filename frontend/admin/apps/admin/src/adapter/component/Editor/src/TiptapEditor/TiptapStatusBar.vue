@@ -9,9 +9,9 @@ defineProps<{
   <div
     class="pointer-events-none absolute bottom-3 right-4 flex select-none items-center gap-2 text-xs text-[var(--tte-text-muted)]"
   >
-    <span>{{ statusInfo.words }} {{ $t('common.editor.words') }}</span>
+    <span>{{ statusInfo.words }} {{ $t('ui.editor.words') }}</span>
     <span class="text-[var(--tte-statusbar-border)]">|</span>
-    <span>{{ statusInfo.chars }} {{ $t('common.editor.chars') }}</span>
+    <span>{{ statusInfo.chars }} {{ $t('ui.editor.chars') }}</span>
     <span class="text-[var(--tte-statusbar-border)]">|</span>
     <span>Ln {{ statusInfo.cursor }}</span>
     <span

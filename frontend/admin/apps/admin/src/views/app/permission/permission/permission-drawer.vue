@@ -115,6 +115,15 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
     },
     {
+      component: 'Textarea',
+      fieldName: 'description',
+      label: $t('page.permission.description'),
+      componentProps: {
+        placeholder: $t('ui.placeholder.input'),
+        allowClear: true,
+      },
+    },
+    {
       component: 'ApiTree',
       fieldName: 'menuIds',
       componentProps: {

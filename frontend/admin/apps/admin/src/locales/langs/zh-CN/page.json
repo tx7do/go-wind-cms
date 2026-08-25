@@ -108,6 +108,9 @@
         "lastLoginAt": "最后登录时间",
         "lastLoginIp": "最后登录IP"
       }
+    },
+    "validation": {
+      "passwordRequired": "创建用户时必须设置密码"
     }
   },
   "role": {
@@ -145,7 +148,8 @@
     "parentId": "上级分组",
     "button": {
       "create": "创建分组"
-    }
+    },
+    "description": "描述"
   },
   "dict": {
     "moduleName": "字典",
@@ -316,7 +320,11 @@
       "do_you_want_start_task": "您确定要启动该任务吗？",
       "do_you_want_restart_task": "您确定要重启该任务吗？",
       "do_you_want_stop_task": "您确定要停止该任务吗？"
-    }
+    },
+    "taskOptionsUniqueTTL": "唯一性 TTL(秒,如 300s)",
+    "taskOptionsRetention": "保留时长(秒,如 300s)",
+    "taskOptionsGroup": "任务分组",
+    "taskOptionsTaskID": "任务 ID"
   },
   "internalMessage": {
     "moduleName": "消息管理",
@@ -346,6 +354,10 @@
     "parentId": "父节点",
     "button": {
       "create": "创建分类"
+    },
+    "iconUrl": "图标URL",
+    "placeholder": {
+      "iconUrl": "请输入图标URL"
     }
   },
   "privateMessage": {
@@ -768,10 +780,12 @@
     "sortOrder": "排序优先级",
     "isOpenNewTab": "新标签页打开",
     "isInvalid": "是否无效",
-    "cssClass": "自定义CSS类",
     "requiredPermission": "访问权限",
     "button": {
       "create": "创建导航项"
+    },
+    "validation": {
+      "navigationIdRequired": "请先在左侧选择一个导航，再创建导航项"
     }
   },
   "site": {
@@ -790,7 +804,11 @@
     },
     "help": {
       "isDefault": "设置为默认站点后，其他站点自动取消默认状态",
-      "defaultLocale": "格式: zh-CN、en-US 等 (BCP 47 语言标签)"
+      "defaultLocale": "格式: zh-CN、en-US 等 (BCP 47 语言标签)",
+      "alternateDomains": "备用域名，每行一个（与主域名独立，用于多域名指向同一站点）"
+    },
+    "placeholder": {
+      "alternateDomains": "每行输入一个域名，如\nexample.com\nwww.example.com"
     }
   },
   "section": {
@@ -844,8 +862,10 @@
       "validationRegex": "校验正则",
       "relation": {
         "targetEntityType": "引用目标实体类型",
-        "allowCrossTenant": "允许跨租户引用"
-      }
+        "allowCrossTenant": "允许跨租户引用",
+        "filterCategoryId": "过滤分类ID"
+      },
+      "options": "选项(JSON)"
     },
     "title": {
       "create": "创建内容模型",

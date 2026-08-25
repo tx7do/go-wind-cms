@@ -106,32 +106,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
     setLoading(true);
 
     const values = await baseFormApi.getValues();
-    let items: any[] = [];
 
-    if (values.itemsJson && String(values.itemsJson).trim()) {
-      try {
-        const parsed = JSON.parse(values.itemsJson);
-        if (Array.isArray(parsed)) {
-          items = parsed;
-        } else {
-          notification.error({
-            message: $t('page.navigation.validation.itemsJsonInvalid'),
-          });
-          setLoading(false);
-          return;
-        }
-      } catch {
-        notification.error({
-          message: $t('page.navigation.validation.itemsJsonInvalid'),
-        });
-        setLoading(false);
-        return;
-      }
-    }
-
+    // 导航项（items）由独立的 navigation-item-list 子组件管理 CRUD，
+    // 此 drawer 仅处理导航自身字段；payload 不含 items，避免整体替换语义
+    // 误清空子项（itemsJson 往返解析失败会 items=[] 触发 CleanItems）。
     const payload = {
       isActive: values.isActive,
-      items,
       locale: values.locale,
       location: values.location,
       name: values.name,
@@ -139,13 +119,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     try {
       await (data.value?.create
-        ? apiClient.navigationService.Create({ data: { ...payload } })
+        ? apiClient.navigationService.Create({ data: { ...payload } as any })
         : apiClient.navigationService.Update({
             id: data.value?.row?.id,
-            data: { ...payload },
-            updateMask: makeUpdateMask(
-              Object.keys(payload).filter((k) => !['items'].includes(k)),
-            ),
+            data: { ...payload } as any,
+            updateMask: makeUpdateMask(Object.keys(payload)),
           }));
 
       notification.success({
@@ -176,7 +154,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
     if (row) {
       baseFormApi.setValues({
         isActive: row.isActive,
-        itemsJson: JSON.stringify(row.items || [], null, 2),
         locale: row.locale,
         location: row.location,
         name: row.name,
@@ -184,7 +161,6 @@ const [Drawer, drawerApi] = useVbenDrawer({
     } else {
       baseFormApi.setValues({
         isActive: true,
-        itemsJson: '[]',
       });
     }
 

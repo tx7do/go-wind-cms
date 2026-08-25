@@ -89,8 +89,8 @@ export function useToolbarActions(
 
   const clearContent = async () => {
     Modal.confirm({
-      content: $t('common.editor.clear_content_confirm'),
-      title: $t('common.title.confirm'),
+      content: $t('ui.editor.clear_content_confirm'),
+      title: $t('ui.title.confirm'),
       okText: $t('common.confirm'),
       cancelText: $t('common.cancel'),
       onOk: () => {

@@ -236,13 +236,13 @@ onUnmounted(() => {
     <!-- Link Input Dialog -->
     <Modal
       v-model:open="linkModalVisible"
-      :title="$t('common.title.insert_url')"
+      :title="$t('ui.title.insert_url')"
       :mask-closable="false"
       @cancel="handleLinkCancel"
     >
       <Input
         v-model:value="linkUrl"
-        :placeholder="$t('common.placeholder.input_url')"
+        :placeholder="$t('ui.placeholder.input_url')"
         allow-clear
         @keyup.enter="handleLinkOk"
       />
@@ -255,7 +255,7 @@ onUnmounted(() => {
     <!-- Code Block Insert Dialog -->
     <Modal
       v-model:open="codeBlockModalVisible"
-      :title="$t('common.editor.insertCodeBlock')"
+      :title="$t('ui.editor.insertCodeBlock')"
       width="600px"
       :mask-closable="false"
       @cancel="handleCodeBlockCancel"
@@ -263,11 +263,11 @@ onUnmounted(() => {
       <div class="code-block-modal">
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.codeLanguage') }}
+            {{ $t('ui.editor.codeLanguage') }}
           </label>
           <Select
             v-model:value="codeBlockLanguage"
-            :placeholder="$t('common.editor.selectLanguage')"
+            :placeholder="$t('ui.editor.selectLanguage')"
             show-search
             :filter-option="true"
             class="language-select"
@@ -283,11 +283,11 @@ onUnmounted(() => {
         </div>
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.codeContent') }}
+            {{ $t('ui.editor.codeContent') }}
           </label>
           <textarea
             v-model="codeBlockContent"
-            :placeholder="$t('common.editor.codeContentPlaceholder')"
+            :placeholder="$t('ui.editor.codeContentPlaceholder')"
             class="code-textarea"
             rows="10"
           ></textarea>
@@ -302,7 +302,7 @@ onUnmounted(() => {
     <!-- Video Insert Dialog -->
     <Modal
       v-model:open="videoModalVisible"
-      :title="$t('common.editor.insertVideo')"
+      :title="$t('ui.editor.insertVideo')"
       width="500px"
       :mask-closable="false"
       @cancel="handleVideoCancel"
@@ -310,18 +310,18 @@ onUnmounted(() => {
       <div class="video-modal">
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.videoUrl') }}
+            {{ $t('ui.editor.videoUrl') }}
           </label>
           <Input
             v-model:value="videoUrl"
-            :placeholder="$t('common.editor.videoUrlPlaceholder')"
+            :placeholder="$t('ui.editor.videoUrlPlaceholder')"
             allow-clear
             @keyup.enter="handleVideoOk"
           />
         </div>
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.videoWidth') }}
+            {{ $t('ui.editor.videoWidth') }}
           </label>
           <Select v-model:value="videoWidth" class="width-select">
             <Select.Option value="100%">100%</Select.Option>
@@ -341,7 +341,7 @@ onUnmounted(() => {
     <!-- Iframe Insert Dialog -->
     <Modal
       v-model:open="iframeModalVisible"
-      :title="$t('common.editor.insertIframe')"
+      :title="$t('ui.editor.insertIframe')"
       width="500px"
       :mask-closable="false"
       @cancel="handleIframeCancel"
@@ -349,18 +349,18 @@ onUnmounted(() => {
       <div class="iframe-modal">
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.iframeUrl') }}
+            {{ $t('ui.editor.iframeUrl') }}
           </label>
           <Input
             v-model:value="iframeUrl"
-            :placeholder="$t('common.editor.iframeUrlPlaceholder')"
+            :placeholder="$t('ui.editor.iframeUrlPlaceholder')"
             allow-clear
             @keyup.enter="handleIframeOk"
           />
         </div>
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.iframeWidth') }}
+            {{ $t('ui.editor.iframeWidth') }}
           </label>
           <Select v-model:value="iframeWidth" class="width-select">
             <Select.Option value="100%">100%</Select.Option>
@@ -372,7 +372,7 @@ onUnmounted(() => {
         </div>
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.iframeHeight') }}
+            {{ $t('ui.editor.iframeHeight') }}
           </label>
           <Select v-model:value="iframeHeight" class="height-select">
             <Select.Option value="500px">500px</Select.Option>
@@ -382,24 +382,24 @@ onUnmounted(() => {
         </div>
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.iframeTitle') }}
+            {{ $t('ui.editor.iframeTitle') }}
           </label>
           <Input
             v-model:value="iframeTitle"
-            :placeholder="$t('common.editor.iframeTitlePlaceholder')"
+            :placeholder="$t('ui.editor.iframeTitlePlaceholder')"
             allow-clear
           />
         </div>
         <div class="modal-field">
           <label class="field-label">
-            {{ $t('common.editor.allowFullscreen') }}
+            {{ $t('ui.editor.allowFullscreen') }}
           </label>
           <div style="display: flex; gap: 12px; align-items: center">
             <Switch v-model:checked="iframeAllowFullscreen" />
             <span>{{
               iframeAllowFullscreen
-                ? $t('common.editor.allowFullscreenEnabled')
-                : $t('common.editor.allowFullscreenDisabled')
+                ? $t('ui.editor.allowFullscreenEnabled')
+                : $t('ui.editor.allowFullscreenDisabled')
             }}</span>
           </div>
         </div>

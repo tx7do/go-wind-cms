@@ -131,6 +131,17 @@ const [BaseForm, baseFormApi] = useVbenForm({
         allowClear: true,
       },
     },
+    {
+      component: 'Textarea',
+      fieldName: 'alternateDomainsText',
+      label: $t('page.site.alternateDomains'),
+      help: $t('page.site.help.alternateDomains'),
+      componentProps: {
+        rows: 3,
+        placeholder: $t('page.site.placeholder.alternateDomains'),
+        allowClear: true,
+      },
+    },
   ],
 });
 
@@ -149,6 +160,15 @@ const [Drawer, drawerApi] = useVbenDrawer({
     const values = await baseFormApi.getValues();
     const isCreate = data.value?.create;
 
+    // 桥接：alternateDomainsText（换行分隔文本）↔ alternateDomains（string[]）
+    const rawText = (values as any).alternateDomainsText ?? '';
+    const alternateDomains = (rawText as string)
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    (values as any).alternateDomains = alternateDomains;
+    delete (values as any).alternateDomainsText;
+
     (async () => {
       try {
         await (isCreate
@@ -156,11 +176,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
           : apiClient.siteService.Update({
               id: data.value.row.id,
               data: { ...values } as any,
-              updateMask: makeUpdateMask(
-                Object.keys(values).filter((k) =>
-                  !['slug', 'domain'].includes(k),
-                ),
-              ),
+              updateMask: makeUpdateMask(Object.keys(values)),
             }));
 
         notification.success({
@@ -184,7 +200,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
   onOpenChange(isOpen) {
     if (isOpen) {
       data.value = drawerApi.getData<Record<string, any>>();
-      baseFormApi.setValues(data.value?.row);
+      const row = data.value?.row;
+      if (row) {
+        // 桥接回填：alternateDomains string[] → 换行分隔文本
+        row.alternateDomainsText = Array.isArray(row.alternateDomains)
+          ? row.alternateDomains.join('\n')
+          : '';
+      }
+      baseFormApi.setValues(row);
 
       setLoading(false);
     }
