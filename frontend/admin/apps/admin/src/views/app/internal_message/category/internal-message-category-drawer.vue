@@ -215,7 +215,7 @@ async function loadParentOptions() {
 </script>
 
 <template>
-  <Drawer :title="getTitle">
+  <Drawer :title="getTitle" class="w-full max-w-[800px]">
     <BaseForm />
   </Drawer>
 </template>

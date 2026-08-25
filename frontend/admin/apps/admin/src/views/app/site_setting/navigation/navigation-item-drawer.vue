@@ -188,7 +188,7 @@ function setLoading(loading: boolean) {
 }
 </script>
 <template>
-  <Drawer :title="getTitle" class="w-[720px]">
+  <Drawer :title="getTitle" class="w-full max-w-[800px]">
     <BaseForm />
   </Drawer>
 </template>
