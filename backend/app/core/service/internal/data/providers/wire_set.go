@@ -92,6 +92,8 @@ var ProviderSet = wire.NewSet(
 
 	data.NewInteractionRepo,
 
+	data.NewStatsRepo,
+
 	data.NewMediaAssetRepo,
 	data.NewMediaVariantRepo,
 

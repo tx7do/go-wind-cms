@@ -20,6 +20,7 @@ import (
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
@@ -77,6 +78,8 @@ func NewGrpcServer(
 
 	interactionService *service.InteractionService,
 	interactionAdminService *service.InteractionAdminService,
+
+	statsService *service.StatsService,
 
 	postService *service.PostService,
 	categoryService *service.CategoryService,
@@ -143,6 +146,8 @@ func NewGrpcServer(
 
 	interactionV1.RegisterInteractionServiceServer(srv, interactionService)
 	interactionV1.RegisterInteractionAdminServiceServer(srv, interactionAdminService)
+
+	statsV1.RegisterStatsServiceServer(srv, statsService)
 
 	contentV1.RegisterPostServiceServer(srv, postService)
 	contentV1.RegisterCategoryServiceServer(srv, categoryService)

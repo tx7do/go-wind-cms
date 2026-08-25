@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package stats.service.v1;
+
+import "errors/errors.proto";
+
+// 统计系统错误定义（精简版：统计服务为只读查询面，仅需要少量错误码）
+enum StatsErrorReason {
+  option (errors.default_code) = 500;
+
+  // 400
+  BAD_REQUEST = 0 [(errors.code) = 400]; // 错误请求
+
+  // 401
+  UNAUTHORIZED = 100 [(errors.code) = 401]; // 未授权
+
+  // 403
+  FORBIDDEN = 300 [(errors.code) = 403]; // 禁止访问
+
+  // 500
+  INTERNAL_SERVER_ERROR = 2000 [(errors.code) = 500]; // 内部服务器错误
+
+  // 503
+  SERVICE_UNAVAILABLE = 2300 [(errors.code) = 503]; // 服务不可用
+}

@@ -5373,6 +5373,76 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/stats/content-trend:
+        get:
+            tags:
+                - StatsService
+            description: 内容增长趋势（近 N 天按天聚合）
+            operationId: StatsService_GetContentTrend
+            parameters:
+                - name: days
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetContentTrendResponse'
+    /admin/v1/stats/interactions:
+        get:
+            tags:
+                - StatsService
+            description: 互动统计（点赞 TOP N + 类型分布）
+            operationId: StatsService_GetInteractionStats
+            parameters:
+                - name: topN
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetInteractionStatsResponse'
+    /admin/v1/stats/login-activity:
+        get:
+            tags:
+                - StatsService
+            description: 登录活跃趋势（近 N 天成功/失败按天聚合）
+            operationId: StatsService_GetLoginActivity
+            parameters:
+                - name: days
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetLoginActivityResponse'
+    /admin/v1/stats/overview:
+        get:
+            tags:
+                - StatsService
+            description: 分析页概览卡片数据
+            operationId: StatsService_GetDashboardOverview
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetDashboardOverviewResponse'
     /admin/v1/tags:
         get:
             tags:
@@ -11375,6 +11445,81 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新站点配置
+        stats.service.v1.DailyCount:
+            type: object
+            properties:
+                date:
+                    type: string
+                value:
+                    type: string
+            description: 单日计数点。date 为 YYYY-MM-DD（数据库本地时区）。
+        stats.service.v1.GetContentTrendResponse:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+                posts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+                comments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+        stats.service.v1.GetDashboardOverviewResponse:
+            type: object
+            properties:
+                userCount:
+                    type: string
+                postCount:
+                    type: string
+                commentCount:
+                    type: string
+                interactionCount:
+                    type: string
+                newUserCountWeek:
+                    type: string
+                newPostCountWeek:
+                    type: string
+                newCommentCountWeek:
+                    type: string
+                newLikeCountWeek:
+                    type: string
+        stats.service.v1.GetInteractionStatsResponse:
+            type: object
+            properties:
+                topLikedPosts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.InteractionTopItem'
+                totalLikes:
+                    type: string
+                totalWatches:
+                    type: string
+        stats.service.v1.GetLoginActivityResponse:
+            type: object
+            properties:
+                success:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+                failed:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+        stats.service.v1.InteractionTopItem:
+            type: object
+            properties:
+                targetId:
+                    type: integer
+                    format: uint32
+                title:
+                    type: string
+                likeCount:
+                    type: string
+            description: 点赞 TOP 榜条目。已删除的帖子不出现在榜单中。
         storage.service.v1.CreateFileRequest:
             type: object
             properties:
@@ -11948,6 +12093,11 @@ tags:
       description: 站点服务
     - name: SiteSettingService
       description: 站点配置服务
+    - name: StatsService
+      description: |-
+        统计服务（后台分析页 BFF 转发）。仅转发至 core StatsService，
+         供 admin 分析页读取概览卡片与图表数据，全部为只读查询。
+         租户范围由鉴权上下文透传的 viewer 决定。
     - name: TagService
       description: 标签服务
     - name: TaskService

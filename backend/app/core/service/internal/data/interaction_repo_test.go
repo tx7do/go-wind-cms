@@ -13,6 +13,7 @@ import (
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-crud/viewer" //nolint:goimports -- sqlite3 driver registered via blank import below
 
+	"go-wind-cms/app/core/service/internal/data/client"
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/enttest"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
@@ -35,7 +36,7 @@ func newTestInteractionRepo(t *testing.T) (*InteractionRepo, *ent.Client, func()
 
 	drv, err := entCrud.CreateDriver(
 		"sqlite3",
-		"file:ent?mode=memory&cache=shared&_fk=1",
+		"file:ent?mode=memory&cache=shared&_fk=1&_time_format=sqlite",
 		false, false,
 	)
 	require.NoError(t, err, "创建 sqlite driver 失败")
@@ -44,6 +45,8 @@ func newTestInteractionRepo(t *testing.T) (*InteractionRepo, *ent.Client, func()
 		ent.Driver(drv),
 		ent.Log(func(a ...any) { t.Log(a...) }),
 	))
+
+	client.ApplyTimeDefaultHooks(db)
 
 	wrapped := entCrud.NewEntClient(db, drv)
 

@@ -129,6 +129,7 @@ func NewRestServer(
 
 	commentService *service.CommentService,
 	interactionAdminService *service.InteractionAdminService,
+	statsService *service.StatsService,
 
 	postService *service.PostService,
 	categoryService *service.CategoryService,
@@ -204,6 +205,7 @@ func NewRestServer(
 	adminV1.RegisterTagServiceHTTPServer(srv, tagService)
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
+	adminV1.RegisterStatsServiceHTTPServer(srv, statsService)
 	adminV1.RegisterPageServiceHTTPServer(srv, pageService)
 	adminV1.RegisterSectionServiceHTTPServer(srv, sectionService)
 

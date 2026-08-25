@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package stats.service.v1;
+
+// 统计服务（后台分析页数据面）
+//
+// 为 admin 分析页提供跨域聚合统计（用户/帖子/评论/互动/登录审计），
+// 全部为只读查询，无副作用。查询落在 core 服务，租户范围由 viewer 上下文
+// 决定：平台管理员看全局，租户管理员仅看本租户。
+//
+// 注意：本服务不引入 PV/UV 埋点体系，访问量类指标不在范围内；
+// 后续若做埋点，在此扩展 RPC 即可。
+service StatsService {
+  // 分析页概览卡片：各实体总量 + 近 7 天新增量。
+  rpc GetDashboardOverview (GetDashboardOverviewRequest) returns (GetDashboardOverviewResponse) {}
+
+  // 内容增长趋势：近 N 天按天聚合的新增用户/帖子/评论序列。
+  rpc GetContentTrend (GetContentTrendRequest) returns (GetContentTrendResponse) {}
+
+  // 互动统计：点赞 TOP N 内容 + 各 metric 累计总量分布。
+  rpc GetInteractionStats (GetInteractionStatsRequest) returns (GetInteractionStatsResponse) {}
+
+  // 登录活跃趋势：近 N 天按天聚合的登录成功/失败次数（来自登录审计日志）。
+  rpc GetLoginActivity (GetLoginActivityRequest) returns (GetLoginActivityResponse) {}
+}
+
+message GetDashboardOverviewRequest {}
+
+message GetDashboardOverviewResponse {
+  int64 user_count = 1;              // 用户总量
+  int64 post_count = 2;              // 帖子总量
+  int64 comment_count = 3;           // 评论总量
+  int64 interaction_count = 4;       // 互动累计总量（点赞 + 收藏计数之和）
+  int64 new_user_count_week = 5;       // 近 7 天新增用户
+  int64 new_post_count_week = 6;       // 近 7 天新增帖子
+  int64 new_comment_count_week = 7;    // 近 7 天新增评论
+  int64 new_like_count_week = 8; // 近 7 天新增点赞（post_like ledger 计数）
+}
+
+// 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
+message GetContentTrendRequest {
+  int32 days = 1;
+}
+
+// 单日计数点。date 为 YYYY-MM-DD（数据库本地时区）。
+message DailyCount {
+  string date = 1;
+  int64 value = 2;
+}
+
+message GetContentTrendResponse {
+  repeated DailyCount users = 1;    // 每日新增用户
+  repeated DailyCount posts = 2;    // 每日新增帖子
+  repeated DailyCount comments = 3; // 每日新增评论
+}
+
+// TOP N 参数。服务端 clamp：缺省/非正数取 10，上限 50。
+message GetInteractionStatsRequest {
+  int32 top_n = 1;
+}
+
+// 点赞 TOP 榜条目。已删除的帖子不出现在榜单中。
+message InteractionTopItem {
+  uint32 target_id = 1; // 帖子 ID
+  string title = 2;     // 帖子标题（当前默认语言，取不到时为空串）
+  int64 like_count = 3; // 点赞计数
+}
+
+message GetInteractionStatsResponse {
+  repeated InteractionTopItem top_liked_posts = 1; // 点赞数降序 TOP N
+  int64 total_likes = 2;                           // 全站点赞累计总量
+  int64 total_watches = 3;                         // 全站收藏累计总量
+}
+
+// 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
+message GetLoginActivityRequest {
+  int32 days = 1;
+}
+
+message GetLoginActivityResponse {
+  repeated DailyCount success = 1; // 每日登录成功次数
+  repeated DailyCount failed = 2;  // 每日登录失败次数
+}

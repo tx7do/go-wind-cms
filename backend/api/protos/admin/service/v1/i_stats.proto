@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "stats/service/v1/stats.proto";
+
+// 统计服务（后台分析页 BFF 转发）。仅转发至 core StatsService，
+// 供 admin 分析页读取概览卡片与图表数据，全部为只读查询。
+// 租户范围由鉴权上下文透传的 viewer 决定。
+service StatsService {
+  // 分析页概览卡片数据
+  rpc GetDashboardOverview (stats.service.v1.GetDashboardOverviewRequest) returns (stats.service.v1.GetDashboardOverviewResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/overview"
+    };
+  }
+
+  // 内容增长趋势（近 N 天按天聚合）
+  rpc GetContentTrend (stats.service.v1.GetContentTrendRequest) returns (stats.service.v1.GetContentTrendResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/content-trend"
+    };
+  }
+
+  // 互动统计（点赞 TOP N + 类型分布）
+  rpc GetInteractionStats (stats.service.v1.GetInteractionStatsRequest) returns (stats.service.v1.GetInteractionStatsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/interactions"
+    };
+  }
+
+  // 登录活跃趋势（近 N 天成功/失败按天聚合）
+  rpc GetLoginActivity (stats.service.v1.GetLoginActivityRequest) returns (stats.service.v1.GetLoginActivityResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/login-activity"
+    };
+  }
+}

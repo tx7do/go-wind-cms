@@ -68,6 +68,8 @@ export * from './site';
 
 export * from './site-setting';
 
+export * from './stats';
+
 export * from './tag';
 
 export * from './task';

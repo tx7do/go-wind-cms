@@ -9287,6 +9287,155 @@ export type siteservicev1_DeleteSiteSettingRequest = {
   id?: number;
 };
 
+// 统计服务（后台分析页 BFF 转发）。仅转发至 core StatsService，
+// 供 admin 分析页读取概览卡片与图表数据，全部为只读查询。
+// 租户范围由鉴权上下文透传的 viewer 决定。
+export interface StatsService {
+  // 分析页概览卡片数据
+  GetDashboardOverview(
+    request: statsservicev1_GetDashboardOverviewRequest,
+  ): Promise<statsservicev1_GetDashboardOverviewResponse>;
+  // 内容增长趋势（近 N 天按天聚合）
+  GetContentTrend(
+    request: statsservicev1_GetContentTrendRequest,
+  ): Promise<statsservicev1_GetContentTrendResponse>;
+  // 互动统计（点赞 TOP N + 类型分布）
+  GetInteractionStats(
+    request: statsservicev1_GetInteractionStatsRequest,
+  ): Promise<statsservicev1_GetInteractionStatsResponse>;
+  // 登录活跃趋势（近 N 天成功/失败按天聚合）
+  GetLoginActivity(
+    request: statsservicev1_GetLoginActivityRequest,
+  ): Promise<statsservicev1_GetLoginActivityResponse>;
+}
+
+export function createStatsServiceClient(
+  transport: ClientTransport,
+): StatsService {
+  return {
+    GetDashboardOverview(_request) {
+      const path = `admin/v1/stats/overview`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetDashboardOverview',
+      }) as Promise<statsservicev1_GetDashboardOverviewResponse>;
+    },
+    GetContentTrend(request) {
+      const path = `admin/v1/stats/content-trend`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.days) {
+        queryParams.push(
+          `days=${encodeURIComponent(request.days.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetContentTrend',
+      }) as Promise<statsservicev1_GetContentTrendResponse>;
+    },
+    GetInteractionStats(request) {
+      const path = `admin/v1/stats/interactions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.topN) {
+        queryParams.push(
+          `topN=${encodeURIComponent(request.topN.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetInteractionStats',
+      }) as Promise<statsservicev1_GetInteractionStatsResponse>;
+    },
+    GetLoginActivity(request) {
+      const path = `admin/v1/stats/login-activity`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.days) {
+        queryParams.push(
+          `days=${encodeURIComponent(request.days.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetLoginActivity',
+      }) as Promise<statsservicev1_GetLoginActivityResponse>;
+    },
+  };
+}
+export type statsservicev1_GetDashboardOverviewRequest = {
+};
+
+export type statsservicev1_GetDashboardOverviewResponse = {
+  commentCount: number | undefined;
+  interactionCount: number | undefined;
+  newCommentCountWeek: number | undefined;
+  newLikeCountWeek: number | undefined;
+  newPostCountWeek: number | undefined;
+  newUserCountWeek: number | undefined;
+  postCount: number | undefined;
+  userCount: number | undefined;
+};
+
+// 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
+export type statsservicev1_GetContentTrendRequest = {
+  days: number | undefined;
+};
+
+export type statsservicev1_GetContentTrendResponse = {
+  comments: statsservicev1_DailyCount[] | undefined;
+  posts: statsservicev1_DailyCount[] | undefined;
+  users: statsservicev1_DailyCount[] | undefined;
+};
+
+// 单日计数点。date 为 YYYY-MM-DD（数据库本地时区）。
+export type statsservicev1_DailyCount = {
+  date: string | undefined;
+  value: number | undefined;
+};
+
+// TOP N 参数。服务端 clamp：缺省/非正数取 10，上限 50。
+export type statsservicev1_GetInteractionStatsRequest = {
+  topN: number | undefined;
+};
+
+export type statsservicev1_GetInteractionStatsResponse = {
+  topLikedPosts: statsservicev1_InteractionTopItem[] | undefined;
+  totalLikes: number | undefined;
+  totalWatches: number | undefined;
+};
+
+// 点赞 TOP 榜条目。已删除的帖子不出现在榜单中。
+export type statsservicev1_InteractionTopItem = {
+  likeCount: number | undefined;
+  targetId: number | undefined;
+  title: string | undefined;
+};
+
+// 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
+export type statsservicev1_GetLoginActivityRequest = {
+  days: number | undefined;
+};
+
+export type statsservicev1_GetLoginActivityResponse = {
+  failed: statsservicev1_DailyCount[] | undefined;
+  success: statsservicev1_DailyCount[] | undefined;
+};
+
 // 标签服务
 export interface TagService {
   // 获取标签列表
@@ -10930,6 +11079,7 @@ export class ApiClient {
   private _sectionService?: SectionService;
   private _siteService?: SiteService;
   private _siteSettingService?: SiteSettingService;
+  private _statsService?: StatsService;
   private _tagService?: TagService;
   private _taskService?: TaskService;
   private _tenantService?: TenantService;
@@ -11084,6 +11234,10 @@ export class ApiClient {
 
   get siteSettingService(): SiteSettingService {
     return this._siteSettingService ??= createSiteSettingServiceClient(this._transport);
+  }
+
+  get statsService(): StatsService {
+    return this._statsService ??= createStatsServiceClient(this._transport);
   }
 
   get tagService(): TagService {
