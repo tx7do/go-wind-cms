@@ -83,9 +83,8 @@ export const useTabbarStore = defineStore('core-tabbar', {
      * @param router
      */
     async _goToTab(tab: TabDefinition, router: Router) {
-      const { params, path, query } = tab;
+      const { path, query } = tab;
       const toParams = {
-        params: params || {},
         path,
         query: query || {},
       };
