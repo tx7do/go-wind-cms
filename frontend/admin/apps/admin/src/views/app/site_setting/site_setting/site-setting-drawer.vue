@@ -146,6 +146,9 @@ const [BaseForm, baseFormApi] = useVbenForm({
       component: 'Switch',
       fieldName: 'isRequired',
       label: $t('page.siteSetting.isRequired'),
+      componentProps: {
+        class: 'w-auto',
+      },
     },
     {
       component: 'Textarea',
@@ -257,6 +260,9 @@ const [BaseForm, baseFormApi] = useVbenForm({
       component: 'Switch',
       fieldName: 'value',
       label: $t('page.siteSetting.value'),
+      componentProps: {
+        class: 'w-auto',
+      },
       dependencies: {
         triggerFields: ['type'],
         if: (values) => values.type === 'SETTING_TYPE_BOOLEAN',
