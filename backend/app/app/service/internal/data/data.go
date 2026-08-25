@@ -203,15 +203,6 @@ func NewPageServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV
 	return contentV1.NewPageServiceClient(cli)
 }
 
-func NewSectionServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.SectionServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
-	if err != nil {
-		return nil
-	}
-
-	return contentV1.NewSectionServiceClient(cli)
-}
-
 func NewPostServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.PostServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

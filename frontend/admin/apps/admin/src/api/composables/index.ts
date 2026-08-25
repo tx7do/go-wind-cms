@@ -60,8 +60,6 @@ export * from './post';
 
 export * from './role';
 
-export * from './section';
-
 export * from './shared';
 
 export * from './site';

@@ -67,7 +67,6 @@ var ProviderSet = wire.NewSet(
 	data.NewOperationAuditLogServiceClient,
 
 	data.NewPageServiceClient,
-	data.NewSectionServiceClient,
 	data.NewCategoryServiceClient,
 	data.NewPostServiceClient,
 	data.NewContentModelServiceClient,

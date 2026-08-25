@@ -52,7 +52,7 @@ const [Modal, modalApi] = useVbenModal({
     const values = await baseFormApi.getValues();
 
     try {
-      await apiClient.pageService.Create({ data: values });
+      await apiClient.pageService.Create({ data: values as any });
 
       setLoading(false);
       modalApi.close();

@@ -15,6 +15,7 @@ import {
   editorTypeOptions,
   pageStatusList,
   pageTypeList,
+  sectionTypeList,
   uploadMediaAsset,
   fetchListContentModels,
   fetchListFieldDefinitions,
@@ -65,6 +66,82 @@ watch(
     }
   },
   { immediate: true },
+);
+
+// ==============================
+// 嵌套区块管理（页面子部件，随页面整体读写）
+// ==============================
+const sections = computed(() => pageEditViewStore.formData.sections ?? []);
+
+function addSection() {
+  const list = pageEditViewStore.formData.sections ?? [];
+  list.push({
+    type: 'SECTION_TYPE_RICH_TEXT',
+    name: '',
+    sortOrder: list.length,
+    config: {},
+    translations: [],
+  });
+  pageEditViewStore.formData.sections = list;
+}
+
+function removeSection(index: number) {
+  const list = pageEditViewStore.formData.sections ?? [];
+  list.splice(index, 1);
+  pageEditViewStore.formData.sections = list;
+}
+
+function moveSection(index: number, delta: number) {
+  const list = pageEditViewStore.formData.sections ?? [];
+  const target = index + delta;
+  if (target < 0 || target >= list.length) {
+    return;
+  }
+  const a = list[index];
+  const b = list[target];
+  if (!a || !b) {
+    return;
+  }
+  list[index] = b;
+  list[target] = a;
+  pageEditViewStore.formData.sections = list;
+}
+
+function ensureSectionTranslations(sectionIndex: number) {
+  const list = pageEditViewStore.formData.sections ?? [];
+  return list[sectionIndex]?.translations ?? [];
+}
+
+function addSectionTranslation(sectionIndex: number, lang: string) {
+  const list = pageEditViewStore.formData.sections ?? [];
+  if (!list[sectionIndex]) {
+    return;
+  }
+  const trs = list[sectionIndex].translations ?? [];
+  if (trs.some((t) => t.languageCode === lang)) {
+    return;
+  }
+  trs.push({ languageCode: lang, content: {} });
+  list[sectionIndex].translations = trs;
+  pageEditViewStore.formData.sections = list;
+}
+
+function removeSectionTranslation(sectionIndex: number, trIndex: number) {
+  const list = pageEditViewStore.formData.sections ?? [];
+  const trs = list[sectionIndex]?.translations ?? [];
+  trs.splice(trIndex, 1);
+  if (list[sectionIndex]) {
+    list[sectionIndex].translations = trs;
+  }
+  pageEditViewStore.formData.sections = list;
+}
+
+// 区块可用语言选项（复用页面已加载的语言列表，与主译文语言一致）
+const sectionLanguageOptions = computed(() =>
+  pageEditViewStore.languageOptions.map((o) => ({
+    label: o.label,
+    value: o.value,
+  })),
 );
 
 const route = useRoute();
@@ -406,6 +483,95 @@ init();
           :size="'small'"
         />
       </a-form-item>
+    </div>
+
+    <!-- 嵌套区块管理（页面子部件，随页面整体读写） -->
+    <div class="px-4 py-2 border-b border-splitLine">
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-xs text-textSec block">{{ $t('page.section.moduleName') }}</label>
+        <a-button size="small" type="primary" @click="addSection">{{ $t('page.section.button.create') }}</a-button>
+      </div>
+
+      <div v-if="sections.length === 0" class="text-xs text-textDis">
+        {{ $t('page.section.placeholder.content') }}
+      </div>
+
+      <div
+        v-for="(section, sIdx) in sections"
+        :key="sIdx"
+        class="border border-splitLine rounded mb-2 p-2"
+      >
+        <div class="flex items-center gap-2 mb-2">
+          <a-button size="small" @click="moveSection(sIdx, -1)">↑</a-button>
+          <a-button size="small" @click="moveSection(sIdx, 1)">↓</a-button>
+          <span class="text-xs text-textSec">#{{ sIdx }}</span>
+          <div class="flex-1" />
+          <a-button size="small" danger @click="removeSection(sIdx)">×</a-button>
+        </div>
+
+        <div class="flex gap-2 mb-2">
+          <div class="flex-1">
+            <label class="text-xs text-textSec block mb-1">{{ $t('page.section.type') }}</label>
+            <Select
+              v-model:value="section.type"
+              :options="sectionTypeList"
+              size="small"
+              style="width: 100%"
+            />
+          </div>
+          <div class="flex-1">
+            <label class="text-xs text-textSec block mb-1">{{ $t('page.section.name') }}</label>
+            <Input v-model:value="section.name" size="small" :placeholder="$t('page.section.placeholder.name')" />
+          </div>
+          <div style="width: 90px">
+            <label class="text-xs text-textSec block mb-1">{{ $t('page.section.sortOrder') }}</label>
+            <Input v-model:value="section.sortOrder" size="small" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="text-xs text-textSec block mb-1">{{ $t('page.section.config') }}</label>
+          <Textarea
+            :value="section.config ? JSON.stringify(section.config) : ''"
+            @update:value="(v: string) => { try { section.config = v ? JSON.parse(v) : {} } catch { /* ignore malformed */ } }"
+            :rows="2"
+            size="small"
+          />
+        </div>
+
+        <div class="border-t border-splitLine pt-2">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs text-textSec block">{{ $t('page.section.content') }}</label>
+            <div class="flex gap-1">
+              <Select
+                :value="undefined"
+                :options="sectionLanguageOptions"
+                size="small"
+                style="width: 120px"
+                :placeholder="$t('page.section.placeholder.content')"
+                @update:value="(lang: string) => { if (lang) addSectionTranslation(sIdx, lang); }"
+              />
+            </div>
+          </div>
+
+          <div
+            v-for="(tr, trIdx) in ensureSectionTranslations(sIdx)"
+            :key="trIdx"
+            class="border border-splitLine rounded mb-2 p-2"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs text-textSec">{{ tr.languageCode }}</span>
+              <a-button size="small" danger @click="removeSectionTranslation(sIdx, trIdx)">×</a-button>
+            </div>
+            <Textarea
+              :value="tr.content ? JSON.stringify(tr.content) : ''"
+              @update:value="(v: string) => { try { tr.content = v ? JSON.parse(v) : {} } catch { /* ignore malformed */ } }"
+              :rows="3"
+              size="small"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="page-edit-container min-h-0 flex-1">

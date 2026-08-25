@@ -82,38 +82,6 @@ const content: RouteRecordRaw[] = [
       },
 
       {
-        path: 'sections',
-        name: 'SectionManagement',
-        meta: {
-          order: 2,
-          icon: 'lucide:layout-panel-top',
-          title: $t('menu.content.section'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
-        },
-        component: () => import('#/views/app/content/section/index.vue'),
-      },
-      {
-        path: 'sections/create',
-        name: 'CreateSection',
-        meta: {
-          hideInMenu: true,
-          title: $t('menu.content.createSection'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
-        },
-        component: () => import('#/views/app/content/section/edit/index.vue'),
-      },
-      {
-        path: 'sections/edit/:id',
-        name: 'EditSection',
-        meta: {
-          hideInMenu: true,
-          title: $t('menu.content.editSection'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
-        },
-        component: () => import('#/views/app/content/section/edit/index.vue'),
-      },
-
-      {
         path: 'categories',
         name: 'CategoryManagement',
         meta: {

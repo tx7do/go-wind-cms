@@ -49,7 +49,6 @@ var ProviderSet = wire.NewSet(
 	service.NewPostService,
 	service.NewTagService,
 	service.NewPageService,
-	service.NewSectionService,
 
 	// OpenSearch 搜索与重索引服务。
 	// 消费 data.SearchRepo + data.PostRepo，使 wire 真正连通 ES 注入链。

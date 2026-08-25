@@ -9,6 +9,7 @@ import "google/protobuf/field_mask.proto";
 import "pagination/v1/pagination.proto";
 
 import "content/service/v1/types.proto";
+import "content/service/v1/section.proto";
 
 // 页面服务
 service PageService {
@@ -172,6 +173,13 @@ message Page {
       example: {yaml: '["zh-CN", "en-US", "ja-JP"]'}
     }
   ]; // 可用的语言代码列表
+
+
+  // 页面区块（随页面整体读写，Create/Update 时整体替换，对齐 content_model.fields 惯例）
+  repeated Section sections = 40 [
+    json_name = "sections",
+    (gnostic.openapi.v3.property) = {description: "页面区块列表（嵌套子部件，随页面整体读写）"}
+  ]; // 页面区块列表
 
 
   optional uint32 parent_id = 50 [

@@ -2063,6 +2063,8 @@ export type contentservicev1_Page = {
   parentId?: number;
   path?: string;
   redirectUrl?: string;
+  // 页面区块（随页面整体读写，Create/Update 时整体替换，对齐 content_model.fields 惯例）
+  sections: contentservicev1_Section[] | undefined;
   showInNavigation?: boolean;
   slug?: string;
   sortOrder?: number;
@@ -2103,6 +2105,56 @@ export type contentservicev1_PageTranslation = {
   slug?: string;
   thumbnail?: string;
   title?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 页面区块（语言无关的结构，内容随语言变化在翻译表中）。
+// 作为 Page 的嵌套子部件随页面整体读写，无独立服务入口。
+export type contentservicev1_Section = {
+  availableLanguages: string[] | undefined;
+  config: { [key: string]: string } | undefined;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  name?: string;
+  pageId?: number;
+  sortOrder?: number;
+  translations: contentservicev1_SectionTranslation[] | undefined;
+  type?: contentservicev1_SectionType;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 区块类型
+export type contentservicev1_SectionType =
+  | 'SECTION_TYPE_BUTTON'
+  | 'SECTION_TYPE_CAROUSEL'
+  | 'SECTION_TYPE_CODE'
+  | 'SECTION_TYPE_CUSTOM'
+  | 'SECTION_TYPE_DIVIDER'
+  | 'SECTION_TYPE_FORM'
+  | 'SECTION_TYPE_GALLERY'
+  | 'SECTION_TYPE_HTML'
+  | 'SECTION_TYPE_IMAGE'
+  | 'SECTION_TYPE_MARKDOWN'
+  | 'SECTION_TYPE_RICH_TEXT'
+  | 'SECTION_TYPE_SPACER'
+  | 'SECTION_TYPE_TITLE'
+  | 'SECTION_TYPE_UNSPECIFIED'
+  | 'SECTION_TYPE_VIDEO';
+// 区块翻译（语言相关的内容）
+export type contentservicev1_SectionTranslation = {
+  content: { [key: string]: string } | undefined;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  languageCode?: string;
+  sectionId?: number;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
 };
@@ -2471,317 +2523,6 @@ export type contentservicev1_UpdatePostRequest = {
 
 // 请求 - 删除帖子
 export type contentservicev1_DeletePostRequest = {
-  id?: number;
-};
-
-// 页面区块服务
-export interface SectionService {
-  // 获取区块列表
-  List(
-    request: pagination_PagingRequest,
-  ): Promise<contentservicev1_ListSectionResponse>;
-  // 获取区块数据
-  Get(
-    request: contentservicev1_GetSectionRequest,
-  ): Promise<contentservicev1_Section>;
-  // 创建区块
-  Create(
-    request: contentservicev1_CreateSectionRequest,
-  ): Promise<contentservicev1_Section>;
-  // 更新区块
-  Update(
-    request: contentservicev1_UpdateSectionRequest,
-  ): Promise<contentservicev1_Section>;
-  // 删除区块
-  Delete(
-    request: contentservicev1_DeleteSectionRequest,
-  ): Promise<wellKnownEmpty>;
-  // 获取翻译数据
-  GetTranslation(
-    request: contentservicev1_GetSectionRequest,
-  ): Promise<contentservicev1_SectionTranslation>;
-}
-
-export function createSectionServiceClient(
-  transport: ClientTransport,
-): SectionService {
-  return {
-    List(request) {
-      const path = `app/v1/sections`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.page) {
-        queryParams.push(
-          `page=${encodeURIComponent(request.page.toString())}`,
-        );
-      }
-      if (request.pageSize) {
-        queryParams.push(
-          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
-        );
-      }
-      if (request.offset) {
-        queryParams.push(
-          `offset=${encodeURIComponent(request.offset.toString())}`,
-        );
-      }
-      if (request.limit) {
-        queryParams.push(
-          `limit=${encodeURIComponent(request.limit.toString())}`,
-        );
-      }
-      if (request.token) {
-        queryParams.push(
-          `token=${encodeURIComponent(request.token.toString())}`,
-        );
-      }
-      if (request.noPaging) {
-        queryParams.push(
-          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
-        );
-      }
-      if (request.query) {
-        queryParams.push(
-          `query=${encodeURIComponent(request.query.toString())}`,
-        );
-      }
-      if (request.filter) {
-        queryParams.push(
-          `filter=${encodeURIComponent(request.filter.toString())}`,
-        );
-      }
-      if (request.filterExpr?.type) {
-        queryParams.push(
-          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
-      if (request.orderBy) {
-        queryParams.push(
-          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
-        );
-      }
-      if (request.fieldMask) {
-        queryParams.push(
-          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'GET', body, {
-        service: 'SectionService',
-        method: 'List',
-      }) as Promise<contentservicev1_ListSectionResponse>;
-    },
-    Get(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `app/v1/sections/${request.id}`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.locale) {
-        queryParams.push(
-          `locale=${encodeURIComponent(request.locale.toString())}`,
-        );
-      }
-      if (request.viewMask) {
-        queryParams.push(
-          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'GET', body, {
-        service: 'SectionService',
-        method: 'Get',
-      }) as Promise<contentservicev1_Section>;
-    },
-    Create(request) {
-      const path = `app/v1/sections`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'POST', body, {
-        service: 'SectionService',
-        method: 'Create',
-      }) as Promise<contentservicev1_Section>;
-    },
-    Update(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `app/v1/sections/${request.id}`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'PUT', body, {
-        service: 'SectionService',
-        method: 'Update',
-      }) as Promise<contentservicev1_Section>;
-    },
-    Delete(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `app/v1/sections/${request.id}`;
-      const body = null;
-      return transport.unary(path, 'DELETE', body, {
-        service: 'SectionService',
-        method: 'Delete',
-      }) as Promise<wellKnownEmpty>;
-    },
-    GetTranslation(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `app/v1/sections/${request.id}/translation`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.locale) {
-        queryParams.push(
-          `locale=${encodeURIComponent(request.locale.toString())}`,
-        );
-      }
-      if (request.viewMask) {
-        queryParams.push(
-          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'GET', body, {
-        service: 'SectionService',
-        method: 'GetTranslation',
-      }) as Promise<contentservicev1_SectionTranslation>;
-    },
-  };
-}
-// 回应 - 区块列表
-export type contentservicev1_ListSectionResponse = {
-  items: contentservicev1_Section[] | undefined;
-  total: number | undefined;
-};
-
-// 页面区块（语言无关的结构，内容随语言变化在翻译表中）
-export type contentservicev1_Section = {
-  availableLanguages: string[] | undefined;
-  config: { [key: string]: string } | undefined;
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  name?: string;
-  pageId?: number;
-  sortOrder?: number;
-  translations: contentservicev1_SectionTranslation[] | undefined;
-  type?: contentservicev1_SectionType;
-  updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-};
-
-// 区块类型
-export type contentservicev1_SectionType =
-  | 'SECTION_TYPE_BUTTON'
-  | 'SECTION_TYPE_CAROUSEL'
-  | 'SECTION_TYPE_CODE'
-  | 'SECTION_TYPE_CUSTOM'
-  | 'SECTION_TYPE_DIVIDER'
-  | 'SECTION_TYPE_FORM'
-  | 'SECTION_TYPE_GALLERY'
-  | 'SECTION_TYPE_HTML'
-  | 'SECTION_TYPE_IMAGE'
-  | 'SECTION_TYPE_MARKDOWN'
-  | 'SECTION_TYPE_RICH_TEXT'
-  | 'SECTION_TYPE_SPACER'
-  | 'SECTION_TYPE_TITLE'
-  | 'SECTION_TYPE_UNSPECIFIED'
-  | 'SECTION_TYPE_VIDEO';
-// 区块翻译（语言相关的内容）
-export type contentservicev1_SectionTranslation = {
-  content: { [key: string]: string } | undefined;
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  languageCode?: string;
-  sectionId?: number;
-  updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-};
-
-// 请求 - 区块数据
-export type contentservicev1_GetSectionRequest = {
-  id?: number;
-  locale?: string;
-  viewMask?: wellKnownFieldMask;
-};
-
-// 请求 - 创建区块
-export type contentservicev1_CreateSectionRequest = {
-  data: contentservicev1_Section | undefined;
-};
-
-// 请求 - 更新区块
-export type contentservicev1_UpdateSectionRequest = {
-  allowMissing?: boolean;
-  data: contentservicev1_Section | undefined;
-  id: number | undefined;
-  updateMask: undefined | wellKnownFieldMask;
-};
-
-// 请求 - 删除区块
-export type contentservicev1_DeleteSectionRequest = {
   id?: number;
 };
 
@@ -3554,7 +3295,6 @@ export class ApiClient {
   private _navigationService?: NavigationService;
   private _pageService?: PageService;
   private _postService?: PostService;
-  private _sectionService?: SectionService;
   private _siteService?: SiteService;
   private _tagService?: TagService;
   private readonly _transport: ClientTransport;
@@ -3594,10 +3334,6 @@ export class ApiClient {
 
   get postService(): PostService {
     return this._postService ??= createPostServiceClient(this._transport);
-  }
-
-  get sectionService(): SectionService {
-    return this._sectionService ??= createSectionServiceClient(this._transport);
   }
 
   get siteService(): SiteService {

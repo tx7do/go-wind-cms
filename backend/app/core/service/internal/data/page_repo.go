@@ -228,6 +228,13 @@ func (r *PageRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 			return nil, contentV1.ErrorInternalServerError("query availed languages failed")
 		}
 		item.AvailableLanguages = languages
+
+		// 嵌套子部件：水合每页的 section（含各自翻译/可用语言）。
+		sections, sErr := r.sectionRepo.ListByPage(ctx, item.GetId())
+		if sErr != nil {
+			return nil, sErr
+		}
+		item.Sections = sections
 	}
 
 	return &contentV1.ListPageResponse{
@@ -280,6 +287,13 @@ func (r *PageRepo) Get(ctx context.Context, req *contentV1.GetPageRequest) (*con
 		return nil, contentV1.ErrorInternalServerError("query availed languages failed")
 	}
 	dto.AvailableLanguages = languages
+
+	// 嵌套子部件：水合页面下的所有 section（含各自翻译/可用语言）。
+	sections, err := r.sectionRepo.ListByPage(ctx, dto.GetId())
+	if err != nil {
+		return nil, err
+	}
+	dto.Sections = sections
 
 	return dto, nil
 }
@@ -352,6 +366,14 @@ func (r *PageRepo) Create(ctx context.Context, req *contentV1.CreatePageRequest)
 		if err = r.pageTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
 			r.log.Errorf("batch insert translations failed: %s", err.Error())
 			return nil, contentV1.ErrorInternalServerError("batch insert translations failed")
+		}
+	}
+
+	// 嵌套子部件：随页面整体写入。对齐 content_model.batchCreateFields 惯例，
+	// 子 section 的 page_id 强制设为父页面值，tenant 由 viewer 推导。
+	if len(req.Data.Sections) > 0 {
+		if err = r.sectionRepo.BatchCreateByPage(ctx, tx, entity.ID, req.Data.GetSections()); err != nil {
+			return nil, err
 		}
 	}
 
@@ -452,6 +474,14 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 			s.Where(sql.EQ(page.FieldID, req.GetId()))
 		},
 	)
+
+	// 嵌套子部件整体替换：先清旧再建新，对齐 content_model.replaceFields 惯例。
+	// 非空守卫确保不含 sections 的普通字段更新不会清空既有 section。
+	if len(req.Data.Sections) > 0 {
+		if rErr := r.sectionRepo.ReplaceByPage(ctx, tx, req.GetId(), req.Data.GetSections()); rErr != nil {
+			return nil, rErr
+		}
+	}
 
 	return result, err
 }

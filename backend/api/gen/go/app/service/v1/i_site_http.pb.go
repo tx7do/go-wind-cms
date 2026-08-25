@@ -43,14 +43,14 @@ type SiteServiceHTTPServer interface {
 
 func RegisterSiteServiceHTTPServer(s *http.Server, srv SiteServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/sites", _SiteService_List6_HTTP_Handler(srv))
+	r.GET("/app/v1/sites", _SiteService_List5_HTTP_Handler(srv))
 	r.GET("/app/v1/site", _SiteService_GetSiteByDomain0_HTTP_Handler(srv))
-	r.POST("/app/v1/sites", _SiteService_Create6_HTTP_Handler(srv))
-	r.PUT("/app/v1/sites/{id}", _SiteService_Update6_HTTP_Handler(srv))
-	r.DELETE("/app/v1/sites/{id}", _SiteService_Delete6_HTTP_Handler(srv))
+	r.POST("/app/v1/sites", _SiteService_Create5_HTTP_Handler(srv))
+	r.PUT("/app/v1/sites/{id}", _SiteService_Update5_HTTP_Handler(srv))
+	r.DELETE("/app/v1/sites/{id}", _SiteService_Delete5_HTTP_Handler(srv))
 }
 
-func _SiteService_List6_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
+func _SiteService_List5_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -88,7 +88,7 @@ func _SiteService_GetSiteByDomain0_HTTP_Handler(srv SiteServiceHTTPServer) func(
 	}
 }
 
-func _SiteService_Create6_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
+func _SiteService_Create5_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateSiteRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -110,7 +110,7 @@ func _SiteService_Create6_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.
 	}
 }
 
-func _SiteService_Update6_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
+func _SiteService_Update5_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateSiteRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -135,7 +135,7 @@ func _SiteService_Update6_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.
 	}
 }
 
-func _SiteService_Delete6_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
+func _SiteService_Delete5_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteSiteRequest
 		if err := ctx.BindQuery(&in); err != nil {

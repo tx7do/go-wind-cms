@@ -5317,6 +5317,8 @@ class ContentServiceV1Page {
   int? parentId;
   String? path;
   String? redirectUrl;
+  /// 页面区块（随页面整体读写，Create/Update 时整体替换，对齐 content_model.fields 惯例）
+  List<ContentServiceV1Section>? sections;
   bool? showInNavigation;
   String? slug;
   int? sortOrder;
@@ -5346,6 +5348,7 @@ class ContentServiceV1Page {
     this.parentId,
     this.path,
     this.redirectUrl,
+    this.sections,
     this.showInNavigation,
     this.slug,
     this.sortOrder,
@@ -5377,6 +5380,7 @@ class ContentServiceV1Page {
       parentId: json['parentId'] as int?,
       path: json['path'] as String?,
       redirectUrl: json['redirectUrl'] as String?,
+      sections: (json['sections'] as List<dynamic>?)?.map((e) => ContentServiceV1Section.fromJson(e as Map<String, dynamic>)).toList(),
       showInNavigation: json['showInNavigation'] as bool?,
       slug: json['slug'] as String?,
       sortOrder: json['sortOrder'] as int?,
@@ -5409,6 +5413,7 @@ class ContentServiceV1Page {
     if (parentId != null) json['parentId'] = parentId;
     if (path != null) json['path'] = path;
     if (redirectUrl != null) json['redirectUrl'] = redirectUrl;
+    if (sections != null) json['sections'] = sections!.map((e) => e.toJson()).toList();
     if (showInNavigation != null) json['showInNavigation'] = showInNavigation;
     if (slug != null) json['slug'] = slug;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
@@ -5423,7 +5428,7 @@ class ContentServiceV1Page {
 
   @override
   String toString() {
-    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, sections: $sections, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -5449,6 +5454,7 @@ class ContentServiceV1Page {
       && parentId == other.parentId
       && path == other.path
       && redirectUrl == other.redirectUrl
+      && sections == other.sections
       && showInNavigation == other.showInNavigation
       && slug == other.slug
       && sortOrder == other.sortOrder
@@ -5480,6 +5486,7 @@ class ContentServiceV1Page {
     parentId,
     path,
     redirectUrl,
+    sections,
     showInNavigation,
     slug,
     sortOrder,
@@ -5510,6 +5517,7 @@ class ContentServiceV1Page {
     int? parentId,
     String? path,
     String? redirectUrl,
+    List<ContentServiceV1Section>? sections,
     bool? showInNavigation,
     String? slug,
     int? sortOrder,
@@ -5539,6 +5547,7 @@ class ContentServiceV1Page {
       parentId: parentId ?? this.parentId,
       path: path ?? this.path,
       redirectUrl: redirectUrl ?? this.redirectUrl,
+      sections: sections ?? this.sections,
       showInNavigation: showInNavigation ?? this.showInNavigation,
       slug: slug ?? this.slug,
       sortOrder: sortOrder ?? this.sortOrder,
@@ -5739,6 +5748,304 @@ class ContentServiceV1PageTranslation {
       slug: slug ?? this.slug,
       thumbnail: thumbnail ?? this.thumbnail,
       title: title ?? this.title,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 页面区块（语言无关的结构，内容随语言变化在翻译表中）。
+/// 作为 Page 的嵌套子部件随页面整体读写，无独立服务入口。
+class ContentServiceV1Section {
+  List<String>? availableLanguages;
+  Map<String, String>? config;
+  String? createdAt;
+  int? createdBy;
+  String? deletedAt;
+  int? deletedBy;
+  int? id;
+  String? name;
+  int? pageId;
+  int? sortOrder;
+  List<ContentServiceV1SectionTranslation>? translations;
+  ContentServiceV1SectionType? type;
+  String? updatedAt;
+  int? updatedBy;
+
+  ContentServiceV1Section({
+    this.availableLanguages,
+    this.config,
+    this.createdAt,
+    this.createdBy,
+    this.deletedAt,
+    this.deletedBy,
+    this.id,
+    this.name,
+    this.pageId,
+    this.sortOrder,
+    this.translations,
+    this.type,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory ContentServiceV1Section.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1Section(
+      availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      config: (json['config'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      pageId: json['pageId'] as int?,
+      sortOrder: json['sortOrder'] as int?,
+      translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1SectionTranslation.fromJson(e as Map<String, dynamic>)).toList(),
+      type: json['type'] != null ? ContentServiceV1SectionType.fromString(json['type'] as String) : null,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
+    if (config != null) json['config'] = config;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (id != null) json['id'] = id;
+    if (name != null) json['name'] = name;
+    if (pageId != null) json['pageId'] = pageId;
+    if (sortOrder != null) json['sortOrder'] = sortOrder;
+    if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
+    if (type != null) json['type'] = type!.value;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1Section(availableLanguages: $availableLanguages, config: $config, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, name: $name, pageId: $pageId, sortOrder: $sortOrder, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1Section &&
+      runtimeType == other.runtimeType
+      && availableLanguages == other.availableLanguages
+      && config == other.config
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && id == other.id
+      && name == other.name
+      && pageId == other.pageId
+      && sortOrder == other.sortOrder
+      && translations == other.translations
+      && type == other.type
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    availableLanguages,
+    config,
+    createdAt,
+    createdBy,
+    deletedAt,
+    deletedBy,
+    id,
+    name,
+    pageId,
+    sortOrder,
+    translations,
+    type,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  ContentServiceV1Section copyWith({
+    List<String>? availableLanguages,
+    Map<String, String>? config,
+    String? createdAt,
+    int? createdBy,
+    String? deletedAt,
+    int? deletedBy,
+    int? id,
+    String? name,
+    int? pageId,
+    int? sortOrder,
+    List<ContentServiceV1SectionTranslation>? translations,
+    ContentServiceV1SectionType? type,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return ContentServiceV1Section(
+      availableLanguages: availableLanguages ?? this.availableLanguages,
+      config: config ?? this.config,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      pageId: pageId ?? this.pageId,
+      sortOrder: sortOrder ?? this.sortOrder,
+      translations: translations ?? this.translations,
+      type: type ?? this.type,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 区块类型
+enum ContentServiceV1SectionType {
+  sectionTypeButton('SECTION_TYPE_BUTTON'),
+  sectionTypeCarousel('SECTION_TYPE_CAROUSEL'),
+  sectionTypeCode('SECTION_TYPE_CODE'),
+  sectionTypeCustom('SECTION_TYPE_CUSTOM'),
+  sectionTypeDivider('SECTION_TYPE_DIVIDER'),
+  sectionTypeForm('SECTION_TYPE_FORM'),
+  sectionTypeGallery('SECTION_TYPE_GALLERY'),
+  sectionTypeHtml('SECTION_TYPE_HTML'),
+  sectionTypeImage('SECTION_TYPE_IMAGE'),
+  sectionTypeMarkdown('SECTION_TYPE_MARKDOWN'),
+  sectionTypeRichText('SECTION_TYPE_RICH_TEXT'),
+  sectionTypeSpacer('SECTION_TYPE_SPACER'),
+  sectionTypeTitle('SECTION_TYPE_TITLE'),
+  sectionTypeUnspecified('SECTION_TYPE_UNSPECIFIED'),
+  sectionTypeVideo('SECTION_TYPE_VIDEO');
+
+  final String value;
+  const ContentServiceV1SectionType(this.value);
+
+  static ContentServiceV1SectionType fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1SectionType value: ' + v));
+  @override
+  String toString() => value;
+}
+
+/// 区块翻译（语言相关的内容）
+class ContentServiceV1SectionTranslation {
+  Map<String, String>? content;
+  String? createdAt;
+  int? createdBy;
+  String? deletedAt;
+  int? deletedBy;
+  int? id;
+  String? languageCode;
+  int? sectionId;
+  String? updatedAt;
+  int? updatedBy;
+
+  ContentServiceV1SectionTranslation({
+    this.content,
+    this.createdAt,
+    this.createdBy,
+    this.deletedAt,
+    this.deletedBy,
+    this.id,
+    this.languageCode,
+    this.sectionId,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory ContentServiceV1SectionTranslation.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1SectionTranslation(
+      content: (json['content'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      id: json['id'] as int?,
+      languageCode: json['languageCode'] as String?,
+      sectionId: json['sectionId'] as int?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (content != null) json['content'] = content;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (id != null) json['id'] = id;
+    if (languageCode != null) json['languageCode'] = languageCode;
+    if (sectionId != null) json['sectionId'] = sectionId;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1SectionTranslation(content: $content, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, languageCode: $languageCode, sectionId: $sectionId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1SectionTranslation &&
+      runtimeType == other.runtimeType
+      && content == other.content
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && id == other.id
+      && languageCode == other.languageCode
+      && sectionId == other.sectionId
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    content,
+    createdAt,
+    createdBy,
+    deletedAt,
+    deletedBy,
+    id,
+    languageCode,
+    sectionId,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  ContentServiceV1SectionTranslation copyWith({
+    Map<String, String>? content,
+    String? createdAt,
+    int? createdBy,
+    String? deletedAt,
+    int? deletedBy,
+    int? id,
+    String? languageCode,
+    int? sectionId,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return ContentServiceV1SectionTranslation(
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      id: id ?? this.id,
+      languageCode: languageCode ?? this.languageCode,
+      sectionId: sectionId ?? this.sectionId,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );
@@ -6591,727 +6898,6 @@ class ContentServiceV1DeletePostRequest {
     int? id,
   }) {
     return ContentServiceV1DeletePostRequest(
-      id: id ?? this.id,
-    );
-  }
-}
-
-/// 页面区块服务
-class SectionServiceClient {
-  final ClientTransport _transport;
-
-  SectionServiceClient(this._transport);
-
-  /// 获取区块列表
-  Future<ContentServiceV1ListSectionResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/sections';
-    final queryParams = <String>[];
-    if (request.page != null) {
-      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
-    }
-    if (request.pageSize != null) {
-      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
-    }
-    if (request.offset != null) {
-      queryParams.add('offset=${Uri.encodeComponent(request.offset!.toString())}');
-    }
-    if (request.limit != null) {
-      queryParams.add('limit=${Uri.encodeComponent(request.limit!.toString())}');
-    }
-    if (request.token != null) {
-      queryParams.add('token=${Uri.encodeComponent(request.token!.toString())}');
-    }
-    if (request.noPaging != null) {
-      queryParams.add('noPaging=${Uri.encodeComponent(request.noPaging!.toString())}');
-    }
-    if (request.query != null) {
-      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
-    }
-    if (request.filter != null) {
-      queryParams.add('filter=${Uri.encodeComponent(request.filter!.toString())}');
-    }
-    if (request.filterExpr?.type != null) {
-      queryParams.add('filterExpr.type=${Uri.encodeComponent(request.filterExpr!.type!.toString())}');
-    }
-    if (request.orderBy != null) {
-      queryParams.add('orderBy=${Uri.encodeComponent(request.orderBy!.toString())}');
-    }
-    if (request.fieldMask != null) {
-      queryParams.add('fieldMask=${Uri.encodeComponent(request.fieldMask!.toString())}');
-    }
-    var uri = path;
-    if (queryParams.isNotEmpty) {
-      uri += '?${queryParams.join("&")}';
-    }
-    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'SectionService',
-      method: 'List',
-    ), headers: headers);
-    return ContentServiceV1ListSectionResponse.fromJson(result as Map<String, dynamic>);
-  }
-
-  /// 获取区块数据
-  Future<ContentServiceV1Section> get(ContentServiceV1GetSectionRequest request, {Map<String, String>? headers}) async {
-    if (request.id == null) {
-      throw ArgumentError('missing required field request.id');
-    }
-    final path = '/app/v1/sections/${request.id}';
-    final queryParams = <String>[];
-    if (request.locale != null) {
-      queryParams.add('locale=${Uri.encodeComponent(request.locale!.toString())}');
-    }
-    if (request.viewMask != null) {
-      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
-    }
-    var uri = path;
-    if (queryParams.isNotEmpty) {
-      uri += '?${queryParams.join("&")}';
-    }
-    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'SectionService',
-      method: 'Get',
-    ), headers: headers);
-    return ContentServiceV1Section.fromJson(result as Map<String, dynamic>);
-  }
-
-  /// 创建区块
-  Future<ContentServiceV1Section> create(ContentServiceV1CreateSectionRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/sections';
-    final body = jsonEncode(request.toJson());
-    final result = await _transport.unary(path, 'POST', body, TransportMeta(
-      service: 'SectionService',
-      method: 'Create',
-    ), headers: headers);
-    return ContentServiceV1Section.fromJson(result as Map<String, dynamic>);
-  }
-
-  /// 更新区块
-  Future<ContentServiceV1Section> update(ContentServiceV1UpdateSectionRequest request, {Map<String, String>? headers}) async {
-    if (request.id == null) {
-      throw ArgumentError('missing required field request.id');
-    }
-    final path = '/app/v1/sections/${request.id}';
-    final body = jsonEncode(request.toJson());
-    final result = await _transport.unary(path, 'PUT', body, TransportMeta(
-      service: 'SectionService',
-      method: 'Update',
-    ), headers: headers);
-    return ContentServiceV1Section.fromJson(result as Map<String, dynamic>);
-  }
-
-  /// 删除区块
-  Future<Map<String, dynamic>> delete(ContentServiceV1DeleteSectionRequest request, {Map<String, String>? headers}) async {
-    if (request.id == null) {
-      throw ArgumentError('missing required field request.id');
-    }
-    final path = '/app/v1/sections/${request.id}';
-    final result = await _transport.unary(path, 'DELETE', null, TransportMeta(
-      service: 'SectionService',
-      method: 'Delete',
-    ), headers: headers);
-    return result as Map<String, dynamic>;
-  }
-
-  /// 获取翻译数据
-  Future<ContentServiceV1SectionTranslation> getTranslation(ContentServiceV1GetSectionRequest request, {Map<String, String>? headers}) async {
-    if (request.id == null) {
-      throw ArgumentError('missing required field request.id');
-    }
-    final path = '/app/v1/sections/${request.id}/translation';
-    final queryParams = <String>[];
-    if (request.locale != null) {
-      queryParams.add('locale=${Uri.encodeComponent(request.locale!.toString())}');
-    }
-    if (request.viewMask != null) {
-      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
-    }
-    var uri = path;
-    if (queryParams.isNotEmpty) {
-      uri += '?${queryParams.join("&")}';
-    }
-    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'SectionService',
-      method: 'GetTranslation',
-    ), headers: headers);
-    return ContentServiceV1SectionTranslation.fromJson(result as Map<String, dynamic>);
-  }
-}
-
-/// 回应 - 区块列表
-class ContentServiceV1ListSectionResponse {
-  List<ContentServiceV1Section>? items;
-  int? total;
-
-  ContentServiceV1ListSectionResponse({
-    this.items,
-    this.total,
-  });
-
-  factory ContentServiceV1ListSectionResponse.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1ListSectionResponse(
-      items: (json['items'] as List<dynamic>?)?.map((e) => ContentServiceV1Section.fromJson(e as Map<String, dynamic>)).toList(),
-      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
-    if (total != null) json['total'] = total.toString();
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1ListSectionResponse(items: $items, total: $total)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1ListSectionResponse &&
-      runtimeType == other.runtimeType
-      && items == other.items
-      && total == other.total
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    items,
-    total,
-  ]);
-
-  ContentServiceV1ListSectionResponse copyWith({
-    List<ContentServiceV1Section>? items,
-    int? total,
-  }) {
-    return ContentServiceV1ListSectionResponse(
-      items: items ?? this.items,
-      total: total ?? this.total,
-    );
-  }
-}
-
-/// 页面区块（语言无关的结构，内容随语言变化在翻译表中）
-class ContentServiceV1Section {
-  List<String>? availableLanguages;
-  Map<String, String>? config;
-  String? createdAt;
-  int? createdBy;
-  String? deletedAt;
-  int? deletedBy;
-  int? id;
-  String? name;
-  int? pageId;
-  int? sortOrder;
-  List<ContentServiceV1SectionTranslation>? translations;
-  ContentServiceV1SectionType? type;
-  String? updatedAt;
-  int? updatedBy;
-
-  ContentServiceV1Section({
-    this.availableLanguages,
-    this.config,
-    this.createdAt,
-    this.createdBy,
-    this.deletedAt,
-    this.deletedBy,
-    this.id,
-    this.name,
-    this.pageId,
-    this.sortOrder,
-    this.translations,
-    this.type,
-    this.updatedAt,
-    this.updatedBy,
-  });
-
-  factory ContentServiceV1Section.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1Section(
-      availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      config: (json['config'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
-      createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
-      deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
-      id: json['id'] as int?,
-      name: json['name'] as String?,
-      pageId: json['pageId'] as int?,
-      sortOrder: json['sortOrder'] as int?,
-      translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1SectionTranslation.fromJson(e as Map<String, dynamic>)).toList(),
-      type: json['type'] != null ? ContentServiceV1SectionType.fromString(json['type'] as String) : null,
-      updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
-    if (config != null) json['config'] = config;
-    if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
-    if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (id != null) json['id'] = id;
-    if (name != null) json['name'] = name;
-    if (pageId != null) json['pageId'] = pageId;
-    if (sortOrder != null) json['sortOrder'] = sortOrder;
-    if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
-    if (type != null) json['type'] = type!.value;
-    if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1Section(availableLanguages: $availableLanguages, config: $config, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, name: $name, pageId: $pageId, sortOrder: $sortOrder, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1Section &&
-      runtimeType == other.runtimeType
-      && availableLanguages == other.availableLanguages
-      && config == other.config
-      && createdAt == other.createdAt
-      && createdBy == other.createdBy
-      && deletedAt == other.deletedAt
-      && deletedBy == other.deletedBy
-      && id == other.id
-      && name == other.name
-      && pageId == other.pageId
-      && sortOrder == other.sortOrder
-      && translations == other.translations
-      && type == other.type
-      && updatedAt == other.updatedAt
-      && updatedBy == other.updatedBy
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    availableLanguages,
-    config,
-    createdAt,
-    createdBy,
-    deletedAt,
-    deletedBy,
-    id,
-    name,
-    pageId,
-    sortOrder,
-    translations,
-    type,
-    updatedAt,
-    updatedBy,
-  ]);
-
-  ContentServiceV1Section copyWith({
-    List<String>? availableLanguages,
-    Map<String, String>? config,
-    String? createdAt,
-    int? createdBy,
-    String? deletedAt,
-    int? deletedBy,
-    int? id,
-    String? name,
-    int? pageId,
-    int? sortOrder,
-    List<ContentServiceV1SectionTranslation>? translations,
-    ContentServiceV1SectionType? type,
-    String? updatedAt,
-    int? updatedBy,
-  }) {
-    return ContentServiceV1Section(
-      availableLanguages: availableLanguages ?? this.availableLanguages,
-      config: config ?? this.config,
-      createdAt: createdAt ?? this.createdAt,
-      createdBy: createdBy ?? this.createdBy,
-      deletedAt: deletedAt ?? this.deletedAt,
-      deletedBy: deletedBy ?? this.deletedBy,
-      id: id ?? this.id,
-      name: name ?? this.name,
-      pageId: pageId ?? this.pageId,
-      sortOrder: sortOrder ?? this.sortOrder,
-      translations: translations ?? this.translations,
-      type: type ?? this.type,
-      updatedAt: updatedAt ?? this.updatedAt,
-      updatedBy: updatedBy ?? this.updatedBy,
-    );
-  }
-}
-
-/// 区块类型
-enum ContentServiceV1SectionType {
-  sectionTypeButton('SECTION_TYPE_BUTTON'),
-  sectionTypeCarousel('SECTION_TYPE_CAROUSEL'),
-  sectionTypeCode('SECTION_TYPE_CODE'),
-  sectionTypeCustom('SECTION_TYPE_CUSTOM'),
-  sectionTypeDivider('SECTION_TYPE_DIVIDER'),
-  sectionTypeForm('SECTION_TYPE_FORM'),
-  sectionTypeGallery('SECTION_TYPE_GALLERY'),
-  sectionTypeHtml('SECTION_TYPE_HTML'),
-  sectionTypeImage('SECTION_TYPE_IMAGE'),
-  sectionTypeMarkdown('SECTION_TYPE_MARKDOWN'),
-  sectionTypeRichText('SECTION_TYPE_RICH_TEXT'),
-  sectionTypeSpacer('SECTION_TYPE_SPACER'),
-  sectionTypeTitle('SECTION_TYPE_TITLE'),
-  sectionTypeUnspecified('SECTION_TYPE_UNSPECIFIED'),
-  sectionTypeVideo('SECTION_TYPE_VIDEO');
-
-  final String value;
-  const ContentServiceV1SectionType(this.value);
-
-  static ContentServiceV1SectionType fromString(String v) =>
-    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1SectionType value: ' + v));
-  @override
-  String toString() => value;
-}
-
-/// 区块翻译（语言相关的内容）
-class ContentServiceV1SectionTranslation {
-  Map<String, String>? content;
-  String? createdAt;
-  int? createdBy;
-  String? deletedAt;
-  int? deletedBy;
-  int? id;
-  String? languageCode;
-  int? sectionId;
-  String? updatedAt;
-  int? updatedBy;
-
-  ContentServiceV1SectionTranslation({
-    this.content,
-    this.createdAt,
-    this.createdBy,
-    this.deletedAt,
-    this.deletedBy,
-    this.id,
-    this.languageCode,
-    this.sectionId,
-    this.updatedAt,
-    this.updatedBy,
-  });
-
-  factory ContentServiceV1SectionTranslation.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1SectionTranslation(
-      content: (json['content'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
-      createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
-      deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
-      id: json['id'] as int?,
-      languageCode: json['languageCode'] as String?,
-      sectionId: json['sectionId'] as int?,
-      updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (content != null) json['content'] = content;
-    if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
-    if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (id != null) json['id'] = id;
-    if (languageCode != null) json['languageCode'] = languageCode;
-    if (sectionId != null) json['sectionId'] = sectionId;
-    if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1SectionTranslation(content: $content, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, languageCode: $languageCode, sectionId: $sectionId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1SectionTranslation &&
-      runtimeType == other.runtimeType
-      && content == other.content
-      && createdAt == other.createdAt
-      && createdBy == other.createdBy
-      && deletedAt == other.deletedAt
-      && deletedBy == other.deletedBy
-      && id == other.id
-      && languageCode == other.languageCode
-      && sectionId == other.sectionId
-      && updatedAt == other.updatedAt
-      && updatedBy == other.updatedBy
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    content,
-    createdAt,
-    createdBy,
-    deletedAt,
-    deletedBy,
-    id,
-    languageCode,
-    sectionId,
-    updatedAt,
-    updatedBy,
-  ]);
-
-  ContentServiceV1SectionTranslation copyWith({
-    Map<String, String>? content,
-    String? createdAt,
-    int? createdBy,
-    String? deletedAt,
-    int? deletedBy,
-    int? id,
-    String? languageCode,
-    int? sectionId,
-    String? updatedAt,
-    int? updatedBy,
-  }) {
-    return ContentServiceV1SectionTranslation(
-      content: content ?? this.content,
-      createdAt: createdAt ?? this.createdAt,
-      createdBy: createdBy ?? this.createdBy,
-      deletedAt: deletedAt ?? this.deletedAt,
-      deletedBy: deletedBy ?? this.deletedBy,
-      id: id ?? this.id,
-      languageCode: languageCode ?? this.languageCode,
-      sectionId: sectionId ?? this.sectionId,
-      updatedAt: updatedAt ?? this.updatedAt,
-      updatedBy: updatedBy ?? this.updatedBy,
-    );
-  }
-}
-
-/// 请求 - 区块数据
-class ContentServiceV1GetSectionRequest {
-  int? id;
-  String? locale;
-  String? viewMask;
-
-  ContentServiceV1GetSectionRequest({
-    this.id,
-    this.locale,
-    this.viewMask,
-  });
-
-  factory ContentServiceV1GetSectionRequest.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1GetSectionRequest(
-      id: json['id'] as int?,
-      locale: json['locale'] as String?,
-      viewMask: json['viewMask'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
-    if (locale != null) json['locale'] = locale;
-    if (viewMask != null) json['viewMask'] = viewMask;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1GetSectionRequest(id: $id, locale: $locale, viewMask: $viewMask)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1GetSectionRequest &&
-      runtimeType == other.runtimeType
-      && id == other.id
-      && locale == other.locale
-      && viewMask == other.viewMask
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    id,
-    locale,
-    viewMask,
-  ]);
-
-  ContentServiceV1GetSectionRequest copyWith({
-    int? id,
-    String? locale,
-    String? viewMask,
-  }) {
-    return ContentServiceV1GetSectionRequest(
-      id: id ?? this.id,
-      locale: locale ?? this.locale,
-      viewMask: viewMask ?? this.viewMask,
-    );
-  }
-}
-
-/// 请求 - 创建区块
-class ContentServiceV1CreateSectionRequest {
-  ContentServiceV1Section? data;
-
-  ContentServiceV1CreateSectionRequest({
-    this.data,
-  });
-
-  factory ContentServiceV1CreateSectionRequest.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1CreateSectionRequest(
-      data: json['data'] != null ? ContentServiceV1Section.fromJson(json['data'] as Map<String, dynamic>) : null,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (data != null) json['data'] = data!.toJson();
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1CreateSectionRequest(data: $data)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1CreateSectionRequest &&
-      runtimeType == other.runtimeType
-      && data == other.data
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    data,
-  ]);
-
-  ContentServiceV1CreateSectionRequest copyWith({
-    ContentServiceV1Section? data,
-  }) {
-    return ContentServiceV1CreateSectionRequest(
-      data: data ?? this.data,
-    );
-  }
-}
-
-/// 请求 - 更新区块
-class ContentServiceV1UpdateSectionRequest {
-  bool? allowMissing;
-  ContentServiceV1Section? data;
-  int? id;
-  String? updateMask;
-
-  ContentServiceV1UpdateSectionRequest({
-    this.allowMissing,
-    this.data,
-    this.id,
-    this.updateMask,
-  });
-
-  factory ContentServiceV1UpdateSectionRequest.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1UpdateSectionRequest(
-      allowMissing: json['allowMissing'] as bool?,
-      data: json['data'] != null ? ContentServiceV1Section.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
-      updateMask: json['updateMask'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (allowMissing != null) json['allowMissing'] = allowMissing;
-    if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
-    if (updateMask != null) json['updateMask'] = updateMask;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1UpdateSectionRequest(allowMissing: $allowMissing, data: $data, id: $id, updateMask: $updateMask)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1UpdateSectionRequest &&
-      runtimeType == other.runtimeType
-      && allowMissing == other.allowMissing
-      && data == other.data
-      && id == other.id
-      && updateMask == other.updateMask
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    allowMissing,
-    data,
-    id,
-    updateMask,
-  ]);
-
-  ContentServiceV1UpdateSectionRequest copyWith({
-    bool? allowMissing,
-    ContentServiceV1Section? data,
-    int? id,
-    String? updateMask,
-  }) {
-    return ContentServiceV1UpdateSectionRequest(
-      allowMissing: allowMissing ?? this.allowMissing,
-      data: data ?? this.data,
-      id: id ?? this.id,
-      updateMask: updateMask ?? this.updateMask,
-    );
-  }
-}
-
-/// 请求 - 删除区块
-class ContentServiceV1DeleteSectionRequest {
-  int? id;
-
-  ContentServiceV1DeleteSectionRequest({
-    this.id,
-  });
-
-  factory ContentServiceV1DeleteSectionRequest.fromJson(Map<String, dynamic> json) {
-    return ContentServiceV1DeleteSectionRequest(
-      id: json['id'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
-    return json;
-  }
-
-  @override
-  String toString() {
-    return 'ContentServiceV1DeleteSectionRequest(id: $id)';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is ContentServiceV1DeleteSectionRequest &&
-      runtimeType == other.runtimeType
-      && id == other.id
-    ;
-
-  @override
-  int get hashCode => Object.hashAll([
-    id,
-  ]);
-
-  ContentServiceV1DeleteSectionRequest copyWith({
-    int? id,
-  }) {
-    return ContentServiceV1DeleteSectionRequest(
       id: id ?? this.id,
     );
   }
@@ -9642,7 +9228,6 @@ class ApiClient {
   NavigationServiceClient? _navigationService;
   PageServiceClient? _pageService;
   PostServiceClient? _postService;
-  SectionServiceClient? _sectionService;
   SiteServiceClient? _siteService;
   TagServiceClient? _tagService;
   UserProfileServiceClient? _userProfileService;
@@ -9689,11 +9274,6 @@ class ApiClient {
     return _postService!;
   }
 
-  SectionServiceClient get sectionService {
-    _sectionService ??= SectionServiceClient(_transport);
-    return _sectionService!;
-  }
-
   SiteServiceClient get siteService {
     _siteService ??= SiteServiceClient(_transport);
     return _siteService!;
@@ -9719,7 +9299,6 @@ class ApiClient {
     _navigationService = null;
     _pageService = null;
     _postService = null;
-    _sectionService = null;
     _siteService = null;
     _tagService = null;
     _userProfileService = null;

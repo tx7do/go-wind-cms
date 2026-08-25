@@ -133,25 +133,25 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
           throw new Error('Page not found');
         }
 
-        if (!item.translations || item.translations.length === 0) {
-          throw new Error('No translations found for page');
-        }
+        // 页面可能尚无任何翻译（新建页、或演示数据中无翻译的页面）。
+        // 此时仍加载页面级元数据，并让作者以当前语言撰写首条翻译，
+        // 而非直接抛错阻断编辑。
+        const hasTranslations =
+          !!item.translations && item.translations.length > 0;
 
         // Find translation for selected language
-        let langItem = item.translations?.find(
-          (t) => t.languageCode === this.formData.lang,
-        );
+        let langItem = hasTranslations
+          ? item.translations?.find(
+              (t) => t.languageCode === this.formData.lang,
+            )
+          : undefined;
 
         this.needTranslate = false;
 
         // If translation not found, use first available translation
         if (!langItem) {
-          langItem = item.translations?.[0];
+          langItem = hasTranslations ? item.translations?.[0] : undefined;
           this.needTranslate = true;
-        }
-
-        if (!langItem) {
-          throw new Error('No translations found for page');
         }
 
         // Mark translation status in language options using availableLanguages
@@ -163,9 +163,9 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
 
         // Update form data
         this.formData.id = item.id;
-        this.formData.title = langItem.title || '';
-        this.formData.slug = langItem.slug || '';
-        this.formData.content = langItem.content || '';
+        this.formData.title = langItem?.title || '';
+        this.formData.slug = langItem?.slug || '';
+        this.formData.content = langItem?.content || '';
         this.formData.editorType = convertToUIEditorType(item.editorType);
         this.formData.parentId = item.parentId;
         this.formData.type = item.type;
@@ -179,6 +179,19 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
         this.formData.sortOrder = item.sortOrder;
         this.formData.contentModelId = item.contentModelId;
         this.formData.customFields = item.customFields ?? {};
+
+        // 嵌套区块：从页面整体水合（后端按 page_id 返回该页全部 section 及其各语言翻译）。
+        this.formData.sections = (item.sections ?? []).map((s) => ({
+          id: s.id,
+          type: s.type,
+          name: s.name,
+          sortOrder: s.sortOrder,
+          config: s.config,
+          translations: (s.translations ?? []).map((tr) => ({
+            languageCode: tr.languageCode,
+            content: tr.content,
+          })),
+        }));
 
         // Try to load draft after fetching backend data
         // Draft will override backend data if exists
@@ -294,6 +307,7 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
           sortOrder: this.formData.sortOrder,
           contentModelId: this.formData.contentModelId,
           customFields: this.formData.customFields,
+          sections: this.formData.sections,
           translations: [
             {
               title: this.formData.title,
@@ -309,7 +323,10 @@ export const usePageEditViewStore = defineStore('page-edit-view', {
               id: this.formData.id || 0,
               data,
               updateMask: makeUpdateMask(
-                Object.keys(data).filter((k) => k !== 'translations'),
+                // translations 与 sections 均为整体替换字段，不纳入 updateMask
+                Object.keys(data).filter(
+                  (k) => k !== 'translations' && k !== 'sections',
+                ),
               ),
             }));
 
