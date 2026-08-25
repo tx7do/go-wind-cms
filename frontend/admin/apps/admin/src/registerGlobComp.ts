@@ -3,13 +3,17 @@
 import {
   Button,
   Card,
+  Col,
   Divider,
   Dropdown,
   Form,
   Input,
+  InputNumber,
   Layout,
   Menu,
+  Modal,
   Popconfirm,
+  Row,
   Select,
   Space,
   Switch,
@@ -25,6 +29,9 @@ import {
 export function registerGlobComp(app: App) {
   app
     .use(Input)
+    .use(Col)
+    .use(Row)
+    .use(InputNumber)
     .use(Button)
     .use(Layout)
     .use(Space)
@@ -38,5 +45,6 @@ export function registerGlobComp(app: App) {
     .use(Tabs)
     .use(Divider)
     .use(Menu)
+    .use(Modal)
     .use(Tree);
 }
