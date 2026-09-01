@@ -94,6 +94,8 @@ func NewGrpcServer(
 	navigationItemService *service.NavigationItemService,
 
 	mediaAssetService *service.MediaAssetService,
+
+	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -161,6 +163,8 @@ func NewGrpcServer(
 	siteV1.RegisterNavigationItemServiceServer(srv, navigationItemService)
 
 	mediaV1.RegisterMediaAssetServiceServer(srv, mediaAssetService)
+
+	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 
 	return srv, nil
 }

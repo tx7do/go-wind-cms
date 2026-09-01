@@ -240,17 +240,22 @@ func (s *TaskService) registerHandlersWithAudit() error {
 }
 ```
 
-### 5. Add EventBus to Wire Dependencies
+### 5. Add EventBus to the Hand-Written Wiring
 
-In `data/init.go`:
+项目已移除 google/wire,依赖装配在手写装配文件中完成(`app/core/service/cmd/server/wiring.go`)。
+在基础设施小节构造 manager,并作为构造参数传给需要的 service:
 
 ```go
-var ProviderSet = wire.NewSet(
-    NewData,
-    // ... existing providers ...
-    NewEventBusManager,  // Add this
-)
+// cmd/server/wiring.go — 基础设施小节
+eventBusManager := eventbus.NewManager(logger)
 
+// 服务层小节 — 作为构造参数传入
+taskService := service.NewTaskService(ctx, taskRepo, userRepo, ..., eventBusManager)
+```
+
+若走 provider 构造函数形态,则在对应 data/service 包中提供:
+
+```go
 // NewEventBusManager creates a new event bus manager
 func NewEventBusManager(logger log.Logger) *eventbus.Manager {
     return eventbus.NewManager(logger)

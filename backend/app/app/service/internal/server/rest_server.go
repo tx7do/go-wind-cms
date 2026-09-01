@@ -120,6 +120,8 @@ func NewRestServer(
 	pageService *service.PageService,
 	navigationService *service.NavigationService,
 	siteService *service.SiteService,
+
+	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -148,6 +150,8 @@ func NewRestServer(
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 
 	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
+
+	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

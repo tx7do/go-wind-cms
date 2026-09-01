@@ -11,7 +11,7 @@ GoWind（风行内容中台）— 企业级无头内容中枢（Headless Content
 - [Kratos](https://go-kratos.dev/) -- B站微服务框架
 - [Consul](https://www.consul.io/) / [Etcd](https://etcd.io/) -- 服务发现和配置管理
 - [OpenTelemetry](https://opentelemetry.io/) -- 分布式可观察系统
-- [Wire](https://github.com/google/wire) -- 依赖注入框架
+- 手写依赖装配（wiring.go，无 DI 框架）
 - [OpenAPI](https://www.openapis.org/) -- RESTful API 文档
 - [MinIO](https://min.io/) -- 对象存储服务器
 - [Redis](https://redis.io/) -- 非关系型数据库
@@ -73,13 +73,6 @@ make openapi
 ```bash
 cd `{项目根目录}/backend/app/{服务名}/service`
 make ent
-```
-
-### 生成wire代码
-
-```bash
-cd `{项目根目录}/backend/app/{服务名}/service`
-make wire
 ```
 
 ### 构建Docker镜像

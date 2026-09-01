@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"context"
 	"strings"
 	"time"
@@ -175,7 +176,8 @@ func RegisterOSS(L *lua.LState, ossClient *oss.MinIOClient, logger *log.Helper) 
 			content := L.CheckString(3)
 
 			ctx := context.Background()
-			_, _, downloadURL, err := ossClient.UploadFile(ctx, bucketName, objectName, "", []byte(content))
+			payload := []byte(content)
+			_, _, downloadURL, err := ossClient.UploadFile(ctx, bucketName, objectName, "", bytes.NewReader(payload), int64(len(payload)))
 			if err != nil {
 				L.Push(lua.LBool(false))
 				L.Push(lua.LString(err.Error()))

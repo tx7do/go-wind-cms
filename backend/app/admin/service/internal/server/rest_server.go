@@ -143,6 +143,8 @@ func NewRestServer(
 	navigationItemService *service.NavigationItemService,
 
 	mediaAssetService *service.MediaAssetService,
+
+	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -213,6 +215,8 @@ func NewRestServer(
 	adminV1.RegisterNavigationItemServiceHTTPServer(srv, navigationItemService)
 
 	adminV1.RegisterMediaAssetServiceHTTPServer(srv, mediaAssetService)
+
+	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

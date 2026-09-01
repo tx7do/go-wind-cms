@@ -216,7 +216,7 @@ Post/Page 编辑器（`views/app/content/post/edit/`、`page/edit/`）：
 - [ ] core service：content_model_service（CRUD + 翻译 + ListFieldDefinitions）
 - [ ] core service：字段值校验 `ValidateValues`（text/number/richtext/image/file/relation 全覆盖）
 - [ ] proto：admin i_content_model.proto + 字段定义 proto
-- [ ] `make api` + wire 注入 + admin BFF 注册
+- [ ] `make api` + 手写装配登记（wiring.go / make register）+ admin BFF 注册
 - [ ] 编译验证
 
 ### 阶段 2：管理后台 UI

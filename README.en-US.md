@@ -50,7 +50,7 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 |:---|:---|:---|
 | Language | [Go 1.25+](https://go.dev/) | High-performance compiled language |
 | Framework | [go-kratos](https://go-kratos.dev/) | Microservice framework by Bilibili |
-| DI | [Wire](https://github.com/google/wire) | Compile-time dependency injection |
+| DI | Hand-written assembly (`wiring.go`) | No DI framework; `make register` assists module registration |
 | ORM | [Ent](https://entgo.io/) | Go entity framework |
 | Database | [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/) | Relational database |
 | Cache | [Redis](https://redis.io/) | In-memory data store |
@@ -202,7 +202,7 @@ make openapi
 # Generate TypeScript code
 make ts
 
-# Generate all code (ent + wire + api + openapi)
+# Generate all code (ent + api + openapi)
 make gen
 
 # Build all services

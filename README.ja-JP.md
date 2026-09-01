@@ -50,7 +50,7 @@ GoWind HCH（風行）は、すぐに使える企業向けの Golang フルス�
 |:---|:---|:---|
 | 言語 | [Go 1.25+](https://go.dev/) | 高性能コンパイル言語 |
 | フレームワーク | [go-kratos](https://go-kratos.dev/) | Bilibili オープンソースマイクロサービスフレームワーク |
-| DI | [Wire](https://github.com/google/wire) | コンパイル時依存性注入 |
+| DI | 手書き組み立て(`wiring.go`) | DIフレームワークなし、`make register`で新モジュールを登録 |
 | ORM | [Ent](https://entgo.io/) | Go エンティティフレームワーク |
 | データベース | [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/) | リレーショナルデータベース |
 | キャッシュ | [Redis](https://redis.io/) | インメモリデータストア |
@@ -202,7 +202,7 @@ make openapi
 # TypeScript コードの生成
 make ts
 
-# 全コードの生成 (ent + wire + api + openapi)
+# 全コードの生成 (ent + api + openapi)
 make gen
 
 # 全サービスのビルド

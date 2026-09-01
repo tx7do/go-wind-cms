@@ -15,7 +15,7 @@ ROOT_DIR	:= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 SRCS_MK		:= $(foreach dir, app, $(wildcard $(dir)/*/*/Makefile))
 
-.PHONY: help wire gen ent build api openapi init all vendor dep test cover vet lint docker \
+.PHONY: help register gen ent build api openapi init all vendor dep test cover vet lint docker \
 		install-dev install-prod docker-up docker-down docker-libs pm2-deploy
 
 # show environment variables
@@ -72,12 +72,9 @@ vet:
 lint:
 	golangci-lint run
 
-# generate wire code
-wire:
-	$(foreach dir, $(dir $(realpath $(SRCS_MK))),\
-      cd $(dir);\
-      make wire;\
-    )
+# register a new CRUD module into the hand-written wiring (usage: make register ENTITY=product [SVC=core] [PKG=contentV1])
+register:
+	go run ./tools/register -entity $(ENTITY) -svc $(SVC) -pkg $(PKG)
 
 # generate ent code
 ent:
@@ -87,7 +84,7 @@ ent:
     )
 
 # generate code
-gen: ent wire api openapi
+gen: ent api openapi
 
 # generate protobuf api go code
 api:

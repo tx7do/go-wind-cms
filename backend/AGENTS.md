@@ -10,7 +10,7 @@
 - **框架**: go-kratos v2.9.2（HTTP + gRPC + SSE）
 - **语言**: Go 1.25
 - **ORM**: entgo.io/ent v0.14（schema 即代码，启用 privacy/entql/upsert 等特性）
-- **依赖注入**: google/wire（编译期代码生成）
+- **依赖注入**: 手写装配（`cmd/server/wiring.go`，无 DI 框架，新增模块用 `make register` 辅助登记）
 - **数据库**: PostgreSQL（主）/ MySQL，驱动 pgx/v5
 - **缓存/队列**: Redis（go-redis/v9）、Asynq 异步任务
 - **鉴权**: kratos-authn（JWT HS256）+ kratos-authz（Casbin / OPA）
@@ -55,21 +55,19 @@ backend/
 │   └── gen/go/                   # ← protoc 生成（禁止手改）
 ├── app/                          # 应用实现层（3 个独立微服务）
 │   └── <admin|app|core>/service/
-│       ├── cmd/server/           # 入口 + wire 注入
+│       ├── cmd/server/           # 入口 + 手写依赖装配
 │       │   ├── main.go
-│       │   ├── wire.go           # wireinject 声明
-│       │   └── wire_gen.go       # ← wire 生成（禁止手改）
+│       │   └── wiring.go         # ★ initApp 手写装配（依赖注入点，人工维护）
 │       ├── configs/              # 运行时配置（server/data/client/...yaml）
 │       └── internal/
 │           ├── server/           # 传输层（HTTP/gRPC/SSE 装配 + 中间件）
 │           ├── service/          # 业务逻辑层（实现 proto 接口）
-│           │   └── providers/wire_set.go
 │           └── data/             # 数据访问层（仅 core 服务有 DB）
 │               ├── ent/schema/   # ★ ent 实体定义（人工维护）
 │               ├── ent/          # ← ent generate 生成（禁止手改）
-│               ├── *_repo.go     # 仓储实现
-│               └── providers/wire_set.go
+│               └── *_repo.go     # 仓储实现
 ├── pkg/                          # 跨服务公共库（中间件/加密/工具/领域包）
+├── tools/register/               # 新模块装配登记工具（make register 调用）
 ├── sql/                          # 数据库种子/演示数据脚本
 ├── scripts/                      # 部署与环境脚本（env/docker/deploy）
 ├── Makefile / app.mk             # 构建编排
@@ -105,16 +103,16 @@ api/
 ### 契约与生成
 
 1. **Protobuf 是单一事实源** — 所有接口、数据模型、错误码必须先在 `api/protos/` 定义，再生成 Go 代码
-2. **禁止手改生成代码** — `api/gen/`、`*/ent/`（除 `ent/schema/`）、`wire_gen.go` 均为生成产物
+2. **禁止手改生成代码** — `api/gen/`、`*/ent/`（除 `ent/schema/`）均为生成产物
 3. **改 proto 后必须重新生成** — 执行 `make api`（或一键 `make gen`）
 4. **新增 ent 实体后必须重新生成** — 执行 `make ent`
-5. **新增/修改构造函数后必须重新生成** — 执行 `make wire`
+5. **新增模块必须接入手写装配** — 在 `cmd/server/wiring.go` 对应分层小节追加构造行（或 `make register ENTITY=xxx` 自动注入标准形态），漏接由编译器在调用处报错
 
 ### 分层规约
 
 6. **admin/app service 不碰数据库** — 它们只校验参数并 gRPC 转发到 core
 7. **数据访问只在 core-service 的 `internal/data/`** — 其它服务不直接操作 ent
-8. **每层有独立的 `providers/wire_set.go`** — 新增构造函数必须注册到对应层的 ProviderSet
+8. **装配按分层小节组织** — wiring.go 内新增构造行放对应分层小节，并传给下游消费者（CRUD 标准形态可用 `make register` 注入）
 
 ### 命名约定
 
@@ -361,42 +359,34 @@ func (User) Indexes() []ent.Index {
 
 > ent 实体（`ent.User`）与 DTO（`identityV1.User` proto message）之间通过 `mapper.CopierMapper` + 枚举 `EnumTypeConverter` 在 repo 层转换。**对外数据模型是 proto message，不是 ent 实体。**
 
-## 依赖注入（google/wire）
+## 依赖装配（手写 wiring.go）
 
-编译期代码生成 DI。每层一个 `providers/wire_set.go`（带 `//go:build wireinject` 标签）：
+不使用 DI 框架。每个服务的 `cmd/server/wiring.go` 用 `initApp` 手写装配整个应用，构造调用严格单向分层，自上而下的阅读顺序即依赖方向：
 
-```go
-// app/core/service/internal/data/providers/wire_set.go
-//go:build wireinject
-package providers
-
-import "github.com/google/wire"
-import "go-wind-cms/app/core/service/internal/data"
-
-var ProviderSet = wire.NewSet(
-    data.NewRedisClient,
-    data.NewEntClient,
-    data.NewUserRepo,         // ★ 每个 repo 构造函数都登记
-    data.NewRoleRepo,
-    // ...
-)
+```
+基础设施 → [仓储层(data，仅 core) / 服务客户端(data，仅 admin/app)] → 服务层(service) → 传输层(server)
 ```
 
-顶层 `cmd/server/wire.go` 组合各层：
+要点：
+- **admin/app 是 BFF**：data 层是 `data.NewXxxServiceClient(ctx, discovery)` 服务客户端；core 的 data 层是 `data.NewXxxRepo(ctx, entClient)` 仓储
+- **cleanup 收集器**：持有清理的资源（redis/ent/opensearch client）创建成功后立即注册进 `cleanups`，任何一步失败 `rollback` 逆序执行（与 shutdown 共用同一条 LIFO 路径）
+- **本文件只做构造与传参**，不写业务逻辑
 
-```go
-//go:build wireinject
-func initApp(*bootstrap.Context) (*kratos.App, func(), error) {
-    panic(wire.Build(
-        serverProviders.ProviderSet,
-        serviceProviders.ProviderSet,
-        dataProviders.ProviderSet,
-        newApp,
-    ))
-}
+新增模块的登记有两种方式：
+
+1. **`make register`（CRUD 标准形态自动注入）**：
+
+```bash
+make register ENTITY=product                      # core：仓储+服务+gRPC 注册，共 5 处
+make register ENTITY=product SVC=admin            # admin BFF：客户端+服务+REST 注册
+make register ENTITY=collection SVC=core PKG=contentV1   # core 需指定路由包别名
 ```
 
-> **新增任何构造函数后**：1) 注册到对应层的 `ProviderSet`；2) 执行 `make wire` 重新生成 `wire_gen.go`。
+工具（`tools/register`，纯标准库）经文件内的 `register:*` 锚点注释一次性注入五处（wiring.go 仓储/服务行与实参 + server 文件形参与路由注册），幂等可重跑、与手工编辑混用安全。
+
+2. **手工编辑**：非标准形态（依赖多个仓储/客户端）在 wiring.go 对应分层小节追加构造行，并传给下游消费者。
+
+> **漏登记 = 编译错误在准确行**（wire 时代忘跑 `make wire` 是静默漏装配）。
 
 ## 日志
 
@@ -486,10 +476,10 @@ func NewRestMiddleware(...) []middleware.Middleware {
 
 | 命令 | 作用 |
 |------|------|
-| `make gen` | ★ 一键全流程：`ent + wire + api + openapi`（新增接口/实体后首选） |
+| `make gen` | ★ 一键全流程：`ent + api + openapi`（新增接口/实体后首选） |
 | `make api` | proto → Go 代码（`cd api && buf generate`） |
 | `make ent` | 生成 ent ORM 代码 |
-| `make wire` | 生成 wire 依赖注入代码 |
+| `make register` | 新模块装配登记（`ENTITY=xxx [SVC=core] [PKG=contentV1]`，见「依赖装配」章节） |
 | `make openapi` | 生成 OpenAPI v3 文档 |
 | `make build` | `api + openapi` 再编译各服务 |
 | `make build_only` | 跳过生成，仅编译 |
@@ -517,14 +507,11 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - [ ] Step 3: （仅 core）定义 ent schema（app/core/service/internal/data/ent/schema/{entity}.go）
 - [ ] Step 4: （仅 core）make ent 生成 ent 代码
 - [ ] Step 5: （仅 core）实现 repo（internal/data/{entity}_repo.go：接口 + 实现 + 事务模式）
-- [ ] Step 6: （仅 core）在 data/providers/wire_set.go 注册 NewXxxRepo
-- [ ] Step 7: 实现 core service（internal/service/{entity}_service.go，嵌入 UnimplementedXxxServer）
-- [ ] Step 8: 在 service/providers/wire_set.go 注册 NewXxxService
-- [ ] Step 9: （如对外 REST）在 core/server/grpc_server.go 注册 gRPC service
-- [ ] Step 10: （admin/app 网关）实现薄 BFF service（注入 XxxServiceClient，转发）
-- [ ] Step 11: 在 admin/server/rest_server.go 调用 RegisterXxxHTTPServer
-- [ ] Step 12: make wire 重新生成依赖注入
-- [ ] Step 13: make build → make run 验证
+- [ ] Step 6: 实现 core service（internal/service/{entity}_service.go，嵌入 UnimplementedXxxServer）
+- [ ] Step 7: （仅 core）make register ENTITY={entity} SVC=core PKG={domainV1} 注入装配与 gRPC 注册
+- [ ] Step 8: （admin/app 网关）实现薄 BFF service（注入 XxxServiceClient，转发）
+- [ ] Step 9: （admin/app 网关）make register ENTITY={entity} SVC=admin|app 注入装配与 REST 注册
+- [ ] Step 10: make build → make run 验证
 ```
 
 ## 常见错误与纠正
@@ -532,12 +519,12 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 | 错误做法 | 正确做法 |
 |---|---|
 | 在 admin/app service 里操作 ent / DB | 数据访问只能在 core-service 的 `internal/data/` |
-| 手改 `api/gen/`、`*/ent/`（非 schema）、`wire_gen.go` | 这些是生成产物，改源（proto / ent schema / wire.go）后 `make gen` |
+| 手改 `api/gen/`、`*/ent/`（非 schema） | 这些是生成产物，改源（proto / ent schema）后 `make gen` |
 | 改 proto 后不重新生成 | 执行 `make api`（或 `make gen`） |
 | `return nil, errors.New("xxx")` | 用生成的 Kratos 错误助手 `identityV1.ErrorBadRequest("xxx")` |
 | `fmt.Println` / 标准 `log` 做业务日志 | 用注入的 `*log.Helper`（`s.log.Errorf`） |
 | 手写 HTTP 路由 | 由 proto 的 `google.api.http` 注解生成，在 server 层 `RegisterXxxHTTPServer` |
-| 新增构造函数不注册 ProviderSet | 必须加到对应层 `providers/wire_set.go` 再 `make wire` |
+| 新模块不接入手写装配 | 在 `cmd/server/wiring.go` 对应小节追加构造行（CRUD 标准形态用 `make register`），漏接=编译错误 |
 | 接口与实现同名（都叫 `UserRepo`） | 接口 `UserRepo`，实现 `userRepo`，`NewUserRepo` 返回接口类型 |
 | repo 里直接 Commit/Rollback 散落 | 用统一的 `defer { rollback/commit }` 闭包模式 |
 | 手写 SQL 迁移脚本 | ent schema 即迁移源，`migrate: true` 自动建表 |
@@ -546,8 +533,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 
 **架构骨架**
 - `app/<svc>/service/cmd/server/main.go` — 启动入口
-- `app/<svc>/service/cmd/server/wire.go` — DI 声明（wireinject）
-- `app/<svc>/service/cmd/server/wire_gen.go` — DI 生成结果（查注入拓扑）
+- `app/<svc>/service/cmd/server/wiring.go` — ★ 手写依赖装配（查注入拓扑看这里，分层小节 + register:* 锚点）
 - `app/<svc>/service/internal/server/rest_server.go` — HTTP server + 路由 + 中间件
 - `app/<svc>/service/internal/server/grpc_server.go` — gRPC server + 中间件
 
