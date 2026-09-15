@@ -13,7 +13,7 @@ const defaultPreferences: Preferences = {
     theme: {
         mode: 'auto',
         /** HSL raw 格式: "H S% L%"，直接映射到 CSS --primary 变量 */
-        colorPrimary: '142.1 76.2% 36.3%',
+        colorPrimary: '212 100% 45%',
         colorSuccess: '142.1 76.2% 36.3%',
         colorWarning: '38 92% 50%',
         colorDestructive: '0 84.2% 60.2%',

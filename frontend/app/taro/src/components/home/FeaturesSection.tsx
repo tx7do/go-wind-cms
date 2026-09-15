@@ -12,11 +12,11 @@ const FEATURE_ICONS = [
 ];
 
 const FEATURE_BG_COLORS = [
-    'rgba(22,119,255,0.08)', 'rgba(0,180,42,0.08)', 'rgba(255,125,0,0.08)',
+    'rgba(0,107,230,0.08)', 'rgba(0,180,42,0.08)', 'rgba(255,125,0,0.08)',
     'rgba(114,46,209,0.08)', 'rgba(19,194,194,0.08)', 'rgba(235,47,150,0.08)',
 ];
 
-const FEATURE_ICON_COLORS = ['#1677ff', '#00b42a', '#ff7d00', '#722ed1', '#13c2c2', '#eb2f96'];
+const FEATURE_ICON_COLORS = ['#006be6', '#00b42a', '#ff7d00', '#722ed1', '#13c2c2', '#eb2f96'];
 
 export default function FeaturesSection() {
     const t = useTranslations('page.home');

@@ -75,14 +75,14 @@ export default function TagDetailPage() {
       {/* 页面标题 */}
       <View
         className='bg-cardBg px-[24rpx] pt-[40rpx] pb-[24rpx] border-b-[1rpx] border-splitLine'
-        style={{borderTop: `3px solid ${tag?.color || '#1677ff'}`}}
+        style={{borderTop: `3px solid ${tag?.color || '#006be6'}`}}
       >
         <View className='flex items-center gap-[16rpx]'>
           <View
             className='w-[48rpx] h-[48rpx] rounded-full flex items-center justify-center'
-            style={{backgroundColor: `${tag?.color || '#1677ff'}20`}}
+            style={{backgroundColor: `${tag?.color || '#006be6'}20`}}
           >
-            <XIcon name='carbon:tag' size={20} style={{color: tag?.color || '#1677ff'}} />
+            <XIcon name='carbon:tag' size={20} style={{color: tag?.color || '#006be6'}} />
           </View>
           <View className='flex-1 min-w-0'>
             <Text className='text-title font-bold text-textMain'>

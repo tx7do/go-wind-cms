@@ -15,7 +15,7 @@ class SettingsPage extends StatelessWidget {
 
   /// 预设主题色列表
   static const List<Color> _presetColors = [
-    Color(0xFF3A7CA5), // 默认蓝
+    Color(0xFF006BE6), // 品牌蓝（默认）
     Color(0xFF6750A4), // 紫色
     Color(0xFF006B5E), // 墨绿
     Color(0xFFB7262E), // 中国红

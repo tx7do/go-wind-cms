@@ -51,29 +51,34 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
     }, [mode]);
 
     // 全平台：通过内联 CSS 变量注入色板（最可靠的跨端方案，不依赖 page 选择器在 H5 中的匹配）
+    // 色值与 app.css token 及 docs/design-language.md 保持同源
     const themeStyle = useMemo(() => {
         if (isDark) {
             return {
+                '--color-primary': '#2e96ff',
+                '--color-primary-tint': 'rgba(46, 150, 255, 0.16)',
                 '--color-text-main': '#ffffffe6',
                 '--color-text-sec': '#ffffffcc',
                 '--color-text-third': '#ffffffa3',
                 '--color-text-weak': '#ffffff6b',
-                '--color-page-bg': '#17171a',
-                '--color-card-bg': '#232326',
-                '--color-split-line': '#3a3a3c',
-                '--color-bar-bg': 'rgba(35, 35, 38, 0.92)',
+                '--color-page-bg': '#050b14',
+                '--color-card-bg': '#0d1626',
+                '--color-split-line': '#1e293b',
+                '--color-bar-bg': 'rgba(13, 22, 38, 0.92)',
             } as React.CSSProperties;
         }
         return {
-            '--color-text-main': '#1d2129',
-            '--color-text-sec': '#4e5969',
-            '--color-text-third': '#86909c',
-            '--color-text-weak': '#c9cdd4',
+            '--color-primary': '#006be6',
+            '--color-primary-tint': '#e5efff',
+            '--color-text-main': '#0f172a',
+            '--color-text-sec': '#475569',
+            '--color-text-third': '#64748b',
+            '--color-text-weak': '#cbd5e1',
             // 亮色背景：页面底色略深于纯白，卡片纯白以形成对比
-            '--color-page-bg': '#ebedf0',
+            '--color-page-bg': '#f4f7f9',
             '--color-card-bg': '#ffffff',
             // 分割线：更轻以避免与卡片边框叠加后显得粗重
-            '--color-split-line': '#e8eaed',
+            '--color-split-line': '#e2e8f0',
             '--color-bar-bg': 'rgba(255, 255, 255, 0.92)',
         } as React.CSSProperties;
     }, [isDark]);

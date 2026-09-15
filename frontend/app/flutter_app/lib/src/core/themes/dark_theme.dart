@@ -7,11 +7,12 @@ import 'snackbar_color.dart' show SnackBarColor;
 import 'app_theme_extension.dart';
 
 class DarkColor {
-  static const Color bgColor = Color.fromRGBO(18, 18, 18, 1.0);
-  static const Color surfaceColor = Color.fromRGBO(28, 28, 30, 1.0);
-  static const Color cardColor = Color.fromRGBO(35, 35, 38, 1.0);
-  static const Color onSurface = Color.fromRGBO(232, 232, 234, 1.0);
-  static const Color cursorColor = Color(0xFF3A7CA5);
+  // 深空夜蓝（docs/design-language.md 深色模式），非死黑
+  static const Color bgColor = Color.fromRGBO(5, 11, 20, 1.0);
+  static const Color surfaceColor = Color.fromRGBO(13, 22, 38, 1.0);
+  static const Color cardColor = Color.fromRGBO(20, 32, 56, 1.0);
+  static const Color onSurface = Color.fromRGBO(248, 250, 252, 1.0);
+  static const Color cursorColor = Color(0xFF2E96FF);
 }
 
 ColorScheme _buildDarkColorScheme(Color seedColor) => ColorScheme.fromSeed(
@@ -227,6 +228,6 @@ ThemeData _buildDarkTheme(Color seedColor) {
 /// 获取暗黑系主题
 /// [seedColor] 种子颜色，用于动态生成配色方案
 ThemeData getDarkTheme({Color? seedColor}) {
-  final color = seedColor ?? const Color(0xFF3A7CA5);
+  final color = seedColor ?? const Color(0xFF006BE6);
   return _buildDarkTheme(color);
 }

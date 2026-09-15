@@ -71,7 +71,7 @@ export default function FeaturesSection() {
                             )}
                         >
                             {/* hover 风迹渐变蒙层 */}
-                            <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
+                            <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-primary/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
                             <div className={cn(
                                 'relative mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl',
                                 'bg-primary/10 text-3xl text-primary',

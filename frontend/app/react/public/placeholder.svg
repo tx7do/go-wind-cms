@@ -1,13 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
-  <!-- 文章封面占位图：山峦插画,绿色调与站点主色 primary (#16a34a) 同源;构图重心置于竖直中线,兼容超宽 object-cover 裁切 -->
+  <!-- 文章封面占位图：风纹插画,品牌蓝与站点主色 primary (#006BE6) 同源(docs/design-language.md §7);构图重心置于竖直中线,兼容超宽 object-cover 裁切 -->
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fefffe"/>
-      <stop offset="1" stop-color="#e2f3e9"/>
+      <stop offset="0" stop-color="#fbfdff"/>
+      <stop offset="1" stop-color="#e3effc"/>
     </linearGradient>
   </defs>
   <rect width="640" height="360" fill="url(#sky)"/>
-  <circle cx="440" cy="148" r="36" fill="#b9e3c6"/>
-  <path d="M0 268 C 140 200, 300 218, 400 246 C 500 274, 570 258, 640 238 L 640 360 L 0 360 Z" fill="#16a34a" fill-opacity="0.18"/>
-  <path d="M0 322 C 180 262, 380 308, 640 272 L 640 360 L 0 360 Z" fill="#16a34a" fill-opacity="0.34"/>
+  <circle cx="452" cy="132" r="40" fill="#c3ddf7"/>
+  <g fill="none" stroke="#006be6" stroke-linecap="round">
+    <path d="M96 214 C 210 168, 330 252, 448 206 C 520 178, 570 196, 604 214" stroke-opacity="0.30" stroke-width="14"/>
+    <path d="M60 264 C 190 216, 320 300, 456 254 C 528 230, 580 246, 612 262" stroke-opacity="0.18" stroke-width="14"/>
+    <path d="M128 168 C 220 132, 320 196, 420 162" stroke-opacity="0.10" stroke-width="12"/>
+  </g>
 </svg>

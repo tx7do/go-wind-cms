@@ -6,9 +6,10 @@ module.exports = {
     extend: {
       /* ========== 全局通用色板（规范 §3） ========== */
       colors: {
-        // 主色系
-        primary: '#1677ff',       // 主色/主按钮/重点强调
+        // 主色系（品牌蓝，随主题经 CSS 变量切换：亮 #006BE6 / 暗 #2E96FF，见 docs/design-language.md）
+        primary: 'var(--color-primary)',       // 主色/主按钮/重点强调
         'primary-foreground': '#ffffff', // 主色上的文字色
+        'primary-tint': 'var(--color-primary-tint)', // 主色浅底（徽章/图标底）
         success: '#00b42a',       // 成功状态/完成提示
         warning: '#ff7d00',       // 警告状态/待处理提示
         danger: '#f53f3f',        // 错误状态/删除/高危操作

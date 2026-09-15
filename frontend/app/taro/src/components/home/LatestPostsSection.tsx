@@ -92,7 +92,7 @@ export default function LatestPostsSection() {
         <View
           className='px-[24rpx] py-[12rpx] rounded-full flex items-center justify-center'
           style={{
-            backgroundColor: 'rgba(22,119,255,0.08)',
+            backgroundColor: 'rgba(0,107,230,0.08)',
           }}
           onClick={() => router.push('/post')}
           hoverClass='tap-active'
@@ -110,8 +110,8 @@ export default function LatestPostsSection() {
         duration={500}
         circular
         indicatorDots
-        indicatorColor='rgba(22,119,255,0.2)'
-        indicatorActiveColor='rgba(22,119,255,1)'
+        indicatorColor='rgba(0,107,230,0.2)'
+        indicatorActiveColor='rgba(0,107,230,1)'
         onChange={() => {}}
       >
         {posts.map((post) => {
@@ -125,7 +125,7 @@ export default function LatestPostsSection() {
                 onClick={() => handleViewPost(post)}
                 hoverClass='tap-active'
                 style={{
-                  background: thumbnail ? 'none' : 'linear-gradient(135deg, rgba(22,119,255,0.06) 0%, rgba(114,46,209,0.06) 100%)',
+                  background: thumbnail ? 'none' : 'linear-gradient(135deg, rgba(0,107,230,0.06) 0%, rgba(112,179,255,0.12) 100%)',
                 }}
               >
                 {/* 封面图 */}

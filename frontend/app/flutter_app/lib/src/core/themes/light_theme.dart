@@ -6,16 +6,16 @@ import 'fonts.dart';
 import 'snackbar_color.dart' show SnackBarColor;
 import 'app_theme_extension.dart';
 
-/// 默认主题色
-const Color kDefaultSeedColor = Color(0xFF3A7CA5);
+/// 默认主题色（品牌蓝，docs/design-language.md）
+const Color kDefaultSeedColor = Color(0xFF006BE6);
 
 class LightColor {
-  static const Color bgColor = Color.fromRGBO(245, 247, 250, 1.0);
-  static const Color primaryColor = Color.fromRGBO(58, 124, 165, 1.0);
+  static const Color bgColor = Color.fromRGBO(244, 247, 249, 1.0);
+  static const Color primaryColor = Color(0xFF006BE6);
   static const Color onPrimaryColor = Color.fromRGBO(255, 255, 255, 1.0);
-  static const Color inputTextColor = Color.fromRGBO(10, 25, 12, 1.0);
+  static const Color inputTextColor = Color.fromRGBO(15, 23, 42, 1.0);
   static const Color inputFillColor = Color.fromRGBO(255, 255, 255, 1.0);
-  static const Color cursorColor = Color(0xFF3A7CA5);
+  static const Color cursorColor = Color(0xFF006BE6);
   static const Color accentColor = Color.fromRGBO(255, 152, 67, 1.0);
 }
 
@@ -29,11 +29,11 @@ ColorScheme _buildLightColorScheme(Color seedColor) => ColorScheme.fromSeed(
   /// 主色调上的文字或图标颜色
   onPrimary: LightColor.onPrimaryColor,
 
-  /// 主色调的容器背景色，更淡一些以提供对比
-  primaryContainer: const Color.fromRGBO(210, 232, 245, 1.0),
+  /// 主色调容器背景色，更淡一些以提供对比（品牌蓝浅底 tint）
+  primaryContainer: const Color.fromRGBO(229, 239, 255, 1.0),
 
   /// 主色调容器上的文字或图标颜色
-  onPrimaryContainer: const Color.fromRGBO(20, 60, 85, 1.0),
+  onPrimaryContainer: const Color.fromRGBO(0, 58, 117, 1.0),
 
   /// 背景颜色
   surface: const Color.fromARGB(255, 255, 255, 255),
@@ -41,9 +41,9 @@ ColorScheme _buildLightColorScheme(Color seedColor) => ColorScheme.fromSeed(
   // 背景颜色上的文字或图标颜色
   onSurface: const Color.fromRGBO(30, 30, 30, 1.0),
 
-  /// 次级容器
-  secondaryContainer: const Color.fromRGBO(255, 237, 220, 1.0),
-  onSecondaryContainer: const Color.fromRGBO(120, 60, 10, 1.0),
+  /// 次级容器（品牌蓝 tint）
+  secondaryContainer: const Color.fromRGBO(224, 238, 255, 1.0),
+  onSecondaryContainer: const Color.fromRGBO(0, 58, 117, 1.0),
 
   /// 错误状态的颜色
   error: Colors.red,

@@ -8,18 +8,23 @@ page {
     --safe-bottom: env(safe-area-inset-bottom, 0rpx);
 }
 
-/* ========== 亮色主题色板（CSS 变量） ========== */
+/* ========== 亮色主题色板（CSS 变量） ==========
+ * 与 docs/design-language.md 同源：品牌蓝主色 + slate 中性阶 */
 page {
-    /* 文字色 */
-    --color-text-main: #1d2129;
-    --color-text-sec: #4e5969;
-    --color-text-third: #86909c;
-    --color-text-weak: #c9cdd4;
+    /* 品牌主色（docs/brand 权威值 #006BE6） */
+    --color-primary: #006be6;
+    --color-primary-strong: #005ac2;
+    --color-primary-tint: #e5efff;
+    /* 文字色（slate 阶） */
+    --color-text-main: #0f172a;
+    --color-text-sec: #475569;
+    --color-text-third: #64748b;
+    --color-text-weak: #cbd5e1;
     /* 背景色 */
-    --color-page-bg: #ebedf0;
+    --color-page-bg: #f4f7f9;
     --color-card-bg: #ffffff;
     /* 分割线/边框色 */
-    --color-split-line: #e8eaed;
+    --color-split-line: #e2e8f0;
     /* 底部操作栏背景 */
     --color-bar-bg: rgba(255, 255, 255, 0.92);
 
@@ -32,14 +37,17 @@ page {
 /* ========== 暗色主题色板（H5: .dark on <html>; 小程序: 由 ThemeClientProvider style 覆盖） ========== */
 .dark page,
 page.dark {
+    --color-primary: #2e96ff;
+    --color-primary-strong: #70b3ff;
+    --color-primary-tint: rgba(46, 150, 255, 0.16);
     --color-text-main: #ffffffd9;
     --color-text-sec: #ffffffb3;
     --color-text-third: #ffffff8a;
     --color-text-weak: #ffffff59;
-    --color-page-bg: #17171a;
-    --color-card-bg: #232326;
-    --color-split-line: #3a3a3c;
-    --color-bar-bg: rgba(35, 35, 38, 0.92);
+    --color-page-bg: #050b14;
+    --color-card-bg: #0d1626;
+    --color-split-line: #1e293b;
+    --color-bar-bg: rgba(13, 22, 38, 0.92);
 
     background-color: var(--color-page-bg);
     color: var(--color-text-main);
@@ -132,7 +140,7 @@ textarea::placeholder,
 /* 链接 */
 .content-viewer .markdown-link,
 .content-viewer a {
-    color: #1677ff;
+    color: var(--color-primary);
     text-decoration: none;
 }
 
@@ -144,7 +152,7 @@ textarea::placeholder,
     padding: 2rpx 8rpx;
     border-radius: 6rpx;
     background-color: var(--color-page-bg);
-    color: #1677ff;
+    color: var(--color-primary);
 }
 
 /* 代码块 */
@@ -183,7 +191,7 @@ textarea::placeholder,
 .content-viewer blockquote {
     margin: 24rpx 0;
     padding: 16rpx 24rpx;
-    border-inline-start: 6rpx solid #1677ff;
+    border-inline-start: 6rpx solid var(--color-primary);
     background-color: var(--color-page-bg);
     border-start-start-radius: 0;
     border-end-start-radius: 0;

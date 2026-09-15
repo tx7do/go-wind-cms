@@ -40,13 +40,13 @@ const HomeCategoryCard: React.FC<HomeCategoryCardProps> = ({category, onClick, m
                 'transition-all duration-300 ease-out',
                 'hover:-translate-y-1 hover:border-primary/30 hover:bg-slate-50',
                 'dark:hover:bg-slate-900',
-                'hover:shadow-[0_12px_30px_rgba(34,197,94,0.06)]',
+                'hover:shadow-[0_12px_30px_rgba(0,107,230,0.08)]',
             )}
             onClick={handleClick}
             style={{willChange: 'transform, box-shadow'}}
         >
             {/* hover 风迹渐变蒙层 */}
-            <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100 rounded-2xl"/>
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-primary/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100 rounded-2xl"/>
 
             {mobileCompact ? (
                 /* 移动端紧凑模式：图标在上，文字在下，垂直居中 */

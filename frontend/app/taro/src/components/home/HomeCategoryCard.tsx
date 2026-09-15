@@ -39,7 +39,7 @@ const HomeCategoryCard: React.FC<{
                   className='flex items-center justify-center'
                   style={{
                         height: '120rpx',
-                        backgroundColor: 'rgba(22,119,255,0.1)',
+                        backgroundColor: 'rgba(0,107,230,0.1)',
                     }}
                 >
                     <XIcon name={getIconName(category.icon)} size={40} className='text-primary' />
@@ -82,7 +82,7 @@ const HomeCategoryCard: React.FC<{
                     width: '72rpx',
                     height: '72rpx',
                     marginInlineEnd: '20rpx',
-                    backgroundColor: 'rgba(22,119,255,0.08)',
+                    backgroundColor: 'rgba(0,107,230,0.08)',
                 }}
             >
                 <XIcon name={getIconName(category.icon)} size={28} className='text-primary' />

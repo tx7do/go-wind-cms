@@ -52,13 +52,13 @@ const PostCard: React.FC<PostCardProps> = ({
               onClick={handleViewPost}
               hoverClass='tap-active'
             >
-                {/* 缩略图 / 图标占位 - 固定 16:9 比例 */}
-                <View className='w-[240rpx] h-[136rpx] flex-shrink-0 overflow-hidden bg-pageBg'>
+                {/* 缩略图 / 品牌蓝风纹占位 - 固定 16:9 比例（docs/design-language.md §7） */}
+                <View className='w-[240rpx] h-[136rpx] flex-shrink-0 overflow-hidden' style={{backgroundColor: 'var(--color-primary-tint)'}}>
                     {thumbnail ? (
                         <Image src={thumbnail} mode='aspectFill' className='w-full h-full' />
                     ) : (
                         <View className='w-full h-full flex items-center justify-center'>
-                            <XIcon name='carbon:document' size={40} className='text-textWeak' />
+                            <XIcon name='carbon:document' size={40} className='text-primary' />
                         </View>
                     )}
                 </View>
@@ -95,7 +95,7 @@ const PostCard: React.FC<PostCardProps> = ({
         >
             {/* 封面图 / 渐变背景 + 图标占位 */}
             <View className='w-full h-[280rpx] overflow-hidden flex items-center justify-center' style={{
-                background: thumbnail ? 'none' : 'linear-gradient(135deg, rgba(22,119,255,0.06) 0%, rgba(114,46,209,0.06) 100%)',
+                background: thumbnail ? 'none' : 'linear-gradient(135deg, rgba(0,107,230,0.06) 0%, rgba(112,179,255,0.10) 100%)',
             }}
             >
                 {thumbnail ? (

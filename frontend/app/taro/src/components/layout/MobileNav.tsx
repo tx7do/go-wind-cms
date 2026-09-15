@@ -256,7 +256,7 @@ function DrawerItem({icon, label, onClick, active, destructive}: {
     destructive?: boolean;
 }) {
     // 选中状态：半透明主色背景 + 主色文字 + 加粗
-    const bgStyle = active ? {backgroundColor: 'rgba(22,119,255,0.08)'} : {};
+    const bgStyle = active ? {backgroundColor: 'rgba(0,107,230,0.08)'} : {};
 
     return (
         <View

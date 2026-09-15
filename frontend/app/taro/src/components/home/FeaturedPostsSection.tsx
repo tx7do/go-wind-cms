@@ -26,7 +26,7 @@ export default function FeaturedPostsSection() {
                 <View
                   className='px-[24rpx] py-[12rpx] rounded-full flex items-center justify-center'
                   style={{
-                      backgroundColor: 'rgba(22,119,255,0.08)',
+                      backgroundColor: 'rgba(0,107,230,0.08)',
                   }}
                   onClick={() => router.push('/post')}
                   hoverClass='tap-active'

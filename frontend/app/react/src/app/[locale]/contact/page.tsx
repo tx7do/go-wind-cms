@@ -99,9 +99,10 @@ function ContactCard({
             emailText: 'text-primary',
         },
         blue: {
-            iconBg: 'bg-blue-500/10 text-blue-500 border-blue-500/20 dark:text-blue-400',
-            hoverBorder: 'hover:border-blue-500/40',
-            emailText: 'text-blue-500 dark:text-blue-400',
+            // 设计语言：装饰蓝一律随主色 token（docs/design-language.md §2.3）
+            iconBg: 'bg-primary/10 text-primary border-primary/20',
+            hoverBorder: 'hover:border-primary/40',
+            emailText: 'text-primary',
         },
         slate: {
             iconBg: 'bg-muted text-muted-foreground border-border',

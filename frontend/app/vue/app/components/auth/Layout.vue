@@ -38,7 +38,7 @@ const linkBtn = 'text-sm text-primary font-medium underline underline-offset-4 t
           <div class="flex flex-col items-start gap-4">
             <img src="/logo.png" :alt="t('authentication.login.logo_alt')" class="h-16 w-auto" />
             <h1 class="text-4xl font-bold leading-tight">
-              <span class="bg-gradient-to-r from-foreground via-primary to-sky-400 bg-clip-text text-transparent">
+              <span class="bg-gradient-to-r from-foreground via-primary to-primary/60 bg-clip-text text-transparent">
                 {{ t('authentication.login.brand_title') }}
               </span>
             </h1>

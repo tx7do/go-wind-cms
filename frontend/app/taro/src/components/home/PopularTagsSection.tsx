@@ -16,7 +16,7 @@ interface TagItem {
 
 /** 预定义标签色板，避免 HSL 在小程序端兼容性问题 */
 const TAG_COLORS = [
-    '#1677ff', '#00b42a', '#ff7d00', '#f53f3f',
+    '#006be6', '#00b42a', '#ff7d00', '#f53f3f',
     '#722ed1', '#13c2c2', '#eb2f96', '#faad14',
 ];
 
@@ -76,7 +76,7 @@ export default function PopularTagsSection() {
                 <View
                   className='px-[24rpx] py-[12rpx] rounded-full flex items-center justify-center'
                   style={{
-                      backgroundColor: 'rgba(22,119,255,0.08)',
+                      backgroundColor: 'rgba(0,107,230,0.08)',
                   }}
                   onClick={() => router.push('/tag')}
                   hoverClass='tap-active'

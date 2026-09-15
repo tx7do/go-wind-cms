@@ -73,7 +73,7 @@ export default function AuthLayout({
                             <h1 className="text-4xl font-bold leading-tight">
                                 {/* 流光渐变文字：白 → 翠绿 → 天蓝 */}
                                 <span
-                                    className="bg-gradient-to-r from-foreground via-primary to-sky-400 bg-clip-text text-transparent"
+                                    className="bg-gradient-to-r from-foreground via-primary to-primary/60 bg-clip-text text-transparent"
                                 >
                                     {t('login.brand_title')}
                                 </span>

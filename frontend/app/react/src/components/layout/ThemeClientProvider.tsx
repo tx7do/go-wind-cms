@@ -54,10 +54,10 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
     useEffect(() => {
         const root = document.documentElement;
 
-        // 主色调 → --primary / --ring
-        root.style.setProperty('--primary', theme.colorPrimary);
+        // 主色调 → --primary / --ring（暗色用品牌蓝提亮变体，hue 不变）
+        root.style.setProperty('--primary', isDark ? '212 100% 58%' : theme.colorPrimary);
 
-        // 根据暗色/亮色自动计算 primary-foreground（绿底按钮上的文字必须是纯白色）
+        // 主色底按钮上的文字必须是纯白色
         root.style.setProperty('--primary-foreground', '0 0% 100%');
 
         // 成功色
@@ -76,11 +76,11 @@ export default function ThemeClientProvider({children}: { children: React.ReactN
         root.style.setProperty('--radius', theme.radius);
 
         // ring 颜色跟随 primary
-        root.style.setProperty('--ring', theme.colorPrimary);
+        root.style.setProperty('--ring', isDark ? '212 100% 58%' : theme.colorPrimary);
 
-        // accent 色保持赛博科技蓝
-        root.style.setProperty('--accent', '217.2 91.2% 59.8%');
-        root.style.setProperty('--accent-foreground', isDark ? '210 20% 98%' : '224 71.4% 4.1%');
+        // accent：品牌蓝 tint 底（docs/design-language.md §2.2）
+        root.style.setProperty('--accent', isDark ? '212 50% 18%' : '212 100% 95%');
+        root.style.setProperty('--accent-foreground', isDark ? '212 100% 78%' : '212 100% 38%');
     }, [
         theme.colorPrimary,
         theme.colorSuccess,

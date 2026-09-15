@@ -35,7 +35,7 @@ const features = [
             'hover:shadow-[0_20px_40px_-8px_hsl(var(--primary)/0.15)]',
           )"
         >
-          <div class="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          <div class="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-primary/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           <div :class="cn(
             'relative mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl',
             'bg-primary/10 text-3xl text-primary',

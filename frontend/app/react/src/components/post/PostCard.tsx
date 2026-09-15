@@ -66,7 +66,7 @@ const PostCard: React.FC<PostCardProps> = ({
                     className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]"
                 />
                 {/* hover 风迹渐变蒙层 */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-sky-400/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-primary/15 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
             </div>
             <div className="flex flex-1 flex-col gap-3 p-6 max-md:p-4 max-md:gap-2.5">
                 {/* 标题：固定 min-h 确保两行高度 */}

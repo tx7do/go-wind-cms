@@ -56,7 +56,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                 />
                 {/* hover 风迹渐变蒙层 */}
                 <div className={cn(
-                    'absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-sky-400/20 transition-opacity duration-500',
+                    'absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-primary/15 transition-opacity duration-500',
                     clickable ? 'opacity-0 group-hover:opacity-100' : 'opacity-0',
                 )}/>
             </div>

@@ -88,7 +88,7 @@ export default function TagListPage() {
                       key={tag.id}
                       className='flex flex-col rounded-[16rpx] bg-cardBg overflow-hidden tap-active'
                       style={{
-                        borderTop: `3px solid ${tag.color || '#1677ff'}`,
+                        borderTop: `3px solid ${tag.color || '#006be6'}`,
                       }}
                       onClick={() => handleTagClick(tag.id || 0)}
                       hoverClass='opacity-80'
@@ -98,9 +98,9 @@ export default function TagListPage() {
                         <View className='flex items-center gap-[12rpx]'>
                           <View
                             className='w-[40rpx] h-[40rpx] rounded-full flex items-center justify-center flex-shrink-0'
-                            style={{backgroundColor: `${tag.color || '#1677ff'}20`}}
+                            style={{backgroundColor: `${tag.color || '#006be6'}20`}}
                           >
-                            <XIcon name='carbon:tag' size={16} style={{color: tag.color || '#1677ff'}} />
+                            <XIcon name='carbon:tag' size={16} style={{color: tag.color || '#006be6'}} />
                           </View>
                           <Text
                             className='text-body font-bold text-textMain flex-1 min-w-0'

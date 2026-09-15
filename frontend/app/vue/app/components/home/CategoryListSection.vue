@@ -72,10 +72,10 @@ const getCategoryName = (category: any): string => {
         <div
           v-for="category in categories"
           :key="category.id"
-          class="group scroll-reveal-item relative flex min-h-50 h-full cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 hover:bg-accent/5 hover:shadow-[0_12px_30px_rgba(34,197,94,0.06)]"
+          class="group scroll-reveal-item relative flex min-h-50 h-full cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 hover:bg-accent/5 hover:shadow-[0_12px_30px_rgba(0,107,230,0.08)]"
           @click="navigateTo(localePath(`/category/${category.id}`))"
         >
-          <div class="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-sky-400/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100 rounded-2xl" />
+          <div class="pointer-events-none absolute inset-0 bg-linear-to-tr from-primary/5 via-transparent to-primary/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100 rounded-2xl" />
           <div class="relative z-1 flex h-full flex-col justify-between">
             <div class="mb-5 flex gap-5">
               <div class="mb-4 flex h-17.5 w-17.5 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 text-3xl transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 group-hover:shadow-[0_8px_24px_-4px_hsl(var(--primary)/0.4)]">
