@@ -154,3 +154,6 @@ bazel-*
 
 # ZCode agent artifacts
 .zcode/
+
+# JS dependencies
+node_modules/
