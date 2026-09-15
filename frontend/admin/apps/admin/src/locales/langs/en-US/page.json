@@ -561,6 +561,7 @@
   "post": {
     "moduleName": "Posts",
     "status": "Post Status",
+    "statusAll": "All",
     "editorType": "Editor Type",
     "slug": "Post Slug",
     "disallowComment": "Disable Comments",
@@ -577,7 +578,9 @@
       "create": "Create Post",
       "saveDraft": "Save Draft",
       "publish": "Publish Post",
-      "oneClickTranslate": "One-Click Translate"
+      "oneClickTranslate": "One-Click Translate",
+      "replaceImage": "Replace image",
+      "removeImage": "Remove image"
     },
     "title": {
       "create": "Create Post",
@@ -590,7 +593,9 @@
       "untitled": "[Untitled]",
       "hasTranslation": "Translation Available",
       "noTranslation": "No Translation",
-      "category": "Please select category"
+      "category": "Please select category",
+      "code": "Optional. A site-wide unique identifier, e.g. spc-floor-2026",
+      "summary": "Leave blank to auto-generate on save, or click Auto Summary above"
     },
     "validation": {
       "titleRequired": "Post title is required",
@@ -613,7 +618,33 @@
       "translationNotExists": "Translation does not exist, please translate first",
       "translationExists": "Translation already exists, do you want to overwrite it?",
       "loadLanguageFailed": "Failed to load language list, please try again later",
-      "loadCategoryFailed": "Failed to load category list, please try again later"
+      "loadCategoryFailed": "Failed to load category list, please try again later",
+      "categoryRequired": "Please select at least one category",
+      "draftFound": "Unpublished local draft found",
+      "draftFoundMessage": "A local draft from your last edit session is available. Restore it? Discarding keeps the server content",
+      "draftRestore": "Restore Draft",
+      "unsavedTitle": "Unsaved changes",
+      "unsavedMessage": "Leaving this page will discard unsaved changes. Leave anyway?",
+      "scheduleSuccess": "Scheduled successfully, it will be published automatically at the set time"
+    },
+    "settings": "Article Settings",
+    "settingsGroup": {
+      "base": "General",
+      "media": "Media & Advanced"
+    },
+    "code": "Unique Code",
+    "category": "Categories",
+    "publishTime": "Publish Time",
+    "thumbnailSharedHint": "(shared across languages)",
+    "seo": {
+      "title": "SEO Settings",
+      "seoTitle": "SEO Title",
+      "metaKeywords": "SEO Keywords",
+      "metaDescription": "SEO Description",
+      "ogTitle": "OG Title",
+      "ogDescription": "OG Description",
+      "ogImage": "OG Image",
+      "canonicalUrl": "Canonical URL"
     }
   },
   "tag": {

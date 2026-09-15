@@ -578,6 +578,7 @@
   "post": {
     "moduleName": "帖子管理",
     "status": "帖子状态",
+    "statusAll": "全部",
     "editorType": "编辑器类型",
     "slug": "帖子别名",
     "disallowComment": "禁止评论",
@@ -596,7 +597,9 @@
       "create": "创建帖子",
       "saveDraft": "保存草稿",
       "publish": "发布帖子",
-      "oneClickTranslate": "一键翻译"
+      "oneClickTranslate": "一键翻译",
+      "replaceImage": "更换图片",
+      "removeImage": "移除图片"
     },
     "title": {
       "create": "创建帖子",
@@ -609,7 +612,9 @@
       "untitled": "【无标题】",
       "hasTranslation": "已有翻译",
       "noTranslation": "未翻译",
-      "category": "请选择分类"
+      "category": "请选择分类",
+      "code": "可选，全站唯一英文标识，如 spc-floor-2026",
+      "summary": "留空则保存时按内容自动生成，或点击上方“自动摘要”"
     },
     "validation": {
       "titleRequired": "帖子标题不能为空",
@@ -632,7 +637,33 @@
       "translationNotExists": "翻译内容不存在，请先进行翻译",
       "translationExists": "翻译内容已存在，是否覆盖原有翻译？",
       "loadCategoryFailed": "加载分类列表失败，请稍后再试",
-      "loadLanguageFailed": "加载语言列表失败，请稍后再试"
+      "loadLanguageFailed": "加载语言列表失败，请稍后再试",
+      "categoryRequired": "请至少选择一个分类",
+      "draftFound": "检测到未发布的本地草稿",
+      "draftFoundMessage": "上次编辑留有本地草稿，是否恢复？放弃后将保留服务端内容",
+      "draftRestore": "恢复草稿",
+      "unsavedTitle": "有未保存的修改",
+      "unsavedMessage": "离开页面将丢失未保存的内容，确定离开吗？",
+      "scheduleSuccess": "定时发布设置成功，到达发布时间后自动发布"
+    },
+    "settings": "文章设置",
+    "settingsGroup": {
+      "base": "基础设置",
+      "media": "媒体与高级"
+    },
+    "code": "唯一编码",
+    "category": "分类",
+    "publishTime": "发布时间",
+    "thumbnailSharedHint": "（全语言共用）",
+    "seo": {
+      "title": "SEO 设置",
+      "seoTitle": "SEO 标题",
+      "metaKeywords": "SEO 关键词",
+      "metaDescription": "SEO 描述",
+      "ogTitle": "OG 标题",
+      "ogDescription": "OG 描述",
+      "ogImage": "OG 图片",
+      "canonicalUrl": "规范 URL"
     }
   },
   "tag": {

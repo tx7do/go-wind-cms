@@ -34,7 +34,10 @@ interface UseTiptapEditorOptions {
   placeholder: Ref<string>;
   showToolbar: Ref<boolean>;
   showStatusBar: Ref<boolean>;
-  uploadImage: Ref<((file: File) => Promise<string>) | undefined>;
+  uploadImage: Ref<
+    | ((file: File, onProgress?: (percent: number) => void) => Promise<string>)
+    | undefined
+  >;
   fullHeight: Ref<boolean>;
   height: Ref<number | string>;
   config: Ref<Record<string, any>>;

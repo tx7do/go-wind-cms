@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   Col,
+  Collapse,
+  DatePicker,
   Divider,
   Dropdown,
   Form,
@@ -20,6 +22,7 @@ import {
   Tabs,
   Tag,
   Tree,
+  Upload,
 } from 'ant-design-vue';
 
 /**
@@ -46,5 +49,8 @@ export function registerGlobComp(app: App) {
     .use(Divider)
     .use(Menu)
     .use(Modal)
-    .use(Tree);
+    .use(Tree)
+    .use(Collapse)
+    .use(DatePicker)
+    .use(Upload);
 }

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { h } from 'vue';
+import { computed, h, onActivated, onMounted, ref } from 'vue';
 
 import { Page, type VbenFormProps } from '@vben/common-ui';
 import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
@@ -26,6 +26,23 @@ import {
 import { $t } from '#/locales';
 import { router } from '#/router';
 
+/** 状态 Tab：ALL 之外为 POST_STATUS_* 枚举名 */
+const ALL_STATUS = 'ALL';
+const activeStatus = ref<string>(ALL_STATUS);
+const statusCounts = ref<Record<string, number>>({});
+const COUNT_REFRESH_THROTTLE_MS = 3000;
+let lastCountRefreshAt = 0;
+let countsInFlight = false;
+let countsRefreshQueued = false;
+
+const statusTabs = computed(() => [
+  { key: ALL_STATUS, label: $t('page.post.statusAll') },
+  ...postStatusList.value.map((o) => ({
+    key: o.value as string,
+    label: o.label,
+  })),
+]);
+
 const formOptions: VbenFormProps = {
   // 默认展开
   collapsed: false,
@@ -35,25 +52,13 @@ const formOptions: VbenFormProps = {
   submitOnEnter: true,
   schema: [
     {
+      // 主表唯一码字段是 code；proto 的 slug 是 translations 层字段，列表查询会 500
       component: 'Input',
-      fieldName: 'slug',
+      fieldName: 'code',
       label: $t('page.post.slug'),
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
         allowClear: true,
-      },
-    },
-    {
-      component: 'Select',
-      fieldName: 'status',
-      label: $t('page.post.status'),
-      componentProps: {
-        options: postStatusList,
-        placeholder: $t('ui.placeholder.select'),
-        filterOption: (input: string, option: any) =>
-          option.label.toLowerCase().includes(input.toLowerCase()),
-        allowClear: true,
-        showSearch: true,
       },
     },
   ],
@@ -78,10 +83,17 @@ const gridOptions: VxeGridProps<Post> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
+        const query: Record<string, unknown> = { ...(formValues ?? {}) };
+        // 状态 Tab 是唯一的状态筛选入口，ALL 表示不过滤
+        if (activeStatus.value === ALL_STATUS) {
+          delete query.status;
+        } else {
+          query.status = activeStatus.value;
+        }
         return await fetchListPosts(
           new PaginationQuery({
             paging: { page: page.currentPage, pageSize: page.pageSize },
-            formValues,
+            formValues: query,
             fieldMask:
               'id,status,sort_order,is_featured,author_name,available_languages,created_at,code,editor_type,disallow_comment,in_progress,auto_summary,is_featured,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,',
           }),
@@ -154,6 +166,69 @@ const gridOptions: VxeGridProps<Post> = {
 
 const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
+/**
+ * 刷新各状态 Tab 的计数（每次一个 pageSize=1 的计数查询，取 total）
+ * @param force 跳过节流强制刷新（如删除后）
+ */
+async function refreshCounts(force = false) {
+  const now = Date.now();
+  if (!force && now - lastCountRefreshAt < COUNT_REFRESH_THROTTLE_MS) return;
+  if (countsInFlight) {
+    countsRefreshQueued = true;
+    return;
+  }
+  countsInFlight = true;
+  lastCountRefreshAt = now;
+  try {
+    const keys = [ALL_STATUS, ...postStatusList.value.map((o) => o.value)];
+    const entries = await Promise.all(
+      keys.map(async (key) => {
+        try {
+          const resp = await fetchListPosts(
+            new PaginationQuery({
+              paging: { page: 1, pageSize: 1 },
+              formValues: key === ALL_STATUS ? {} : { status: key },
+              fieldMask: 'id',
+            }),
+          );
+          return [key, resp.total] as const;
+        } catch {
+          return [key, undefined] as const;
+        }
+      }),
+    );
+    const next: Record<string, number> = {};
+    for (const [key, total] of entries) {
+      // uint64 经 JSON 序列化是字符串，需强转数字
+      const n = Number(total);
+      if (Number.isFinite(n)) {
+        next[key] = n;
+      }
+    }
+    statusCounts.value = next;
+  } finally {
+    countsInFlight = false;
+    if (countsRefreshQueued) {
+      countsRefreshQueued = false;
+      refreshCounts(true);
+    }
+  }
+}
+
+/* 状态 Tab 切换：回到第 1 页重新查询 */
+function handleStatusTabChange() {
+  gridApi.reload();
+}
+
+onMounted(() => {
+  refreshCounts();
+});
+
+// keep-alive 缓存页从编辑页返回时刷新计数（节流去重首挂载的重复触发）
+onActivated(() => {
+  refreshCounts();
+});
+
 /* 创建 */
 function handleCreate() {
   router.push({
@@ -181,6 +256,7 @@ async function handleDelete(row: any) {
     });
 
     await gridApi.reload();
+    refreshCounts(true);
   } catch {
     notification.error({
       message: $t('ui.notification.delete_failed'),
@@ -200,6 +276,27 @@ function getPostTitle(row: any) {
 <template>
   <Page auto-content-height>
     <Grid :table-title="$t('menu.content.post')">
+      <template #toolbar-actions>
+        <a-tabs
+          v-model:activeKey="activeStatus"
+          size="small"
+          class="post-status-tabs"
+          @change="handleStatusTabChange"
+        >
+          <a-tab-pane v-for="tabItem in statusTabs" :key="tabItem.key">
+            <template #tab>
+              <span>
+                {{ tabItem.label }}
+                <span
+                  v-if="statusCounts[tabItem.key] !== undefined"
+                  class="status-count"
+                  >{{ statusCounts[tabItem.key] }}</span
+                >
+              </span>
+            </template>
+          </a-tab-pane>
+        </a-tabs>
+      </template>
       <template #toolbar-tools>
         <a-button class="mr-2" type="primary" @click="handleCreate">
           {{ $t('page.post.button.create') }}
@@ -250,3 +347,20 @@ function getPostTitle(row: any) {
     </Grid>
   </Page>
 </template>
+
+<style scoped>
+.post-status-tabs :deep(.ant-tabs-nav) {
+  margin-bottom: 0;
+}
+
+/* 仅作筛选器使用，隐藏空 pane 内容区 */
+.post-status-tabs :deep(.ant-tabs-content-holder) {
+  display: none;
+}
+
+.post-status-tabs :deep(.status-count) {
+  margin-left: 4px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+</style>

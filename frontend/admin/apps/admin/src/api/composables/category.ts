@@ -18,7 +18,7 @@ import {
 
 import { apiClient } from '#/api/client';
 import { queryClient } from '#/plugins/vue-query';
-import { makeUpdateMask, type PaginationQuery } from '#/transport/rest';
+import { makeUpdateMask, PaginationQuery } from '#/transport/rest';
 
 // ==============================
 // 分类管理
@@ -42,6 +42,49 @@ export async function fetchListCategories(params: PaginationQuery) {
     staleTime: 0,
     retry: 0,
   });
+}
+
+/**
+ * 拉取拍平的分类下拉选项（含子分类，以「父级 / 」前缀区分层级）。
+ * 供文章编辑页的分类选择与文章列表的分类筛选共用。
+ */
+export async function fetchFlattenedCategoryOptions(
+  lang: string,
+): Promise<{ label: string; value: number }[]> {
+  try {
+    const resp = await fetchListCategories(
+      new PaginationQuery({
+        paging: { page: 1, pageSize: 500 },
+        fieldMask:
+          'id,parent_id,children,translations.id,translations.language_code,translations.name',
+      }),
+    );
+    return flattenCategories(resp.items ?? [], '', lang);
+  } catch (error) {
+    console.error('Failed to load categories:', error);
+    return [];
+  }
+}
+
+function flattenCategories(
+  items: any[],
+  prefix: string,
+  lang: string,
+): { label: string; value: number }[] {
+  const options: { label: string; value: number }[] = [];
+  for (const item of items) {
+    const name =
+      item.translations?.find((t: any) => t.languageCode === lang)?.name ||
+      item.translations?.[0]?.name ||
+      item.code ||
+      item.id;
+    const label = `${prefix}${name}`;
+    options.push({ label, value: Number(item.id) });
+    if (item.children && item.children.length > 0) {
+      options.push(...flattenCategories(item.children, `${label} / `, lang));
+    }
+  }
+  return options;
 }
 
 export function useGetCategory(

@@ -22,6 +22,10 @@ export const LucideArrowLeft = createIconifyIcon('lucide:arrow-left');
 
 export const LucideChevronLeft = createIconifyIcon('lucide:chevron-left');
 
+export const LucideChevronRight = createIconifyIcon('lucide:chevron-right');
+
+export const LucideSettings = createIconifyIcon('lucide:settings');
+
 export const LucideTrash = createIconifyIcon('lucide:trash');
 export const LucideTrash2 = createIconifyIcon('lucide:trash-2');
 

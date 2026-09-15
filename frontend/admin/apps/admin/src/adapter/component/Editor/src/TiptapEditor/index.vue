@@ -7,6 +7,12 @@ import { marked } from 'marked';
 
 import { $t } from '#/locales';
 
+import {
+  hideUploadProgress,
+  notifyUploadError,
+  showUploadProgress,
+} from '#/api';
+
 import { useEditorModals } from './composables/useEditorModals';
 import { useTiptapEditor } from './composables/useTiptapEditor';
 import { useToolbarActions } from './composables/useToolbarActions';
@@ -22,7 +28,10 @@ interface Props {
   config?: Record<string, any>;
   showToolbar?: boolean;
   showStatusBar?: boolean;
-  uploadImage?: (file: File) => Promise<string>;
+  uploadImage?: (
+    file: File,
+    onProgress?: (percent: number) => void,
+  ) => Promise<string>;
   fullHeight?: boolean;
 }
 
@@ -150,13 +159,16 @@ const handleImageUpload = async (event: Event) => {
   }
 
   try {
-    const url = await props.uploadImage(file);
+    showUploadProgress(-1);
+    const url = await props.uploadImage(file, showUploadProgress);
     if (url && editor.value) {
       editor.value.chain().focus().setImage({ src: url }).run();
     }
   } catch (error) {
     console.error('Image upload failed:', error);
+    notifyUploadError(error);
   } finally {
+    hideUploadProgress();
     input.value = '';
   }
 };

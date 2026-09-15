@@ -7,6 +7,12 @@ import { type EditorProps, MdEditor } from 'md-editor-v3';
 
 import { $t } from '#/locales';
 
+import {
+  hideUploadProgress,
+  notifyUploadError,
+  showUploadProgress,
+} from '#/api';
+
 import { isDarkMode } from './utils';
 
 import 'md-editor-v3/lib/style.css';
@@ -18,7 +24,10 @@ interface UseEditorConfigProps {
   placeholder?: string;
   options?: Partial<EditorProps>;
   enableExport?: boolean;
-  uploadImage?: (file: File) => Promise<string>;
+  uploadImage?: (
+    file: File,
+    onProgress?: (percent: number) => void,
+  ) => Promise<string>;
 }
 
 const props = withDefaults(defineProps<UseEditorConfigProps>(), {
@@ -172,10 +181,14 @@ async function doUploadImage(file: File): Promise<string> {
   }
 
   try {
-    return await props.uploadImage(file);
+    showUploadProgress(-1);
+    return await props.uploadImage(file, showUploadProgress);
   } catch (error) {
     console.error('Image upload failed:', error);
+    notifyUploadError(error);
     return '';
+  } finally {
+    hideUploadProgress();
   }
 }
 

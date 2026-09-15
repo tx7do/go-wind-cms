@@ -92,7 +92,9 @@
     "password_mismatch": "两次输入的密码不一致",
     "input_old_password": "请输入旧密码",
     "input_new_password": "请输入新密码",
-    "input_confirm_password": "请确认新密码"
+    "input_confirm_password": "请确认新密码",
+    "uploading": "图片上传中",
+    "file_too_large": "文件过大，服务器拒绝接收，请压缩后重试"
   },
   "text": {
     "do_you_want_delete": "你是否要删除掉该{moduleName}？",

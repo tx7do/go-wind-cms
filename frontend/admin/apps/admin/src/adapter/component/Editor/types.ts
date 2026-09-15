@@ -13,7 +13,10 @@ export interface EditorProps {
   height?: number | string;
   disabled?: boolean;
   placeholder?: string;
-  uploadImage?: (file: File) => Promise<string>;
+  uploadImage?: (
+    file: File,
+    onProgress?: (percent: number) => void,
+  ) => Promise<string>;
   // Markdown specific
   markdownOptions?: {
     hideModeSwitch?: boolean;
