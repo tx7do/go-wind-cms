@@ -1533,8 +1533,7 @@ INSERT INTO pages (
     0,
     NULL
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 25 DAY,
     NOW(),
@@ -1556,8 +1555,7 @@ INSERT INTO pages (
     0,
     NULL
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 20 DAY,
     NOW(),
@@ -1579,8 +1577,7 @@ INSERT INTO pages (
     0,
     NULL
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 18 DAY,
     NOW(),
@@ -1602,8 +1599,7 @@ INSERT INTO pages (
     1,
     3
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 15 DAY,
     NOW(),
@@ -1625,8 +1621,7 @@ INSERT INTO pages (
     0,
     NULL
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 15 DAY,
     NOW(),
@@ -1648,8 +1643,7 @@ INSERT INTO pages (
     0,
     NULL
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 12 DAY,
     NOW(),
@@ -1671,8 +1665,7 @@ INSERT INTO pages (
     0,
     NULL
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 12 DAY,
     NOW(),
@@ -1694,8 +1687,7 @@ INSERT INTO pages (
     0,
     NULL
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 10 DAY,
     NOW(),
@@ -1740,8 +1732,7 @@ INSERT INTO page_translations (
     '/images/covers/home-zh.jpg',
     '/'
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 30 DAY,
     NOW(),
@@ -1752,8 +1743,7 @@ INSERT INTO page_translations (
     '/images/covers/home-en.jpg',
     '/en'
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 15 DAY,
     NOW(),
@@ -1764,8 +1754,7 @@ INSERT INTO page_translations (
     '/images/covers/404-zh.jpg',
     '/404'
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 15 DAY,
     NOW(),
@@ -1776,8 +1765,7 @@ INSERT INTO page_translations (
     '/images/covers/404-en.jpg',
     '/en/404'
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 12 DAY,
     NOW(),
@@ -1788,8 +1776,7 @@ INSERT INTO page_translations (
     '/images/covers/login-zh.jpg',
     '/login'
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 25 DAY,
     NOW(),
@@ -1835,8 +1822,7 @@ INSERT INTO categories (
     NULL,
     1,
     1)
-),
-,
+),,
 -- 生活随笔
 (
     2,
@@ -1855,8 +1841,7 @@ INSERT INTO categories (
     NULL,
     1,
     1)
-),
-,
+),,
 -- 产品设计
 (
     3,
@@ -1875,8 +1860,7 @@ INSERT INTO categories (
     NULL,
     1,
     1)
-),
-,
+),,
 -- 创业思考
 (
     4,
@@ -1895,8 +1879,7 @@ INSERT INTO categories (
     NULL,
     1,
     1)
-),
-,
+),,
 -- ========== 二级分类（父ID=1：技术分享） ==========
 -- 前端开发
 (
@@ -1916,8 +1899,7 @@ INSERT INTO categories (
     1,
     1,
     1)
-),
-,
+),,
 -- 后端开发
 (
     12,
@@ -1936,8 +1918,7 @@ INSERT INTO categories (
     1,
     1,
     1)
-),
-,
+),,
 -- 移动开发
 (
     13,
@@ -1956,8 +1937,7 @@ INSERT INTO categories (
     1,
     1,
     1)
-),
-,
+),,
 -- ========== 二级分类（父ID=2：生活随笔） ==========
 -- 旅行游记
 (
@@ -1977,8 +1957,7 @@ INSERT INTO categories (
     2,
     1,
     1)
-),
-,
+),,
 -- 美食探店
 (
     22,
@@ -1997,8 +1976,7 @@ INSERT INTO categories (
     2,
     1,
     1)
-),
-,
+),,
 -- ========== 二级分类（父ID=3：产品设计） ==========
 -- UI 设计
 (
@@ -2018,8 +1996,7 @@ INSERT INTO categories (
     3,
     1,
     1)
-),
-,
+),,
 -- UX 设计
 (
     32,
@@ -2038,8 +2015,7 @@ INSERT INTO categories (
     3,
     1,
     1)
-),
-,
+),,
 -- ========== 二级分类（父ID=4：创业思考） ==========
 -- 团队管理
 (
@@ -2059,8 +2035,7 @@ INSERT INTO categories (
     4,
     1,
     1)
-),
-,
+),,
 -- 产品思考
 (
     42,
@@ -2107,8 +2082,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     101,
     NOW() - INTERVAL 30 DAY,
@@ -2123,8 +2097,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     2,
     NOW() - INTERVAL 25 DAY,
@@ -2139,8 +2112,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     102,
     NOW() - INTERVAL 25 DAY,
@@ -2155,8 +2127,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     3,
     NOW() - INTERVAL 20 DAY,
@@ -2171,8 +2142,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     103,
     NOW() - INTERVAL 20 DAY,
@@ -2187,8 +2157,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     4,
     NOW() - INTERVAL 15 DAY,
@@ -2203,8 +2172,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     104,
     NOW() - INTERVAL 15 DAY,
@@ -2219,8 +2187,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     11,
     NOW() - INTERVAL 25 DAY,
@@ -2235,8 +2202,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     111,
     NOW() - INTERVAL 25 DAY,
@@ -2251,8 +2217,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     12,
     NOW() - INTERVAL 24 DAY,
@@ -2267,8 +2232,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     112,
     NOW() - INTERVAL 24 DAY,
@@ -2283,8 +2247,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     13,
     NOW() - INTERVAL 23 DAY,
@@ -2299,8 +2262,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     113,
     NOW() - INTERVAL 23 DAY,
@@ -2315,8 +2277,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     21,
     NOW() - INTERVAL 20 DAY,
@@ -2331,8 +2292,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     121,
     NOW() - INTERVAL 20 DAY,
@@ -2347,8 +2307,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     22,
     NOW() - INTERVAL 19 DAY,
@@ -2363,8 +2322,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     122,
     NOW() - INTERVAL 19 DAY,
@@ -2379,8 +2337,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     31,
     NOW() - INTERVAL 18 DAY,
@@ -2395,8 +2352,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     131,
     NOW() - INTERVAL 18 DAY,
@@ -2411,8 +2367,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     32,
     NOW() - INTERVAL 17 DAY,
@@ -2427,8 +2382,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     132,
     NOW() - INTERVAL 17 DAY,
@@ -2443,8 +2397,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     41,
     NOW() - INTERVAL 14 DAY,
@@ -2459,8 +2412,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     141,
     NOW() - INTERVAL 14 DAY,
@@ -2475,8 +2427,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     42,
     NOW() - INTERVAL 13 DAY,
@@ -2491,8 +2442,7 @@ INSERT INTO category_translations (
     1,
     1
 )
-),
-,
+),,
 (
     142,
     NOW() - INTERVAL 13 DAY,
@@ -3120,8 +3070,7 @@ INSERT INTO posts (
     '',
     '{"show_toc": "true", "toc_depth": "3", "allow_copy": "true", "copyright_notice": "GoWind 官方原创"}'
 )
-),
-,
+),,
 -- 文章2：GoWind v2.0 版本发布公告（已发布、精选）
 (
     NOW() - INTERVAL 25 DAY,
@@ -3140,8 +3089,7 @@ INSERT INTO posts (
     '',
     '{"show_changelog": "true", "release_date": "2024-03-01", "upgrade_guide_url": "/docs/upgrade/v2.0"}'
 )
-),
-,
+),,
 -- 文章3：Linux 环境下部署 风行内容中台（已发布）
 (
     NOW() - INTERVAL 22 DAY,
@@ -3160,8 +3108,7 @@ INSERT INTO posts (
     '',
     '{"os_type": "Linux", "distro": "Ubuntu, CentOS", "tested_version": "v1.9.0"}'
 )
-),
-,
+),,
 -- 文章4：2024 Content Hub 行业发展趋势分析（已发布）
 (
     NOW() - INTERVAL 20 DAY,
@@ -3180,8 +3127,7 @@ INSERT INTO posts (
     '',
     '{"data_source": "IDC 2024 行业报告", "chart_support": "true", "downloadable": "true"}'
 )
-),
-,
+),,
 -- 文章5：风行内容中台 自定义模板开发（草稿、未完成）
 (
     NOW() - INTERVAL 15 DAY,
@@ -3200,8 +3146,7 @@ INSERT INTO posts (
     '',
     '{"dev_status": "50%", "expected_release": "2024-04-01", "required_skills": "Go, Vue3, HTML/CSS"}'
 )
-),
-,
+),,
 -- 文章6：GoWind 企业版功能详解（加密、已发布）
 (
     NOW() - INTERVAL 12 DAY,
@@ -3220,8 +3165,7 @@ INSERT INTO posts (
     '$2a$10$89jZk54G89sdkf89sdf89sd89sdf89sdf89sdf',
     '{"is_enterprise": "true", "price_range": "¥9999-¥19999", "trial_available": "true"}'
 )
-),
-,
+),,
 -- 文章7：常见问题解答（草稿）
 (
     NOW() - INTERVAL 10 DAY,
@@ -3240,8 +3184,7 @@ INSERT INTO posts (
     '',
     '{"faq_category": "installation, configuration, performance", "update_frequency": "monthly"}'
 )
-),
-,
+),,
 -- 文章8：风行内容中台 性能优化指南（已发布、精选）
 (
     NOW() - INTERVAL 8 DAY,
@@ -3317,8 +3260,7 @@ INSERT INTO post_translations (
     '/blog/gowind-content-hub-quick-start',
     2580
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 25 DAY,
     NOW(),
@@ -3356,8 +3298,7 @@ GoWind Content Hub v2.0于2024年3月1日发布，是开源以来的重大版本
     '/blog/gowind-v2-0-release',
     3200
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 22 DAY,
     NOW(),
@@ -3409,8 +3350,7 @@ yum install -y golang postgresql git
     '/blog/deploy-gowind-on-linux',
     2800
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 20 DAY,
     NOW(),
@@ -3452,8 +3392,7 @@ IDC 2024年全球Content Hub市场研究报告
     '/blog/2024-cms-industry-trends',
     2600
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 15 DAY,
     NOW(),
@@ -3505,8 +3444,7 @@ IDC 2024年全球Content Hub市场研究报告
     '/blog/gowind-custom-template-dev',
     1800
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 12 DAY,
     NOW(),
@@ -3550,8 +3488,7 @@ IDC 2024年全球Content Hub市场研究报告
     '/blog/gowind-enterprise-features',
     2200
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 10 DAY,
     NOW(),
@@ -3595,8 +3532,7 @@ A3：在后台设置-多语言中启用，上传翻译文件。
     '/blog/gowind-faq',
     1500
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 8 DAY,
     NOW(),
@@ -3640,8 +3576,7 @@ v1.9版本QPS仅5万，响应时间200ms，无法满足高并发需求。
     '/blog/gowind-cms-performance-optimization',
     3000
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 30 DAY,
     NOW(),
@@ -3685,8 +3620,7 @@ v1.9版本QPS仅5万，响应时间200ms，无法满足高并发需求。
     '/en/blog/gowind-cms-quick-start',
     2580
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 25 DAY,
     NOW(),
@@ -3724,8 +3658,7 @@ GoWind Content Hub v2.0 was released on March 1, 2024, marking the most signific
     '/en/blog/gowind-v2-0-release',
     3200
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 22 DAY,
     NOW(),
@@ -3777,8 +3710,7 @@ Create systemd service file: /etc/systemd/system/gowind.service',
     '/en/blog/deploy-gowind-on-linux',
     2800
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 20 DAY,
     NOW(),
@@ -3820,8 +3752,7 @@ Accelerated domestic substitution, Content Hub developed with Go/Java languages 
     '/en/blog/2024-cms-industry-trends',
     2600
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 15 DAY,
     NOW(),
@@ -3873,8 +3804,7 @@ Accelerated domestic substitution, Content Hub developed with Go/Java languages 
     '/en/blog/gowind-custom-template-dev',
     1800
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 12 DAY,
     NOW(),
@@ -3918,8 +3848,7 @@ Contact support: 400-123-4567, 15-day free trial available.',
     '/en/blog/gowind-enterprise-features',
     2200
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 10 DAY,
     NOW(),
@@ -3963,8 +3892,7 @@ A3: Enable in backend Settings > Multi-language, upload translation files.
     '/en/blog/gowind-faq',
     1500
 )
-),
-,
+),,
 (
     NOW() - INTERVAL 8 DAY,
     NOW(),

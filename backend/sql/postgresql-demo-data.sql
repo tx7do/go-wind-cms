@@ -828,11 +828,11 @@ SELECT setval('site_settings_id_seq', (SELECT MAX(id) FROM site_settings));
 INSERT INTO public.navigations (
     id, created_at, updated_at, name, location, locale, is_active, created_by, updated_by
 ) VALUES
--- Main Navigation (HEADER)
+-- Main Navigation (HEADER),
 (101, NOW(), NOW(), '主导航', 'HEADER', 'zh-CN', true, 1, 1),
--- Footer Navigation (FOOTER)
+-- Footer Navigation (FOOTER),
 (102, NOW(), NOW(), '页脚导航', 'FOOTER', 'zh-CN', true, 1, 1),
--- Sidebar Navigation (SIDEBAR)
+-- Sidebar Navigation (SIDEBAR),
 (103, NOW(), NOW(), '侧边栏导航', 'SIDEBAR', 'zh-CN', true, 1, 1),
 -- 手机端底部导航
 (104, NOW(), NOW(), '手机底部导航', 'MOBILE', 'zh-CN', true, 1, 1),
@@ -1534,9 +1534,7 @@ INSERT INTO pages (
     '{"banner_show": "true", "banner_delay": "3000", "show_hot_articles": "true"}'::jsonb,
     0,
     NULL
-)
 ),
-,
 (
     NOW() - INTERVAL '25 days',
     NOW(),
@@ -1557,9 +1555,7 @@ INSERT INTO pages (
     '{"show_team_avatar": "true", "team_size": "15", "founded_year": "2024"}'::jsonb,
     0,
     NULL
-)
 ),
-,
 (
     NOW() - INTERVAL '20 days',
     NOW(),
@@ -1580,9 +1576,7 @@ INSERT INTO pages (
     '{"sidebar_collapse": "false", "edit_on_github": "true", "github_repo": "gowind/cms-docs"}'::jsonb,
     0,
     NULL
-)
 ),
-,
 (
     NOW() - INTERVAL '18 days',
     NOW(),
@@ -1603,9 +1597,7 @@ INSERT INTO pages (
     '{"difficulty": "beginner", "estimated_time": "5分钟"}'::jsonb,
     1,
     3
-)
 ),
-,
 (
     NOW() - INTERVAL '15 days',
     NOW(),
@@ -1626,9 +1618,7 @@ INSERT INTO pages (
     '{"show_search": "true", "show_home_button": "true", "custom_message": "您访问的页面不存在～"}'::jsonb,
     0,
     NULL
-)
 ),
-,
 (
     NOW() - INTERVAL '15 days',
     NOW(),
@@ -1649,9 +1639,7 @@ INSERT INTO pages (
     '{"show_contact_button": "true", "maintenance_phone": "400-123-4567"}'::jsonb,
     0,
     NULL
-)
 ),
-,
 (
     NOW() - INTERVAL '12 days',
     NOW(),
@@ -1672,9 +1660,7 @@ INSERT INTO pages (
     '{"show_captcha": "true", "remember_me_days": "7", "oauth_github": "true", "oauth_google": "false"}'::jsonb,
     0,
     NULL
-)
 ),
-,
 (
     NOW() - INTERVAL '12 days',
     NOW(),
@@ -1695,9 +1681,7 @@ INSERT INTO pages (
     '{"last_updated": "2024-03-01", "version": "1.0"}'::jsonb,
     0,
     NULL
-)
 ),
-,
 (
     NOW() - INTERVAL '10 days',
     NOW(),
@@ -1718,9 +1702,7 @@ INSERT INTO pages (
     '{"need_email_verify": "true", "default_role": "user", "invite_code_required": "false"}'::jsonb,
     0,
     NULL
-)
-)
-;
+);
 
 SELECT setval('pages_id_seq', (SELECT MAX(id) FROM pages));
 
@@ -1741,9 +1723,7 @@ INSERT INTO page_translations (
     'home',
     '/images/covers/home-zh.jpg',
     '/'
-)
 ),
-,
 (
     NOW() - INTERVAL '30 days',
     NOW(),
@@ -1753,9 +1733,7 @@ INSERT INTO page_translations (
     'home',
     '/images/covers/home-en.jpg',
     '/en'
-)
 ),
-,
 (
     NOW() - INTERVAL '15 days',
     NOW(),
@@ -1765,9 +1743,7 @@ INSERT INTO page_translations (
     '404',
     '/images/covers/404-zh.jpg',
     '/404'
-)
 ),
-,
 (
     NOW() - INTERVAL '15 days',
     NOW(),
@@ -1777,9 +1753,7 @@ INSERT INTO page_translations (
     '404',
     '/images/covers/404-en.jpg',
     '/en/404'
-)
 ),
-,
 (
     NOW() - INTERVAL '12 days',
     NOW(),
@@ -1789,9 +1763,7 @@ INSERT INTO page_translations (
     'login',
     '/images/covers/login-zh.jpg',
     '/login'
-)
 ),
-,
 (
     NOW() - INTERVAL '25 days',
     NOW(),
@@ -1801,9 +1773,7 @@ INSERT INTO page_translations (
     'about',
     '/images/covers/about-zh.jpg',
     '/about'
-)
-)
-;
+);
 
 SELECT setval('page_translations_id_seq', (SELECT MAX(id) FROM page_translations));
 
@@ -1836,9 +1806,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     NULL,
     1,
-    1)
-),
-,
+    1),
 -- 生活随笔
 (
     2,
@@ -1856,9 +1824,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     NULL,
     1,
-    1)
-),
-,
+    1),
 -- 产品设计
 (
     3,
@@ -1876,9 +1842,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     NULL,
     1,
-    1)
-),
-,
+    1),
 -- 创业思考
 (
     4,
@@ -1896,9 +1860,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     NULL,
     1,
-    1)
-),
-,
+    1),
 -- ========== 二级分类（父ID=1：技术分享） ==========
 -- 前端开发
 (
@@ -1917,9 +1879,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     1,
     1,
-    1)
-),
-,
+    1),
 -- 后端开发
 (
     12,
@@ -1937,9 +1897,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     1,
     1,
-    1)
-),
-,
+    1),
 -- 移动开发
 (
     13,
@@ -1957,9 +1915,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     1,
     1,
-    1)
-),
-,
+    1),
 -- ========== 二级分类（父ID=2：生活随笔） ==========
 -- 旅行游记
 (
@@ -1978,9 +1934,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     2,
     1,
-    1)
-),
-,
+    1),
 -- 美食探店
 (
     22,
@@ -1998,9 +1952,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     2,
     1,
-    1)
-),
-,
+    1),
 -- ========== 二级分类（父ID=3：产品设计） ==========
 -- UI 设计
 (
@@ -2019,9 +1971,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     3,
     1,
-    1)
-),
-,
+    1),
 -- UX 设计
 (
     32,
@@ -2039,9 +1989,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     3,
     1,
-    1)
-),
-,
+    1),
 -- ========== 二级分类（父ID=4：创业思考） ==========
 -- 团队管理
 (
@@ -2060,9 +2008,7 @@ INSERT INTO categories (
     '{}'::jsonb,
     4,
     1,
-    1)
-),
-,
+    1),
 -- 产品思考
 (
     42,
@@ -2081,7 +2027,6 @@ INSERT INTO categories (
     4,
     1,
     1)
-)
 ;
 
 SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));
@@ -2108,9 +2053,7 @@ INSERT INTO category_translations (
     '/tech',
     1,
     1
-)
 ),
-,
 (
     101,
     NOW() - INTERVAL '30 days',
@@ -2124,9 +2067,7 @@ INSERT INTO category_translations (
     '/en/tech',
     1,
     1
-)
 ),
-,
 (
     2,
     NOW() - INTERVAL '25 days',
@@ -2140,9 +2081,7 @@ INSERT INTO category_translations (
     '/life',
     1,
     1
-)
 ),
-,
 (
     102,
     NOW() - INTERVAL '25 days',
@@ -2156,9 +2095,7 @@ INSERT INTO category_translations (
     '/en/life',
     1,
     1
-)
 ),
-,
 (
     3,
     NOW() - INTERVAL '20 days',
@@ -2172,9 +2109,7 @@ INSERT INTO category_translations (
     '/design',
     1,
     1
-)
 ),
-,
 (
     103,
     NOW() - INTERVAL '20 days',
@@ -2188,9 +2123,7 @@ INSERT INTO category_translations (
     '/en/design',
     1,
     1
-)
 ),
-,
 (
     4,
     NOW() - INTERVAL '15 days',
@@ -2204,9 +2137,7 @@ INSERT INTO category_translations (
     '/startup',
     1,
     1
-)
 ),
-,
 (
     104,
     NOW() - INTERVAL '15 days',
@@ -2220,9 +2151,7 @@ INSERT INTO category_translations (
     '/en/startup',
     1,
     1
-)
 ),
-,
 (
     11,
     NOW() - INTERVAL '25 days',
@@ -2236,9 +2165,7 @@ INSERT INTO category_translations (
     '/tech/frontend',
     1,
     1
-)
 ),
-,
 (
     111,
     NOW() - INTERVAL '25 days',
@@ -2252,9 +2179,7 @@ INSERT INTO category_translations (
     '/en/tech/frontend',
     1,
     1
-)
 ),
-,
 (
     12,
     NOW() - INTERVAL '24 days',
@@ -2268,9 +2193,7 @@ INSERT INTO category_translations (
     '/tech/backend',
     1,
     1
-)
 ),
-,
 (
     112,
     NOW() - INTERVAL '24 days',
@@ -2284,9 +2207,7 @@ INSERT INTO category_translations (
     '/en/tech/backend',
     1,
     1
-)
 ),
-,
 (
     13,
     NOW() - INTERVAL '23 days',
@@ -2300,9 +2221,7 @@ INSERT INTO category_translations (
     '/tech/mobile',
     1,
     1
-)
 ),
-,
 (
     113,
     NOW() - INTERVAL '23 days',
@@ -2316,9 +2235,7 @@ INSERT INTO category_translations (
     '/en/tech/mobile',
     1,
     1
-)
 ),
-,
 (
     21,
     NOW() - INTERVAL '20 days',
@@ -2332,9 +2249,7 @@ INSERT INTO category_translations (
     '/life/travel',
     1,
     1
-)
 ),
-,
 (
     121,
     NOW() - INTERVAL '20 days',
@@ -2348,9 +2263,7 @@ INSERT INTO category_translations (
     '/en/life/travel',
     1,
     1
-)
 ),
-,
 (
     22,
     NOW() - INTERVAL '19 days',
@@ -2364,9 +2277,7 @@ INSERT INTO category_translations (
     '/life/food',
     1,
     1
-)
 ),
-,
 (
     122,
     NOW() - INTERVAL '19 days',
@@ -2380,9 +2291,7 @@ INSERT INTO category_translations (
     '/en/life/food',
     1,
     1
-)
 ),
-,
 (
     31,
     NOW() - INTERVAL '18 days',
@@ -2396,9 +2305,7 @@ INSERT INTO category_translations (
     '/design/ui-design',
     1,
     1
-)
 ),
-,
 (
     131,
     NOW() - INTERVAL '18 days',
@@ -2412,9 +2319,7 @@ INSERT INTO category_translations (
     '/en/design/ui-design',
     1,
     1
-)
 ),
-,
 (
     32,
     NOW() - INTERVAL '17 days',
@@ -2428,9 +2333,7 @@ INSERT INTO category_translations (
     '/design/ux-design',
     1,
     1
-)
 ),
-,
 (
     132,
     NOW() - INTERVAL '17 days',
@@ -2444,9 +2347,7 @@ INSERT INTO category_translations (
     '/en/design/ux-design',
     1,
     1
-)
 ),
-,
 (
     41,
     NOW() - INTERVAL '14 days',
@@ -2460,9 +2361,7 @@ INSERT INTO category_translations (
     '/startup/team-management',
     1,
     1
-)
 ),
-,
 (
     141,
     NOW() - INTERVAL '14 days',
@@ -2476,9 +2375,7 @@ INSERT INTO category_translations (
     '/en/startup/team-management',
     1,
     1
-)
 ),
-,
 (
     42,
     NOW() - INTERVAL '13 days',
@@ -2492,9 +2389,7 @@ INSERT INTO category_translations (
     '/startup/product-thinking',
     1,
     1
-)
 ),
-,
 (
     142,
     NOW() - INTERVAL '13 days',
@@ -2508,9 +2403,7 @@ INSERT INTO category_translations (
     '/en/startup/product-thinking',
     1,
     1
-)
-)
-;
+);
 
 SELECT setval('category_translations_id_seq', (SELECT MAX(id) FROM category_translations));
 
@@ -3121,9 +3014,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=1',
     '',
     '{"show_toc": "true", "toc_depth": "3", "allow_copy": "true", "copyright_notice": "GoWind 官方原创"}'::jsonb
-)
 ),
-,
 -- 文章2：GoWind v2.0 版本发布公告（已发布、精选）
 (
     NOW() - INTERVAL '25 days',
@@ -3141,9 +3032,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=2',
     '',
     '{"show_changelog": "true", "release_date": "2024-03-01", "upgrade_guide_url": "/docs/upgrade/v2.0"}'::jsonb
-)
 ),
-,
 -- 文章3：Linux 环境下部署 风行内容中台（已发布）
 (
     NOW() - INTERVAL '22 days',
@@ -3161,9 +3050,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=3',
     '',
     '{"os_type": "Linux", "distro": "Ubuntu, CentOS", "tested_version": "v1.9.0"}'::jsonb
-)
 ),
-,
 -- 文章4：2024 Content Hub 行业发展趋势分析（已发布）
 (
     NOW() - INTERVAL '20 days',
@@ -3181,9 +3068,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=4',
     '',
     '{"data_source": "IDC 2024 行业报告", "chart_support": "true", "downloadable": "true"}'::jsonb
-)
 ),
-,
 -- 文章5：风行内容中台 自定义模板开发（草稿、未完成）
 (
     NOW() - INTERVAL '15 days',
@@ -3201,9 +3086,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=5',
     '',
     '{"dev_status": "50%", "expected_release": "2024-04-01", "required_skills": "Go, Vue3, HTML/CSS"}'::jsonb
-)
 ),
-,
 -- 文章6：GoWind 企业版功能详解（加密、已发布）
 (
     NOW() - INTERVAL '12 days',
@@ -3221,9 +3104,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=6',
     '$2a$10$89jZk54G89sdkf89sdf89sd89sdf89sdf89sdf',
     '{"is_enterprise": "true", "price_range": "¥9999-¥19999", "trial_available": "true"}'::jsonb
-)
 ),
-,
 -- 文章7：常见问题解答（草稿）
 (
     NOW() - INTERVAL '10 days',
@@ -3241,9 +3122,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=7',
     '',
     '{"faq_category": "installation, configuration, performance", "update_frequency": "monthly"}'::jsonb
-)
 ),
-,
 -- 文章8：风行内容中台 性能优化指南（已发布、精选）
 (
     NOW() - INTERVAL '8 days',
@@ -3261,9 +3140,7 @@ INSERT INTO posts (
     'https://picsum.photos/800/450?random=8',
     '',
     '{"benchmark_data": "true", "qps_before": "50000", "qps_after": "100000", "optimization_points": "DB, Cache, Code"}'::jsonb
-)
-)
-;
+);
 
 SELECT setval('posts_id_seq', (SELECT MAX(id) FROM posts));
 
@@ -3318,9 +3195,7 @@ INSERT INTO post_translations (
 > 首次登录请立即修改密码！',
     '/blog/gowind-content-hub-quick-start',
     2580
-)
 ),
-,
 (
     NOW() - INTERVAL '25 days',
     NOW(),
@@ -3357,9 +3232,7 @@ GoWind Content Hub v2.0于2024年3月1日发布，是开源以来的重大版本
 - 全新安装：直接克隆v2.0分支代码部署',
     '/blog/gowind-v2-0-release',
     3200
-)
 ),
-,
 (
     NOW() - INTERVAL '22 days',
     NOW(),
@@ -3410,9 +3283,7 @@ yum install -y golang postgresql git
 创建systemd服务文件：/etc/systemd/system/gowind.service',
     '/blog/deploy-gowind-on-linux',
     2800
-)
 ),
-,
 (
     NOW() - INTERVAL '20 days',
     NOW(),
@@ -3453,9 +3324,7 @@ IDC 2024年全球Content Hub市场研究报告
 国产化替代加速，Go/Java语言开发的Content Hub占比提升。',
     '/blog/2024-cms-industry-trends',
     2600
-)
 ),
-,
 (
     NOW() - INTERVAL '15 days',
     NOW(),
@@ -3506,9 +3375,7 @@ IDC 2024年全球Content Hub市场研究报告
 3. 自定义组件开发',
     '/blog/gowind-custom-template-dev',
     1800
-)
 ),
-,
 (
     NOW() - INTERVAL '12 days',
     NOW(),
@@ -3551,9 +3418,7 @@ IDC 2024年全球Content Hub市场研究报告
 联系客服：400-123-4567，可申请15天免费试用。',
     '/blog/gowind-enterprise-features',
     2200
-)
 ),
-,
 (
     NOW() - INTERVAL '10 days',
     NOW(),
@@ -3596,9 +3461,7 @@ A3：在后台设置-多语言中启用，上传翻译文件。
 - 升级相关问题',
     '/blog/gowind-faq',
     1500
-)
 ),
-,
 (
     NOW() - INTERVAL '8 days',
     NOW(),
@@ -3641,9 +3504,7 @@ v1.9版本QPS仅5万，响应时间200ms，无法满足高并发需求。
 3. 代码：优化Goroutine、JSON序列化、静态资源压缩',
     '/blog/gowind-cms-performance-optimization',
     3000
-)
 ),
-,
 (
     NOW() - INTERVAL '30 days',
     NOW(),
@@ -3686,9 +3547,7 @@ v1.9版本QPS仅5万，响应时间200ms，无法满足高并发需求。
 > Please change password immediately after first login!',
     '/en/blog/gowind-cms-quick-start',
     2580
-)
 ),
-,
 (
     NOW() - INTERVAL '25 days',
     NOW(),
@@ -3725,9 +3584,7 @@ GoWind Content Hub v2.0 was released on March 1, 2024, marking the most signific
 - Fresh installation: Clone v2.0 branch code directly for deployment',
     '/en/blog/gowind-v2-0-release',
     3200
-)
 ),
-,
 (
     NOW() - INTERVAL '22 days',
     NOW(),
@@ -3778,9 +3635,7 @@ yum install -y golang postgresql git
 Create systemd service file: /etc/systemd/system/gowind.service',
     '/en/blog/deploy-gowind-on-linux',
     2800
-)
 ),
-,
 (
     NOW() - INTERVAL '20 days',
     NOW(),
@@ -3821,9 +3676,7 @@ Global Content Hub market size expected to reach $8.9 billion in 2024, with 18% 
 Accelerated domestic substitution, Content Hub developed with Go/Java languages gaining market share.',
     '/en/blog/2024-cms-industry-trends',
     2600
-)
 ),
-,
 (
     NOW() - INTERVAL '15 days',
     NOW(),
@@ -3874,9 +3727,7 @@ Accelerated domestic substitution, Content Hub developed with Go/Java languages 
 3. Custom component development',
     '/en/blog/gowind-custom-template-dev',
     1800
-)
 ),
-,
 (
     NOW() - INTERVAL '12 days',
     NOW(),
@@ -3919,9 +3770,7 @@ Contact support: 400-123-4567, 15-day free trial available.',
 Contact support: 400-123-4567, 15-day free trial available.',
     '/en/blog/gowind-enterprise-features',
     2200
-)
 ),
-,
 (
     NOW() - INTERVAL '10 days',
     NOW(),
@@ -3964,9 +3813,7 @@ A3: Enable in backend Settings > Multi-language, upload translation files.
 - Upgrade related questions',
     '/en/blog/gowind-faq',
     1500
-)
 ),
-,
 (
     NOW() - INTERVAL '8 days',
     NOW(),
@@ -4009,9 +3856,7 @@ v1.9 version had only 50K QPS with 200ms response time, unable to meet high-conc
 3. Code: Goroutine optimization, JSON serialization improvement, static resource compression',
     '/en/blog/gowind-cms-performance-optimization',
     3000
-)
-)
-;
+);
 
 SELECT setval('post_translations_id_seq', (SELECT MAX(id) FROM post_translations));
 
