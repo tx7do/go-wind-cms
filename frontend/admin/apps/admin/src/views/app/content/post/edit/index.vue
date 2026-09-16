@@ -14,11 +14,10 @@ import { $t } from '@vben/locales';
 
 import { Modal, notification } from 'ant-design-vue';
 
-import { Editor } from '#/adapter/component/Editor';
+import { Editor, EditorType } from '#/adapter/component/Editor';
 import {
   apiClient,
   compressImageFile,
-  editorTypeOptions,
   postStatusToColor,
   postStatusToName,
   notifyUploadError,
@@ -28,6 +27,18 @@ import { router } from '#/router';
 
 import { usePostEditViewStore } from './post-edit-view.state';
 import PostSettingsPanel from './post-settings-panel.vue';
+
+// 文章只提供富文本与 Markdown 两种编辑器；代码/JSON/纯文本编辑器不适合文章场景
+const editorTypeOptions = computed(() => [
+  {
+    label: $t('enum.editorType.EDITOR_TYPE_RICH_TEXT'),
+    value: EditorType.RICH_TEXT,
+  },
+  {
+    label: $t('enum.editorType.EDITOR_TYPE_MARKDOWN'),
+    value: EditorType.MARKDOWN,
+  },
+]);
 
 const postEditViewStore = usePostEditViewStore();
 
