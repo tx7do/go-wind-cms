@@ -16,6 +16,7 @@ import {
   editorTypeToName,
   enableBoolToColor,
   enableBoolToName,
+  fetchFlattenedCategoryOptions,
   fetchListPosts,
   PaginationQuery,
   type contentservicev1_Post as Post,
@@ -34,6 +35,22 @@ const COUNT_REFRESH_THROTTLE_MS = 3000;
 let lastCountRefreshAt = 0;
 let countsInFlight = false;
 let countsRefreshQueued = false;
+
+/** 分类筛选下拉选项（与编辑页分类选择共用数据源） */
+const categoryOptions = ref<{ label: string; value: number }[]>([]);
+const categoryOptionsLoading = ref(false);
+
+async function fetchCategoryOptions() {
+  if (categoryOptionsLoading.value) return;
+  categoryOptionsLoading.value = true;
+  try {
+    categoryOptions.value = await fetchFlattenedCategoryOptions(
+      i18n.global.locale.value,
+    );
+  } finally {
+    categoryOptionsLoading.value = false;
+  }
+}
 
 const statusTabs = computed(() => [
   { key: ALL_STATUS, label: $t('page.post.statusAll') },
@@ -59,6 +76,20 @@ const formOptions: VbenFormProps = {
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
         allowClear: true,
+      },
+    },
+    {
+      component: 'Select',
+      fieldName: 'categoryIds',
+      label: $t('page.post.category'),
+      componentProps: {
+        options: categoryOptions,
+        loading: categoryOptionsLoading,
+        placeholder: $t('ui.placeholder.select'),
+        allowClear: true,
+        showSearch: true,
+        filterOption: (input: string, option: any) =>
+          option.label.toLowerCase().includes(input.toLowerCase()),
       },
     },
   ],
@@ -89,6 +120,13 @@ const gridOptions: VxeGridProps<Post> = {
           delete query.status;
         } else {
           query.status = activeStatus.value;
+        }
+        // 分类过滤走连接表：字段名必须带 __in 后缀且值为数组，
+        // 通用转换器对单值生成 Value，而 post_repo 的连接表过滤只认 Values
+        if (query.categoryIds != null) {
+          const v = query.categoryIds;
+          delete query.categoryIds;
+          query.category_ids__in = Array.isArray(v) ? v : [v];
         }
         return await fetchListPosts(
           new PaginationQuery({
@@ -222,6 +260,7 @@ function handleStatusTabChange() {
 
 onMounted(() => {
   refreshCounts();
+  fetchCategoryOptions();
 });
 
 // keep-alive 缓存页从编辑页返回时刷新计数（节流去重首挂载的重复触发）
