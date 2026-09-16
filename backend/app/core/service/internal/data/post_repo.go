@@ -26,6 +26,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/postcategory"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-cms/app/core/service/internal/data/ent/user"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
@@ -266,6 +267,18 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 	}
 
 	if req.FieldMask != nil && len(req.FieldMask.Paths) > 0 {
+		// 作者名称读时回填依赖 author_id，而前端 fieldMask 一般不含该列，这里补选
+		hasAuthorID := false
+		for _, path := range req.FieldMask.Paths {
+			if path == post.FieldAuthorID {
+				hasAuthorID = true
+				break
+			}
+		}
+		if !hasAuthorID {
+			req.FieldMask.Paths = append(req.FieldMask.Paths, post.FieldAuthorID)
+		}
+
 		whereSelectors, err := r.repository.BuildSelectorWithTable(post.Table, req.FieldMask.Paths)
 		if err != nil {
 			r.log.Errorf("build selector with table failed: %s", err.Error())
@@ -334,10 +347,60 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		}
 	}
 
+	r.fillAuthorNames(ctx, ret.Items)
+
 	return &contentV1.ListPostResponse{
 		Total: ret.Total,
 		Items: ret.Items,
 	}, nil
+}
+
+// fillAuthorNames 为缺失作者名称的文章按 author_id 批量回填（昵称优先，回退用户名）。
+// 历史数据创建时未写 author_name 冗余列，读时兜底可同时修复存量行与用户改名的展示。
+func (r *PostRepo) fillAuthorNames(ctx context.Context, dtos []*contentV1.Post) {
+	need := make(map[uint32]struct{})
+	ids := make([]uint32, 0, len(dtos))
+	for _, dto := range dtos {
+		if dto.GetAuthorName() != "" || dto.GetAuthorId() == 0 {
+			continue
+		}
+		if _, ok := need[dto.GetAuthorId()]; !ok {
+			need[dto.GetAuthorId()] = struct{}{}
+			ids = append(ids, dto.GetAuthorId())
+		}
+	}
+	if len(ids) == 0 {
+		return
+	}
+
+	users, err := r.entClient.Client().User.Query().
+		Where(user.IDIn(ids...)).
+		Select(user.FieldID, user.FieldNickname, user.FieldUsername).
+		All(ctx)
+	if err != nil {
+		// 名称解析失败不阻塞列表/详情
+		r.log.Errorf("query author names failed: %s", err.Error())
+		return
+	}
+
+	names := make(map[uint32]string, len(users))
+	for _, u := range users {
+		name := u.Nickname
+		if name == nil || *name == "" {
+			name = u.Username
+		}
+		if name != nil && *name != "" {
+			names[u.ID] = *name
+		}
+	}
+	for _, dto := range dtos {
+		if dto.GetAuthorName() != "" {
+			continue
+		}
+		if name, ok := names[dto.GetAuthorId()]; ok {
+			dto.AuthorName = trans.Ptr(name)
+		}
+	}
 }
 
 func (r *PostRepo) Get(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.Post, error) {
@@ -370,6 +433,8 @@ func (r *PostRepo) Get(ctx context.Context, req *contentV1.GetPostRequest) (*con
 	}
 
 	dto := r.mapper.ToDTO(entity)
+
+	r.fillAuthorNames(ctx, []*contentV1.Post{dto})
 
 	languages, err := r.postTranslationRepo.ListAvailedLanguages(ctx, dto.GetId())
 	if err != nil {
