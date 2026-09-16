@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -882,6 +883,596 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `操作失败，请稍后重试`
+  String get errorDefault {
+    return Intl.message('操作失败，请稍后重试', name: 'errorDefault', desc: '', args: []);
+  }
+
+  /// `网络异常，请检查网络连接`
+  String get errorNetworkError {
+    return Intl.message(
+      '网络异常，请检查网络连接',
+      name: 'errorNetworkError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求超时，请稍后重试`
+  String get errorTimeout {
+    return Intl.message('请求超时，请稍后重试', name: 'errorTimeout', desc: '', args: []);
+  }
+
+  /// `请求参数错误`
+  String get errorBadRequest {
+    return Intl.message('请求参数错误', name: 'errorBadRequest', desc: '', args: []);
+  }
+
+  /// `授权类型无效`
+  String get errorInvalidGrantType {
+    return Intl.message(
+      '授权类型无效',
+      name: 'errorInvalidGrantType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `用户 ID 无效`
+  String get errorInvalidUserid {
+    return Intl.message(
+      '用户 ID 无效',
+      name: 'errorInvalidUserid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `令牌无效`
+  String get errorInvalidToken {
+    return Intl.message('令牌无效', name: 'errorInvalidToken', desc: '', args: []);
+  }
+
+  /// `用户名或密码错误`
+  String get errorInvalidPassword {
+    return Intl.message(
+      '用户名或密码错误',
+      name: 'errorInvalidPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `未登录或登录已过期`
+  String get errorUnauthorized {
+    return Intl.message(
+      '未登录或登录已过期',
+      name: 'errorUnauthorized',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `账号已被冻结`
+  String get errorUserFreeze {
+    return Intl.message('账号已被冻结', name: 'errorUserFreeze', desc: '', args: []);
+  }
+
+  /// `应用密钥错误`
+  String get errorIncorrectAppSecret {
+    return Intl.message(
+      '应用密钥错误',
+      name: 'errorIncorrectAppSecret',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `访问令牌错误`
+  String get errorIncorrectAccessToken {
+    return Intl.message(
+      '访问令牌错误',
+      name: 'errorIncorrectAccessToken',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `刷新令牌错误`
+  String get errorIncorrectRefreshToken {
+    return Intl.message(
+      '刷新令牌错误',
+      name: 'errorIncorrectRefreshToken',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `登录已过期，请重新登录`
+  String get errorTokenExpired {
+    return Intl.message(
+      '登录已过期，请重新登录',
+      name: 'errorTokenExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `令牌不存在`
+  String get errorTokenNotExist {
+    return Intl.message(
+      '令牌不存在',
+      name: 'errorTokenNotExist',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `需要支付`
+  String get errorPaymentRequired {
+    return Intl.message(
+      '需要支付',
+      name: 'errorPaymentRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `没有权限执行此操作`
+  String get errorForbidden {
+    return Intl.message(
+      '没有权限执行此操作',
+      name: 'errorForbidden',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `资源不存在`
+  String get errorNotFound {
+    return Intl.message('资源不存在', name: 'errorNotFound', desc: '', args: []);
+  }
+
+  /// `用户不存在`
+  String get errorUserNotFound {
+    return Intl.message('用户不存在', name: 'errorUserNotFound', desc: '', args: []);
+  }
+
+  /// `请求方法不允许`
+  String get errorMethodNotAllowed {
+    return Intl.message(
+      '请求方法不允许',
+      name: 'errorMethodNotAllowed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `不可接受的请求`
+  String get errorNotAcceptable {
+    return Intl.message(
+      '不可接受的请求',
+      name: 'errorNotAcceptable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `需要代理身份验证`
+  String get errorProxyAuthenticationRequired {
+    return Intl.message(
+      '需要代理身份验证',
+      name: 'errorProxyAuthenticationRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求超时`
+  String get errorRequestTimeout {
+    return Intl.message(
+      '请求超时',
+      name: 'errorRequestTimeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `数据冲突，请刷新后重试`
+  String get errorConflict {
+    return Intl.message(
+      '数据冲突，请刷新后重试',
+      name: 'errorConflict',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `资源已删除`
+  String get errorGone {
+    return Intl.message('资源已删除', name: 'errorGone', desc: '', args: []);
+  }
+
+  /// `缺少 Content-Length`
+  String get errorLengthRequired {
+    return Intl.message(
+      '缺少 Content-Length',
+      name: 'errorLengthRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `前置条件不满足`
+  String get errorPreconditionFailed {
+    return Intl.message(
+      '前置条件不满足',
+      name: 'errorPreconditionFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求数据过大`
+  String get errorPayloadTooLarge {
+    return Intl.message(
+      '请求数据过大',
+      name: 'errorPayloadTooLarge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求地址过长`
+  String get errorUriTooLong {
+    return Intl.message('请求地址过长', name: 'errorUriTooLong', desc: '', args: []);
+  }
+
+  /// `不支持的媒体类型`
+  String get errorUnsupportedMediaType {
+    return Intl.message(
+      '不支持的媒体类型',
+      name: 'errorUnsupportedMediaType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求范围无法满足`
+  String get errorRangeNotSatisfiable {
+    return Intl.message(
+      '请求范围无法满足',
+      name: 'errorRangeNotSatisfiable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求期望无法满足`
+  String get errorExpectationFailed {
+    return Intl.message(
+      '请求期望无法满足',
+      name: 'errorExpectationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `服务器拒绝处理请求`
+  String get errorImATeapot {
+    return Intl.message(
+      '服务器拒绝处理请求',
+      name: 'errorImATeapot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求被错误转发`
+  String get errorMisdirectedRequest {
+    return Intl.message(
+      '请求被错误转发',
+      name: 'errorMisdirectedRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `无法处理请求数据`
+  String get errorUnprocessableEntity {
+    return Intl.message(
+      '无法处理请求数据',
+      name: 'errorUnprocessableEntity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `资源已锁定`
+  String get errorLocked {
+    return Intl.message('资源已锁定', name: 'errorLocked', desc: '', args: []);
+  }
+
+  /// `依赖操作失败`
+  String get errorFailedDependency {
+    return Intl.message(
+      '依赖操作失败',
+      name: 'errorFailedDependency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求过早`
+  String get errorTooEarly {
+    return Intl.message('请求过早', name: 'errorTooEarly', desc: '', args: []);
+  }
+
+  /// `需要升级后使用`
+  String get errorUpgradeRequired {
+    return Intl.message(
+      '需要升级后使用',
+      name: 'errorUpgradeRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `需要前置条件`
+  String get errorPreconditionRequired {
+    return Intl.message(
+      '需要前置条件',
+      name: 'errorPreconditionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求过于频繁，请稍后重试`
+  String get errorTooManyRequests {
+    return Intl.message(
+      '请求过于频繁，请稍后重试',
+      name: 'errorTooManyRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求头字段过大`
+  String get errorRequestHeaderFieldsTooLarge {
+    return Intl.message(
+      '请求头字段过大',
+      name: 'errorRequestHeaderFieldsTooLarge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `因法律原因不可用`
+  String get errorUnavailableForLegalReasons {
+    return Intl.message(
+      '因法律原因不可用',
+      name: 'errorUnavailableForLegalReasons',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `服务器内部错误`
+  String get errorInternalServerError {
+    return Intl.message(
+      '服务器内部错误',
+      name: 'errorInternalServerError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `功能暂未实现`
+  String get errorNotImplemented {
+    return Intl.message(
+      '功能暂未实现',
+      name: 'errorNotImplemented',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `网关错误`
+  String get errorBadGateway {
+    return Intl.message('网关错误', name: 'errorBadGateway', desc: '', args: []);
+  }
+
+  /// `服务暂时不可用`
+  String get errorServiceUnavailable {
+    return Intl.message(
+      '服务暂时不可用',
+      name: 'errorServiceUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `网关超时`
+  String get errorGatewayTimeout {
+    return Intl.message(
+      '网关超时',
+      name: 'errorGatewayTimeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `不支持的 HTTP 版本`
+  String get errorHttpVersionNotSupported {
+    return Intl.message(
+      '不支持的 HTTP 版本',
+      name: 'errorHttpVersionNotSupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `变体协商错误`
+  String get errorVariantAlsoNegotiates {
+    return Intl.message(
+      '变体协商错误',
+      name: 'errorVariantAlsoNegotiates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `存储空间不足`
+  String get errorInsufficientStorage {
+    return Intl.message(
+      '存储空间不足',
+      name: 'errorInsufficientStorage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `检测到循环请求`
+  String get errorLoopDetected {
+    return Intl.message(
+      '检测到循环请求',
+      name: 'errorLoopDetected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `需要扩展`
+  String get errorNotExtended {
+    return Intl.message('需要扩展', name: 'errorNotExtended', desc: '', args: []);
+  }
+
+  /// `需要网络认证`
+  String get errorNetworkAuthenticationRequired {
+    return Intl.message(
+      '需要网络认证',
+      name: 'errorNetworkAuthenticationRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `网络读取超时`
+  String get errorNetworkReadTimeoutError {
+    return Intl.message(
+      '网络读取超时',
+      name: 'errorNetworkReadTimeoutError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `网络连接超时`
+  String get errorNetworkConnectTimeoutError {
+    return Intl.message(
+      '网络连接超时',
+      name: 'errorNetworkConnectTimeoutError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `访问令牌不存在`
+  String get errorAccessTokenNotFound {
+    return Intl.message(
+      '访问令牌不存在',
+      name: 'errorAccessTokenNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `刷新令牌不存在`
+  String get errorRefreshTokenNotFound {
+    return Intl.message(
+      '刷新令牌不存在',
+      name: 'errorRefreshTokenNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `删除失败`
+  String get errorDeleteFailed {
+    return Intl.message('删除失败', name: 'errorDeleteFailed', desc: '', args: []);
+  }
+
+  /// `部门不存在`
+  String get errorDepartmentNotFound {
+    return Intl.message(
+      '部门不存在',
+      name: 'errorDepartmentNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `下载失败`
+  String get errorDownloadFailed {
+    return Intl.message(
+      '下载失败',
+      name: 'errorDownloadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `文件不存在`
+  String get errorFileNotFound {
+    return Intl.message('文件不存在', name: 'errorFileNotFound', desc: '', args: []);
+  }
+
+  /// `文件过大`
+  String get errorFileTooLarge {
+    return Intl.message('文件过大', name: 'errorFileTooLarge', desc: '', args: []);
+  }
+
+  /// `组织不存在`
+  String get errorOrganizationNotFound {
+    return Intl.message(
+      '组织不存在',
+      name: 'errorOrganizationNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `职位不存在`
+  String get errorPositionNotFound {
+    return Intl.message(
+      '职位不存在',
+      name: 'errorPositionNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `角色不存在`
+  String get errorRoleNotFound {
+    return Intl.message('角色不存在', name: 'errorRoleNotFound', desc: '', args: []);
+  }
+
+  /// `租户不存在`
+  String get errorTenantNotFound {
+    return Intl.message(
+      '租户不存在',
+      name: 'errorTenantNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `上传失败`
+  String get errorUploadFailed {
+    return Intl.message('上传失败', name: 'errorUploadFailed', desc: '', args: []);
   }
 }
 

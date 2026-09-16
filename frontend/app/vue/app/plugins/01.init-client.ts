@@ -1,4 +1,5 @@
 import {RequestClient} from '@/core/transport/rest/request-client'
+import {resolveApiErrorMsg} from '@/core/transport/rest/utils'
 import {useAccessStore} from '@/stores/modules/core/access.state'
 import {useUserStore} from '@/stores/modules/core/user.state'
 import {refreshToken as apiRefreshToken} from '@/api/composables/auth'
@@ -68,6 +69,13 @@ export default defineNuxtPlugin(async (nuxtApp) => {
             if (config.isDev) {
                 console.error('[RequestClient Error]', message)
             }
+        },
+
+        // 错误文案统一走 reason → i18n（error.<REASON>），查不到回退默认文案
+        getErrorMsg: (error: unknown) => {
+            const locale = (i18n as any)?.locale?.value || 'zh-CN'
+            const dict = (i18n as any)?.getLocaleMessage?.(locale)?.error as Record<string, string> | undefined
+            return resolveApiErrorMsg(error, dict)
         },
     })
 

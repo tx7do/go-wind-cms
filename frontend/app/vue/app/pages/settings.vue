@@ -8,6 +8,7 @@ import { useAccessStore } from '@/stores/modules/core/access.state'
 
 const { t } = useI18n()
 const { locale } = useI18n()
+const { resolveApiError } = useApiError()
 
 useHead({ title: t('settings.account.title') })
 const localePath = useLocalePath()
@@ -90,7 +91,7 @@ async function submitChangePassword() {
     newPassword.value = ''
     confirmPassword.value = ''
   } catch (e: any) {
-    pwdError.value = e?.message || t('settings.account.change_failed')
+    pwdError.value = resolveApiError(e)
   } finally {
     pwdLoading.value = false
   }

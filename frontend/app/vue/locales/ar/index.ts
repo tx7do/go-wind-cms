@@ -14,6 +14,7 @@ import comment from './comment.json'
 import common from './common.json'
 import component from './component.json'
 import enum_ from './enum.json'
+import error from './error.json'
 import menu from './menu.json'
 import navbar from './navbar.json'
 import page from './page.json'
@@ -29,6 +30,7 @@ export default {
     common,
     component,
     enum: enum_,
+    error,
     menu,
     navbar,
     page,

@@ -5,6 +5,7 @@ import zhCN_page from '../../messages/zh-CN/page.json';
 import zhCN_navbar from '../../messages/zh-CN/navbar.json';
 import zhCN_menu from '../../messages/zh-CN/menu.json';
 import zhCN_enum from '../../messages/zh-CN/enum.json';
+import zhCN_error from '../../messages/zh-CN/error.json';
 import zhCN_component from '../../messages/zh-CN/component.json';
 import zhCN_common from '../../messages/zh-CN/common.json';
 import zhCN_comment from '../../messages/zh-CN/comment.json';
@@ -21,6 +22,7 @@ import enUS_page from '../../messages/en-US/page.json';
 import enUS_navbar from '../../messages/en-US/navbar.json';
 import enUS_menu from '../../messages/en-US/menu.json';
 import enUS_enum from '../../messages/en-US/enum.json';
+import enUS_error from '../../messages/en-US/error.json';
 import enUS_component from '../../messages/en-US/component.json';
 import enUS_common from '../../messages/en-US/common.json';
 import enUS_settings from '../../messages/en-US/settings.json';
@@ -50,6 +52,7 @@ export const allMessages: Record<Locale, Record<string, Record<string, unknown>>
         navbar: zhCN_navbar,
         menu: zhCN_menu,
         enum: zhCN_enum,
+        error: zhCN_error,
         component: zhCN_component,
         common: zhCN_common,
         comment: zhCN_comment,
@@ -67,6 +70,7 @@ export const allMessages: Record<Locale, Record<string, Record<string, unknown>>
         navbar: enUS_navbar,
         menu: enUS_menu,
         enum: enUS_enum,
+        error: enUS_error,
         component: enUS_component,
         common: enUS_common,
         settings: enUS_settings,

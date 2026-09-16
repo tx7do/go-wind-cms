@@ -5,11 +5,12 @@ import {useTranslations} from 'next-intl';
 
 import {requestApi} from '@/core/transport/rest/request-api';
 import {encryptByAES} from '@/utils';
-import {useI18nRouter} from '@/i18n/helpers';
+import {useApiError, useI18nRouter} from '@/i18n/helpers';
 
 export default function AccountRegisterPage() {
     const t = useTranslations('authentication');
     const router = useI18nRouter();
+    const resolveApiError = useApiError();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -58,7 +59,7 @@ export default function AccountRegisterPage() {
             });
             router.push('/login');
         } catch (e: any) {
-            setErrorMsg(e?.message || 'Registration failed');
+            setErrorMsg(resolveApiError(e));
         } finally {
             setLoading(false);
         }

@@ -5,6 +5,7 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show CommentServiceV1Comment, ContentServiceV1Post,
         ContentServiceV1Category, ContentServiceV1Tag,
         InteractionServiceV1TargetType, InteractionServiceV1CounterMetric;
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/services/pagination_query.dart';
+import 'package:flutter_app/src/core/transport/http/api_error_messages.dart';
 import 'package:flutter_app/src/core/transport/http/status.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/comment_tree_utils.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/post_header.dart';
@@ -124,9 +126,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final result = await _commentService.create(newComment);
     if (result is Status) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(result.getMessage)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(localizedApiErrorMessage(S.of(context), result)),
+          ),
+        );
       }
       return;
     }

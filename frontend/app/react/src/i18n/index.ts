@@ -2,6 +2,7 @@ import {useLocale} from 'next-intl';
 
 export * from './config';
 export * from './helpers/useI18n';
+export * from './helpers/useApiError';
 
 // 导出语言切换组件
 export {LocaleSwitcher} from '@/components/layout/LocaleSwitcher';

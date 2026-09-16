@@ -9,7 +9,7 @@ import SettingRow from '@/components/ui/setting-row';
 import XIcon from '@/plugins/xicon';
 
 import {usePreferences} from '@/core/preferences';
-import {useI18n} from '@/i18n';
+import {useApiError, useI18n} from '@/i18n';
 import type {ThemeModeType, SupportedLanguagesType} from '@/core/preferences';
 import {requestApi} from '@/core/transport/rest/request-api';
 import {encryptByAES} from '@/utils';
@@ -24,6 +24,7 @@ interface MenuItem {
 export default function SettingsPage() {
     const t = useTranslations('settings');
     const locale = useLocale();
+    const resolveApiError = useApiError();
 
     const {
         theme: themePref,
@@ -100,7 +101,7 @@ export default function SettingsPage() {
             setNewPassword('');
             setConfirmPassword('');
         } catch (e: any) {
-            setPwdError(e?.message || t('account.change_failed'));
+            setPwdError(resolveApiError(e));
         } finally {
             setPwdLoading(false);
         }

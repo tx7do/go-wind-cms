@@ -18,7 +18,9 @@ import {
     PreferencesStoreContext,
 } from '@/core/preferences/store';
 import {RequestClient} from '@/core/transport/rest/request-client';
+import {resolveApiErrorMsg} from '@/core/transport/rest/utils';
 import {env} from '@/config/env';
+import {allMessages, defaultLocale, validateLocale} from '@/i18n/config';
 import {refreshToken as apiRefreshToken} from '@/api/hooks/auth';
 import type {IUser} from '@/store/core/user/store';
 import {fetchUserProfile} from '@/api/hooks/user-profile';
@@ -107,6 +109,13 @@ export default function StoreProvider({children}: { children: ReactNode }) {
                 if (env.isDev) {
                     console.error('[RequestClient Error]', message);
                 }
+            },
+
+            // 错误文案统一走 reason → i18n（error.<REASON>），查不到回退默认文案
+            getErrorMsg: (error: unknown) => {
+                const locale = validateLocale(preferencesStore.getState().preferences.app.locale);
+                const dict = (allMessages[locale] ?? allMessages[defaultLocale])?.error as Record<string, string> | undefined;
+                return resolveApiErrorMsg(error, dict);
             },
         });
 

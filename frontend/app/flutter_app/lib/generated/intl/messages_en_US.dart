@@ -122,7 +122,195 @@ class MessageLookup extends MessageLookupByLibrary {
       "Limitation of Liability",
     ),
     "discover": MessageLookupByLibrary.simpleMessage("Discover"),
+    "errorAccessTokenNotFound": MessageLookupByLibrary.simpleMessage(
+      "Access token not found",
+    ),
+    "errorBadGateway": MessageLookupByLibrary.simpleMessage("Bad gateway"),
+    "errorBadRequest": MessageLookupByLibrary.simpleMessage("Invalid request"),
+    "errorConflict": MessageLookupByLibrary.simpleMessage(
+      "Data conflict. Please refresh and try again",
+    ),
+    "errorDefault": MessageLookupByLibrary.simpleMessage(
+      "Operation failed. Please try again later.",
+    ),
+    "errorDeleteFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to delete",
+    ),
+    "errorDepartmentNotFound": MessageLookupByLibrary.simpleMessage(
+      "Department not found",
+    ),
+    "errorDownloadFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to download",
+    ),
+    "errorExpectationFailed": MessageLookupByLibrary.simpleMessage(
+      "Expectation failed",
+    ),
+    "errorFailedDependency": MessageLookupByLibrary.simpleMessage(
+      "Dependent operation failed",
+    ),
+    "errorFileNotFound": MessageLookupByLibrary.simpleMessage("File not found"),
+    "errorFileTooLarge": MessageLookupByLibrary.simpleMessage(
+      "File is too large",
+    ),
+    "errorForbidden": MessageLookupByLibrary.simpleMessage(
+      "You do not have permission to perform this action",
+    ),
+    "errorGatewayTimeout": MessageLookupByLibrary.simpleMessage(
+      "Gateway timed out",
+    ),
+    "errorGone": MessageLookupByLibrary.simpleMessage(
+      "Resource is no longer available",
+    ),
+    "errorHttpVersionNotSupported": MessageLookupByLibrary.simpleMessage(
+      "Unsupported HTTP version",
+    ),
+    "errorImATeapot": MessageLookupByLibrary.simpleMessage(
+      "The server refused to process the request",
+    ),
+    "errorIncorrectAccessToken": MessageLookupByLibrary.simpleMessage(
+      "Incorrect access token",
+    ),
+    "errorIncorrectAppSecret": MessageLookupByLibrary.simpleMessage(
+      "Incorrect app secret",
+    ),
+    "errorIncorrectRefreshToken": MessageLookupByLibrary.simpleMessage(
+      "Incorrect refresh token",
+    ),
+    "errorInsufficientStorage": MessageLookupByLibrary.simpleMessage(
+      "Insufficient storage",
+    ),
+    "errorInternalServerError": MessageLookupByLibrary.simpleMessage(
+      "Internal server error",
+    ),
+    "errorInvalidGrantType": MessageLookupByLibrary.simpleMessage(
+      "Unsupported authorization type",
+    ),
+    "errorInvalidPassword": MessageLookupByLibrary.simpleMessage(
+      "Incorrect username or password",
+    ),
+    "errorInvalidToken": MessageLookupByLibrary.simpleMessage("Invalid token"),
+    "errorInvalidUserid": MessageLookupByLibrary.simpleMessage(
+      "Invalid user ID",
+    ),
+    "errorLengthRequired": MessageLookupByLibrary.simpleMessage(
+      "Content-Length header required",
+    ),
+    "errorLocked": MessageLookupByLibrary.simpleMessage("Resource is locked"),
+    "errorLoopDetected": MessageLookupByLibrary.simpleMessage(
+      "Request loop detected",
+    ),
+    "errorMethodNotAllowed": MessageLookupByLibrary.simpleMessage(
+      "HTTP method not allowed",
+    ),
+    "errorMisdirectedRequest": MessageLookupByLibrary.simpleMessage(
+      "Misdirected request",
+    ),
+    "errorNetworkAuthenticationRequired": MessageLookupByLibrary.simpleMessage(
+      "Network authentication required",
+    ),
+    "errorNetworkConnectTimeoutError": MessageLookupByLibrary.simpleMessage(
+      "Network connection timed out",
+    ),
+    "errorNetworkError": MessageLookupByLibrary.simpleMessage(
+      "Network error. Please check your connection.",
+    ),
+    "errorNetworkReadTimeoutError": MessageLookupByLibrary.simpleMessage(
+      "Network read timed out",
+    ),
+    "errorNotAcceptable": MessageLookupByLibrary.simpleMessage(
+      "Request not acceptable",
+    ),
+    "errorNotExtended": MessageLookupByLibrary.simpleMessage(
+      "Further extensions required",
+    ),
+    "errorNotFound": MessageLookupByLibrary.simpleMessage("Resource not found"),
+    "errorNotImplemented": MessageLookupByLibrary.simpleMessage(
+      "Not implemented yet",
+    ),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("Error Occurred!"),
+    "errorOrganizationNotFound": MessageLookupByLibrary.simpleMessage(
+      "Organization not found",
+    ),
+    "errorPayloadTooLarge": MessageLookupByLibrary.simpleMessage(
+      "Request payload too large",
+    ),
+    "errorPaymentRequired": MessageLookupByLibrary.simpleMessage(
+      "Payment required",
+    ),
+    "errorPositionNotFound": MessageLookupByLibrary.simpleMessage(
+      "Position not found",
+    ),
+    "errorPreconditionFailed": MessageLookupByLibrary.simpleMessage(
+      "Precondition failed",
+    ),
+    "errorPreconditionRequired": MessageLookupByLibrary.simpleMessage(
+      "Precondition required",
+    ),
+    "errorProxyAuthenticationRequired": MessageLookupByLibrary.simpleMessage(
+      "Proxy authentication required",
+    ),
+    "errorRangeNotSatisfiable": MessageLookupByLibrary.simpleMessage(
+      "Requested range not satisfiable",
+    ),
+    "errorRefreshTokenNotFound": MessageLookupByLibrary.simpleMessage(
+      "Refresh token not found",
+    ),
+    "errorRequestHeaderFieldsTooLarge": MessageLookupByLibrary.simpleMessage(
+      "Request header fields too large",
+    ),
+    "errorRequestTimeout": MessageLookupByLibrary.simpleMessage(
+      "Request timed out",
+    ),
+    "errorRoleNotFound": MessageLookupByLibrary.simpleMessage("Role not found"),
+    "errorServiceUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Service temporarily unavailable",
+    ),
+    "errorTenantNotFound": MessageLookupByLibrary.simpleMessage(
+      "Tenant not found",
+    ),
+    "errorTimeout": MessageLookupByLibrary.simpleMessage(
+      "Request timed out. Please try again later.",
+    ),
+    "errorTokenExpired": MessageLookupByLibrary.simpleMessage(
+      "Session expired. Please sign in again",
+    ),
+    "errorTokenNotExist": MessageLookupByLibrary.simpleMessage(
+      "Token does not exist",
+    ),
+    "errorTooEarly": MessageLookupByLibrary.simpleMessage(
+      "Request sent too early",
+    ),
+    "errorTooManyRequests": MessageLookupByLibrary.simpleMessage(
+      "Too many requests. Please slow down",
+    ),
+    "errorUnauthorized": MessageLookupByLibrary.simpleMessage(
+      "Not signed in or session expired",
+    ),
+    "errorUnavailableForLegalReasons": MessageLookupByLibrary.simpleMessage(
+      "Unavailable for legal reasons",
+    ),
+    "errorUnprocessableEntity": MessageLookupByLibrary.simpleMessage(
+      "Unable to process the request data",
+    ),
+    "errorUnsupportedMediaType": MessageLookupByLibrary.simpleMessage(
+      "Unsupported media type",
+    ),
+    "errorUpgradeRequired": MessageLookupByLibrary.simpleMessage(
+      "Upgrade required",
+    ),
+    "errorUploadFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to upload",
+    ),
+    "errorUriTooLong": MessageLookupByLibrary.simpleMessage(
+      "Request URI too long",
+    ),
+    "errorUserFreeze": MessageLookupByLibrary.simpleMessage(
+      "This account has been suspended",
+    ),
+    "errorUserNotFound": MessageLookupByLibrary.simpleMessage("User not found"),
+    "errorVariantAlsoNegotiates": MessageLookupByLibrary.simpleMessage(
+      "Variant negotiation error",
+    ),
     "featureNotAvailable": MessageLookupByLibrary.simpleMessage(
       "This feature is coming soon",
     ),

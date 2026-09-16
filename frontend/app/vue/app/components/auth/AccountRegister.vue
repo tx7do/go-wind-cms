@@ -4,6 +4,7 @@ import { encryptByAES } from '@/utils'
 import { useAppConfig } from '@/hooks/use-app-config'
 
 const { t } = useI18n()
+const { resolveApiError } = useApiError()
 const localePath = useLocalePath()
 const config = useAppConfig()
 
@@ -50,7 +51,7 @@ async function handleRegister() {
       navigateTo(localePath('/login'))
     }, 1200)
   } catch (e: any) {
-    errorMsg.value = e?.message || 'Registration failed'
+    errorMsg.value = resolveApiError(e)
   } finally {
     loading.value = false
   }

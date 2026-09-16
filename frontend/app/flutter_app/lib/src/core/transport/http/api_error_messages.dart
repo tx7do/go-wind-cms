@@ -1,0 +1,80 @@
+import 'package:flutter_app/generated/l10n.dart';
+
+import 'status.dart';
+
+/// API 错误文案：不再使用后端 message 字段（开发用英文文本，无法本地化），
+/// 用 reason 查询本地化文案（与 arb 中 error 前缀条目一一对应），
+/// 查不到时回退到默认错误文案。
+String localizedApiErrorMessage(S s, Status status) {
+  final resolver = status.reason == null ? null : _kApiErrorReasonText[status.reason!];
+  return resolver != null ? resolver(s) : s.errorDefault;
+}
+
+/// 后端 kratos reason 枚举 → S 错误文案 getter 映射
+final Map<String, String Function(S)> _kApiErrorReasonText = {
+  'BAD_REQUEST': (s) => s.errorBadRequest,
+  'INVALID_GRANT_TYPE': (s) => s.errorInvalidGrantType,
+  'INVALID_USERID': (s) => s.errorInvalidUserid,
+  'INVALID_TOKEN': (s) => s.errorInvalidToken,
+  'INVALID_PASSWORD': (s) => s.errorInvalidPassword,
+  'UNAUTHORIZED': (s) => s.errorUnauthorized,
+  'USER_FREEZE': (s) => s.errorUserFreeze,
+  'INCORRECT_APP_SECRET': (s) => s.errorIncorrectAppSecret,
+  'INCORRECT_ACCESS_TOKEN': (s) => s.errorIncorrectAccessToken,
+  'INCORRECT_REFRESH_TOKEN': (s) => s.errorIncorrectRefreshToken,
+  'TOKEN_EXPIRED': (s) => s.errorTokenExpired,
+  'TOKEN_NOT_EXIST': (s) => s.errorTokenNotExist,
+  'PAYMENT_REQUIRED': (s) => s.errorPaymentRequired,
+  'FORBIDDEN': (s) => s.errorForbidden,
+  'NOT_FOUND': (s) => s.errorNotFound,
+  'USER_NOT_FOUND': (s) => s.errorUserNotFound,
+  'METHOD_NOT_ALLOWED': (s) => s.errorMethodNotAllowed,
+  'NOT_ACCEPTABLE': (s) => s.errorNotAcceptable,
+  'PROXY_AUTHENTICATION_REQUIRED': (s) => s.errorProxyAuthenticationRequired,
+  'REQUEST_TIMEOUT': (s) => s.errorRequestTimeout,
+  'CONFLICT': (s) => s.errorConflict,
+  'GONE': (s) => s.errorGone,
+  'LENGTH_REQUIRED': (s) => s.errorLengthRequired,
+  'PRECONDITION_FAILED': (s) => s.errorPreconditionFailed,
+  'PAYLOAD_TOO_LARGE': (s) => s.errorPayloadTooLarge,
+  'URI_TOO_LONG': (s) => s.errorUriTooLong,
+  'UNSUPPORTED_MEDIA_TYPE': (s) => s.errorUnsupportedMediaType,
+  'RANGE_NOT_SATISFIABLE': (s) => s.errorRangeNotSatisfiable,
+  'EXPECTATION_FAILED': (s) => s.errorExpectationFailed,
+  'IM_A_TEAPOT': (s) => s.errorImATeapot,
+  'MISDIRECTED_REQUEST': (s) => s.errorMisdirectedRequest,
+  'UNPROCESSABLE_ENTITY': (s) => s.errorUnprocessableEntity,
+  'LOCKED': (s) => s.errorLocked,
+  'FAILED_DEPENDENCY': (s) => s.errorFailedDependency,
+  'TOO_EARLY': (s) => s.errorTooEarly,
+  'UPGRADE_REQUIRED': (s) => s.errorUpgradeRequired,
+  'PRECONDITION_REQUIRED': (s) => s.errorPreconditionRequired,
+  'TOO_MANY_REQUESTS': (s) => s.errorTooManyRequests,
+  'REQUEST_HEADER_FIELDS_TOO_LARGE': (s) => s.errorRequestHeaderFieldsTooLarge,
+  'UNAVAILABLE_FOR_LEGAL_REASONS': (s) => s.errorUnavailableForLegalReasons,
+  'INTERNAL_SERVER_ERROR': (s) => s.errorInternalServerError,
+  'NOT_IMPLEMENTED': (s) => s.errorNotImplemented,
+  'BAD_GATEWAY': (s) => s.errorBadGateway,
+  'SERVICE_UNAVAILABLE': (s) => s.errorServiceUnavailable,
+  'GATEWAY_TIMEOUT': (s) => s.errorGatewayTimeout,
+  'HTTP_VERSION_NOT_SUPPORTED': (s) => s.errorHttpVersionNotSupported,
+  'VARIANT_ALSO_NEGOTIATES': (s) => s.errorVariantAlsoNegotiates,
+  'INSUFFICIENT_STORAGE': (s) => s.errorInsufficientStorage,
+  'LOOP_DETECTED': (s) => s.errorLoopDetected,
+  'NOT_EXTENDED': (s) => s.errorNotExtended,
+  'NETWORK_AUTHENTICATION_REQUIRED': (s) => s.errorNetworkAuthenticationRequired,
+  'NETWORK_READ_TIMEOUT_ERROR': (s) => s.errorNetworkReadTimeoutError,
+  'NETWORK_CONNECT_TIMEOUT_ERROR': (s) => s.errorNetworkConnectTimeoutError,
+  'ACCESS_TOKEN_NOT_FOUND': (s) => s.errorAccessTokenNotFound,
+  'REFRESH_TOKEN_NOT_FOUND': (s) => s.errorRefreshTokenNotFound,
+  'DELETE_FAILED': (s) => s.errorDeleteFailed,
+  'DEPARTMENT_NOT_FOUND': (s) => s.errorDepartmentNotFound,
+  'DOWNLOAD_FAILED': (s) => s.errorDownloadFailed,
+  'FILE_NOT_FOUND': (s) => s.errorFileNotFound,
+  'FILE_TOO_LARGE': (s) => s.errorFileTooLarge,
+  'ORGANIZATION_NOT_FOUND': (s) => s.errorOrganizationNotFound,
+  'POSITION_NOT_FOUND': (s) => s.errorPositionNotFound,
+  'ROLE_NOT_FOUND': (s) => s.errorRoleNotFound,
+  'TENANT_NOT_FOUND': (s) => s.errorTenantNotFound,
+  'UPLOAD_FAILED': (s) => s.errorUploadFailed,
+};

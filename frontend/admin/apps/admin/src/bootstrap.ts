@@ -1,6 +1,7 @@
 import { createApp, watchEffect } from 'vue';
 
 import { registerAccessDirective } from '@vben/access';
+import { i18n } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 import { initStores, useAccessStore } from '@vben/stores';
 import '@vben/styles';
@@ -11,6 +12,7 @@ import { useTitle } from '@vueuse/core';
 import { $t, setupI18n } from '#/locales';
 import { setupVueQuery } from '#/plugins/vue-query';
 import { RequestClient } from '#/transport/rest';
+import { resolveApiErrorMsg } from '#/transport/rest/utils';
 
 import { initComponentAdapter } from './adapter/component';
 import App from './app.vue';
@@ -50,6 +52,14 @@ async function bootstrap(namespace: string) {
     refreshToken: () => authStore.refreshToken(),
     onReAuthenticate: () => authStore.reauthenticate(),
     onError: (msg) => console.error('[RequestClient]', msg),
+    // 错误文案统一走 reason → i18n（error.<REASON>），查不到回退默认文案
+    getErrorMsg: (error) => {
+      const messages = i18n.global.getLocaleMessage(
+        i18n.global.locale.value,
+      ) as Record<string, any>;
+      const dict = messages?.error as Record<string, string> | undefined;
+      return resolveApiErrorMsg(error, dict);
+    },
   });
 
   // 安装权限指令

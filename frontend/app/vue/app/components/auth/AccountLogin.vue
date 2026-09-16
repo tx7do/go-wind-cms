@@ -2,6 +2,7 @@
 import { useAuthStore } from '@/stores/modules/app/auth.state'
 
 const { t } = useI18n()
+const { resolveApiError } = useApiError()
 const localePath = useLocalePath()
 const route = useRoute()
 const authStore = useAuthStore()
@@ -36,7 +37,7 @@ const handleLogin = async () => {
       await navigateTo(target.startsWith('/') ? target : localePath('/'))
     })
   } catch (e: any) {
-    errorMsg.value = e?.message || t('authentication.login.login_failed')
+    errorMsg.value = resolveApiError(e)
   } finally {
     loading.value = false
   }
