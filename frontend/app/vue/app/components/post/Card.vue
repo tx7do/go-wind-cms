@@ -47,38 +47,36 @@ function handleViewPost() {
     </div>
     <div class="flex flex-1 flex-col gap-3 p-6 max-md:p-4 max-md:gap-2.5">
       <h3 :class="cn(
-        'line-clamp-2 min-h-[3.4em] text-lg font-bold leading-[1.7] text-foreground transition-colors duration-300',
+        'line-clamp-2 min-h-[2.9em] text-lg font-bold leading-[1.45] text-foreground transition-colors duration-300',
         'group-hover:text-primary',
-        'max-md:min-h-[3em] max-md:text-[17px]',
+        'max-md:min-h-[2.6em] max-md:text-[17px]',
       )">
         {{ getPostTitle(post) }}
       </h3>
       <p :class="cn(
-        'line-clamp-3 min-h-[4.4em] flex-1 text-sm leading-relaxed text-muted-foreground',
-        'max-md:min-h-[4em] max-md:text-xs max-md:leading-relaxed',
+        'line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground',
+        'max-md:text-xs',
       )">
         {{ getPostSummary(post) }}
       </p>
       <div :class="cn(
         'border-t border-border pt-3 text-[13px] font-medium text-muted-foreground',
-        'flex flex-col gap-1.5',
+        'flex items-center justify-between gap-3',
         'max-md:text-xs',
       )">
-        <div class="flex flex-wrap gap-4">
+        <div class="flex min-w-0 flex-wrap items-center gap-4">
           <div class="flex items-center gap-1.5 whitespace-nowrap">
             <XIcon icon="carbon:user" :size="16" />
-            <span>{{ post.authorName || '—' }}</span>
+            <span class="truncate">{{ post.authorName || '—' }}</span>
           </div>
           <div class="flex items-center gap-1.5 whitespace-nowrap">
             <XIcon icon="carbon:calendar" :size="16" />
             <span>{{ formatDate(post.createdAt) }}</span>
           </div>
         </div>
-        <div class="flex flex-wrap gap-4">
-          <div class="flex items-center gap-1.5 whitespace-nowrap">
-            <XIcon icon="carbon:thumbs-up" :size="16" />
-            <span>{{ likeCount || 0 }}</span>
-          </div>
+        <div class="flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap">
+          <XIcon icon="carbon:thumbs-up" :size="16" />
+          <span>{{ likeCount || 0 }}</span>
         </div>
       </div>
     </div>

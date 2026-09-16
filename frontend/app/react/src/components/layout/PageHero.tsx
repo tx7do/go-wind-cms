@@ -27,24 +27,27 @@ const PageHero: React.FC<PageHeroProps> = ({
     subtitle,
     description,
     icon,
-    iconSize = 48,
+    iconSize = 40,
     meta,
     accentColor,
     children,
     size = 'md',
 }) => {
-    const minHeight = size === 'sm' ? 'min-h-[280px]' : size === 'lg' ? 'min-h-[380px]' : 'min-h-[340px]';
-    const padding = size === 'sm' ? 'py-16' : size === 'lg' ? 'py-28' : 'py-20';
+    const minHeight = size === 'sm' ? 'min-h-[200px]' : size === 'lg' ? 'min-h-[260px]' : 'min-h-[220px]';
+    const padding = size === 'sm' ? 'py-10' : size === 'lg' ? 'py-16' : 'py-12';
 
     return (
-        <section className={cn(
-            'relative w-full overflow-hidden',
-            'dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900/80 dark:to-background',
-            'bg-gradient-to-b from-[hsl(142,70%,96%)] via-[hsl(142,50%,98%)] to-background',
-            minHeight,
-            padding,
-            'flex items-center justify-center text-center',
-        )}>
+        <section
+            className={cn(
+                'relative w-full overflow-hidden',
+                minHeight,
+                padding,
+                'flex items-center justify-center text-center',
+            )}
+            style={{
+                background: `linear-gradient(to bottom, var(--hero-gradient-from), var(--hero-gradient-via), var(--hero-gradient-to))`,
+            }}
+        >
             {/* 装饰线条层：低透明度风轨纹理 */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                 {/* 水平流动线条 */}
@@ -72,7 +75,7 @@ const PageHero: React.FC<PageHeroProps> = ({
                 {/* 图标 */}
                 {icon && (
                     <div
-                        className="mb-4 flex items-center justify-center"
+                        className="mb-3 flex items-center justify-center"
                         style={{color: accentColor || 'hsl(var(--primary))'}}
                     >
                         <XIcon name={icon} size={iconSize}/>

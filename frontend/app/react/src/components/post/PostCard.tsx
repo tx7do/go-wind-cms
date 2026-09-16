@@ -69,42 +69,40 @@ const PostCard: React.FC<PostCardProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-primary/15 opacity-0 transition-opacity duration-500 group-hover:opacity-100"/>
             </div>
             <div className="flex flex-1 flex-col gap-3 p-6 max-md:p-4 max-md:gap-2.5">
-                {/* 标题：固定 min-h 确保两行高度 */}
+                {/* 标题：固定两行高度保证跨卡对齐 */}
                 <h3 className={cn(
-                    'line-clamp-2 min-h-[3.4em] text-lg font-bold leading-[1.7] text-foreground transition-colors duration-300',
+                    'line-clamp-2 min-h-[2.9em] text-lg font-bold leading-[1.45] text-foreground transition-colors duration-300',
                     'group-hover:text-primary',
-                    'max-md:min-h-[3em] max-md:text-[17px]',
+                    'max-md:min-h-[2.6em] max-md:text-[17px]',
                 )}>
                     {getPostTitle(post)}
                 </h3>
-                {/* 摘要：固定 min-h 确保三行高度，底部的数据列永退贴底 */}
+                {/* 摘要：最多三行，flex-1 把元数据压到卡底 */}
                 <p className={cn(
-                    'line-clamp-3 min-h-[4.4em] flex-1 text-sm leading-relaxed text-muted-foreground',
-                    'max-md:min-h-[4em] max-md:text-xs max-md:leading-relaxed',
+                    'line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground',
+                    'max-md:text-xs',
                 )}>
                     {getPostSummary(post)}
                 </p>
-                {/* 元数据固定双行布局：第一行作者+日期，第二行浏览+点赞，确保所有卡片对齐 */}
+                {/* 元数据单行贴底：作者+日期居左，点赞居右 */}
                 <div className={cn(
                     'border-t border-border pt-3 text-[13px] font-medium text-muted-foreground',
-                    'flex flex-col gap-1.5',
+                    'flex items-center justify-between gap-3',
                     'max-md:text-xs',
                 )}>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex min-w-0 flex-wrap items-center gap-4">
                         <div className="flex items-center gap-1.5 whitespace-nowrap">
                             <XIcon name="carbon:user" size={16}/>
-                            <span>{post.authorName || '—'}</span>
+                            <span className="truncate">{post.authorName || '—'}</span>
                         </div>
                         <div className="flex items-center gap-1.5 whitespace-nowrap">
                             <XIcon name="carbon:calendar" size={16}/>
                             <span>{formatDate(post.createdAt)}</span>
                         </div>
                     </div>
-                    <div className="flex flex-wrap gap-4">
-                        <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <XIcon name="carbon:thumbs-up" size={16}/>
-                            <span>{likeCount || 0}</span>
-                        </div>
+                    <div className="flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap">
+                        <XIcon name="carbon:thumbs-up" size={16}/>
+                        <span>{likeCount || 0}</span>
                     </div>
                 </div>
             </div>
