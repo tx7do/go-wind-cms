@@ -13,10 +13,10 @@ const props = defineProps<{
 }>()
 
 const minHeight = computed(() =>
-  props.size === 'sm' ? 'min-h-[280px]' : props.size === 'lg' ? 'min-h-[380px]' : 'min-h-[340px]'
+  props.size === 'sm' ? 'min-h-[200px]' : props.size === 'lg' ? 'min-h-[260px]' : 'min-h-[220px]'
 )
 const padding = computed(() =>
-  props.size === 'sm' ? 'py-16' : props.size === 'lg' ? 'py-28' : 'py-20'
+  props.size === 'sm' ? 'py-10' : props.size === 'lg' ? 'py-16' : 'py-12'
 )
 </script>
 
@@ -43,10 +43,10 @@ const padding = computed(() =>
       <!-- 图标 -->
       <div
         v-if="icon"
-        class="mb-4 flex items-center justify-center"
+        class="mb-3 flex items-center justify-center"
         :style="{ color: accentColor || 'hsl(var(--primary))' }"
       >
-        <XIcon :icon="icon" :size="iconSize ?? 48" />
+        <XIcon :icon="icon" :size="iconSize ?? 40" />
       </div>
 
       <!-- 副标题 -->
