@@ -1,0 +1,22 @@
+{
+  "title": "Overview",
+  "analytics": {
+    "userCountTotal": "Total Users",
+    "postCountTotal": "Total Posts",
+    "commentCountTotal": "Total Comments",
+    "interactionCountTotal": "Total Interactions",
+    "weeklyNew": "New in 7 Days",
+    "contentTrend": "Content Growth Trend",
+    "newUsers": "New Users",
+    "newPosts": "New Posts",
+    "newComments": "New Comments",
+    "interactionTop": "Interaction Top",
+    "interactionDistribution": "Interaction Distribution",
+    "totalLikes": "Likes",
+    "totalWatches": "Favorites",
+    "loginActivity": "Login Activity",
+    "loginSuccess": "Login Success",
+    "loginFailed": "Login Failed",
+    "titleFallback": "(Untitled)"
+  }
+}

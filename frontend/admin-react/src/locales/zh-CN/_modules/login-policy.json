@@ -1,0 +1,42 @@
+{
+  "pageTitle": "登录策略管理",
+  "moduleName": "登录策略",
+  "serial": "序号",
+  "targetId": "目标标识",
+  "targetIdPlaceholder": "请输入目标标识",
+  "type": "策略类型",
+  "typePlaceholder": "请选择策略类型",
+  "method": "登录方式",
+  "methodPlaceholder": "请选择登录方式",
+  "value": "策略值",
+  "valuePlaceholder": "请输入策略值",
+  "reason": "原因",
+  "reasonPlaceholder": "请输入原因",
+  "createdAt": "创建时间",
+  "action": "操作",
+  "create": "新建策略",
+  "edit": "编辑策略",
+  "deleteConfirmTitle": "确认删除",
+  "deleteConfirmDesc": "确定要删除该{{moduleName}}吗？",
+  "createSuccess": "创建成功",
+  "updateSuccess": "更新成功",
+  "deleteSuccess": "删除成功",
+  "createFailed": "创建失败",
+  "updateFailed": "更新失败",
+  "deleteFailed": "删除失败",
+  "fetchFailed": "获取数据失败",
+  "requiredType": "请选择策略类型",
+  "requiredMethod": "请选择登录方式",
+  "requiredValue": "请输入策略值",
+  "policyType": {
+    "BLACKLIST": "黑名单",
+    "WHITELIST": "白名单"
+  },
+  "policyMethod": {
+    "IP": "IP地址",
+    "MAC": "MAC地址",
+    "REGION": "地区",
+    "TIME": "时间",
+    "DEVICE": "设备"
+  }
+}

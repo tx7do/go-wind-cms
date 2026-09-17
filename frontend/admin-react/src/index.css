@@ -1,0 +1,18 @@
+/* ============================================
+   index.css - 全局基础样式
+   注意：此处仅保留全局重置和基础样式。
+   布局、认证页面、组件样式由各自的 CSS/Less 文件管理。
+   ============================================ */
+
+/* 全局字体渲染优化 */
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 段落重置 */
+p {
+  margin: 0;
+}

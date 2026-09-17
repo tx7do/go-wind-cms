@@ -1,0 +1,30 @@
+/**
+ * ContentContainer 组件样式
+ * 统一页面内容区域的布局
+ */
+
+/* 基础样式 */
+.content-container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* 固定高度模式：占满父容器剩余空间 */
+.content-container--fixed {
+  flex: 1;
+  min-height: 0; /* 防止 flex 溢出 */
+  overflow: hidden;
+}
+
+/* 自适应高度模式：内容有多高就撑多高 */
+.content-container--auto {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+/* 滚动模式 */
+.content-container--scrollable {
+  overflow: auto;
+}

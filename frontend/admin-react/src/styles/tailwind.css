@@ -1,0 +1,65 @@
+/* Tailwind v4 —— 关闭 Preflight（与 Antd + 项目 global.css reset 共存），
+   只导入 theme + utilities。dark: 变体重定向到 [data-theme=dark]，与
+   ThemeProvider 在 <html> 上写 data-theme 的策略一致。 */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant light (&:where([data-theme=light], [data-theme=light] *));
+
+@theme {
+  /* 项目用到的、不在 v4 默认主题里的动画 */
+  --animate-fade-in: fade-in 0.3s ease-out;
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* 登录页左侧品牌区光晕的缓慢呼吸 */
+  --animate-breathe: breathe 6s ease-in-out infinite;
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.08);
+    }
+  }
+}
+
+/* ============================================
+   登录表单输入控件统一化
+   仅作用于 .login-form 内的 antd 输入控件。
+   颜色（底色/边框/focus/placeholder）全部跟随全局 antd
+   token（与全站输入框一致，暗色下为 L2 浮起底 + slate 边框），
+   此处只统一结构尺寸：高度 h-11、圆角 8px（规范控件值）。
+   ============================================ */
+.login-form .ant-input-affix-wrapper,
+.login-form .ant-input-password {
+  height: 2.75rem;
+  border-radius: 0.5rem;
+}
+
+/* 登录按钮：统一高度 h-11，圆角跟随全局 token */
+.login-form .login-submit-btn {
+  height: 2.75rem !important;
+  border-radius: 0.5rem !important;
+}
+
+/* 统一 Form.Item 间距，确保所有表单元素两端对齐 */
+.login-form .ant-form-item {
+  margin-bottom: 1.25rem;
+}
+
+/* 记住账号行：减小 antd large 尺寸的默认 min-height */
+.login-form .login-remember-item .ant-form-item-control-input {
+  min-height: auto;
+}

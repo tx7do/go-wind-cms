@@ -1,0 +1,112 @@
+/*  基础骨架块 */
+.skeleton-block {
+    position: relative;
+    overflow: hidden;
+    vertical-align: middle;
+    user-select: none;
+    pointer-events: none;
+}
+
+.skeleton-circle {
+    border-radius: 50% !important;
+}
+
+/*  容器布局 */
+.skeleton-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/*  动画：波浪效果（默认） */
+@keyframes skeleton-wave {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.animate-wave::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+    );
+    animation: skeleton-wave 1.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/*  动画：脉冲效果 */
+@keyframes skeleton-pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.animate-pulse {
+    animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+/*  暗黑模式适配 */
+[data-theme='dark'] .animate-wave::after {
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.15),
+            transparent
+    );
+}
+
+/*  减少动画（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+    .animate-wave::after,
+    .animate-pulse {
+        animation: none !important;
+    }
+}
+
+/*  段落预设优化 */
+.skeleton-paragraph {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-paragraph .skeleton-block {
+    height: 1em;
+}
+
+.skeleton-paragraph .skeleton-block:last-child {
+    width: 60% !important;
+}
+
+/*  行内骨架优化 */
+.skeleton-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/*  响应式适配 */
+@media (max-width: 768px) {
+    .skeleton-container {
+        gap: 6px;
+    }
+
+    .skeleton-block {
+        transform: scale(0.95);
+        transform-origin: left center;
+    }
+}

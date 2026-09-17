@@ -181,6 +181,6 @@ Web 端（react/vue/taro-H5）统一以 CSS 变量承载，组件只允许引用
 | vue (Nuxt) | `frontend/app/vue/app/assets/css/main.css` | 同上；另有 `--hero-gradient-*` 变量转蓝 |
 | taro | `frontend/app/taro/src/app.css` | `page` 级 CSS 变量，中性色对齐 slate、新增 `--color-primary` 系 |
 | flutter | `frontend/app/flutter_app/lib/src/core/themes/{light,dark}_theme.dart` | `primaryColor #006BE6`，container/tint 按 Material 由 seed 派生，seed 同步 |
-| admin（参照） | `frontend/admin/packages/@core/base/design/src/design-tokens/` | 已落地品牌蓝，作为跨端一致性基准 |
+| admin（参照） | `frontend/admin-react/src/core/preferences/config/`（constants.ts / darkTheme.ts） | 品牌蓝已落地，作为跨端一致性基准 |
 
 > 验收方式：四端亮/暗两态截图比对；grep 四端源码不得再出现 `16A34A / 22C55E / 34,197,94 / 3A7CA5` 等废止色值。

@@ -1,0 +1,39 @@
+{
+  "pageTitle": "Navigation",
+  "moduleName": "Navigation",
+  "name": "Navigation Name",
+  "namePlaceholder": "Enter navigation name",
+  "location": "Location Key",
+  "locationPlaceholder": "Select location",
+  "locale": "Locale",
+  "localePlaceholder": "Select locale",
+  "isActive": "Enabled",
+  "createdAt": "Created At",
+  "action": "Action",
+  "create": "Create Navigation",
+  "edit": "Edit Navigation",
+  "requiredName": "Please enter navigation name",
+  "requiredLocation": "Please select location",
+  "requiredLocale": "Please select locale",
+  "deleteConfirmTitle": "Confirm Delete",
+  "deleteConfirmDesc": "Are you sure you want to delete this {{moduleName}}?",
+  "createSuccess": "Created successfully",
+  "createFailed": "Failed to create",
+  "updateSuccess": "Updated successfully",
+  "updateFailed": "Failed to update",
+  "deleteSuccess": "Deleted successfully",
+  "deleteFailed": "Failed to delete",
+  "fetchFailed": "Failed to load",
+  "boolMap": {
+    "true": "Yes",
+    "false": "No"
+  },
+  "locationMap": {
+    "HEADER": "Header Navigation",
+    "FOOTER": "Footer Navigation",
+    "SIDEBAR": "Sidebar Navigation",
+    "MOBILE": "Mobile Navigation",
+    "TOP_BAR": "Top Bar",
+    "OFFCANVAS": "Offcanvas Navigation"
+  }
+}

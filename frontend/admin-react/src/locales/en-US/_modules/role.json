@@ -1,0 +1,62 @@
+{
+  "pageTitle": "Role Management",
+  "moduleName": "Role",
+  "serial": "#",
+  "name": "Role Name",
+  "namePlaceholder": "Enter role name",
+  "requiredName": "Please enter role name",
+  "code": "Role Code",
+  "codePlaceholder": "Enter role code",
+  "requiredCode": "Please enter role code",
+  "tenantName": "Tenant",
+  "status": "Status",
+  "statusPlaceholder": "Select status",
+  "requiredStatus": "Please select status",
+  "sortOrder": "Sort Order",
+  "sortOrderPlaceholder": "Enter sort order",
+  "description": "Description",
+  "descriptionPlaceholder": "Enter description",
+  "permissions": "Permissions",
+  "createdAt": "Created At",
+  "action": "Actions",
+  "create": "New Role",
+  "edit": "Edit Role",
+  "deleteConfirmTitle": "Confirm Delete",
+  "deleteConfirmDesc": "Are you sure you want to delete this {{moduleName}}?",
+  "createSuccess": "Created successfully",
+  "updateSuccess": "Updated successfully",
+  "deleteSuccess": "Deleted successfully",
+  "createFailed": "Creation failed",
+  "updateFailed": "Update failed",
+  "deleteFailed": "Delete failed",
+  "fetchFailed": "Failed to fetch data",
+  "statusMap": {
+    "ON": "Active",
+    "OFF": "Inactive"
+  },
+  "dataScope": "Data Scope",
+  "dataScopePlaceholder": "Select data scope",
+  "requiredDataScope": "Please select data scope",
+  "orgUnits": "Authorized Org Units",
+  "noOrgUnitData": "No org unit data",
+  "dataScopeMap": {
+    "ALL": "All",
+    "UNIT_AND_CHILD": "Department and Subordinates",
+    "UNIT_ONLY": "Department Only",
+    "SELECTED_UNITS": "Custom",
+    "SELF": "Self Only"
+  },
+  "fieldPerm": {
+    "title": "Field Permissions",
+    "hint": "Checked fields are hidden for users with this role: removed from list/detail views and stripped from create/update payloads (takes effect after re-login).",
+    "field": {
+      "email": "Email",
+      "mobile": "Mobile",
+      "telephone": "Telephone",
+      "address": "Address",
+      "region": "Region",
+      "lastLoginAt": "Last Login At",
+      "lastLoginIp": "Last Login IP"
+    }
+  }
+}

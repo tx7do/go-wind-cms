@@ -50,6 +50,6 @@ vue-element / react / vben 三端 typecheck 门禁全部通过（2026-09-10）�
 
 ## 落地替换点（选定方案后）
 
-- react：`frontend/admin/react/public/logo.png`（200×200，由 tile SVG 导出 PNG）+ `src/core/preferences/config/default.ts` 的 `logo.source`
+- react：`frontend/admin-react/public/logo.png`（200×200，由 tile SVG 导出 PNG）+ `src/core/preferences/config/default.ts` 的 `logo.source`
 - favicon：三端 `public/favicon.ico`（react / vue-element / vue-vben）
 - 登录页品牌区：按 `docs/design-language.md` 认证页规范（画布深底 + 表面卡 + float 动效）

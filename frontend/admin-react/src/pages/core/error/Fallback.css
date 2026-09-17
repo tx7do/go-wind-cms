@@ -1,0 +1,174 @@
+/* Fallback 组件样式
+   插画色板走 --fb-* 语义变量（暗/亮两态各自取值，SVG 内禁用裸色值），
+   主色锚点 --app-color-primary 由 ThemeProvider 写在 <html> 上（随偏好联动）；
+   文本色走 antd v6 cssVar token（--ant-color-*，作用域在 ConfigProvider 包裹层内，
+   本组件始终渲染在其内部）。 */
+.fallback-container {
+    /* 插画语义色板 · 亮色（纸墨日光版） */
+    --fb-primary: var(--app-color-primary);
+    --fb-ink: #1f2937; /* 线稿/数字 = 文字主色 gray-800 */
+    --fb-paper: #ffffff; /* 留白件（衬衫/纸面），两态同为白 */
+    --fb-mist: #f2f2f2; /* 最浅装饰件（云/山体） */
+    --fb-mist-2: #e4e4e4; /* 次浅装饰件 */
+    --fb-line: #cacaca; /* 细线（地平线/弧线） */
+    --fb-navy: #3f3d56; /* 深藏青物件 */
+    --fb-navy-deep: #2f2e41; /* 更深藏青物件 */
+    --fb-skin: #a0616a; /* 肤色，两态同值 */
+    --fb-skin-light: #ffb6b6;
+    --fb-glow: color-mix(in srgb, var(--fb-primary) 14%, transparent);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+/* 插画语义色板 · 暗色（月夜版：装饰件压到画布上方一档，藏青物件提亮保形，
+   主色提亮一档保持插画可读——色板基调与 docs/design-language.md §2.3 一致） */
+[data-theme='dark'] .fallback-container {
+    --fb-primary: color-mix(in srgb, var(--app-color-primary) 78%, white);
+    --fb-ink: #f8fafc;
+    --fb-mist: #182136;
+    --fb-mist-2: #22304a;
+    --fb-line: #33405e;
+    --fb-navy: #46547a;
+    --fb-navy-deep: #38456a;
+    --fb-glow: color-mix(in srgb, var(--fb-primary) 26%, transparent);
+}
+
+/* 主色柔光晕：垫在插画后方，暗色下更明显 */
+.fallback-container::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    width: min(58vmin, 540px);
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, var(--fb-glow), transparent 72%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.fallback-image {
+    width: 50%;
+    max-width: 400px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    animation:
+        fb-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both,
+        fb-float 6s ease-in-out 0.6s infinite;
+}
+
+.fallback-image svg {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+}
+
+.fallback-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.fallback-title {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: var(--ant-color-text);
+    animation: fb-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+@media (min-width: 768px) {
+    .fallback-title {
+        font-size: 1.875rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .fallback-title {
+        font-size: 2.25rem;
+    }
+}
+
+.fallback-desc {
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: var(--ant-color-text-secondary);
+    animation: fb-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+@media (min-width: 768px) {
+    .fallback-desc {
+        font-size: 1.125rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .fallback-desc {
+        font-size: 1.25rem;
+    }
+}
+
+.fallback-container .ant-btn {
+    padding: 0.625rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    animation: fb-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+}
+
+.fallback-container .ant-btn .anticon {
+    margin-right: 0.25rem;
+}
+
+/* 进场：上浮淡入 */
+@keyframes fb-enter {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 插画悬浮呼吸（与认证页品牌插画同款语言，幅度收敛） */
+@keyframes fb-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/* 动效尊重全局开关（preferences.transition.enable）与系统减弱动效 */
+.fallback-container[data-animate='off'] .fallback-image,
+.fallback-container[data-animate='off'] .fallback-title,
+.fallback-container[data-animate='off'] .fallback-desc,
+.fallback-container[data-animate='off'] .ant-btn {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fallback-container .fallback-image,
+    .fallback-container .fallback-title,
+    .fallback-container .fallback-desc,
+    .fallback-container .ant-btn {
+        animation: none;
+    }
+}

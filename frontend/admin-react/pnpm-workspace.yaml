@@ -1,0 +1,8 @@
+# pnpm v12 构建审批（allowBuilds）：下列依赖一律不执行 install 脚本。
+# 与既有 node_modules 的实际安装行为一致；二进制经 optional 平台包分发，跳过安全。
+allowBuilds:
+  '@swc/core': false
+  core-js: false
+  esbuild: false
+  json-editor-vue: false
+  vue-demi: false

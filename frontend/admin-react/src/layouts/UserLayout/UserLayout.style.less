@@ -1,0 +1,240 @@
+/* ============================================
+   UserLayout 认证页面样式（基于 AuthLayout）
+   ============================================ */
+
+/* 外层容器 */
+.user-layout-wrapper {
+  display: flex !important;  /* 覆盖 #root 的 display: block !important */
+  min-height: 100vh !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+  position: relative;
+
+  /* 亮色模式背景 */
+  &.light-mode {
+    background: #f5f7fa;
+  }
+
+  /* 暗黑模式背景 */
+  &:not(.light-mode) {
+    background: var(--login-page-bg, #0B0F19);
+  }
+}
+
+/* 右上角工具栏 */
+.user-toolbar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+/* 工具栏按钮 - 亮色模式 */
+.user-toolbar-btn-light {
+  color: rgba(0, 0, 0, 0.65) !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 6px !important;
+}
+
+/* 工具栏按钮 - 暗黑模式 */
+.user-toolbar-btn-dark {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 6px !important;
+}
+
+/* 左侧品牌展示区 */
+.user-brand-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+
+  /* 亮色模式渐变 */
+  .user-layout-wrapper.light-mode & {
+    background: linear-gradient(135deg, #e8ecf1 0%, #d5e0ed 100%);
+  }
+
+  /* 暗黑模式渐变 */
+  .user-layout-wrapper:not(.light-mode) & {
+    background: linear-gradient(135deg, #0B0F19 0%, #111827 50%, #0B0F19 100%);
+  }
+
+  /* 背景装饰层 */
+  .user-brand-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+
+    .user-layout-wrapper.light-mode & {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+    }
+
+    .user-layout-wrapper:not(.light-mode) & {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
+    }
+  }
+
+  /* 装饰圆形 */
+  .user-brand-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+
+    &.circle-1 {
+      top: 10%;
+      right: 15%;
+      width: 300px;
+      height: 300px;
+
+      .user-layout-wrapper.light-mode & {
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+      }
+
+      .user-layout-wrapper:not(.light-mode) & {
+        background: radial-gradient(circle, rgba(0, 107, 230, 0.15) 0%, transparent 70%);
+      }
+    }
+
+    &.circle-2 {
+      bottom: 15%;
+      left: 10%;
+      width: 200px;
+      height: 200px;
+
+      .user-layout-wrapper.light-mode & {
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      }
+
+      .user-layout-wrapper:not(.light-mode) & {
+        background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+      }
+    }
+  }
+
+  /* 品牌图标容器 */
+  .user-brand-icon {
+    width: 360px;
+    height: 360px;
+    margin-bottom: 36px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 品牌标题 */
+  .user-brand-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+
+    .user-layout-wrapper.light-mode & {
+      color: #1f1f1f !important;
+      text-shadow: none;
+    }
+
+    .user-layout-wrapper:not(.light-mode) & {
+      color: #fff !important;
+      text-shadow: none;
+    }
+  }
+
+  /* 品牌描述 */
+  .user-brand-description {
+    font-size: 15px;
+    text-align: center;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+
+    .user-layout-wrapper.light-mode & {
+      color: rgba(0, 0, 0, 0.75) !important;
+      text-shadow: none;
+    }
+
+    .user-layout-wrapper:not(.light-mode) & {
+      color: rgba(255, 255, 255, 0.65) !important;
+      text-shadow: none;
+    }
+  }
+}
+
+/* 右侧表单区 */
+.user-form-section {
+  width: 48%;
+  min-width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 64px 56px;
+  position: relative;
+
+  /* 亮色模式 */
+  .user-layout-wrapper.light-mode & {
+    background: #ffffff;
+    border-left: none;
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.05);
+  }
+
+  /* 暗黑模式：表单面板用导航层色，极细描边与品牌区勾边 */
+  .user-layout-wrapper:not(.light-mode) & {
+    background: #111827;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.4);
+  }
+
+  /* 表单内容容器 */
+  .user-form-content {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* 底部版权信息 —— 文字色由 Tailwind dark: 类名提供，此处仅保留布局 */
+  .user-copyright {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+  }
+}
+
+/* 品牌插画：vben 同款浮动动效（float 5s，translateY -20px 循环） */
+@keyframes slogan-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.user-brand-icon {
+  animation: slogan-float 5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-brand-icon {
+    animation: none;
+  }
+}

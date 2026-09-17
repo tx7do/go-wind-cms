@@ -1,0 +1,295 @@
+/**
+ * TabsBar 样式
+ * 支持 4 种风格：brisk | card | chrome | plain
+ */
+
+/* ========== 基础样式 ========== */
+.tabsbar-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========== Chrome 风格 ========== */
+/* 类似 Chrome 浏览器标签页 */
+.tabsbar-chrome {
+  .ant-tabs-nav {
+    margin-bottom: 0;
+    
+    .ant-tabs-tab {
+      margin: 0 2px 0 0;
+      padding: 6px 16px;
+      border-radius: 8px 8px 0 0;
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: none;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(128, 128, 128, 0.08);
+      }
+      
+      &.ant-tabs-tab-active {
+        background: rgba(128, 128, 128, 0.12);
+        border-color: rgba(128, 128, 128, 0.15);
+      }
+    }
+    
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+  }
+  
+  /* 暗色模式适配 */
+  .ant-tabs-tab {
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    &.ant-tabs-tab-active {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+/* ========== Card 风格 ========== */
+/* 标准卡片式标签 */
+.tabsbar-card {
+  .ant-tabs-nav {
+    margin-bottom: 0;
+    
+    .ant-tabs-tab {
+      margin: 0 4px;
+      padding: 6px 16px;
+      border-radius: 4px;
+      background: rgba(128, 128, 128, 0.06);
+      border: 1px solid rgba(128, 128, 128, 0.1);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(128, 128, 128, 0.1);
+      }
+      
+      &.ant-tabs-tab-active {
+        background: rgba(128, 128, 128, 0.12);
+        border-color: rgba(128, 128, 128, 0.2);
+        font-weight: 500;
+      }
+    }
+    
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+  }
+  
+  /* 暗色模式适配 */
+  .ant-tabs-tab {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    
+    &.ant-tabs-tab-active {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+  }
+}
+
+/* ========== Brisk 风格 ========== */
+/* 轻快风格，底部线条指示 */
+/* 颜色统一使用 antd 主题 token，亮/暗模式自动切换，避免硬编码导致暗黑模式下不可见 */
+.tabsbar-brisk {
+  .ant-tabs-nav {
+    margin-bottom: 0;
+
+    .ant-tabs-tab {
+      margin: 0 12px;
+      padding: 8px 4px;
+      color: var(--ant-color-text-secondary);
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: var(--ant-color-text);
+      }
+
+      &.ant-tabs-tab-active {
+        color: var(--ant-color-primary);
+        font-weight: 500;
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      height: 2px;
+      background: var(--ant-color-primary);
+      border-radius: 2px 2px 0 0;
+    }
+  }
+}
+
+/* ========== Plain 风格 ========== */
+/* 简洁风格，类似 brisk 但更简约 */
+/* 颜色统一使用 antd 主题 token，亮/暗模式自动切换 */
+.tabsbar-plain {
+  .ant-tabs-nav {
+    margin-bottom: 0;
+
+    .ant-tabs-tab {
+      margin: 0 8px;
+      padding: 8px 2px;
+      color: var(--ant-color-text-secondary);
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+
+      &:hover {
+        color: var(--ant-color-text);
+      }
+
+      &.ant-tabs-tab-active {
+        color: var(--ant-color-primary);
+        font-weight: 500;
+        border-bottom-color: var(--ant-color-primary);
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+  }
+}
+
+/* ========== 通用样式 ========== */
+/* 标签页容器 */
+.tabsbar-container {
+  .ant-tabs {
+    margin-bottom: 0;
+    
+    .ant-tabs-nav {
+      margin-bottom: 0;
+      padding: 0;
+    }
+    
+    .ant-tabs-tab-btn {
+      outline: none;
+    }
+    
+    .ant-tabs-tab-remove {
+      margin-left: 8px;
+      margin-right: -4px;
+    }
+    
+    /* 拖拽样式 */
+    .ant-tabs-tab {
+      cursor: default;
+      transition: all 0.2s ease;
+      
+      &[draggable="true"] {
+        cursor: grab;
+        
+        &:active {
+          cursor: grabbing;
+        }
+      }
+      
+      &.dragging {
+        opacity: 0.5;
+        transform: scale(0.95);
+      }
+      
+      &.drag-over {
+        border-left: 2px solid var(--ant-color-primary);
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: -2px;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: var(--ant-color-primary);
+        }
+      }
+    }
+  }
+}
+
+/* 标签页标签样式 */
+.tabsbar-tab-label {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.tabsbar-tab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* 右键菜单样式 */
+.tabsbar-context-menu {
+  .ant-dropdown-menu-item {
+    padding: 6px 12px;
+    
+    .anticon {
+      margin-right: 8px;
+    }
+  }
+  
+  .ant-dropdown-menu-item-disabled {
+    opacity: 0.45;
+  }
+}
+
+/* 固定标签页标识 */
+.tabsbar-container {
+  .ant-tabs-tab[data-pinned='true'] {
+    &::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--ant-color-primary);
+    }
+  }
+}
+
+/* ========== 暗色模式：选中 Tab（2026-09-16 对齐 vben 温和配方，design-language.md §4） ==========
+   chrome / card：中性灰底 + 正常亮文字，不用主色描边/发光/主色字（用户实测对比度刺眼）；
+   注意 antd 把激活文字色挂在内层 .ant-tabs-tab-btn 上，只覆盖外层 .ant-tabs-tab 不生效；
+   brisk / plain：线型指示风格保留主色文字 + 主色指示条。 */
+[data-theme='dark'] .tabsbar-container .ant-tabs-tab.ant-tabs-tab-active {
+  color: var(--ant-color-text);
+}
+[data-theme='dark'] .tabsbar-container .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--ant-color-text);
+}
+[data-theme='dark'] .tabsbar-chrome .ant-tabs-tab.ant-tabs-tab-active,
+[data-theme='dark'] .tabsbar-card .ant-tabs-tab.ant-tabs-tab-active {
+  background: var(--ant-color-fill) !important;
+  border-color: transparent !important;
+  box-shadow: none;
+  color: var(--ant-color-text);
+  font-weight: 400;
+}
+[data-theme='dark'] .tabsbar-chrome .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+[data-theme='dark'] .tabsbar-card .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--ant-color-text);
+}
+[data-theme='dark'] .tabsbar-brisk .ant-tabs-tab.ant-tabs-tab-active,
+[data-theme='dark'] .tabsbar-plain .ant-tabs-tab.ant-tabs-tab-active {
+  color: var(--ant-color-primary);
+  font-weight: 500;
+}
+/* brisk / plain 风格：底部指示条统一主色 */
+[data-theme='dark'] .tabsbar-container .ant-tabs-ink-bar {
+  background: var(--ant-color-primary);
+}

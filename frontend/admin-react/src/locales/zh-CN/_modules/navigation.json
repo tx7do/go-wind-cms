@@ -1,0 +1,39 @@
+{
+  "pageTitle": "导航管理",
+  "moduleName": "导航管理",
+  "name": "导航名称",
+  "namePlaceholder": "请输入导航名称",
+  "location": "渲染位置标识",
+  "locationPlaceholder": "请选择渲染位置",
+  "locale": "语言区域",
+  "localePlaceholder": "请选择语言区域",
+  "isActive": "是否启用",
+  "createdAt": "创建时间",
+  "action": "操作",
+  "create": "创建导航",
+  "edit": "编辑导航",
+  "requiredName": "请输入导航名称",
+  "requiredLocation": "请选择渲染位置",
+  "requiredLocale": "请选择语言区域",
+  "deleteConfirmTitle": "确认删除",
+  "deleteConfirmDesc": "确定要删除该{{moduleName}}吗？",
+  "createSuccess": "创建成功",
+  "createFailed": "创建失败",
+  "updateSuccess": "更新成功",
+  "updateFailed": "更新失败",
+  "deleteSuccess": "删除成功",
+  "deleteFailed": "删除失败",
+  "fetchFailed": "加载失败",
+  "boolMap": {
+    "true": "是",
+    "false": "否"
+  },
+  "locationMap": {
+    "HEADER": "页头导航",
+    "FOOTER": "页脚导航",
+    "SIDEBAR": "侧边栏导航",
+    "MOBILE": "移动端专属导航",
+    "TOP_BAR": "顶部通知栏",
+    "OFFCANVAS": "抽屉式导航"
+  }
+}

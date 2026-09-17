@@ -1,0 +1,14 @@
+.breadcrumb-item {
+    transition: color 0.2s ease;
+}
+
+.breadcrumb-item:hover {
+    color: var(--ant-color-primary);
+}
+
+.breadcrumb-item-bg {
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: var(--ant-color-bg-container);
+    border: 1px solid var(--ant-color-border-secondary);
+}

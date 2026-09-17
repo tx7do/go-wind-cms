@@ -1,0 +1,63 @@
+{
+  "pageTitle": "评论管理",
+  "moduleName": "评论管理",
+  "commentList": "评论列表",
+  "authorName": "作者名称",
+  "authorNamePlaceholder": "请输入作者名称",
+  "authorType": "作者类型",
+  "authorTypePlaceholder": "请选择作者类型",
+  "contentType": "内容类型",
+  "contentTypePlaceholder": "请选择内容类型",
+  "status": "评论状态",
+  "statusPlaceholder": "请选择评论状态",
+  "content": "评论内容",
+  "objectId": "对象ID",
+  "ipAddress": "IP地址",
+  "location": "地理位置",
+  "createdAt": "创建时间",
+  "createdAtRange": "创建时间范围",
+  "isSpam": "是否垃圾评论",
+  "helpIsSpam": "标记为垃圾评论后，该评论将被隐藏",
+  "isSticky": "是否置顶",
+  "helpIsSticky": "置顶后，该评论将显示在列表顶部",
+  "action": "操作",
+  "reply": "回复",
+  "replyTo": "回复：{authorName}",
+  "edit": "编辑评论",
+  "requiredContent": "请输入评论内容",
+  "requiredStatus": "请选择评论状态",
+  "deleteConfirmTitle": "确认删除",
+  "deleteConfirmDesc": "确定要删除该{{moduleName}}吗？",
+  "createSuccess": "创建成功",
+  "createFailed": "创建失败",
+  "updateSuccess": "更新成功",
+  "updateFailed": "更新失败",
+  "deleteSuccess": "删除成功",
+  "deleteFailed": "删除失败",
+  "fetchFailed": "加载失败",
+  "dateRange": {
+    "today": "今天",
+    "yesterday": "昨天",
+    "thisWeek": "本周",
+    "lastWeek": "上周",
+    "thisMonth": "本月",
+    "lastMonth": "上月"
+  },
+  "statusMap": {
+    "STATUS_PENDING": "待审核",
+    "STATUS_APPROVED": "已审核",
+    "STATUS_REJECTED": "已拒绝",
+    "STATUS_SPAM": "垃圾评论"
+  },
+  "contentTypeMap": {
+    "CONTENT_TYPE_POST": "文章",
+    "CONTENT_TYPE_PAGE": "页面",
+    "CONTENT_TYPE_PRODUCT": "产品"
+  },
+  "authorTypeMap": {
+    "AUTHOR_TYPE_GUEST": "游客",
+    "AUTHOR_TYPE_USER": "普通用户",
+    "AUTHOR_TYPE_ADMIN": "管理员",
+    "AUTHOR_TYPE_MODERATOR": "审核员"
+  }
+}

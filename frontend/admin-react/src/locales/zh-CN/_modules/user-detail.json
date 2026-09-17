@@ -1,0 +1,43 @@
+{
+  "pageTitle": "用户详情",
+  "title": "用户详情",
+  "tab": {
+    "basicInfo": "基本信息",
+    "apiAuditLog": "API审计日志",
+    "internalMessage": "站内信"
+  },
+  "desc": {
+    "username": "用户名",
+    "realname": "真实姓名",
+    "nickname": "昵称",
+    "gender": "性别",
+    "roleNames": "角色",
+    "mobile": "手机号",
+    "email": "邮箱",
+    "region": "地区",
+    "address": "地址",
+    "tenantName": "所属租户",
+    "orgUnitName": "组织",
+    "positionName": "职位",
+    "createdAt": "创建时间",
+    "lastLoginAt": "最后登录",
+    "lastLoginIp": "最后登录IP"
+  },
+  "button": {
+    "banAccount": "禁用账户",
+    "editPassword": "修改密码"
+  },
+  "banConfirmTitle": "确认禁用",
+  "banConfirmDesc": "确定要禁用该用户吗？",
+  "banSuccess": "已禁用该账户",
+  "banFailed": "禁用账户失败",
+  "editPasswordTitle": "修改密码",
+  "newPassword": "新密码",
+  "newPasswordPlaceholder": "请输入新密码",
+  "confirmPassword": "确认密码",
+  "confirmPasswordPlaceholder": "请再次输入新密码",
+  "passwordMismatch": "两次输入的密码不一致",
+  "editPasswordSuccess": "密码修改成功",
+  "editPasswordFailed": "密码修改失败",
+  "fetchFailed": "获取用户数据失败"
+}

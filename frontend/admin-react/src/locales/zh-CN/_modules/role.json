@@ -1,0 +1,62 @@
+{
+  "pageTitle": "角色管理",
+  "moduleName": "角色",
+  "serial": "序号",
+  "name": "角色名称",
+  "namePlaceholder": "请输入角色名称",
+  "requiredName": "请输入角色名称",
+  "code": "角色编码",
+  "codePlaceholder": "请输入角色编码",
+  "requiredCode": "请输入角色编码",
+  "tenantName": "所属租户",
+  "status": "状态",
+  "statusPlaceholder": "请选择状态",
+  "requiredStatus": "请选择状态",
+  "sortOrder": "排序",
+  "sortOrderPlaceholder": "请输入排序",
+  "description": "描述",
+  "descriptionPlaceholder": "请输入描述",
+  "permissions": "权限配置",
+  "createdAt": "创建时间",
+  "action": "操作",
+  "create": "新建角色",
+  "edit": "编辑角色",
+  "deleteConfirmTitle": "确认删除",
+  "deleteConfirmDesc": "确定要删除该{{moduleName}}吗？",
+  "createSuccess": "创建成功",
+  "updateSuccess": "更新成功",
+  "deleteSuccess": "删除成功",
+  "createFailed": "创建失败",
+  "updateFailed": "更新失败",
+  "deleteFailed": "删除失败",
+  "fetchFailed": "获取数据失败",
+  "statusMap": {
+    "ON": "启用",
+    "OFF": "禁用"
+  },
+  "dataScope": "数据权限范围",
+  "dataScopePlaceholder": "请选择数据权限范围",
+  "requiredDataScope": "请选择数据权限范围",
+  "orgUnits": "授权组织单元",
+  "noOrgUnitData": "暂无组织单元数据",
+  "dataScopeMap": {
+    "ALL": "全部",
+    "UNIT_AND_CHILD": "本部门及以下",
+    "UNIT_ONLY": "本部门",
+    "SELECTED_UNITS": "自定义",
+    "SELF": "仅本人"
+  },
+  "fieldPerm": {
+    "title": "字段权限",
+    "hint": "勾选的字段对该角色用户不可见：列表/详情不再显示，且不能通过创建/编辑写入（重新登录后生效）。",
+    "field": {
+      "email": "邮箱",
+      "mobile": "手机号",
+      "telephone": "固定电话",
+      "address": "地址",
+      "region": "区域",
+      "lastLoginAt": "最后登录时间",
+      "lastLoginIp": "最后登录 IP"
+    }
+  }
+}

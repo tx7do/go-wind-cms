@@ -1,0 +1,71 @@
+GoWind React Admin 脚手架开发指南
+
+## 技术栈
+- React 19 + TypeScript 6 + Ant Design v6 + ProComponents 2
+- Vite 8 (SWC) + Zustand 5 + TanStack React Query 5 + React Router v6
+- i18next + react-i18next + Less + Tailwind v4 + Iconify (lucide) + pnpm
+
+## 目录结构
+- src/api/ - API 层（generated/ 禁止手动修改, client.ts apiClient 单例, hooks/ React Query）
+- src/core/ - 核心模块（access/i18n/preferences/router/storage/transport）
+- src/pages/app/ - 业务页面, src/pages/core/ - 系统页面
+- src/router/modules/ - 业务路由（import.meta.glob 自动导入）
+- src/stores/ - Zustand Stores（auth/user/tabs/pageRefresh）
+- src/locales/ - 翻译资源（zh-CN/en-US, _core/ + _modules/）
+
+## API 两层架构
+Generated → Hooks (通过 apiClient 直调, React Query)
+- apiClient (src/api/client.ts) 单例懒加载所有 Service Client
+- React 组件用 useXxx() Hook
+- Store/路由守卫/工具函数用 fetchXxx() 方法
+- Hooks 命名: useListXxx/useGetXxx + fetchListXxx/fetchXxx
+
+## 路由
+- modules/*.tsx 通过 import.meta.glob 自动导入
+- meta.title 格式: 'routes:xxx' (i18n)
+- meta.authority: 角色码和权限码混合数组
+- 权限模式: frontend (默认) / backend
+
+## 权限系统
+- 角色码: useUserStore.userRoles
+- 权限码: useUserStore.accessCodes
+- useAccess() Hook / AccessControl 组件 / getAccessStatic() 非组件
+- 权限码格式: 模块:资源:操作 (如 sys:user:create)
+- 超级管理员: *:*:* 角色自动通过
+
+## 状态管理
+- useAuthStore: Token/登录 (token 持久化)
+- useUserStore: 用户/角色/权限 (userInfo 持久化)
+- usePreferencesStore: 偏好设置 (全部持久化)
+- React 组件: useStore((s) => s.xxx) selector 订阅
+- 非组件: useStore.getState().xxx
+
+## 国际化
+- useI18n('namespace') 指定命名空间, t('key') 翻译
+- 翻译文件: locales/{zh-CN,en-US}/_modules/xxx.json 自动收集
+- 插值用 {{var}}, 不是 #{var}
+- 硬编码文本必须提取到翻译文件
+
+## 代码风格
+- Prettier: 单引号/分号/尾逗号all/行宽100/2空格/LF
+- 路径别名: @/ → src/, #/ → types/
+- 提交: Conventional Commits
+
+## 关键注意事项
+1. PaginationQuery 必须用 new: new PaginationQuery({ page, pageSize })
+2. 非组件环境禁用 useXxx Hook, 只能用 fetchXxx() 或 apiClient 直调
+3. 国际化插值 {{var}} 非 #{var}
+4. meta.title 用 'routes:xxx' 格式
+5. 禁止修改 generated 目录
+6. DrawerForm 用 formRef, 没有 useForm
+7. antd v6: items 替代 TabPane, Alert 用 title 替代 message
+8. ProTable scroll.y 初始值必须是像素值(数字)
+9. 角色码和权限码分离: userRoles + accessCodes
+10. 不要使用 userInfo?.permissions (不存在)
+
+## 新增模块清单
+1. 翻译: locales/{zh-CN,en-US}/_modules/xxx.json
+2. 页面: pages/app/xxx/index.tsx
+3. API: api/hooks/xxx.ts (通过 apiClient 直调) + 导出
+4. 路由: router/modules/xxx.tsx
+5. 权限: meta.authority + useAccess()

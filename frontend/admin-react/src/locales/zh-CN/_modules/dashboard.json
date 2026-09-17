@@ -1,0 +1,22 @@
+{
+  "title": "概览",
+  "analytics": {
+    "userCountTotal": "用户总量",
+    "postCountTotal": "帖子总量",
+    "commentCountTotal": "评论总量",
+    "interactionCountTotal": "互动总量",
+    "weeklyNew": "近 7 天新增",
+    "contentTrend": "内容增长趋势",
+    "newUsers": "新增用户",
+    "newPosts": "新增帖子",
+    "newComments": "新增评论",
+    "interactionTop": "互动 TOP 榜",
+    "interactionDistribution": "互动类型分布",
+    "totalLikes": "点赞",
+    "totalWatches": "收藏",
+    "loginActivity": "登录活跃",
+    "loginSuccess": "登录成功",
+    "loginFailed": "登录失败",
+    "titleFallback": "(无标题)"
+  }
+}

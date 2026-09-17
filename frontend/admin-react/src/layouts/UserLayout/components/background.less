@@ -1,0 +1,195 @@
+/* ============================================
+   Background 组件样式（认证页面背景装饰）
+   遵循 Less 选择器作用域规范：
+   - 每个主题色规则使用 `.auth-background.dark &` 或 `.auth-background.light &` 包裹
+   ============================================ */
+
+/* 根容器 - 固定定位覆盖全屏 */
+.auth-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+
+  &.dark {
+    background: #0B0F19;
+  }
+
+  &.light {
+    background: #f5f7fa;
+  }
+}
+
+/* ===== 主背景渐变层 ===== */
+.auth-bg-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  .auth-background.dark & {
+    background: linear-gradient(135deg, #0B0F19 0%, #111827 50%, #0B0F19 100%);
+  }
+
+  .auth-background.light & {
+    background: linear-gradient(135deg, #e8ecf1 0%, #d5e0ed 100%);
+  }
+}
+
+/* ===== 光斑装饰 ===== */
+.auth-bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 大光斑 - 右上 */
+.auth-bg-orb-1 {
+  top: 5%;
+  right: 10%;
+  width: 400px;
+  height: 400px;
+
+  .auth-background.dark & {
+    background: radial-gradient(circle, rgba(0, 107, 230, 0.15) 0%, transparent 70%);
+  }
+
+  .auth-background.light & {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  }
+}
+
+/* 中光斑 - 左下 */
+.auth-bg-orb-2 {
+  bottom: 10%;
+  left: 5%;
+  width: 280px;
+  height: 280px;
+
+  .auth-background.dark & {
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+  }
+
+  .auth-background.light & {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  }
+}
+
+/* 小光斑 - 中心偏左 */
+.auth-bg-orb-3 {
+  top: 40%;
+  left: 30%;
+  width: 180px;
+  height: 180px;
+
+  .auth-background.dark & {
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.08) 0%, transparent 70%);
+  }
+
+  .auth-background.light & {
+    background: radial-gradient(circle, rgba(100, 150, 255, 0.12) 0%, transparent 70%);
+  }
+}
+
+/* 品牌区光斑 - 大 */
+.auth-bg-orb-brand-1 {
+  top: 15%;
+  right: 15%;
+  width: 350px;
+  height: 350px;
+
+  .auth-background.dark & {
+    background: radial-gradient(circle, rgba(0, 107, 230, 0.2) 0%, transparent 70%);
+  }
+
+  .auth-background.light & {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  }
+}
+
+/* 品牌区光斑 - 小 */
+.auth-bg-orb-brand-2 {
+  bottom: 20%;
+  left: 10%;
+  width: 220px;
+  height: 220px;
+
+  .auth-background.dark & {
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.12) 0%, transparent 70%);
+  }
+
+  .auth-background.light & {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, transparent 70%);
+  }
+}
+
+/* ===== 网格纹理（微妙的点阵效果） ===== */
+.auth-bg-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.03;
+
+  .auth-background.dark & {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .auth-background.light & {
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.5) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+/* ===== 品牌区域（panel-left / panel-right 模式） ===== */
+.auth-bg-brand-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  overflow: hidden;
+
+  &.left {
+    left: 0;
+  }
+
+  &.right {
+    right: 0;
+  }
+
+  /* 品牌区域暗色背景 */
+  &.left.dark,
+  &.right.dark {
+    background: linear-gradient(135deg, #0B0F19 0%, #111827 50%, #0B0F19 100%);
+  }
+
+  /* 品牌区域亮色背景 */
+  &.left.light,
+  &.right.light {
+    background: linear-gradient(135deg, #e8ecf1 0%, #d5e0ed 100%);
+  }
+}
+
+/* 品牌区渐变叠加 */
+.auth-bg-brand-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  .auth-background.dark & {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
+  }
+
+  .auth-background.light & {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+  }
+}

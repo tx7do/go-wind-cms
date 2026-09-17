@@ -178,7 +178,7 @@ gow run admin
 
 ```bash
 # Admin panel
-cd frontend/admin
+cd frontend/admin-react
 pnpm install
 pnpm dev
 

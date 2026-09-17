@@ -1,0 +1,29 @@
+/**
+ * PageContainer 组件样式
+ */
+
+/* ProPageContainer 根元素：确保占满父容器高度 */
+.page-container-root {
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* ========================================
+ * ProTable 在 ContentContainer 中撑满高度
+ *
+ * 策略：CSS 只负责最外层 flex 骨架。
+ * antd 内部的高度由 useProTableScrollY 通过 JS
+ * 直接操作 .ant-table-body.style 来控制。
+ * ======================================== */
+
+/* 中间容器：占满 ContentContainer 内容区 */
+.page-container-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ProTable 根元素：占满中间容器 */
+.page-container-content > .ant-pro-table {
+  height: 100%;
+}

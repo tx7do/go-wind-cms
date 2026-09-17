@@ -1,0 +1,229 @@
+import { useMemo, useCallback, useState } from 'react';
+import { Menu } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
+import { usePreferencesStore } from '@/core/preferences/store';
+import { getIconFromName } from '../../utils/iconResolver';
+import ControlPanel from './ControlPanel';
+import './SiderMenu.style.less';
+
+interface SiderMenuProps {
+  menuData: any[];
+  isMobile: boolean;
+  isDark: boolean;
+  openKeys: string[];
+  selectedKeys: string[];
+  onOpenChange: (keys: string[]) => void;
+}
+
+export const Index = ({
+  menuData,
+  isMobile,
+  isDark,
+  openKeys,
+  selectedKeys,
+  onOpenChange,
+}: SiderMenuProps) => {
+  const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
+  const { t: tRoutes } = useTranslation('routes');
+
+  const preferences = usePreferencesStore((state) => state.preferences);
+  const setPreferences = usePreferencesStore((state) => state.setPreferences);
+
+  // 从 preferences 获取侧边栏配置
+  const sidebarConfig = preferences.sidebar;
+  const sidebarCollapsed = sidebarConfig?.collapsed ?? false;
+  const collapsedShowTitle = sidebarConfig?.collapsedShowTitle ?? false;
+  const expandOnHover = sidebarConfig?.expandOnHover ?? true;
+  const sidebarEnable = sidebarConfig?.enable ?? true;
+  const sidebarHidden = sidebarConfig?.hidden ?? false;
+
+  // 鼠标悬停状态（用于 expandOnHover）
+  const [isHovering, setIsHovering] = useState(false);
+
+  // 转换菜单数据为 Ant Design Menu items 格式
+  const menuItems = useMemo(() => {
+    /**
+     * 翻译菜单标题
+     * @param label - 可能是 i18n key 或普通文本
+     * @returns 翻译后的文本
+     */
+    const translateLabel = (label: string | undefined): string => {
+      if (!label) return '';
+      // 处理 'menu:xxx' 或 'routes:xxx' 前缀的 i18n key
+      if (label.startsWith('menu:') || label.startsWith('routes:')) {
+        const keyName = label.includes(':') ? label.substring(label.indexOf(':') + 1) : label;
+        return tRoutes(keyName, { defaultValue: label });
+      }
+      // 否则直接尝试翻译（可能已经是简化的 key）
+      return t(label, label);
+    };
+
+    const transformItem = (items: any[]): any[] => {
+      return items.map((item) => ({
+        key: item.path || item.key,
+        icon: getIconFromName(item.icon),
+        label: translateLabel(item.name || item.label), // 翻译标题
+        children: item.children ? transformItem(item.children) : undefined,
+      }));
+    };
+    return transformItem(menuData);
+  }, [menuData, t, i18n.language]); // 添加 i18n.language 依赖，语言切换时重新翻译
+
+  // 菜单点击
+  const handleMenuClick = useCallback(
+    (info: { key: string }) => {
+      if (info.key) {
+        navigate(info.key);
+        if (isMobile) {
+          setPreferences({ sidebar: { collapsed: true } });
+        }
+      }
+    },
+    [navigate, isMobile, setPreferences],
+  );
+
+  // 完全隐藏侧边栏（sidebar.enable = false 或 sidebar.hidden = true）
+  if (!sidebarEnable || sidebarHidden) return null;
+
+  // 计算是否折叠：
+  // - expandOnHover=true: 根据 hover 状态动态切换
+  // - expandOnHover=false: 根据 collapsed 状态决定
+  const isCollapsed = expandOnHover
+    ? !isHovering // 自动模式：只看 hover 状态
+    : sidebarCollapsed; // 手动模式：看 collapsed 状态
+
+  // 计算侧边栏宽度
+  const sidebarWidth = isCollapsed ? 48 : (sidebarConfig?.width ?? 224);
+
+  // 鼠标进入/离开事件处理（仅 expandOnHover=true 时生效）
+  const handleMouseEnter = () => {
+    if (expandOnHover) {
+      setIsHovering(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (expandOnHover) {
+      setIsHovering(false);
+    }
+  };
+
+  // 切换折叠状态
+  const handleToggleCollapse = () => {
+    setPreferences({ sidebar: { collapsed: !sidebarCollapsed } });
+  };
+
+  // 切换 expandOnHover 状态（固定/自动模式）
+  const handleToggleExpandOnHover = () => {
+    const newExpandOnHover = !expandOnHover;
+
+    // 关键：切换模式时，同步更新 hover 状态以保持当前视觉效果
+    if (newExpandOnHover) {
+      // 切换到自动模式：根据当前 collapsed 状态设置 hover
+      // 如果当前是展开状态（collapsed=false），则设置 hovering=true
+      // 如果当前是折叠状态（collapsed=true），则设置 hovering=false
+      setIsHovering(!sidebarCollapsed);
+    } else {
+      // 切换到手动模式：取消 hover 状态
+      setIsHovering(false);
+    }
+
+    setPreferences({ sidebar: { expandOnHover: newExpandOnHover } });
+  };
+
+  return (
+    <div
+      style={{
+        width: sidebarWidth,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'var(--app-bg-nav, var(--ant-color-bg-container))',
+        borderRight: '1px solid var(--ant-color-border)',
+        transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        flexShrink: 0,
+        overflow: 'hidden',
+        // Drawer 效果：expandOnHover=true 时，使用绝对定位悬浮在内容上方
+        position: expandOnHover ? 'absolute' : 'relative',
+        zIndex: expandOnHover ? 1000 : 1,
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Logo 区域 */}
+      <div
+        style={{
+          height: 56,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: isCollapsed && !collapsedShowTitle ? 'center' : 'flex-start',
+          padding: isCollapsed && !collapsedShowTitle ? '0' : '0 16px',
+          gap: 8,
+          cursor: 'pointer',
+          flexShrink: 0,
+          overflow: 'hidden',
+        }}
+        onClick={() => navigate('/')}
+      >
+        {preferences.logo.enable && (
+          <img
+            src={preferences.logo.source}
+            alt="logo"
+            style={{ height: 32, width: 32, flexShrink: 0 }}
+          />
+        )}
+        {(!isCollapsed || collapsedShowTitle) && preferences.app.dynamicTitle && (
+          <span
+            style={{
+              fontWeight: 700,
+              fontSize: 16,
+              color: 'var(--ant-color-text)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {preferences.app.name}
+          </span>
+        )}
+      </div>
+
+      {/* 菜单树形列表 */}
+      <div style={{ flex: 1, overflow: 'hidden' }}>
+        <div style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '4px 0' }}>
+          <Menu
+            mode="inline"
+            inlineCollapsed={isCollapsed && !collapsedShowTitle}
+            selectedKeys={selectedKeys}
+            openKeys={openKeys}
+            onOpenChange={onOpenChange}
+            onClick={handleMenuClick}
+            items={menuItems}
+            style={{
+              background: 'transparent',
+              borderInlineEnd: 'none',
+              width: '100%',
+            }}
+            theme={isDark ? 'dark' : 'light'}
+            // 当 collapsedShowTitle=true 时，覆盖默认的折叠样式
+            className={collapsedShowTitle && isCollapsed ? 'menu-collapsed-show-title' : ''}
+          />
+        </div>
+      </div>
+
+      {/* 底部控制面板 */}
+      <ControlPanel
+        collapsed={sidebarCollapsed}
+        isDark={isDark}
+        expandOnHover={expandOnHover}
+        onToggleExpandOnHover={handleToggleExpandOnHover}
+        onToggleCollapse={handleToggleCollapse}
+      />
+    </div>
+  );
+};
+
+export default Index;

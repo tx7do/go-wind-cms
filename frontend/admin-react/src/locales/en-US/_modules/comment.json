@@ -1,0 +1,63 @@
+{
+  "pageTitle": "Comments",
+  "moduleName": "Comments",
+  "commentList": "Comment List",
+  "authorName": "Author Name",
+  "authorNamePlaceholder": "Enter author name",
+  "authorType": "Author Type",
+  "authorTypePlaceholder": "Select author type",
+  "contentType": "Content Type",
+  "contentTypePlaceholder": "Select content type",
+  "status": "Status",
+  "statusPlaceholder": "Select status",
+  "content": "Content",
+  "objectId": "Object ID",
+  "ipAddress": "IP Address",
+  "location": "Location",
+  "createdAt": "Created At",
+  "createdAtRange": "Created At Range",
+  "isSpam": "Spam",
+  "helpIsSpam": "Marked spam comments will be hidden",
+  "isSticky": "Sticky",
+  "helpIsSticky": "Sticky comments will be displayed at the top of the list",
+  "action": "Action",
+  "reply": "Reply",
+  "replyTo": "Reply: {authorName}",
+  "edit": "Edit Comment",
+  "requiredContent": "Please enter content",
+  "requiredStatus": "Please select status",
+  "deleteConfirmTitle": "Confirm Delete",
+  "deleteConfirmDesc": "Are you sure you want to delete this {{moduleName}}?",
+  "createSuccess": "Created successfully",
+  "createFailed": "Failed to create",
+  "updateSuccess": "Updated successfully",
+  "updateFailed": "Failed to update",
+  "deleteSuccess": "Deleted successfully",
+  "deleteFailed": "Failed to delete",
+  "fetchFailed": "Failed to load",
+  "dateRange": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month"
+  },
+  "statusMap": {
+    "STATUS_PENDING": "Pending Review",
+    "STATUS_APPROVED": "Approved",
+    "STATUS_REJECTED": "Rejected",
+    "STATUS_SPAM": "Spam"
+  },
+  "contentTypeMap": {
+    "CONTENT_TYPE_POST": "Post",
+    "CONTENT_TYPE_PAGE": "Page",
+    "CONTENT_TYPE_PRODUCT": "Product"
+  },
+  "authorTypeMap": {
+    "AUTHOR_TYPE_GUEST": "Guest",
+    "AUTHOR_TYPE_USER": "User",
+    "AUTHOR_TYPE_ADMIN": "Administrator",
+    "AUTHOR_TYPE_MODERATOR": "Moderator"
+  }
+}

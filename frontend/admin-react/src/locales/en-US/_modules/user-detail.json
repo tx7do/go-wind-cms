@@ -1,0 +1,43 @@
+{
+  "pageTitle": "User Detail",
+  "title": "User Detail",
+  "tab": {
+    "basicInfo": "Basic Info",
+    "apiAuditLog": "API Audit Log",
+    "internalMessage": "Internal Messages"
+  },
+  "desc": {
+    "username": "Username",
+    "realname": "Real Name",
+    "nickname": "Nickname",
+    "gender": "Gender",
+    "roleNames": "Roles",
+    "mobile": "Mobile",
+    "email": "Email",
+    "region": "Region",
+    "address": "Address",
+    "tenantName": "Tenant",
+    "orgUnitName": "Organization",
+    "positionName": "Position",
+    "createdAt": "Created At",
+    "lastLoginAt": "Last Login",
+    "lastLoginIp": "Last Login IP"
+  },
+  "button": {
+    "banAccount": "Disable Account",
+    "editPassword": "Change Password"
+  },
+  "banConfirmTitle": "Confirm Disable",
+  "banConfirmDesc": "Are you sure you want to disable this user?",
+  "banSuccess": "Account disabled successfully",
+  "banFailed": "Failed to disable account",
+  "editPasswordTitle": "Change Password",
+  "newPassword": "New Password",
+  "newPasswordPlaceholder": "Enter new password",
+  "confirmPassword": "Confirm Password",
+  "confirmPasswordPlaceholder": "Re-enter new password",
+  "passwordMismatch": "Passwords do not match",
+  "editPasswordSuccess": "Password changed successfully",
+  "editPasswordFailed": "Failed to change password",
+  "fetchFailed": "Failed to fetch user data"
+}
