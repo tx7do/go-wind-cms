@@ -19,8 +19,8 @@ server:
         - "HEAD"
         - "OPTIONS"
       origins:
-        - "http://localhost:5888"
-        - "http://127.0.0.1:5888"
+        - "http://localhost:5999"
+        - "http://127.0.0.1:5999"
     middleware:
       auth:
         method: "HS256"
