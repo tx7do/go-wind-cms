@@ -89,7 +89,7 @@ const BasicInfoPage: React.FC<BasicInfoPageProps> = ({ userId }) => {
         <Descriptions.Item label={t('desc.orgUnitName')}>
           {(user.orgUnitNames ?? []).length > 0
             ? (user.orgUnitNames ?? []).map((org) => (
-                <Tag key={org} style={{ backgroundColor: getRandomColor(org), color: '#333', border: 'none' }}>
+                <Tag key={org} color={getRandomColor(org)}>
                   {org}
                 </Tag>
               ))

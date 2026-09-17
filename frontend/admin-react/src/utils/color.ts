@@ -1,18 +1,40 @@
 /**
- * 生成基于字符串的固定随机色（HSL模式，保证饱和度和明度适中）
- * @param str
+ * antd Tag 预设色名池：交给 antd 后由主题算法推导底色/边框/文字，
+ * 暗色模式自动适配。勿在此返回 hex/hsl——自定义色不参与主题适配，
+ * 暗色下会出现亮底深字的刺眼组合（历史教训，勿回退）。
  */
-export const getRandomColor = (str: string) => {
+const TAG_PRESET_COLORS = [
+  'blue',
+  'green',
+  'gold',
+  'red',
+  'purple',
+  'cyan',
+  'magenta',
+  'orange',
+] as const;
+
+export type TagPresetColor = (typeof TAG_PRESET_COLORS)[number];
+
+/**
+ * 生成基于字符串的确定性预设色（同一字符串恒定同色），供 Tag color 使用
+ */
+export const getPresetColor = (str: string): TagPresetColor => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const hue = Math.abs(hash % 360);
-  return `hsl(${hue}, 50%, 85%)`;
+  return TAG_PRESET_COLORS[Math.abs(hash) % TAG_PRESET_COLORS.length];
 };
 
 /**
- * 根据首字母生成固定随机色
+ * @deprecated 旧名，等价于 getPresetColor。新代码请用 getPresetColor。
+ */
+export const getRandomColor = getPresetColor;
+
+/**
+ * 根据首字母生成固定头像底色（CSS 色，供 Avatar backgroundColor 使用；
+ * Tag 场景请用 getPresetColor）
  * @param char
  */
 export const getCharColor = (char: string) => {

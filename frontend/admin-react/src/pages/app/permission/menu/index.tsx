@@ -168,14 +168,7 @@ const MenuManagement = () => {
         return (
           <Space wrap size={[4, 4]}>
             {authorities.map((auth) => (
-              <Tag
-                key={auth}
-                style={{
-                  backgroundColor: getRandomColor(auth),
-                  color: '#333',
-                  border: 'none',
-                }}
-              >
+              <Tag key={auth} color={getRandomColor(auth)}>
                 {auth}
               </Tag>
             ))}

@@ -11,6 +11,7 @@ import {
 import { useAuthStore } from '@/stores';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getGenderOptions } from '../constants';
+import { getPresetColor } from '@/utils/color';
 
 /** 格式化 wellKnownTimestamp */
 function formatTimestamp(ts: any): string {
@@ -211,21 +212,21 @@ const UserProfile = () => {
                       <Descriptions column={1} size="small" style={{ marginBottom: 16 }}>
                         <Descriptions.Item label={t('roleNames')}>
                           {user?.roleNames?.map((role) => (
-                            <Tag key={role} style={{ backgroundColor: getCharColor(role), color: '#333', border: 'none' }}>
+                            <Tag key={role} color={getPresetColor(role)}>
                               {role}
                             </Tag>
                           ))}
                         </Descriptions.Item>
                         <Descriptions.Item label={t('orgUnitNames')}>
                           {user?.orgUnitNames?.map((org) => (
-                            <Tag key={org} style={{ backgroundColor: getCharColor(org), color: '#333', border: 'none' }}>
+                            <Tag key={org} color={getPresetColor(org)}>
                               {org}
                             </Tag>
                           ))}
                         </Descriptions.Item>
                         <Descriptions.Item label={t('positionNames')}>
                           {user?.positionNames?.map((pos) => (
-                            <Tag key={pos} style={{ backgroundColor: getCharColor(pos), color: '#333', border: 'none' }}>
+                            <Tag key={pos} color={getPresetColor(pos)}>
                               {pos}
                             </Tag>
                           ))}

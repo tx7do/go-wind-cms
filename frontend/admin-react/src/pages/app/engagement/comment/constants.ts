@@ -5,11 +5,11 @@
 type TFn = (key: string, options?: Record<string, any>) => string;
 
 const STATUS_COLOR_MAP: Record<string, string> = {
-  STATUS_PENDING: '#60a5fa',
-  STATUS_APPROVED: '#22c55e',
-  STATUS_REJECTED: '#f97316',
-  STATUS_SPAM: '#ef4444',
-  DEFAULT: '#94a3b8',
+  STATUS_PENDING: 'geekblue',
+  STATUS_APPROVED: 'green',
+  STATUS_REJECTED: 'orange',
+  STATUS_SPAM: 'red',
+  DEFAULT: 'default',
 };
 
 const STATUS_VALUES = [
@@ -20,10 +20,10 @@ const STATUS_VALUES = [
 ] as const;
 
 const CONTENT_TYPE_COLOR_MAP: Record<string, string> = {
-  CONTENT_TYPE_POST: '#2563eb',
-  CONTENT_TYPE_PAGE: '#7c3aed',
-  CONTENT_TYPE_PRODUCT: '#ea580c',
-  DEFAULT: '#2563eb',
+  CONTENT_TYPE_POST: 'geekblue',
+  CONTENT_TYPE_PAGE: 'purple',
+  CONTENT_TYPE_PRODUCT: 'volcano',
+  DEFAULT: 'geekblue',
 };
 
 const CONTENT_TYPE_VALUES = [
@@ -33,11 +33,11 @@ const CONTENT_TYPE_VALUES = [
 ] as const;
 
 const AUTHOR_TYPE_COLOR_MAP: Record<string, string> = {
-  AUTHOR_TYPE_GUEST: '#64748b',
-  AUTHOR_TYPE_USER: '#10b981',
-  AUTHOR_TYPE_ADMIN: '#3b82f6',
-  AUTHOR_TYPE_MODERATOR: '#f97316',
-  DEFAULT: '#94a3b8',
+  AUTHOR_TYPE_GUEST: 'default',
+  AUTHOR_TYPE_USER: 'green',
+  AUTHOR_TYPE_ADMIN: 'blue',
+  AUTHOR_TYPE_MODERATOR: 'orange',
+  DEFAULT: 'default',
 };
 
 const AUTHOR_TYPE_VALUES = [

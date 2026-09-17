@@ -5,10 +5,10 @@
 type TFn = (key: string, options?: Record<string, any>) => string;
 
 const CATEGORY_STATUS_COLOR_MAP: Record<string, string> = {
-  CATEGORY_STATUS_ACTIVE: '#22c55e',
-  CATEGORY_STATUS_HIDDEN: '#f97316',
-  CATEGORY_STATUS_ARCHIVED: '#92400e',
-  DEFAULT: '#94a3b8',
+  CATEGORY_STATUS_ACTIVE: 'green',
+  CATEGORY_STATUS_HIDDEN: 'orange',
+  CATEGORY_STATUS_ARCHIVED: 'gold',
+  DEFAULT: 'default',
 };
 
 const CATEGORY_STATUS_VALUES = [

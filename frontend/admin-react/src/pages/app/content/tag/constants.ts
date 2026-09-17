@@ -5,10 +5,10 @@
 type TFn = (key: string, options?: Record<string, any>) => string;
 
 const TAG_STATUS_COLOR_MAP: Record<string, string> = {
-  TAG_STATUS_ACTIVE: '#22c55e',
-  TAG_STATUS_HIDDEN: '#f97316',
-  TAG_STATUS_ARCHIVED: '#92400e',
-  DEFAULT: '#94a3b8',
+  TAG_STATUS_ACTIVE: 'green',
+  TAG_STATUS_HIDDEN: 'orange',
+  TAG_STATUS_ARCHIVED: 'gold',
+  DEFAULT: 'default',
 };
 
 const TAG_STATUS_VALUES = [

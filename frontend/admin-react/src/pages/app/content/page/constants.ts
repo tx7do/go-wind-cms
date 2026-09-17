@@ -5,10 +5,10 @@
 type TFn = (key: string, options?: Record<string, any>) => string;
 
 const PAGE_STATUS_COLOR_MAP: Record<string, string> = {
-  PAGE_STATUS_DRAFT: '#8b5cf6',
-  PAGE_STATUS_PUBLISHED: '#22c55e',
-  PAGE_STATUS_ARCHIVED: '#92400e',
-  DEFAULT: '#94a3b8',
+  PAGE_STATUS_DRAFT: 'purple',
+  PAGE_STATUS_PUBLISHED: 'green',
+  PAGE_STATUS_ARCHIVED: 'gold',
+  DEFAULT: 'default',
 };
 
 const PAGE_STATUS_VALUES = [
@@ -18,12 +18,12 @@ const PAGE_STATUS_VALUES = [
 ] as const;
 
 const PAGE_TYPE_COLOR_MAP: Record<string, string> = {
-  PAGE_TYPE_DEFAULT: '#7c3aed',
-  PAGE_TYPE_HOME: '#3b82f6',
-  PAGE_TYPE_ERROR_404: '#f97316',
-  PAGE_TYPE_ERROR_500: '#ef4444',
-  PAGE_TYPE_CUSTOM: '#06b6d4',
-  DEFAULT: '#94a3b8',
+  PAGE_TYPE_DEFAULT: 'purple',
+  PAGE_TYPE_HOME: 'blue',
+  PAGE_TYPE_ERROR_404: 'orange',
+  PAGE_TYPE_ERROR_500: 'red',
+  PAGE_TYPE_CUSTOM: 'lime',
+  DEFAULT: 'default',
 };
 
 const PAGE_TYPE_VALUES = [
@@ -35,13 +35,13 @@ const PAGE_TYPE_VALUES = [
 ] as const;
 
 export const EDITOR_TYPE_COLOR_MAP: Record<string, string> = {
-  EDITOR_TYPE_MARKDOWN: '#4f46e5',
-  EDITOR_TYPE_RICH_TEXT: '#14b8a6',
-  EDITOR_TYPE_JSON_BLOCK: '#d946ef',
-  EDITOR_TYPE_PLAIN_TEXT: '#64748b',
-  EDITOR_TYPE_CODE: '#0ea5e9',
-  EDITOR_TYPE_VISUAL_BUILDER: '#06b6d4',
-  DEFAULT: '#94a3b8',
+  EDITOR_TYPE_MARKDOWN: 'geekblue',
+  EDITOR_TYPE_RICH_TEXT: 'cyan',
+  EDITOR_TYPE_JSON_BLOCK: 'magenta',
+  EDITOR_TYPE_PLAIN_TEXT: 'default',
+  EDITOR_TYPE_CODE: 'blue',
+  EDITOR_TYPE_VISUAL_BUILDER: 'lime',
+  DEFAULT: 'default',
 };
 
 export const EDITOR_TYPE_VALUES = [

@@ -5,13 +5,13 @@
 type TFn = (key: string, options?: Record<string, any>) => string;
 
 const LOCATION_COLOR_MAP: Record<string, string> = {
-  HEADER: '#6366f1',
-  FOOTER: '#059669',
-  SIDEBAR: '#d97706',
-  MOBILE: '#dc2626',
-  TOP_BAR: '#dc2626',
-  OFFCANVAS: '#dc2626',
-  DEFAULT: '#94a3b8',
+  HEADER: 'geekblue',
+  FOOTER: 'green',
+  SIDEBAR: 'gold',
+  MOBILE: 'red',
+  TOP_BAR: 'red',
+  OFFCANVAS: 'red',
+  DEFAULT: 'default',
 };
 
 const LOCATION_VALUES = [
@@ -24,12 +24,12 @@ const LOCATION_VALUES = [
 ] as const;
 
 const LINK_TYPE_COLOR_MAP: Record<string, string> = {
-  LINK_TYPE_CUSTOM: '#6366f1',
-  LINK_TYPE_POST: '#059669',
-  LINK_TYPE_PAGE: '#d97706',
-  LINK_TYPE_CATEGORY: '#dc2626',
-  LINK_TYPE_EXTERNAL: '#dc2626',
-  DEFAULT: '#94a3b8',
+  LINK_TYPE_CUSTOM: 'geekblue',
+  LINK_TYPE_POST: 'green',
+  LINK_TYPE_PAGE: 'gold',
+  LINK_TYPE_CATEGORY: 'red',
+  LINK_TYPE_EXTERNAL: 'red',
+  DEFAULT: 'default',
 };
 
 const LINK_TYPE_VALUES = [
