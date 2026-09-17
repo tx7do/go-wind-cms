@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { MdEditor } from 'md-editor-rt';
 import 'md-editor-rt/lib/style.css';
+import './markdown-editor.css';
 
 import { hideUploadProgress, notifyUploadError, showUploadProgress } from '@/utils/upload-feedback';
 
@@ -198,6 +199,8 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         value={localValue}
         onChange={handleChange}
         theme={theme}
+        // 代码高亮主题由 md-editor-rt 运行时加载，暗色用深色主题
+        codeTheme={isDark ? 'github-dark' : 'github'}
         placeholder={placeholder}
         disabled={disabled}
         onSave={handleSave}

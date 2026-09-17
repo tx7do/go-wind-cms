@@ -1,0 +1,10 @@
+/* ============ md-editor-rt 主题对齐 ============
+ * md-editor-rt 暗色默认 --md-bk-color:#000（纯黑），与应用深蓝灰表面
+ * 割裂感很强（"编辑器是个黑洞"）。这里以更高优先级覆写其根元素上的
+ * 变量声明，对齐 Tiptap 编辑器的 slate 色板；亮色保持默认白不动。
+ * 变量声明在 .md-editor 根上会压过祖先继承，故必须命中该元素本身。 */
+.md-editor-wrapper .md-editor.md-editor-dark {
+  --md-bk-color: #0f172a;
+  --md-color: #e2e8f0;
+  --md-bk-color-outstand: #1e293b;
+}
