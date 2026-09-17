@@ -203,6 +203,9 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         onSave={handleSave}
         onUploadImg={handleUploadImages}
         className="md-editor-inner"
+        // md-editor-rt 根元素默认按内容收缩（约 500px），必须显式给满高，
+        // 否则 wrapper 已撑满而编辑器本体仍在内容高度处截断。
+        style={{ height: '100%' }}
         toolbars={editorProps.toolbars}
         preview={editorProps.preview}
         showCodeRowNumber={editorProps.showCodeRowNumber}

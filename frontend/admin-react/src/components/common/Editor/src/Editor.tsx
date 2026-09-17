@@ -56,7 +56,10 @@ const Editor: React.FC<EditorProps> = ({
   const EditorComponent = currentEditorComponent;
 
   return (
-    <div className="editor-container">
+    // height 必须落在这一层：编辑器各实现的根节点都以 height:'100%' 向上取高，
+    // 若本层高度为 auto（默认无 CSS 规则），百分比失去参照，会退化为
+    // md-editor/tiptap 的库内默认高度（约 500px），编辑页撑不满剩余空间。
+    <div className="editor-container" style={{ height }}>
       <Suspense fallback={<div style={{ padding: 16, textAlign: 'center', color: 'var(--ant-color-text-secondary)' }}>Loading editor...</div>}>
         <EditorComponent
           value={value ?? ''}
