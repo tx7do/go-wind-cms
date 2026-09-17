@@ -65,6 +65,17 @@ const Login: React.FC = () => {
     remember?: boolean;
     captcha?: string;
   }) => {
+    // 跳转目标：redirect 参数 → 用户 homePath → 首页。
+    // 校验必须为同源相对路径，防止开放重定向（如 ?redirect=https://evil.com 或 //evil.com）
+    const resolveSafeRedirect = () => {
+      const rawRedirect =
+        searchParams.get('redirect') || useAuthStore.getState().userInfo?.homePath || '/';
+      return typeof rawRedirect === 'string' &&
+        rawRedirect.startsWith('/') &&
+        !rawRedirect.startsWith('//')
+        ? rawRedirect
+        : '/';
+    };
     try {
       await login(
         {
@@ -73,24 +84,18 @@ const Login: React.FC = () => {
           tenant_code: values.tenant_code,
           grant_type: 'password',
         },
-        undefined,
+        // onSuccess：store 检测到回调即跳过默认的 window.location.href 整页跳转，
+        // 改由这里立即经 react-router 跳转。必须赶在 AppRouter 重建 router
+        // （createBrowserRouter 以 window.location 为初始地址）之前完成。
+        // 旧实现是 store 整页跳 homePath 与本页 300ms 定时器 navigate(redirect)
+        // 赛跑：location.href 同步改写 window.location 使新 router 落在 homePath，
+        // 定时器的 pushState 又把地址栏推回 redirect，两者各说各话——
+        // 复现为"URL /content/posts 渲染着仪表盘"，手动刷新才恢复。
+        () => navigate(resolveSafeRedirect()),
         { id: captchaId, value: values.captcha ?? '' },
       );
 
       message.success(t('loginSuccess'));
-
-      // 跳转到重定向页面或首页
-      // 校验 redirect 必须为同源相对路径，防止开放重定向（如 ?redirect=https://evil.com 或 //evil.com）
-      const rawRedirect = searchParams.get('redirect') || '/';
-      const safeRedirect =
-        typeof rawRedirect === 'string' &&
-        rawRedirect.startsWith('/') &&
-        !rawRedirect.startsWith('//')
-          ? rawRedirect
-          : '/';
-      setTimeout(() => {
-        navigate(safeRedirect);
-      }, 300);
     } catch (error: any) {
       // 登录失败后刷新验证码
       refreshCaptcha();
