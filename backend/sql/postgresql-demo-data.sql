@@ -3953,7 +3953,7 @@ UPDATE comments             SET tenant_id = 1 WHERE tenant_id = 0;
 UPDATE navigations          SET tenant_id = 1 WHERE tenant_id = 0;
 UPDATE navigation_items     SET tenant_id = 1 WHERE tenant_id = 0;
 
--- 开发环境:前端 dev server 跑在 localhost 的不同端口(5011/5001/10086),
+-- 开发环境:前端 dev server 跑在 localhost 的不同端口(15011/15001/15021),
 -- 匿名租户解析按 Host 匹配租户 domain(后端对带端口 Host 会去端口回退匹配)
 UPDATE sys_tenants SET domain = 'localhost' WHERE id = 1;
 
