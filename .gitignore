@@ -157,3 +157,13 @@ bazel-*
 
 # JS dependencies
 node_modules/
+
+# === 本地工作产物（不入库） ===
+*.log
+gui-test-screenshots/
+.playwright-mcp/
+.minio-backup/
+frontend/admin/dist/
+frontend/admin/dist.zip
+*.local.xlsx
+*.local.csv
