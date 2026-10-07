@@ -139,6 +139,15 @@ func NewRestServer(
 	commentService *service.CommentService,
 	interactionAdminService *service.InteractionAdminService,
 	statsService *service.StatsService,
+	aiProviderService *service.AiProviderService,
+	aiContentService *service.AiContentService,
+	aiChatService *service.AiChatService,
+	aiConversationService *service.AiConversationService,
+	aiMessageService *service.AiMessageService,
+	aiKnowledgeService *service.AiKnowledgeService,
+	aiUsageLogService *service.AiUsageLogService,
+	aiQueryService *service.AiQueryService,
+	auditExportService *service.AuditExportService,
 
 	postService *service.PostService,
 	categoryService *service.CategoryService,
@@ -195,6 +204,15 @@ func NewRestServer(
 	adminV1.RegisterPermissionAuditLogServiceHTTPServer(srv, permissionAuditLogService)
 	adminV1.RegisterPolicyEvaluationLogServiceHTTPServer(srv, policyEvaluationLogService)
 
+	// 审计日志/用量流水服务端导出：手动注册（二进制文件响应 + Content-Disposition，
+	// proto 生成路由不支持）。鉴权在 handler 内显式做（验 Bearer + 重建操作者）。
+	srv.Route("/").GET("admin/v1/audit-logs:export", func(ctx http.Context) error {
+		return auditExportService.ServeExport(ctx.Response(), ctx.Request())
+	})
+	srv.Route("/").GET("admin/v1/ai/usage-logs:export", func(ctx http.Context) error {
+		return auditExportService.ServeAiUsageExport(ctx.Response(), ctx.Request())
+	})
+
 	adminV1.RegisterInternalMessageServiceHTTPServer(srv, internalMessageService)
 	adminV1.RegisterInternalMessageCategoryServiceHTTPServer(srv, internalMessageCategoryService)
 	adminV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
@@ -216,6 +234,14 @@ func NewRestServer(
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
 	adminV1.RegisterStatsServiceHTTPServer(srv, statsService)
+	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)
+	adminV1.RegisterAiContentServiceHTTPServer(srv, aiContentService)
+	adminV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)
+	adminV1.RegisterAiConversationServiceHTTPServer(srv, aiConversationService)
+	adminV1.RegisterAiMessageServiceHTTPServer(srv, aiMessageService)
+	adminV1.RegisterAiKnowledgeBaseServiceHTTPServer(srv, aiKnowledgeService)
+	adminV1.RegisterAiUsageLogServiceHTTPServer(srv, aiUsageLogService)
+	adminV1.RegisterAiQueryServiceHTTPServer(srv, aiQueryService)
 	adminV1.RegisterPageServiceHTTPServer(srv, pageService)
 
 	adminV1.RegisterSiteSettingServiceHTTPServer(srv, siteSettingService)

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "ai/service/v1/ai_content.proto";
+
+// AI 内容生成服务（表单助手）
+service AiContentService {
+  // 生成内容
+  rpc GenerateContent (ai.service.v1.GenerateContentRequest) returns (ai.service.v1.GenerateContentResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/content/generate"
+      body: "*"
+    };
+  }
+
+  // 语义搜索（菜单等可导航条目）
+  rpc SemanticSearch (ai.service.v1.SemanticSearchRequest) returns (ai.service.v1.SemanticSearchResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/content/search"
+      body: "*"
+    };
+  }
+
+  // 重建搜索索引
+  rpc RebuildSearchIndex (google.protobuf.Empty) returns (ai.service.v1.RebuildSearchIndexResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/content/rebuild-index"
+    };
+  }
+
+  // AI 安全与异常洞察（平台用户专属）
+  rpc GetSafetyInsights (ai.service.v1.SafetyInsightsRequest) returns (ai.service.v1.SafetyInsightsResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/insights"
+      body: "*"
+    };
+  }
+}

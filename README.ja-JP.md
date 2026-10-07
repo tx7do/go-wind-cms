@@ -65,10 +65,10 @@ GoWind HCH（風行）は、すぐに使える企業向けの Golang フルス�
 
 | 技術 | 説明 |
 |:---|:---|
-| [Vue 3](https://vuejs.org/) | プログレッシブフロントエンドフレームワーク |
+| [React 19](https://react.dev/) | プログレッシブフロントエンドフレームワーク |
 | [TypeScript](https://www.typescriptlang.org/) | 型安全開発 |
-| [Ant Design Vue](https://antdv.com/) | エンタープライズ UI コンポーネントライブラリ |
-| [Vben Admin](https://doc.vben.pro/) | 管理画面フレームワーク |
+| [Ant Design](https://ant.design/) | エンタープライズ UI コンポーネントライブラリ |
+| [ProComponents](https://procomponents.ant.design/) | エンタープライズ管理画面コンポーネント |
 
 ### アプリケーションフロントエンド
 
@@ -135,7 +135,7 @@ go-wind-cms/
 │   ├── pkg/                        # 共通パッケージ (認可/暗号化/イベントバス/JWT/ミドルウェア/OSS...)
 │   └── scripts/                    # デプロイスクリプト (Docker/PM2/環境設定)
 ├── frontend/
-│   ├── admin/                      # 管理画面フロントエンド (Vue3 + Ant Design Vue + Vben Admin)
+│   ├── admin/                      # 管理画面フロントエンド (React 19 + Ant Design 6 + ProComponents)
 │   └── app/                        # アプリケーションフロントエンド
 │       ├── react/                  # React アプリ (Next.js)
 │       ├── vue/                    # Vue アプリ (Nuxt.js)
@@ -178,7 +178,7 @@ gow run admin
 
 ```bash
 # 管理画面
-cd frontend/admin-react
+cd frontend/admin
 pnpm install
 pnpm dev
 

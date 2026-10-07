@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "ai/service/v1/ai_query.proto";
+
+// 智能问数服务（NL → 只读 SQL → 结构化结果）
+// 平台管理员专属：第一版查的是全平台数据，且 SQL 会触达原生库表。
+service AiQueryService {
+  // 智能问数
+  rpc Ask (ai.service.v1.AskAiQueryRequest) returns (ai.service.v1.AskAiQueryResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/query/ask"
+      body: "*"
+    };
+  }
+}

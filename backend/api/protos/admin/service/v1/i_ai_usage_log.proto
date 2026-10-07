@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ai/service/v1/ai_usage_log.proto";
+
+// AI 用量流水服务（配额记账事实源）
+service AiUsageLogService {
+  // 分页查询用量流水
+  rpc List (pagination.PagingRequest) returns (ai.service.v1.ListAiUsageLogResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/usage-logs"
+    };
+  }
+
+  // 当月用量汇总（tokens/调用量/配额上限）
+  rpc GetUsageSummary (google.protobuf.Empty) returns (ai.service.v1.UsageSummaryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/usage-summary"
+    };
+  }
+}

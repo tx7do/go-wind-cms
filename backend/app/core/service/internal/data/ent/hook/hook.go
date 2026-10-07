@@ -8,6 +8,90 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent"
 )
 
+// The AiChunkFunc type is an adapter to allow the use of ordinary
+// function as AiChunk mutator.
+type AiChunkFunc func(context.Context, *ent.AiChunkMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiChunkFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiChunkMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiChunkMutation", m)
+}
+
+// The AiConversationFunc type is an adapter to allow the use of ordinary
+// function as AiConversation mutator.
+type AiConversationFunc func(context.Context, *ent.AiConversationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiConversationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiConversationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiConversationMutation", m)
+}
+
+// The AiDocFunc type is an adapter to allow the use of ordinary
+// function as AiDoc mutator.
+type AiDocFunc func(context.Context, *ent.AiDocMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiDocFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiDocMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiDocMutation", m)
+}
+
+// The AiKnowledgeBaseFunc type is an adapter to allow the use of ordinary
+// function as AiKnowledgeBase mutator.
+type AiKnowledgeBaseFunc func(context.Context, *ent.AiKnowledgeBaseMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiKnowledgeBaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiKnowledgeBaseMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiKnowledgeBaseMutation", m)
+}
+
+// The AiMessageFunc type is an adapter to allow the use of ordinary
+// function as AiMessage mutator.
+type AiMessageFunc func(context.Context, *ent.AiMessageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiMessageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiMessageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiMessageMutation", m)
+}
+
+// The AiProviderFunc type is an adapter to allow the use of ordinary
+// function as AiProvider mutator.
+type AiProviderFunc func(context.Context, *ent.AiProviderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiProviderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiProviderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiProviderMutation", m)
+}
+
+// The AiUsageLogFunc type is an adapter to allow the use of ordinary
+// function as AiUsageLog mutator.
+type AiUsageLogFunc func(context.Context, *ent.AiUsageLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiUsageLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiUsageLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiUsageLogMutation", m)
+}
+
 // The ApiFunc type is an adapter to allow the use of ordinary
 // function as Api mutator.
 type ApiFunc func(context.Context, *ent.APIMutation) (ent.Value, error)

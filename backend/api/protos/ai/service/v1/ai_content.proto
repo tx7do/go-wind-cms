@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package ai.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+
+// AI 内容生成服务：按场景预设提示词，生成表单/文案内容。
+// 复用对话域的 provider 解析与用量记账链路。
+service AiContentService {
+  // 生成内容
+  rpc GenerateContent (GenerateContentRequest) returns (GenerateContentResponse) {}
+
+  // 语义搜索（菜单等可导航条目）
+  rpc SemanticSearch (SemanticSearchRequest) returns (SemanticSearchResponse) {}
+
+  // 重建搜索索引（向量化全部菜单条目）
+  rpc RebuildSearchIndex (google.protobuf.Empty) returns (RebuildSearchIndexResponse) {}
+
+  // AI 安全与异常洞察：审计明细行为模式挖掘（平台用户专属——数据会外发到模型端点）
+  rpc GetSafetyInsights (SafetyInsightsRequest) returns (SafetyInsightsResponse) {}
+}
+
+// AI 安全洞察 - 请求
+message SafetyInsightsRequest {
+  // 界面语言（BCP-47），决定 LLM 总评的输出语言；
+  // 告警只回传结构化事实，文案由前端 i18n 模板渲染
+  optional string lang = 1;
+}
+
+// 异常告警条目：规则预筛的确定性结构化事实，不含人类文案——
+// 文案由前端按 type 选 i18n 模板并以 facts 插值渲染
+message AiInsightAlert {
+  string severity = 1; // HIGH / MEDIUM / LOW
+  string type = 2;     // BRUTE_FORCE / NIGHT_OPS / FAILED_OPS / SENSITIVE_OPS
+  map<string, string> facts = 3;
+  repeated AiSensitiveOpItem items = 4; // SENSITIVE_OPS 专用明细行
+}
+
+// 敏感操作明细项
+message AiSensitiveOpItem {
+  string username = 1;
+  string action = 2;
+  string resource_type = 3 [json_name = "resourceType"];
+  string created_at = 4 [json_name = "createdAt"];
+}
+
+// AI 安全洞察 - 回应
+message SafetyInsightsResponse {
+  repeated AiInsightAlert alerts = 1;
+  string summary = 2; // LLM 总体评估（无告警为空；生成失败不阻断告警）
+}
+
+// 语义搜索 - 请求
+message SemanticSearchRequest {
+  string query = 1;                // 搜索文本
+  optional uint32 limit = 2;       // 返回条数（默认 8）
+}
+
+// 语义搜索 - 回应
+message SemanticSearchResponse {
+  repeated SemanticSearchItem items = 1;
+}
+
+// 搜索结果项
+message SemanticSearchItem {
+  string title = 1;    // 条目标题（菜单名等）
+  string route = 2;    // 前端路由路径
+  string item_type = 3 [json_name = "itemType"]; // 类型（menu）
+  float score = 4;     // 余弦相似度（0~1）
+}
+
+// 重建搜索索引 - 请求
+message RebuildSearchIndexRequest {}
+
+// 重建搜索索引 - 回应
+message RebuildSearchIndexResponse {
+  uint32 indexed_count = 1 [json_name = "indexedCount"]; // 索引条目数
+}
+
+// 场景标识（服务端按此选择预设提示词模板）
+enum ContentScene {
+  CONTENT_SCENE_UNSPECIFIED = 0;
+
+  // 通用描述（角色/菜单/字典项/文件等实体描述）
+  DESCRIPTION = 1;
+  // 公告/通知正文
+  ANNOUNCEMENT = 2;
+  // 回复/反馈文案
+  REPLY = 3;
+  // 自由生成（用户自带完整提示词）
+  GENERAL = 4;
+  // 文章标题
+  POST_TITLE = 5;
+  // 文章摘要
+  POST_SUMMARY = 6;
+  // 文章正文
+  POST_BODY = 7;
+}
+
+// 内容生成 - 请求
+message GenerateContentRequest {
+  // 场景标识
+  ContentScene scene = 1;
+
+  // 主题/关键词（用户输入的生成指令）
+  string topic = 2;
+
+  // 补充上下文（如已有内容的续写、字段标签等，可选）
+  optional string context = 3 [json_name = "context"];
+
+  // 输出语言（BCP-47，默认 zh-CN）
+  optional string lang = 4 [json_name = "lang"];
+
+  // 期望长度（字符数提示，默认 200）
+  optional uint32 max_length = 5 [json_name = "maxLength"];
+}
+
+// 内容生成 - 回应
+message GenerateContentResponse {
+  string content = 1;  // 生成的文本
+  uint32 total_tokens = 2 [json_name = "totalTokens"]; // 本次消耗 tokens
+}

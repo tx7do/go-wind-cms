@@ -65,10 +65,10 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 
 | Technology | Description |
 |:---|:---|
-| [Vue 3](https://vuejs.org/) | Progressive frontend framework |
+| [React 19](https://react.dev/) | Progressive frontend framework |
 | [TypeScript](https://www.typescriptlang.org/) | Type-safe development |
-| [Ant Design Vue](https://antdv.com/) | Enterprise UI component library |
-| [Vben Admin](https://doc.vben.pro/) | Admin management framework |
+| [Ant Design](https://ant.design/) | Enterprise UI component library |
+| [ProComponents](https://procomponents.ant.design/) | Enterprise middle/back-office components |
 
 ### App Frontend
 
@@ -135,7 +135,7 @@ go-wind-cms/
 │   ├── pkg/                        # Shared packages (auth/crypto/eventbus/JWT/middleware/OSS...)
 │   └── scripts/                    # Deploy scripts (Docker/PM2/env setup)
 ├── frontend/
-│   ├── admin/                      # Admin frontend (Vue3 + Ant Design Vue + Vben Admin)
+│   ├── admin/                      # Admin frontend (React 19 + Ant Design 6 + ProComponents)
 │   └── app/                        # App frontends
 │       ├── react/                  # React app (Next.js)
 │       ├── vue/                    # Vue app (Nuxt.js)
@@ -178,7 +178,7 @@ gow run admin
 
 ```bash
 # Admin panel
-cd frontend/admin-react
+cd frontend/admin
 pnpm install
 pnpm dev
 

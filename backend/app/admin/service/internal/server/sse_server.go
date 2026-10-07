@@ -13,6 +13,7 @@ import (
 func NewSseServer(
 	ctx *bootstrap.Context,
 	internalMessageService *service.InternalMessageService,
+	aiChatService *service.AiChatService,
 ) *sseServer.Server {
 	cfg := ctx.GetConfig()
 
@@ -26,6 +27,7 @@ func NewSseServer(
 	)
 
 	internalMessageService.RegisterInternalMessagePublisher(srv)
+	aiChatService.RegisterAiChatPublisher(srv)
 
 	//srv.CreateStream("test")
 

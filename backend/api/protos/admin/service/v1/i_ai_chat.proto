@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "ai/service/v1/ai_chat.proto";
+
+// AI 对话服务（表单助手）
+//
+// 流式语义：本 RPC 是普通 POST（body 为扁平请求体，不包 data）。
+// BFF 消费 core 的 ChatStreamFrame 流：chunk/tool 帧经 SSE 网关
+// （`ai_chat_chunk` / `ai_chat_tool` 事件）推给发起用户，done 帧作为
+// 同步响应返回。前端先累积 chunk 做流式渲染，POST 响应到达后以响应
+// 中的完整消息为准。
+service AiChatService {
+  // 发起一轮对话
+  rpc Chat (ai.service.v1.ChatRequest) returns (ai.service.v1.ChatResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/chat/completions"
+      body: "*"
+    };
+  }
+}

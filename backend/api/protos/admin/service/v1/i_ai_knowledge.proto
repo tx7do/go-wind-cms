@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ai/service/v1/ai_knowledge.proto";
+
+// AI 知识库管理服务（RAG）
+service AiKnowledgeBaseService {
+  // 分页查询知识库列表
+  rpc List (pagination.PagingRequest) returns (ai.service.v1.ListAiKnowledgeBaseResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/knowledge-bases"
+    };
+  }
+
+  // 查询知识库详情
+  rpc Get (ai.service.v1.GetAiKnowledgeBaseRequest) returns (ai.service.v1.AiKnowledgeBase) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/knowledge-bases/{id}"
+    };
+  }
+
+  // 创建知识库
+  rpc Create (ai.service.v1.CreateAiKnowledgeBaseRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/knowledge-bases"
+      body: "*"
+    };
+  }
+
+  // 更新知识库
+  rpc Update (ai.service.v1.UpdateAiKnowledgeBaseRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/ai/knowledge-bases/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除知识库
+  rpc Delete (ai.service.v1.DeleteAiKnowledgeBaseRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/ai/knowledge-bases/{id}"
+    };
+  }
+
+  // 上传文档（纯文本：切片 → 向量化 → 落库）
+  rpc UploadDoc (ai.service.v1.UploadAiDocRequest) returns (ai.service.v1.UploadAiDocResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/knowledge-bases/{base_id}/docs"
+      body: "*"
+    };
+  }
+
+  // 上传文档文件（txt/md/docx/pdf：抽取文本后入库）
+  rpc UploadDocFile (ai.service.v1.UploadAiDocFileRequest) returns (ai.service.v1.UploadAiDocResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/knowledge-bases/{base_id}/docs/file"
+      body: "*"
+    };
+  }
+
+  // 查询知识库下的文档
+  rpc ListDocs (ai.service.v1.ListAiDocsRequest) returns (ai.service.v1.ListAiDocsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/knowledge-bases/{base_id}/docs"
+    };
+  }
+
+  // 删除文档
+  rpc DeleteDoc (ai.service.v1.DeleteAiDocRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/ai/knowledge-bases/{base_id}/docs/{id}"
+    };
+  }
+
+  // 检索测试
+  rpc Search (ai.service.v1.SearchAiKnowledgeRequest) returns (ai.service.v1.SearchAiKnowledgeResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/knowledge-bases/{base_id}/search"
+      body: "*"
+    };
+  }
+}

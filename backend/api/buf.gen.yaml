@@ -65,6 +65,9 @@ managed:
     - file_option: go_package
       path: media/service/v1
       value: go-wind-cms/api/gen/go/media/service/v1;mediapb
+    - file_option: go_package
+      path: ai/service/v1
+      value: go-wind-cms/api/gen/go/ai/service/v1;aipb
 
 plugins:
   # generate go code

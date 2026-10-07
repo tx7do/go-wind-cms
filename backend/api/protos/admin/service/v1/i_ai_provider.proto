@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ai/service/v1/ai_provider.proto";
+
+// AI 模型提供商管理服务
+service AiProviderService {
+  // 分页查询 AI 提供商列表
+  rpc List (pagination.PagingRequest) returns (ai.service.v1.ListAiProviderResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/providers"
+    };
+  }
+
+  // 查询 AI 提供商详情
+  rpc Get (ai.service.v1.GetAiProviderRequest) returns (ai.service.v1.AiProvider) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/providers/{id}"
+    };
+  }
+
+  // 创建 AI 提供商
+  rpc Create (ai.service.v1.CreateAiProviderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/providers"
+      body: "*"
+    };
+  }
+
+  // 更新 AI 提供商
+  rpc Update (ai.service.v1.UpdateAiProviderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/ai/providers/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除 AI 提供商
+  rpc Delete (ai.service.v1.DeleteAiProviderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/ai/providers/{id}"
+    };
+  }
+}

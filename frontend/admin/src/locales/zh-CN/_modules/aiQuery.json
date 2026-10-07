@@ -1,0 +1,19 @@
+{
+  "title": "智能问数",
+  "ask": "提问",
+  "inputPlaceholder": "用自然语言提问，例如：最近 24 小时登录失败最多的账号是哪个？",
+  "emptyDesc": "用自然语言查询数据，AI 生成只读 SQL 并返回结果（租户用户仅可查本租户数据）",
+  "thinking": "正在生成 SQL 并查询…",
+  "noRows": "查询没有返回数据。",
+  "answerTag": "结论",
+  "failed": "查询失败",
+  "generatedSql": "生成的 SQL（只读）",
+  "samples": {
+    "sample1": "系统里有多少个用户？",
+    "sample2": "最近 24 小时登录失败最多的账号是哪个？",
+    "sample3": "统计每个角色的用户数量"
+  },
+  "viewChart": "图表",
+  "viewTable": "表格",
+  "rowCount": "{count} 行"
+}

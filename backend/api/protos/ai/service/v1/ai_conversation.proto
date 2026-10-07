@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package ai.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// AI 对话会话服务
+service AiConversationService {
+  // 分页查询会话列表
+  rpc List (pagination.PagingRequest) returns (ListAiConversationResponse) {}
+
+  // 统计会话数量
+  rpc Count (pagination.PagingRequest) returns (CountAiConversationResponse) {}
+
+  // 查询会话详情
+  rpc Get (GetAiConversationRequest) returns (AiConversation) {}
+
+  // 更新会话（改标题）
+  rpc Update (UpdateAiConversationRequest) returns (google.protobuf.Empty) {}
+
+  // 删除会话
+  rpc Delete (DeleteAiConversationRequest) returns (google.protobuf.Empty) {}
+}
+
+// AI 对话会话
+message AiConversation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "会话ID"
+    }
+  ]; // 会话ID
+
+  optional string title = 2 [
+    json_name = "title",
+    (gnostic.openapi.v3.property) = {description: "会话标题（默认取首条消息摘要）"}
+  ]; // 会话标题
+
+  optional uint32 provider_id = 3 [
+    json_name = "providerId",
+    (gnostic.openapi.v3.property) = {description: "会话使用的提供商ID（0 表示未指定）"}
+  ]; // 提供商ID
+
+  optional uint32 user_id = 4 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "归属用户ID"}
+  ]; // 归属用户ID
+
+  optional uint32 tenant_id = 5 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID"}
+  ]; // 租户ID
+
+  optional google.protobuf.Timestamp last_message_at = 6 [
+    json_name = "lastMessageAt",
+    (gnostic.openapi.v3.property) = {description: "最近一条消息时间"}
+  ]; // 最近一条消息时间
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 查询会话列表 - 回应
+message ListAiConversationResponse {
+  repeated AiConversation items = 1;
+  uint64 total = 2;
+}
+
+// 查询会话详情 - 请求
+message GetAiConversationRequest {
+  oneof query_by {
+    uint32 id = 1;
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask"
+  ]; // 视图字段过滤器
+}
+
+// 更新会话 - 请求
+message UpdateAiConversationRequest {
+  uint32 id = 1;
+
+  AiConversation data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    json_name = "allowMissing"
+  ]; // 资源不存在则新增
+}
+
+// 删除会话 - 请求
+message DeleteAiConversationRequest {
+  oneof query_by {
+    uint32 id = 1;
+  }
+}
+
+message CountAiConversationResponse {
+  uint64 count = 1; // 会话数量
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ai/service/v1/ai_message.proto";
+
+// AI 对话消息服务
+service AiMessageService {
+  // 分页查询消息列表（按 conversationId 过滤；ID 类字段精确匹配，不走模糊搜索）
+  rpc List (pagination.PagingRequest) returns (ai.service.v1.ListAiMessageResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/messages"
+    };
+  }
+
+  // 删除消息
+  rpc Delete (ai.service.v1.DeleteAiMessageRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/ai/messages/{id}"
+    };
+  }
+}

@@ -1,0 +1,26 @@
+diff --git a/es/layouts/DrawerForm/index.js b/es/layouts/DrawerForm/index.js
+index d245f57ab5f243a960c8a2d450634bc4fd37c251..8cf98de7304dd3655d9972c7f2e216a411f5e34f 100644
+--- a/es/layouts/DrawerForm/index.js
++++ b/es/layouts/DrawerForm/index.js
+@@ -234,7 +234,7 @@ function DrawerForm(_ref) {
+   return wrapSSR( /*#__PURE__*/_jsxs(_Fragment, {
+     children: [/*#__PURE__*/_jsxs(Drawer, _objectSpread(_objectSpread(_objectSpread({
+       title: title,
+-      width: drawerWidth
++      size: drawerWidth
+     }, drawerProps), drawerOpenProps), {}, {
+       afterOpenChange: function afterOpenChange(e) {
+         var _drawerProps$afterOpe;
+diff --git a/lib/layouts/DrawerForm/index.js b/lib/layouts/DrawerForm/index.js
+index da34213c91bb584c04578e030afd698685b26b6b..3a2954cc828a54abc1c71326a33c2c7788157d1d 100644
+--- a/lib/layouts/DrawerForm/index.js
++++ b/lib/layouts/DrawerForm/index.js
+@@ -240,7 +240,7 @@ function DrawerForm(_ref) {
+   return wrapSSR( /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
+     children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_antd.Drawer, (0, _objectSpread2.default)((0, _objectSpread2.default)((0, _objectSpread2.default)({
+       title: title,
+-      width: drawerWidth
++      size: drawerWidth
+     }, drawerProps), drawerOpenProps), {}, {
+       afterOpenChange: function afterOpenChange(e) {
+         var _drawerProps$afterOpe;

@@ -109,6 +109,15 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	commentServiceClient := data.NewCommentServiceClient(ctx, discovery)
 	interactionAdminServiceClient := data.NewInteractionAdminServiceClient(ctx, discovery)
 	statsServiceClient := data.NewStatsServiceClient(ctx, discovery)
+	aiProviderServiceClient := data.NewAiProviderServiceClient(ctx, discovery)
+	aiContentServiceClient := data.NewAiContentServiceClient(ctx, discovery)
+	aiChatServiceClient := data.NewAiChatServiceClient(ctx, discovery)
+	aiConversationServiceClient := data.NewAiConversationServiceClient(ctx, discovery)
+	aiMessageServiceClient := data.NewAiMessageServiceClient(ctx, discovery)
+	aiKnowledgeBaseServiceClient := data.NewAiKnowledgeBaseServiceClient(ctx, discovery)
+	aiUsageLogServiceClient := data.NewAiUsageLogServiceClient(ctx, discovery)
+	aiQueryServiceClient := data.NewAiQueryServiceClient(ctx, discovery)
+	auditExportService := service.NewAuditExportService(ctx, loginAuditLogServiceClient, apiAuditLogServiceClient, operationAuditLogServiceClient, dataAccessAuditLogServiceClient, permissionAuditLogServiceClient, policyEvaluationLogServiceClient, aiUsageLogServiceClient, accessTokenChecker)
 
 	// 站点配置
 	siteServiceClient := data.NewSiteServiceClient(ctx, discovery)
@@ -167,6 +176,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	commentService := service.NewCommentService(ctx, commentServiceClient)
 	interactionAdminService := service.NewInteractionAdminService(ctx, interactionAdminServiceClient)
 	statsService := service.NewStatsService(ctx, statsServiceClient)
+	aiProviderService := service.NewAiProviderService(ctx, aiProviderServiceClient)
+	aiContentService := service.NewAiContentService(ctx, aiContentServiceClient)
+	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient, authenticationServiceClient)
+	aiConversationService := service.NewAiConversationService(ctx, aiConversationServiceClient)
+	aiMessageService := service.NewAiMessageService(ctx, aiMessageServiceClient)
+	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeBaseServiceClient)
+	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogServiceClient)
+	aiQueryService := service.NewAiQueryService(ctx, aiQueryServiceClient)
 	postService := service.NewPostService(ctx, postServiceClient)
 	categoryService := service.NewCategoryService(ctx, categoryServiceClient)
 	tagService := service.NewTagService(ctx, tagServiceClient)
@@ -197,6 +214,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		internalMessageService, internalMessageCategoryService, internalMessageRecipientService,
 		apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService,
 		commentService, interactionAdminService, statsService,
+		aiProviderService, aiContentService,
+		aiChatService, aiConversationService, aiMessageService,
+		aiKnowledgeService,
+		aiUsageLogService,
+		aiQueryService,
+		auditExportService,
 		postService, categoryService, tagService, contentModelService, pageService,
 		siteService, siteSettingService, navigationService, navigationItemService,
 		mediaAssetService,
@@ -210,7 +233,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	sseServer := server.NewSseServer(ctx, internalMessageService)
+	sseServer := server.NewSseServer(ctx, internalMessageService, aiChatService)
 
 	return newApp(ctx, httpServer, grpcServer, sseServer), rollback, nil
 }

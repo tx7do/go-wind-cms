@@ -1,0 +1,50 @@
+{
+  "title": "概览",
+  "analytics": {
+    "userCountTotal": "用户总量",
+    "postCountTotal": "帖子总量",
+    "commentCountTotal": "评论总量",
+    "interactionCountTotal": "互动总量",
+    "weeklyNew": "近 7 天新增",
+    "contentTrend": "内容增长趋势",
+    "newUsers": "新增用户",
+    "newPosts": "新增帖子",
+    "newComments": "新增评论",
+    "interactionTop": "互动 TOP 榜",
+    "interactionDistribution": "互动类型分布",
+    "totalLikes": "点赞",
+    "totalWatches": "收藏",
+    "loginActivity": "登录活跃",
+    "loginSuccess": "登录成功",
+    "loginFailed": "登录失败",
+    "titleFallback": "(无标题)"
+  },
+  "aiInsights": {
+    "title": "安全与异常洞察",
+    "subtitle": "近 24 小时审计明细 · 行为模式挖掘",
+    "generate": "开始扫描",
+    "regenerate": "重新扫描",
+    "empty": "点击「开始扫描」，AI 将挖掘近 24 小时审计明细中的异常模式。",
+    "noAnomaly": "最近 24 小时未检测到异常行为模式。",
+    "failed": "扫描失败",
+    "assessment": "AI 总体评估",
+    "alerts": {
+      "bruteForce": {
+        "title": "疑似口令尝试：账号 {{username}} 24h 内登录失败 {{count}} 次",
+        "detail": "最近一次失败来源 IP：{{ip}}。建议确认是否本人操作，必要时重置口令并临时封禁来源。"
+      },
+      "nightOps": {
+        "title": "非常规时段操作：账号 {{username}} 在本地 0-6 点执行了 {{count}} 次操作",
+        "detail": "深夜时段的操作偏离常规作息，若非计划内变更/运维窗口，建议与该账号持有人核实。"
+      },
+      "failedOps": {
+        "title": "操作失败集中：账号 {{username}} 24h 内失败操作 {{count}} 次（共 {{total}} 次）",
+        "detail": "连续失败可能意味着权限不足或越权尝试，建议在操作日志中核对失败资源与原因。"
+      },
+      "sensitiveOps": {
+        "title": "存在 {{count}} 条敏感操作（删除/导出/授权变更）"
+      }
+    },
+    "generatedAt": "生成于 {{time}}"
+  }
+}

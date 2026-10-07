@@ -1,0 +1,662 @@
+/* AI 对话页样式：颜色一律走 antd v6 主题变量（--ant-color-*），
+   主色可配置、暗色自动跟随；不写死 tailwind 调色板（bg-blue-500 / bg-gray-100
+   在换主题色或切暗色时会脱节）。所有选择器收在 .ai-chat-page 作用域内，
+   因为页面级 CSS 是全局注入的，短类名（.msg/.composer）会撞别的页面。 */
+
+.ai-chat-page {
+  --aichat-card-radius: 12px;
+  --aichat-control-radius: 8px;
+  --aichat-col: 56rem;
+}
+
+.ai-chat-page .chat-card {
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: var(--aichat-card-radius);
+  box-shadow: var(--ant-box-shadow-tertiary);
+}
+
+/* ── 面板头部 ─────────────────────────────────────────────────────── */
+.ai-chat-page .panel-head {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ant-color-text-secondary);
+  border-bottom: 1px solid var(--ant-color-border-secondary);
+}
+
+.ai-chat-page .panel-head__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ant-color-text);
+  white-space: nowrap;
+}
+
+.ai-chat-page .panel-head__badge {
+  flex-shrink: 0;
+  padding: 0 6px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 17px;
+  color: var(--ant-color-text-secondary);
+  background: var(--ant-color-fill-tertiary);
+  border-radius: 999px;
+}
+
+.ai-chat-page .panel-head__tag {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 4px;
+  align-items: center;
+  max-width: 40%;
+  padding: 1px 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ant-color-primary);
+  white-space: nowrap;
+  background: var(--ant-color-primary-bg);
+  border: 1px solid var(--ant-color-primary-border);
+  border-radius: 999px;
+}
+
+/* ── 会话列表 ─────────────────────────────────────────────────────── */
+.ai-chat-page .new-conv-btn {
+  width: 100%;
+}
+
+.ai-chat-page .conv-list {
+  flex: 1;
+  min-height: 0;
+  padding: 6px 8px 10px;
+  overflow-y: auto;
+}
+
+.ai-chat-page .conv-list__empty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 8px;
+  font-size: 12px;
+  color: var(--ant-color-text-placeholder);
+}
+
+.ai-chat-page .conv-item {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 7px 10px;
+  cursor: pointer;
+  border-radius: var(--aichat-control-radius);
+  transition: background-color 0.15s ease;
+}
+
+.ai-chat-page .conv-item + .conv-item {
+  margin-top: 2px;
+}
+
+.ai-chat-page .conv-item:hover {
+  background: var(--ant-color-fill-tertiary);
+}
+
+/* 选中态按 docs/design-language.md §4 定稿：主色实底 + 前景色文字 + 8px 圆角，
+   不得用左侧竖条 / 淡色底 / 字重加粗区分。旧写法实测暗色下标题仅 3.29:1。
+   antd 6 没有 primary-foreground 这个变量，实测白纸黑字存在的是 text-light-solid=#fff。 */
+.ai-chat-page .conv-item.is-active {
+  color: var(--ant-color-text-light-solid);
+  background: var(--ant-color-primary);
+}
+
+.ai-chat-page .conv-item.is-active .conv-item__title,
+.ai-chat-page .conv-item.is-active .conv-item__time,
+.ai-chat-page .conv-item.is-active .row-op {
+  color: inherit;
+}
+
+.ai-chat-page .conv-item__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ai-chat-page .conv-item__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  color: var(--ant-color-text);
+  white-space: nowrap;
+}
+
+.ai-chat-page .conv-item__time {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ant-color-text-placeholder);
+}
+
+/* 行内操作按钮：hover/focus-within 才露出，避免列表常驻两列图标抢视线 */
+.ai-chat-page .conv-item__ops {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.ai-chat-page .conv-item:hover .conv-item__ops,
+.ai-chat-page .conv-item:focus-within .conv-item__ops {
+  opacity: 1;
+}
+
+.ai-chat-page .row-op {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  color: var(--ant-color-text-secondary);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.ai-chat-page .row-op:hover {
+  color: var(--ant-color-primary);
+  background: var(--ant-color-fill-secondary);
+}
+
+.ai-chat-page .row-op--danger:hover {
+  color: var(--ant-color-error);
+  background: var(--ant-color-error-bg);
+}
+
+/* ── 消息区 ───────────────────────────────────────────────────────── */
+.ai-chat-page .msg-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* 正文与输入框同宽，形成一条居中的阅读柱 */
+.ai-chat-page .msg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: var(--aichat-col);
+  min-height: 100%;
+  padding: 20px 24px 12px;
+  margin: 0 auto;
+}
+
+.ai-chat-page .chat-empty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.ai-chat-page .chat-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 8px;
+  color: var(--ant-color-primary);
+  background: var(--ant-color-primary-bg);
+  border-radius: 50%;
+}
+
+.ai-chat-page .chat-empty__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ant-color-text);
+}
+
+.ai-chat-page .chat-empty__desc {
+  max-width: 26rem;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ant-color-text-placeholder);
+}
+
+.ai-chat-page .msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.ai-chat-page .msg--user {
+  flex-direction: row-reverse;
+}
+
+.ai-chat-page .msg--user .msg__main {
+  align-items: flex-end;
+}
+
+.ai-chat-page .msg--user .msg__meta {
+  flex-direction: row-reverse;
+}
+
+.ai-chat-page .msg__avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
+  border-radius: 50%;
+}
+
+.ai-chat-page .msg--ai .msg__avatar {
+  color: var(--ant-color-primary);
+  background: var(--ant-color-primary-bg);
+}
+
+.ai-chat-page .msg--user .msg__avatar {
+  color: var(--ant-color-text-secondary);
+  background: var(--ant-color-fill-secondary);
+}
+
+.ai-chat-page .msg__main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-width: 78%;
+}
+
+.ai-chat-page .msg__meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0 2px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ant-color-text-placeholder);
+}
+
+.ai-chat-page .msg__who {
+  font-weight: 600;
+  color: var(--ant-color-text-secondary);
+}
+
+.ai-chat-page .msg__bubble {
+  padding: 9px 13px;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  border-radius: var(--aichat-card-radius);
+}
+
+.ai-chat-page .msg__bubble--user {
+  color: var(--ant-color-white);
+  white-space: pre-wrap;
+  background: var(--ant-color-primary);
+  border-top-right-radius: 4px;
+}
+
+.ai-chat-page .msg__bubble--ai {
+  min-width: 0;
+  color: var(--ant-color-text);
+  background: var(--ant-color-fill-tertiary);
+  border: 1px solid var(--ant-color-border-secondary);
+  border-top-left-radius: 4px;
+}
+
+.ai-chat-page .msg__foot {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ant-color-text-placeholder);
+}
+
+.ai-chat-page .typing {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  height: 20px;
+}
+
+.ai-chat-page .typing i {
+  width: 6px;
+  height: 6px;
+  background: var(--ant-color-text-disabled);
+  border-radius: 50%;
+  animation: aichat-typing-bounce 1.2s ease-in-out infinite;
+}
+
+.ai-chat-page .typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ai-chat-page .typing i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes aichat-typing-bounce {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+.ai-chat-page .is-spinning {
+  display: inline-flex;
+  animation: aichat-typing-spin 1s linear infinite;
+}
+
+@keyframes aichat-typing-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── 输入区 ───────────────────────────────────────────────────────── */
+.ai-chat-page .composer {
+  flex-shrink: 0;
+  padding: 12px 24px 16px;
+  background: var(--ant-color-bg-container);
+  border-top: 1px solid var(--ant-color-border-secondary);
+}
+
+.ai-chat-page .composer__box {
+  max-width: var(--aichat-col);
+  padding: 6px 10px 8px;
+  margin: 0 auto;
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border);
+  border-radius: var(--aichat-card-radius);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ai-chat-page .composer__box:hover {
+  border-color: var(--ant-color-primary-border-hover, var(--ant-color-primary-border));
+}
+
+.ai-chat-page .composer__box:focus-within {
+  border-color: var(--ant-color-primary);
+  box-shadow: 0 0 0 2px var(--ant-color-primary-bg);
+}
+
+/* pro-components-dark.css 把裸 textarea 的 border/background 写成了 !important，
+   普通覆盖打不过（实测暗色下文本域自己一圈边框，与 composer 外框叠成双线）；
+   这里复制它的 :not() 结构并多加两个类名，用更高优先级 + !important 压回无边框透明态。 */
+.ai-chat-page .composer .composer__box .composer__input.ant-input:not(.ant-input-affix-wrapper textarea) {
+  padding: 4px 2px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ant-color-text) !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ai-chat-page .composer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.ai-chat-page .composer__tool {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+  color: var(--ant-color-text-placeholder);
+}
+
+.ai-chat-page .composer__tool-label {
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+/* 窄屏下可收缩：固定 width 会被 flex 压缩到 placeholder 都放不下 */
+.ai-chat-page .composer__kb {
+  flex: 1 1 180px;
+  min-width: 96px;
+  max-width: 260px;
+}
+
+.ai-chat-page .composer__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.ai-chat-page .composer__hint {
+  font-size: 11px;
+  color: var(--ant-color-text-placeholder);
+}
+
+/* ── Markdown 正文 ────────────────────────────────────────────────── */
+/* 全局 reset（global.css 的 * { margin: 0; padding: 0 }）把段落间距与列表内边距
+   清零，且本端没有 @tailwindcss/typography（prose 类是死类），
+   LLM 输出以列表与标题为主，必须在气泡内逐项还原，否则回复糊成一片纯文本。 */
+.ai-chat-page .markdown-body p {
+  margin: 0 0 0.5em;
+}
+
+.ai-chat-page .markdown-body p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-chat-page .markdown-body h1,
+.ai-chat-page .markdown-body h2,
+.ai-chat-page .markdown-body h3,
+.ai-chat-page .markdown-body h4,
+.ai-chat-page .markdown-body h5,
+.ai-chat-page .markdown-body h6 {
+  margin: 0.8em 0 0.4em;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ant-color-text);
+}
+
+.ai-chat-page .markdown-body h1:first-child,
+.ai-chat-page .markdown-body h2:first-child,
+.ai-chat-page .markdown-body h3:first-child,
+.ai-chat-page .markdown-body h4:first-child {
+  margin-top: 0;
+}
+
+.ai-chat-page .markdown-body h1 {
+  font-size: 1.25em;
+}
+
+.ai-chat-page .markdown-body h2 {
+  font-size: 1.15em;
+}
+
+.ai-chat-page .markdown-body h3 {
+  font-size: 1.05em;
+}
+
+.ai-chat-page .markdown-body h4,
+.ai-chat-page .markdown-body h5,
+.ai-chat-page .markdown-body h6 {
+  font-size: 1em;
+}
+
+.ai-chat-page .markdown-body ul,
+.ai-chat-page .markdown-body ol {
+  padding-left: 1.5em;
+  margin: 0.4em 0;
+}
+
+.ai-chat-page .markdown-body ul:last-child,
+.ai-chat-page .markdown-body ol:last-child {
+  margin-bottom: 0;
+}
+
+.ai-chat-page .markdown-body ul {
+  list-style: disc;
+}
+
+.ai-chat-page .markdown-body ul ul {
+  list-style: circle;
+}
+
+.ai-chat-page .markdown-body ol {
+  list-style: decimal;
+}
+
+.ai-chat-page .markdown-body li {
+  margin: 0.2em 0;
+}
+
+.ai-chat-page .markdown-body li::marker {
+  color: var(--ant-color-text-secondary);
+}
+
+.ai-chat-page .markdown-body li > p {
+  margin: 0;
+}
+
+.ai-chat-page .markdown-body a {
+  color: var(--ant-color-primary);
+  text-decoration: none;
+}
+
+.ai-chat-page .markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.ai-chat-page .markdown-body blockquote {
+  padding: 2px 0 2px 12px;
+  margin: 0.5em 0;
+  color: var(--ant-color-text-secondary);
+  border-left: 3px solid var(--ant-color-border);
+}
+
+.ai-chat-page .markdown-body hr {
+  margin: 0.8em 0;
+  border: none;
+  border-top: 1px solid var(--ant-color-border-secondary);
+}
+
+.ai-chat-page .markdown-body strong {
+  font-weight: 600;
+}
+
+.ai-chat-page .markdown-body img {
+  max-width: 100%;
+  border-radius: var(--aichat-control-radius);
+}
+
+.ai-chat-page .markdown-body code {
+  padding: 1px 5px;
+  font-size: 0.92em;
+  background: var(--ant-color-fill-secondary);
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 4px;
+}
+
+.ai-chat-page .markdown-body pre {
+  max-width: 100%;
+  padding: 12px;
+  margin: 0.5em 0;
+  overflow-x: auto;
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: var(--aichat-control-radius);
+}
+
+.ai-chat-page .markdown-body pre:last-child {
+  margin-bottom: 0;
+}
+
+.ai-chat-page .markdown-body pre code {
+  padding: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  background: transparent;
+  border: none;
+}
+
+.ai-chat-page .markdown-body table {
+  display: block;
+  max-width: 100%;
+  margin: 0.5em 0;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.ai-chat-page .markdown-body th,
+.ai-chat-page .markdown-body td {
+  padding: 5px 10px;
+  border: 1px solid var(--ant-color-border-secondary);
+}
+
+.ai-chat-page .markdown-body th {
+  font-weight: 600;
+  background: var(--ant-color-fill-secondary);
+}
+
+/* 工具调用可见化：ai_chat_tool 帧的展示条（模型调工具期间的中间过程，流式结束即清） */
+.ai-chat-page .tool-call {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: min(680px, 100%);
+  margin: 6px 0 6px 44px;
+  padding: 6px 10px;
+  font-family: var(--ant-font-family-code, ui-monospace, monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  border: 1px dashed var(--ant-color-border-secondary);
+  border-radius: var(--ant-border-radius-lg);
+  background: var(--ant-color-fill-quaternary);
+}
+
+.ai-chat-page .tool-call__head {
+  color: var(--ant-color-text-secondary);
+}
+
+.ai-chat-page .tool-call__result {
+  color: var(--ant-color-text);
+  word-break: break-all;
+}

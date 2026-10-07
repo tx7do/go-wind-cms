@@ -1,0 +1,208 @@
+syntax = "proto3";
+
+package ai.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// AI 知识库服务（RAG：文档切片 → embedding → 向量检索）
+service AiKnowledgeBaseService {
+  // 分页查询知识库列表
+  rpc List (pagination.PagingRequest) returns (ListAiKnowledgeBaseResponse) {}
+
+  // 查询知识库详情
+  rpc Get (GetAiKnowledgeBaseRequest) returns (AiKnowledgeBase) {}
+
+  // 创建知识库
+  rpc Create (CreateAiKnowledgeBaseRequest) returns (google.protobuf.Empty) {}
+
+  // 更新知识库
+  rpc Update (UpdateAiKnowledgeBaseRequest) returns (google.protobuf.Empty) {}
+
+  // 删除知识库（级联删除文档与切片）
+  rpc Delete (DeleteAiKnowledgeBaseRequest) returns (google.protobuf.Empty) {}
+
+  // 上传文档（纯文本入库：切片 → 向量化 → 落库）
+  rpc UploadDoc (UploadAiDocRequest) returns (UploadAiDocResponse) {}
+
+  // 上传文档文件（txt/md/docx/pdf：抽取文本后走同一入库链）
+  rpc UploadDocFile (UploadAiDocFileRequest) returns (UploadAiDocResponse) {}
+
+  // 分页查询知识库下的文档
+  rpc ListDocs (ListAiDocsRequest) returns (ListAiDocsResponse) {}
+
+  // 删除文档（级联删除切片）
+  rpc DeleteDoc (DeleteAiDocRequest) returns (google.protobuf.Empty) {}
+
+  // 检索测试：返回与 query 语义最相近的切片
+  rpc Search (SearchAiKnowledgeRequest) returns (SearchAiKnowledgeResponse) {}
+}
+
+// AI 知识库
+message AiKnowledgeBase {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "知识库ID"}
+  ]; // 知识库ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "知识库名称"}
+  ]; // 知识库名称
+
+  optional string description = 3 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "描述"}
+  ]; // 描述
+
+  optional uint32 provider_id = 4 [
+    json_name = "providerId",
+    (gnostic.openapi.v3.property) = {description: "向量化使用的模型提供商ID（其端点须支持 OpenAI 兼容 /v1/embeddings）"}
+  ]; // 向量化提供商ID
+
+  optional string embedding_model = 5 [
+    json_name = "embeddingModel",
+    (gnostic.openapi.v3.property) = {description: "embedding 模型名，如 text-embedding-3-small"}
+  ]; // embedding 模型名
+
+  optional uint32 user_id = 6 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "创建人用户ID"}
+  ]; // 创建人用户ID
+
+  optional uint32 tenant_id = 7 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID（0=平台级）"}
+  ]; // 租户ID
+
+  optional uint32 doc_count = 8 [
+    json_name = "docCount",
+    (gnostic.openapi.v3.property) = {description: "文档数（读视图）"}
+  ]; // 文档数
+
+  optional uint32 created_by = 100 [json_name = "createdBy"];
+  optional uint32 updated_by = 101 [json_name = "updatedBy"];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy"];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt"];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt"];
+}
+
+// 查询知识库列表 - 回应
+message ListAiKnowledgeBaseResponse {
+  repeated AiKnowledgeBase items = 1;
+  uint64 total = 2;
+}
+
+// 查询知识库详情 - 请求
+message GetAiKnowledgeBaseRequest {
+  oneof query_by {
+    uint32 id = 1;
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask"];
+}
+
+// 创建知识库 - 请求
+message CreateAiKnowledgeBaseRequest {
+  AiKnowledgeBase data = 1;
+}
+
+// 更新知识库 - 请求
+message UpdateAiKnowledgeBaseRequest {
+  uint32 id = 1;
+  AiKnowledgeBase data = 2;
+  google.protobuf.FieldMask update_mask = 3 [json_name = "updateMask"];
+  optional bool allow_missing = 4 [json_name = "allowMissing"];
+}
+
+// 删除知识库 - 请求
+message DeleteAiKnowledgeBaseRequest {
+  oneof query_by {
+    uint32 id = 1;
+  }
+}
+
+// 上传文档 - 请求（纯文本；内容直接随请求体传输）
+message UploadAiDocRequest {
+  uint32 base_id = 1 [json_name = "baseId"]; // 知识库ID
+
+  string name = 2;   // 文档名称
+  string content = 3; // 文档纯文本内容
+}
+
+// 上传文档文件 - 请求（文件字节经 protojson 即 base64 字符串传输）
+message UploadAiDocFileRequest {
+  uint32 base_id = 1 [json_name = "baseId"]; // 知识库ID
+
+  string file_name = 2 [json_name = "fileName"]; // 原始文件名（扩展名决定抽取器）
+
+  bytes content_base64 = 3 [json_name = "contentBase64"]; // 文件内容（≤10MB）
+
+  optional string doc_name = 4 [json_name = "docName"]; // 文档显示名，缺省取文件名去扩展名
+}
+
+// 上传文档 - 回应
+message UploadAiDocResponse {
+  AiDoc doc = 1;       // 文档行
+  uint32 chunk_count = 2 [json_name = "chunkCount"]; // 实际切片数
+}
+
+// AI 文档
+message AiDoc {
+  optional uint32 id = 1 [json_name = "id"]; // 文档ID
+
+  optional uint32 base_id = 2 [json_name = "baseId"]; // 所属知识库ID
+  optional string name = 3 [json_name = "name"];       // 文档名称
+  optional uint32 chunk_count = 4 [json_name = "chunkCount"]; // 切片数
+  optional string status = 5 [json_name = "status"];   // 状态：READY / FAILED
+  optional string error_message = 6 [json_name = "errorMessage"]; // 失败原因
+
+  optional uint32 user_id = 10 [json_name = "userId"]; // 上传人
+
+  optional uint32 tenant_id = 12 [json_name = "tenantId"]; // 租户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+}
+
+// 查询文档列表 - 请求
+message ListAiDocsRequest {
+  uint32 base_id = 1 [json_name = "baseId"]; // 知识库ID
+}
+
+// 查询文档列表 - 回应
+message ListAiDocsResponse {
+  repeated AiDoc items = 1;
+  uint64 total = 2;
+}
+
+// 删除文档 - 请求
+message DeleteAiDocRequest {
+  uint32 base_id = 1 [json_name = "baseId"]; // 知识库ID（路由参数）
+  uint32 id = 2;                               // 文档ID
+}
+
+// 检索 - 请求
+message SearchAiKnowledgeRequest {
+  uint32 base_id = 1 [json_name = "baseId"]; // 知识库ID
+  string query = 2;                            // 查询文本
+  optional uint32 top_k = 3 [json_name = "topK"]; // 返回条数，默认 3
+}
+
+// 检索命中片段
+message KnowledgeHit {
+  AiDoc doc = 1;      // 所属文档（id/name）
+  uint32 chunk_index = 2 [json_name = "chunkIndex"]; // 片段序号
+  string content = 3;  // 片段内容
+  double score = 4;    // 余弦相似度（0~1）
+}
+
+// 检索 - 回应
+message SearchAiKnowledgeResponse {
+  repeated KnowledgeHit hits = 1;
+}

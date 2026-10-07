@@ -1,0 +1,151 @@
+/* ============================================
+ * 「语义色作文字」的合格档（docs/design-language.md §2.1）
+ * ============================================
+ * antd 把 colorPrimary / colorSuccess / colorWarning / colorError 的原值同时用于
+ * 实底填充和"软底标签、链接、文字按钮"的前景，而基准值本身按 §2.1 的实测亮度只适合当填充：
+ * 浅色 success #57D188 在自己的 tint #F0FFF3 上只有 1.87:1、warning #EFBD48 1.71:1、
+ * danger #FF3860 3.17:1（当链接文字时 3.51:1）、primary 4.47:1（2026-09-28 三端大扫测）。
+ * 这里用 color-mix 从 --app-color-*（随偏好主色联动，见 ThemeProvider §4.1）反解出文字档，
+ * 比例与 vue-element 端 styles/vendors/_element-plus.scss §3 一致——换主色后文字档跟着联动，
+ * 不是写死的色值。填充（实底按钮、徽标底、选中态底）继续用基准值，只有"文字"换成本节的变量。
+ *
+ * 为什么每条都带 !important：antd v6 的运行时样式表在本文件**之后**注入，且自身选择器权重不低
+ * （软底标签那条是 `:where(hash).ant-tag.ant-tag-success:not(.ant-tag-disabled).ant-tag-filled`
+ * = 4 个类，实测由 .zcode/tmp/react-css-winner.mjs 读出）。只堆类名要把权重赌准，且 prod 构建的
+ * 注入顺序与 dev 不同 → 与 vue-element 端 _element-plus.scss §3 采用同一手段（unplugin 组件 CSS
+ * 同样后注入，那边也只有 !important 活下来）。pro-components-dark.css:289 记的是同一个坑。
+ *
+ * 适用范围只在"文字前景"；**实底填充上的白字不要动**：暗色下 antd 的 colorError 派生成 #DC3355，
+ * 白字实测 4.52:1 已达标，而 §2.1 的暗墨 #0B0F19 在其上只有 4.24:1（2026-09-28 大扫测里
+ * 我误把暗墨用到暗色徽标/危险实底按钮，新造出 40 条违规，故实底暗墨规则只在浅色生效）。
+ */
+
+:root {
+  --gowind-primary-text: color-mix(in srgb, var(--app-color-primary) 90%, #0b0f19);
+  --gowind-success-text: color-mix(in srgb, var(--app-color-success) 50%, #0b0f19);
+  --gowind-warning-text: color-mix(in srgb, var(--app-color-warning) 50%, #0b0f19);
+  --gowind-danger-text: color-mix(in srgb, var(--app-color-destructive) 70%, #0b0f19);
+
+  /* 实底语义色上的前景 = §2.1 的暗色 L0：白字在 #FF3860 上只有 3.51:1，暗墨有 5.46:1 */
+  --gowind-solid-ink: #0b0f19;
+
+  /* 「次要文字」档（§2.2，与 react tokens 的 SECONDARY_TEXT_* 同值）：
+     antd 默认 colorTextDescription 浅色 rgba(0,0,0,.45) 实测 3.35:1。
+     Descriptions 的标签列不吃全局 token（实测 7 处未跟着变），只能在这里补。 */
+  --gowind-secondary-text: #676e7c;
+
+  /* AI 用量页汇总数字的强调色（24px/600，大字号门槛 3.0:1；与 vue-element 端同值）
+     浅色原值实测不可读：cyan-500 对白底 2.37:1，故降到 cyan-700 5.36:1 */
+  /* #3b82f6：白底 3.68 / 暗底 L1 4.82（24px 大字号档） */
+  --metric-blue: #3b82f6;
+  --metric-cyan: #0e7490;
+  --metric-violet: #7c3aed;
+}
+
+html[data-theme='dark'] {
+  --gowind-primary-text: color-mix(in srgb, var(--app-color-primary) 70%, #ffffff);
+  --gowind-success-text: color-mix(in srgb, var(--app-color-success) 90%, #ffffff);
+  --gowind-warning-text: color-mix(in srgb, var(--app-color-warning) 90%, #ffffff);
+  --gowind-danger-text: color-mix(in srgb, var(--app-color-destructive) 90%, #ffffff);
+
+  --gowind-secondary-text: #8b949e;
+
+  /* 暗色侧数字保持亮色：#22d3ee 在 L1 上 9.82:1 */
+  --metric-cyan: #22d3ee;
+  --metric-violet: #a78bfa;
+}
+
+/* ---------- Tag（filled 软底状态标签）：前景走文字档 ----------
+   达标值：success 5.69 / warning 5.39 / danger 5.50 / primary 5.16（各自 tint 上），
+   暗色侧 8.82 / 9.58 / 5.33 / 5.80。 */
+.ant-tag.ant-tag-filled.ant-tag-success {
+  color: var(--gowind-success-text) !important;
+}
+
+.ant-tag.ant-tag-filled.ant-tag-warning {
+  color: var(--gowind-warning-text) !important;
+}
+
+.ant-tag.ant-tag-filled.ant-tag-error {
+  color: var(--gowind-danger-text) !important;
+}
+
+.ant-tag.ant-tag-filled.ant-tag-processing {
+  color: var(--gowind-primary-text) !important;
+}
+
+/* ---------- 预设色相标签：同色相降档，保住枚举值的色彩区分度 ----------
+   antd 给软底标签的文字用色板的 -7，配自己的 -1 浅底实测只有 2.72~3.39:1
+   （gold 2.72 / green 3.37 / cyan 3.39 / orange 3.34），压暗到 60% 后 5.89~6.92:1。
+   没列出的 blue(5.5) / purple(8.88) / geekblue(7.89) / red(5.07) / pink(4.94) 原值已达标，不动。 */
+html[data-theme='light'] .ant-tag.ant-tag-filled.ant-tag-gold {
+  color: color-mix(in srgb, #d48806 60%, #0b0f19) !important;
+}
+
+html[data-theme='light'] .ant-tag.ant-tag-filled.ant-tag-green {
+  color: color-mix(in srgb, #389e0d 60%, #0b0f19) !important;
+}
+
+html[data-theme='light'] .ant-tag.ant-tag-filled.ant-tag-cyan {
+  color: color-mix(in srgb, #08979c 60%, #0b0f19) !important;
+}
+
+html[data-theme='light'] .ant-tag.ant-tag-filled.ant-tag-orange {
+  color: color-mix(in srgb, #d46b08 60%, #0b0f19) !important;
+}
+
+/* 暗色侧同理升档：purple 3.39 → 4.95、geekblue 4.16 → 5.81（各自 tint 上） */
+html[data-theme='dark'] .ant-tag.ant-tag-filled.ant-tag-purple {
+  color: color-mix(in srgb, #854eca 80%, #ffffff) !important;
+}
+
+html[data-theme='dark'] .ant-tag.ant-tag-filled.ant-tag-geekblue {
+  color: color-mix(in srgb, #5273e0 80%, #ffffff) !important;
+}
+
+/* ---------- 按钮：danger 的文字/链接/描边档，实底档换暗墨（仅浅色，见文件头） ----------
+   原值实测：浅色 #FF3860 on 白 3.51、暗色 #DC3355 on L1 3.93 → 文字档 6.09 / 5.51。 */
+.ant-btn.ant-btn-color-dangerous:not(.ant-btn-variant-solid) {
+  color: var(--gowind-danger-text) !important;
+}
+
+html[data-theme='light'] .ant-btn.ant-btn-color-dangerous.ant-btn-variant-solid {
+  color: var(--gowind-solid-ink) !important;
+}
+
+/* ---------- 徽标实底数字：EP/antd 都在这里写死白字，浅色实底下暗墨才达标（5.46:1） ---------- */
+html[data-theme='light'] .ant-badge-count.ant-scroll-number {
+  color: var(--gowind-solid-ink) !important;
+}
+
+/* ---------- 选中态的主色文字（菜单 4.47 / 标签栏 4.33 → 5.16 / 5.01） ----------
+   菜单选中项只在浅色生效：暗色侧 antd 把选中底铺成主色 #035EC7（实测），文字必须是浅色的
+   反白档才够（白字 6.10:1），套用文字档反而只有 2.03:1——2026-09-28 大扫测实测到的自伤。 */
+html[data-theme='light'] .ant-menu-item-selected .ant-menu-title-content,
+html[data-theme='light'] .ant-menu-item-selected .ant-menu-title-content .anticon {
+  color: var(--gowind-primary-text) !important;
+}
+
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--gowind-primary-text) !important;
+}
+
+/* ---------- ProTable 检索区的「展开/收起」：ProComponents 自带 colorPrimary，
+   不吃 ConfigProvider 的 colorLink（暗色实测 #035EC7 on #111827 = 2.90:1） ---------- */
+.ant-pro-query-filter-collapse-button {
+  color: var(--gowind-primary-text) !important;
+}
+
+/* ---------- Descriptions 标签列：全局 colorTextDescription 没传到（实测 7 处） ---------- */
+.ant-descriptions-item-label {
+  color: var(--gowind-secondary-text) !important;
+}
+
+/* ---------- 开关轨道文字：浅色未选中轨道 #BFBFBF 上白字只有 1.83:1，暗墨 10.41:1 ----------
+   用 aria-checked 而不是 .ant-switch-checked：v6 的选中态类名不是稳定契约。
+   必须命中内层 checked/unchecked 两个子 span：antd 给子 span 自己写了 color，
+   只改 .ant-switch-inner 会被子节点自身的声明覆盖（实测两个子 span 各 1.83:1）。
+   只在浅色生效：暗色侧大扫测两组（基线/修复后）都没有开关违规，动它只会引入未知。 */
+html[data-theme='light'] .ant-switch[aria-checked='false'] .ant-switch-inner > span {
+  color: var(--gowind-solid-ink) !important;
+}

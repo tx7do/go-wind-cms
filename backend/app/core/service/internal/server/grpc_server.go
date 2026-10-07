@@ -21,6 +21,7 @@ import (
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
+	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
@@ -80,6 +81,14 @@ func NewGrpcServer(
 	interactionAdminService *service.InteractionAdminService,
 
 	statsService *service.StatsService,
+	aiProviderService *service.AiProviderService,
+	aiContentService *service.AiContentService,
+	aiChatService *service.AiChatService,
+	aiConversationService *service.AiConversationService,
+	aiMessageService *service.AiMessageService,
+	aiKnowledgeService *service.AiKnowledgeService,
+	aiUsageLogService *service.AiUsageLogService,
+	aiQueryService *service.AiQueryService,
 
 	postService *service.PostService,
 	categoryService *service.CategoryService,
@@ -149,6 +158,14 @@ func NewGrpcServer(
 	interactionV1.RegisterInteractionAdminServiceServer(srv, interactionAdminService)
 
 	statsV1.RegisterStatsServiceServer(srv, statsService)
+	aiV1.RegisterAiProviderServiceServer(srv, aiProviderService)
+	aiV1.RegisterAiContentServiceServer(srv, aiContentService)
+	aiV1.RegisterAiChatServiceServer(srv, aiChatService)
+	aiV1.RegisterAiConversationServiceServer(srv, aiConversationService)
+	aiV1.RegisterAiMessageServiceServer(srv, aiMessageService)
+	aiV1.RegisterAiKnowledgeBaseServiceServer(srv, aiKnowledgeService)
+	aiV1.RegisterAiUsageLogServiceServer(srv, aiUsageLogService)
+	aiV1.RegisterAiQueryServiceServer(srv, aiQueryService)
 
 	contentV1.RegisterPostServiceServer(srv, postService)
 	contentV1.RegisterCategoryServiceServer(srv, categoryService)

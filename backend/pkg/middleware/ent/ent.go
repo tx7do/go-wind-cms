@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 
 	"github.com/tx7do/go-crud/viewer"
+	appMetadata "go-wind-cms/pkg/metadata"
 	"go.opentelemetry.io/otel/trace"
 
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
@@ -140,4 +141,21 @@ func metaDataToUserViewerContext(md *authenticationV1.OperatorMetadata, traceID 
 		md.GetDataScope(),
 	)
 	return userViewer
+}
+
+// InjectViewerForStream 把已认证请求的 OperatorMetadata 解析为 UserViewer 注入 ctx，
+// 匿名/异常时回落 SystemViewer。供 kratos server-streaming RPC 使用——
+// unary 中间件（Server）不覆盖流式 handler，流式入口需自行调用本函数。
+func InjectViewerForStream(ctx context.Context) context.Context {
+	var traceID string
+	spanContext := trace.SpanContextFromContext(ctx)
+	if spanContext.HasTraceID() {
+		traceID = spanContext.TraceID().String()
+	}
+
+	op, opErr := appMetadata.FromServerContext(ctx)
+	if opErr != nil || op == nil {
+		return viewer.WithContext(ctx, resolveAnonymousViewer(ctx, nil, traceID))
+	}
+	return viewer.WithContext(ctx, metaDataToUserViewerContext(op, traceID))
 }

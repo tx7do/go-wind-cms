@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package ai.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// AI 用量流水服务（配额记账事实源）
+service AiUsageLogService {
+  // 分页查询用量流水
+  rpc List (pagination.PagingRequest) returns (ListAiUsageLogResponse) {}
+
+  // 统计用量流水条数
+  rpc Count (pagination.PagingRequest) returns (CountAiUsageLogResponse) {}
+
+  // 当月用量汇总（tokens/调用次数；本仓无套餐配额，quota 字段恒 false/0）
+  rpc GetUsageSummary (google.protobuf.Empty) returns (UsageSummaryResponse) {}
+}
+
+// AI 调用用量流水（每次成功的模型调用一行；配额按 total_tokens 聚合）
+message AiUsageLog {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "流水ID"
+    }
+  ]; // 流水ID
+
+  optional uint32 provider_id = 2 [
+    json_name = "providerId",
+    (gnostic.openapi.v3.property) = {description: "提供商ID"}
+  ]; // 提供商ID
+
+  optional uint32 conversation_id = 3 [
+    json_name = "conversationId",
+    (gnostic.openapi.v3.property) = {description: "会话ID（0 表示非对话调用）"}
+  ]; // 会话ID
+
+  optional uint32 user_id = 4 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "发起用户ID"}
+  ]; // 发起用户ID
+
+  optional uint32 tenant_id = 5 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID（0 表示平台自用）"}
+  ]; // 租户ID
+
+  optional string model_name = 6 [
+    json_name = "modelName",
+    (gnostic.openapi.v3.property) = {description: "模型名称"}
+  ]; // 模型名称
+
+  optional uint32 prompt_tokens = 7 [
+    json_name = "promptTokens",
+    (gnostic.openapi.v3.property) = {description: "输入 token 数"}
+  ]; // 输入 token 数
+
+  optional uint32 completion_tokens = 8 [
+    json_name = "completionTokens",
+    (gnostic.openapi.v3.property) = {description: "输出 token 数"}
+  ]; // 输出 token 数
+
+  optional uint32 total_tokens = 9 [
+    json_name = "totalTokens",
+    (gnostic.openapi.v3.property) = {description: "总 token 数"}
+  ]; // 总 token 数
+
+  optional uint32 duration_ms = 10 [
+    json_name = "durationMs",
+    (gnostic.openapi.v3.property) = {description: "调用耗时（毫秒）"}
+  ]; // 调用耗时
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "调用时间"}];// 调用时间
+}
+
+// 查询用量流水列表 - 回应
+message ListAiUsageLogResponse {
+  repeated AiUsageLog items = 1;
+  uint64 total = 2;
+}
+
+message CountAiUsageLogResponse {
+  uint64 count = 1; // 流水条数
+}
+
+// 当月用量汇总 - 回应
+message UsageSummaryResponse {
+  uint32 month_tokens = 1 [json_name = "monthTokens"]; // 本月已用 tokens（当前视角：租户用户为本租户，平台用户为 tenant_id=0 记录）
+  uint32 month_calls = 2 [json_name = "monthCalls"];   // 本月调用次数
+  bool quota_configured = 3 [json_name = "quotaConfigured"]; // 套餐是否配置了 AI_TOKENS 配额（平台用户恒 false=不限量）
+  uint64 quota_limit = 4 [json_name = "quotaLimit"];         // 配额上限（未配置为 0）
+}

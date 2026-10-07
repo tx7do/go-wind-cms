@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package ai.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+// 智能问数（NL → 只读 SQL → 结构化结果）。
+//
+// 安全边界（第一版，平台管理员专属）：
+//   1. 仅生成只读 SELECT/WITH 语句，多语句、写操作、危险关键字一律拒绝；
+//   2. FROM/JOIN 涉及的表必须在内置白名单内；
+//   3. 缺 LIMIT 自动补 LIMIT 100；
+//   4. 执行走只读事务（READ ONLY），数据库层兜底。
+service AiQueryService {
+  // 智能问数
+  rpc Ask (AskAiQueryRequest) returns (AskAiQueryResponse) {}
+}
+
+// 对话历史一轮（多轮追问用）：只回传问答摘要，供模型消解指代（如"那只看 admin 的"）
+message AiQueryHistoryItem {
+  string question = 1;          // 历史问题
+  string sql = 2;               // 该轮生成的 SQL
+  string result_summary = 3 [json_name = "resultSummary"]; // 结果摘要（前几行值拼串）
+}
+
+// 智能问数 - 请求
+message AskAiQueryRequest {
+  string question = 1; // 自然语言问题
+
+  // 界面语言（BCP-47），决定结论 answer 的输出语言；默认 zh-CN
+  optional string lang = 2 [json_name = "lang"];
+
+  // 是否生成自然语言结论（二次模型调用；默认 true）
+  optional bool with_answer = 3 [json_name = "withAnswer"];
+
+  // 对话历史（最近若干轮，建议 ≤5；用于消解追问里的指代，如"那只看 admin 的"）
+  repeated AiQueryHistoryItem history = 4;
+}
+
+// 结果行（values 与 columns 下标对应；时间/数字均已格式化为字符串）
+message AiQueryRow {
+  repeated string values = 1;
+}
+
+// 智能问数 - 回应
+message AskAiQueryResponse {
+  // 生成的只读 SQL（原样返回，便于核对与复用）
+  string sql = 1;
+
+  // 结果列名
+  repeated string columns = 2;
+
+  // 结果行（上限 100 行）
+  repeated AiQueryRow rows = 3;
+
+  // 实际返回的行数
+  uint32 row_count = 4 [json_name = "rowCount"];
+
+  // 自然语言结论（with_answer=false 或模型失败时为空）
+  optional string answer = 5;
+
+  // 本次消耗的总 token 数（计入 AI_TOKENS 用量）
+  uint32 total_tokens = 6 [json_name = "totalTokens"];
+
+  // 执行失败原因（SQL 语法/列不存在等；有值时 rows 为空）
+  optional string error_message = 7 [json_name = "errorMessage"];
+}

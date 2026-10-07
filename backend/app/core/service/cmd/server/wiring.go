@@ -135,6 +135,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	postTagRepo := data.NewPostTagRepo(ctx, entClient)
 	postRepo := data.NewPostRepo(ctx, entClient, postTranslationRepo, postCategoryRepo, postTagRepo)
 	statsRepo := data.NewStatsRepo(ctx, entClient)
+	aiProviderRepo := data.NewAiProviderRepo(ctx, entClient)
+	aiConversationRepo := data.NewAiConversationRepo(ctx, entClient)
+	aiMessageRepo := data.NewAiMessageRepo(ctx, entClient)
+	aiUsageLogRepo := data.NewAiUsageLogRepo(ctx, entClient)
+	aiKnowledgeRepo := data.NewAiKnowledgeRepo(ctx, entClient)
 	contentModelRepo := data.NewContentModelRepo(ctx, entClient)
 	categoryTranslationRepo := data.NewCategoryTranslationRepo(ctx, entClient)
 	categoryRepo := data.NewCategoryRepo(ctx, entClient, categoryTranslationRepo)
@@ -204,6 +209,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	interactionService := service.NewInteractionService(ctx, interactionRepo, postRepo)
 	interactionAdminService := service.NewInteractionAdminService(ctx, interactionRepo, operationAuditLogRepo)
 	statsService := service.NewStatsService(ctx, statsRepo)
+	aiProviderService := service.NewAiProviderService(ctx, aiProviderRepo)
+	aiContentService := service.NewAiContentService(ctx, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo, entClient, menuRepo, roleRepo, userRepo)
+	aiChatService := service.NewAiChatService(ctx, aiConversationRepo, aiMessageRepo, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo)
+	aiConversationService := service.NewAiConversationService(ctx, aiConversationRepo)
+	aiMessageService := service.NewAiMessageService(ctx, aiMessageRepo)
+	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeRepo, aiProviderRepo, aiUsageLogRepo)
+	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo)
+	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
 	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
@@ -238,6 +251,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		commentService,
 		interactionService, interactionAdminService,
 		statsService,
+		aiProviderService, aiContentService,
+		aiChatService, aiConversationService, aiMessageService,
+		aiKnowledgeService,
+		aiUsageLogService,
+		aiQueryService,
 		postService, categoryService, tagService, pageService,
 		contentModelService,
 		siteService, siteSettingService, navigationService, navigationItemService,

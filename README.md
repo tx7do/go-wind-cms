@@ -65,10 +65,10 @@
 
 | 技术                                            | 说明         |
 |:----------------------------------------------|:-----------|
-| [Vue 3](https://vuejs.org/)                   | 渐进式前端框架    |
+| [React 19](https://react.dev/)                | 渐进式前端框架    |
 | [TypeScript](https://www.typescriptlang.org/) | 类型安全       |
-| [Ant Design Vue](https://antdv.com/)          | 企业级 UI 组件库 |
-| [Vben Admin](https://doc.vben.pro/)           | 后台管理框架     |
+| [Ant Design](https://ant.design/)             | 企业级 UI 组件库 |
+| [ProComponents](https://procomponents.ant.design/) | 企业级中后台组件 |
 
 ### 前台展示前端
 
@@ -135,7 +135,7 @@ go-wind-cms/
 │   ├── pkg/                        # 公共包 (鉴权/加密/事件总线/JWT/中间件/OSS...)
 │   └── scripts/                    # 部署脚本 (Docker/PM2/环境安装)
 ├── frontend/
-│   ├── admin/                      # 管理后台前端 (Vue3 + Ant Design Vue + Vben Admin)
+│   ├── admin/                      # 管理后台前端 (React 19 + Ant Design 6 + ProComponents)
 │   └── app/                        # 前台应用
 │       ├── react/                  # React 前台 (Next.js)
 │       ├── vue/                    # Vue 前台 (Nuxt.js)
@@ -178,7 +178,7 @@ gow run admin
 
 ```bash
 # 管理后台
-cd frontend/admin-react
+cd frontend/admin
 pnpm install
 pnpm dev
 
