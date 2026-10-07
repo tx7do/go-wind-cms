@@ -214,28 +214,28 @@ func (s *FileTransferService) UploadFile(ctx context.Context, req *storageV1.Upl
 func (s *FileTransferService) downloadFileFromURL(ctx context.Context, downloadContext string) (*storageV1.DownloadFileResponse, error) {
 	parsedURL, err := netutil.ValidateURL(downloadContext)
 	if err != nil {
-		return nil, storageV1.ErrorDownloadFailed(err.Error())
+		return nil, storageV1.ErrorDownloadFailed("%s", err.Error())
 	}
 
 	httpReq, err := http.NewRequestWithContext(ctx, "GET", parsedURL.String(), nil)
 	if err != nil {
-		return nil, storageV1.ErrorDownloadFailed(err.Error())
+		return nil, storageV1.ErrorDownloadFailed("%s", err.Error())
 	}
 
 	client := netutil.SafeHTTPClient()
 	resp, err := client.Do(httpReq)
 	if err != nil {
-		return nil, storageV1.ErrorDownloadFailed(err.Error())
+		return nil, storageV1.ErrorDownloadFailed("%s", err.Error())
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
-		return nil, storageV1.ErrorDownloadFailed("unexpected status: " + resp.Status)
+		return nil, storageV1.ErrorDownloadFailed("unexpected status: %s", resp.Status)
 	}
 
 	fileData, err := io.ReadAll(netutil.LimitReader(resp.Body))
 	if err != nil {
-		return nil, storageV1.ErrorDownloadFailed(err.Error())
+		return nil, storageV1.ErrorDownloadFailed("%s", err.Error())
 	}
 
 	return &storageV1.DownloadFileResponse{

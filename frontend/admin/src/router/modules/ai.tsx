@@ -34,6 +34,8 @@ export const aiRoutes: AppRouteObject[] = [
           title: 'routes:ai-query',
           icon: 'lucide:search-code',
           order: 2,
+          // 问数查全平台原生表，平台管理员专属（后端对租户 403）
+          authority: ['sys:platform_admin'],
         },
       },
       {
@@ -64,6 +66,8 @@ export const aiRoutes: AppRouteObject[] = [
           title: 'routes:ai-providers',
           icon: 'lucide:cpu',
           order: 5,
+          // 提供商是平台级配置（且 api_key 敏感），租户不可见
+          authority: ['sys:platform_admin'],
         },
       },
     ],

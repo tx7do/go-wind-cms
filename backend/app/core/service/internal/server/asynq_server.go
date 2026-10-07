@@ -45,7 +45,7 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 	}
 
 	// 注册知识库切片重索引任务：更换 embedding 模型/provider 后全量重算向量。
-	if err = asynq.RegisterSubscriber(srv, task.AiDocReindexTaskType, aiKnowledgeService.ReindexDocs); err != nil {
+	if err = asynq.RegisterSubscriber(srv, task.AiDocReindexTaskType, aiKnowledgeService.ReindexDocsWorker); err != nil {
 		log.Error(err)
 	}
 

@@ -84,4 +84,12 @@ service AiKnowledgeBaseService {
       body: "*"
     };
   }
+
+  // 重索引（异步任务）
+  rpc ReindexDocs (ai.service.v1.ReindexDocsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/knowledge-bases/reindex"
+      body: "*"
+    };
+  }
 }

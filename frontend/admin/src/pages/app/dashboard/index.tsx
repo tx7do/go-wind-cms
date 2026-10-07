@@ -10,6 +10,7 @@ import {
 import { useI18n } from '@/core/i18n';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import AiInsightsCard from './components/AiInsightsCard';
+import { useUserStore } from '@/stores/user';
 import {
   useGetContentTrend,
   useGetDashboardOverview,
@@ -332,10 +333,12 @@ const Dashboard = () => {
         ))}
       </Row>
 
-      {/* AI 安全与异常洞察（平台用户专属） */}
-      <div style={{ marginTop: 16 }}>
-        <AiInsightsCard />
-      </div>
+      {/* AI 安全与异常洞察（平台用户专属：明细为全平台数据且外发模型端点） */}
+      {!useUserStore((st) => st.isTenantUser) && (
+        <div style={{ marginTop: 16 }}>
+          <AiInsightsCard />
+        </div>
+      )}
 
       {/* 内容增长趋势 */}
       <Card

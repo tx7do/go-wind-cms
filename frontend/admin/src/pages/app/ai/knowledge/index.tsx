@@ -2,12 +2,18 @@ import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { Button, Popconfirm, Tag, App } from 'antd';
-import { DeleteOutlined, EditOutlined, FileTextOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+   EditOutlined,
+   FileTextOutlined,
+   PlusOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { aiservicev1_AiKnowledgeBase as AiKnowledgeBase } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
-import { fetchListAiKnowledgeBases, useDeleteAiKnowledgeBase } from '@/api/hooks/ai-knowledge';
+import { fetchListAiKnowledgeBases, useDeleteAiKnowledgeBase, useReindexDocs } from '@/api/hooks/ai-knowledge';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { TABLE } from '@/config/constants';
@@ -91,6 +97,13 @@ export default function AiKnowledgePage() {
     },
   ];
 
+  const reindexMutation = useReindexDocs({
+    onSuccess: () => {
+      message.success(t('reindexQueued'));
+    },
+    onError: (error: Error) => console.error('reindex docs failed:', error),
+  });
+
   return (
     <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
       <div ref={containerRef} className="page-container-content">
@@ -108,6 +121,18 @@ export default function AiKnowledgePage() {
             return { data: res.items || [], total: res.total || 0, success: true };
           }}
           toolBarRender={() => [
+            <Popconfirm
+              key="reindex"
+              title={t('reindexConfirmTitle')}
+              description={t('reindexConfirmDesc')}
+              onConfirm={() => {
+                reindexMutation.mutate({ baseId: 0 });
+              }}
+            >
+              <Button key="reindex-btn" icon={<SyncOutlined />} loading={reindexMutation.isPending}>
+                {t('reindex')}
+              </Button>
+            </Popconfirm>,
             <Button
               key="create"
               type="primary"

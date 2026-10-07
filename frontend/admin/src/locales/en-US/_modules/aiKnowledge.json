@@ -35,5 +35,9 @@
   "knowledgeBase": "Knowledge base",
   "knowledgeBasePlaceholder": "Pick one to inject relevant chunks into chats",
   "uploadFile": "Upload file",
-  "supportedFormats": "txt/md/docx/pdf etc., ≤10MB"
+  "supportedFormats": "txt/md/docx/pdf etc., ≤10MB",
+  "reindex": "Rebuild Vectors",
+  "reindexConfirmTitle": "Confirm rebuild",
+  "reindexConfirmDesc": "Re-embed all existing chunks across knowledge bases with the current embedding model (async). Continue?",
+  "reindexQueued": "Queued"
 }

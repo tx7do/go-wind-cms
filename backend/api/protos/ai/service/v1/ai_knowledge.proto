@@ -41,6 +41,16 @@ service AiKnowledgeBaseService {
 
   // 检索测试：返回与 query 语义最相近的切片
   rpc Search (SearchAiKnowledgeRequest) returns (SearchAiKnowledgeResponse) {}
+
+  // 重索引：入队 asynq 任务，对指定（或全部）知识库的既有切片重算向量。
+  // 场景：更换 embedding 模型/provider 后全量重建。异步执行，立即返回。
+  rpc ReindexDocs (ReindexDocsRequest) returns (google.protobuf.Empty) {}
+}
+
+// 重索引 - 请求
+message ReindexDocsRequest {
+  // 知识库ID；0 表示全部知识库
+  optional uint32 base_id = 1 [json_name = "baseId"];
 }
 
 // AI 知识库

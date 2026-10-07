@@ -28,8 +28,7 @@ var File_admin_service_v1_i_ai_knowledge_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_ai_knowledge_proto_rawDesc = "" +
 	"\n" +
-	"%admin/service/v1/i_ai_knowledge.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a ai/service/v1/ai_knowledge.proto2\xc1\n" +
-	"\n" +
+	"%admin/service/v1/i_ai_knowledge.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a ai/service/v1/ai_knowledge.proto2\xbc\v\n" +
 	"\x16AiKnowledgeBaseService\x12s\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a*.ai.service.v1.ListAiKnowledgeBaseResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/v1/ai/knowledge-bases\x12z\n" +
 	"\x03Get\x12(.ai.service.v1.GetAiKnowledgeBaseRequest\x1a\x1e.ai.service.v1.AiKnowledgeBase\")\x82\xd3\xe4\x93\x02#\x12!/admin/v1/ai/knowledge-bases/{id}\x12v\n" +
@@ -40,7 +39,8 @@ const file_admin_service_v1_i_ai_knowledge_proto_rawDesc = "" +
 	"\rUploadDocFile\x12%.ai.service.v1.UploadAiDocFileRequest\x1a\".ai.service.v1.UploadAiDocResponse\";\x82\xd3\xe4\x93\x025:\x01*\"0/admin/v1/ai/knowledge-bases/{base_id}/docs/file\x12\x84\x01\n" +
 	"\bListDocs\x12 .ai.service.v1.ListAiDocsRequest\x1a!.ai.service.v1.ListAiDocsResponse\"3\x82\xd3\xe4\x93\x02-\x12+/admin/v1/ai/knowledge-bases/{base_id}/docs\x12\x80\x01\n" +
 	"\tDeleteDoc\x12!.ai.service.v1.DeleteAiDocRequest\x1a\x16.google.protobuf.Empty\"8\x82\xd3\xe4\x93\x022*0/admin/v1/ai/knowledge-bases/{base_id}/docs/{id}\x12\x95\x01\n" +
-	"\x06Search\x12'.ai.service.v1.SearchAiKnowledgeRequest\x1a(.ai.service.v1.SearchAiKnowledgeResponse\"8\x82\xd3\xe4\x93\x022:\x01*\"-/admin/v1/ai/knowledge-bases/{base_id}/searchB\xbc\x01\n" +
+	"\x06Search\x12'.ai.service.v1.SearchAiKnowledgeRequest\x1a(.ai.service.v1.SearchAiKnowledgeResponse\"8\x82\xd3\xe4\x93\x022:\x01*\"-/admin/v1/ai/knowledge-bases/{base_id}/search\x12y\n" +
+	"\vReindexDocs\x12!.ai.service.v1.ReindexDocsRequest\x1a\x16.google.protobuf.Empty\"/\x82\xd3\xe4\x93\x02):\x01*\"$/admin/v1/ai/knowledge-bases/reindexB\xbc\x01\n" +
 	"\x14com.admin.service.v1B\x11IAiKnowledgeProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_ai_knowledge_proto_goTypes = []any{
@@ -54,12 +54,13 @@ var file_admin_service_v1_i_ai_knowledge_proto_goTypes = []any{
 	(*v11.ListAiDocsRequest)(nil),            // 7: ai.service.v1.ListAiDocsRequest
 	(*v11.DeleteAiDocRequest)(nil),           // 8: ai.service.v1.DeleteAiDocRequest
 	(*v11.SearchAiKnowledgeRequest)(nil),     // 9: ai.service.v1.SearchAiKnowledgeRequest
-	(*v11.ListAiKnowledgeBaseResponse)(nil),  // 10: ai.service.v1.ListAiKnowledgeBaseResponse
-	(*v11.AiKnowledgeBase)(nil),              // 11: ai.service.v1.AiKnowledgeBase
-	(*emptypb.Empty)(nil),                    // 12: google.protobuf.Empty
-	(*v11.UploadAiDocResponse)(nil),          // 13: ai.service.v1.UploadAiDocResponse
-	(*v11.ListAiDocsResponse)(nil),           // 14: ai.service.v1.ListAiDocsResponse
-	(*v11.SearchAiKnowledgeResponse)(nil),    // 15: ai.service.v1.SearchAiKnowledgeResponse
+	(*v11.ReindexDocsRequest)(nil),           // 10: ai.service.v1.ReindexDocsRequest
+	(*v11.ListAiKnowledgeBaseResponse)(nil),  // 11: ai.service.v1.ListAiKnowledgeBaseResponse
+	(*v11.AiKnowledgeBase)(nil),              // 12: ai.service.v1.AiKnowledgeBase
+	(*emptypb.Empty)(nil),                    // 13: google.protobuf.Empty
+	(*v11.UploadAiDocResponse)(nil),          // 14: ai.service.v1.UploadAiDocResponse
+	(*v11.ListAiDocsResponse)(nil),           // 15: ai.service.v1.ListAiDocsResponse
+	(*v11.SearchAiKnowledgeResponse)(nil),    // 16: ai.service.v1.SearchAiKnowledgeResponse
 }
 var file_admin_service_v1_i_ai_knowledge_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.AiKnowledgeBaseService.List:input_type -> pagination.PagingRequest
@@ -72,18 +73,20 @@ var file_admin_service_v1_i_ai_knowledge_proto_depIdxs = []int32{
 	7,  // 7: admin.service.v1.AiKnowledgeBaseService.ListDocs:input_type -> ai.service.v1.ListAiDocsRequest
 	8,  // 8: admin.service.v1.AiKnowledgeBaseService.DeleteDoc:input_type -> ai.service.v1.DeleteAiDocRequest
 	9,  // 9: admin.service.v1.AiKnowledgeBaseService.Search:input_type -> ai.service.v1.SearchAiKnowledgeRequest
-	10, // 10: admin.service.v1.AiKnowledgeBaseService.List:output_type -> ai.service.v1.ListAiKnowledgeBaseResponse
-	11, // 11: admin.service.v1.AiKnowledgeBaseService.Get:output_type -> ai.service.v1.AiKnowledgeBase
-	12, // 12: admin.service.v1.AiKnowledgeBaseService.Create:output_type -> google.protobuf.Empty
-	12, // 13: admin.service.v1.AiKnowledgeBaseService.Update:output_type -> google.protobuf.Empty
-	12, // 14: admin.service.v1.AiKnowledgeBaseService.Delete:output_type -> google.protobuf.Empty
-	13, // 15: admin.service.v1.AiKnowledgeBaseService.UploadDoc:output_type -> ai.service.v1.UploadAiDocResponse
-	13, // 16: admin.service.v1.AiKnowledgeBaseService.UploadDocFile:output_type -> ai.service.v1.UploadAiDocResponse
-	14, // 17: admin.service.v1.AiKnowledgeBaseService.ListDocs:output_type -> ai.service.v1.ListAiDocsResponse
-	12, // 18: admin.service.v1.AiKnowledgeBaseService.DeleteDoc:output_type -> google.protobuf.Empty
-	15, // 19: admin.service.v1.AiKnowledgeBaseService.Search:output_type -> ai.service.v1.SearchAiKnowledgeResponse
-	10, // [10:20] is the sub-list for method output_type
-	0,  // [0:10] is the sub-list for method input_type
+	10, // 10: admin.service.v1.AiKnowledgeBaseService.ReindexDocs:input_type -> ai.service.v1.ReindexDocsRequest
+	11, // 11: admin.service.v1.AiKnowledgeBaseService.List:output_type -> ai.service.v1.ListAiKnowledgeBaseResponse
+	12, // 12: admin.service.v1.AiKnowledgeBaseService.Get:output_type -> ai.service.v1.AiKnowledgeBase
+	13, // 13: admin.service.v1.AiKnowledgeBaseService.Create:output_type -> google.protobuf.Empty
+	13, // 14: admin.service.v1.AiKnowledgeBaseService.Update:output_type -> google.protobuf.Empty
+	13, // 15: admin.service.v1.AiKnowledgeBaseService.Delete:output_type -> google.protobuf.Empty
+	14, // 16: admin.service.v1.AiKnowledgeBaseService.UploadDoc:output_type -> ai.service.v1.UploadAiDocResponse
+	14, // 17: admin.service.v1.AiKnowledgeBaseService.UploadDocFile:output_type -> ai.service.v1.UploadAiDocResponse
+	15, // 18: admin.service.v1.AiKnowledgeBaseService.ListDocs:output_type -> ai.service.v1.ListAiDocsResponse
+	13, // 19: admin.service.v1.AiKnowledgeBaseService.DeleteDoc:output_type -> google.protobuf.Empty
+	16, // 20: admin.service.v1.AiKnowledgeBaseService.Search:output_type -> ai.service.v1.SearchAiKnowledgeResponse
+	13, // 21: admin.service.v1.AiKnowledgeBaseService.ReindexDocs:output_type -> google.protobuf.Empty
+	11, // [11:22] is the sub-list for method output_type
+	0,  // [0:11] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

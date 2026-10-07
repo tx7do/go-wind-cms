@@ -442,6 +442,19 @@ func (s *AiContentService) SemanticSearch(ctx context.Context, req *aiV1.Semanti
 		return &aiV1.SemanticSearchResponse{Items: []*aiV1.SemanticSearchItem{}}, nil
 	}
 
+	// 懒自建：索引表为空（首次使用/换库）时先重建再检索，避免"永远静默降级"。
+	// 仅平台路径触发（租户首查等平台侧已建好）；构建失败降级为空结果不报错。
+	if tenantId == 0 {
+		var idxCount int
+		if cntErr := s.entClient.DB().QueryRowContext(ctx,
+			"SELECT COUNT(*) FROM sys_ai_search_index WHERE item_type = 'menu'").Scan(&idxCount); cntErr == nil && idxCount == 0 {
+			if _, bErr := s.BuildMenuSearchIndex(ctx); bErr != nil {
+				s.log.Errorf("lazy build search index failed, degrade to empty: %v", bErr)
+				return &aiV1.SemanticSearchResponse{Items: []*aiV1.SemanticSearchItem{}}, nil
+			}
+		}
+	}
+
 	provider, err := s.providerRepo.GetEnabledDefault(ctx)
 	if err != nil {
 		return nil, err

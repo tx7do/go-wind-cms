@@ -941,6 +941,10 @@ export interface AiKnowledgeBaseService {
   Search(
     request: aiservicev1_SearchAiKnowledgeRequest,
   ): Promise<aiservicev1_SearchAiKnowledgeResponse>;
+  // 重索引（异步任务）
+  ReindexDocs(
+    request: aiservicev1_ReindexDocsRequest,
+  ): Promise<wellKnownEmpty>;
 }
 
 export function createAiKnowledgeBaseServiceClient(
@@ -1171,6 +1175,14 @@ export function createAiKnowledgeBaseServiceClient(
         method: 'Search',
       }) as Promise<aiservicev1_SearchAiKnowledgeResponse>;
     },
+    ReindexDocs(request) {
+      const path = `admin/v1/ai/knowledge-bases/reindex`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'ReindexDocs',
+      }) as Promise<wellKnownEmpty>;
+    },
   };
 }
 // 查询知识库列表 - 回应
@@ -1290,6 +1302,12 @@ export type aiservicev1_KnowledgeHit = {
   content: string | undefined;
   doc: aiservicev1_AiDoc | undefined;
   score: number | undefined;
+};
+
+// 重索引 - 请求
+export type aiservicev1_ReindexDocsRequest = {
+  // 知识库ID；0 表示全部知识库
+  baseId?: number;
 };
 
 // AI 对话消息服务

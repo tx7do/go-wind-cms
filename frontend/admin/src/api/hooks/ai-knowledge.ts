@@ -124,3 +124,14 @@ export function useDeleteAiDoc(
 
 export type AiKnowledgeBase = aiservicev1_AiKnowledgeBase;
 export type AiDoc = aiservicev1_AiDoc;
+
+// useReindexDocs — 重索引（异步任务）：换 embedding 模型/provider 后重建切片向量。
+// baseId=0 表示全部知识库。
+export function useReindexDocs(
+  options?: UseMutationOptions<{}, Error, { baseId?: number }>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.aiKnowledgeBaseService.ReindexDocs({ baseId: req.baseId ?? 0 }),
+    ...options,
+  });
+}

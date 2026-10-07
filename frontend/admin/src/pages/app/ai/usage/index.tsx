@@ -128,6 +128,10 @@ export default function AiUsagePage() {
               fetcher={fetchListAiUsageLogs}
               columns={columns}
               filename="ai-usage-logs"
+              serverExport={{
+                url: 'admin/v1/ai/usage-logs:export',
+                buildQuery: () => new PaginationQuery({}),
+              }}
             />,
           ]}
           scroll={{ y: tableScrollY, x: 800 }}

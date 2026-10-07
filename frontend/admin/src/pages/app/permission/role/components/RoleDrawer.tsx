@@ -10,6 +10,7 @@ import {
   ProFormDependency,
 } from '@ant-design/pro-components';
 import { App, Tree, Spin, Checkbox } from 'antd';
+import AiGenerateButton from '@/components/common/AiGenerateButton';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { permissionservicev1_Role as Role } from '@/api/generated/admin/service/v1';
@@ -285,7 +286,18 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
 
       <ProFormTextArea
         name="description"
-        label={t('description')}
+        label={
+          <span className="inline-flex items-center gap-2">
+            {t('description')}
+            <AiGenerateButton
+              scene="DESCRIPTION"
+              size="small"
+              onGenerate={(content) => {
+                formRef.current?.setFieldValue('description', content);
+              }}
+            />
+          </span>
+        }
         placeholder={t('descriptionPlaceholder')}
         fieldProps={{ allowClear: true, rows: 2 }}
       />

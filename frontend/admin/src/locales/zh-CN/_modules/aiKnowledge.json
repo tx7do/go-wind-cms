@@ -35,5 +35,9 @@
   "knowledgeBase": "知识库",
   "knowledgeBasePlaceholder": "选择后对话将检索注入相关片段",
   "uploadFile": "上传文件",
-  "supportedFormats": "支持 txt/md/docx/pdf 等，≤10MB"
+  "supportedFormats": "支持 txt/md/docx/pdf 等，≤10MB",
+  "reindex": "重建向量索引",
+  "reindexConfirmTitle": "确认重建",
+  "reindexConfirmDesc": "将对全部知识库的既有切片按当前 embedding 模型重算向量（异步执行），继续？",
+  "reindexQueued": "已入队，稍后可在任务中查看进度"
 }

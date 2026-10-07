@@ -35,6 +35,112 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ReindexDocsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ReindexDocsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReindexDocsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ReindexDocsRequestMultiError, or nil if none found.
+func (m *ReindexDocsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReindexDocsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.BaseId != nil {
+		// no validation rules for BaseId
+	}
+
+	if len(errors) > 0 {
+		return ReindexDocsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReindexDocsRequestMultiError is an error wrapping multiple validation errors
+// returned by ReindexDocsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ReindexDocsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReindexDocsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReindexDocsRequestMultiError) AllErrors() []error { return m }
+
+// ReindexDocsRequestValidationError is the validation error returned by
+// ReindexDocsRequest.Validate if the designated constraints aren't met.
+type ReindexDocsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReindexDocsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReindexDocsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReindexDocsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReindexDocsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReindexDocsRequestValidationError) ErrorName() string {
+	return "ReindexDocsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ReindexDocsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReindexDocsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReindexDocsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReindexDocsRequestValidationError{}
+
 // Validate checks the field values on AiKnowledgeBase with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

@@ -352,14 +352,16 @@ func TestGetCounts_Batch(t *testing.T) {
 	}
 }
 
-// TestGetCounts_Unauthenticated 验证无 viewer context 时返回 Unauthorized。
+// TestGetCounts_Unauthenticated 验证无 viewer context 时按 SystemViewer 兜底放行。
+// 2b062885 移除了 ent 层 fail-closed 守卫：无 viewer 时回退 SystemViewer，
+// 计数查询走公开读语义（匿名可读），不再返回 Unauthorized。
 func TestGetCounts_Unauthenticated(t *testing.T) {
 	repo, _, cleanup := newTestInteractionRepo(t)
 	defer cleanup()
 
 	// 无 viewer context（context.Background 无 tenant）
 	_, err := repo.GetCounts(context.Background(), interactionV1.TargetType_TARGET_TYPE_POST, []uint32{1}, []interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_LIKE})
-	assert.Error(t, err, "无 viewer context 应返回错误")
+	assert.NoError(t, err, "无 viewer context 应回退 SystemViewer 放行公开读")
 }
 
 // TestGetCounts_EmptyRequest 验证空 target_ids 或 metrics 返回空 map。

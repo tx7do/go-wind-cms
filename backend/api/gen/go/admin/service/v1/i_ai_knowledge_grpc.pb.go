@@ -32,6 +32,7 @@ const (
 	AiKnowledgeBaseService_ListDocs_FullMethodName      = "/admin.service.v1.AiKnowledgeBaseService/ListDocs"
 	AiKnowledgeBaseService_DeleteDoc_FullMethodName     = "/admin.service.v1.AiKnowledgeBaseService/DeleteDoc"
 	AiKnowledgeBaseService_Search_FullMethodName        = "/admin.service.v1.AiKnowledgeBaseService/Search"
+	AiKnowledgeBaseService_ReindexDocs_FullMethodName   = "/admin.service.v1.AiKnowledgeBaseService/ReindexDocs"
 )
 
 // AiKnowledgeBaseServiceClient is the client API for AiKnowledgeBaseService service.
@@ -60,6 +61,8 @@ type AiKnowledgeBaseServiceClient interface {
 	DeleteDoc(ctx context.Context, in *v11.DeleteAiDocRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 检索测试
 	Search(ctx context.Context, in *v11.SearchAiKnowledgeRequest, opts ...grpc.CallOption) (*v11.SearchAiKnowledgeResponse, error)
+	// 重索引（异步任务）
+	ReindexDocs(ctx context.Context, in *v11.ReindexDocsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type aiKnowledgeBaseServiceClient struct {
@@ -170,6 +173,16 @@ func (c *aiKnowledgeBaseServiceClient) Search(ctx context.Context, in *v11.Searc
 	return out, nil
 }
 
+func (c *aiKnowledgeBaseServiceClient) ReindexDocs(ctx context.Context, in *v11.ReindexDocsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AiKnowledgeBaseService_ReindexDocs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AiKnowledgeBaseServiceServer is the server API for AiKnowledgeBaseService service.
 // All implementations must embed UnimplementedAiKnowledgeBaseServiceServer
 // for forward compatibility.
@@ -196,6 +209,8 @@ type AiKnowledgeBaseServiceServer interface {
 	DeleteDoc(context.Context, *v11.DeleteAiDocRequest) (*emptypb.Empty, error)
 	// 检索测试
 	Search(context.Context, *v11.SearchAiKnowledgeRequest) (*v11.SearchAiKnowledgeResponse, error)
+	// 重索引（异步任务）
+	ReindexDocs(context.Context, *v11.ReindexDocsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAiKnowledgeBaseServiceServer()
 }
 
@@ -235,6 +250,9 @@ func (UnimplementedAiKnowledgeBaseServiceServer) DeleteDoc(context.Context, *v11
 }
 func (UnimplementedAiKnowledgeBaseServiceServer) Search(context.Context, *v11.SearchAiKnowledgeRequest) (*v11.SearchAiKnowledgeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Search not implemented")
+}
+func (UnimplementedAiKnowledgeBaseServiceServer) ReindexDocs(context.Context, *v11.ReindexDocsRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReindexDocs not implemented")
 }
 func (UnimplementedAiKnowledgeBaseServiceServer) mustEmbedUnimplementedAiKnowledgeBaseServiceServer() {
 }
@@ -438,6 +456,24 @@ func _AiKnowledgeBaseService_Search_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AiKnowledgeBaseService_ReindexDocs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ReindexDocsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiKnowledgeBaseServiceServer).ReindexDocs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiKnowledgeBaseService_ReindexDocs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiKnowledgeBaseServiceServer).ReindexDocs(ctx, req.(*v11.ReindexDocsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AiKnowledgeBaseService_ServiceDesc is the grpc.ServiceDesc for AiKnowledgeBaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -484,6 +520,10 @@ var AiKnowledgeBaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Search",
 			Handler:    _AiKnowledgeBaseService_Search_Handler,
+		},
+		{
+			MethodName: "ReindexDocs",
+			Handler:    _AiKnowledgeBaseService_ReindexDocs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

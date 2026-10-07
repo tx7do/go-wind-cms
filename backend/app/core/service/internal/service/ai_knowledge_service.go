@@ -43,6 +43,7 @@ type AiKnowledgeService struct {
 
 	providerRepo *data.AiProviderRepo
 	usageLogRepo *data.AiUsageLogRepo
+	taskService  *TaskService
 }
 
 func NewAiKnowledgeService(
@@ -50,12 +51,14 @@ func NewAiKnowledgeService(
 	repo *data.AiKnowledgeRepo,
 	providerRepo *data.AiProviderRepo,
 	usageLogRepo *data.AiUsageLogRepo,
+	taskService *TaskService,
 ) *AiKnowledgeService {
 	s := &AiKnowledgeService{
 		log:          ctx.NewLoggerHelper("ai_knowledge/service/core-service"),
 		repo:         repo,
 		providerRepo: providerRepo,
 		usageLogRepo: usageLogRepo,
+		taskService:  taskService,
 	}
 
 	// 启动期补建 pgvector 扩展与 embedding 列（幂等；失败只降级 RAG，不阻断服务）
@@ -407,6 +410,18 @@ func (s *AiKnowledgeService) operator(ctx context.Context) (uint32, uint32) {
 	return userId, tenantId
 }
 
+// ReindexDocs 重索引 RPC：入队 asynq 任务（baseId=0 全量），立即返回。
+// 平台维护操作；实际重算在 worker 内异步执行。
+func (s *AiKnowledgeService) ReindexDocs(ctx context.Context, req *aiV1.ReindexDocsRequest) (*emptypb.Empty, error) {
+	if s.taskService == nil {
+		return nil, aiV1.ErrorInternalServerError("task scheduler not available")
+	}
+	if err := s.taskService.EnqueueAiDocReindex(req.GetBaseId()); err != nil {
+		return nil, aiV1.ErrorInternalServerError("enqueue reindex failed: %v", err)
+	}
+	return &emptypb.Empty{}, nil
+}
+
 // ── 重索引任务（asynq：ai.doc.reindex） ─────────────────────────────
 
 // reindexEmbedBatchSize 每批送 /v1/embeddings 的切片数。
@@ -417,7 +432,7 @@ const reindexEmbedBatchSize = 32
 // 更换了知识库的 embedding 模型（或 provider 端点）后需要重建。
 // asynq ctx 不携带 viewer，租户隔离会拒绝无 viewer 查询；重索引是平台操作，
 // 用系统查看器。
-func (s *AiKnowledgeService) ReindexDocs(taskType string, data *task.AiDocReindexPayload) error {
+func (s *AiKnowledgeService) ReindexDocsWorker(taskType string, data *task.AiDocReindexPayload) error {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
 
 	var baseIds []uint32

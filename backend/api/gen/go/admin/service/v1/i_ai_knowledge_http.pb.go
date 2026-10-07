@@ -28,6 +28,7 @@ const OperationAiKnowledgeBaseServiceDeleteDoc = "/admin.service.v1.AiKnowledgeB
 const OperationAiKnowledgeBaseServiceGet = "/admin.service.v1.AiKnowledgeBaseService/Get"
 const OperationAiKnowledgeBaseServiceList = "/admin.service.v1.AiKnowledgeBaseService/List"
 const OperationAiKnowledgeBaseServiceListDocs = "/admin.service.v1.AiKnowledgeBaseService/ListDocs"
+const OperationAiKnowledgeBaseServiceReindexDocs = "/admin.service.v1.AiKnowledgeBaseService/ReindexDocs"
 const OperationAiKnowledgeBaseServiceSearch = "/admin.service.v1.AiKnowledgeBaseService/Search"
 const OperationAiKnowledgeBaseServiceUpdate = "/admin.service.v1.AiKnowledgeBaseService/Update"
 const OperationAiKnowledgeBaseServiceUploadDoc = "/admin.service.v1.AiKnowledgeBaseService/UploadDoc"
@@ -46,6 +47,8 @@ type AiKnowledgeBaseServiceHTTPServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListAiKnowledgeBaseResponse, error)
 	// ListDocs 查询知识库下的文档
 	ListDocs(context.Context, *v11.ListAiDocsRequest) (*v11.ListAiDocsResponse, error)
+	// ReindexDocs 重索引（异步任务）
+	ReindexDocs(context.Context, *v11.ReindexDocsRequest) (*emptypb.Empty, error)
 	// Search 检索测试
 	Search(context.Context, *v11.SearchAiKnowledgeRequest) (*v11.SearchAiKnowledgeResponse, error)
 	// Update 更新知识库
@@ -68,6 +71,7 @@ func RegisterAiKnowledgeBaseServiceHTTPServer(s *http.Server, srv AiKnowledgeBas
 	r.GET("/admin/v1/ai/knowledge-bases/{base_id}/docs", _AiKnowledgeBaseService_ListDocs0_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/ai/knowledge-bases/{base_id}/docs/{id}", _AiKnowledgeBaseService_DeleteDoc0_HTTP_Handler(srv))
 	r.POST("/admin/v1/ai/knowledge-bases/{base_id}/search", _AiKnowledgeBaseService_Search0_HTTP_Handler(srv))
+	r.POST("/admin/v1/ai/knowledge-bases/reindex", _AiKnowledgeBaseService_ReindexDocs0_HTTP_Handler(srv))
 }
 
 func _AiKnowledgeBaseService_List1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
@@ -299,6 +303,28 @@ func _AiKnowledgeBaseService_Search0_HTTP_Handler(srv AiKnowledgeBaseServiceHTTP
 	}
 }
 
+func _AiKnowledgeBaseService_ReindexDocs0_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ReindexDocsRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAiKnowledgeBaseServiceReindexDocs)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ReindexDocs(ctx, req.(*v11.ReindexDocsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AiKnowledgeBaseServiceHTTPClient interface {
 	// Create 创建知识库
 	Create(ctx context.Context, req *v11.CreateAiKnowledgeBaseRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -312,6 +338,8 @@ type AiKnowledgeBaseServiceHTTPClient interface {
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListAiKnowledgeBaseResponse, err error)
 	// ListDocs 查询知识库下的文档
 	ListDocs(ctx context.Context, req *v11.ListAiDocsRequest, opts ...http.CallOption) (rsp *v11.ListAiDocsResponse, err error)
+	// ReindexDocs 重索引（异步任务）
+	ReindexDocs(ctx context.Context, req *v11.ReindexDocsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Search 检索测试
 	Search(ctx context.Context, req *v11.SearchAiKnowledgeRequest, opts ...http.CallOption) (rsp *v11.SearchAiKnowledgeResponse, err error)
 	// Update 更新知识库
@@ -408,6 +436,20 @@ func (c *AiKnowledgeBaseServiceHTTPClientImpl) ListDocs(ctx context.Context, in 
 	opts = append(opts, http.Operation(OperationAiKnowledgeBaseServiceListDocs))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ReindexDocs 重索引（异步任务）
+func (c *AiKnowledgeBaseServiceHTTPClientImpl) ReindexDocs(ctx context.Context, in *v11.ReindexDocsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/ai/knowledge-bases/reindex"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAiKnowledgeBaseServiceReindexDocs))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

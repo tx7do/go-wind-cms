@@ -67,3 +67,7 @@ func (s *AiKnowledgeService) DeleteDoc(ctx context.Context, req *aiV1.DeleteAiDo
 func (s *AiKnowledgeService) Search(ctx context.Context, req *aiV1.SearchAiKnowledgeRequest) (*aiV1.SearchAiKnowledgeResponse, error) {
 	return s.aiKnowledgeBaseServiceClient.Search(ctx, req)
 }
+
+func (s *AiKnowledgeService) ReindexDocs(ctx context.Context, req *aiV1.ReindexDocsRequest) (*emptypb.Empty, error) {
+	return s.aiKnowledgeBaseServiceClient.ReindexDocs(ctx, req)
+}

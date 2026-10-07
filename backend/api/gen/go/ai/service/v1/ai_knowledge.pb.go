@@ -26,6 +26,52 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 重索引 - 请求
+type ReindexDocsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 知识库ID；0 表示全部知识库
+	BaseId        *uint32 `protobuf:"varint,1,opt,name=base_id,json=baseId,proto3,oneof" json:"base_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReindexDocsRequest) Reset() {
+	*x = ReindexDocsRequest{}
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReindexDocsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReindexDocsRequest) ProtoMessage() {}
+
+func (x *ReindexDocsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReindexDocsRequest.ProtoReflect.Descriptor instead.
+func (*ReindexDocsRequest) Descriptor() ([]byte, []int) {
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ReindexDocsRequest) GetBaseId() uint32 {
+	if x != nil && x.BaseId != nil {
+		return *x.BaseId
+	}
+	return 0
+}
+
 // AI 知识库
 type AiKnowledgeBase struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -49,7 +95,7 @@ type AiKnowledgeBase struct {
 
 func (x *AiKnowledgeBase) Reset() {
 	*x = AiKnowledgeBase{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[0]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -61,7 +107,7 @@ func (x *AiKnowledgeBase) String() string {
 func (*AiKnowledgeBase) ProtoMessage() {}
 
 func (x *AiKnowledgeBase) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[0]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -74,7 +120,7 @@ func (x *AiKnowledgeBase) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AiKnowledgeBase.ProtoReflect.Descriptor instead.
 func (*AiKnowledgeBase) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{0}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AiKnowledgeBase) GetId() uint32 {
@@ -186,7 +232,7 @@ type ListAiKnowledgeBaseResponse struct {
 
 func (x *ListAiKnowledgeBaseResponse) Reset() {
 	*x = ListAiKnowledgeBaseResponse{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[1]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -198,7 +244,7 @@ func (x *ListAiKnowledgeBaseResponse) String() string {
 func (*ListAiKnowledgeBaseResponse) ProtoMessage() {}
 
 func (x *ListAiKnowledgeBaseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[1]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -211,7 +257,7 @@ func (x *ListAiKnowledgeBaseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAiKnowledgeBaseResponse.ProtoReflect.Descriptor instead.
 func (*ListAiKnowledgeBaseResponse) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{1}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListAiKnowledgeBaseResponse) GetItems() []*AiKnowledgeBase {
@@ -242,7 +288,7 @@ type GetAiKnowledgeBaseRequest struct {
 
 func (x *GetAiKnowledgeBaseRequest) Reset() {
 	*x = GetAiKnowledgeBaseRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[2]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -254,7 +300,7 @@ func (x *GetAiKnowledgeBaseRequest) String() string {
 func (*GetAiKnowledgeBaseRequest) ProtoMessage() {}
 
 func (x *GetAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[2]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -267,7 +313,7 @@ func (x *GetAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAiKnowledgeBaseRequest.ProtoReflect.Descriptor instead.
 func (*GetAiKnowledgeBaseRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{2}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetAiKnowledgeBaseRequest) GetQueryBy() isGetAiKnowledgeBaseRequest_QueryBy {
@@ -313,7 +359,7 @@ type CreateAiKnowledgeBaseRequest struct {
 
 func (x *CreateAiKnowledgeBaseRequest) Reset() {
 	*x = CreateAiKnowledgeBaseRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[3]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -325,7 +371,7 @@ func (x *CreateAiKnowledgeBaseRequest) String() string {
 func (*CreateAiKnowledgeBaseRequest) ProtoMessage() {}
 
 func (x *CreateAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[3]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -338,7 +384,7 @@ func (x *CreateAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAiKnowledgeBaseRequest.ProtoReflect.Descriptor instead.
 func (*CreateAiKnowledgeBaseRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{3}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateAiKnowledgeBaseRequest) GetData() *AiKnowledgeBase {
@@ -361,7 +407,7 @@ type UpdateAiKnowledgeBaseRequest struct {
 
 func (x *UpdateAiKnowledgeBaseRequest) Reset() {
 	*x = UpdateAiKnowledgeBaseRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[4]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -373,7 +419,7 @@ func (x *UpdateAiKnowledgeBaseRequest) String() string {
 func (*UpdateAiKnowledgeBaseRequest) ProtoMessage() {}
 
 func (x *UpdateAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[4]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -386,7 +432,7 @@ func (x *UpdateAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAiKnowledgeBaseRequest.ProtoReflect.Descriptor instead.
 func (*UpdateAiKnowledgeBaseRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{4}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateAiKnowledgeBaseRequest) GetId() uint32 {
@@ -430,7 +476,7 @@ type DeleteAiKnowledgeBaseRequest struct {
 
 func (x *DeleteAiKnowledgeBaseRequest) Reset() {
 	*x = DeleteAiKnowledgeBaseRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[5]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -442,7 +488,7 @@ func (x *DeleteAiKnowledgeBaseRequest) String() string {
 func (*DeleteAiKnowledgeBaseRequest) ProtoMessage() {}
 
 func (x *DeleteAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[5]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -455,7 +501,7 @@ func (x *DeleteAiKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAiKnowledgeBaseRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAiKnowledgeBaseRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{5}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteAiKnowledgeBaseRequest) GetQueryBy() isDeleteAiKnowledgeBaseRequest_QueryBy {
@@ -496,7 +542,7 @@ type UploadAiDocRequest struct {
 
 func (x *UploadAiDocRequest) Reset() {
 	*x = UploadAiDocRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[6]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -508,7 +554,7 @@ func (x *UploadAiDocRequest) String() string {
 func (*UploadAiDocRequest) ProtoMessage() {}
 
 func (x *UploadAiDocRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[6]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -521,7 +567,7 @@ func (x *UploadAiDocRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadAiDocRequest.ProtoReflect.Descriptor instead.
 func (*UploadAiDocRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{6}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UploadAiDocRequest) GetBaseId() uint32 {
@@ -558,7 +604,7 @@ type UploadAiDocFileRequest struct {
 
 func (x *UploadAiDocFileRequest) Reset() {
 	*x = UploadAiDocFileRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[7]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -570,7 +616,7 @@ func (x *UploadAiDocFileRequest) String() string {
 func (*UploadAiDocFileRequest) ProtoMessage() {}
 
 func (x *UploadAiDocFileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[7]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -583,7 +629,7 @@ func (x *UploadAiDocFileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadAiDocFileRequest.ProtoReflect.Descriptor instead.
 func (*UploadAiDocFileRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{7}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UploadAiDocFileRequest) GetBaseId() uint32 {
@@ -625,7 +671,7 @@ type UploadAiDocResponse struct {
 
 func (x *UploadAiDocResponse) Reset() {
 	*x = UploadAiDocResponse{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[8]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -637,7 +683,7 @@ func (x *UploadAiDocResponse) String() string {
 func (*UploadAiDocResponse) ProtoMessage() {}
 
 func (x *UploadAiDocResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[8]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -650,7 +696,7 @@ func (x *UploadAiDocResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadAiDocResponse.ProtoReflect.Descriptor instead.
 func (*UploadAiDocResponse) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{8}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UploadAiDocResponse) GetDoc() *AiDoc {
@@ -685,7 +731,7 @@ type AiDoc struct {
 
 func (x *AiDoc) Reset() {
 	*x = AiDoc{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[9]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -697,7 +743,7 @@ func (x *AiDoc) String() string {
 func (*AiDoc) ProtoMessage() {}
 
 func (x *AiDoc) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[9]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -710,7 +756,7 @@ func (x *AiDoc) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AiDoc.ProtoReflect.Descriptor instead.
 func (*AiDoc) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{9}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *AiDoc) GetId() uint32 {
@@ -786,7 +832,7 @@ type ListAiDocsRequest struct {
 
 func (x *ListAiDocsRequest) Reset() {
 	*x = ListAiDocsRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[10]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -798,7 +844,7 @@ func (x *ListAiDocsRequest) String() string {
 func (*ListAiDocsRequest) ProtoMessage() {}
 
 func (x *ListAiDocsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[10]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -811,7 +857,7 @@ func (x *ListAiDocsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAiDocsRequest.ProtoReflect.Descriptor instead.
 func (*ListAiDocsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{10}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListAiDocsRequest) GetBaseId() uint32 {
@@ -832,7 +878,7 @@ type ListAiDocsResponse struct {
 
 func (x *ListAiDocsResponse) Reset() {
 	*x = ListAiDocsResponse{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[11]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -844,7 +890,7 @@ func (x *ListAiDocsResponse) String() string {
 func (*ListAiDocsResponse) ProtoMessage() {}
 
 func (x *ListAiDocsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[11]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -857,7 +903,7 @@ func (x *ListAiDocsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAiDocsResponse.ProtoReflect.Descriptor instead.
 func (*ListAiDocsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{11}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListAiDocsResponse) GetItems() []*AiDoc {
@@ -885,7 +931,7 @@ type DeleteAiDocRequest struct {
 
 func (x *DeleteAiDocRequest) Reset() {
 	*x = DeleteAiDocRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[12]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -897,7 +943,7 @@ func (x *DeleteAiDocRequest) String() string {
 func (*DeleteAiDocRequest) ProtoMessage() {}
 
 func (x *DeleteAiDocRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[12]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -910,7 +956,7 @@ func (x *DeleteAiDocRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAiDocRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAiDocRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{12}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteAiDocRequest) GetBaseId() uint32 {
@@ -939,7 +985,7 @@ type SearchAiKnowledgeRequest struct {
 
 func (x *SearchAiKnowledgeRequest) Reset() {
 	*x = SearchAiKnowledgeRequest{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[13]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -951,7 +997,7 @@ func (x *SearchAiKnowledgeRequest) String() string {
 func (*SearchAiKnowledgeRequest) ProtoMessage() {}
 
 func (x *SearchAiKnowledgeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[13]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -964,7 +1010,7 @@ func (x *SearchAiKnowledgeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchAiKnowledgeRequest.ProtoReflect.Descriptor instead.
 func (*SearchAiKnowledgeRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{13}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *SearchAiKnowledgeRequest) GetBaseId() uint32 {
@@ -1001,7 +1047,7 @@ type KnowledgeHit struct {
 
 func (x *KnowledgeHit) Reset() {
 	*x = KnowledgeHit{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[14]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1013,7 +1059,7 @@ func (x *KnowledgeHit) String() string {
 func (*KnowledgeHit) ProtoMessage() {}
 
 func (x *KnowledgeHit) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[14]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1026,7 +1072,7 @@ func (x *KnowledgeHit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KnowledgeHit.ProtoReflect.Descriptor instead.
 func (*KnowledgeHit) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{14}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *KnowledgeHit) GetDoc() *AiDoc {
@@ -1067,7 +1113,7 @@ type SearchAiKnowledgeResponse struct {
 
 func (x *SearchAiKnowledgeResponse) Reset() {
 	*x = SearchAiKnowledgeResponse{}
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[15]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1079,7 +1125,7 @@ func (x *SearchAiKnowledgeResponse) String() string {
 func (*SearchAiKnowledgeResponse) ProtoMessage() {}
 
 func (x *SearchAiKnowledgeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[15]
+	mi := &file_ai_service_v1_ai_knowledge_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1092,7 +1138,7 @@ func (x *SearchAiKnowledgeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchAiKnowledgeResponse.ProtoReflect.Descriptor instead.
 func (*SearchAiKnowledgeResponse) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{15}
+	return file_ai_service_v1_ai_knowledge_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *SearchAiKnowledgeResponse) GetHits() []*KnowledgeHit {
@@ -1106,7 +1152,11 @@ var File_ai_service_v1_ai_knowledge_proto protoreflect.FileDescriptor
 
 const file_ai_service_v1_ai_knowledge_proto_rawDesc = "" +
 	"\n" +
-	" ai/service/v1/ai_knowledge.proto\x12\rai.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xbc\b\n" +
+	" ai/service/v1/ai_knowledge.proto\x12\rai.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\">\n" +
+	"\x12ReindexDocsRequest\x12\x1c\n" +
+	"\abase_id\x18\x01 \x01(\rH\x00R\x06baseId\x88\x01\x01B\n" +
+	"\n" +
+	"\b_base_id\"\xbc\b\n" +
 	"\x0fAiKnowledgeBase\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xbaG\x0e\x92\x02\v知识库IDH\x00R\x02id\x88\x01\x01\x12.\n" +
 	"\x04name\x18\x02 \x01(\tB\x15\xbaG\x12\x92\x02\x0f知识库名称H\x01R\x04name\x88\x01\x01\x123\n" +
@@ -1229,7 +1279,7 @@ const file_ai_service_v1_ai_knowledge_proto_rawDesc = "" +
 	"\acontent\x18\x03 \x01(\tR\acontent\x12\x14\n" +
 	"\x05score\x18\x04 \x01(\x01R\x05score\"L\n" +
 	"\x19SearchAiKnowledgeResponse\x12/\n" +
-	"\x04hits\x18\x01 \x03(\v2\x1b.ai.service.v1.KnowledgeHitR\x04hits2\xdf\x06\n" +
+	"\x04hits\x18\x01 \x03(\v2\x1b.ai.service.v1.KnowledgeHitR\x04hits2\xab\a\n" +
 	"\x16AiKnowledgeBaseService\x12O\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a*.ai.service.v1.ListAiKnowledgeBaseResponse\"\x00\x12Q\n" +
 	"\x03Get\x12(.ai.service.v1.GetAiKnowledgeBaseRequest\x1a\x1e.ai.service.v1.AiKnowledgeBase\"\x00\x12O\n" +
@@ -1240,7 +1290,8 @@ const file_ai_service_v1_ai_knowledge_proto_rawDesc = "" +
 	"\rUploadDocFile\x12%.ai.service.v1.UploadAiDocFileRequest\x1a\".ai.service.v1.UploadAiDocResponse\"\x00\x12Q\n" +
 	"\bListDocs\x12 .ai.service.v1.ListAiDocsRequest\x1a!.ai.service.v1.ListAiDocsResponse\"\x00\x12H\n" +
 	"\tDeleteDoc\x12!.ai.service.v1.DeleteAiDocRequest\x1a\x16.google.protobuf.Empty\"\x00\x12]\n" +
-	"\x06Search\x12'.ai.service.v1.SearchAiKnowledgeRequest\x1a(.ai.service.v1.SearchAiKnowledgeResponse\"\x00B\xa6\x01\n" +
+	"\x06Search\x12'.ai.service.v1.SearchAiKnowledgeRequest\x1a(.ai.service.v1.SearchAiKnowledgeResponse\"\x00\x12J\n" +
+	"\vReindexDocs\x12!.ai.service.v1.ReindexDocsRequest\x1a\x16.google.protobuf.Empty\"\x00B\xa6\x01\n" +
 	"\x11com.ai.service.v1B\x10AiKnowledgeProtoP\x01Z)go-wind-cms/api/gen/go/ai/service/v1;aipb\xa2\x02\x03ASX\xaa\x02\rAi.Service.V1\xca\x02\rAi\\Service\\V1\xe2\x02\x19Ai\\Service\\V1\\GPBMetadata\xea\x02\x0fAi::Service::V1b\x06proto3"
 
 var (
@@ -1255,65 +1306,68 @@ func file_ai_service_v1_ai_knowledge_proto_rawDescGZIP() []byte {
 	return file_ai_service_v1_ai_knowledge_proto_rawDescData
 }
 
-var file_ai_service_v1_ai_knowledge_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_ai_service_v1_ai_knowledge_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_ai_service_v1_ai_knowledge_proto_goTypes = []any{
-	(*AiKnowledgeBase)(nil),              // 0: ai.service.v1.AiKnowledgeBase
-	(*ListAiKnowledgeBaseResponse)(nil),  // 1: ai.service.v1.ListAiKnowledgeBaseResponse
-	(*GetAiKnowledgeBaseRequest)(nil),    // 2: ai.service.v1.GetAiKnowledgeBaseRequest
-	(*CreateAiKnowledgeBaseRequest)(nil), // 3: ai.service.v1.CreateAiKnowledgeBaseRequest
-	(*UpdateAiKnowledgeBaseRequest)(nil), // 4: ai.service.v1.UpdateAiKnowledgeBaseRequest
-	(*DeleteAiKnowledgeBaseRequest)(nil), // 5: ai.service.v1.DeleteAiKnowledgeBaseRequest
-	(*UploadAiDocRequest)(nil),           // 6: ai.service.v1.UploadAiDocRequest
-	(*UploadAiDocFileRequest)(nil),       // 7: ai.service.v1.UploadAiDocFileRequest
-	(*UploadAiDocResponse)(nil),          // 8: ai.service.v1.UploadAiDocResponse
-	(*AiDoc)(nil),                        // 9: ai.service.v1.AiDoc
-	(*ListAiDocsRequest)(nil),            // 10: ai.service.v1.ListAiDocsRequest
-	(*ListAiDocsResponse)(nil),           // 11: ai.service.v1.ListAiDocsResponse
-	(*DeleteAiDocRequest)(nil),           // 12: ai.service.v1.DeleteAiDocRequest
-	(*SearchAiKnowledgeRequest)(nil),     // 13: ai.service.v1.SearchAiKnowledgeRequest
-	(*KnowledgeHit)(nil),                 // 14: ai.service.v1.KnowledgeHit
-	(*SearchAiKnowledgeResponse)(nil),    // 15: ai.service.v1.SearchAiKnowledgeResponse
-	(*timestamppb.Timestamp)(nil),        // 16: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),        // 17: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),             // 18: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                // 19: google.protobuf.Empty
+	(*ReindexDocsRequest)(nil),           // 0: ai.service.v1.ReindexDocsRequest
+	(*AiKnowledgeBase)(nil),              // 1: ai.service.v1.AiKnowledgeBase
+	(*ListAiKnowledgeBaseResponse)(nil),  // 2: ai.service.v1.ListAiKnowledgeBaseResponse
+	(*GetAiKnowledgeBaseRequest)(nil),    // 3: ai.service.v1.GetAiKnowledgeBaseRequest
+	(*CreateAiKnowledgeBaseRequest)(nil), // 4: ai.service.v1.CreateAiKnowledgeBaseRequest
+	(*UpdateAiKnowledgeBaseRequest)(nil), // 5: ai.service.v1.UpdateAiKnowledgeBaseRequest
+	(*DeleteAiKnowledgeBaseRequest)(nil), // 6: ai.service.v1.DeleteAiKnowledgeBaseRequest
+	(*UploadAiDocRequest)(nil),           // 7: ai.service.v1.UploadAiDocRequest
+	(*UploadAiDocFileRequest)(nil),       // 8: ai.service.v1.UploadAiDocFileRequest
+	(*UploadAiDocResponse)(nil),          // 9: ai.service.v1.UploadAiDocResponse
+	(*AiDoc)(nil),                        // 10: ai.service.v1.AiDoc
+	(*ListAiDocsRequest)(nil),            // 11: ai.service.v1.ListAiDocsRequest
+	(*ListAiDocsResponse)(nil),           // 12: ai.service.v1.ListAiDocsResponse
+	(*DeleteAiDocRequest)(nil),           // 13: ai.service.v1.DeleteAiDocRequest
+	(*SearchAiKnowledgeRequest)(nil),     // 14: ai.service.v1.SearchAiKnowledgeRequest
+	(*KnowledgeHit)(nil),                 // 15: ai.service.v1.KnowledgeHit
+	(*SearchAiKnowledgeResponse)(nil),    // 16: ai.service.v1.SearchAiKnowledgeResponse
+	(*timestamppb.Timestamp)(nil),        // 17: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),        // 18: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),             // 19: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                // 20: google.protobuf.Empty
 }
 var file_ai_service_v1_ai_knowledge_proto_depIdxs = []int32{
-	16, // 0: ai.service.v1.AiKnowledgeBase.created_at:type_name -> google.protobuf.Timestamp
-	16, // 1: ai.service.v1.AiKnowledgeBase.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 2: ai.service.v1.AiKnowledgeBase.deleted_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: ai.service.v1.ListAiKnowledgeBaseResponse.items:type_name -> ai.service.v1.AiKnowledgeBase
-	17, // 4: ai.service.v1.GetAiKnowledgeBaseRequest.view_mask:type_name -> google.protobuf.FieldMask
-	0,  // 5: ai.service.v1.CreateAiKnowledgeBaseRequest.data:type_name -> ai.service.v1.AiKnowledgeBase
-	0,  // 6: ai.service.v1.UpdateAiKnowledgeBaseRequest.data:type_name -> ai.service.v1.AiKnowledgeBase
-	17, // 7: ai.service.v1.UpdateAiKnowledgeBaseRequest.update_mask:type_name -> google.protobuf.FieldMask
-	9,  // 8: ai.service.v1.UploadAiDocResponse.doc:type_name -> ai.service.v1.AiDoc
-	16, // 9: ai.service.v1.AiDoc.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 10: ai.service.v1.ListAiDocsResponse.items:type_name -> ai.service.v1.AiDoc
-	9,  // 11: ai.service.v1.KnowledgeHit.doc:type_name -> ai.service.v1.AiDoc
-	14, // 12: ai.service.v1.SearchAiKnowledgeResponse.hits:type_name -> ai.service.v1.KnowledgeHit
-	18, // 13: ai.service.v1.AiKnowledgeBaseService.List:input_type -> pagination.PagingRequest
-	2,  // 14: ai.service.v1.AiKnowledgeBaseService.Get:input_type -> ai.service.v1.GetAiKnowledgeBaseRequest
-	3,  // 15: ai.service.v1.AiKnowledgeBaseService.Create:input_type -> ai.service.v1.CreateAiKnowledgeBaseRequest
-	4,  // 16: ai.service.v1.AiKnowledgeBaseService.Update:input_type -> ai.service.v1.UpdateAiKnowledgeBaseRequest
-	5,  // 17: ai.service.v1.AiKnowledgeBaseService.Delete:input_type -> ai.service.v1.DeleteAiKnowledgeBaseRequest
-	6,  // 18: ai.service.v1.AiKnowledgeBaseService.UploadDoc:input_type -> ai.service.v1.UploadAiDocRequest
-	7,  // 19: ai.service.v1.AiKnowledgeBaseService.UploadDocFile:input_type -> ai.service.v1.UploadAiDocFileRequest
-	10, // 20: ai.service.v1.AiKnowledgeBaseService.ListDocs:input_type -> ai.service.v1.ListAiDocsRequest
-	12, // 21: ai.service.v1.AiKnowledgeBaseService.DeleteDoc:input_type -> ai.service.v1.DeleteAiDocRequest
-	13, // 22: ai.service.v1.AiKnowledgeBaseService.Search:input_type -> ai.service.v1.SearchAiKnowledgeRequest
-	1,  // 23: ai.service.v1.AiKnowledgeBaseService.List:output_type -> ai.service.v1.ListAiKnowledgeBaseResponse
-	0,  // 24: ai.service.v1.AiKnowledgeBaseService.Get:output_type -> ai.service.v1.AiKnowledgeBase
-	19, // 25: ai.service.v1.AiKnowledgeBaseService.Create:output_type -> google.protobuf.Empty
-	19, // 26: ai.service.v1.AiKnowledgeBaseService.Update:output_type -> google.protobuf.Empty
-	19, // 27: ai.service.v1.AiKnowledgeBaseService.Delete:output_type -> google.protobuf.Empty
-	8,  // 28: ai.service.v1.AiKnowledgeBaseService.UploadDoc:output_type -> ai.service.v1.UploadAiDocResponse
-	8,  // 29: ai.service.v1.AiKnowledgeBaseService.UploadDocFile:output_type -> ai.service.v1.UploadAiDocResponse
-	11, // 30: ai.service.v1.AiKnowledgeBaseService.ListDocs:output_type -> ai.service.v1.ListAiDocsResponse
-	19, // 31: ai.service.v1.AiKnowledgeBaseService.DeleteDoc:output_type -> google.protobuf.Empty
-	15, // 32: ai.service.v1.AiKnowledgeBaseService.Search:output_type -> ai.service.v1.SearchAiKnowledgeResponse
-	23, // [23:33] is the sub-list for method output_type
-	13, // [13:23] is the sub-list for method input_type
+	17, // 0: ai.service.v1.AiKnowledgeBase.created_at:type_name -> google.protobuf.Timestamp
+	17, // 1: ai.service.v1.AiKnowledgeBase.updated_at:type_name -> google.protobuf.Timestamp
+	17, // 2: ai.service.v1.AiKnowledgeBase.deleted_at:type_name -> google.protobuf.Timestamp
+	1,  // 3: ai.service.v1.ListAiKnowledgeBaseResponse.items:type_name -> ai.service.v1.AiKnowledgeBase
+	18, // 4: ai.service.v1.GetAiKnowledgeBaseRequest.view_mask:type_name -> google.protobuf.FieldMask
+	1,  // 5: ai.service.v1.CreateAiKnowledgeBaseRequest.data:type_name -> ai.service.v1.AiKnowledgeBase
+	1,  // 6: ai.service.v1.UpdateAiKnowledgeBaseRequest.data:type_name -> ai.service.v1.AiKnowledgeBase
+	18, // 7: ai.service.v1.UpdateAiKnowledgeBaseRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 8: ai.service.v1.UploadAiDocResponse.doc:type_name -> ai.service.v1.AiDoc
+	17, // 9: ai.service.v1.AiDoc.created_at:type_name -> google.protobuf.Timestamp
+	10, // 10: ai.service.v1.ListAiDocsResponse.items:type_name -> ai.service.v1.AiDoc
+	10, // 11: ai.service.v1.KnowledgeHit.doc:type_name -> ai.service.v1.AiDoc
+	15, // 12: ai.service.v1.SearchAiKnowledgeResponse.hits:type_name -> ai.service.v1.KnowledgeHit
+	19, // 13: ai.service.v1.AiKnowledgeBaseService.List:input_type -> pagination.PagingRequest
+	3,  // 14: ai.service.v1.AiKnowledgeBaseService.Get:input_type -> ai.service.v1.GetAiKnowledgeBaseRequest
+	4,  // 15: ai.service.v1.AiKnowledgeBaseService.Create:input_type -> ai.service.v1.CreateAiKnowledgeBaseRequest
+	5,  // 16: ai.service.v1.AiKnowledgeBaseService.Update:input_type -> ai.service.v1.UpdateAiKnowledgeBaseRequest
+	6,  // 17: ai.service.v1.AiKnowledgeBaseService.Delete:input_type -> ai.service.v1.DeleteAiKnowledgeBaseRequest
+	7,  // 18: ai.service.v1.AiKnowledgeBaseService.UploadDoc:input_type -> ai.service.v1.UploadAiDocRequest
+	8,  // 19: ai.service.v1.AiKnowledgeBaseService.UploadDocFile:input_type -> ai.service.v1.UploadAiDocFileRequest
+	11, // 20: ai.service.v1.AiKnowledgeBaseService.ListDocs:input_type -> ai.service.v1.ListAiDocsRequest
+	13, // 21: ai.service.v1.AiKnowledgeBaseService.DeleteDoc:input_type -> ai.service.v1.DeleteAiDocRequest
+	14, // 22: ai.service.v1.AiKnowledgeBaseService.Search:input_type -> ai.service.v1.SearchAiKnowledgeRequest
+	0,  // 23: ai.service.v1.AiKnowledgeBaseService.ReindexDocs:input_type -> ai.service.v1.ReindexDocsRequest
+	2,  // 24: ai.service.v1.AiKnowledgeBaseService.List:output_type -> ai.service.v1.ListAiKnowledgeBaseResponse
+	1,  // 25: ai.service.v1.AiKnowledgeBaseService.Get:output_type -> ai.service.v1.AiKnowledgeBase
+	20, // 26: ai.service.v1.AiKnowledgeBaseService.Create:output_type -> google.protobuf.Empty
+	20, // 27: ai.service.v1.AiKnowledgeBaseService.Update:output_type -> google.protobuf.Empty
+	20, // 28: ai.service.v1.AiKnowledgeBaseService.Delete:output_type -> google.protobuf.Empty
+	9,  // 29: ai.service.v1.AiKnowledgeBaseService.UploadDoc:output_type -> ai.service.v1.UploadAiDocResponse
+	9,  // 30: ai.service.v1.AiKnowledgeBaseService.UploadDocFile:output_type -> ai.service.v1.UploadAiDocResponse
+	12, // 31: ai.service.v1.AiKnowledgeBaseService.ListDocs:output_type -> ai.service.v1.ListAiDocsResponse
+	20, // 32: ai.service.v1.AiKnowledgeBaseService.DeleteDoc:output_type -> google.protobuf.Empty
+	16, // 33: ai.service.v1.AiKnowledgeBaseService.Search:output_type -> ai.service.v1.SearchAiKnowledgeResponse
+	20, // 34: ai.service.v1.AiKnowledgeBaseService.ReindexDocs:output_type -> google.protobuf.Empty
+	24, // [24:35] is the sub-list for method output_type
+	13, // [13:24] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
 	13, // [13:13] is the sub-list for extension extendee
 	0,  // [0:13] is the sub-list for field type_name
@@ -1325,23 +1379,24 @@ func file_ai_service_v1_ai_knowledge_proto_init() {
 		return
 	}
 	file_ai_service_v1_ai_knowledge_proto_msgTypes[0].OneofWrappers = []any{}
-	file_ai_service_v1_ai_knowledge_proto_msgTypes[2].OneofWrappers = []any{
+	file_ai_service_v1_ai_knowledge_proto_msgTypes[1].OneofWrappers = []any{}
+	file_ai_service_v1_ai_knowledge_proto_msgTypes[3].OneofWrappers = []any{
 		(*GetAiKnowledgeBaseRequest_Id)(nil),
 	}
-	file_ai_service_v1_ai_knowledge_proto_msgTypes[4].OneofWrappers = []any{}
-	file_ai_service_v1_ai_knowledge_proto_msgTypes[5].OneofWrappers = []any{
+	file_ai_service_v1_ai_knowledge_proto_msgTypes[5].OneofWrappers = []any{}
+	file_ai_service_v1_ai_knowledge_proto_msgTypes[6].OneofWrappers = []any{
 		(*DeleteAiKnowledgeBaseRequest_Id)(nil),
 	}
-	file_ai_service_v1_ai_knowledge_proto_msgTypes[7].OneofWrappers = []any{}
-	file_ai_service_v1_ai_knowledge_proto_msgTypes[9].OneofWrappers = []any{}
-	file_ai_service_v1_ai_knowledge_proto_msgTypes[13].OneofWrappers = []any{}
+	file_ai_service_v1_ai_knowledge_proto_msgTypes[8].OneofWrappers = []any{}
+	file_ai_service_v1_ai_knowledge_proto_msgTypes[10].OneofWrappers = []any{}
+	file_ai_service_v1_ai_knowledge_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ai_service_v1_ai_knowledge_proto_rawDesc), len(file_ai_service_v1_ai_knowledge_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

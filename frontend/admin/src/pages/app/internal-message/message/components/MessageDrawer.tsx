@@ -13,6 +13,7 @@ import type { internal_messageservicev1_InternalMessage as InternalMessage } fro
 import { PaginationQuery } from '@/core';
 import { useUpdateInternalMessage, useSendMessage, fetchListMessageCategories } from '@/api/hooks/internal-message';
 import { fetchListUsers } from '@/api/hooks/user';
+import AiGenerateButton from '@/components/common/AiGenerateButton';
 import { Editor, EditorType } from '@/components/common/Editor';
 import { getStatusOptions, getTypeOptions } from '../constants';
 
@@ -242,7 +243,17 @@ const MessageDrawer: React.FC<MessageDrawerProps> = ({ open, mode, data, onClose
       {/* 消息内容 - Tiptap 富文本编辑器 */}
       <Form.Item
         name="content"
-        label={t('content')}
+        label={
+          <span className="inline-flex items-center gap-2">
+            {t('content')}
+            <AiGenerateButton
+              scene="ANNOUNCEMENT"
+              onGenerate={(content: string) => {
+                formRef.current?.setFieldValue('content', content);
+              }}
+            />
+          </span>
+        }
         rules={[{ required: true, message: t('requiredContent', '请输入消息内容') }]}
       >
         <Editor

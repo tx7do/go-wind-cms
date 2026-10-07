@@ -647,7 +647,7 @@ func (r *ContentModelRepo) ValidateValues(ctx context.Context, contentModelID ui
 	// 多余键检查
 	for key := range customFields {
 		if _, ok := defMap[key]; !ok {
-			return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q is not defined in the bound content model", key))
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q is not defined in the bound content model", key))
 		}
 	}
 
@@ -657,7 +657,7 @@ func (r *ContentModelRepo) ValidateValues(ctx context.Context, contentModelID ui
 
 		isRequired := def.IsRequired != nil && *def.IsRequired
 		if isRequired && (!exists || strings.TrimSpace(value) == "") {
-			return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q is required", name))
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q is required", name))
 		}
 		if !exists || value == "" {
 			continue
@@ -673,52 +673,52 @@ func (r *ContentModelRepo) ValidateValues(ctx context.Context, contentModelID ui
 			if def.ValidationRegex != nil && *def.ValidationRegex != "" {
 				re, cErr := regexp.Compile(*def.ValidationRegex)
 				if cErr != nil {
-					return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q has an invalid validation regex", name))
+					return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q has an invalid validation regex", name))
 				}
 				if !re.MatchString(value) {
-					return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q does not match the validation rule", name))
+					return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q does not match the validation rule", name))
 				}
 			}
 
 		case fielddefinition.TypeFIELD_TYPE_NUMBER:
 			if _, pErr := strconv.ParseFloat(value, 64); pErr != nil {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q must be a number", name))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be a number", name))
 			}
 
 		case fielddefinition.TypeFIELD_TYPE_IMAGE, fielddefinition.TypeFIELD_TYPE_FILE:
 			id, ok := parseStringRef(value, mediaRefPrefix)
 			if !ok {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q must be a media reference like %s<id>", name, mediaRefPrefix))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be a media reference like %s<id>", name, mediaRefPrefix))
 			}
 			// 媒体归属校验：存在且属于当前租户（与站点配置读取的字段裁剪同理，防止跨租户引用）
 			media, mErr := r.entClient.Client().MediaAsset.Get(ctx, id)
 			if mErr != nil {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q references a non-existent media asset", name))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a non-existent media asset", name))
 			}
 			if media.TenantID != nil && tenantID != 0 && *media.TenantID != tenantID {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q references a media asset from another tenant", name))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a media asset from another tenant", name))
 			}
 
 		case fielddefinition.TypeFIELD_TYPE_RELATION:
 			if def.RelationConfig == nil {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q is a relation without relation config", name))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q is a relation without relation config", name))
 			}
 			entityType, id, ok := parseEntityRef(value)
 			if !ok {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q must be an entity reference like post:<id>", name))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be an entity reference like post:<id>", name))
 			}
 			if !relationEntityTypeWhitelist[entityType] {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q references an unsupported entity type %q", name, entityType))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references an unsupported entity type %q", name, entityType))
 			}
 			if def.RelationConfig.TargetEntityType != "" && def.RelationConfig.TargetEntityType != entityType {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q must reference a %s", name, def.RelationConfig.TargetEntityType))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must reference a %s", name, def.RelationConfig.TargetEntityType))
 			}
 			targetTenant, tErr := r.queryEntityTenant(ctx, entityType, id)
 			if tErr != nil {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q references a non-existent %s", name, entityType))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a non-existent %s", name, entityType))
 			}
 			if !def.RelationConfig.AllowCrossTenant && tenantID != 0 && targetTenant != tenantID {
-				return contentV1.ErrorBadRequest(fmt.Sprintf("custom field %q references a %s from another tenant", name, entityType))
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a %s from another tenant", name, entityType))
 			}
 		}
 	}
