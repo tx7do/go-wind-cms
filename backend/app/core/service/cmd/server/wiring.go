@@ -267,7 +267,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

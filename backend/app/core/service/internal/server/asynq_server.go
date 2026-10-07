@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -41,6 +41,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 	// worker 收到 search.reindex 任务后，调 SearchService.ReindexPost 从 DB 取
 	// 最新数据写入/删除 ES。详见 search_service.go / search_repo.go 安全模型。
 	if err = asynq.RegisterSubscriber(srv, task.SearchReindexTaskType, searchService.ReindexPost); err != nil {
+		log.Error(err)
+	}
+
+	// 注册知识库切片重索引任务：更换 embedding 模型/provider 后全量重算向量。
+	if err = asynq.RegisterSubscriber(srv, task.AiDocReindexTaskType, aiKnowledgeService.ReindexDocs); err != nil {
 		log.Error(err)
 	}
 

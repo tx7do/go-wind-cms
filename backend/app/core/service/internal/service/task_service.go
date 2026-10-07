@@ -590,3 +590,18 @@ func (s *TaskService) EnqueueSearchReindex(payload *task.SearchReindexPayload) e
 		payload.Entity, payload.ID, payload.Op)
 	return nil
 }
+
+// EnqueueAiDocReindex 入队一个知识库切片重索引任务（baseId=0 全量）。
+// 入队 best-effort：调度器未注入（开发环境未起 asynq）时静默跳过。
+func (s *TaskService) EnqueueAiDocReindex(baseID uint32) error {
+	if s.taskScheduler == nil {
+		s.log.Warnf("ai doc reindex skipped: task scheduler not available (base=%d)", baseID)
+		return nil
+	}
+	if err := s.taskScheduler.NewTask(task.AiDocReindexTaskType, &task.AiDocReindexPayload{BaseID: baseID}); err != nil {
+		s.log.Errorf("enqueue ai doc reindex failed (base=%d): %v", baseID, err)
+		return err
+	}
+	s.log.Infof("enqueued ai doc reindex (base=%d)", baseID)
+	return nil
+}
