@@ -48,3 +48,13 @@ const AiDocReindexTaskType = "ai.doc.reindex"
 type AiDocReindexPayload struct {
 	BaseID uint32 `json:"base_id"`
 }
+
+// AiQueryRunTaskType 定时问数任务的 asynq 任务类型。
+// 执行一次问数并把结果以站内信推送给平台侧用户。
+const AiQueryRunTaskType = "ai.query.run"
+
+// AiQueryRunPayload 定时问数任务 payload。
+type AiQueryRunPayload struct {
+	Question string `json:"question"`
+	Lang     string `json:"lang"`
+}

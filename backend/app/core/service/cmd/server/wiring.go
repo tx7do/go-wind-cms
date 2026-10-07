@@ -216,7 +216,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiMessageService := service.NewAiMessageService(ctx, aiMessageRepo)
 	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeRepo, aiProviderRepo, aiUsageLogRepo)
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo)
-	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient)
+	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
 	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
@@ -267,7 +267,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

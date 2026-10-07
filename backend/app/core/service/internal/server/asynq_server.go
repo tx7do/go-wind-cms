@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -46,6 +46,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 
 	// 注册知识库切片重索引任务：更换 embedding 模型/provider 后全量重算向量。
 	if err = asynq.RegisterSubscriber(srv, task.AiDocReindexTaskType, aiKnowledgeService.ReindexDocs); err != nil {
+		log.Error(err)
+	}
+
+	// 注册定时问数任务：执行问题 → 站内信推送结果给平台侧用户。
+	if err = asynq.RegisterSubscriber(srv, task.AiQueryRunTaskType, aiQueryService.AsyncAiQueryRun); err != nil {
 		log.Error(err)
 	}
 
