@@ -58,3 +58,14 @@ type AiQueryRunPayload struct {
 	Question string `json:"question"`
 	Lang     string `json:"lang"`
 }
+
+// AiPostIndexTaskType 帖子语义索引任务的 asynq 任务类型。
+// 把帖子标题+摘要向量化写入 AI 全局搜索索引（sys_ai_search_index）。
+const AiPostIndexTaskType = "ai.post.index"
+
+// AiPostIndexPayload 帖子语义索引任务 payload。
+type AiPostIndexPayload struct {
+	PostID   uint32 `json:"post_id"`
+	TenantID uint32 `json:"tenant_id"`
+	Op       string `json:"op"` // index / delete
+}

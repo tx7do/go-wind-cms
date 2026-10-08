@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -51,6 +51,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 
 	// 注册定时问数任务：执行问题 → 站内信推送结果给平台侧用户。
 	if err = asynq.RegisterSubscriber(srv, task.AiQueryRunTaskType, aiQueryService.AsyncAiQueryRun); err != nil {
+		log.Error(err)
+	}
+
+	// 注册帖子语义索引任务：帖子增删改后同步 AI 全局搜索索引。
+	if err = asynq.RegisterSubscriber(srv, task.AiPostIndexTaskType, aiContentService.IndexPostWorker); err != nil {
 		log.Error(err)
 	}
 

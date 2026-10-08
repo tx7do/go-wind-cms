@@ -631,7 +631,21 @@ const PostEditPage = () => {
 
         {/* 主体：左侧编辑器 + 右侧内嵌设置栏 */}
         <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
-          <div style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
+          <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '4px 8px' }}>
+              <AiGenerateButton
+                scene="POST_BODY"
+                context={formData.title ? `文章标题：${formData.title}` : undefined}
+                onGenerate={(content) => {
+                  // 正文生成是追加语义：已有内容换行拼接，避免覆盖用户已写内容
+                  const base = formData.content?.trim();
+                  patch({ content: base ? `${base}
+
+${content}` : content });
+                }}
+              />
+            </div>
+            <div style={{ flex: 1, minHeight: 0 }}>
             <Editor
               height="100%"
               value={formData.content}
@@ -640,6 +654,7 @@ const PostEditPage = () => {
               uploadImage={handleUploadImage}
               onChange={(v) => patch({ content: v })}
             />
+            </div>
           </div>
 
           {/* 右侧：内嵌设置栏 + 常驻竖向开关轨 */}

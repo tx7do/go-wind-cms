@@ -445,12 +445,15 @@ func (s *AiContentService) SemanticSearch(ctx context.Context, req *aiV1.Semanti
 	// 懒自建：索引表为空（首次使用/换库）时先重建再检索，避免"永远静默降级"。
 	// 仅平台路径触发（租户首查等平台侧已建好）；构建失败降级为空结果不报错。
 	if tenantId == 0 {
-		var idxCount int
-		if cntErr := s.entClient.DB().QueryRowContext(ctx,
-			"SELECT COUNT(*) FROM sys_ai_search_index WHERE item_type = 'menu'").Scan(&idxCount); cntErr == nil && idxCount == 0 {
-			if _, bErr := s.BuildMenuSearchIndex(ctx); bErr != nil {
-				s.log.Errorf("lazy build search index failed, degrade to empty: %v", bErr)
-				return &aiV1.SemanticSearchResponse{Items: []*aiV1.SemanticSearchItem{}}, nil
+		if err := s.ensureSearchIndexColumns(ctx); err == nil {
+			var idxCount int
+			if cntErr := s.entClient.DB().QueryRowContext(ctx,
+				"SELECT COUNT(*) FROM sys_ai_search_index").Scan(&idxCount); cntErr == nil && idxCount == 0 {
+				if _, bErr := s.BuildMenuSearchIndex(ctx); bErr != nil {
+					s.log.Errorf("lazy build search index failed, degrade to empty: %v", bErr)
+				} else if _, bErr := s.BuildPostSearchIndex(ctx); bErr != nil {
+					s.log.Errorf("lazy build post index failed: %v", bErr)
+				}
 			}
 		}
 	}
@@ -495,21 +498,25 @@ func (s *AiContentService) SemanticSearch(ctx context.Context, req *aiV1.Semanti
 	var dbErr error
 	if tenantId == 0 {
 		rows, dbErr = db.QueryContext(ctx,
-			"SELECT title, route, 1 - (embedding <=> $1::vector) AS score FROM sys_ai_search_index WHERE item_type = 'menu' ORDER BY embedding <=> $1::vector LIMIT $2",
+			"SELECT title, route, item_type, 1 - (embedding <=> $1::vector) AS score FROM sys_ai_search_index WHERE item_type IN ('menu','post') ORDER BY embedding <=> $1::vector LIMIT $2",
 			queryVec, limit,
 		)
 	} else {
+		// 菜单行按角色可见菜单集裁剪；帖子行按本租户过滤
 		placeholders := make([]string, len(allowedMenuIDs))
-		args := make([]any, 0, len(allowedMenuIDs)+2)
+		args := make([]any, 0, len(allowedMenuIDs)+3)
 		args = append(args, queryVec)
 		for i, id := range allowedMenuIDs {
 			placeholders[i] = fmt.Sprintf("$%d", i+2)
 			args = append(args, id)
 		}
 		args = append(args, limit)
+		args = append(args, tenantId)
 		sqlText := fmt.Sprintf(
-			"SELECT title, route, 1 - (embedding <=> $1::vector) AS score FROM sys_ai_search_index WHERE item_type = 'menu' AND item_id IN (%s) ORDER BY embedding <=> $1::vector LIMIT $%d",
-			strings.Join(placeholders, ", "), len(args),
+			"SELECT title, route, item_type, 1 - (embedding <=> $1::vector) AS score FROM sys_ai_search_index WHERE "+
+				"((item_type = 'menu' AND item_id IN (%s)) OR (item_type = 'post' AND tenant_id = $%d)) "+
+				"ORDER BY embedding <=> $1::vector LIMIT $%d",
+			strings.Join(placeholders, ", "), len(args), len(args)+1,
 		)
 		rows, dbErr = db.QueryContext(ctx, sqlText, args...)
 	}
@@ -521,13 +528,13 @@ func (s *AiContentService) SemanticSearch(ctx context.Context, req *aiV1.Semanti
 
 	resp := &aiV1.SemanticSearchResponse{Items: make([]*aiV1.SemanticSearchItem, 0, limit)}
 	for rows.Next() {
-		var title, route string
+		var title, route, itemType string
 		var score float64
-		if err = rows.Scan(&title, &route, &score); err != nil {
+		if err = rows.Scan(&title, &route, &itemType, &score); err != nil {
 			continue
 		}
 		resp.Items = append(resp.Items, &aiV1.SemanticSearchItem{
-			Title: title, Route: route, ItemType: "menu", Score: float32(score),
+			Title: title, Route: route, ItemType: itemType, Score: float32(score),
 		})
 	}
 	return resp, rows.Err()
@@ -539,7 +546,12 @@ func (s *AiContentService) RebuildSearchIndex(ctx context.Context, _ *emptypb.Em
 	if err != nil {
 		return nil, aiV1.ErrorInternalServerError("rebuild search index failed: %v", err)
 	}
-	return &aiV1.RebuildSearchIndexResponse{IndexedCount: count}, nil
+	// 帖子索引失败不回滚菜单索引——部分可用优于全不可用
+	postCount, pErr := s.BuildPostSearchIndex(ctx)
+	if pErr != nil {
+		s.log.Errorf("rebuild post index failed: %v", pErr)
+	}
+	return &aiV1.RebuildSearchIndexResponse{IndexedCount: count + uint32(postCount)}, nil
 }
 
 // visibleMenuIDs 解析调用者可见的菜单 ID 集。

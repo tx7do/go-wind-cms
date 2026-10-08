@@ -47,6 +47,24 @@ func cmsToolDefs() []openai.Tool {
 				Parameters:  json.RawMessage(`{"type":"object","properties":{},"required":[]}`),
 			},
 		},
+		{
+			Type: openai.ToolTypeFunction,
+			Function: &openai.FunctionDefinition{
+				Name:        "query_comments",
+				Description: "查询评论统计（按状态分组：PUBLISHED已发布/PENDING待审/TRASHED回收站）。用户问评论情况、待审数量时调用。",
+				Parameters:  json.RawMessage(`{"type":"object","properties":{},"required":[]}`),
+			},
+		},
+		{
+			Type: openai.ToolTypeFunction,
+			Function: &openai.FunctionDefinition{
+				Name:        "query_top_posts",
+				Description: "查询互动量最高的帖子 TOP N（按评论数排序）。用户问热门帖子/互动排行时调用。",
+				Parameters: json.RawMessage(`{"type":"object","properties":{` +
+					`"limit":{"type":"string","description":"可选，返回条数，默认 5，最大 20"}},` +
+					`"required":[]}`),
+			},
+		},
 	}
 }
 
@@ -106,6 +124,31 @@ func (s *AiChatService) execCMSTool(ctx context.Context, tenantId uint32, name, 
 			 UNION ALL SELECT '帖子', COUNT(*) FROM posts
 			 UNION ALL SELECT '评论', COUNT(*) FROM comments
 			 UNION ALL SELECT '媒体文件', COUNT(*) FROM media_assets`)
+		if err != nil {
+			return "", true, err
+		}
+		return out, true, nil
+
+	case "query_comments":
+		out, err := s.queryRowsAsString(ctx, db,
+			`SELECT status, COUNT(*) FROM comments GROUP BY status ORDER BY status`)
+		if err != nil {
+			return "", true, err
+		}
+		return out, true, nil
+
+	case "query_top_posts":
+		topN := 5
+		if v, ok := p["limit"].(string); ok {
+			if n, err := strconv.Atoi(v); err == nil && n > 0 && n <= 20 {
+				topN = n
+			}
+		}
+		out, err := s.queryRowsAsString(ctx, db,
+			`SELECT c.object_id AS post_id, COALESCE(MAX(pt.title), '') AS title, COUNT(*) AS comment_count
+			 FROM comments c LEFT JOIN post_translations pt ON pt.post_id = c.object_id
+			 WHERE c.content_type = 'POST' OR c.content_type = 'post'
+			 GROUP BY c.object_id ORDER BY comment_count DESC LIMIT $1`, topN)
 		if err != nil {
 			return "", true, err
 		}

@@ -261,4 +261,13 @@ func (s *PostService) enqueuePostReindex(ctx context.Context, postID uint32, op 
 	if err := s.taskService.EnqueueSearchReindex(payload); err != nil {
 		s.log.Errorf("enqueue post reindex failed (post_id=%d op=%s): %v", postID, op, err)
 	}
+	// AI 语义索引（pgvector）同步入队：全局搜索可命中帖子标题/摘要。
+	// best-effort 同上。
+	if err := s.taskService.EnqueueAiPostIndex(&task.AiPostIndexPayload{
+		PostID:   postID,
+		TenantID: tenantID,
+		Op:       op,
+	}); err != nil {
+		s.log.Errorf("enqueue ai post index failed (post_id=%d op=%s): %v", postID, op, err)
+	}
 }
