@@ -120,6 +120,19 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Personal Center | Profile editing, avatar, password reset, login history |
 | Headless API | Complete OpenAPI for content CRUD, multi-terminal support |
 
+### AI Assistant
+
+| Feature | Description |
+|:--------|:------------|
+| Model Providers | OpenAI-compatible endpoint management (cloud API / local Ollama), encrypted API keys, usage metering |
+| Chat Assistant | SSE streaming chat with CMS read-only tools (content overview / post query / comment stats) |
+| Knowledge Base RAG | Documents (txt/md/docx/pdf) auto-chunked & vectorized into pgvector, retrieved into chat context |
+| AI Query | Natural language → read-only SQL → structured results, table whitelist & tenant fail-closed |
+| Semantic Content Search | Post titles/summaries vectorized into global search (Ctrl+K), incremental & full rebuild |
+| Safety Insights | Dashboard rule-based 24h audit anomaly scan with LLM summary (platform admins) |
+| AI Content Generation | One-click generation for post title/summary/body, page titles, category/tag descriptions, comment replies, role descriptions |
+| Usage Stats | Full call metering (chat/generation/embedding), monthly summary & server-side export |
+
 ## Project Structure
 
 ```
