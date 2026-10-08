@@ -211,7 +211,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	statsService := service.NewStatsService(ctx, statsRepo)
 	aiProviderService := service.NewAiProviderService(ctx, aiProviderRepo)
 	aiContentService := service.NewAiContentService(ctx, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo, entClient, menuRepo, roleRepo, userRepo)
-	aiChatService := service.NewAiChatService(ctx, aiConversationRepo, aiMessageRepo, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo)
+	aiChatService := service.NewAiChatService(ctx, aiConversationRepo, aiMessageRepo, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo, entClient)
 	aiConversationService := service.NewAiConversationService(ctx, aiConversationRepo)
 	aiMessageService := service.NewAiMessageService(ctx, aiMessageRepo)
 	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeRepo, aiProviderRepo, aiUsageLogRepo, taskService)

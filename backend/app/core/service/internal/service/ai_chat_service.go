@@ -11,6 +11,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc"
+	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-crud/viewer"
 
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
@@ -41,6 +42,7 @@ type AiChatService struct {
 	providerRepo     *data.AiProviderRepo
 	usageLogRepo     *data.AiUsageLogRepo
 	knowledgeRepo    *data.AiKnowledgeRepo
+	entClient        *entCrud.EntClient[*ent.Client]
 }
 
 func NewAiChatService(
@@ -50,6 +52,7 @@ func NewAiChatService(
 	providerRepo *data.AiProviderRepo,
 	usageLogRepo *data.AiUsageLogRepo,
 	knowledgeRepo *data.AiKnowledgeRepo,
+	entClient *entCrud.EntClient[*ent.Client],
 ) *AiChatService {
 	return &AiChatService{
 		log:              ctx.NewLoggerHelper("ai_chat/service/core-service"),
@@ -58,6 +61,7 @@ func NewAiChatService(
 		providerRepo:     providerRepo,
 		usageLogRepo:     usageLogRepo,
 		knowledgeRepo:    knowledgeRepo,
+		entClient:        entClient,
 	}
 }
 
@@ -174,8 +178,13 @@ func (s *AiChatService) Chat(req *aiV1.ChatRequest, stream grpc.ServerStreamingS
 	runner := &aiToolLoop{
 		client:    client,
 		model:     ptrStrOr(provider.ModelName, "gpt-4o-mini"),
-		tools:     aiBuiltinToolDefs(),
-		exec:      execAiTool,
+		tools:     append(aiBuiltinToolDefs(), cmsToolDefs()...),
+		exec: func(tctx context.Context, name, args string) (string, error) {
+			if out, handled, err := s.execCMSTool(tctx, tenantId, name, args); handled {
+				return out, err
+			}
+			return execAiTool(tctx, name, args)
+		},
 		maxRounds: aiToolMaxRounds,
 		onDelta: func(delta string) {
 			_ = stream.Send(&aiV1.ChatStreamFrame{Frame: &aiV1.ChatStreamFrame_Chunk{

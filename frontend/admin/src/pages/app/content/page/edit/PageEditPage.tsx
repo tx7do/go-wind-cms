@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '@/api/client';
 import { PaginationQuery } from '@/core';
+import AiGenerateButton from '@/components/common/AiGenerateButton';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { Editor, EditorType } from '@/components/common/Editor';
 import {
@@ -599,6 +600,10 @@ const PageEditPage = () => {
             style={{ flex: 1, minWidth: 200 }}
             value={formData.title}
             onChange={(e) => updateForm({ title: e.target.value })}
+          />
+          <AiGenerateButton
+            scene="POST_TITLE"
+            onGenerate={(content) => updateForm({ title: content })}
           />
           <Input
             placeholder={t('slugPlaceholder')}
