@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 	"time"
 
@@ -23,9 +24,14 @@ import (
 	"go-wind-cms/app/core/service/internal/data"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
+	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
 
+	"github.com/minio/minio-go/v7"
+
 	"go-wind-cms/pkg/crypto"
+	"go-wind-cms/pkg/oss"
 	_ "go-wind-cms/pkg/social/bluesky"    // 注册 Bluesky 平台适配器
 	_ "go-wind-cms/pkg/social/devto"      // 注册 DEV.to 平台适配器
 	_ "go-wind-cms/pkg/social/mastodon"   // 注册 Mastodon 平台适配器
@@ -43,6 +49,15 @@ const socialStaleTaskSkipWindow = 2 * time.Minute
 // 失败次数达到该值即判定最终失败并通知操作者。
 const socialPublishMaxAttempts = 4
 
+// socialMediaPlatforms 支持配图的平台集合（其余平台带图会在创建时报错）。
+var socialMediaPlatforms = map[socialV1.Platform]bool{
+	socialV1.Platform_PLATFORM_TELEGRAM:   true,
+	socialV1.Platform_PLATFORM_BLUESKY:    true,
+	socialV1.Platform_PLATFORM_MASTODON:   true,
+	socialV1.Platform_PLATFORM_WORDPRESS:  true,
+	socialV1.Platform_PLATFORM_WEIBO:      true,
+}
+
 type SocialService struct {
 	socialV1.UnimplementedSocialServiceServer
 
@@ -51,6 +66,9 @@ type SocialService struct {
 	accountRepo        *data.SocialAccountRepo
 	distributionRepo   *data.SocialDistributionRepo
 	statsHistoryRepo   *data.SocialStatsHistoryRepo
+	mediaAssetRepo     *data.MediaAssetRepo
+	fileRepo           *data.FileRepo
+	mc                 *oss.MinIOClient
 	postRepo           *data.PostRepo
 	taskService        *TaskService
 	internalMessageSvc *InternalMessageService
@@ -61,6 +79,9 @@ func NewSocialService(
 	accountRepo *data.SocialAccountRepo,
 	distributionRepo *data.SocialDistributionRepo,
 	statsHistoryRepo *data.SocialStatsHistoryRepo,
+	mediaAssetRepo *data.MediaAssetRepo,
+	fileRepo *data.FileRepo,
+	mc *oss.MinIOClient,
 	postRepo *data.PostRepo,
 	taskService *TaskService,
 	internalMessageSvc *InternalMessageService,
@@ -70,6 +91,9 @@ func NewSocialService(
 		accountRepo:        accountRepo,
 		distributionRepo:   distributionRepo,
 		statsHistoryRepo:   statsHistoryRepo,
+		mediaAssetRepo:     mediaAssetRepo,
+		fileRepo:           fileRepo,
+		mc:                 mc,
 		postRepo:           postRepo,
 		taskService:        taskService,
 		internalMessageSvc: internalMessageSvc,
@@ -296,6 +320,15 @@ func (s *SocialService) CreateSocialDistribution(ctx context.Context, req *socia
 	if data.GetPlatform() == socialV1.Platform_PLATFORM_DEVTO &&
 		strings.TrimSpace(data.GetTitle()) == "" && data.GetPostId() == 0 {
 		return nil, socialV1.ErrorBadRequest("title or postId is required for DEV.to")
+	}
+	// 配图：仅支持图片的平台可带，至多 4 张
+	if len(data.GetMediaIds()) != 0 {
+		if !socialMediaPlatforms[data.GetPlatform()] {
+			return nil, socialV1.ErrorBadRequest("media is not supported on this platform")
+		}
+		if len(data.GetMediaIds()) > 4 {
+			return nil, socialV1.ErrorBadRequest("at most 4 media attachments")
+		}
 	}
 
 	// 账号必须在本租户内、平台匹配且启用（Get 走租户过滤，跨租户引用直接 404）
@@ -548,9 +581,12 @@ func (s *SocialService) PublishDistributionWorker(taskType string, payload *task
 		}
 	}
 
+	media := s.resolveMedia(ctx, d.GetMediaIds())
+
 	res, err := provider.Publish(ctx, creds, &social.PublishInput{
 		Text:  d.GetOverrideText(),
 		Title: title,
+		Media: media,
 	})
 	if err != nil {
 		attempts, merr := s.distributionRepo.MarkFailed(ctx, d.GetId(), err.Error())
@@ -909,6 +945,79 @@ func (s *SocialService) ListSocialDistributionStatsHistory(ctx context.Context, 
 		})
 	}
 	return &socialV1.ListSocialDistributionStatsHistoryResponse{Items: items}, nil
+}
+
+// socialMaxMediaPerPost 单帖配图解析上限。
+const socialMaxMediaPerPost = 4
+
+// resolveMedia 把媒体资产 ID 解析为图片字节（SystemViewer 上下文跨租户读取）。
+// 单张失败跳过并记日志；仅接受图片类型；至多解析 socialMaxMediaPerPost 张。
+func (s *SocialService) resolveMedia(ctx context.Context, mediaIDs []uint32) []social.MediaAttachment {
+	if len(mediaIDs) == 0 {
+		return nil
+	}
+
+	out := make([]social.MediaAttachment, 0, len(mediaIDs))
+	for _, id := range mediaIDs {
+		if len(out) >= socialMaxMediaPerPost {
+			break
+		}
+
+		asset, err := s.mediaAssetRepo.Get(ctx, &mediaV1.GetMediaAssetRequest{Id: id})
+		if err != nil || asset == nil {
+			s.log.Warnf("resolve media: asset %d not loadable: %v", id, err)
+			continue
+		}
+		if mime := asset.GetMimeType(); mime != "" && !strings.HasPrefix(mime, "image/") {
+			s.log.Warnf("resolve media: asset %d is not an image (%s), skip", id, mime)
+			continue
+		}
+
+		var bucket, object string
+		if asset.GetFileId() != 0 {
+			fileRec, ferr := s.fileRepo.Get(ctx, &storageV1.GetFileRequest{
+				QueryBy: &storageV1.GetFileRequest_Id{Id: asset.GetFileId()},
+			})
+			if ferr != nil || fileRec == nil {
+				s.log.Warnf("resolve media: file %d not loadable: %v", asset.GetFileId(), ferr)
+				continue
+			}
+			bucket = fileRec.GetBucketName()
+			object = fileRec.GetFileDirectory() + fileRec.GetSaveFileName()
+		} else if sp := asset.GetStoragePath(); sp != "" {
+			if parts := strings.SplitN(sp, "/", 2); len(parts) == 2 {
+				bucket, object = parts[0], parts[1]
+			} else {
+				bucket, object = "files", parts[0]
+			}
+		} else {
+			s.log.Warnf("resolve media: asset %d has no file reference, skip", id)
+			continue
+		}
+
+		obj, err := s.mc.GetClient().GetObject(ctx, bucket, object, minio.GetObjectOptions{})
+		if err != nil {
+			s.log.Warnf("resolve media: fetch object failed (bucket=%s object=%s): %v", bucket, object, err)
+			continue
+		}
+		data, err := io.ReadAll(obj)
+		_ = obj.Close()
+		if err != nil {
+			s.log.Warnf("resolve media: read object failed (bucket=%s object=%s): %v", bucket, object, err)
+			continue
+		}
+
+		filename := asset.GetFilename()
+		if filename == "" {
+			filename = fmt.Sprintf("media-%d", id)
+		}
+		contentType := asset.GetMimeType()
+		if contentType == "" {
+			contentType = "image/jpeg"
+		}
+		out = append(out, social.MediaAttachment{Filename: filename, ContentType: contentType, Data: data})
+	}
+	return out
 }
 
 // recordStatsHistory 追加一行统计快照（趋势数据从今天开始积累；失败不影响主流程）。

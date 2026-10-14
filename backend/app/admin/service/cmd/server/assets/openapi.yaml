@@ -13507,6 +13507,12 @@ components:
                 title:
                     type: string
                     description: 平台文章标题（DEV.to 等需要标题的平台使用；关联文章且留空时缺省取文章标题）
+                mediaIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 配图媒体资产ID列表（支持图片的平台使用：Telegram/Bluesky/Mastodon/WordPress/微博；至多 4 张）
                 likes:
                     type: integer
                     description: 点赞数（平台回拉快照）

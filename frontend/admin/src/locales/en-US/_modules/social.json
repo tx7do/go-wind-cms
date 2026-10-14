@@ -139,5 +139,9 @@
   "kpiPublished": "Published",
   "kpiLikes": "Total Likes",
   "kpiReplies": "Total Replies",
-  "kpiLast7Days": "Last 7 Days"
+  "kpiLast7Days": "Last 7 Days",
+  "mediaIds": "Images",
+  "mediaIdsPlaceholder": "Pick images from the media library (up to 4)",
+  "helpMediaIds": "Only Telegram/Bluesky/Mastodon/WordPress/Weibo support images; you will be asked to remove them for other platforms",
+  "mediaUnsupported": "This platform does not support images; remove them before publishing"
 }

@@ -3770,6 +3770,7 @@ var (
 		{Name: "external_id", Type: field.TypeString, Nullable: true, Comment: "平台侧帖子 ID"},
 		{Name: "error_message", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "最近一次发布失败的原因"},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "平台文章标题（DEV.to 等需要标题的平台）"},
+		{Name: "media_ids", Type: field.TypeJSON, Nullable: true, Comment: "配图媒体资产ID列表（支持图片的平台）"},
 		{Name: "likes", Type: field.TypeUint32, Nullable: true, Comment: "点赞数（平台回拉快照）", Default: 0},
 		{Name: "replies", Type: field.TypeUint32, Nullable: true, Comment: "回复数（平台回拉快照）", Default: 0},
 		{Name: "reposts", Type: field.TypeUint32, Nullable: true, Comment: "转发数（平台回拉快照）", Default: 0},

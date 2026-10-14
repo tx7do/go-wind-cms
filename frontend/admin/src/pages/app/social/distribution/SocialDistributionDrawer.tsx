@@ -16,8 +16,18 @@ import AiGenerateButton from '@/components/common/AiGenerateButton';
 
 import { fetchListPosts } from '@/api/hooks/post';
 import { PaginationQuery } from '@/core';
+import { fetchListMediaAssets } from '@/api/hooks/media-asset';
 import { fetchListSocialAccounts, useCreateSocialDistribution, useUpdateSocialDistribution } from '@/api/hooks/social';
 import { MAX_POST_CHARS, supportedPlatformOptions } from './constants';
+
+/** 支持配图的平台 */
+const MEDIA_PLATFORMS = new Set([
+  'PLATFORM_TELEGRAM',
+  'PLATFORM_BLUESKY',
+  'PLATFORM_MASTODON',
+  'PLATFORM_WORDPRESS',
+  'PLATFORM_WEIBO',
+]);
 
 interface SocialDistributionDrawerProps {
   open: boolean;
@@ -68,6 +78,7 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
           accountId: data?.accountId,
           postId: data?.postId,
           title: data?.title || '',
+          mediaIds: data?.mediaIds || [],
           overrideText: data?.overrideText || '',
           publishTime: data?.publishTime ? dayjs(data.publishTime) : undefined,
         });
@@ -95,6 +106,24 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
         }));
     };
   }, [platform]);
+
+  // 配图下拉（媒体库中的图片资产）
+  const mediaOptions = useMemo(() => {
+    return async (keywords?: string) => {
+      const query = new PaginationQuery({
+        paging: { page: 1, pageSize: 100 },
+        formValues: keywords ? { filename: keywords } : null,
+        orderBy: ['-created_at'],
+      });
+      const resp = await fetchListMediaAssets(query);
+      return (resp.items || [])
+        .filter((item: any) => (item.mimeType || '').startsWith('image/'))
+        .map((item: any) => ({
+          label: `${item.filename || item.title || `#${item.id}`}`,
+          value: item.id,
+        }));
+    };
+  }, []);
 
   // 源帖下拉（CMS 文章，取标题做选项文案）
   const postOptions = useMemo(() => {
@@ -154,6 +183,13 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
         ? dayjs(values.publishTime).toISOString()
         : undefined;
 
+      // 配图仅支持特定平台：不支持时明确报错（后端也有同样校验兜底）
+      if (values.mediaIds?.length && !MEDIA_PLATFORMS.has(values.platform)) {
+        message.error(t('mediaUnsupported'));
+        return false;
+      }
+      const mediaIds: number[] = values.mediaIds || [];
+
       if (isEdit) {
         const maskKeys: string[] = ['overrideText', 'publishTime'];
         const payload: Record<string, any> = {
@@ -172,6 +208,10 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
           payload.postId = values.postId;
           maskKeys.push('postId');
         }
+        if (MEDIA_PLATFORMS.has(platform || '')) {
+          payload.mediaIds = mediaIds;
+          maskKeys.push('mediaIds');
+        }
         await updateMutation.mutateAsync({ id: data.id, values: payload, maskKeys });
       } else {
         await createMutation.mutateAsync({
@@ -180,6 +220,7 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
             accountId: values.accountId,
             postId: values.postId,
             title: values.title,
+            mediaIds,
             overrideText: values.overrideText,
             // 缺省 SCHEDULED：publishTime 为空时后端立即入队
             status: 'STATUS_SCHEDULED',
@@ -264,6 +305,23 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
           rules={[{ required: true, message: t('requiredTitle') }]}
           extra={t('helpTitle')}
           fieldProps={{ allowClear: true, maxLength: 128, showCount: true }}
+        />
+      )}
+
+      {MEDIA_PLATFORMS.has(platform || '') && (
+        <ProFormSelect
+          name="mediaIds"
+          label={t('mediaIds')}
+          placeholder={t('mediaIdsPlaceholder')}
+          extra={t('helpMediaIds')}
+          request={() => mediaOptions()}
+          fieldProps={{
+            mode: 'multiple',
+            showSearch: true,
+            optionFilterProp: 'label',
+            allowClear: true,
+            maxCount: 4,
+          }}
         />
       )}
 

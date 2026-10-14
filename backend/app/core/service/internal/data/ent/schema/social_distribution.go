@@ -97,6 +97,10 @@ func (SocialDistribution) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.JSON("media_ids", []uint32{}).
+			Comment("配图媒体资产ID列表（支持图片的平台）").
+			Optional(),
+
 		field.Uint32("likes").
 			Comment("点赞数（平台回拉快照）").
 			Default(0).

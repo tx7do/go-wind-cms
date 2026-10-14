@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
 	"strings"
@@ -54,6 +55,8 @@ type SocialDistribution struct {
 	ErrorMessage *string `json:"error_message,omitempty"`
 	// 平台文章标题（DEV.to 等需要标题的平台）
 	Title *string `json:"title,omitempty"`
+	// 配图媒体资产ID列表（支持图片的平台）
+	MediaIds []uint32 `json:"media_ids,omitempty"`
 	// 点赞数（平台回拉快照）
 	Likes *uint32 `json:"likes,omitempty"`
 	// 回复数（平台回拉快照）
@@ -72,6 +75,8 @@ func (*SocialDistribution) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case socialdistribution.FieldMediaIds:
+			values[i] = new([]byte)
 		case socialdistribution.FieldID, socialdistribution.FieldCreatedBy, socialdistribution.FieldUpdatedBy, socialdistribution.FieldDeletedBy, socialdistribution.FieldTenantID, socialdistribution.FieldAccountID, socialdistribution.FieldPostID, socialdistribution.FieldLikes, socialdistribution.FieldReplies, socialdistribution.FieldReposts, socialdistribution.FieldPublishAttempts:
 			values[i] = new(sql.NullInt64)
 		case socialdistribution.FieldPlatform, socialdistribution.FieldOverrideText, socialdistribution.FieldStatus, socialdistribution.FieldExternalURI, socialdistribution.FieldExternalID, socialdistribution.FieldErrorMessage, socialdistribution.FieldTitle:
@@ -224,6 +229,14 @@ func (_m *SocialDistribution) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				_m.Title = new(string)
 				*_m.Title = value.String
+			}
+		case socialdistribution.FieldMediaIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field media_ids", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.MediaIds); err != nil {
+					return fmt.Errorf("unmarshal field media_ids: %w", err)
+				}
 			}
 		case socialdistribution.FieldLikes:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -385,6 +398,9 @@ func (_m *SocialDistribution) String() string {
 		builder.WriteString("title=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("media_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MediaIds))
 	builder.WriteString(", ")
 	if v := _m.Likes; v != nil {
 		builder.WriteString("likes=")

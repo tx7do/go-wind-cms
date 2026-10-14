@@ -6,6 +6,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/tx7do/go-utils/copierutil"
@@ -161,6 +162,11 @@ func (r *SocialDistributionRepo) Create(ctx context.Context, req *socialV1.Creat
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
 
+	// 配图：仅在非空时写入（空数组与空值在库中都表示无配图）
+	if len(req.Data.GetMediaIds()) != 0 {
+		builder.SetMediaIds(req.Data.GetMediaIds())
+	}
+
 	entity, err := builder.Save(ctx)
 	if err != nil {
 		r.log.Errorf("insert social distribution failed: %s", err.Error())
@@ -213,6 +219,11 @@ func (r *SocialDistributionRepo) Update(ctx context.Context, req *socialV1.Updat
 				SetNillablePublishTime(timeTimestamppbToTime(req.Data.PublishTime)).
 				SetNillableTitle(req.Data.Title).
 				SetUpdatedAt(time.Now())
+
+			// 配图仅按 mask 写入：避免未携带时被误清空
+			if maskHasPath(req.GetUpdateMask(), "media_ids") {
+				builder.SetMediaIds(req.Data.GetMediaIds())
+			}
 
 			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
 			if hasUser {
@@ -483,6 +494,19 @@ func (r *SocialDistributionRepo) Summary(ctx context.Context, tenantID uint32, s
 	}
 
 	return out, nil
+}
+
+// maskHasPath 判断 update_mask 是否包含指定字段。
+func maskHasPath(mask *fieldmaskpb.FieldMask, path string) bool {
+	if mask == nil {
+		return false
+	}
+	for _, p := range mask.Paths {
+		if p == path {
+			return true
+		}
+	}
+	return false
 }
 
 // timeTimestamppbToTime Timestamp → time.Time（nil 安全）。

@@ -76,10 +76,16 @@ type postView struct {
 	Link string `json:"link"`
 }
 
+type mediaView struct {
+	ID        int64  `json:"id"`
+	SourceURL string `json:"source_url"`
+}
+
 type createPostRequest struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Status  string `json:"status"`
+	Title        string `json:"title"`
+	Content      string `json:"content"`
+	Status       string `json:"status"`
+	FeaturedMedia int64  `json:"featured_media,omitempty"`
 }
 
 // ── social.Provider 实现 ──
@@ -94,6 +100,7 @@ func (c *Client) ValidateCredentials(ctx context.Context, creds social.Credentia
 }
 
 // Publish 发表文章：标题取 input.Title（缺省取正文首行），正文转基础 HTML 段落。
+// 带配图时第一张上传为特色图（featured_media），其余以 <img> 追加进正文。
 func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *social.PublishInput) (*social.PublishResult, error) {
 	if input == nil || strings.TrimSpace(input.Text) == "" {
 		return nil, fmt.Errorf("wordpress: empty content")
@@ -107,10 +114,31 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 		return nil, fmt.Errorf("wordpress: empty title")
 	}
 
+	contentHTML := social.PlainTextToHTML(input.Text)
+
 	body := createPostRequest{
 		Title:   title,
-		Content: social.PlainTextToHTML(input.Text),
+		Content: contentHTML,
 		Status:  "publish",
+	}
+
+	// 配图：第一张为特色图，其余追加进正文
+	if len(input.Media) != 0 {
+		var imgTags []string
+		for i, m := range input.Media {
+			mediaURL, uerr := c.uploadMedia(ctx, creds, m)
+			if uerr != nil {
+				return nil, uerr
+			}
+			if i == 0 {
+				body.FeaturedMedia = mediaURL.ID
+				continue
+			}
+			imgTags = append(imgTags, "<p><img src=\""+mediaURL.SourceURL+"\" alt=\"\" /></p>")
+		}
+		if len(imgTags) != 0 {
+			body.Content += strings.Join(imgTags, "")
+		}
 	}
 
 	var post postView
@@ -125,6 +153,58 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 		ExternalID:  fmt.Sprintf("%d", post.ID),
 		ExternalURI: post.Link,
 	}, nil
+}
+
+// uploadMedia 上传一张图片到媒体库，返回媒体 ID 与公开地址。
+func (c *Client) uploadMedia(ctx context.Context, creds social.Credentials, m social.MediaAttachment) (*mediaView, error) {
+	base, err := siteURL(creds)
+	if err != nil {
+		return nil, err
+	}
+	username := creds.Get("username")
+	appPassword := creds.Get("app_password")
+	if username == "" || appPassword == "" {
+		return nil, social.ErrInvalidCredentials
+	}
+
+	buf, fw := social.NewMultipartWriter()
+	if werr := social.WriteFilePart(fw, "file", m.Filename, m.Data); werr != nil {
+		return nil, fmt.Errorf("wordpress: build media part: %w", werr)
+	}
+	if ferr := fw.Close(); ferr != nil {
+		return nil, ferr
+	}
+
+	req, rerr := http.NewRequestWithContext(ctx, http.MethodPost, base+"/wp-json/wp/v2/media", buf)
+	if rerr != nil {
+		return nil, fmt.Errorf("wordpress: build media request: %w", rerr)
+	}
+	req.Header.Set("User-Agent", social.UserAgent)
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(username+":"+appPassword)))
+	req.Header.Set("Content-Type", fw.FormDataContentType())
+
+	resp, derr := c.httpClient.Do(req)
+	if derr != nil {
+		return nil, fmt.Errorf("wordpress: upload media: %w", derr)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	raw, rerr := io.ReadAll(io.LimitReader(resp.Body, maxResponseSize))
+	if rerr != nil {
+		return nil, fmt.Errorf("wordpress: read media response: %w", rerr)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, classifyError(resp.StatusCode, raw)
+	}
+
+	var media mediaView
+	if err := json.Unmarshal(raw, &media); err != nil {
+		return nil, fmt.Errorf("wordpress: decode media response: %w", err)
+	}
+	if media.ID == 0 {
+		return nil, fmt.Errorf("wordpress: unexpected media response")
+	}
+	return &media, nil
 }
 
 // FetchStats 自建站无平台侧互动统计。

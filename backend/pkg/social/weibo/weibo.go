@@ -12,6 +12,7 @@
 package weibo
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -100,13 +101,21 @@ func (c *Client) ValidateCredentials(ctx context.Context, creds social.Credentia
 	return c.do(ctx, creds, http.MethodGet, "/account/rate_limit_status.json", nil, &view)
 }
 
-// Publish 发博。微博 API 不回传帖子 URL，externalURI 留空。
+// Publish 发博。带配图时走 statuses/upload（发文+传图一体，取第一张配图）。
+// 微博 API 不回传帖子 URL，externalURI 留空。
 func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *social.PublishInput) (*social.PublishResult, error) {
-	if input == nil || strings.TrimSpace(input.Text) == "" {
+	if input == nil {
+		return nil, fmt.Errorf("weibo: empty input")
+	}
+	if len(input.Media) == 0 && strings.TrimSpace(input.Text) == "" {
 		return nil, fmt.Errorf("weibo: empty text")
 	}
 	if utf8.RuneCountInString(input.Text) > maxStatusRunes {
 		return nil, social.ErrContentTooLong
+	}
+
+	if len(input.Media) != 0 {
+		return c.publishWithPic(ctx, creds, input)
 	}
 
 	form := url.Values{}
@@ -115,6 +124,58 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 	var status statusView
 	if err := c.do(ctx, creds, http.MethodPost, "/statuses/update.json", form, &status); err != nil {
 		return nil, err
+	}
+	if status.ID == 0 {
+		return nil, fmt.Errorf("weibo: unexpected publish response")
+	}
+
+	return &social.PublishResult{
+		ExternalID: fmt.Sprintf("%d", status.ID),
+	}, nil
+}
+
+// publishWithPic 带图发博（multipart statuses/upload，取第一张配图）。
+func (c *Client) publishWithPic(ctx context.Context, creds social.Credentials, input *social.PublishInput) (*social.PublishResult, error) {
+	token := creds.Get("access_token")
+	if token == "" {
+		return nil, social.ErrInvalidCredentials
+	}
+
+	media := input.Media[0]
+	buf, fw := social.NewMultipartWriter()
+	_ = fw.WriteField("status", input.Text)
+	if perr := social.WriteFilePart(fw, "pic", media.Filename, media.Data); perr != nil {
+		return nil, fmt.Errorf("weibo: build pic part: %w", perr)
+	}
+	if ferr := fw.Close(); ferr != nil {
+		return nil, ferr
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		c.endpoint+"/statuses/upload.json?access_token="+url.QueryEscape(token), bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		return nil, fmt.Errorf("weibo: build request: %w", err)
+	}
+	req.Header.Set("User-Agent", social.UserAgent)
+	req.Header.Set("Content-Type", fw.FormDataContentType())
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("weibo: upload: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	raw, err := io.ReadAll(io.LimitReader(resp.Body, maxResponseSize))
+	if err != nil {
+		return nil, fmt.Errorf("weibo: read response: %w", err)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, classifyError(resp.StatusCode, raw)
+	}
+
+	var status statusView
+	if err := json.Unmarshal(raw, &status); err != nil {
+		return nil, fmt.Errorf("weibo: decode response: %w", err)
 	}
 	if status.ID == 0 {
 		return nil, fmt.Errorf("weibo: unexpected publish response")

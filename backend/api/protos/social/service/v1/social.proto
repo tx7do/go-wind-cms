@@ -275,6 +275,11 @@ message SocialDistribution {
     (gnostic.openapi.v3.property) = {description: "平台文章标题（DEV.to 等需要标题的平台使用；关联文章且留空时缺省取文章标题）"}
   ]; // 平台文章标题
 
+  repeated uint32 media_ids = 15 [
+    json_name = "mediaIds",
+    (gnostic.openapi.v3.property) = {description: "配图媒体资产ID列表（支持图片的平台使用：Telegram/Bluesky/Mastodon/WordPress/微博；至多 4 张）"}
+  ]; // 配图媒体资产ID列表
+
   optional uint32 likes = 20 [
     json_name = "likes",
     (gnostic.openapi.v3.property) = {description: "点赞数（平台回拉快照）"}

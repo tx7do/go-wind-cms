@@ -11,6 +11,7 @@
 package telegram
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -107,8 +108,15 @@ func (c *Client) ValidateCredentials(ctx context.Context, creds social.Credentia
 
 // Publish 发帖到 chat_id 指定的频道/群。公开频道（chat_id 为 @name）可构造
 // t.me 链接；私有频道无法构造，externalURI 留空。
+// 带配图时改走 sendPhoto（文案作 caption，上限 1024 字符，取第一张图）。
 func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *social.PublishInput) (*social.PublishResult, error) {
-	if input == nil || strings.TrimSpace(input.Text) == "" {
+	if input == nil {
+		return nil, fmt.Errorf("telegram: empty input")
+	}
+	if len(input.Media) != 0 {
+		return c.publishPhoto(ctx, creds, input)
+	}
+	if strings.TrimSpace(input.Text) == "" {
 		return nil, fmt.Errorf("telegram: empty text")
 	}
 	if utf8.RuneCountInString(input.Text) > maxMessageRunes {
@@ -126,6 +134,51 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 
 	var msg messageView
 	if err := c.do(ctx, creds, http.MethodPost, "/sendMessage", form, &msg); err != nil {
+		return nil, err
+	}
+	if msg.MessageID == 0 {
+		return nil, fmt.Errorf("telegram: unexpected publish response")
+	}
+
+	uri := ""
+	if strings.HasPrefix(chatID, "@") {
+		uri = fmt.Sprintf("https://t.me/%s/%d", strings.TrimPrefix(chatID, "@"), msg.MessageID)
+	}
+
+	return &social.PublishResult{
+		ExternalID:  fmt.Sprintf("%d", msg.MessageID),
+		ExternalURI: uri,
+	}, nil
+}
+
+// maxCaptionRunes sendPhoto 的 caption 上限。
+const maxCaptionRunes = 1024
+
+// publishPhoto 带图发布（multipart sendPhoto，取第一张配图）。
+func (c *Client) publishPhoto(ctx context.Context, creds social.Credentials, input *social.PublishInput) (*social.PublishResult, error) {
+	chatID := creds.Get("chat_id")
+	if chatID == "" {
+		return nil, social.ErrInvalidCredentials
+	}
+
+	caption := input.Text
+	if utf8.RuneCountInString(caption) > maxCaptionRunes {
+		caption = string([]rune(caption)[:maxCaptionRunes])
+	}
+
+	media := input.Media[0]
+	buf, fw := social.NewMultipartWriter()
+	_ = fw.WriteField("chat_id", chatID)
+	_ = fw.WriteField("caption", caption)
+	if perr := social.WriteFilePart(fw, "photo", media.Filename, media.Data); perr != nil {
+		return nil, fmt.Errorf("telegram: build photo part: %w", perr)
+	}
+	if ferr := fw.Close(); ferr != nil {
+		return nil, ferr
+	}
+
+	var msg messageView
+	if err := c.doMultipart(ctx, creds, "/sendPhoto", buf, fw.FormDataContentType(), &msg); err != nil {
 		return nil, err
 	}
 	if msg.MessageID == 0 {
@@ -175,11 +228,33 @@ func (c *Client) do(ctx context.Context, creds social.Credentials, method, path 
 	if err != nil {
 		return fmt.Errorf("telegram: build request: %w", err)
 	}
-	req.Header.Set("User-Agent", "go-wind-cms-social/1.0")
+	req.Header.Set("User-Agent", social.UserAgent)
 	if contentType != "" {
 		req.Header.Set("Content-Type", contentType)
 	}
 
+	return c.execute(req, path, out)
+}
+
+// doMultipart 执行一次 multipart Bot API 调用（sendPhoto 等文件上传用）。
+func (c *Client) doMultipart(ctx context.Context, creds social.Credentials, path string, buf *bytes.Buffer, contentType string, out any) error {
+	token := creds.Get("bot_token")
+	if token == "" {
+		return social.ErrInvalidCredentials
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.endpoint+"/bot"+url.PathEscape(token)+path, bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		return fmt.Errorf("telegram: build request: %w", err)
+	}
+	req.Header.Set("User-Agent", social.UserAgent)
+	req.Header.Set("Content-Type", contentType)
+
+	return c.execute(req, path, out)
+}
+
+// execute 发送请求并归一化处理 Bot API 响应。
+func (c *Client) execute(req *http.Request, path string, out any) error {
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("telegram: request %s: %w", path, err)

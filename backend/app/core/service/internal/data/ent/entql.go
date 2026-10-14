@@ -1884,6 +1884,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			socialdistribution.FieldExternalID:      {Type: field.TypeString, Column: socialdistribution.FieldExternalID},
 			socialdistribution.FieldErrorMessage:    {Type: field.TypeString, Column: socialdistribution.FieldErrorMessage},
 			socialdistribution.FieldTitle:           {Type: field.TypeString, Column: socialdistribution.FieldTitle},
+			socialdistribution.FieldMediaIds:        {Type: field.TypeJSON, Column: socialdistribution.FieldMediaIds},
 			socialdistribution.FieldLikes:           {Type: field.TypeUint32, Column: socialdistribution.FieldLikes},
 			socialdistribution.FieldReplies:         {Type: field.TypeUint32, Column: socialdistribution.FieldReplies},
 			socialdistribution.FieldReposts:         {Type: field.TypeUint32, Column: socialdistribution.FieldReposts},
@@ -10226,6 +10227,11 @@ func (f *SocialDistributionFilter) WhereErrorMessage(p entql.StringP) {
 // WhereTitle applies the entql string predicate on the title field.
 func (f *SocialDistributionFilter) WhereTitle(p entql.StringP) {
 	f.Where(p.Field(socialdistribution.FieldTitle))
+}
+
+// WhereMediaIds applies the entql json.RawMessage predicate on the media_ids field.
+func (f *SocialDistributionFilter) WhereMediaIds(p entql.BytesP) {
+	f.Where(p.Field(socialdistribution.FieldMediaIds))
 }
 
 // WhereLikes applies the entql uint32 predicate on the likes field.

@@ -254,7 +254,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetRepo)
 
 	// 社交分发
-	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, socialStatsHistoryRepo, postRepo, taskService, internalMessageService)
+	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, socialStatsHistoryRepo, mediaAssetRepo, fileRepo, minIOClient, postRepo, taskService, internalMessageService)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 

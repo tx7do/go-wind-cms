@@ -569,6 +569,7 @@ type SocialDistribution struct {
 	ExternalId    *string                    `protobuf:"bytes,12,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`                        // 平台侧帖子 ID
 	ErrorMessage  *string                    `protobuf:"bytes,13,opt,name=error_message,json=errorMessage,proto3,oneof" json:"error_message,omitempty"`                  // 最近一次发布失败的原因
 	Title         *string                    `protobuf:"bytes,14,opt,name=title,proto3,oneof" json:"title,omitempty"`                                                    // 平台文章标题
+	MediaIds      []uint32                   `protobuf:"varint,15,rep,packed,name=media_ids,json=mediaIds,proto3" json:"media_ids,omitempty"`                            // 配图媒体资产ID列表
 	Likes         *uint32                    `protobuf:"varint,20,opt,name=likes,proto3,oneof" json:"likes,omitempty"`                                                   // 点赞数（回拉快照）
 	Replies       *uint32                    `protobuf:"varint,21,opt,name=replies,proto3,oneof" json:"replies,omitempty"`                                               // 回复数（回拉快照）
 	Reposts       *uint32                    `protobuf:"varint,22,opt,name=reposts,proto3,oneof" json:"reposts,omitempty"`                                               // 转发数（回拉快照）
@@ -709,6 +710,13 @@ func (x *SocialDistribution) GetTitle() string {
 		return *x.Title
 	}
 	return ""
+}
+
+func (x *SocialDistribution) GetMediaIds() []uint32 {
+	if x != nil {
+		return x.MediaIds
+	}
+	return nil
 }
 
 func (x *SocialDistribution) GetLikes() uint32 {
@@ -1517,7 +1525,7 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xb6\x14\n" +
+	"\v_deleted_at\"\xd3\x15\n" +
 	"\x12SocialDistribution\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e分发记录IDH\x00R\x02id\x88\x01\x01\x12P\n" +
 	"\bplatform\x18\x02 \x01(\x0e2\x1b.social.service.v1.PlatformB\x12\xbaG\x0f\x92\x02\f社交平台H\x01R\bplatform\x88\x01\x01\x12A\n" +
@@ -1537,7 +1545,8 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\vexternal_id\x18\f \x01(\tB6\xbaG3\x92\x020平台侧帖子 ID（用于统计回拉定位）H\vR\n" +
 	"externalId\x88\x01\x01\x12Q\n" +
 	"\rerror_message\x18\r \x01(\tB'\xbaG$\x92\x02!最近一次发布失败的原因H\fR\ferrorMessage\x88\x01\x01\x12\x8e\x01\n" +
-	"\x05title\x18\x0e \x01(\tBs\xbaGp\x92\x02m平台文章标题（DEV.to 等需要标题的平台使用；关联文章且留空时缺省取文章标题）H\rR\x05title\x88\x01\x01\x12B\n" +
+	"\x05title\x18\x0e \x01(\tBs\xbaGp\x92\x02m平台文章标题（DEV.to 等需要标题的平台使用；关联文章且留空时缺省取文章标题）H\rR\x05title\x88\x01\x01\x12\x9a\x01\n" +
+	"\tmedia_ids\x18\x0f \x03(\rB}\xbaGz\x92\x02w配图媒体资产ID列表（支持图片的平台使用：Telegram/Bluesky/Mastodon/WordPress/微博；至多 4 张）R\bmediaIds\x12B\n" +
 	"\x05likes\x18\x14 \x01(\rB'\xbaG$\x92\x02!点赞数（平台回拉快照）H\x0eR\x05likes\x88\x01\x01\x12F\n" +
 	"\areplies\x18\x15 \x01(\rB'\xbaG$\x92\x02!回复数（平台回拉快照）H\x0fR\areplies\x88\x01\x01\x12F\n" +
 	"\areposts\x18\x16 \x01(\rB'\xbaG$\x92\x02!转发数（平台回拉快照）H\x10R\areposts\x88\x01\x01\x12a\n" +

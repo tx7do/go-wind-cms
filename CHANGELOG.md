@@ -17,6 +17,10 @@
 - 系统通知实时推送：core 服务经 Redis Pub/Sub 发事件、admin 服务订阅后转 SSE
   实时推送给目标用户全部在线会话（载荷复用既有 notification 事件形态，前端
   零改动；落库为准，推送失败不影响到达）。
+- 图片分发：分发记录支持挂载媒体库配图（至多 4 张），Telegram（sendPhoto）、
+  Bluesky（uploadBlob + embed.images）、Mastodon（/api/v2/media + media_ids）、
+  WordPress（特色图 + 正文 <img>）、微博（statuses/upload）五个平台随内容发布；
+  不支持配图的平台在创建时明确报错。
 
 ### 修复
 

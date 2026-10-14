@@ -68,12 +68,21 @@ func MarshalCredentials(creds Credentials) (string, error) {
 	return string(b), nil
 }
 
+// MediaAttachment 一张随内容发布的图片（已从媒体库解析出的字节）。
+type MediaAttachment struct {
+	Filename    string
+	ContentType string
+	Data        []byte
+}
+
 // PublishInput 一次发布的内容输入。
 type PublishInput struct {
 	// Text 发布文案（来自分发记录的平台覆盖文案）。
 	Text string
 	// Title 平台文章标题（DEV.to 等以"文章"为单位的平台使用；可为空）。
 	Title string
+	// Media 配图（仅支持图片的平台消费；按平台自身的张数上限取舍）。
+	Media []MediaAttachment
 }
 
 // PublishResult 发布成功后的平台侧定位信息。

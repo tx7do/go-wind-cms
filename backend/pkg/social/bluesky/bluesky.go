@@ -11,6 +11,7 @@
 package bluesky
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -105,11 +106,19 @@ type createRecordRequest struct {
 	Record     postRecordDoc `json:"record"`
 }
 
-// postRecordDoc app.bsky.feed.post 记录体（最小集：纯文本 + 创建时间）。
+// maxEmbedImages Bluesky 单帖配图上限。
+const maxEmbedImages = 4
+
+// postRecordDoc app.bsky.feed.post 记录体（纯文本/配图 embed + 创建时间）。
 type postRecordDoc struct {
-	Type      string `json:"$type"`
-	Text      string `json:"text"`
-	CreatedAt string `json:"createdAt"`
+	Type      string          `json:"$type"`
+	Text      string          `json:"text"`
+	CreatedAt string          `json:"createdAt"`
+	Embed     json.RawMessage `json:"embed,omitempty"`
+}
+
+type uploadBlobResponse struct {
+	Blob json.RawMessage `json:"blob"`
 }
 
 type createRecordResponse struct {
@@ -152,6 +161,29 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 		return nil, err
 	}
 
+	// 配图：uploadBlob 逐张上传（至多 4 张），组装 app.bsky.embed.images
+	embed := json.RawMessage("")
+	images := input.Media
+	if len(images) > maxEmbedImages {
+		images = images[:maxEmbedImages]
+	}
+	if len(images) != 0 {
+		uploaded := make([]map[string]any, 0, len(images))
+		for _, m := range images {
+			blob, uerr := c.uploadBlob(ctx, sess.AccessJwt, m.ContentType, m.Data)
+			if uerr != nil {
+				return nil, uerr
+			}
+			uploaded = append(uploaded, map[string]any{"alt": "", "image": blob})
+		}
+		if embedRaw, merr := json.Marshal(map[string]any{
+			"$type":  "app.bsky.embed.images",
+			"images": uploaded,
+		}); merr == nil {
+			embed = embedRaw
+		}
+	}
+
 	body := createRecordRequest{
 		Repo:       sess.Did,
 		Collection: postCollection,
@@ -159,6 +191,7 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 			Type:      postCollection,
 			Text:      input.Text,
 			CreatedAt: time.Now().UTC().Format(time.RFC3339),
+			Embed:     embed,
 		},
 	}
 
@@ -201,6 +234,41 @@ func (c *Client) FetchStats(ctx context.Context, creds social.Credentials, exter
 }
 
 // ── 内部实现 ──
+
+// uploadBlob 上传一张图片到用户的 blob 存储，返回可直接嵌入 record 的 blob JSON。
+func (c *Client) uploadBlob(ctx context.Context, accessToken, contentType string, data []byte) (json.RawMessage, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		c.endpoint+"/xrpc/com.atproto.repo.uploadBlob", bytes.NewReader(data))
+	if err != nil {
+		return nil, fmt.Errorf("bluesky: build upload request: %w", err)
+	}
+	req.Header.Set("User-Agent", social.UserAgent)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", contentType)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("bluesky: upload blob: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	raw, err := io.ReadAll(io.LimitReader(resp.Body, maxResponseSize))
+	if err != nil {
+		return nil, fmt.Errorf("bluesky: read upload response: %w", err)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, classifyError(resp.StatusCode, raw)
+	}
+
+	var up uploadBlobResponse
+	if err = json.Unmarshal(raw, &up); err != nil {
+		return nil, fmt.Errorf("bluesky: decode upload response: %w", err)
+	}
+	if len(up.Blob) == 0 {
+		return nil, fmt.Errorf("bluesky: empty blob in upload response")
+	}
+	return up.Blob, nil
+}
 
 // createSession 登录换取临时会话。
 func (c *Client) createSession(ctx context.Context, creds social.Credentials) (*createSessionResponse, error) {

@@ -12,6 +12,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -384,6 +385,24 @@ func (_u *SocialDistributionUpdate) ClearTitle() *SocialDistributionUpdate {
 	return _u
 }
 
+// SetMediaIds sets the "media_ids" field.
+func (_u *SocialDistributionUpdate) SetMediaIds(v []uint32) *SocialDistributionUpdate {
+	_u.mutation.SetMediaIds(v)
+	return _u
+}
+
+// AppendMediaIds appends value to the "media_ids" field.
+func (_u *SocialDistributionUpdate) AppendMediaIds(v []uint32) *SocialDistributionUpdate {
+	_u.mutation.AppendMediaIds(v)
+	return _u
+}
+
+// ClearMediaIds clears the value of the "media_ids" field.
+func (_u *SocialDistributionUpdate) ClearMediaIds() *SocialDistributionUpdate {
+	_u.mutation.ClearMediaIds()
+	return _u
+}
+
 // SetLikes sets the "likes" field.
 func (_u *SocialDistributionUpdate) SetLikes(v uint32) *SocialDistributionUpdate {
 	_u.mutation.ResetLikes()
@@ -693,6 +712,17 @@ func (_u *SocialDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 	}
 	if _u.mutation.TitleCleared() {
 		_spec.ClearField(socialdistribution.FieldTitle, field.TypeString)
+	}
+	if value, ok := _u.mutation.MediaIds(); ok {
+		_spec.SetField(socialdistribution.FieldMediaIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedMediaIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, socialdistribution.FieldMediaIds, value)
+		})
+	}
+	if _u.mutation.MediaIdsCleared() {
+		_spec.ClearField(socialdistribution.FieldMediaIds, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.Likes(); ok {
 		_spec.SetField(socialdistribution.FieldLikes, field.TypeUint32, value)
@@ -1113,6 +1143,24 @@ func (_u *SocialDistributionUpdateOne) ClearTitle() *SocialDistributionUpdateOne
 	return _u
 }
 
+// SetMediaIds sets the "media_ids" field.
+func (_u *SocialDistributionUpdateOne) SetMediaIds(v []uint32) *SocialDistributionUpdateOne {
+	_u.mutation.SetMediaIds(v)
+	return _u
+}
+
+// AppendMediaIds appends value to the "media_ids" field.
+func (_u *SocialDistributionUpdateOne) AppendMediaIds(v []uint32) *SocialDistributionUpdateOne {
+	_u.mutation.AppendMediaIds(v)
+	return _u
+}
+
+// ClearMediaIds clears the value of the "media_ids" field.
+func (_u *SocialDistributionUpdateOne) ClearMediaIds() *SocialDistributionUpdateOne {
+	_u.mutation.ClearMediaIds()
+	return _u
+}
+
 // SetLikes sets the "likes" field.
 func (_u *SocialDistributionUpdateOne) SetLikes(v uint32) *SocialDistributionUpdateOne {
 	_u.mutation.ResetLikes()
@@ -1452,6 +1500,17 @@ func (_u *SocialDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Soci
 	}
 	if _u.mutation.TitleCleared() {
 		_spec.ClearField(socialdistribution.FieldTitle, field.TypeString)
+	}
+	if value, ok := _u.mutation.MediaIds(); ok {
+		_spec.SetField(socialdistribution.FieldMediaIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedMediaIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, socialdistribution.FieldMediaIds, value)
+		})
+	}
+	if _u.mutation.MediaIdsCleared() {
+		_spec.ClearField(socialdistribution.FieldMediaIds, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.Likes(); ok {
 		_spec.SetField(socialdistribution.FieldLikes, field.TypeUint32, value)

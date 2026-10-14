@@ -11091,6 +11091,7 @@ export type socialservicev1_SocialDistribution = {
   externalUri?: string;
   id?: number;
   likes?: number;
+  mediaIds: number[] | undefined;
   overrideText?: string;
   platform?: socialservicev1_Platform;
   postId?: number;

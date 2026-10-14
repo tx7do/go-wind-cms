@@ -28,6 +28,7 @@ const (
 	Platform = "PLATFORM_MASTODON"
 
 	maxStatusRunes  = 500 // Mastodon 单帖上限（多数实例 500；实例自定义上限以服务端报错为准）
+	maxMediaCount   = 4   // 单帖配图上限
 	defaultTimeout  = 30 * time.Second
 	maxResponseSize = 10 << 20 // 10MB
 )
@@ -89,9 +90,13 @@ func (c *Client) ValidateCredentials(ctx context.Context, creds social.Credentia
 	return nil
 }
 
-// Publish 发帖。externalID 为平台 status id（统计回拉定位键），externalURI 为帖子链接。
+// Publish 发帖。带配图时先逐张上传媒体（至多 4 张），再以 media_ids 发帖。
+// externalID 为平台 status id（统计回拉定位键），externalURI 为帖子链接。
 func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *social.PublishInput) (*social.PublishResult, error) {
-	if input == nil || strings.TrimSpace(input.Text) == "" {
+	if input == nil {
+		return nil, fmt.Errorf("mastodon: empty input")
+	}
+	if len(input.Media) == 0 && strings.TrimSpace(input.Text) == "" {
 		return nil, fmt.Errorf("mastodon: empty text")
 	}
 	if utf8.RuneCountInString(input.Text) > maxStatusRunes {
@@ -101,6 +106,18 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 	form := url.Values{}
 	form.Set("status", input.Text)
 	form.Set("visibility", "public")
+
+	media := input.Media
+	if len(media) > maxMediaCount {
+		media = media[:maxMediaCount]
+	}
+	for _, m := range media {
+		mediaID, merr := c.uploadMedia(ctx, creds, m)
+		if merr != nil {
+			return nil, merr
+		}
+		form.Add("media_ids[]", mediaID)
+	}
 
 	var status statusView
 	if err := c.do(ctx, creds, http.MethodPost, "/api/v1/statuses", form, &status); err != nil {
@@ -114,6 +131,57 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 		ExternalID:  status.ID,
 		ExternalURI: status.URL,
 	}, nil
+}
+
+// uploadMedia 上传一张图片，返回媒体 ID。
+func (c *Client) uploadMedia(ctx context.Context, creds social.Credentials, m social.MediaAttachment) (string, error) {
+	base, err := server(creds)
+	if err != nil {
+		return "", err
+	}
+	token := creds.Get("access_token")
+	if token == "" {
+		return "", social.ErrInvalidCredentials
+	}
+
+	buf, fw := social.NewMultipartWriter()
+	if werr := social.WriteFilePart(fw, "file", m.Filename, m.Data); werr != nil {
+		return "", fmt.Errorf("mastodon: build media part: %w", werr)
+	}
+	if ferr := fw.Close(); ferr != nil {
+		return "", ferr
+	}
+
+	req, rerr := social.NewMultipartRequest(ctx, http.MethodPost, base+"/api/v1/media", buf, fw)
+	if rerr != nil {
+		return "", fmt.Errorf("mastodon: build media request: %w", rerr)
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, derr := c.httpClient.Do(req)
+	if derr != nil {
+		return "", fmt.Errorf("mastodon: upload media: %w", derr)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	raw, rerr := io.ReadAll(io.LimitReader(resp.Body, maxResponseSize))
+	if rerr != nil {
+		return "", fmt.Errorf("mastodon: read media response: %w", rerr)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", classifyError(resp.StatusCode, raw)
+	}
+
+	var media struct {
+		ID string `json:"id"`
+	}
+	if err := json.Unmarshal(raw, &media); err != nil {
+		return "", fmt.Errorf("mastodon: decode media response: %w", err)
+	}
+	if media.ID == "" {
+		return "", fmt.Errorf("mastodon: unexpected media response")
+	}
+	return media.ID, nil
 }
 
 // FetchStats 回拉帖子互动计数。

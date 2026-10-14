@@ -99171,6 +99171,8 @@ type SocialDistributionMutation struct {
 	external_id         *string
 	error_message       *string
 	title               *string
+	media_ids           *[]uint32
+	appendmedia_ids     []uint32
 	likes               *uint32
 	addlikes            *int32
 	replies             *uint32
@@ -100298,6 +100300,71 @@ func (m *SocialDistributionMutation) ResetTitle() {
 	delete(m.clearedFields, socialdistribution.FieldTitle)
 }
 
+// SetMediaIds sets the "media_ids" field.
+func (m *SocialDistributionMutation) SetMediaIds(u []uint32) {
+	m.media_ids = &u
+	m.appendmedia_ids = nil
+}
+
+// MediaIds returns the value of the "media_ids" field in the mutation.
+func (m *SocialDistributionMutation) MediaIds() (r []uint32, exists bool) {
+	v := m.media_ids
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMediaIds returns the old "media_ids" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldMediaIds(ctx context.Context) (v []uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMediaIds is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMediaIds requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMediaIds: %w", err)
+	}
+	return oldValue.MediaIds, nil
+}
+
+// AppendMediaIds adds u to the "media_ids" field.
+func (m *SocialDistributionMutation) AppendMediaIds(u []uint32) {
+	m.appendmedia_ids = append(m.appendmedia_ids, u...)
+}
+
+// AppendedMediaIds returns the list of values that were appended to the "media_ids" field in this mutation.
+func (m *SocialDistributionMutation) AppendedMediaIds() ([]uint32, bool) {
+	if len(m.appendmedia_ids) == 0 {
+		return nil, false
+	}
+	return m.appendmedia_ids, true
+}
+
+// ClearMediaIds clears the value of the "media_ids" field.
+func (m *SocialDistributionMutation) ClearMediaIds() {
+	m.media_ids = nil
+	m.appendmedia_ids = nil
+	m.clearedFields[socialdistribution.FieldMediaIds] = struct{}{}
+}
+
+// MediaIdsCleared returns if the "media_ids" field was cleared in this mutation.
+func (m *SocialDistributionMutation) MediaIdsCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldMediaIds]
+	return ok
+}
+
+// ResetMediaIds resets all changes to the "media_ids" field.
+func (m *SocialDistributionMutation) ResetMediaIds() {
+	m.media_ids = nil
+	m.appendmedia_ids = nil
+	delete(m.clearedFields, socialdistribution.FieldMediaIds)
+}
+
 // SetLikes sets the "likes" field.
 func (m *SocialDistributionMutation) SetLikes(u uint32) {
 	m.likes = &u
@@ -100661,7 +100728,7 @@ func (m *SocialDistributionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SocialDistributionMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
 	if m.created_at != nil {
 		fields = append(fields, socialdistribution.FieldCreatedAt)
 	}
@@ -100715,6 +100782,9 @@ func (m *SocialDistributionMutation) Fields() []string {
 	}
 	if m.title != nil {
 		fields = append(fields, socialdistribution.FieldTitle)
+	}
+	if m.media_ids != nil {
+		fields = append(fields, socialdistribution.FieldMediaIds)
 	}
 	if m.likes != nil {
 		fields = append(fields, socialdistribution.FieldLikes)
@@ -100775,6 +100845,8 @@ func (m *SocialDistributionMutation) Field(name string) (ent.Value, bool) {
 		return m.ErrorMessage()
 	case socialdistribution.FieldTitle:
 		return m.Title()
+	case socialdistribution.FieldMediaIds:
+		return m.MediaIds()
 	case socialdistribution.FieldLikes:
 		return m.Likes()
 	case socialdistribution.FieldReplies:
@@ -100830,6 +100902,8 @@ func (m *SocialDistributionMutation) OldField(ctx context.Context, name string) 
 		return m.OldErrorMessage(ctx)
 	case socialdistribution.FieldTitle:
 		return m.OldTitle(ctx)
+	case socialdistribution.FieldMediaIds:
+		return m.OldMediaIds(ctx)
 	case socialdistribution.FieldLikes:
 		return m.OldLikes(ctx)
 	case socialdistribution.FieldReplies:
@@ -100974,6 +101048,13 @@ func (m *SocialDistributionMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTitle(v)
+		return nil
+	case socialdistribution.FieldMediaIds:
+		v, ok := value.([]uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMediaIds(v)
 		return nil
 	case socialdistribution.FieldLikes:
 		v, ok := value.(uint32)
@@ -101217,6 +101298,9 @@ func (m *SocialDistributionMutation) ClearedFields() []string {
 	if m.FieldCleared(socialdistribution.FieldTitle) {
 		fields = append(fields, socialdistribution.FieldTitle)
 	}
+	if m.FieldCleared(socialdistribution.FieldMediaIds) {
+		fields = append(fields, socialdistribution.FieldMediaIds)
+	}
 	if m.FieldCleared(socialdistribution.FieldLikes) {
 		fields = append(fields, socialdistribution.FieldLikes)
 	}
@@ -101300,6 +101384,9 @@ func (m *SocialDistributionMutation) ClearField(name string) error {
 	case socialdistribution.FieldTitle:
 		m.ClearTitle()
 		return nil
+	case socialdistribution.FieldMediaIds:
+		m.ClearMediaIds()
+		return nil
 	case socialdistribution.FieldLikes:
 		m.ClearLikes()
 		return nil
@@ -101376,6 +101463,9 @@ func (m *SocialDistributionMutation) ResetField(name string) error {
 		return nil
 	case socialdistribution.FieldTitle:
 		m.ResetTitle()
+		return nil
+	case socialdistribution.FieldMediaIds:
+		m.ResetMediaIds()
 		return nil
 	case socialdistribution.FieldLikes:
 		m.ResetLikes()

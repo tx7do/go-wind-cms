@@ -1144,6 +1144,16 @@ func TitleContainsFold(v string) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldContainsFold(FieldTitle, v))
 }
 
+// MediaIdsIsNil applies the IsNil predicate on the "media_ids" field.
+func MediaIdsIsNil() predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldIsNull(FieldMediaIds))
+}
+
+// MediaIdsNotNil applies the NotNil predicate on the "media_ids" field.
+func MediaIdsNotNil() predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldNotNull(FieldMediaIds))
+}
+
 // LikesEQ applies the EQ predicate on the "likes" field.
 func LikesEQ(v uint32) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldLikes, v))

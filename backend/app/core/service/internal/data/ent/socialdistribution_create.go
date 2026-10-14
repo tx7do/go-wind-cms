@@ -274,6 +274,12 @@ func (_c *SocialDistributionCreate) SetNillableTitle(v *string) *SocialDistribut
 	return _c
 }
 
+// SetMediaIds sets the "media_ids" field.
+func (_c *SocialDistributionCreate) SetMediaIds(v []uint32) *SocialDistributionCreate {
+	_c.mutation.SetMediaIds(v)
+	return _c
+}
+
 // SetLikes sets the "likes" field.
 func (_c *SocialDistributionCreate) SetLikes(v uint32) *SocialDistributionCreate {
 	_c.mutation.SetLikes(v)
@@ -531,6 +537,10 @@ func (_c *SocialDistributionCreate) createSpec() (*SocialDistribution, *sqlgraph
 	if value, ok := _c.mutation.Title(); ok {
 		_spec.SetField(socialdistribution.FieldTitle, field.TypeString, value)
 		_node.Title = &value
+	}
+	if value, ok := _c.mutation.MediaIds(); ok {
+		_spec.SetField(socialdistribution.FieldMediaIds, field.TypeJSON, value)
+		_node.MediaIds = value
 	}
 	if value, ok := _c.mutation.Likes(); ok {
 		_spec.SetField(socialdistribution.FieldLikes, field.TypeUint32, value)
@@ -919,6 +929,24 @@ func (u *SocialDistributionUpsert) UpdateTitle() *SocialDistributionUpsert {
 // ClearTitle clears the value of the "title" field.
 func (u *SocialDistributionUpsert) ClearTitle() *SocialDistributionUpsert {
 	u.SetNull(socialdistribution.FieldTitle)
+	return u
+}
+
+// SetMediaIds sets the "media_ids" field.
+func (u *SocialDistributionUpsert) SetMediaIds(v []uint32) *SocialDistributionUpsert {
+	u.Set(socialdistribution.FieldMediaIds, v)
+	return u
+}
+
+// UpdateMediaIds sets the "media_ids" field to the value that was provided on create.
+func (u *SocialDistributionUpsert) UpdateMediaIds() *SocialDistributionUpsert {
+	u.SetExcluded(socialdistribution.FieldMediaIds)
+	return u
+}
+
+// ClearMediaIds clears the value of the "media_ids" field.
+func (u *SocialDistributionUpsert) ClearMediaIds() *SocialDistributionUpsert {
+	u.SetNull(socialdistribution.FieldMediaIds)
 	return u
 }
 
@@ -1458,6 +1486,27 @@ func (u *SocialDistributionUpsertOne) UpdateTitle() *SocialDistributionUpsertOne
 func (u *SocialDistributionUpsertOne) ClearTitle() *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.ClearTitle()
+	})
+}
+
+// SetMediaIds sets the "media_ids" field.
+func (u *SocialDistributionUpsertOne) SetMediaIds(v []uint32) *SocialDistributionUpsertOne {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.SetMediaIds(v)
+	})
+}
+
+// UpdateMediaIds sets the "media_ids" field to the value that was provided on create.
+func (u *SocialDistributionUpsertOne) UpdateMediaIds() *SocialDistributionUpsertOne {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.UpdateMediaIds()
+	})
+}
+
+// ClearMediaIds clears the value of the "media_ids" field.
+func (u *SocialDistributionUpsertOne) ClearMediaIds() *SocialDistributionUpsertOne {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.ClearMediaIds()
 	})
 }
 
@@ -2182,6 +2231,27 @@ func (u *SocialDistributionUpsertBulk) UpdateTitle() *SocialDistributionUpsertBu
 func (u *SocialDistributionUpsertBulk) ClearTitle() *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.ClearTitle()
+	})
+}
+
+// SetMediaIds sets the "media_ids" field.
+func (u *SocialDistributionUpsertBulk) SetMediaIds(v []uint32) *SocialDistributionUpsertBulk {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.SetMediaIds(v)
+	})
+}
+
+// UpdateMediaIds sets the "media_ids" field to the value that was provided on create.
+func (u *SocialDistributionUpsertBulk) UpdateMediaIds() *SocialDistributionUpsertBulk {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.UpdateMediaIds()
+	})
+}
+
+// ClearMediaIds clears the value of the "media_ids" field.
+func (u *SocialDistributionUpsertBulk) ClearMediaIds() *SocialDistributionUpsertBulk {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.ClearMediaIds()
 	})
 }
 

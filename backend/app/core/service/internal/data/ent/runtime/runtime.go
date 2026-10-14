@@ -2071,19 +2071,19 @@ func init() {
 	// socialdistribution.DefaultTenantID holds the default value on creation for the tenant_id field.
 	socialdistribution.DefaultTenantID = socialdistributionDescTenantID.Default.(uint32)
 	// socialdistributionDescLikes is the schema descriptor for likes field.
-	socialdistributionDescLikes := socialdistributionFields[11].Descriptor()
+	socialdistributionDescLikes := socialdistributionFields[12].Descriptor()
 	// socialdistribution.DefaultLikes holds the default value on creation for the likes field.
 	socialdistribution.DefaultLikes = socialdistributionDescLikes.Default.(uint32)
 	// socialdistributionDescReplies is the schema descriptor for replies field.
-	socialdistributionDescReplies := socialdistributionFields[12].Descriptor()
+	socialdistributionDescReplies := socialdistributionFields[13].Descriptor()
 	// socialdistribution.DefaultReplies holds the default value on creation for the replies field.
 	socialdistribution.DefaultReplies = socialdistributionDescReplies.Default.(uint32)
 	// socialdistributionDescReposts is the schema descriptor for reposts field.
-	socialdistributionDescReposts := socialdistributionFields[13].Descriptor()
+	socialdistributionDescReposts := socialdistributionFields[14].Descriptor()
 	// socialdistribution.DefaultReposts holds the default value on creation for the reposts field.
 	socialdistribution.DefaultReposts = socialdistributionDescReposts.Default.(uint32)
 	// socialdistributionDescPublishAttempts is the schema descriptor for publish_attempts field.
-	socialdistributionDescPublishAttempts := socialdistributionFields[15].Descriptor()
+	socialdistributionDescPublishAttempts := socialdistributionFields[16].Descriptor()
 	// socialdistribution.DefaultPublishAttempts holds the default value on creation for the publish_attempts field.
 	socialdistribution.DefaultPublishAttempts = socialdistributionDescPublishAttempts.Default.(uint32)
 	// socialdistributionDescID is the schema descriptor for id field.

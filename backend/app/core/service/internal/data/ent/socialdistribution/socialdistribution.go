@@ -50,6 +50,8 @@ const (
 	FieldErrorMessage = "error_message"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
+	// FieldMediaIds holds the string denoting the media_ids field in the database.
+	FieldMediaIds = "media_ids"
 	// FieldLikes holds the string denoting the likes field in the database.
 	FieldLikes = "likes"
 	// FieldReplies holds the string denoting the replies field in the database.
@@ -85,6 +87,7 @@ var Columns = []string{
 	FieldExternalID,
 	FieldErrorMessage,
 	FieldTitle,
+	FieldMediaIds,
 	FieldLikes,
 	FieldReplies,
 	FieldReposts,

@@ -139,5 +139,9 @@
   "kpiPublished": "已发布",
   "kpiLikes": "累计点赞",
   "kpiReplies": "累计回复",
-  "kpiLast7Days": "近 7 天发布"
+  "kpiLast7Days": "近 7 天发布",
+  "mediaIds": "配图",
+  "mediaIdsPlaceholder": "从媒体库选择配图（至多 4 张）",
+  "helpMediaIds": "仅 Telegram/Bluesky/Mastodon/WordPress/微博 支持配图；发布到不支持的平台前会要求移除配图",
+  "mediaUnsupported": "该平台不支持配图，请移除配图后再发布"
 }
