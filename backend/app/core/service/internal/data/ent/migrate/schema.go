@@ -3705,6 +3705,108 @@ var (
 			},
 		},
 	}
+	// SocialAccountsColumns holds the columns for the "social_accounts" table.
+	SocialAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "platform", Type: field.TypeEnum, Nullable: true, Comment: "社交平台", Enums: []string{"PLATFORM_BLUESKY", "PLATFORM_MASTODON", "PLATFORM_DEVTO"}},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "账号显示名称"},
+		{Name: "handle", Type: field.TypeString, Nullable: true, Comment: "平台内账号标识（如 user.bsky.social）"},
+		{Name: "credentials", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "平台凭据 JSON（AES-GCM 加密落库，enc: 前缀；仅写入，读取由服务层清空）"},
+		{Name: "credential_hint", Type: field.TypeString, Nullable: true, Comment: "凭据脱敏提示（如 app-password ***wxyz）"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+	}
+	// SocialAccountsTable holds the schema information for the "social_accounts" table.
+	SocialAccountsTable = &schema.Table{
+		Name:       "social_accounts",
+		Comment:    "社交账号",
+		Columns:    SocialAccountsColumns,
+		PrimaryKey: []*schema.Column{SocialAccountsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_social_accounts_tenant_platform",
+				Unique:  false,
+				Columns: []*schema.Column{SocialAccountsColumns[8], SocialAccountsColumns[9]},
+			},
+			{
+				Name:    "idx_social_accounts_platform",
+				Unique:  false,
+				Columns: []*schema.Column{SocialAccountsColumns[9]},
+			},
+			{
+				Name:    "idx_social_accounts_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SocialAccountsColumns[1]},
+			},
+		},
+	}
+	// SocialDistributionsColumns holds the columns for the "social_distributions" table.
+	SocialDistributionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "platform", Type: field.TypeEnum, Nullable: true, Comment: "社交平台", Enums: []string{"PLATFORM_BLUESKY", "PLATFORM_MASTODON", "PLATFORM_DEVTO"}},
+		{Name: "account_id", Type: field.TypeUint32, Nullable: true, Comment: "使用的社交账号ID"},
+		{Name: "post_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 CMS 文章ID"},
+		{Name: "override_text", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "按平台覆盖的发布文案"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "分发状态", Enums: []string{"STATUS_DRAFT", "STATUS_SCHEDULED", "STATUS_PUBLISHING", "STATUS_PUBLISHED", "STATUS_FAILED"}},
+		{Name: "publish_time", Type: field.TypeTime, Nullable: true, Comment: "计划发布时间"},
+		{Name: "published_at", Type: field.TypeTime, Nullable: true, Comment: "实际发布时间"},
+		{Name: "external_uri", Type: field.TypeString, Nullable: true, Comment: "平台侧帖子 URI"},
+		{Name: "external_id", Type: field.TypeString, Nullable: true, Comment: "平台侧帖子 ID"},
+		{Name: "error_message", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "最近一次发布失败的原因"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "平台文章标题（DEV.to 等需要标题的平台）"},
+		{Name: "likes", Type: field.TypeUint32, Nullable: true, Comment: "点赞数（平台回拉快照）", Default: 0},
+		{Name: "replies", Type: field.TypeUint32, Nullable: true, Comment: "回复数（平台回拉快照）", Default: 0},
+		{Name: "reposts", Type: field.TypeUint32, Nullable: true, Comment: "转发数（平台回拉快照）", Default: 0},
+		{Name: "stats_synced_at", Type: field.TypeTime, Nullable: true, Comment: "统计回拉时间"},
+	}
+	// SocialDistributionsTable holds the schema information for the "social_distributions" table.
+	SocialDistributionsTable = &schema.Table{
+		Name:       "social_distributions",
+		Comment:    "社交内容分发记录",
+		Columns:    SocialDistributionsColumns,
+		PrimaryKey: []*schema.Column{SocialDistributionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_social_distributions_tenant_status",
+				Unique:  false,
+				Columns: []*schema.Column{SocialDistributionsColumns[7], SocialDistributionsColumns[12]},
+			},
+			{
+				Name:    "idx_social_distributions_account",
+				Unique:  false,
+				Columns: []*schema.Column{SocialDistributionsColumns[9]},
+			},
+			{
+				Name:    "idx_social_distributions_post",
+				Unique:  false,
+				Columns: []*schema.Column{SocialDistributionsColumns[10]},
+			},
+			{
+				Name:    "idx_social_distributions_platform",
+				Unique:  false,
+				Columns: []*schema.Column{SocialDistributionsColumns[8]},
+			},
+			{
+				Name:    "idx_social_distributions_publish_time",
+				Unique:  false,
+				Columns: []*schema.Column{SocialDistributionsColumns[13]},
+			},
+		},
+	}
 	// TagsColumns holds the columns for the "tags" table.
 	TagsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4437,6 +4539,8 @@ var (
 		SectionTranslationsTable,
 		SitesTable,
 		SiteSettingsTable,
+		SocialAccountsTable,
+		SocialDistributionsTable,
 		TagsTable,
 		TagTranslationsTable,
 		SysTasksTable,
@@ -4775,6 +4879,16 @@ func init() {
 	}
 	SiteSettingsTable.Annotation = &entsql.Annotation{
 		Table:     "site_settings",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SocialAccountsTable.Annotation = &entsql.Annotation{
+		Table:     "social_accounts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SocialDistributionsTable.Annotation = &entsql.Annotation{
+		Table:     "social_distributions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

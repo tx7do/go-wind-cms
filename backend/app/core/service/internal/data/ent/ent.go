@@ -69,6 +69,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
+	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
+	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -207,6 +209,8 @@ func checkColumn(t, c string) error {
 			sectiontranslation.Table:         sectiontranslation.ValidColumn,
 			site.Table:                       site.ValidColumn,
 			sitesetting.Table:                sitesetting.ValidColumn,
+			socialaccount.Table:              socialaccount.ValidColumn,
+			socialdistribution.Table:         socialdistribution.ValidColumn,
 			tag.Table:                        tag.ValidColumn,
 			tagtranslation.Table:             tagtranslation.ValidColumn,
 			task.Table:                       task.ValidColumn,

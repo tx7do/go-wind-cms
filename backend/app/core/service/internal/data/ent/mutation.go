@@ -75,6 +75,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
+	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
+	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -163,6 +165,8 @@ const (
 	TypeSectionTranslation         = "SectionTranslation"
 	TypeSite                       = "Site"
 	TypeSiteSetting                = "SiteSetting"
+	TypeSocialAccount              = "SocialAccount"
+	TypeSocialDistribution         = "SocialDistribution"
 	TypeTag                        = "Tag"
 	TypeTagTranslation             = "TagTranslation"
 	TypeTask                       = "Task"
@@ -97545,6 +97549,3644 @@ func (m *SiteSettingMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *SiteSettingMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown SiteSetting edge %s", name)
+}
+
+// SocialAccountMutation represents an operation that mutates the SocialAccount nodes in the graph.
+type SocialAccountMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *uint32
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	created_by      *uint32
+	addcreated_by   *int32
+	updated_by      *uint32
+	addupdated_by   *int32
+	deleted_by      *uint32
+	adddeleted_by   *int32
+	is_enabled      *bool
+	tenant_id       *uint32
+	addtenant_id    *int32
+	platform        *socialaccount.Platform
+	name            *string
+	handle          *string
+	credentials     *string
+	credential_hint *string
+	remark          *string
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*SocialAccount, error)
+	predicates      []predicate.SocialAccount
+}
+
+var _ ent.Mutation = (*SocialAccountMutation)(nil)
+
+// socialaccountOption allows management of the mutation configuration using functional options.
+type socialaccountOption func(*SocialAccountMutation)
+
+// newSocialAccountMutation creates new mutation for the SocialAccount entity.
+func newSocialAccountMutation(c config, op Op, opts ...socialaccountOption) *SocialAccountMutation {
+	m := &SocialAccountMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSocialAccount,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSocialAccountID sets the ID field of the mutation.
+func withSocialAccountID(id uint32) socialaccountOption {
+	return func(m *SocialAccountMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SocialAccount
+		)
+		m.oldValue = func(ctx context.Context) (*SocialAccount, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SocialAccount.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSocialAccount sets the old SocialAccount of the mutation.
+func withSocialAccount(node *SocialAccount) socialaccountOption {
+	return func(m *SocialAccountMutation) {
+		m.oldValue = func(context.Context) (*SocialAccount, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SocialAccountMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SocialAccountMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SocialAccount entities.
+func (m *SocialAccountMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SocialAccountMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SocialAccountMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SocialAccount.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SocialAccountMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SocialAccountMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SocialAccountMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[socialaccount.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SocialAccountMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SocialAccountMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, socialaccount.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SocialAccountMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SocialAccountMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SocialAccountMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[socialaccount.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SocialAccountMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SocialAccountMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, socialaccount.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SocialAccountMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SocialAccountMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SocialAccountMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[socialaccount.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SocialAccountMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SocialAccountMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, socialaccount.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SocialAccountMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SocialAccountMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *SocialAccountMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SocialAccountMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SocialAccountMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[socialaccount.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SocialAccountMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SocialAccountMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, socialaccount.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SocialAccountMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SocialAccountMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *SocialAccountMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SocialAccountMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SocialAccountMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[socialaccount.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SocialAccountMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SocialAccountMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, socialaccount.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SocialAccountMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SocialAccountMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *SocialAccountMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *SocialAccountMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SocialAccountMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[socialaccount.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SocialAccountMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SocialAccountMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, socialaccount.FieldDeletedBy)
+}
+
+// SetIsEnabled sets the "is_enabled" field.
+func (m *SocialAccountMutation) SetIsEnabled(b bool) {
+	m.is_enabled = &b
+}
+
+// IsEnabled returns the value of the "is_enabled" field in the mutation.
+func (m *SocialAccountMutation) IsEnabled() (r bool, exists bool) {
+	v := m.is_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsEnabled returns the old "is_enabled" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldIsEnabled(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsEnabled: %w", err)
+	}
+	return oldValue.IsEnabled, nil
+}
+
+// ClearIsEnabled clears the value of the "is_enabled" field.
+func (m *SocialAccountMutation) ClearIsEnabled() {
+	m.is_enabled = nil
+	m.clearedFields[socialaccount.FieldIsEnabled] = struct{}{}
+}
+
+// IsEnabledCleared returns if the "is_enabled" field was cleared in this mutation.
+func (m *SocialAccountMutation) IsEnabledCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldIsEnabled]
+	return ok
+}
+
+// ResetIsEnabled resets all changes to the "is_enabled" field.
+func (m *SocialAccountMutation) ResetIsEnabled() {
+	m.is_enabled = nil
+	delete(m.clearedFields, socialaccount.FieldIsEnabled)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *SocialAccountMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *SocialAccountMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *SocialAccountMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *SocialAccountMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *SocialAccountMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[socialaccount.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *SocialAccountMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *SocialAccountMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, socialaccount.FieldTenantID)
+}
+
+// SetPlatform sets the "platform" field.
+func (m *SocialAccountMutation) SetPlatform(s socialaccount.Platform) {
+	m.platform = &s
+}
+
+// Platform returns the value of the "platform" field in the mutation.
+func (m *SocialAccountMutation) Platform() (r socialaccount.Platform, exists bool) {
+	v := m.platform
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlatform returns the old "platform" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldPlatform(ctx context.Context) (v *socialaccount.Platform, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlatform is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlatform requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlatform: %w", err)
+	}
+	return oldValue.Platform, nil
+}
+
+// ClearPlatform clears the value of the "platform" field.
+func (m *SocialAccountMutation) ClearPlatform() {
+	m.platform = nil
+	m.clearedFields[socialaccount.FieldPlatform] = struct{}{}
+}
+
+// PlatformCleared returns if the "platform" field was cleared in this mutation.
+func (m *SocialAccountMutation) PlatformCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldPlatform]
+	return ok
+}
+
+// ResetPlatform resets all changes to the "platform" field.
+func (m *SocialAccountMutation) ResetPlatform() {
+	m.platform = nil
+	delete(m.clearedFields, socialaccount.FieldPlatform)
+}
+
+// SetName sets the "name" field.
+func (m *SocialAccountMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *SocialAccountMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *SocialAccountMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[socialaccount.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *SocialAccountMutation) NameCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *SocialAccountMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, socialaccount.FieldName)
+}
+
+// SetHandle sets the "handle" field.
+func (m *SocialAccountMutation) SetHandle(s string) {
+	m.handle = &s
+}
+
+// Handle returns the value of the "handle" field in the mutation.
+func (m *SocialAccountMutation) Handle() (r string, exists bool) {
+	v := m.handle
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHandle returns the old "handle" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldHandle(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHandle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHandle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHandle: %w", err)
+	}
+	return oldValue.Handle, nil
+}
+
+// ClearHandle clears the value of the "handle" field.
+func (m *SocialAccountMutation) ClearHandle() {
+	m.handle = nil
+	m.clearedFields[socialaccount.FieldHandle] = struct{}{}
+}
+
+// HandleCleared returns if the "handle" field was cleared in this mutation.
+func (m *SocialAccountMutation) HandleCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldHandle]
+	return ok
+}
+
+// ResetHandle resets all changes to the "handle" field.
+func (m *SocialAccountMutation) ResetHandle() {
+	m.handle = nil
+	delete(m.clearedFields, socialaccount.FieldHandle)
+}
+
+// SetCredentials sets the "credentials" field.
+func (m *SocialAccountMutation) SetCredentials(s string) {
+	m.credentials = &s
+}
+
+// Credentials returns the value of the "credentials" field in the mutation.
+func (m *SocialAccountMutation) Credentials() (r string, exists bool) {
+	v := m.credentials
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCredentials returns the old "credentials" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldCredentials(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCredentials is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCredentials requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCredentials: %w", err)
+	}
+	return oldValue.Credentials, nil
+}
+
+// ClearCredentials clears the value of the "credentials" field.
+func (m *SocialAccountMutation) ClearCredentials() {
+	m.credentials = nil
+	m.clearedFields[socialaccount.FieldCredentials] = struct{}{}
+}
+
+// CredentialsCleared returns if the "credentials" field was cleared in this mutation.
+func (m *SocialAccountMutation) CredentialsCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldCredentials]
+	return ok
+}
+
+// ResetCredentials resets all changes to the "credentials" field.
+func (m *SocialAccountMutation) ResetCredentials() {
+	m.credentials = nil
+	delete(m.clearedFields, socialaccount.FieldCredentials)
+}
+
+// SetCredentialHint sets the "credential_hint" field.
+func (m *SocialAccountMutation) SetCredentialHint(s string) {
+	m.credential_hint = &s
+}
+
+// CredentialHint returns the value of the "credential_hint" field in the mutation.
+func (m *SocialAccountMutation) CredentialHint() (r string, exists bool) {
+	v := m.credential_hint
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCredentialHint returns the old "credential_hint" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldCredentialHint(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCredentialHint is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCredentialHint requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCredentialHint: %w", err)
+	}
+	return oldValue.CredentialHint, nil
+}
+
+// ClearCredentialHint clears the value of the "credential_hint" field.
+func (m *SocialAccountMutation) ClearCredentialHint() {
+	m.credential_hint = nil
+	m.clearedFields[socialaccount.FieldCredentialHint] = struct{}{}
+}
+
+// CredentialHintCleared returns if the "credential_hint" field was cleared in this mutation.
+func (m *SocialAccountMutation) CredentialHintCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldCredentialHint]
+	return ok
+}
+
+// ResetCredentialHint resets all changes to the "credential_hint" field.
+func (m *SocialAccountMutation) ResetCredentialHint() {
+	m.credential_hint = nil
+	delete(m.clearedFields, socialaccount.FieldCredentialHint)
+}
+
+// SetRemark sets the "remark" field.
+func (m *SocialAccountMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *SocialAccountMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the SocialAccount entity.
+// If the SocialAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialAccountMutation) OldRemark(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *SocialAccountMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[socialaccount.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *SocialAccountMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[socialaccount.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *SocialAccountMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, socialaccount.FieldRemark)
+}
+
+// Where appends a list predicates to the SocialAccountMutation builder.
+func (m *SocialAccountMutation) Where(ps ...predicate.SocialAccount) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SocialAccountMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SocialAccountMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SocialAccount, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SocialAccountMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SocialAccountMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SocialAccount).
+func (m *SocialAccountMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SocialAccountMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_at != nil {
+		fields = append(fields, socialaccount.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, socialaccount.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, socialaccount.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, socialaccount.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, socialaccount.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, socialaccount.FieldDeletedBy)
+	}
+	if m.is_enabled != nil {
+		fields = append(fields, socialaccount.FieldIsEnabled)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, socialaccount.FieldTenantID)
+	}
+	if m.platform != nil {
+		fields = append(fields, socialaccount.FieldPlatform)
+	}
+	if m.name != nil {
+		fields = append(fields, socialaccount.FieldName)
+	}
+	if m.handle != nil {
+		fields = append(fields, socialaccount.FieldHandle)
+	}
+	if m.credentials != nil {
+		fields = append(fields, socialaccount.FieldCredentials)
+	}
+	if m.credential_hint != nil {
+		fields = append(fields, socialaccount.FieldCredentialHint)
+	}
+	if m.remark != nil {
+		fields = append(fields, socialaccount.FieldRemark)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SocialAccountMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case socialaccount.FieldCreatedAt:
+		return m.CreatedAt()
+	case socialaccount.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case socialaccount.FieldDeletedAt:
+		return m.DeletedAt()
+	case socialaccount.FieldCreatedBy:
+		return m.CreatedBy()
+	case socialaccount.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case socialaccount.FieldDeletedBy:
+		return m.DeletedBy()
+	case socialaccount.FieldIsEnabled:
+		return m.IsEnabled()
+	case socialaccount.FieldTenantID:
+		return m.TenantID()
+	case socialaccount.FieldPlatform:
+		return m.Platform()
+	case socialaccount.FieldName:
+		return m.Name()
+	case socialaccount.FieldHandle:
+		return m.Handle()
+	case socialaccount.FieldCredentials:
+		return m.Credentials()
+	case socialaccount.FieldCredentialHint:
+		return m.CredentialHint()
+	case socialaccount.FieldRemark:
+		return m.Remark()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SocialAccountMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case socialaccount.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case socialaccount.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case socialaccount.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case socialaccount.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case socialaccount.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case socialaccount.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case socialaccount.FieldIsEnabled:
+		return m.OldIsEnabled(ctx)
+	case socialaccount.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case socialaccount.FieldPlatform:
+		return m.OldPlatform(ctx)
+	case socialaccount.FieldName:
+		return m.OldName(ctx)
+	case socialaccount.FieldHandle:
+		return m.OldHandle(ctx)
+	case socialaccount.FieldCredentials:
+		return m.OldCredentials(ctx)
+	case socialaccount.FieldCredentialHint:
+		return m.OldCredentialHint(ctx)
+	case socialaccount.FieldRemark:
+		return m.OldRemark(ctx)
+	}
+	return nil, fmt.Errorf("unknown SocialAccount field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialAccountMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case socialaccount.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case socialaccount.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case socialaccount.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case socialaccount.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case socialaccount.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case socialaccount.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case socialaccount.FieldIsEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsEnabled(v)
+		return nil
+	case socialaccount.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case socialaccount.FieldPlatform:
+		v, ok := value.(socialaccount.Platform)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlatform(v)
+		return nil
+	case socialaccount.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case socialaccount.FieldHandle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHandle(v)
+		return nil
+	case socialaccount.FieldCredentials:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCredentials(v)
+		return nil
+	case socialaccount.FieldCredentialHint:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCredentialHint(v)
+		return nil
+	case socialaccount.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialAccount field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SocialAccountMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, socialaccount.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, socialaccount.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, socialaccount.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, socialaccount.FieldTenantID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SocialAccountMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case socialaccount.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case socialaccount.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case socialaccount.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case socialaccount.FieldTenantID:
+		return m.AddedTenantID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialAccountMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case socialaccount.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case socialaccount.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case socialaccount.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case socialaccount.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialAccount numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SocialAccountMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(socialaccount.FieldCreatedAt) {
+		fields = append(fields, socialaccount.FieldCreatedAt)
+	}
+	if m.FieldCleared(socialaccount.FieldUpdatedAt) {
+		fields = append(fields, socialaccount.FieldUpdatedAt)
+	}
+	if m.FieldCleared(socialaccount.FieldDeletedAt) {
+		fields = append(fields, socialaccount.FieldDeletedAt)
+	}
+	if m.FieldCleared(socialaccount.FieldCreatedBy) {
+		fields = append(fields, socialaccount.FieldCreatedBy)
+	}
+	if m.FieldCleared(socialaccount.FieldUpdatedBy) {
+		fields = append(fields, socialaccount.FieldUpdatedBy)
+	}
+	if m.FieldCleared(socialaccount.FieldDeletedBy) {
+		fields = append(fields, socialaccount.FieldDeletedBy)
+	}
+	if m.FieldCleared(socialaccount.FieldIsEnabled) {
+		fields = append(fields, socialaccount.FieldIsEnabled)
+	}
+	if m.FieldCleared(socialaccount.FieldTenantID) {
+		fields = append(fields, socialaccount.FieldTenantID)
+	}
+	if m.FieldCleared(socialaccount.FieldPlatform) {
+		fields = append(fields, socialaccount.FieldPlatform)
+	}
+	if m.FieldCleared(socialaccount.FieldName) {
+		fields = append(fields, socialaccount.FieldName)
+	}
+	if m.FieldCleared(socialaccount.FieldHandle) {
+		fields = append(fields, socialaccount.FieldHandle)
+	}
+	if m.FieldCleared(socialaccount.FieldCredentials) {
+		fields = append(fields, socialaccount.FieldCredentials)
+	}
+	if m.FieldCleared(socialaccount.FieldCredentialHint) {
+		fields = append(fields, socialaccount.FieldCredentialHint)
+	}
+	if m.FieldCleared(socialaccount.FieldRemark) {
+		fields = append(fields, socialaccount.FieldRemark)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SocialAccountMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SocialAccountMutation) ClearField(name string) error {
+	switch name {
+	case socialaccount.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case socialaccount.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case socialaccount.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case socialaccount.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case socialaccount.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case socialaccount.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case socialaccount.FieldIsEnabled:
+		m.ClearIsEnabled()
+		return nil
+	case socialaccount.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case socialaccount.FieldPlatform:
+		m.ClearPlatform()
+		return nil
+	case socialaccount.FieldName:
+		m.ClearName()
+		return nil
+	case socialaccount.FieldHandle:
+		m.ClearHandle()
+		return nil
+	case socialaccount.FieldCredentials:
+		m.ClearCredentials()
+		return nil
+	case socialaccount.FieldCredentialHint:
+		m.ClearCredentialHint()
+		return nil
+	case socialaccount.FieldRemark:
+		m.ClearRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialAccount nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SocialAccountMutation) ResetField(name string) error {
+	switch name {
+	case socialaccount.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case socialaccount.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case socialaccount.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case socialaccount.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case socialaccount.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case socialaccount.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case socialaccount.FieldIsEnabled:
+		m.ResetIsEnabled()
+		return nil
+	case socialaccount.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case socialaccount.FieldPlatform:
+		m.ResetPlatform()
+		return nil
+	case socialaccount.FieldName:
+		m.ResetName()
+		return nil
+	case socialaccount.FieldHandle:
+		m.ResetHandle()
+		return nil
+	case socialaccount.FieldCredentials:
+		m.ResetCredentials()
+		return nil
+	case socialaccount.FieldCredentialHint:
+		m.ResetCredentialHint()
+		return nil
+	case socialaccount.FieldRemark:
+		m.ResetRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialAccount field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SocialAccountMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SocialAccountMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SocialAccountMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SocialAccountMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SocialAccountMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SocialAccountMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SocialAccountMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SocialAccount unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SocialAccountMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SocialAccount edge %s", name)
+}
+
+// SocialDistributionMutation represents an operation that mutates the SocialDistribution nodes in the graph.
+type SocialDistributionMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *uint32
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	created_by      *uint32
+	addcreated_by   *int32
+	updated_by      *uint32
+	addupdated_by   *int32
+	deleted_by      *uint32
+	adddeleted_by   *int32
+	tenant_id       *uint32
+	addtenant_id    *int32
+	platform        *socialdistribution.Platform
+	account_id      *uint32
+	addaccount_id   *int32
+	post_id         *uint32
+	addpost_id      *int32
+	override_text   *string
+	status          *socialdistribution.Status
+	publish_time    *time.Time
+	published_at    *time.Time
+	external_uri    *string
+	external_id     *string
+	error_message   *string
+	title           *string
+	likes           *uint32
+	addlikes        *int32
+	replies         *uint32
+	addreplies      *int32
+	reposts         *uint32
+	addreposts      *int32
+	stats_synced_at *time.Time
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*SocialDistribution, error)
+	predicates      []predicate.SocialDistribution
+}
+
+var _ ent.Mutation = (*SocialDistributionMutation)(nil)
+
+// socialdistributionOption allows management of the mutation configuration using functional options.
+type socialdistributionOption func(*SocialDistributionMutation)
+
+// newSocialDistributionMutation creates new mutation for the SocialDistribution entity.
+func newSocialDistributionMutation(c config, op Op, opts ...socialdistributionOption) *SocialDistributionMutation {
+	m := &SocialDistributionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSocialDistribution,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSocialDistributionID sets the ID field of the mutation.
+func withSocialDistributionID(id uint32) socialdistributionOption {
+	return func(m *SocialDistributionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SocialDistribution
+		)
+		m.oldValue = func(ctx context.Context) (*SocialDistribution, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SocialDistribution.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSocialDistribution sets the old SocialDistribution of the mutation.
+func withSocialDistribution(node *SocialDistribution) socialdistributionOption {
+	return func(m *SocialDistributionMutation) {
+		m.oldValue = func(context.Context) (*SocialDistribution, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SocialDistributionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SocialDistributionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SocialDistribution entities.
+func (m *SocialDistributionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SocialDistributionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SocialDistributionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SocialDistribution.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SocialDistributionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SocialDistributionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SocialDistributionMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[socialdistribution.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SocialDistributionMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SocialDistributionMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, socialdistribution.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SocialDistributionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SocialDistributionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SocialDistributionMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[socialdistribution.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SocialDistributionMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SocialDistributionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, socialdistribution.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SocialDistributionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SocialDistributionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SocialDistributionMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[socialdistribution.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SocialDistributionMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SocialDistributionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, socialdistribution.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SocialDistributionMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SocialDistributionMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *SocialDistributionMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SocialDistributionMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SocialDistributionMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[socialdistribution.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SocialDistributionMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SocialDistributionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, socialdistribution.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SocialDistributionMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SocialDistributionMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *SocialDistributionMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SocialDistributionMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SocialDistributionMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[socialdistribution.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SocialDistributionMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SocialDistributionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, socialdistribution.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SocialDistributionMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SocialDistributionMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *SocialDistributionMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *SocialDistributionMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SocialDistributionMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[socialdistribution.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SocialDistributionMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SocialDistributionMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, socialdistribution.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *SocialDistributionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *SocialDistributionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *SocialDistributionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *SocialDistributionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *SocialDistributionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[socialdistribution.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *SocialDistributionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *SocialDistributionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, socialdistribution.FieldTenantID)
+}
+
+// SetPlatform sets the "platform" field.
+func (m *SocialDistributionMutation) SetPlatform(s socialdistribution.Platform) {
+	m.platform = &s
+}
+
+// Platform returns the value of the "platform" field in the mutation.
+func (m *SocialDistributionMutation) Platform() (r socialdistribution.Platform, exists bool) {
+	v := m.platform
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlatform returns the old "platform" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldPlatform(ctx context.Context) (v *socialdistribution.Platform, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlatform is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlatform requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlatform: %w", err)
+	}
+	return oldValue.Platform, nil
+}
+
+// ClearPlatform clears the value of the "platform" field.
+func (m *SocialDistributionMutation) ClearPlatform() {
+	m.platform = nil
+	m.clearedFields[socialdistribution.FieldPlatform] = struct{}{}
+}
+
+// PlatformCleared returns if the "platform" field was cleared in this mutation.
+func (m *SocialDistributionMutation) PlatformCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldPlatform]
+	return ok
+}
+
+// ResetPlatform resets all changes to the "platform" field.
+func (m *SocialDistributionMutation) ResetPlatform() {
+	m.platform = nil
+	delete(m.clearedFields, socialdistribution.FieldPlatform)
+}
+
+// SetAccountID sets the "account_id" field.
+func (m *SocialDistributionMutation) SetAccountID(u uint32) {
+	m.account_id = &u
+	m.addaccount_id = nil
+}
+
+// AccountID returns the value of the "account_id" field in the mutation.
+func (m *SocialDistributionMutation) AccountID() (r uint32, exists bool) {
+	v := m.account_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccountID returns the old "account_id" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldAccountID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccountID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccountID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccountID: %w", err)
+	}
+	return oldValue.AccountID, nil
+}
+
+// AddAccountID adds u to the "account_id" field.
+func (m *SocialDistributionMutation) AddAccountID(u int32) {
+	if m.addaccount_id != nil {
+		*m.addaccount_id += u
+	} else {
+		m.addaccount_id = &u
+	}
+}
+
+// AddedAccountID returns the value that was added to the "account_id" field in this mutation.
+func (m *SocialDistributionMutation) AddedAccountID() (r int32, exists bool) {
+	v := m.addaccount_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAccountID clears the value of the "account_id" field.
+func (m *SocialDistributionMutation) ClearAccountID() {
+	m.account_id = nil
+	m.addaccount_id = nil
+	m.clearedFields[socialdistribution.FieldAccountID] = struct{}{}
+}
+
+// AccountIDCleared returns if the "account_id" field was cleared in this mutation.
+func (m *SocialDistributionMutation) AccountIDCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldAccountID]
+	return ok
+}
+
+// ResetAccountID resets all changes to the "account_id" field.
+func (m *SocialDistributionMutation) ResetAccountID() {
+	m.account_id = nil
+	m.addaccount_id = nil
+	delete(m.clearedFields, socialdistribution.FieldAccountID)
+}
+
+// SetPostID sets the "post_id" field.
+func (m *SocialDistributionMutation) SetPostID(u uint32) {
+	m.post_id = &u
+	m.addpost_id = nil
+}
+
+// PostID returns the value of the "post_id" field in the mutation.
+func (m *SocialDistributionMutation) PostID() (r uint32, exists bool) {
+	v := m.post_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostID returns the old "post_id" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldPostID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostID: %w", err)
+	}
+	return oldValue.PostID, nil
+}
+
+// AddPostID adds u to the "post_id" field.
+func (m *SocialDistributionMutation) AddPostID(u int32) {
+	if m.addpost_id != nil {
+		*m.addpost_id += u
+	} else {
+		m.addpost_id = &u
+	}
+}
+
+// AddedPostID returns the value that was added to the "post_id" field in this mutation.
+func (m *SocialDistributionMutation) AddedPostID() (r int32, exists bool) {
+	v := m.addpost_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPostID clears the value of the "post_id" field.
+func (m *SocialDistributionMutation) ClearPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	m.clearedFields[socialdistribution.FieldPostID] = struct{}{}
+}
+
+// PostIDCleared returns if the "post_id" field was cleared in this mutation.
+func (m *SocialDistributionMutation) PostIDCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldPostID]
+	return ok
+}
+
+// ResetPostID resets all changes to the "post_id" field.
+func (m *SocialDistributionMutation) ResetPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	delete(m.clearedFields, socialdistribution.FieldPostID)
+}
+
+// SetOverrideText sets the "override_text" field.
+func (m *SocialDistributionMutation) SetOverrideText(s string) {
+	m.override_text = &s
+}
+
+// OverrideText returns the value of the "override_text" field in the mutation.
+func (m *SocialDistributionMutation) OverrideText() (r string, exists bool) {
+	v := m.override_text
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOverrideText returns the old "override_text" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldOverrideText(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOverrideText is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOverrideText requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOverrideText: %w", err)
+	}
+	return oldValue.OverrideText, nil
+}
+
+// ClearOverrideText clears the value of the "override_text" field.
+func (m *SocialDistributionMutation) ClearOverrideText() {
+	m.override_text = nil
+	m.clearedFields[socialdistribution.FieldOverrideText] = struct{}{}
+}
+
+// OverrideTextCleared returns if the "override_text" field was cleared in this mutation.
+func (m *SocialDistributionMutation) OverrideTextCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldOverrideText]
+	return ok
+}
+
+// ResetOverrideText resets all changes to the "override_text" field.
+func (m *SocialDistributionMutation) ResetOverrideText() {
+	m.override_text = nil
+	delete(m.clearedFields, socialdistribution.FieldOverrideText)
+}
+
+// SetStatus sets the "status" field.
+func (m *SocialDistributionMutation) SetStatus(s socialdistribution.Status) {
+	m.status = &s
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *SocialDistributionMutation) Status() (r socialdistribution.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldStatus(ctx context.Context) (v *socialdistribution.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *SocialDistributionMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[socialdistribution.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *SocialDistributionMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *SocialDistributionMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, socialdistribution.FieldStatus)
+}
+
+// SetPublishTime sets the "publish_time" field.
+func (m *SocialDistributionMutation) SetPublishTime(t time.Time) {
+	m.publish_time = &t
+}
+
+// PublishTime returns the value of the "publish_time" field in the mutation.
+func (m *SocialDistributionMutation) PublishTime() (r time.Time, exists bool) {
+	v := m.publish_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPublishTime returns the old "publish_time" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldPublishTime(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPublishTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPublishTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPublishTime: %w", err)
+	}
+	return oldValue.PublishTime, nil
+}
+
+// ClearPublishTime clears the value of the "publish_time" field.
+func (m *SocialDistributionMutation) ClearPublishTime() {
+	m.publish_time = nil
+	m.clearedFields[socialdistribution.FieldPublishTime] = struct{}{}
+}
+
+// PublishTimeCleared returns if the "publish_time" field was cleared in this mutation.
+func (m *SocialDistributionMutation) PublishTimeCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldPublishTime]
+	return ok
+}
+
+// ResetPublishTime resets all changes to the "publish_time" field.
+func (m *SocialDistributionMutation) ResetPublishTime() {
+	m.publish_time = nil
+	delete(m.clearedFields, socialdistribution.FieldPublishTime)
+}
+
+// SetPublishedAt sets the "published_at" field.
+func (m *SocialDistributionMutation) SetPublishedAt(t time.Time) {
+	m.published_at = &t
+}
+
+// PublishedAt returns the value of the "published_at" field in the mutation.
+func (m *SocialDistributionMutation) PublishedAt() (r time.Time, exists bool) {
+	v := m.published_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPublishedAt returns the old "published_at" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldPublishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPublishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPublishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPublishedAt: %w", err)
+	}
+	return oldValue.PublishedAt, nil
+}
+
+// ClearPublishedAt clears the value of the "published_at" field.
+func (m *SocialDistributionMutation) ClearPublishedAt() {
+	m.published_at = nil
+	m.clearedFields[socialdistribution.FieldPublishedAt] = struct{}{}
+}
+
+// PublishedAtCleared returns if the "published_at" field was cleared in this mutation.
+func (m *SocialDistributionMutation) PublishedAtCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldPublishedAt]
+	return ok
+}
+
+// ResetPublishedAt resets all changes to the "published_at" field.
+func (m *SocialDistributionMutation) ResetPublishedAt() {
+	m.published_at = nil
+	delete(m.clearedFields, socialdistribution.FieldPublishedAt)
+}
+
+// SetExternalURI sets the "external_uri" field.
+func (m *SocialDistributionMutation) SetExternalURI(s string) {
+	m.external_uri = &s
+}
+
+// ExternalURI returns the value of the "external_uri" field in the mutation.
+func (m *SocialDistributionMutation) ExternalURI() (r string, exists bool) {
+	v := m.external_uri
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalURI returns the old "external_uri" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldExternalURI(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExternalURI is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExternalURI requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalURI: %w", err)
+	}
+	return oldValue.ExternalURI, nil
+}
+
+// ClearExternalURI clears the value of the "external_uri" field.
+func (m *SocialDistributionMutation) ClearExternalURI() {
+	m.external_uri = nil
+	m.clearedFields[socialdistribution.FieldExternalURI] = struct{}{}
+}
+
+// ExternalURICleared returns if the "external_uri" field was cleared in this mutation.
+func (m *SocialDistributionMutation) ExternalURICleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldExternalURI]
+	return ok
+}
+
+// ResetExternalURI resets all changes to the "external_uri" field.
+func (m *SocialDistributionMutation) ResetExternalURI() {
+	m.external_uri = nil
+	delete(m.clearedFields, socialdistribution.FieldExternalURI)
+}
+
+// SetExternalID sets the "external_id" field.
+func (m *SocialDistributionMutation) SetExternalID(s string) {
+	m.external_id = &s
+}
+
+// ExternalID returns the value of the "external_id" field in the mutation.
+func (m *SocialDistributionMutation) ExternalID() (r string, exists bool) {
+	v := m.external_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalID returns the old "external_id" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldExternalID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExternalID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExternalID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalID: %w", err)
+	}
+	return oldValue.ExternalID, nil
+}
+
+// ClearExternalID clears the value of the "external_id" field.
+func (m *SocialDistributionMutation) ClearExternalID() {
+	m.external_id = nil
+	m.clearedFields[socialdistribution.FieldExternalID] = struct{}{}
+}
+
+// ExternalIDCleared returns if the "external_id" field was cleared in this mutation.
+func (m *SocialDistributionMutation) ExternalIDCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldExternalID]
+	return ok
+}
+
+// ResetExternalID resets all changes to the "external_id" field.
+func (m *SocialDistributionMutation) ResetExternalID() {
+	m.external_id = nil
+	delete(m.clearedFields, socialdistribution.FieldExternalID)
+}
+
+// SetErrorMessage sets the "error_message" field.
+func (m *SocialDistributionMutation) SetErrorMessage(s string) {
+	m.error_message = &s
+}
+
+// ErrorMessage returns the value of the "error_message" field in the mutation.
+func (m *SocialDistributionMutation) ErrorMessage() (r string, exists bool) {
+	v := m.error_message
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldErrorMessage returns the old "error_message" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldErrorMessage(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldErrorMessage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldErrorMessage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldErrorMessage: %w", err)
+	}
+	return oldValue.ErrorMessage, nil
+}
+
+// ClearErrorMessage clears the value of the "error_message" field.
+func (m *SocialDistributionMutation) ClearErrorMessage() {
+	m.error_message = nil
+	m.clearedFields[socialdistribution.FieldErrorMessage] = struct{}{}
+}
+
+// ErrorMessageCleared returns if the "error_message" field was cleared in this mutation.
+func (m *SocialDistributionMutation) ErrorMessageCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldErrorMessage]
+	return ok
+}
+
+// ResetErrorMessage resets all changes to the "error_message" field.
+func (m *SocialDistributionMutation) ResetErrorMessage() {
+	m.error_message = nil
+	delete(m.clearedFields, socialdistribution.FieldErrorMessage)
+}
+
+// SetTitle sets the "title" field.
+func (m *SocialDistributionMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *SocialDistributionMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldTitle(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ClearTitle clears the value of the "title" field.
+func (m *SocialDistributionMutation) ClearTitle() {
+	m.title = nil
+	m.clearedFields[socialdistribution.FieldTitle] = struct{}{}
+}
+
+// TitleCleared returns if the "title" field was cleared in this mutation.
+func (m *SocialDistributionMutation) TitleCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldTitle]
+	return ok
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *SocialDistributionMutation) ResetTitle() {
+	m.title = nil
+	delete(m.clearedFields, socialdistribution.FieldTitle)
+}
+
+// SetLikes sets the "likes" field.
+func (m *SocialDistributionMutation) SetLikes(u uint32) {
+	m.likes = &u
+	m.addlikes = nil
+}
+
+// Likes returns the value of the "likes" field in the mutation.
+func (m *SocialDistributionMutation) Likes() (r uint32, exists bool) {
+	v := m.likes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLikes returns the old "likes" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldLikes(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLikes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLikes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLikes: %w", err)
+	}
+	return oldValue.Likes, nil
+}
+
+// AddLikes adds u to the "likes" field.
+func (m *SocialDistributionMutation) AddLikes(u int32) {
+	if m.addlikes != nil {
+		*m.addlikes += u
+	} else {
+		m.addlikes = &u
+	}
+}
+
+// AddedLikes returns the value that was added to the "likes" field in this mutation.
+func (m *SocialDistributionMutation) AddedLikes() (r int32, exists bool) {
+	v := m.addlikes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLikes clears the value of the "likes" field.
+func (m *SocialDistributionMutation) ClearLikes() {
+	m.likes = nil
+	m.addlikes = nil
+	m.clearedFields[socialdistribution.FieldLikes] = struct{}{}
+}
+
+// LikesCleared returns if the "likes" field was cleared in this mutation.
+func (m *SocialDistributionMutation) LikesCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldLikes]
+	return ok
+}
+
+// ResetLikes resets all changes to the "likes" field.
+func (m *SocialDistributionMutation) ResetLikes() {
+	m.likes = nil
+	m.addlikes = nil
+	delete(m.clearedFields, socialdistribution.FieldLikes)
+}
+
+// SetReplies sets the "replies" field.
+func (m *SocialDistributionMutation) SetReplies(u uint32) {
+	m.replies = &u
+	m.addreplies = nil
+}
+
+// Replies returns the value of the "replies" field in the mutation.
+func (m *SocialDistributionMutation) Replies() (r uint32, exists bool) {
+	v := m.replies
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReplies returns the old "replies" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldReplies(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReplies is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReplies requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReplies: %w", err)
+	}
+	return oldValue.Replies, nil
+}
+
+// AddReplies adds u to the "replies" field.
+func (m *SocialDistributionMutation) AddReplies(u int32) {
+	if m.addreplies != nil {
+		*m.addreplies += u
+	} else {
+		m.addreplies = &u
+	}
+}
+
+// AddedReplies returns the value that was added to the "replies" field in this mutation.
+func (m *SocialDistributionMutation) AddedReplies() (r int32, exists bool) {
+	v := m.addreplies
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReplies clears the value of the "replies" field.
+func (m *SocialDistributionMutation) ClearReplies() {
+	m.replies = nil
+	m.addreplies = nil
+	m.clearedFields[socialdistribution.FieldReplies] = struct{}{}
+}
+
+// RepliesCleared returns if the "replies" field was cleared in this mutation.
+func (m *SocialDistributionMutation) RepliesCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldReplies]
+	return ok
+}
+
+// ResetReplies resets all changes to the "replies" field.
+func (m *SocialDistributionMutation) ResetReplies() {
+	m.replies = nil
+	m.addreplies = nil
+	delete(m.clearedFields, socialdistribution.FieldReplies)
+}
+
+// SetReposts sets the "reposts" field.
+func (m *SocialDistributionMutation) SetReposts(u uint32) {
+	m.reposts = &u
+	m.addreposts = nil
+}
+
+// Reposts returns the value of the "reposts" field in the mutation.
+func (m *SocialDistributionMutation) Reposts() (r uint32, exists bool) {
+	v := m.reposts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReposts returns the old "reposts" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldReposts(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReposts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReposts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReposts: %w", err)
+	}
+	return oldValue.Reposts, nil
+}
+
+// AddReposts adds u to the "reposts" field.
+func (m *SocialDistributionMutation) AddReposts(u int32) {
+	if m.addreposts != nil {
+		*m.addreposts += u
+	} else {
+		m.addreposts = &u
+	}
+}
+
+// AddedReposts returns the value that was added to the "reposts" field in this mutation.
+func (m *SocialDistributionMutation) AddedReposts() (r int32, exists bool) {
+	v := m.addreposts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReposts clears the value of the "reposts" field.
+func (m *SocialDistributionMutation) ClearReposts() {
+	m.reposts = nil
+	m.addreposts = nil
+	m.clearedFields[socialdistribution.FieldReposts] = struct{}{}
+}
+
+// RepostsCleared returns if the "reposts" field was cleared in this mutation.
+func (m *SocialDistributionMutation) RepostsCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldReposts]
+	return ok
+}
+
+// ResetReposts resets all changes to the "reposts" field.
+func (m *SocialDistributionMutation) ResetReposts() {
+	m.reposts = nil
+	m.addreposts = nil
+	delete(m.clearedFields, socialdistribution.FieldReposts)
+}
+
+// SetStatsSyncedAt sets the "stats_synced_at" field.
+func (m *SocialDistributionMutation) SetStatsSyncedAt(t time.Time) {
+	m.stats_synced_at = &t
+}
+
+// StatsSyncedAt returns the value of the "stats_synced_at" field in the mutation.
+func (m *SocialDistributionMutation) StatsSyncedAt() (r time.Time, exists bool) {
+	v := m.stats_synced_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatsSyncedAt returns the old "stats_synced_at" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldStatsSyncedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatsSyncedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatsSyncedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatsSyncedAt: %w", err)
+	}
+	return oldValue.StatsSyncedAt, nil
+}
+
+// ClearStatsSyncedAt clears the value of the "stats_synced_at" field.
+func (m *SocialDistributionMutation) ClearStatsSyncedAt() {
+	m.stats_synced_at = nil
+	m.clearedFields[socialdistribution.FieldStatsSyncedAt] = struct{}{}
+}
+
+// StatsSyncedAtCleared returns if the "stats_synced_at" field was cleared in this mutation.
+func (m *SocialDistributionMutation) StatsSyncedAtCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldStatsSyncedAt]
+	return ok
+}
+
+// ResetStatsSyncedAt resets all changes to the "stats_synced_at" field.
+func (m *SocialDistributionMutation) ResetStatsSyncedAt() {
+	m.stats_synced_at = nil
+	delete(m.clearedFields, socialdistribution.FieldStatsSyncedAt)
+}
+
+// Where appends a list predicates to the SocialDistributionMutation builder.
+func (m *SocialDistributionMutation) Where(ps ...predicate.SocialDistribution) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SocialDistributionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SocialDistributionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SocialDistribution, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SocialDistributionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SocialDistributionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SocialDistribution).
+func (m *SocialDistributionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SocialDistributionMutation) Fields() []string {
+	fields := make([]string, 0, 22)
+	if m.created_at != nil {
+		fields = append(fields, socialdistribution.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, socialdistribution.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, socialdistribution.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, socialdistribution.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, socialdistribution.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, socialdistribution.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, socialdistribution.FieldTenantID)
+	}
+	if m.platform != nil {
+		fields = append(fields, socialdistribution.FieldPlatform)
+	}
+	if m.account_id != nil {
+		fields = append(fields, socialdistribution.FieldAccountID)
+	}
+	if m.post_id != nil {
+		fields = append(fields, socialdistribution.FieldPostID)
+	}
+	if m.override_text != nil {
+		fields = append(fields, socialdistribution.FieldOverrideText)
+	}
+	if m.status != nil {
+		fields = append(fields, socialdistribution.FieldStatus)
+	}
+	if m.publish_time != nil {
+		fields = append(fields, socialdistribution.FieldPublishTime)
+	}
+	if m.published_at != nil {
+		fields = append(fields, socialdistribution.FieldPublishedAt)
+	}
+	if m.external_uri != nil {
+		fields = append(fields, socialdistribution.FieldExternalURI)
+	}
+	if m.external_id != nil {
+		fields = append(fields, socialdistribution.FieldExternalID)
+	}
+	if m.error_message != nil {
+		fields = append(fields, socialdistribution.FieldErrorMessage)
+	}
+	if m.title != nil {
+		fields = append(fields, socialdistribution.FieldTitle)
+	}
+	if m.likes != nil {
+		fields = append(fields, socialdistribution.FieldLikes)
+	}
+	if m.replies != nil {
+		fields = append(fields, socialdistribution.FieldReplies)
+	}
+	if m.reposts != nil {
+		fields = append(fields, socialdistribution.FieldReposts)
+	}
+	if m.stats_synced_at != nil {
+		fields = append(fields, socialdistribution.FieldStatsSyncedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SocialDistributionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case socialdistribution.FieldCreatedAt:
+		return m.CreatedAt()
+	case socialdistribution.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case socialdistribution.FieldDeletedAt:
+		return m.DeletedAt()
+	case socialdistribution.FieldCreatedBy:
+		return m.CreatedBy()
+	case socialdistribution.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case socialdistribution.FieldDeletedBy:
+		return m.DeletedBy()
+	case socialdistribution.FieldTenantID:
+		return m.TenantID()
+	case socialdistribution.FieldPlatform:
+		return m.Platform()
+	case socialdistribution.FieldAccountID:
+		return m.AccountID()
+	case socialdistribution.FieldPostID:
+		return m.PostID()
+	case socialdistribution.FieldOverrideText:
+		return m.OverrideText()
+	case socialdistribution.FieldStatus:
+		return m.Status()
+	case socialdistribution.FieldPublishTime:
+		return m.PublishTime()
+	case socialdistribution.FieldPublishedAt:
+		return m.PublishedAt()
+	case socialdistribution.FieldExternalURI:
+		return m.ExternalURI()
+	case socialdistribution.FieldExternalID:
+		return m.ExternalID()
+	case socialdistribution.FieldErrorMessage:
+		return m.ErrorMessage()
+	case socialdistribution.FieldTitle:
+		return m.Title()
+	case socialdistribution.FieldLikes:
+		return m.Likes()
+	case socialdistribution.FieldReplies:
+		return m.Replies()
+	case socialdistribution.FieldReposts:
+		return m.Reposts()
+	case socialdistribution.FieldStatsSyncedAt:
+		return m.StatsSyncedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SocialDistributionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case socialdistribution.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case socialdistribution.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case socialdistribution.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case socialdistribution.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case socialdistribution.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case socialdistribution.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case socialdistribution.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case socialdistribution.FieldPlatform:
+		return m.OldPlatform(ctx)
+	case socialdistribution.FieldAccountID:
+		return m.OldAccountID(ctx)
+	case socialdistribution.FieldPostID:
+		return m.OldPostID(ctx)
+	case socialdistribution.FieldOverrideText:
+		return m.OldOverrideText(ctx)
+	case socialdistribution.FieldStatus:
+		return m.OldStatus(ctx)
+	case socialdistribution.FieldPublishTime:
+		return m.OldPublishTime(ctx)
+	case socialdistribution.FieldPublishedAt:
+		return m.OldPublishedAt(ctx)
+	case socialdistribution.FieldExternalURI:
+		return m.OldExternalURI(ctx)
+	case socialdistribution.FieldExternalID:
+		return m.OldExternalID(ctx)
+	case socialdistribution.FieldErrorMessage:
+		return m.OldErrorMessage(ctx)
+	case socialdistribution.FieldTitle:
+		return m.OldTitle(ctx)
+	case socialdistribution.FieldLikes:
+		return m.OldLikes(ctx)
+	case socialdistribution.FieldReplies:
+		return m.OldReplies(ctx)
+	case socialdistribution.FieldReposts:
+		return m.OldReposts(ctx)
+	case socialdistribution.FieldStatsSyncedAt:
+		return m.OldStatsSyncedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown SocialDistribution field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialDistributionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case socialdistribution.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case socialdistribution.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case socialdistribution.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case socialdistribution.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case socialdistribution.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case socialdistribution.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case socialdistribution.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case socialdistribution.FieldPlatform:
+		v, ok := value.(socialdistribution.Platform)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlatform(v)
+		return nil
+	case socialdistribution.FieldAccountID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccountID(v)
+		return nil
+	case socialdistribution.FieldPostID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostID(v)
+		return nil
+	case socialdistribution.FieldOverrideText:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOverrideText(v)
+		return nil
+	case socialdistribution.FieldStatus:
+		v, ok := value.(socialdistribution.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case socialdistribution.FieldPublishTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPublishTime(v)
+		return nil
+	case socialdistribution.FieldPublishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPublishedAt(v)
+		return nil
+	case socialdistribution.FieldExternalURI:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalURI(v)
+		return nil
+	case socialdistribution.FieldExternalID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalID(v)
+		return nil
+	case socialdistribution.FieldErrorMessage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetErrorMessage(v)
+		return nil
+	case socialdistribution.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case socialdistribution.FieldLikes:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLikes(v)
+		return nil
+	case socialdistribution.FieldReplies:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReplies(v)
+		return nil
+	case socialdistribution.FieldReposts:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReposts(v)
+		return nil
+	case socialdistribution.FieldStatsSyncedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatsSyncedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialDistribution field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SocialDistributionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, socialdistribution.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, socialdistribution.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, socialdistribution.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, socialdistribution.FieldTenantID)
+	}
+	if m.addaccount_id != nil {
+		fields = append(fields, socialdistribution.FieldAccountID)
+	}
+	if m.addpost_id != nil {
+		fields = append(fields, socialdistribution.FieldPostID)
+	}
+	if m.addlikes != nil {
+		fields = append(fields, socialdistribution.FieldLikes)
+	}
+	if m.addreplies != nil {
+		fields = append(fields, socialdistribution.FieldReplies)
+	}
+	if m.addreposts != nil {
+		fields = append(fields, socialdistribution.FieldReposts)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SocialDistributionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case socialdistribution.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case socialdistribution.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case socialdistribution.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case socialdistribution.FieldTenantID:
+		return m.AddedTenantID()
+	case socialdistribution.FieldAccountID:
+		return m.AddedAccountID()
+	case socialdistribution.FieldPostID:
+		return m.AddedPostID()
+	case socialdistribution.FieldLikes:
+		return m.AddedLikes()
+	case socialdistribution.FieldReplies:
+		return m.AddedReplies()
+	case socialdistribution.FieldReposts:
+		return m.AddedReposts()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialDistributionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case socialdistribution.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case socialdistribution.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case socialdistribution.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case socialdistribution.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case socialdistribution.FieldAccountID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAccountID(v)
+		return nil
+	case socialdistribution.FieldPostID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPostID(v)
+		return nil
+	case socialdistribution.FieldLikes:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLikes(v)
+		return nil
+	case socialdistribution.FieldReplies:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReplies(v)
+		return nil
+	case socialdistribution.FieldReposts:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReposts(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialDistribution numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SocialDistributionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(socialdistribution.FieldCreatedAt) {
+		fields = append(fields, socialdistribution.FieldCreatedAt)
+	}
+	if m.FieldCleared(socialdistribution.FieldUpdatedAt) {
+		fields = append(fields, socialdistribution.FieldUpdatedAt)
+	}
+	if m.FieldCleared(socialdistribution.FieldDeletedAt) {
+		fields = append(fields, socialdistribution.FieldDeletedAt)
+	}
+	if m.FieldCleared(socialdistribution.FieldCreatedBy) {
+		fields = append(fields, socialdistribution.FieldCreatedBy)
+	}
+	if m.FieldCleared(socialdistribution.FieldUpdatedBy) {
+		fields = append(fields, socialdistribution.FieldUpdatedBy)
+	}
+	if m.FieldCleared(socialdistribution.FieldDeletedBy) {
+		fields = append(fields, socialdistribution.FieldDeletedBy)
+	}
+	if m.FieldCleared(socialdistribution.FieldTenantID) {
+		fields = append(fields, socialdistribution.FieldTenantID)
+	}
+	if m.FieldCleared(socialdistribution.FieldPlatform) {
+		fields = append(fields, socialdistribution.FieldPlatform)
+	}
+	if m.FieldCleared(socialdistribution.FieldAccountID) {
+		fields = append(fields, socialdistribution.FieldAccountID)
+	}
+	if m.FieldCleared(socialdistribution.FieldPostID) {
+		fields = append(fields, socialdistribution.FieldPostID)
+	}
+	if m.FieldCleared(socialdistribution.FieldOverrideText) {
+		fields = append(fields, socialdistribution.FieldOverrideText)
+	}
+	if m.FieldCleared(socialdistribution.FieldStatus) {
+		fields = append(fields, socialdistribution.FieldStatus)
+	}
+	if m.FieldCleared(socialdistribution.FieldPublishTime) {
+		fields = append(fields, socialdistribution.FieldPublishTime)
+	}
+	if m.FieldCleared(socialdistribution.FieldPublishedAt) {
+		fields = append(fields, socialdistribution.FieldPublishedAt)
+	}
+	if m.FieldCleared(socialdistribution.FieldExternalURI) {
+		fields = append(fields, socialdistribution.FieldExternalURI)
+	}
+	if m.FieldCleared(socialdistribution.FieldExternalID) {
+		fields = append(fields, socialdistribution.FieldExternalID)
+	}
+	if m.FieldCleared(socialdistribution.FieldErrorMessage) {
+		fields = append(fields, socialdistribution.FieldErrorMessage)
+	}
+	if m.FieldCleared(socialdistribution.FieldTitle) {
+		fields = append(fields, socialdistribution.FieldTitle)
+	}
+	if m.FieldCleared(socialdistribution.FieldLikes) {
+		fields = append(fields, socialdistribution.FieldLikes)
+	}
+	if m.FieldCleared(socialdistribution.FieldReplies) {
+		fields = append(fields, socialdistribution.FieldReplies)
+	}
+	if m.FieldCleared(socialdistribution.FieldReposts) {
+		fields = append(fields, socialdistribution.FieldReposts)
+	}
+	if m.FieldCleared(socialdistribution.FieldStatsSyncedAt) {
+		fields = append(fields, socialdistribution.FieldStatsSyncedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SocialDistributionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SocialDistributionMutation) ClearField(name string) error {
+	switch name {
+	case socialdistribution.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case socialdistribution.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case socialdistribution.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case socialdistribution.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case socialdistribution.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case socialdistribution.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case socialdistribution.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case socialdistribution.FieldPlatform:
+		m.ClearPlatform()
+		return nil
+	case socialdistribution.FieldAccountID:
+		m.ClearAccountID()
+		return nil
+	case socialdistribution.FieldPostID:
+		m.ClearPostID()
+		return nil
+	case socialdistribution.FieldOverrideText:
+		m.ClearOverrideText()
+		return nil
+	case socialdistribution.FieldStatus:
+		m.ClearStatus()
+		return nil
+	case socialdistribution.FieldPublishTime:
+		m.ClearPublishTime()
+		return nil
+	case socialdistribution.FieldPublishedAt:
+		m.ClearPublishedAt()
+		return nil
+	case socialdistribution.FieldExternalURI:
+		m.ClearExternalURI()
+		return nil
+	case socialdistribution.FieldExternalID:
+		m.ClearExternalID()
+		return nil
+	case socialdistribution.FieldErrorMessage:
+		m.ClearErrorMessage()
+		return nil
+	case socialdistribution.FieldTitle:
+		m.ClearTitle()
+		return nil
+	case socialdistribution.FieldLikes:
+		m.ClearLikes()
+		return nil
+	case socialdistribution.FieldReplies:
+		m.ClearReplies()
+		return nil
+	case socialdistribution.FieldReposts:
+		m.ClearReposts()
+		return nil
+	case socialdistribution.FieldStatsSyncedAt:
+		m.ClearStatsSyncedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialDistribution nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SocialDistributionMutation) ResetField(name string) error {
+	switch name {
+	case socialdistribution.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case socialdistribution.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case socialdistribution.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case socialdistribution.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case socialdistribution.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case socialdistribution.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case socialdistribution.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case socialdistribution.FieldPlatform:
+		m.ResetPlatform()
+		return nil
+	case socialdistribution.FieldAccountID:
+		m.ResetAccountID()
+		return nil
+	case socialdistribution.FieldPostID:
+		m.ResetPostID()
+		return nil
+	case socialdistribution.FieldOverrideText:
+		m.ResetOverrideText()
+		return nil
+	case socialdistribution.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case socialdistribution.FieldPublishTime:
+		m.ResetPublishTime()
+		return nil
+	case socialdistribution.FieldPublishedAt:
+		m.ResetPublishedAt()
+		return nil
+	case socialdistribution.FieldExternalURI:
+		m.ResetExternalURI()
+		return nil
+	case socialdistribution.FieldExternalID:
+		m.ResetExternalID()
+		return nil
+	case socialdistribution.FieldErrorMessage:
+		m.ResetErrorMessage()
+		return nil
+	case socialdistribution.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case socialdistribution.FieldLikes:
+		m.ResetLikes()
+		return nil
+	case socialdistribution.FieldReplies:
+		m.ResetReplies()
+		return nil
+	case socialdistribution.FieldReposts:
+		m.ResetReposts()
+		return nil
+	case socialdistribution.FieldStatsSyncedAt:
+		m.ResetStatsSyncedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialDistribution field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SocialDistributionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SocialDistributionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SocialDistributionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SocialDistributionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SocialDistributionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SocialDistributionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SocialDistributionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SocialDistribution unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SocialDistributionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SocialDistribution edge %s", name)
 }
 
 // TagMutation represents an operation that mutates the Tag nodes in the graph.

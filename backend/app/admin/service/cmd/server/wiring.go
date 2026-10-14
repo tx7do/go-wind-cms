@@ -1,8 +1,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+
+	pkgcrypto "go-wind-cms/pkg/crypto"
 
 	"go-wind-cms/app/admin/service/internal/data"
 	"go-wind-cms/app/admin/service/internal/server"
@@ -40,6 +45,16 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	}
 
 	// ═══════════════════════ 一、基础设施 ═══════════════════════
+
+	// 全局存储加密器(AES-256-GCM, pkg/crypto):与 core 服务必须配置同一个
+	// ENCRYPTION_KEY,否则一边加密一边解不开。未配置时降级明文并告警(生产必须配置)。
+	if encKey := os.Getenv("ENCRYPTION_KEY"); encKey != "" {
+		if err := pkgcrypto.InitGlobalEncryptor(encKey, true); err != nil {
+			return nil, nil, err
+		}
+	} else {
+		log.Warnf("ENCRYPTION_KEY not set: credential encryption DISABLED (secrets stored in plaintext)")
+	}
 
 	// 服务发现与鉴权基建
 	discovery := data.NewDiscovery(ctx)
@@ -125,6 +140,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	navigationServiceClient := data.NewNavigationServiceClient(ctx, discovery)
 	navigationItemServiceClient := data.NewNavigationItemServiceClient(ctx, discovery)
 
+	// 社交分发
+	socialServiceClient := data.NewSocialServiceClient(ctx, discovery)
+
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -197,6 +215,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	navigationItemService := service.NewNavigationItemService(ctx, navigationItemServiceClient)
 	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetServiceClient)
 
+	// 社交分发
+	socialService := service.NewSocialService(ctx, socialServiceClient)
+
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -223,6 +244,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		postService, categoryService, tagService, contentModelService, pageService,
 		siteService, siteSettingService, navigationService, navigationItemService,
 		mediaAssetService,
+		socialService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 

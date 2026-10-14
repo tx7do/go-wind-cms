@@ -4,69 +4,75 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import '../../../transport.dart';
+import '../../../proto_wire.dart';
 
 /// 前台应用错误定义
 enum AppErrorReason {
-  badGateway('BAD_GATEWAY'),
-  badRequest('BAD_REQUEST'),
-  conflict('CONFLICT'),
-  expectationFailed('EXPECTATION_FAILED'),
-  failedDependency('FAILED_DEPENDENCY'),
-  forbidden('FORBIDDEN'),
-  gatewayTimeout('GATEWAY_TIMEOUT'),
-  gone('GONE'),
-  httpVersionNotSupported('HTTP_VERSION_NOT_SUPPORTED'),
-  imATeapot('IM_A_TEAPOT'),
-  incorrectAccessToken('INCORRECT_ACCESS_TOKEN'),
-  incorrectAppSecret('INCORRECT_APP_SECRET'),
-  incorrectRefreshToken('INCORRECT_REFRESH_TOKEN'),
-  insufficientStorage('INSUFFICIENT_STORAGE'),
-  internalServerError('INTERNAL_SERVER_ERROR'),
-  invalidGrantType('INVALID_GRANT_TYPE'),
-  invalidPassword('INVALID_PASSWORD'),
-  invalidToken('INVALID_TOKEN'),
-  invalidUserid('INVALID_USERID'),
-  lengthRequired('LENGTH_REQUIRED'),
-  locked('LOCKED'),
-  loopDetected('LOOP_DETECTED'),
-  methodNotAllowed('METHOD_NOT_ALLOWED'),
-  misdirectedRequest('MISDIRECTED_REQUEST'),
-  networkAuthenticationRequired('NETWORK_AUTHENTICATION_REQUIRED'),
-  networkConnectTimeoutError('NETWORK_CONNECT_TIMEOUT_ERROR'),
-  networkReadTimeoutError('NETWORK_READ_TIMEOUT_ERROR'),
-  notAcceptable('NOT_ACCEPTABLE'),
-  notExtended('NOT_EXTENDED'),
-  notFound('NOT_FOUND'),
-  notImplemented('NOT_IMPLEMENTED'),
-  payloadTooLarge('PAYLOAD_TOO_LARGE'),
-  paymentRequired('PAYMENT_REQUIRED'),
-  preconditionFailed('PRECONDITION_FAILED'),
-  preconditionRequired('PRECONDITION_REQUIRED'),
-  proxyAuthenticationRequired('PROXY_AUTHENTICATION_REQUIRED'),
-  rangeNotSatisfiable('RANGE_NOT_SATISFIABLE'),
-  requestHeaderFieldsTooLarge('REQUEST_HEADER_FIELDS_TOO_LARGE'),
-  requestTimeout('REQUEST_TIMEOUT'),
-  serviceUnavailable('SERVICE_UNAVAILABLE'),
-  tokenExpired('TOKEN_EXPIRED'),
-  tokenNotExist('TOKEN_NOT_EXIST'),
-  tooEarly('TOO_EARLY'),
-  tooManyRequests('TOO_MANY_REQUESTS'),
-  unauthorized('UNAUTHORIZED'),
-  unavailableForLegalReasons('UNAVAILABLE_FOR_LEGAL_REASONS'),
-  unprocessableEntity('UNPROCESSABLE_ENTITY'),
-  unsupportedMediaType('UNSUPPORTED_MEDIA_TYPE'),
-  upgradeRequired('UPGRADE_REQUIRED'),
-  uriTooLong('URI_TOO_LONG'),
-  userFreeze('USER_FREEZE'),
-  userNotFound('USER_NOT_FOUND'),
-  variantAlsoNegotiates('VARIANT_ALSO_NEGOTIATES');
+  badGateway('BAD_GATEWAY', 2200),
+  badRequest('BAD_REQUEST', 0),
+  conflict('CONFLICT', 900),
+  expectationFailed('EXPECTATION_FAILED', 1070),
+  failedDependency('FAILED_DEPENDENCY', 1120),
+  forbidden('FORBIDDEN', 300),
+  gatewayTimeout('GATEWAY_TIMEOUT', 2400),
+  gone('GONE', 1000),
+  httpVersionNotSupported('HTTP_VERSION_NOT_SUPPORTED', 2500),
+  imATeapot('IM_A_TEAPOT', 1080),
+  incorrectAccessToken('INCORRECT_ACCESS_TOKEN', 104),
+  incorrectAppSecret('INCORRECT_APP_SECRET', 103),
+  incorrectRefreshToken('INCORRECT_REFRESH_TOKEN', 105),
+  insufficientStorage('INSUFFICIENT_STORAGE', 2700),
+  internalServerError('INTERNAL_SERVER_ERROR', 2000),
+  invalidGrantType('INVALID_GRANT_TYPE', 1),
+  invalidPassword('INVALID_PASSWORD', 4),
+  invalidToken('INVALID_TOKEN', 3),
+  invalidUserid('INVALID_USERID', 2),
+  lengthRequired('LENGTH_REQUIRED', 1010),
+  locked('LOCKED', 1110),
+  loopDetected('LOOP_DETECTED', 2800),
+  methodNotAllowed('METHOD_NOT_ALLOWED', 500),
+  misdirectedRequest('MISDIRECTED_REQUEST', 1090),
+  networkAuthenticationRequired('NETWORK_AUTHENTICATION_REQUIRED', 3000),
+  networkConnectTimeoutError('NETWORK_CONNECT_TIMEOUT_ERROR', 3200),
+  networkReadTimeoutError('NETWORK_READ_TIMEOUT_ERROR', 3100),
+  notAcceptable('NOT_ACCEPTABLE', 600),
+  notExtended('NOT_EXTENDED', 2900),
+  notFound('NOT_FOUND', 400),
+  notImplemented('NOT_IMPLEMENTED', 2100),
+  payloadTooLarge('PAYLOAD_TOO_LARGE', 1030),
+  paymentRequired('PAYMENT_REQUIRED', 200),
+  preconditionFailed('PRECONDITION_FAILED', 1020),
+  preconditionRequired('PRECONDITION_REQUIRED', 1150),
+  proxyAuthenticationRequired('PROXY_AUTHENTICATION_REQUIRED', 700),
+  rangeNotSatisfiable('RANGE_NOT_SATISFIABLE', 1060),
+  requestHeaderFieldsTooLarge('REQUEST_HEADER_FIELDS_TOO_LARGE', 1170),
+  requestTimeout('REQUEST_TIMEOUT', 800),
+  serviceUnavailable('SERVICE_UNAVAILABLE', 2300),
+  tokenExpired('TOKEN_EXPIRED', 106),
+  tokenNotExist('TOKEN_NOT_EXIST', 107),
+  tooEarly('TOO_EARLY', 1130),
+  tooManyRequests('TOO_MANY_REQUESTS', 1160),
+  unauthorized('UNAUTHORIZED', 100),
+  unavailableForLegalReasons('UNAVAILABLE_FOR_LEGAL_REASONS', 1180),
+  unprocessableEntity('UNPROCESSABLE_ENTITY', 1100),
+  unsupportedMediaType('UNSUPPORTED_MEDIA_TYPE', 1050),
+  upgradeRequired('UPGRADE_REQUIRED', 1140),
+  uriTooLong('URI_TOO_LONG', 1040),
+  userFreeze('USER_FREEZE', 101),
+  userNotFound('USER_NOT_FOUND', 401),
+  variantAlsoNegotiates('VARIANT_ALSO_NEGOTIATES', 2600);
 
   final String value;
-  const AppErrorReason(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AppErrorReason(this.value, this.wire);
 
   static AppErrorReason fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AppErrorReason value: ' + v));
+  static AppErrorReason fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AppErrorReason wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -278,35 +284,230 @@ class AuthenticationServiceV1LoginRequest {
       username: username ?? this.username,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: grant_type
+    final f1 = grant_type;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // AuthenticationServiceV1GrantType
+    }
+    // field 2: client_id
+    final f2 = client_id;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: client_secret
+    final f3 = client_secret;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: scope
+    final f4 = scope;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: redirect_uri
+    final f5 = redirect_uri;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: user_id
+    final f6 = user_id;
+    if (f6 != null) {
+      w.writeUint32(6, f6!);
+    }
+    // field 10: username
+    final f10 = username;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: email
+    final f11 = email;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 12: mobile
+    final f12 = mobile;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 19: password
+    final f19 = password;
+    if (f19 != null) {
+      w.writeString(19, f19!);
+    }
+    // field 20: refresh_token
+    final f20 = refresh_token;
+    if (f20 != null) {
+      w.writeString(20, f20!);
+    }
+    // field 30: code
+    final f30 = code;
+    if (f30 != null) {
+      w.writeString(30, f30!);
+    }
+    // field 40: client_type
+    final f40 = client_type;
+    if (f40 != null) {
+      w.writeEnum(40, f40!.wire); // AuthenticationServiceV1ClientType
+    }
+    // field 50: device_id
+    final f50 = device_id;
+    if (f50 != null) {
+      w.writeString(50, f50!);
+    }
+    // field 60: jti
+    final f60 = jti;
+    if (f60 != null) {
+      w.writeString(60, f60!);
+    }
+    // field 70: tenant_code
+    final f70 = tenant_code;
+    if (f70 != null) {
+      w.writeString(70, f70!);
+    }
+  }
+
+  factory AuthenticationServiceV1LoginRequest.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1LoginRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1LoginRequest _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1LoginRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: grant_type
+        case 1: {
+          m.grant_type = AuthenticationServiceV1GrantType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: client_id
+        case 2: {
+          m.client_id = r.readString();
+          break;
+        }
+        // field 3: client_secret
+        case 3: {
+          m.client_secret = r.readString();
+          break;
+        }
+        // field 4: scope
+        case 4: {
+          m.scope = r.readString();
+          break;
+        }
+        // field 5: redirect_uri
+        case 5: {
+          m.redirect_uri = r.readString();
+          break;
+        }
+        // field 6: user_id
+        case 6: {
+          m.user_id = r.readUint32();
+          break;
+        }
+        // field 10: username
+        case 10: {
+          m.username = r.readString();
+          break;
+        }
+        // field 11: email
+        case 11: {
+          m.email = r.readString();
+          break;
+        }
+        // field 12: mobile
+        case 12: {
+          m.mobile = r.readString();
+          break;
+        }
+        // field 19: password
+        case 19: {
+          m.password = r.readString();
+          break;
+        }
+        // field 20: refresh_token
+        case 20: {
+          m.refresh_token = r.readString();
+          break;
+        }
+        // field 30: code
+        case 30: {
+          m.code = r.readString();
+          break;
+        }
+        // field 40: client_type
+        case 40: {
+          m.client_type = AuthenticationServiceV1ClientType.fromWire(r.readEnum());
+          break;
+        }
+        // field 50: device_id
+        case 50: {
+          m.device_id = r.readString();
+          break;
+        }
+        // field 60: jti
+        case 60: {
+          m.jti = r.readString();
+          break;
+        }
+        // field 70: tenant_code
+        case 70: {
+          m.tenant_code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 授权类型
 enum AuthenticationServiceV1GrantType {
-  authorizationCode('authorization_code'),
-  clientCredentials('client_credentials'),
-  implicit('implicit'),
-  password('password'),
-  refreshToken('refresh_token');
+  authorizationCode('authorization_code', 2),
+  clientCredentials('client_credentials', 1),
+  implicit('implicit', 4),
+  password('password', 0),
+  refreshToken('refresh_token', 3);
 
   final String value;
-  const AuthenticationServiceV1GrantType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AuthenticationServiceV1GrantType(this.value, this.wire);
 
   static AuthenticationServiceV1GrantType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1GrantType value: ' + v));
+  static AuthenticationServiceV1GrantType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1GrantType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 客户端类型
 enum AuthenticationServiceV1ClientType {
-  admin('admin'),
-  app('app');
+  admin('admin', 0),
+  app('app', 1);
 
   final String value;
-  const AuthenticationServiceV1ClientType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AuthenticationServiceV1ClientType(this.value, this.wire);
 
   static AuthenticationServiceV1ClientType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1ClientType value: ' + v));
+  static AuthenticationServiceV1ClientType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1ClientType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -404,18 +605,119 @@ class AuthenticationServiceV1LoginResponse {
       token_type: token_type ?? this.token_type,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: token_type
+    final f1 = token_type;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // AuthenticationServiceV1TokenType
+    }
+    // field 2: access_token
+    final f2 = access_token;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: expires_in
+    final f3 = expires_in;
+    if (f3 != null) {
+      w.writeInt64(3, f3!);
+    }
+    // field 4: refresh_token
+    final f4 = refresh_token;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: scope
+    final f5 = scope;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: refresh_expires_in
+    final f6 = refresh_expires_in;
+    if (f6 != null) {
+      w.writeInt64(6, f6!);
+    }
+    // field 7: id_token
+    final f7 = id_token;
+    if (f7 != null) {
+      w.writeString(7, f7!);
+    }
+  }
+
+  factory AuthenticationServiceV1LoginResponse.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1LoginResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1LoginResponse _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1LoginResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: token_type
+        case 1: {
+          m.token_type = AuthenticationServiceV1TokenType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: access_token
+        case 2: {
+          m.access_token = r.readString();
+          break;
+        }
+        // field 3: expires_in
+        case 3: {
+          m.expires_in = r.readInt64();
+          break;
+        }
+        // field 4: refresh_token
+        case 4: {
+          m.refresh_token = r.readString();
+          break;
+        }
+        // field 5: scope
+        case 5: {
+          m.scope = r.readString();
+          break;
+        }
+        // field 6: refresh_expires_in
+        case 6: {
+          m.refresh_expires_in = r.readInt64();
+          break;
+        }
+        // field 7: id_token
+        case 7: {
+          m.id_token = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 令牌类型
 enum AuthenticationServiceV1TokenType {
-  bearer('bearer'),
-  mac('mac');
+  bearer('bearer', 0),
+  mac('mac', 1);
 
   final String value;
-  const AuthenticationServiceV1TokenType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AuthenticationServiceV1TokenType(this.value, this.wire);
 
   static AuthenticationServiceV1TokenType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1TokenType value: ' + v));
+  static AuthenticationServiceV1TokenType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1TokenType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -522,7 +824,9 @@ class CategoryServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/categories/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'CategoryService',
       method: 'Update',
@@ -718,6 +1022,153 @@ class PaginationPagingRequest {
       token: token ?? this.token,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: page
+    final f1 = page;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: pageSize
+    final f2 = pageSize;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: offset
+    final f3 = offset;
+    if (f3 != null) {
+      w.writeUint64(3, f3!);
+    }
+    // field 4: limit
+    final f4 = limit;
+    if (f4 != null) {
+      w.writeUint32(4, f4!);
+    }
+    // field 5: token
+    final f5 = token;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: noPaging
+    final f6 = noPaging;
+    if (f6 != null) {
+      w.writeBool(6, f6!);
+    }
+    // field 10: query
+    final f10 = query;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: filter
+    final f11 = filter;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 12: filterExpr
+    final f12 = filterExpr;
+    if (f12 != null) {
+      final cw = ProtoWireWriter(); f12!._writeTo(cw); w.writeRaw(12, cw.toBuffer()); // PaginationFilterExpr
+    }
+    // field 20: orderBy
+    final f20 = orderBy;
+    if (f20 != null) {
+      w.writeString(20, f20!);
+    }
+    // field 21: sorting
+    final f21 = sorting;
+    if (f21 != null) {
+      for (final e in f21!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(21, cw.toBuffer()); }
+    }
+    // field 30: fieldMask
+    final f30 = fieldMask;
+    if (f30 != null) {
+      w.writeFieldMask(30, f30!);
+    }
+  }
+
+  factory PaginationPagingRequest.fromBuffer(List<int> bytes) {
+    return PaginationPagingRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationPagingRequest _readFrom(ProtoWireReader r) {
+    final m = PaginationPagingRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: page
+        case 1: {
+          m.page = r.readUint32();
+          break;
+        }
+        // field 2: pageSize
+        case 2: {
+          m.pageSize = r.readUint32();
+          break;
+        }
+        // field 3: offset
+        case 3: {
+          m.offset = r.readUint64();
+          break;
+        }
+        // field 4: limit
+        case 4: {
+          m.limit = r.readUint32();
+          break;
+        }
+        // field 5: token
+        case 5: {
+          m.token = r.readString();
+          break;
+        }
+        // field 6: noPaging
+        case 6: {
+          m.noPaging = r.readBool();
+          break;
+        }
+        // field 10: query
+        case 10: {
+          m.query = r.readString();
+          break;
+        }
+        // field 11: filter
+        case 11: {
+          m.filter = r.readString();
+          break;
+        }
+        // field 12: filterExpr
+        case 12: {
+          m.filterExpr = PaginationFilterExpr._readFrom(r.readNested());
+          break;
+        }
+        // field 20: orderBy
+        case 20: {
+          m.orderBy = r.readString();
+          break;
+        }
+        // field 21: sorting
+        case 21: {
+          m.sorting = r.readNestedList().map(PaginationSorting._readFrom).toList();
+          break;
+        }
+        // field 30: fieldMask
+        case 30: {
+          m.fieldMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 过滤表达式
@@ -784,19 +1235,80 @@ class PaginationFilterExpr {
       type: type ?? this.type,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: type
+    final f1 = type;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // PaginationExprType
+    }
+    // field 2: conditions
+    final f2 = conditions;
+    if (f2 != null) {
+      for (final e in f2!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
+    }
+    // field 3: groups
+    final f3 = groups;
+    if (f3 != null) {
+      for (final e in f3!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(3, cw.toBuffer()); }
+    }
+  }
+
+  factory PaginationFilterExpr.fromBuffer(List<int> bytes) {
+    return PaginationFilterExpr._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationFilterExpr _readFrom(ProtoWireReader r) {
+    final m = PaginationFilterExpr();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: type
+        case 1: {
+          m.type = PaginationExprType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: conditions
+        case 2: {
+          m.conditions = r.readNestedList().map(PaginationFilterCondition._readFrom).toList();
+          break;
+        }
+        // field 3: groups
+        case 3: {
+          m.groups = r.readNestedList().map(PaginationFilterExpr._readFrom).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 过滤表达式类型
 enum PaginationExprType {
-  and('AND'),
-  exprTypeUnspecified('EXPR_TYPE_UNSPECIFIED'),
-  or('OR');
+  and('AND', 1),
+  exprTypeUnspecified('EXPR_TYPE_UNSPECIFIED', 0),
+  or('OR', 2);
 
   final String value;
-  const PaginationExprType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationExprType(this.value, this.wire);
 
   static PaginationExprType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationExprType value: ' + v));
+  static PaginationExprType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationExprType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -903,45 +1415,146 @@ class PaginationFilterCondition {
       values: values ?? this.values,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: field
+    final f1 = field;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: op
+    final f2 = op;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // PaginationOperator
+    }
+    // field 3: value
+    final f3 = value;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: values
+    final f4 = values;
+    if (f4 != null) {
+      w.writeStringList(4, f4!);
+    }
+    // field 5: datePart
+    final f5 = datePart;
+    if (f5 != null) {
+      w.writeEnum(5, f5!.wire); // PaginationDatePart
+    }
+    // field 6: jsonPath
+    final f6 = jsonPath;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 7: jsonValue
+    final f7 = jsonValue;
+    if (f7 != null) {
+      throw UnsupportedError('dart-http wire: google.protobuf.Value not supported');
+    }
+  }
+
+  factory PaginationFilterCondition.fromBuffer(List<int> bytes) {
+    return PaginationFilterCondition._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationFilterCondition _readFrom(ProtoWireReader r) {
+    final m = PaginationFilterCondition();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: field
+        case 1: {
+          m.field = r.readString();
+          break;
+        }
+        // field 2: op
+        case 2: {
+          m.op = PaginationOperator.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: value
+        case 3: {
+          m.value = r.readString();
+          break;
+        }
+        // field 4: values
+        case 4: {
+          m.values = r.readStringList();
+          break;
+        }
+        // field 5: datePart
+        case 5: {
+          m.datePart = PaginationDatePart.fromWire(r.readEnum());
+          break;
+        }
+        // field 6: jsonPath
+        case 6: {
+          m.jsonPath = r.readString();
+          break;
+        }
+        // field 7: jsonValue
+        case 7: {
+          m.jsonValue = (throw UnsupportedError('dart-http wire: google.protobuf.Value not supported'));
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 操作符枚举
 enum PaginationOperator {
-  arrayContains('ARRAY_CONTAINS'),
-  between('BETWEEN'),
-  contains('CONTAINS'),
-  endsWith('ENDS_WITH'),
-  eq('EQ'),
-  exact('EXACT'),
-  exists('EXISTS'),
-  gt('GT'),
-  gte('GTE'),
-  icontains('ICONTAINS'),
-  iendsWith('IENDS_WITH'),
-  iexact('IEXACT'),
-  ilike('ILIKE'),
-  in_('IN'),
-  iregexp('IREGEXP'),
-  isNotNull('IS_NOT_NULL'),
-  isNull('IS_NULL'),
-  istartsWith('ISTARTS_WITH'),
-  jsonContains('JSON_CONTAINS'),
-  like('LIKE'),
-  lt('LT'),
-  lte('LTE'),
-  neq('NEQ'),
-  nin('NIN'),
-  notLike('NOT_LIKE'),
-  operatorUnspecified('OPERATOR_UNSPECIFIED'),
-  regexp('REGEXP'),
-  search('SEARCH'),
-  startsWith('STARTS_WITH');
+  arrayContains('ARRAY_CONTAINS', 24),
+  between('BETWEEN', 14),
+  contains('CONTAINS', 17),
+  endsWith('ENDS_WITH', 19),
+  eq('EQ', 1),
+  exact('EXACT', 27),
+  exists('EXISTS', 25),
+  gt('GT', 3),
+  gte('GTE', 4),
+  icontains('ICONTAINS', 20),
+  iendsWith('IENDS_WITH', 22),
+  iexact('IEXACT', 28),
+  ilike('ILIKE', 8),
+  in_('IN', 10),
+  iregexp('IREGEXP', 16),
+  isNotNull('IS_NOT_NULL', 13),
+  isNull('IS_NULL', 12),
+  istartsWith('ISTARTS_WITH', 21),
+  jsonContains('JSON_CONTAINS', 23),
+  like('LIKE', 7),
+  lt('LT', 5),
+  lte('LTE', 6),
+  neq('NEQ', 2),
+  nin('NIN', 11),
+  notLike('NOT_LIKE', 9),
+  operatorUnspecified('OPERATOR_UNSPECIFIED', 0),
+  regexp('REGEXP', 15),
+  search('SEARCH', 26),
+  startsWith('STARTS_WITH', 18);
 
   final String value;
-  const PaginationOperator(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationOperator(this.value, this.wire);
 
   static PaginationOperator fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationOperator value: ' + v));
+  static PaginationOperator fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationOperator wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -952,27 +1565,31 @@ enum PaginationOperator {
 
 /// 日期时间部分枚举
 enum PaginationDatePart {
-  date('DATE'),
-  datePartUnspecified('DATE_PART_UNSPECIFIED'),
-  day('DAY'),
-  hour('HOUR'),
-  isoWeekDay('ISO_WEEK_DAY'),
-  isoYear('ISO_YEAR'),
-  microsecond('MICROSECOND'),
-  minute('MINUTE'),
-  month('MONTH'),
-  quarter('QUARTER'),
-  second('SECOND'),
-  time('TIME'),
-  week('WEEK'),
-  weekDay('WEEK_DAY'),
-  year('YEAR');
+  date('DATE', 1),
+  datePartUnspecified('DATE_PART_UNSPECIFIED', 0),
+  day('DAY', 9),
+  hour('HOUR', 11),
+  isoWeekDay('ISO_WEEK_DAY', 8),
+  isoYear('ISO_YEAR', 3),
+  microsecond('MICROSECOND', 14),
+  minute('MINUTE', 12),
+  month('MONTH', 5),
+  quarter('QUARTER', 4),
+  second('SECOND', 13),
+  time('TIME', 10),
+  week('WEEK', 6),
+  weekDay('WEEK_DAY', 7),
+  year('YEAR', 2);
 
   final String value;
-  const PaginationDatePart(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationDatePart(this.value, this.wire);
 
   static PaginationDatePart fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationDatePart value: ' + v));
+  static PaginationDatePart fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationDatePart wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -1032,18 +1649,69 @@ class PaginationSorting {
       field: field ?? this.field,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: field
+    final f1 = field;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: direction
+    final f2 = direction;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // PaginationSorting$Direction
+    }
+  }
+
+  factory PaginationSorting.fromBuffer(List<int> bytes) {
+    return PaginationSorting._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationSorting _readFrom(ProtoWireReader r) {
+    final m = PaginationSorting();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: field
+        case 1: {
+          m.field = r.readString();
+          break;
+        }
+        // field 2: direction
+        case 2: {
+          m.direction = PaginationSorting$Direction.fromWire(r.readEnum());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 排序方向（ASC/DESC，默认ASC）
 enum PaginationSorting$Direction {
-  asc('ASC'),
-  desc('DESC');
+  asc('ASC', 0),
+  desc('DESC', 1);
 
   final String value;
-  const PaginationSorting$Direction(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationSorting$Direction(this.value, this.wire);
 
   static PaginationSorting$Direction fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationSorting\$Direction value: ' + v));
+  static PaginationSorting$Direction fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationSorting\$Direction wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -1105,6 +1773,53 @@ class ContentServiceV1ListCategoryResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory ContentServiceV1ListCategoryResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ListCategoryResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ListCategoryResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ListCategoryResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(ContentServiceV1Category._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 类别
@@ -1128,6 +1843,7 @@ class ContentServiceV1Category {
   int? postCount;
   int? sortOrder;
   ContentServiceV1Category$CategoryStatus? status;
+  String? thumbnail;
   List<ContentServiceV1CategoryTranslation>? translations;
   String? updatedAt;
   int? updatedBy;
@@ -1152,6 +1868,7 @@ class ContentServiceV1Category {
     this.postCount,
     this.sortOrder,
     this.status,
+    this.thumbnail,
     this.translations,
     this.updatedAt,
     this.updatedBy,
@@ -1178,6 +1895,7 @@ class ContentServiceV1Category {
       postCount: json['postCount'] as int?,
       sortOrder: json['sortOrder'] as int?,
       status: json['status'] != null ? ContentServiceV1Category$CategoryStatus.fromString(json['status'] as String) : null,
+      thumbnail: json['thumbnail'] as String?,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1CategoryTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
@@ -1205,6 +1923,7 @@ class ContentServiceV1Category {
     if (postCount != null) json['postCount'] = postCount;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (status != null) json['status'] = status!.value;
+    if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
@@ -1213,7 +1932,7 @@ class ContentServiceV1Category {
 
   @override
   String toString() {
-    return 'ContentServiceV1Category(availableLanguages: $availableLanguages, children: $children, code: $code, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, directPostCount: $directPostCount, icon: $icon, id: $id, isNav: $isNav, parentId: $parentId, path: $path, postCount: $postCount, sortOrder: $sortOrder, status: $status, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1Category(availableLanguages: $availableLanguages, children: $children, code: $code, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, directPostCount: $directPostCount, icon: $icon, id: $id, isNav: $isNav, parentId: $parentId, path: $path, postCount: $postCount, sortOrder: $sortOrder, status: $status, thumbnail: $thumbnail, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -1240,6 +1959,7 @@ class ContentServiceV1Category {
       && postCount == other.postCount
       && sortOrder == other.sortOrder
       && status == other.status
+      && thumbnail == other.thumbnail
       && translations == other.translations
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
@@ -1266,6 +1986,7 @@ class ContentServiceV1Category {
     postCount,
     sortOrder,
     status,
+    thumbnail,
     translations,
     updatedAt,
     updatedBy,
@@ -1291,6 +2012,7 @@ class ContentServiceV1Category {
     int? postCount,
     int? sortOrder,
     ContentServiceV1Category$CategoryStatus? status,
+    String? thumbnail,
     List<ContentServiceV1CategoryTranslation>? translations,
     String? updatedAt,
     int? updatedBy,
@@ -1315,25 +2037,310 @@ class ContentServiceV1Category {
       postCount: postCount ?? this.postCount,
       sortOrder: sortOrder ?? this.sortOrder,
       status: status ?? this.status,
+      thumbnail: thumbnail ?? this.thumbnail,
       translations: translations ?? this.translations,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: status
+    final f2 = status;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // ContentServiceV1Category$CategoryStatus
+    }
+    // field 3: sortOrder
+    final f3 = sortOrder;
+    if (f3 != null) {
+      w.writeUint32(3, f3!);
+    }
+    // field 4: isNav
+    final f4 = isNav;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+    // field 5: icon
+    final f5 = icon;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: code
+    final f6 = code;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 7: thumbnail
+    final f7 = thumbnail;
+    if (f7 != null) {
+      w.writeString(7, f7!);
+    }
+    // field 10: postCount
+    final f10 = postCount;
+    if (f10 != null) {
+      w.writeUint32(10, f10!);
+    }
+    // field 11: directPostCount
+    final f11 = directPostCount;
+    if (f11 != null) {
+      w.writeUint32(11, f11!);
+    }
+    // field 20: translations
+    final f20 = translations;
+    if (f20 != null) {
+      for (final e in f20!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
+    }
+    // field 21: availableLanguages
+    final f21 = availableLanguages;
+    if (f21 != null) {
+      w.writeStringList(21, f21!);
+    }
+    // field 30: customFields
+    final f30 = customFields;
+    if (f30 != null) {
+      f30!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(30, ew.toBuffer());
+      });
+    }
+    // field 31: contentModelId
+    final f31 = contentModelId;
+    if (f31 != null) {
+      w.writeUint32(31, f31!);
+    }
+    // field 60: parentId
+    final f60 = parentId;
+    if (f60 != null) {
+      w.writeUint32(60, f60!);
+    }
+    // field 61: children
+    final f61 = children;
+    if (f61 != null) {
+      for (final e in f61!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(61, cw.toBuffer()); }
+    }
+    // field 62: depth
+    final f62 = depth;
+    if (f62 != null) {
+      w.writeInt32(62, f62!);
+    }
+    // field 63: path
+    final f63 = path;
+    if (f63 != null) {
+      w.writeString(63, f63!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1Category.fromBuffer(List<int> bytes) {
+    return ContentServiceV1Category._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1Category _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1Category();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: status
+        case 2: {
+          m.status = ContentServiceV1Category$CategoryStatus.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: sortOrder
+        case 3: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 4: isNav
+        case 4: {
+          m.isNav = r.readBool();
+          break;
+        }
+        // field 5: icon
+        case 5: {
+          m.icon = r.readString();
+          break;
+        }
+        // field 6: code
+        case 6: {
+          m.code = r.readString();
+          break;
+        }
+        // field 7: thumbnail
+        case 7: {
+          m.thumbnail = r.readString();
+          break;
+        }
+        // field 10: postCount
+        case 10: {
+          m.postCount = r.readUint32();
+          break;
+        }
+        // field 11: directPostCount
+        case 11: {
+          m.directPostCount = r.readUint32();
+          break;
+        }
+        // field 20: translations
+        case 20: {
+          m.translations = r.readNestedList().map(ContentServiceV1CategoryTranslation._readFrom).toList();
+          break;
+        }
+        // field 21: availableLanguages
+        case 21: {
+          m.availableLanguages = r.readStringList();
+          break;
+        }
+        // field 30: customFields
+        case 30: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.customFields ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 31: contentModelId
+        case 31: {
+          m.contentModelId = r.readUint32();
+          break;
+        }
+        // field 60: parentId
+        case 60: {
+          m.parentId = r.readUint32();
+          break;
+        }
+        // field 61: children
+        case 61: {
+          m.children = r.readNestedList().map(ContentServiceV1Category._readFrom).toList();
+          break;
+        }
+        // field 62: depth
+        case 62: {
+          m.depth = r.readInt32();
+          break;
+        }
+        // field 63: path
+        case 63: {
+          m.path = r.readString();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 分类状态
 enum ContentServiceV1Category$CategoryStatus {
-  categoryStatusActive('CATEGORY_STATUS_ACTIVE'),
-  categoryStatusArchived('CATEGORY_STATUS_ARCHIVED'),
-  categoryStatusHidden('CATEGORY_STATUS_HIDDEN'),
-  categoryStatusUnspecified('CATEGORY_STATUS_UNSPECIFIED');
+  categoryStatusActive('CATEGORY_STATUS_ACTIVE', 1),
+  categoryStatusArchived('CATEGORY_STATUS_ARCHIVED', 3),
+  categoryStatusHidden('CATEGORY_STATUS_HIDDEN', 2),
+  categoryStatusUnspecified('CATEGORY_STATUS_UNSPECIFIED', 0);
 
   final String value;
-  const ContentServiceV1Category$CategoryStatus(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1Category$CategoryStatus(this.value, this.wire);
 
   static ContentServiceV1Category$CategoryStatus fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Category\$CategoryStatus value: ' + v));
+  static ContentServiceV1Category$CategoryStatus fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Category\$CategoryStatus wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -1353,7 +2360,6 @@ class ContentServiceV1CategoryTranslation {
   String? name;
   ContentServiceV1SeoMeta? seo;
   String? slug;
-  String? thumbnail;
   String? updatedAt;
   int? updatedBy;
 
@@ -1371,7 +2377,6 @@ class ContentServiceV1CategoryTranslation {
     this.name,
     this.seo,
     this.slug,
-    this.thumbnail,
     this.updatedAt,
     this.updatedBy,
   });
@@ -1391,7 +2396,6 @@ class ContentServiceV1CategoryTranslation {
       name: json['name'] as String?,
       seo: json['seo'] != null ? ContentServiceV1SeoMeta.fromJson(json['seo'] as Map<String, dynamic>) : null,
       slug: json['slug'] as String?,
-      thumbnail: json['thumbnail'] as String?,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
     );
@@ -1412,7 +2416,6 @@ class ContentServiceV1CategoryTranslation {
     if (name != null) json['name'] = name;
     if (seo != null) json['seo'] = seo!.toJson();
     if (slug != null) json['slug'] = slug;
-    if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
     return json;
@@ -1420,7 +2423,7 @@ class ContentServiceV1CategoryTranslation {
 
   @override
   String toString() {
-    return 'ContentServiceV1CategoryTranslation(categoryId: $categoryId, coverImage: $coverImage, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, description: $description, fullPath: $fullPath, id: $id, languageCode: $languageCode, name: $name, seo: $seo, slug: $slug, thumbnail: $thumbnail, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1CategoryTranslation(categoryId: $categoryId, coverImage: $coverImage, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, description: $description, fullPath: $fullPath, id: $id, languageCode: $languageCode, name: $name, seo: $seo, slug: $slug, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -1441,7 +2444,6 @@ class ContentServiceV1CategoryTranslation {
       && name == other.name
       && seo == other.seo
       && slug == other.slug
-      && thumbnail == other.thumbnail
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
     ;
@@ -1461,7 +2463,6 @@ class ContentServiceV1CategoryTranslation {
     name,
     seo,
     slug,
-    thumbnail,
     updatedAt,
     updatedBy,
   ]);
@@ -1480,7 +2481,6 @@ class ContentServiceV1CategoryTranslation {
     String? name,
     ContentServiceV1SeoMeta? seo,
     String? slug,
-    String? thumbnail,
     String? updatedAt,
     int? updatedBy,
   }) {
@@ -1498,11 +2498,187 @@ class ContentServiceV1CategoryTranslation {
       name: name ?? this.name,
       seo: seo ?? this.seo,
       slug: slug ?? this.slug,
-      thumbnail: thumbnail ?? this.thumbnail,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: categoryId
+    final f2 = categoryId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: languageCode
+    final f3 = languageCode;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 10: name
+    final f10 = name;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: slug
+    final f11 = slug;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 12: description
+    final f12 = description;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 14: coverImage
+    final f14 = coverImage;
+    if (f14 != null) {
+      w.writeString(14, f14!);
+    }
+    // field 20: fullPath
+    final f20 = fullPath;
+    if (f20 != null) {
+      w.writeString(20, f20!);
+    }
+    // field 30: seo
+    final f30 = seo;
+    if (f30 != null) {
+      final cw = ProtoWireWriter(); f30!._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1CategoryTranslation.fromBuffer(List<int> bytes) {
+    return ContentServiceV1CategoryTranslation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1CategoryTranslation _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1CategoryTranslation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: categoryId
+        case 2: {
+          m.categoryId = r.readUint32();
+          break;
+        }
+        // field 3: languageCode
+        case 3: {
+          m.languageCode = r.readString();
+          break;
+        }
+        // field 10: name
+        case 10: {
+          m.name = r.readString();
+          break;
+        }
+        // field 11: slug
+        case 11: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 12: description
+        case 12: {
+          m.description = r.readString();
+          break;
+        }
+        // field 14: coverImage
+        case 14: {
+          m.coverImage = r.readString();
+          break;
+        }
+        // field 20: fullPath
+        case 20: {
+          m.fullPath = r.readString();
+          break;
+        }
+        // field 30: seo
+        case 30: {
+          m.seo = ContentServiceV1SeoMeta._readFrom(r.readNested());
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// SEO 元信息结构设计
@@ -1598,6 +2774,103 @@ class ContentServiceV1SeoMeta {
       seoTitle: seoTitle ?? this.seoTitle,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: seoTitle
+    final f1 = seoTitle;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: metaKeywords
+    final f2 = metaKeywords;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: metaDescription
+    final f3 = metaDescription;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: ogTitle
+    final f4 = ogTitle;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: ogDescription
+    final f5 = ogDescription;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: ogImage
+    final f6 = ogImage;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 33: canonicalUrl
+    final f33 = canonicalUrl;
+    if (f33 != null) {
+      w.writeString(33, f33!);
+    }
+  }
+
+  factory ContentServiceV1SeoMeta.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SeoMeta._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SeoMeta _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SeoMeta();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: seoTitle
+        case 1: {
+          m.seoTitle = r.readString();
+          break;
+        }
+        // field 2: metaKeywords
+        case 2: {
+          m.metaKeywords = r.readString();
+          break;
+        }
+        // field 3: metaDescription
+        case 3: {
+          m.metaDescription = r.readString();
+          break;
+        }
+        // field 4: ogTitle
+        case 4: {
+          m.ogTitle = r.readString();
+          break;
+        }
+        // field 5: ogDescription
+        case 5: {
+          m.ogDescription = r.readString();
+          break;
+        }
+        // field 6: ogImage
+        case 6: {
+          m.ogImage = r.readString();
+          break;
+        }
+        // field 33: canonicalUrl
+        case 33: {
+          m.canonicalUrl = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// Well-known type: Timestamp
@@ -1673,6 +2946,73 @@ class ContentServiceV1GetCategoryRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 10: locale
+    final f10 = locale;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory ContentServiceV1GetCategoryRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1GetCategoryRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1GetCategoryRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1GetCategoryRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        // field 10: locale
+        case 10: {
+          m.locale = r.readString();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 创建类别
@@ -1720,6 +3060,43 @@ class ContentServiceV1CreateCategoryRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Category
+    }
+  }
+
+  factory ContentServiceV1CreateCategoryRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1CreateCategoryRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1CreateCategoryRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1CreateCategoryRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = ContentServiceV1Category._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 更新类别
@@ -1791,6 +3168,73 @@ class ContentServiceV1UpdateCategoryRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Category
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3!);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+  }
+
+  factory ContentServiceV1UpdateCategoryRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1UpdateCategoryRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1UpdateCategoryRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1UpdateCategoryRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = ContentServiceV1Category._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 删除类别
@@ -1838,6 +3282,43 @@ class ContentServiceV1DeleteCategoryRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory ContentServiceV1DeleteCategoryRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1DeleteCategoryRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1DeleteCategoryRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1DeleteCategoryRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 评论服务
@@ -1932,7 +3413,9 @@ class CommentServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/comments/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'CommentService',
       method: 'Update',
@@ -2007,6 +3490,53 @@ class CommentServiceV1ListCommentResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory CommentServiceV1ListCommentResponse.fromBuffer(List<int> bytes) {
+    return CommentServiceV1ListCommentResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static CommentServiceV1ListCommentResponse _readFrom(ProtoWireReader r) {
+    final m = CommentServiceV1ListCommentResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(CommentServiceV1Comment._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 评论
@@ -2246,54 +3776,343 @@ class CommentServiceV1Comment {
       userAgent: userAgent ?? this.userAgent,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: contentType
+    final f2 = contentType;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // CommentServiceV1Comment$ContentType
+    }
+    // field 3: objectId
+    final f3 = objectId;
+    if (f3 != null) {
+      w.writeUint32(3, f3!);
+    }
+    // field 4: content
+    final f4 = content;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 10: authorId
+    final f10 = authorId;
+    if (f10 != null) {
+      w.writeUint32(10, f10!);
+    }
+    // field 11: authorName
+    final f11 = authorName;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 12: authorEmail
+    final f12 = authorEmail;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 13: authorUrl
+    final f13 = authorUrl;
+    if (f13 != null) {
+      w.writeString(13, f13!);
+    }
+    // field 14: authorType
+    final f14 = authorType;
+    if (f14 != null) {
+      w.writeEnum(14, f14!.wire); // CommentServiceV1Comment$AuthorType
+    }
+    // field 20: status
+    final f20 = status;
+    if (f20 != null) {
+      w.writeEnum(20, f20!.wire); // CommentServiceV1Comment$Status
+    }
+    // field 24: ipAddress
+    final f24 = ipAddress;
+    if (f24 != null) {
+      w.writeString(24, f24!);
+    }
+    // field 25: location
+    final f25 = location;
+    if (f25 != null) {
+      w.writeString(25, f25!);
+    }
+    // field 26: userAgent
+    final f26 = userAgent;
+    if (f26 != null) {
+      w.writeString(26, f26!);
+    }
+    // field 27: detectedLanguage
+    final f27 = detectedLanguage;
+    if (f27 != null) {
+      w.writeString(27, f27!);
+    }
+    // field 30: isSpam
+    final f30 = isSpam;
+    if (f30 != null) {
+      w.writeBool(30, f30!);
+    }
+    // field 31: isSticky
+    final f31 = isSticky;
+    if (f31 != null) {
+      w.writeBool(31, f31!);
+    }
+    // field 50: parentId
+    final f50 = parentId;
+    if (f50 != null) {
+      w.writeUint32(50, f50!);
+    }
+    // field 51: children
+    final f51 = children;
+    if (f51 != null) {
+      for (final e in f51!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(51, cw.toBuffer()); }
+    }
+    // field 52: replyToId
+    final f52 = replyToId;
+    if (f52 != null) {
+      w.writeUint32(52, f52!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory CommentServiceV1Comment.fromBuffer(List<int> bytes) {
+    return CommentServiceV1Comment._readFrom(ProtoWireReader(bytes));
+  }
+
+  static CommentServiceV1Comment _readFrom(ProtoWireReader r) {
+    final m = CommentServiceV1Comment();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: contentType
+        case 2: {
+          m.contentType = CommentServiceV1Comment$ContentType.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: objectId
+        case 3: {
+          m.objectId = r.readUint32();
+          break;
+        }
+        // field 4: content
+        case 4: {
+          m.content = r.readString();
+          break;
+        }
+        // field 10: authorId
+        case 10: {
+          m.authorId = r.readUint32();
+          break;
+        }
+        // field 11: authorName
+        case 11: {
+          m.authorName = r.readString();
+          break;
+        }
+        // field 12: authorEmail
+        case 12: {
+          m.authorEmail = r.readString();
+          break;
+        }
+        // field 13: authorUrl
+        case 13: {
+          m.authorUrl = r.readString();
+          break;
+        }
+        // field 14: authorType
+        case 14: {
+          m.authorType = CommentServiceV1Comment$AuthorType.fromWire(r.readEnum());
+          break;
+        }
+        // field 20: status
+        case 20: {
+          m.status = CommentServiceV1Comment$Status.fromWire(r.readEnum());
+          break;
+        }
+        // field 24: ipAddress
+        case 24: {
+          m.ipAddress = r.readString();
+          break;
+        }
+        // field 25: location
+        case 25: {
+          m.location = r.readString();
+          break;
+        }
+        // field 26: userAgent
+        case 26: {
+          m.userAgent = r.readString();
+          break;
+        }
+        // field 27: detectedLanguage
+        case 27: {
+          m.detectedLanguage = r.readString();
+          break;
+        }
+        // field 30: isSpam
+        case 30: {
+          m.isSpam = r.readBool();
+          break;
+        }
+        // field 31: isSticky
+        case 31: {
+          m.isSticky = r.readBool();
+          break;
+        }
+        // field 50: parentId
+        case 50: {
+          m.parentId = r.readUint32();
+          break;
+        }
+        // field 51: children
+        case 51: {
+          m.children = r.readNestedList().map(CommentServiceV1Comment._readFrom).toList();
+          break;
+        }
+        // field 52: replyToId
+        case 52: {
+          m.replyToId = r.readUint32();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 内容类型
 enum CommentServiceV1Comment$ContentType {
-  contentTypePage('CONTENT_TYPE_PAGE'),
-  contentTypePost('CONTENT_TYPE_POST'),
-  contentTypeProduct('CONTENT_TYPE_PRODUCT'),
-  contentTypeUnspecified('CONTENT_TYPE_UNSPECIFIED');
+  contentTypePage('CONTENT_TYPE_PAGE', 2),
+  contentTypePost('CONTENT_TYPE_POST', 1),
+  contentTypeProduct('CONTENT_TYPE_PRODUCT', 3),
+  contentTypeUnspecified('CONTENT_TYPE_UNSPECIFIED', 0);
 
   final String value;
-  const CommentServiceV1Comment$ContentType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const CommentServiceV1Comment$ContentType(this.value, this.wire);
 
   static CommentServiceV1Comment$ContentType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown CommentServiceV1Comment\$ContentType value: ' + v));
+  static CommentServiceV1Comment$ContentType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown CommentServiceV1Comment\$ContentType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 作者类型
 enum CommentServiceV1Comment$AuthorType {
-  authorTypeAdmin('AUTHOR_TYPE_ADMIN'),
-  authorTypeGuest('AUTHOR_TYPE_GUEST'),
-  authorTypeModerator('AUTHOR_TYPE_MODERATOR'),
-  authorTypeUnspecified('AUTHOR_TYPE_UNSPECIFIED'),
-  authorTypeUser('AUTHOR_TYPE_USER');
+  authorTypeAdmin('AUTHOR_TYPE_ADMIN', 3),
+  authorTypeGuest('AUTHOR_TYPE_GUEST', 1),
+  authorTypeModerator('AUTHOR_TYPE_MODERATOR', 4),
+  authorTypeUnspecified('AUTHOR_TYPE_UNSPECIFIED', 0),
+  authorTypeUser('AUTHOR_TYPE_USER', 2);
 
   final String value;
-  const CommentServiceV1Comment$AuthorType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const CommentServiceV1Comment$AuthorType(this.value, this.wire);
 
   static CommentServiceV1Comment$AuthorType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown CommentServiceV1Comment\$AuthorType value: ' + v));
+  static CommentServiceV1Comment$AuthorType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown CommentServiceV1Comment\$AuthorType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 评论状态
 enum CommentServiceV1Comment$Status {
-  statusApproved('STATUS_APPROVED'),
-  statusPending('STATUS_PENDING'),
-  statusRejected('STATUS_REJECTED'),
-  statusSpam('STATUS_SPAM'),
-  statusUnspecified('STATUS_UNSPECIFIED');
+  statusApproved('STATUS_APPROVED', 2),
+  statusPending('STATUS_PENDING', 1),
+  statusRejected('STATUS_REJECTED', 3),
+  statusSpam('STATUS_SPAM', 4),
+  statusUnspecified('STATUS_UNSPECIFIED', 0);
 
   final String value;
-  const CommentServiceV1Comment$Status(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const CommentServiceV1Comment$Status(this.value, this.wire);
 
   static CommentServiceV1Comment$Status fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown CommentServiceV1Comment\$Status value: ' + v));
+  static CommentServiceV1Comment$Status fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown CommentServiceV1Comment\$Status wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -2351,6 +4170,53 @@ class CommentServiceV1GetCommentRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory CommentServiceV1GetCommentRequest.fromBuffer(List<int> bytes) {
+    return CommentServiceV1GetCommentRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static CommentServiceV1GetCommentRequest _readFrom(ProtoWireReader r) {
+    final m = CommentServiceV1GetCommentRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 创建评论
@@ -2398,6 +4264,43 @@ class CommentServiceV1CreateCommentRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // CommentServiceV1Comment
+    }
+  }
+
+  factory CommentServiceV1CreateCommentRequest.fromBuffer(List<int> bytes) {
+    return CommentServiceV1CreateCommentRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static CommentServiceV1CreateCommentRequest _readFrom(ProtoWireReader r) {
+    final m = CommentServiceV1CreateCommentRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = CommentServiceV1Comment._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 更新评论
@@ -2469,6 +4372,73 @@ class CommentServiceV1UpdateCommentRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // CommentServiceV1Comment
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3!);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+  }
+
+  factory CommentServiceV1UpdateCommentRequest.fromBuffer(List<int> bytes) {
+    return CommentServiceV1UpdateCommentRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static CommentServiceV1UpdateCommentRequest _readFrom(ProtoWireReader r) {
+    final m = CommentServiceV1UpdateCommentRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = CommentServiceV1Comment._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 删除评论
@@ -2516,6 +4486,43 @@ class CommentServiceV1DeleteCommentRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory CommentServiceV1DeleteCommentRequest.fromBuffer(List<int> bytes) {
+    return CommentServiceV1DeleteCommentRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static CommentServiceV1DeleteCommentRequest _readFrom(ProtoWireReader r) {
+    final m = CommentServiceV1DeleteCommentRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 文件传输服务
@@ -2705,6 +4712,123 @@ class StorageServiceV1DownloadFileRequest {
       storageObject: storageObject ?? this.storageObject,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: fileId
+    final f1 = fileId;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: storageObject
+    final f2 = storageObject;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // StorageServiceV1StorageObject
+    }
+    // field 3: downloadUrl
+    final f3 = downloadUrl;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: rangeStart
+    final f4 = rangeStart;
+    if (f4 != null) {
+      w.writeInt64(4, f4!);
+    }
+    // field 5: rangeEnd
+    final f5 = rangeEnd;
+    if (f5 != null) {
+      w.writeInt64(5, f5!);
+    }
+    // field 6: preferPresignedUrl
+    final f6 = preferPresignedUrl;
+    if (f6 != null) {
+      w.writeBool(6, f6!);
+    }
+    // field 7: presignExpireSeconds
+    final f7 = presignExpireSeconds;
+    if (f7 != null) {
+      w.writeInt32(7, f7!);
+    }
+    // field 8: disposition
+    final f8 = disposition;
+    if (f8 != null) {
+      w.writeString(8, f8!);
+    }
+    // field 9: acceptMime
+    final f9 = acceptMime;
+    if (f9 != null) {
+      w.writeString(9, f9!);
+    }
+  }
+
+  factory StorageServiceV1DownloadFileRequest.fromBuffer(List<int> bytes) {
+    return StorageServiceV1DownloadFileRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static StorageServiceV1DownloadFileRequest _readFrom(ProtoWireReader r) {
+    final m = StorageServiceV1DownloadFileRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: fileId
+        case 1: {
+          m.fileId = r.readUint32();
+          break;
+        }
+        // field 2: storageObject
+        case 2: {
+          m.storageObject = StorageServiceV1StorageObject._readFrom(r.readNested());
+          break;
+        }
+        // field 3: downloadUrl
+        case 3: {
+          m.downloadUrl = r.readString();
+          break;
+        }
+        // field 4: rangeStart
+        case 4: {
+          m.rangeStart = r.readInt64();
+          break;
+        }
+        // field 5: rangeEnd
+        case 5: {
+          m.rangeEnd = r.readInt64();
+          break;
+        }
+        // field 6: preferPresignedUrl
+        case 6: {
+          m.preferPresignedUrl = r.readBool();
+          break;
+        }
+        // field 7: presignExpireSeconds
+        case 7: {
+          m.presignExpireSeconds = r.readInt32();
+          break;
+        }
+        // field 8: disposition
+        case 8: {
+          m.disposition = r.readString();
+          break;
+        }
+        // field 9: acceptMime
+        case 9: {
+          m.acceptMime = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 对象存储对象
@@ -2768,6 +4892,63 @@ class StorageServiceV1StorageObject {
       objectName: objectName ?? this.objectName,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: bucketName
+    final f1 = bucketName;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: fileDirectory
+    final f2 = fileDirectory;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: objectName
+    final f3 = objectName;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+  }
+
+  factory StorageServiceV1StorageObject.fromBuffer(List<int> bytes) {
+    return StorageServiceV1StorageObject._readFrom(ProtoWireReader(bytes));
+  }
+
+  static StorageServiceV1StorageObject _readFrom(ProtoWireReader r) {
+    final m = StorageServiceV1StorageObject();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: bucketName
+        case 1: {
+          m.bucketName = r.readString();
+          break;
+        }
+        // field 2: fileDirectory
+        case 2: {
+          m.fileDirectory = r.readString();
+          break;
+        }
+        // field 3: objectName
+        case 3: {
+          m.objectName = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 文件下载响应
@@ -2871,6 +5052,110 @@ class StorageServiceV1DownloadFileResponse {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: file
+    throw UnsupportedError('dart-http wire: field storage.service.v1.DownloadFileResponse.file');
+    // field 2: downloadUrl
+    final f2 = downloadUrl;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: sourceFileName
+    final f3 = sourceFileName;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: mime
+    final f4 = mime;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: size
+    final f5 = size;
+    if (f5 != null) {
+      w.writeInt64(5, f5!);
+    }
+    // field 6: checksum
+    final f6 = checksum;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 7: storagePath
+    final f7 = storagePath;
+    if (f7 != null) {
+      w.writeString(7, f7!);
+    }
+    // field 8: updatedAt
+    final f8 = updatedAt;
+    if (f8 != null) {
+      w.writeTimestamp(8, f8!);
+    }
+  }
+
+  factory StorageServiceV1DownloadFileResponse.fromBuffer(List<int> bytes) {
+    return StorageServiceV1DownloadFileResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static StorageServiceV1DownloadFileResponse _readFrom(ProtoWireReader r) {
+    final m = StorageServiceV1DownloadFileResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: file
+        case 1: {
+          r.skip();
+          break;
+        }
+        // field 2: downloadUrl
+        case 2: {
+          m.downloadUrl = r.readString();
+          break;
+        }
+        // field 3: sourceFileName
+        case 3: {
+          m.sourceFileName = r.readString();
+          break;
+        }
+        // field 4: mime
+        case 4: {
+          m.mime = r.readString();
+          break;
+        }
+        // field 5: size
+        case 5: {
+          m.size = r.readInt64();
+          break;
+        }
+        // field 6: checksum
+        case 6: {
+          m.checksum = r.readString();
+          break;
+        }
+        // field 7: storagePath
+        case 7: {
+          m.storagePath = r.readString();
+          break;
+        }
+        // field 8: updatedAt
+        case 8: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class StorageServiceV1UploadFileRequest {
@@ -2973,6 +5258,110 @@ class StorageServiceV1UploadFileRequest {
       userId: userId ?? this.userId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: storageObject
+    final f1 = storageObject;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // StorageServiceV1StorageObject
+    }
+    // field 2: file
+    throw UnsupportedError('dart-http wire: field storage.service.v1.UploadFileRequest.file');
+    // field 3: presign
+    final f3 = presign;
+    if (f3 != null) {
+      final cw = ProtoWireWriter(); f3!._writeTo(cw); w.writeRaw(3, cw.toBuffer()); // StorageServiceV1PresignOption
+    }
+    // field 4: sourceFileName
+    final f4 = sourceFileName;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: mime
+    final f5 = mime;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: size
+    final f6 = size;
+    if (f6 != null) {
+      w.writeInt64(6, f6!);
+    }
+    // field 10: tenantId
+    final f10 = tenantId;
+    if (f10 != null) {
+      w.writeUint32(10, f10!);
+    }
+    // field 11: userId
+    final f11 = userId;
+    if (f11 != null) {
+      w.writeUint32(11, f11!);
+    }
+  }
+
+  factory StorageServiceV1UploadFileRequest.fromBuffer(List<int> bytes) {
+    return StorageServiceV1UploadFileRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static StorageServiceV1UploadFileRequest _readFrom(ProtoWireReader r) {
+    final m = StorageServiceV1UploadFileRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: storageObject
+        case 1: {
+          m.storageObject = StorageServiceV1StorageObject._readFrom(r.readNested());
+          break;
+        }
+        // field 2: file
+        case 2: {
+          r.skip();
+          break;
+        }
+        // field 3: presign
+        case 3: {
+          m.presign = StorageServiceV1PresignOption._readFrom(r.readNested());
+          break;
+        }
+        // field 4: sourceFileName
+        case 4: {
+          m.sourceFileName = r.readString();
+          break;
+        }
+        // field 5: mime
+        case 5: {
+          m.mime = r.readString();
+          break;
+        }
+        // field 6: size
+        case 6: {
+          m.size = r.readInt64();
+          break;
+        }
+        // field 10: tenantId
+        case 10: {
+          m.tenantId = r.readUint32();
+          break;
+        }
+        // field 11: userId
+        case 11: {
+          m.userId = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 预签名选项
@@ -3036,6 +5425,63 @@ class StorageServiceV1PresignOption {
       method: method ?? this.method,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: method
+    final f1 = method;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: expireSeconds
+    final f2 = expireSeconds;
+    if (f2 != null) {
+      w.writeInt32(2, f2!);
+    }
+    // field 3: contentType
+    final f3 = contentType;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+  }
+
+  factory StorageServiceV1PresignOption.fromBuffer(List<int> bytes) {
+    return StorageServiceV1PresignOption._readFrom(ProtoWireReader(bytes));
+  }
+
+  static StorageServiceV1PresignOption _readFrom(ProtoWireReader r) {
+    final m = StorageServiceV1PresignOption();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: method
+        case 1: {
+          m.method = r.readString();
+          break;
+        }
+        // field 2: expireSeconds
+        case 2: {
+          m.expireSeconds = r.readInt32();
+          break;
+        }
+        // field 3: contentType
+        case 3: {
+          m.contentType = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class StorageServiceV1UploadFileResponse {
@@ -3090,6 +5536,53 @@ class StorageServiceV1UploadFileResponse {
       presignedUrl: presignedUrl ?? this.presignedUrl,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: objectName
+    final f1 = objectName;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: presignedUrl
+    final f2 = presignedUrl;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory StorageServiceV1UploadFileResponse.fromBuffer(List<int> bytes) {
+    return StorageServiceV1UploadFileResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static StorageServiceV1UploadFileResponse _readFrom(ProtoWireReader r) {
+    final m = StorageServiceV1UploadFileResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: objectName
+        case 1: {
+          m.objectName = r.readString();
+          break;
+        }
+        // field 2: presignedUrl
+        case 2: {
+          m.presignedUrl = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 交互服务（点赞/收藏）
@@ -3265,19 +5758,70 @@ class InteractionServiceV1LikeRequest {
       targetType: targetType ?? this.targetType,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: targetType
+    final f1 = targetType;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+    }
+    // field 2: targetId
+    final f2 = targetId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+  }
+
+  factory InteractionServiceV1LikeRequest.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1LikeRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1LikeRequest _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1LikeRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: targetType
+        case 1: {
+          m.targetType = InteractionServiceV1TargetType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: targetId
+        case 2: {
+          m.targetId = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 交互目标类型
 enum InteractionServiceV1TargetType {
-  targetTypeComment('TARGET_TYPE_COMMENT'),
-  targetTypePost('TARGET_TYPE_POST'),
-  targetTypeUnspecified('TARGET_TYPE_UNSPECIFIED');
+  targetTypeComment('TARGET_TYPE_COMMENT', 2),
+  targetTypePost('TARGET_TYPE_POST', 1),
+  targetTypeUnspecified('TARGET_TYPE_UNSPECIFIED', 0);
 
   final String value;
-  const InteractionServiceV1TargetType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const InteractionServiceV1TargetType(this.value, this.wire);
 
   static InteractionServiceV1TargetType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InteractionServiceV1TargetType value: ' + v));
+  static InteractionServiceV1TargetType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown InteractionServiceV1TargetType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -3334,6 +5878,53 @@ class InteractionServiceV1LikeResponse {
       liked: liked ?? this.liked,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: liked
+    final f1 = liked;
+    if (f1 != null) {
+      w.writeBool(1, f1!);
+    }
+    // field 2: likeCount
+    final f2 = likeCount;
+    if (f2 != null) {
+      w.writeInt32(2, f2!);
+    }
+  }
+
+  factory InteractionServiceV1LikeResponse.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1LikeResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1LikeResponse _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1LikeResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: liked
+        case 1: {
+          m.liked = r.readBool();
+          break;
+        }
+        // field 2: likeCount
+        case 2: {
+          m.likeCount = r.readInt32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class InteractionServiceV1WatchRequest {
@@ -3380,6 +5971,43 @@ class InteractionServiceV1WatchRequest {
       postId: postId ?? this.postId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: postId
+    final f1 = postId;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory InteractionServiceV1WatchRequest.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1WatchRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1WatchRequest _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1WatchRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: postId
+        case 1: {
+          m.postId = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class InteractionServiceV1WatchResponse {
@@ -3434,6 +6062,53 @@ class InteractionServiceV1WatchResponse {
       watched: watched ?? this.watched,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: watched
+    final f1 = watched;
+    if (f1 != null) {
+      w.writeBool(1, f1!);
+    }
+    // field 2: watchCount
+    final f2 = watchCount;
+    if (f2 != null) {
+      w.writeInt32(2, f2!);
+    }
+  }
+
+  factory InteractionServiceV1WatchResponse.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1WatchResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1WatchResponse _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1WatchResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: watched
+        case 1: {
+          m.watched = r.readBool();
+          break;
+        }
+        // field 2: watchCount
+        case 2: {
+          m.watchCount = r.readInt32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class InteractionServiceV1GetInteractionStatusRequest {
@@ -3488,6 +6163,53 @@ class InteractionServiceV1GetInteractionStatusRequest {
       targetType: targetType ?? this.targetType,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: targetType
+    final f1 = targetType;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+    }
+    // field 2: targetIds
+    final f2 = targetIds;
+    if (f2 != null) {
+      w.writePackedVarintList(2, f2!);
+    }
+  }
+
+  factory InteractionServiceV1GetInteractionStatusRequest.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1GetInteractionStatusRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1GetInteractionStatusRequest _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1GetInteractionStatusRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: targetType
+        case 1: {
+          m.targetType = InteractionServiceV1TargetType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: targetIds
+        case 2: {
+          m.targetIds = r.readVarintList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class InteractionServiceV1GetInteractionStatusResponse {
@@ -3534,6 +6256,66 @@ class InteractionServiceV1GetInteractionStatusResponse {
       statuses: statuses ?? this.statuses,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: statuses
+    final f1 = statuses;
+    if (f1 != null) {
+      f1!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeUint32(1, k);
+        final vw = ProtoWireWriter(); v._writeTo(vw); ew.writeRaw(2, vw.toBuffer());
+        w.writeRaw(1, ew.toBuffer());
+      });
+    }
+  }
+
+  factory InteractionServiceV1GetInteractionStatusResponse.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1GetInteractionStatusResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1GetInteractionStatusResponse _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1GetInteractionStatusResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: statuses
+        case 1: {
+          final er = r.readNested();
+          int? k;
+          InteractionServiceV1InteractionStatus? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readUint32();
+                break;
+              }
+              case 2: {
+                v = InteractionServiceV1InteractionStatus._readFrom(er.readNested());
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.statuses ??= {})[k!] = v!;
+          }
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class InteractionServiceV1InteractionStatus {
@@ -3588,6 +6370,53 @@ class InteractionServiceV1InteractionStatus {
       watched: watched ?? this.watched,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: liked
+    final f1 = liked;
+    if (f1 != null) {
+      w.writeBool(1, f1!);
+    }
+    // field 2: watched
+    final f2 = watched;
+    if (f2 != null) {
+      w.writeBool(2, f2!);
+    }
+  }
+
+  factory InteractionServiceV1InteractionStatus.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1InteractionStatus._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1InteractionStatus _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1InteractionStatus();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: liked
+        case 1: {
+          m.liked = r.readBool();
+          break;
+        }
+        // field 2: watched
+        case 2: {
+          m.watched = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 回应 - 帖子列表
@@ -3643,6 +6472,53 @@ class ContentServiceV1ListPostResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory ContentServiceV1ListPostResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ListPostResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ListPostResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ListPostResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(ContentServiceV1Post._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 帖子
@@ -3668,6 +6544,7 @@ class ContentServiceV1Post {
   int? sortOrder;
   ContentServiceV1Post$PostStatus? status;
   List<int>? tagIds;
+  String? thumbnail;
   List<ContentServiceV1PostTranslation>? translations;
   String? updatedAt;
   int? updatedBy;
@@ -3694,6 +6571,7 @@ class ContentServiceV1Post {
     this.sortOrder,
     this.status,
     this.tagIds,
+    this.thumbnail,
     this.translations,
     this.updatedAt,
     this.updatedBy,
@@ -3722,6 +6600,7 @@ class ContentServiceV1Post {
       sortOrder: json['sortOrder'] as int?,
       status: json['status'] != null ? ContentServiceV1Post$PostStatus.fromString(json['status'] as String) : null,
       tagIds: (json['tagIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      thumbnail: json['thumbnail'] as String?,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1PostTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
@@ -3751,6 +6630,7 @@ class ContentServiceV1Post {
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (status != null) json['status'] = status!.value;
     if (tagIds != null) json['tagIds'] = tagIds;
+    if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
@@ -3759,7 +6639,7 @@ class ContentServiceV1Post {
 
   @override
   String toString() {
-    return 'ContentServiceV1Post(authorId: $authorId, authorName: $authorName, autoSummary: $autoSummary, availableLanguages: $availableLanguages, categoryIds: $categoryIds, code: $code, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, disallowComment: $disallowComment, editorType: $editorType, id: $id, inProgress: $inProgress, isFeatured: $isFeatured, passwordHash: $passwordHash, publishTime: $publishTime, sortOrder: $sortOrder, status: $status, tagIds: $tagIds, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1Post(authorId: $authorId, authorName: $authorName, autoSummary: $autoSummary, availableLanguages: $availableLanguages, categoryIds: $categoryIds, code: $code, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, disallowComment: $disallowComment, editorType: $editorType, id: $id, inProgress: $inProgress, isFeatured: $isFeatured, passwordHash: $passwordHash, publishTime: $publishTime, sortOrder: $sortOrder, status: $status, tagIds: $tagIds, thumbnail: $thumbnail, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -3788,6 +6668,7 @@ class ContentServiceV1Post {
       && sortOrder == other.sortOrder
       && status == other.status
       && tagIds == other.tagIds
+      && thumbnail == other.thumbnail
       && translations == other.translations
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
@@ -3816,6 +6697,7 @@ class ContentServiceV1Post {
     sortOrder,
     status,
     tagIds,
+    thumbnail,
     translations,
     updatedAt,
     updatedBy,
@@ -3843,6 +6725,7 @@ class ContentServiceV1Post {
     int? sortOrder,
     ContentServiceV1Post$PostStatus? status,
     List<int>? tagIds,
+    String? thumbnail,
     List<ContentServiceV1PostTranslation>? translations,
     String? updatedAt,
     int? updatedBy,
@@ -3869,45 +6752,354 @@ class ContentServiceV1Post {
       sortOrder: sortOrder ?? this.sortOrder,
       status: status ?? this.status,
       tagIds: tagIds ?? this.tagIds,
+      thumbnail: thumbnail ?? this.thumbnail,
       translations: translations ?? this.translations,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: status
+    final f2 = status;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // ContentServiceV1Post$PostStatus
+    }
+    // field 3: editorType
+    final f3 = editorType;
+    if (f3 != null) {
+      w.writeEnum(3, f3!.wire); // ContentServiceV1EditorType
+    }
+    // field 4: code
+    final f4 = code;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: disallowComment
+    final f5 = disallowComment;
+    if (f5 != null) {
+      w.writeBool(5, f5!);
+    }
+    // field 6: inProgress
+    final f6 = inProgress;
+    if (f6 != null) {
+      w.writeBool(6, f6!);
+    }
+    // field 7: autoSummary
+    final f7 = autoSummary;
+    if (f7 != null) {
+      w.writeBool(7, f7!);
+    }
+    // field 8: isFeatured
+    final f8 = isFeatured;
+    if (f8 != null) {
+      w.writeBool(8, f8!);
+    }
+    // field 9: sortOrder
+    final f9 = sortOrder;
+    if (f9 != null) {
+      w.writeUint32(9, f9!);
+    }
+    // field 13: thumbnail
+    final f13 = thumbnail;
+    if (f13 != null) {
+      w.writeString(13, f13!);
+    }
+    // field 20: authorId
+    final f20 = authorId;
+    if (f20 != null) {
+      w.writeUint32(20, f20!);
+    }
+    // field 21: authorName
+    final f21 = authorName;
+    if (f21 != null) {
+      w.writeString(21, f21!);
+    }
+    // field 30: customFields
+    final f30 = customFields;
+    if (f30 != null) {
+      f30!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(30, ew.toBuffer());
+      });
+    }
+    // field 40: translations
+    final f40 = translations;
+    if (f40 != null) {
+      for (final e in f40!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(40, cw.toBuffer()); }
+    }
+    // field 41: availableLanguages
+    final f41 = availableLanguages;
+    if (f41 != null) {
+      w.writeStringList(41, f41!);
+    }
+    // field 50: categoryIds
+    final f50 = categoryIds;
+    if (f50 != null) {
+      w.writePackedVarintList(50, f50!);
+    }
+    // field 51: tagIds
+    final f51 = tagIds;
+    if (f51 != null) {
+      w.writePackedVarintList(51, f51!);
+    }
+    // field 60: passwordHash
+    final f60 = passwordHash;
+    if (f60 != null) {
+      w.writeString(60, f60!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+    // field 203: publishTime
+    final f203 = publishTime;
+    if (f203 != null) {
+      w.writeTimestamp(203, f203!);
+    }
+  }
+
+  factory ContentServiceV1Post.fromBuffer(List<int> bytes) {
+    return ContentServiceV1Post._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1Post _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1Post();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: status
+        case 2: {
+          m.status = ContentServiceV1Post$PostStatus.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: editorType
+        case 3: {
+          m.editorType = ContentServiceV1EditorType.fromWire(r.readEnum());
+          break;
+        }
+        // field 4: code
+        case 4: {
+          m.code = r.readString();
+          break;
+        }
+        // field 5: disallowComment
+        case 5: {
+          m.disallowComment = r.readBool();
+          break;
+        }
+        // field 6: inProgress
+        case 6: {
+          m.inProgress = r.readBool();
+          break;
+        }
+        // field 7: autoSummary
+        case 7: {
+          m.autoSummary = r.readBool();
+          break;
+        }
+        // field 8: isFeatured
+        case 8: {
+          m.isFeatured = r.readBool();
+          break;
+        }
+        // field 9: sortOrder
+        case 9: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 13: thumbnail
+        case 13: {
+          m.thumbnail = r.readString();
+          break;
+        }
+        // field 20: authorId
+        case 20: {
+          m.authorId = r.readUint32();
+          break;
+        }
+        // field 21: authorName
+        case 21: {
+          m.authorName = r.readString();
+          break;
+        }
+        // field 30: customFields
+        case 30: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.customFields ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 40: translations
+        case 40: {
+          m.translations = r.readNestedList().map(ContentServiceV1PostTranslation._readFrom).toList();
+          break;
+        }
+        // field 41: availableLanguages
+        case 41: {
+          m.availableLanguages = r.readStringList();
+          break;
+        }
+        // field 50: categoryIds
+        case 50: {
+          m.categoryIds = r.readVarintList();
+          break;
+        }
+        // field 51: tagIds
+        case 51: {
+          m.tagIds = r.readVarintList();
+          break;
+        }
+        // field 60: passwordHash
+        case 60: {
+          m.passwordHash = r.readString();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        // field 203: publishTime
+        case 203: {
+          m.publishTime = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 帖子状态
 enum ContentServiceV1Post$PostStatus {
-  postStatusDraft('POST_STATUS_DRAFT'),
-  postStatusPublished('POST_STATUS_PUBLISHED'),
-  postStatusScheduled('POST_STATUS_SCHEDULED'),
-  postStatusTrashed('POST_STATUS_TRASHED'),
-  postStatusUnspecified('POST_STATUS_UNSPECIFIED');
+  postStatusDraft('POST_STATUS_DRAFT', 1),
+  postStatusPublished('POST_STATUS_PUBLISHED', 2),
+  postStatusScheduled('POST_STATUS_SCHEDULED', 3),
+  postStatusTrashed('POST_STATUS_TRASHED', 4),
+  postStatusUnspecified('POST_STATUS_UNSPECIFIED', 0);
 
   final String value;
-  const ContentServiceV1Post$PostStatus(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1Post$PostStatus(this.value, this.wire);
 
   static ContentServiceV1Post$PostStatus fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Post\$PostStatus value: ' + v));
+  static ContentServiceV1Post$PostStatus fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Post\$PostStatus wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 编辑器类型
 enum ContentServiceV1EditorType {
-  editorTypeCode('EDITOR_TYPE_CODE'),
-  editorTypeJsonBlock('EDITOR_TYPE_JSON_BLOCK'),
-  editorTypeMarkdown('EDITOR_TYPE_MARKDOWN'),
-  editorTypePlainText('EDITOR_TYPE_PLAIN_TEXT'),
-  editorTypeRichText('EDITOR_TYPE_RICH_TEXT'),
-  editorTypeUnspecified('EDITOR_TYPE_UNSPECIFIED'),
-  editorTypeVisualBuilder('EDITOR_TYPE_VISUAL_BUILDER');
+  editorTypeCode('EDITOR_TYPE_CODE', 4),
+  editorTypeJsonBlock('EDITOR_TYPE_JSON_BLOCK', 10),
+  editorTypeMarkdown('EDITOR_TYPE_MARKDOWN', 1),
+  editorTypePlainText('EDITOR_TYPE_PLAIN_TEXT', 3),
+  editorTypeRichText('EDITOR_TYPE_RICH_TEXT', 2),
+  editorTypeUnspecified('EDITOR_TYPE_UNSPECIFIED', 0),
+  editorTypeVisualBuilder('EDITOR_TYPE_VISUAL_BUILDER', 11);
 
   final String value;
-  const ContentServiceV1EditorType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1EditorType(this.value, this.wire);
 
   static ContentServiceV1EditorType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1EditorType value: ' + v));
+  static ContentServiceV1EditorType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1EditorType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -3927,7 +7119,6 @@ class ContentServiceV1PostTranslation {
   ContentServiceV1SeoMeta? seo;
   String? slug;
   String? summary;
-  String? thumbnail;
   String? title;
   String? updatedAt;
   int? updatedBy;
@@ -3947,7 +7138,6 @@ class ContentServiceV1PostTranslation {
     this.seo,
     this.slug,
     this.summary,
-    this.thumbnail,
     this.title,
     this.updatedAt,
     this.updatedBy,
@@ -3969,7 +7159,6 @@ class ContentServiceV1PostTranslation {
       seo: json['seo'] != null ? ContentServiceV1SeoMeta.fromJson(json['seo'] as Map<String, dynamic>) : null,
       slug: json['slug'] as String?,
       summary: json['summary'] as String?,
-      thumbnail: json['thumbnail'] as String?,
       title: json['title'] as String?,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
@@ -3992,7 +7181,6 @@ class ContentServiceV1PostTranslation {
     if (seo != null) json['seo'] = seo!.toJson();
     if (slug != null) json['slug'] = slug;
     if (summary != null) json['summary'] = summary;
-    if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (title != null) json['title'] = title;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
@@ -4002,7 +7190,7 @@ class ContentServiceV1PostTranslation {
 
   @override
   String toString() {
-    return 'ContentServiceV1PostTranslation(content: $content, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, fullPath: $fullPath, id: $id, languageCode: $languageCode, originalContent: $originalContent, postId: $postId, seo: $seo, slug: $slug, summary: $summary, thumbnail: $thumbnail, title: $title, updatedAt: $updatedAt, updatedBy: $updatedBy, wordCount: $wordCount)';
+    return 'ContentServiceV1PostTranslation(content: $content, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, fullPath: $fullPath, id: $id, languageCode: $languageCode, originalContent: $originalContent, postId: $postId, seo: $seo, slug: $slug, summary: $summary, title: $title, updatedAt: $updatedAt, updatedBy: $updatedBy, wordCount: $wordCount)';
   }
 
   @override
@@ -4023,7 +7211,6 @@ class ContentServiceV1PostTranslation {
       && seo == other.seo
       && slug == other.slug
       && summary == other.summary
-      && thumbnail == other.thumbnail
       && title == other.title
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
@@ -4045,7 +7232,6 @@ class ContentServiceV1PostTranslation {
     seo,
     slug,
     summary,
-    thumbnail,
     title,
     updatedAt,
     updatedBy,
@@ -4066,7 +7252,6 @@ class ContentServiceV1PostTranslation {
     ContentServiceV1SeoMeta? seo,
     String? slug,
     String? summary,
-    String? thumbnail,
     String? title,
     String? updatedAt,
     int? updatedBy,
@@ -4086,13 +7271,209 @@ class ContentServiceV1PostTranslation {
       seo: seo ?? this.seo,
       slug: slug ?? this.slug,
       summary: summary ?? this.summary,
-      thumbnail: thumbnail ?? this.thumbnail,
       title: title ?? this.title,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
       wordCount: wordCount ?? this.wordCount,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: postId
+    final f2 = postId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: languageCode
+    final f3 = languageCode;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 10: title
+    final f10 = title;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: slug
+    final f11 = slug;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 12: summary
+    final f12 = summary;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 13: content
+    final f13 = content;
+    if (f13 != null) {
+      w.writeString(13, f13!);
+    }
+    // field 14: originalContent
+    final f14 = originalContent;
+    if (f14 != null) {
+      w.writeString(14, f14!);
+    }
+    // field 17: fullPath
+    final f17 = fullPath;
+    if (f17 != null) {
+      w.writeString(17, f17!);
+    }
+    // field 18: wordCount
+    final f18 = wordCount;
+    if (f18 != null) {
+      w.writeUint32(18, f18!);
+    }
+    // field 20: seo
+    final f20 = seo;
+    if (f20 != null) {
+      final cw = ProtoWireWriter(); f20!._writeTo(cw); w.writeRaw(20, cw.toBuffer()); // ContentServiceV1SeoMeta
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1PostTranslation.fromBuffer(List<int> bytes) {
+    return ContentServiceV1PostTranslation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1PostTranslation _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1PostTranslation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: postId
+        case 2: {
+          m.postId = r.readUint32();
+          break;
+        }
+        // field 3: languageCode
+        case 3: {
+          m.languageCode = r.readString();
+          break;
+        }
+        // field 10: title
+        case 10: {
+          m.title = r.readString();
+          break;
+        }
+        // field 11: slug
+        case 11: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 12: summary
+        case 12: {
+          m.summary = r.readString();
+          break;
+        }
+        // field 13: content
+        case 13: {
+          m.content = r.readString();
+          break;
+        }
+        // field 14: originalContent
+        case 14: {
+          m.originalContent = r.readString();
+          break;
+        }
+        // field 17: fullPath
+        case 17: {
+          m.fullPath = r.readString();
+          break;
+        }
+        // field 18: wordCount
+        case 18: {
+          m.wordCount = r.readUint32();
+          break;
+        }
+        // field 20: seo
+        case 20: {
+          m.seo = ContentServiceV1SeoMeta._readFrom(r.readNested());
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class InteractionServiceV1GetCountsRequest {
@@ -4155,20 +7536,81 @@ class InteractionServiceV1GetCountsRequest {
       targetType: targetType ?? this.targetType,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: targetType
+    final f1 = targetType;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+    }
+    // field 2: targetIds
+    final f2 = targetIds;
+    if (f2 != null) {
+      w.writePackedVarintList(2, f2!);
+    }
+    // field 3: metrics
+    final f3 = metrics;
+    if (f3 != null) {
+      w.writePackedVarintList(3, f3!.map((e) => e.wire).toList()); // InteractionServiceV1CounterMetric
+    }
+  }
+
+  factory InteractionServiceV1GetCountsRequest.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1GetCountsRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1GetCountsRequest _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1GetCountsRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: targetType
+        case 1: {
+          m.targetType = InteractionServiceV1TargetType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: targetIds
+        case 2: {
+          m.targetIds = r.readVarintList();
+          break;
+        }
+        // field 3: metrics
+        case 3: {
+          m.metrics = r.readVarintList().map(InteractionServiceV1CounterMetric.fromWire).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 计数指标类型。与 interaction_counter 表的 metric 列对应。
 /// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
 enum InteractionServiceV1CounterMetric {
-  counterMetricLike('COUNTER_METRIC_LIKE'),
-  counterMetricUnspecified('COUNTER_METRIC_UNSPECIFIED'),
-  counterMetricWatch('COUNTER_METRIC_WATCH');
+  counterMetricLike('COUNTER_METRIC_LIKE', 1),
+  counterMetricUnspecified('COUNTER_METRIC_UNSPECIFIED', 0),
+  counterMetricWatch('COUNTER_METRIC_WATCH', 2);
 
   final String value;
-  const InteractionServiceV1CounterMetric(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const InteractionServiceV1CounterMetric(this.value, this.wire);
 
   static InteractionServiceV1CounterMetric fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InteractionServiceV1CounterMetric value: ' + v));
+  static InteractionServiceV1CounterMetric fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown InteractionServiceV1CounterMetric wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -4219,6 +7661,66 @@ class InteractionServiceV1GetCountsResponse {
       counts: counts ?? this.counts,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: counts
+    final f1 = counts;
+    if (f1 != null) {
+      f1!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeUint32(1, k);
+        final vw = ProtoWireWriter(); v._writeTo(vw); ew.writeRaw(2, vw.toBuffer());
+        w.writeRaw(1, ew.toBuffer());
+      });
+    }
+  }
+
+  factory InteractionServiceV1GetCountsResponse.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1GetCountsResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1GetCountsResponse _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1GetCountsResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: counts
+        case 1: {
+          final er = r.readNested();
+          int? k;
+          InteractionServiceV1CountMap? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readUint32();
+                break;
+              }
+              case 2: {
+                v = InteractionServiceV1CountMap._readFrom(er.readNested());
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.counts ??= {})[k!] = v!;
+          }
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 单个目标下所有请求 metric 的计数集合。
@@ -4266,6 +7768,43 @@ class InteractionServiceV1CountMap {
       counts: counts ?? this.counts,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: counts
+    final f1 = counts;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+  }
+
+  factory InteractionServiceV1CountMap.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1CountMap._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1CountMap _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1CountMap();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: counts
+        case 1: {
+          m.counts = r.readNestedList().map(InteractionServiceV1MetricCount._readFrom).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
@@ -4322,6 +7861,53 @@ class InteractionServiceV1MetricCount {
       metric: metric ?? this.metric,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: metric
+    final f1 = metric;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // InteractionServiceV1CounterMetric
+    }
+    // field 2: count
+    final f2 = count;
+    if (f2 != null) {
+      w.writeInt64(2, f2!);
+    }
+  }
+
+  factory InteractionServiceV1MetricCount.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1MetricCount._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1MetricCount _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1MetricCount();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: metric
+        case 1: {
+          m.metric = InteractionServiceV1CounterMetric.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: count
+        case 2: {
+          m.count = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 导航服务
@@ -4419,7 +8005,9 @@ class NavigationServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/navigations/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'NavigationService',
       method: 'Update',
@@ -4494,6 +8082,53 @@ class SiteServiceV1ListNavigationResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory SiteServiceV1ListNavigationResponse.fromBuffer(List<int> bytes) {
+    return SiteServiceV1ListNavigationResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1ListNavigationResponse _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1ListNavigationResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(SiteServiceV1Navigation._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 导航
@@ -4629,23 +8264,174 @@ class SiteServiceV1Navigation {
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: name
+    final f2 = name;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: location
+    final f3 = location;
+    if (f3 != null) {
+      w.writeEnum(3, f3!.wire); // SiteServiceV1Navigation$Location
+    }
+    // field 4: locale
+    final f4 = locale;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: isActive
+    final f5 = isActive;
+    if (f5 != null) {
+      w.writeBool(5, f5!);
+    }
+    // field 10: items
+    final f10 = items;
+    if (f10 != null) {
+      for (final e in f10!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(10, cw.toBuffer()); }
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory SiteServiceV1Navigation.fromBuffer(List<int> bytes) {
+    return SiteServiceV1Navigation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1Navigation _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1Navigation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: name
+        case 2: {
+          m.name = r.readString();
+          break;
+        }
+        // field 3: location
+        case 3: {
+          m.location = SiteServiceV1Navigation$Location.fromWire(r.readEnum());
+          break;
+        }
+        // field 4: locale
+        case 4: {
+          m.locale = r.readString();
+          break;
+        }
+        // field 5: isActive
+        case 5: {
+          m.isActive = r.readBool();
+          break;
+        }
+        // field 10: items
+        case 10: {
+          m.items = r.readNestedList().map(SiteServiceV1NavigationItem._readFrom).toList();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 导航位置枚举
 enum SiteServiceV1Navigation$Location {
-  footer('FOOTER'),
-  header('HEADER'),
-  mobile('MOBILE'),
-  navigationLocationUnspecified('NAVIGATION_LOCATION_UNSPECIFIED'),
-  offcanvas('OFFCANVAS'),
-  sidebar('SIDEBAR'),
-  topBar('TOP_BAR');
+  footer('FOOTER', 2),
+  header('HEADER', 1),
+  mobile('MOBILE', 4),
+  navigationLocationUnspecified('NAVIGATION_LOCATION_UNSPECIFIED', 0),
+  offcanvas('OFFCANVAS', 6),
+  sidebar('SIDEBAR', 3),
+  topBar('TOP_BAR', 5);
 
   final String value;
-  const SiteServiceV1Navigation$Location(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const SiteServiceV1Navigation$Location(this.value, this.wire);
 
   static SiteServiceV1Navigation$Location fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown SiteServiceV1Navigation\$Location value: ' + v));
+  static SiteServiceV1Navigation$Location fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown SiteServiceV1Navigation\$Location wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -4847,22 +8633,253 @@ class SiteServiceV1NavigationItem {
       url: url ?? this.url,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: navigationId
+    final f2 = navigationId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: title
+    final f3 = title;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: description
+    final f4 = description;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: icon
+    final f5 = icon;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: url
+    final f6 = url;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 7: linkType
+    final f7 = linkType;
+    if (f7 != null) {
+      w.writeEnum(7, f7!.wire); // SiteServiceV1NavigationItem$LinkType
+    }
+    // field 8: objectId
+    final f8 = objectId;
+    if (f8 != null) {
+      w.writeUint32(8, f8!);
+    }
+    // field 9: sortOrder
+    final f9 = sortOrder;
+    if (f9 != null) {
+      w.writeUint32(9, f9!);
+    }
+    // field 10: isOpenNewTab
+    final f10 = isOpenNewTab;
+    if (f10 != null) {
+      w.writeBool(10, f10!);
+    }
+    // field 11: isInvalid
+    final f11 = isInvalid;
+    if (f11 != null) {
+      w.writeBool(11, f11!);
+    }
+    // field 12: requiredPermission
+    final f12 = requiredPermission;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 50: parentId
+    final f50 = parentId;
+    if (f50 != null) {
+      w.writeUint32(50, f50!);
+    }
+    // field 51: children
+    final f51 = children;
+    if (f51 != null) {
+      for (final e in f51!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(51, cw.toBuffer()); }
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory SiteServiceV1NavigationItem.fromBuffer(List<int> bytes) {
+    return SiteServiceV1NavigationItem._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1NavigationItem _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1NavigationItem();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: navigationId
+        case 2: {
+          m.navigationId = r.readUint32();
+          break;
+        }
+        // field 3: title
+        case 3: {
+          m.title = r.readString();
+          break;
+        }
+        // field 4: description
+        case 4: {
+          m.description = r.readString();
+          break;
+        }
+        // field 5: icon
+        case 5: {
+          m.icon = r.readString();
+          break;
+        }
+        // field 6: url
+        case 6: {
+          m.url = r.readString();
+          break;
+        }
+        // field 7: linkType
+        case 7: {
+          m.linkType = SiteServiceV1NavigationItem$LinkType.fromWire(r.readEnum());
+          break;
+        }
+        // field 8: objectId
+        case 8: {
+          m.objectId = r.readUint32();
+          break;
+        }
+        // field 9: sortOrder
+        case 9: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 10: isOpenNewTab
+        case 10: {
+          m.isOpenNewTab = r.readBool();
+          break;
+        }
+        // field 11: isInvalid
+        case 11: {
+          m.isInvalid = r.readBool();
+          break;
+        }
+        // field 12: requiredPermission
+        case 12: {
+          m.requiredPermission = r.readString();
+          break;
+        }
+        // field 50: parentId
+        case 50: {
+          m.parentId = r.readUint32();
+          break;
+        }
+        // field 51: children
+        case 51: {
+          m.children = r.readNestedList().map(SiteServiceV1NavigationItem._readFrom).toList();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 链接类型
 enum SiteServiceV1NavigationItem$LinkType {
-  linkTypeCategory('LINK_TYPE_CATEGORY'),
-  linkTypeCustom('LINK_TYPE_CUSTOM'),
-  linkTypeExternal('LINK_TYPE_EXTERNAL'),
-  linkTypePage('LINK_TYPE_PAGE'),
-  linkTypePost('LINK_TYPE_POST'),
-  linkTypeUnspecified('LINK_TYPE_UNSPECIFIED');
+  linkTypeCategory('LINK_TYPE_CATEGORY', 4),
+  linkTypeCustom('LINK_TYPE_CUSTOM', 1),
+  linkTypeExternal('LINK_TYPE_EXTERNAL', 5),
+  linkTypePage('LINK_TYPE_PAGE', 3),
+  linkTypePost('LINK_TYPE_POST', 2),
+  linkTypeUnspecified('LINK_TYPE_UNSPECIFIED', 0);
 
   final String value;
-  const SiteServiceV1NavigationItem$LinkType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const SiteServiceV1NavigationItem$LinkType(this.value, this.wire);
 
   static SiteServiceV1NavigationItem$LinkType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown SiteServiceV1NavigationItem\$LinkType value: ' + v));
+  static SiteServiceV1NavigationItem$LinkType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown SiteServiceV1NavigationItem\$LinkType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -4928,6 +8945,63 @@ class SiteServiceV1GetNavigationRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: name
+    final f2 = name;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory SiteServiceV1GetNavigationRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1GetNavigationRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1GetNavigationRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1GetNavigationRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: name
+        case 2: {
+          m.name = r.readString();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 创建导航
@@ -4975,6 +9049,43 @@ class SiteServiceV1CreateNavigationRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // SiteServiceV1Navigation
+    }
+  }
+
+  factory SiteServiceV1CreateNavigationRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1CreateNavigationRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1CreateNavigationRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1CreateNavigationRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = SiteServiceV1Navigation._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 更新导航
@@ -5046,6 +9157,73 @@ class SiteServiceV1UpdateNavigationRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // SiteServiceV1Navigation
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3!);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+  }
+
+  factory SiteServiceV1UpdateNavigationRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1UpdateNavigationRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1UpdateNavigationRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1UpdateNavigationRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = SiteServiceV1Navigation._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 删除导航
@@ -5093,6 +9271,43 @@ class SiteServiceV1DeleteNavigationRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory SiteServiceV1DeleteNavigationRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1DeleteNavigationRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1DeleteNavigationRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1DeleteNavigationRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 页面服务
@@ -5193,7 +9408,9 @@ class PageServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/pages/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'PageService',
       method: 'Update',
@@ -5295,6 +9512,53 @@ class ContentServiceV1ListPageResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory ContentServiceV1ListPageResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ListPageResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ListPageResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ListPageResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(ContentServiceV1Page._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 页面
@@ -5324,6 +9588,7 @@ class ContentServiceV1Page {
   int? sortOrder;
   ContentServiceV1Page$PageStatus? status;
   String? template;
+  String? thumbnail;
   List<ContentServiceV1PageTranslation>? translations;
   ContentServiceV1Page$PageType? type;
   String? updatedAt;
@@ -5354,6 +9619,7 @@ class ContentServiceV1Page {
     this.sortOrder,
     this.status,
     this.template,
+    this.thumbnail,
     this.translations,
     this.type,
     this.updatedAt,
@@ -5386,6 +9652,7 @@ class ContentServiceV1Page {
       sortOrder: json['sortOrder'] as int?,
       status: json['status'] != null ? ContentServiceV1Page$PageStatus.fromString(json['status'] as String) : null,
       template: json['template'] as String?,
+      thumbnail: json['thumbnail'] as String?,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1PageTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       type: json['type'] != null ? ContentServiceV1Page$PageType.fromString(json['type'] as String) : null,
       updatedAt: json['updatedAt'] as String?,
@@ -5419,6 +9686,7 @@ class ContentServiceV1Page {
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (status != null) json['status'] = status!.value;
     if (template != null) json['template'] = template;
+    if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (type != null) json['type'] = type!.value;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
@@ -5428,7 +9696,7 @@ class ContentServiceV1Page {
 
   @override
   String toString() {
-    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, sections: $sections, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, sections: $sections, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, thumbnail: $thumbnail, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -5460,6 +9728,7 @@ class ContentServiceV1Page {
       && sortOrder == other.sortOrder
       && status == other.status
       && template == other.template
+      && thumbnail == other.thumbnail
       && translations == other.translations
       && type == other.type
       && updatedAt == other.updatedAt
@@ -5492,6 +9761,7 @@ class ContentServiceV1Page {
     sortOrder,
     status,
     template,
+    thumbnail,
     translations,
     type,
     updatedAt,
@@ -5523,6 +9793,7 @@ class ContentServiceV1Page {
     int? sortOrder,
     ContentServiceV1Page$PageStatus? status,
     String? template,
+    String? thumbnail,
     List<ContentServiceV1PageTranslation>? translations,
     ContentServiceV1Page$PageType? type,
     String? updatedAt,
@@ -5553,44 +9824,393 @@ class ContentServiceV1Page {
       sortOrder: sortOrder ?? this.sortOrder,
       status: status ?? this.status,
       template: template ?? this.template,
+      thumbnail: thumbnail ?? this.thumbnail,
       translations: translations ?? this.translations,
       type: type ?? this.type,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: status
+    final f2 = status;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // ContentServiceV1Page$PageStatus
+    }
+    // field 3: type
+    final f3 = type;
+    if (f3 != null) {
+      w.writeEnum(3, f3!.wire); // ContentServiceV1Page$PageType
+    }
+    // field 4: editorType
+    final f4 = editorType;
+    if (f4 != null) {
+      w.writeEnum(4, f4!.wire); // ContentServiceV1EditorType
+    }
+    // field 5: slug
+    final f5 = slug;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: authorId
+    final f6 = authorId;
+    if (f6 != null) {
+      w.writeUint32(6, f6!);
+    }
+    // field 7: authorName
+    final f7 = authorName;
+    if (f7 != null) {
+      w.writeString(7, f7!);
+    }
+    // field 8: disallowComment
+    final f8 = disallowComment;
+    if (f8 != null) {
+      w.writeBool(8, f8!);
+    }
+    // field 9: redirectUrl
+    final f9 = redirectUrl;
+    if (f9 != null) {
+      w.writeString(9, f9!);
+    }
+    // field 10: showInNavigation
+    final f10 = showInNavigation;
+    if (f10 != null) {
+      w.writeBool(10, f10!);
+    }
+    // field 11: sortOrder
+    final f11 = sortOrder;
+    if (f11 != null) {
+      w.writeUint32(11, f11!);
+    }
+    // field 12: template
+    final f12 = template;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 13: isCustomTemplate
+    final f13 = isCustomTemplate;
+    if (f13 != null) {
+      w.writeBool(13, f13!);
+    }
+    // field 14: thumbnail
+    final f14 = thumbnail;
+    if (f14 != null) {
+      w.writeString(14, f14!);
+    }
+    // field 21: customFields
+    final f21 = customFields;
+    if (f21 != null) {
+      f21!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(21, ew.toBuffer());
+      });
+    }
+    // field 22: contentModelId
+    final f22 = contentModelId;
+    if (f22 != null) {
+      w.writeUint32(22, f22!);
+    }
+    // field 30: translations
+    final f30 = translations;
+    if (f30 != null) {
+      for (final e in f30!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(30, cw.toBuffer()); }
+    }
+    // field 31: availableLanguages
+    final f31 = availableLanguages;
+    if (f31 != null) {
+      w.writeStringList(31, f31!);
+    }
+    // field 40: sections
+    final f40 = sections;
+    if (f40 != null) {
+      for (final e in f40!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(40, cw.toBuffer()); }
+    }
+    // field 50: parentId
+    final f50 = parentId;
+    if (f50 != null) {
+      w.writeUint32(50, f50!);
+    }
+    // field 52: depth
+    final f52 = depth;
+    if (f52 != null) {
+      w.writeInt32(52, f52!);
+    }
+    // field 53: path
+    final f53 = path;
+    if (f53 != null) {
+      w.writeString(53, f53!);
+    }
+    // field 61: children
+    final f61 = children;
+    if (f61 != null) {
+      for (final e in f61!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(61, cw.toBuffer()); }
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1Page.fromBuffer(List<int> bytes) {
+    return ContentServiceV1Page._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1Page _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1Page();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: status
+        case 2: {
+          m.status = ContentServiceV1Page$PageStatus.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: type
+        case 3: {
+          m.type = ContentServiceV1Page$PageType.fromWire(r.readEnum());
+          break;
+        }
+        // field 4: editorType
+        case 4: {
+          m.editorType = ContentServiceV1EditorType.fromWire(r.readEnum());
+          break;
+        }
+        // field 5: slug
+        case 5: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 6: authorId
+        case 6: {
+          m.authorId = r.readUint32();
+          break;
+        }
+        // field 7: authorName
+        case 7: {
+          m.authorName = r.readString();
+          break;
+        }
+        // field 8: disallowComment
+        case 8: {
+          m.disallowComment = r.readBool();
+          break;
+        }
+        // field 9: redirectUrl
+        case 9: {
+          m.redirectUrl = r.readString();
+          break;
+        }
+        // field 10: showInNavigation
+        case 10: {
+          m.showInNavigation = r.readBool();
+          break;
+        }
+        // field 11: sortOrder
+        case 11: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 12: template
+        case 12: {
+          m.template = r.readString();
+          break;
+        }
+        // field 13: isCustomTemplate
+        case 13: {
+          m.isCustomTemplate = r.readBool();
+          break;
+        }
+        // field 14: thumbnail
+        case 14: {
+          m.thumbnail = r.readString();
+          break;
+        }
+        // field 21: customFields
+        case 21: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.customFields ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 22: contentModelId
+        case 22: {
+          m.contentModelId = r.readUint32();
+          break;
+        }
+        // field 30: translations
+        case 30: {
+          m.translations = r.readNestedList().map(ContentServiceV1PageTranslation._readFrom).toList();
+          break;
+        }
+        // field 31: availableLanguages
+        case 31: {
+          m.availableLanguages = r.readStringList();
+          break;
+        }
+        // field 40: sections
+        case 40: {
+          m.sections = r.readNestedList().map(ContentServiceV1Section._readFrom).toList();
+          break;
+        }
+        // field 50: parentId
+        case 50: {
+          m.parentId = r.readUint32();
+          break;
+        }
+        // field 52: depth
+        case 52: {
+          m.depth = r.readInt32();
+          break;
+        }
+        // field 53: path
+        case 53: {
+          m.path = r.readString();
+          break;
+        }
+        // field 61: children
+        case 61: {
+          m.children = r.readNestedList().map(ContentServiceV1Page._readFrom).toList();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 页面状态
 enum ContentServiceV1Page$PageStatus {
-  pageStatusArchived('PAGE_STATUS_ARCHIVED'),
-  pageStatusDraft('PAGE_STATUS_DRAFT'),
-  pageStatusPublished('PAGE_STATUS_PUBLISHED'),
-  pageStatusUnspecified('PAGE_STATUS_UNSPECIFIED');
+  pageStatusArchived('PAGE_STATUS_ARCHIVED', 3),
+  pageStatusDraft('PAGE_STATUS_DRAFT', 1),
+  pageStatusPublished('PAGE_STATUS_PUBLISHED', 2),
+  pageStatusUnspecified('PAGE_STATUS_UNSPECIFIED', 0);
 
   final String value;
-  const ContentServiceV1Page$PageStatus(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1Page$PageStatus(this.value, this.wire);
 
   static ContentServiceV1Page$PageStatus fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Page\$PageStatus value: ' + v));
+  static ContentServiceV1Page$PageStatus fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Page\$PageStatus wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 页面类型（用于特殊页面处理）
 enum ContentServiceV1Page$PageType {
-  pageTypeCustom('PAGE_TYPE_CUSTOM'),
-  pageTypeDefault('PAGE_TYPE_DEFAULT'),
-  pageTypeError404('PAGE_TYPE_ERROR_404'),
-  pageTypeError500('PAGE_TYPE_ERROR_500'),
-  pageTypeHome('PAGE_TYPE_HOME'),
-  pageTypeUnspecified('PAGE_TYPE_UNSPECIFIED');
+  pageTypeCustom('PAGE_TYPE_CUSTOM', 5),
+  pageTypeDefault('PAGE_TYPE_DEFAULT', 1),
+  pageTypeError404('PAGE_TYPE_ERROR_404', 3),
+  pageTypeError500('PAGE_TYPE_ERROR_500', 4),
+  pageTypeHome('PAGE_TYPE_HOME', 2),
+  pageTypeUnspecified('PAGE_TYPE_UNSPECIFIED', 0);
 
   final String value;
-  const ContentServiceV1Page$PageType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1Page$PageType(this.value, this.wire);
 
   static ContentServiceV1Page$PageType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Page\$PageType value: ' + v));
+  static ContentServiceV1Page$PageType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Page\$PageType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -5608,7 +10228,6 @@ class ContentServiceV1PageTranslation {
   int? pageId;
   ContentServiceV1SeoMeta? seo;
   String? slug;
-  String? thumbnail;
   String? title;
   String? updatedAt;
   int? updatedBy;
@@ -5625,7 +10244,6 @@ class ContentServiceV1PageTranslation {
     this.pageId,
     this.seo,
     this.slug,
-    this.thumbnail,
     this.title,
     this.updatedAt,
     this.updatedBy,
@@ -5644,7 +10262,6 @@ class ContentServiceV1PageTranslation {
       pageId: json['pageId'] as int?,
       seo: json['seo'] != null ? ContentServiceV1SeoMeta.fromJson(json['seo'] as Map<String, dynamic>) : null,
       slug: json['slug'] as String?,
-      thumbnail: json['thumbnail'] as String?,
       title: json['title'] as String?,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
@@ -5664,7 +10281,6 @@ class ContentServiceV1PageTranslation {
     if (pageId != null) json['pageId'] = pageId;
     if (seo != null) json['seo'] = seo!.toJson();
     if (slug != null) json['slug'] = slug;
-    if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (title != null) json['title'] = title;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
@@ -5673,7 +10289,7 @@ class ContentServiceV1PageTranslation {
 
   @override
   String toString() {
-    return 'ContentServiceV1PageTranslation(coverImage: $coverImage, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, fullPath: $fullPath, id: $id, languageCode: $languageCode, pageId: $pageId, seo: $seo, slug: $slug, thumbnail: $thumbnail, title: $title, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1PageTranslation(coverImage: $coverImage, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, fullPath: $fullPath, id: $id, languageCode: $languageCode, pageId: $pageId, seo: $seo, slug: $slug, title: $title, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -5692,7 +10308,6 @@ class ContentServiceV1PageTranslation {
       && pageId == other.pageId
       && seo == other.seo
       && slug == other.slug
-      && thumbnail == other.thumbnail
       && title == other.title
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
@@ -5711,7 +10326,6 @@ class ContentServiceV1PageTranslation {
     pageId,
     seo,
     slug,
-    thumbnail,
     title,
     updatedAt,
     updatedBy,
@@ -5729,7 +10343,6 @@ class ContentServiceV1PageTranslation {
     int? pageId,
     ContentServiceV1SeoMeta? seo,
     String? slug,
-    String? thumbnail,
     String? title,
     String? updatedAt,
     int? updatedBy,
@@ -5746,12 +10359,178 @@ class ContentServiceV1PageTranslation {
       pageId: pageId ?? this.pageId,
       seo: seo ?? this.seo,
       slug: slug ?? this.slug,
-      thumbnail: thumbnail ?? this.thumbnail,
       title: title ?? this.title,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: pageId
+    final f2 = pageId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: languageCode
+    final f3 = languageCode;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 10: title
+    final f10 = title;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: slug
+    final f11 = slug;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 14: coverImage
+    final f14 = coverImage;
+    if (f14 != null) {
+      w.writeString(14, f14!);
+    }
+    // field 20: fullPath
+    final f20 = fullPath;
+    if (f20 != null) {
+      w.writeString(20, f20!);
+    }
+    // field 30: seo
+    final f30 = seo;
+    if (f30 != null) {
+      final cw = ProtoWireWriter(); f30!._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1PageTranslation.fromBuffer(List<int> bytes) {
+    return ContentServiceV1PageTranslation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1PageTranslation _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1PageTranslation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: pageId
+        case 2: {
+          m.pageId = r.readUint32();
+          break;
+        }
+        // field 3: languageCode
+        case 3: {
+          m.languageCode = r.readString();
+          break;
+        }
+        // field 10: title
+        case 10: {
+          m.title = r.readString();
+          break;
+        }
+        // field 11: slug
+        case 11: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 14: coverImage
+        case 14: {
+          m.coverImage = r.readString();
+          break;
+        }
+        // field 20: fullPath
+        case 20: {
+          m.fullPath = r.readString();
+          break;
+        }
+        // field 30: seo
+        case 30: {
+          m.seo = ContentServiceV1SeoMeta._readFrom(r.readNested());
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 页面区块（语言无关的结构，内容随语言变化在翻译表中）。
@@ -5904,31 +10683,225 @@ class ContentServiceV1Section {
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: pageId
+    final f2 = pageId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: type
+    final f3 = type;
+    if (f3 != null) {
+      w.writeEnum(3, f3!.wire); // ContentServiceV1SectionType
+    }
+    // field 4: name
+    final f4 = name;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: sortOrder
+    final f5 = sortOrder;
+    if (f5 != null) {
+      w.writeUint32(5, f5!);
+    }
+    // field 10: config
+    final f10 = config;
+    if (f10 != null) {
+      f10!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(10, ew.toBuffer());
+      });
+    }
+    // field 20: translations
+    final f20 = translations;
+    if (f20 != null) {
+      for (final e in f20!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
+    }
+    // field 21: availableLanguages
+    final f21 = availableLanguages;
+    if (f21 != null) {
+      w.writeStringList(21, f21!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1Section.fromBuffer(List<int> bytes) {
+    return ContentServiceV1Section._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1Section _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1Section();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: pageId
+        case 2: {
+          m.pageId = r.readUint32();
+          break;
+        }
+        // field 3: type
+        case 3: {
+          m.type = ContentServiceV1SectionType.fromWire(r.readEnum());
+          break;
+        }
+        // field 4: name
+        case 4: {
+          m.name = r.readString();
+          break;
+        }
+        // field 5: sortOrder
+        case 5: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 10: config
+        case 10: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.config ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 20: translations
+        case 20: {
+          m.translations = r.readNestedList().map(ContentServiceV1SectionTranslation._readFrom).toList();
+          break;
+        }
+        // field 21: availableLanguages
+        case 21: {
+          m.availableLanguages = r.readStringList();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 区块类型
 enum ContentServiceV1SectionType {
-  sectionTypeButton('SECTION_TYPE_BUTTON'),
-  sectionTypeCarousel('SECTION_TYPE_CAROUSEL'),
-  sectionTypeCode('SECTION_TYPE_CODE'),
-  sectionTypeCustom('SECTION_TYPE_CUSTOM'),
-  sectionTypeDivider('SECTION_TYPE_DIVIDER'),
-  sectionTypeForm('SECTION_TYPE_FORM'),
-  sectionTypeGallery('SECTION_TYPE_GALLERY'),
-  sectionTypeHtml('SECTION_TYPE_HTML'),
-  sectionTypeImage('SECTION_TYPE_IMAGE'),
-  sectionTypeMarkdown('SECTION_TYPE_MARKDOWN'),
-  sectionTypeRichText('SECTION_TYPE_RICH_TEXT'),
-  sectionTypeSpacer('SECTION_TYPE_SPACER'),
-  sectionTypeTitle('SECTION_TYPE_TITLE'),
-  sectionTypeUnspecified('SECTION_TYPE_UNSPECIFIED'),
-  sectionTypeVideo('SECTION_TYPE_VIDEO');
+  sectionTypeButton('SECTION_TYPE_BUTTON', 7),
+  sectionTypeCarousel('SECTION_TYPE_CAROUSEL', 13),
+  sectionTypeCode('SECTION_TYPE_CODE', 10),
+  sectionTypeCustom('SECTION_TYPE_CUSTOM', 99),
+  sectionTypeDivider('SECTION_TYPE_DIVIDER', 8),
+  sectionTypeForm('SECTION_TYPE_FORM', 12),
+  sectionTypeGallery('SECTION_TYPE_GALLERY', 5),
+  sectionTypeHtml('SECTION_TYPE_HTML', 11),
+  sectionTypeImage('SECTION_TYPE_IMAGE', 4),
+  sectionTypeMarkdown('SECTION_TYPE_MARKDOWN', 2),
+  sectionTypeRichText('SECTION_TYPE_RICH_TEXT', 1),
+  sectionTypeSpacer('SECTION_TYPE_SPACER', 9),
+  sectionTypeTitle('SECTION_TYPE_TITLE', 3),
+  sectionTypeUnspecified('SECTION_TYPE_UNSPECIFIED', 0),
+  sectionTypeVideo('SECTION_TYPE_VIDEO', 6);
 
   final String value;
-  const ContentServiceV1SectionType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1SectionType(this.value, this.wire);
 
   static ContentServiceV1SectionType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1SectionType value: ' + v));
+  static ContentServiceV1SectionType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1SectionType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -6050,6 +11023,156 @@ class ContentServiceV1SectionTranslation {
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: sectionId
+    final f2 = sectionId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: languageCode
+    final f3 = languageCode;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 10: content
+    final f10 = content;
+    if (f10 != null) {
+      f10!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(10, ew.toBuffer());
+      });
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1SectionTranslation.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SectionTranslation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SectionTranslation _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SectionTranslation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: sectionId
+        case 2: {
+          m.sectionId = r.readUint32();
+          break;
+        }
+        // field 3: languageCode
+        case 3: {
+          m.languageCode = r.readString();
+          break;
+        }
+        // field 10: content
+        case 10: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.content ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 页面数据
@@ -6121,6 +11244,73 @@ class ContentServiceV1GetPageRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: slug
+    final f2 = slug;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 10: locale
+    final f10 = locale;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory ContentServiceV1GetPageRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1GetPageRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1GetPageRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1GetPageRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: slug
+        case 2: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 10: locale
+        case 10: {
+          m.locale = r.readString();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 创建页面
@@ -6168,6 +11358,43 @@ class ContentServiceV1CreatePageRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Page
+    }
+  }
+
+  factory ContentServiceV1CreatePageRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1CreatePageRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1CreatePageRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1CreatePageRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = ContentServiceV1Page._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 更新页面
@@ -6239,6 +11466,73 @@ class ContentServiceV1UpdatePageRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Page
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3!);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+  }
+
+  factory ContentServiceV1UpdatePageRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1UpdatePageRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1UpdatePageRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1UpdatePageRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = ContentServiceV1Page._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 删除页面
@@ -6286,6 +11580,43 @@ class ContentServiceV1DeletePageRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory ContentServiceV1DeletePageRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1DeletePageRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1DeletePageRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1DeletePageRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 帖子服务
@@ -6416,7 +11747,9 @@ class PostServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/posts/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'PostService',
       method: 'Update',
@@ -6541,6 +11874,73 @@ class ContentServiceV1SearchPostsRequest {
       query: query ?? this.query,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: query
+    final f1 = query;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: language
+    final f2 = language;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: page
+    final f3 = page;
+    if (f3 != null) {
+      w.writeInt32(3, f3!);
+    }
+    // field 4: pageSize
+    final f4 = pageSize;
+    if (f4 != null) {
+      w.writeInt32(4, f4!);
+    }
+  }
+
+  factory ContentServiceV1SearchPostsRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SearchPostsRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SearchPostsRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SearchPostsRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: query
+        case 1: {
+          m.query = r.readString();
+          break;
+        }
+        // field 2: language
+        case 2: {
+          m.language = r.readString();
+          break;
+        }
+        // field 3: page
+        case 3: {
+          m.page = r.readInt32();
+          break;
+        }
+        // field 4: pageSize
+        case 4: {
+          m.pageSize = r.readInt32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 回应 - 帖子搜索
@@ -6599,6 +11999,53 @@ class ContentServiceV1SearchPostsResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeInt32(2, f2!);
+    }
+  }
+
+  factory ContentServiceV1SearchPostsResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SearchPostsResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SearchPostsResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SearchPostsResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(ContentServiceV1SearchPostHit._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readInt32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 搜索命中条目（最小字段集）
@@ -6665,6 +12112,63 @@ class ContentServiceV1SearchPostHit {
       title: title ?? this.title,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: postId
+    final f1 = postId;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: language
+    final f2 = language;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: title
+    final f3 = title;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+  }
+
+  factory ContentServiceV1SearchPostHit.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SearchPostHit._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SearchPostHit _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SearchPostHit();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: postId
+        case 1: {
+          m.postId = r.readUint32();
+          break;
+        }
+        // field 2: language
+        case 2: {
+          m.language = r.readString();
+          break;
+        }
+        // field 3: title
+        case 3: {
+          m.title = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 帖子数据
@@ -6736,6 +12240,73 @@ class ContentServiceV1GetPostRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 10: locale
+    final f10 = locale;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory ContentServiceV1GetPostRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1GetPostRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1GetPostRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1GetPostRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        // field 10: locale
+        case 10: {
+          m.locale = r.readString();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 创建帖子
@@ -6783,6 +12354,43 @@ class ContentServiceV1CreatePostRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Post
+    }
+  }
+
+  factory ContentServiceV1CreatePostRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1CreatePostRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1CreatePostRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1CreatePostRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = ContentServiceV1Post._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 更新帖子
@@ -6854,6 +12462,73 @@ class ContentServiceV1UpdatePostRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Post
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3!);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+  }
+
+  factory ContentServiceV1UpdatePostRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1UpdatePostRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1UpdatePostRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1UpdatePostRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = ContentServiceV1Post._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 删除帖子
@@ -6901,6 +12576,43 @@ class ContentServiceV1DeletePostRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory ContentServiceV1DeletePostRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1DeletePostRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1DeletePostRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1DeletePostRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 站点服务（公开端点）
@@ -6997,7 +12709,9 @@ class SiteServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/sites/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'SiteService',
       method: 'Update',
@@ -7072,6 +12786,53 @@ class SiteServiceV1ListSiteResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory SiteServiceV1ListSiteResponse.fromBuffer(List<int> bytes) {
+    return SiteServiceV1ListSiteResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1ListSiteResponse _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1ListSiteResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(SiteServiceV1Site._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 站点
@@ -7247,20 +13008,221 @@ class SiteServiceV1Site {
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: tenantId
+    final f2 = tenantId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: name
+    final f3 = name;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: slug
+    final f4 = slug;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: domain
+    final f5 = domain;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: alternateDomains
+    final f6 = alternateDomains;
+    if (f6 != null) {
+      w.writeStringList(6, f6!);
+    }
+    // field 7: isDefault
+    final f7 = isDefault;
+    if (f7 != null) {
+      w.writeBool(7, f7!);
+    }
+    // field 8: status
+    final f8 = status;
+    if (f8 != null) {
+      w.writeEnum(8, f8!.wire); // SiteServiceV1Site$Status
+    }
+    // field 9: defaultLocale
+    final f9 = defaultLocale;
+    if (f9 != null) {
+      w.writeString(9, f9!);
+    }
+    // field 10: template
+    final f10 = template;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: theme
+    final f11 = theme;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory SiteServiceV1Site.fromBuffer(List<int> bytes) {
+    return SiteServiceV1Site._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1Site _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1Site();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: tenantId
+        case 2: {
+          m.tenantId = r.readUint32();
+          break;
+        }
+        // field 3: name
+        case 3: {
+          m.name = r.readString();
+          break;
+        }
+        // field 4: slug
+        case 4: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 5: domain
+        case 5: {
+          m.domain = r.readString();
+          break;
+        }
+        // field 6: alternateDomains
+        case 6: {
+          m.alternateDomains = r.readStringList();
+          break;
+        }
+        // field 7: isDefault
+        case 7: {
+          m.isDefault = r.readBool();
+          break;
+        }
+        // field 8: status
+        case 8: {
+          m.status = SiteServiceV1Site$Status.fromWire(r.readEnum());
+          break;
+        }
+        // field 9: defaultLocale
+        case 9: {
+          m.defaultLocale = r.readString();
+          break;
+        }
+        // field 10: template
+        case 10: {
+          m.template = r.readString();
+          break;
+        }
+        // field 11: theme
+        case 11: {
+          m.theme = r.readString();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 站点状态
 enum SiteServiceV1Site$Status {
-  siteStatusActive('SITE_STATUS_ACTIVE'),
-  siteStatusInactive('SITE_STATUS_INACTIVE'),
-  siteStatusMaintenance('SITE_STATUS_MAINTENANCE'),
-  siteStatusUnspecified('SITE_STATUS_UNSPECIFIED');
+  siteStatusActive('SITE_STATUS_ACTIVE', 1),
+  siteStatusInactive('SITE_STATUS_INACTIVE', 2),
+  siteStatusMaintenance('SITE_STATUS_MAINTENANCE', 3),
+  siteStatusUnspecified('SITE_STATUS_UNSPECIFIED', 0);
 
   final String value;
-  const SiteServiceV1Site$Status(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const SiteServiceV1Site$Status(this.value, this.wire);
 
   static SiteServiceV1Site$Status fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown SiteServiceV1Site\$Status value: ' + v));
+  static SiteServiceV1Site$Status fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown SiteServiceV1Site\$Status wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -7318,6 +13280,53 @@ class SiteServiceV1GetSiteByDomainRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: domain
+    final f1 = domain;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory SiteServiceV1GetSiteByDomainRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1GetSiteByDomainRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1GetSiteByDomainRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1GetSiteByDomainRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: domain
+        case 1: {
+          m.domain = r.readString();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 创建站点
@@ -7365,6 +13374,43 @@ class SiteServiceV1CreateSiteRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // SiteServiceV1Site
+    }
+  }
+
+  factory SiteServiceV1CreateSiteRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1CreateSiteRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1CreateSiteRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1CreateSiteRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = SiteServiceV1Site._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 更新站点
@@ -7436,6 +13482,73 @@ class SiteServiceV1UpdateSiteRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // SiteServiceV1Site
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3!);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+  }
+
+  factory SiteServiceV1UpdateSiteRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1UpdateSiteRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1UpdateSiteRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1UpdateSiteRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = SiteServiceV1Site._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 删除站点
@@ -7483,6 +13596,43 @@ class SiteServiceV1DeleteSiteRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory SiteServiceV1DeleteSiteRequest.fromBuffer(List<int> bytes) {
+    return SiteServiceV1DeleteSiteRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static SiteServiceV1DeleteSiteRequest _readFrom(ProtoWireReader r) {
+    final m = SiteServiceV1DeleteSiteRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 标签服务
@@ -7583,7 +13733,9 @@ class TagServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/tags/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'TagService',
       method: 'Update',
@@ -7685,6 +13837,53 @@ class ContentServiceV1ListTagResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory ContentServiceV1ListTagResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ListTagResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ListTagResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ListTagResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(ContentServiceV1Tag._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 标签
@@ -7860,20 +14059,221 @@ class ContentServiceV1Tag {
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: status
+    final f2 = status;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // ContentServiceV1Tag$TagStatus
+    }
+    // field 3: color
+    final f3 = color;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: icon
+    final f4 = icon;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: group
+    final f5 = group;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: sortOrder
+    final f6 = sortOrder;
+    if (f6 != null) {
+      w.writeUint32(6, f6!);
+    }
+    // field 7: isFeatured
+    final f7 = isFeatured;
+    if (f7 != null) {
+      w.writeBool(7, f7!);
+    }
+    // field 8: code
+    final f8 = code;
+    if (f8 != null) {
+      w.writeString(8, f8!);
+    }
+    // field 10: postCount
+    final f10 = postCount;
+    if (f10 != null) {
+      w.writeUint32(10, f10!);
+    }
+    // field 20: translations
+    final f20 = translations;
+    if (f20 != null) {
+      for (final e in f20!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
+    }
+    // field 21: availableLanguages
+    final f21 = availableLanguages;
+    if (f21 != null) {
+      w.writeStringList(21, f21!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1Tag.fromBuffer(List<int> bytes) {
+    return ContentServiceV1Tag._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1Tag _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1Tag();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: status
+        case 2: {
+          m.status = ContentServiceV1Tag$TagStatus.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: color
+        case 3: {
+          m.color = r.readString();
+          break;
+        }
+        // field 4: icon
+        case 4: {
+          m.icon = r.readString();
+          break;
+        }
+        // field 5: group
+        case 5: {
+          m.group = r.readString();
+          break;
+        }
+        // field 6: sortOrder
+        case 6: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 7: isFeatured
+        case 7: {
+          m.isFeatured = r.readBool();
+          break;
+        }
+        // field 8: code
+        case 8: {
+          m.code = r.readString();
+          break;
+        }
+        // field 10: postCount
+        case 10: {
+          m.postCount = r.readUint32();
+          break;
+        }
+        // field 20: translations
+        case 20: {
+          m.translations = r.readNestedList().map(ContentServiceV1TagTranslation._readFrom).toList();
+          break;
+        }
+        // field 21: availableLanguages
+        case 21: {
+          m.availableLanguages = r.readStringList();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 标签状态
 enum ContentServiceV1Tag$TagStatus {
-  tagStatusActive('TAG_STATUS_ACTIVE'),
-  tagStatusArchived('TAG_STATUS_ARCHIVED'),
-  tagStatusHidden('TAG_STATUS_HIDDEN'),
-  tagStatusUnspecified('TAG_STATUS_UNSPECIFIED');
+  tagStatusActive('TAG_STATUS_ACTIVE', 1),
+  tagStatusArchived('TAG_STATUS_ARCHIVED', 3),
+  tagStatusHidden('TAG_STATUS_HIDDEN', 2),
+  tagStatusUnspecified('TAG_STATUS_UNSPECIFIED', 0);
 
   final String value;
-  const ContentServiceV1Tag$TagStatus(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1Tag$TagStatus(this.value, this.wire);
 
   static ContentServiceV1Tag$TagStatus fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Tag\$TagStatus value: ' + v));
+  static ContentServiceV1Tag$TagStatus fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1Tag\$TagStatus wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -8035,6 +14435,183 @@ class ContentServiceV1TagTranslation {
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: tagId
+    final f2 = tagId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: languageCode
+    final f3 = languageCode;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 10: name
+    final f10 = name;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: slug
+    final f11 = slug;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 12: description
+    final f12 = description;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 13: coverImage
+    final f13 = coverImage;
+    if (f13 != null) {
+      w.writeString(13, f13!);
+    }
+    // field 20: fullPath
+    final f20 = fullPath;
+    if (f20 != null) {
+      w.writeString(20, f20!);
+    }
+    // field 30: seo
+    final f30 = seo;
+    if (f30 != null) {
+      final cw = ProtoWireWriter(); f30!._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory ContentServiceV1TagTranslation.fromBuffer(List<int> bytes) {
+    return ContentServiceV1TagTranslation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1TagTranslation _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1TagTranslation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: tagId
+        case 2: {
+          m.tagId = r.readUint32();
+          break;
+        }
+        // field 3: languageCode
+        case 3: {
+          m.languageCode = r.readString();
+          break;
+        }
+        // field 10: name
+        case 10: {
+          m.name = r.readString();
+          break;
+        }
+        // field 11: slug
+        case 11: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 12: description
+        case 12: {
+          m.description = r.readString();
+          break;
+        }
+        // field 13: coverImage
+        case 13: {
+          m.coverImage = r.readString();
+          break;
+        }
+        // field 20: fullPath
+        case 20: {
+          m.fullPath = r.readString();
+          break;
+        }
+        // field 30: seo
+        case 30: {
+          m.seo = ContentServiceV1SeoMeta._readFrom(r.readNested());
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 标签数据
@@ -8106,6 +14683,73 @@ class ContentServiceV1GetTagRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 10: locale
+    final f10 = locale;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory ContentServiceV1GetTagRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1GetTagRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1GetTagRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1GetTagRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        // field 10: locale
+        case 10: {
+          m.locale = r.readString();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 创建标签
@@ -8153,6 +14797,43 @@ class ContentServiceV1CreateTagRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Tag
+    }
+  }
+
+  factory ContentServiceV1CreateTagRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1CreateTagRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1CreateTagRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1CreateTagRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = ContentServiceV1Tag._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 更新标签
@@ -8224,6 +14905,73 @@ class ContentServiceV1UpdateTagRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Tag
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3!);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4!);
+    }
+  }
+
+  factory ContentServiceV1UpdateTagRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1UpdateTagRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1UpdateTagRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1UpdateTagRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = ContentServiceV1Tag._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 删除标签
@@ -8271,6 +15019,43 @@ class ContentServiceV1DeleteTagRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory ContentServiceV1DeleteTagRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1DeleteTagRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1DeleteTagRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1DeleteTagRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 用户个人资料服务
@@ -8707,37 +15492,492 @@ class IdentityServiceV1User {
       username: username ?? this.username,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: tenantId
+    final f2 = tenantId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: tenantName
+    final f3 = tenantName;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: orgUnitId
+    final f4 = orgUnitId;
+    if (f4 != null) {
+      w.writeUint32(4, f4!);
+    }
+    // field 5: orgUnitIds
+    final f5 = orgUnitIds;
+    if (f5 != null) {
+      w.writePackedVarintList(5, f5!);
+    }
+    // field 6: orgUnitName
+    final f6 = orgUnitName;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 7: orgUnitNames
+    final f7 = orgUnitNames;
+    if (f7 != null) {
+      w.writeStringList(7, f7!);
+    }
+    // field 8: positionId
+    final f8 = positionId;
+    if (f8 != null) {
+      w.writeUint32(8, f8!);
+    }
+    // field 9: positionIds
+    final f9 = positionIds;
+    if (f9 != null) {
+      w.writePackedVarintList(9, f9!);
+    }
+    // field 10: positionName
+    final f10 = positionName;
+    if (f10 != null) {
+      w.writeString(10, f10!);
+    }
+    // field 11: positionNames
+    final f11 = positionNames;
+    if (f11 != null) {
+      w.writeStringList(11, f11!);
+    }
+    // field 12: roleId
+    final f12 = roleId;
+    if (f12 != null) {
+      w.writeUint32(12, f12!);
+    }
+    // field 13: roleIds
+    final f13 = roleIds;
+    if (f13 != null) {
+      w.writePackedVarintList(13, f13!);
+    }
+    // field 14: roles
+    final f14 = roles;
+    if (f14 != null) {
+      w.writeStringList(14, f14!);
+    }
+    // field 15: roleNames
+    final f15 = roleNames;
+    if (f15 != null) {
+      w.writeStringList(15, f15!);
+    }
+    // field 20: username
+    final f20 = username;
+    if (f20 != null) {
+      w.writeString(20, f20!);
+    }
+    // field 21: nickname
+    final f21 = nickname;
+    if (f21 != null) {
+      w.writeString(21, f21!);
+    }
+    // field 22: realname
+    final f22 = realname;
+    if (f22 != null) {
+      w.writeString(22, f22!);
+    }
+    // field 23: avatar
+    final f23 = avatar;
+    if (f23 != null) {
+      w.writeString(23, f23!);
+    }
+    // field 24: email
+    final f24 = email;
+    if (f24 != null) {
+      w.writeString(24, f24!);
+    }
+    // field 25: mobile
+    final f25 = mobile;
+    if (f25 != null) {
+      w.writeString(25, f25!);
+    }
+    // field 26: telephone
+    final f26 = telephone;
+    if (f26 != null) {
+      w.writeString(26, f26!);
+    }
+    // field 27: gender
+    final f27 = gender;
+    if (f27 != null) {
+      w.writeEnum(27, f27!.wire); // IdentityServiceV1User$Gender
+    }
+    // field 28: address
+    final f28 = address;
+    if (f28 != null) {
+      w.writeString(28, f28!);
+    }
+    // field 29: region
+    final f29 = region;
+    if (f29 != null) {
+      w.writeString(29, f29!);
+    }
+    // field 30: description
+    final f30 = description;
+    if (f30 != null) {
+      w.writeString(30, f30!);
+    }
+    // field 31: remark
+    final f31 = remark;
+    if (f31 != null) {
+      w.writeString(31, f31!);
+    }
+    // field 50: lastLoginAt
+    final f50 = lastLoginAt;
+    if (f50 != null) {
+      w.writeTimestamp(50, f50!);
+    }
+    // field 51: lastLoginIp
+    final f51 = lastLoginIp;
+    if (f51 != null) {
+      w.writeString(51, f51!);
+    }
+    // field 52: status
+    final f52 = status;
+    if (f52 != null) {
+      w.writeEnum(52, f52!.wire); // IdentityServiceV1User$Status
+    }
+    // field 53: lockedUntil
+    final f53 = lockedUntil;
+    if (f53 != null) {
+      w.writeTimestamp(53, f53!);
+    }
+    // field 80: followers
+    final f80 = followers;
+    if (f80 != null) {
+      w.writeUint64(80, f80!);
+    }
+    // field 81: following
+    final f81 = following;
+    if (f81 != null) {
+      w.writeUint64(81, f81!);
+    }
+    // field 90: postCount
+    final f90 = postCount;
+    if (f90 != null) {
+      w.writeUint64(90, f90!);
+    }
+    // field 91: commentCount
+    final f91 = commentCount;
+    if (f91 != null) {
+      w.writeUint64(91, f91!);
+    }
+    // field 92: likeCount
+    final f92 = likeCount;
+    if (f92 != null) {
+      w.writeUint64(92, f92!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory IdentityServiceV1User.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1User._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1User _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1User();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: tenantId
+        case 2: {
+          m.tenantId = r.readUint32();
+          break;
+        }
+        // field 3: tenantName
+        case 3: {
+          m.tenantName = r.readString();
+          break;
+        }
+        // field 4: orgUnitId
+        case 4: {
+          m.orgUnitId = r.readUint32();
+          break;
+        }
+        // field 5: orgUnitIds
+        case 5: {
+          m.orgUnitIds = r.readVarintList();
+          break;
+        }
+        // field 6: orgUnitName
+        case 6: {
+          m.orgUnitName = r.readString();
+          break;
+        }
+        // field 7: orgUnitNames
+        case 7: {
+          m.orgUnitNames = r.readStringList();
+          break;
+        }
+        // field 8: positionId
+        case 8: {
+          m.positionId = r.readUint32();
+          break;
+        }
+        // field 9: positionIds
+        case 9: {
+          m.positionIds = r.readVarintList();
+          break;
+        }
+        // field 10: positionName
+        case 10: {
+          m.positionName = r.readString();
+          break;
+        }
+        // field 11: positionNames
+        case 11: {
+          m.positionNames = r.readStringList();
+          break;
+        }
+        // field 12: roleId
+        case 12: {
+          m.roleId = r.readUint32();
+          break;
+        }
+        // field 13: roleIds
+        case 13: {
+          m.roleIds = r.readVarintList();
+          break;
+        }
+        // field 14: roles
+        case 14: {
+          m.roles = r.readStringList();
+          break;
+        }
+        // field 15: roleNames
+        case 15: {
+          m.roleNames = r.readStringList();
+          break;
+        }
+        // field 20: username
+        case 20: {
+          m.username = r.readString();
+          break;
+        }
+        // field 21: nickname
+        case 21: {
+          m.nickname = r.readString();
+          break;
+        }
+        // field 22: realname
+        case 22: {
+          m.realname = r.readString();
+          break;
+        }
+        // field 23: avatar
+        case 23: {
+          m.avatar = r.readString();
+          break;
+        }
+        // field 24: email
+        case 24: {
+          m.email = r.readString();
+          break;
+        }
+        // field 25: mobile
+        case 25: {
+          m.mobile = r.readString();
+          break;
+        }
+        // field 26: telephone
+        case 26: {
+          m.telephone = r.readString();
+          break;
+        }
+        // field 27: gender
+        case 27: {
+          m.gender = IdentityServiceV1User$Gender.fromWire(r.readEnum());
+          break;
+        }
+        // field 28: address
+        case 28: {
+          m.address = r.readString();
+          break;
+        }
+        // field 29: region
+        case 29: {
+          m.region = r.readString();
+          break;
+        }
+        // field 30: description
+        case 30: {
+          m.description = r.readString();
+          break;
+        }
+        // field 31: remark
+        case 31: {
+          m.remark = r.readString();
+          break;
+        }
+        // field 50: lastLoginAt
+        case 50: {
+          m.lastLoginAt = r.readTimestampIso();
+          break;
+        }
+        // field 51: lastLoginIp
+        case 51: {
+          m.lastLoginIp = r.readString();
+          break;
+        }
+        // field 52: status
+        case 52: {
+          m.status = IdentityServiceV1User$Status.fromWire(r.readEnum());
+          break;
+        }
+        // field 53: lockedUntil
+        case 53: {
+          m.lockedUntil = r.readTimestampIso();
+          break;
+        }
+        // field 80: followers
+        case 80: {
+          m.followers = r.readUint64();
+          break;
+        }
+        // field 81: following
+        case 81: {
+          m.following = r.readUint64();
+          break;
+        }
+        // field 90: postCount
+        case 90: {
+          m.postCount = r.readUint64();
+          break;
+        }
+        // field 91: commentCount
+        case 91: {
+          m.commentCount = r.readUint64();
+          break;
+        }
+        // field 92: likeCount
+        case 92: {
+          m.likeCount = r.readUint64();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 用户性别
 enum IdentityServiceV1User$Gender {
-  female('FEMALE'),
-  male('MALE'),
-  secret('SECRET');
+  female('FEMALE', 2),
+  male('MALE', 1),
+  secret('SECRET', 0);
 
   final String value;
-  const IdentityServiceV1User$Gender(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const IdentityServiceV1User$Gender(this.value, this.wire);
 
   static IdentityServiceV1User$Gender fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Gender value: ' + v));
+  static IdentityServiceV1User$Gender fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Gender wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 用户状态
 enum IdentityServiceV1User$Status {
-  closed('CLOSED'),
-  disabled('DISABLED'),
-  expired('EXPIRED'),
-  locked('LOCKED'),
-  normal('NORMAL'),
-  pending('PENDING');
+  closed('CLOSED', 9),
+  disabled('DISABLED', 0),
+  expired('EXPIRED', 4),
+  locked('LOCKED', 3),
+  normal('NORMAL', 1),
+  pending('PENDING', 2);
 
   final String value;
-  const IdentityServiceV1User$Status(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const IdentityServiceV1User$Status(this.value, this.wire);
 
   static IdentityServiceV1User$Status fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Status value: ' + v));
+  static IdentityServiceV1User$Status fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Status wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -8821,6 +16061,83 @@ class IdentityServiceV1UpdateUserRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1User
+    }
+    // field 3: password
+    final f3 = password;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: updateMask
+    final f4 = updateMask;
+    if (f4 != null) {
+      w.writeFieldMask(4, f4!);
+    }
+    // field 5: allowMissing
+    final f5 = allowMissing;
+    if (f5 != null) {
+      w.writeBool(5, f5!);
+    }
+  }
+
+  factory IdentityServiceV1UpdateUserRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1UpdateUserRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1UpdateUserRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1UpdateUserRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = IdentityServiceV1User._readFrom(r.readNested());
+          break;
+        }
+        // field 3: password
+        case 3: {
+          m.password = r.readString();
+          break;
+        }
+        // field 4: updateMask
+        case 4: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 5: allowMissing
+        case 5: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 修改用户密码（需要验证旧密码） - 请求
@@ -8876,6 +16193,53 @@ class IdentityServiceV1ChangePasswordRequest {
       oldPassword: oldPassword ?? this.oldPassword,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: oldPassword
+    final f1 = oldPassword;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: newPassword
+    final f2 = newPassword;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory IdentityServiceV1ChangePasswordRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1ChangePasswordRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1ChangePasswordRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1ChangePasswordRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: oldPassword
+        case 1: {
+          m.oldPassword = r.readString();
+          break;
+        }
+        // field 2: newPassword
+        case 2: {
+          m.newPassword = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1BindContactRequest {
@@ -8930,6 +16294,53 @@ class IdentityServiceV1BindContactRequest {
       phone: phone ?? this.phone,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1BindPhoneRequest
+    }
+    // field 2: email
+    final f2 = email;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1BindEmailRequest
+    }
+  }
+
+  factory IdentityServiceV1BindContactRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1BindContactRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1BindContactRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1BindContactRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = IdentityServiceV1BindPhoneRequest._readFrom(r.readNested());
+          break;
+        }
+        // field 2: email
+        case 2: {
+          m.email = IdentityServiceV1BindEmailRequest._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1BindPhoneRequest {
@@ -8984,6 +16395,53 @@ class IdentityServiceV1BindPhoneRequest {
       phone: phone ?? this.phone,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory IdentityServiceV1BindPhoneRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1BindPhoneRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1BindPhoneRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1BindPhoneRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = r.readString();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1BindEmailRequest {
@@ -9038,6 +16496,53 @@ class IdentityServiceV1BindEmailRequest {
       verificationCode: verificationCode ?? this.verificationCode,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: email
+    final f1 = email;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: verificationCode
+    final f2 = verificationCode;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory IdentityServiceV1BindEmailRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1BindEmailRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1BindEmailRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1BindEmailRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: email
+        case 1: {
+          m.email = r.readString();
+          break;
+        }
+        // field 2: verificationCode
+        case 2: {
+          m.verificationCode = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1VerifyContactRequest {
@@ -9101,6 +16606,63 @@ class IdentityServiceV1VerifyContactRequest {
       verificationId: verificationId ?? this.verificationId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1PhoneVerification
+    }
+    // field 2: email
+    final f2 = email;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1EmailVerification
+    }
+    // field 3: verificationId
+    final f3 = verificationId;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+  }
+
+  factory IdentityServiceV1VerifyContactRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1VerifyContactRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1VerifyContactRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1VerifyContactRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = IdentityServiceV1PhoneVerification._readFrom(r.readNested());
+          break;
+        }
+        // field 2: email
+        case 2: {
+          m.email = IdentityServiceV1EmailVerification._readFrom(r.readNested());
+          break;
+        }
+        // field 3: verificationId
+        case 3: {
+          m.verificationId = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 手机验证
@@ -9158,6 +16720,53 @@ class IdentityServiceV1PhoneVerification {
       phone: phone ?? this.phone,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory IdentityServiceV1PhoneVerification.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1PhoneVerification._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1PhoneVerification _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1PhoneVerification();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = r.readString();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 邮箱验证
@@ -9215,6 +16824,53 @@ class IdentityServiceV1EmailVerification {
       email: email ?? this.email,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: email
+    final f1 = email;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory IdentityServiceV1EmailVerification.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1EmailVerification._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1EmailVerification _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1EmailVerification();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: email
+        case 1: {
+          m.email = r.readString();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class ApiClient {

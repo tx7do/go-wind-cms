@@ -68,6 +68,9 @@ managed:
     - file_option: go_package
       path: ai/service/v1
       value: go-wind-cms/api/gen/go/ai/service/v1;aipb
+    - file_option: go_package
+      path: social/service/v1
+      value: go-wind-cms/api/gen/go/social/service/v1;socialpb
 
 plugins:
   # generate go code

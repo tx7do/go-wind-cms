@@ -161,6 +161,7 @@ func NewRestServer(
 	navigationItemService *service.NavigationItemService,
 
 	mediaAssetService *service.MediaAssetService,
+	socialService *service.SocialService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) *http.Server {
@@ -232,6 +233,7 @@ func NewRestServer(
 	adminV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
 	adminV1.RegisterTagServiceHTTPServer(srv, tagService)
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
+	adminV1.RegisterSocialServiceHTTPServer(srv, socialService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
 	adminV1.RegisterStatsServiceHTTPServer(srv, statsService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)

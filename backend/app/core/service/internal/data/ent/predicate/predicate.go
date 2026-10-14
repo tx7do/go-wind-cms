@@ -195,6 +195,12 @@ type Site func(*sql.Selector)
 // SiteSetting is the predicate function for sitesetting builders.
 type SiteSetting func(*sql.Selector)
 
+// SocialAccount is the predicate function for socialaccount builders.
+type SocialAccount func(*sql.Selector)
+
+// SocialDistribution is the predicate function for socialdistribution builders.
+type SocialDistribution func(*sql.Selector)
+
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)
 

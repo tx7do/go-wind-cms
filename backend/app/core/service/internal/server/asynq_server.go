@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -56,6 +56,34 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 
 	// 注册帖子语义索引任务：帖子增删改后同步 AI 全局搜索索引。
 	if err = asynq.RegisterSubscriber(srv, task.AiPostIndexTaskType, aiContentService.IndexPostWorker); err != nil {
+		log.Error(err)
+	}
+
+	// 注册社交分发发布任务：到点发布到社交平台并回写状态（详见 social_service.go 状态机）。
+	if err = asynq.RegisterSubscriber(srv, task.SocialDistributionPublishTaskType, socialService.PublishDistributionWorker); err != nil {
+		log.Error(err)
+	}
+
+	// 注册文章定时发布任务：到点把 SCHEDULED 文章转正为 PUBLISHED 并刷新索引
+	//（修复前端承诺"到点自动发布"但后端无执行器的既有缺口）。
+	if err = asynq.RegisterSubscriber(srv, task.PostPublishTaskType, postService.PublishScheduledPostWorker); err != nil {
+		log.Error(err)
+	}
+
+	// 周期兜底扫描（每分钟）：DELAY 任务在 Redis 丢失/崩溃窗口内可能静默消失，
+	// 到期未处理的 SCHEDULED 记录由此重新入队；worker 幂等，重复入队无害。
+	if _, err = srv.NewPeriodicTask("*/1 * * * *", task.PostPublishSweepTaskType, &task.PublishSweepPayload{}); err != nil {
+		log.Error(err)
+	}
+	if _, err = srv.NewPeriodicTask("*/1 * * * *", task.SocialPublishSweepTaskType, &task.PublishSweepPayload{}); err != nil {
+		log.Error(err)
+	}
+
+	// 注册社交统计周期回拉（每 30 分钟）：批量刷新近 30 天内已发布分发的互动快照。
+	if err = asynq.RegisterSubscriber(srv, task.SocialStatsSyncTaskType, socialService.StatsSyncWorker); err != nil {
+		log.Error(err)
+	}
+	if _, err = srv.NewPeriodicTask("*/30 * * * *", task.SocialStatsSyncTaskType, &task.StatsSyncPayload{}); err != nil {
 		log.Error(err)
 	}
 

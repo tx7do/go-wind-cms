@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package social.service.v1;
+
+import "errors/errors.proto";
+
+// 社交分发错误定义
+enum SocialErrorReason {
+  option (errors.default_code) = 500;
+
+  // 400
+  BAD_REQUEST = 0 [(errors.code) = 400]; // 错误请求
+
+  // 401
+  UNAUTHORIZED = 100 [(errors.code) = 401]; // 未授权
+
+  // 403
+  FORBIDDEN = 300 [(errors.code) = 403]; // 禁止访问
+
+  // 404
+  NOT_FOUND = 400 [(errors.code) = 404]; // 找不到资源
+
+  // 409
+  CONFLICT = 900 [(errors.code) = 409]; // 冲突
+
+  // 429
+  TOO_MANY_REQUESTS = 1160 [(errors.code) = 429]; // 请求过多（平台限流）
+
+  // 500
+  INTERNAL_SERVER_ERROR = 2000 [(errors.code) = 500]; // 内部服务器错误
+
+  // 502
+  BAD_GATEWAY = 2200 [(errors.code) = 502]; // 平台网关错误
+
+  // ── 域专属 ──
+
+  // 400
+  PLATFORM_UNSUPPORTED = 4000 [(errors.code) = 400];   // 不支持的平台
+  CREDENTIALS_INVALID = 4001 [(errors.code) = 400];    // 平台凭据无效（认证失败）
+  CREDENTIALS_MISSING = 4002 [(errors.code) = 400];    // 平台凭据缺失
+
+  // 404
+  ACCOUNT_NOT_FOUND = 4100 [(errors.code) = 404];      // 社交账号不存在
+
+  // 409
+  ACCOUNT_DISABLED = 4200 [(errors.code) = 409];       // 社交账号已停用
+  NOT_PUBLISHABLE = 4201 [(errors.code) = 409];        // 当前状态不可发布/重试
+  CONTENT_TOO_LONG = 4202 [(errors.code) = 409];       // 文案超出平台长度限制
+
+  // 502
+  PLATFORM_ERROR = 4300 [(errors.code) = 502];         // 平台 API 返回错误
+}

@@ -74,6 +74,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
+	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
+	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -221,6 +223,10 @@ type Client struct {
 	Site *SiteClient
 	// SiteSetting is the client for interacting with the SiteSetting builders.
 	SiteSetting *SiteSettingClient
+	// SocialAccount is the client for interacting with the SocialAccount builders.
+	SocialAccount *SocialAccountClient
+	// SocialDistribution is the client for interacting with the SocialDistribution builders.
+	SocialDistribution *SocialDistributionClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TagTranslation is the client for interacting with the TagTranslation builders.
@@ -313,6 +319,8 @@ func (c *Client) init() {
 	c.SectionTranslation = NewSectionTranslationClient(c.config)
 	c.Site = NewSiteClient(c.config)
 	c.SiteSetting = NewSiteSettingClient(c.config)
+	c.SocialAccount = NewSocialAccountClient(c.config)
+	c.SocialDistribution = NewSocialDistributionClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.TagTranslation = NewTagTranslationClient(c.config)
 	c.Task = NewTaskClient(c.config)
@@ -477,6 +485,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SectionTranslation:         NewSectionTranslationClient(cfg),
 		Site:                       NewSiteClient(cfg),
 		SiteSetting:                NewSiteSettingClient(cfg),
+		SocialAccount:              NewSocialAccountClient(cfg),
+		SocialDistribution:         NewSocialDistributionClient(cfg),
 		Tag:                        NewTagClient(cfg),
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
@@ -568,6 +578,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SectionTranslation:         NewSectionTranslationClient(cfg),
 		Site:                       NewSiteClient(cfg),
 		SiteSetting:                NewSiteSettingClient(cfg),
+		SocialAccount:              NewSocialAccountClient(cfg),
+		SocialDistribution:         NewSocialDistributionClient(cfg),
 		Tag:                        NewTagClient(cfg),
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
@@ -620,8 +632,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
 		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
 		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.SocialAccount, c.SocialDistribution, c.Tag, c.TagTranslation, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -645,8 +657,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
 		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
 		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.SocialAccount, c.SocialDistribution, c.Tag, c.TagTranslation, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -781,6 +793,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Site.mutate(ctx, m)
 	case *SiteSettingMutation:
 		return c.SiteSetting.mutate(ctx, m)
+	case *SocialAccountMutation:
+		return c.SocialAccount.mutate(ctx, m)
+	case *SocialDistributionMutation:
+		return c.SocialDistribution.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *TagTranslationMutation:
@@ -9658,6 +9674,274 @@ func (c *SiteSettingClient) mutate(ctx context.Context, m *SiteSettingMutation) 
 	}
 }
 
+// SocialAccountClient is a client for the SocialAccount schema.
+type SocialAccountClient struct {
+	config
+}
+
+// NewSocialAccountClient returns a client for the SocialAccount from the given config.
+func NewSocialAccountClient(c config) *SocialAccountClient {
+	return &SocialAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `socialaccount.Hooks(f(g(h())))`.
+func (c *SocialAccountClient) Use(hooks ...Hook) {
+	c.hooks.SocialAccount = append(c.hooks.SocialAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `socialaccount.Intercept(f(g(h())))`.
+func (c *SocialAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SocialAccount = append(c.inters.SocialAccount, interceptors...)
+}
+
+// Create returns a builder for creating a SocialAccount entity.
+func (c *SocialAccountClient) Create() *SocialAccountCreate {
+	mutation := newSocialAccountMutation(c.config, OpCreate)
+	return &SocialAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SocialAccount entities.
+func (c *SocialAccountClient) CreateBulk(builders ...*SocialAccountCreate) *SocialAccountCreateBulk {
+	return &SocialAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SocialAccountClient) MapCreateBulk(slice any, setFunc func(*SocialAccountCreate, int)) *SocialAccountCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SocialAccountCreateBulk{err: fmt.Errorf("calling to SocialAccountClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SocialAccountCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SocialAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SocialAccount.
+func (c *SocialAccountClient) Update() *SocialAccountUpdate {
+	mutation := newSocialAccountMutation(c.config, OpUpdate)
+	return &SocialAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SocialAccountClient) UpdateOne(_m *SocialAccount) *SocialAccountUpdateOne {
+	mutation := newSocialAccountMutation(c.config, OpUpdateOne, withSocialAccount(_m))
+	return &SocialAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SocialAccountClient) UpdateOneID(id uint32) *SocialAccountUpdateOne {
+	mutation := newSocialAccountMutation(c.config, OpUpdateOne, withSocialAccountID(id))
+	return &SocialAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SocialAccount.
+func (c *SocialAccountClient) Delete() *SocialAccountDelete {
+	mutation := newSocialAccountMutation(c.config, OpDelete)
+	return &SocialAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SocialAccountClient) DeleteOne(_m *SocialAccount) *SocialAccountDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SocialAccountClient) DeleteOneID(id uint32) *SocialAccountDeleteOne {
+	builder := c.Delete().Where(socialaccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SocialAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for SocialAccount.
+func (c *SocialAccountClient) Query() *SocialAccountQuery {
+	return &SocialAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSocialAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SocialAccount entity by its id.
+func (c *SocialAccountClient) Get(ctx context.Context, id uint32) (*SocialAccount, error) {
+	return c.Query().Where(socialaccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SocialAccountClient) GetX(ctx context.Context, id uint32) *SocialAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SocialAccountClient) Hooks() []Hook {
+	hooks := c.hooks.SocialAccount
+	return append(hooks[:len(hooks):len(hooks)], socialaccount.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *SocialAccountClient) Interceptors() []Interceptor {
+	return c.inters.SocialAccount
+}
+
+func (c *SocialAccountClient) mutate(ctx context.Context, m *SocialAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SocialAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SocialAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SocialAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SocialAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SocialAccount mutation op: %q", m.Op())
+	}
+}
+
+// SocialDistributionClient is a client for the SocialDistribution schema.
+type SocialDistributionClient struct {
+	config
+}
+
+// NewSocialDistributionClient returns a client for the SocialDistribution from the given config.
+func NewSocialDistributionClient(c config) *SocialDistributionClient {
+	return &SocialDistributionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `socialdistribution.Hooks(f(g(h())))`.
+func (c *SocialDistributionClient) Use(hooks ...Hook) {
+	c.hooks.SocialDistribution = append(c.hooks.SocialDistribution, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `socialdistribution.Intercept(f(g(h())))`.
+func (c *SocialDistributionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SocialDistribution = append(c.inters.SocialDistribution, interceptors...)
+}
+
+// Create returns a builder for creating a SocialDistribution entity.
+func (c *SocialDistributionClient) Create() *SocialDistributionCreate {
+	mutation := newSocialDistributionMutation(c.config, OpCreate)
+	return &SocialDistributionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SocialDistribution entities.
+func (c *SocialDistributionClient) CreateBulk(builders ...*SocialDistributionCreate) *SocialDistributionCreateBulk {
+	return &SocialDistributionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SocialDistributionClient) MapCreateBulk(slice any, setFunc func(*SocialDistributionCreate, int)) *SocialDistributionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SocialDistributionCreateBulk{err: fmt.Errorf("calling to SocialDistributionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SocialDistributionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SocialDistributionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SocialDistribution.
+func (c *SocialDistributionClient) Update() *SocialDistributionUpdate {
+	mutation := newSocialDistributionMutation(c.config, OpUpdate)
+	return &SocialDistributionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SocialDistributionClient) UpdateOne(_m *SocialDistribution) *SocialDistributionUpdateOne {
+	mutation := newSocialDistributionMutation(c.config, OpUpdateOne, withSocialDistribution(_m))
+	return &SocialDistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SocialDistributionClient) UpdateOneID(id uint32) *SocialDistributionUpdateOne {
+	mutation := newSocialDistributionMutation(c.config, OpUpdateOne, withSocialDistributionID(id))
+	return &SocialDistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SocialDistribution.
+func (c *SocialDistributionClient) Delete() *SocialDistributionDelete {
+	mutation := newSocialDistributionMutation(c.config, OpDelete)
+	return &SocialDistributionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SocialDistributionClient) DeleteOne(_m *SocialDistribution) *SocialDistributionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SocialDistributionClient) DeleteOneID(id uint32) *SocialDistributionDeleteOne {
+	builder := c.Delete().Where(socialdistribution.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SocialDistributionDeleteOne{builder}
+}
+
+// Query returns a query builder for SocialDistribution.
+func (c *SocialDistributionClient) Query() *SocialDistributionQuery {
+	return &SocialDistributionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSocialDistribution},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SocialDistribution entity by its id.
+func (c *SocialDistributionClient) Get(ctx context.Context, id uint32) (*SocialDistribution, error) {
+	return c.Query().Where(socialdistribution.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SocialDistributionClient) GetX(ctx context.Context, id uint32) *SocialDistribution {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SocialDistributionClient) Hooks() []Hook {
+	hooks := c.hooks.SocialDistribution
+	return append(hooks[:len(hooks):len(hooks)], socialdistribution.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *SocialDistributionClient) Interceptors() []Interceptor {
+	return c.inters.SocialDistribution
+}
+
+func (c *SocialDistributionClient) mutate(ctx context.Context, m *SocialDistributionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SocialDistributionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SocialDistributionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SocialDistributionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SocialDistributionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SocialDistribution mutation op: %q", m.Op())
+	}
+}
+
 // TagClient is a client for the Tag schema.
 type TagClient struct {
 	config
@@ -10878,8 +11162,9 @@ type (
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
 		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, Tag, TagTranslation, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
+		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution, Tag,
+		TagTranslation, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Hook
 	}
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
@@ -10894,7 +11179,8 @@ type (
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
 		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, Tag, TagTranslation, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution, Tag,
+		TagTranslation, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Interceptor
 	}
 )

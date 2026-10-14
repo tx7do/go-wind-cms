@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -10,12 +11,20 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-crud/viewer"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
+	appViewer "go-wind-cms/pkg/entgo/viewer"
 
 	"go-wind-cms/app/core/service/internal/data"
 	"go-wind-cms/pkg/task"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
+
+// postPublishRescheduleTolerance 定时发布的改期容差：
+// 旧任务到点时若 publish_time 已被推迟超过该窗口则自弃（与 social 分发同款语义）。
+const postPublishRescheduleTolerance = 2 * time.Minute
 
 type PostService struct {
 	contentV1.UnimplementedPostServiceServer
@@ -122,6 +131,11 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 	// best-effort：失败仅记日志，不回滚 DB；漏掉的文档由周期 ReindexAll 修复。
 	s.enqueuePostReindex(ctx, dto.GetId(), "index")
 
+	// 定时发布钩子：SCHEDULED 落库后入队到点转正任务（失败显式报错）。
+	if err := s.enqueueScheduledPublish(dto); err != nil {
+		return nil, err
+	}
+
 	return dto, nil
 }
 
@@ -152,6 +166,11 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 
 	// 双写钩子：更新后入队 ES 重索引（worker 会从 DB 取最新数据 upsert ES）。
 	s.enqueuePostReindex(ctx, dto.GetId(), "index")
+
+	// 定时发布钩子：以 SCHEDULED 终态保存（含改期）时重新入队到点转正任务。
+	if err := s.enqueueScheduledPublish(dto); err != nil {
+		return nil, err
+	}
 
 	return dto, nil
 }
@@ -270,4 +289,119 @@ func (s *PostService) enqueuePostReindex(ctx context.Context, postID uint32, op 
 	}); err != nil {
 		s.log.Errorf("enqueue ai post index failed (post_id=%d op=%s): %v", postID, op, err)
 	}
+}
+
+// enqueueScheduledPublish 文章保存后的定时发布钩子：终态为 SCHEDULED 时入队
+// post.publish 任务（publish_time 在未来按时刻 DELAY，为空或已过立即执行）。
+//
+// 每次以 SCHEDULED 状态保存都会重新入队；改期后旧任务到点自检
+// publish_time 已被推迟则自弃，不会双发（详见 PublishScheduledPostWorker）。
+// 入队失败返回错误：文章已落库为 SCHEDULED 而无任务执行等于永远不发布，
+// 不能像 reindex 那样静默（没有周期兜底）；调用方据此向用户报错。
+func (s *PostService) enqueueScheduledPublish(post *contentV1.Post) error {
+	if post == nil || post.GetStatus() != contentV1.Post_POST_STATUS_SCHEDULED {
+		return nil
+	}
+
+	var at time.Time
+	if pt := post.GetPublishTime(); pt != nil && pt.IsValid() {
+		at = pt.AsTime()
+		if !at.After(time.Now()) {
+			at = time.Time{} // 排期已过 → 立即转正
+		}
+	}
+
+	if err := s.taskService.EnqueuePostPublish(&task.PostPublishPayload{
+		PostID: post.GetId(),
+	}, at); err != nil {
+		s.log.Errorf("schedule post publish failed (post=%d): %v", post.GetId(), err)
+		return contentV1.ErrorInternalServerError("schedule post publish failed")
+	}
+	return nil
+}
+
+// PublishScheduledPostWorker 是 asynq "post.publish" 任务的 handler：
+// 把到点的 SCHEDULED 文章流转为 PUBLISHED，并复用既有双写钩子刷新 ES/AI 索引。
+//
+// 幂等与自弃规则：
+//   - 状态已非 SCHEDULED（已发布/退回草稿）→ 跳过
+//   - publish_time 仍晚于 now+容差（改期后的旧任务）→ 自弃，由新任务执行
+//   - 转正失败返回 err 交 asynq 重试
+func (s *PostService) PublishScheduledPostWorker(taskType string, payload *task.PostPublishPayload) error {
+	if payload == nil || payload.PostID == 0 {
+		s.log.Warnf("post publish worker: nil payload")
+		return nil
+	}
+	s.log.Infof("post publish worker: post=%d tenant=%d", payload.PostID, payload.TenantID)
+
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+
+	post, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+		QueryBy: &contentV1.GetPostRequest_Id{Id: payload.PostID},
+	})
+	if err != nil {
+		s.log.Errorf("post publish worker: post %d not loadable: %v", payload.PostID, err)
+		return nil // 文章不存在/已删：不重试
+	}
+
+	if post.GetStatus() != contentV1.Post_POST_STATUS_SCHEDULED {
+		s.log.Infof("post publish worker: post %d status=%s (not scheduled), skip",
+			payload.PostID, post.GetStatus())
+		return nil
+	}
+	if pt := post.GetPublishTime(); pt != nil && pt.IsValid() &&
+		pt.AsTime().After(time.Now().Add(postPublishRescheduleTolerance)) {
+		s.log.Infof("post publish worker: post %d rescheduled to %s, skip stale task",
+			payload.PostID, pt.AsTime())
+		return nil
+	}
+
+	// 转正：走 repo.Update（与手动发布同一条写入路径），再复用双写钩子刷索引。
+	// publish_time 缺失时补为当前时间，避免 C 端按发布时间排序/展示拿到空值。
+	updateMask := []string{"status"}
+	data := &contentV1.Post{Status: trans.Ptr(contentV1.Post_POST_STATUS_PUBLISHED)}
+	if post.GetPublishTime() == nil {
+		data.PublishTime = timestamppb.Now()
+		updateMask = append(updateMask, "publishTime")
+	}
+
+	updated, err := s.postRepo.Update(ctx, &contentV1.UpdatePostRequest{
+		Id:         payload.PostID,
+		Data:       data,
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: updateMask},
+	})
+	if err != nil {
+		s.log.Errorf("post publish worker: publish post %d failed: %v", payload.PostID, err)
+		return err // 暂时性失败：asynq 重试
+	}
+
+	// 状态变化影响 ES/AI 索引可见性（C 端只查 PUBLISHED），复用既有重索引链。
+	s.enqueuePostReindex(ctx, payload.PostID, "index")
+
+	s.log.Infof("post publish worker: post %d published (publishTime=%s)",
+		payload.PostID, updated.GetPublishTime())
+	return nil
+}
+
+// PublishSweepWorker 是 asynq "post.scheduled.sweep" 周期任务的 handler：
+// 兜底扫描到期（publish_time 为空或已过）仍未转正的 SCHEDULED 文章并重新入队。
+// DELAY 任务在 Redis 丢失/崩溃窗口内可能静默消失，本扫描是自愈网；
+// 重新入队的任务仍走 PublishScheduledPostWorker 的状态自检，重复入队无害。
+func (s *PostService) PublishSweepWorker(taskType string, payload *task.PublishSweepPayload) error {
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+
+	ids, err := s.postRepo.ListDueScheduledPostIDs(ctx, time.Now())
+	if err != nil {
+		s.log.Errorf("post publish sweep: list due posts failed: %v", err)
+		return err
+	}
+	for _, id := range ids {
+		if err := s.taskService.EnqueuePostPublish(&task.PostPublishPayload{PostID: id}, time.Time{}); err != nil {
+			s.log.Errorf("post publish sweep: re-enqueue post %d failed: %v", id, err)
+		}
+	}
+	if len(ids) != 0 {
+		s.log.Infof("post publish sweep: re-enqueued %d due scheduled posts", len(ids))
+	}
+	return nil
 }

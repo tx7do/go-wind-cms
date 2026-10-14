@@ -67,6 +67,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
+	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
+	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -85,7 +87,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 72)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 74)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   aichunk.Table,
@@ -1825,6 +1827,68 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[63] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   socialaccount.Table,
+			Columns: socialaccount.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: socialaccount.FieldID,
+			},
+		},
+		Type: "SocialAccount",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			socialaccount.FieldCreatedAt:      {Type: field.TypeTime, Column: socialaccount.FieldCreatedAt},
+			socialaccount.FieldUpdatedAt:      {Type: field.TypeTime, Column: socialaccount.FieldUpdatedAt},
+			socialaccount.FieldDeletedAt:      {Type: field.TypeTime, Column: socialaccount.FieldDeletedAt},
+			socialaccount.FieldCreatedBy:      {Type: field.TypeUint32, Column: socialaccount.FieldCreatedBy},
+			socialaccount.FieldUpdatedBy:      {Type: field.TypeUint32, Column: socialaccount.FieldUpdatedBy},
+			socialaccount.FieldDeletedBy:      {Type: field.TypeUint32, Column: socialaccount.FieldDeletedBy},
+			socialaccount.FieldIsEnabled:      {Type: field.TypeBool, Column: socialaccount.FieldIsEnabled},
+			socialaccount.FieldTenantID:       {Type: field.TypeUint32, Column: socialaccount.FieldTenantID},
+			socialaccount.FieldPlatform:       {Type: field.TypeEnum, Column: socialaccount.FieldPlatform},
+			socialaccount.FieldName:           {Type: field.TypeString, Column: socialaccount.FieldName},
+			socialaccount.FieldHandle:         {Type: field.TypeString, Column: socialaccount.FieldHandle},
+			socialaccount.FieldCredentials:    {Type: field.TypeString, Column: socialaccount.FieldCredentials},
+			socialaccount.FieldCredentialHint: {Type: field.TypeString, Column: socialaccount.FieldCredentialHint},
+			socialaccount.FieldRemark:         {Type: field.TypeString, Column: socialaccount.FieldRemark},
+		},
+	}
+	graph.Nodes[64] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   socialdistribution.Table,
+			Columns: socialdistribution.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: socialdistribution.FieldID,
+			},
+		},
+		Type: "SocialDistribution",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			socialdistribution.FieldCreatedAt:     {Type: field.TypeTime, Column: socialdistribution.FieldCreatedAt},
+			socialdistribution.FieldUpdatedAt:     {Type: field.TypeTime, Column: socialdistribution.FieldUpdatedAt},
+			socialdistribution.FieldDeletedAt:     {Type: field.TypeTime, Column: socialdistribution.FieldDeletedAt},
+			socialdistribution.FieldCreatedBy:     {Type: field.TypeUint32, Column: socialdistribution.FieldCreatedBy},
+			socialdistribution.FieldUpdatedBy:     {Type: field.TypeUint32, Column: socialdistribution.FieldUpdatedBy},
+			socialdistribution.FieldDeletedBy:     {Type: field.TypeUint32, Column: socialdistribution.FieldDeletedBy},
+			socialdistribution.FieldTenantID:      {Type: field.TypeUint32, Column: socialdistribution.FieldTenantID},
+			socialdistribution.FieldPlatform:      {Type: field.TypeEnum, Column: socialdistribution.FieldPlatform},
+			socialdistribution.FieldAccountID:     {Type: field.TypeUint32, Column: socialdistribution.FieldAccountID},
+			socialdistribution.FieldPostID:        {Type: field.TypeUint32, Column: socialdistribution.FieldPostID},
+			socialdistribution.FieldOverrideText:  {Type: field.TypeString, Column: socialdistribution.FieldOverrideText},
+			socialdistribution.FieldStatus:        {Type: field.TypeEnum, Column: socialdistribution.FieldStatus},
+			socialdistribution.FieldPublishTime:   {Type: field.TypeTime, Column: socialdistribution.FieldPublishTime},
+			socialdistribution.FieldPublishedAt:   {Type: field.TypeTime, Column: socialdistribution.FieldPublishedAt},
+			socialdistribution.FieldExternalURI:   {Type: field.TypeString, Column: socialdistribution.FieldExternalURI},
+			socialdistribution.FieldExternalID:    {Type: field.TypeString, Column: socialdistribution.FieldExternalID},
+			socialdistribution.FieldErrorMessage:  {Type: field.TypeString, Column: socialdistribution.FieldErrorMessage},
+			socialdistribution.FieldTitle:         {Type: field.TypeString, Column: socialdistribution.FieldTitle},
+			socialdistribution.FieldLikes:         {Type: field.TypeUint32, Column: socialdistribution.FieldLikes},
+			socialdistribution.FieldReplies:       {Type: field.TypeUint32, Column: socialdistribution.FieldReplies},
+			socialdistribution.FieldReposts:       {Type: field.TypeUint32, Column: socialdistribution.FieldReposts},
+			socialdistribution.FieldStatsSyncedAt: {Type: field.TypeTime, Column: socialdistribution.FieldStatsSyncedAt},
+		},
+	}
+	graph.Nodes[65] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tag.Table,
 			Columns: tag.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -1851,7 +1915,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tag.FieldPostCount:  {Type: field.TypeUint32, Column: tag.FieldPostCount},
 		},
 	}
-	graph.Nodes[64] = &sqlgraph.Node{
+	graph.Nodes[66] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tagtranslation.Table,
 			Columns: tagtranslation.Columns,
@@ -1879,7 +1943,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tagtranslation.FieldFullPath:     {Type: field.TypeString, Column: tagtranslation.FieldFullPath},
 		},
 	}
-	graph.Nodes[65] = &sqlgraph.Node{
+	graph.Nodes[67] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   task.Table,
 			Columns: task.Columns,
@@ -1906,7 +1970,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			task.FieldEnable:      {Type: field.TypeBool, Column: task.FieldEnable},
 		},
 	}
-	graph.Nodes[66] = &sqlgraph.Node{
+	graph.Nodes[68] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tenant.Table,
 			Columns: tenant.Columns,
@@ -1939,7 +2003,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tenant.FieldExpiredAt:        {Type: field.TypeTime, Column: tenant.FieldExpiredAt},
 		},
 	}
-	graph.Nodes[67] = &sqlgraph.Node{
+	graph.Nodes[69] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -1975,7 +2039,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldStatus:      {Type: field.TypeEnum, Column: user.FieldStatus},
 		},
 	}
-	graph.Nodes[68] = &sqlgraph.Node{
+	graph.Nodes[70] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usercredential.Table,
 			Columns: usercredential.Columns,
@@ -2008,7 +2072,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usercredential.FieldResetTokenUsedAt:       {Type: field.TypeTime, Column: usercredential.FieldResetTokenUsedAt},
 		},
 	}
-	graph.Nodes[69] = &sqlgraph.Node{
+	graph.Nodes[71] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userorgunit.Table,
 			Columns: userorgunit.Columns,
@@ -2038,7 +2102,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userorgunit.FieldStatus:     {Type: field.TypeEnum, Column: userorgunit.FieldStatus},
 		},
 	}
-	graph.Nodes[70] = &sqlgraph.Node{
+	graph.Nodes[72] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userposition.Table,
 			Columns: userposition.Columns,
@@ -2067,7 +2131,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userposition.FieldStatus:     {Type: field.TypeEnum, Column: userposition.FieldStatus},
 		},
 	}
-	graph.Nodes[71] = &sqlgraph.Node{
+	graph.Nodes[73] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userrole.Table,
 			Columns: userrole.Columns,
@@ -9891,6 +9955,266 @@ func (f *SiteSettingFilter) WhereValidationRegex(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (_q *SocialAccountQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SocialAccountQuery builder.
+func (_q *SocialAccountQuery) Filter() *SocialAccountFilter {
+	return &SocialAccountFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SocialAccountMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SocialAccountMutation builder.
+func (m *SocialAccountMutation) Filter() *SocialAccountFilter {
+	return &SocialAccountFilter{config: m.config, predicateAdder: m}
+}
+
+// SocialAccountFilter provides a generic filtering capability at runtime for SocialAccountQuery.
+type SocialAccountFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SocialAccountFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[63].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SocialAccountFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(socialaccount.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *SocialAccountFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(socialaccount.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *SocialAccountFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(socialaccount.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *SocialAccountFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(socialaccount.FieldDeletedAt))
+}
+
+// WhereCreatedBy applies the entql uint32 predicate on the created_by field.
+func (f *SocialAccountFilter) WhereCreatedBy(p entql.Uint32P) {
+	f.Where(p.Field(socialaccount.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql uint32 predicate on the updated_by field.
+func (f *SocialAccountFilter) WhereUpdatedBy(p entql.Uint32P) {
+	f.Where(p.Field(socialaccount.FieldUpdatedBy))
+}
+
+// WhereDeletedBy applies the entql uint32 predicate on the deleted_by field.
+func (f *SocialAccountFilter) WhereDeletedBy(p entql.Uint32P) {
+	f.Where(p.Field(socialaccount.FieldDeletedBy))
+}
+
+// WhereIsEnabled applies the entql bool predicate on the is_enabled field.
+func (f *SocialAccountFilter) WhereIsEnabled(p entql.BoolP) {
+	f.Where(p.Field(socialaccount.FieldIsEnabled))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *SocialAccountFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(socialaccount.FieldTenantID))
+}
+
+// WherePlatform applies the entql string predicate on the platform field.
+func (f *SocialAccountFilter) WherePlatform(p entql.StringP) {
+	f.Where(p.Field(socialaccount.FieldPlatform))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *SocialAccountFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(socialaccount.FieldName))
+}
+
+// WhereHandle applies the entql string predicate on the handle field.
+func (f *SocialAccountFilter) WhereHandle(p entql.StringP) {
+	f.Where(p.Field(socialaccount.FieldHandle))
+}
+
+// WhereCredentials applies the entql string predicate on the credentials field.
+func (f *SocialAccountFilter) WhereCredentials(p entql.StringP) {
+	f.Where(p.Field(socialaccount.FieldCredentials))
+}
+
+// WhereCredentialHint applies the entql string predicate on the credential_hint field.
+func (f *SocialAccountFilter) WhereCredentialHint(p entql.StringP) {
+	f.Where(p.Field(socialaccount.FieldCredentialHint))
+}
+
+// WhereRemark applies the entql string predicate on the remark field.
+func (f *SocialAccountFilter) WhereRemark(p entql.StringP) {
+	f.Where(p.Field(socialaccount.FieldRemark))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *SocialDistributionQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SocialDistributionQuery builder.
+func (_q *SocialDistributionQuery) Filter() *SocialDistributionFilter {
+	return &SocialDistributionFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SocialDistributionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SocialDistributionMutation builder.
+func (m *SocialDistributionMutation) Filter() *SocialDistributionFilter {
+	return &SocialDistributionFilter{config: m.config, predicateAdder: m}
+}
+
+// SocialDistributionFilter provides a generic filtering capability at runtime for SocialDistributionQuery.
+type SocialDistributionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SocialDistributionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[64].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SocialDistributionFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *SocialDistributionFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(socialdistribution.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *SocialDistributionFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(socialdistribution.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *SocialDistributionFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(socialdistribution.FieldDeletedAt))
+}
+
+// WhereCreatedBy applies the entql uint32 predicate on the created_by field.
+func (f *SocialDistributionFilter) WhereCreatedBy(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql uint32 predicate on the updated_by field.
+func (f *SocialDistributionFilter) WhereUpdatedBy(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldUpdatedBy))
+}
+
+// WhereDeletedBy applies the entql uint32 predicate on the deleted_by field.
+func (f *SocialDistributionFilter) WhereDeletedBy(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldDeletedBy))
+}
+
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *SocialDistributionFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldTenantID))
+}
+
+// WherePlatform applies the entql string predicate on the platform field.
+func (f *SocialDistributionFilter) WherePlatform(p entql.StringP) {
+	f.Where(p.Field(socialdistribution.FieldPlatform))
+}
+
+// WhereAccountID applies the entql uint32 predicate on the account_id field.
+func (f *SocialDistributionFilter) WhereAccountID(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldAccountID))
+}
+
+// WherePostID applies the entql uint32 predicate on the post_id field.
+func (f *SocialDistributionFilter) WherePostID(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldPostID))
+}
+
+// WhereOverrideText applies the entql string predicate on the override_text field.
+func (f *SocialDistributionFilter) WhereOverrideText(p entql.StringP) {
+	f.Where(p.Field(socialdistribution.FieldOverrideText))
+}
+
+// WhereStatus applies the entql string predicate on the status field.
+func (f *SocialDistributionFilter) WhereStatus(p entql.StringP) {
+	f.Where(p.Field(socialdistribution.FieldStatus))
+}
+
+// WherePublishTime applies the entql time.Time predicate on the publish_time field.
+func (f *SocialDistributionFilter) WherePublishTime(p entql.TimeP) {
+	f.Where(p.Field(socialdistribution.FieldPublishTime))
+}
+
+// WherePublishedAt applies the entql time.Time predicate on the published_at field.
+func (f *SocialDistributionFilter) WherePublishedAt(p entql.TimeP) {
+	f.Where(p.Field(socialdistribution.FieldPublishedAt))
+}
+
+// WhereExternalURI applies the entql string predicate on the external_uri field.
+func (f *SocialDistributionFilter) WhereExternalURI(p entql.StringP) {
+	f.Where(p.Field(socialdistribution.FieldExternalURI))
+}
+
+// WhereExternalID applies the entql string predicate on the external_id field.
+func (f *SocialDistributionFilter) WhereExternalID(p entql.StringP) {
+	f.Where(p.Field(socialdistribution.FieldExternalID))
+}
+
+// WhereErrorMessage applies the entql string predicate on the error_message field.
+func (f *SocialDistributionFilter) WhereErrorMessage(p entql.StringP) {
+	f.Where(p.Field(socialdistribution.FieldErrorMessage))
+}
+
+// WhereTitle applies the entql string predicate on the title field.
+func (f *SocialDistributionFilter) WhereTitle(p entql.StringP) {
+	f.Where(p.Field(socialdistribution.FieldTitle))
+}
+
+// WhereLikes applies the entql uint32 predicate on the likes field.
+func (f *SocialDistributionFilter) WhereLikes(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldLikes))
+}
+
+// WhereReplies applies the entql uint32 predicate on the replies field.
+func (f *SocialDistributionFilter) WhereReplies(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldReplies))
+}
+
+// WhereReposts applies the entql uint32 predicate on the reposts field.
+func (f *SocialDistributionFilter) WhereReposts(p entql.Uint32P) {
+	f.Where(p.Field(socialdistribution.FieldReposts))
+}
+
+// WhereStatsSyncedAt applies the entql time.Time predicate on the stats_synced_at field.
+func (f *SocialDistributionFilter) WhereStatsSyncedAt(p entql.TimeP) {
+	f.Where(p.Field(socialdistribution.FieldStatsSyncedAt))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (_q *TagQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
 }
@@ -9919,7 +10243,7 @@ type TagFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TagFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[63].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[65].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10034,7 +10358,7 @@ type TagTranslationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TagTranslationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[64].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[66].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10149,7 +10473,7 @@ type TaskFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TaskFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[65].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[67].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10259,7 +10583,7 @@ type TenantFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TenantFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[66].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[68].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10399,7 +10723,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[67].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[69].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10554,7 +10878,7 @@ type UserCredentialFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserCredentialFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[68].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[70].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10694,7 +11018,7 @@ type UserOrgUnitFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserOrgUnitFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[69].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[71].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10819,7 +11143,7 @@ type UserPositionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserPositionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[70].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[72].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -10939,7 +11263,7 @@ type UserRoleFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserRoleFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[71].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[73].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

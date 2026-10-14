@@ -403,6 +403,26 @@ func (r *PostRepo) fillAuthorNames(ctx context.Context, dtos []*contentV1.Post) 
 	}
 }
 
+// ListDueScheduledPostIDs 兜底扫描用：到期（publish_time 为空或已过）仍未转正的
+// SCHEDULED 文章 ID。SystemViewer 上下文调用（跨租户扫描）。
+func (r *PostRepo) ListDueScheduledPostIDs(ctx context.Context, now time.Time) ([]uint32, error) {
+	ids, err := r.entClient.Client().Post.Query().
+		Where(
+			post.StatusEQ(post.StatusPostStatusScheduled),
+			post.Or(
+				post.PublishTimeIsNil(),
+				post.PublishTimeLTE(now),
+			),
+		).
+		Select(post.FieldID).
+		IDs(ctx)
+	if err != nil {
+		r.log.Errorf("list due scheduled posts failed: %s", err.Error())
+		return nil, err
+	}
+	return ids, nil
+}
+
 func (r *PostRepo) Get(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.Post, error) {
 	if req == nil {
 		return nil, contentV1.ErrorBadRequest("invalid parameter")

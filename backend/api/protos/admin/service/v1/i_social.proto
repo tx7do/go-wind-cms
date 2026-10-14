@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "social/service/v1/social.proto";
+
+// 社交分发服务（管理面）
+service SocialService {
+  // ── 社交账号 ──
+
+  // 获取社交账号列表
+  rpc ListSocialAccounts (pagination.PagingRequest) returns (social.service.v1.ListSocialAccountsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/social/accounts"
+    };
+  }
+
+  // 获取社交账号数据
+  rpc GetSocialAccount (social.service.v1.GetSocialAccountRequest) returns (social.service.v1.SocialAccount) {
+    option (google.api.http) = {
+      get: "/admin/v1/social/accounts/{id}"
+    };
+  }
+
+  // 创建社交账号（服务端验证凭据并加密落库）
+  rpc CreateSocialAccount (social.service.v1.CreateSocialAccountRequest) returns (social.service.v1.SocialAccount) {
+    option (google.api.http) = {
+      post: "/admin/v1/social/accounts"
+      body: "*"
+    };
+  }
+
+  // 更新社交账号
+  rpc UpdateSocialAccount (social.service.v1.UpdateSocialAccountRequest) returns (social.service.v1.SocialAccount) {
+    option (google.api.http) = {
+      put: "/admin/v1/social/accounts/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除社交账号
+  rpc DeleteSocialAccount (social.service.v1.DeleteSocialAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/social/accounts/{id}"
+    };
+  }
+
+  // ── 内容分发 ──
+
+  // 获取分发记录列表
+  rpc ListSocialDistributions (pagination.PagingRequest) returns (social.service.v1.ListSocialDistributionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/social/distributions"
+    };
+  }
+
+  // 获取分发记录数据
+  rpc GetSocialDistribution (social.service.v1.GetSocialDistributionRequest) returns (social.service.v1.SocialDistribution) {
+    option (google.api.http) = {
+      get: "/admin/v1/social/distributions/{id}"
+    };
+  }
+
+  // 创建分发记录（排期或立即发布）
+  rpc CreateSocialDistribution (social.service.v1.CreateSocialDistributionRequest) returns (social.service.v1.SocialDistribution) {
+    option (google.api.http) = {
+      post: "/admin/v1/social/distributions"
+      body: "*"
+    };
+  }
+
+  // 更新分发记录
+  rpc UpdateSocialDistribution (social.service.v1.UpdateSocialDistributionRequest) returns (social.service.v1.SocialDistribution) {
+    option (google.api.http) = {
+      put: "/admin/v1/social/distributions/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除分发记录
+  rpc DeleteSocialDistribution (social.service.v1.DeleteSocialDistributionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/social/distributions/{id}"
+    };
+  }
+
+  // 立即发布分发记录
+  rpc PublishSocialDistribution (social.service.v1.PublishSocialDistributionRequest) returns (social.service.v1.SocialDistribution) {
+    option (google.api.http) = {
+      post: "/admin/v1/social/distributions/{id}/publish"
+      body: "*"
+    };
+  }
+
+  // 回拉分发记录的平台互动统计
+  rpc RefreshSocialDistributionStats (social.service.v1.RefreshSocialDistributionStatsRequest) returns (social.service.v1.SocialDistribution) {
+    option (google.api.http) = {
+      post: "/admin/v1/social/distributions/{id}/stats/refresh"
+      body: "*"
+    };
+  }
+}

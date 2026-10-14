@@ -23,6 +23,7 @@ require (
 	github.com/minio/minio-go/v7 v7.2.1
 	github.com/opensearch-project/opensearch-go/v4 v4.6.0
 	github.com/redis/go-redis/v9 v9.22.0
+	github.com/sashabaranov/go-openai v1.41.2
 	github.com/stretchr/testify v1.11.1
 	github.com/tx7do/go-crud/api v0.0.7
 	github.com/tx7do/go-crud/entgo v0.0.52
@@ -34,6 +35,7 @@ require (
 	github.com/tx7do/go-utils/captcha v0.0.4
 	github.com/tx7do/go-utils/copierutil v0.0.8
 	github.com/tx7do/go-utils/crypto v0.0.2
+	github.com/tx7do/go-utils/doctext v0.1.0
 	github.com/tx7do/go-utils/geoip v1.1.8
 	github.com/tx7do/go-utils/id v0.0.6
 	github.com/tx7do/go-utils/jwtutil v0.0.3
@@ -41,6 +43,7 @@ require (
 	github.com/tx7do/go-utils/password v0.0.2
 	github.com/tx7do/go-utils/slug v0.0.1
 	github.com/tx7do/go-utils/translator v1.1.3
+	github.com/tx7do/go-wind-plugins/ai/openai v0.0.1
 	github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062
 	github.com/tx7do/kratos-authn v1.1.11
 	github.com/tx7do/kratos-authn/engine/jwt v1.1.11
@@ -66,6 +69,7 @@ require (
 	github.com/tx7do/kratos-transport/transport/asynq v1.3.13
 	github.com/tx7do/kratos-transport/transport/sse v1.3.8
 	github.com/xiaoqidun/entps v1.56.0
+	github.com/xuri/excelize/v2 v2.9.1
 	github.com/yuin/gopher-lua v1.1.2
 	go.etcd.io/etcd/client/v3 v3.7.1
 	go.opentelemetry.io/otel/trace v1.45.0
@@ -191,7 +195,6 @@ require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
-	github.com/sashabaranov/go-openai v1.41.2 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/shirou/gopsutil/v3 v3.24.5 // indirect
@@ -210,9 +213,7 @@ require (
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/tx7do/go-crud/audit v0.0.2 // indirect
 	github.com/tx7do/go-crud/cache v0.0.1 // indirect
-	github.com/tx7do/go-utils/doctext v0.1.0 // indirect
 	github.com/tx7do/go-wind v0.0.2 // indirect
-	github.com/tx7do/go-wind-plugins/ai/openai v0.0.1 // indirect
 	github.com/tx7do/go-wind-plugins/encoding v0.0.1 // indirect
 	github.com/tx7do/go-wind-plugins/encoding/json v0.0.1 // indirect
 	github.com/tx7do/kratos-transport/tracing v1.1.2 // indirect
@@ -228,7 +229,6 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xuri/efp v0.0.1 // indirect
-	github.com/xuri/excelize/v2 v2.9.1 // indirect
 	github.com/xuri/nfp v0.0.1 // indirect
 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect

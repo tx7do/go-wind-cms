@@ -69,6 +69,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
+	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
+	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -2017,6 +2019,72 @@ func init() {
 	sitesettingDescID := sitesettingMixinFields0[0].Descriptor()
 	// sitesetting.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	sitesetting.IDValidator = sitesettingDescID.Validators[0].(func(uint32) error)
+	socialaccountMixin := schema.SocialAccount{}.Mixin()
+	socialaccount.Policy = privacy.NewPolicies(socialaccountMixin[4], schema.SocialAccount{})
+	socialaccount.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := socialaccount.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	socialaccountMixinFields0 := socialaccountMixin[0].Fields()
+	_ = socialaccountMixinFields0
+	socialaccountMixinFields3 := socialaccountMixin[3].Fields()
+	_ = socialaccountMixinFields3
+	socialaccountMixinFields4 := socialaccountMixin[4].Fields()
+	_ = socialaccountMixinFields4
+	socialaccountFields := schema.SocialAccount{}.Fields()
+	_ = socialaccountFields
+	// socialaccountDescIsEnabled is the schema descriptor for is_enabled field.
+	socialaccountDescIsEnabled := socialaccountMixinFields3[0].Descriptor()
+	// socialaccount.DefaultIsEnabled holds the default value on creation for the is_enabled field.
+	socialaccount.DefaultIsEnabled = socialaccountDescIsEnabled.Default.(bool)
+	// socialaccountDescTenantID is the schema descriptor for tenant_id field.
+	socialaccountDescTenantID := socialaccountMixinFields4[0].Descriptor()
+	// socialaccount.DefaultTenantID holds the default value on creation for the tenant_id field.
+	socialaccount.DefaultTenantID = socialaccountDescTenantID.Default.(uint32)
+	// socialaccountDescID is the schema descriptor for id field.
+	socialaccountDescID := socialaccountMixinFields0[0].Descriptor()
+	// socialaccount.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	socialaccount.IDValidator = socialaccountDescID.Validators[0].(func(uint32) error)
+	socialdistributionMixin := schema.SocialDistribution{}.Mixin()
+	socialdistribution.Policy = privacy.NewPolicies(socialdistributionMixin[3], schema.SocialDistribution{})
+	socialdistribution.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := socialdistribution.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	socialdistributionMixinFields0 := socialdistributionMixin[0].Fields()
+	_ = socialdistributionMixinFields0
+	socialdistributionMixinFields3 := socialdistributionMixin[3].Fields()
+	_ = socialdistributionMixinFields3
+	socialdistributionFields := schema.SocialDistribution{}.Fields()
+	_ = socialdistributionFields
+	// socialdistributionDescTenantID is the schema descriptor for tenant_id field.
+	socialdistributionDescTenantID := socialdistributionMixinFields3[0].Descriptor()
+	// socialdistribution.DefaultTenantID holds the default value on creation for the tenant_id field.
+	socialdistribution.DefaultTenantID = socialdistributionDescTenantID.Default.(uint32)
+	// socialdistributionDescLikes is the schema descriptor for likes field.
+	socialdistributionDescLikes := socialdistributionFields[11].Descriptor()
+	// socialdistribution.DefaultLikes holds the default value on creation for the likes field.
+	socialdistribution.DefaultLikes = socialdistributionDescLikes.Default.(uint32)
+	// socialdistributionDescReplies is the schema descriptor for replies field.
+	socialdistributionDescReplies := socialdistributionFields[12].Descriptor()
+	// socialdistribution.DefaultReplies holds the default value on creation for the replies field.
+	socialdistribution.DefaultReplies = socialdistributionDescReplies.Default.(uint32)
+	// socialdistributionDescReposts is the schema descriptor for reposts field.
+	socialdistributionDescReposts := socialdistributionFields[13].Descriptor()
+	// socialdistribution.DefaultReposts holds the default value on creation for the reposts field.
+	socialdistribution.DefaultReposts = socialdistributionDescReposts.Default.(uint32)
+	// socialdistributionDescID is the schema descriptor for id field.
+	socialdistributionDescID := socialdistributionMixinFields0[0].Descriptor()
+	// socialdistribution.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	socialdistribution.IDValidator = socialdistributionDescID.Validators[0].(func(uint32) error)
 	tagMixin := schema.Tag{}.Mixin()
 	tag.Policy = privacy.NewPolicies(tagMixin[4], schema.Tag{})
 	tag.Hooks[0] = func(next ent.Mutator) ent.Mutator {

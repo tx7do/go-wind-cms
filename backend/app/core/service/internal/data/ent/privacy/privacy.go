@@ -1623,6 +1623,54 @@ func (f SiteSettingMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SiteSettingMutation", m)
 }
 
+// The SocialAccountQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SocialAccountQueryRuleFunc func(context.Context, *ent.SocialAccountQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SocialAccountQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SocialAccountQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SocialAccountQuery", q)
+}
+
+// The SocialAccountMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SocialAccountMutationRuleFunc func(context.Context, *ent.SocialAccountMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SocialAccountMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SocialAccountMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SocialAccountMutation", m)
+}
+
+// The SocialDistributionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SocialDistributionQueryRuleFunc func(context.Context, *ent.SocialDistributionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SocialDistributionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SocialDistributionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SocialDistributionQuery", q)
+}
+
+// The SocialDistributionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SocialDistributionMutationRuleFunc func(context.Context, *ent.SocialDistributionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SocialDistributionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SocialDistributionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SocialDistributionMutation", m)
+}
+
 // The TagQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type TagQueryRuleFunc func(context.Context, *ent.TagQuery) error
@@ -2000,6 +2048,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.SiteSettingQuery:
 		return q.Filter(), nil
+	case *ent.SocialAccountQuery:
+		return q.Filter(), nil
+	case *ent.SocialDistributionQuery:
+		return q.Filter(), nil
 	case *ent.TagQuery:
 		return q.Filter(), nil
 	case *ent.TagTranslationQuery:
@@ -2150,6 +2202,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.SiteMutation:
 		return m.Filter(), nil
 	case *ent.SiteSettingMutation:
+		return m.Filter(), nil
+	case *ent.SocialAccountMutation:
+		return m.Filter(), nil
+	case *ent.SocialDistributionMutation:
 		return m.Filter(), nil
 	case *ent.TagMutation:
 		return m.Filter(), nil

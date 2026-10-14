@@ -625,3 +625,62 @@ func (s *TaskService) EnqueueAiDocReindex(baseID uint32) error {
 	s.log.Infof("enqueued ai doc reindex (base=%d)", baseID)
 	return nil
 }
+
+// EnqueueSocialDistributionPublish 入队一个社交分发发布任务。
+//
+// 与重索引类任务的 best-effort 不同：发布是用户显式动作，调度器未注入时
+// 返回错误（否则 SCHEDULED 记录会被无声搁置）。
+//
+// processAt 零值表示立即执行；否则精确到该时刻（asynq DELAY 语义）。
+// 重试由 asynq 承担（MaxRetry 3），每次重试前 worker 会把状态回写 FAILED。
+func (s *TaskService) EnqueueSocialDistributionPublish(payload *task.SocialDistributionPublishPayload, processAt time.Time) error {
+	if payload == nil || payload.DistributionID == 0 {
+		return errors.New("nil social distribution publish payload")
+	}
+	if s.taskScheduler == nil {
+		s.log.Errorf("enqueue social publish rejected: task scheduler not available (distribution=%d)",
+			payload.DistributionID)
+		return errors.New("task scheduler not available")
+	}
+
+	opts := []asynq.Option{asynq.MaxRetry(3)}
+	if !processAt.IsZero() {
+		opts = append(opts, asynq.ProcessAt(processAt))
+	}
+
+	if err := s.taskScheduler.NewTask(task.SocialDistributionPublishTaskType, payload, opts...); err != nil {
+		s.log.Errorf("enqueue social publish failed (distribution=%d): %v", payload.DistributionID, err)
+		return err
+	}
+	s.log.Infof("enqueued social publish (distribution=%d processAt=%s)",
+		payload.DistributionID, processAt)
+	return nil
+}
+
+// EnqueuePostPublish 入队一个文章定时发布任务（到点把 SCHEDULED 流转为 PUBLISHED）。
+//
+// 与 social 分发同语义：发布是用户显式动作，调度器未注入时返回错误
+// （否则 SCHEDULED 文章会被无声搁置，前端承诺的"到点自动发布"落空）。
+// processAt 零值表示立即执行。
+func (s *TaskService) EnqueuePostPublish(payload *task.PostPublishPayload, processAt time.Time) error {
+	if payload == nil || payload.PostID == 0 {
+		return errors.New("nil post publish payload")
+	}
+	if s.taskScheduler == nil {
+		s.log.Errorf("enqueue post publish rejected: task scheduler not available (post=%d)",
+			payload.PostID)
+		return errors.New("task scheduler not available")
+	}
+
+	opts := []asynq.Option{asynq.MaxRetry(3)}
+	if !processAt.IsZero() {
+		opts = append(opts, asynq.ProcessAt(processAt))
+	}
+
+	if err := s.taskScheduler.NewTask(task.PostPublishTaskType, payload, opts...); err != nil {
+		s.log.Errorf("enqueue post publish failed (post=%d): %v", payload.PostID, err)
+		return err
+	}
+	s.log.Infof("enqueued post publish (post=%d processAt=%s)", payload.PostID, processAt)
+	return nil
+}

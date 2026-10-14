@@ -764,6 +764,30 @@ func (f SiteSettingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SiteSettingMutation", m)
 }
 
+// The SocialAccountFunc type is an adapter to allow the use of ordinary
+// function as SocialAccount mutator.
+type SocialAccountFunc func(context.Context, *ent.SocialAccountMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SocialAccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SocialAccountMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SocialAccountMutation", m)
+}
+
+// The SocialDistributionFunc type is an adapter to allow the use of ordinary
+// function as SocialDistribution mutator.
+type SocialDistributionFunc func(context.Context, *ent.SocialDistributionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SocialDistributionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SocialDistributionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SocialDistributionMutation", m)
+}
+
 // The TagFunc type is an adapter to allow the use of ordinary
 // function as Tag mutator.
 type TagFunc func(context.Context, *ent.TagMutation) (ent.Value, error)

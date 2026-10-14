@@ -138,6 +138,10 @@ type Tx struct {
 	Site *SiteClient
 	// SiteSetting is the client for interacting with the SiteSetting builders.
 	SiteSetting *SiteSettingClient
+	// SocialAccount is the client for interacting with the SocialAccount builders.
+	SocialAccount *SocialAccountClient
+	// SocialDistribution is the client for interacting with the SocialDistribution builders.
+	SocialDistribution *SocialDistributionClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TagTranslation is the client for interacting with the TagTranslation builders.
@@ -350,6 +354,8 @@ func (tx *Tx) init() {
 	tx.SectionTranslation = NewSectionTranslationClient(tx.config)
 	tx.Site = NewSiteClient(tx.config)
 	tx.SiteSetting = NewSiteSettingClient(tx.config)
+	tx.SocialAccount = NewSocialAccountClient(tx.config)
+	tx.SocialDistribution = NewSocialDistributionClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.TagTranslation = NewTagTranslationClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)

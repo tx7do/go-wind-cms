@@ -23,6 +23,7 @@ import (
 	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
+	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
 
@@ -104,6 +105,8 @@ func NewGrpcServer(
 
 	mediaAssetService *service.MediaAssetService,
 
+	socialService *service.SocialService,
+
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
@@ -180,6 +183,8 @@ func NewGrpcServer(
 	siteV1.RegisterNavigationItemServiceServer(srv, navigationItemService)
 
 	mediaV1.RegisterMediaAssetServiceServer(srv, mediaAssetService)
+
+	socialV1.RegisterSocialServiceServer(srv, socialService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

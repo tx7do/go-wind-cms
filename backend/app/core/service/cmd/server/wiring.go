@@ -1,8 +1,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+
+	pkgcrypto "go-wind-cms/pkg/crypto"
 
 	"go-wind-cms/app/core/service/internal/data"
 	"go-wind-cms/app/core/service/internal/data/client"
@@ -39,6 +44,16 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	}
 
 	// ═══════════════════════ 一、基础设施 ═══════════════════════
+
+	// 全局存储加密器(AES-256-GCM, pkg/crypto):凭据类字段落库加密的总开关。
+	// key 从 ENCRYPTION_KEY 环境变量读取;未配置时降级明文并告警(生产必须配置)。
+	if encKey := os.Getenv("ENCRYPTION_KEY"); encKey != "" {
+		if err := pkgcrypto.InitGlobalEncryptor(encKey, true); err != nil {
+			return nil, nil, err
+		}
+	} else {
+		log.Warnf("ENCRYPTION_KEY not set: credential encryption DISABLED (secrets stored in plaintext)")
+	}
 
 	// 认证基建:令牌缓存 → 认证器
 	authenticatorOption := data.NewAuthenticatorConfig(ctx)
@@ -160,6 +175,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	mediaVariantRepo := data.NewMediaVariantRepo(ctx, entClient)
 	mediaAssetRepo := data.NewMediaAssetRepo(ctx, entClient, mediaVariantRepo)
 
+	// 社交分发
+	socialAccountRepo := data.NewSocialAccountRepo(ctx, entClient)
+	socialDistributionRepo := data.NewSocialDistributionRepo(ctx, entClient)
+
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -233,6 +252,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 媒体
 	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetRepo)
 
+	// 社交分发
+	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, postRepo, taskService)
+
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -260,6 +282,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		contentModelService,
 		siteService, siteSettingService, navigationService, navigationItemService,
 		mediaAssetService,
+		socialService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {
@@ -267,7 +290,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }
