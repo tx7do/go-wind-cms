@@ -13,7 +13,8 @@
     "PLATFORM_WECHAT_OA": "WeChat OA",
     "PLATFORM_NOSTR": "Nostr",
     "PLATFORM_WEIBO": "Weibo",
-    "PLATFORM_LINKEDIN": "LinkedIn"
+    "PLATFORM_LINKEDIN": "LinkedIn",
+    "PLATFORM_METAWEBLOG": "MetaWeblog Blogs"
   },
   "statusMap": {
     "STATUS_DRAFT": "Draft",
@@ -110,7 +111,9 @@
     "thumb_media_id": "Cover media_id",
     "private_key": "Private Key",
     "relays": "Relay List",
-    "access_token": "Access Token"
+    "access_token": "Access Token",
+    "rpc_url": "XML-RPC Endpoint",
+    "password": "Password"
   },
   "helpCred": {
     "server": "e.g. https://mastodon.social or https://example.com",
@@ -121,6 +124,7 @@
     "private_key": "64-char hex or nsec (stored locally, keep it safe)",
     "relays": "Comma-separated relay URLs (wss://…)",
     "access_token": "Platform OAuth2 access token",
-    "app_password": "Application password (not the login password)"
+    "app_password": "Application password (not the login password)",
+    "rpc_url": "e.g. cnblogs https://rpc.cnblogs.com/metaweblog/{blog}; enable MetaWeblog/API access in the blog backend"
   }
 }

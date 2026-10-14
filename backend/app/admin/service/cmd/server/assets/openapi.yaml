@@ -13342,6 +13342,7 @@ components:
                         - PLATFORM_NOSTR
                         - PLATFORM_WEIBO
                         - PLATFORM_LINKEDIN
+                        - PLATFORM_METAWEBLOG
                     type: string
                     description: 社交平台
                     format: enum
@@ -13407,6 +13408,7 @@ components:
                         - PLATFORM_NOSTR
                         - PLATFORM_WEIBO
                         - PLATFORM_LINKEDIN
+                        - PLATFORM_METAWEBLOG
                     type: string
                     description: 社交平台
                     format: enum

@@ -14,6 +14,7 @@ const PLATFORM_COLOR_MAP: Record<string, string> = {
   PLATFORM_NOSTR: 'orange',
   PLATFORM_WEIBO: 'red',
   PLATFORM_LINKEDIN: 'geekblue',
+  PLATFORM_METAWEBLOG: 'gold',
   DEFAULT: 'default',
 };
 
@@ -68,6 +69,11 @@ export const PLATFORM_CREDENTIAL_FIELDS: Record<string, CredentialField[]> = {
   ],
   PLATFORM_WEIBO: [{ key: 'access_token', required: true, secret: true }],
   PLATFORM_LINKEDIN: [{ key: 'access_token', required: true, secret: true }],
+  PLATFORM_METAWEBLOG: [
+    { key: 'rpc_url', required: true, alsoHandle: true },
+    { key: 'username', required: true },
+    { key: 'password', required: true, secret: true },
+  ],
 };
 
 export function getPlatformColor(platform: string): string {

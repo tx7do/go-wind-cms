@@ -13,8 +13,8 @@
 
 #### 社交分发（Social Distribution）
 
-- 社交账号管理：连接 9 个平台——Bluesky / Mastodon / DEV.to / Telegram /
-  WordPress / 微信公众号 / Nostr / 微博 / LinkedIn（多数免开发者审核；微博需
+- 社交账号管理：连接 10 个平台——Bluesky / Mastodon / DEV.to / Telegram /
+  WordPress / 微信公众号 / Nostr / 微博 / LinkedIn / 博客园（MetaWeblog 通用 XML-RPC 适配器，兼覆盖 Typecho 等）（多数免开发者审核；微博需
   应用过审，微信公众号需认证号与 IP 白名单）；凭据保存时同步调用平台验证，
   AES-GCM 加密落库（`enc:` 前缀），读取恒为空、只回脱敏 hint；编辑凭据走
   服务端增量合并（部分更新不丢密钥）。

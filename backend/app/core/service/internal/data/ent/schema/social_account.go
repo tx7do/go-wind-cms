@@ -36,6 +36,7 @@ func (SocialAccount) Fields() []ent.Field {
 				"PlatformNostr", "PLATFORM_NOSTR",
 				"PlatformWeibo", "PLATFORM_WEIBO",
 				"PlatformLinkedin", "PLATFORM_LINKEDIN",
+				"PlatformMetaweblog", "PLATFORM_METAWEBLOG",
 			).
 			Optional().
 			Nillable(),

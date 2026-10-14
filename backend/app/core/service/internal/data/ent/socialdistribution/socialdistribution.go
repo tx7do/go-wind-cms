@@ -124,15 +124,16 @@ type Platform string
 
 // Platform values.
 const (
-	PlatformPlatformBluesky   Platform = "PLATFORM_BLUESKY"
-	PlatformPlatformMastodon  Platform = "PLATFORM_MASTODON"
-	PlatformPlatformDevto     Platform = "PLATFORM_DEVTO"
-	PlatformPlatformTelegram  Platform = "PLATFORM_TELEGRAM"
-	PlatformPlatformWordpress Platform = "PLATFORM_WORDPRESS"
-	PlatformPlatformWechatOa  Platform = "PLATFORM_WECHAT_OA"
-	PlatformPlatformNostr     Platform = "PLATFORM_NOSTR"
-	PlatformPlatformWeibo     Platform = "PLATFORM_WEIBO"
-	PlatformPlatformLinkedin  Platform = "PLATFORM_LINKEDIN"
+	PlatformPlatformBluesky    Platform = "PLATFORM_BLUESKY"
+	PlatformPlatformMastodon   Platform = "PLATFORM_MASTODON"
+	PlatformPlatformDevto      Platform = "PLATFORM_DEVTO"
+	PlatformPlatformTelegram   Platform = "PLATFORM_TELEGRAM"
+	PlatformPlatformWordpress  Platform = "PLATFORM_WORDPRESS"
+	PlatformPlatformWechatOa   Platform = "PLATFORM_WECHAT_OA"
+	PlatformPlatformNostr      Platform = "PLATFORM_NOSTR"
+	PlatformPlatformWeibo      Platform = "PLATFORM_WEIBO"
+	PlatformPlatformLinkedin   Platform = "PLATFORM_LINKEDIN"
+	PlatformPlatformMetaweblog Platform = "PLATFORM_METAWEBLOG"
 )
 
 func (pl Platform) String() string {
@@ -142,7 +143,7 @@ func (pl Platform) String() string {
 // PlatformValidator is a validator for the "platform" field enum values. It is called by the builders before save.
 func PlatformValidator(pl Platform) error {
 	switch pl {
-	case PlatformPlatformBluesky, PlatformPlatformMastodon, PlatformPlatformDevto, PlatformPlatformTelegram, PlatformPlatformWordpress, PlatformPlatformWechatOa, PlatformPlatformNostr, PlatformPlatformWeibo, PlatformPlatformLinkedin:
+	case PlatformPlatformBluesky, PlatformPlatformMastodon, PlatformPlatformDevto, PlatformPlatformTelegram, PlatformPlatformWordpress, PlatformPlatformWechatOa, PlatformPlatformNostr, PlatformPlatformWeibo, PlatformPlatformLinkedin, PlatformPlatformMetaweblog:
 		return nil
 	default:
 		return fmt.Errorf("socialdistribution: invalid enum value for platform field: %q", pl)

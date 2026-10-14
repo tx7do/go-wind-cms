@@ -13,7 +13,8 @@
     "PLATFORM_WECHAT_OA": "微信公众号",
     "PLATFORM_NOSTR": "Nostr",
     "PLATFORM_WEIBO": "微博",
-    "PLATFORM_LINKEDIN": "LinkedIn"
+    "PLATFORM_LINKEDIN": "LinkedIn",
+    "PLATFORM_METAWEBLOG": "博客园 / MetaWeblog"
   },
   "statusMap": {
     "STATUS_DRAFT": "草稿",
@@ -110,7 +111,9 @@
     "thumb_media_id": "封面图 media_id",
     "private_key": "私钥",
     "relays": "Relay 列表",
-    "access_token": "Access Token"
+    "access_token": "Access Token",
+    "rpc_url": "XML-RPC 端点",
+    "password": "密码"
   },
   "helpCred": {
     "server": "如 https://mastodon.social 或 https://example.com",
@@ -121,6 +124,7 @@
     "private_key": "64 位 hex 或 nsec 私钥（仅保存在本机，请妥善保管）",
     "relays": "逗号分隔的 relay 地址（wss://…）",
     "access_token": "平台 OAuth2 access token",
-    "app_password": "应用密码（非登录密码）"
+    "app_password": "应用密码（非登录密码）",
+    "rpc_url": "如博客园 https://rpc.cnblogs.com/metaweblog/{博客名}；需在博客后台开启 MetaWeblog/API 访问"
   }
 }

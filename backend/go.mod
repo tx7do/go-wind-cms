@@ -18,6 +18,7 @@ require (
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/jinzhu/copier v0.4.0
 	github.com/jinzhu/inflection v1.0.0
+	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b
 	github.com/lib/pq v1.12.3
 	github.com/mileusna/useragent v1.3.5
 	github.com/minio/minio-go/v7 v7.2.1

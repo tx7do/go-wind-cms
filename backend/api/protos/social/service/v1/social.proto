@@ -66,6 +66,7 @@ enum Platform {
   PLATFORM_NOSTR = 7;     // Nostr（开放协议，私钥即账户）
   PLATFORM_WEIBO = 8;     // 微博（OAuth2 access token，需应用过审）
   PLATFORM_LINKEDIN = 9;  // LinkedIn 个人动态（OAuth2 access token）
+  PLATFORM_METAWEBLOG = 10; // MetaWeblog 博客（XML-RPC，博客园/Typecho 等）
 }
 
 // 社交账号

@@ -124,7 +124,7 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 
 | Feature | Description |
 |:---|:---|
-| Social Accounts | Connect 9 platforms — Bluesky / Mastodon / DEV.to / Telegram / WordPress / WeChat Official Account / Nostr / Weibo / LinkedIn (most review-free); credentials verified on save, AES-GCM encrypted, only masked hints on read |
+| Social Accounts | Connect 10 platforms — Bluesky / Mastodon / DEV.to / Telegram / WordPress / WeChat Official Account / Nostr / Weibo / LinkedIn / cnblogs via MetaWeblog (most review-free); credentials verified on save, AES-GCM encrypted, only masked hints on read |
 | Content Distribution | Per-platform text & title overrides, scheduled or instant publishing; full state-machine tracking with one-click retry |
 | Publishing Calendar | Calendar/list dual view, monthly schedule overview, click a date to schedule quickly |
 | Engagement Stats | Platform likes/replies/reposts snapshots, instant manual refresh + periodic auto-sync |

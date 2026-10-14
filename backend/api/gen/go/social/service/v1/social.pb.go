@@ -31,30 +31,32 @@ type Platform int32
 
 const (
 	Platform_PLATFORM_UNSPECIFIED Platform = 0
-	Platform_PLATFORM_BLUESKY     Platform = 1 // Bluesky（AT Protocol，App Password 认证）
-	Platform_PLATFORM_MASTODON    Platform = 2 // Mastodon（access token）
-	Platform_PLATFORM_DEVTO       Platform = 3 // DEV.to（API Key）
-	Platform_PLATFORM_TELEGRAM    Platform = 4 // Telegram 频道（Bot Token + chat_id）
-	Platform_PLATFORM_WORDPRESS   Platform = 5 // WordPress（应用密码 Basic Auth）
-	Platform_PLATFORM_WECHAT_OA   Platform = 6 // 微信公众号（AppID/AppSecret，需认证号与 IP 白名单）
-	Platform_PLATFORM_NOSTR       Platform = 7 // Nostr（开放协议，私钥即账户）
-	Platform_PLATFORM_WEIBO       Platform = 8 // 微博（OAuth2 access token，需应用过审）
-	Platform_PLATFORM_LINKEDIN    Platform = 9 // LinkedIn 个人动态（OAuth2 access token）
+	Platform_PLATFORM_BLUESKY     Platform = 1  // Bluesky（AT Protocol，App Password 认证）
+	Platform_PLATFORM_MASTODON    Platform = 2  // Mastodon（access token）
+	Platform_PLATFORM_DEVTO       Platform = 3  // DEV.to（API Key）
+	Platform_PLATFORM_TELEGRAM    Platform = 4  // Telegram 频道（Bot Token + chat_id）
+	Platform_PLATFORM_WORDPRESS   Platform = 5  // WordPress（应用密码 Basic Auth）
+	Platform_PLATFORM_WECHAT_OA   Platform = 6  // 微信公众号（AppID/AppSecret，需认证号与 IP 白名单）
+	Platform_PLATFORM_NOSTR       Platform = 7  // Nostr（开放协议，私钥即账户）
+	Platform_PLATFORM_WEIBO       Platform = 8  // 微博（OAuth2 access token，需应用过审）
+	Platform_PLATFORM_LINKEDIN    Platform = 9  // LinkedIn 个人动态（OAuth2 access token）
+	Platform_PLATFORM_METAWEBLOG  Platform = 10 // MetaWeblog 博客（XML-RPC，博客园/Typecho 等）
 )
 
 // Enum value maps for Platform.
 var (
 	Platform_name = map[int32]string{
-		0: "PLATFORM_UNSPECIFIED",
-		1: "PLATFORM_BLUESKY",
-		2: "PLATFORM_MASTODON",
-		3: "PLATFORM_DEVTO",
-		4: "PLATFORM_TELEGRAM",
-		5: "PLATFORM_WORDPRESS",
-		6: "PLATFORM_WECHAT_OA",
-		7: "PLATFORM_NOSTR",
-		8: "PLATFORM_WEIBO",
-		9: "PLATFORM_LINKEDIN",
+		0:  "PLATFORM_UNSPECIFIED",
+		1:  "PLATFORM_BLUESKY",
+		2:  "PLATFORM_MASTODON",
+		3:  "PLATFORM_DEVTO",
+		4:  "PLATFORM_TELEGRAM",
+		5:  "PLATFORM_WORDPRESS",
+		6:  "PLATFORM_WECHAT_OA",
+		7:  "PLATFORM_NOSTR",
+		8:  "PLATFORM_WEIBO",
+		9:  "PLATFORM_LINKEDIN",
+		10: "PLATFORM_METAWEBLOG",
 	}
 	Platform_value = map[string]int32{
 		"PLATFORM_UNSPECIFIED": 0,
@@ -67,6 +69,7 @@ var (
 		"PLATFORM_NOSTR":       7,
 		"PLATFORM_WEIBO":       8,
 		"PLATFORM_LINKEDIN":    9,
+		"PLATFORM_METAWEBLOG":  10,
 	}
 )
 
@@ -1358,7 +1361,7 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	" PublishSocialDistributionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\"7\n" +
 	"%RefreshSocialDistributionStatsRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id*\xeb\x01\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id*\x84\x02\n" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10PLATFORM_BLUESKY\x10\x01\x12\x15\n" +
@@ -1369,7 +1372,9 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\x12PLATFORM_WECHAT_OA\x10\x06\x12\x12\n" +
 	"\x0ePLATFORM_NOSTR\x10\a\x12\x12\n" +
 	"\x0ePLATFORM_WEIBO\x10\b\x12\x15\n" +
-	"\x11PLATFORM_LINKEDIN\x10\t2\xc5\n" +
+	"\x11PLATFORM_LINKEDIN\x10\t\x12\x17\n" +
+	"\x13PLATFORM_METAWEBLOG\x10\n" +
+	"2\xc5\n" +
 	"\n" +
 	"\rSocialService\x12`\n" +
 	"\x12ListSocialAccounts\x12\x19.pagination.PagingRequest\x1a-.social.service.v1.ListSocialAccountsResponse\"\x00\x12b\n" +
