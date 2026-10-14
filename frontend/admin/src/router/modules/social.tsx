@@ -29,6 +29,17 @@ export const socialRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'social-inbox',
+        path: 'inbox',
+        element: createLazyRoute(() => import('@/pages/app/social/inbox')),
+        meta: {
+          title: 'routes:social-inbox',
+          icon: 'lucide:inbox',
+          order: 3,
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+      },
+      {
         name: 'social-distributions',
         path: 'distributions',
         element: createLazyRoute(() => import('@/pages/app/social/distribution')),

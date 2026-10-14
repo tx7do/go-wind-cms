@@ -2771,3 +2771,779 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RefreshSocialDistributionStatsRequestValidationError{}
+
+// Validate checks the field values on MoveSocialDistributionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MoveSocialDistributionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MoveSocialDistributionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// MoveSocialDistributionRequestMultiError, or nil if none found.
+func (m *MoveSocialDistributionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MoveSocialDistributionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for TargetStatus
+
+	if len(errors) > 0 {
+		return MoveSocialDistributionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// MoveSocialDistributionRequestMultiError is an error wrapping multiple
+// validation errors returned by MoveSocialDistributionRequest.ValidateAll()
+// if the designated constraints aren't met.
+type MoveSocialDistributionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MoveSocialDistributionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MoveSocialDistributionRequestMultiError) AllErrors() []error { return m }
+
+// MoveSocialDistributionRequestValidationError is the validation error
+// returned by MoveSocialDistributionRequest.Validate if the designated
+// constraints aren't met.
+type MoveSocialDistributionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MoveSocialDistributionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MoveSocialDistributionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MoveSocialDistributionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MoveSocialDistributionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MoveSocialDistributionRequestValidationError) ErrorName() string {
+	return "MoveSocialDistributionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MoveSocialDistributionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMoveSocialDistributionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MoveSocialDistributionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MoveSocialDistributionRequestValidationError{}
+
+// Validate checks the field values on SocialInboxItem with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SocialInboxItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SocialInboxItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SocialInboxItemMultiError, or nil if none found.
+func (m *SocialInboxItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SocialInboxItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Platform != nil {
+		// no validation rules for Platform
+	}
+
+	if m.AccountId != nil {
+		// no validation rules for AccountId
+	}
+
+	if m.Type != nil {
+		// no validation rules for Type
+	}
+
+	if m.ExternalId != nil {
+		// no validation rules for ExternalId
+	}
+
+	if m.AuthorName != nil {
+		// no validation rules for AuthorName
+	}
+
+	if m.AuthorHandle != nil {
+		// no validation rules for AuthorHandle
+	}
+
+	if m.Content != nil {
+		// no validation rules for Content
+	}
+
+	if m.Url != nil {
+		// no validation rules for Url
+	}
+
+	if m.OccurredAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetOccurredAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "OccurredAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "OccurredAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetOccurredAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SocialInboxItemValidationError{
+					field:  "OccurredAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.ReadAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetReadAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "ReadAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "ReadAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetReadAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SocialInboxItemValidationError{
+					field:  "ReadAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatedBy != nil {
+		// no validation rules for CreatedBy
+	}
+
+	if m.UpdatedBy != nil {
+		// no validation rules for UpdatedBy
+	}
+
+	if m.DeletedBy != nil {
+		// no validation rules for DeletedBy
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SocialInboxItemValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SocialInboxItemValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SocialInboxItemValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SocialInboxItemValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SocialInboxItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// SocialInboxItemMultiError is an error wrapping multiple validation errors
+// returned by SocialInboxItem.ValidateAll() if the designated constraints
+// aren't met.
+type SocialInboxItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SocialInboxItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SocialInboxItemMultiError) AllErrors() []error { return m }
+
+// SocialInboxItemValidationError is the validation error returned by
+// SocialInboxItem.Validate if the designated constraints aren't met.
+type SocialInboxItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SocialInboxItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SocialInboxItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SocialInboxItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SocialInboxItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SocialInboxItemValidationError) ErrorName() string { return "SocialInboxItemValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SocialInboxItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSocialInboxItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SocialInboxItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SocialInboxItemValidationError{}
+
+// Validate checks the field values on ListSocialInboxRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListSocialInboxRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListSocialInboxRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListSocialInboxRequestMultiError, or nil if none found.
+func (m *ListSocialInboxRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSocialInboxRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.AccountId != nil {
+		// no validation rules for AccountId
+	}
+
+	if m.UnreadOnly != nil {
+		// no validation rules for UnreadOnly
+	}
+
+	if m.Limit != nil {
+		// no validation rules for Limit
+	}
+
+	if len(errors) > 0 {
+		return ListSocialInboxRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListSocialInboxRequestMultiError is an error wrapping multiple validation
+// errors returned by ListSocialInboxRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListSocialInboxRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSocialInboxRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSocialInboxRequestMultiError) AllErrors() []error { return m }
+
+// ListSocialInboxRequestValidationError is the validation error returned by
+// ListSocialInboxRequest.Validate if the designated constraints aren't met.
+type ListSocialInboxRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSocialInboxRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSocialInboxRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSocialInboxRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSocialInboxRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSocialInboxRequestValidationError) ErrorName() string {
+	return "ListSocialInboxRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSocialInboxRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSocialInboxRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSocialInboxRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSocialInboxRequestValidationError{}
+
+// Validate checks the field values on ListSocialInboxResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListSocialInboxResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListSocialInboxResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListSocialInboxResponseMultiError, or nil if none found.
+func (m *ListSocialInboxResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSocialInboxResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListSocialInboxResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListSocialInboxResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListSocialInboxResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for UnreadCount
+
+	if len(errors) > 0 {
+		return ListSocialInboxResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListSocialInboxResponseMultiError is an error wrapping multiple validation
+// errors returned by ListSocialInboxResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListSocialInboxResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSocialInboxResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSocialInboxResponseMultiError) AllErrors() []error { return m }
+
+// ListSocialInboxResponseValidationError is the validation error returned by
+// ListSocialInboxResponse.Validate if the designated constraints aren't met.
+type ListSocialInboxResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSocialInboxResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSocialInboxResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSocialInboxResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSocialInboxResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSocialInboxResponseValidationError) ErrorName() string {
+	return "ListSocialInboxResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSocialInboxResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSocialInboxResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSocialInboxResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSocialInboxResponseValidationError{}
+
+// Validate checks the field values on MarkSocialInboxReadRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MarkSocialInboxReadRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MarkSocialInboxReadRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MarkSocialInboxReadRequestMultiError, or nil if none found.
+func (m *MarkSocialInboxReadRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MarkSocialInboxReadRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return MarkSocialInboxReadRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// MarkSocialInboxReadRequestMultiError is an error wrapping multiple
+// validation errors returned by MarkSocialInboxReadRequest.ValidateAll() if
+// the designated constraints aren't met.
+type MarkSocialInboxReadRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MarkSocialInboxReadRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MarkSocialInboxReadRequestMultiError) AllErrors() []error { return m }
+
+// MarkSocialInboxReadRequestValidationError is the validation error returned
+// by MarkSocialInboxReadRequest.Validate if the designated constraints aren't met.
+type MarkSocialInboxReadRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MarkSocialInboxReadRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MarkSocialInboxReadRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MarkSocialInboxReadRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MarkSocialInboxReadRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MarkSocialInboxReadRequestValidationError) ErrorName() string {
+	return "MarkSocialInboxReadRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MarkSocialInboxReadRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMarkSocialInboxReadRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MarkSocialInboxReadRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MarkSocialInboxReadRequestValidationError{}

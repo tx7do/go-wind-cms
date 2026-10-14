@@ -55,6 +55,15 @@ service SocialService {
   // 获取分发记录的互动统计历史（时间序列，按时间升序，用于趋势图）
   rpc ListSocialDistributionStatsHistory (ListSocialDistributionStatsHistoryRequest) returns (ListSocialDistributionStatsHistoryResponse) {}
 
+  // 移动分发状态（看板拖拽）：仅 草稿↔已排期、失败→草稿/已排期 三类合法流转
+  rpc MoveSocialDistribution (MoveSocialDistributionRequest) returns (SocialDistribution) {}
+
+  // 获取社交收件箱（平台回复/提及回拉）
+  rpc ListSocialInbox (ListSocialInboxRequest) returns (ListSocialInboxResponse) {}
+
+  // 标记收件项已读
+  rpc MarkSocialInboxRead (MarkSocialInboxReadRequest) returns (google.protobuf.Empty) {}
+
   // 获取当前租户的分发汇总指标（KPI 卡片）
   rpc GetSocialDistributionSummary (google.protobuf.Empty) returns (SocialDistributionSummary) {}
 }
@@ -423,4 +432,109 @@ message PublishSocialDistributionRequest {
 // 请求 - 回拉分发记录统计
 message RefreshSocialDistributionStatsRequest {
   uint32 id = 1;
+}
+
+// 请求 - 移动分发状态（看板拖拽）
+message MoveSocialDistributionRequest {
+  uint32 id = 1; // 分发记录ID
+
+  SocialDistribution.Status target_status = 2 [
+    json_name = "targetStatus",
+    (gnostic.openapi.v3.property) = {description: "目标状态（仅 STATUS_DRAFT / STATUS_SCHEDULED）"}
+  ]; // 目标状态
+}
+
+// 社交收件箱条目（平台回复/提及回拉）
+message SocialInboxItem {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "收件项ID"}
+  ]; // 收件项ID
+
+  optional Platform platform = 2 [
+    json_name = "platform",
+    (gnostic.openapi.v3.property) = {description: "社交平台"}
+  ]; // 社交平台
+
+  optional uint32 account_id = 3 [
+    json_name = "accountId",
+    (gnostic.openapi.v3.property) = {description: "关联的社交账号ID"}
+  ]; // 关联的社交账号ID
+
+  optional string type = 4 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {description: "条目类型（REPLY 回复 / MENTION 提及 / LIKE 点赞 / OTHER 其他）"}
+  ]; // 条目类型
+
+  optional string external_id = 5 [
+    json_name = "externalId",
+    (gnostic.openapi.v3.property) = {description: "平台侧条目唯一标识（去重键）"}
+  ]; // 平台侧条目唯一标识
+
+  optional string author_name = 6 [
+    json_name = "authorName",
+    (gnostic.openapi.v3.property) = {description: "作者显示名"}
+  ]; // 作者显示名
+
+  optional string author_handle = 7 [
+    json_name = "authorHandle",
+    (gnostic.openapi.v3.property) = {description: "作者账号标识"}
+  ]; // 作者账号标识
+
+  optional string content = 8 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "内容摘要"}
+  ]; // 内容摘要
+
+  optional string url = 9 [
+    json_name = "url",
+    (gnostic.openapi.v3.property) = {description: "平台侧链接"}
+  ]; // 平台侧链接
+
+  optional google.protobuf.Timestamp occurred_at = 10 [
+    json_name = "occurredAt",
+    (gnostic.openapi.v3.property) = {description: "平台侧发生时间"}
+  ]; // 平台侧发生时间
+
+  optional google.protobuf.Timestamp read_at = 11 [
+    json_name = "readAt",
+    (gnostic.openapi.v3.property) = {description: "标记已读时间"}
+  ]; // 标记已读时间
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}]; // 删除时间
+}
+
+// 请求 - 收件箱列表
+message ListSocialInboxRequest {
+  optional uint32 account_id = 1 [
+    json_name = "accountId",
+    (gnostic.openapi.v3.property) = {description: "按社交账号筛选"}
+  ]; // 按社交账号筛选
+
+  optional bool unread_only = 2 [
+    json_name = "unreadOnly",
+    (gnostic.openapi.v3.property) = {description: "仅看未读"}
+  ]; // 仅看未读
+
+  optional uint32 limit = 3 [
+    json_name = "limit",
+    (gnostic.openapi.v3.property) = {description: "返回条数（缺省 50，至多 200）"}
+  ]; // 返回条数
+}
+
+// 回应 - 收件箱列表
+message ListSocialInboxResponse {
+  repeated SocialInboxItem items = 1;
+  uint64 unread_count = 2;
+}
+
+// 请求 - 标记收件项已读
+message MarkSocialInboxReadRequest {
+  uint32 id = 1; // 收件项ID
 }

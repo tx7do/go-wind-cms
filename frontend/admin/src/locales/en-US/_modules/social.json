@@ -143,5 +143,15 @@
   "mediaIds": "Images",
   "mediaIdsPlaceholder": "Pick images from the media library (up to 4)",
   "helpMediaIds": "Only Telegram/Bluesky/Mastodon/WordPress/Weibo support images; you will be asked to remove them for other platforms",
-  "mediaUnsupported": "This platform does not support images; remove them before publishing"
+  "mediaUnsupported": "This platform does not support images; remove them before publishing",
+  "viewKanban": "Kanban",
+  "kanbanEmpty": "Nothing here",
+  "moveSuccess": "Moved",
+  "moveFailed": "Move failed (status may have changed, refresh)",
+  "moveToPublishedForbidden": "Published is drag-locked; use \"Publish Now\"",
+  "inboxAll": "All",
+  "inboxUnread": "Unread",
+  "inboxEmpty": "No inbox items (Bluesky/Mastodon accounts pull every 15 minutes)",
+  "markRead": "Mark read",
+  "markReadConfirmTitle": "Mark as read?"
 }

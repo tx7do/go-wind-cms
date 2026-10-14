@@ -71,6 +71,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
+	"go-wind-cms/app/core/service/internal/data/ent/socialinboxitem"
 	"go-wind-cms/app/core/service/internal/data/ent/socialstatshistory"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
@@ -2090,6 +2091,30 @@ func init() {
 	socialdistributionDescID := socialdistributionMixinFields0[0].Descriptor()
 	// socialdistribution.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	socialdistribution.IDValidator = socialdistributionDescID.Validators[0].(func(uint32) error)
+	socialinboxitemMixin := schema.SocialInboxItem{}.Mixin()
+	socialinboxitem.Policy = privacy.NewPolicies(socialinboxitemMixin[3], schema.SocialInboxItem{})
+	socialinboxitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := socialinboxitem.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	socialinboxitemMixinFields0 := socialinboxitemMixin[0].Fields()
+	_ = socialinboxitemMixinFields0
+	socialinboxitemMixinFields3 := socialinboxitemMixin[3].Fields()
+	_ = socialinboxitemMixinFields3
+	socialinboxitemFields := schema.SocialInboxItem{}.Fields()
+	_ = socialinboxitemFields
+	// socialinboxitemDescTenantID is the schema descriptor for tenant_id field.
+	socialinboxitemDescTenantID := socialinboxitemMixinFields3[0].Descriptor()
+	// socialinboxitem.DefaultTenantID holds the default value on creation for the tenant_id field.
+	socialinboxitem.DefaultTenantID = socialinboxitemDescTenantID.Default.(uint32)
+	// socialinboxitemDescID is the schema descriptor for id field.
+	socialinboxitemDescID := socialinboxitemMixinFields0[0].Descriptor()
+	// socialinboxitem.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	socialinboxitem.IDValidator = socialinboxitemDescID.Validators[0].(func(uint32) error)
 	socialstatshistoryMixin := schema.SocialStatsHistory{}.Mixin()
 	socialstatshistoryMixinFields0 := socialstatshistoryMixin[0].Fields()
 	_ = socialstatshistoryMixinFields0

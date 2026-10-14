@@ -6414,6 +6414,32 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/social/distributions/{id}/move:
+        post:
+            tags:
+                - SocialService
+            description: 移动分发状态（看板拖拽）
+            operationId: SocialService_MoveSocialDistribution
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/social.service.v1.MoveSocialDistributionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/social.service.v1.SocialDistribution'
     /admin/v1/social/distributions/{id}/publish:
         post:
             tags:
@@ -6491,6 +6517,57 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/social.service.v1.SocialDistribution'
+    /admin/v1/social/inbox:
+        get:
+            tags:
+                - SocialService
+            description: 获取社交收件箱（平台回复/提及回拉）
+            operationId: SocialService_ListSocialInbox
+            parameters:
+                - name: accountId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: unreadOnly
+                  in: query
+                  schema:
+                    type: boolean
+                - name: limit
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/social.service.v1.ListSocialInboxResponse'
+    /admin/v1/social/inbox/{id}/read:
+        post:
+            tags:
+                - SocialService
+            description: 标记收件项已读
+            operationId: SocialService_MarkSocialInboxRead
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/social.service.v1.MarkSocialInboxReadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/social/summary:
         get:
             tags:
@@ -13356,6 +13433,41 @@ components:
                 total:
                     type: string
             description: 回应 - 分发记录列表
+        social.service.v1.ListSocialInboxResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/social.service.v1.SocialInboxItem'
+                unreadCount:
+                    type: string
+            description: 回应 - 收件箱列表
+        social.service.v1.MarkSocialInboxReadRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+            description: 请求 - 标记收件项已读
+        social.service.v1.MoveSocialDistributionRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                targetStatus:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - STATUS_DRAFT
+                        - STATUS_SCHEDULED
+                        - STATUS_PUBLISHING
+                        - STATUS_PUBLISHED
+                        - STATUS_FAILED
+                    type: string
+                    description: 目标状态（仅 STATUS_DRAFT / STATUS_SCHEDULED）
+                    format: enum
+            description: 请求 - 移动分发状态（看板拖拽）
         social.service.v1.PublishSocialDistributionRequest:
             type: object
             properties:
@@ -13573,6 +13685,84 @@ components:
                     type: string
                     description: 近 7 天发布数
             description: 分发汇总指标
+        social.service.v1.SocialInboxItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 收件项ID
+                    format: uint32
+                platform:
+                    enum:
+                        - PLATFORM_UNSPECIFIED
+                        - PLATFORM_BLUESKY
+                        - PLATFORM_MASTODON
+                        - PLATFORM_DEVTO
+                        - PLATFORM_TELEGRAM
+                        - PLATFORM_WORDPRESS
+                        - PLATFORM_WECHAT_OA
+                        - PLATFORM_NOSTR
+                        - PLATFORM_WEIBO
+                        - PLATFORM_LINKEDIN
+                        - PLATFORM_METAWEBLOG
+                    type: string
+                    description: 社交平台
+                    format: enum
+                accountId:
+                    type: integer
+                    description: 关联的社交账号ID
+                    format: uint32
+                type:
+                    type: string
+                    description: 条目类型（REPLY 回复 / MENTION 提及 / LIKE 点赞 / OTHER 其他）
+                externalId:
+                    type: string
+                    description: 平台侧条目唯一标识（去重键）
+                authorName:
+                    type: string
+                    description: 作者显示名
+                authorHandle:
+                    type: string
+                    description: 作者账号标识
+                content:
+                    type: string
+                    description: 内容摘要
+                url:
+                    type: string
+                    description: 平台侧链接
+                occurredAt:
+                    type: string
+                    description: 平台侧发生时间
+                    format: date-time
+                readAt:
+                    type: string
+                    description: 标记已读时间
+                    format: date-time
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 社交收件箱条目（平台回复/提及回拉）
         social.service.v1.SocialStatsHistoryPoint:
             type: object
             properties:

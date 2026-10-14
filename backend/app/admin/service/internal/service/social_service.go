@@ -142,3 +142,15 @@ func (s *SocialService) ListSocialDistributionStatsHistory(ctx context.Context, 
 func (s *SocialService) GetSocialDistributionSummary(ctx context.Context, empty *emptypb.Empty) (*socialV1.SocialDistributionSummary, error) {
 	return s.socialServiceClient.GetSocialDistributionSummary(ctx, empty)
 }
+
+func (s *SocialService) MoveSocialDistribution(ctx context.Context, req *socialV1.MoveSocialDistributionRequest) (*socialV1.SocialDistribution, error) {
+	return s.socialServiceClient.MoveSocialDistribution(ctx, req)
+}
+
+func (s *SocialService) ListSocialInbox(ctx context.Context, req *socialV1.ListSocialInboxRequest) (*socialV1.ListSocialInboxResponse, error) {
+	return s.socialServiceClient.ListSocialInbox(ctx, req)
+}
+
+func (s *SocialService) MarkSocialInboxRead(ctx context.Context, req *socialV1.MarkSocialInboxReadRequest) (*emptypb.Empty, error) {
+	return s.socialServiceClient.MarkSocialInboxRead(ctx, req)
+}

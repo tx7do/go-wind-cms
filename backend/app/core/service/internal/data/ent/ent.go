@@ -71,6 +71,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
+	"go-wind-cms/app/core/service/internal/data/ent/socialinboxitem"
 	"go-wind-cms/app/core/service/internal/data/ent/socialstatshistory"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
@@ -212,6 +213,7 @@ func checkColumn(t, c string) error {
 			sitesetting.Table:                sitesetting.ValidColumn,
 			socialaccount.Table:              socialaccount.ValidColumn,
 			socialdistribution.Table:         socialdistribution.ValidColumn,
+			socialinboxitem.Table:            socialinboxitem.ValidColumn,
 			socialstatshistory.Table:         socialstatshistory.ValidColumn,
 			tag.Table:                        tag.ValidColumn,
 			tagtranslation.Table:             tagtranslation.ValidColumn,

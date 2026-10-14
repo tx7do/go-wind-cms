@@ -32,6 +32,9 @@ const OperationSocialServiceGetSocialDistributionSummary = "/admin.service.v1.So
 const OperationSocialServiceListSocialAccounts = "/admin.service.v1.SocialService/ListSocialAccounts"
 const OperationSocialServiceListSocialDistributionStatsHistory = "/admin.service.v1.SocialService/ListSocialDistributionStatsHistory"
 const OperationSocialServiceListSocialDistributions = "/admin.service.v1.SocialService/ListSocialDistributions"
+const OperationSocialServiceListSocialInbox = "/admin.service.v1.SocialService/ListSocialInbox"
+const OperationSocialServiceMarkSocialInboxRead = "/admin.service.v1.SocialService/MarkSocialInboxRead"
+const OperationSocialServiceMoveSocialDistribution = "/admin.service.v1.SocialService/MoveSocialDistribution"
 const OperationSocialServicePublishSocialDistribution = "/admin.service.v1.SocialService/PublishSocialDistribution"
 const OperationSocialServiceRefreshSocialDistributionStats = "/admin.service.v1.SocialService/RefreshSocialDistributionStats"
 const OperationSocialServiceUpdateSocialAccount = "/admin.service.v1.SocialService/UpdateSocialAccount"
@@ -58,6 +61,12 @@ type SocialServiceHTTPServer interface {
 	ListSocialDistributionStatsHistory(context.Context, *v11.ListSocialDistributionStatsHistoryRequest) (*v11.ListSocialDistributionStatsHistoryResponse, error)
 	// ListSocialDistributions 获取分发记录列表
 	ListSocialDistributions(context.Context, *v1.PagingRequest) (*v11.ListSocialDistributionsResponse, error)
+	// ListSocialInbox 获取社交收件箱（平台回复/提及回拉）
+	ListSocialInbox(context.Context, *v11.ListSocialInboxRequest) (*v11.ListSocialInboxResponse, error)
+	// MarkSocialInboxRead 标记收件项已读
+	MarkSocialInboxRead(context.Context, *v11.MarkSocialInboxReadRequest) (*emptypb.Empty, error)
+	// MoveSocialDistribution 移动分发状态（看板拖拽）
+	MoveSocialDistribution(context.Context, *v11.MoveSocialDistributionRequest) (*v11.SocialDistribution, error)
 	// PublishSocialDistribution 立即发布分发记录
 	PublishSocialDistribution(context.Context, *v11.PublishSocialDistributionRequest) (*v11.SocialDistribution, error)
 	// RefreshSocialDistributionStats 回拉分发记录的平台互动统计
@@ -84,6 +93,9 @@ func RegisterSocialServiceHTTPServer(s *http.Server, srv SocialServiceHTTPServer
 	r.POST("/admin/v1/social/distributions/{id}/stats/refresh", _SocialService_RefreshSocialDistributionStats0_HTTP_Handler(srv))
 	r.GET("/admin/v1/social/distributions/{id}/stats/history", _SocialService_ListSocialDistributionStatsHistory0_HTTP_Handler(srv))
 	r.GET("/admin/v1/social/summary", _SocialService_GetSocialDistributionSummary0_HTTP_Handler(srv))
+	r.POST("/admin/v1/social/distributions/{id}/move", _SocialService_MoveSocialDistribution0_HTTP_Handler(srv))
+	r.GET("/admin/v1/social/inbox", _SocialService_ListSocialInbox0_HTTP_Handler(srv))
+	r.POST("/admin/v1/social/inbox/{id}/read", _SocialService_MarkSocialInboxRead0_HTTP_Handler(srv))
 }
 
 func _SocialService_ListSocialAccounts0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
@@ -397,6 +409,75 @@ func _SocialService_GetSocialDistributionSummary0_HTTP_Handler(srv SocialService
 	}
 }
 
+func _SocialService_MoveSocialDistribution0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.MoveSocialDistributionRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSocialServiceMoveSocialDistribution)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.MoveSocialDistribution(ctx, req.(*v11.MoveSocialDistributionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.SocialDistribution)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _SocialService_ListSocialInbox0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListSocialInboxRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSocialServiceListSocialInbox)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListSocialInbox(ctx, req.(*v11.ListSocialInboxRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListSocialInboxResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _SocialService_MarkSocialInboxRead0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.MarkSocialInboxReadRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSocialServiceMarkSocialInboxRead)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.MarkSocialInboxRead(ctx, req.(*v11.MarkSocialInboxReadRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type SocialServiceHTTPClient interface {
 	// CreateSocialAccount 创建社交账号（服务端验证凭据并加密落库）
 	CreateSocialAccount(ctx context.Context, req *v11.CreateSocialAccountRequest, opts ...http.CallOption) (rsp *v11.SocialAccount, err error)
@@ -418,6 +499,12 @@ type SocialServiceHTTPClient interface {
 	ListSocialDistributionStatsHistory(ctx context.Context, req *v11.ListSocialDistributionStatsHistoryRequest, opts ...http.CallOption) (rsp *v11.ListSocialDistributionStatsHistoryResponse, err error)
 	// ListSocialDistributions 获取分发记录列表
 	ListSocialDistributions(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListSocialDistributionsResponse, err error)
+	// ListSocialInbox 获取社交收件箱（平台回复/提及回拉）
+	ListSocialInbox(ctx context.Context, req *v11.ListSocialInboxRequest, opts ...http.CallOption) (rsp *v11.ListSocialInboxResponse, err error)
+	// MarkSocialInboxRead 标记收件项已读
+	MarkSocialInboxRead(ctx context.Context, req *v11.MarkSocialInboxReadRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// MoveSocialDistribution 移动分发状态（看板拖拽）
+	MoveSocialDistribution(ctx context.Context, req *v11.MoveSocialDistributionRequest, opts ...http.CallOption) (rsp *v11.SocialDistribution, err error)
 	// PublishSocialDistribution 立即发布分发记录
 	PublishSocialDistribution(ctx context.Context, req *v11.PublishSocialDistributionRequest, opts ...http.CallOption) (rsp *v11.SocialDistribution, err error)
 	// RefreshSocialDistributionStats 回拉分发记录的平台互动统计
@@ -570,6 +657,48 @@ func (c *SocialServiceHTTPClientImpl) ListSocialDistributions(ctx context.Contex
 	opts = append(opts, http.Operation(OperationSocialServiceListSocialDistributions))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListSocialInbox 获取社交收件箱（平台回复/提及回拉）
+func (c *SocialServiceHTTPClientImpl) ListSocialInbox(ctx context.Context, in *v11.ListSocialInboxRequest, opts ...http.CallOption) (*v11.ListSocialInboxResponse, error) {
+	var out v11.ListSocialInboxResponse
+	pattern := "/admin/v1/social/inbox"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationSocialServiceListSocialInbox))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// MarkSocialInboxRead 标记收件项已读
+func (c *SocialServiceHTTPClientImpl) MarkSocialInboxRead(ctx context.Context, in *v11.MarkSocialInboxReadRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/social/inbox/{id}/read"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationSocialServiceMarkSocialInboxRead))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// MoveSocialDistribution 移动分发状态（看板拖拽）
+func (c *SocialServiceHTTPClientImpl) MoveSocialDistribution(ctx context.Context, in *v11.MoveSocialDistributionRequest, opts ...http.CallOption) (*v11.SocialDistribution, error) {
+	var out v11.SocialDistribution
+	pattern := "/admin/v1/social/distributions/{id}/move"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationSocialServiceMoveSocialDistribution))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

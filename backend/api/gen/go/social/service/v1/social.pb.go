@@ -1453,6 +1453,391 @@ func (x *RefreshSocialDistributionStatsRequest) GetId() uint32 {
 	return 0
 }
 
+// 请求 - 移动分发状态（看板拖拽）
+type MoveSocialDistributionRequest struct {
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	Id            uint32                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                                          // 分发记录ID
+	TargetStatus  SocialDistribution_Status `protobuf:"varint,2,opt,name=target_status,json=targetStatus,proto3,enum=social.service.v1.SocialDistribution_Status" json:"target_status,omitempty"` // 目标状态
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MoveSocialDistributionRequest) Reset() {
+	*x = MoveSocialDistributionRequest{}
+	mi := &file_social_service_v1_social_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MoveSocialDistributionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoveSocialDistributionRequest) ProtoMessage() {}
+
+func (x *MoveSocialDistributionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MoveSocialDistributionRequest.ProtoReflect.Descriptor instead.
+func (*MoveSocialDistributionRequest) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *MoveSocialDistributionRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MoveSocialDistributionRequest) GetTargetStatus() SocialDistribution_Status {
+	if x != nil {
+		return x.TargetStatus
+	}
+	return SocialDistribution_STATUS_UNSPECIFIED
+}
+
+// 社交收件箱条目（平台回复/提及回拉）
+type SocialInboxItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                             // 收件项ID
+	Platform      *Platform              `protobuf:"varint,2,opt,name=platform,proto3,enum=social.service.v1.Platform,oneof" json:"platform,omitempty"` // 社交平台
+	AccountId     *uint32                `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`              // 关联的社交账号ID
+	Type          *string                `protobuf:"bytes,4,opt,name=type,proto3,oneof" json:"type,omitempty"`                                          // 条目类型
+	ExternalId    *string                `protobuf:"bytes,5,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`            // 平台侧条目唯一标识
+	AuthorName    *string                `protobuf:"bytes,6,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`            // 作者显示名
+	AuthorHandle  *string                `protobuf:"bytes,7,opt,name=author_handle,json=authorHandle,proto3,oneof" json:"author_handle,omitempty"`      // 作者账号标识
+	Content       *string                `protobuf:"bytes,8,opt,name=content,proto3,oneof" json:"content,omitempty"`                                    // 内容摘要
+	Url           *string                `protobuf:"bytes,9,opt,name=url,proto3,oneof" json:"url,omitempty"`                                            // 平台侧链接
+	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=occurred_at,json=occurredAt,proto3,oneof" json:"occurred_at,omitempty"`           // 平台侧发生时间
+	ReadAt        *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=read_at,json=readAt,proto3,oneof" json:"read_at,omitempty"`                       // 标记已读时间
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`            // 创建者用户ID
+	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`            // 更新者用户ID
+	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`            // 删除者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`             // 创建时间
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`             // 更新时间
+	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`             // 删除时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SocialInboxItem) Reset() {
+	*x = SocialInboxItem{}
+	mi := &file_social_service_v1_social_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialInboxItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialInboxItem) ProtoMessage() {}
+
+func (x *SocialInboxItem) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialInboxItem.ProtoReflect.Descriptor instead.
+func (*SocialInboxItem) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *SocialInboxItem) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *SocialInboxItem) GetPlatform() Platform {
+	if x != nil && x.Platform != nil {
+		return *x.Platform
+	}
+	return Platform_PLATFORM_UNSPECIFIED
+}
+
+func (x *SocialInboxItem) GetAccountId() uint32 {
+	if x != nil && x.AccountId != nil {
+		return *x.AccountId
+	}
+	return 0
+}
+
+func (x *SocialInboxItem) GetType() string {
+	if x != nil && x.Type != nil {
+		return *x.Type
+	}
+	return ""
+}
+
+func (x *SocialInboxItem) GetExternalId() string {
+	if x != nil && x.ExternalId != nil {
+		return *x.ExternalId
+	}
+	return ""
+}
+
+func (x *SocialInboxItem) GetAuthorName() string {
+	if x != nil && x.AuthorName != nil {
+		return *x.AuthorName
+	}
+	return ""
+}
+
+func (x *SocialInboxItem) GetAuthorHandle() string {
+	if x != nil && x.AuthorHandle != nil {
+		return *x.AuthorHandle
+	}
+	return ""
+}
+
+func (x *SocialInboxItem) GetContent() string {
+	if x != nil && x.Content != nil {
+		return *x.Content
+	}
+	return ""
+}
+
+func (x *SocialInboxItem) GetUrl() string {
+	if x != nil && x.Url != nil {
+		return *x.Url
+	}
+	return ""
+}
+
+func (x *SocialInboxItem) GetOccurredAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.OccurredAt
+	}
+	return nil
+}
+
+func (x *SocialInboxItem) GetReadAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ReadAt
+	}
+	return nil
+}
+
+func (x *SocialInboxItem) GetCreatedBy() uint32 {
+	if x != nil && x.CreatedBy != nil {
+		return *x.CreatedBy
+	}
+	return 0
+}
+
+func (x *SocialInboxItem) GetUpdatedBy() uint32 {
+	if x != nil && x.UpdatedBy != nil {
+		return *x.UpdatedBy
+	}
+	return 0
+}
+
+func (x *SocialInboxItem) GetDeletedBy() uint32 {
+	if x != nil && x.DeletedBy != nil {
+		return *x.DeletedBy
+	}
+	return 0
+}
+
+func (x *SocialInboxItem) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *SocialInboxItem) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *SocialInboxItem) GetDeletedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
+// 请求 - 收件箱列表
+type ListSocialInboxRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccountId     *uint32                `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`    // 按社交账号筛选
+	UnreadOnly    *bool                  `protobuf:"varint,2,opt,name=unread_only,json=unreadOnly,proto3,oneof" json:"unread_only,omitempty"` // 仅看未读
+	Limit         *uint32                `protobuf:"varint,3,opt,name=limit,proto3,oneof" json:"limit,omitempty"`                             // 返回条数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSocialInboxRequest) Reset() {
+	*x = ListSocialInboxRequest{}
+	mi := &file_social_service_v1_social_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSocialInboxRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSocialInboxRequest) ProtoMessage() {}
+
+func (x *ListSocialInboxRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSocialInboxRequest.ProtoReflect.Descriptor instead.
+func (*ListSocialInboxRequest) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ListSocialInboxRequest) GetAccountId() uint32 {
+	if x != nil && x.AccountId != nil {
+		return *x.AccountId
+	}
+	return 0
+}
+
+func (x *ListSocialInboxRequest) GetUnreadOnly() bool {
+	if x != nil && x.UnreadOnly != nil {
+		return *x.UnreadOnly
+	}
+	return false
+}
+
+func (x *ListSocialInboxRequest) GetLimit() uint32 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+// 回应 - 收件箱列表
+type ListSocialInboxResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*SocialInboxItem     `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	UnreadCount   uint64                 `protobuf:"varint,2,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSocialInboxResponse) Reset() {
+	*x = ListSocialInboxResponse{}
+	mi := &file_social_service_v1_social_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSocialInboxResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSocialInboxResponse) ProtoMessage() {}
+
+func (x *ListSocialInboxResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSocialInboxResponse.ProtoReflect.Descriptor instead.
+func (*ListSocialInboxResponse) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ListSocialInboxResponse) GetItems() []*SocialInboxItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListSocialInboxResponse) GetUnreadCount() uint64 {
+	if x != nil {
+		return x.UnreadCount
+	}
+	return 0
+}
+
+// 请求 - 标记收件项已读
+type MarkSocialInboxReadRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 收件项ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkSocialInboxReadRequest) Reset() {
+	*x = MarkSocialInboxReadRequest{}
+	mi := &file_social_service_v1_social_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkSocialInboxReadRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkSocialInboxReadRequest) ProtoMessage() {}
+
+func (x *MarkSocialInboxReadRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkSocialInboxReadRequest.ProtoReflect.Descriptor instead.
+func (*MarkSocialInboxReadRequest) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *MarkSocialInboxReadRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 var File_social_service_v1_social_proto protoreflect.FileDescriptor
 
 const file_social_service_v1_social_proto_rawDesc = "" +
@@ -1644,6 +2029,72 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	" PublishSocialDistributionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\"7\n" +
 	"%RefreshSocialDistributionStatsRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\"\xc0\x01\n" +
+	"\x1dMoveSocialDistributionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\x12\x8e\x01\n" +
+	"\rtarget_status\x18\x02 \x01(\x0e2,.social.service.v1.SocialDistribution.StatusB;\xbaG8\x92\x025目标状态（仅 STATUS_DRAFT / STATUS_SCHEDULED）R\ftargetStatus\"\xc6\v\n" +
+	"\x0fSocialInboxItem\x12&\n" +
+	"\x02id\x18\x01 \x01(\rB\x11\xbaG\x0e\x92\x02\v收件项IDH\x00R\x02id\x88\x01\x01\x12P\n" +
+	"\bplatform\x18\x02 \x01(\x0e2\x1b.social.service.v1.PlatformB\x12\xbaG\x0f\x92\x02\f社交平台H\x01R\bplatform\x88\x01\x01\x12A\n" +
+	"\n" +
+	"account_id\x18\x03 \x01(\rB\x1d\xbaG\x1a\x92\x02\x17关联的社交账号IDH\x02R\taccountId\x88\x01\x01\x12k\n" +
+	"\x04type\x18\x04 \x01(\tBR\xbaGO\x92\x02L条目类型（REPLY 回复 / MENTION 提及 / LIKE 点赞 / OTHER 其他）H\x03R\x04type\x88\x01\x01\x12V\n" +
+	"\vexternal_id\x18\x05 \x01(\tB0\xbaG-\x92\x02*平台侧条目唯一标识（去重键）H\x04R\n" +
+	"externalId\x88\x01\x01\x12;\n" +
+	"\vauthor_name\x18\x06 \x01(\tB\x15\xbaG\x12\x92\x02\x0f作者显示名H\x05R\n" +
+	"authorName\x88\x01\x01\x12B\n" +
+	"\rauthor_handle\x18\a \x01(\tB\x18\xbaG\x15\x92\x02\x12作者账号标识H\x06R\fauthorHandle\x88\x01\x01\x121\n" +
+	"\acontent\x18\b \x01(\tB\x12\xbaG\x0f\x92\x02\f内容摘要H\aR\acontent\x88\x01\x01\x12,\n" +
+	"\x03url\x18\t \x01(\tB\x15\xbaG\x12\x92\x02\x0f平台侧链接H\bR\x03url\x88\x01\x01\x12]\n" +
+	"\voccurred_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xbaG\x18\x92\x02\x15平台侧发生时间H\tR\n" +
+	"occurredAt\x88\x01\x01\x12R\n" +
+	"\aread_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12标记已读时间H\n" +
+	"R\x06readAt\x88\x01\x01\x12;\n" +
+	"\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01B\x05\n" +
+	"\x03_idB\v\n" +
+	"\t_platformB\r\n" +
+	"\v_account_idB\a\n" +
+	"\x05_typeB\x0e\n" +
+	"\f_external_idB\x0e\n" +
+	"\f_author_nameB\x10\n" +
+	"\x0e_author_handleB\n" +
+	"\n" +
+	"\b_contentB\x06\n" +
+	"\x04_urlB\x0e\n" +
+	"\f_occurred_atB\n" +
+	"\n" +
+	"\b_read_atB\r\n" +
+	"\v_created_byB\r\n" +
+	"\v_updated_byB\r\n" +
+	"\v_deleted_byB\r\n" +
+	"\v_created_atB\r\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_at\"\x87\x02\n" +
+	"\x16ListSocialInboxRequest\x12?\n" +
+	"\n" +
+	"account_id\x18\x01 \x01(\rB\x1b\xbaG\x18\x92\x02\x15按社交账号筛选H\x00R\taccountId\x88\x01\x01\x128\n" +
+	"\vunread_only\x18\x02 \x01(\bB\x12\xbaG\x0f\x92\x02\f仅看未读H\x01R\n" +
+	"unreadOnly\x88\x01\x01\x12I\n" +
+	"\x05limit\x18\x03 \x01(\rB.\xbaG+\x92\x02(返回条数（缺省 50，至多 200）H\x02R\x05limit\x88\x01\x01B\r\n" +
+	"\v_account_idB\x0e\n" +
+	"\f_unread_onlyB\b\n" +
+	"\x06_limit\"v\n" +
+	"\x17ListSocialInboxResponse\x128\n" +
+	"\x05items\x18\x01 \x03(\v2\".social.service.v1.SocialInboxItemR\x05items\x12!\n" +
+	"\funread_count\x18\x02 \x01(\x04R\vunreadCount\",\n" +
+	"\x1aMarkSocialInboxReadRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id*\x84\x02\n" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x14\n" +
@@ -1657,7 +2108,7 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\x0ePLATFORM_WEIBO\x10\b\x12\x15\n" +
 	"\x11PLATFORM_LINKEDIN\x10\t\x12\x17\n" +
 	"\x13PLATFORM_METAWEBLOG\x10\n" +
-	"2\xd3\f\n" +
+	"2\x94\x0f\n" +
 	"\rSocialService\x12`\n" +
 	"\x12ListSocialAccounts\x12\x19.pagination.PagingRequest\x1a-.social.service.v1.ListSocialAccountsResponse\"\x00\x12b\n" +
 	"\x10GetSocialAccount\x12*.social.service.v1.GetSocialAccountRequest\x1a .social.service.v1.SocialAccount\"\x00\x12h\n" +
@@ -1671,7 +2122,10 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\x18DeleteSocialDistribution\x122.social.service.v1.DeleteSocialDistributionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12y\n" +
 	"\x19PublishSocialDistribution\x123.social.service.v1.PublishSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\"\x00\x12\x83\x01\n" +
 	"\x1eRefreshSocialDistributionStats\x128.social.service.v1.RefreshSocialDistributionStatsRequest\x1a%.social.service.v1.SocialDistribution\"\x00\x12\xa3\x01\n" +
-	"\"ListSocialDistributionStatsHistory\x12<.social.service.v1.ListSocialDistributionStatsHistoryRequest\x1a=.social.service.v1.ListSocialDistributionStatsHistoryResponse\"\x00\x12f\n" +
+	"\"ListSocialDistributionStatsHistory\x12<.social.service.v1.ListSocialDistributionStatsHistoryRequest\x1a=.social.service.v1.ListSocialDistributionStatsHistoryResponse\"\x00\x12s\n" +
+	"\x16MoveSocialDistribution\x120.social.service.v1.MoveSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\"\x00\x12j\n" +
+	"\x0fListSocialInbox\x12).social.service.v1.ListSocialInboxRequest\x1a*.social.service.v1.ListSocialInboxResponse\"\x00\x12^\n" +
+	"\x13MarkSocialInboxRead\x12-.social.service.v1.MarkSocialInboxReadRequest\x1a\x16.google.protobuf.Empty\"\x00\x12f\n" +
 	"\x1cGetSocialDistributionSummary\x12\x16.google.protobuf.Empty\x1a,.social.service.v1.SocialDistributionSummary\"\x00B\xbd\x01\n" +
 	"\x15com.social.service.v1B\vSocialProtoP\x01Z1go-wind-cms/api/gen/go/social/service/v1;socialpb\xa2\x02\x03SSX\xaa\x02\x11Social.Service.V1\xca\x02\x11Social\\Service\\V1\xe2\x02\x1dSocial\\Service\\V1\\GPBMetadata\xea\x02\x13Social::Service::V1b\x06proto3"
 
@@ -1688,7 +2142,7 @@ func file_social_service_v1_social_proto_rawDescGZIP() []byte {
 }
 
 var file_social_service_v1_social_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_social_service_v1_social_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_social_service_v1_social_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_social_service_v1_social_proto_goTypes = []any{
 	(Platform)(0),                                      // 0: social.service.v1.Platform
 	(SocialDistribution_Status)(0),                     // 1: social.service.v1.SocialDistribution.Status
@@ -1710,69 +2164,88 @@ var file_social_service_v1_social_proto_goTypes = []any{
 	(*DeleteSocialDistributionRequest)(nil),            // 17: social.service.v1.DeleteSocialDistributionRequest
 	(*PublishSocialDistributionRequest)(nil),           // 18: social.service.v1.PublishSocialDistributionRequest
 	(*RefreshSocialDistributionStatsRequest)(nil),      // 19: social.service.v1.RefreshSocialDistributionStatsRequest
-	(*timestamppb.Timestamp)(nil),                      // 20: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),                      // 21: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                           // 22: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                              // 23: google.protobuf.Empty
+	(*MoveSocialDistributionRequest)(nil),              // 20: social.service.v1.MoveSocialDistributionRequest
+	(*SocialInboxItem)(nil),                            // 21: social.service.v1.SocialInboxItem
+	(*ListSocialInboxRequest)(nil),                     // 22: social.service.v1.ListSocialInboxRequest
+	(*ListSocialInboxResponse)(nil),                    // 23: social.service.v1.ListSocialInboxResponse
+	(*MarkSocialInboxReadRequest)(nil),                 // 24: social.service.v1.MarkSocialInboxReadRequest
+	(*timestamppb.Timestamp)(nil),                      // 25: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                      // 26: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                           // 27: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                              // 28: google.protobuf.Empty
 }
 var file_social_service_v1_social_proto_depIdxs = []int32{
-	20, // 0: social.service.v1.SocialStatsHistoryPoint.recorded_at:type_name -> google.protobuf.Timestamp
+	25, // 0: social.service.v1.SocialStatsHistoryPoint.recorded_at:type_name -> google.protobuf.Timestamp
 	3,  // 1: social.service.v1.ListSocialDistributionStatsHistoryResponse.items:type_name -> social.service.v1.SocialStatsHistoryPoint
 	0,  // 2: social.service.v1.SocialAccount.platform:type_name -> social.service.v1.Platform
-	20, // 3: social.service.v1.SocialAccount.created_at:type_name -> google.protobuf.Timestamp
-	20, // 4: social.service.v1.SocialAccount.updated_at:type_name -> google.protobuf.Timestamp
-	20, // 5: social.service.v1.SocialAccount.deleted_at:type_name -> google.protobuf.Timestamp
+	25, // 3: social.service.v1.SocialAccount.created_at:type_name -> google.protobuf.Timestamp
+	25, // 4: social.service.v1.SocialAccount.updated_at:type_name -> google.protobuf.Timestamp
+	25, // 5: social.service.v1.SocialAccount.deleted_at:type_name -> google.protobuf.Timestamp
 	0,  // 6: social.service.v1.SocialDistribution.platform:type_name -> social.service.v1.Platform
 	1,  // 7: social.service.v1.SocialDistribution.status:type_name -> social.service.v1.SocialDistribution.Status
-	20, // 8: social.service.v1.SocialDistribution.publish_time:type_name -> google.protobuf.Timestamp
-	20, // 9: social.service.v1.SocialDistribution.published_at:type_name -> google.protobuf.Timestamp
-	20, // 10: social.service.v1.SocialDistribution.stats_synced_at:type_name -> google.protobuf.Timestamp
-	20, // 11: social.service.v1.SocialDistribution.created_at:type_name -> google.protobuf.Timestamp
-	20, // 12: social.service.v1.SocialDistribution.updated_at:type_name -> google.protobuf.Timestamp
-	20, // 13: social.service.v1.SocialDistribution.deleted_at:type_name -> google.protobuf.Timestamp
+	25, // 8: social.service.v1.SocialDistribution.publish_time:type_name -> google.protobuf.Timestamp
+	25, // 9: social.service.v1.SocialDistribution.published_at:type_name -> google.protobuf.Timestamp
+	25, // 10: social.service.v1.SocialDistribution.stats_synced_at:type_name -> google.protobuf.Timestamp
+	25, // 11: social.service.v1.SocialDistribution.created_at:type_name -> google.protobuf.Timestamp
+	25, // 12: social.service.v1.SocialDistribution.updated_at:type_name -> google.protobuf.Timestamp
+	25, // 13: social.service.v1.SocialDistribution.deleted_at:type_name -> google.protobuf.Timestamp
 	6,  // 14: social.service.v1.ListSocialAccountsResponse.items:type_name -> social.service.v1.SocialAccount
-	21, // 15: social.service.v1.GetSocialAccountRequest.view_mask:type_name -> google.protobuf.FieldMask
+	26, // 15: social.service.v1.GetSocialAccountRequest.view_mask:type_name -> google.protobuf.FieldMask
 	6,  // 16: social.service.v1.CreateSocialAccountRequest.data:type_name -> social.service.v1.SocialAccount
 	6,  // 17: social.service.v1.UpdateSocialAccountRequest.data:type_name -> social.service.v1.SocialAccount
-	21, // 18: social.service.v1.UpdateSocialAccountRequest.update_mask:type_name -> google.protobuf.FieldMask
+	26, // 18: social.service.v1.UpdateSocialAccountRequest.update_mask:type_name -> google.protobuf.FieldMask
 	7,  // 19: social.service.v1.ListSocialDistributionsResponse.items:type_name -> social.service.v1.SocialDistribution
-	21, // 20: social.service.v1.GetSocialDistributionRequest.view_mask:type_name -> google.protobuf.FieldMask
+	26, // 20: social.service.v1.GetSocialDistributionRequest.view_mask:type_name -> google.protobuf.FieldMask
 	7,  // 21: social.service.v1.CreateSocialDistributionRequest.data:type_name -> social.service.v1.SocialDistribution
 	7,  // 22: social.service.v1.UpdateSocialDistributionRequest.data:type_name -> social.service.v1.SocialDistribution
-	21, // 23: social.service.v1.UpdateSocialDistributionRequest.update_mask:type_name -> google.protobuf.FieldMask
-	22, // 24: social.service.v1.SocialService.ListSocialAccounts:input_type -> pagination.PagingRequest
-	9,  // 25: social.service.v1.SocialService.GetSocialAccount:input_type -> social.service.v1.GetSocialAccountRequest
-	10, // 26: social.service.v1.SocialService.CreateSocialAccount:input_type -> social.service.v1.CreateSocialAccountRequest
-	11, // 27: social.service.v1.SocialService.UpdateSocialAccount:input_type -> social.service.v1.UpdateSocialAccountRequest
-	12, // 28: social.service.v1.SocialService.DeleteSocialAccount:input_type -> social.service.v1.DeleteSocialAccountRequest
-	22, // 29: social.service.v1.SocialService.ListSocialDistributions:input_type -> pagination.PagingRequest
-	14, // 30: social.service.v1.SocialService.GetSocialDistribution:input_type -> social.service.v1.GetSocialDistributionRequest
-	15, // 31: social.service.v1.SocialService.CreateSocialDistribution:input_type -> social.service.v1.CreateSocialDistributionRequest
-	16, // 32: social.service.v1.SocialService.UpdateSocialDistribution:input_type -> social.service.v1.UpdateSocialDistributionRequest
-	17, // 33: social.service.v1.SocialService.DeleteSocialDistribution:input_type -> social.service.v1.DeleteSocialDistributionRequest
-	18, // 34: social.service.v1.SocialService.PublishSocialDistribution:input_type -> social.service.v1.PublishSocialDistributionRequest
-	19, // 35: social.service.v1.SocialService.RefreshSocialDistributionStats:input_type -> social.service.v1.RefreshSocialDistributionStatsRequest
-	4,  // 36: social.service.v1.SocialService.ListSocialDistributionStatsHistory:input_type -> social.service.v1.ListSocialDistributionStatsHistoryRequest
-	23, // 37: social.service.v1.SocialService.GetSocialDistributionSummary:input_type -> google.protobuf.Empty
-	8,  // 38: social.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
-	6,  // 39: social.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
-	6,  // 40: social.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
-	6,  // 41: social.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
-	23, // 42: social.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
-	13, // 43: social.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
-	7,  // 44: social.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	7,  // 45: social.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	7,  // 46: social.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	23, // 47: social.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
-	7,  // 48: social.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	7,  // 49: social.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
-	5,  // 50: social.service.v1.SocialService.ListSocialDistributionStatsHistory:output_type -> social.service.v1.ListSocialDistributionStatsHistoryResponse
-	2,  // 51: social.service.v1.SocialService.GetSocialDistributionSummary:output_type -> social.service.v1.SocialDistributionSummary
-	38, // [38:52] is the sub-list for method output_type
-	24, // [24:38] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	26, // 23: social.service.v1.UpdateSocialDistributionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 24: social.service.v1.MoveSocialDistributionRequest.target_status:type_name -> social.service.v1.SocialDistribution.Status
+	0,  // 25: social.service.v1.SocialInboxItem.platform:type_name -> social.service.v1.Platform
+	25, // 26: social.service.v1.SocialInboxItem.occurred_at:type_name -> google.protobuf.Timestamp
+	25, // 27: social.service.v1.SocialInboxItem.read_at:type_name -> google.protobuf.Timestamp
+	25, // 28: social.service.v1.SocialInboxItem.created_at:type_name -> google.protobuf.Timestamp
+	25, // 29: social.service.v1.SocialInboxItem.updated_at:type_name -> google.protobuf.Timestamp
+	25, // 30: social.service.v1.SocialInboxItem.deleted_at:type_name -> google.protobuf.Timestamp
+	21, // 31: social.service.v1.ListSocialInboxResponse.items:type_name -> social.service.v1.SocialInboxItem
+	27, // 32: social.service.v1.SocialService.ListSocialAccounts:input_type -> pagination.PagingRequest
+	9,  // 33: social.service.v1.SocialService.GetSocialAccount:input_type -> social.service.v1.GetSocialAccountRequest
+	10, // 34: social.service.v1.SocialService.CreateSocialAccount:input_type -> social.service.v1.CreateSocialAccountRequest
+	11, // 35: social.service.v1.SocialService.UpdateSocialAccount:input_type -> social.service.v1.UpdateSocialAccountRequest
+	12, // 36: social.service.v1.SocialService.DeleteSocialAccount:input_type -> social.service.v1.DeleteSocialAccountRequest
+	27, // 37: social.service.v1.SocialService.ListSocialDistributions:input_type -> pagination.PagingRequest
+	14, // 38: social.service.v1.SocialService.GetSocialDistribution:input_type -> social.service.v1.GetSocialDistributionRequest
+	15, // 39: social.service.v1.SocialService.CreateSocialDistribution:input_type -> social.service.v1.CreateSocialDistributionRequest
+	16, // 40: social.service.v1.SocialService.UpdateSocialDistribution:input_type -> social.service.v1.UpdateSocialDistributionRequest
+	17, // 41: social.service.v1.SocialService.DeleteSocialDistribution:input_type -> social.service.v1.DeleteSocialDistributionRequest
+	18, // 42: social.service.v1.SocialService.PublishSocialDistribution:input_type -> social.service.v1.PublishSocialDistributionRequest
+	19, // 43: social.service.v1.SocialService.RefreshSocialDistributionStats:input_type -> social.service.v1.RefreshSocialDistributionStatsRequest
+	4,  // 44: social.service.v1.SocialService.ListSocialDistributionStatsHistory:input_type -> social.service.v1.ListSocialDistributionStatsHistoryRequest
+	20, // 45: social.service.v1.SocialService.MoveSocialDistribution:input_type -> social.service.v1.MoveSocialDistributionRequest
+	22, // 46: social.service.v1.SocialService.ListSocialInbox:input_type -> social.service.v1.ListSocialInboxRequest
+	24, // 47: social.service.v1.SocialService.MarkSocialInboxRead:input_type -> social.service.v1.MarkSocialInboxReadRequest
+	28, // 48: social.service.v1.SocialService.GetSocialDistributionSummary:input_type -> google.protobuf.Empty
+	8,  // 49: social.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
+	6,  // 50: social.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
+	6,  // 51: social.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
+	6,  // 52: social.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
+	28, // 53: social.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
+	13, // 54: social.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
+	7,  // 55: social.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	7,  // 56: social.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	7,  // 57: social.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	28, // 58: social.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
+	7,  // 59: social.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	7,  // 60: social.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
+	5,  // 61: social.service.v1.SocialService.ListSocialDistributionStatsHistory:output_type -> social.service.v1.ListSocialDistributionStatsHistoryResponse
+	7,  // 62: social.service.v1.SocialService.MoveSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	23, // 63: social.service.v1.SocialService.ListSocialInbox:output_type -> social.service.v1.ListSocialInboxResponse
+	28, // 64: social.service.v1.SocialService.MarkSocialInboxRead:output_type -> google.protobuf.Empty
+	2,  // 65: social.service.v1.SocialService.GetSocialDistributionSummary:output_type -> social.service.v1.SocialDistributionSummary
+	49, // [49:66] is the sub-list for method output_type
+	32, // [32:49] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_social_service_v1_social_proto_init() }
@@ -1795,13 +2268,15 @@ func file_social_service_v1_social_proto_init() {
 	file_social_service_v1_social_proto_msgTypes[15].OneofWrappers = []any{
 		(*DeleteSocialDistributionRequest_Id)(nil),
 	}
+	file_social_service_v1_social_proto_msgTypes[19].OneofWrappers = []any{}
+	file_social_service_v1_social_proto_msgTypes[20].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_social_service_v1_social_proto_rawDesc), len(file_social_service_v1_social_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   18,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

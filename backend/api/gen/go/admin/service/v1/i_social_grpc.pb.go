@@ -36,6 +36,9 @@ const (
 	SocialService_RefreshSocialDistributionStats_FullMethodName     = "/admin.service.v1.SocialService/RefreshSocialDistributionStats"
 	SocialService_ListSocialDistributionStatsHistory_FullMethodName = "/admin.service.v1.SocialService/ListSocialDistributionStatsHistory"
 	SocialService_GetSocialDistributionSummary_FullMethodName       = "/admin.service.v1.SocialService/GetSocialDistributionSummary"
+	SocialService_MoveSocialDistribution_FullMethodName             = "/admin.service.v1.SocialService/MoveSocialDistribution"
+	SocialService_ListSocialInbox_FullMethodName                    = "/admin.service.v1.SocialService/ListSocialInbox"
+	SocialService_MarkSocialInboxRead_FullMethodName                = "/admin.service.v1.SocialService/MarkSocialInboxRead"
 )
 
 // SocialServiceClient is the client API for SocialService service.
@@ -72,6 +75,12 @@ type SocialServiceClient interface {
 	ListSocialDistributionStatsHistory(ctx context.Context, in *v11.ListSocialDistributionStatsHistoryRequest, opts ...grpc.CallOption) (*v11.ListSocialDistributionStatsHistoryResponse, error)
 	// 获取当前租户的分发汇总指标（KPI 卡片）
 	GetSocialDistributionSummary(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.SocialDistributionSummary, error)
+	// 移动分发状态（看板拖拽）
+	MoveSocialDistribution(ctx context.Context, in *v11.MoveSocialDistributionRequest, opts ...grpc.CallOption) (*v11.SocialDistribution, error)
+	// 获取社交收件箱（平台回复/提及回拉）
+	ListSocialInbox(ctx context.Context, in *v11.ListSocialInboxRequest, opts ...grpc.CallOption) (*v11.ListSocialInboxResponse, error)
+	// 标记收件项已读
+	MarkSocialInboxRead(ctx context.Context, in *v11.MarkSocialInboxReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type socialServiceClient struct {
@@ -222,6 +231,36 @@ func (c *socialServiceClient) GetSocialDistributionSummary(ctx context.Context, 
 	return out, nil
 }
 
+func (c *socialServiceClient) MoveSocialDistribution(ctx context.Context, in *v11.MoveSocialDistributionRequest, opts ...grpc.CallOption) (*v11.SocialDistribution, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.SocialDistribution)
+	err := c.cc.Invoke(ctx, SocialService_MoveSocialDistribution_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *socialServiceClient) ListSocialInbox(ctx context.Context, in *v11.ListSocialInboxRequest, opts ...grpc.CallOption) (*v11.ListSocialInboxResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListSocialInboxResponse)
+	err := c.cc.Invoke(ctx, SocialService_ListSocialInbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *socialServiceClient) MarkSocialInboxRead(ctx context.Context, in *v11.MarkSocialInboxReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SocialService_MarkSocialInboxRead_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SocialServiceServer is the server API for SocialService service.
 // All implementations must embed UnimplementedSocialServiceServer
 // for forward compatibility.
@@ -256,6 +295,12 @@ type SocialServiceServer interface {
 	ListSocialDistributionStatsHistory(context.Context, *v11.ListSocialDistributionStatsHistoryRequest) (*v11.ListSocialDistributionStatsHistoryResponse, error)
 	// 获取当前租户的分发汇总指标（KPI 卡片）
 	GetSocialDistributionSummary(context.Context, *emptypb.Empty) (*v11.SocialDistributionSummary, error)
+	// 移动分发状态（看板拖拽）
+	MoveSocialDistribution(context.Context, *v11.MoveSocialDistributionRequest) (*v11.SocialDistribution, error)
+	// 获取社交收件箱（平台回复/提及回拉）
+	ListSocialInbox(context.Context, *v11.ListSocialInboxRequest) (*v11.ListSocialInboxResponse, error)
+	// 标记收件项已读
+	MarkSocialInboxRead(context.Context, *v11.MarkSocialInboxReadRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSocialServiceServer()
 }
 
@@ -307,6 +352,15 @@ func (UnimplementedSocialServiceServer) ListSocialDistributionStatsHistory(conte
 }
 func (UnimplementedSocialServiceServer) GetSocialDistributionSummary(context.Context, *emptypb.Empty) (*v11.SocialDistributionSummary, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSocialDistributionSummary not implemented")
+}
+func (UnimplementedSocialServiceServer) MoveSocialDistribution(context.Context, *v11.MoveSocialDistributionRequest) (*v11.SocialDistribution, error) {
+	return nil, status.Error(codes.Unimplemented, "method MoveSocialDistribution not implemented")
+}
+func (UnimplementedSocialServiceServer) ListSocialInbox(context.Context, *v11.ListSocialInboxRequest) (*v11.ListSocialInboxResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSocialInbox not implemented")
+}
+func (UnimplementedSocialServiceServer) MarkSocialInboxRead(context.Context, *v11.MarkSocialInboxReadRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method MarkSocialInboxRead not implemented")
 }
 func (UnimplementedSocialServiceServer) mustEmbedUnimplementedSocialServiceServer() {}
 func (UnimplementedSocialServiceServer) testEmbeddedByValue()                       {}
@@ -581,6 +635,60 @@ func _SocialService_GetSocialDistributionSummary_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SocialService_MoveSocialDistribution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.MoveSocialDistributionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SocialServiceServer).MoveSocialDistribution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SocialService_MoveSocialDistribution_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SocialServiceServer).MoveSocialDistribution(ctx, req.(*v11.MoveSocialDistributionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SocialService_ListSocialInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListSocialInboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SocialServiceServer).ListSocialInbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SocialService_ListSocialInbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SocialServiceServer).ListSocialInbox(ctx, req.(*v11.ListSocialInboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SocialService_MarkSocialInboxRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.MarkSocialInboxReadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SocialServiceServer).MarkSocialInboxRead(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SocialService_MarkSocialInboxRead_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SocialServiceServer).MarkSocialInboxRead(ctx, req.(*v11.MarkSocialInboxReadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SocialService_ServiceDesc is the grpc.ServiceDesc for SocialService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -643,6 +751,18 @@ var SocialService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSocialDistributionSummary",
 			Handler:    _SocialService_GetSocialDistributionSummary_Handler,
+		},
+		{
+			MethodName: "MoveSocialDistribution",
+			Handler:    _SocialService_MoveSocialDistribution_Handler,
+		},
+		{
+			MethodName: "ListSocialInbox",
+			Handler:    _SocialService_ListSocialInbox_Handler,
+		},
+		{
+			MethodName: "MarkSocialInboxRead",
+			Handler:    _SocialService_MarkSocialInboxRead_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

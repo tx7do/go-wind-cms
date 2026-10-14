@@ -118,4 +118,27 @@ service SocialService {
       get: "/admin/v1/social/summary"
     };
   }
+
+  // 移动分发状态（看板拖拽）
+  rpc MoveSocialDistribution (social.service.v1.MoveSocialDistributionRequest) returns (social.service.v1.SocialDistribution) {
+    option (google.api.http) = {
+      post: "/admin/v1/social/distributions/{id}/move"
+      body: "*"
+    };
+  }
+
+  // 获取社交收件箱（平台回复/提及回拉）
+  rpc ListSocialInbox (social.service.v1.ListSocialInboxRequest) returns (social.service.v1.ListSocialInboxResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/social/inbox"
+    };
+  }
+
+  // 标记收件项已读
+  rpc MarkSocialInboxRead (social.service.v1.MarkSocialInboxReadRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/social/inbox/{id}/read"
+      body: "*"
+    };
+  }
 }

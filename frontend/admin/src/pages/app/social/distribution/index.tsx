@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
 import { Calendar, Card, Col, Popconfirm, Row, Segmented, Statistic, Tag, App, Tooltip } from 'antd';
@@ -13,6 +13,7 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import {
   fetchListSocialDistributions,
   useDeleteSocialDistribution,
+  useMoveSocialDistribution,
   usePublishSocialDistribution,
   useRefreshSocialDistributionStats,
   useSocialDistributionSummary,
@@ -49,7 +50,7 @@ const SocialDistributionList = () => {
   const [trendRow, setTrendRow] = useState<any>(null);
 
   // ── 日历视图 ──
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'calendar' | 'kanban'>('list');
   const [monthItems, setMonthItems] = useState<any[]>([]);
   const [calendarMonth, setCalendarMonth] = useState<dayjs.Dayjs>(dayjs());
 
@@ -71,6 +72,47 @@ const SocialDistributionList = () => {
     if (mode === 'calendar') {
       fetchMonthItems(calendarMonth);
     }
+  };
+
+  // ── 看板视图 ──
+  const [kanbanItems, setKanbanItems] = useState<any[]>([]);
+  const fetchKanbanItems = useCallback(async () => {
+    const query = new PaginationQuery({
+      paging: { page: 1, pageSize: 100 },
+      orderBy: ['-created_at'],
+    });
+    const resp = await fetchListSocialDistributions(query);
+    setKanbanItems(resp.items || []);
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === 'kanban') {
+      fetchKanbanItems();
+    }
+  }, [viewMode, fetchKanbanItems]);
+
+  const KANBAN_COLUMNS: { status: string; labelKey: string }[] = [
+    { status: 'STATUS_DRAFT', labelKey: 'statusMap.STATUS_DRAFT' },
+    { status: 'STATUS_SCHEDULED', labelKey: 'statusMap.STATUS_SCHEDULED' },
+    { status: 'STATUS_FAILED', labelKey: 'statusMap.STATUS_FAILED' },
+    { status: 'STATUS_PUBLISHED', labelKey: 'statusMap.STATUS_PUBLISHED' },
+  ];
+
+  const itemsByStatus = useMemo(() => {
+    const map: Record<string, any[]> = {};
+    for (const item of kanbanItems) {
+      (map[item.status] ??= []).push(item);
+    }
+    return map;
+  }, [kanbanItems]);
+
+  const handleDropToStatus = (record: any, targetStatus: string) => {
+    if (record.status === targetStatus) return;
+    if (targetStatus === 'STATUS_PUBLISHED') {
+      message.warning(t('moveToPublishedForbidden'));
+      return;
+    }
+    moveMutation.mutate({ id: record.id, targetStatus } as any);
   };
 
   const itemsByDay = useMemo(() => {
@@ -130,6 +172,17 @@ const SocialDistributionList = () => {
     },
     onError: (error: Error) => {
       message.error(error.message || t('publishFailed'));
+    },
+  });
+
+  const moveMutation = useMoveSocialDistribution({
+    onSuccess: () => {
+      message.success(t('moveSuccess'));
+      invalidate();
+      fetchKanbanItems();
+    },
+    onError: (error: Error) => {
+      message.error(error.message || t('moveFailed'));
     },
   });
 
@@ -340,13 +393,70 @@ const SocialDistributionList = () => {
             options={[
               { label: t('viewList'), value: 'list' },
               { label: t('viewCalendar'), value: 'calendar' },
+              { label: t('viewKanban'), value: 'kanban' },
             ]}
           />
           {viewMode === 'calendar' && (
             <span style={{ color: 'var(--ant-color-text-tertiary)', fontSize: 12 }}>{t('calendarHint')}</span>
           )}
         </div>
-        {viewMode === 'calendar' ? (
+        {viewMode === 'kanban' ? (
+          <Row gutter={12} style={{ flex: 1, minHeight: 0, overflowX: 'auto' }}>
+            {KANBAN_COLUMNS.map((col) => {
+              const items = itemsByStatus[col.status] || [];
+              return (
+                <Col span={6} key={col.status}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => {
+                    const raw = sessionStorage.getItem('kanbanDragging');
+                    if (!raw) return;
+                    try {
+                      const record = JSON.parse(raw);
+                      if (record.id) handleDropToStatus(record, col.status);
+                    } finally {
+                      sessionStorage.removeItem('kanbanDragging');
+                    }
+                  }}
+                >
+                  <Card size="small" bordered={false} style={{ minHeight: 240 }} title={t(col.labelKey)}>
+                    {items.length === 0 && (
+                      <div style={{ color: 'var(--ant-color-text-tertiary)', fontSize: 12 }}>{t('kanbanEmpty')}</div>
+                    )}
+                    {items.map((item: any) => {
+                      const draggable = item.status !== 'STATUS_PUBLISHED';
+                      return (
+                        <Card
+                          key={item.id}
+                          size="small"
+                          style={{ marginBottom: 8, cursor: draggable ? 'grab' : 'default' }}
+                          draggable={draggable}
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData('text/plain', String(item.id));
+                            sessionStorage.setItem('kanbanDragging', JSON.stringify(item));
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
+                            <Tag color={getPlatformColor(item.platform)} style={{ marginRight: 0 }}>
+                              {getPlatformLabel(t, item.platform)}
+                            </Tag>
+                            {item.publishTime && (
+                              <span style={{ fontSize: 12, color: 'var(--ant-color-text-tertiary)' }}>
+                                {dayjs(item.publishTime).format('MM-DD HH:mm')}
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ fontSize: 12, marginTop: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {item.overrideText || '—'}
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
+        ) : viewMode === 'calendar' ? (
           <Card bordered={false} style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
             <Calendar
               cellRender={renderDateCell}

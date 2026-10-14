@@ -206,6 +206,82 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 	}, nil
 }
 
+// inboxNotification app.bsky.feed.notifications 的通知项。
+type inboxNotification struct {
+	URI       string `json:"uri"`
+	Cid       string `json:"cid"`
+	Reason    string `json:"reason"` // reply / mention / like / repost / quote / follow
+	IndexedAt string `json:"indexedAt"`
+	Author    struct {
+		Did         string `json:"did"`
+		Handle      string `json:"handle"`
+		DisplayName string `json:"displayName"`
+	} `json:"author"`
+	Record struct {
+		Text string `json:"text"`
+	} `json:"record"`
+}
+
+type notificationsResponse struct {
+	Notifications []inboxNotification `json:"notifications"`
+}
+
+// FetchInbox 回拉回复/提及（like/repost 仅计数无内容，跳过）。
+func (c *Client) FetchInbox(ctx context.Context, creds social.Credentials, since time.Time) ([]social.InboxItem, error) {
+	sess, err := c.createSession(ctx, creds)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp notificationsResponse
+	if err = c.do(ctx, http.MethodGet, "/xrpc/app.bsky.feed.notifications?limit=50", nil, sess.AccessJwt, &resp); err != nil {
+		return nil, err
+	}
+
+	items := make([]social.InboxItem, 0, len(resp.Notifications))
+	for _, n := range resp.Notifications {
+		if n.Reason != "reply" && n.Reason != "mention" {
+			continue
+		}
+		at := parseATTime(n.IndexedAt)
+		if at.Before(since) {
+			continue
+		}
+		typ := "REPLY"
+		if n.Reason == "mention" {
+			typ = "MENTION"
+		}
+		items = append(items, social.InboxItem{
+			ExternalID:   n.URI,
+			Type:         typ,
+			AuthorName:   n.Author.DisplayName,
+			AuthorHandle: n.Author.Handle,
+			Content:      n.Record.Text,
+			URL:          fmt.Sprintf("https://bsky.app/profile/%s/post/%s", n.Author.Handle, rkeyOf(n.URI)),
+			OccurredAt:   at,
+		})
+	}
+	return items, nil
+}
+
+// rkeyOf 从 at:// URI 取最后一段 rkey。
+func rkeyOf(atURI string) string {
+	parts := strings.Split(atURI, "/")
+	if len(parts) == 0 {
+		return atURI
+	}
+	return parts[len(parts)-1]
+}
+
+// parseATTime 解析 AT Protocol 的 RFC3339 时间戳。
+func parseATTime(s string) time.Time {
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return time.Time{}
+	}
+	return t
+}
+
 // FetchStats 回拉帖子互动计数。externalID 为发帖时记录的 at:// URI。
 func (c *Client) FetchStats(ctx context.Context, creds social.Credentials, externalID, _ string) (*social.Stats, error) {
 	if externalID == "" {

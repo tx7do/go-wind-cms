@@ -64,6 +64,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 
+	// 注册社交收件箱回拉任务：回复/提及落库（详见 social_service.go InboxSyncWorker）。
+	if err = asynq.RegisterSubscriber(srv, task.SocialInboxSyncTaskType, socialService.InboxSyncWorker); err != nil {
+		log.Error(err)
+	}
+
 	// 注册文章定时发布任务：到点把 SCHEDULED 文章转正为 PUBLISHED 并刷新索引
 	//（修复前端承诺"到点自动发布"但后端无执行器的既有缺口）。
 	if err = asynq.RegisterSubscriber(srv, task.PostPublishTaskType, postService.PublishScheduledPostWorker); err != nil {
@@ -76,6 +81,9 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 	if _, err = srv.NewPeriodicTask("*/1 * * * *", task.SocialPublishSweepTaskType, &task.PublishSweepPayload{}); err != nil {
+		log.Error(err)
+	}
+	if _, err = srv.NewPeriodicTask("*/15 * * * *", task.SocialInboxSyncTaskType, &task.PublishSweepPayload{}); err != nil {
 		log.Error(err)
 	}
 

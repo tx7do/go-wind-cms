@@ -1671,6 +1671,30 @@ func (f SocialDistributionMutationRuleFunc) EvalMutation(ctx context.Context, m 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SocialDistributionMutation", m)
 }
 
+// The SocialInboxItemQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SocialInboxItemQueryRuleFunc func(context.Context, *ent.SocialInboxItemQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SocialInboxItemQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SocialInboxItemQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SocialInboxItemQuery", q)
+}
+
+// The SocialInboxItemMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SocialInboxItemMutationRuleFunc func(context.Context, *ent.SocialInboxItemMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SocialInboxItemMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SocialInboxItemMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SocialInboxItemMutation", m)
+}
+
 // The SocialStatsHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SocialStatsHistoryQueryRuleFunc func(context.Context, *ent.SocialStatsHistoryQuery) error
@@ -2076,6 +2100,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.SocialDistributionQuery:
 		return q.Filter(), nil
+	case *ent.SocialInboxItemQuery:
+		return q.Filter(), nil
 	case *ent.SocialStatsHistoryQuery:
 		return q.Filter(), nil
 	case *ent.TagQuery:
@@ -2232,6 +2258,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.SocialAccountMutation:
 		return m.Filter(), nil
 	case *ent.SocialDistributionMutation:
+		return m.Filter(), nil
+	case *ent.SocialInboxItemMutation:
 		return m.Filter(), nil
 	case *ent.SocialStatsHistoryMutation:
 		return m.Filter(), nil

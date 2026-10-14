@@ -22,6 +22,9 @@ const (
 
 	// SocialPublishSweepTaskType 社交分发发布兜底扫描的 asynq 周期任务类型。
 	SocialPublishSweepTaskType = "social.distribution.sweep"
+
+	// SocialInboxSyncTaskType 社交收件箱回拉的 asynq 周期任务类型。
+	SocialInboxSyncTaskType = "social.inbox.sync"
 )
 
 // PublishSweepPayload 兜底扫描任务 payload（无字段，扫描范围由 DB 决定）。

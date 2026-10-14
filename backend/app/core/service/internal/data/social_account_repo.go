@@ -10,6 +10,7 @@ import (
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
 
 	"github.com/tx7do/go-utils/copierutil"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/go-utils/mapper"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -236,6 +237,36 @@ func (r *SocialAccountRepo) Delete(ctx context.Context, req *socialV1.DeleteSoci
 		r.log.Errorf("delete social account failed: %s", err.Error())
 	}
 	return err
+}
+
+// ListEnabledByPlatforms 收件箱同步用：指定平台上全部启用中的账号（SystemViewer 跨租户）。
+func (r *SocialAccountRepo) ListEnabledByPlatforms(ctx context.Context, platforms []socialV1.Platform) ([]*socialV1.SocialAccount, error) {
+	ents := make([]socialaccount.Platform, 0, len(platforms))
+	for _, p := range platforms {
+		if e := r.platformConverter.ToEntity(trans.Ptr(p)); e != nil {
+			ents = append(ents, *e)
+		}
+	}
+	if len(ents) == 0 {
+		return nil, nil
+	}
+
+	rows, err := r.entClient.Client().SocialAccount.Query().
+		Where(
+			socialaccount.IsEnabled(true),
+			socialaccount.PlatformIn(ents...),
+		).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list enabled accounts failed: %s", err.Error())
+		return nil, err
+	}
+
+	out := make([]*socialV1.SocialAccount, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, r.mapper.ToDTO(row))
+	}
+	return out, nil
 }
 
 // socialTenantIDFromContext 解析写入侧租户归属：viewer 优先，

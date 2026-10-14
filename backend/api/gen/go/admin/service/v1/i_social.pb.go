@@ -28,7 +28,7 @@ var File_admin_service_v1_i_social_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_social_proto_rawDesc = "" +
 	"\n" +
-	"\x1fadmin/service/v1/i_social.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1esocial/service/v1/social.proto2\xb7\x11\n" +
+	"\x1fadmin/service/v1/i_social.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1esocial/service/v1/social.proto2\xf7\x14\n" +
 	"\rSocialService\x12\x81\x01\n" +
 	"\x12ListSocialAccounts\x12\x19.pagination.PagingRequest\x1a-.social.service.v1.ListSocialAccountsResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/social/accounts\x12\x88\x01\n" +
 	"\x10GetSocialAccount\x12*.social.service.v1.GetSocialAccountRequest\x1a .social.service.v1.SocialAccount\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/social/accounts/{id}\x12\x8c\x01\n" +
@@ -43,7 +43,10 @@ const file_admin_service_v1_i_social_proto_rawDesc = "" +
 	"\x19PublishSocialDistribution\x123.social.service.v1.PublishSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\"6\x82\xd3\xe4\x93\x020:\x01*\"+/admin/v1/social/distributions/{id}/publish\x12\xbf\x01\n" +
 	"\x1eRefreshSocialDistributionStats\x128.social.service.v1.RefreshSocialDistributionStatsRequest\x1a%.social.service.v1.SocialDistribution\"<\x82\xd3\xe4\x93\x026:\x01*\"1/admin/v1/social/distributions/{id}/stats/refresh\x12\xdc\x01\n" +
 	"\"ListSocialDistributionStatsHistory\x12<.social.service.v1.ListSocialDistributionStatsHistoryRequest\x1a=.social.service.v1.ListSocialDistributionStatsHistoryResponse\"9\x82\xd3\xe4\x93\x023\x121/admin/v1/social/distributions/{id}/stats/history\x12\x86\x01\n" +
-	"\x1cGetSocialDistributionSummary\x12\x16.google.protobuf.Empty\x1a,.social.service.v1.SocialDistributionSummary\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/social/summaryB\xb7\x01\n" +
+	"\x1cGetSocialDistributionSummary\x12\x16.google.protobuf.Empty\x1a,.social.service.v1.SocialDistributionSummary\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/social/summary\x12\xa6\x01\n" +
+	"\x16MoveSocialDistribution\x120.social.service.v1.MoveSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/admin/v1/social/distributions/{id}/move\x12\x88\x01\n" +
+	"\x0fListSocialInbox\x12).social.service.v1.ListSocialInboxRequest\x1a*.social.service.v1.ListSocialInboxResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/admin/v1/social/inbox\x12\x89\x01\n" +
+	"\x13MarkSocialInboxRead\x12-.social.service.v1.MarkSocialInboxReadRequest\x1a\x16.google.protobuf.Empty\"+\x82\xd3\xe4\x93\x02%:\x01*\" /admin/v1/social/inbox/{id}/readB\xb7\x01\n" +
 	"\x14com.admin.service.v1B\fISocialProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_social_proto_goTypes = []any{
@@ -60,12 +63,16 @@ var file_admin_service_v1_i_social_proto_goTypes = []any{
 	(*v11.RefreshSocialDistributionStatsRequest)(nil),      // 10: social.service.v1.RefreshSocialDistributionStatsRequest
 	(*v11.ListSocialDistributionStatsHistoryRequest)(nil),  // 11: social.service.v1.ListSocialDistributionStatsHistoryRequest
 	(*emptypb.Empty)(nil),                                  // 12: google.protobuf.Empty
-	(*v11.ListSocialAccountsResponse)(nil),                 // 13: social.service.v1.ListSocialAccountsResponse
-	(*v11.SocialAccount)(nil),                              // 14: social.service.v1.SocialAccount
-	(*v11.ListSocialDistributionsResponse)(nil),            // 15: social.service.v1.ListSocialDistributionsResponse
-	(*v11.SocialDistribution)(nil),                         // 16: social.service.v1.SocialDistribution
-	(*v11.ListSocialDistributionStatsHistoryResponse)(nil), // 17: social.service.v1.ListSocialDistributionStatsHistoryResponse
-	(*v11.SocialDistributionSummary)(nil),                  // 18: social.service.v1.SocialDistributionSummary
+	(*v11.MoveSocialDistributionRequest)(nil),              // 13: social.service.v1.MoveSocialDistributionRequest
+	(*v11.ListSocialInboxRequest)(nil),                     // 14: social.service.v1.ListSocialInboxRequest
+	(*v11.MarkSocialInboxReadRequest)(nil),                 // 15: social.service.v1.MarkSocialInboxReadRequest
+	(*v11.ListSocialAccountsResponse)(nil),                 // 16: social.service.v1.ListSocialAccountsResponse
+	(*v11.SocialAccount)(nil),                              // 17: social.service.v1.SocialAccount
+	(*v11.ListSocialDistributionsResponse)(nil),            // 18: social.service.v1.ListSocialDistributionsResponse
+	(*v11.SocialDistribution)(nil),                         // 19: social.service.v1.SocialDistribution
+	(*v11.ListSocialDistributionStatsHistoryResponse)(nil), // 20: social.service.v1.ListSocialDistributionStatsHistoryResponse
+	(*v11.SocialDistributionSummary)(nil),                  // 21: social.service.v1.SocialDistributionSummary
+	(*v11.ListSocialInboxResponse)(nil),                    // 22: social.service.v1.ListSocialInboxResponse
 }
 var file_admin_service_v1_i_social_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.SocialService.ListSocialAccounts:input_type -> pagination.PagingRequest
@@ -82,22 +89,28 @@ var file_admin_service_v1_i_social_proto_depIdxs = []int32{
 	10, // 11: admin.service.v1.SocialService.RefreshSocialDistributionStats:input_type -> social.service.v1.RefreshSocialDistributionStatsRequest
 	11, // 12: admin.service.v1.SocialService.ListSocialDistributionStatsHistory:input_type -> social.service.v1.ListSocialDistributionStatsHistoryRequest
 	12, // 13: admin.service.v1.SocialService.GetSocialDistributionSummary:input_type -> google.protobuf.Empty
-	13, // 14: admin.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
-	14, // 15: admin.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
-	14, // 16: admin.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
-	14, // 17: admin.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
-	12, // 18: admin.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
-	15, // 19: admin.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
-	16, // 20: admin.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	16, // 21: admin.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	16, // 22: admin.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	12, // 23: admin.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
-	16, // 24: admin.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	16, // 25: admin.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
-	17, // 26: admin.service.v1.SocialService.ListSocialDistributionStatsHistory:output_type -> social.service.v1.ListSocialDistributionStatsHistoryResponse
-	18, // 27: admin.service.v1.SocialService.GetSocialDistributionSummary:output_type -> social.service.v1.SocialDistributionSummary
-	14, // [14:28] is the sub-list for method output_type
-	0,  // [0:14] is the sub-list for method input_type
+	13, // 14: admin.service.v1.SocialService.MoveSocialDistribution:input_type -> social.service.v1.MoveSocialDistributionRequest
+	14, // 15: admin.service.v1.SocialService.ListSocialInbox:input_type -> social.service.v1.ListSocialInboxRequest
+	15, // 16: admin.service.v1.SocialService.MarkSocialInboxRead:input_type -> social.service.v1.MarkSocialInboxReadRequest
+	16, // 17: admin.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
+	17, // 18: admin.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
+	17, // 19: admin.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
+	17, // 20: admin.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
+	12, // 21: admin.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
+	18, // 22: admin.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
+	19, // 23: admin.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	19, // 24: admin.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	19, // 25: admin.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	12, // 26: admin.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
+	19, // 27: admin.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	19, // 28: admin.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
+	20, // 29: admin.service.v1.SocialService.ListSocialDistributionStatsHistory:output_type -> social.service.v1.ListSocialDistributionStatsHistoryResponse
+	21, // 30: admin.service.v1.SocialService.GetSocialDistributionSummary:output_type -> social.service.v1.SocialDistributionSummary
+	19, // 31: admin.service.v1.SocialService.MoveSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	22, // 32: admin.service.v1.SocialService.ListSocialInbox:output_type -> social.service.v1.ListSocialInboxResponse
+	12, // 33: admin.service.v1.SocialService.MarkSocialInboxRead:output_type -> google.protobuf.Empty
+	17, // [17:34] is the sub-list for method output_type
+	0,  // [0:17] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

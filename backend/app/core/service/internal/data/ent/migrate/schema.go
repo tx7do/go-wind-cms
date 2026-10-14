@@ -3811,6 +3811,51 @@ var (
 			},
 		},
 	}
+	// SocialInboxItemsColumns holds the columns for the "social_inbox_items" table.
+	SocialInboxItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "platform", Type: field.TypeEnum, Nullable: true, Comment: "社交平台", Enums: []string{"PLATFORM_BLUESKY", "PLATFORM_MASTODON", "PLATFORM_DEVTO", "PLATFORM_TELEGRAM", "PLATFORM_WORDPRESS", "PLATFORM_WECHAT_OA", "PLATFORM_NOSTR", "PLATFORM_WEIBO", "PLATFORM_LINKEDIN", "PLATFORM_METAWEBLOG"}},
+		{Name: "account_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的社交账号ID"},
+		{Name: "type", Type: field.TypeString, Nullable: true, Comment: "条目类型（REPLY/MENTION/LIKE/OTHER）"},
+		{Name: "external_id", Type: field.TypeString, Nullable: true, Comment: "平台侧条目唯一标识"},
+		{Name: "author_name", Type: field.TypeString, Nullable: true, Comment: "作者显示名"},
+		{Name: "author_handle", Type: field.TypeString, Nullable: true, Comment: "作者账号标识"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "内容摘要"},
+		{Name: "url", Type: field.TypeString, Nullable: true, Comment: "平台侧链接"},
+		{Name: "occurred_at", Type: field.TypeTime, Nullable: true, Comment: "平台侧发生时间"},
+		{Name: "read_at", Type: field.TypeTime, Nullable: true, Comment: "标记已读时间"},
+	}
+	// SocialInboxItemsTable holds the schema information for the "social_inbox_items" table.
+	SocialInboxItemsTable = &schema.Table{
+		Name:       "social_inbox_items",
+		Comment:    "社交收件箱条目",
+		Columns:    SocialInboxItemsColumns,
+		PrimaryKey: []*schema.Column{SocialInboxItemsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_social_inbox_platform_external",
+				Unique:  false,
+				Columns: []*schema.Column{SocialInboxItemsColumns[8], SocialInboxItemsColumns[11]},
+			},
+			{
+				Name:    "idx_social_inbox_account_read",
+				Unique:  false,
+				Columns: []*schema.Column{SocialInboxItemsColumns[9], SocialInboxItemsColumns[17]},
+			},
+			{
+				Name:    "idx_social_inbox_tenant_created",
+				Unique:  false,
+				Columns: []*schema.Column{SocialInboxItemsColumns[7], SocialInboxItemsColumns[1]},
+			},
+		},
+	}
 	// SocialStatsHistoryColumns holds the columns for the "social_stats_history" table.
 	SocialStatsHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4575,6 +4620,7 @@ var (
 		SiteSettingsTable,
 		SocialAccountsTable,
 		SocialDistributionsTable,
+		SocialInboxItemsTable,
 		SocialStatsHistoryTable,
 		TagsTable,
 		TagTranslationsTable,
@@ -4924,6 +4970,11 @@ func init() {
 	}
 	SocialDistributionsTable.Annotation = &entsql.Annotation{
 		Table:     "social_distributions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SocialInboxItemsTable.Annotation = &entsql.Annotation{
+		Table:     "social_inbox_items",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

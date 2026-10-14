@@ -49,6 +49,15 @@ const socialStaleTaskSkipWindow = 2 * time.Minute
 // 失败次数达到该值即判定最终失败并通知操作者。
 const socialPublishMaxAttempts = 4
 
+// socialInboxPullWindow 收件箱回拉窗口（每周期拉最近 N 天）。
+const socialInboxPullWindow = 3 * 24 * time.Hour
+
+// socialInboxPlatforms 具备收件箱回拉能力的平台集合。
+var socialInboxPlatforms = []socialV1.Platform{
+	socialV1.Platform_PLATFORM_BLUESKY,
+	socialV1.Platform_PLATFORM_MASTODON,
+}
+
 // socialMediaPlatforms 支持配图的平台集合（其余平台带图会在创建时报错）。
 var socialMediaPlatforms = map[socialV1.Platform]bool{
 	socialV1.Platform_PLATFORM_TELEGRAM:   true,
@@ -72,6 +81,7 @@ type SocialService struct {
 	postRepo           *data.PostRepo
 	taskService        *TaskService
 	internalMessageSvc *InternalMessageService
+	inboxRepo          *data.SocialInboxRepo
 }
 
 func NewSocialService(
@@ -85,6 +95,7 @@ func NewSocialService(
 	postRepo *data.PostRepo,
 	taskService *TaskService,
 	internalMessageSvc *InternalMessageService,
+	inboxRepo *data.SocialInboxRepo,
 ) *SocialService {
 	return &SocialService{
 		log:                ctx.NewLoggerHelper("social/service/core-service"),
@@ -97,6 +108,7 @@ func NewSocialService(
 		postRepo:           postRepo,
 		taskService:        taskService,
 		internalMessageSvc: internalMessageSvc,
+		inboxRepo:          inboxRepo,
 	}
 }
 
@@ -1034,4 +1046,195 @@ func (s *SocialService) recordStatsHistory(ctx context.Context, distributionID u
 	}); err != nil {
 		s.log.Errorf("record stats history failed (distribution=%d): %v", distributionID, err)
 	}
+}
+
+// MoveSocialDistribution 看板拖拽的状态流转：
+//   - →草稿：从 已排期/失败 撤回（未触发的发布任务到点自检状态后自弃）
+//   - →已排期：从 草稿/失败 排期（publish_time 缺省立即）
+//
+// 已发布/发布中不可移动。
+func (s *SocialService) MoveSocialDistribution(ctx context.Context, req *socialV1.MoveSocialDistributionRequest) (*socialV1.SocialDistribution, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, socialV1.ErrorBadRequest("invalid parameter")
+	}
+
+	target := req.GetTargetStatus()
+	if target != socialV1.SocialDistribution_STATUS_DRAFT &&
+		target != socialV1.SocialDistribution_STATUS_SCHEDULED {
+		return nil, socialV1.ErrorBadRequest("target status must be DRAFT or SCHEDULED")
+	}
+
+	// 租户校验
+	if _, err := s.distributionRepo.Get(ctx, &socialV1.GetSocialDistributionRequest{Id: req.GetId()}); err != nil {
+		return nil, err
+	}
+
+	tid, _ := maybeTenantFromViewerSocial(ctx)
+	moved, err := s.distributionRepo.MoveStatus(ctx, req.GetId(), target, tid)
+	if err != nil {
+		return nil, err
+	}
+	if !moved {
+		return nil, socialV1.ErrorNotPublishable("status changed concurrently, refresh and retry")
+	}
+
+	updated, err := s.distributionRepo.GetByID(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	// 拖到已排期：重新入队（publish_time 为空/已过 → 立即）
+	if target == socialV1.SocialDistribution_STATUS_SCHEDULED {
+		if err = s.enqueuePublish(updated); err != nil {
+			_, _ = s.distributionRepo.MarkFailed(ctx, updated.GetId(), "enqueue failed: "+err.Error())
+			return nil, socialV1.ErrorInternalServerError("schedule publish failed")
+		}
+	}
+
+	return updated, nil
+}
+
+// ListSocialInbox 收件箱列表（租户隔离；可按账号/未读过滤）。
+func (s *SocialService) ListSocialInbox(ctx context.Context, req *socialV1.ListSocialInboxRequest) (*socialV1.ListSocialInboxResponse, error) {
+	tid, _ := maybeTenantFromViewerSocial(ctx)
+	limit := int(req.GetLimit())
+
+	rows, unread, err := s.inboxRepo.List(ctx, tid, req.GetAccountId(), req.GetUnreadOnly(), limit)
+	if err != nil {
+		return nil, socialV1.ErrorInternalServerError("list inbox failed")
+	}
+
+	items := make([]*socialV1.SocialInboxItem, 0, len(rows))
+	for _, row := range rows {
+		item := &socialV1.SocialInboxItem{
+			Id:        trans.Ptr(row.ID),
+			AccountId: row.AccountID,
+			CreatedAt: timeutil.TimeToTimestamppb(row.CreatedAt),
+		}
+		if row.Platform != nil {
+			item.Platform = trans.Ptr(socialV1.Platform(socialV1.Platform_value[string(*row.Platform)]))
+		}
+		if row.Type != nil {
+			item.Type = row.Type
+		}
+		if row.ExternalID != nil {
+			item.ExternalId = row.ExternalID
+		}
+		if row.AuthorName != nil {
+			item.AuthorName = row.AuthorName
+		}
+		if row.AuthorHandle != nil {
+			item.AuthorHandle = row.AuthorHandle
+		}
+		if row.Content != nil {
+			item.Content = row.Content
+		}
+		if row.URL != nil {
+			item.Url = row.URL
+		}
+		item.OccurredAt = timeutil.TimeToTimestamppb(row.OccurredAt)
+		item.ReadAt = timeutil.TimeToTimestamppb(row.ReadAt)
+		items = append(items, item)
+	}
+
+	return &socialV1.ListSocialInboxResponse{
+		Items:       items,
+		UnreadCount: unread,
+	}, nil
+}
+
+// MarkSocialInboxRead 标记收件项已读（租户守卫）。
+func (s *SocialService) MarkSocialInboxRead(ctx context.Context, req *socialV1.MarkSocialInboxReadRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, socialV1.ErrorBadRequest("invalid parameter")
+	}
+	tid, _ := maybeTenantFromViewerSocial(ctx)
+	if err := s.inboxRepo.MarkRead(ctx, tid, req.GetId(), time.Now()); err != nil {
+		return nil, socialV1.ErrorInternalServerError("mark read failed")
+	}
+	return &emptypb.Empty{}, nil
+}
+
+// InboxSyncWorker 是 asynq "social.inbox.sync" 周期任务的 handler：
+// 对全部启用且具备收件箱能力的账号（Bluesky/Mastodon）回拉回复/提及，
+// 以 (platform, external_id) 去重落库。
+func (s *SocialService) InboxSyncWorker(taskType string, payload *task.PublishSweepPayload) error {
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+
+	accounts, err := s.accountRepo.ListEnabledByPlatforms(ctx, socialInboxPlatforms)
+	if err != nil {
+		s.log.Errorf("inbox sync: list accounts failed: %v", err)
+		return err
+	}
+
+	since := time.Now().Add(-socialInboxPullWindow)
+	total := 0
+	for _, acct := range accounts {
+		provider, perr := social.GetProvider(acct.GetPlatform().String())
+		if perr != nil {
+			continue
+		}
+		fetcher, ok := social.AsInboxFetcher(provider)
+		if !ok {
+			continue
+		}
+		creds, cerr := s.decryptCredentials(acct)
+		if cerr != nil {
+			s.log.Warnf("inbox sync: decrypt credentials failed (account=%d): %v", acct.GetId(), cerr)
+			continue
+		}
+
+		items, ferr := fetcher.FetchInbox(ctx, creds, since)
+		if ferr != nil {
+			s.log.Warnf("inbox sync: fetch failed (account=%d): %v", acct.GetId(), ferr)
+			continue
+		}
+
+		tenantID := socialTenantIDFromViewerContext(ctx)
+		for i := range items {
+			item := &socialV1.SocialInboxItem{
+				Platform:     acct.Platform,
+				AccountId:    trans.Ptr(acct.GetId()),
+				Type:         trans.Ptr(items[i].Type),
+				ExternalId:   trans.Ptr(items[i].ExternalID),
+				AuthorName:   trans.Ptr(items[i].AuthorName),
+				AuthorHandle: trans.Ptr(items[i].AuthorHandle),
+				Content:      trans.Ptr(items[i].Content),
+				Url:          trans.Ptr(items[i].URL),
+				OccurredAt:   timeutil.TimeToTimestamppb(&items[i].OccurredAt),
+			}
+			created, cerr := s.inboxRepo.CreateIfAbsent(ctx, item, tenantID)
+			if cerr != nil {
+				continue
+			}
+			if created {
+				total++
+			}
+		}
+	}
+	if total != 0 {
+		s.log.Infof("inbox sync: pulled %d new items", total)
+	}
+	return nil
+}
+
+// maybeTenantFromViewerSocial viewer → 租户 ID（服务包内复用）。
+func maybeTenantFromViewerSocial(ctx context.Context) (uint32, bool) {
+	vc, exist := viewer.FromContext(ctx)
+	if !exist || vc == nil {
+		return 0, false
+	}
+	tid := vc.TenantID()
+	if tid == 0 {
+		return 0, false
+	}
+	return uint32(tid), true
+}
+
+// socialTenantIDFromViewerContext SystemViewer 上下文下的租户 ID（无则 0 平台）。
+func socialTenantIDFromViewerContext(ctx context.Context) uint32 {
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		return uint32(vc.TenantID())
+	}
+	return 0
 }

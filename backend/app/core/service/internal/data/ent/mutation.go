@@ -77,6 +77,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
+	"go-wind-cms/app/core/service/internal/data/ent/socialinboxitem"
 	"go-wind-cms/app/core/service/internal/data/ent/socialstatshistory"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
@@ -168,6 +169,7 @@ const (
 	TypeSiteSetting                = "SiteSetting"
 	TypeSocialAccount              = "SocialAccount"
 	TypeSocialDistribution         = "SocialDistribution"
+	TypeSocialInboxItem            = "SocialInboxItem"
 	TypeSocialStatsHistory         = "SocialStatsHistory"
 	TypeTag                        = "Tag"
 	TypeTagTranslation             = "TagTranslation"
@@ -101532,6 +101534,1701 @@ func (m *SocialDistributionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *SocialDistributionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown SocialDistribution edge %s", name)
+}
+
+// SocialInboxItemMutation represents an operation that mutates the SocialInboxItem nodes in the graph.
+type SocialInboxItemMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	tenant_id     *uint32
+	addtenant_id  *int32
+	platform      *socialinboxitem.Platform
+	account_id    *uint32
+	addaccount_id *int32
+	_type         *string
+	external_id   *string
+	author_name   *string
+	author_handle *string
+	content       *string
+	url           *string
+	occurred_at   *time.Time
+	read_at       *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*SocialInboxItem, error)
+	predicates    []predicate.SocialInboxItem
+}
+
+var _ ent.Mutation = (*SocialInboxItemMutation)(nil)
+
+// socialinboxitemOption allows management of the mutation configuration using functional options.
+type socialinboxitemOption func(*SocialInboxItemMutation)
+
+// newSocialInboxItemMutation creates new mutation for the SocialInboxItem entity.
+func newSocialInboxItemMutation(c config, op Op, opts ...socialinboxitemOption) *SocialInboxItemMutation {
+	m := &SocialInboxItemMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSocialInboxItem,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSocialInboxItemID sets the ID field of the mutation.
+func withSocialInboxItemID(id uint32) socialinboxitemOption {
+	return func(m *SocialInboxItemMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SocialInboxItem
+		)
+		m.oldValue = func(ctx context.Context) (*SocialInboxItem, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SocialInboxItem.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSocialInboxItem sets the old SocialInboxItem of the mutation.
+func withSocialInboxItem(node *SocialInboxItem) socialinboxitemOption {
+	return func(m *SocialInboxItemMutation) {
+		m.oldValue = func(context.Context) (*SocialInboxItem, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SocialInboxItemMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SocialInboxItemMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SocialInboxItem entities.
+func (m *SocialInboxItemMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SocialInboxItemMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SocialInboxItemMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SocialInboxItem.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SocialInboxItemMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SocialInboxItemMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SocialInboxItemMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[socialinboxitem.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SocialInboxItemMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, socialinboxitem.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SocialInboxItemMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SocialInboxItemMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SocialInboxItemMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[socialinboxitem.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SocialInboxItemMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, socialinboxitem.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SocialInboxItemMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SocialInboxItemMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SocialInboxItemMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[socialinboxitem.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SocialInboxItemMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, socialinboxitem.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SocialInboxItemMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SocialInboxItemMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *SocialInboxItemMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SocialInboxItemMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SocialInboxItemMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[socialinboxitem.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SocialInboxItemMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, socialinboxitem.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SocialInboxItemMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SocialInboxItemMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *SocialInboxItemMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SocialInboxItemMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SocialInboxItemMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[socialinboxitem.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SocialInboxItemMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, socialinboxitem.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SocialInboxItemMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SocialInboxItemMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *SocialInboxItemMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *SocialInboxItemMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SocialInboxItemMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[socialinboxitem.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SocialInboxItemMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, socialinboxitem.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *SocialInboxItemMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *SocialInboxItemMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *SocialInboxItemMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *SocialInboxItemMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *SocialInboxItemMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[socialinboxitem.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *SocialInboxItemMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, socialinboxitem.FieldTenantID)
+}
+
+// SetPlatform sets the "platform" field.
+func (m *SocialInboxItemMutation) SetPlatform(s socialinboxitem.Platform) {
+	m.platform = &s
+}
+
+// Platform returns the value of the "platform" field in the mutation.
+func (m *SocialInboxItemMutation) Platform() (r socialinboxitem.Platform, exists bool) {
+	v := m.platform
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlatform returns the old "platform" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldPlatform(ctx context.Context) (v *socialinboxitem.Platform, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlatform is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlatform requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlatform: %w", err)
+	}
+	return oldValue.Platform, nil
+}
+
+// ClearPlatform clears the value of the "platform" field.
+func (m *SocialInboxItemMutation) ClearPlatform() {
+	m.platform = nil
+	m.clearedFields[socialinboxitem.FieldPlatform] = struct{}{}
+}
+
+// PlatformCleared returns if the "platform" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) PlatformCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldPlatform]
+	return ok
+}
+
+// ResetPlatform resets all changes to the "platform" field.
+func (m *SocialInboxItemMutation) ResetPlatform() {
+	m.platform = nil
+	delete(m.clearedFields, socialinboxitem.FieldPlatform)
+}
+
+// SetAccountID sets the "account_id" field.
+func (m *SocialInboxItemMutation) SetAccountID(u uint32) {
+	m.account_id = &u
+	m.addaccount_id = nil
+}
+
+// AccountID returns the value of the "account_id" field in the mutation.
+func (m *SocialInboxItemMutation) AccountID() (r uint32, exists bool) {
+	v := m.account_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccountID returns the old "account_id" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldAccountID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccountID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccountID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccountID: %w", err)
+	}
+	return oldValue.AccountID, nil
+}
+
+// AddAccountID adds u to the "account_id" field.
+func (m *SocialInboxItemMutation) AddAccountID(u int32) {
+	if m.addaccount_id != nil {
+		*m.addaccount_id += u
+	} else {
+		m.addaccount_id = &u
+	}
+}
+
+// AddedAccountID returns the value that was added to the "account_id" field in this mutation.
+func (m *SocialInboxItemMutation) AddedAccountID() (r int32, exists bool) {
+	v := m.addaccount_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAccountID clears the value of the "account_id" field.
+func (m *SocialInboxItemMutation) ClearAccountID() {
+	m.account_id = nil
+	m.addaccount_id = nil
+	m.clearedFields[socialinboxitem.FieldAccountID] = struct{}{}
+}
+
+// AccountIDCleared returns if the "account_id" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) AccountIDCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldAccountID]
+	return ok
+}
+
+// ResetAccountID resets all changes to the "account_id" field.
+func (m *SocialInboxItemMutation) ResetAccountID() {
+	m.account_id = nil
+	m.addaccount_id = nil
+	delete(m.clearedFields, socialinboxitem.FieldAccountID)
+}
+
+// SetType sets the "type" field.
+func (m *SocialInboxItemMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *SocialInboxItemMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldType(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ClearType clears the value of the "type" field.
+func (m *SocialInboxItemMutation) ClearType() {
+	m._type = nil
+	m.clearedFields[socialinboxitem.FieldType] = struct{}{}
+}
+
+// TypeCleared returns if the "type" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) TypeCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldType]
+	return ok
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *SocialInboxItemMutation) ResetType() {
+	m._type = nil
+	delete(m.clearedFields, socialinboxitem.FieldType)
+}
+
+// SetExternalID sets the "external_id" field.
+func (m *SocialInboxItemMutation) SetExternalID(s string) {
+	m.external_id = &s
+}
+
+// ExternalID returns the value of the "external_id" field in the mutation.
+func (m *SocialInboxItemMutation) ExternalID() (r string, exists bool) {
+	v := m.external_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalID returns the old "external_id" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldExternalID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExternalID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExternalID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalID: %w", err)
+	}
+	return oldValue.ExternalID, nil
+}
+
+// ClearExternalID clears the value of the "external_id" field.
+func (m *SocialInboxItemMutation) ClearExternalID() {
+	m.external_id = nil
+	m.clearedFields[socialinboxitem.FieldExternalID] = struct{}{}
+}
+
+// ExternalIDCleared returns if the "external_id" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) ExternalIDCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldExternalID]
+	return ok
+}
+
+// ResetExternalID resets all changes to the "external_id" field.
+func (m *SocialInboxItemMutation) ResetExternalID() {
+	m.external_id = nil
+	delete(m.clearedFields, socialinboxitem.FieldExternalID)
+}
+
+// SetAuthorName sets the "author_name" field.
+func (m *SocialInboxItemMutation) SetAuthorName(s string) {
+	m.author_name = &s
+}
+
+// AuthorName returns the value of the "author_name" field in the mutation.
+func (m *SocialInboxItemMutation) AuthorName() (r string, exists bool) {
+	v := m.author_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthorName returns the old "author_name" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldAuthorName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthorName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthorName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthorName: %w", err)
+	}
+	return oldValue.AuthorName, nil
+}
+
+// ClearAuthorName clears the value of the "author_name" field.
+func (m *SocialInboxItemMutation) ClearAuthorName() {
+	m.author_name = nil
+	m.clearedFields[socialinboxitem.FieldAuthorName] = struct{}{}
+}
+
+// AuthorNameCleared returns if the "author_name" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) AuthorNameCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldAuthorName]
+	return ok
+}
+
+// ResetAuthorName resets all changes to the "author_name" field.
+func (m *SocialInboxItemMutation) ResetAuthorName() {
+	m.author_name = nil
+	delete(m.clearedFields, socialinboxitem.FieldAuthorName)
+}
+
+// SetAuthorHandle sets the "author_handle" field.
+func (m *SocialInboxItemMutation) SetAuthorHandle(s string) {
+	m.author_handle = &s
+}
+
+// AuthorHandle returns the value of the "author_handle" field in the mutation.
+func (m *SocialInboxItemMutation) AuthorHandle() (r string, exists bool) {
+	v := m.author_handle
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthorHandle returns the old "author_handle" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldAuthorHandle(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthorHandle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthorHandle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthorHandle: %w", err)
+	}
+	return oldValue.AuthorHandle, nil
+}
+
+// ClearAuthorHandle clears the value of the "author_handle" field.
+func (m *SocialInboxItemMutation) ClearAuthorHandle() {
+	m.author_handle = nil
+	m.clearedFields[socialinboxitem.FieldAuthorHandle] = struct{}{}
+}
+
+// AuthorHandleCleared returns if the "author_handle" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) AuthorHandleCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldAuthorHandle]
+	return ok
+}
+
+// ResetAuthorHandle resets all changes to the "author_handle" field.
+func (m *SocialInboxItemMutation) ResetAuthorHandle() {
+	m.author_handle = nil
+	delete(m.clearedFields, socialinboxitem.FieldAuthorHandle)
+}
+
+// SetContent sets the "content" field.
+func (m *SocialInboxItemMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *SocialInboxItemMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldContent(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ClearContent clears the value of the "content" field.
+func (m *SocialInboxItemMutation) ClearContent() {
+	m.content = nil
+	m.clearedFields[socialinboxitem.FieldContent] = struct{}{}
+}
+
+// ContentCleared returns if the "content" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) ContentCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldContent]
+	return ok
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *SocialInboxItemMutation) ResetContent() {
+	m.content = nil
+	delete(m.clearedFields, socialinboxitem.FieldContent)
+}
+
+// SetURL sets the "url" field.
+func (m *SocialInboxItemMutation) SetURL(s string) {
+	m.url = &s
+}
+
+// URL returns the value of the "url" field in the mutation.
+func (m *SocialInboxItemMutation) URL() (r string, exists bool) {
+	v := m.url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURL returns the old "url" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldURL(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURL: %w", err)
+	}
+	return oldValue.URL, nil
+}
+
+// ClearURL clears the value of the "url" field.
+func (m *SocialInboxItemMutation) ClearURL() {
+	m.url = nil
+	m.clearedFields[socialinboxitem.FieldURL] = struct{}{}
+}
+
+// URLCleared returns if the "url" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) URLCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldURL]
+	return ok
+}
+
+// ResetURL resets all changes to the "url" field.
+func (m *SocialInboxItemMutation) ResetURL() {
+	m.url = nil
+	delete(m.clearedFields, socialinboxitem.FieldURL)
+}
+
+// SetOccurredAt sets the "occurred_at" field.
+func (m *SocialInboxItemMutation) SetOccurredAt(t time.Time) {
+	m.occurred_at = &t
+}
+
+// OccurredAt returns the value of the "occurred_at" field in the mutation.
+func (m *SocialInboxItemMutation) OccurredAt() (r time.Time, exists bool) {
+	v := m.occurred_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOccurredAt returns the old "occurred_at" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldOccurredAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOccurredAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOccurredAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOccurredAt: %w", err)
+	}
+	return oldValue.OccurredAt, nil
+}
+
+// ClearOccurredAt clears the value of the "occurred_at" field.
+func (m *SocialInboxItemMutation) ClearOccurredAt() {
+	m.occurred_at = nil
+	m.clearedFields[socialinboxitem.FieldOccurredAt] = struct{}{}
+}
+
+// OccurredAtCleared returns if the "occurred_at" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) OccurredAtCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldOccurredAt]
+	return ok
+}
+
+// ResetOccurredAt resets all changes to the "occurred_at" field.
+func (m *SocialInboxItemMutation) ResetOccurredAt() {
+	m.occurred_at = nil
+	delete(m.clearedFields, socialinboxitem.FieldOccurredAt)
+}
+
+// SetReadAt sets the "read_at" field.
+func (m *SocialInboxItemMutation) SetReadAt(t time.Time) {
+	m.read_at = &t
+}
+
+// ReadAt returns the value of the "read_at" field in the mutation.
+func (m *SocialInboxItemMutation) ReadAt() (r time.Time, exists bool) {
+	v := m.read_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReadAt returns the old "read_at" field's value of the SocialInboxItem entity.
+// If the SocialInboxItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialInboxItemMutation) OldReadAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReadAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReadAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReadAt: %w", err)
+	}
+	return oldValue.ReadAt, nil
+}
+
+// ClearReadAt clears the value of the "read_at" field.
+func (m *SocialInboxItemMutation) ClearReadAt() {
+	m.read_at = nil
+	m.clearedFields[socialinboxitem.FieldReadAt] = struct{}{}
+}
+
+// ReadAtCleared returns if the "read_at" field was cleared in this mutation.
+func (m *SocialInboxItemMutation) ReadAtCleared() bool {
+	_, ok := m.clearedFields[socialinboxitem.FieldReadAt]
+	return ok
+}
+
+// ResetReadAt resets all changes to the "read_at" field.
+func (m *SocialInboxItemMutation) ResetReadAt() {
+	m.read_at = nil
+	delete(m.clearedFields, socialinboxitem.FieldReadAt)
+}
+
+// Where appends a list predicates to the SocialInboxItemMutation builder.
+func (m *SocialInboxItemMutation) Where(ps ...predicate.SocialInboxItem) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SocialInboxItemMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SocialInboxItemMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SocialInboxItem, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SocialInboxItemMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SocialInboxItemMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SocialInboxItem).
+func (m *SocialInboxItemMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SocialInboxItemMutation) Fields() []string {
+	fields := make([]string, 0, 17)
+	if m.created_at != nil {
+		fields = append(fields, socialinboxitem.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, socialinboxitem.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, socialinboxitem.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, socialinboxitem.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, socialinboxitem.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, socialinboxitem.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, socialinboxitem.FieldTenantID)
+	}
+	if m.platform != nil {
+		fields = append(fields, socialinboxitem.FieldPlatform)
+	}
+	if m.account_id != nil {
+		fields = append(fields, socialinboxitem.FieldAccountID)
+	}
+	if m._type != nil {
+		fields = append(fields, socialinboxitem.FieldType)
+	}
+	if m.external_id != nil {
+		fields = append(fields, socialinboxitem.FieldExternalID)
+	}
+	if m.author_name != nil {
+		fields = append(fields, socialinboxitem.FieldAuthorName)
+	}
+	if m.author_handle != nil {
+		fields = append(fields, socialinboxitem.FieldAuthorHandle)
+	}
+	if m.content != nil {
+		fields = append(fields, socialinboxitem.FieldContent)
+	}
+	if m.url != nil {
+		fields = append(fields, socialinboxitem.FieldURL)
+	}
+	if m.occurred_at != nil {
+		fields = append(fields, socialinboxitem.FieldOccurredAt)
+	}
+	if m.read_at != nil {
+		fields = append(fields, socialinboxitem.FieldReadAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SocialInboxItemMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case socialinboxitem.FieldCreatedAt:
+		return m.CreatedAt()
+	case socialinboxitem.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case socialinboxitem.FieldDeletedAt:
+		return m.DeletedAt()
+	case socialinboxitem.FieldCreatedBy:
+		return m.CreatedBy()
+	case socialinboxitem.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case socialinboxitem.FieldDeletedBy:
+		return m.DeletedBy()
+	case socialinboxitem.FieldTenantID:
+		return m.TenantID()
+	case socialinboxitem.FieldPlatform:
+		return m.Platform()
+	case socialinboxitem.FieldAccountID:
+		return m.AccountID()
+	case socialinboxitem.FieldType:
+		return m.GetType()
+	case socialinboxitem.FieldExternalID:
+		return m.ExternalID()
+	case socialinboxitem.FieldAuthorName:
+		return m.AuthorName()
+	case socialinboxitem.FieldAuthorHandle:
+		return m.AuthorHandle()
+	case socialinboxitem.FieldContent:
+		return m.Content()
+	case socialinboxitem.FieldURL:
+		return m.URL()
+	case socialinboxitem.FieldOccurredAt:
+		return m.OccurredAt()
+	case socialinboxitem.FieldReadAt:
+		return m.ReadAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SocialInboxItemMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case socialinboxitem.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case socialinboxitem.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case socialinboxitem.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case socialinboxitem.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case socialinboxitem.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case socialinboxitem.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case socialinboxitem.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case socialinboxitem.FieldPlatform:
+		return m.OldPlatform(ctx)
+	case socialinboxitem.FieldAccountID:
+		return m.OldAccountID(ctx)
+	case socialinboxitem.FieldType:
+		return m.OldType(ctx)
+	case socialinboxitem.FieldExternalID:
+		return m.OldExternalID(ctx)
+	case socialinboxitem.FieldAuthorName:
+		return m.OldAuthorName(ctx)
+	case socialinboxitem.FieldAuthorHandle:
+		return m.OldAuthorHandle(ctx)
+	case socialinboxitem.FieldContent:
+		return m.OldContent(ctx)
+	case socialinboxitem.FieldURL:
+		return m.OldURL(ctx)
+	case socialinboxitem.FieldOccurredAt:
+		return m.OldOccurredAt(ctx)
+	case socialinboxitem.FieldReadAt:
+		return m.OldReadAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown SocialInboxItem field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialInboxItemMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case socialinboxitem.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case socialinboxitem.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case socialinboxitem.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case socialinboxitem.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case socialinboxitem.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case socialinboxitem.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case socialinboxitem.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case socialinboxitem.FieldPlatform:
+		v, ok := value.(socialinboxitem.Platform)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlatform(v)
+		return nil
+	case socialinboxitem.FieldAccountID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccountID(v)
+		return nil
+	case socialinboxitem.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case socialinboxitem.FieldExternalID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalID(v)
+		return nil
+	case socialinboxitem.FieldAuthorName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthorName(v)
+		return nil
+	case socialinboxitem.FieldAuthorHandle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthorHandle(v)
+		return nil
+	case socialinboxitem.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	case socialinboxitem.FieldURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURL(v)
+		return nil
+	case socialinboxitem.FieldOccurredAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOccurredAt(v)
+		return nil
+	case socialinboxitem.FieldReadAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReadAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialInboxItem field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SocialInboxItemMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, socialinboxitem.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, socialinboxitem.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, socialinboxitem.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, socialinboxitem.FieldTenantID)
+	}
+	if m.addaccount_id != nil {
+		fields = append(fields, socialinboxitem.FieldAccountID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SocialInboxItemMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case socialinboxitem.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case socialinboxitem.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case socialinboxitem.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case socialinboxitem.FieldTenantID:
+		return m.AddedTenantID()
+	case socialinboxitem.FieldAccountID:
+		return m.AddedAccountID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialInboxItemMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case socialinboxitem.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case socialinboxitem.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case socialinboxitem.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case socialinboxitem.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case socialinboxitem.FieldAccountID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAccountID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialInboxItem numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SocialInboxItemMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(socialinboxitem.FieldCreatedAt) {
+		fields = append(fields, socialinboxitem.FieldCreatedAt)
+	}
+	if m.FieldCleared(socialinboxitem.FieldUpdatedAt) {
+		fields = append(fields, socialinboxitem.FieldUpdatedAt)
+	}
+	if m.FieldCleared(socialinboxitem.FieldDeletedAt) {
+		fields = append(fields, socialinboxitem.FieldDeletedAt)
+	}
+	if m.FieldCleared(socialinboxitem.FieldCreatedBy) {
+		fields = append(fields, socialinboxitem.FieldCreatedBy)
+	}
+	if m.FieldCleared(socialinboxitem.FieldUpdatedBy) {
+		fields = append(fields, socialinboxitem.FieldUpdatedBy)
+	}
+	if m.FieldCleared(socialinboxitem.FieldDeletedBy) {
+		fields = append(fields, socialinboxitem.FieldDeletedBy)
+	}
+	if m.FieldCleared(socialinboxitem.FieldTenantID) {
+		fields = append(fields, socialinboxitem.FieldTenantID)
+	}
+	if m.FieldCleared(socialinboxitem.FieldPlatform) {
+		fields = append(fields, socialinboxitem.FieldPlatform)
+	}
+	if m.FieldCleared(socialinboxitem.FieldAccountID) {
+		fields = append(fields, socialinboxitem.FieldAccountID)
+	}
+	if m.FieldCleared(socialinboxitem.FieldType) {
+		fields = append(fields, socialinboxitem.FieldType)
+	}
+	if m.FieldCleared(socialinboxitem.FieldExternalID) {
+		fields = append(fields, socialinboxitem.FieldExternalID)
+	}
+	if m.FieldCleared(socialinboxitem.FieldAuthorName) {
+		fields = append(fields, socialinboxitem.FieldAuthorName)
+	}
+	if m.FieldCleared(socialinboxitem.FieldAuthorHandle) {
+		fields = append(fields, socialinboxitem.FieldAuthorHandle)
+	}
+	if m.FieldCleared(socialinboxitem.FieldContent) {
+		fields = append(fields, socialinboxitem.FieldContent)
+	}
+	if m.FieldCleared(socialinboxitem.FieldURL) {
+		fields = append(fields, socialinboxitem.FieldURL)
+	}
+	if m.FieldCleared(socialinboxitem.FieldOccurredAt) {
+		fields = append(fields, socialinboxitem.FieldOccurredAt)
+	}
+	if m.FieldCleared(socialinboxitem.FieldReadAt) {
+		fields = append(fields, socialinboxitem.FieldReadAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SocialInboxItemMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SocialInboxItemMutation) ClearField(name string) error {
+	switch name {
+	case socialinboxitem.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case socialinboxitem.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case socialinboxitem.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case socialinboxitem.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case socialinboxitem.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case socialinboxitem.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case socialinboxitem.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case socialinboxitem.FieldPlatform:
+		m.ClearPlatform()
+		return nil
+	case socialinboxitem.FieldAccountID:
+		m.ClearAccountID()
+		return nil
+	case socialinboxitem.FieldType:
+		m.ClearType()
+		return nil
+	case socialinboxitem.FieldExternalID:
+		m.ClearExternalID()
+		return nil
+	case socialinboxitem.FieldAuthorName:
+		m.ClearAuthorName()
+		return nil
+	case socialinboxitem.FieldAuthorHandle:
+		m.ClearAuthorHandle()
+		return nil
+	case socialinboxitem.FieldContent:
+		m.ClearContent()
+		return nil
+	case socialinboxitem.FieldURL:
+		m.ClearURL()
+		return nil
+	case socialinboxitem.FieldOccurredAt:
+		m.ClearOccurredAt()
+		return nil
+	case socialinboxitem.FieldReadAt:
+		m.ClearReadAt()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialInboxItem nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SocialInboxItemMutation) ResetField(name string) error {
+	switch name {
+	case socialinboxitem.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case socialinboxitem.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case socialinboxitem.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case socialinboxitem.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case socialinboxitem.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case socialinboxitem.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case socialinboxitem.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case socialinboxitem.FieldPlatform:
+		m.ResetPlatform()
+		return nil
+	case socialinboxitem.FieldAccountID:
+		m.ResetAccountID()
+		return nil
+	case socialinboxitem.FieldType:
+		m.ResetType()
+		return nil
+	case socialinboxitem.FieldExternalID:
+		m.ResetExternalID()
+		return nil
+	case socialinboxitem.FieldAuthorName:
+		m.ResetAuthorName()
+		return nil
+	case socialinboxitem.FieldAuthorHandle:
+		m.ResetAuthorHandle()
+		return nil
+	case socialinboxitem.FieldContent:
+		m.ResetContent()
+		return nil
+	case socialinboxitem.FieldURL:
+		m.ResetURL()
+		return nil
+	case socialinboxitem.FieldOccurredAt:
+		m.ResetOccurredAt()
+		return nil
+	case socialinboxitem.FieldReadAt:
+		m.ResetReadAt()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialInboxItem field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SocialInboxItemMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SocialInboxItemMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SocialInboxItemMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SocialInboxItemMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SocialInboxItemMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SocialInboxItemMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SocialInboxItemMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SocialInboxItem unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SocialInboxItemMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SocialInboxItem edge %s", name)
 }
 
 // SocialStatsHistoryMutation represents an operation that mutates the SocialStatsHistory nodes in the graph.

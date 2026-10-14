@@ -25,6 +25,10 @@
   get_social_summary / list_social_distributions / publish_distribution 四个工具；
   StreamableHTTP 传输，Bearer Token 鉴权（环境变量 MCP_ADDR 开启、MCP_TOKEN
   鉴权，未配置则不启动）。
+- 看板视图：分发按状态拖拽流转（草稿↔已排期、失败→草稿/已排期），拖到已排期
+  自动重新入队；已发布列只读。
+- 社交收件箱（Bluesky/Mastodon）：每 15 分钟回拉回复/提及，(platform, external_id)
+  去重落库；支持未读过滤与标记已读。
 
 ### 修复
 

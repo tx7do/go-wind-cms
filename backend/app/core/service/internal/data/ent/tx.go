@@ -142,6 +142,8 @@ type Tx struct {
 	SocialAccount *SocialAccountClient
 	// SocialDistribution is the client for interacting with the SocialDistribution builders.
 	SocialDistribution *SocialDistributionClient
+	// SocialInboxItem is the client for interacting with the SocialInboxItem builders.
+	SocialInboxItem *SocialInboxItemClient
 	// SocialStatsHistory is the client for interacting with the SocialStatsHistory builders.
 	SocialStatsHistory *SocialStatsHistoryClient
 	// Tag is the client for interacting with the Tag builders.
@@ -358,6 +360,7 @@ func (tx *Tx) init() {
 	tx.SiteSetting = NewSiteSettingClient(tx.config)
 	tx.SocialAccount = NewSocialAccountClient(tx.config)
 	tx.SocialDistribution = NewSocialDistributionClient(tx.config)
+	tx.SocialInboxItem = NewSocialInboxItemClient(tx.config)
 	tx.SocialStatsHistory = NewSocialStatsHistoryClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.TagTranslation = NewTagTranslationClient(tx.config)

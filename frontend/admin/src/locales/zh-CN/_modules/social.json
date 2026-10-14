@@ -143,5 +143,15 @@
   "mediaIds": "配图",
   "mediaIdsPlaceholder": "从媒体库选择配图（至多 4 张）",
   "helpMediaIds": "仅 Telegram/Bluesky/Mastodon/WordPress/微博 支持配图；发布到不支持的平台前会要求移除配图",
-  "mediaUnsupported": "该平台不支持配图，请移除配图后再发布"
+  "mediaUnsupported": "该平台不支持配图，请移除配图后再发布",
+  "viewKanban": "看板",
+  "kanbanEmpty": "暂无内容",
+  "moveSuccess": "已移动",
+  "moveFailed": "移动失败（状态可能已变化，请刷新）",
+  "moveToPublishedForbidden": "已发布不可拖拽，请使用「立即发布」",
+  "inboxAll": "全部",
+  "inboxUnread": "未读",
+  "inboxEmpty": "暂无收件内容（Bluesky/Mastodon 账号每 15 分钟自动回拉）",
+  "markRead": "标记已读",
+  "markReadConfirmTitle": "标记为已读？"
 }

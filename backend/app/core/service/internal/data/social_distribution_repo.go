@@ -11,6 +11,7 @@ import (
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -494,6 +495,52 @@ func (r *SocialDistributionRepo) Summary(ctx context.Context, tenantID uint32, s
 	}
 
 	return out, nil
+}
+
+// MoveStatus 看板拖拽的状态流转（状态闸门式条件更新）：
+//   - →DRAFT：从 SCHEDULED/FAILED
+//   - →SCHEDULED：从 DRAFT/FAILED
+//
+// 返回是否发生移动；目标/来源非法或并发变化返回 false。
+func (r *SocialDistributionRepo) MoveStatus(ctx context.Context, id uint32, target socialV1.SocialDistribution_Status, tenantID uint32) (bool, error) {
+	var froms []socialdistribution.Status
+	switch target {
+	case socialV1.SocialDistribution_STATUS_DRAFT:
+		froms = []socialdistribution.Status{
+			socialdistribution.StatusStatusScheduled,
+			socialdistribution.StatusStatusFailed,
+		}
+	case socialV1.SocialDistribution_STATUS_SCHEDULED:
+		froms = []socialdistribution.Status{
+			socialdistribution.StatusStatusDraft,
+			socialdistribution.StatusStatusFailed,
+		}
+	default:
+		return false, socialV1.ErrorBadRequest("invalid target status")
+	}
+
+	builder := r.entClient.Client().SocialDistribution.Update().
+		Where(
+			socialdistribution.IDEQ(id),
+			socialdistribution.StatusIn(froms...),
+		).
+		SetStatus(func() socialdistribution.Status {
+			if e := r.statusConverter.ToEntity(trans.Ptr(target)); e != nil {
+				return *e
+			}
+			return socialdistribution.StatusStatusScheduled
+		}()).
+		SetUpdatedAt(time.Now())
+	if tenantID != 0 {
+		builder.Where(socialdistribution.TenantIDEQ(tenantID))
+	}
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("move status failed (id=%d): %s", id, err.Error())
+		return false, socialV1.ErrorInternalServerError("move status failed")
+	}
+	return n > 0, nil
 }
 
 // maskHasPath 判断 update_mask 是否包含指定字段。

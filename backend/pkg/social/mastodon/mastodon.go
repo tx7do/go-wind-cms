@@ -184,6 +184,121 @@ func (c *Client) uploadMedia(ctx context.Context, creds social.Credentials, m so
 	return media.ID, nil
 }
 
+// inboxNotification /api/v1/notifications 的通知项。
+type inboxNotification struct {
+	ID     string `json:"id"`
+	Type   string `json:"type"` // mention / favourite / reblog / follow ...
+	Status *struct {
+		ID      string `json:"id"`
+		URL     string `json:"url"`
+		Content string `json:"content"` // HTML
+		Account struct {
+			Username    string `json:"username"`
+			DisplayName string `json:"display_name"`
+		} `json:"account"`
+	} `json:"status"`
+	Account struct {
+		Username    string `json:"username"`
+		DisplayName string `json:"display_name"`
+	} `json:"account"`
+	CreatedAt string `json:"created_at"`
+}
+
+// stripHTMLTags 去除 HTML 标签为纯文本（收件箱摘要用，够用就好）。
+func stripHTMLTags(s string) string {
+	var b strings.Builder
+	inTag := false
+	for _, r := range s {
+		switch r {
+		case '<':
+			inTag = true
+		case '>':
+			inTag = false
+			b.WriteRune(' ')
+		default:
+			if !inTag {
+				b.WriteRune(r)
+			}
+		}
+	}
+	return strings.Join(strings.Fields(b.String()), " ")
+}
+
+// parseMastoTime 解析 Mastodon 的 RFC3339 时间戳。
+func parseMastoTime(s string) time.Time {
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return time.Time{}
+	}
+	return t
+}
+
+// FetchInbox 回拉提及（mention 通知，含对他人帖子的回复）。
+func (c *Client) FetchInbox(ctx context.Context, creds social.Credentials, since time.Time) ([]social.InboxItem, error) {
+	base, err := server(creds)
+	if err != nil {
+		return nil, err
+	}
+	token := creds.Get("access_token")
+	if token == "" {
+		return nil, social.ErrInvalidCredentials
+	}
+
+	req, rerr := http.NewRequestWithContext(ctx, http.MethodGet,
+		base+"/api/v1/notifications?types[]=mention&limit=40", nil)
+	if rerr != nil {
+		return nil, fmt.Errorf("mastodon: build notifications request: %w", rerr)
+	}
+	req.Header.Set("User-Agent", social.UserAgent)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, derr := c.httpClient.Do(req)
+	if derr != nil {
+		return nil, fmt.Errorf("mastodon: notifications: %w", derr)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	raw, rerr := io.ReadAll(io.LimitReader(resp.Body, maxResponseSize))
+	if rerr != nil {
+		return nil, fmt.Errorf("mastodon: read notifications: %w", rerr)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, classifyError(resp.StatusCode, raw)
+	}
+
+	var notifications []inboxNotification
+	if err = json.Unmarshal(raw, &notifications); err != nil {
+		return nil, fmt.Errorf("mastodon: decode notifications: %w", err)
+	}
+
+	items := make([]social.InboxItem, 0, len(notifications))
+	for _, n := range notifications {
+		occurred := parseMastoTime(n.CreatedAt)
+		if occurred.Before(since) {
+			continue
+		}
+		item := social.InboxItem{
+			Type:         "MENTION",
+			AuthorName:   n.Account.DisplayName,
+			AuthorHandle: n.Account.Username,
+			OccurredAt:   occurred,
+		}
+		if n.Status != nil {
+			item.ExternalID = n.Status.ID
+			item.URL = n.Status.URL
+			item.Content = stripHTMLTags(n.Status.Content)
+			item.AuthorHandle = n.Status.Account.Username
+		} else {
+			item.ExternalID = n.ID
+		}
+		if item.ExternalID == "" {
+			continue
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}
+
 // FetchStats 回拉帖子互动计数。
 func (c *Client) FetchStats(ctx context.Context, creds social.Credentials, externalID, _ string) (*social.Stats, error) {
 	if externalID == "" {

@@ -788,6 +788,18 @@ func (f SocialDistributionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SocialDistributionMutation", m)
 }
 
+// The SocialInboxItemFunc type is an adapter to allow the use of ordinary
+// function as SocialInboxItem mutator.
+type SocialInboxItemFunc func(context.Context, *ent.SocialInboxItemMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SocialInboxItemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SocialInboxItemMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SocialInboxItemMutation", m)
+}
+
 // The SocialStatsHistoryFunc type is an adapter to allow the use of ordinary
 // function as SocialStatsHistory mutator.
 type SocialStatsHistoryFunc func(context.Context, *ent.SocialStatsHistoryMutation) (ent.Value, error)

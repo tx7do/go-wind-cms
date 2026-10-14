@@ -12,6 +12,10 @@ import {
   type socialservicev1_ListSocialAccountsResponse,
   type socialservicev1_ListSocialDistributionsResponse,
   type socialservicev1_ListSocialDistributionStatsHistoryRequest,
+  type socialservicev1_MoveSocialDistributionRequest,
+  type socialservicev1_ListSocialInboxRequest,
+  type socialservicev1_ListSocialInboxResponse,
+  type socialservicev1_MarkSocialInboxReadRequest,
   type socialservicev1_SocialDistributionSummary,
   type socialservicev1_ListSocialDistributionStatsHistoryResponse,
   type socialservicev1_PublishSocialDistributionRequest,
@@ -145,6 +149,39 @@ export function useDeleteSocialDistribution(
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.socialService.DeleteSocialDistribution(data),
+    ...options,
+  });
+}
+
+export function useMoveSocialDistribution(
+  options?: UseMutationOptions<
+    socialservicev1_SocialDistribution,
+    Error,
+    socialservicev1_MoveSocialDistributionRequest
+  >,
+) {
+  return useMutation({
+    mutationFn: (data) => apiClient.socialService.MoveSocialDistribution(data),
+    ...options,
+  });
+}
+
+export function useListSocialInbox(
+  req: socialservicev1_ListSocialInboxRequest,
+  options?: UseQueryOptions<socialservicev1_ListSocialInboxResponse, Error>,
+) {
+  return useQuery({
+    queryKey: ['listSocialInbox', req],
+    queryFn: () => apiClient.socialService.ListSocialInbox(req),
+    ...options,
+  });
+}
+
+export function useMarkSocialInboxRead(
+  options?: UseMutationOptions<unknown, Error, socialservicev1_MarkSocialInboxReadRequest>,
+) {
+  return useMutation({
+    mutationFn: (data) => apiClient.socialService.MarkSocialInboxRead(data),
     ...options,
   });
 }

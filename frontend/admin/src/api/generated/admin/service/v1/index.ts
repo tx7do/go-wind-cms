@@ -10620,6 +10620,18 @@ export interface SocialService {
   GetSocialDistributionSummary(
     request: wellKnownEmpty,
   ): Promise<socialservicev1_SocialDistributionSummary>;
+  // 移动分发状态（看板拖拽）
+  MoveSocialDistribution(
+    request: socialservicev1_MoveSocialDistributionRequest,
+  ): Promise<socialservicev1_SocialDistribution>;
+  // 获取社交收件箱（平台回复/提及回拉）
+  ListSocialInbox(
+    request: socialservicev1_ListSocialInboxRequest,
+  ): Promise<socialservicev1_ListSocialInboxResponse>;
+  // 标记收件项已读
+  MarkSocialInboxRead(
+    request: socialservicev1_MarkSocialInboxReadRequest,
+  ): Promise<wellKnownEmpty>;
 }
 
 export function createSocialServiceClient(
@@ -11009,6 +11021,56 @@ export function createSocialServiceClient(
         method: 'GetSocialDistributionSummary',
       }) as Promise<socialservicev1_SocialDistributionSummary>;
     },
+    MoveSocialDistribution(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/distributions/${request.id}/move`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SocialService',
+        method: 'MoveSocialDistribution',
+      }) as Promise<socialservicev1_SocialDistribution>;
+    },
+    ListSocialInbox(request) {
+      const path = `admin/v1/social/inbox`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.accountId) {
+        queryParams.push(
+          `accountId=${encodeURIComponent(request.accountId.toString())}`,
+        );
+      }
+      if (request.unreadOnly) {
+        queryParams.push(
+          `unreadOnly=${encodeURIComponent(request.unreadOnly.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SocialService',
+        method: 'ListSocialInbox',
+      }) as Promise<socialservicev1_ListSocialInboxResponse>;
+    },
+    MarkSocialInboxRead(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/inbox/${request.id}/read`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SocialService',
+        method: 'MarkSocialInboxRead',
+      }) as Promise<wellKnownEmpty>;
+    },
   };
 }
 // 回应 - 社交账号列表
@@ -11175,6 +11237,51 @@ export type socialservicev1_SocialDistributionSummary = {
   totalPublished?: number;
   totalReplies?: number;
   totalReposts?: number;
+};
+
+// 请求 - 移动分发状态（看板拖拽）
+export type socialservicev1_MoveSocialDistributionRequest = {
+  id: number | undefined;
+  targetStatus: socialservicev1_SocialDistribution_Status | undefined;
+};
+
+// 请求 - 收件箱列表
+export type socialservicev1_ListSocialInboxRequest = {
+  accountId?: number;
+  limit?: number;
+  unreadOnly?: boolean;
+};
+
+// 回应 - 收件箱列表
+export type socialservicev1_ListSocialInboxResponse = {
+  items: socialservicev1_SocialInboxItem[] | undefined;
+  unreadCount: number | undefined;
+};
+
+// 社交收件箱条目（平台回复/提及回拉）
+export type socialservicev1_SocialInboxItem = {
+  accountId?: number;
+  authorHandle?: string;
+  authorName?: string;
+  content?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  externalId?: string;
+  id?: number;
+  occurredAt?: wellKnownTimestamp;
+  platform?: socialservicev1_Platform;
+  readAt?: wellKnownTimestamp;
+  type?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  url?: string;
+};
+
+// 请求 - 标记收件项已读
+export type socialservicev1_MarkSocialInboxReadRequest = {
+  id: number | undefined;
 };
 
 // 统计服务（后台分析页 BFF 转发）。仅转发至 core StatsService，
