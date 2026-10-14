@@ -676,6 +676,8 @@ github.com/tx7do/kratos-transport/transport/asynq v1.3.13 h1:4loC3+hiYYhU8gniqdO
 github.com/tx7do/kratos-transport/transport/asynq v1.3.13/go.mod h1:I1qqHw3mOwy7CdE+eZDApRw2QR+bWbez8PbxrODrKaQ=
 github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 h1:p1B1jpGN3SqoTrrrSmgsvv5RC/NvCHVbB970u7OTdKQ=
 github.com/tx7do/kratos-transport/transport/keepalive v1.3.5/go.mod h1:vfYTnR7EpZfn2+jv1rscmhfNTDvEa5TBDEgU6iuTFwA=
+github.com/tx7do/kratos-transport/transport/mcp v1.3.4 h1:PeKFxeLz36E/OjzGWSyTrvgQT3sTfKqNwa4o1h9MwDw=
+github.com/tx7do/kratos-transport/transport/mcp v1.3.4/go.mod h1:XE4dl8nmxUn9s4txzov0ZmhXa0OXT7ZyeBIEjFvkcIk=
 github.com/tx7do/kratos-transport/transport/sse v1.3.8 h1:w38AlSYjfQnCvrpZbH6X13Rv0pB1c9qMk7sqkT5gHqE=
 github.com/tx7do/kratos-transport/transport/sse v1.3.8/go.mod h1:2luD0/3iS4gh9dWv3F3o/75/TbV302NN4mjkV1jLT1w=
 github.com/valyala/fastjson v1.6.10 h1:/yjJg8jaVQdYR3arGxPE2X5z89xrlhS0eGXdv+ADTh4=

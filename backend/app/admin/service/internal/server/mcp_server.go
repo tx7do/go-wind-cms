@@ -3,20 +3,19 @@ package server
 import (
 	"context"
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/mark3labs/mcp-go/mcp"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/mark3labs/mcp-go/server"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	mcptransport "github.com/tx7do/kratos-transport/transport/mcp"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
@@ -24,33 +23,29 @@ import (
 	"go-wind-cms/app/admin/service/internal/service"
 )
 
-// McpServer MCP 服务器：把 CMS 的查询与发布触发能力以 MCP 工具暴露给
-// AI 代理（Claude 等）。StreamableHTTP 传输，Bearer Token 鉴权
-//（HTTP 层 401 拒绝；tools/list 元数据可见，调用必须携带 Token）。
+// NewMcpServer MCP 服务器：把 CMS 的查询与发布触发能力以 MCP 工具暴露给
+// AI 代理（Claude 等）。StreamableHTTP 传输。
+//
+// 鉴权模型：HTTP 层经 WithHTTPContextFunc 注入 Authorization 头（上游
+// v1.3.4 的 WithMCPHTTPServerOptions 透传），各工具 handler 内用
+// authorizeMcp 校验——tools/list 元数据对未鉴权请求可见（仅工具名与
+// 描述），调用必须携带正确 Token。
 //
 // 环境变量：
 //   - MCP_ADDR  监听地址（如 ":6602"）；未设置则不启动 MCP 服务器。
 //     生产建议仅绑定内网地址或置于反向代理之后
-//   - MCP_TOKEN 鉴权 Token（必填；调用方以 "Authorization: Bearer <token>" 携带）
+//   - MCP_TOKEN 鉴权 Token（必填；缺失拒绝启动）
 //
 // 工具集：
 //   - list_recent_posts           最近文章（标题/状态/ID）
 //   - get_social_summary          分发 KPI 汇总
 //   - list_social_distributions   分发记录（可按状态筛选）
 //   - publish_distribution        触发一条分发立即发布（写操作）
-type McpServer struct {
-	log        *log.Helper
-	httpServer *http.Server
-	endpoint   *net.TCPAddr
-}
-
-// NewMcpServer 构造 MCP 服务器。MCP_ADDR 未设置时返回 nil（不启动），
-// MCP_TOKEN 缺失时拒绝启动（无鉴权的写工具绝不能暴露）。
 func NewMcpServer(
 	ctx *bootstrap.Context,
 	postService *service.PostService,
 	socialService *service.SocialService,
-) *McpServer {
+) *mcptransport.Server {
 	addr := strings.TrimSpace(os.Getenv("MCP_ADDR"))
 	if addr == "" {
 		return nil
@@ -61,68 +56,45 @@ func NewMcpServer(
 		return nil
 	}
 
-	// MCP 协议服务器（mark3labs/mcp-go）
-	mcpSrv := server.NewMCPServer("GoWind CMS", "1.1.0", server.WithRecovery())
-	registerMcpTools(mcpSrv, token, postService, socialService)
+	srv := mcptransport.NewServer(
+		mcptransport.WithServerName("GoWind CMS"),
+		mcptransport.WithServerVersion("1.1.0"),
+		mcptransport.WithMCPServeType(mcptransport.ServerTypeHTTP),
+		mcptransport.WithMCPServeAddress(addr),
+		mcptransport.WithMCPServerOptions(server.WithRecovery()),
+		mcptransport.WithMCPHTTPServerOptions(
+			server.WithHTTPContextFunc(func(ctx context.Context, r *http.Request) context.Context {
+				return context.WithValue(ctx, mcpTokenCtxKey{}, r.Header.Get("Authorization"))
+			}),
+		),
+	)
 
-	// HTTP 层：Bearer 鉴权 → 转 MCP StreamableHTTP
-	mcpHTTP := server.NewStreamableHTTPServer(mcpSrv)
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Authorization") != "Bearer "+token {
-			w.Header().Set("WWW-Authenticate", `Bearer realm="go-wind-cms-mcp"`)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-			return
-		}
-		mcpHTTP.ServeHTTP(w, r)
-	})
+	registerMcpTools(srv, token, postService, socialService)
 
-	tcpAddr, _ := net.ResolveTCPAddr("tcp", hostIfNoPort(addr))
-	return &McpServer{
-		log:        ctx.NewLoggerHelper("mcp/server/admin-service"),
-		httpServer: &http.Server{Addr: addr, Handler: handler, ReadHeaderTimeout: 15 * time.Second},
-		endpoint:   tcpAddr,
-	}
+	log.Infof("MCP server configured at %s (tools: list_recent_posts/get_social_summary/list_social_distributions/publish_distribution)", addr)
+	return srv
 }
 
-// Name kratos transport 名。
-func (s *McpServer) Name() string { return "mcp" }
+// mcpTokenCtxKey Authorization 头的 ctx 注入键。
+type mcpTokenCtxKey struct{}
 
-// Start 启动 HTTP 监听（kratos App 生命周期调用）。
-func (s *McpServer) Start(ctx context.Context) error {
-	if s == nil || s.httpServer == nil {
+// authorizeMcp 校验 MCP 调用者的 Bearer Token（与启动时 MCP_TOKEN 比对）。
+func authorizeMcp(ctx context.Context, token string) error {
+	if v, ok := ctx.Value(mcpTokenCtxKey{}).(string); ok && v == "Bearer "+token {
 		return nil
 	}
-	return s.httpServer.ListenAndServe()
+	return fmt.Errorf("unauthorized: missing or invalid bearer token")
 }
 
-// Stop 优雅停机。
-func (s *McpServer) Stop(ctx context.Context) error {
-	if s == nil || s.httpServer == nil {
-		return nil
-	}
-	return s.httpServer.Shutdown(ctx)
-}
-
-// Endpoint kratos Endpointer 接口。
-func (s *McpServer) Endpoint() (*net.TCPAddr, error) { return s.endpoint, nil }
-
-// hostIfNoPort 形如 ":6602" 的地址补 localhost 前缀，供 endpoint 展示。
-func hostIfNoPort(addr string) string {
-	if strings.HasPrefix(addr, ":") {
-		return "localhost" + addr
-	}
-	return addr
-}
-
-// registerMcpTools 注册全部 MCP 工具（HTTP 层已做 Bearer 校验，handler 内兜底为空操作）。
+// registerMcpTools 注册全部 MCP 工具。
 func registerMcpTools(
-	mcpSrv *server.MCPServer,
+	srv *mcptransport.Server,
 	token string,
 	postService *service.PostService,
 	socialService *service.SocialService,
 ) {
 	authz := func(ctx context.Context) error {
-		return nil
+		return authorizeMcp(ctx, token)
 	}
 
 	// ── list_recent_posts ──
@@ -130,7 +102,7 @@ func registerMcpTools(
 		mcp.WithDescription("列出 CMS 最近的文章（标题/状态/发布时间/ID）"),
 		mcp.WithNumber("limit", mcp.Description("返回条数，缺省 10，至多 50")),
 	)
-	mcpSrv.AddTool(listPostsTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	_ = srv.RegisterHandler(listPostsTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		if err := authz(ctx); err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
@@ -156,7 +128,7 @@ func registerMcpTools(
 	summaryTool := mcp.NewTool("get_social_summary",
 		mcp.WithDescription("获取社交分发 KPI 汇总：已发布总数、累计赞/评/转、近 7 天发布数"),
 	)
-	mcpSrv.AddTool(summaryTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	_ = srv.RegisterHandler(summaryTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		if err := authz(ctx); err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
@@ -180,7 +152,7 @@ func registerMcpTools(
 		),
 		mcp.WithNumber("limit", mcp.Description("返回条数，缺省 10，至多 50")),
 	)
-	mcpSrv.AddTool(listDistTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	_ = srv.RegisterHandler(listDistTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		if err := authz(ctx); err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
@@ -223,7 +195,7 @@ func registerMcpTools(
 		mcp.WithDescription("触发一条社交分发立即发布（写操作；仅草稿/已排期/失败状态可触发）"),
 		mcp.WithNumber("id", mcp.Required(), mcp.Description("分发记录 ID")),
 	)
-	mcpSrv.AddTool(publishTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	_ = srv.RegisterHandler(publishTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		if err := authz(ctx); err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}

@@ -242,6 +242,7 @@ require (
 	github.com/tx7do/kratos-transport/tracing v1.1.2 // indirect
 	github.com/tx7do/kratos-transport/transport v1.3.4 // indirect
 	github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 // indirect
+	github.com/tx7do/kratos-transport/transport/mcp v1.3.4 // indirect
 	github.com/valyala/fastjson v1.6.10 // indirect
 	github.com/vearutop/statigz v1.5.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.33 // indirect
