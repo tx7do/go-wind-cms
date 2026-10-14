@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
+	kratosTransport "github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -262,5 +263,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	sseServer := server.NewSseServer(ctx, internalMessageService, aiChatService)
 
-	return newApp(ctx, httpServer, grpcServer, sseServer), rollback, nil
+	servers := []kratosTransport.Server{httpServer, grpcServer, sseServer}
+	// MCP 服务器（可选）：MCP_ADDR 设置时把 CMS 查询/发布能力暴露给 AI 代理
+	if mcpServer := server.NewMcpServer(ctx, postService, socialService); mcpServer != nil {
+		servers = append(servers, mcpServer)
+	}
+
+	return newApp(ctx, servers...), rollback, nil
 }

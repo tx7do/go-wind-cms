@@ -21,6 +21,10 @@
   Bluesky（uploadBlob + embed.images）、Mastodon（/api/v2/media + media_ids）、
   WordPress（特色图 + 正文 <img>）、微博（statuses/upload）五个平台随内容发布；
   不支持配图的平台在创建时明确报错。
+- MCP 服务器：把 CMS 能力以 MCP 工具暴露给 AI 代理——list_recent_posts /
+  get_social_summary / list_social_distributions / publish_distribution 四个工具；
+  StreamableHTTP 传输，Bearer Token 鉴权（环境变量 MCP_ADDR 开启、MCP_TOKEN
+  鉴权，未配置则不启动）。
 
 ### 修复
 

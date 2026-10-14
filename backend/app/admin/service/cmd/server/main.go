@@ -4,10 +4,8 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
+	kratosTransport "github.com/go-kratos/kratos/v2/transport"
 
-	"github.com/tx7do/kratos-transport/transport/sse"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -23,15 +21,9 @@ var version = "1.0.0"
 
 func newApp(
 	ctx *bootstrap.Context,
-	hs *http.Server,
-	gs *grpc.Server,
-	ss *sse.Server,
+	servers ...kratosTransport.Server,
 ) *kratos.App {
-	return bootstrap.NewApp(ctx,
-		hs,
-		gs,
-		ss,
-	)
+	return bootstrap.NewApp(ctx, servers...)
 }
 
 func runApp() error {
