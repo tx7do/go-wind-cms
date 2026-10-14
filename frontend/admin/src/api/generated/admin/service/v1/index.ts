@@ -10560,6 +10560,548 @@ export type siteservicev1_DeleteSiteSettingRequest = {
   id?: number;
 };
 
+// 社交分发服务（管理面）
+export interface SocialService {
+  // 获取社交账号列表
+  ListSocialAccounts(
+    request: pagination_PagingRequest,
+  ): Promise<socialservicev1_ListSocialAccountsResponse>;
+  // 获取社交账号数据
+  GetSocialAccount(
+    request: socialservicev1_GetSocialAccountRequest,
+  ): Promise<socialservicev1_SocialAccount>;
+  // 创建社交账号（服务端验证凭据并加密落库）
+  CreateSocialAccount(
+    request: socialservicev1_CreateSocialAccountRequest,
+  ): Promise<socialservicev1_SocialAccount>;
+  // 更新社交账号
+  UpdateSocialAccount(
+    request: socialservicev1_UpdateSocialAccountRequest,
+  ): Promise<socialservicev1_SocialAccount>;
+  // 删除社交账号
+  DeleteSocialAccount(
+    request: socialservicev1_DeleteSocialAccountRequest,
+  ): Promise<wellKnownEmpty>;
+  // 获取分发记录列表
+  ListSocialDistributions(
+    request: pagination_PagingRequest,
+  ): Promise<socialservicev1_ListSocialDistributionsResponse>;
+  // 获取分发记录数据
+  GetSocialDistribution(
+    request: socialservicev1_GetSocialDistributionRequest,
+  ): Promise<socialservicev1_SocialDistribution>;
+  // 创建分发记录（排期或立即发布）
+  CreateSocialDistribution(
+    request: socialservicev1_CreateSocialDistributionRequest,
+  ): Promise<socialservicev1_SocialDistribution>;
+  // 更新分发记录
+  UpdateSocialDistribution(
+    request: socialservicev1_UpdateSocialDistributionRequest,
+  ): Promise<socialservicev1_SocialDistribution>;
+  // 删除分发记录
+  DeleteSocialDistribution(
+    request: socialservicev1_DeleteSocialDistributionRequest,
+  ): Promise<wellKnownEmpty>;
+  // 立即发布分发记录
+  PublishSocialDistribution(
+    request: socialservicev1_PublishSocialDistributionRequest,
+  ): Promise<socialservicev1_SocialDistribution>;
+  // 回拉分发记录的平台互动统计
+  RefreshSocialDistributionStats(
+    request: socialservicev1_RefreshSocialDistributionStatsRequest,
+  ): Promise<socialservicev1_SocialDistribution>;
+}
+
+export function createSocialServiceClient(
+  transport: ClientTransport,
+): SocialService {
+  return {
+    ListSocialAccounts(request) {
+      const path = `admin/v1/social/accounts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SocialService',
+        method: 'ListSocialAccounts',
+      }) as Promise<socialservicev1_ListSocialAccountsResponse>;
+    },
+    GetSocialAccount(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/accounts/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SocialService',
+        method: 'GetSocialAccount',
+      }) as Promise<socialservicev1_SocialAccount>;
+    },
+    CreateSocialAccount(request) {
+      const path = `admin/v1/social/accounts`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SocialService',
+        method: 'CreateSocialAccount',
+      }) as Promise<socialservicev1_SocialAccount>;
+    },
+    UpdateSocialAccount(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/accounts/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'SocialService',
+        method: 'UpdateSocialAccount',
+      }) as Promise<socialservicev1_SocialAccount>;
+    },
+    DeleteSocialAccount(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/accounts/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'SocialService',
+        method: 'DeleteSocialAccount',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ListSocialDistributions(request) {
+      const path = `admin/v1/social/distributions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SocialService',
+        method: 'ListSocialDistributions',
+      }) as Promise<socialservicev1_ListSocialDistributionsResponse>;
+    },
+    GetSocialDistribution(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/distributions/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SocialService',
+        method: 'GetSocialDistribution',
+      }) as Promise<socialservicev1_SocialDistribution>;
+    },
+    CreateSocialDistribution(request) {
+      const path = `admin/v1/social/distributions`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SocialService',
+        method: 'CreateSocialDistribution',
+      }) as Promise<socialservicev1_SocialDistribution>;
+    },
+    UpdateSocialDistribution(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/distributions/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'SocialService',
+        method: 'UpdateSocialDistribution',
+      }) as Promise<socialservicev1_SocialDistribution>;
+    },
+    DeleteSocialDistribution(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/distributions/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'SocialService',
+        method: 'DeleteSocialDistribution',
+      }) as Promise<wellKnownEmpty>;
+    },
+    PublishSocialDistribution(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/distributions/${request.id}/publish`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SocialService',
+        method: 'PublishSocialDistribution',
+      }) as Promise<socialservicev1_SocialDistribution>;
+    },
+    RefreshSocialDistributionStats(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/distributions/${request.id}/stats/refresh`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SocialService',
+        method: 'RefreshSocialDistributionStats',
+      }) as Promise<socialservicev1_SocialDistribution>;
+    },
+  };
+}
+// 回应 - 社交账号列表
+export type socialservicev1_ListSocialAccountsResponse = {
+  items: socialservicev1_SocialAccount[] | undefined;
+  total: number | undefined;
+};
+
+// 社交账号
+export type socialservicev1_SocialAccount = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  credentialHint?: string;
+  credentials?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  handle?: string;
+  id?: number;
+  isEnabled?: boolean;
+  name?: string;
+  platform?: socialservicev1_Platform;
+  remark?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 社交平台
+export type socialservicev1_Platform =
+  | 'PLATFORM_BLUESKY'
+  | 'PLATFORM_DEVTO'
+  | 'PLATFORM_MASTODON'
+  | 'PLATFORM_UNSPECIFIED';
+// 请求 - 社交账号数据
+export type socialservicev1_GetSocialAccountRequest = {
+  id: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 请求 - 创建社交账号
+export type socialservicev1_CreateSocialAccountRequest = {
+  data: socialservicev1_SocialAccount | undefined;
+};
+
+// 请求 - 更新社交账号
+export type socialservicev1_UpdateSocialAccountRequest = {
+  allowMissing?: boolean;
+  data: socialservicev1_SocialAccount | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除社交账号
+export type socialservicev1_DeleteSocialAccountRequest = {
+  id?: number;
+};
+
+// 回应 - 分发记录列表
+export type socialservicev1_ListSocialDistributionsResponse = {
+  items: socialservicev1_SocialDistribution[] | undefined;
+  total: number | undefined;
+};
+
+// 内容分发记录
+export type socialservicev1_SocialDistribution = {
+  accountId?: number;
+  accountName?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  errorMessage?: string;
+  externalId?: string;
+  externalUri?: string;
+  id?: number;
+  likes?: number;
+  overrideText?: string;
+  platform?: socialservicev1_Platform;
+  postId?: number;
+  postTitle?: string;
+  publishTime?: wellKnownTimestamp;
+  publishedAt?: wellKnownTimestamp;
+  replies?: number;
+  reposts?: number;
+  statsSyncedAt?: wellKnownTimestamp;
+  status?: socialservicev1_SocialDistribution_Status;
+  title?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 分发状态
+export type socialservicev1_SocialDistribution_Status =
+  | 'STATUS_DRAFT'
+  | 'STATUS_FAILED'
+  | 'STATUS_PUBLISHED'
+  | 'STATUS_PUBLISHING'
+  | 'STATUS_SCHEDULED'
+  | 'STATUS_UNSPECIFIED';
+// 请求 - 分发记录数据
+export type socialservicev1_GetSocialDistributionRequest = {
+  id: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 请求 - 创建分发记录
+export type socialservicev1_CreateSocialDistributionRequest = {
+  data: socialservicev1_SocialDistribution | undefined;
+};
+
+// 请求 - 更新分发记录
+export type socialservicev1_UpdateSocialDistributionRequest = {
+  allowMissing?: boolean;
+  data: socialservicev1_SocialDistribution | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除分发记录
+export type socialservicev1_DeleteSocialDistributionRequest = {
+  id?: number;
+};
+
+// 请求 - 立即发布分发记录
+export type socialservicev1_PublishSocialDistributionRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 回拉分发记录统计
+export type socialservicev1_RefreshSocialDistributionStatsRequest = {
+  id: number | undefined;
+};
+
 // 统计服务（后台分析页 BFF 转发）。仅转发至 core StatsService，
 // 供 admin 分析页读取概览卡片与图表数据，全部为只读查询。
 // 租户范围由鉴权上下文透传的 viewer 决定。
@@ -12359,6 +12901,7 @@ export class ApiClient {
   private _roleService?: RoleService;
   private _siteService?: SiteService;
   private _siteSettingService?: SiteSettingService;
+  private _socialService?: SocialService;
   private _statsService?: StatsService;
   private _tagService?: TagService;
   private _taskService?: TaskService;
@@ -12542,6 +13085,10 @@ export class ApiClient {
 
   get siteSettingService(): SiteSettingService {
     return this._siteSettingService ??= createSiteSettingServiceClient(this._transport);
+  }
+
+  get socialService(): SocialService {
+    return this._socialService ??= createSocialServiceClient(this._transport);
   }
 
   get statsService(): StatsService {

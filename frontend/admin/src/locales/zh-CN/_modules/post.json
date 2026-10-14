@@ -85,5 +85,7 @@
   "editorTypeMap": {
     "EDITOR_TYPE_MARKDOWN": "Markdown",
     "EDITOR_TYPE_RICH_TEXT": "富文本"
-  }
+  },
+  "distributeToSocial": "分发到社交",
+  "distributeNeedSave": "请先保存文章再分发"
 }

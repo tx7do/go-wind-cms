@@ -78,6 +78,9 @@ export * from './dashboard';
 // 内部消息
 export * from './internal-message';
 
+// 社交分发
+export * from './social';
+
 // 脚本管理
 
 // 脚本执行日志

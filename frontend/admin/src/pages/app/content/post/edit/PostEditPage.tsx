@@ -6,6 +6,7 @@ import {
   CloseOutlined,
   MenuFoldOutlined,
   SettingOutlined,
+  ShareAltOutlined,
   TranslationOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useParams, useSearchParams, useBlocker } from 'react-router-dom';
@@ -26,6 +27,7 @@ import {
   getPostStatusLabel,
 } from '../constants';
 import AiGenerateButton from '@/components/common/AiGenerateButton';
+import SocialDistributionDrawer from '@/pages/app/social/distribution/SocialDistributionDrawer';
 import PostSettingsPanel from './PostSettingsPanel';
 import type { PostEditProps } from './types';
 
@@ -89,6 +91,7 @@ const PostEditPage = () => {
   >([]);
   const [saving, setSaving] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(true);
+  const [socialDistOpen, setSocialDistOpen] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState<{ label: string; value: number }[]>([]);
   const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(false);
 
@@ -728,9 +731,29 @@ ${content}` : content });
             <Button type="primary" danger onClick={handlePublish} loading={saving}>
               {t('publish')}
             </Button>
+            <Button
+              icon={<ShareAltOutlined />}
+              disabled={!postId}
+              title={postId ? undefined : t('distributeNeedSave')}
+              onClick={() => setSocialDistOpen(true)}
+            >
+              {t('distributeToSocial')}
+            </Button>
           </Space>
         </div>
       </div>
+
+      {/* 社交分发：以本文章为源帖预填新建分发 */}
+      <SocialDistributionDrawer
+        open={socialDistOpen}
+        prefill={{
+          postId: postId ?? undefined,
+          postTitle: formData.title || undefined,
+          overrideText: formData.title ? `${formData.title}` : undefined,
+        }}
+        onClose={() => setSocialDistOpen(false)}
+        onSuccess={() => setSocialDistOpen(false)}
+      />
     </ContentContainer>
   );
 };

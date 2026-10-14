@@ -208,7 +208,14 @@
       "USER_LOCKED": "User has been locked",
       "USER_NOT_FOUND": "User not found",
       "VALIDATION_FAILED": "Validation failed",
-      "VARIANT_ALSO_NEGOTIATES": "Variant negotiation error"
+      "PLATFORM_UNSUPPORTED": "Social platform not supported yet",
+      "CREDENTIALS_INVALID": "Platform rejected the credentials",
+      "CREDENTIALS_MISSING": "Platform credentials missing",
+      "ACCOUNT_NOT_FOUND": "Social account not found",
+      "ACCOUNT_DISABLED": "Social account is disabled",
+      "NOT_PUBLISHABLE": "Not in a publishable state",
+      "CONTENT_TOO_LONG": "Content exceeds platform length limit",
+      "PLATFORM_ERROR": "Social platform error"
     },
     "status": {
       "400": "Bad request",

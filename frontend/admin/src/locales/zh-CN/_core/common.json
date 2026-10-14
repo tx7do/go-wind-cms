@@ -208,7 +208,14 @@
       "USER_LOCKED": "用户已被锁定",
       "USER_NOT_FOUND": "用户不存在",
       "VALIDATION_FAILED": "数据校验失败",
-      "VARIANT_ALSO_NEGOTIATES": "变体协商错误"
+      "PLATFORM_UNSUPPORTED": "暂不支持该社交平台",
+      "CREDENTIALS_INVALID": "平台凭据无效，请检查账号与密码",
+      "CREDENTIALS_MISSING": "平台凭据缺失",
+      "ACCOUNT_NOT_FOUND": "社交账号不存在",
+      "ACCOUNT_DISABLED": "社交账号已停用",
+      "NOT_PUBLISHABLE": "当前状态不可发布",
+      "CONTENT_TOO_LONG": "文案超出平台长度限制",
+      "PLATFORM_ERROR": "社交平台返回错误"
     },
     "status": {
       "400": "请求参数错误",
