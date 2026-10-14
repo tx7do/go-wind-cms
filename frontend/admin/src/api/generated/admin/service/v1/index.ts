@@ -466,7 +466,9 @@ export type aiservicev1_ContentScene =
   // 文章标题
   | 'POST_TITLE'
   // 回复/反馈文案
-  | 'REPLY';
+  | 'REPLY'
+  // 社交平台发布文案（短文案，可带话题标签）
+  | 'SOCIAL_POST';
 // 内容生成 - 回应
 export type aiservicev1_GenerateContentResponse = {
   content: string | undefined;

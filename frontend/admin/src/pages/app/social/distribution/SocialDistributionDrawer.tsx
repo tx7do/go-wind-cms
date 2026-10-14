@@ -12,6 +12,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 
+import AiGenerateButton from '@/components/common/AiGenerateButton';
+
 import { fetchListPosts } from '@/api/hooks/post';
 import { PaginationQuery } from '@/core';
 import { fetchListSocialAccounts, useCreateSocialDistribution, useUpdateSocialDistribution } from '@/api/hooks/social';
@@ -267,7 +269,17 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
 
       <ProFormTextArea
         name="overrideText"
-        label={t('overrideText')}
+        label={
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            {t('overrideText')}
+            <AiGenerateButton
+              scene="SOCIAL_POST"
+              context={platform ? `${t('platform')}：${t(`platformMap.${platform}`)}` : undefined}
+              defaultTopic={data?.postTitle || undefined}
+              onGenerate={(content: string) => formRef.current?.setFieldValue('overrideText', content)}
+            />
+          </span>
+        }
         placeholder={t('overrideTextPlaceholder')}
         rules={[{ required: true, message: t('requiredOverrideText') }]}
         extra={t('helpOverrideText', { max: MAX_POST_CHARS })}
