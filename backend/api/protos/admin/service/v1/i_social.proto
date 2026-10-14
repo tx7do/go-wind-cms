@@ -111,4 +111,11 @@ service SocialService {
       get: "/admin/v1/social/distributions/{id}/stats/history"
     };
   }
+
+  // 获取当前租户的分发汇总指标（KPI 卡片）
+  rpc GetSocialDistributionSummary (google.protobuf.Empty) returns (social.service.v1.SocialDistributionSummary) {
+    option (google.api.http) = {
+      get: "/admin/v1/social/summary"
+    };
+  }
 }

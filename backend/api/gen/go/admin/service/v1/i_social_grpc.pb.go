@@ -35,6 +35,7 @@ const (
 	SocialService_PublishSocialDistribution_FullMethodName          = "/admin.service.v1.SocialService/PublishSocialDistribution"
 	SocialService_RefreshSocialDistributionStats_FullMethodName     = "/admin.service.v1.SocialService/RefreshSocialDistributionStats"
 	SocialService_ListSocialDistributionStatsHistory_FullMethodName = "/admin.service.v1.SocialService/ListSocialDistributionStatsHistory"
+	SocialService_GetSocialDistributionSummary_FullMethodName       = "/admin.service.v1.SocialService/GetSocialDistributionSummary"
 )
 
 // SocialServiceClient is the client API for SocialService service.
@@ -69,6 +70,8 @@ type SocialServiceClient interface {
 	RefreshSocialDistributionStats(ctx context.Context, in *v11.RefreshSocialDistributionStatsRequest, opts ...grpc.CallOption) (*v11.SocialDistribution, error)
 	// 获取分发记录的互动统计历史（趋势图数据）
 	ListSocialDistributionStatsHistory(ctx context.Context, in *v11.ListSocialDistributionStatsHistoryRequest, opts ...grpc.CallOption) (*v11.ListSocialDistributionStatsHistoryResponse, error)
+	// 获取当前租户的分发汇总指标（KPI 卡片）
+	GetSocialDistributionSummary(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.SocialDistributionSummary, error)
 }
 
 type socialServiceClient struct {
@@ -209,6 +212,16 @@ func (c *socialServiceClient) ListSocialDistributionStatsHistory(ctx context.Con
 	return out, nil
 }
 
+func (c *socialServiceClient) GetSocialDistributionSummary(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.SocialDistributionSummary, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.SocialDistributionSummary)
+	err := c.cc.Invoke(ctx, SocialService_GetSocialDistributionSummary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SocialServiceServer is the server API for SocialService service.
 // All implementations must embed UnimplementedSocialServiceServer
 // for forward compatibility.
@@ -241,6 +254,8 @@ type SocialServiceServer interface {
 	RefreshSocialDistributionStats(context.Context, *v11.RefreshSocialDistributionStatsRequest) (*v11.SocialDistribution, error)
 	// 获取分发记录的互动统计历史（趋势图数据）
 	ListSocialDistributionStatsHistory(context.Context, *v11.ListSocialDistributionStatsHistoryRequest) (*v11.ListSocialDistributionStatsHistoryResponse, error)
+	// 获取当前租户的分发汇总指标（KPI 卡片）
+	GetSocialDistributionSummary(context.Context, *emptypb.Empty) (*v11.SocialDistributionSummary, error)
 	mustEmbedUnimplementedSocialServiceServer()
 }
 
@@ -289,6 +304,9 @@ func (UnimplementedSocialServiceServer) RefreshSocialDistributionStats(context.C
 }
 func (UnimplementedSocialServiceServer) ListSocialDistributionStatsHistory(context.Context, *v11.ListSocialDistributionStatsHistoryRequest) (*v11.ListSocialDistributionStatsHistoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListSocialDistributionStatsHistory not implemented")
+}
+func (UnimplementedSocialServiceServer) GetSocialDistributionSummary(context.Context, *emptypb.Empty) (*v11.SocialDistributionSummary, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSocialDistributionSummary not implemented")
 }
 func (UnimplementedSocialServiceServer) mustEmbedUnimplementedSocialServiceServer() {}
 func (UnimplementedSocialServiceServer) testEmbeddedByValue()                       {}
@@ -545,6 +563,24 @@ func _SocialService_ListSocialDistributionStatsHistory_Handler(srv interface{}, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SocialService_GetSocialDistributionSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SocialServiceServer).GetSocialDistributionSummary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SocialService_GetSocialDistributionSummary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SocialServiceServer).GetSocialDistributionSummary(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SocialService_ServiceDesc is the grpc.ServiceDesc for SocialService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -603,6 +639,10 @@ var SocialService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListSocialDistributionStatsHistory",
 			Handler:    _SocialService_ListSocialDistributionStatsHistory_Handler,
+		},
+		{
+			MethodName: "GetSocialDistributionSummary",
+			Handler:    _SocialService_GetSocialDistributionSummary_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

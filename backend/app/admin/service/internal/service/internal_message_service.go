@@ -24,7 +24,9 @@ import (
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
 
+	"github.com/redis/go-redis/v9"
 	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-cms/pkg/sseevent"
 )
 
 type InternalMessagePublisher interface {
@@ -44,6 +46,9 @@ type InternalMessageService struct {
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
 
 	internalMessagePublisher InternalMessagePublisher
+
+	// notifyCancel 停止 Redis 通知订阅协程（进程生命周期级，见 StartNotifySubscriber）
+	notifyCancel context.CancelFunc
 
 	clientType authenticationV1.ClientType
 }
@@ -308,9 +313,76 @@ func (s *InternalMessageService) sendNotification(ctx context.Context, messageId
 		s.internalMessagePublisher.Publish(ctx, sse.StreamID(streamId), &sse.Event{
 			ID:    []byte(id.NewGUIDv7(false)),
 			Data:  recipientJson,
-			Event: []byte("notification"),
+			Event: []byte(sseevent.EventNotification),
 		})
 	}
 
 	return nil
+}
+
+// StartNotifySubscriber 订阅 core 服务经 Redis Pub/Sub 发出的系统通知事件
+//（社交发布 worker 等后台链路，落库在 core 侧完成），转成 SSE 实时推送给
+// 目标用户的全部在线会话。落库为准：本协程只管实时性，崩溃/丢失不影响到达。
+// 事件载荷复用既有 "notification" 事件的收件行 JSON 形态，前端零改动。
+func (s *InternalMessageService) StartNotifySubscriber(redisClient *redis.Client) {
+	if redisClient == nil {
+		return
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	s.notifyCancel = cancel
+
+	go func() {
+		sub := redisClient.Subscribe(ctx, sseevent.RedisChannelNotify)
+		defer sub.Close()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case m := <-sub.Channel():
+				var ev sseevent.NotifyEvent
+				if err := json.Unmarshal([]byte(m.Payload), &ev); err != nil {
+					s.log.Errorf("notify subscriber: unmarshal event failed: %v", err)
+					continue
+				}
+				s.pushRealtimeNotify(ctx, ev)
+			}
+		}
+	}()
+}
+
+// StopNotifySubscriber 停止订阅协程（进程退出时调用）。
+func (s *InternalMessageService) StopNotifySubscriber() {
+	if s.notifyCancel != nil {
+		s.notifyCancel()
+	}
+}
+
+// pushRealtimeNotify 把一条系统通知推给目标用户的全部在线管理端会话。
+func (s *InternalMessageService) pushRealtimeNotify(ctx context.Context, ev sseevent.NotifyEvent) {
+	streamIds, err := s.authenticationServiceClient.GetAccessTokens(ctx, &authenticationV1.GetAccessTokensRequest{
+		UserId:     ev.UserID,
+		ClientType: authenticationV1.ClientType_admin,
+	})
+	if err != nil {
+		s.log.Errorf("notify subscriber: get access tokens failed (user=%d): %v", ev.UserID, err)
+		return
+	}
+
+	// 载荷对齐既有 "notification" 事件的收件行 JSON 形态，前端零改动
+	recipientJson, _ := json.Marshal(map[string]any{
+		"messageId":       0,
+		"recipientUserId": ev.UserID,
+		"status":          "SENT",
+		"title":           ev.Title,
+		"content":         ev.Content,
+		"createdAt":       time.Now().Format(time.RFC3339),
+	})
+	for _, streamId := range streamIds.AccessTokens {
+		s.internalMessagePublisher.Publish(ctx, sse.StreamID(streamId), &sse.Event{
+			ID:    []byte(id.NewGUIDv7(false)),
+			Data:  recipientJson,
+			Event: []byte(sseevent.EventNotification),
+		})
+	}
 }

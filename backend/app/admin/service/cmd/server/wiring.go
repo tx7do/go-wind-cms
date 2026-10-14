@@ -187,6 +187,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 站内信
 	internalMessageService := service.NewInternalMessageService(ctx, internalMessageServiceClient, internalMessageCategoryServiceClient, internalMessageRecipientServiceClient, authenticationServiceClient, userServiceClient, clientType)
+
+	// 订阅 core 服务经 Redis Pub/Sub 发出的系统通知事件，转 SSE 实时推送
+	//（落库在 core 侧完成；订阅协程随进程退出停止，注册进 cleanups）
+	internalMessageService.StartNotifySubscriber(redisClient)
+	cleanups = append(cleanups, internalMessageService.StopNotifySubscriber)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(ctx, internalMessageCategoryServiceClient)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageServiceClient, internalMessageRecipientServiceClient)
 

@@ -10616,6 +10616,10 @@ export interface SocialService {
   ListSocialDistributionStatsHistory(
     request: socialservicev1_ListSocialDistributionStatsHistoryRequest,
   ): Promise<socialservicev1_ListSocialDistributionStatsHistoryResponse>;
+  // 获取当前租户的分发汇总指标（KPI 卡片）
+  GetSocialDistributionSummary(
+    request: wellKnownEmpty,
+  ): Promise<socialservicev1_SocialDistributionSummary>;
 }
 
 export function createSocialServiceClient(
@@ -10997,6 +11001,14 @@ export function createSocialServiceClient(
         method: 'ListSocialDistributionStatsHistory',
       }) as Promise<socialservicev1_ListSocialDistributionStatsHistoryResponse>;
     },
+    GetSocialDistributionSummary(_request) {
+      const path = `admin/v1/social/summary`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'SocialService',
+        method: 'GetSocialDistributionSummary',
+      }) as Promise<socialservicev1_SocialDistributionSummary>;
+    },
   };
 }
 // 回应 - 社交账号列表
@@ -11153,6 +11165,15 @@ export type socialservicev1_SocialStatsHistoryPoint = {
   recordedAt?: wellKnownTimestamp;
   replies?: number;
   reposts?: number;
+};
+
+// 分发汇总指标
+export type socialservicev1_SocialDistributionSummary = {
+  publishedLast7Days?: number;
+  totalLikes?: number;
+  totalPublished?: number;
+  totalReplies?: number;
+  totalReposts?: number;
 };
 
 // 统计服务（后台分析页 BFF 转发）。仅转发至 core StatsService，

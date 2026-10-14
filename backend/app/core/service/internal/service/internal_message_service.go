@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -18,6 +19,9 @@ import (
 
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
+
+	"github.com/redis/go-redis/v9"
+	"go-wind-cms/pkg/sseevent"
 )
 
 type InternalMessageService struct {
@@ -30,6 +34,10 @@ type InternalMessageService struct {
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo
 
 	userRepo data.UserRepo
+
+	// redisClient 用于把系统通知事件发布到 Redis Pub/Sub（admin 服务订阅后转
+	// SSE 实时推送）；为 nil 时静默跳过（落库为准，只损失实时性）。
+	redisClient *redis.Client
 }
 
 func NewInternalMessageService(
@@ -38,6 +46,7 @@ func NewInternalMessageService(
 	internalMessageCategoryRepo *data.InternalMessageCategoryRepo,
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo,
 	userRepo data.UserRepo,
+	redisClient *redis.Client,
 ) *InternalMessageService {
 	return &InternalMessageService{
 		log:                          ctx.NewLoggerHelper("internal-message/service/core-service"),
@@ -45,6 +54,7 @@ func NewInternalMessageService(
 		internalMessageCategoryRepo:  internalMessageCategoryRepo,
 		internalMessageRecipientRepo: internalMessageRecipientRepo,
 		userRepo:                     userRepo,
+		redisClient:                  redisClient,
 	}
 }
 
@@ -333,6 +343,21 @@ func (s *InternalMessageService) NotifyUser(ctx context.Context, recipientUserID
 
 	if err = s.sendNotification(ctx, msg.GetId(), recipientUserID, 0, &now, title, content); err != nil {
 		s.log.Errorf("notify user: create recipient failed (recipient=%d): %v", recipientUserID, err)
+		return
+	}
+
+	// 实时推送（best-effort）：向 Redis Pub/Sub 发事件，admin 服务订阅后转 SSE
+	// 实时推送给目标用户的全部在线会话。落库为准：推送失败只损失实时性，不影响到达。
+	if s.redisClient != nil {
+		if payload, jerr := json.Marshal(sseevent.NotifyEvent{
+			UserID:  recipientUserID,
+			Title:   title,
+			Content: content,
+		}); jerr == nil {
+			if perr := s.redisClient.Publish(context.Background(), sseevent.RedisChannelNotify, payload).Err(); perr != nil {
+				s.log.Warnf("notify user: publish realtime event failed: %v", perr)
+			}
+		}
 	}
 }
 

@@ -35,6 +35,128 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on SocialDistributionSummary with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SocialDistributionSummary) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SocialDistributionSummary with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SocialDistributionSummaryMultiError, or nil if none found.
+func (m *SocialDistributionSummary) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SocialDistributionSummary) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.TotalPublished != nil {
+		// no validation rules for TotalPublished
+	}
+
+	if m.TotalLikes != nil {
+		// no validation rules for TotalLikes
+	}
+
+	if m.TotalReplies != nil {
+		// no validation rules for TotalReplies
+	}
+
+	if m.TotalReposts != nil {
+		// no validation rules for TotalReposts
+	}
+
+	if m.PublishedLast_7Days != nil {
+		// no validation rules for PublishedLast_7Days
+	}
+
+	if len(errors) > 0 {
+		return SocialDistributionSummaryMultiError(errors)
+	}
+
+	return nil
+}
+
+// SocialDistributionSummaryMultiError is an error wrapping multiple validation
+// errors returned by SocialDistributionSummary.ValidateAll() if the
+// designated constraints aren't met.
+type SocialDistributionSummaryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SocialDistributionSummaryMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SocialDistributionSummaryMultiError) AllErrors() []error { return m }
+
+// SocialDistributionSummaryValidationError is the validation error returned by
+// SocialDistributionSummary.Validate if the designated constraints aren't met.
+type SocialDistributionSummaryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SocialDistributionSummaryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SocialDistributionSummaryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SocialDistributionSummaryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SocialDistributionSummaryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SocialDistributionSummaryValidationError) ErrorName() string {
+	return "SocialDistributionSummaryValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SocialDistributionSummaryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSocialDistributionSummary.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SocialDistributionSummaryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SocialDistributionSummaryValidationError{}
+
 // Validate checks the field values on SocialStatsHistoryPoint with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

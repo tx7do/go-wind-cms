@@ -13,6 +13,10 @@
 
 - 分发互动趋势图：统计历史查询 API（`GET /admin/v1/social/distributions/{id}/stats/history`）
   + 轻量 SVG 折线弹窗（赞/评/转三条曲线），数据基于统计回拉的历史快照。
+- 分发 KPI 汇总卡片（已发布/累计赞/评/转/近 7 天发布）与分发报告 CSV 导出。
+- 系统通知实时推送：core 服务经 Redis Pub/Sub 发事件、admin 服务订阅后转 SSE
+  实时推送给目标用户全部在线会话（载荷复用既有 notification 事件形态，前端
+  零改动；落库为准，推送失败不影响到达）。
 
 ### 修复
 

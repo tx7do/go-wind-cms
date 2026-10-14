@@ -17,6 +17,7 @@ import (
 	"github.com/tx7do/go-utils/timeutil"
 
 	appViewer "go-wind-cms/pkg/entgo/viewer"
+	"github.com/tx7do/go-crud/viewer"
 	"go-wind-cms/pkg/social"
 
 	"go-wind-cms/app/core/service/internal/data"
@@ -860,6 +861,25 @@ func (s *SocialService) StatsSyncWorker(taskType string, payload *task.StatsSync
 
 	s.log.Infof("stats sync: batch done (candidates=%d ok=%d fail=%d)", len(items), okCount, failCount)
 	return nil
+}
+
+// GetSocialDistributionSummary 当前租户的分发汇总指标（KPI 卡片）。
+func (s *SocialService) GetSocialDistributionSummary(ctx context.Context, _ *emptypb.Empty) (*socialV1.SocialDistributionSummary, error) {
+	tid := uint32(0)
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		tid = uint32(vc.TenantID())
+	}
+	row, err := s.distributionRepo.Summary(ctx, tid, time.Now().Add(-7*24*time.Hour))
+	if err != nil {
+		return nil, err
+	}
+	return &socialV1.SocialDistributionSummary{
+		TotalPublished:      trans.Ptr(row.TotalPublished),
+		TotalLikes:          trans.Ptr(row.TotalLikes),
+		TotalReplies:        trans.Ptr(row.TotalReplies),
+		TotalReposts:        trans.Ptr(row.TotalReposts),
+		PublishedLast_7Days: trans.Ptr(row.PublishedLast7Day),
+	}, nil
 }
 
 // ListSocialDistributionStatsHistory 返回分发记录的统计时间序列（趋势图数据）。

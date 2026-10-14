@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Calendar, Card, Popconfirm, Segmented, Tag, App, Tooltip } from 'antd';
+import { Calendar, Card, Col, Popconfirm, Row, Segmented, Statistic, Tag, App, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, SendOutlined, SyncOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,7 @@ import {
   useDeleteSocialDistribution,
   usePublishSocialDistribution,
   useRefreshSocialDistributionStats,
+  useSocialDistributionSummary,
 } from '@/api/hooks/social';
 import {
   getPlatformColor,
@@ -24,6 +25,7 @@ import {
   platformOptions,
   statusOptions,
 } from './constants';
+import TableExportButton from '@/components/common/TableExportButton';
 import SocialDistributionDrawer from './SocialDistributionDrawer';
 import StatsTrendModal from './StatsTrendModal';
 
@@ -41,6 +43,9 @@ const SocialDistributionList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingRow, setEditingRow] = useState<any>(null);
   const [calendarPrefillDate, setCalendarPrefillDate] = useState<string | undefined>();
+
+  // KPI 汇总：随列表刷新联动（invalidate 时 summary 一并失效）
+  const summary = useSocialDistributionSummary();
   const [trendRow, setTrendRow] = useState<any>(null);
 
   // ── 日历视图 ──
@@ -104,6 +109,7 @@ const SocialDistributionList = () => {
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['listSocialDistributions'] });
+    queryClient.invalidateQueries({ queryKey: ['socialDistributionSummary'] });
     actionRef.current?.reload();
   };
 
@@ -305,6 +311,28 @@ const SocialDistributionList = () => {
   return (
     <>
       <div ref={containerRef} className="page-container-content" style={{ padding: '0 8px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Row gutter={12} style={{ marginBottom: 12 }}>
+          <Col span={6}>
+            <Card size="small" bordered={false}>
+              <Statistic title={t('kpiPublished')} value={Number(summary.data?.totalPublished) || 0} />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card size="small" bordered={false}>
+              <Statistic title={t('kpiLikes')} value={Number(summary.data?.totalLikes) || 0} />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card size="small" bordered={false}>
+              <Statistic title={t('kpiReplies')} value={Number(summary.data?.totalReplies) || 0} />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card size="small" bordered={false}>
+              <Statistic title={t('kpiLast7Days')} value={Number(summary.data?.publishedLast7Days) || 0} />
+            </Card>
+          </Col>
+        </Row>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <Segmented
             value={viewMode}
@@ -374,6 +402,12 @@ const SocialDistributionList = () => {
             showQuickJumper: true,
           }}
           toolBarRender={() => [
+            <TableExportButton
+              key="export"
+              fetcher={fetchListSocialDistributions}
+              columns={columns}
+              filename="social-distributions"
+            />,
             <a
               key="create"
               onClick={() => {

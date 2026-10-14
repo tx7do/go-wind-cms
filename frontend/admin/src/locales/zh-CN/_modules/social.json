@@ -135,5 +135,9 @@
   "trend.likes": "赞",
   "trend.replies": "评",
   "trend.reposts": "转",
-  "trendHint": "趋势基于统计回拉的历史快照；发布后每 30 分钟自动积累一个数据点"
+  "trendHint": "趋势基于统计回拉的历史快照；发布后每 30 分钟自动积累一个数据点",
+  "kpiPublished": "已发布",
+  "kpiLikes": "累计点赞",
+  "kpiReplies": "累计回复",
+  "kpiLast7Days": "近 7 天发布"
 }

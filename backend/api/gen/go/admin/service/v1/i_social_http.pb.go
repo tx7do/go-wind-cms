@@ -28,6 +28,7 @@ const OperationSocialServiceDeleteSocialAccount = "/admin.service.v1.SocialServi
 const OperationSocialServiceDeleteSocialDistribution = "/admin.service.v1.SocialService/DeleteSocialDistribution"
 const OperationSocialServiceGetSocialAccount = "/admin.service.v1.SocialService/GetSocialAccount"
 const OperationSocialServiceGetSocialDistribution = "/admin.service.v1.SocialService/GetSocialDistribution"
+const OperationSocialServiceGetSocialDistributionSummary = "/admin.service.v1.SocialService/GetSocialDistributionSummary"
 const OperationSocialServiceListSocialAccounts = "/admin.service.v1.SocialService/ListSocialAccounts"
 const OperationSocialServiceListSocialDistributionStatsHistory = "/admin.service.v1.SocialService/ListSocialDistributionStatsHistory"
 const OperationSocialServiceListSocialDistributions = "/admin.service.v1.SocialService/ListSocialDistributions"
@@ -49,6 +50,8 @@ type SocialServiceHTTPServer interface {
 	GetSocialAccount(context.Context, *v11.GetSocialAccountRequest) (*v11.SocialAccount, error)
 	// GetSocialDistribution 获取分发记录数据
 	GetSocialDistribution(context.Context, *v11.GetSocialDistributionRequest) (*v11.SocialDistribution, error)
+	// GetSocialDistributionSummary 获取当前租户的分发汇总指标（KPI 卡片）
+	GetSocialDistributionSummary(context.Context, *emptypb.Empty) (*v11.SocialDistributionSummary, error)
 	// ListSocialAccounts 获取社交账号列表
 	ListSocialAccounts(context.Context, *v1.PagingRequest) (*v11.ListSocialAccountsResponse, error)
 	// ListSocialDistributionStatsHistory 获取分发记录的互动统计历史（趋势图数据）
@@ -80,6 +83,7 @@ func RegisterSocialServiceHTTPServer(s *http.Server, srv SocialServiceHTTPServer
 	r.POST("/admin/v1/social/distributions/{id}/publish", _SocialService_PublishSocialDistribution0_HTTP_Handler(srv))
 	r.POST("/admin/v1/social/distributions/{id}/stats/refresh", _SocialService_RefreshSocialDistributionStats0_HTTP_Handler(srv))
 	r.GET("/admin/v1/social/distributions/{id}/stats/history", _SocialService_ListSocialDistributionStatsHistory0_HTTP_Handler(srv))
+	r.GET("/admin/v1/social/summary", _SocialService_GetSocialDistributionSummary0_HTTP_Handler(srv))
 }
 
 func _SocialService_ListSocialAccounts0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
@@ -374,6 +378,25 @@ func _SocialService_ListSocialDistributionStatsHistory0_HTTP_Handler(srv SocialS
 	}
 }
 
+func _SocialService_GetSocialDistributionSummary0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSocialServiceGetSocialDistributionSummary)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetSocialDistributionSummary(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.SocialDistributionSummary)
+		return ctx.Result(200, reply)
+	}
+}
+
 type SocialServiceHTTPClient interface {
 	// CreateSocialAccount 创建社交账号（服务端验证凭据并加密落库）
 	CreateSocialAccount(ctx context.Context, req *v11.CreateSocialAccountRequest, opts ...http.CallOption) (rsp *v11.SocialAccount, err error)
@@ -387,6 +410,8 @@ type SocialServiceHTTPClient interface {
 	GetSocialAccount(ctx context.Context, req *v11.GetSocialAccountRequest, opts ...http.CallOption) (rsp *v11.SocialAccount, err error)
 	// GetSocialDistribution 获取分发记录数据
 	GetSocialDistribution(ctx context.Context, req *v11.GetSocialDistributionRequest, opts ...http.CallOption) (rsp *v11.SocialDistribution, err error)
+	// GetSocialDistributionSummary 获取当前租户的分发汇总指标（KPI 卡片）
+	GetSocialDistributionSummary(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.SocialDistributionSummary, err error)
 	// ListSocialAccounts 获取社交账号列表
 	ListSocialAccounts(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListSocialAccountsResponse, err error)
 	// ListSocialDistributionStatsHistory 获取分发记录的互动统计历史（趋势图数据）
@@ -487,6 +512,20 @@ func (c *SocialServiceHTTPClientImpl) GetSocialDistribution(ctx context.Context,
 	pattern := "/admin/v1/social/distributions/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationSocialServiceGetSocialDistribution))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetSocialDistributionSummary 获取当前租户的分发汇总指标（KPI 卡片）
+func (c *SocialServiceHTTPClientImpl) GetSocialDistributionSummary(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v11.SocialDistributionSummary, error) {
+	var out v11.SocialDistributionSummary
+	pattern := "/admin/v1/social/summary"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationSocialServiceGetSocialDistributionSummary))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

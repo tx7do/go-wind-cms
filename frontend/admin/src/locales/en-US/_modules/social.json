@@ -135,5 +135,9 @@
   "trend.likes": "Likes",
   "trend.replies": "Replies",
   "trend.reposts": "Reposts",
-  "trendHint": "Trend is based on pull history snapshots; one data point accumulates every 30 minutes after publishing"
+  "trendHint": "Trend is based on pull history snapshots; one data point accumulates every 30 minutes after publishing",
+  "kpiPublished": "Published",
+  "kpiLikes": "Total Likes",
+  "kpiReplies": "Total Replies",
+  "kpiLast7Days": "Last 7 Days"
 }

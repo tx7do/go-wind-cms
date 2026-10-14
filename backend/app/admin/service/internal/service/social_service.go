@@ -138,3 +138,7 @@ func (s *SocialService) RefreshSocialDistributionStats(ctx context.Context, req 
 func (s *SocialService) ListSocialDistributionStatsHistory(ctx context.Context, req *socialV1.ListSocialDistributionStatsHistoryRequest) (*socialV1.ListSocialDistributionStatsHistoryResponse, error) {
 	return s.socialServiceClient.ListSocialDistributionStatsHistory(ctx, req)
 }
+
+func (s *SocialService) GetSocialDistributionSummary(ctx context.Context, empty *emptypb.Empty) (*socialV1.SocialDistributionSummary, error) {
+	return s.socialServiceClient.GetSocialDistributionSummary(ctx, empty)
+}

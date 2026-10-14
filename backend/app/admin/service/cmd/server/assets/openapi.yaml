@@ -6491,6 +6491,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/social.service.v1.SocialDistribution'
+    /admin/v1/social/summary:
+        get:
+            tags:
+                - SocialService
+            description: 获取当前租户的分发汇总指标（KPI 卡片）
+            operationId: SocialService_GetSocialDistributionSummary
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/social.service.v1.SocialDistributionSummary'
     /admin/v1/stats/content-trend:
         get:
             tags:
@@ -13535,6 +13548,25 @@ components:
                     description: 删除时间
                     format: date-time
             description: 内容分发记录
+        social.service.v1.SocialDistributionSummary:
+            type: object
+            properties:
+                totalPublished:
+                    type: string
+                    description: 已发布分发总数
+                totalLikes:
+                    type: string
+                    description: 累计点赞数（最新快照合计）
+                totalReplies:
+                    type: string
+                    description: 累计回复数（最新快照合计）
+                totalReposts:
+                    type: string
+                    description: 累计转发数（最新快照合计）
+                publishedLast7Days:
+                    type: string
+                    description: 近 7 天发布数
+            description: 分发汇总指标
         social.service.v1.SocialStatsHistoryPoint:
             type: object
             properties:

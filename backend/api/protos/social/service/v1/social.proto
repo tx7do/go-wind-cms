@@ -54,6 +54,37 @@ service SocialService {
 
   // 获取分发记录的互动统计历史（时间序列，按时间升序，用于趋势图）
   rpc ListSocialDistributionStatsHistory (ListSocialDistributionStatsHistoryRequest) returns (ListSocialDistributionStatsHistoryResponse) {}
+
+  // 获取当前租户的分发汇总指标（KPI 卡片）
+  rpc GetSocialDistributionSummary (google.protobuf.Empty) returns (SocialDistributionSummary) {}
+}
+
+// 分发汇总指标
+message SocialDistributionSummary {
+  optional uint64 total_published = 1 [
+    json_name = "totalPublished",
+    (gnostic.openapi.v3.property) = {description: "已发布分发总数"}
+  ]; // 已发布总数
+
+  optional uint64 total_likes = 2 [
+    json_name = "totalLikes",
+    (gnostic.openapi.v3.property) = {description: "累计点赞数（最新快照合计）"}
+  ]; // 累计点赞
+
+  optional uint64 total_replies = 3 [
+    json_name = "totalReplies",
+    (gnostic.openapi.v3.property) = {description: "累计回复数（最新快照合计）"}
+  ]; // 累计回复
+
+  optional uint64 total_reposts = 4 [
+    json_name = "totalReposts",
+    (gnostic.openapi.v3.property) = {description: "累计转发数（最新快照合计）"}
+  ]; // 累计转发
+
+  optional uint64 published_last_7_days = 5 [
+    json_name = "publishedLast7Days",
+    (gnostic.openapi.v3.property) = {description: "近 7 天发布数"}
+  ]; // 近 7 天发布数
 }
 
 // 统计历史快照点

@@ -416,6 +416,75 @@ func (r *SocialDistributionRepo) TouchStatsSyncedAt(ctx context.Context, id uint
 	return nil
 }
 
+// SummaryRow 汇总指标行。
+type SummaryRow struct {
+	TotalPublished    uint64
+	TotalLikes        uint64
+	TotalReplies      uint64
+	TotalReposts      uint64
+	PublishedLast7Day uint64
+}
+
+// Summary 汇总当前租户（tid=0 为平台视角看全部）已发布分发的 KPI 指标。
+func (r *SocialDistributionRepo) Summary(ctx context.Context, tenantID uint32, since7d time.Time) (*SummaryRow, error) {
+	base := func(s *sql.Selector) {
+		s.Where(sql.EQ(socialdistribution.FieldStatus, socialdistribution.StatusStatusPublished))
+		if tenantID != 0 {
+			s.Where(sql.EQ(socialdistribution.FieldTenantID, tenantID))
+		}
+	}
+
+	var rows []struct {
+		Count   uint64 `json:"count"`
+		Likes   uint64 `json:"likes"`
+		Replies uint64 `json:"replies"`
+		Reposts uint64 `json:"reposts"`
+	}
+	err := r.entClient.Client().SocialDistribution.Query().
+		Modify(func(s *sql.Selector) {
+			base(s)
+			s.Select(
+				sql.As("COUNT(*)", "count"),
+				sql.As("COALESCE(SUM("+socialdistribution.FieldLikes+"),0)", "likes"),
+				sql.As("COALESCE(SUM("+socialdistribution.FieldReplies+"),0)", "replies"),
+				sql.As("COALESCE(SUM("+socialdistribution.FieldReposts+"),0)", "reposts"),
+			)
+		}).
+		Scan(ctx, &rows)
+	if err != nil {
+		r.log.Errorf("summary: aggregate failed: %s", err.Error())
+		return nil, socialV1.ErrorInternalServerError("summary failed")
+	}
+	out := &SummaryRow{}
+	if len(rows) != 0 {
+		out.TotalPublished = rows[0].Count
+		out.TotalLikes = rows[0].Likes
+		out.TotalReplies = rows[0].Replies
+		out.TotalReposts = rows[0].Reposts
+	}
+
+	// 近 7 天发布数
+	err2 := r.entClient.Client().SocialDistribution.Query().
+		Modify(func(s *sql.Selector) {
+			s.Where(sql.EQ(socialdistribution.FieldStatus, socialdistribution.StatusStatusPublished))
+			s.Where(sql.GTE(socialdistribution.FieldPublishedAt, since7d))
+			if tenantID != 0 {
+				s.Where(sql.EQ(socialdistribution.FieldTenantID, tenantID))
+			}
+			s.Select(sql.As("COUNT(*)", "count"))
+		}).
+		Scan(ctx, &rows)
+	if err2 != nil {
+		r.log.Errorf("summary: last-7d count failed: %s", err2.Error())
+		return nil, socialV1.ErrorInternalServerError("summary failed")
+	}
+	if len(rows) != 0 {
+		out.PublishedLast7Day = rows[0].Count
+	}
+
+	return out, nil
+}
+
 // timeTimestamppbToTime Timestamp → time.Time（nil 安全）。
 func timeTimestamppbToTime(ts *timestamppb.Timestamp) *time.Time {
 	if ts == nil || !ts.IsValid() {
