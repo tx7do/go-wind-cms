@@ -126,5 +126,7 @@
     "access_token": "Platform OAuth2 access token",
     "app_password": "Application password (not the login password)",
     "rpc_url": "e.g. cnblogs https://rpc.cnblogs.com/metaweblog/{blog}; enable MetaWeblog/API access in the blog backend"
-  }
+  },
+  "status": "Status",
+  "requiredCredential": "{{label}} is required"
 }

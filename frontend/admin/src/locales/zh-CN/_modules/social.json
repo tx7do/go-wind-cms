@@ -126,5 +126,7 @@
     "access_token": "平台 OAuth2 access token",
     "app_password": "应用密码（非登录密码）",
     "rpc_url": "如博客园 https://rpc.cnblogs.com/metaweblog/{博客名}；需在博客后台开启 MetaWeblog/API 访问"
-  }
+  },
+  "status": "分发状态",
+  "requiredCredential": "请输入{{label}}"
 }
