@@ -76,6 +76,17 @@ gow 未覆盖的任务才退回 Makefile（`backend/` 根目录执行）：`make
 - **Node 版本**：admin dev（vite 8 / rolldown）要求 Node ≥ 20.19，否则报 `styleText` 不存在——系统默认 20.10 太老，须前置 nvm 的 20.20 再 `npm run dev`。
 - **`go test ./...` 偶发** `fork/exec %TEMP%\go-build...\x.test.exe: Access is denied.`（Windows 对刚链接好的测试二进制执行被拦，疑似杀软实时扫描）：属环境问题、**不是代码失败**。复验办法是绕开 Temp——`go test -c -o <工作区内路径>/x.test.exe ./pkg/x` 后直接跑该 exe；判成"测试挂了"之前先这样确认一次。
 
+- **凭据加密（ENCRYPTION_KEY）**：core/admin 启动读取环境变量 `ENCRYPTION_KEY`
+  （两服务必须同值），社交账号凭据与 AI provider key 据此 AES-GCM 加密落库；
+  未设置时降级明文入库并打告警——生产必须配置，换 key 会使既有密文不可解。
+- **接口同步只对空表有效**：管理页「接口同步」为全量重插显式 ID，`sys_apis`
+  非空时主键冲突整体失败（admin 侧吞错仍显示成功）。非空表补录新端点：先
+  `setval(pg_get_serial_sequence('sys_apis','id'), max(id)+1)` 修序列，再
+  `POST /admin/v1/apis` 逐条创建。
+- **asynq 任务类型命名**：ServeMux 精确匹配失败后按**前缀**兜底路由，
+  新任务类型不得与其他已注册类型互为前缀（"post.publish.sweep" 曾被前缀
+  路由到 "post.publish" 的 handler 导致 payload 解码失败被吞）。
+
 ## 文档索引
 
 - 根 README（三语）：[README.md](./README.md) / [README.en-US.md](./README.en-US.md) / [README.ja-JP.md](./README.ja-JP.md)

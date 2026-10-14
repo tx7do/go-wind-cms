@@ -120,6 +120,15 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Personal Center | Profile editing, avatar, password reset, login history |
 | Headless API | Complete OpenAPI for content CRUD, multi-terminal support |
 
+### Social Distribution
+
+| Feature | Description |
+|:---|:---|
+| Social Accounts | Connect Bluesky / Mastodon / DEV.to (no developer review needed); credentials verified on save, AES-GCM encrypted, only masked hints on read |
+| Content Distribution | Per-platform text & title overrides, scheduled or instant publishing; full state-machine tracking with one-click retry |
+| Publishing Calendar | Calendar/list dual view, monthly schedule overview, click a date to schedule quickly |
+| Engagement Stats | Platform likes/replies/reposts snapshots, instant manual refresh + periodic auto-sync |
+
 ### AI Assistant
 
 | Feature | Description |
