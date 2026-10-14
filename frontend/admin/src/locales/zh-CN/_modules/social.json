@@ -3,7 +3,7 @@
   "platform": "社交平台",
   "platformPlaceholder": "请选择社交平台",
   "requiredPlatform": "请选择社交平台",
-  "helpPlatform": "支持 Bluesky / Mastodon / DEV.to / Telegram / WordPress / 微信公众号 / Nostr / 微博 / LinkedIn（多数平台免审核，凭据自助获取）",
+  "helpPlatform": "选择平台后将展示所需凭据字段；多数平台免审核，凭据自助获取",
   "platformMap": {
     "PLATFORM_BLUESKY": "Bluesky",
     "PLATFORM_MASTODON": "Mastodon",

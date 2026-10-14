@@ -3,7 +3,7 @@
   "platform": "Platform",
   "platformPlaceholder": "Select a platform",
   "requiredPlatform": "Platform is required",
-  "helpPlatform": "Bluesky / Mastodon / DEV.to / Telegram / WordPress / WeChat OA / Nostr / Weibo / LinkedIn supported (most are review-free, self-serve credentials)",
+  "helpPlatform": "Credential fields adapt to the selected platform; most are review-free with self-serve credentials",
   "platformMap": {
     "PLATFORM_BLUESKY": "Bluesky",
     "PLATFORM_MASTODON": "Mastodon",
