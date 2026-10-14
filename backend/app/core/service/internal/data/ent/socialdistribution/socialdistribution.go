@@ -58,6 +58,8 @@ const (
 	FieldReposts = "reposts"
 	// FieldStatsSyncedAt holds the string denoting the stats_synced_at field in the database.
 	FieldStatsSyncedAt = "stats_synced_at"
+	// FieldPublishAttempts holds the string denoting the publish_attempts field in the database.
+	FieldPublishAttempts = "publish_attempts"
 	// Table holds the table name of the socialdistribution in the database.
 	Table = "social_distributions"
 )
@@ -87,6 +89,7 @@ var Columns = []string{
 	FieldReplies,
 	FieldReposts,
 	FieldStatsSyncedAt,
+	FieldPublishAttempts,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -115,6 +118,8 @@ var (
 	DefaultReplies uint32
 	// DefaultReposts holds the default value on creation for the "reposts" field.
 	DefaultReposts uint32
+	// DefaultPublishAttempts holds the default value on creation for the "publish_attempts" field.
+	DefaultPublishAttempts uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -292,4 +297,9 @@ func ByReposts(opts ...sql.OrderTermOption) OrderOption {
 // ByStatsSyncedAt orders the results by the stats_synced_at field.
 func ByStatsSyncedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatsSyncedAt, opts...).ToFunc()
+}
+
+// ByPublishAttempts orders the results by the publish_attempts field.
+func ByPublishAttempts(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPublishAttempts, opts...).ToFunc()
 }

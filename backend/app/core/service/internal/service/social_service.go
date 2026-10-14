@@ -36,30 +36,40 @@ const socialStaleTaskSkipWindow = 2 * time.Minute
 // SocialService 社交分发服务（core）。
 // 职责边界：账号凭据的验证/加解密、分发的排期入队、发布 worker 的状态机推进、
 // 统计回拉；平台 HTTP 细节全部在 pkg/social/<platform> 适配器内。
+// socialPublishMaxAttempts 发布投递总次数上限（首次 + asynq MaxRetry 3），
+// 失败次数达到该值即判定最终失败并通知操作者。
+const socialPublishMaxAttempts = 4
+
 type SocialService struct {
 	socialV1.UnimplementedSocialServiceServer
 
 	log *log.Helper
 
-	accountRepo      *data.SocialAccountRepo
-	distributionRepo *data.SocialDistributionRepo
-	postRepo         *data.PostRepo
-	taskService      *TaskService
+	accountRepo        *data.SocialAccountRepo
+	distributionRepo   *data.SocialDistributionRepo
+	statsHistoryRepo   *data.SocialStatsHistoryRepo
+	postRepo           *data.PostRepo
+	taskService        *TaskService
+	internalMessageSvc *InternalMessageService
 }
 
 func NewSocialService(
 	ctx *bootstrap.Context,
 	accountRepo *data.SocialAccountRepo,
 	distributionRepo *data.SocialDistributionRepo,
+	statsHistoryRepo *data.SocialStatsHistoryRepo,
 	postRepo *data.PostRepo,
 	taskService *TaskService,
+	internalMessageSvc *InternalMessageService,
 ) *SocialService {
 	return &SocialService{
-		log:              ctx.NewLoggerHelper("social/service/core-service"),
-		accountRepo:      accountRepo,
-		distributionRepo: distributionRepo,
-		postRepo:         postRepo,
-		taskService:      taskService,
+		log:                ctx.NewLoggerHelper("social/service/core-service"),
+		accountRepo:        accountRepo,
+		distributionRepo:   distributionRepo,
+		statsHistoryRepo:   statsHistoryRepo,
+		postRepo:           postRepo,
+		taskService:        taskService,
+		internalMessageSvc: internalMessageSvc,
 	}
 }
 
@@ -316,7 +326,7 @@ func (s *SocialService) CreateSocialDistribution(ctx context.Context, req *socia
 	// SCHEDULED → 排期入队（publish_time 为空或已过 → 立即）
 	if created.GetStatus() == socialV1.SocialDistribution_STATUS_SCHEDULED {
 		if err = s.enqueuePublish(created); err != nil {
-			s.distributionRepo.MarkFailed(ctx, created.GetId(), "enqueue failed: "+err.Error())
+			_, _ = s.distributionRepo.MarkFailed(ctx, created.GetId(), "enqueue failed: "+err.Error())
 			return nil, socialV1.ErrorInternalServerError("schedule publish failed")
 		}
 	}
@@ -368,7 +378,7 @@ func (s *SocialService) UpdateSocialDistribution(ctx context.Context, req *socia
 	// 改期 → 重新入队（旧 DELAY 任务到点自检 publish_time 已推迟会自弃）
 	if maskHasPublishTime && updated.GetStatus() == socialV1.SocialDistribution_STATUS_SCHEDULED {
 		if err = s.enqueuePublish(updated); err != nil {
-			s.distributionRepo.MarkFailed(ctx, updated.GetId(), "enqueue failed: "+err.Error())
+			_, _ = s.distributionRepo.MarkFailed(ctx, updated.GetId(), "enqueue failed: "+err.Error())
 			return nil, socialV1.ErrorInternalServerError("reschedule publish failed")
 		}
 	}
@@ -416,7 +426,7 @@ func (s *SocialService) PublishSocialDistribution(ctx context.Context, req *soci
 	}
 
 	if err = s.enqueuePublish(d); err != nil {
-		s.distributionRepo.MarkFailed(ctx, req.GetId(), "enqueue failed: "+err.Error())
+		_, _ = s.distributionRepo.MarkFailed(ctx, req.GetId(), "enqueue failed: "+err.Error())
 		return nil, socialV1.ErrorInternalServerError("enqueue publish failed")
 	}
 
@@ -447,9 +457,11 @@ func (s *SocialService) RefreshSocialDistributionStats(ctx context.Context, req 
 		return nil, s.mapProviderError(err, "fetch stats")
 	}
 
-	if err = s.distributionRepo.UpdateStats(ctx, req.GetId(), stats.Likes, stats.Replies, stats.Reposts, time.Now()); err != nil {
+	now := time.Now()
+	if err = s.distributionRepo.UpdateStats(ctx, req.GetId(), stats.Likes, stats.Replies, stats.Reposts, now); err != nil {
 		return nil, err
 	}
+	s.recordStatsHistory(ctx, req.GetId(), stats, now)
 
 	return s.distributionRepo.GetByID(ctx, req.GetId())
 }
@@ -497,21 +509,21 @@ func (s *SocialService) PublishDistributionWorker(taskType string, payload *task
 	// 账号侧永久性检查
 	acct, err := s.accountRepo.GetByID(ctx, d.GetAccountId())
 	if err != nil {
-		s.distributionRepo.MarkFailed(ctx, d.GetId(), "social account missing")
+		_, _ = s.distributionRepo.MarkFailed(ctx, d.GetId(), "social account missing")
 		return nil
 	}
 	if !acct.GetIsEnabled() {
-		s.distributionRepo.MarkFailed(ctx, d.GetId(), "social account is disabled")
+		_, _ = s.distributionRepo.MarkFailed(ctx, d.GetId(), "social account is disabled")
 		return nil
 	}
 	if acct.GetPlatform() != d.GetPlatform() {
-		s.distributionRepo.MarkFailed(ctx, d.GetId(), "platform mismatch with account")
+		_, _ = s.distributionRepo.MarkFailed(ctx, d.GetId(), "platform mismatch with account")
 		return nil
 	}
 
 	provider, err := social.GetProvider(d.GetPlatform().String())
 	if err != nil {
-		s.distributionRepo.MarkFailed(ctx, d.GetId(), err.Error())
+		_, _ = s.distributionRepo.MarkFailed(ctx, d.GetId(), err.Error())
 		return nil
 	}
 
@@ -538,10 +550,18 @@ func (s *SocialService) PublishDistributionWorker(taskType string, payload *task
 		Title: title,
 	})
 	if err != nil {
-		s.distributionRepo.MarkFailed(ctx, d.GetId(), err.Error())
-		s.log.Errorf("social publish worker: publish distribution %d failed: %v", d.GetId(), err)
+		attempts, merr := s.distributionRepo.MarkFailed(ctx, d.GetId(), err.Error())
+		if merr != nil {
+			return merr
+		}
+		s.log.Errorf("social publish worker: publish distribution %d failed (attempt=%d): %v", d.GetId(), attempts, err)
+		final := attempts >= socialPublishMaxAttempts
 		if errors.Is(err, social.ErrInvalidCredentials) || errors.Is(err, social.ErrContentTooLong) {
-			return nil // 永久性失败：重试无意义
+			s.notifyPublishResult(d, acct.GetName(), false, err.Error()) // 永久性失败：即最终失败
+			return nil                                                   // 重试无意义
+		}
+		if final {
+			s.notifyPublishResult(d, acct.GetName(), false, err.Error()) // 重试穷尽：最终失败
 		}
 		return err // 暂时性失败：asynq 重试
 	}
@@ -549,9 +569,40 @@ func (s *SocialService) PublishDistributionWorker(taskType string, payload *task
 	if err = s.distributionRepo.MarkPublished(ctx, d.GetId(), res.ExternalID, res.ExternalURI); err != nil {
 		return err
 	}
+	s.notifyPublishResult(d, acct.GetName(), true, res.ExternalURI)
 
 	s.log.Infof("social publish worker: distribution %d published to %s", d.GetId(), res.ExternalURI)
 	return nil
+}
+
+// notifyPublishResult 发布结果站内信（借鉴 go-wind-admin notifications 的
+// "结果触达"设计）：成功即时通知；失败只在最终失败时通知一次（重试期间不打扰，
+// 状态在列表页可见）。通知失败不影响发布结果，仅记日志。
+func (s *SocialService) notifyPublishResult(d *socialV1.SocialDistribution, accountName string, success bool, detail string) {
+	if s.internalMessageSvc == nil || d.GetCreatedBy() == 0 {
+		return
+	}
+
+	platform := strings.TrimPrefix(d.GetPlatform().String(), "PLATFORM_")
+	account := accountName
+	if account == "" {
+		account = fmt.Sprintf("#%d", d.GetAccountId())
+	}
+
+	var title, content string
+	if success {
+		title = "社交发布成功"
+		content = fmt.Sprintf("已成功发布到 %s（账号：%s）。", platform, account)
+		if detail != "" {
+			content += "\n查看：" + detail
+		}
+	} else {
+		title = "社交发布失败"
+		content = fmt.Sprintf("发布到 %s（账号：%s）失败：%s。\n可在「社交分发」列表中修复后点击「立即发布」重试。",
+			platform, account, detail)
+	}
+
+	s.internalMessageSvc.NotifyUser(context.Background(), d.GetCreatedBy(), title, content)
 }
 
 // ── 内部工具 ──
@@ -796,9 +847,31 @@ func (s *SocialService) StatsSyncWorker(taskType string, payload *task.StatsSync
 			failCount++
 			continue
 		}
+		s.recordStatsHistory(ctx, item.GetId(), stats, now)
 		okCount++
+	}
+
+	// 顺手裁剪 90 天前的历史快照（限批，防止表无限膨胀）
+	if pruned, perr := s.statsHistoryRepo.PruneOlderThan(ctx, now.Add(-90*24*time.Hour), 1000); perr == nil && pruned != 0 {
+		s.log.Infof("stats sync: pruned %d stale history rows", pruned)
 	}
 
 	s.log.Infof("stats sync: batch done (candidates=%d ok=%d fail=%d)", len(items), okCount, failCount)
 	return nil
+}
+
+// recordStatsHistory 追加一行统计快照（趋势数据从今天开始积累；失败不影响主流程）。
+func (s *SocialService) recordStatsHistory(ctx context.Context, distributionID uint32, stats *social.Stats, now time.Time) {
+	if s.statsHistoryRepo == nil || stats == nil {
+		return
+	}
+	if err := s.statsHistoryRepo.Record(ctx, data.StatsRecord{
+		DistributionID: distributionID,
+		Likes:          stats.Likes,
+		Replies:        stats.Replies,
+		Reposts:        stats.Reposts,
+		RecordedAt:     now,
+	}); err != nil {
+		s.log.Errorf("record stats history failed (distribution=%d): %v", distributionID, err)
+	}
 }

@@ -1671,6 +1671,30 @@ func (f SocialDistributionMutationRuleFunc) EvalMutation(ctx context.Context, m 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SocialDistributionMutation", m)
 }
 
+// The SocialStatsHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SocialStatsHistoryQueryRuleFunc func(context.Context, *ent.SocialStatsHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SocialStatsHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SocialStatsHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SocialStatsHistoryQuery", q)
+}
+
+// The SocialStatsHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SocialStatsHistoryMutationRuleFunc func(context.Context, *ent.SocialStatsHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SocialStatsHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SocialStatsHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SocialStatsHistoryMutation", m)
+}
+
 // The TagQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type TagQueryRuleFunc func(context.Context, *ent.TagQuery) error
@@ -2052,6 +2076,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.SocialDistributionQuery:
 		return q.Filter(), nil
+	case *ent.SocialStatsHistoryQuery:
+		return q.Filter(), nil
 	case *ent.TagQuery:
 		return q.Filter(), nil
 	case *ent.TagTranslationQuery:
@@ -2206,6 +2232,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.SocialAccountMutation:
 		return m.Filter(), nil
 	case *ent.SocialDistributionMutation:
+		return m.Filter(), nil
+	case *ent.SocialStatsHistoryMutation:
 		return m.Filter(), nil
 	case *ent.TagMutation:
 		return m.Filter(), nil

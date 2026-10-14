@@ -485,6 +485,33 @@ func (_u *SocialDistributionUpdate) ClearStatsSyncedAt() *SocialDistributionUpda
 	return _u
 }
 
+// SetPublishAttempts sets the "publish_attempts" field.
+func (_u *SocialDistributionUpdate) SetPublishAttempts(v uint32) *SocialDistributionUpdate {
+	_u.mutation.ResetPublishAttempts()
+	_u.mutation.SetPublishAttempts(v)
+	return _u
+}
+
+// SetNillablePublishAttempts sets the "publish_attempts" field if the given value is not nil.
+func (_u *SocialDistributionUpdate) SetNillablePublishAttempts(v *uint32) *SocialDistributionUpdate {
+	if v != nil {
+		_u.SetPublishAttempts(*v)
+	}
+	return _u
+}
+
+// AddPublishAttempts adds value to the "publish_attempts" field.
+func (_u *SocialDistributionUpdate) AddPublishAttempts(v int32) *SocialDistributionUpdate {
+	_u.mutation.AddPublishAttempts(v)
+	return _u
+}
+
+// ClearPublishAttempts clears the value of the "publish_attempts" field.
+func (_u *SocialDistributionUpdate) ClearPublishAttempts() *SocialDistributionUpdate {
+	_u.mutation.ClearPublishAttempts()
+	return _u
+}
+
 // Mutation returns the SocialDistributionMutation object of the builder.
 func (_u *SocialDistributionUpdate) Mutation() *SocialDistributionMutation {
 	return _u.mutation
@@ -699,6 +726,15 @@ func (_u *SocialDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 	}
 	if _u.mutation.StatsSyncedAtCleared() {
 		_spec.ClearField(socialdistribution.FieldStatsSyncedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.PublishAttempts(); ok {
+		_spec.SetField(socialdistribution.FieldPublishAttempts, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedPublishAttempts(); ok {
+		_spec.AddField(socialdistribution.FieldPublishAttempts, field.TypeUint32, value)
+	}
+	if _u.mutation.PublishAttemptsCleared() {
+		_spec.ClearField(socialdistribution.FieldPublishAttempts, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -1178,6 +1214,33 @@ func (_u *SocialDistributionUpdateOne) ClearStatsSyncedAt() *SocialDistributionU
 	return _u
 }
 
+// SetPublishAttempts sets the "publish_attempts" field.
+func (_u *SocialDistributionUpdateOne) SetPublishAttempts(v uint32) *SocialDistributionUpdateOne {
+	_u.mutation.ResetPublishAttempts()
+	_u.mutation.SetPublishAttempts(v)
+	return _u
+}
+
+// SetNillablePublishAttempts sets the "publish_attempts" field if the given value is not nil.
+func (_u *SocialDistributionUpdateOne) SetNillablePublishAttempts(v *uint32) *SocialDistributionUpdateOne {
+	if v != nil {
+		_u.SetPublishAttempts(*v)
+	}
+	return _u
+}
+
+// AddPublishAttempts adds value to the "publish_attempts" field.
+func (_u *SocialDistributionUpdateOne) AddPublishAttempts(v int32) *SocialDistributionUpdateOne {
+	_u.mutation.AddPublishAttempts(v)
+	return _u
+}
+
+// ClearPublishAttempts clears the value of the "publish_attempts" field.
+func (_u *SocialDistributionUpdateOne) ClearPublishAttempts() *SocialDistributionUpdateOne {
+	_u.mutation.ClearPublishAttempts()
+	return _u
+}
+
 // Mutation returns the SocialDistributionMutation object of the builder.
 func (_u *SocialDistributionUpdateOne) Mutation() *SocialDistributionMutation {
 	return _u.mutation
@@ -1422,6 +1485,15 @@ func (_u *SocialDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Soci
 	}
 	if _u.mutation.StatsSyncedAtCleared() {
 		_spec.ClearField(socialdistribution.FieldStatsSyncedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.PublishAttempts(); ok {
+		_spec.SetField(socialdistribution.FieldPublishAttempts, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedPublishAttempts(); ok {
+		_spec.AddField(socialdistribution.FieldPublishAttempts, field.TypeUint32, value)
+	}
+	if _u.mutation.PublishAttemptsCleared() {
+		_spec.ClearField(socialdistribution.FieldPublishAttempts, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &SocialDistribution{config: _u.config}

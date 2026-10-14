@@ -77,6 +77,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
+	"go-wind-cms/app/core/service/internal/data/ent/socialstatshistory"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -167,6 +168,7 @@ const (
 	TypeSiteSetting                = "SiteSetting"
 	TypeSocialAccount              = "SocialAccount"
 	TypeSocialDistribution         = "SocialDistribution"
+	TypeSocialStatsHistory         = "SocialStatsHistory"
 	TypeTag                        = "Tag"
 	TypeTagTranslation             = "TagTranslation"
 	TypeTask                       = "Task"
@@ -98996,44 +98998,46 @@ func (m *SocialAccountMutation) ResetEdge(name string) error {
 // SocialDistributionMutation represents an operation that mutates the SocialDistribution nodes in the graph.
 type SocialDistributionMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *uint32
-	created_at      *time.Time
-	updated_at      *time.Time
-	deleted_at      *time.Time
-	created_by      *uint32
-	addcreated_by   *int32
-	updated_by      *uint32
-	addupdated_by   *int32
-	deleted_by      *uint32
-	adddeleted_by   *int32
-	tenant_id       *uint32
-	addtenant_id    *int32
-	platform        *socialdistribution.Platform
-	account_id      *uint32
-	addaccount_id   *int32
-	post_id         *uint32
-	addpost_id      *int32
-	override_text   *string
-	status          *socialdistribution.Status
-	publish_time    *time.Time
-	published_at    *time.Time
-	external_uri    *string
-	external_id     *string
-	error_message   *string
-	title           *string
-	likes           *uint32
-	addlikes        *int32
-	replies         *uint32
-	addreplies      *int32
-	reposts         *uint32
-	addreposts      *int32
-	stats_synced_at *time.Time
-	clearedFields   map[string]struct{}
-	done            bool
-	oldValue        func(context.Context) (*SocialDistribution, error)
-	predicates      []predicate.SocialDistribution
+	op                  Op
+	typ                 string
+	id                  *uint32
+	created_at          *time.Time
+	updated_at          *time.Time
+	deleted_at          *time.Time
+	created_by          *uint32
+	addcreated_by       *int32
+	updated_by          *uint32
+	addupdated_by       *int32
+	deleted_by          *uint32
+	adddeleted_by       *int32
+	tenant_id           *uint32
+	addtenant_id        *int32
+	platform            *socialdistribution.Platform
+	account_id          *uint32
+	addaccount_id       *int32
+	post_id             *uint32
+	addpost_id          *int32
+	override_text       *string
+	status              *socialdistribution.Status
+	publish_time        *time.Time
+	published_at        *time.Time
+	external_uri        *string
+	external_id         *string
+	error_message       *string
+	title               *string
+	likes               *uint32
+	addlikes            *int32
+	replies             *uint32
+	addreplies          *int32
+	reposts             *uint32
+	addreposts          *int32
+	stats_synced_at     *time.Time
+	publish_attempts    *uint32
+	addpublish_attempts *int32
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*SocialDistribution, error)
+	predicates          []predicate.SocialDistribution
 }
 
 var _ ent.Mutation = (*SocialDistributionMutation)(nil)
@@ -100407,6 +100411,76 @@ func (m *SocialDistributionMutation) ResetStatsSyncedAt() {
 	delete(m.clearedFields, socialdistribution.FieldStatsSyncedAt)
 }
 
+// SetPublishAttempts sets the "publish_attempts" field.
+func (m *SocialDistributionMutation) SetPublishAttempts(u uint32) {
+	m.publish_attempts = &u
+	m.addpublish_attempts = nil
+}
+
+// PublishAttempts returns the value of the "publish_attempts" field in the mutation.
+func (m *SocialDistributionMutation) PublishAttempts() (r uint32, exists bool) {
+	v := m.publish_attempts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPublishAttempts returns the old "publish_attempts" field's value of the SocialDistribution entity.
+// If the SocialDistribution object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialDistributionMutation) OldPublishAttempts(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPublishAttempts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPublishAttempts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPublishAttempts: %w", err)
+	}
+	return oldValue.PublishAttempts, nil
+}
+
+// AddPublishAttempts adds u to the "publish_attempts" field.
+func (m *SocialDistributionMutation) AddPublishAttempts(u int32) {
+	if m.addpublish_attempts != nil {
+		*m.addpublish_attempts += u
+	} else {
+		m.addpublish_attempts = &u
+	}
+}
+
+// AddedPublishAttempts returns the value that was added to the "publish_attempts" field in this mutation.
+func (m *SocialDistributionMutation) AddedPublishAttempts() (r int32, exists bool) {
+	v := m.addpublish_attempts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPublishAttempts clears the value of the "publish_attempts" field.
+func (m *SocialDistributionMutation) ClearPublishAttempts() {
+	m.publish_attempts = nil
+	m.addpublish_attempts = nil
+	m.clearedFields[socialdistribution.FieldPublishAttempts] = struct{}{}
+}
+
+// PublishAttemptsCleared returns if the "publish_attempts" field was cleared in this mutation.
+func (m *SocialDistributionMutation) PublishAttemptsCleared() bool {
+	_, ok := m.clearedFields[socialdistribution.FieldPublishAttempts]
+	return ok
+}
+
+// ResetPublishAttempts resets all changes to the "publish_attempts" field.
+func (m *SocialDistributionMutation) ResetPublishAttempts() {
+	m.publish_attempts = nil
+	m.addpublish_attempts = nil
+	delete(m.clearedFields, socialdistribution.FieldPublishAttempts)
+}
+
 // Where appends a list predicates to the SocialDistributionMutation builder.
 func (m *SocialDistributionMutation) Where(ps ...predicate.SocialDistribution) {
 	m.predicates = append(m.predicates, ps...)
@@ -100441,7 +100515,7 @@ func (m *SocialDistributionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SocialDistributionMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, socialdistribution.FieldCreatedAt)
 	}
@@ -100508,6 +100582,9 @@ func (m *SocialDistributionMutation) Fields() []string {
 	if m.stats_synced_at != nil {
 		fields = append(fields, socialdistribution.FieldStatsSyncedAt)
 	}
+	if m.publish_attempts != nil {
+		fields = append(fields, socialdistribution.FieldPublishAttempts)
+	}
 	return fields
 }
 
@@ -100560,6 +100637,8 @@ func (m *SocialDistributionMutation) Field(name string) (ent.Value, bool) {
 		return m.Reposts()
 	case socialdistribution.FieldStatsSyncedAt:
 		return m.StatsSyncedAt()
+	case socialdistribution.FieldPublishAttempts:
+		return m.PublishAttempts()
 	}
 	return nil, false
 }
@@ -100613,6 +100692,8 @@ func (m *SocialDistributionMutation) OldField(ctx context.Context, name string) 
 		return m.OldReposts(ctx)
 	case socialdistribution.FieldStatsSyncedAt:
 		return m.OldStatsSyncedAt(ctx)
+	case socialdistribution.FieldPublishAttempts:
+		return m.OldPublishAttempts(ctx)
 	}
 	return nil, fmt.Errorf("unknown SocialDistribution field %s", name)
 }
@@ -100776,6 +100857,13 @@ func (m *SocialDistributionMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetStatsSyncedAt(v)
 		return nil
+	case socialdistribution.FieldPublishAttempts:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPublishAttempts(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SocialDistribution field %s", name)
 }
@@ -100811,6 +100899,9 @@ func (m *SocialDistributionMutation) AddedFields() []string {
 	if m.addreposts != nil {
 		fields = append(fields, socialdistribution.FieldReposts)
 	}
+	if m.addpublish_attempts != nil {
+		fields = append(fields, socialdistribution.FieldPublishAttempts)
+	}
 	return fields
 }
 
@@ -100837,6 +100928,8 @@ func (m *SocialDistributionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedReplies()
 	case socialdistribution.FieldReposts:
 		return m.AddedReposts()
+	case socialdistribution.FieldPublishAttempts:
+		return m.AddedPublishAttempts()
 	}
 	return nil, false
 }
@@ -100908,6 +101001,13 @@ func (m *SocialDistributionMutation) AddField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddReposts(v)
+		return nil
+	case socialdistribution.FieldPublishAttempts:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPublishAttempts(v)
 		return nil
 	}
 	return fmt.Errorf("unknown SocialDistribution numeric field %s", name)
@@ -100982,6 +101082,9 @@ func (m *SocialDistributionMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(socialdistribution.FieldStatsSyncedAt) {
 		fields = append(fields, socialdistribution.FieldStatsSyncedAt)
+	}
+	if m.FieldCleared(socialdistribution.FieldPublishAttempts) {
+		fields = append(fields, socialdistribution.FieldPublishAttempts)
 	}
 	return fields
 }
@@ -101063,6 +101166,9 @@ func (m *SocialDistributionMutation) ClearField(name string) error {
 	case socialdistribution.FieldStatsSyncedAt:
 		m.ClearStatsSyncedAt()
 		return nil
+	case socialdistribution.FieldPublishAttempts:
+		m.ClearPublishAttempts()
+		return nil
 	}
 	return fmt.Errorf("unknown SocialDistribution nullable field %s", name)
 }
@@ -101137,6 +101243,9 @@ func (m *SocialDistributionMutation) ResetField(name string) error {
 	case socialdistribution.FieldStatsSyncedAt:
 		m.ResetStatsSyncedAt()
 		return nil
+	case socialdistribution.FieldPublishAttempts:
+		m.ResetPublishAttempts()
+		return nil
 	}
 	return fmt.Errorf("unknown SocialDistribution field %s", name)
 }
@@ -101187,6 +101296,937 @@ func (m *SocialDistributionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *SocialDistributionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown SocialDistribution edge %s", name)
+}
+
+// SocialStatsHistoryMutation represents an operation that mutates the SocialStatsHistory nodes in the graph.
+type SocialStatsHistoryMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *uint32
+	created_at         *time.Time
+	updated_at         *time.Time
+	deleted_at         *time.Time
+	distribution_id    *uint32
+	adddistribution_id *int32
+	likes              *uint32
+	addlikes           *int32
+	replies            *uint32
+	addreplies         *int32
+	reposts            *uint32
+	addreposts         *int32
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*SocialStatsHistory, error)
+	predicates         []predicate.SocialStatsHistory
+}
+
+var _ ent.Mutation = (*SocialStatsHistoryMutation)(nil)
+
+// socialstatshistoryOption allows management of the mutation configuration using functional options.
+type socialstatshistoryOption func(*SocialStatsHistoryMutation)
+
+// newSocialStatsHistoryMutation creates new mutation for the SocialStatsHistory entity.
+func newSocialStatsHistoryMutation(c config, op Op, opts ...socialstatshistoryOption) *SocialStatsHistoryMutation {
+	m := &SocialStatsHistoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSocialStatsHistory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSocialStatsHistoryID sets the ID field of the mutation.
+func withSocialStatsHistoryID(id uint32) socialstatshistoryOption {
+	return func(m *SocialStatsHistoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SocialStatsHistory
+		)
+		m.oldValue = func(ctx context.Context) (*SocialStatsHistory, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SocialStatsHistory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSocialStatsHistory sets the old SocialStatsHistory of the mutation.
+func withSocialStatsHistory(node *SocialStatsHistory) socialstatshistoryOption {
+	return func(m *SocialStatsHistoryMutation) {
+		m.oldValue = func(context.Context) (*SocialStatsHistory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SocialStatsHistoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SocialStatsHistoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SocialStatsHistory entities.
+func (m *SocialStatsHistoryMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SocialStatsHistoryMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SocialStatsHistoryMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SocialStatsHistory.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SocialStatsHistoryMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SocialStatsHistoryMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SocialStatsHistory entity.
+// If the SocialStatsHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialStatsHistoryMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SocialStatsHistoryMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[socialstatshistory.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[socialstatshistory.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SocialStatsHistoryMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, socialstatshistory.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SocialStatsHistoryMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SocialStatsHistoryMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SocialStatsHistory entity.
+// If the SocialStatsHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialStatsHistoryMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SocialStatsHistoryMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[socialstatshistory.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[socialstatshistory.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SocialStatsHistoryMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, socialstatshistory.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SocialStatsHistoryMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SocialStatsHistoryMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SocialStatsHistory entity.
+// If the SocialStatsHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialStatsHistoryMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SocialStatsHistoryMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[socialstatshistory.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[socialstatshistory.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SocialStatsHistoryMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, socialstatshistory.FieldDeletedAt)
+}
+
+// SetDistributionID sets the "distribution_id" field.
+func (m *SocialStatsHistoryMutation) SetDistributionID(u uint32) {
+	m.distribution_id = &u
+	m.adddistribution_id = nil
+}
+
+// DistributionID returns the value of the "distribution_id" field in the mutation.
+func (m *SocialStatsHistoryMutation) DistributionID() (r uint32, exists bool) {
+	v := m.distribution_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDistributionID returns the old "distribution_id" field's value of the SocialStatsHistory entity.
+// If the SocialStatsHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialStatsHistoryMutation) OldDistributionID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDistributionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDistributionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDistributionID: %w", err)
+	}
+	return oldValue.DistributionID, nil
+}
+
+// AddDistributionID adds u to the "distribution_id" field.
+func (m *SocialStatsHistoryMutation) AddDistributionID(u int32) {
+	if m.adddistribution_id != nil {
+		*m.adddistribution_id += u
+	} else {
+		m.adddistribution_id = &u
+	}
+}
+
+// AddedDistributionID returns the value that was added to the "distribution_id" field in this mutation.
+func (m *SocialStatsHistoryMutation) AddedDistributionID() (r int32, exists bool) {
+	v := m.adddistribution_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDistributionID clears the value of the "distribution_id" field.
+func (m *SocialStatsHistoryMutation) ClearDistributionID() {
+	m.distribution_id = nil
+	m.adddistribution_id = nil
+	m.clearedFields[socialstatshistory.FieldDistributionID] = struct{}{}
+}
+
+// DistributionIDCleared returns if the "distribution_id" field was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) DistributionIDCleared() bool {
+	_, ok := m.clearedFields[socialstatshistory.FieldDistributionID]
+	return ok
+}
+
+// ResetDistributionID resets all changes to the "distribution_id" field.
+func (m *SocialStatsHistoryMutation) ResetDistributionID() {
+	m.distribution_id = nil
+	m.adddistribution_id = nil
+	delete(m.clearedFields, socialstatshistory.FieldDistributionID)
+}
+
+// SetLikes sets the "likes" field.
+func (m *SocialStatsHistoryMutation) SetLikes(u uint32) {
+	m.likes = &u
+	m.addlikes = nil
+}
+
+// Likes returns the value of the "likes" field in the mutation.
+func (m *SocialStatsHistoryMutation) Likes() (r uint32, exists bool) {
+	v := m.likes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLikes returns the old "likes" field's value of the SocialStatsHistory entity.
+// If the SocialStatsHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialStatsHistoryMutation) OldLikes(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLikes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLikes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLikes: %w", err)
+	}
+	return oldValue.Likes, nil
+}
+
+// AddLikes adds u to the "likes" field.
+func (m *SocialStatsHistoryMutation) AddLikes(u int32) {
+	if m.addlikes != nil {
+		*m.addlikes += u
+	} else {
+		m.addlikes = &u
+	}
+}
+
+// AddedLikes returns the value that was added to the "likes" field in this mutation.
+func (m *SocialStatsHistoryMutation) AddedLikes() (r int32, exists bool) {
+	v := m.addlikes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLikes clears the value of the "likes" field.
+func (m *SocialStatsHistoryMutation) ClearLikes() {
+	m.likes = nil
+	m.addlikes = nil
+	m.clearedFields[socialstatshistory.FieldLikes] = struct{}{}
+}
+
+// LikesCleared returns if the "likes" field was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) LikesCleared() bool {
+	_, ok := m.clearedFields[socialstatshistory.FieldLikes]
+	return ok
+}
+
+// ResetLikes resets all changes to the "likes" field.
+func (m *SocialStatsHistoryMutation) ResetLikes() {
+	m.likes = nil
+	m.addlikes = nil
+	delete(m.clearedFields, socialstatshistory.FieldLikes)
+}
+
+// SetReplies sets the "replies" field.
+func (m *SocialStatsHistoryMutation) SetReplies(u uint32) {
+	m.replies = &u
+	m.addreplies = nil
+}
+
+// Replies returns the value of the "replies" field in the mutation.
+func (m *SocialStatsHistoryMutation) Replies() (r uint32, exists bool) {
+	v := m.replies
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReplies returns the old "replies" field's value of the SocialStatsHistory entity.
+// If the SocialStatsHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialStatsHistoryMutation) OldReplies(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReplies is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReplies requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReplies: %w", err)
+	}
+	return oldValue.Replies, nil
+}
+
+// AddReplies adds u to the "replies" field.
+func (m *SocialStatsHistoryMutation) AddReplies(u int32) {
+	if m.addreplies != nil {
+		*m.addreplies += u
+	} else {
+		m.addreplies = &u
+	}
+}
+
+// AddedReplies returns the value that was added to the "replies" field in this mutation.
+func (m *SocialStatsHistoryMutation) AddedReplies() (r int32, exists bool) {
+	v := m.addreplies
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReplies clears the value of the "replies" field.
+func (m *SocialStatsHistoryMutation) ClearReplies() {
+	m.replies = nil
+	m.addreplies = nil
+	m.clearedFields[socialstatshistory.FieldReplies] = struct{}{}
+}
+
+// RepliesCleared returns if the "replies" field was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) RepliesCleared() bool {
+	_, ok := m.clearedFields[socialstatshistory.FieldReplies]
+	return ok
+}
+
+// ResetReplies resets all changes to the "replies" field.
+func (m *SocialStatsHistoryMutation) ResetReplies() {
+	m.replies = nil
+	m.addreplies = nil
+	delete(m.clearedFields, socialstatshistory.FieldReplies)
+}
+
+// SetReposts sets the "reposts" field.
+func (m *SocialStatsHistoryMutation) SetReposts(u uint32) {
+	m.reposts = &u
+	m.addreposts = nil
+}
+
+// Reposts returns the value of the "reposts" field in the mutation.
+func (m *SocialStatsHistoryMutation) Reposts() (r uint32, exists bool) {
+	v := m.reposts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReposts returns the old "reposts" field's value of the SocialStatsHistory entity.
+// If the SocialStatsHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SocialStatsHistoryMutation) OldReposts(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReposts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReposts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReposts: %w", err)
+	}
+	return oldValue.Reposts, nil
+}
+
+// AddReposts adds u to the "reposts" field.
+func (m *SocialStatsHistoryMutation) AddReposts(u int32) {
+	if m.addreposts != nil {
+		*m.addreposts += u
+	} else {
+		m.addreposts = &u
+	}
+}
+
+// AddedReposts returns the value that was added to the "reposts" field in this mutation.
+func (m *SocialStatsHistoryMutation) AddedReposts() (r int32, exists bool) {
+	v := m.addreposts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReposts clears the value of the "reposts" field.
+func (m *SocialStatsHistoryMutation) ClearReposts() {
+	m.reposts = nil
+	m.addreposts = nil
+	m.clearedFields[socialstatshistory.FieldReposts] = struct{}{}
+}
+
+// RepostsCleared returns if the "reposts" field was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) RepostsCleared() bool {
+	_, ok := m.clearedFields[socialstatshistory.FieldReposts]
+	return ok
+}
+
+// ResetReposts resets all changes to the "reposts" field.
+func (m *SocialStatsHistoryMutation) ResetReposts() {
+	m.reposts = nil
+	m.addreposts = nil
+	delete(m.clearedFields, socialstatshistory.FieldReposts)
+}
+
+// Where appends a list predicates to the SocialStatsHistoryMutation builder.
+func (m *SocialStatsHistoryMutation) Where(ps ...predicate.SocialStatsHistory) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SocialStatsHistoryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SocialStatsHistoryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SocialStatsHistory, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SocialStatsHistoryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SocialStatsHistoryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SocialStatsHistory).
+func (m *SocialStatsHistoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SocialStatsHistoryMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, socialstatshistory.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, socialstatshistory.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, socialstatshistory.FieldDeletedAt)
+	}
+	if m.distribution_id != nil {
+		fields = append(fields, socialstatshistory.FieldDistributionID)
+	}
+	if m.likes != nil {
+		fields = append(fields, socialstatshistory.FieldLikes)
+	}
+	if m.replies != nil {
+		fields = append(fields, socialstatshistory.FieldReplies)
+	}
+	if m.reposts != nil {
+		fields = append(fields, socialstatshistory.FieldReposts)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SocialStatsHistoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case socialstatshistory.FieldCreatedAt:
+		return m.CreatedAt()
+	case socialstatshistory.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case socialstatshistory.FieldDeletedAt:
+		return m.DeletedAt()
+	case socialstatshistory.FieldDistributionID:
+		return m.DistributionID()
+	case socialstatshistory.FieldLikes:
+		return m.Likes()
+	case socialstatshistory.FieldReplies:
+		return m.Replies()
+	case socialstatshistory.FieldReposts:
+		return m.Reposts()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SocialStatsHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case socialstatshistory.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case socialstatshistory.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case socialstatshistory.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case socialstatshistory.FieldDistributionID:
+		return m.OldDistributionID(ctx)
+	case socialstatshistory.FieldLikes:
+		return m.OldLikes(ctx)
+	case socialstatshistory.FieldReplies:
+		return m.OldReplies(ctx)
+	case socialstatshistory.FieldReposts:
+		return m.OldReposts(ctx)
+	}
+	return nil, fmt.Errorf("unknown SocialStatsHistory field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialStatsHistoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case socialstatshistory.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case socialstatshistory.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case socialstatshistory.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case socialstatshistory.FieldDistributionID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDistributionID(v)
+		return nil
+	case socialstatshistory.FieldLikes:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLikes(v)
+		return nil
+	case socialstatshistory.FieldReplies:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReplies(v)
+		return nil
+	case socialstatshistory.FieldReposts:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReposts(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialStatsHistory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SocialStatsHistoryMutation) AddedFields() []string {
+	var fields []string
+	if m.adddistribution_id != nil {
+		fields = append(fields, socialstatshistory.FieldDistributionID)
+	}
+	if m.addlikes != nil {
+		fields = append(fields, socialstatshistory.FieldLikes)
+	}
+	if m.addreplies != nil {
+		fields = append(fields, socialstatshistory.FieldReplies)
+	}
+	if m.addreposts != nil {
+		fields = append(fields, socialstatshistory.FieldReposts)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SocialStatsHistoryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case socialstatshistory.FieldDistributionID:
+		return m.AddedDistributionID()
+	case socialstatshistory.FieldLikes:
+		return m.AddedLikes()
+	case socialstatshistory.FieldReplies:
+		return m.AddedReplies()
+	case socialstatshistory.FieldReposts:
+		return m.AddedReposts()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SocialStatsHistoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case socialstatshistory.FieldDistributionID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDistributionID(v)
+		return nil
+	case socialstatshistory.FieldLikes:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLikes(v)
+		return nil
+	case socialstatshistory.FieldReplies:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReplies(v)
+		return nil
+	case socialstatshistory.FieldReposts:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReposts(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SocialStatsHistory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SocialStatsHistoryMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(socialstatshistory.FieldCreatedAt) {
+		fields = append(fields, socialstatshistory.FieldCreatedAt)
+	}
+	if m.FieldCleared(socialstatshistory.FieldUpdatedAt) {
+		fields = append(fields, socialstatshistory.FieldUpdatedAt)
+	}
+	if m.FieldCleared(socialstatshistory.FieldDeletedAt) {
+		fields = append(fields, socialstatshistory.FieldDeletedAt)
+	}
+	if m.FieldCleared(socialstatshistory.FieldDistributionID) {
+		fields = append(fields, socialstatshistory.FieldDistributionID)
+	}
+	if m.FieldCleared(socialstatshistory.FieldLikes) {
+		fields = append(fields, socialstatshistory.FieldLikes)
+	}
+	if m.FieldCleared(socialstatshistory.FieldReplies) {
+		fields = append(fields, socialstatshistory.FieldReplies)
+	}
+	if m.FieldCleared(socialstatshistory.FieldReposts) {
+		fields = append(fields, socialstatshistory.FieldReposts)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SocialStatsHistoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SocialStatsHistoryMutation) ClearField(name string) error {
+	switch name {
+	case socialstatshistory.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case socialstatshistory.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case socialstatshistory.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case socialstatshistory.FieldDistributionID:
+		m.ClearDistributionID()
+		return nil
+	case socialstatshistory.FieldLikes:
+		m.ClearLikes()
+		return nil
+	case socialstatshistory.FieldReplies:
+		m.ClearReplies()
+		return nil
+	case socialstatshistory.FieldReposts:
+		m.ClearReposts()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialStatsHistory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SocialStatsHistoryMutation) ResetField(name string) error {
+	switch name {
+	case socialstatshistory.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case socialstatshistory.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case socialstatshistory.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case socialstatshistory.FieldDistributionID:
+		m.ResetDistributionID()
+		return nil
+	case socialstatshistory.FieldLikes:
+		m.ResetLikes()
+		return nil
+	case socialstatshistory.FieldReplies:
+		m.ResetReplies()
+		return nil
+	case socialstatshistory.FieldReposts:
+		m.ResetReposts()
+		return nil
+	}
+	return fmt.Errorf("unknown SocialStatsHistory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SocialStatsHistoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SocialStatsHistoryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SocialStatsHistoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SocialStatsHistoryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SocialStatsHistoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SocialStatsHistoryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SocialStatsHistoryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SocialStatsHistory unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SocialStatsHistoryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SocialStatsHistory edge %s", name)
 }
 
 // TagMutation represents an operation that mutates the Tag nodes in the graph.

@@ -178,6 +178,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 社交分发
 	socialAccountRepo := data.NewSocialAccountRepo(ctx, entClient)
 	socialDistributionRepo := data.NewSocialDistributionRepo(ctx, entClient)
+	socialStatsHistoryRepo := data.NewSocialStatsHistoryRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 
@@ -253,7 +254,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetRepo)
 
 	// 社交分发
-	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, postRepo, taskService)
+	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, socialStatsHistoryRepo, postRepo, taskService, internalMessageService)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 

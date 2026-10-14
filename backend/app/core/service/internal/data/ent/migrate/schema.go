@@ -3772,6 +3772,7 @@ var (
 		{Name: "replies", Type: field.TypeUint32, Nullable: true, Comment: "回复数（平台回拉快照）", Default: 0},
 		{Name: "reposts", Type: field.TypeUint32, Nullable: true, Comment: "转发数（平台回拉快照）", Default: 0},
 		{Name: "stats_synced_at", Type: field.TypeTime, Nullable: true, Comment: "统计回拉时间"},
+		{Name: "publish_attempts", Type: field.TypeUint32, Nullable: true, Comment: "发布投递尝试次数（含首次与 asynq 重试），用于判定最终失败", Default: 0},
 	}
 	// SocialDistributionsTable holds the schema information for the "social_distributions" table.
 	SocialDistributionsTable = &schema.Table{
@@ -3804,6 +3805,36 @@ var (
 				Name:    "idx_social_distributions_publish_time",
 				Unique:  false,
 				Columns: []*schema.Column{SocialDistributionsColumns[13]},
+			},
+		},
+	}
+	// SocialStatsHistoryColumns holds the columns for the "social_stats_history" table.
+	SocialStatsHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "distribution_id", Type: field.TypeUint32, Nullable: true, Comment: "分发记录ID"},
+		{Name: "likes", Type: field.TypeUint32, Nullable: true, Comment: "点赞数快照", Default: 0},
+		{Name: "replies", Type: field.TypeUint32, Nullable: true, Comment: "回复数快照", Default: 0},
+		{Name: "reposts", Type: field.TypeUint32, Nullable: true, Comment: "转发数快照", Default: 0},
+	}
+	// SocialStatsHistoryTable holds the schema information for the "social_stats_history" table.
+	SocialStatsHistoryTable = &schema.Table{
+		Name:       "social_stats_history",
+		Comment:    "社交分发统计历史快照",
+		Columns:    SocialStatsHistoryColumns,
+		PrimaryKey: []*schema.Column{SocialStatsHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_social_stats_history_dist_time",
+				Unique:  false,
+				Columns: []*schema.Column{SocialStatsHistoryColumns[4], SocialStatsHistoryColumns[1]},
+			},
+			{
+				Name:    "idx_social_stats_history_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SocialStatsHistoryColumns[1]},
 			},
 		},
 	}
@@ -4541,6 +4572,7 @@ var (
 		SiteSettingsTable,
 		SocialAccountsTable,
 		SocialDistributionsTable,
+		SocialStatsHistoryTable,
 		TagsTable,
 		TagTranslationsTable,
 		SysTasksTable,
@@ -4889,6 +4921,11 @@ func init() {
 	}
 	SocialDistributionsTable.Annotation = &entsql.Annotation{
 		Table:     "social_distributions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SocialStatsHistoryTable.Annotation = &entsql.Annotation{
+		Table:     "social_stats_history",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

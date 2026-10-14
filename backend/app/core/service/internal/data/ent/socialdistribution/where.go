@@ -154,6 +154,11 @@ func StatsSyncedAt(v time.Time) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldStatsSyncedAt, v))
 }
 
+// PublishAttempts applies equality check predicate on the "publish_attempts" field. It's identical to PublishAttemptsEQ.
+func PublishAttempts(v uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldEQ(FieldPublishAttempts, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldCreatedAt, v))
@@ -1337,6 +1342,56 @@ func StatsSyncedAtIsNil() predicate.SocialDistribution {
 // StatsSyncedAtNotNil applies the NotNil predicate on the "stats_synced_at" field.
 func StatsSyncedAtNotNil() predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotNull(FieldStatsSyncedAt))
+}
+
+// PublishAttemptsEQ applies the EQ predicate on the "publish_attempts" field.
+func PublishAttemptsEQ(v uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldEQ(FieldPublishAttempts, v))
+}
+
+// PublishAttemptsNEQ applies the NEQ predicate on the "publish_attempts" field.
+func PublishAttemptsNEQ(v uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldNEQ(FieldPublishAttempts, v))
+}
+
+// PublishAttemptsIn applies the In predicate on the "publish_attempts" field.
+func PublishAttemptsIn(vs ...uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldIn(FieldPublishAttempts, vs...))
+}
+
+// PublishAttemptsNotIn applies the NotIn predicate on the "publish_attempts" field.
+func PublishAttemptsNotIn(vs ...uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldNotIn(FieldPublishAttempts, vs...))
+}
+
+// PublishAttemptsGT applies the GT predicate on the "publish_attempts" field.
+func PublishAttemptsGT(v uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldGT(FieldPublishAttempts, v))
+}
+
+// PublishAttemptsGTE applies the GTE predicate on the "publish_attempts" field.
+func PublishAttemptsGTE(v uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldGTE(FieldPublishAttempts, v))
+}
+
+// PublishAttemptsLT applies the LT predicate on the "publish_attempts" field.
+func PublishAttemptsLT(v uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldLT(FieldPublishAttempts, v))
+}
+
+// PublishAttemptsLTE applies the LTE predicate on the "publish_attempts" field.
+func PublishAttemptsLTE(v uint32) predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldLTE(FieldPublishAttempts, v))
+}
+
+// PublishAttemptsIsNil applies the IsNil predicate on the "publish_attempts" field.
+func PublishAttemptsIsNil() predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldIsNull(FieldPublishAttempts))
+}
+
+// PublishAttemptsNotNil applies the NotNil predicate on the "publish_attempts" field.
+func PublishAttemptsNotNil() predicate.SocialDistribution {
+	return predicate.SocialDistribution(sql.FieldNotNull(FieldPublishAttempts))
 }
 
 // And groups predicates with the AND operator between them.

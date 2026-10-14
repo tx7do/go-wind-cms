@@ -71,6 +71,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
+	"go-wind-cms/app/core/service/internal/data/ent/socialstatshistory"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -2081,10 +2082,35 @@ func init() {
 	socialdistributionDescReposts := socialdistributionFields[13].Descriptor()
 	// socialdistribution.DefaultReposts holds the default value on creation for the reposts field.
 	socialdistribution.DefaultReposts = socialdistributionDescReposts.Default.(uint32)
+	// socialdistributionDescPublishAttempts is the schema descriptor for publish_attempts field.
+	socialdistributionDescPublishAttempts := socialdistributionFields[15].Descriptor()
+	// socialdistribution.DefaultPublishAttempts holds the default value on creation for the publish_attempts field.
+	socialdistribution.DefaultPublishAttempts = socialdistributionDescPublishAttempts.Default.(uint32)
 	// socialdistributionDescID is the schema descriptor for id field.
 	socialdistributionDescID := socialdistributionMixinFields0[0].Descriptor()
 	// socialdistribution.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	socialdistribution.IDValidator = socialdistributionDescID.Validators[0].(func(uint32) error)
+	socialstatshistoryMixin := schema.SocialStatsHistory{}.Mixin()
+	socialstatshistoryMixinFields0 := socialstatshistoryMixin[0].Fields()
+	_ = socialstatshistoryMixinFields0
+	socialstatshistoryFields := schema.SocialStatsHistory{}.Fields()
+	_ = socialstatshistoryFields
+	// socialstatshistoryDescLikes is the schema descriptor for likes field.
+	socialstatshistoryDescLikes := socialstatshistoryFields[1].Descriptor()
+	// socialstatshistory.DefaultLikes holds the default value on creation for the likes field.
+	socialstatshistory.DefaultLikes = socialstatshistoryDescLikes.Default.(uint32)
+	// socialstatshistoryDescReplies is the schema descriptor for replies field.
+	socialstatshistoryDescReplies := socialstatshistoryFields[2].Descriptor()
+	// socialstatshistory.DefaultReplies holds the default value on creation for the replies field.
+	socialstatshistory.DefaultReplies = socialstatshistoryDescReplies.Default.(uint32)
+	// socialstatshistoryDescReposts is the schema descriptor for reposts field.
+	socialstatshistoryDescReposts := socialstatshistoryFields[3].Descriptor()
+	// socialstatshistory.DefaultReposts holds the default value on creation for the reposts field.
+	socialstatshistory.DefaultReposts = socialstatshistoryDescReposts.Default.(uint32)
+	// socialstatshistoryDescID is the schema descriptor for id field.
+	socialstatshistoryDescID := socialstatshistoryMixinFields0[0].Descriptor()
+	// socialstatshistory.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	socialstatshistory.IDValidator = socialstatshistoryDescID.Validators[0].(func(uint32) error)
 	tagMixin := schema.Tag{}.Mixin()
 	tag.Policy = privacy.NewPolicies(tagMixin[4], schema.Tag{})
 	tag.Hooks[0] = func(next ent.Mutator) ent.Mutator {

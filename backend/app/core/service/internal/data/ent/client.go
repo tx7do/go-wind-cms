@@ -76,6 +76,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
 	"go-wind-cms/app/core/service/internal/data/ent/socialaccount"
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
+	"go-wind-cms/app/core/service/internal/data/ent/socialstatshistory"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -227,6 +228,8 @@ type Client struct {
 	SocialAccount *SocialAccountClient
 	// SocialDistribution is the client for interacting with the SocialDistribution builders.
 	SocialDistribution *SocialDistributionClient
+	// SocialStatsHistory is the client for interacting with the SocialStatsHistory builders.
+	SocialStatsHistory *SocialStatsHistoryClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TagTranslation is the client for interacting with the TagTranslation builders.
@@ -321,6 +324,7 @@ func (c *Client) init() {
 	c.SiteSetting = NewSiteSettingClient(c.config)
 	c.SocialAccount = NewSocialAccountClient(c.config)
 	c.SocialDistribution = NewSocialDistributionClient(c.config)
+	c.SocialStatsHistory = NewSocialStatsHistoryClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.TagTranslation = NewTagTranslationClient(c.config)
 	c.Task = NewTaskClient(c.config)
@@ -487,6 +491,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SiteSetting:                NewSiteSettingClient(cfg),
 		SocialAccount:              NewSocialAccountClient(cfg),
 		SocialDistribution:         NewSocialDistributionClient(cfg),
+		SocialStatsHistory:         NewSocialStatsHistoryClient(cfg),
 		Tag:                        NewTagClient(cfg),
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
@@ -580,6 +585,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SiteSetting:                NewSiteSettingClient(cfg),
 		SocialAccount:              NewSocialAccountClient(cfg),
 		SocialDistribution:         NewSocialDistributionClient(cfg),
+		SocialStatsHistory:         NewSocialStatsHistoryClient(cfg),
 		Tag:                        NewTagClient(cfg),
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
@@ -632,8 +638,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
 		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
 		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.SocialAccount, c.SocialDistribution, c.Tag, c.TagTranslation, c.Task,
-		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.SocialAccount, c.SocialDistribution, c.SocialStatsHistory, c.Tag,
+		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -657,8 +664,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
 		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
 		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.SocialAccount, c.SocialDistribution, c.Tag, c.TagTranslation, c.Task,
-		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.SocialAccount, c.SocialDistribution, c.SocialStatsHistory, c.Tag,
+		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -797,6 +805,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.SocialAccount.mutate(ctx, m)
 	case *SocialDistributionMutation:
 		return c.SocialDistribution.mutate(ctx, m)
+	case *SocialStatsHistoryMutation:
+		return c.SocialStatsHistory.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *TagTranslationMutation:
@@ -9942,6 +9952,139 @@ func (c *SocialDistributionClient) mutate(ctx context.Context, m *SocialDistribu
 	}
 }
 
+// SocialStatsHistoryClient is a client for the SocialStatsHistory schema.
+type SocialStatsHistoryClient struct {
+	config
+}
+
+// NewSocialStatsHistoryClient returns a client for the SocialStatsHistory from the given config.
+func NewSocialStatsHistoryClient(c config) *SocialStatsHistoryClient {
+	return &SocialStatsHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `socialstatshistory.Hooks(f(g(h())))`.
+func (c *SocialStatsHistoryClient) Use(hooks ...Hook) {
+	c.hooks.SocialStatsHistory = append(c.hooks.SocialStatsHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `socialstatshistory.Intercept(f(g(h())))`.
+func (c *SocialStatsHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SocialStatsHistory = append(c.inters.SocialStatsHistory, interceptors...)
+}
+
+// Create returns a builder for creating a SocialStatsHistory entity.
+func (c *SocialStatsHistoryClient) Create() *SocialStatsHistoryCreate {
+	mutation := newSocialStatsHistoryMutation(c.config, OpCreate)
+	return &SocialStatsHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SocialStatsHistory entities.
+func (c *SocialStatsHistoryClient) CreateBulk(builders ...*SocialStatsHistoryCreate) *SocialStatsHistoryCreateBulk {
+	return &SocialStatsHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SocialStatsHistoryClient) MapCreateBulk(slice any, setFunc func(*SocialStatsHistoryCreate, int)) *SocialStatsHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SocialStatsHistoryCreateBulk{err: fmt.Errorf("calling to SocialStatsHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SocialStatsHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SocialStatsHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SocialStatsHistory.
+func (c *SocialStatsHistoryClient) Update() *SocialStatsHistoryUpdate {
+	mutation := newSocialStatsHistoryMutation(c.config, OpUpdate)
+	return &SocialStatsHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SocialStatsHistoryClient) UpdateOne(_m *SocialStatsHistory) *SocialStatsHistoryUpdateOne {
+	mutation := newSocialStatsHistoryMutation(c.config, OpUpdateOne, withSocialStatsHistory(_m))
+	return &SocialStatsHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SocialStatsHistoryClient) UpdateOneID(id uint32) *SocialStatsHistoryUpdateOne {
+	mutation := newSocialStatsHistoryMutation(c.config, OpUpdateOne, withSocialStatsHistoryID(id))
+	return &SocialStatsHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SocialStatsHistory.
+func (c *SocialStatsHistoryClient) Delete() *SocialStatsHistoryDelete {
+	mutation := newSocialStatsHistoryMutation(c.config, OpDelete)
+	return &SocialStatsHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SocialStatsHistoryClient) DeleteOne(_m *SocialStatsHistory) *SocialStatsHistoryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SocialStatsHistoryClient) DeleteOneID(id uint32) *SocialStatsHistoryDeleteOne {
+	builder := c.Delete().Where(socialstatshistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SocialStatsHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for SocialStatsHistory.
+func (c *SocialStatsHistoryClient) Query() *SocialStatsHistoryQuery {
+	return &SocialStatsHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSocialStatsHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SocialStatsHistory entity by its id.
+func (c *SocialStatsHistoryClient) Get(ctx context.Context, id uint32) (*SocialStatsHistory, error) {
+	return c.Query().Where(socialstatshistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SocialStatsHistoryClient) GetX(ctx context.Context, id uint32) *SocialStatsHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SocialStatsHistoryClient) Hooks() []Hook {
+	return c.hooks.SocialStatsHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *SocialStatsHistoryClient) Interceptors() []Interceptor {
+	return c.inters.SocialStatsHistory
+}
+
+func (c *SocialStatsHistoryClient) mutate(ctx context.Context, m *SocialStatsHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SocialStatsHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SocialStatsHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SocialStatsHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SocialStatsHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SocialStatsHistory mutation op: %q", m.Op())
+	}
+}
+
 // TagClient is a client for the Tag schema.
 type TagClient struct {
 	config
@@ -11162,9 +11305,9 @@ type (
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
 		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution, Tag,
-		TagTranslation, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Hook
+		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution,
+		SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
@@ -11179,8 +11322,8 @@ type (
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
 		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution, Tag,
-		TagTranslation, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Interceptor
+		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution,
+		SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

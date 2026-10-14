@@ -119,6 +119,12 @@ func (SocialDistribution) Fields() []ent.Field {
 			Comment("统计回拉时间").
 			Optional().
 			Nillable(),
+
+		field.Uint32("publish_attempts").
+			Comment("发布投递尝试次数（含首次与 asynq 重试），用于判定最终失败").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 

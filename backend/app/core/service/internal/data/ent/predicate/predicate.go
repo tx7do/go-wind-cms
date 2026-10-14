@@ -201,6 +201,9 @@ type SocialAccount func(*sql.Selector)
 // SocialDistribution is the predicate function for socialdistribution builders.
 type SocialDistribution func(*sql.Selector)
 
+// SocialStatsHistory is the predicate function for socialstatshistory builders.
+type SocialStatsHistory func(*sql.Selector)
+
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)
 

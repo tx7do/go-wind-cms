@@ -97,6 +97,8 @@ enum ContentScene {
   POST_SUMMARY = 6;
   // 文章正文
   POST_BODY = 7;
+  // 社交平台发布文案（短文案，可带话题标签）
+  SOCIAL_POST = 8;
 }
 
 // 内容生成 - 请求

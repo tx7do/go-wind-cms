@@ -8032,6 +8032,7 @@ components:
                         - POST_TITLE
                         - POST_SUMMARY
                         - POST_BODY
+                        - SOCIAL_POST
                     type: string
                     description: 场景标识
                     format: enum

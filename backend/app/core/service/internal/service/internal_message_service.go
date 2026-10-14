@@ -292,6 +292,50 @@ func (s *InternalMessageService) isRecipientAllowed(ctx context.Context, recipie
 	return true
 }
 
+// NotifyUser 系统级通知：后台任务（无操作人身份）触达指定用户。
+// 借鉴 go-wind-admin Notification 域的"系统发起"语义——不读 viewer/operator，
+// sender 记为 0（系统）；租户从收件人用户记录推导（消息与收件行都落对租户）。
+// 通知失败只记日志不返回错误：调用方（发布 worker 等任务链路）不能因通知中断。
+//
+// 设计取舍（对照 go-wind-admin 的完整 Notification 域）：站内信落库即达
+// （收件中心可见），实时 SSE 推送延后；渠道抽象/路由规则/模板表等有第二类
+// 投递渠道需求时再引入。
+func (s *InternalMessageService) NotifyUser(ctx context.Context, recipientUserID uint32, title, content string) {
+	if recipientUserID == 0 {
+		return
+	}
+
+	recipient, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: recipientUserID},
+	})
+	if err != nil || recipient == nil {
+		s.log.Errorf("notify user: recipient %d not found: %v", recipientUserID, err)
+		return
+	}
+	tenantID := recipient.GetTenantId()
+	now := time.Now()
+
+	msg, err := s.internalMessageRepo.Create(ctx, &internalMessageV1.CreateInternalMessageRequest{
+		Data: &internalMessageV1.InternalMessage{
+			TenantId:  trans.Ptr(tenantID),
+			Title:     trans.Ptr(title),
+			Content:   trans.Ptr(content),
+			Status:    trans.Ptr(internalMessageV1.InternalMessage_PUBLISHED),
+			Type:      trans.Ptr(internalMessageV1.InternalMessage_NOTIFICATION),
+			CreatedBy: trans.Ptr(uint32(0)), // 0 = 系统
+			CreatedAt: timeutil.TimeToTimestamppb(&now),
+		},
+	})
+	if err != nil {
+		s.log.Errorf("notify user: create message failed (recipient=%d): %v", recipientUserID, err)
+		return
+	}
+
+	if err = s.sendNotification(ctx, msg.GetId(), recipientUserID, 0, &now, title, content); err != nil {
+		s.log.Errorf("notify user: create recipient failed (recipient=%d): %v", recipientUserID, err)
+	}
+}
+
 // sendNotification 向客户端发送通知消息
 func (s *InternalMessageService) sendNotification(ctx context.Context, messageId uint32, recipientUserId uint32, senderUserId uint32, now *time.Time, title, content string) error {
 	recipient := &internalMessageV1.InternalMessageRecipient{

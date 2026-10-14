@@ -297,16 +297,25 @@ func (r *SocialDistributionRepo) MarkPublished(ctx context.Context, id uint32, e
 	return nil
 }
 
-// markFailed 发布失败回写（asynq 每次重试前也会走到这里，error_message 覆盖为最近一次原因）。
-func (r *SocialDistributionRepo) MarkFailed(ctx context.Context, id uint32, message string) {
-	_, err := r.entClient.Client().SocialDistribution.UpdateOneID(id).
+// MarkFailed 发布失败回写并累计尝试次数（error_message 覆盖为最近一次原因）。
+// 返回累计尝试次数：worker 据此判定 asynq 重试是否已穷尽（次数达到
+// 1+MaxRetry 即最终失败，触发站内通知）。
+func (r *SocialDistributionRepo) MarkFailed(ctx context.Context, id uint32, message string) (uint32, error) {
+	entity, err := r.entClient.Client().SocialDistribution.UpdateOneID(id).
 		SetStatus(socialdistribution.StatusStatusFailed).
 		SetErrorMessage(message).
+		AddPublishAttempts(1).
 		SetUpdatedAt(time.Now()).
 		Save(ctx)
 	if err != nil {
 		r.log.Errorf("mark failed failed (id=%d): %s", id, err.Error())
+		return 0, socialV1.ErrorInternalServerError("mark failed failed")
 	}
+	var attempts uint32
+	if entity != nil && entity.PublishAttempts != nil {
+		attempts = *entity.PublishAttempts
+	}
+	return attempts, nil
 }
 
 // updateStats 回拉统计快照回写。

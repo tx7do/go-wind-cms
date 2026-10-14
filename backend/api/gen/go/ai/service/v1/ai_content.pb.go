@@ -42,6 +42,8 @@ const (
 	ContentScene_POST_SUMMARY ContentScene = 6
 	// 文章正文
 	ContentScene_POST_BODY ContentScene = 7
+	// 社交平台发布文案（短文案，可带话题标签）
+	ContentScene_SOCIAL_POST ContentScene = 8
 )
 
 // Enum value maps for ContentScene.
@@ -55,6 +57,7 @@ var (
 		5: "POST_TITLE",
 		6: "POST_SUMMARY",
 		7: "POST_BODY",
+		8: "SOCIAL_POST",
 	}
 	ContentScene_value = map[string]int32{
 		"CONTENT_SCENE_UNSPECIFIED": 0,
@@ -65,6 +68,7 @@ var (
 		"POST_TITLE":                5,
 		"POST_SUMMARY":              6,
 		"POST_BODY":                 7,
+		"SOCIAL_POST":               8,
 	}
 )
 
@@ -771,7 +775,7 @@ const file_ai_service_v1_ai_content_proto_rawDesc = "" +
 	"\v_max_length\"V\n" +
 	"\x17GenerateContentResponse\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\x12!\n" +
-	"\ftotal_tokens\x18\x02 \x01(\rR\vtotalTokens*\x99\x01\n" +
+	"\ftotal_tokens\x18\x02 \x01(\rR\vtotalTokens*\xaa\x01\n" +
 	"\fContentScene\x12\x1d\n" +
 	"\x19CONTENT_SCENE_UNSPECIFIED\x10\x00\x12\x0f\n" +
 	"\vDESCRIPTION\x10\x01\x12\x10\n" +
@@ -781,7 +785,8 @@ const file_ai_service_v1_ai_content_proto_rawDesc = "" +
 	"\n" +
 	"POST_TITLE\x10\x05\x12\x10\n" +
 	"\fPOST_SUMMARY\x10\x06\x12\r\n" +
-	"\tPOST_BODY\x10\a2\x96\x03\n" +
+	"\tPOST_BODY\x10\a\x12\x0f\n" +
+	"\vSOCIAL_POST\x10\b2\x96\x03\n" +
 	"\x10AiContentService\x12b\n" +
 	"\x0fGenerateContent\x12%.ai.service.v1.GenerateContentRequest\x1a&.ai.service.v1.GenerateContentResponse\"\x00\x12_\n" +
 	"\x0eSemanticSearch\x12$.ai.service.v1.SemanticSearchRequest\x1a%.ai.service.v1.SemanticSearchResponse\"\x00\x12Y\n" +

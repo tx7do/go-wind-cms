@@ -330,6 +330,20 @@ func (_c *SocialDistributionCreate) SetNillableStatsSyncedAt(v *time.Time) *Soci
 	return _c
 }
 
+// SetPublishAttempts sets the "publish_attempts" field.
+func (_c *SocialDistributionCreate) SetPublishAttempts(v uint32) *SocialDistributionCreate {
+	_c.mutation.SetPublishAttempts(v)
+	return _c
+}
+
+// SetNillablePublishAttempts sets the "publish_attempts" field if the given value is not nil.
+func (_c *SocialDistributionCreate) SetNillablePublishAttempts(v *uint32) *SocialDistributionCreate {
+	if v != nil {
+		_c.SetPublishAttempts(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *SocialDistributionCreate) SetID(v uint32) *SocialDistributionCreate {
 	_c.mutation.SetID(v)
@@ -388,6 +402,10 @@ func (_c *SocialDistributionCreate) defaults() error {
 	if _, ok := _c.mutation.Reposts(); !ok {
 		v := socialdistribution.DefaultReposts
 		_c.mutation.SetReposts(v)
+	}
+	if _, ok := _c.mutation.PublishAttempts(); !ok {
+		v := socialdistribution.DefaultPublishAttempts
+		_c.mutation.SetPublishAttempts(v)
 	}
 	return nil
 }
@@ -529,6 +547,10 @@ func (_c *SocialDistributionCreate) createSpec() (*SocialDistribution, *sqlgraph
 	if value, ok := _c.mutation.StatsSyncedAt(); ok {
 		_spec.SetField(socialdistribution.FieldStatsSyncedAt, field.TypeTime, value)
 		_node.StatsSyncedAt = &value
+	}
+	if value, ok := _c.mutation.PublishAttempts(); ok {
+		_spec.SetField(socialdistribution.FieldPublishAttempts, field.TypeUint32, value)
+		_node.PublishAttempts = &value
 	}
 	return _node, _spec
 }
@@ -987,6 +1009,30 @@ func (u *SocialDistributionUpsert) UpdateStatsSyncedAt() *SocialDistributionUpse
 // ClearStatsSyncedAt clears the value of the "stats_synced_at" field.
 func (u *SocialDistributionUpsert) ClearStatsSyncedAt() *SocialDistributionUpsert {
 	u.SetNull(socialdistribution.FieldStatsSyncedAt)
+	return u
+}
+
+// SetPublishAttempts sets the "publish_attempts" field.
+func (u *SocialDistributionUpsert) SetPublishAttempts(v uint32) *SocialDistributionUpsert {
+	u.Set(socialdistribution.FieldPublishAttempts, v)
+	return u
+}
+
+// UpdatePublishAttempts sets the "publish_attempts" field to the value that was provided on create.
+func (u *SocialDistributionUpsert) UpdatePublishAttempts() *SocialDistributionUpsert {
+	u.SetExcluded(socialdistribution.FieldPublishAttempts)
+	return u
+}
+
+// AddPublishAttempts adds v to the "publish_attempts" field.
+func (u *SocialDistributionUpsert) AddPublishAttempts(v uint32) *SocialDistributionUpsert {
+	u.Add(socialdistribution.FieldPublishAttempts, v)
+	return u
+}
+
+// ClearPublishAttempts clears the value of the "publish_attempts" field.
+func (u *SocialDistributionUpsert) ClearPublishAttempts() *SocialDistributionUpsert {
+	u.SetNull(socialdistribution.FieldPublishAttempts)
 	return u
 }
 
@@ -1517,6 +1563,34 @@ func (u *SocialDistributionUpsertOne) UpdateStatsSyncedAt() *SocialDistributionU
 func (u *SocialDistributionUpsertOne) ClearStatsSyncedAt() *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.ClearStatsSyncedAt()
+	})
+}
+
+// SetPublishAttempts sets the "publish_attempts" field.
+func (u *SocialDistributionUpsertOne) SetPublishAttempts(v uint32) *SocialDistributionUpsertOne {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.SetPublishAttempts(v)
+	})
+}
+
+// AddPublishAttempts adds v to the "publish_attempts" field.
+func (u *SocialDistributionUpsertOne) AddPublishAttempts(v uint32) *SocialDistributionUpsertOne {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.AddPublishAttempts(v)
+	})
+}
+
+// UpdatePublishAttempts sets the "publish_attempts" field to the value that was provided on create.
+func (u *SocialDistributionUpsertOne) UpdatePublishAttempts() *SocialDistributionUpsertOne {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.UpdatePublishAttempts()
+	})
+}
+
+// ClearPublishAttempts clears the value of the "publish_attempts" field.
+func (u *SocialDistributionUpsertOne) ClearPublishAttempts() *SocialDistributionUpsertOne {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.ClearPublishAttempts()
 	})
 }
 
@@ -2213,6 +2287,34 @@ func (u *SocialDistributionUpsertBulk) UpdateStatsSyncedAt() *SocialDistribution
 func (u *SocialDistributionUpsertBulk) ClearStatsSyncedAt() *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.ClearStatsSyncedAt()
+	})
+}
+
+// SetPublishAttempts sets the "publish_attempts" field.
+func (u *SocialDistributionUpsertBulk) SetPublishAttempts(v uint32) *SocialDistributionUpsertBulk {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.SetPublishAttempts(v)
+	})
+}
+
+// AddPublishAttempts adds v to the "publish_attempts" field.
+func (u *SocialDistributionUpsertBulk) AddPublishAttempts(v uint32) *SocialDistributionUpsertBulk {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.AddPublishAttempts(v)
+	})
+}
+
+// UpdatePublishAttempts sets the "publish_attempts" field to the value that was provided on create.
+func (u *SocialDistributionUpsertBulk) UpdatePublishAttempts() *SocialDistributionUpsertBulk {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.UpdatePublishAttempts()
+	})
+}
+
+// ClearPublishAttempts clears the value of the "publish_attempts" field.
+func (u *SocialDistributionUpsertBulk) ClearPublishAttempts() *SocialDistributionUpsertBulk {
+	return u.Update(func(s *SocialDistributionUpsert) {
+		s.ClearPublishAttempts()
 	})
 }
 

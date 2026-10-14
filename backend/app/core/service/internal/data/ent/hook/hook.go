@@ -788,6 +788,18 @@ func (f SocialDistributionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SocialDistributionMutation", m)
 }
 
+// The SocialStatsHistoryFunc type is an adapter to allow the use of ordinary
+// function as SocialStatsHistory mutator.
+type SocialStatsHistoryFunc func(context.Context, *ent.SocialStatsHistoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SocialStatsHistoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SocialStatsHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SocialStatsHistoryMutation", m)
+}
+
 // The TagFunc type is an adapter to allow the use of ordinary
 // function as Tag mutator.
 type TagFunc func(context.Context, *ent.TagMutation) (ent.Value, error)

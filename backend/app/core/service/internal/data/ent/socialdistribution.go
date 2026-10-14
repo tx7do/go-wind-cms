@@ -62,7 +62,9 @@ type SocialDistribution struct {
 	Reposts *uint32 `json:"reposts,omitempty"`
 	// 统计回拉时间
 	StatsSyncedAt *time.Time `json:"stats_synced_at,omitempty"`
-	selectValues  sql.SelectValues
+	// 发布投递尝试次数（含首次与 asynq 重试），用于判定最终失败
+	PublishAttempts *uint32 `json:"publish_attempts,omitempty"`
+	selectValues    sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -70,7 +72,7 @@ func (*SocialDistribution) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case socialdistribution.FieldID, socialdistribution.FieldCreatedBy, socialdistribution.FieldUpdatedBy, socialdistribution.FieldDeletedBy, socialdistribution.FieldTenantID, socialdistribution.FieldAccountID, socialdistribution.FieldPostID, socialdistribution.FieldLikes, socialdistribution.FieldReplies, socialdistribution.FieldReposts:
+		case socialdistribution.FieldID, socialdistribution.FieldCreatedBy, socialdistribution.FieldUpdatedBy, socialdistribution.FieldDeletedBy, socialdistribution.FieldTenantID, socialdistribution.FieldAccountID, socialdistribution.FieldPostID, socialdistribution.FieldLikes, socialdistribution.FieldReplies, socialdistribution.FieldReposts, socialdistribution.FieldPublishAttempts:
 			values[i] = new(sql.NullInt64)
 		case socialdistribution.FieldPlatform, socialdistribution.FieldOverrideText, socialdistribution.FieldStatus, socialdistribution.FieldExternalURI, socialdistribution.FieldExternalID, socialdistribution.FieldErrorMessage, socialdistribution.FieldTitle:
 			values[i] = new(sql.NullString)
@@ -251,6 +253,13 @@ func (_m *SocialDistribution) assignValues(columns []string, values []any) error
 				_m.StatsSyncedAt = new(time.Time)
 				*_m.StatsSyncedAt = value.Time
 			}
+		case socialdistribution.FieldPublishAttempts:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field publish_attempts", values[i])
+			} else if value.Valid {
+				_m.PublishAttempts = new(uint32)
+				*_m.PublishAttempts = uint32(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -395,6 +404,11 @@ func (_m *SocialDistribution) String() string {
 	if v := _m.StatsSyncedAt; v != nil {
 		builder.WriteString("stats_synced_at=")
 		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.PublishAttempts; v != nil {
+		builder.WriteString("publish_attempts=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')
 	return builder.String()
