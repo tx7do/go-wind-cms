@@ -3,11 +3,17 @@
   "platform": "Platform",
   "platformPlaceholder": "Select a platform",
   "requiredPlatform": "Platform is required",
-  "helpPlatform": "Bluesky / Mastodon / DEV.to supported, no developer review needed",
+  "helpPlatform": "Bluesky / Mastodon / DEV.to / Telegram / WordPress / WeChat OA / Nostr / Weibo / LinkedIn supported (most are review-free, self-serve credentials)",
   "platformMap": {
     "PLATFORM_BLUESKY": "Bluesky",
     "PLATFORM_MASTODON": "Mastodon",
-    "PLATFORM_DEVTO": "DEV.to"
+    "PLATFORM_DEVTO": "DEV.to",
+    "PLATFORM_TELEGRAM": "Telegram",
+    "PLATFORM_WORDPRESS": "WordPress",
+    "PLATFORM_WECHAT_OA": "WeChat OA",
+    "PLATFORM_NOSTR": "Nostr",
+    "PLATFORM_WEIBO": "Weibo",
+    "PLATFORM_LINKEDIN": "LinkedIn"
   },
   "statusMap": {
     "STATUS_DRAFT": "Draft",
@@ -89,5 +95,32 @@
   "viewList": "List",
   "viewCalendar": "Calendar",
   "calendarEmpty": "No distributions",
-  "calendarHint": "Click a date to create a distribution; markers show scheduled times"
+  "calendarHint": "Click a date to create a distribution; markers show scheduled times",
+  "credentialEditPlaceholder": "Leave empty to keep current",
+  "credentialPlaceholder": "Enter value",
+  "credentialFields": {
+    "app_password": "App Password",
+    "server": "Site / Instance URL",
+    "username": "Username",
+    "bot_token": "Bot Token",
+    "chat_id": "Chat ID",
+    "api_key": "API Key",
+    "app_id": "AppID",
+    "app_secret": "AppSecret",
+    "thumb_media_id": "Cover media_id",
+    "private_key": "Private Key",
+    "relays": "Relay List",
+    "access_token": "Access Token"
+  },
+  "helpCred": {
+    "server": "e.g. https://mastodon.social or https://example.com",
+    "chat_id": "Channel ID (@channelname or -100…); the bot must be a channel admin",
+    "thumb_media_id": "Upload a cover image as permanent material in the WeChat backend and put its media_id here (required for publishing)",
+    "app_id": "Official account AppID (Settings & Development → Basic)",
+    "app_secret": "Official account AppSecret; server IP must be whitelisted",
+    "private_key": "64-char hex or nsec (stored locally, keep it safe)",
+    "relays": "Comma-separated relay URLs (wss://…)",
+    "access_token": "Platform OAuth2 access token",
+    "app_password": "Application password (not the login password)"
+  }
 }

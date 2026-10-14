@@ -3,11 +3,17 @@
   "platform": "社交平台",
   "platformPlaceholder": "请选择社交平台",
   "requiredPlatform": "请选择社交平台",
-  "helpPlatform": "支持 Bluesky / Mastodon / DEV.to，均免开发者审核",
+  "helpPlatform": "支持 Bluesky / Mastodon / DEV.to / Telegram / WordPress / 微信公众号 / Nostr / 微博 / LinkedIn（多数平台免审核，凭据自助获取）",
   "platformMap": {
     "PLATFORM_BLUESKY": "Bluesky",
     "PLATFORM_MASTODON": "Mastodon",
-    "PLATFORM_DEVTO": "DEV.to"
+    "PLATFORM_DEVTO": "DEV.to",
+    "PLATFORM_TELEGRAM": "Telegram",
+    "PLATFORM_WORDPRESS": "WordPress",
+    "PLATFORM_WECHAT_OA": "微信公众号",
+    "PLATFORM_NOSTR": "Nostr",
+    "PLATFORM_WEIBO": "微博",
+    "PLATFORM_LINKEDIN": "LinkedIn"
   },
   "statusMap": {
     "STATUS_DRAFT": "草稿",
@@ -89,5 +95,32 @@
   "viewList": "列表",
   "viewCalendar": "日历",
   "calendarEmpty": "当日无分发",
-  "calendarHint": "点击日期新建分发；标记为发布计划时间"
+  "calendarHint": "点击日期新建分发；标记为发布计划时间",
+  "credentialEditPlaceholder": "留空 = 不修改",
+  "credentialPlaceholder": "请输入",
+  "credentialFields": {
+    "app_password": "应用密码",
+    "server": "站点地址 / 实例",
+    "username": "用户名",
+    "bot_token": "Bot Token",
+    "chat_id": "频道 ID",
+    "api_key": "API Key",
+    "app_id": "AppID",
+    "app_secret": "AppSecret",
+    "thumb_media_id": "封面图 media_id",
+    "private_key": "私钥",
+    "relays": "Relay 列表",
+    "access_token": "Access Token"
+  },
+  "helpCred": {
+    "server": "如 https://mastodon.social 或 https://example.com",
+    "chat_id": "频道 ID（如 @channelname 或 -100…），bot 需为该频道管理员",
+    "thumb_media_id": "在公众号后台「素材管理」上传一张永久素材封面图，填其 media_id（发布必填）",
+    "app_id": "公众号 AppID（设置与开发 → 基本配置）",
+    "app_secret": "公众号 AppSecret；服务器 IP 需加入公众号 IP 白名单",
+    "private_key": "64 位 hex 或 nsec 私钥（仅保存在本机，请妥善保管）",
+    "relays": "逗号分隔的 relay 地址（wss://…）",
+    "access_token": "平台 OAuth2 access token",
+    "app_password": "应用密码（非登录密码）"
+  }
 }

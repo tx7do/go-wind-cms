@@ -13,8 +13,14 @@
 
 #### 社交分发（Social Distribution）
 
-- 社交账号管理：连接 Bluesky / Mastodon / DEV.to（均免开发者审核）；凭据保存时
-  同步调用平台验证，AES-GCM 加密落库（`enc:` 前缀），读取恒为空、只回脱敏 hint。
+- 社交账号管理：连接 9 个平台——Bluesky / Mastodon / DEV.to / Telegram /
+  WordPress / 微信公众号 / Nostr / 微博 / LinkedIn（多数免开发者审核；微博需
+  应用过审，微信公众号需认证号与 IP 白名单）；凭据保存时同步调用平台验证，
+  AES-GCM 加密落库（`enc:` 前缀），读取恒为空、只回脱敏 hint；编辑凭据走
+  服务端增量合并（部分更新不丢密钥）。
+- 统计能力分级：平台不支持互动统计（Telegram/WordPress/微信公众号/Nostr/
+  LinkedIn）时回拉链路静默跳过并推进节流时间戳，前端返回明确的
+  STATS_UNSUPPORTED 语义。
 - 内容分发引擎：CMS 文章一键分发到社交平台，按平台覆盖文案/标题；定时（asynq
   DELAY）与立即发布，状态机全程跟踪（草稿→排期→发布中→已发布/失败可重试），
   状态闸门防并发重复发布，改期自动重新排队。

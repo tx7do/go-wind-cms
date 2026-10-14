@@ -23,6 +23,9 @@ var (
 	ErrContentTooLong = errors.New("social: content too long")
 	// ErrNotFound 平台侧内容不存在（已删除或不可见）。
 	ErrNotFound = errors.New("social: content not found")
+	// ErrStatsUnsupported 平台不提供互动统计能力（如 Telegram Bot API 无浏览数、
+	// 自建 WordPress 无平台侧统计）。统计回拉链路据此静默跳过而非报错。
+	ErrStatsUnsupported = errors.New("social: stats not supported by platform")
 )
 
 // Credentials 平台凭据的解密后载体。各平台自行约定键名：

@@ -215,7 +215,8 @@
       "ACCOUNT_DISABLED": "社交账号已停用",
       "NOT_PUBLISHABLE": "当前状态不可发布",
       "CONTENT_TOO_LONG": "文案超出平台长度限制",
-      "PLATFORM_ERROR": "社交平台返回错误"
+      "PLATFORM_ERROR": "社交平台返回错误",
+      "STATS_UNSUPPORTED": "该平台不提供互动统计"
     },
     "status": {
       "400": "请求参数错误",

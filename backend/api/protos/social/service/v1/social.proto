@@ -57,9 +57,15 @@ service SocialService {
 enum Platform {
   PLATFORM_UNSPECIFIED = 0;
 
-  PLATFORM_BLUESKY = 1;  // Bluesky（AT Protocol，App Password 认证）
-  PLATFORM_MASTODON = 2; // Mastodon（预留）
-  PLATFORM_DEVTO = 3;    // DEV.to（预留）
+  PLATFORM_BLUESKY = 1;   // Bluesky（AT Protocol，App Password 认证）
+  PLATFORM_MASTODON = 2;  // Mastodon（access token）
+  PLATFORM_DEVTO = 3;     // DEV.to（API Key）
+  PLATFORM_TELEGRAM = 4;  // Telegram 频道（Bot Token + chat_id）
+  PLATFORM_WORDPRESS = 5; // WordPress（应用密码 Basic Auth）
+  PLATFORM_WECHAT_OA = 6; // 微信公众号（AppID/AppSecret，需认证号与 IP 白名单）
+  PLATFORM_NOSTR = 7;     // Nostr（开放协议，私钥即账户）
+  PLATFORM_WEIBO = 8;     // 微博（OAuth2 access token，需应用过审）
+  PLATFORM_LINKEDIN = 9;  // LinkedIn 个人动态（OAuth2 access token）
 }
 
 // 社交账号

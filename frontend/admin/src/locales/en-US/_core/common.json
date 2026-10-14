@@ -215,7 +215,8 @@
       "ACCOUNT_DISABLED": "Social account is disabled",
       "NOT_PUBLISHABLE": "Not in a publishable state",
       "CONTENT_TOO_LONG": "Content exceeds platform length limit",
-      "PLATFORM_ERROR": "Social platform error"
+      "PLATFORM_ERROR": "Social platform error",
+      "STATS_UNSUPPORTED": "This platform does not provide engagement stats"
     },
     "status": {
       "400": "Bad request",

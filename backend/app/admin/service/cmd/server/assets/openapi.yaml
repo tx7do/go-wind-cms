@@ -13336,6 +13336,12 @@ components:
                         - PLATFORM_BLUESKY
                         - PLATFORM_MASTODON
                         - PLATFORM_DEVTO
+                        - PLATFORM_TELEGRAM
+                        - PLATFORM_WORDPRESS
+                        - PLATFORM_WECHAT_OA
+                        - PLATFORM_NOSTR
+                        - PLATFORM_WEIBO
+                        - PLATFORM_LINKEDIN
                     type: string
                     description: 社交平台
                     format: enum
@@ -13395,6 +13401,12 @@ components:
                         - PLATFORM_BLUESKY
                         - PLATFORM_MASTODON
                         - PLATFORM_DEVTO
+                        - PLATFORM_TELEGRAM
+                        - PLATFORM_WORDPRESS
+                        - PLATFORM_WECHAT_OA
+                        - PLATFORM_NOSTR
+                        - PLATFORM_WEIBO
+                        - PLATFORM_LINKEDIN
                     type: string
                     description: 社交平台
                     format: enum

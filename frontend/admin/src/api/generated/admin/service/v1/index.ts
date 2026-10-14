@@ -11000,8 +11000,14 @@ export type socialservicev1_SocialAccount = {
 export type socialservicev1_Platform =
   | 'PLATFORM_BLUESKY'
   | 'PLATFORM_DEVTO'
+  | 'PLATFORM_LINKEDIN'
   | 'PLATFORM_MASTODON'
-  | 'PLATFORM_UNSPECIFIED';
+  | 'PLATFORM_NOSTR'
+  | 'PLATFORM_TELEGRAM'
+  | 'PLATFORM_UNSPECIFIED'
+  | 'PLATFORM_WECHAT_OA'
+  | 'PLATFORM_WEIBO'
+  | 'PLATFORM_WORDPRESS';
 // 请求 - 社交账号数据
 export type socialservicev1_GetSocialAccountRequest = {
   id: number | undefined;

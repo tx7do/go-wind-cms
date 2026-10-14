@@ -30,6 +30,12 @@ func (SocialAccount) Fields() []ent.Field {
 				"PlatformBluesky", "PLATFORM_BLUESKY",
 				"PlatformMastodon", "PLATFORM_MASTODON",
 				"PlatformDevto", "PLATFORM_DEVTO",
+				"PlatformTelegram", "PLATFORM_TELEGRAM",
+				"PlatformWordpress", "PLATFORM_WORDPRESS",
+				"PlatformWechatOa", "PLATFORM_WECHAT_OA",
+				"PlatformNostr", "PLATFORM_NOSTR",
+				"PlatformWeibo", "PLATFORM_WEIBO",
+				"PlatformLinkedin", "PLATFORM_LINKEDIN",
 			).
 			Optional().
 			Nillable(),

@@ -54,6 +54,8 @@ const (
 	SocialErrorReason_CONTENT_TOO_LONG SocialErrorReason = 4202 // 文案超出平台长度限制
 	// 502
 	SocialErrorReason_PLATFORM_ERROR SocialErrorReason = 4300 // 平台 API 返回错误
+	// 400
+	SocialErrorReason_STATS_UNSUPPORTED SocialErrorReason = 4400 // 平台不提供互动统计能力
 )
 
 // Enum value maps for SocialErrorReason.
@@ -75,6 +77,7 @@ var (
 		4201: "NOT_PUBLISHABLE",
 		4202: "CONTENT_TOO_LONG",
 		4300: "PLATFORM_ERROR",
+		4400: "STATS_UNSUPPORTED",
 	}
 	SocialErrorReason_value = map[string]int32{
 		"BAD_REQUEST":           0,
@@ -93,6 +96,7 @@ var (
 		"NOT_PUBLISHABLE":       4201,
 		"CONTENT_TOO_LONG":      4202,
 		"PLATFORM_ERROR":        4300,
+		"STATS_UNSUPPORTED":     4400,
 	}
 )
 
@@ -127,7 +131,7 @@ var File_social_service_v1_social_error_proto protoreflect.FileDescriptor
 
 const file_social_service_v1_social_error_proto_rawDesc = "" +
 	"\n" +
-	"$social/service/v1/social_error.proto\x12\x11social.service.v1\x1a\x13errors/errors.proto*\xd1\x03\n" +
+	"$social/service/v1/social_error.proto\x12\x11social.service.v1\x1a\x13errors/errors.proto*\xef\x03\n" +
 	"\x11SocialErrorReason\x12\x15\n" +
 	"\vBAD_REQUEST\x10\x00\x1a\x04\xa8E\x90\x03\x12\x16\n" +
 	"\fUNAUTHORIZED\x10d\x1a\x04\xa8E\x91\x03\x12\x14\n" +
@@ -144,7 +148,8 @@ const file_social_service_v1_social_error_proto_rawDesc = "" +
 	"\x10ACCOUNT_DISABLED\x10\xe8 \x1a\x04\xa8E\x99\x03\x12\x1a\n" +
 	"\x0fNOT_PUBLISHABLE\x10\xe9 \x1a\x04\xa8E\x99\x03\x12\x1b\n" +
 	"\x10CONTENT_TOO_LONG\x10\xea \x1a\x04\xa8E\x99\x03\x12\x19\n" +
-	"\x0ePLATFORM_ERROR\x10\xcc!\x1a\x04\xa8E\xf6\x03\x1a\x04\xa0E\xf4\x03B\xc2\x01\n" +
+	"\x0ePLATFORM_ERROR\x10\xcc!\x1a\x04\xa8E\xf6\x03\x12\x1c\n" +
+	"\x11STATS_UNSUPPORTED\x10\xb0\"\x1a\x04\xa8E\x90\x03\x1a\x04\xa0E\xf4\x03B\xc2\x01\n" +
 	"\x15com.social.service.v1B\x10SocialErrorProtoP\x01Z1go-wind-cms/api/gen/go/social/service/v1;socialpb\xa2\x02\x03SSX\xaa\x02\x11Social.Service.V1\xca\x02\x11Social\\Service\\V1\xe2\x02\x1dSocial\\Service\\V1\\GPBMetadata\xea\x02\x13Social::Service::V1b\x06proto3"
 
 var (

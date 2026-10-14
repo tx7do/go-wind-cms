@@ -395,6 +395,18 @@ func (r *SocialDistributionRepo) CountUnfinishedByAccount(ctx context.Context, a
 	return count, nil
 }
 
+// TouchStatsSyncedAt 仅推进统计回拉时间戳（平台不支持统计时用来节流跳过）。
+func (r *SocialDistributionRepo) TouchStatsSyncedAt(ctx context.Context, id uint32, syncedAt time.Time) error {
+	_, err := r.entClient.Client().SocialDistribution.UpdateOneID(id).
+		SetStatsSyncedAt(syncedAt).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("touch stats synced_at failed (id=%d): %s", id, err.Error())
+		return socialV1.ErrorInternalServerError("touch stats synced_at failed")
+	}
+	return nil
+}
+
 // timeTimestamppbToTime Timestamp → time.Time（nil 安全）。
 func timeTimestamppbToTime(ts *timestamppb.Timestamp) *time.Time {
 	if ts == nil || !ts.IsValid() {

@@ -234,3 +234,17 @@ func IsPlatformError(err error) bool {
 func ErrorPlatformError(format string, args ...interface{}) *errors.Error {
 	return errors.New(502, SocialErrorReason_PLATFORM_ERROR.String(), fmt.Sprintf(format, args...))
 }
+
+// 400
+func IsStatsUnsupported(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == SocialErrorReason_STATS_UNSUPPORTED.String() && e.Code == 400
+}
+
+// 400
+func ErrorStatsUnsupported(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, SocialErrorReason_STATS_UNSUPPORTED.String(), fmt.Sprintf(format, args...))
+}

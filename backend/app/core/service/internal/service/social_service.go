@@ -102,12 +102,20 @@ func (s *SocialService) CreateSocialAccount(ctx context.Context, req *socialV1.C
 	if err != nil {
 		return nil, socialV1.ErrorCredentialsMissing("credentials must be a JSON object string")
 	}
+	// Bluesky 的 handle 列是唯一事实源：列值覆盖凭据内的 handle 键
+	if data.GetPlatform() == socialV1.Platform_PLATFORM_BLUESKY && data.GetHandle() != "" {
+		creds["handle"] = data.GetHandle()
+	}
 	// 保存即验证：杜绝坏凭据入库（发布时才暴雷）
 	if err = provider.ValidateCredentials(ctx, creds); err != nil {
 		return nil, s.mapProviderError(err, "validate credentials")
 	}
 
-	encrypted, err := crypto.EncryptIfNeeded(data.GetCredentials())
+	mergedJSON, merr := social.MarshalCredentials(creds)
+	if merr != nil {
+		return nil, socialV1.ErrorInternalServerError("marshal credentials failed")
+	}
+	encrypted, err := crypto.EncryptIfNeeded(mergedJSON)
 	if err != nil {
 		s.log.Errorf("encrypt credentials failed: %v", err)
 		return nil, socialV1.ErrorInternalServerError("encrypt credentials failed")
@@ -129,7 +137,8 @@ func (s *SocialService) UpdateSocialAccount(ctx context.Context, req *socialV1.U
 	}
 	data := req.Data
 
-	// 传入了新凭据（非空 JSON）→ 验证并加密；凭据字段是否真正落库由 update_mask 决定
+	// 传入了新凭据（非空 JSON）→ 增量合并后验证并加密；是否真正落库由 update_mask 决定。
+	// 动态凭据表单只回传填写的键：未填的旧键从已存凭据保留（部分更新不丢密钥）。
 	if data.GetCredentials() != "" {
 		ensureMaskPath(req, "credentials")
 		ensureMaskPath(req, "credential_hint")
@@ -138,20 +147,50 @@ func (s *SocialService) UpdateSocialAccount(ctx context.Context, req *socialV1.U
 		if err != nil {
 			return nil, socialV1.ErrorPlatformUnsupported("platform not supported yet")
 		}
-		creds, err := social.ParseCredentials(data.GetCredentials())
+		newCreds, err := social.ParseCredentials(data.GetCredentials())
 		if err != nil {
 			return nil, socialV1.ErrorCredentialsMissing("credentials must be a JSON object string")
 		}
-		if err = provider.ValidateCredentials(ctx, creds); err != nil {
+
+		existing, err := s.accountRepo.Get(ctx, &socialV1.GetSocialAccountRequest{Id: req.GetId()})
+		if err != nil {
+			return nil, err
+		}
+		merged := social.Credentials{}
+		if raw := existing.GetCredentials(); raw != "" {
+			plain, derr := crypto.DecryptIfNeeded(raw)
+			if derr != nil {
+				s.log.Errorf("decrypt credentials failed (account=%d): %v", req.GetId(), derr)
+				return nil, socialV1.ErrorInternalServerError("decrypt credentials failed")
+			}
+			if oldCreds, perr := social.ParseCredentials(plain); perr == nil {
+				merged = oldCreds
+			}
+		}
+		for k, v := range newCreds {
+			if v != "" {
+				merged[k] = v
+			}
+		}
+		// Bluesky 的 handle 列是唯一事实源：列值覆盖凭据内的 handle 键
+		if data.GetPlatform() == socialV1.Platform_PLATFORM_BLUESKY && data.GetHandle() != "" {
+			merged["handle"] = data.GetHandle()
+		}
+
+		if err = provider.ValidateCredentials(ctx, merged); err != nil {
 			return nil, s.mapProviderError(err, "validate credentials")
 		}
-		encrypted, err := crypto.EncryptIfNeeded(data.GetCredentials())
+		mergedJSON, merr := social.MarshalCredentials(merged)
+		if merr != nil {
+			return nil, socialV1.ErrorInternalServerError("marshal credentials failed")
+		}
+		encrypted, err := crypto.EncryptIfNeeded(mergedJSON)
 		if err != nil {
 			s.log.Errorf("encrypt credentials failed: %v", err)
 			return nil, socialV1.ErrorInternalServerError("encrypt credentials failed")
 		}
 		data.Credentials = &encrypted
-		data.CredentialHint = trans.Ptr(buildCredentialHint(creds))
+		data.CredentialHint = trans.Ptr(buildCredentialHint(merged))
 	} else if maskHasPath(req.GetUpdateMask(), "handle") {
 		// 只改 handle 没重输密码 → 同步改写已存凭据里的 handle 键（handle 列是唯一事实源，
 		// 不改会让登录标识与展示 handle 脱节）。凭据密文无法在 BFF 侧改写，必须由 core 完成。
@@ -580,6 +619,8 @@ func (s *SocialService) mapProviderError(err error, action string) error {
 		return socialV1.ErrorTooManyRequests("platform rate limited")
 	case errors.Is(err, social.ErrNotFound):
 		return socialV1.ErrorNotFound("platform content not found")
+	case errors.Is(err, social.ErrStatsUnsupported):
+		return socialV1.ErrorStatsUnsupported("platform does not support engagement stats")
 	default:
 		s.log.Errorf("social %s failed: %v", action, err)
 		return socialV1.ErrorPlatformError("platform error")
@@ -736,6 +777,13 @@ func (s *SocialService) StatsSyncWorker(taskType string, payload *task.StatsSync
 
 		stats, perr := provider.FetchStats(ctx, creds, item.GetExternalId(), item.GetExternalUri())
 		if perr != nil {
+			if errors.Is(perr, social.ErrStatsUnsupported) {
+				// 平台不提供统计：仅推进节流时间戳，避免每周期重复尝试与告警噪音
+				if uerr := s.distributionRepo.TouchStatsSyncedAt(ctx, item.GetId(), now); uerr != nil {
+					s.log.Errorf("stats sync: touch synced_at failed (distribution=%d): %v", item.GetId(), uerr)
+				}
+				continue
+			}
 			s.log.Warnf("stats sync: fetch stats failed (distribution=%d platform=%s): %v",
 				item.GetId(), item.GetPlatform(), perr)
 			failCount++

@@ -49,4 +49,7 @@ enum SocialErrorReason {
 
   // 502
   PLATFORM_ERROR = 4300 [(errors.code) = 502];         // 平台 API 返回错误
+
+  // 400
+  STATS_UNSUPPORTED = 4400 [(errors.code) = 400];      // 平台不提供互动统计能力
 }
