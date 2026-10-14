@@ -148,6 +148,34 @@ func (_c *InternalMessageRecipientCreate) SetNillableReadAt(v *time.Time) *Inter
 	return _c
 }
 
+// SetTitle sets the "title" field.
+func (_c *InternalMessageRecipientCreate) SetTitle(v string) *InternalMessageRecipientCreate {
+	_c.mutation.SetTitle(v)
+	return _c
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_c *InternalMessageRecipientCreate) SetNillableTitle(v *string) *InternalMessageRecipientCreate {
+	if v != nil {
+		_c.SetTitle(*v)
+	}
+	return _c
+}
+
+// SetContent sets the "content" field.
+func (_c *InternalMessageRecipientCreate) SetContent(v string) *InternalMessageRecipientCreate {
+	_c.mutation.SetContent(v)
+	return _c
+}
+
+// SetNillableContent sets the "content" field if the given value is not nil.
+func (_c *InternalMessageRecipientCreate) SetNillableContent(v *string) *InternalMessageRecipientCreate {
+	if v != nil {
+		_c.SetContent(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *InternalMessageRecipientCreate) SetID(v uint32) *InternalMessageRecipientCreate {
 	_c.mutation.SetID(v)
@@ -278,6 +306,14 @@ func (_c *InternalMessageRecipientCreate) createSpec() (*InternalMessageRecipien
 	if value, ok := _c.mutation.ReadAt(); ok {
 		_spec.SetField(internalmessagerecipient.FieldReadAt, field.TypeTime, value)
 		_node.ReadAt = &value
+	}
+	if value, ok := _c.mutation.Title(); ok {
+		_spec.SetField(internalmessagerecipient.FieldTitle, field.TypeString, value)
+		_node.Title = &value
+	}
+	if value, ok := _c.mutation.Content(); ok {
+		_spec.SetField(internalmessagerecipient.FieldContent, field.TypeString, value)
+		_node.Content = &value
 	}
 	return _node, _spec
 }
@@ -466,6 +502,42 @@ func (u *InternalMessageRecipientUpsert) UpdateReadAt() *InternalMessageRecipien
 // ClearReadAt clears the value of the "read_at" field.
 func (u *InternalMessageRecipientUpsert) ClearReadAt() *InternalMessageRecipientUpsert {
 	u.SetNull(internalmessagerecipient.FieldReadAt)
+	return u
+}
+
+// SetTitle sets the "title" field.
+func (u *InternalMessageRecipientUpsert) SetTitle(v string) *InternalMessageRecipientUpsert {
+	u.Set(internalmessagerecipient.FieldTitle, v)
+	return u
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *InternalMessageRecipientUpsert) UpdateTitle() *InternalMessageRecipientUpsert {
+	u.SetExcluded(internalmessagerecipient.FieldTitle)
+	return u
+}
+
+// ClearTitle clears the value of the "title" field.
+func (u *InternalMessageRecipientUpsert) ClearTitle() *InternalMessageRecipientUpsert {
+	u.SetNull(internalmessagerecipient.FieldTitle)
+	return u
+}
+
+// SetContent sets the "content" field.
+func (u *InternalMessageRecipientUpsert) SetContent(v string) *InternalMessageRecipientUpsert {
+	u.Set(internalmessagerecipient.FieldContent, v)
+	return u
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *InternalMessageRecipientUpsert) UpdateContent() *InternalMessageRecipientUpsert {
+	u.SetExcluded(internalmessagerecipient.FieldContent)
+	return u
+}
+
+// ClearContent clears the value of the "content" field.
+func (u *InternalMessageRecipientUpsert) ClearContent() *InternalMessageRecipientUpsert {
+	u.SetNull(internalmessagerecipient.FieldContent)
 	return u
 }
 
@@ -681,6 +753,48 @@ func (u *InternalMessageRecipientUpsertOne) UpdateReadAt() *InternalMessageRecip
 func (u *InternalMessageRecipientUpsertOne) ClearReadAt() *InternalMessageRecipientUpsertOne {
 	return u.Update(func(s *InternalMessageRecipientUpsert) {
 		s.ClearReadAt()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *InternalMessageRecipientUpsertOne) SetTitle(v string) *InternalMessageRecipientUpsertOne {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *InternalMessageRecipientUpsertOne) UpdateTitle() *InternalMessageRecipientUpsertOne {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// ClearTitle clears the value of the "title" field.
+func (u *InternalMessageRecipientUpsertOne) ClearTitle() *InternalMessageRecipientUpsertOne {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.ClearTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *InternalMessageRecipientUpsertOne) SetContent(v string) *InternalMessageRecipientUpsertOne {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *InternalMessageRecipientUpsertOne) UpdateContent() *InternalMessageRecipientUpsertOne {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// ClearContent clears the value of the "content" field.
+func (u *InternalMessageRecipientUpsertOne) ClearContent() *InternalMessageRecipientUpsertOne {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.ClearContent()
 	})
 }
 
@@ -1062,6 +1176,48 @@ func (u *InternalMessageRecipientUpsertBulk) UpdateReadAt() *InternalMessageReci
 func (u *InternalMessageRecipientUpsertBulk) ClearReadAt() *InternalMessageRecipientUpsertBulk {
 	return u.Update(func(s *InternalMessageRecipientUpsert) {
 		s.ClearReadAt()
+	})
+}
+
+// SetTitle sets the "title" field.
+func (u *InternalMessageRecipientUpsertBulk) SetTitle(v string) *InternalMessageRecipientUpsertBulk {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.SetTitle(v)
+	})
+}
+
+// UpdateTitle sets the "title" field to the value that was provided on create.
+func (u *InternalMessageRecipientUpsertBulk) UpdateTitle() *InternalMessageRecipientUpsertBulk {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.UpdateTitle()
+	})
+}
+
+// ClearTitle clears the value of the "title" field.
+func (u *InternalMessageRecipientUpsertBulk) ClearTitle() *InternalMessageRecipientUpsertBulk {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.ClearTitle()
+	})
+}
+
+// SetContent sets the "content" field.
+func (u *InternalMessageRecipientUpsertBulk) SetContent(v string) *InternalMessageRecipientUpsertBulk {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.SetContent(v)
+	})
+}
+
+// UpdateContent sets the "content" field to the value that was provided on create.
+func (u *InternalMessageRecipientUpsertBulk) UpdateContent() *InternalMessageRecipientUpsertBulk {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.UpdateContent()
+	})
+}
+
+// ClearContent clears the value of the "content" field.
+func (u *InternalMessageRecipientUpsertBulk) ClearContent() *InternalMessageRecipientUpsertBulk {
+	return u.Update(func(s *InternalMessageRecipientUpsert) {
+		s.ClearContent()
 	})
 }
 

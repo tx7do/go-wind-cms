@@ -61,6 +61,16 @@ func (InternalMessageRecipient) Fields() []ent.Field {
 			Comment("用户阅读消息的时间").
 			Optional().
 			Nillable(),
+
+		field.String("title").
+			Comment("消息标题快照（消息被删除后收件箱仍可展示）").
+			Optional().
+			Nillable(),
+
+		field.Text("content").
+			Comment("消息内容快照").
+			Optional().
+			Nillable(),
 	}
 }
 

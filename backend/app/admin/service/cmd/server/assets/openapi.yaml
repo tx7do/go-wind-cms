@@ -6440,6 +6440,31 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/social.service.v1.SocialDistribution'
+    /admin/v1/social/distributions/{id}/stats/history:
+        get:
+            tags:
+                - SocialService
+            description: 获取分发记录的互动统计历史（趋势图数据）
+            operationId: SocialService_ListSocialDistributionStatsHistory
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: limit
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/social.service.v1.ListSocialDistributionStatsHistoryResponse'
     /admin/v1/social/distributions/{id}/stats/refresh:
         post:
             tags:
@@ -13300,6 +13325,14 @@ components:
                 total:
                     type: string
             description: 回应 - 社交账号列表
+        social.service.v1.ListSocialDistributionStatsHistoryResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/social.service.v1.SocialStatsHistoryPoint'
+            description: 回应 - 统计历史
         social.service.v1.ListSocialDistributionsResponse:
             type: object
             properties:
@@ -13502,6 +13535,26 @@ components:
                     description: 删除时间
                     format: date-time
             description: 内容分发记录
+        social.service.v1.SocialStatsHistoryPoint:
+            type: object
+            properties:
+                recordedAt:
+                    type: string
+                    description: 快照时间
+                    format: date-time
+                likes:
+                    type: integer
+                    description: 点赞数
+                    format: uint32
+                replies:
+                    type: integer
+                    description: 回复数
+                    format: uint32
+                reposts:
+                    type: integer
+                    description: 转发数
+                    format: uint32
+            description: 统计历史快照点
         social.service.v1.UpdateSocialAccountRequest:
             type: object
             properties:

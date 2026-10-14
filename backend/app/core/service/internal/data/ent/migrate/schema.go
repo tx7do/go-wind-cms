@@ -1239,6 +1239,8 @@ var (
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "消息状态", Enums: []string{"SENT", "RECEIVED", "READ", "REVOKED", "DELETED"}},
 		{Name: "received_at", Type: field.TypeTime, Nullable: true, Comment: "消息到达用户收件箱的时间"},
 		{Name: "read_at", Type: field.TypeTime, Nullable: true, Comment: "用户阅读消息的时间"},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "消息标题快照（消息被删除后收件箱仍可展示）"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "消息内容快照"},
 	}
 	// InternalMessageRecipientsTable holds the schema information for the "internal_message_recipients" table.
 	InternalMessageRecipientsTable = &schema.Table{

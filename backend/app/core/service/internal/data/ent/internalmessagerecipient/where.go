@@ -94,6 +94,16 @@ func ReadAt(v time.Time) predicate.InternalMessageRecipient {
 	return predicate.InternalMessageRecipient(sql.FieldEQ(FieldReadAt, v))
 }
 
+// Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
+func Title(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldEQ(FieldTitle, v))
+}
+
+// Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
+func Content(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldEQ(FieldContent, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.InternalMessageRecipient {
 	return predicate.InternalMessageRecipient(sql.FieldEQ(FieldCreatedAt, v))
@@ -522,6 +532,156 @@ func ReadAtIsNil() predicate.InternalMessageRecipient {
 // ReadAtNotNil applies the NotNil predicate on the "read_at" field.
 func ReadAtNotNil() predicate.InternalMessageRecipient {
 	return predicate.InternalMessageRecipient(sql.FieldNotNull(FieldReadAt))
+}
+
+// TitleEQ applies the EQ predicate on the "title" field.
+func TitleEQ(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldEQ(FieldTitle, v))
+}
+
+// TitleNEQ applies the NEQ predicate on the "title" field.
+func TitleNEQ(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldNEQ(FieldTitle, v))
+}
+
+// TitleIn applies the In predicate on the "title" field.
+func TitleIn(vs ...string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldIn(FieldTitle, vs...))
+}
+
+// TitleNotIn applies the NotIn predicate on the "title" field.
+func TitleNotIn(vs ...string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldNotIn(FieldTitle, vs...))
+}
+
+// TitleGT applies the GT predicate on the "title" field.
+func TitleGT(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldGT(FieldTitle, v))
+}
+
+// TitleGTE applies the GTE predicate on the "title" field.
+func TitleGTE(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldGTE(FieldTitle, v))
+}
+
+// TitleLT applies the LT predicate on the "title" field.
+func TitleLT(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldLT(FieldTitle, v))
+}
+
+// TitleLTE applies the LTE predicate on the "title" field.
+func TitleLTE(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldLTE(FieldTitle, v))
+}
+
+// TitleContains applies the Contains predicate on the "title" field.
+func TitleContains(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldContains(FieldTitle, v))
+}
+
+// TitleHasPrefix applies the HasPrefix predicate on the "title" field.
+func TitleHasPrefix(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldHasPrefix(FieldTitle, v))
+}
+
+// TitleHasSuffix applies the HasSuffix predicate on the "title" field.
+func TitleHasSuffix(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldHasSuffix(FieldTitle, v))
+}
+
+// TitleIsNil applies the IsNil predicate on the "title" field.
+func TitleIsNil() predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldIsNull(FieldTitle))
+}
+
+// TitleNotNil applies the NotNil predicate on the "title" field.
+func TitleNotNil() predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldNotNull(FieldTitle))
+}
+
+// TitleEqualFold applies the EqualFold predicate on the "title" field.
+func TitleEqualFold(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldEqualFold(FieldTitle, v))
+}
+
+// TitleContainsFold applies the ContainsFold predicate on the "title" field.
+func TitleContainsFold(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldContainsFold(FieldTitle, v))
+}
+
+// ContentEQ applies the EQ predicate on the "content" field.
+func ContentEQ(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldEQ(FieldContent, v))
+}
+
+// ContentNEQ applies the NEQ predicate on the "content" field.
+func ContentNEQ(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldNEQ(FieldContent, v))
+}
+
+// ContentIn applies the In predicate on the "content" field.
+func ContentIn(vs ...string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldIn(FieldContent, vs...))
+}
+
+// ContentNotIn applies the NotIn predicate on the "content" field.
+func ContentNotIn(vs ...string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldNotIn(FieldContent, vs...))
+}
+
+// ContentGT applies the GT predicate on the "content" field.
+func ContentGT(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldGT(FieldContent, v))
+}
+
+// ContentGTE applies the GTE predicate on the "content" field.
+func ContentGTE(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldGTE(FieldContent, v))
+}
+
+// ContentLT applies the LT predicate on the "content" field.
+func ContentLT(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldLT(FieldContent, v))
+}
+
+// ContentLTE applies the LTE predicate on the "content" field.
+func ContentLTE(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldLTE(FieldContent, v))
+}
+
+// ContentContains applies the Contains predicate on the "content" field.
+func ContentContains(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldContains(FieldContent, v))
+}
+
+// ContentHasPrefix applies the HasPrefix predicate on the "content" field.
+func ContentHasPrefix(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldHasPrefix(FieldContent, v))
+}
+
+// ContentHasSuffix applies the HasSuffix predicate on the "content" field.
+func ContentHasSuffix(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldHasSuffix(FieldContent, v))
+}
+
+// ContentIsNil applies the IsNil predicate on the "content" field.
+func ContentIsNil() predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldIsNull(FieldContent))
+}
+
+// ContentNotNil applies the NotNil predicate on the "content" field.
+func ContentNotNil() predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldNotNull(FieldContent))
+}
+
+// ContentEqualFold applies the EqualFold predicate on the "content" field.
+func ContentEqualFold(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldEqualFold(FieldContent, v))
+}
+
+// ContentContainsFold applies the ContainsFold predicate on the "content" field.
+func ContentContainsFold(v string) predicate.InternalMessageRecipient {
+	return predicate.InternalMessageRecipient(sql.FieldContainsFold(FieldContent, v))
 }
 
 // And groups predicates with the AND operator between them.

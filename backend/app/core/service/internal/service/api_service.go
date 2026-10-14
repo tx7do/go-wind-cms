@@ -84,7 +84,7 @@ func (s *ApiService) Delete(ctx context.Context, req *permissionV1.DeleteApiRequ
 }
 
 func (s *ApiService) SyncApis(ctx context.Context, req *permissionV1.SyncApisRequest) (*emptypb.Empty, error) {
-	if err := s.apiRepo.BatchCreate(ctx, req.GetApis()); err != nil {
+	if err := s.apiRepo.SyncApis(ctx, req.GetApis()); err != nil {
 		return nil, err
 	}
 

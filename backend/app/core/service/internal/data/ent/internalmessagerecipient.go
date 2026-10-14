@@ -35,7 +35,11 @@ type InternalMessageRecipient struct {
 	// 消息到达用户收件箱的时间
 	ReceivedAt *time.Time `json:"received_at,omitempty"`
 	// 用户阅读消息的时间
-	ReadAt       *time.Time `json:"read_at,omitempty"`
+	ReadAt *time.Time `json:"read_at,omitempty"`
+	// 消息标题快照（消息被删除后收件箱仍可展示）
+	Title *string `json:"title,omitempty"`
+	// 消息内容快照
+	Content      *string `json:"content,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -46,7 +50,7 @@ func (*InternalMessageRecipient) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case internalmessagerecipient.FieldID, internalmessagerecipient.FieldTenantID, internalmessagerecipient.FieldMessageID, internalmessagerecipient.FieldRecipientUserID:
 			values[i] = new(sql.NullInt64)
-		case internalmessagerecipient.FieldStatus:
+		case internalmessagerecipient.FieldStatus, internalmessagerecipient.FieldTitle, internalmessagerecipient.FieldContent:
 			values[i] = new(sql.NullString)
 		case internalmessagerecipient.FieldCreatedAt, internalmessagerecipient.FieldUpdatedAt, internalmessagerecipient.FieldDeletedAt, internalmessagerecipient.FieldReceivedAt, internalmessagerecipient.FieldReadAt:
 			values[i] = new(sql.NullTime)
@@ -134,6 +138,20 @@ func (_m *InternalMessageRecipient) assignValues(columns []string, values []any)
 				_m.ReadAt = new(time.Time)
 				*_m.ReadAt = value.Time
 			}
+		case internalmessagerecipient.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				_m.Title = new(string)
+				*_m.Title = value.String
+			}
+		case internalmessagerecipient.FieldContent:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field content", values[i])
+			} else if value.Valid {
+				_m.Content = new(string)
+				*_m.Content = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -213,6 +231,16 @@ func (_m *InternalMessageRecipient) String() string {
 	if v := _m.ReadAt; v != nil {
 		builder.WriteString("read_at=")
 		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.Title; v != nil {
+		builder.WriteString("title=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Content; v != nil {
+		builder.WriteString("content=")
+		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')
 	return builder.String()

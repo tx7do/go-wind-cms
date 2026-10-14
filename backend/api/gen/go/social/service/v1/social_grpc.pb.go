@@ -21,18 +21,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SocialService_ListSocialAccounts_FullMethodName             = "/social.service.v1.SocialService/ListSocialAccounts"
-	SocialService_GetSocialAccount_FullMethodName               = "/social.service.v1.SocialService/GetSocialAccount"
-	SocialService_CreateSocialAccount_FullMethodName            = "/social.service.v1.SocialService/CreateSocialAccount"
-	SocialService_UpdateSocialAccount_FullMethodName            = "/social.service.v1.SocialService/UpdateSocialAccount"
-	SocialService_DeleteSocialAccount_FullMethodName            = "/social.service.v1.SocialService/DeleteSocialAccount"
-	SocialService_ListSocialDistributions_FullMethodName        = "/social.service.v1.SocialService/ListSocialDistributions"
-	SocialService_GetSocialDistribution_FullMethodName          = "/social.service.v1.SocialService/GetSocialDistribution"
-	SocialService_CreateSocialDistribution_FullMethodName       = "/social.service.v1.SocialService/CreateSocialDistribution"
-	SocialService_UpdateSocialDistribution_FullMethodName       = "/social.service.v1.SocialService/UpdateSocialDistribution"
-	SocialService_DeleteSocialDistribution_FullMethodName       = "/social.service.v1.SocialService/DeleteSocialDistribution"
-	SocialService_PublishSocialDistribution_FullMethodName      = "/social.service.v1.SocialService/PublishSocialDistribution"
-	SocialService_RefreshSocialDistributionStats_FullMethodName = "/social.service.v1.SocialService/RefreshSocialDistributionStats"
+	SocialService_ListSocialAccounts_FullMethodName                 = "/social.service.v1.SocialService/ListSocialAccounts"
+	SocialService_GetSocialAccount_FullMethodName                   = "/social.service.v1.SocialService/GetSocialAccount"
+	SocialService_CreateSocialAccount_FullMethodName                = "/social.service.v1.SocialService/CreateSocialAccount"
+	SocialService_UpdateSocialAccount_FullMethodName                = "/social.service.v1.SocialService/UpdateSocialAccount"
+	SocialService_DeleteSocialAccount_FullMethodName                = "/social.service.v1.SocialService/DeleteSocialAccount"
+	SocialService_ListSocialDistributions_FullMethodName            = "/social.service.v1.SocialService/ListSocialDistributions"
+	SocialService_GetSocialDistribution_FullMethodName              = "/social.service.v1.SocialService/GetSocialDistribution"
+	SocialService_CreateSocialDistribution_FullMethodName           = "/social.service.v1.SocialService/CreateSocialDistribution"
+	SocialService_UpdateSocialDistribution_FullMethodName           = "/social.service.v1.SocialService/UpdateSocialDistribution"
+	SocialService_DeleteSocialDistribution_FullMethodName           = "/social.service.v1.SocialService/DeleteSocialDistribution"
+	SocialService_PublishSocialDistribution_FullMethodName          = "/social.service.v1.SocialService/PublishSocialDistribution"
+	SocialService_RefreshSocialDistributionStats_FullMethodName     = "/social.service.v1.SocialService/RefreshSocialDistributionStats"
+	SocialService_ListSocialDistributionStatsHistory_FullMethodName = "/social.service.v1.SocialService/ListSocialDistributionStatsHistory"
 )
 
 // SocialServiceClient is the client API for SocialService service.
@@ -67,6 +68,8 @@ type SocialServiceClient interface {
 	PublishSocialDistribution(ctx context.Context, in *PublishSocialDistributionRequest, opts ...grpc.CallOption) (*SocialDistribution, error)
 	// 回拉指定分发记录的平台互动统计（点赞/回复/转发快照）
 	RefreshSocialDistributionStats(ctx context.Context, in *RefreshSocialDistributionStatsRequest, opts ...grpc.CallOption) (*SocialDistribution, error)
+	// 获取分发记录的互动统计历史（时间序列，按时间升序，用于趋势图）
+	ListSocialDistributionStatsHistory(ctx context.Context, in *ListSocialDistributionStatsHistoryRequest, opts ...grpc.CallOption) (*ListSocialDistributionStatsHistoryResponse, error)
 }
 
 type socialServiceClient struct {
@@ -197,6 +200,16 @@ func (c *socialServiceClient) RefreshSocialDistributionStats(ctx context.Context
 	return out, nil
 }
 
+func (c *socialServiceClient) ListSocialDistributionStatsHistory(ctx context.Context, in *ListSocialDistributionStatsHistoryRequest, opts ...grpc.CallOption) (*ListSocialDistributionStatsHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSocialDistributionStatsHistoryResponse)
+	err := c.cc.Invoke(ctx, SocialService_ListSocialDistributionStatsHistory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SocialServiceServer is the server API for SocialService service.
 // All implementations must embed UnimplementedSocialServiceServer
 // for forward compatibility.
@@ -229,6 +242,8 @@ type SocialServiceServer interface {
 	PublishSocialDistribution(context.Context, *PublishSocialDistributionRequest) (*SocialDistribution, error)
 	// 回拉指定分发记录的平台互动统计（点赞/回复/转发快照）
 	RefreshSocialDistributionStats(context.Context, *RefreshSocialDistributionStatsRequest) (*SocialDistribution, error)
+	// 获取分发记录的互动统计历史（时间序列，按时间升序，用于趋势图）
+	ListSocialDistributionStatsHistory(context.Context, *ListSocialDistributionStatsHistoryRequest) (*ListSocialDistributionStatsHistoryResponse, error)
 	mustEmbedUnimplementedSocialServiceServer()
 }
 
@@ -274,6 +289,9 @@ func (UnimplementedSocialServiceServer) PublishSocialDistribution(context.Contex
 }
 func (UnimplementedSocialServiceServer) RefreshSocialDistributionStats(context.Context, *RefreshSocialDistributionStatsRequest) (*SocialDistribution, error) {
 	return nil, status.Error(codes.Unimplemented, "method RefreshSocialDistributionStats not implemented")
+}
+func (UnimplementedSocialServiceServer) ListSocialDistributionStatsHistory(context.Context, *ListSocialDistributionStatsHistoryRequest) (*ListSocialDistributionStatsHistoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSocialDistributionStatsHistory not implemented")
 }
 func (UnimplementedSocialServiceServer) mustEmbedUnimplementedSocialServiceServer() {}
 func (UnimplementedSocialServiceServer) testEmbeddedByValue()                       {}
@@ -512,6 +530,24 @@ func _SocialService_RefreshSocialDistributionStats_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SocialService_ListSocialDistributionStatsHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSocialDistributionStatsHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SocialServiceServer).ListSocialDistributionStatsHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SocialService_ListSocialDistributionStatsHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SocialServiceServer).ListSocialDistributionStatsHistory(ctx, req.(*ListSocialDistributionStatsHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SocialService_ServiceDesc is the grpc.ServiceDesc for SocialService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -566,6 +602,10 @@ var SocialService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefreshSocialDistributionStats",
 			Handler:    _SocialService_RefreshSocialDistributionStats_Handler,
+		},
+		{
+			MethodName: "ListSocialDistributionStatsHistory",
+			Handler:    _SocialService_ListSocialDistributionStatsHistory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

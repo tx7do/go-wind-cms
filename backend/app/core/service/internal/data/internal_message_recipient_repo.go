@@ -172,6 +172,8 @@ func (r *InternalMessageRecipientRepo) Create(ctx context.Context, req *internal
 		SetNillableStatus(r.statusConverter.ToEntity(req.Status)).
 		SetNillableReceivedAt(timeutil.TimestamppbToTime(req.ReceivedAt)).
 		SetNillableReadAt(timeutil.TimestamppbToTime(req.ReadAt)).
+		SetNillableTitle(req.Title).
+		SetNillableContent(req.Content).
 		SetCreatedAt(time.Now())
 
 	var err error

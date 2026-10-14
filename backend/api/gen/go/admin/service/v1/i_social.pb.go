@@ -28,7 +28,7 @@ var File_admin_service_v1_i_social_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_social_proto_rawDesc = "" +
 	"\n" +
-	"\x1fadmin/service/v1/i_social.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1esocial/service/v1/social.proto2\xcf\x0e\n" +
+	"\x1fadmin/service/v1/i_social.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1esocial/service/v1/social.proto2\xae\x10\n" +
 	"\rSocialService\x12\x81\x01\n" +
 	"\x12ListSocialAccounts\x12\x19.pagination.PagingRequest\x1a-.social.service.v1.ListSocialAccountsResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/social/accounts\x12\x88\x01\n" +
 	"\x10GetSocialAccount\x12*.social.service.v1.GetSocialAccountRequest\x1a .social.service.v1.SocialAccount\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/social/accounts/{id}\x12\x8c\x01\n" +
@@ -41,26 +41,29 @@ const file_admin_service_v1_i_social_proto_rawDesc = "" +
 	"\x18UpdateSocialDistribution\x122.social.service.v1.UpdateSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\".\x82\xd3\xe4\x93\x02(:\x01*\x1a#/admin/v1/social/distributions/{id}\x12\x93\x01\n" +
 	"\x18DeleteSocialDistribution\x122.social.service.v1.DeleteSocialDistributionRequest\x1a\x16.google.protobuf.Empty\"+\x82\xd3\xe4\x93\x02%*#/admin/v1/social/distributions/{id}\x12\xaf\x01\n" +
 	"\x19PublishSocialDistribution\x123.social.service.v1.PublishSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\"6\x82\xd3\xe4\x93\x020:\x01*\"+/admin/v1/social/distributions/{id}/publish\x12\xbf\x01\n" +
-	"\x1eRefreshSocialDistributionStats\x128.social.service.v1.RefreshSocialDistributionStatsRequest\x1a%.social.service.v1.SocialDistribution\"<\x82\xd3\xe4\x93\x026:\x01*\"1/admin/v1/social/distributions/{id}/stats/refreshB\xb7\x01\n" +
+	"\x1eRefreshSocialDistributionStats\x128.social.service.v1.RefreshSocialDistributionStatsRequest\x1a%.social.service.v1.SocialDistribution\"<\x82\xd3\xe4\x93\x026:\x01*\"1/admin/v1/social/distributions/{id}/stats/refresh\x12\xdc\x01\n" +
+	"\"ListSocialDistributionStatsHistory\x12<.social.service.v1.ListSocialDistributionStatsHistoryRequest\x1a=.social.service.v1.ListSocialDistributionStatsHistoryResponse\"9\x82\xd3\xe4\x93\x023\x121/admin/v1/social/distributions/{id}/stats/historyB\xb7\x01\n" +
 	"\x14com.admin.service.v1B\fISocialProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_social_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),                          // 0: pagination.PagingRequest
-	(*v11.GetSocialAccountRequest)(nil),               // 1: social.service.v1.GetSocialAccountRequest
-	(*v11.CreateSocialAccountRequest)(nil),            // 2: social.service.v1.CreateSocialAccountRequest
-	(*v11.UpdateSocialAccountRequest)(nil),            // 3: social.service.v1.UpdateSocialAccountRequest
-	(*v11.DeleteSocialAccountRequest)(nil),            // 4: social.service.v1.DeleteSocialAccountRequest
-	(*v11.GetSocialDistributionRequest)(nil),          // 5: social.service.v1.GetSocialDistributionRequest
-	(*v11.CreateSocialDistributionRequest)(nil),       // 6: social.service.v1.CreateSocialDistributionRequest
-	(*v11.UpdateSocialDistributionRequest)(nil),       // 7: social.service.v1.UpdateSocialDistributionRequest
-	(*v11.DeleteSocialDistributionRequest)(nil),       // 8: social.service.v1.DeleteSocialDistributionRequest
-	(*v11.PublishSocialDistributionRequest)(nil),      // 9: social.service.v1.PublishSocialDistributionRequest
-	(*v11.RefreshSocialDistributionStatsRequest)(nil), // 10: social.service.v1.RefreshSocialDistributionStatsRequest
-	(*v11.ListSocialAccountsResponse)(nil),            // 11: social.service.v1.ListSocialAccountsResponse
-	(*v11.SocialAccount)(nil),                         // 12: social.service.v1.SocialAccount
-	(*emptypb.Empty)(nil),                             // 13: google.protobuf.Empty
-	(*v11.ListSocialDistributionsResponse)(nil),       // 14: social.service.v1.ListSocialDistributionsResponse
-	(*v11.SocialDistribution)(nil),                    // 15: social.service.v1.SocialDistribution
+	(*v1.PagingRequest)(nil),                               // 0: pagination.PagingRequest
+	(*v11.GetSocialAccountRequest)(nil),                    // 1: social.service.v1.GetSocialAccountRequest
+	(*v11.CreateSocialAccountRequest)(nil),                 // 2: social.service.v1.CreateSocialAccountRequest
+	(*v11.UpdateSocialAccountRequest)(nil),                 // 3: social.service.v1.UpdateSocialAccountRequest
+	(*v11.DeleteSocialAccountRequest)(nil),                 // 4: social.service.v1.DeleteSocialAccountRequest
+	(*v11.GetSocialDistributionRequest)(nil),               // 5: social.service.v1.GetSocialDistributionRequest
+	(*v11.CreateSocialDistributionRequest)(nil),            // 6: social.service.v1.CreateSocialDistributionRequest
+	(*v11.UpdateSocialDistributionRequest)(nil),            // 7: social.service.v1.UpdateSocialDistributionRequest
+	(*v11.DeleteSocialDistributionRequest)(nil),            // 8: social.service.v1.DeleteSocialDistributionRequest
+	(*v11.PublishSocialDistributionRequest)(nil),           // 9: social.service.v1.PublishSocialDistributionRequest
+	(*v11.RefreshSocialDistributionStatsRequest)(nil),      // 10: social.service.v1.RefreshSocialDistributionStatsRequest
+	(*v11.ListSocialDistributionStatsHistoryRequest)(nil),  // 11: social.service.v1.ListSocialDistributionStatsHistoryRequest
+	(*v11.ListSocialAccountsResponse)(nil),                 // 12: social.service.v1.ListSocialAccountsResponse
+	(*v11.SocialAccount)(nil),                              // 13: social.service.v1.SocialAccount
+	(*emptypb.Empty)(nil),                                  // 14: google.protobuf.Empty
+	(*v11.ListSocialDistributionsResponse)(nil),            // 15: social.service.v1.ListSocialDistributionsResponse
+	(*v11.SocialDistribution)(nil),                         // 16: social.service.v1.SocialDistribution
+	(*v11.ListSocialDistributionStatsHistoryResponse)(nil), // 17: social.service.v1.ListSocialDistributionStatsHistoryResponse
 }
 var file_admin_service_v1_i_social_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.SocialService.ListSocialAccounts:input_type -> pagination.PagingRequest
@@ -75,20 +78,22 @@ var file_admin_service_v1_i_social_proto_depIdxs = []int32{
 	8,  // 9: admin.service.v1.SocialService.DeleteSocialDistribution:input_type -> social.service.v1.DeleteSocialDistributionRequest
 	9,  // 10: admin.service.v1.SocialService.PublishSocialDistribution:input_type -> social.service.v1.PublishSocialDistributionRequest
 	10, // 11: admin.service.v1.SocialService.RefreshSocialDistributionStats:input_type -> social.service.v1.RefreshSocialDistributionStatsRequest
-	11, // 12: admin.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
-	12, // 13: admin.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
-	12, // 14: admin.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
-	12, // 15: admin.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
-	13, // 16: admin.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
-	14, // 17: admin.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
-	15, // 18: admin.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	15, // 19: admin.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	15, // 20: admin.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	13, // 21: admin.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
-	15, // 22: admin.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	15, // 23: admin.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
-	12, // [12:24] is the sub-list for method output_type
-	0,  // [0:12] is the sub-list for method input_type
+	11, // 12: admin.service.v1.SocialService.ListSocialDistributionStatsHistory:input_type -> social.service.v1.ListSocialDistributionStatsHistoryRequest
+	12, // 13: admin.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
+	13, // 14: admin.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
+	13, // 15: admin.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
+	13, // 16: admin.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
+	14, // 17: admin.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
+	15, // 18: admin.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
+	16, // 19: admin.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	16, // 20: admin.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	16, // 21: admin.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	14, // 22: admin.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
+	16, // 23: admin.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	16, // 24: admin.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
+	17, // 25: admin.service.v1.SocialService.ListSocialDistributionStatsHistory:output_type -> social.service.v1.ListSocialDistributionStatsHistoryResponse
+	13, // [13:26] is the sub-list for method output_type
+	0,  // [0:13] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

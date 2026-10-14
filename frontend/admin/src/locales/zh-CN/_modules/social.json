@@ -128,5 +128,12 @@
     "rpc_url": "如博客园 https://rpc.cnblogs.com/metaweblog/{博客名}；需在博客后台开启 MetaWeblog/API 访问"
   },
   "status": "分发状态",
-  "requiredCredential": "请输入{{label}}"
+  "requiredCredential": "请输入{{label}}",
+  "trend": "趋势",
+  "trendTitle": "互动趋势",
+  "trendNoData": "暂无足够的快照数据（每 30 分钟自动回拉一次，也可手动刷新积累）",
+  "trend.likes": "赞",
+  "trend.replies": "评",
+  "trend.reposts": "转",
+  "trendHint": "趋势基于统计回拉的历史快照；发布后每 30 分钟自动积累一个数据点"
 }

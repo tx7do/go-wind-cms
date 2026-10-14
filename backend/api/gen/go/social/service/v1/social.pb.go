@@ -156,7 +156,174 @@ func (x SocialDistribution_Status) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SocialDistribution_Status.Descriptor instead.
 func (SocialDistribution_Status) EnumDescriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{1, 0}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{4, 0}
+}
+
+// 统计历史快照点
+type SocialStatsHistoryPoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RecordedAt    *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=recorded_at,json=recordedAt,proto3,oneof" json:"recorded_at,omitempty"` // 快照时间
+	Likes         *uint32                `protobuf:"varint,2,opt,name=likes,proto3,oneof" json:"likes,omitempty"`                            // 点赞数
+	Replies       *uint32                `protobuf:"varint,3,opt,name=replies,proto3,oneof" json:"replies,omitempty"`                        // 回复数
+	Reposts       *uint32                `protobuf:"varint,4,opt,name=reposts,proto3,oneof" json:"reposts,omitempty"`                        // 转发数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SocialStatsHistoryPoint) Reset() {
+	*x = SocialStatsHistoryPoint{}
+	mi := &file_social_service_v1_social_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocialStatsHistoryPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocialStatsHistoryPoint) ProtoMessage() {}
+
+func (x *SocialStatsHistoryPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocialStatsHistoryPoint.ProtoReflect.Descriptor instead.
+func (*SocialStatsHistoryPoint) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SocialStatsHistoryPoint) GetRecordedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RecordedAt
+	}
+	return nil
+}
+
+func (x *SocialStatsHistoryPoint) GetLikes() uint32 {
+	if x != nil && x.Likes != nil {
+		return *x.Likes
+	}
+	return 0
+}
+
+func (x *SocialStatsHistoryPoint) GetReplies() uint32 {
+	if x != nil && x.Replies != nil {
+		return *x.Replies
+	}
+	return 0
+}
+
+func (x *SocialStatsHistoryPoint) GetReposts() uint32 {
+	if x != nil && x.Reposts != nil {
+		return *x.Reposts
+	}
+	return 0
+}
+
+// 请求 - 统计历史
+type ListSocialDistributionStatsHistoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`             // 分发记录ID
+	Limit         *uint32                `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"` // 点数上限
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSocialDistributionStatsHistoryRequest) Reset() {
+	*x = ListSocialDistributionStatsHistoryRequest{}
+	mi := &file_social_service_v1_social_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSocialDistributionStatsHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSocialDistributionStatsHistoryRequest) ProtoMessage() {}
+
+func (x *ListSocialDistributionStatsHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSocialDistributionStatsHistoryRequest.ProtoReflect.Descriptor instead.
+func (*ListSocialDistributionStatsHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ListSocialDistributionStatsHistoryRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ListSocialDistributionStatsHistoryRequest) GetLimit() uint32 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+// 回应 - 统计历史
+type ListSocialDistributionStatsHistoryResponse struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Items         []*SocialStatsHistoryPoint `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSocialDistributionStatsHistoryResponse) Reset() {
+	*x = ListSocialDistributionStatsHistoryResponse{}
+	mi := &file_social_service_v1_social_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSocialDistributionStatsHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSocialDistributionStatsHistoryResponse) ProtoMessage() {}
+
+func (x *ListSocialDistributionStatsHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_social_service_v1_social_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSocialDistributionStatsHistoryResponse.ProtoReflect.Descriptor instead.
+func (*ListSocialDistributionStatsHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ListSocialDistributionStatsHistoryResponse) GetItems() []*SocialStatsHistoryPoint {
+	if x != nil {
+		return x.Items
+	}
+	return nil
 }
 
 // 社交账号
@@ -182,7 +349,7 @@ type SocialAccount struct {
 
 func (x *SocialAccount) Reset() {
 	*x = SocialAccount{}
-	mi := &file_social_service_v1_social_proto_msgTypes[0]
+	mi := &file_social_service_v1_social_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -194,7 +361,7 @@ func (x *SocialAccount) String() string {
 func (*SocialAccount) ProtoMessage() {}
 
 func (x *SocialAccount) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[0]
+	mi := &file_social_service_v1_social_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -207,7 +374,7 @@ func (x *SocialAccount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SocialAccount.ProtoReflect.Descriptor instead.
 func (*SocialAccount) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{0}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SocialAccount) GetId() uint32 {
@@ -341,7 +508,7 @@ type SocialDistribution struct {
 
 func (x *SocialDistribution) Reset() {
 	*x = SocialDistribution{}
-	mi := &file_social_service_v1_social_proto_msgTypes[1]
+	mi := &file_social_service_v1_social_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -353,7 +520,7 @@ func (x *SocialDistribution) String() string {
 func (*SocialDistribution) ProtoMessage() {}
 
 func (x *SocialDistribution) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[1]
+	mi := &file_social_service_v1_social_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -366,7 +533,7 @@ func (x *SocialDistribution) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SocialDistribution.ProtoReflect.Descriptor instead.
 func (*SocialDistribution) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{1}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SocialDistribution) GetId() uint32 {
@@ -548,7 +715,7 @@ type ListSocialAccountsResponse struct {
 
 func (x *ListSocialAccountsResponse) Reset() {
 	*x = ListSocialAccountsResponse{}
-	mi := &file_social_service_v1_social_proto_msgTypes[2]
+	mi := &file_social_service_v1_social_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -560,7 +727,7 @@ func (x *ListSocialAccountsResponse) String() string {
 func (*ListSocialAccountsResponse) ProtoMessage() {}
 
 func (x *ListSocialAccountsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[2]
+	mi := &file_social_service_v1_social_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -573,7 +740,7 @@ func (x *ListSocialAccountsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSocialAccountsResponse.ProtoReflect.Descriptor instead.
 func (*ListSocialAccountsResponse) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{2}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListSocialAccountsResponse) GetItems() []*SocialAccount {
@@ -601,7 +768,7 @@ type GetSocialAccountRequest struct {
 
 func (x *GetSocialAccountRequest) Reset() {
 	*x = GetSocialAccountRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[3]
+	mi := &file_social_service_v1_social_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -613,7 +780,7 @@ func (x *GetSocialAccountRequest) String() string {
 func (*GetSocialAccountRequest) ProtoMessage() {}
 
 func (x *GetSocialAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[3]
+	mi := &file_social_service_v1_social_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -626,7 +793,7 @@ func (x *GetSocialAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSocialAccountRequest.ProtoReflect.Descriptor instead.
 func (*GetSocialAccountRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{3}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetSocialAccountRequest) GetId() uint32 {
@@ -653,7 +820,7 @@ type CreateSocialAccountRequest struct {
 
 func (x *CreateSocialAccountRequest) Reset() {
 	*x = CreateSocialAccountRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[4]
+	mi := &file_social_service_v1_social_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -665,7 +832,7 @@ func (x *CreateSocialAccountRequest) String() string {
 func (*CreateSocialAccountRequest) ProtoMessage() {}
 
 func (x *CreateSocialAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[4]
+	mi := &file_social_service_v1_social_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -678,7 +845,7 @@ func (x *CreateSocialAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSocialAccountRequest.ProtoReflect.Descriptor instead.
 func (*CreateSocialAccountRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{4}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateSocialAccountRequest) GetData() *SocialAccount {
@@ -701,7 +868,7 @@ type UpdateSocialAccountRequest struct {
 
 func (x *UpdateSocialAccountRequest) Reset() {
 	*x = UpdateSocialAccountRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[5]
+	mi := &file_social_service_v1_social_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -713,7 +880,7 @@ func (x *UpdateSocialAccountRequest) String() string {
 func (*UpdateSocialAccountRequest) ProtoMessage() {}
 
 func (x *UpdateSocialAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[5]
+	mi := &file_social_service_v1_social_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -726,7 +893,7 @@ func (x *UpdateSocialAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSocialAccountRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSocialAccountRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{5}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateSocialAccountRequest) GetId() uint32 {
@@ -770,7 +937,7 @@ type DeleteSocialAccountRequest struct {
 
 func (x *DeleteSocialAccountRequest) Reset() {
 	*x = DeleteSocialAccountRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[6]
+	mi := &file_social_service_v1_social_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -782,7 +949,7 @@ func (x *DeleteSocialAccountRequest) String() string {
 func (*DeleteSocialAccountRequest) ProtoMessage() {}
 
 func (x *DeleteSocialAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[6]
+	mi := &file_social_service_v1_social_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -795,7 +962,7 @@ func (x *DeleteSocialAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSocialAccountRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSocialAccountRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{6}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteSocialAccountRequest) GetQueryBy() isDeleteSocialAccountRequest_QueryBy {
@@ -835,7 +1002,7 @@ type ListSocialDistributionsResponse struct {
 
 func (x *ListSocialDistributionsResponse) Reset() {
 	*x = ListSocialDistributionsResponse{}
-	mi := &file_social_service_v1_social_proto_msgTypes[7]
+	mi := &file_social_service_v1_social_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -847,7 +1014,7 @@ func (x *ListSocialDistributionsResponse) String() string {
 func (*ListSocialDistributionsResponse) ProtoMessage() {}
 
 func (x *ListSocialDistributionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[7]
+	mi := &file_social_service_v1_social_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -860,7 +1027,7 @@ func (x *ListSocialDistributionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSocialDistributionsResponse.ProtoReflect.Descriptor instead.
 func (*ListSocialDistributionsResponse) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{7}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListSocialDistributionsResponse) GetItems() []*SocialDistribution {
@@ -888,7 +1055,7 @@ type GetSocialDistributionRequest struct {
 
 func (x *GetSocialDistributionRequest) Reset() {
 	*x = GetSocialDistributionRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[8]
+	mi := &file_social_service_v1_social_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -900,7 +1067,7 @@ func (x *GetSocialDistributionRequest) String() string {
 func (*GetSocialDistributionRequest) ProtoMessage() {}
 
 func (x *GetSocialDistributionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[8]
+	mi := &file_social_service_v1_social_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -913,7 +1080,7 @@ func (x *GetSocialDistributionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSocialDistributionRequest.ProtoReflect.Descriptor instead.
 func (*GetSocialDistributionRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{8}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetSocialDistributionRequest) GetId() uint32 {
@@ -940,7 +1107,7 @@ type CreateSocialDistributionRequest struct {
 
 func (x *CreateSocialDistributionRequest) Reset() {
 	*x = CreateSocialDistributionRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[9]
+	mi := &file_social_service_v1_social_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -952,7 +1119,7 @@ func (x *CreateSocialDistributionRequest) String() string {
 func (*CreateSocialDistributionRequest) ProtoMessage() {}
 
 func (x *CreateSocialDistributionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[9]
+	mi := &file_social_service_v1_social_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -965,7 +1132,7 @@ func (x *CreateSocialDistributionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSocialDistributionRequest.ProtoReflect.Descriptor instead.
 func (*CreateSocialDistributionRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{9}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *CreateSocialDistributionRequest) GetData() *SocialDistribution {
@@ -988,7 +1155,7 @@ type UpdateSocialDistributionRequest struct {
 
 func (x *UpdateSocialDistributionRequest) Reset() {
 	*x = UpdateSocialDistributionRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[10]
+	mi := &file_social_service_v1_social_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1000,7 +1167,7 @@ func (x *UpdateSocialDistributionRequest) String() string {
 func (*UpdateSocialDistributionRequest) ProtoMessage() {}
 
 func (x *UpdateSocialDistributionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[10]
+	mi := &file_social_service_v1_social_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1013,7 +1180,7 @@ func (x *UpdateSocialDistributionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSocialDistributionRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSocialDistributionRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{10}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateSocialDistributionRequest) GetId() uint32 {
@@ -1057,7 +1224,7 @@ type DeleteSocialDistributionRequest struct {
 
 func (x *DeleteSocialDistributionRequest) Reset() {
 	*x = DeleteSocialDistributionRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[11]
+	mi := &file_social_service_v1_social_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1069,7 +1236,7 @@ func (x *DeleteSocialDistributionRequest) String() string {
 func (*DeleteSocialDistributionRequest) ProtoMessage() {}
 
 func (x *DeleteSocialDistributionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[11]
+	mi := &file_social_service_v1_social_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1082,7 +1249,7 @@ func (x *DeleteSocialDistributionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSocialDistributionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSocialDistributionRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{11}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *DeleteSocialDistributionRequest) GetQueryBy() isDeleteSocialDistributionRequest_QueryBy {
@@ -1121,7 +1288,7 @@ type PublishSocialDistributionRequest struct {
 
 func (x *PublishSocialDistributionRequest) Reset() {
 	*x = PublishSocialDistributionRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[12]
+	mi := &file_social_service_v1_social_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1133,7 +1300,7 @@ func (x *PublishSocialDistributionRequest) String() string {
 func (*PublishSocialDistributionRequest) ProtoMessage() {}
 
 func (x *PublishSocialDistributionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[12]
+	mi := &file_social_service_v1_social_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1146,7 +1313,7 @@ func (x *PublishSocialDistributionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishSocialDistributionRequest.ProtoReflect.Descriptor instead.
 func (*PublishSocialDistributionRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{12}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PublishSocialDistributionRequest) GetId() uint32 {
@@ -1166,7 +1333,7 @@ type RefreshSocialDistributionStatsRequest struct {
 
 func (x *RefreshSocialDistributionStatsRequest) Reset() {
 	*x = RefreshSocialDistributionStatsRequest{}
-	mi := &file_social_service_v1_social_proto_msgTypes[13]
+	mi := &file_social_service_v1_social_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1178,7 +1345,7 @@ func (x *RefreshSocialDistributionStatsRequest) String() string {
 func (*RefreshSocialDistributionStatsRequest) ProtoMessage() {}
 
 func (x *RefreshSocialDistributionStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_social_service_v1_social_proto_msgTypes[13]
+	mi := &file_social_service_v1_social_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1191,7 +1358,7 @@ func (x *RefreshSocialDistributionStatsRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use RefreshSocialDistributionStatsRequest.ProtoReflect.Descriptor instead.
 func (*RefreshSocialDistributionStatsRequest) Descriptor() ([]byte, []int) {
-	return file_social_service_v1_social_proto_rawDescGZIP(), []int{13}
+	return file_social_service_v1_social_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RefreshSocialDistributionStatsRequest) GetId() uint32 {
@@ -1205,7 +1372,25 @@ var File_social_service_v1_social_proto protoreflect.FileDescriptor
 
 const file_social_service_v1_social_proto_rawDesc = "" +
 	"\n" +
-	"\x1esocial/service/v1/social.proto\x12\x11social.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa6\n" +
+	"\x1esocial/service/v1/social.proto\x12\x11social.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xad\x02\n" +
+	"\x17SocialStatsHistoryPoint\x12T\n" +
+	"\vrecorded_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f快照时间H\x00R\n" +
+	"recordedAt\x88\x01\x01\x12*\n" +
+	"\x05likes\x18\x02 \x01(\rB\x0f\xbaG\f\x92\x02\t点赞数H\x01R\x05likes\x88\x01\x01\x12.\n" +
+	"\areplies\x18\x03 \x01(\rB\x0f\xbaG\f\x92\x02\t回复数H\x02R\areplies\x88\x01\x01\x12.\n" +
+	"\areposts\x18\x04 \x01(\rB\x0f\xbaG\f\x92\x02\t转发数H\x03R\areposts\x88\x01\x01B\x0e\n" +
+	"\f_recorded_atB\b\n" +
+	"\x06_likesB\n" +
+	"\n" +
+	"\b_repliesB\n" +
+	"\n" +
+	"\b_reposts\"\xab\x01\n" +
+	")ListSocialDistributionStatsHistoryRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\x12d\n" +
+	"\x05limit\x18\x02 \x01(\rBI\xbaGF\x92\x02C返回点数上限（缺省 200，按时间升序取最近 N 点）H\x00R\x05limit\x88\x01\x01B\b\n" +
+	"\x06_limit\"n\n" +
+	"*ListSocialDistributionStatsHistoryResponse\x12@\n" +
+	"\x05items\x18\x01 \x03(\v2*.social.service.v1.SocialStatsHistoryPointR\x05items\"\xa6\n" +
 	"\n" +
 	"\rSocialAccount\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b账号IDH\x00R\x02id\x88\x01\x01\x12P\n" +
@@ -1374,8 +1559,7 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\x0ePLATFORM_WEIBO\x10\b\x12\x15\n" +
 	"\x11PLATFORM_LINKEDIN\x10\t\x12\x17\n" +
 	"\x13PLATFORM_METAWEBLOG\x10\n" +
-	"2\xc5\n" +
-	"\n" +
+	"2\xeb\v\n" +
 	"\rSocialService\x12`\n" +
 	"\x12ListSocialAccounts\x12\x19.pagination.PagingRequest\x1a-.social.service.v1.ListSocialAccountsResponse\"\x00\x12b\n" +
 	"\x10GetSocialAccount\x12*.social.service.v1.GetSocialAccountRequest\x1a .social.service.v1.SocialAccount\"\x00\x12h\n" +
@@ -1388,7 +1572,8 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\x18UpdateSocialDistribution\x122.social.service.v1.UpdateSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\"\x00\x12h\n" +
 	"\x18DeleteSocialDistribution\x122.social.service.v1.DeleteSocialDistributionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12y\n" +
 	"\x19PublishSocialDistribution\x123.social.service.v1.PublishSocialDistributionRequest\x1a%.social.service.v1.SocialDistribution\"\x00\x12\x83\x01\n" +
-	"\x1eRefreshSocialDistributionStats\x128.social.service.v1.RefreshSocialDistributionStatsRequest\x1a%.social.service.v1.SocialDistribution\"\x00B\xbd\x01\n" +
+	"\x1eRefreshSocialDistributionStats\x128.social.service.v1.RefreshSocialDistributionStatsRequest\x1a%.social.service.v1.SocialDistribution\"\x00\x12\xa3\x01\n" +
+	"\"ListSocialDistributionStatsHistory\x12<.social.service.v1.ListSocialDistributionStatsHistoryRequest\x1a=.social.service.v1.ListSocialDistributionStatsHistoryResponse\"\x00B\xbd\x01\n" +
 	"\x15com.social.service.v1B\vSocialProtoP\x01Z1go-wind-cms/api/gen/go/social/service/v1;socialpb\xa2\x02\x03SSX\xaa\x02\x11Social.Service.V1\xca\x02\x11Social\\Service\\V1\xe2\x02\x1dSocial\\Service\\V1\\GPBMetadata\xea\x02\x13Social::Service::V1b\x06proto3"
 
 var (
@@ -1404,81 +1589,88 @@ func file_social_service_v1_social_proto_rawDescGZIP() []byte {
 }
 
 var file_social_service_v1_social_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_social_service_v1_social_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_social_service_v1_social_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_social_service_v1_social_proto_goTypes = []any{
-	(Platform)(0),                                 // 0: social.service.v1.Platform
-	(SocialDistribution_Status)(0),                // 1: social.service.v1.SocialDistribution.Status
-	(*SocialAccount)(nil),                         // 2: social.service.v1.SocialAccount
-	(*SocialDistribution)(nil),                    // 3: social.service.v1.SocialDistribution
-	(*ListSocialAccountsResponse)(nil),            // 4: social.service.v1.ListSocialAccountsResponse
-	(*GetSocialAccountRequest)(nil),               // 5: social.service.v1.GetSocialAccountRequest
-	(*CreateSocialAccountRequest)(nil),            // 6: social.service.v1.CreateSocialAccountRequest
-	(*UpdateSocialAccountRequest)(nil),            // 7: social.service.v1.UpdateSocialAccountRequest
-	(*DeleteSocialAccountRequest)(nil),            // 8: social.service.v1.DeleteSocialAccountRequest
-	(*ListSocialDistributionsResponse)(nil),       // 9: social.service.v1.ListSocialDistributionsResponse
-	(*GetSocialDistributionRequest)(nil),          // 10: social.service.v1.GetSocialDistributionRequest
-	(*CreateSocialDistributionRequest)(nil),       // 11: social.service.v1.CreateSocialDistributionRequest
-	(*UpdateSocialDistributionRequest)(nil),       // 12: social.service.v1.UpdateSocialDistributionRequest
-	(*DeleteSocialDistributionRequest)(nil),       // 13: social.service.v1.DeleteSocialDistributionRequest
-	(*PublishSocialDistributionRequest)(nil),      // 14: social.service.v1.PublishSocialDistributionRequest
-	(*RefreshSocialDistributionStatsRequest)(nil), // 15: social.service.v1.RefreshSocialDistributionStatsRequest
-	(*timestamppb.Timestamp)(nil),                 // 16: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),                 // 17: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                      // 18: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                         // 19: google.protobuf.Empty
+	(Platform)(0),                                      // 0: social.service.v1.Platform
+	(SocialDistribution_Status)(0),                     // 1: social.service.v1.SocialDistribution.Status
+	(*SocialStatsHistoryPoint)(nil),                    // 2: social.service.v1.SocialStatsHistoryPoint
+	(*ListSocialDistributionStatsHistoryRequest)(nil),  // 3: social.service.v1.ListSocialDistributionStatsHistoryRequest
+	(*ListSocialDistributionStatsHistoryResponse)(nil), // 4: social.service.v1.ListSocialDistributionStatsHistoryResponse
+	(*SocialAccount)(nil),                              // 5: social.service.v1.SocialAccount
+	(*SocialDistribution)(nil),                         // 6: social.service.v1.SocialDistribution
+	(*ListSocialAccountsResponse)(nil),                 // 7: social.service.v1.ListSocialAccountsResponse
+	(*GetSocialAccountRequest)(nil),                    // 8: social.service.v1.GetSocialAccountRequest
+	(*CreateSocialAccountRequest)(nil),                 // 9: social.service.v1.CreateSocialAccountRequest
+	(*UpdateSocialAccountRequest)(nil),                 // 10: social.service.v1.UpdateSocialAccountRequest
+	(*DeleteSocialAccountRequest)(nil),                 // 11: social.service.v1.DeleteSocialAccountRequest
+	(*ListSocialDistributionsResponse)(nil),            // 12: social.service.v1.ListSocialDistributionsResponse
+	(*GetSocialDistributionRequest)(nil),               // 13: social.service.v1.GetSocialDistributionRequest
+	(*CreateSocialDistributionRequest)(nil),            // 14: social.service.v1.CreateSocialDistributionRequest
+	(*UpdateSocialDistributionRequest)(nil),            // 15: social.service.v1.UpdateSocialDistributionRequest
+	(*DeleteSocialDistributionRequest)(nil),            // 16: social.service.v1.DeleteSocialDistributionRequest
+	(*PublishSocialDistributionRequest)(nil),           // 17: social.service.v1.PublishSocialDistributionRequest
+	(*RefreshSocialDistributionStatsRequest)(nil),      // 18: social.service.v1.RefreshSocialDistributionStatsRequest
+	(*timestamppb.Timestamp)(nil),                      // 19: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                      // 20: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                           // 21: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                              // 22: google.protobuf.Empty
 }
 var file_social_service_v1_social_proto_depIdxs = []int32{
-	0,  // 0: social.service.v1.SocialAccount.platform:type_name -> social.service.v1.Platform
-	16, // 1: social.service.v1.SocialAccount.created_at:type_name -> google.protobuf.Timestamp
-	16, // 2: social.service.v1.SocialAccount.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 3: social.service.v1.SocialAccount.deleted_at:type_name -> google.protobuf.Timestamp
-	0,  // 4: social.service.v1.SocialDistribution.platform:type_name -> social.service.v1.Platform
-	1,  // 5: social.service.v1.SocialDistribution.status:type_name -> social.service.v1.SocialDistribution.Status
-	16, // 6: social.service.v1.SocialDistribution.publish_time:type_name -> google.protobuf.Timestamp
-	16, // 7: social.service.v1.SocialDistribution.published_at:type_name -> google.protobuf.Timestamp
-	16, // 8: social.service.v1.SocialDistribution.stats_synced_at:type_name -> google.protobuf.Timestamp
-	16, // 9: social.service.v1.SocialDistribution.created_at:type_name -> google.protobuf.Timestamp
-	16, // 10: social.service.v1.SocialDistribution.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 11: social.service.v1.SocialDistribution.deleted_at:type_name -> google.protobuf.Timestamp
-	2,  // 12: social.service.v1.ListSocialAccountsResponse.items:type_name -> social.service.v1.SocialAccount
-	17, // 13: social.service.v1.GetSocialAccountRequest.view_mask:type_name -> google.protobuf.FieldMask
-	2,  // 14: social.service.v1.CreateSocialAccountRequest.data:type_name -> social.service.v1.SocialAccount
-	2,  // 15: social.service.v1.UpdateSocialAccountRequest.data:type_name -> social.service.v1.SocialAccount
-	17, // 16: social.service.v1.UpdateSocialAccountRequest.update_mask:type_name -> google.protobuf.FieldMask
-	3,  // 17: social.service.v1.ListSocialDistributionsResponse.items:type_name -> social.service.v1.SocialDistribution
-	17, // 18: social.service.v1.GetSocialDistributionRequest.view_mask:type_name -> google.protobuf.FieldMask
-	3,  // 19: social.service.v1.CreateSocialDistributionRequest.data:type_name -> social.service.v1.SocialDistribution
-	3,  // 20: social.service.v1.UpdateSocialDistributionRequest.data:type_name -> social.service.v1.SocialDistribution
-	17, // 21: social.service.v1.UpdateSocialDistributionRequest.update_mask:type_name -> google.protobuf.FieldMask
-	18, // 22: social.service.v1.SocialService.ListSocialAccounts:input_type -> pagination.PagingRequest
-	5,  // 23: social.service.v1.SocialService.GetSocialAccount:input_type -> social.service.v1.GetSocialAccountRequest
-	6,  // 24: social.service.v1.SocialService.CreateSocialAccount:input_type -> social.service.v1.CreateSocialAccountRequest
-	7,  // 25: social.service.v1.SocialService.UpdateSocialAccount:input_type -> social.service.v1.UpdateSocialAccountRequest
-	8,  // 26: social.service.v1.SocialService.DeleteSocialAccount:input_type -> social.service.v1.DeleteSocialAccountRequest
-	18, // 27: social.service.v1.SocialService.ListSocialDistributions:input_type -> pagination.PagingRequest
-	10, // 28: social.service.v1.SocialService.GetSocialDistribution:input_type -> social.service.v1.GetSocialDistributionRequest
-	11, // 29: social.service.v1.SocialService.CreateSocialDistribution:input_type -> social.service.v1.CreateSocialDistributionRequest
-	12, // 30: social.service.v1.SocialService.UpdateSocialDistribution:input_type -> social.service.v1.UpdateSocialDistributionRequest
-	13, // 31: social.service.v1.SocialService.DeleteSocialDistribution:input_type -> social.service.v1.DeleteSocialDistributionRequest
-	14, // 32: social.service.v1.SocialService.PublishSocialDistribution:input_type -> social.service.v1.PublishSocialDistributionRequest
-	15, // 33: social.service.v1.SocialService.RefreshSocialDistributionStats:input_type -> social.service.v1.RefreshSocialDistributionStatsRequest
-	4,  // 34: social.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
-	2,  // 35: social.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
-	2,  // 36: social.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
-	2,  // 37: social.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
-	19, // 38: social.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
-	9,  // 39: social.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
-	3,  // 40: social.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	3,  // 41: social.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	3,  // 42: social.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	19, // 43: social.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
-	3,  // 44: social.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
-	3,  // 45: social.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
-	34, // [34:46] is the sub-list for method output_type
-	22, // [22:34] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	19, // 0: social.service.v1.SocialStatsHistoryPoint.recorded_at:type_name -> google.protobuf.Timestamp
+	2,  // 1: social.service.v1.ListSocialDistributionStatsHistoryResponse.items:type_name -> social.service.v1.SocialStatsHistoryPoint
+	0,  // 2: social.service.v1.SocialAccount.platform:type_name -> social.service.v1.Platform
+	19, // 3: social.service.v1.SocialAccount.created_at:type_name -> google.protobuf.Timestamp
+	19, // 4: social.service.v1.SocialAccount.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 5: social.service.v1.SocialAccount.deleted_at:type_name -> google.protobuf.Timestamp
+	0,  // 6: social.service.v1.SocialDistribution.platform:type_name -> social.service.v1.Platform
+	1,  // 7: social.service.v1.SocialDistribution.status:type_name -> social.service.v1.SocialDistribution.Status
+	19, // 8: social.service.v1.SocialDistribution.publish_time:type_name -> google.protobuf.Timestamp
+	19, // 9: social.service.v1.SocialDistribution.published_at:type_name -> google.protobuf.Timestamp
+	19, // 10: social.service.v1.SocialDistribution.stats_synced_at:type_name -> google.protobuf.Timestamp
+	19, // 11: social.service.v1.SocialDistribution.created_at:type_name -> google.protobuf.Timestamp
+	19, // 12: social.service.v1.SocialDistribution.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 13: social.service.v1.SocialDistribution.deleted_at:type_name -> google.protobuf.Timestamp
+	5,  // 14: social.service.v1.ListSocialAccountsResponse.items:type_name -> social.service.v1.SocialAccount
+	20, // 15: social.service.v1.GetSocialAccountRequest.view_mask:type_name -> google.protobuf.FieldMask
+	5,  // 16: social.service.v1.CreateSocialAccountRequest.data:type_name -> social.service.v1.SocialAccount
+	5,  // 17: social.service.v1.UpdateSocialAccountRequest.data:type_name -> social.service.v1.SocialAccount
+	20, // 18: social.service.v1.UpdateSocialAccountRequest.update_mask:type_name -> google.protobuf.FieldMask
+	6,  // 19: social.service.v1.ListSocialDistributionsResponse.items:type_name -> social.service.v1.SocialDistribution
+	20, // 20: social.service.v1.GetSocialDistributionRequest.view_mask:type_name -> google.protobuf.FieldMask
+	6,  // 21: social.service.v1.CreateSocialDistributionRequest.data:type_name -> social.service.v1.SocialDistribution
+	6,  // 22: social.service.v1.UpdateSocialDistributionRequest.data:type_name -> social.service.v1.SocialDistribution
+	20, // 23: social.service.v1.UpdateSocialDistributionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	21, // 24: social.service.v1.SocialService.ListSocialAccounts:input_type -> pagination.PagingRequest
+	8,  // 25: social.service.v1.SocialService.GetSocialAccount:input_type -> social.service.v1.GetSocialAccountRequest
+	9,  // 26: social.service.v1.SocialService.CreateSocialAccount:input_type -> social.service.v1.CreateSocialAccountRequest
+	10, // 27: social.service.v1.SocialService.UpdateSocialAccount:input_type -> social.service.v1.UpdateSocialAccountRequest
+	11, // 28: social.service.v1.SocialService.DeleteSocialAccount:input_type -> social.service.v1.DeleteSocialAccountRequest
+	21, // 29: social.service.v1.SocialService.ListSocialDistributions:input_type -> pagination.PagingRequest
+	13, // 30: social.service.v1.SocialService.GetSocialDistribution:input_type -> social.service.v1.GetSocialDistributionRequest
+	14, // 31: social.service.v1.SocialService.CreateSocialDistribution:input_type -> social.service.v1.CreateSocialDistributionRequest
+	15, // 32: social.service.v1.SocialService.UpdateSocialDistribution:input_type -> social.service.v1.UpdateSocialDistributionRequest
+	16, // 33: social.service.v1.SocialService.DeleteSocialDistribution:input_type -> social.service.v1.DeleteSocialDistributionRequest
+	17, // 34: social.service.v1.SocialService.PublishSocialDistribution:input_type -> social.service.v1.PublishSocialDistributionRequest
+	18, // 35: social.service.v1.SocialService.RefreshSocialDistributionStats:input_type -> social.service.v1.RefreshSocialDistributionStatsRequest
+	3,  // 36: social.service.v1.SocialService.ListSocialDistributionStatsHistory:input_type -> social.service.v1.ListSocialDistributionStatsHistoryRequest
+	7,  // 37: social.service.v1.SocialService.ListSocialAccounts:output_type -> social.service.v1.ListSocialAccountsResponse
+	5,  // 38: social.service.v1.SocialService.GetSocialAccount:output_type -> social.service.v1.SocialAccount
+	5,  // 39: social.service.v1.SocialService.CreateSocialAccount:output_type -> social.service.v1.SocialAccount
+	5,  // 40: social.service.v1.SocialService.UpdateSocialAccount:output_type -> social.service.v1.SocialAccount
+	22, // 41: social.service.v1.SocialService.DeleteSocialAccount:output_type -> google.protobuf.Empty
+	12, // 42: social.service.v1.SocialService.ListSocialDistributions:output_type -> social.service.v1.ListSocialDistributionsResponse
+	6,  // 43: social.service.v1.SocialService.GetSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	6,  // 44: social.service.v1.SocialService.CreateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	6,  // 45: social.service.v1.SocialService.UpdateSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	22, // 46: social.service.v1.SocialService.DeleteSocialDistribution:output_type -> google.protobuf.Empty
+	6,  // 47: social.service.v1.SocialService.PublishSocialDistribution:output_type -> social.service.v1.SocialDistribution
+	6,  // 48: social.service.v1.SocialService.RefreshSocialDistributionStats:output_type -> social.service.v1.SocialDistribution
+	4,  // 49: social.service.v1.SocialService.ListSocialDistributionStatsHistory:output_type -> social.service.v1.ListSocialDistributionStatsHistoryResponse
+	37, // [37:50] is the sub-list for method output_type
+	24, // [24:37] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_social_service_v1_social_proto_init() }
@@ -1489,13 +1681,15 @@ func file_social_service_v1_social_proto_init() {
 	file_social_service_v1_social_proto_msgTypes[0].OneofWrappers = []any{}
 	file_social_service_v1_social_proto_msgTypes[1].OneofWrappers = []any{}
 	file_social_service_v1_social_proto_msgTypes[3].OneofWrappers = []any{}
-	file_social_service_v1_social_proto_msgTypes[5].OneofWrappers = []any{}
-	file_social_service_v1_social_proto_msgTypes[6].OneofWrappers = []any{
+	file_social_service_v1_social_proto_msgTypes[4].OneofWrappers = []any{}
+	file_social_service_v1_social_proto_msgTypes[6].OneofWrappers = []any{}
+	file_social_service_v1_social_proto_msgTypes[8].OneofWrappers = []any{}
+	file_social_service_v1_social_proto_msgTypes[9].OneofWrappers = []any{
 		(*DeleteSocialAccountRequest_Id)(nil),
 	}
-	file_social_service_v1_social_proto_msgTypes[8].OneofWrappers = []any{}
-	file_social_service_v1_social_proto_msgTypes[10].OneofWrappers = []any{}
-	file_social_service_v1_social_proto_msgTypes[11].OneofWrappers = []any{
+	file_social_service_v1_social_proto_msgTypes[11].OneofWrappers = []any{}
+	file_social_service_v1_social_proto_msgTypes[13].OneofWrappers = []any{}
+	file_social_service_v1_social_proto_msgTypes[14].OneofWrappers = []any{
 		(*DeleteSocialDistributionRequest_Id)(nil),
 	}
 	type x struct{}
@@ -1504,7 +1698,7 @@ func file_social_service_v1_social_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_social_service_v1_social_proto_rawDesc), len(file_social_service_v1_social_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   14,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

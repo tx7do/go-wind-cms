@@ -10612,6 +10612,10 @@ export interface SocialService {
   RefreshSocialDistributionStats(
     request: socialservicev1_RefreshSocialDistributionStatsRequest,
   ): Promise<socialservicev1_SocialDistribution>;
+  // 获取分发记录的互动统计历史（趋势图数据）
+  ListSocialDistributionStatsHistory(
+    request: socialservicev1_ListSocialDistributionStatsHistoryRequest,
+  ): Promise<socialservicev1_ListSocialDistributionStatsHistoryResponse>;
 }
 
 export function createSocialServiceClient(
@@ -10972,6 +10976,27 @@ export function createSocialServiceClient(
         method: 'RefreshSocialDistributionStats',
       }) as Promise<socialservicev1_SocialDistribution>;
     },
+    ListSocialDistributionStatsHistory(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/social/distributions/${request.id}/stats/history`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SocialService',
+        method: 'ListSocialDistributionStatsHistory',
+      }) as Promise<socialservicev1_ListSocialDistributionStatsHistoryResponse>;
+    },
   };
 }
 // 回应 - 社交账号列表
@@ -11109,6 +11134,25 @@ export type socialservicev1_PublishSocialDistributionRequest = {
 // 请求 - 回拉分发记录统计
 export type socialservicev1_RefreshSocialDistributionStatsRequest = {
   id: number | undefined;
+};
+
+// 请求 - 统计历史
+export type socialservicev1_ListSocialDistributionStatsHistoryRequest = {
+  id: number | undefined;
+  limit?: number;
+};
+
+// 回应 - 统计历史
+export type socialservicev1_ListSocialDistributionStatsHistoryResponse = {
+  items: socialservicev1_SocialStatsHistoryPoint[] | undefined;
+};
+
+// 统计历史快照点
+export type socialservicev1_SocialStatsHistoryPoint = {
+  likes?: number;
+  recordedAt?: wellKnownTimestamp;
+  replies?: number;
+  reposts?: number;
 };
 
 // 统计服务（后台分析页 BFF 转发）。仅转发至 core StatsService，

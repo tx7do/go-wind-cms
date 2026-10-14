@@ -25,6 +25,7 @@ import {
   statusOptions,
 } from './constants';
 import SocialDistributionDrawer from './SocialDistributionDrawer';
+import StatsTrendModal from './StatsTrendModal';
 
 /**
  * 内容分发列表页：CMS 文章 → 社交平台的发布记录（状态/统计/失败原因）
@@ -40,6 +41,7 @@ const SocialDistributionList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingRow, setEditingRow] = useState<any>(null);
   const [calendarPrefillDate, setCalendarPrefillDate] = useState<string | undefined>();
+  const [trendRow, setTrendRow] = useState<any>(null);
 
   // ── 日历视图 ──
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
@@ -274,6 +276,9 @@ const SocialDistributionList = () => {
             >
               <SyncOutlined /> {t('refreshStats')}
             </a>,
+            <a key="trend" onClick={() => setTrendRow(record)}>
+              {t('trend')}
+            </a>,
           );
         }
         actions.push(
@@ -392,6 +397,12 @@ const SocialDistributionList = () => {
         />
         )}
       </div>
+
+      <StatsTrendModal
+        open={!!trendRow}
+        distributionId={trendRow?.id}
+        onClose={() => setTrendRow(null)}
+      />
 
       <SocialDistributionDrawer
         open={drawerOpen}

@@ -128,5 +128,12 @@
     "rpc_url": "e.g. cnblogs https://rpc.cnblogs.com/metaweblog/{blog}; enable MetaWeblog/API access in the blog backend"
   },
   "status": "Status",
-  "requiredCredential": "{{label}} is required"
+  "requiredCredential": "{{label}} is required",
+  "trend": "Trend",
+  "trendTitle": "Engagement Trend",
+  "trendNoData": "Not enough snapshots yet (auto pull every 30 minutes, or refresh manually to accumulate)",
+  "trend.likes": "Likes",
+  "trend.replies": "Replies",
+  "trend.reposts": "Reposts",
+  "trendHint": "Trend is based on pull history snapshots; one data point accumulates every 30 minutes after publishing"
 }

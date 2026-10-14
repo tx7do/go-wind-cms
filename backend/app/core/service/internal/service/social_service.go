@@ -14,6 +14,8 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
+	"github.com/tx7do/go-utils/timeutil"
+
 	appViewer "go-wind-cms/pkg/entgo/viewer"
 	"go-wind-cms/pkg/social"
 
@@ -529,7 +531,7 @@ func (s *SocialService) PublishDistributionWorker(taskType string, payload *task
 
 	creds, err := s.decryptCredentials(acct)
 	if err != nil {
-		s.distributionRepo.MarkFailed(ctx, d.GetId(), "credentials unavailable: "+err.Error())
+		_, _ = 		s.distributionRepo.MarkFailed(ctx, d.GetId(), "credentials unavailable: "+err.Error())
 		return nil
 	}
 
@@ -858,6 +860,35 @@ func (s *SocialService) StatsSyncWorker(taskType string, payload *task.StatsSync
 
 	s.log.Infof("stats sync: batch done (candidates=%d ok=%d fail=%d)", len(items), okCount, failCount)
 	return nil
+}
+
+// ListSocialDistributionStatsHistory 返回分发记录的统计时间序列（趋势图数据）。
+func (s *SocialService) ListSocialDistributionStatsHistory(ctx context.Context, req *socialV1.ListSocialDistributionStatsHistoryRequest) (*socialV1.ListSocialDistributionStatsHistoryResponse, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, socialV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// 租户校验：Get 走租户过滤，跨租户访问直接 404
+	if _, err := s.distributionRepo.Get(ctx, &socialV1.GetSocialDistributionRequest{Id: req.GetId()}); err != nil {
+		return nil, err
+	}
+
+	records, err := s.statsHistoryRepo.ListByDistribution(ctx, req.GetId(), int(req.GetLimit()))
+	if err != nil {
+		return nil, socialV1.ErrorInternalServerError("list stats history failed")
+	}
+
+	items := make([]*socialV1.SocialStatsHistoryPoint, 0, len(records))
+	for _, rec := range records {
+		at := rec.RecordedAt
+		items = append(items, &socialV1.SocialStatsHistoryPoint{
+			RecordedAt: timeutil.TimeToTimestamppb(&at),
+			Likes:      trans.Ptr(rec.Likes),
+			Replies:    trans.Ptr(rec.Replies),
+			Reposts:    trans.Ptr(rec.Reposts),
+		})
+	}
+	return &socialV1.ListSocialDistributionStatsHistoryResponse{Items: items}, nil
 }
 
 // recordStatsHistory 追加一行统计快照（趋势数据从今天开始积累；失败不影响主流程）。

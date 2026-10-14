@@ -29,6 +29,7 @@ const OperationSocialServiceDeleteSocialDistribution = "/admin.service.v1.Social
 const OperationSocialServiceGetSocialAccount = "/admin.service.v1.SocialService/GetSocialAccount"
 const OperationSocialServiceGetSocialDistribution = "/admin.service.v1.SocialService/GetSocialDistribution"
 const OperationSocialServiceListSocialAccounts = "/admin.service.v1.SocialService/ListSocialAccounts"
+const OperationSocialServiceListSocialDistributionStatsHistory = "/admin.service.v1.SocialService/ListSocialDistributionStatsHistory"
 const OperationSocialServiceListSocialDistributions = "/admin.service.v1.SocialService/ListSocialDistributions"
 const OperationSocialServicePublishSocialDistribution = "/admin.service.v1.SocialService/PublishSocialDistribution"
 const OperationSocialServiceRefreshSocialDistributionStats = "/admin.service.v1.SocialService/RefreshSocialDistributionStats"
@@ -50,6 +51,8 @@ type SocialServiceHTTPServer interface {
 	GetSocialDistribution(context.Context, *v11.GetSocialDistributionRequest) (*v11.SocialDistribution, error)
 	// ListSocialAccounts 获取社交账号列表
 	ListSocialAccounts(context.Context, *v1.PagingRequest) (*v11.ListSocialAccountsResponse, error)
+	// ListSocialDistributionStatsHistory 获取分发记录的互动统计历史（趋势图数据）
+	ListSocialDistributionStatsHistory(context.Context, *v11.ListSocialDistributionStatsHistoryRequest) (*v11.ListSocialDistributionStatsHistoryResponse, error)
 	// ListSocialDistributions 获取分发记录列表
 	ListSocialDistributions(context.Context, *v1.PagingRequest) (*v11.ListSocialDistributionsResponse, error)
 	// PublishSocialDistribution 立即发布分发记录
@@ -76,6 +79,7 @@ func RegisterSocialServiceHTTPServer(s *http.Server, srv SocialServiceHTTPServer
 	r.DELETE("/admin/v1/social/distributions/{id}", _SocialService_DeleteSocialDistribution0_HTTP_Handler(srv))
 	r.POST("/admin/v1/social/distributions/{id}/publish", _SocialService_PublishSocialDistribution0_HTTP_Handler(srv))
 	r.POST("/admin/v1/social/distributions/{id}/stats/refresh", _SocialService_RefreshSocialDistributionStats0_HTTP_Handler(srv))
+	r.GET("/admin/v1/social/distributions/{id}/stats/history", _SocialService_ListSocialDistributionStatsHistory0_HTTP_Handler(srv))
 }
 
 func _SocialService_ListSocialAccounts0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
@@ -348,6 +352,28 @@ func _SocialService_RefreshSocialDistributionStats0_HTTP_Handler(srv SocialServi
 	}
 }
 
+func _SocialService_ListSocialDistributionStatsHistory0_HTTP_Handler(srv SocialServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListSocialDistributionStatsHistoryRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSocialServiceListSocialDistributionStatsHistory)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListSocialDistributionStatsHistory(ctx, req.(*v11.ListSocialDistributionStatsHistoryRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListSocialDistributionStatsHistoryResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type SocialServiceHTTPClient interface {
 	// CreateSocialAccount 创建社交账号（服务端验证凭据并加密落库）
 	CreateSocialAccount(ctx context.Context, req *v11.CreateSocialAccountRequest, opts ...http.CallOption) (rsp *v11.SocialAccount, err error)
@@ -363,6 +389,8 @@ type SocialServiceHTTPClient interface {
 	GetSocialDistribution(ctx context.Context, req *v11.GetSocialDistributionRequest, opts ...http.CallOption) (rsp *v11.SocialDistribution, err error)
 	// ListSocialAccounts 获取社交账号列表
 	ListSocialAccounts(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListSocialAccountsResponse, err error)
+	// ListSocialDistributionStatsHistory 获取分发记录的互动统计历史（趋势图数据）
+	ListSocialDistributionStatsHistory(ctx context.Context, req *v11.ListSocialDistributionStatsHistoryRequest, opts ...http.CallOption) (rsp *v11.ListSocialDistributionStatsHistoryResponse, err error)
 	// ListSocialDistributions 获取分发记录列表
 	ListSocialDistributions(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListSocialDistributionsResponse, err error)
 	// PublishSocialDistribution 立即发布分发记录
@@ -473,6 +501,20 @@ func (c *SocialServiceHTTPClientImpl) ListSocialAccounts(ctx context.Context, in
 	pattern := "/admin/v1/social/accounts"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationSocialServiceListSocialAccounts))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListSocialDistributionStatsHistory 获取分发记录的互动统计历史（趋势图数据）
+func (c *SocialServiceHTTPClientImpl) ListSocialDistributionStatsHistory(ctx context.Context, in *v11.ListSocialDistributionStatsHistoryRequest, opts ...http.CallOption) (*v11.ListSocialDistributionStatsHistoryResponse, error) {
+	var out v11.ListSocialDistributionStatsHistoryResponse
+	pattern := "/admin/v1/social/distributions/{id}/stats/history"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationSocialServiceListSocialDistributionStatsHistory))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

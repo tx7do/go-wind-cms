@@ -11,6 +11,8 @@ import {
   type socialservicev1_DeleteSocialDistributionRequest,
   type socialservicev1_ListSocialAccountsResponse,
   type socialservicev1_ListSocialDistributionsResponse,
+  type socialservicev1_ListSocialDistributionStatsHistoryRequest,
+  type socialservicev1_ListSocialDistributionStatsHistoryResponse,
   type socialservicev1_PublishSocialDistributionRequest,
   type socialservicev1_RefreshSocialDistributionStatsRequest,
   type socialservicev1_SocialAccount,
@@ -155,6 +157,21 @@ export function usePublishSocialDistribution(
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.socialService.PublishSocialDistribution(data),
+    ...options,
+  });
+}
+
+export function useSocialDistributionStatsHistory(
+  req: socialservicev1_ListSocialDistributionStatsHistoryRequest,
+  options?: Omit<
+    UseQueryOptions<socialservicev1_ListSocialDistributionStatsHistoryResponse, Error>,
+    'queryKey' | 'queryFn'
+  >,
+) {
+  return useQuery({
+    queryKey: ['socialDistributionStatsHistory', req],
+    queryFn: () => apiClient.socialService.ListSocialDistributionStatsHistory(req),
+    enabled: !!req.id,
     ...options,
   });
 }

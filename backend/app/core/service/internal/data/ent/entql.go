@@ -793,6 +793,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			internalmessagerecipient.FieldStatus:          {Type: field.TypeEnum, Column: internalmessagerecipient.FieldStatus},
 			internalmessagerecipient.FieldReceivedAt:      {Type: field.TypeTime, Column: internalmessagerecipient.FieldReceivedAt},
 			internalmessagerecipient.FieldReadAt:          {Type: field.TypeTime, Column: internalmessagerecipient.FieldReadAt},
+			internalmessagerecipient.FieldTitle:           {Type: field.TypeString, Column: internalmessagerecipient.FieldTitle},
+			internalmessagerecipient.FieldContent:         {Type: field.TypeString, Column: internalmessagerecipient.FieldContent},
 		},
 	}
 	graph.Nodes[26] = &sqlgraph.Node{
@@ -5604,6 +5606,16 @@ func (f *InternalMessageRecipientFilter) WhereReceivedAt(p entql.TimeP) {
 // WhereReadAt applies the entql time.Time predicate on the read_at field.
 func (f *InternalMessageRecipientFilter) WhereReadAt(p entql.TimeP) {
 	f.Where(p.Field(internalmessagerecipient.FieldReadAt))
+}
+
+// WhereTitle applies the entql string predicate on the title field.
+func (f *InternalMessageRecipientFilter) WhereTitle(p entql.StringP) {
+	f.Where(p.Field(internalmessagerecipient.FieldTitle))
+}
+
+// WhereContent applies the entql string predicate on the content field.
+func (f *InternalMessageRecipientFilter) WhereContent(p entql.StringP) {
+	f.Where(p.Field(internalmessagerecipient.FieldContent))
 }
 
 // addPredicate implements the predicateAdder interface.

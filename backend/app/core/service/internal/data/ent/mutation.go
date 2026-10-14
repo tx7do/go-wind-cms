@@ -39165,6 +39165,8 @@ type InternalMessageRecipientMutation struct {
 	status               *internalmessagerecipient.Status
 	received_at          *time.Time
 	read_at              *time.Time
+	title                *string
+	content              *string
 	clearedFields        map[string]struct{}
 	done                 bool
 	oldValue             func(context.Context) (*InternalMessageRecipient, error)
@@ -39779,6 +39781,104 @@ func (m *InternalMessageRecipientMutation) ResetReadAt() {
 	delete(m.clearedFields, internalmessagerecipient.FieldReadAt)
 }
 
+// SetTitle sets the "title" field.
+func (m *InternalMessageRecipientMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *InternalMessageRecipientMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the InternalMessageRecipient entity.
+// If the InternalMessageRecipient object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InternalMessageRecipientMutation) OldTitle(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ClearTitle clears the value of the "title" field.
+func (m *InternalMessageRecipientMutation) ClearTitle() {
+	m.title = nil
+	m.clearedFields[internalmessagerecipient.FieldTitle] = struct{}{}
+}
+
+// TitleCleared returns if the "title" field was cleared in this mutation.
+func (m *InternalMessageRecipientMutation) TitleCleared() bool {
+	_, ok := m.clearedFields[internalmessagerecipient.FieldTitle]
+	return ok
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *InternalMessageRecipientMutation) ResetTitle() {
+	m.title = nil
+	delete(m.clearedFields, internalmessagerecipient.FieldTitle)
+}
+
+// SetContent sets the "content" field.
+func (m *InternalMessageRecipientMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *InternalMessageRecipientMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the InternalMessageRecipient entity.
+// If the InternalMessageRecipient object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InternalMessageRecipientMutation) OldContent(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ClearContent clears the value of the "content" field.
+func (m *InternalMessageRecipientMutation) ClearContent() {
+	m.content = nil
+	m.clearedFields[internalmessagerecipient.FieldContent] = struct{}{}
+}
+
+// ContentCleared returns if the "content" field was cleared in this mutation.
+func (m *InternalMessageRecipientMutation) ContentCleared() bool {
+	_, ok := m.clearedFields[internalmessagerecipient.FieldContent]
+	return ok
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *InternalMessageRecipientMutation) ResetContent() {
+	m.content = nil
+	delete(m.clearedFields, internalmessagerecipient.FieldContent)
+}
+
 // Where appends a list predicates to the InternalMessageRecipientMutation builder.
 func (m *InternalMessageRecipientMutation) Where(ps ...predicate.InternalMessageRecipient) {
 	m.predicates = append(m.predicates, ps...)
@@ -39813,7 +39913,7 @@ func (m *InternalMessageRecipientMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InternalMessageRecipientMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, internalmessagerecipient.FieldCreatedAt)
 	}
@@ -39841,6 +39941,12 @@ func (m *InternalMessageRecipientMutation) Fields() []string {
 	if m.read_at != nil {
 		fields = append(fields, internalmessagerecipient.FieldReadAt)
 	}
+	if m.title != nil {
+		fields = append(fields, internalmessagerecipient.FieldTitle)
+	}
+	if m.content != nil {
+		fields = append(fields, internalmessagerecipient.FieldContent)
+	}
 	return fields
 }
 
@@ -39867,6 +39973,10 @@ func (m *InternalMessageRecipientMutation) Field(name string) (ent.Value, bool) 
 		return m.ReceivedAt()
 	case internalmessagerecipient.FieldReadAt:
 		return m.ReadAt()
+	case internalmessagerecipient.FieldTitle:
+		return m.Title()
+	case internalmessagerecipient.FieldContent:
+		return m.Content()
 	}
 	return nil, false
 }
@@ -39894,6 +40004,10 @@ func (m *InternalMessageRecipientMutation) OldField(ctx context.Context, name st
 		return m.OldReceivedAt(ctx)
 	case internalmessagerecipient.FieldReadAt:
 		return m.OldReadAt(ctx)
+	case internalmessagerecipient.FieldTitle:
+		return m.OldTitle(ctx)
+	case internalmessagerecipient.FieldContent:
+		return m.OldContent(ctx)
 	}
 	return nil, fmt.Errorf("unknown InternalMessageRecipient field %s", name)
 }
@@ -39965,6 +40079,20 @@ func (m *InternalMessageRecipientMutation) SetField(name string, value ent.Value
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetReadAt(v)
+		return nil
+	case internalmessagerecipient.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case internalmessagerecipient.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
 		return nil
 	}
 	return fmt.Errorf("unknown InternalMessageRecipient field %s", name)
@@ -40062,6 +40190,12 @@ func (m *InternalMessageRecipientMutation) ClearedFields() []string {
 	if m.FieldCleared(internalmessagerecipient.FieldReadAt) {
 		fields = append(fields, internalmessagerecipient.FieldReadAt)
 	}
+	if m.FieldCleared(internalmessagerecipient.FieldTitle) {
+		fields = append(fields, internalmessagerecipient.FieldTitle)
+	}
+	if m.FieldCleared(internalmessagerecipient.FieldContent) {
+		fields = append(fields, internalmessagerecipient.FieldContent)
+	}
 	return fields
 }
 
@@ -40103,6 +40237,12 @@ func (m *InternalMessageRecipientMutation) ClearField(name string) error {
 	case internalmessagerecipient.FieldReadAt:
 		m.ClearReadAt()
 		return nil
+	case internalmessagerecipient.FieldTitle:
+		m.ClearTitle()
+		return nil
+	case internalmessagerecipient.FieldContent:
+		m.ClearContent()
+		return nil
 	}
 	return fmt.Errorf("unknown InternalMessageRecipient nullable field %s", name)
 }
@@ -40137,6 +40277,12 @@ func (m *InternalMessageRecipientMutation) ResetField(name string) error {
 		return nil
 	case internalmessagerecipient.FieldReadAt:
 		m.ResetReadAt()
+		return nil
+	case internalmessagerecipient.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case internalmessagerecipient.FieldContent:
+		m.ResetContent()
 		return nil
 	}
 	return fmt.Errorf("unknown InternalMessageRecipient field %s", name)

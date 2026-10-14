@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -50,6 +51,43 @@ func (r *SocialStatsHistoryRepo) Record(ctx context.Context, rec StatsRecord) er
 		return err
 	}
 	return nil
+}
+
+// ListByDistribution 取某分发记录的统计快照时间序列（按时间升序，至多 limit 点；
+// 倒序取最近 N 点后反转为时间升序，供趋势图直接绘制）。
+func (r *SocialStatsHistoryRepo) ListByDistribution(ctx context.Context, distributionID uint32, limit int) ([]StatsRecord, error) {
+	if limit <= 0 || limit > 1000 {
+		limit = 200
+	}
+	rows, err := r.entClient.Client().SocialStatsHistory.Query().
+		Where(socialstatshistory.DistributionIDEQ(distributionID)).
+		Order(socialstatshistory.ByCreatedAt(sql.OrderDesc())).
+		Limit(limit).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list stats history failed (distribution=%d): %s", distributionID, err.Error())
+		return nil, err
+	}
+
+	records := make([]StatsRecord, 0, len(rows))
+	for i := len(rows) - 1; i >= 0; i-- {
+		row := rows[i]
+		rec := StatsRecord{DistributionID: distributionID}
+		if row.CreatedAt != nil {
+			rec.RecordedAt = *row.CreatedAt
+		}
+		if row.Likes != nil {
+			rec.Likes = *row.Likes
+		}
+		if row.Replies != nil {
+			rec.Replies = *row.Replies
+		}
+		if row.Reposts != nil {
+			rec.Reposts = *row.Reposts
+		}
+		records = append(records, rec)
+	}
+	return records, nil
 }
 
 // PruneOlderThan 裁剪指定时间之前的快照（限批，防长事务）。

@@ -104,4 +104,11 @@ service SocialService {
       body: "*"
     };
   }
+
+  // 获取分发记录的互动统计历史（趋势图数据）
+  rpc ListSocialDistributionStatsHistory (social.service.v1.ListSocialDistributionStatsHistoryRequest) returns (social.service.v1.ListSocialDistributionStatsHistoryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/social/distributions/{id}/stats/history"
+    };
+  }
 }

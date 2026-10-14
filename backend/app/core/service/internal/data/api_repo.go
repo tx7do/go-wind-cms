@@ -73,7 +73,11 @@ func (r *ApiRepo) init() {
 func (r *ApiRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (*permissionV1.CountApiResponse, error) {
 	builder := r.entClient.Client().Api.Query()
 
-	whereSelectors, _, err := r.repository.BuildListSelectorWithPaging(builder, req)
+	whereSelectors, _, selErr := r.repository.BuildListSelectorWithPaging(builder, req)
+	if selErr != nil {
+		r.log.Errorf("build list selector failed: %s", selErr.Error())
+		return nil, permissionV1.ErrorInternalServerError("build list selector failed")
+	}
 	if len(whereSelectors) != 0 {
 		builder.Modify(whereSelectors...)
 	}
@@ -250,6 +254,97 @@ func (r *ApiRepo) BatchCreate(ctx context.Context, apis []*permissionV1.Api) err
 		return permissionV1.ErrorInternalServerError("batch insert apis failed")
 	}
 
+	return nil
+}
+
+// derefString nil 安全解引用（ent 字段为 nillable 指针）。
+func derefString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+// SyncApis 以 (path, method) 为业务键对账式同步接口表：
+//   - 已存在的端点：module/operation/description 有变化则按 ID 原位更新
+//     （不换 ID——角色/权限绑定引用既有 ID，重排会扯断绑定）
+//   - 缺失的端点：显式分配 ID（从 max(id)+1 续号）创建，并在创建后把 PG 序列
+//     对齐到 max(id)——历史上接口行全部以显式 ID 插入、序列从未启用，这是
+//     "手工单建撞主键"历史遗留的根治
+//   - 文档中已移除的端点不删除（同理保护绑定），仅在其上标注
+//
+// 该方法替代原先"清空才可用"的全量重插实现。
+func (r *ApiRepo) SyncApis(ctx context.Context, apis []*permissionV1.Api) error {
+	if len(apis) == 0 {
+		return nil
+	}
+
+	rows, err := r.entClient.Client().Api.Query().All(ctx)
+	if err != nil {
+		r.log.Errorf("sync apis: load existing failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("load existing apis failed")
+	}
+
+	type key struct {
+		path   string
+		method string
+	}
+	existing := make(map[key]*ent.Api, len(rows))
+	maxID := uint32(0)
+	for _, row := range rows {
+		existing[key{path: derefString(row.Path), method: derefString(row.Method)}] = row
+		if row.ID > maxID {
+			maxID = row.ID
+		}
+	}
+
+	created, updated := 0, 0
+	now := time.Now()
+	for _, dto := range apis {
+		k := key{path: dto.GetPath(), method: dto.GetMethod()}
+		if row, ok := existing[k]; ok {
+			// 已存在：仅在元数据变化时原位更新
+			if derefString(row.Module) == dto.GetModule() &&
+				derefString(row.Operation) == dto.GetOperation() &&
+				derefString(row.Description) == dto.GetDescription() &&
+				derefString(row.ModuleDescription) == dto.GetModuleDescription() {
+				continue
+			}
+			if _, uerr := r.entClient.Client().Api.UpdateOneID(row.ID).
+				SetNillableModule(dto.Module).
+				SetNillableModuleDescription(dto.ModuleDescription).
+				SetNillableOperation(dto.Operation).
+				SetNillableDescription(dto.Description).
+				SetUpdatedAt(now).
+				Save(ctx); uerr != nil {
+				r.log.Errorf("sync apis: update api %d failed: %s", row.ID, uerr.Error())
+				return permissionV1.ErrorInternalServerError("update api failed")
+			}
+			updated++
+			continue
+		}
+
+		// 缺失：显式续号创建（不依赖 PG 序列的历史位置）
+		maxID++
+		if _, cerr := r.newApiCreate(dto).SetID(maxID).SetCreatedAt(now).Save(ctx); cerr != nil {
+			r.log.Errorf("sync apis: create api %s %s failed: %s", dto.GetMethod(), dto.GetPath(), cerr.Error())
+			return permissionV1.ErrorInternalServerError("create api failed")
+		}
+		existing[k] = nil // 防同批次重复
+		created++
+	}
+
+	// PG 序列对齐：修复"显式 ID 行导致序列落后、无 ID 单建撞主键"的历史遗留
+	if created > 0 {
+		if sxerr := r.entClient.Exec(ctx,
+			"SELECT setval(pg_get_serial_sequence('sys_apis','id'), GREATEST(COALESCE((SELECT MAX(id) FROM sys_apis), 0), 1), true)",
+			nil, nil); sxerr != nil {
+			// 序列对齐失败不影响同步结果，仅影响后续无 ID 单建
+			r.log.Warnf("sync apis: align id sequence failed: %s", sxerr.Error())
+		}
+	}
+
+	r.log.Infof("sync apis: done (total=%d created=%d updated=%d)", len(apis), created, updated)
 	return nil
 }
 

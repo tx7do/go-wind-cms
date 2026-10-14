@@ -183,6 +183,46 @@ func (_u *InternalMessageRecipientUpdate) ClearReadAt() *InternalMessageRecipien
 	return _u
 }
 
+// SetTitle sets the "title" field.
+func (_u *InternalMessageRecipientUpdate) SetTitle(v string) *InternalMessageRecipientUpdate {
+	_u.mutation.SetTitle(v)
+	return _u
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_u *InternalMessageRecipientUpdate) SetNillableTitle(v *string) *InternalMessageRecipientUpdate {
+	if v != nil {
+		_u.SetTitle(*v)
+	}
+	return _u
+}
+
+// ClearTitle clears the value of the "title" field.
+func (_u *InternalMessageRecipientUpdate) ClearTitle() *InternalMessageRecipientUpdate {
+	_u.mutation.ClearTitle()
+	return _u
+}
+
+// SetContent sets the "content" field.
+func (_u *InternalMessageRecipientUpdate) SetContent(v string) *InternalMessageRecipientUpdate {
+	_u.mutation.SetContent(v)
+	return _u
+}
+
+// SetNillableContent sets the "content" field if the given value is not nil.
+func (_u *InternalMessageRecipientUpdate) SetNillableContent(v *string) *InternalMessageRecipientUpdate {
+	if v != nil {
+		_u.SetContent(*v)
+	}
+	return _u
+}
+
+// ClearContent clears the value of the "content" field.
+func (_u *InternalMessageRecipientUpdate) ClearContent() *InternalMessageRecipientUpdate {
+	_u.mutation.ClearContent()
+	return _u
+}
+
 // Mutation returns the InternalMessageRecipientMutation object of the builder.
 func (_u *InternalMessageRecipientUpdate) Mutation() *InternalMessageRecipientMutation {
 	return _u.mutation
@@ -296,6 +336,18 @@ func (_u *InternalMessageRecipientUpdate) sqlSave(ctx context.Context) (_node in
 	}
 	if _u.mutation.ReadAtCleared() {
 		_spec.ClearField(internalmessagerecipient.FieldReadAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.Title(); ok {
+		_spec.SetField(internalmessagerecipient.FieldTitle, field.TypeString, value)
+	}
+	if _u.mutation.TitleCleared() {
+		_spec.ClearField(internalmessagerecipient.FieldTitle, field.TypeString)
+	}
+	if value, ok := _u.mutation.Content(); ok {
+		_spec.SetField(internalmessagerecipient.FieldContent, field.TypeString, value)
+	}
+	if _u.mutation.ContentCleared() {
+		_spec.ClearField(internalmessagerecipient.FieldContent, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -473,6 +525,46 @@ func (_u *InternalMessageRecipientUpdateOne) ClearReadAt() *InternalMessageRecip
 	return _u
 }
 
+// SetTitle sets the "title" field.
+func (_u *InternalMessageRecipientUpdateOne) SetTitle(v string) *InternalMessageRecipientUpdateOne {
+	_u.mutation.SetTitle(v)
+	return _u
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_u *InternalMessageRecipientUpdateOne) SetNillableTitle(v *string) *InternalMessageRecipientUpdateOne {
+	if v != nil {
+		_u.SetTitle(*v)
+	}
+	return _u
+}
+
+// ClearTitle clears the value of the "title" field.
+func (_u *InternalMessageRecipientUpdateOne) ClearTitle() *InternalMessageRecipientUpdateOne {
+	_u.mutation.ClearTitle()
+	return _u
+}
+
+// SetContent sets the "content" field.
+func (_u *InternalMessageRecipientUpdateOne) SetContent(v string) *InternalMessageRecipientUpdateOne {
+	_u.mutation.SetContent(v)
+	return _u
+}
+
+// SetNillableContent sets the "content" field if the given value is not nil.
+func (_u *InternalMessageRecipientUpdateOne) SetNillableContent(v *string) *InternalMessageRecipientUpdateOne {
+	if v != nil {
+		_u.SetContent(*v)
+	}
+	return _u
+}
+
+// ClearContent clears the value of the "content" field.
+func (_u *InternalMessageRecipientUpdateOne) ClearContent() *InternalMessageRecipientUpdateOne {
+	_u.mutation.ClearContent()
+	return _u
+}
+
 // Mutation returns the InternalMessageRecipientMutation object of the builder.
 func (_u *InternalMessageRecipientUpdateOne) Mutation() *InternalMessageRecipientMutation {
 	return _u.mutation
@@ -616,6 +708,18 @@ func (_u *InternalMessageRecipientUpdateOne) sqlSave(ctx context.Context) (_node
 	}
 	if _u.mutation.ReadAtCleared() {
 		_spec.ClearField(internalmessagerecipient.FieldReadAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.Title(); ok {
+		_spec.SetField(internalmessagerecipient.FieldTitle, field.TypeString, value)
+	}
+	if _u.mutation.TitleCleared() {
+		_spec.ClearField(internalmessagerecipient.FieldTitle, field.TypeString)
+	}
+	if value, ok := _u.mutation.Content(); ok {
+		_spec.SetField(internalmessagerecipient.FieldContent, field.TypeString, value)
+	}
+	if _u.mutation.ContentCleared() {
+		_spec.ClearField(internalmessagerecipient.FieldContent, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &InternalMessageRecipient{config: _u.config}

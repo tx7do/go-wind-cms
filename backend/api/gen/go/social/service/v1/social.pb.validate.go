@@ -35,6 +35,405 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on SocialStatsHistoryPoint with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SocialStatsHistoryPoint) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SocialStatsHistoryPoint with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SocialStatsHistoryPointMultiError, or nil if none found.
+func (m *SocialStatsHistoryPoint) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SocialStatsHistoryPoint) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.RecordedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetRecordedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SocialStatsHistoryPointValidationError{
+						field:  "RecordedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SocialStatsHistoryPointValidationError{
+						field:  "RecordedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetRecordedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SocialStatsHistoryPointValidationError{
+					field:  "RecordedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Likes != nil {
+		// no validation rules for Likes
+	}
+
+	if m.Replies != nil {
+		// no validation rules for Replies
+	}
+
+	if m.Reposts != nil {
+		// no validation rules for Reposts
+	}
+
+	if len(errors) > 0 {
+		return SocialStatsHistoryPointMultiError(errors)
+	}
+
+	return nil
+}
+
+// SocialStatsHistoryPointMultiError is an error wrapping multiple validation
+// errors returned by SocialStatsHistoryPoint.ValidateAll() if the designated
+// constraints aren't met.
+type SocialStatsHistoryPointMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SocialStatsHistoryPointMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SocialStatsHistoryPointMultiError) AllErrors() []error { return m }
+
+// SocialStatsHistoryPointValidationError is the validation error returned by
+// SocialStatsHistoryPoint.Validate if the designated constraints aren't met.
+type SocialStatsHistoryPointValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SocialStatsHistoryPointValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SocialStatsHistoryPointValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SocialStatsHistoryPointValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SocialStatsHistoryPointValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SocialStatsHistoryPointValidationError) ErrorName() string {
+	return "SocialStatsHistoryPointValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SocialStatsHistoryPointValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSocialStatsHistoryPoint.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SocialStatsHistoryPointValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SocialStatsHistoryPointValidationError{}
+
+// Validate checks the field values on
+// ListSocialDistributionStatsHistoryRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ListSocialDistributionStatsHistoryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// ListSocialDistributionStatsHistoryRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// ListSocialDistributionStatsHistoryRequestMultiError, or nil if none found.
+func (m *ListSocialDistributionStatsHistoryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSocialDistributionStatsHistoryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if m.Limit != nil {
+		// no validation rules for Limit
+	}
+
+	if len(errors) > 0 {
+		return ListSocialDistributionStatsHistoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListSocialDistributionStatsHistoryRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// ListSocialDistributionStatsHistoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListSocialDistributionStatsHistoryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSocialDistributionStatsHistoryRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSocialDistributionStatsHistoryRequestMultiError) AllErrors() []error { return m }
+
+// ListSocialDistributionStatsHistoryRequestValidationError is the validation
+// error returned by ListSocialDistributionStatsHistoryRequest.Validate if the
+// designated constraints aren't met.
+type ListSocialDistributionStatsHistoryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSocialDistributionStatsHistoryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSocialDistributionStatsHistoryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSocialDistributionStatsHistoryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSocialDistributionStatsHistoryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSocialDistributionStatsHistoryRequestValidationError) ErrorName() string {
+	return "ListSocialDistributionStatsHistoryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSocialDistributionStatsHistoryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSocialDistributionStatsHistoryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSocialDistributionStatsHistoryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSocialDistributionStatsHistoryRequestValidationError{}
+
+// Validate checks the field values on
+// ListSocialDistributionStatsHistoryResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ListSocialDistributionStatsHistoryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// ListSocialDistributionStatsHistoryResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// ListSocialDistributionStatsHistoryResponseMultiError, or nil if none found.
+func (m *ListSocialDistributionStatsHistoryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSocialDistributionStatsHistoryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListSocialDistributionStatsHistoryResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListSocialDistributionStatsHistoryResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListSocialDistributionStatsHistoryResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListSocialDistributionStatsHistoryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListSocialDistributionStatsHistoryResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// ListSocialDistributionStatsHistoryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListSocialDistributionStatsHistoryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSocialDistributionStatsHistoryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSocialDistributionStatsHistoryResponseMultiError) AllErrors() []error { return m }
+
+// ListSocialDistributionStatsHistoryResponseValidationError is the validation
+// error returned by ListSocialDistributionStatsHistoryResponse.Validate if
+// the designated constraints aren't met.
+type ListSocialDistributionStatsHistoryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSocialDistributionStatsHistoryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSocialDistributionStatsHistoryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSocialDistributionStatsHistoryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSocialDistributionStatsHistoryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSocialDistributionStatsHistoryResponseValidationError) ErrorName() string {
+	return "ListSocialDistributionStatsHistoryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSocialDistributionStatsHistoryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSocialDistributionStatsHistoryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSocialDistributionStatsHistoryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSocialDistributionStatsHistoryResponseValidationError{}
+
 // Validate checks the field values on SocialAccount with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
