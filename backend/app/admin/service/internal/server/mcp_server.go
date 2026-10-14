@@ -144,10 +144,10 @@ func registerMcpTools(
 		}
 
 		var b strings.Builder
-		b.WriteString(fmt.Sprintf("共 %d 篇文章，显示最近 %d 篇：\n", resp.GetTotal(), len(resp.GetItems())))
+		fmt.Fprintf(&b, "共 %d 篇文章，显示最近 %d 篇：\n", resp.GetTotal(), len(resp.GetItems()))
 		for _, p := range resp.GetItems() {
-			b.WriteString(fmt.Sprintf("- [%s] #%d %s（创建于 %s）\n",
-				p.GetStatus(), p.GetId(), firstPostTitleMcp(p), formatDateMcp(p.GetCreatedAt())))
+			fmt.Fprintf(&b, "- [%s] #%d %s（创建于 %s）\n",
+				p.GetStatus(), p.GetId(), firstPostTitleMcp(p), formatDateMcp(p.GetCreatedAt()))
 		}
 		return mcp.NewToolResultText(b.String()), nil
 	})
@@ -202,7 +202,7 @@ func registerMcpTools(
 		}
 
 		var b strings.Builder
-		b.WriteString(fmt.Sprintf("共 %d 条分发，显示最近 %d 条：\n", resp.GetTotal(), len(resp.GetItems())))
+		fmt.Fprintf(&b, "共 %d 条分发，显示最近 %d 条：\n", resp.GetTotal(), len(resp.GetItems()))
 		for _, d := range resp.GetItems() {
 			line := fmt.Sprintf("- [%s] %s → %s（账号：%s）",
 				d.GetStatus(), strings.TrimPrefix(d.GetPlatform().String(), "PLATFORM_"),
@@ -213,7 +213,7 @@ func registerMcpTools(
 			if d.GetErrorMessage() != "" {
 				line += " 失败原因：" + d.GetErrorMessage()
 			}
-			b.WriteString(line + "\n")
+			fmt.Fprintln(&b, line)
 		}
 		return mcp.NewToolResultText(b.String()), nil
 	})
