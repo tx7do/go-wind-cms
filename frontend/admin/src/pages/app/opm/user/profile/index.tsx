@@ -14,7 +14,9 @@ import { getGenderOptions } from '../constants';
 import { getPresetColor } from '@/utils/color';
 
 /** 格式化 wellKnownTimestamp */
-function formatTimestamp(ts: any): string {
+function formatTimestamp(
+  ts?: string | number | { seconds?: number; nanos?: number } | null,
+): string {
   if (!ts) return '-';
   let ms: number;
   if (typeof ts === 'object' && ts.seconds !== undefined) {
@@ -134,7 +136,7 @@ const UserProfile = () => {
   }
 
   return (
-    <ContentContainer heightMode="auto" padding="24px">
+    <ContentContainer heightMode="auto" scrollable padding="24px">
       <Card>
         <Tabs
           defaultActiveKey="basicInfo"
