@@ -104,6 +104,12 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Multi-language Management | Language management, unified translation for content, menus & UI text |
 | Site Management | Multi-site config with independent domain, title, logo, SEO & style |
 | Site Configuration | Basic info, SEO, upload limits, email/SMS global params |
+| Page Builder | Section-based page editor (rich text / gallery / form etc., 14 block types), rendered on all three frontends |
+| Review Workflow | Post submit-for-review → approve/reject with author notifications; permission gate via API role binding |
+| Content Versioning | Automatic full snapshots on save, version list, line diff vs current, one-click restore |
+| Draft Preview | One-click new-tab draft preview from the editor (short-lived signed tokens) |
+| Redirect Management | 301/302 redirect rules, nginx map export, public lookup endpoint for SSR middleware |
+| Form Submissions | Visitor submissions from page FORM sections; admin list, detail & CSV export |
 
 ### System & Operations
 
@@ -119,6 +125,9 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Operation Logs | Full-link audit trail with operator, IP, params & results |
 | Personal Center | Profile editing, avatar, password reset, login history |
 | Headless API | Complete OpenAPI for content CRUD, multi-terminal support |
+| Webhook Events | Content events (publish/update/delete) delivered asynchronously with HMAC signatures; delivery log & test ping |
+| Email Outbound | System notifications via async SMTP; visual SMTP configuration (credentials encrypted) + test send |
+| API Sync | OpenAPI reconciliation sync for the API table (safe on non-empty tables, stable IDs protect role bindings) |
 
 ### Social Distribution
 

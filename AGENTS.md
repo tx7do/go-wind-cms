@@ -72,17 +72,21 @@ gow 未覆盖的任务才退回 Makefile（`backend/` 根目录执行）：`make
 - **登录账号**：全新环境由服务启动时自动播种——管理员 `admin / admin`、普通用户默认口令 `12345678`（`pkg/constants/default_data.go`），**不要**找 SQL 种子脚本，`backend/sql/` 下只有演示数据。登录带图形验证码（Redis 存储）。
 - **refresh-token 勿手动调**：刷新接口会轮换令牌对，手动调用会使内存中的旧 access token 立即失效，表现为"假 401"，别误判成鉴权 bug。
 - **admin 前端坑**：go-crud List 的 `total` 是字符串（uint64 JSON），展示/比较前须 `Number()`；antd Tabs 走 `items` prop 之外的旧写法会静默渲染空壳。
+- **ListTable 必传 `request`**：不传时内部 wrappedRequest 拿到 undefined 结果即判定失败态，页面恒定渲染「加载失败/重试」且无任何日志。新列表页一律用 redirects 页模式（`loadItems` + `request` prop + 受控 dataSource，增删改后 `actionRef.reload()` 重跑）。
+- **新 List 接口禁传空 `sorting=[]`**：生成客户端会序列化成空 `sorting=` 参数，kratos 解析 `pagination.Sorting` 报 400（CODEC）。排序走 `orderBy`（JSON 字符串参数）。
 - **AI 内容生成助手**已落地（`api/protos/ai/`）；本地调试可配任意 OpenAI 兼容 mock 替代真实模型，生产在管理页配真实 provider。
 - **Node 版本**：admin dev（vite 8 / rolldown）要求 Node ≥ 20.19，否则报 `styleText` 不存在——系统默认 20.10 太老，须前置 nvm 的 20.20 再 `npm run dev`。
+- **本地 exe 部署模式**（backend/build/{core,admin,app}.exe --conf ...）有守护进程在进程死后数秒内用同路径 exe 重启：换代码必须按「kill → build → start」顺序，或构建后再 kill（守护会用旧镜像拉起并占住端口，新进程静默退出）。服务日志若重定向到 build/*.log 可直接读。
 - **`go test ./...` 偶发** `fork/exec %TEMP%\go-build...\x.test.exe: Access is denied.`（Windows 对刚链接好的测试二进制执行被拦，疑似杀软实时扫描）：属环境问题、**不是代码失败**。复验办法是绕开 Temp——`go test -c -o <工作区内路径>/x.test.exe ./pkg/x` 后直接跑该 exe；判成"测试挂了"之前先这样确认一次。
 
+- **新增环境变量（2026-10 批次）**：`SITE_BASE_URL`+`SEO_POST_PATH`/`SEO_PAGE_PATH`（app 服务，sitemap URL 生成，未配置返回空 sitemap）；`SMTP_HOST/PORT/USERNAME/PASSWORD/FROM/TLS`（邮件出站回退配置，email_providers 表可视化配置优先）；`MCP_ADDR`/`MCP_TOKEN` 已有。预览令牌签名复用 `ENCRYPTION_KEY`。
 - **凭据加密（ENCRYPTION_KEY）**：core/admin 启动读取环境变量 `ENCRYPTION_KEY`
   （两服务必须同值），社交账号凭据与 AI provider key 据此 AES-GCM 加密落库；
   未设置时降级明文入库并打告警——生产必须配置，换 key 会使既有密文不可解。
-- **接口同步只对空表有效**：管理页「接口同步」为全量重插显式 ID，`sys_apis`
-  非空时主键冲突整体失败（admin 侧吞错仍显示成功）。非空表补录新端点：先
-  `setval(pg_get_serial_sequence('sys_apis','id'), max(id)+1)` 修序列，再
-  `POST /admin/v1/apis` 逐条创建。
+- **接口同步（已升级为对账式 upsert，非空表安全）**：core `ApiRepo.SyncApis`
+  以 (path, method) 为业务键对账——已存在则原位更新（**不换 ID**，保护角色/
+  权限绑定）、缺失则 maxID 续号创建并自动 `setval` 对齐序列；admin 侧错误
+  已传播到管理页。新增端点后管理页点一次「接口同步」即可，无需手工补录。
 - **asynq 任务类型命名**：ServeMux 精确匹配失败后按**前缀**兜底路由，
   新任务类型不得与其他已注册类型互为前缀（"post.publish.sweep" 曾被前缀
   路由到 "post.publish" 的 handler 导致 payload 解码失败被吞）。
