@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -84,6 +84,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 	if _, err = srv.NewPeriodicTask("*/15 * * * *", task.SocialInboxSyncTaskType, &task.PublishSweepPayload{}); err != nil {
+		log.Error(err)
+	}
+
+	// 注册邮件通知投递任务：系统通知的附加邮件触达（SMTP 未配置时 worker 内跳过）。
+	if err = asynq.RegisterSubscriber(srv, task.NotifyEmailTaskType, internalMessageService.SendEmailWorker); err != nil {
 		log.Error(err)
 	}
 

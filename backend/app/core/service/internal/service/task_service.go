@@ -613,6 +613,23 @@ func (s *TaskService) EnqueueAiPostIndex(payload *task.AiPostIndexPayload) error
 	return nil
 }
 
+// EnqueueNotifyEmail 入队一个邮件通知投递任务（best-effort：调度器未注入或
+// SMTP 未配置时静默跳过——邮件是站内信之外的附加触达，不阻断通知主链路）。
+func (s *TaskService) EnqueueNotifyEmail(payload *task.NotifyEmailPayload) error {
+	if payload == nil || payload.UserID == 0 {
+		return nil
+	}
+	if s.taskScheduler == nil {
+		s.log.Warnf("notify email skipped: task scheduler not available (user=%d)", payload.UserID)
+		return nil
+	}
+	if err := s.taskScheduler.NewTask(task.NotifyEmailTaskType, payload, asynq.MaxRetry(3)); err != nil {
+		s.log.Errorf("enqueue notify email failed (user=%d): %v", payload.UserID, err)
+		return err
+	}
+	return nil
+}
+
 // EnqueueWebhookFanout 入队一个 Webhook 事件扇出任务（best-effort：调度器未注入时静默跳过，
 // 内容保存主链路不因外发失败而受阻）。
 func (s *TaskService) EnqueueWebhookFanout(payload *task.WebhookFanoutPayload) error {

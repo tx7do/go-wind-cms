@@ -3,6 +3,9 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"html"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -15,7 +18,10 @@ import (
 
 	"github.com/tx7do/go-crud/viewer"
 
+	appViewer "go-wind-cms/pkg/entgo/viewer"
 	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-cms/pkg/mailer"
+	"go-wind-cms/pkg/task"
 
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
@@ -34,6 +40,7 @@ type InternalMessageService struct {
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo
 
 	userRepo data.UserRepo
+	taskService *TaskService
 
 	// redisClient 用于把系统通知事件发布到 Redis Pub/Sub（admin 服务订阅后转
 	// SSE 实时推送）；为 nil 时静默跳过（落库为准，只损失实时性）。
@@ -47,6 +54,7 @@ func NewInternalMessageService(
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo,
 	userRepo data.UserRepo,
 	redisClient *redis.Client,
+	taskService *TaskService,
 ) *InternalMessageService {
 	return &InternalMessageService{
 		log:                          ctx.NewLoggerHelper("internal-message/service/core-service"),
@@ -55,6 +63,7 @@ func NewInternalMessageService(
 		internalMessageRecipientRepo: internalMessageRecipientRepo,
 		userRepo:                     userRepo,
 		redisClient:                  redisClient,
+		taskService:                  taskService,
 	}
 }
 
@@ -359,6 +368,76 @@ func (s *InternalMessageService) NotifyUser(ctx context.Context, recipientUserID
 			}
 		}
 	}
+
+	// 邮件出站（best-effort）：收件人配有邮箱且 SMTP 已配置时异步投递。
+	// 站内信落库为准，邮件是附加触达——任何失败只记日志。
+	if recipient.GetEmail() != "" && s.taskService != nil {
+		if perr := s.taskService.EnqueueNotifyEmail(&task.NotifyEmailPayload{
+			UserID:   recipientUserID,
+			TenantID: tenantID,
+			Title:    title,
+			Content:  content,
+		}); perr != nil {
+			s.log.Warnf("notify user: enqueue email failed (recipient=%d): %v", recipientUserID, perr)
+		}
+	}
+}
+
+// SendEmailWorker 是 asynq "notify.email" 任务的 handler：
+// 从 DB 取收件人邮箱，以最小 HTML 模板投递系统通知邮件。
+//
+// 幂等/重试口径：
+//   - SMTP 未配置 / 收件人无邮箱 / 用户已删 → 视为永久不适用，返回 nil 不重试
+//   - SMTP 暂时性失败 → 返回 err 交 asynq MaxRetry 退避重试
+func (s *InternalMessageService) SendEmailWorker(taskType string, payload *task.NotifyEmailPayload) error {
+	if payload == nil || payload.UserID == 0 {
+		return nil
+	}
+	cfg := mailer.FromEnv()
+	if !cfg.Enabled() {
+		s.log.Warnf("notify email: smtp not configured, drop (user=%d)", payload.UserID)
+		return nil
+	}
+	if s.taskService == nil {
+		return nil
+	}
+
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+	user, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: payload.UserID},
+	})
+	if err != nil || user == nil {
+		s.log.Warnf("notify email: user %d not loadable, drop: %v", payload.UserID, err)
+		return nil
+	}
+	to := user.GetEmail()
+	if to == "" {
+		return nil
+	}
+
+	if err = cfg.Send([]string{to}, payload.Title, buildNotifyEmailHTML(payload.Title, payload.Content)); err != nil {
+		s.log.Errorf("notify email: send failed (user=%d): %v", payload.UserID, err)
+		return err // SMTP 暂时性失败：asynq 重试
+	}
+	s.log.Infof("notify email: sent to %s (user=%d)", to, payload.UserID)
+	return nil
+}
+
+// buildNotifyEmailHTML 系统通知邮件的最小 HTML 模板。
+// 站点链接取 SITE_URL 环境变量（未配置则不附链接）。
+func buildNotifyEmailHTML(title, content string) string {
+	siteURL := strings.TrimRight(os.Getenv("SITE_URL"), "/")
+	body := strings.ReplaceAll(html.EscapeString(content), "\n", "<br/>")
+	var b strings.Builder
+	b.WriteString(`<div style="max-width:560px;margin:0 auto;font-family:-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#1f2329;">`)
+	b.WriteString(`<h2 style="font-size:18px;margin:24px 0 12px;">` + html.EscapeString(title) + `</h2>`)
+	b.WriteString(`<div style="font-size:14px;line-height:1.7;">` + body + `</div>`)
+	if siteURL != "" {
+		b.WriteString(`<p style="margin:24px 0 8px;"><a href="` + siteURL + `" style="color:#006be6;">` + html.EscapeString(siteURL) + `</a></p>`)
+	}
+	b.WriteString(`<hr style="border:none;border-top:1px solid #e5e6eb;margin:16px 0;"/><p style="font-size:12px;color:#86909c;">` +
+		html.EscapeString("本邮件由系统自动发送，请勿直接回复。") + `</p></div>`)
+	return b.String()
 }
 
 // sendNotification 向客户端发送通知消息
