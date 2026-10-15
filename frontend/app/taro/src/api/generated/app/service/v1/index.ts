@@ -2533,7 +2533,6 @@ export function createPostServiceClient(
   };
 }
 // 请求 - 帖子搜索
-// 
 // tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
 // 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
 export type contentservicev1_SearchPostsRequest = {
@@ -2548,7 +2547,6 @@ export type contentservicev1_SearchPostsRequest = {
 };
 
 // 回应 - 帖子搜索
-// 
 // 仅返回最小字段集：post_id / language / title。
 // 不含 content / tenant_id / status——这些字段不向前台暴露。
 export type contentservicev1_SearchPostsResponse = {
@@ -2590,6 +2588,54 @@ export type contentservicev1_UpdatePostRequest = {
 // 请求 - 删除帖子
 export type contentservicev1_DeletePostRequest = {
   id?: number;
+};
+
+// URL 重定向查询服务（公开站点）：
+// 供 C 端路由中间件按 from_path 匹配 3xx 跳转（vue SSR middleware 直连；
+// react 静态导出与 nginx 场景由 admin 导出 map 配置做边缘层直跳）。
+export interface RedirectService {
+  // 获取全部启用的重定向（匿名可调用，列表量级小全量返回）
+  ListEnabled(
+    request: contentservicev1_ListRedirectsRequest,
+  ): Promise<contentservicev1_ListRedirectsResponse>;
+}
+
+export function createRedirectServiceClient(
+  transport: ClientTransport,
+): RedirectService {
+  return {
+    ListEnabled(_request) {
+      const path = `app/v1/redirects`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'RedirectService',
+        method: 'ListEnabled',
+      }) as Promise<contentservicev1_ListRedirectsResponse>;
+    },
+  };
+}
+// 请求 - 重定向列表（复用：List 分页 / ListEnabled 全量启用的空参请求）
+export type contentservicev1_ListRedirectsRequest = {
+};
+
+// 回应 - 重定向列表
+export type contentservicev1_ListRedirectsResponse = {
+  items: contentservicev1_Redirect[] | undefined;
+  total: number | undefined;
+};
+
+// URL 重定向
+export type contentservicev1_Redirect = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  enabled?: boolean;
+  fromPath?: string;
+  id?: number;
+  statusCode?: number;
+  toUrl?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
 };
 
 // 站点服务（公开端点）
@@ -3362,6 +3408,7 @@ export class ApiClient {
   private _navigationService?: NavigationService;
   private _pageService?: PageService;
   private _postService?: PostService;
+  private _redirectService?: RedirectService;
   private _siteService?: SiteService;
   private _tagService?: TagService;
   private readonly _transport: ClientTransport;
@@ -3405,6 +3452,10 @@ export class ApiClient {
 
   get postService(): PostService {
     return this._postService ??= createPostServiceClient(this._transport);
+  }
+
+  get redirectService(): RedirectService {
+    return this._redirectService ??= createRedirectServiceClient(this._transport);
   }
 
   get siteService(): SiteService {

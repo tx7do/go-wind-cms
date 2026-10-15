@@ -12358,7 +12358,6 @@ class PostServiceClient {
 }
 
 /// 请求 - 帖子搜索
-/// 
 /// tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
 /// 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
 class ContentServiceV1SearchPostsRequest {
@@ -12503,7 +12502,6 @@ class ContentServiceV1SearchPostsRequest {
 }
 
 /// 回应 - 帖子搜索
-/// 
 /// 仅返回最小字段集：post_id / language / title。
 /// 不含 content / tenant_id / status——这些字段不向前台暴露。
 class ContentServiceV1SearchPostsResponse {
@@ -13162,6 +13160,432 @@ class ContentServiceV1DeletePostRequest {
         // field 1: id
         case 1: {
           m.id = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// URL 重定向查询服务（公开站点）：
+/// 供 C 端路由中间件按 from_path 匹配 3xx 跳转（vue SSR middleware 直连；
+/// react 静态导出与 nginx 场景由 admin 导出 map 配置做边缘层直跳）。
+class RedirectServiceClient {
+  final ClientTransport _transport;
+
+  RedirectServiceClient(this._transport);
+
+  /// 获取全部启用的重定向（匿名可调用，列表量级小全量返回）
+  Future<ContentServiceV1ListRedirectsResponse> listEnabled(ContentServiceV1ListRedirectsRequest _request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/redirects';
+    final result = await _transport.unary(path, 'GET', null, TransportMeta(
+      service: 'RedirectService',
+      method: 'ListEnabled',
+    ), headers: headers);
+    return ContentServiceV1ListRedirectsResponse.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+/// 请求 - 重定向列表（复用：List 分页 / ListEnabled 全量启用的空参请求）
+class ContentServiceV1ListRedirectsRequest {
+
+  ContentServiceV1ListRedirectsRequest();
+
+  factory ContentServiceV1ListRedirectsRequest.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ListRedirectsRequest();
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ListRedirectsRequest()';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ListRedirectsRequest &&
+      runtimeType == other.runtimeType
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([]);
+
+  ContentServiceV1ListRedirectsRequest copyWith() {
+    return ContentServiceV1ListRedirectsRequest();
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+  }
+
+  factory ContentServiceV1ListRedirectsRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ListRedirectsRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ListRedirectsRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ListRedirectsRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        default: r.skip();
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 回应 - 重定向列表
+class ContentServiceV1ListRedirectsResponse {
+  List<ContentServiceV1Redirect>? items;
+  int? total;
+
+  ContentServiceV1ListRedirectsResponse({
+    this.items,
+    this.total,
+  });
+
+  factory ContentServiceV1ListRedirectsResponse.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ListRedirectsResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => ContentServiceV1Redirect.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ListRedirectsResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ListRedirectsResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  ContentServiceV1ListRedirectsResponse copyWith({
+    List<ContentServiceV1Redirect>? items,
+    int? total,
+  }) {
+    return ContentServiceV1ListRedirectsResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeUint64(2, f2!);
+    }
+  }
+
+  factory ContentServiceV1ListRedirectsResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ListRedirectsResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ListRedirectsResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ListRedirectsResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(ContentServiceV1Redirect._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readUint64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// URL 重定向
+class ContentServiceV1Redirect {
+  String? createdAt;
+  int? createdBy;
+  String? description;
+  bool? enabled;
+  String? fromPath;
+  int? id;
+  int? statusCode;
+  String? toUrl;
+  String? updatedAt;
+  int? updatedBy;
+
+  ContentServiceV1Redirect({
+    this.createdAt,
+    this.createdBy,
+    this.description,
+    this.enabled,
+    this.fromPath,
+    this.id,
+    this.statusCode,
+    this.toUrl,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory ContentServiceV1Redirect.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1Redirect(
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      description: json['description'] as String?,
+      enabled: json['enabled'] as bool?,
+      fromPath: json['fromPath'] as String?,
+      id: json['id'] as int?,
+      statusCode: json['statusCode'] as int?,
+      toUrl: json['toUrl'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (description != null) json['description'] = description;
+    if (enabled != null) json['enabled'] = enabled;
+    if (fromPath != null) json['fromPath'] = fromPath;
+    if (id != null) json['id'] = id;
+    if (statusCode != null) json['statusCode'] = statusCode;
+    if (toUrl != null) json['toUrl'] = toUrl;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1Redirect(createdAt: $createdAt, createdBy: $createdBy, description: $description, enabled: $enabled, fromPath: $fromPath, id: $id, statusCode: $statusCode, toUrl: $toUrl, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1Redirect &&
+      runtimeType == other.runtimeType
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && description == other.description
+      && enabled == other.enabled
+      && fromPath == other.fromPath
+      && id == other.id
+      && statusCode == other.statusCode
+      && toUrl == other.toUrl
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    createdAt,
+    createdBy,
+    description,
+    enabled,
+    fromPath,
+    id,
+    statusCode,
+    toUrl,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  ContentServiceV1Redirect copyWith({
+    String? createdAt,
+    int? createdBy,
+    String? description,
+    bool? enabled,
+    String? fromPath,
+    int? id,
+    int? statusCode,
+    String? toUrl,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return ContentServiceV1Redirect(
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      description: description ?? this.description,
+      enabled: enabled ?? this.enabled,
+      fromPath: fromPath ?? this.fromPath,
+      id: id ?? this.id,
+      statusCode: statusCode ?? this.statusCode,
+      toUrl: toUrl ?? this.toUrl,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: fromPath
+    final f2 = fromPath;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: toUrl
+    final f3 = toUrl;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: statusCode
+    final f4 = statusCode;
+    if (f4 != null) {
+      w.writeUint32(4, f4!);
+    }
+    // field 5: enabled
+    final f5 = enabled;
+    if (f5 != null) {
+      w.writeBool(5, f5!);
+    }
+    // field 6: description
+    final f6 = description;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+  }
+
+  factory ContentServiceV1Redirect.fromBuffer(List<int> bytes) {
+    return ContentServiceV1Redirect._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1Redirect _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1Redirect();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: fromPath
+        case 2: {
+          m.fromPath = r.readString();
+          break;
+        }
+        // field 3: toUrl
+        case 3: {
+          m.toUrl = r.readString();
+          break;
+        }
+        // field 4: statusCode
+        case 4: {
+          m.statusCode = r.readUint32();
+          break;
+        }
+        // field 5: enabled
+        case 5: {
+          m.enabled = r.readBool();
+          break;
+        }
+        // field 6: description
+        case 6: {
+          m.description = r.readString();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
           break;
         }
         default: {
@@ -17444,6 +17868,7 @@ class ApiClient {
   NavigationServiceClient? _navigationService;
   PageServiceClient? _pageService;
   PostServiceClient? _postService;
+  RedirectServiceClient? _redirectService;
   SiteServiceClient? _siteService;
   TagServiceClient? _tagService;
   UserProfileServiceClient? _userProfileService;
@@ -17495,6 +17920,11 @@ class ApiClient {
     return _postService!;
   }
 
+  RedirectServiceClient get redirectService {
+    _redirectService ??= RedirectServiceClient(_transport);
+    return _redirectService!;
+  }
+
   SiteServiceClient get siteService {
     _siteService ??= SiteServiceClient(_transport);
     return _siteService!;
@@ -17521,6 +17951,7 @@ class ApiClient {
     _navigationService = null;
     _pageService = null;
     _postService = null;
+    _redirectService = null;
     _siteService = null;
     _tagService = null;
     _userProfileService = null;
