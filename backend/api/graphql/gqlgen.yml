@@ -1,0 +1,19 @@
+# gqlgen 配置——GraphQL 契约与产物的分层对齐 protos/gen 惯例：
+#   schema.graphql        契约源（手写，本目录）
+#   ../gen/go/graphql/    生成产物（exec + models，不手改，随代码提交）
+#   resolver.go           解析器骨架/实现（app 服务 internal，引 BFF 服务取数）
+schema:
+  - schema.graphql
+
+exec:
+  filename: ../gen/go/graphql/generated.go
+  package: graphql
+
+model:
+  filename: ../gen/go/graphql/models_gen.go
+  package: graphql
+
+resolver:
+  layout: single-file
+  package: graphql
+  filename: ../../app/app/service/internal/graphql/resolver.go

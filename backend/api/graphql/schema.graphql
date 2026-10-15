@@ -1,0 +1,120 @@
+# GoWind Content Hub —— C 端只读内容 GraphQL API。
+#
+# 语义与 REST app BFF 严格对齐：
+#   - 仅返回已发布内容（草稿/归档/私有按不存在处理）
+#   - locale 缺省时取第一条翻译（与前端 pickTranslation 的回退顺序一致）
+#   - 挂载在独立 GraphQL 服务器（GRAPHQL_ADDR，默认 ":6702"），路径 /graphql
+#
+# v1 范围：帖子/页面/分类/标签的查询；搜索、点赞收藏计数、预览令牌等
+# 仍走 REST（http://<app>/app/v1/...）。
+#
+# 代码生成（在 backend/api/graphql/ 下执行；需 Go ≤1.26 工具链，见 CONTRIBUTING）：
+#   GOSUMDB=sum.golang.org GOTOOLCHAIN=go1.26.4 \
+#     go run github.com/99designs/gqlgen@v0.17.89 generate
+# 产物：exec/models → api/gen/go/graphql/（生成产物，不手改）；
+#       resolver 骨架 → app/app/service/internal/graphql/resolver.go（随实现提交）。
+
+type Query {
+  """按 ID 或 slug 取单篇帖子；两者都缺省返回 null"""
+  post(id: ID, slug: String, locale: String): Post
+
+  """已发布帖子分页列表"""
+  posts(page: Int, pageSize: Int, locale: String): PostList!
+
+  """按 ID 或 slug 取单页；两者都缺省返回 null"""
+  page(id: ID, slug: String, locale: String): Page
+
+  """已发布页面分页列表"""
+  pages(page: Int, pageSize: Int, locale: String): PageList!
+
+  """分类分页列表"""
+  categories(page: Int, pageSize: Int, locale: String): CategoryList!
+
+  """标签分页列表"""
+  tags(page: Int, pageSize: Int, locale: String): TagList!
+}
+
+type Post {
+  id: ID!
+  """SEO 别名（code 字段）"""
+  slug: String
+  status: String!
+  title: String
+  summary: String
+  """正文 HTML / Markdown（按 editorType 决定）"""
+  content: String
+  thumbnail: String
+  authorName: String
+  """RFC3339 发布时间"""
+  publishTime: String
+  disallowComment: Boolean
+  isFeatured: Boolean
+  availableLanguages: [String!]!
+}
+
+type PostList {
+  items: [Post!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+
+type KeyValue {
+  key: String!
+  value: String!
+}
+
+type Section {
+  id: ID!
+  """区块类型（SECTION_TYPE_HERO / RICH_TEXT / FORM / ...）"""
+  type: String!
+  name: String
+  sortOrder: Int!
+  """区块内容键值对（主键 value，样式在 config）"""
+  content: [KeyValue!]!
+}
+
+type Page {
+  id: ID!
+  slug: String
+  status: String!
+  title: String
+  coverImage: String
+  sections: [Section!]!
+  availableLanguages: [String!]!
+}
+
+type PageList {
+  items: [Page!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+
+type Category {
+  id: ID!
+  name: String
+  slug: String
+  description: String
+  coverImage: String
+}
+
+type CategoryList {
+  items: [Category!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+
+type Tag {
+  id: ID!
+  name: String
+  slug: String
+}
+
+type TagList {
+  items: [Tag!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}

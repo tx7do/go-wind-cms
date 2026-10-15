@@ -4,6 +4,7 @@ go 1.26.4
 
 require (
 	entgo.io/ent v0.14.6
+	github.com/99designs/gqlgen v0.17.89
 	github.com/alicebob/miniredis/v2 v2.38.0
 	github.com/dtm-labs/dtm v1.19.0
 	github.com/dtm-labs/dtmdriver v0.0.6
@@ -68,10 +69,12 @@ require (
 	github.com/tx7do/kratos-bootstrap/tracer v0.1.4
 	github.com/tx7do/kratos-bootstrap/transport/sse v0.0.4
 	github.com/tx7do/kratos-swagger-ui v0.0.1
-	github.com/tx7do/kratos-transport/broker v1.3.3
+	github.com/tx7do/kratos-transport/broker v1.4.1
 	github.com/tx7do/kratos-transport/transport/asynq v1.3.13
+	github.com/tx7do/kratos-transport/transport/graphql v1.4.2-0.20261014230056-d5f78b017544
 	github.com/tx7do/kratos-transport/transport/mcp v1.3.4
 	github.com/tx7do/kratos-transport/transport/sse v1.3.8
+	github.com/vektah/gqlparser/v2 v2.5.33
 	github.com/xiaoqidun/entps v1.56.0
 	github.com/xuri/excelize/v2 v2.9.1
 	github.com/yuin/gopher-lua v1.1.2
@@ -138,6 +141,7 @@ require (
 	github.com/go-playground/form/v4 v4.3.0 // indirect
 	github.com/go-resty/resty/v2 v2.17.2 // indirect
 	github.com/go-test/deep v1.0.8 // indirect
+	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
@@ -153,11 +157,13 @@ require (
 	github.com/googleapis/gax-go/v2 v2.23.0 // indirect
 	github.com/gorilla/handlers v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/gosimple/slug v1.15.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/graph-gophers/dataloader/v7 v7.1.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -221,6 +227,7 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.7 // indirect
 	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/sony/sonyflake v1.3.0 // indirect
+	github.com/sosodev/duration v1.4.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/cobra v1.10.2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
@@ -240,12 +247,11 @@ require (
 	github.com/tx7do/go-wind v0.0.2 // indirect
 	github.com/tx7do/go-wind-plugins/encoding v0.0.1 // indirect
 	github.com/tx7do/go-wind-plugins/encoding/json v0.0.1 // indirect
-	github.com/tx7do/kratos-transport/tracing v1.1.2 // indirect
-	github.com/tx7do/kratos-transport/transport v1.3.4 // indirect
+	github.com/tx7do/kratos-transport/tracing v1.2.0 // indirect
+	github.com/tx7do/kratos-transport/transport v1.4.1 // indirect
 	github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 // indirect
 	github.com/valyala/fastjson v1.6.10 // indirect
 	github.com/vearutop/statigz v1.5.0 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.33 // indirect
 	github.com/wenlng/go-captcha/v2 v2.0.5 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.2.0 // indirect

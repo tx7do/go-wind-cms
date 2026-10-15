@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
+	"github.com/tx7do/kratos-transport/transport/graphql"
 	"github.com/tx7do/kratos-transport/transport/sse"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
@@ -26,11 +27,13 @@ func newApp(
 	hs *http.Server,
 	gs *grpc.Server,
 	ss *sse.Server,
+	gqls *graphql.Server,
 ) *kratos.App {
 	return bootstrap.NewApp(ctx,
 		hs,
 		gs,
 		ss,
+		gqls,
 	)
 }
 

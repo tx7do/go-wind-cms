@@ -131,5 +131,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	sseServer := server.NewSseServer(ctx, authenticationServiceClient)
 
-	return newApp(ctx, httpServer, grpcServer, sseServer), rollback, nil
+	// GraphQL 只读内容 API（GRAPHQL_ADDR，默认 :6702；off 停用）
+	graphqlServer := server.NewGraphqlServer(ctx, postService, pageService, categoryService, tagService)
+
+	return newApp(ctx, httpServer, grpcServer, sseServer, graphqlServer), rollback, nil
 }
