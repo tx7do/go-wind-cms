@@ -33,6 +33,12 @@ import (
 // 再生成,路由按生成代码的等价方式手工挂载;须与 AddWhiteList 保持一致。
 const OperationAuthenticationServiceRegister = "/app.v1.AuthenticationService/Register"
 
+// SEO 域手工挂载端点的操作名（sitemap.xml / robots.txt，非 proto 路由）。
+const (
+	OperationSeoServiceSitemap = "SeoService_Sitemap"
+	OperationSeoServiceRobots  = "SeoService_Robots"
+)
+
 // NewRestMiddleware 创建中间件
 func NewRestMiddleware(
 	ctx *bootstrap.Context,
@@ -96,6 +102,11 @@ func NewRestMiddleware(
 		// FormSubmissionService.Submit：页面 FORM 区块的访客提交，匿名可调用
 		//（校验在 core：页面须已发布、区块须为该页面的 FORM 区块、字段集受限）。
 		appV1.OperationFormSubmissionServiceSubmit,
+
+		// SeoService（手工挂载非 proto 路由）：sitemap.xml / robots.txt，
+		// 搜索引擎抓取必须匿名可达；操作名为约定字符串非 proto 生成。
+		OperationSeoServiceSitemap,
+		OperationSeoServiceRobots,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -144,6 +155,7 @@ func NewRestServer(
 	interactionService *service.InteractionService,
 	tagService *service.TagService,
 	pageService *service.PageService,
+	seoService *service.SeoService,
 	formSubmissionService *service.FormSubmissionService,
 	navigationService *service.NavigationService,
 	siteService *service.SiteService,
@@ -178,6 +190,30 @@ func NewRestServer(
 				return err
 			}
 			return ctx.Result(200, out)
+		})
+	}
+
+	// ── 手工挂载:SEO 域 sitemap.xml / robots.txt ──
+	// 非 proto 定义的部署域端点：操作名为约定字符串（与 AddWhiteList 一致），
+	// 直接写响应体（XML/TXT），不走 kratos JSON 编码。
+	{
+		seoRoute := srv.Route("/")
+		seoRoute.GET("/app/v1/sitemap.xml", func(ctx http.Context) error {
+			http.SetOperation(ctx, OperationSeoServiceSitemap)
+			body, err := seoService.Sitemap(ctx)
+			if err != nil {
+				return err
+			}
+			ctx.Response().Header().Set("Content-Type", "application/xml; charset=utf-8")
+			return ctx.Blob(200, "application/xml; charset=utf-8", []byte(body))
+		})
+		seoRoute.GET("/app/v1/robots.txt", func(ctx http.Context) error {
+			http.SetOperation(ctx, OperationSeoServiceRobots)
+			body, err := seoService.Robots(ctx)
+			if err != nil {
+				return err
+			}
+			return ctx.Blob(200, "text/plain; charset=utf-8", []byte(body))
 		})
 	}
 
