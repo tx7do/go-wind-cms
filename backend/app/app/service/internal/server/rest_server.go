@@ -103,6 +103,9 @@ func NewRestMiddleware(
 		//（校验在 core：页面须已发布、区块须为该页面的 FORM 区块、字段集受限）。
 		appV1.OperationFormSubmissionServiceSubmit,
 
+		// RedirectService.ListEnabled：公开重定向查询（C 端路由中间件 3xx 匹配）。
+		appV1.OperationRedirectServiceListEnabled,
+
 		// SeoService（手工挂载非 proto 路由）：sitemap.xml / robots.txt，
 		// 搜索引擎抓取必须匿名可达；操作名为约定字符串非 proto 生成。
 		OperationSeoServiceSitemap,
@@ -157,6 +160,7 @@ func NewRestServer(
 	pageService *service.PageService,
 	seoService *service.SeoService,
 	formSubmissionService *service.FormSubmissionService,
+	redirectService *service.RedirectService,
 	navigationService *service.NavigationService,
 	siteService *service.SiteService,
 
@@ -229,6 +233,7 @@ func NewRestServer(
 	appV1.RegisterTagServiceHTTPServer(srv, tagService)
 	appV1.RegisterPageServiceHTTPServer(srv, pageService)
 	appV1.RegisterFormSubmissionServiceHTTPServer(srv, formSubmissionService)
+	appV1.RegisterRedirectServiceHTTPServer(srv, redirectService)
 
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 

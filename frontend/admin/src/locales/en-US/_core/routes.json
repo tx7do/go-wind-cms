@@ -77,5 +77,6 @@
   "ai-query": "AI Query",
   "social-inbox": "Social Inbox",
   "webhooks": "Webhooks",
-  "content-form-submissions": "Form Submissions"
+  "content-form-submissions": "Form Submissions",
+  "redirects": "Redirects"
 }

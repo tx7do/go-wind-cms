@@ -1,0 +1,22 @@
+{
+  "title": "URL 重定向",
+  "create": "新建重定向",
+  "edit": "编辑",
+  "fromPath": "源路径",
+  "toUrl": "目标地址",
+  "statusCode": "状态码",
+  "enabled": "启用",
+  "description": "备注",
+  "action": "操作",
+  "delete": "删除",
+  "editBtn": "编辑",
+  "deleteConfirm": "确认删除该重定向？",
+  "deleteSuccess": "已删除",
+  "saveSuccess": "已保存",
+  "requiredFields": "源路径与目标地址必填",
+  "exportNginx": "导出 nginx 配置",
+  "exportJson": "导出 JSON",
+  "fromPlaceholder": "/old-post（站内相对路径）",
+  "toPlaceholder": "/new-post 或 https://…",
+  "descriptionPlaceholder": "用途说明（可选）"
+}

@@ -1426,6 +1426,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.PostTranslation'
+    /app/v1/redirects:
+        get:
+            tags:
+                - RedirectService
+            description: 获取全部启用的重定向（匿名可调用，列表量级小全量返回）
+            operationId: RedirectService_ListEnabled
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListRedirectsResponse'
     /app/v1/refresh-token:
         post:
             tags:
@@ -2310,6 +2323,16 @@ components:
                 total:
                     type: string
             description: 回应 - 帖子列表
+        content.service.v1.ListRedirectsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.Redirect'
+                total:
+                    type: string
+            description: 回应 - 重定向列表
         content.service.v1.ListTagResponse:
             type: object
             properties:
@@ -2691,6 +2714,46 @@ components:
                     description: 删除时间
                     format: date-time
             description: 帖子翻译
+        content.service.v1.Redirect:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 重定向ID
+                    format: uint32
+                fromPath:
+                    type: string
+                    description: 源路径（站内相对路径，如 /old-post）
+                toUrl:
+                    type: string
+                    description: 目标地址（站内路径或完整 URL）
+                statusCode:
+                    type: integer
+                    description: HTTP 状态码（301/302/307/308）
+                    format: uint32
+                enabled:
+                    type: boolean
+                    description: 是否启用
+                description:
+                    type: string
+                    description: 用途说明
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+            description: URL 重定向
         content.service.v1.SearchPostHit:
             type: object
             properties:
@@ -3907,6 +3970,11 @@ tags:
       description: 页面服务
     - name: PostService
       description: 帖子服务
+    - name: RedirectService
+      description: |-
+        URL 重定向查询服务（公开站点）：
+         供 C 端路由中间件按 from_path 匹配 3xx 跳转（vue SSR middleware 直连；
+         react 静态导出与 nginx 场景由 admin 导出 map 配置做边缘层直跳）。
     - name: SiteService
       description: |-
         站点服务（公开端点）

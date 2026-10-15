@@ -64,6 +64,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
+	"go-wind-cms/app/core/service/internal/data/ent/redirect"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
@@ -1890,6 +1891,46 @@ func init() {
 	postwatchDescID := postwatchMixinFields0[0].Descriptor()
 	// postwatch.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	postwatch.IDValidator = postwatchDescID.Validators[0].(func(uint32) error)
+	redirectMixin := schema.Redirect{}.Mixin()
+	redirect.Policy = privacy.NewPolicies(redirectMixin[3], schema.Redirect{})
+	redirect.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := redirect.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	redirectMixinFields0 := redirectMixin[0].Fields()
+	_ = redirectMixinFields0
+	redirectMixinFields3 := redirectMixin[3].Fields()
+	_ = redirectMixinFields3
+	redirectFields := schema.Redirect{}.Fields()
+	_ = redirectFields
+	// redirectDescTenantID is the schema descriptor for tenant_id field.
+	redirectDescTenantID := redirectMixinFields3[0].Descriptor()
+	// redirect.DefaultTenantID holds the default value on creation for the tenant_id field.
+	redirect.DefaultTenantID = redirectDescTenantID.Default.(uint32)
+	// redirectDescFromPath is the schema descriptor for from_path field.
+	redirectDescFromPath := redirectFields[0].Descriptor()
+	// redirect.FromPathValidator is a validator for the "from_path" field. It is called by the builders before save.
+	redirect.FromPathValidator = redirectDescFromPath.Validators[0].(func(string) error)
+	// redirectDescToURL is the schema descriptor for to_url field.
+	redirectDescToURL := redirectFields[1].Descriptor()
+	// redirect.ToURLValidator is a validator for the "to_url" field. It is called by the builders before save.
+	redirect.ToURLValidator = redirectDescToURL.Validators[0].(func(string) error)
+	// redirectDescStatusCode is the schema descriptor for status_code field.
+	redirectDescStatusCode := redirectFields[2].Descriptor()
+	// redirect.DefaultStatusCode holds the default value on creation for the status_code field.
+	redirect.DefaultStatusCode = redirectDescStatusCode.Default.(uint32)
+	// redirectDescEnabled is the schema descriptor for enabled field.
+	redirectDescEnabled := redirectFields[3].Descriptor()
+	// redirect.DefaultEnabled holds the default value on creation for the enabled field.
+	redirect.DefaultEnabled = redirectDescEnabled.Default.(bool)
+	// redirectDescID is the schema descriptor for id field.
+	redirectDescID := redirectMixinFields0[0].Descriptor()
+	// redirect.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	redirect.IDValidator = redirectDescID.Validators[0].(func(uint32) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {

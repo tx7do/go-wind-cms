@@ -716,6 +716,18 @@ func (f PostWatchFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostWatchMutation", m)
 }
 
+// The RedirectFunc type is an adapter to allow the use of ordinary
+// function as Redirect mutator.
+type RedirectFunc func(context.Context, *ent.RedirectMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RedirectFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RedirectMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RedirectMutation", m)
+}
+
 // The RoleFunc type is an adapter to allow the use of ordinary
 // function as Role mutator.
 type RoleFunc func(context.Context, *ent.RoleMutation) (ent.Value, error)

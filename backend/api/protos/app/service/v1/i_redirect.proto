@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "content/service/v1/redirect.proto";
+
+// URL 重定向查询服务（公开站点）：
+// 供 C 端路由中间件按 from_path 匹配 3xx 跳转（vue SSR middleware 直连；
+// react 静态导出与 nginx 场景由 admin 导出 map 配置做边缘层直跳）。
+service RedirectService {
+  // 获取全部启用的重定向（匿名可调用，列表量级小全量返回）
+  rpc ListEnabled (content.service.v1.ListRedirectsRequest) returns (content.service.v1.ListRedirectsResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/redirects"
+    };
+  }
+}

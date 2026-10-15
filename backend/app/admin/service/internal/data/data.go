@@ -564,6 +564,15 @@ func NewFormSubmissionServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	return contentV1.NewFormSubmissionServiceClient(cli)
 }
 
+func NewRedirectServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.RedirectServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return contentV1.NewRedirectServiceClient(cli)
+}
+
 func NewWebhookServiceClient(ctx *bootstrap.Context, r registry.Discovery) webhookV1.WebhookServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

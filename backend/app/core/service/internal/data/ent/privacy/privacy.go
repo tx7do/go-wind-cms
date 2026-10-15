@@ -1527,6 +1527,30 @@ func (f PostWatchMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PostWatchMutation", m)
 }
 
+// The RedirectQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RedirectQueryRuleFunc func(context.Context, *ent.RedirectQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RedirectQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RedirectQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RedirectQuery", q)
+}
+
+// The RedirectMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RedirectMutationRuleFunc func(context.Context, *ent.RedirectMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RedirectMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RedirectMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RedirectMutation", m)
+}
+
 // The RoleQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RoleQueryRuleFunc func(context.Context, *ent.RoleQuery) error
@@ -2208,6 +2232,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PostWatchQuery:
 		return q.Filter(), nil
+	case *ent.RedirectQuery:
+		return q.Filter(), nil
 	case *ent.RoleQuery:
 		return q.Filter(), nil
 	case *ent.RoleMetadataQuery:
@@ -2376,6 +2402,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PostVersionMutation:
 		return m.Filter(), nil
 	case *ent.PostWatchMutation:
+		return m.Filter(), nil
+	case *ent.RedirectMutation:
 		return m.Filter(), nil
 	case *ent.RoleMutation:
 		return m.Filter(), nil

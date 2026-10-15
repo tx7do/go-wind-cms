@@ -194,6 +194,15 @@ func NewCategoryServiceClient(ctx *bootstrap.Context, r registry.Discovery) cont
 	return contentV1.NewCategoryServiceClient(cli)
 }
 
+func NewRedirectServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.RedirectServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return contentV1.NewRedirectServiceClient(cli)
+}
+
 func NewFormSubmissionServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.FormSubmissionServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

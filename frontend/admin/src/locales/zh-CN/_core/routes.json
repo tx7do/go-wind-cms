@@ -77,5 +77,6 @@
   "ai-query": "智能问数",
   "social-inbox": "社交收件箱",
   "webhooks": "Webhook 订阅",
-  "content-form-submissions": "表单提交"
+  "content-form-submissions": "表单提交",
+  "redirects": "重定向管理"
 }

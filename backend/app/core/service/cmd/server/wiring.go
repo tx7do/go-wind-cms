@@ -175,6 +175,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 表单提交（页面 FORM 区块）
 	formSubmissionRepo := data.NewFormSubmissionRepo(ctx, entClient)
 
+	// URL 重定向
+	redirectRepo := data.NewRedirectRepo(ctx, entClient)
+
 	// 站点配置
 	siteRepo := data.NewSiteRepo(ctx, entClient)
 	siteSettingRepo := data.NewSiteSettingRepo(ctx, entClient)
@@ -208,6 +211,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 表单提交（页面 FORM 区块；校验依赖 pageRepo）
 	formSubmissionService := service.NewFormSubmissionService(ctx, formSubmissionRepo, pageRepo)
+
+	// URL 重定向
+	redirectService := service.NewRedirectService(ctx, redirectRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
 
 	// 字典与多语言
@@ -304,6 +310,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		socialService,
 		webhookService,
 		formSubmissionService,
+		redirectService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

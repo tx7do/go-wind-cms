@@ -65,6 +65,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
+	"go-wind-cms/app/core/service/internal/data/ent/redirect"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
@@ -212,6 +213,7 @@ func checkColumn(t, c string) error {
 			posttranslation.Table:            posttranslation.ValidColumn,
 			postversion.Table:                postversion.ValidColumn,
 			postwatch.Table:                  postwatch.ValidColumn,
+			redirect.Table:                   redirect.ValidColumn,
 			role.Table:                       role.ValidColumn,
 			rolemetadata.Table:               rolemetadata.ValidColumn,
 			rolepermission.Table:             rolepermission.ValidColumn,

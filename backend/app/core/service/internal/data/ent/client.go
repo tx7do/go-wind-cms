@@ -70,6 +70,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
+	"go-wind-cms/app/core/service/internal/data/ent/redirect"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
@@ -222,6 +223,8 @@ type Client struct {
 	PostVersion *PostVersionClient
 	// PostWatch is the client for interacting with the PostWatch builders.
 	PostWatch *PostWatchClient
+	// Redirect is the client for interacting with the Redirect builders.
+	Redirect *RedirectClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -336,6 +339,7 @@ func (c *Client) init() {
 	c.PostTranslation = NewPostTranslationClient(c.config)
 	c.PostVersion = NewPostVersionClient(c.config)
 	c.PostWatch = NewPostWatchClient(c.config)
+	c.Redirect = NewRedirectClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
@@ -509,6 +513,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PostTranslation:            NewPostTranslationClient(cfg),
 		PostVersion:                NewPostVersionClient(cfg),
 		PostWatch:                  NewPostWatchClient(cfg),
+		Redirect:                   NewRedirectClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
 		RolePermission:             NewRolePermissionClient(cfg),
@@ -609,6 +614,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PostTranslation:            NewPostTranslationClient(cfg),
 		PostVersion:                NewPostVersionClient(cfg),
 		PostWatch:                  NewPostWatchClient(cfg),
+		Redirect:                   NewRedirectClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
 		RolePermission:             NewRolePermissionClient(cfg),
@@ -673,7 +679,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Role,
+		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
 		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
 		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
@@ -701,7 +707,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Role,
+		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
 		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
 		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
@@ -833,6 +839,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PostVersion.mutate(ctx, m)
 	case *PostWatchMutation:
 		return c.PostWatch.mutate(ctx, m)
+	case *RedirectMutation:
+		return c.Redirect.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
 	case *RoleMetadataMutation:
@@ -9200,6 +9208,140 @@ func (c *PostWatchClient) mutate(ctx context.Context, m *PostWatchMutation) (Val
 	}
 }
 
+// RedirectClient is a client for the Redirect schema.
+type RedirectClient struct {
+	config
+}
+
+// NewRedirectClient returns a client for the Redirect from the given config.
+func NewRedirectClient(c config) *RedirectClient {
+	return &RedirectClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `redirect.Hooks(f(g(h())))`.
+func (c *RedirectClient) Use(hooks ...Hook) {
+	c.hooks.Redirect = append(c.hooks.Redirect, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `redirect.Intercept(f(g(h())))`.
+func (c *RedirectClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Redirect = append(c.inters.Redirect, interceptors...)
+}
+
+// Create returns a builder for creating a Redirect entity.
+func (c *RedirectClient) Create() *RedirectCreate {
+	mutation := newRedirectMutation(c.config, OpCreate)
+	return &RedirectCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Redirect entities.
+func (c *RedirectClient) CreateBulk(builders ...*RedirectCreate) *RedirectCreateBulk {
+	return &RedirectCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RedirectClient) MapCreateBulk(slice any, setFunc func(*RedirectCreate, int)) *RedirectCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RedirectCreateBulk{err: fmt.Errorf("calling to RedirectClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RedirectCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RedirectCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Redirect.
+func (c *RedirectClient) Update() *RedirectUpdate {
+	mutation := newRedirectMutation(c.config, OpUpdate)
+	return &RedirectUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RedirectClient) UpdateOne(_m *Redirect) *RedirectUpdateOne {
+	mutation := newRedirectMutation(c.config, OpUpdateOne, withRedirect(_m))
+	return &RedirectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RedirectClient) UpdateOneID(id uint32) *RedirectUpdateOne {
+	mutation := newRedirectMutation(c.config, OpUpdateOne, withRedirectID(id))
+	return &RedirectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Redirect.
+func (c *RedirectClient) Delete() *RedirectDelete {
+	mutation := newRedirectMutation(c.config, OpDelete)
+	return &RedirectDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RedirectClient) DeleteOne(_m *Redirect) *RedirectDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RedirectClient) DeleteOneID(id uint32) *RedirectDeleteOne {
+	builder := c.Delete().Where(redirect.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RedirectDeleteOne{builder}
+}
+
+// Query returns a query builder for Redirect.
+func (c *RedirectClient) Query() *RedirectQuery {
+	return &RedirectQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRedirect},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Redirect entity by its id.
+func (c *RedirectClient) Get(ctx context.Context, id uint32) (*Redirect, error) {
+	return c.Query().Where(redirect.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RedirectClient) GetX(ctx context.Context, id uint32) *Redirect {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *RedirectClient) Hooks() []Hook {
+	hooks := c.hooks.Redirect
+	return append(hooks[:len(hooks):len(hooks)], redirect.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *RedirectClient) Interceptors() []Interceptor {
+	return c.inters.Redirect
+}
+
+func (c *RedirectClient) mutate(ctx context.Context, m *RedirectMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RedirectCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RedirectUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RedirectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RedirectDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Redirect mutation op: %q", m.Op())
+	}
+}
+
 // RoleClient is a client for the Role schema.
 type RoleClient struct {
 	config
@@ -12160,7 +12302,7 @@ type (
 		NavigationItem, OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion,
 		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
-		PostTag, PostTranslation, PostVersion, PostWatch, Role, RoleMetadata,
+		PostTag, PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
 		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
 		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
@@ -12178,7 +12320,7 @@ type (
 		NavigationItem, OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion,
 		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
-		PostTag, PostTranslation, PostVersion, PostWatch, Role, RoleMetadata,
+		PostTag, PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
 		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
 		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,

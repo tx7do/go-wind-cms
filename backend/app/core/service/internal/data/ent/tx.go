@@ -130,6 +130,8 @@ type Tx struct {
 	PostVersion *PostVersionClient
 	// PostWatch is the client for interacting with the PostWatch builders.
 	PostWatch *PostWatchClient
+	// Redirect is the client for interacting with the Redirect builders.
+	Redirect *RedirectClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -364,6 +366,7 @@ func (tx *Tx) init() {
 	tx.PostTranslation = NewPostTranslationClient(tx.config)
 	tx.PostVersion = NewPostVersionClient(tx.config)
 	tx.PostWatch = NewPostWatchClient(tx.config)
+	tx.Redirect = NewRedirectClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)

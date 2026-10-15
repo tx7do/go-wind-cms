@@ -1,0 +1,22 @@
+{
+  "title": "URL Redirects",
+  "create": "Create Redirect",
+  "edit": "Edit",
+  "fromPath": "From Path",
+  "toUrl": "To URL",
+  "statusCode": "Status Code",
+  "enabled": "Enabled",
+  "description": "Note",
+  "action": "Actions",
+  "delete": "Delete",
+  "editBtn": "Edit",
+  "deleteConfirm": "Delete this redirect?",
+  "deleteSuccess": "Deleted",
+  "saveSuccess": "Saved",
+  "requiredFields": "From path and to URL are required",
+  "exportNginx": "Export nginx conf",
+  "exportJson": "Export JSON",
+  "fromPlaceholder": "/old-post (site-relative path)",
+  "toPlaceholder": "/new-post or https://…",
+  "descriptionPlaceholder": "What is this for? (optional)"
+}

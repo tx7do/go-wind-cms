@@ -10169,6 +10169,235 @@ export function createPreviewServiceClient(
     },
   };
 }
+// URL 重定向管理服务
+export interface RedirectService {
+  // 获取重定向列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<contentservicev1_ListRedirectsResponse>;
+  // 获取重定向数据
+  Get(
+    request: contentservicev1_GetRedirectRequest,
+  ): Promise<contentservicev1_Redirect>;
+  // 创建重定向
+  Create(
+    request: contentservicev1_CreateRedirectRequest,
+  ): Promise<contentservicev1_Redirect>;
+  // 更新重定向
+  Update(
+    request: contentservicev1_UpdateRedirectRequest,
+  ): Promise<contentservicev1_Redirect>;
+  // 删除重定向
+  Delete(
+    request: contentservicev1_DeleteRedirectRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createRedirectServiceClient(
+  transport: ClientTransport,
+): RedirectService {
+  return {
+    List(request) {
+      const path = `admin/v1/redirects`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'RedirectService',
+        method: 'List',
+      }) as Promise<contentservicev1_ListRedirectsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/redirects/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'RedirectService',
+        method: 'Get',
+      }) as Promise<contentservicev1_Redirect>;
+    },
+    Create(request) {
+      const path = `admin/v1/redirects`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'RedirectService',
+        method: 'Create',
+      }) as Promise<contentservicev1_Redirect>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/redirects/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'RedirectService',
+        method: 'Update',
+      }) as Promise<contentservicev1_Redirect>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/redirects/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'RedirectService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 回应 - 重定向列表
+export type contentservicev1_ListRedirectsResponse = {
+  items: contentservicev1_Redirect[] | undefined;
+  total: number | undefined;
+};
+
+// URL 重定向
+export type contentservicev1_Redirect = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  enabled?: boolean;
+  fromPath?: string;
+  id?: number;
+  statusCode?: number;
+  toUrl?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 请求 - 重定向数据
+export type contentservicev1_GetRedirectRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 创建重定向
+export type contentservicev1_CreateRedirectRequest = {
+  data: contentservicev1_Redirect | undefined;
+};
+
+// 请求 - 更新重定向
+export type contentservicev1_UpdateRedirectRequest = {
+  allowMissing?: boolean;
+  data: contentservicev1_Redirect | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除重定向
+export type contentservicev1_DeleteRedirectRequest = {
+  id: number | undefined;
+};
+
 // 角色管理服务
 export interface RoleService {
   // 查询角色列表
@@ -13791,6 +14020,7 @@ export class ApiClient {
   private _positionService?: PositionService;
   private _postService?: PostService;
   private _previewService?: PreviewService;
+  private _redirectService?: RedirectService;
   private _roleService?: RoleService;
   private _siteService?: SiteService;
   private _siteSettingService?: SiteSettingService;
@@ -13975,6 +14205,10 @@ export class ApiClient {
 
   get previewService(): PreviewService {
     return this._previewService ??= createPreviewServiceClient(this._transport);
+  }
+
+  get redirectService(): RedirectService {
+    return this._redirectService ??= createRedirectServiceClient(this._transport);
   }
 
   get roleService(): RoleService {

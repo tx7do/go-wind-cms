@@ -183,6 +183,9 @@ type PostVersion func(*sql.Selector)
 // PostWatch is the predicate function for postwatch builders.
 type PostWatch func(*sql.Selector)
 
+// Redirect is the predicate function for redirect builders.
+type Redirect func(*sql.Selector)
+
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
