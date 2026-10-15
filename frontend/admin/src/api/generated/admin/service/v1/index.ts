@@ -9925,6 +9925,63 @@ export type contentservicev1_RestorePostVersionRequest = {
   versionId: number | undefined;
 };
 
+// 请求 - 签发帖子预览令牌
+export type CreatePostPreviewTokenRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 签发页面预览令牌
+export type CreatePagePreviewTokenRequest = {
+  id: number | undefined;
+};
+
+// 预览令牌
+export type PreviewToken = {
+  expiresAt?: wellKnownTimestamp;
+  token?: string;
+};
+
+// 草稿预览服务：为后台编辑中的内容签发短时效预览令牌。
+// C 端公开 BFF 校验该令牌后放行非已发布内容（无状态 HMAC，无服务端存储）。
+export interface PreviewService {
+  // 签发帖子预览令牌
+  CreatePostPreviewToken(
+    request: CreatePostPreviewTokenRequest,
+  ): Promise<PreviewToken>;
+  // 签发页面预览令牌
+  CreatePagePreviewToken(
+    request: CreatePagePreviewTokenRequest,
+  ): Promise<PreviewToken>;
+}
+
+export function createPreviewServiceClient(
+  transport: ClientTransport,
+): PreviewService {
+  return {
+    CreatePostPreviewToken(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/preview/posts/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PreviewService',
+        method: 'CreatePostPreviewToken',
+      }) as Promise<PreviewToken>;
+    },
+    CreatePagePreviewToken(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/preview/pages/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PreviewService',
+        method: 'CreatePagePreviewToken',
+      }) as Promise<PreviewToken>;
+    },
+  };
+}
 // 角色管理服务
 export interface RoleService {
   // 查询角色列表
@@ -13201,6 +13258,307 @@ export type identityservicev1_EmailVerification = {
   email: string | undefined;
 };
 
+// Webhook 服务（内容事件外发订阅管理）
+export interface WebhookService {
+  // 获取 Webhook 列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<webhookservicev1_ListWebhookResponse>;
+  // 获取 Webhook 数据
+  Get(
+    request: webhookservicev1_GetWebhookRequest,
+  ): Promise<webhookservicev1_Webhook>;
+  // 创建 Webhook
+  Create(
+    request: webhookservicev1_CreateWebhookRequest,
+  ): Promise<webhookservicev1_Webhook>;
+  // 更新 Webhook
+  Update(
+    request: webhookservicev1_UpdateWebhookRequest,
+  ): Promise<webhookservicev1_Webhook>;
+  // 删除 Webhook
+  Delete(
+    request: webhookservicev1_DeleteWebhookRequest,
+  ): Promise<wellKnownEmpty>;
+  // 发送测试事件（ping）
+  TestPing(
+    request: webhookservicev1_TestWebhookPingRequest,
+  ): Promise<webhookservicev1_WebhookDelivery>;
+  // 列出投递记录（按时间倒序）
+  ListDeliveries(
+    request: webhookservicev1_ListWebhookDeliveriesRequest,
+  ): Promise<webhookservicev1_ListWebhookDeliveriesResponse>;
+}
+
+export function createWebhookServiceClient(
+  transport: ClientTransport,
+): WebhookService {
+  return {
+    List(request) {
+      const path = `admin/v1/webhooks`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'WebhookService',
+        method: 'List',
+      }) as Promise<webhookservicev1_ListWebhookResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/webhooks/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'WebhookService',
+        method: 'Get',
+      }) as Promise<webhookservicev1_Webhook>;
+    },
+    Create(request) {
+      const path = `admin/v1/webhooks`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'WebhookService',
+        method: 'Create',
+      }) as Promise<webhookservicev1_Webhook>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/webhooks/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'WebhookService',
+        method: 'Update',
+      }) as Promise<webhookservicev1_Webhook>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/webhooks/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'WebhookService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    TestPing(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/webhooks/${request.id}/ping`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'WebhookService',
+        method: 'TestPing',
+      }) as Promise<webhookservicev1_WebhookDelivery>;
+    },
+    ListDeliveries(request) {
+      const path = `admin/v1/webhooks/deliveries`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.webhookId) {
+        queryParams.push(
+          `webhookId=${encodeURIComponent(request.webhookId.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'WebhookService',
+        method: 'ListDeliveries',
+      }) as Promise<webhookservicev1_ListWebhookDeliveriesResponse>;
+    },
+  };
+}
+// 回应 - Webhook 列表
+export type webhookservicev1_ListWebhookResponse = {
+  items: undefined | webhookservicev1_Webhook[];
+  total: number | undefined;
+};
+
+// Webhook 订阅
+export type webhookservicev1_Webhook = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  enabled?: boolean;
+  events: string[] | undefined;
+  id?: number;
+  secret?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  url?: string;
+};
+
+// 请求 - Webhook 数据
+export type webhookservicev1_GetWebhookRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 创建 Webhook
+export type webhookservicev1_CreateWebhookRequest = {
+  data: undefined | webhookservicev1_Webhook;
+};
+
+// 请求 - 更新 Webhook
+export type webhookservicev1_UpdateWebhookRequest = {
+  allowMissing?: boolean;
+  data: undefined | webhookservicev1_Webhook;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除 Webhook
+export type webhookservicev1_DeleteWebhookRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 发送测试事件
+export type webhookservicev1_TestWebhookPingRequest = {
+  id: number | undefined;
+};
+
+// 投递记录（每次尝试一行）
+export type webhookservicev1_WebhookDelivery = {
+  createdAt?: wellKnownTimestamp;
+  durationMs?: number;
+  entityId?: number;
+  error?: string;
+  event?: string;
+  httpStatus?: number;
+  id?: number;
+  status?: string;
+  webhookId?: number;
+};
+
+// 请求 - 列出投递记录
+export type webhookservicev1_ListWebhookDeliveriesRequest = {
+  limit: number | undefined;
+  webhookId: number | undefined;
+};
+
+// 回应 - 投递记录列表
+export type webhookservicev1_ListWebhookDeliveriesResponse = {
+  items: undefined | webhookservicev1_WebhookDelivery[];
+  total: number | undefined;
+};
+
 export class ApiClient {
   private _adminPortalService?: AdminPortalService;
   private _aiChatService?: AiChatService;
@@ -13242,6 +13600,7 @@ export class ApiClient {
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
   private _postService?: PostService;
+  private _previewService?: PreviewService;
   private _roleService?: RoleService;
   private _siteService?: SiteService;
   private _siteSettingService?: SiteSettingService;
@@ -13254,6 +13613,7 @@ export class ApiClient {
   private readonly _transport: ClientTransport;
   private _userProfileService?: UserProfileService;
   private _userService?: UserService;
+  private _webhookService?: WebhookService;
 
   constructor(transport: ClientTransport) {
     this._transport = transport;
@@ -13419,6 +13779,10 @@ export class ApiClient {
     return this._postService ??= createPostServiceClient(this._transport);
   }
 
+  get previewService(): PreviewService {
+    return this._previewService ??= createPreviewServiceClient(this._transport);
+  }
+
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
   }
@@ -13461,6 +13825,10 @@ export class ApiClient {
 
   get userService(): UserService {
     return this._userService ??= createUserServiceClient(this._transport);
+  }
+
+  get webhookService(): WebhookService {
+    return this._webhookService ??= createWebhookServiceClient(this._transport);
   }
 }
 

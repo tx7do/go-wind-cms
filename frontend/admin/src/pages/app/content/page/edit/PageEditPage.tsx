@@ -22,8 +22,10 @@ import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '@/api/client';
 import { PaginationQuery } from '@/core';
+import { EyeOutlined } from '@ant-design/icons';
 import AiGenerateButton from '@/components/common/AiGenerateButton';
 import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
+import { cendBaseUrl, useCreatePagePreviewToken } from '@/api/hooks/preview';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { Editor, EditorType } from '@/components/common/Editor';
 import {
@@ -120,6 +122,7 @@ const PageEditPage = () => {
   const [formData, setFormData] = useState<PageEditProps>(() => emptyForm(initLang));
   const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>([]);
   const [versionsOpen, setVersionsOpen] = useState(false);
+  const createPreviewToken = useCreatePagePreviewToken();
   const [needTranslate, setNeedTranslate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [contentModelOptions, setContentModelOptions] = useState<
@@ -854,6 +857,27 @@ const PageEditPage = () => {
             <Button onClick={saveDraft}>{t('saveDraft')}</Button>
             <Button type="primary" danger loading={saving} onClick={handlePublish}>
               {t('publish')}
+            </Button>
+            <Button
+              icon={<EyeOutlined />}
+              disabled={!pageId}
+              loading={createPreviewToken.isPending}
+              title={pageId ? undefined : t('versionNeedSave')}
+              onClick={async () => {
+                if (!pageId) return;
+                try {
+                  const tk = await createPreviewToken.mutateAsync({ id: pageId });
+                  window.open(
+                    `${cendBaseUrl()}/page/detail?id=${pageId}&preview_token=${tk.token ?? ''}`,
+                    '_blank',
+                    'noopener',
+                  );
+                } catch (error) {
+                  console.error('Create preview token failed:', error);
+                }
+              }}
+            >
+              {t('previewOnCend')}
             </Button>
             <Button
               icon={<HistoryOutlined />}

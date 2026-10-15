@@ -613,6 +613,41 @@ func (s *TaskService) EnqueueAiPostIndex(payload *task.AiPostIndexPayload) error
 	return nil
 }
 
+// EnqueueWebhookFanout 入队一个 Webhook 事件扇出任务（best-effort：调度器未注入时静默跳过，
+// 内容保存主链路不因外发失败而受阻）。
+func (s *TaskService) EnqueueWebhookFanout(payload *task.WebhookFanoutPayload) error {
+	if payload == nil || payload.Event == "" {
+		return nil
+	}
+	if s.taskScheduler == nil {
+		s.log.Warnf("webhook fanout skipped: task scheduler not available (event=%s entity=%d)",
+			payload.Event, payload.EntityID)
+		return nil
+	}
+	if err := s.taskScheduler.NewTask(task.WebhookFanoutTaskType, payload, asynq.MaxRetry(3)); err != nil {
+		s.log.Errorf("enqueue webhook fanout failed (event=%s entity=%d): %v", payload.Event, payload.EntityID, err)
+		return err
+	}
+	return nil
+}
+
+// EnqueueWebhookDeliver 入队一个单订阅投递任务（MaxRetry 5 指数退避，见 DeliverWorker）。
+func (s *TaskService) EnqueueWebhookDeliver(payload *task.WebhookDeliverPayload) error {
+	if payload == nil || payload.WebhookID == 0 {
+		return nil
+	}
+	if s.taskScheduler == nil {
+		s.log.Warnf("webhook deliver skipped: task scheduler not available (webhook=%d event=%s)",
+			payload.WebhookID, payload.Event)
+		return nil
+	}
+	if err := s.taskScheduler.NewTask(task.WebhookDeliverTaskType, payload, asynq.MaxRetry(5)); err != nil {
+		s.log.Errorf("enqueue webhook deliver failed (webhook=%d event=%s): %v", payload.WebhookID, payload.Event, err)
+		return err
+	}
+	return nil
+}
+
 func (s *TaskService) EnqueueAiDocReindex(baseID uint32) error {
 	if s.taskScheduler == nil {
 		s.log.Warnf("ai doc reindex skipped: task scheduler not available (base=%d)", baseID)

@@ -21,6 +21,7 @@ import (
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
+	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
@@ -106,6 +107,7 @@ func NewGrpcServer(
 	mediaAssetService *service.MediaAssetService,
 
 	socialService *service.SocialService,
+	webhookService *service.WebhookService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -185,6 +187,7 @@ func NewGrpcServer(
 	mediaV1.RegisterMediaAssetServiceServer(srv, mediaAssetService)
 
 	socialV1.RegisterSocialServiceServer(srv, socialService)
+	webhookV1.RegisterWebhookServiceServer(srv, webhookService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

@@ -7,6 +7,7 @@ import {
   type contentservicev1_PostTranslation,
 } from '@/api/generated/app/service/v1';
 import { type Paging, makeOrderBy, makeQueryString, makeUpdateMask } from '@/core/transport/rest';
+import { requestApi } from '@/core/transport/rest';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
@@ -165,6 +166,24 @@ export async function fetchPost(id: number) {
   return queryClient.fetchQuery({
     queryKey: ['getPost', id, locale],
     queryFn: () => getPost(id, locale),
+    retry: 0,
+  });
+}
+
+/**
+ * 草稿预览取数：携带 admin 签发的短时效 preview_token，
+ * 后端校验通过则放行非已发布内容（preview_token 不在 proto 消息内，手拼 query 旁路传）。
+ */
+export async function fetchPostPreview(id: number, token: string) {
+  const locale = getCurrentLocale();
+  return queryClient.fetchQuery({
+    queryKey: ['getPostPreview', id, token, locale],
+    queryFn: () =>
+      requestApi({
+        path: `app/v1/posts/${id}?locale=${encodeURIComponent(locale)}&preview_token=${encodeURIComponent(token)}`,
+        method: 'GET',
+        body: null,
+      }),
     retry: 0,
   });
 }

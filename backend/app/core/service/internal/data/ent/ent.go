@@ -84,6 +84,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/userposition"
 	"go-wind-cms/app/core/service/internal/data/ent/userrole"
+	"go-wind-cms/app/core/service/internal/data/ent/webhook"
+	"go-wind-cms/app/core/service/internal/data/ent/webhookdelivery"
 	"reflect"
 	"sync"
 
@@ -228,6 +230,8 @@ func checkColumn(t, c string) error {
 			userorgunit.Table:                userorgunit.ValidColumn,
 			userposition.Table:               userposition.ValidColumn,
 			userrole.Table:                   userrole.ValidColumn,
+			webhook.Table:                    webhook.ValidColumn,
+			webhookdelivery.Table:            webhookdelivery.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

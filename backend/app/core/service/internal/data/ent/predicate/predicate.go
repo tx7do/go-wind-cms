@@ -239,3 +239,9 @@ type UserPosition func(*sql.Selector)
 
 // UserRole is the predicate function for userrole builders.
 type UserRole func(*sql.Selector)
+
+// Webhook is the predicate function for webhook builders.
+type Webhook func(*sql.Selector)
+
+// WebhookDelivery is the predicate function for webhookdelivery builders.
+type WebhookDelivery func(*sql.Selector)

@@ -111,6 +111,7 @@ func NewRestServer(
 	permissionService *service.PermissionService,
 
 	adminPortalService *service.AdminPortalService,
+	previewService *service.PreviewService,
 	taskService *service.TaskService,
 
 	authenticationService *service.AuthenticationService,
@@ -162,6 +163,7 @@ func NewRestServer(
 
 	mediaAssetService *service.MediaAssetService,
 	socialService *service.SocialService,
+	webhookService *service.WebhookService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) *http.Server {
@@ -187,6 +189,7 @@ func NewRestServer(
 	adminV1.RegisterPositionServiceHTTPServer(srv, positionService)
 
 	adminV1.RegisterAdminPortalServiceHTTPServer(srv, adminPortalService)
+	adminV1.RegisterPreviewServiceHTTPServer(srv, previewService)
 	adminV1.RegisterTaskServiceHTTPServer(srv, taskService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
@@ -234,6 +237,7 @@ func NewRestServer(
 	adminV1.RegisterTagServiceHTTPServer(srv, tagService)
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	adminV1.RegisterSocialServiceHTTPServer(srv, socialService)
+	adminV1.RegisterWebhookServiceHTTPServer(srv, webhookService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
 	adminV1.RegisterStatsServiceHTTPServer(srv, statsService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)

@@ -89,5 +89,6 @@
   "distributeToSocial": "分发到社交",
   "distributeNeedSave": "请先保存文章再分发",
   "versionHistory": "版本历史",
-  "versionNeedSave": "保存后可用"
+  "versionNeedSave": "保存后可用",
+  "previewOnCend": "预览"
 }

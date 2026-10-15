@@ -75,5 +75,6 @@
   "ai-knowledge": "知识库",
   "ai-usage": "用量统计",
   "ai-query": "智能问数",
-  "social-inbox": "社交收件箱"
+  "social-inbox": "社交收件箱",
+  "webhooks": "Webhook 订阅"
 }

@@ -27,6 +27,7 @@ import (
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
+	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
@@ -552,6 +553,15 @@ func NewMediaAssetServiceClient(ctx *bootstrap.Context, r registry.Discovery) me
 	}
 
 	return mediaV1.NewMediaAssetServiceClient(cli)
+}
+
+func NewWebhookServiceClient(ctx *bootstrap.Context, r registry.Discovery) webhookV1.WebhookServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return webhookV1.NewWebhookServiceClient(cli)
 }
 
 func NewSocialServiceClient(ctx *bootstrap.Context, r registry.Discovery) socialV1.SocialServiceClient {

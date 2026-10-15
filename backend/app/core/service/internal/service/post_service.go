@@ -34,17 +34,19 @@ type PostService struct {
 	postVersionRepo   *data.PostVersionRepo
 	searchService     *SearchService
 	taskService       *TaskService
+	webhookService    *WebhookService
 	contentModelRepo  *data.ContentModelRepo
 	log               *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo) *PostService {
+func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService) *PostService {
 	return &PostService{
 		log:              ctx.NewLoggerHelper("post/service/core-service"),
 		postRepo:         uc,
 		postVersionRepo:  postVersionRepo,
 		searchService:    searchService,
 		taskService:      taskService,
+		webhookService:   webhookService,
 		contentModelRepo: contentModelRepo,
 	}
 }
@@ -137,6 +139,9 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 	// 版本快照钩子：创建即 v1（best-effort，失败不阻断保存）
 	s.snapshotPostVersion(ctx, dto.GetId())
 
+	// Webhook 事件外发（best-effort）
+	s.dispatchWebhookEvent(ctx, task.WebhookEventPostCreated, dto.GetId(), dto.GetStatus())
+
 	// 定时发布钩子：SCHEDULED 落库后入队到点转正任务（失败显式报错）。
 	if err := s.enqueueScheduledPublish(dto); err != nil {
 		return nil, err
@@ -165,6 +170,16 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 		}
 	}
 
+	// 记录更新前状态：供 Webhook 事件判定是否为"发布"转移
+	var prevStatus contentV1.Post_PostStatus
+	if req != nil && req.Data != nil && req.Data.Status != nil {
+		if existing, gErr := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+			QueryBy: &contentV1.GetPostRequest_Id{Id: req.GetId()},
+		}); gErr == nil && existing != nil {
+			prevStatus = existing.GetStatus()
+		}
+	}
+
 	dto, err := s.postRepo.Update(ctx, req)
 	if err != nil {
 		return nil, err
@@ -175,6 +190,13 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 
 	// 版本快照钩子：每次保存落一版（best-effort，失败不阻断保存）
 	s.snapshotPostVersion(ctx, dto.GetId())
+
+	// Webhook 事件外发：转为 PUBLISHED 记 published，其余记 updated（best-effort）
+	if dto.GetStatus() == contentV1.Post_POST_STATUS_PUBLISHED && prevStatus != contentV1.Post_POST_STATUS_PUBLISHED {
+		s.dispatchWebhookEvent(ctx, task.WebhookEventPostPublished, dto.GetId(), dto.GetStatus())
+	} else {
+		s.dispatchWebhookEvent(ctx, task.WebhookEventPostUpdated, dto.GetId(), dto.GetStatus())
+	}
 
 	// 定时发布钩子：以 SCHEDULED 终态保存（含改期）时重新入队到点转正任务。
 	if err := s.enqueueScheduledPublish(dto); err != nil {
@@ -192,6 +214,9 @@ func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostReque
 
 	// 双写钩子：删除后入队 ES 删除（worker 按 post_id 删 ES 所有语言文档）。
 	s.enqueuePostReindex(ctx, req.GetId(), "delete")
+
+	// Webhook 事件外发（best-effort）
+	s.dispatchWebhookEvent(ctx, task.WebhookEventPostDeleted, req.GetId(), 0)
 
 	return &emptypb.Empty{}, nil
 }
@@ -498,4 +523,12 @@ func (s *PostService) snapshotPostVersion(ctx context.Context, postID uint32) {
 	if _, err = s.postVersionRepo.CreateSnapshot(ctx, postID, full, ""); err != nil {
 		s.log.Errorf("snapshot post version: create snapshot failed (post=%d): %v", postID, err)
 	}
+}
+
+// dispatchWebhookEvent Webhook 事件外发统一入口（best-effort，失败只记日志）。
+func (s *PostService) dispatchWebhookEvent(ctx context.Context, event string, postID uint32, _ contentV1.Post_PostStatus) {
+	if s.webhookService == nil || postID == 0 {
+		return
+	}
+	s.webhookService.DispatchEvent(ctx, event, postID)
 }

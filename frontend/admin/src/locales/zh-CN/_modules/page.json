@@ -96,5 +96,6 @@
     "SECTION_TYPE_CUSTOM": "自定义"
   },
   "versionHistory": "版本历史",
-  "versionNeedSave": "保存后可用"
+  "versionNeedSave": "保存后可用",
+  "previewOnCend": "预览"
 }

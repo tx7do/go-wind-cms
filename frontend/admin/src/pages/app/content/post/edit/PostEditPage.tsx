@@ -27,8 +27,10 @@ import {
   getPostStatusColor,
   getPostStatusLabel,
 } from '../constants';
+import { EyeOutlined } from '@ant-design/icons';
 import AiGenerateButton from '@/components/common/AiGenerateButton';
 import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
+import { cendBaseUrl, useCreatePostPreviewToken } from '@/api/hooks/preview';
 import SocialDistributionDrawer from '@/pages/app/social/distribution/SocialDistributionDrawer';
 import PostSettingsPanel from './PostSettingsPanel';
 import type { PostEditProps } from './types';
@@ -95,6 +97,7 @@ const PostEditPage = () => {
   const [settingsOpen, setSettingsOpen] = useState(true);
   const [socialDistOpen, setSocialDistOpen] = useState(false);
   const [versionsOpen, setVersionsOpen] = useState(false);
+  const createPreviewToken = useCreatePostPreviewToken();
   const [categoryOptions, setCategoryOptions] = useState<{ label: string; value: number }[]>([]);
   const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(false);
 
@@ -741,6 +744,27 @@ ${content}` : content });
               onClick={() => setSocialDistOpen(true)}
             >
               {t('distributeToSocial')}
+            </Button>
+            <Button
+              icon={<EyeOutlined />}
+              disabled={!postId}
+              loading={createPreviewToken.isPending}
+              title={postId ? undefined : t('versionNeedSave')}
+              onClick={async () => {
+                if (!postId) return;
+                try {
+                  const tk = await createPreviewToken.mutateAsync({ id: postId });
+                  window.open(
+                    `${cendBaseUrl()}/post/detail?id=${postId}&preview_token=${tk.token ?? ''}`,
+                    '_blank',
+                    'noopener',
+                  );
+                } catch (error) {
+                  console.error('Create preview token failed:', error);
+                }
+              }}
+            >
+              {t('previewOnCend')}
             </Button>
             <Button
               icon={<HistoryOutlined />}

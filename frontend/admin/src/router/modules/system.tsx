@@ -72,7 +72,18 @@ export const systemRoutes: AppRouteObject[] = [
           // permission: 'sys:platform_admin', // 仅平台管理员权限（开发阶段暂时注释）
         },
       },
-                                        ],
+      {
+        name: 'webhooks',
+        path: 'webhooks', // 相对路径，最终为 /system/webhooks
+        element: createLazyRoute(() => import('@/pages/app/system/webhook')),
+        meta: {
+          title: 'routes:webhooks',
+          icon: 'lucide:webhook', // Iconify 格式
+          order: 8,
+          // permission: 'sys:platform_admin', // 平台管理员或租户管理员权限（开发阶段暂时注释）
+        },
+      },
+                        ],
   },
 ];
 

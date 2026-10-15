@@ -16,6 +16,7 @@ import SectionContainer from '@/components/layout/SectionContainer';
 
 import {
     fetchPost,
+    fetchPostPreview,
     getPostTitle,
     getPostContent,
     getPostThumbnail,
@@ -54,6 +55,8 @@ export default function PostDetailPage() {
         const id = searchParams.get('id');
         return id ? parseInt(id) : null;
     }, [searchParams]);
+    // 草稿预览：admin「预览」按钮带短时效令牌跳转，后端校验后放行非已发布内容
+    const previewToken = useMemo(() => searchParams.get('preview_token') || '', [searchParams]);
 
     // 点赞/收藏状态：由 interaction 子系统提供。
     // useInteractionStatus 取当前 viewer 对此 post 的 {liked, watched} 初始态；
@@ -98,7 +101,9 @@ export default function PostDetailPage() {
             setLocalLoading(true);
             setPostLoading(true);
             try {
-                const fetchedPost = (await fetchPost(postId!)) as contentservicev1_Post;
+                const fetchedPost = (await (previewToken
+                    ? fetchPostPreview(postId, previewToken)
+                    : fetchPost(postId))) as contentservicev1_Post;
                 setPost(fetchedPost);
                 if (fetchedPost) {
                     document.title = `${getPostTitle(fetchedPost)} - GoWind Content Hub`;
@@ -112,7 +117,7 @@ export default function PostDetailPage() {
         }
         loadPost();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [postId]);
+    }, [postId, previewToken]);
 
     // 从 GetCounts 响应同步点赞/收藏计数到缓存。
     // 计数由 interaction_counter 表提供（post 表的散落计数列已移除）。

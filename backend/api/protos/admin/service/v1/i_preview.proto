@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// 草稿预览服务：为后台编辑中的内容签发短时效预览令牌。
+// C 端公开 BFF 校验该令牌后放行非已发布内容（无状态 HMAC，无服务端存储）。
+service PreviewService {
+  // 签发帖子预览令牌
+  rpc CreatePostPreviewToken (CreatePostPreviewTokenRequest) returns (PreviewToken) {
+    option (google.api.http) = {
+      post: "/admin/v1/preview/posts/{id}"
+      body: "*"
+    };
+  }
+
+  // 签发页面预览令牌
+  rpc CreatePagePreviewToken (CreatePagePreviewTokenRequest) returns (PreviewToken) {
+    option (google.api.http) = {
+      post: "/admin/v1/preview/pages/{id}"
+      body: "*"
+    };
+  }
+}
+
+// 请求 - 签发帖子预览令牌
+message CreatePostPreviewTokenRequest {
+  uint32 id = 1 [
+    (gnostic.openapi.v3.property) = {description: "帖子ID"}
+  ];
+}
+
+// 请求 - 签发页面预览令牌
+message CreatePagePreviewTokenRequest {
+  uint32 id = 1 [
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ];
+}
+
+// 预览令牌
+message PreviewToken {
+  optional string token = 1 [
+    json_name = "token",
+    (gnostic.openapi.v3.property) = {description: "预览令牌（拼接到 C 端详情 URL 的 preview_token 参数）"}
+  ]; // 预览令牌
+
+  optional google.protobuf.Timestamp expires_at = 2 [
+    json_name = "expiresAt",
+    (gnostic.openapi.v3.property) = {description: "过期时间"}
+  ]; // 过期时间
+}

@@ -4621,6 +4621,70 @@ var (
 			},
 		},
 	}
+	// WebhooksColumns holds the columns for the "webhooks" table.
+	WebhooksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "url", Type: field.TypeString, Comment: "回调 URL（https:// 推荐，http 仅限内网调试）"},
+		{Name: "secret", Type: field.TypeString, Nullable: true, Comment: "签名密钥（X-Webhook-Signature: sha256=HMAC(body)）"},
+		{Name: "events", Type: field.TypeJSON, Nullable: true, Comment: "订阅的事件类型（post.created/post.updated/post.published/post.deleted/page.*）；空数组=全部事件"},
+		{Name: "enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "用途说明"},
+	}
+	// WebhooksTable holds the schema information for the "webhooks" table.
+	WebhooksTable = &schema.Table{
+		Name:       "webhooks",
+		Comment:    "Webhook 订阅表（内容事件外发，HMAC 签名投递）",
+		Columns:    WebhooksColumns,
+		PrimaryKey: []*schema.Column{WebhooksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "webhook_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{WebhooksColumns[11]},
+			},
+		},
+	}
+	// WebhookDeliveriesColumns holds the columns for the "webhook_deliveries" table.
+	WebhookDeliveriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "webhook_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 Webhook ID"},
+		{Name: "event", Type: field.TypeString, Nullable: true, Comment: "事件类型（post.published 等）"},
+		{Name: "entity_id", Type: field.TypeUint32, Nullable: true, Comment: "事件主体 ID（帖子/页面）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "投递状态", Enums: []string{"DELIVERY_STATUS_SUCCESS", "DELIVERY_STATUS_FAILED"}, Default: "DELIVERY_STATUS_FAILED"},
+		{Name: "http_status", Type: field.TypeInt, Nullable: true, Comment: "响应 HTTP 状态码（0=未达 HTTP 层）", Default: 0},
+		{Name: "error", Type: field.TypeString, Nullable: true, Comment: "失败原因（网络错误或非 2xx）"},
+		{Name: "duration_ms", Type: field.TypeUint32, Nullable: true, Comment: "耗时（毫秒）", Default: 0},
+	}
+	// WebhookDeliveriesTable holds the schema information for the "webhook_deliveries" table.
+	WebhookDeliveriesTable = &schema.Table{
+		Name:       "webhook_deliveries",
+		Comment:    "Webhook 投递记录表（每次尝试一行，只增不改）",
+		Columns:    WebhookDeliveriesColumns,
+		PrimaryKey: []*schema.Column{WebhookDeliveriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "webhookdelivery_webhook_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{WebhookDeliveriesColumns[5], WebhookDeliveriesColumns[1]},
+			},
+			{
+				Name:    "webhookdelivery_event",
+				Unique:  false,
+				Columns: []*schema.Column{WebhookDeliveriesColumns[6]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SysAiChunksTable,
@@ -4701,6 +4765,8 @@ var (
 		SysUserOrgUnitsTable,
 		SysUserPositionsTable,
 		SysUserRolesTable,
+		WebhooksTable,
+		WebhookDeliveriesTable,
 	}
 )
 
@@ -5105,6 +5171,16 @@ func init() {
 	}
 	SysUserRolesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_user_roles",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	WebhooksTable.Annotation = &entsql.Annotation{
+		Table:     "webhooks",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	WebhookDeliveriesTable.Annotation = &entsql.Annotation{
+		Table:     "webhook_deliveries",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

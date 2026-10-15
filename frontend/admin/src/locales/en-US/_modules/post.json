@@ -89,5 +89,6 @@
   "distributeToSocial": "Distribute to Social",
   "distributeNeedSave": "Save the post before distributing",
   "versionHistory": "Version History",
-  "versionNeedSave": "Available after save"
+  "versionNeedSave": "Available after save",
+  "previewOnCend": "Preview"
 }

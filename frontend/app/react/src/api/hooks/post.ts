@@ -9,6 +9,7 @@ import {
 } from '@/api/generated/app/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
+import { requestApi } from '@/core/transport/rest';
 import { currentLocaleLanguageCode } from '@/i18n';
 
 // ==============================
@@ -155,6 +156,24 @@ export async function fetchPost(id: number) {
   return queryClient.fetchQuery({
     queryKey: ['getPost', id],
     queryFn: () => getPost(id),
+    retry: 0,
+  });
+}
+
+/**
+ * 草稿预览取数：携带 admin 签发的短时效 preview_token，
+ * 后端校验通过则放行非已发布内容（preview_token 不在 proto 消息内，手拼 query 旁路传）。
+ */
+export async function fetchPostPreview(id: number, token: string) {
+  const locale = currentLocaleLanguageCode();
+  return queryClient.fetchQuery({
+    queryKey: ['getPostPreview', id, token, locale],
+    queryFn: () =>
+      requestApi({
+        path: `app/v1/posts/${id}?locale=${encodeURIComponent(locale)}&preview_token=${encodeURIComponent(token)}`,
+        method: 'GET',
+        body: null,
+      }),
     retry: 0,
   });
 }

@@ -143,6 +143,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 社交分发
 	socialServiceClient := data.NewSocialServiceClient(ctx, discovery)
+	webhookServiceClient := data.NewWebhookServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
 
@@ -166,6 +167,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionGroupService := service.NewPermissionGroupService(ctx, permissionServiceClient, permissionGroupServiceClient)
 	permissionService := service.NewPermissionService(ctx, permissionServiceClient, permissionGroupServiceClient, roleServiceClient, apiServiceClient, menuServiceClient)
 	adminPortalService := service.NewRouterService(ctx, menuServiceClient, permissionServiceClient, roleServiceClient, userServiceClient)
+	previewService := service.NewPreviewService(ctx)
 
 	// 任务 / 文件 / 翻译
 	taskService := service.NewTaskService(ctx, taskServiceClient)
@@ -223,6 +225,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 社交分发
 	socialService := service.NewSocialService(ctx, socialServiceClient)
+	webhookService := service.NewWebhookService(ctx, webhookServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -233,7 +236,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
 		userService, userProfileService, roleService, tenantService, orgUnitService, positionService,
 		menuService, apiService, permissionGroupService, permissionService,
-		adminPortalService, taskService,
+		adminPortalService, previewService, taskService,
 		authenticationService, loginPolicyService,
 		dictTypeService, dictEntryService, languageService,
 		fileService, fileTransferService,
@@ -251,6 +254,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		siteService, siteSettingService, navigationService, navigationItemService,
 		mediaAssetService,
 		socialService,
+		webhookService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 

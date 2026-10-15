@@ -785,4 +785,19 @@ var DefaultMenus = []*permissionV1.Menu{
 			Authority: []string{"sys:platform_admin"},
 		},
 	},
+	{
+		Id:        trans.Ptr(uint32(68)),
+		ParentId:  trans.Ptr(uint32(60)),
+		Type:      permissionV1.Menu_MENU.Enum(),
+		Name:      trans.Ptr("WebhookManagement"),
+		Path:      trans.Ptr("webhooks"),
+		Component: trans.Ptr("app/system/webhook/index.vue"),
+		CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
+		Meta: &permissionV1.MenuMeta{
+			Title:     trans.Ptr("menu.system.webhook"),
+			Icon:      trans.Ptr("lucide:webhook"),
+			Order:     trans.Ptr(int32(8)),
+			Authority: []string{"sys:platform_admin", "sys:tenant_manager"},
+		},
+	},
 }

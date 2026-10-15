@@ -61,5 +61,15 @@
   "statusMap": {
     "ON": "启用",
     "OFF": "禁用"
+  },
+  "system": {
+    "menus": "menus",
+    "apis": "apis",
+    "dict": "dict",
+    "files": "files",
+    "tasks": "tasks",
+    "login-policies": "login-policies",
+    "languages": "languages",
+    "webhook": "Webhook 订阅"
   }
 }

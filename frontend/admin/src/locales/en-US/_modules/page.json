@@ -96,5 +96,6 @@
     "SECTION_TYPE_CUSTOM": "Custom"
   },
   "versionHistory": "Version History",
-  "versionNeedSave": "Available after save"
+  "versionNeedSave": "Available after save",
+  "previewOnCend": "Preview"
 }

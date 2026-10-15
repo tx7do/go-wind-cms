@@ -1983,6 +1983,54 @@ func (f UserRoleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserRoleMutation", m)
 }
 
+// The WebhookQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type WebhookQueryRuleFunc func(context.Context, *ent.WebhookQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f WebhookQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.WebhookQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.WebhookQuery", q)
+}
+
+// The WebhookMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type WebhookMutationRuleFunc func(context.Context, *ent.WebhookMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f WebhookMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.WebhookMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.WebhookMutation", m)
+}
+
+// The WebhookDeliveryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type WebhookDeliveryQueryRuleFunc func(context.Context, *ent.WebhookDeliveryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f WebhookDeliveryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.WebhookDeliveryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.WebhookDeliveryQuery", q)
+}
+
+// The WebhookDeliveryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type WebhookDeliveryMutationRuleFunc func(context.Context, *ent.WebhookDeliveryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f WebhookDeliveryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.WebhookDeliveryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.WebhookDeliveryMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -2174,6 +2222,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.UserRoleQuery:
 		return q.Filter(), nil
+	case *ent.WebhookQuery:
+		return q.Filter(), nil
+	case *ent.WebhookDeliveryQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
 	}
@@ -2336,6 +2388,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.UserPositionMutation:
 		return m.Filter(), nil
 	case *ent.UserRoleMutation:
+		return m.Filter(), nil
+	case *ent.WebhookMutation:
+		return m.Filter(), nil
+	case *ent.WebhookDeliveryMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

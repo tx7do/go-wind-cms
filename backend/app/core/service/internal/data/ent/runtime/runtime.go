@@ -84,6 +84,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/userposition"
 	"go-wind-cms/app/core/service/internal/data/ent/userrole"
+	"go-wind-cms/app/core/service/internal/data/ent/webhook"
+	"go-wind-cms/app/core/service/internal/data/ent/webhookdelivery"
 
 	"entgo.io/ent"
 	"entgo.io/ent/privacy"
@@ -2485,6 +2487,74 @@ func init() {
 	userroleDescID := userroleMixinFields0[0].Descriptor()
 	// userrole.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	userrole.IDValidator = userroleDescID.Validators[0].(func(uint32) error)
+	webhookMixin := schema.Webhook{}.Mixin()
+	webhook.Policy = privacy.NewPolicies(webhookMixin[3], schema.Webhook{})
+	webhook.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := webhook.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	webhookMixinFields0 := webhookMixin[0].Fields()
+	_ = webhookMixinFields0
+	webhookMixinFields3 := webhookMixin[3].Fields()
+	_ = webhookMixinFields3
+	webhookFields := schema.Webhook{}.Fields()
+	_ = webhookFields
+	// webhookDescTenantID is the schema descriptor for tenant_id field.
+	webhookDescTenantID := webhookMixinFields3[0].Descriptor()
+	// webhook.DefaultTenantID holds the default value on creation for the tenant_id field.
+	webhook.DefaultTenantID = webhookDescTenantID.Default.(uint32)
+	// webhookDescURL is the schema descriptor for url field.
+	webhookDescURL := webhookFields[0].Descriptor()
+	// webhook.URLValidator is a validator for the "url" field. It is called by the builders before save.
+	webhook.URLValidator = webhookDescURL.Validators[0].(func(string) error)
+	// webhookDescEnabled is the schema descriptor for enabled field.
+	webhookDescEnabled := webhookFields[3].Descriptor()
+	// webhook.DefaultEnabled holds the default value on creation for the enabled field.
+	webhook.DefaultEnabled = webhookDescEnabled.Default.(bool)
+	// webhookDescID is the schema descriptor for id field.
+	webhookDescID := webhookMixinFields0[0].Descriptor()
+	// webhook.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	webhook.IDValidator = webhookDescID.Validators[0].(func(uint32) error)
+	webhookdeliveryMixin := schema.WebhookDelivery{}.Mixin()
+	webhookdelivery.Policy = privacy.NewPolicies(webhookdeliveryMixin[2], schema.WebhookDelivery{})
+	webhookdelivery.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := webhookdelivery.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	webhookdeliveryMixinFields0 := webhookdeliveryMixin[0].Fields()
+	_ = webhookdeliveryMixinFields0
+	webhookdeliveryMixinFields2 := webhookdeliveryMixin[2].Fields()
+	_ = webhookdeliveryMixinFields2
+	webhookdeliveryFields := schema.WebhookDelivery{}.Fields()
+	_ = webhookdeliveryFields
+	// webhookdeliveryDescTenantID is the schema descriptor for tenant_id field.
+	webhookdeliveryDescTenantID := webhookdeliveryMixinFields2[0].Descriptor()
+	// webhookdelivery.DefaultTenantID holds the default value on creation for the tenant_id field.
+	webhookdelivery.DefaultTenantID = webhookdeliveryDescTenantID.Default.(uint32)
+	// webhookdeliveryDescEntityID is the schema descriptor for entity_id field.
+	webhookdeliveryDescEntityID := webhookdeliveryFields[2].Descriptor()
+	// webhookdelivery.DefaultEntityID holds the default value on creation for the entity_id field.
+	webhookdelivery.DefaultEntityID = webhookdeliveryDescEntityID.Default.(uint32)
+	// webhookdeliveryDescHTTPStatus is the schema descriptor for http_status field.
+	webhookdeliveryDescHTTPStatus := webhookdeliveryFields[4].Descriptor()
+	// webhookdelivery.DefaultHTTPStatus holds the default value on creation for the http_status field.
+	webhookdelivery.DefaultHTTPStatus = webhookdeliveryDescHTTPStatus.Default.(int)
+	// webhookdeliveryDescDurationMs is the schema descriptor for duration_ms field.
+	webhookdeliveryDescDurationMs := webhookdeliveryFields[6].Descriptor()
+	// webhookdelivery.DefaultDurationMs holds the default value on creation for the duration_ms field.
+	webhookdelivery.DefaultDurationMs = webhookdeliveryDescDurationMs.Default.(uint32)
+	// webhookdeliveryDescID is the schema descriptor for id field.
+	webhookdeliveryDescID := webhookdeliveryMixinFields0[0].Descriptor()
+	// webhookdelivery.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	webhookdelivery.IDValidator = webhookdeliveryDescID.Validators[0].(func(uint32) error)
 }
 
 const (

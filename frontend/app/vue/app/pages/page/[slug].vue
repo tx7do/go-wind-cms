@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { contentservicev1_Page } from '@/api/generated/app/service/v1'
-import { fetchPage, fetchPageBySlug, getPageTranslation } from '@/api/composables/page'
+import { fetchPage, fetchPageBySlug, fetchPagePreview, getPageTranslation } from '@/api/composables/page'
 
 /**
  * CMS Page 公开渲染页：
@@ -11,6 +11,8 @@ const route = useRoute()
 const { t } = useI18n()
 
 const slugParam = computed(() => String(route.params.slug || ''))
+// 草稿预览：admin「预览」按钮带短时效令牌跳转，后端校验后放行非已发布内容
+const previewToken = computed(() => String(route.query.preview_token || ''))
 
 const page = ref<contentservicev1_Page | null>(null)
 const loading = ref(true)
@@ -22,7 +24,10 @@ async function load() {
   }
   loading.value = true
   try {
-    const fetched = await fetchPageBySlug(slugParam.value)
+    const numericId = Number(slugParam.value)
+    const fetched = previewToken.value
+      ? await fetchPagePreview(numericId > 0 ? numericId : 0, previewToken.value)
+      : await fetchPageBySlug(slugParam.value)
     page.value = fetched ?? null
   } catch (e) {
     console.error('[CMS Page] Load failed:', e)
@@ -32,7 +37,7 @@ async function load() {
   }
 }
 
-watch(slugParam, load, { immediate: true })
+watch([slugParam, previewToken], load, { immediate: true })
 
 // SSR/CSR 都生效的标题与 SEO meta
 useHead(() => {

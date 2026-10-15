@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "webhook/service/v1/webhook.proto";
+
+// Webhook 服务（内容事件外发订阅管理）
+service WebhookService {
+  // 获取 Webhook 列表
+  rpc List (pagination.PagingRequest) returns (webhook.service.v1.ListWebhookResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/webhooks"
+    };
+  }
+
+  // 获取 Webhook 数据
+  rpc Get (webhook.service.v1.GetWebhookRequest) returns (webhook.service.v1.Webhook) {
+    option (google.api.http) = {
+      get: "/admin/v1/webhooks/{id}"
+    };
+  }
+
+  // 创建 Webhook
+  rpc Create (webhook.service.v1.CreateWebhookRequest) returns (webhook.service.v1.Webhook) {
+    option (google.api.http) = {
+      post: "/admin/v1/webhooks"
+      body: "*"
+    };
+  }
+
+  // 更新 Webhook
+  rpc Update (webhook.service.v1.UpdateWebhookRequest) returns (webhook.service.v1.Webhook) {
+    option (google.api.http) = {
+      put: "/admin/v1/webhooks/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除 Webhook
+  rpc Delete (webhook.service.v1.DeleteWebhookRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/webhooks/{id}"
+    };
+  }
+
+  // 发送测试事件（ping）
+  rpc TestPing (webhook.service.v1.TestWebhookPingRequest) returns (webhook.service.v1.WebhookDelivery) {
+    option (google.api.http) = {
+      post: "/admin/v1/webhooks/{id}/ping"
+      body: "*"
+    };
+  }
+
+  // 列出投递记录（按时间倒序）
+  rpc ListDeliveries (webhook.service.v1.ListWebhookDeliveriesRequest) returns (webhook.service.v1.ListWebhookDeliveriesResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/webhooks/deliveries"
+    };
+  }
+}

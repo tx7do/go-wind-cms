@@ -169,6 +169,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	postVersionRepo := data.NewPostVersionRepo(ctx, entClient)
 	pageVersionRepo := data.NewPageVersionRepo(ctx, entClient)
 
+	// Webhook 订阅与投递记录
+	webhookRepo := data.NewWebhookRepo(ctx, entClient)
+
 	// 站点配置
 	siteRepo := data.NewSiteRepo(ctx, entClient)
 	siteSettingRepo := data.NewSiteSettingRepo(ctx, entClient)
@@ -196,6 +199,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 任务 / 文件
 	taskService := service.NewTaskService(ctx, taskRepo, userRepo)
+
+	// Webhook 事件外发（订阅 CRUD + 扇出/投递 worker；依赖 taskService）
+	webhookService := service.NewWebhookService(ctx, webhookRepo, taskService)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
 
 	// 字典与多语言
@@ -243,10 +249,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo)
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
-	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo)
+	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)
-	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo)
+	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService)
 	contentModelService := service.NewContentModelService(ctx, contentModelRepo)
 
 	// 站点配置
@@ -260,6 +266,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 社交分发
 	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, socialStatsHistoryRepo, mediaAssetRepo, fileRepo, minIOClient, postRepo, taskService, internalMessageService, socialInboxRepo)
+
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -289,6 +296,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		siteService, siteSettingService, navigationService, navigationItemService,
 		mediaAssetService,
 		socialService,
+		webhookService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {
@@ -296,7 +304,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

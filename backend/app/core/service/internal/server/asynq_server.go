@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -84,6 +84,14 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 	if _, err = srv.NewPeriodicTask("*/15 * * * *", task.SocialInboxSyncTaskType, &task.PublishSweepPayload{}); err != nil {
+		log.Error(err)
+	}
+
+	// 注册 Webhook 投递任务：fanout 按事件扇出到单订阅 deliver（各自由 asynq 退避重试）。
+	if err = asynq.RegisterSubscriber(srv, task.WebhookFanoutTaskType, webhookService.FanoutWorker); err != nil {
+		log.Error(err)
+	}
+	if err = asynq.RegisterSubscriber(srv, task.WebhookDeliverTaskType, webhookService.DeliverWorker); err != nil {
 		log.Error(err)
 	}
 

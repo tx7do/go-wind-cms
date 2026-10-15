@@ -5705,6 +5705,58 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.Post'
+    /admin/v1/preview/pages/{id}:
+        post:
+            tags:
+                - PreviewService
+            description: 签发页面预览令牌
+            operationId: PreviewService_CreatePagePreviewToken
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/admin.service.v1.CreatePagePreviewTokenRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/admin.service.v1.PreviewToken'
+    /admin/v1/preview/posts/{id}:
+        post:
+            tags:
+                - PreviewService
+            description: 签发帖子预览令牌
+            operationId: PreviewService_CreatePostPreviewToken
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/admin.service.v1.CreatePostPreviewTokenRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/admin.service.v1.PreviewToken'
     /admin/v1/refresh-token:
         post:
             tags:
@@ -7753,6 +7805,213 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/identity.service.v1.UserExistsResponse'
+    /admin/v1/webhooks:
+        get:
+            tags:
+                - WebhookService
+            description: 获取 Webhook 列表
+            operationId: WebhookService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/webhook.service.v1.ListWebhookResponse'
+        post:
+            tags:
+                - WebhookService
+            description: 创建 Webhook
+            operationId: WebhookService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/webhook.service.v1.CreateWebhookRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/webhook.service.v1.Webhook'
+    /admin/v1/webhooks/deliveries:
+        get:
+            tags:
+                - WebhookService
+            description: 列出投递记录（按时间倒序）
+            operationId: WebhookService_ListDeliveries
+            parameters:
+                - name: webhookId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: limit
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/webhook.service.v1.ListWebhookDeliveriesResponse'
+    /admin/v1/webhooks/{id}:
+        get:
+            tags:
+                - WebhookService
+            description: 获取 Webhook 数据
+            operationId: WebhookService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/webhook.service.v1.Webhook'
+        put:
+            tags:
+                - WebhookService
+            description: 更新 Webhook
+            operationId: WebhookService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/webhook.service.v1.UpdateWebhookRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/webhook.service.v1.Webhook'
+        delete:
+            tags:
+                - WebhookService
+            description: 删除 Webhook
+            operationId: WebhookService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/webhooks/{id}/ping:
+        post:
+            tags:
+                - WebhookService
+            description: 发送测试事件（ping）
+            operationId: WebhookService_TestPing
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/webhook.service.v1.TestWebhookPingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/webhook.service.v1.WebhookDelivery'
 components:
     schemas:
         KratosStatus:
@@ -7772,6 +8031,22 @@ components:
                     type: object
                     description: 元数据
             description: Kratos错误返回
+        admin.service.v1.CreatePagePreviewTokenRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 页面ID
+                    format: uint32
+            description: 请求 - 签发页面预览令牌
+        admin.service.v1.CreatePostPreviewTokenRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 帖子ID
+                    format: uint32
+            description: 请求 - 签发帖子预览令牌
         admin.service.v1.InitialContextResponse:
             type: object
             properties:
@@ -7799,6 +8074,17 @@ components:
                     items:
                         $ref: '#/components/schemas/permission.service.v1.MenuRouteItem'
             description: 查询路由列表 - 回应
+        admin.service.v1.PreviewToken:
+            type: object
+            properties:
+                token:
+                    type: string
+                    description: 预览令牌（拼接到 C 端详情 URL 的 preview_token 参数）
+                expiresAt:
+                    type: string
+                    description: 过期时间
+                    format: date-time
+            description: 预览令牌
         ai.service.v1.AiConversation:
             type: object
             properties:
@@ -14621,6 +14907,134 @@ components:
                 rawContent:
                     type: string
                     description: 原始内容（供调试使用）
+        webhook.service.v1.CreateWebhookRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/webhook.service.v1.Webhook'
+            description: 请求 - 创建 Webhook
+        webhook.service.v1.ListWebhookDeliveriesResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/webhook.service.v1.WebhookDelivery'
+                total:
+                    type: string
+            description: 回应 - 投递记录列表
+        webhook.service.v1.ListWebhookResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/webhook.service.v1.Webhook'
+                total:
+                    type: string
+            description: 回应 - Webhook 列表
+        webhook.service.v1.TestWebhookPingRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: Webhook ID
+                    format: uint32
+            description: 请求 - 发送测试事件
+        webhook.service.v1.UpdateWebhookRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/webhook.service.v1.Webhook'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 不存在则新增
+            description: 请求 - 更新 Webhook
+        webhook.service.v1.Webhook:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: Webhook ID
+                    format: uint32
+                url:
+                    type: string
+                    description: 回调 URL
+                secret:
+                    type: string
+                    description: '签名密钥（X-Webhook-Signature: sha256=HMAC(body)）'
+                events:
+                    type: array
+                    items:
+                        type: string
+                    description: 订阅的事件类型；空=全部
+                enabled:
+                    type: boolean
+                    description: 是否启用
+                description:
+                    type: string
+                    description: 用途说明
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+            description: Webhook 订阅
+        webhook.service.v1.WebhookDelivery:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 投递记录ID
+                    format: uint32
+                webhookId:
+                    type: integer
+                    description: 关联的 Webhook ID
+                    format: uint32
+                event:
+                    type: string
+                    description: 事件类型
+                entityId:
+                    type: integer
+                    description: 事件主体 ID
+                    format: uint32
+                status:
+                    type: string
+                    description: 投递状态（DELIVERY_STATUS_SUCCESS/FAILED）
+                httpStatus:
+                    type: integer
+                    description: 响应 HTTP 状态码（0=未达 HTTP 层）
+                    format: int32
+                error:
+                    type: string
+                    description: 失败原因
+                durationMs:
+                    type: integer
+                    description: 耗时（毫秒）
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 投递记录（每次尝试一行）
     responses:
         default:
             description: default kratos response
@@ -14730,6 +15144,10 @@ tags:
       description: 职位管理服务
     - name: PostService
       description: 帖子服务
+    - name: PreviewService
+      description: |-
+        草稿预览服务：为后台编辑中的内容签发短时效预览令牌。
+         C 端公开 BFF 校验该令牌后放行非已发布内容（无状态 HMAC，无服务端存储）。
     - name: RoleService
       description: 角色管理服务
     - name: SiteService
@@ -14752,3 +15170,5 @@ tags:
       description: 用户个人资料服务
     - name: UserService
       description: 用户管理服务
+    - name: WebhookService
+      description: Webhook 服务（内容事件外发订阅管理）

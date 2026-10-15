@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
@@ -14,6 +15,7 @@ import (
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	entmiddleware "go-wind-cms/pkg/middleware/ent"
+	"go-wind-cms/pkg/preview"
 )
 
 type PostService struct {
@@ -56,11 +58,29 @@ func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	// 公开端点仅返回已发布文章，草稿/归档/私有等状态按未找到处理
+	// 公开端点仅返回已发布文章，草稿/归档/私有等状态按未找到处理；
+	// 持有效预览令牌（admin 签发的短时效 HMAC）时放行草稿供后台预览
 	if resp == nil || resp.GetStatus() != contentV1.Post_POST_STATUS_PUBLISHED {
-		return nil, contentV1.ErrorNotFound("post not found")
+		if !s.hasValidPreviewToken(ctx, resp.GetId()) {
+			return nil, contentV1.ErrorNotFound("post not found")
+		}
 	}
 	return resp, nil
+}
+
+// hasValidPreviewToken 校验请求 query 里的 preview_token：令牌有效且指向该文章
+// 时放行；令牌存在但无效按"不存在"处理，不暴露令牌有效性细节。
+func (s *PostService) hasValidPreviewToken(ctx context.Context, targetID uint32) bool {
+	token := rawQueryValue(ctx, "preview_token")
+	if token == "" {
+		return false
+	}
+	id, err := preview.Verify(token, preview.KindPost, time.Now())
+	if err != nil {
+		s.log.Warnf("preview token rejected (kind=post): %v", err)
+		return false
+	}
+	return id != 0 && id == targetID
 }
 
 // Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务，

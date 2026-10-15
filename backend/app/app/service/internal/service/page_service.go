@@ -2,14 +2,17 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	"go-wind-cms/pkg/preview"
 )
 
 type PageService struct {
@@ -55,11 +58,38 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	// 公开端点仅返回已发布页面，草稿/归档/私有等状态按未找到处理
+	// 公开端点仅返回已发布页面，草稿/归档/私有等状态按未找到处理；
+	// 持有效预览令牌（admin 签发的短时效 HMAC）时放行草稿供后台预览
 	if resp == nil || resp.GetStatus() != contentV1.Page_PAGE_STATUS_PUBLISHED {
-		return nil, contentV1.ErrorNotFound("page not found")
+		if !s.hasValidPreviewToken(ctx, preview.KindPage, resp.GetId()) {
+			return nil, contentV1.ErrorNotFound("page not found")
+		}
 	}
 	return resp, nil
+}
+
+// hasValidPreviewToken 校验请求 query 里的 preview_token：令牌有效且指向该资源
+// （kind/Id 匹配）时放行；令牌存在但无效按"不存在"处理，不暴露令牌有效性细节。
+func (s *PageService) hasValidPreviewToken(ctx context.Context, kind string, targetID uint32) bool {
+	token := rawQueryValue(ctx, "preview_token")
+	if token == "" {
+		return false
+	}
+	id, err := preview.Verify(token, kind, time.Now())
+	if err != nil {
+		s.log.Warnf("preview token rejected (kind=%s): %v", kind, err)
+		return false
+	}
+	return id != 0 && id == targetID
+}
+
+// rawQueryValue 从 kratos transport 读原始 HTTP 请求的 query 参数
+//（生成代码按 proto 字段装配 query，preview_token 不在消息内，须旁路读取）。
+func rawQueryValue(ctx context.Context, key string) string {
+	if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil {
+		return hr.URL.Query().Get(key)
+	}
+	return ""
 }
 
 // Create/Update/Delete 在 app（公开站点）服务上禁用：CMS 内容的写操作应经由 admin 服务。

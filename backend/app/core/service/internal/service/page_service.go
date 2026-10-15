@@ -11,6 +11,8 @@ import (
 
 	"go-wind-cms/app/core/service/internal/data"
 
+	"go-wind-cms/pkg/task"
+
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
 
@@ -19,15 +21,17 @@ type PageService struct {
 
 	pageRepo         *data.PageRepo
 	pageVersionRepo  *data.PageVersionRepo
+	webhookService   *WebhookService
 	contentModelRepo *data.ContentModelRepo
 	log              *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo) *PageService {
+func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService) *PageService {
 	return &PageService{
 		log:              ctx.NewLoggerHelper("page/service/core-service"),
 		pageRepo:         uc,
 		pageVersionRepo:  pageVersionRepo,
+		webhookService:   webhookService,
 		contentModelRepo: contentModelRepo,
 	}
 }
@@ -57,6 +61,10 @@ func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageReque
 	}
 	// 版本快照钩子：创建即 v1（best-effort，失败不阻断保存）
 	s.snapshotPageVersion(ctx, dto.GetId())
+	// Webhook 事件外发（best-effort）
+	if s.webhookService != nil && dto.GetId() != 0 {
+		s.webhookService.DispatchEvent(ctx, task.WebhookEventPageCreated, dto.GetId())
+	}
 	return dto, nil
 }
 
@@ -79,12 +87,30 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 			return nil, vErr
 		}
 	}
+	// 记录更新前状态：供 Webhook 事件判定是否为"发布"转移
+	var prevStatus contentV1.Page_PageStatus
+	if req != nil {
+		if existing, gErr := s.pageRepo.Get(ctx, &contentV1.GetPageRequest{
+			QueryBy: &contentV1.GetPageRequest_Id{Id: req.GetId()},
+		}); gErr == nil && existing != nil {
+			prevStatus = existing.GetStatus()
+		}
+	}
+
 	dto, err := s.pageRepo.Update(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	// 版本快照钩子：每次保存落一版（best-effort，失败不阻断保存）
 	s.snapshotPageVersion(ctx, dto.GetId())
+	// Webhook 事件外发：转为 PUBLISHED 记 published，其余记 updated（best-effort）
+	if s.webhookService != nil && dto.GetId() != 0 {
+		if dto.GetStatus() == contentV1.Page_PAGE_STATUS_PUBLISHED && prevStatus != contentV1.Page_PAGE_STATUS_PUBLISHED {
+			s.webhookService.DispatchEvent(ctx, task.WebhookEventPagePublished, dto.GetId())
+		} else {
+			s.webhookService.DispatchEvent(ctx, task.WebhookEventPageUpdated, dto.GetId())
+		}
+	}
 	return dto, nil
 }
 
@@ -92,6 +118,10 @@ func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageReque
 	err := s.pageRepo.Delete(ctx, req)
 	if err != nil {
 		return nil, err
+	}
+	// Webhook 事件外发（best-effort）
+	if s.webhookService != nil && req.GetId() != 0 {
+		s.webhookService.DispatchEvent(ctx, task.WebhookEventPageDeleted, req.GetId())
 	}
 	return &emptypb.Empty{}, nil
 }

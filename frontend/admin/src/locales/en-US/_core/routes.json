@@ -75,5 +75,6 @@
   "ai-knowledge": "Knowledge Base",
   "ai-usage": "AI Usage",
   "ai-query": "AI Query",
-  "social-inbox": "Social Inbox"
+  "social-inbox": "Social Inbox",
+  "webhooks": "Webhooks"
 }

@@ -61,5 +61,15 @@
   "statusMap": {
     "ON": "Active",
     "OFF": "Disabled"
+  },
+  "system": {
+    "menus": "menus",
+    "apis": "apis",
+    "dict": "dict",
+    "files": "files",
+    "tasks": "tasks",
+    "login-policies": "login-policies",
+    "languages": "languages",
+    "webhook": "Webhooks"
   }
 }

@@ -5,14 +5,14 @@ import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 
 import type {contentservicev1_Page} from '@/api/generated/app/service/v1';
-import {fetchPage, fetchPageBySlug} from '@/api/hooks/page';
+import {fetchPage, fetchPageBySlug, fetchPagePreview} from '@/api/hooks/page';
 import CmsPageView from '@/components/page/CmsPageView';
 import SectionContainer from '@/components/layout/SectionContainer';
 
 /**
  * CMS Page 公开渲染页（静态导出，query 传参）：
  *   /[locale]/page/detail?slug=about  或  ?id=5
- * 仅返回已发布页面（app BFF Get 过滤），草稿/归档按未找到处理。
+ * 仅返回已发布页面（app BFF Get 过滤）；携带 preview_token 时放行草稿供后台预览。
  */
 export default function PageDetailClient() {
     const t = useTranslations('page');
@@ -23,6 +23,7 @@ export default function PageDetailClient() {
         const raw = searchParams.get('id');
         return raw ? parseInt(raw) : 0;
     }, [searchParams]);
+    const previewToken = useMemo(() => searchParams.get('preview_token') || '', [searchParams]);
 
     const [page, setPage] = useState<contentservicev1_Page | null>(null);
     const [loading, setLoading] = useState(true);
@@ -36,8 +37,12 @@ export default function PageDetailClient() {
             }
             setLoading(true);
             try {
-                const fetched = slug ? await fetchPageBySlug(slug) : await fetchPage(id);
-                if (!cancelled) setPage(fetched ?? null);
+                const fetched = previewToken
+                    ? await fetchPagePreview(id, previewToken)
+                    : slug
+                      ? await fetchPageBySlug(slug)
+                      : await fetchPage(id);
+                if (!cancelled) setPage((fetched as contentservicev1_Page | null) ?? null);
             } catch (error) {
                 console.error('Load cms page failed:', error);
                 if (!cancelled) setPage(null);
@@ -49,7 +54,7 @@ export default function PageDetailClient() {
         return () => {
             cancelled = true;
         };
-    }, [slug, id]);
+    }, [slug, id, previewToken]);
 
     // 标题随页面翻译更新
     useEffect(() => {

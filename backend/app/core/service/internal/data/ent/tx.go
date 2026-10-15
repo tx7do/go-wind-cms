@@ -168,6 +168,10 @@ type Tx struct {
 	UserPosition *UserPositionClient
 	// UserRole is the client for interacting with the UserRole builders.
 	UserRole *UserRoleClient
+	// Webhook is the client for interacting with the Webhook builders.
+	Webhook *WebhookClient
+	// WebhookDelivery is the client for interacting with the WebhookDelivery builders.
+	WebhookDelivery *WebhookDeliveryClient
 
 	// lazily loaded.
 	client     *Client
@@ -377,6 +381,8 @@ func (tx *Tx) init() {
 	tx.UserOrgUnit = NewUserOrgUnitClient(tx.config)
 	tx.UserPosition = NewUserPositionClient(tx.config)
 	tx.UserRole = NewUserRoleClient(tx.config)
+	tx.Webhook = NewWebhookClient(tx.config)
+	tx.WebhookDelivery = NewWebhookDeliveryClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

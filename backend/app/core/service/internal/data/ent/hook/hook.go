@@ -944,6 +944,30 @@ func (f UserRoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserRoleMutation", m)
 }
 
+// The WebhookFunc type is an adapter to allow the use of ordinary
+// function as Webhook mutator.
+type WebhookFunc func(context.Context, *ent.WebhookMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WebhookFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.WebhookMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.WebhookMutation", m)
+}
+
+// The WebhookDeliveryFunc type is an adapter to allow the use of ordinary
+// function as WebhookDelivery mutator.
+type WebhookDeliveryFunc func(context.Context, *ent.WebhookDeliveryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WebhookDeliveryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.WebhookDeliveryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.WebhookDeliveryMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, ent.Mutation) bool
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {XIcon} from '@/plugins/xicon'
-import {fetchPost, getPostTitle, getPostContent, getPostThumbnail} from '@/api/composables/post'
+import {fetchPost, fetchPostPreview, getPostTitle, getPostContent, getPostThumbnail} from '@/api/composables/post'
 import {useGetCounts, extractCount, useWatch, useUnwatch, useLike, useUnlike} from '@/api/composables/interaction'
 
 const {t} = useI18n()
@@ -16,6 +16,8 @@ const isTocExpanded = ref(true)
 const contentRef = ref<HTMLElement | null>(null)
 
 const postId = computed(() => Number(route.params.id))
+// 草稿预览：admin「预览」按钮带短时效令牌跳转，后端校验后放行非已发布内容
+const previewToken = computed(() => String(route.query.preview_token || ''))
 
 // useGetCounts 取此 post 的点赞计数（来自 interaction_counter 表，post 表的 likes 列已移除）。
 // 响应中未出现的 (target, metric) 组合按 0 兜底。
@@ -63,9 +65,11 @@ async function loadPost() {
   if (!postId.value) return
   postLoading.value = true
   try {
-    const fetched = await fetchPost(postId.value)
-    // 仅展示已发布文章，草稿/私有等状态按未找到处理
-    if (!fetched || fetched.status !== 'POST_STATUS_PUBLISHED') {
+    const fetched = previewToken.value
+      ? await fetchPostPreview(postId.value, previewToken.value)
+      : await fetchPost(postId.value)
+    // 仅展示已发布文章，草稿/私有等状态按未找到处理（携带预览令牌时放行草稿）
+    if (!fetched || (fetched.status !== 'POST_STATUS_PUBLISHED' && !previewToken.value)) {
       post.value = null
       return
     }
