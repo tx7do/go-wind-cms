@@ -28,7 +28,7 @@ var File_admin_service_v1_i_post_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_post_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_post.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto2\x80\t\n" +
+	"\x1dadmin/service/v1/i_post.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto2\xa0\f\n" +
 	"\vPostService\x12`\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/v1/posts\x12a\n" +
 	"\x03Get\x12\".content.service.v1.GetPostRequest\x1a\x18.content.service.v1.Post\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/posts/{id}\x12e\n" +
@@ -39,7 +39,10 @@ const file_admin_service_v1_i_post_proto_rawDesc = "" +
 	"\fListVersions\x12+.content.service.v1.ListPostVersionsRequest\x1a,.content.service.v1.ListPostVersionsResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/admin/v1/posts/{post_id}/versions\x12\x7f\n" +
 	"\n" +
 	"GetVersion\x12).content.service.v1.GetPostVersionRequest\x1a\x1f.content.service.v1.PostVersion\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/posts/versions/{id}\x12\x9d\x01\n" +
-	"\x0eRestoreVersion\x12-.content.service.v1.RestorePostVersionRequest\x1a\x18.content.service.v1.Post\"B\x82\xd3\xe4\x93\x02<:\x01*\"7/admin/v1/posts/{post_id}/versions/{version_id}/restoreB\xb5\x01\n" +
+	"\x0eRestoreVersion\x12-.content.service.v1.RestorePostVersionRequest\x1a\x18.content.service.v1.Post\"B\x82\xd3\xe4\x93\x02<:\x01*\"7/admin/v1/posts/{post_id}/versions/{version_id}/restore\x12\x89\x01\n" +
+	"\fSubmitReview\x12+.content.service.v1.SubmitPostReviewRequest\x1a\x18.content.service.v1.Post\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/admin/v1/posts/{post_id}/review/submit\x12\x85\x01\n" +
+	"\rApproveReview\x12%.content.service.v1.ReviewPostRequest\x1a\x18.content.service.v1.Post\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/admin/v1/posts/{post_id}/review/approve\x12\x89\x01\n" +
+	"\fRejectReview\x12+.content.service.v1.RejectPostReviewRequest\x1a\x18.content.service.v1.Post\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/admin/v1/posts/{post_id}/review/rejectB\xb5\x01\n" +
 	"\x14com.admin.service.v1B\n" +
 	"IPostProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
@@ -53,12 +56,15 @@ var file_admin_service_v1_i_post_proto_goTypes = []any{
 	(*v11.ListPostVersionsRequest)(nil),       // 6: content.service.v1.ListPostVersionsRequest
 	(*v11.GetPostVersionRequest)(nil),         // 7: content.service.v1.GetPostVersionRequest
 	(*v11.RestorePostVersionRequest)(nil),     // 8: content.service.v1.RestorePostVersionRequest
-	(*v11.ListPostResponse)(nil),              // 9: content.service.v1.ListPostResponse
-	(*v11.Post)(nil),                          // 10: content.service.v1.Post
-	(*emptypb.Empty)(nil),                     // 11: google.protobuf.Empty
-	(*v11.PostTranslationExistsResponse)(nil), // 12: content.service.v1.PostTranslationExistsResponse
-	(*v11.ListPostVersionsResponse)(nil),      // 13: content.service.v1.ListPostVersionsResponse
-	(*v11.PostVersion)(nil),                   // 14: content.service.v1.PostVersion
+	(*v11.SubmitPostReviewRequest)(nil),       // 9: content.service.v1.SubmitPostReviewRequest
+	(*v11.ReviewPostRequest)(nil),             // 10: content.service.v1.ReviewPostRequest
+	(*v11.RejectPostReviewRequest)(nil),       // 11: content.service.v1.RejectPostReviewRequest
+	(*v11.ListPostResponse)(nil),              // 12: content.service.v1.ListPostResponse
+	(*v11.Post)(nil),                          // 13: content.service.v1.Post
+	(*emptypb.Empty)(nil),                     // 14: google.protobuf.Empty
+	(*v11.PostTranslationExistsResponse)(nil), // 15: content.service.v1.PostTranslationExistsResponse
+	(*v11.ListPostVersionsResponse)(nil),      // 16: content.service.v1.ListPostVersionsResponse
+	(*v11.PostVersion)(nil),                   // 17: content.service.v1.PostVersion
 }
 var file_admin_service_v1_i_post_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.PostService.List:input_type -> pagination.PagingRequest
@@ -70,17 +76,23 @@ var file_admin_service_v1_i_post_proto_depIdxs = []int32{
 	6,  // 6: admin.service.v1.PostService.ListVersions:input_type -> content.service.v1.ListPostVersionsRequest
 	7,  // 7: admin.service.v1.PostService.GetVersion:input_type -> content.service.v1.GetPostVersionRequest
 	8,  // 8: admin.service.v1.PostService.RestoreVersion:input_type -> content.service.v1.RestorePostVersionRequest
-	9,  // 9: admin.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
-	10, // 10: admin.service.v1.PostService.Get:output_type -> content.service.v1.Post
-	10, // 11: admin.service.v1.PostService.Create:output_type -> content.service.v1.Post
-	10, // 12: admin.service.v1.PostService.Update:output_type -> content.service.v1.Post
-	11, // 13: admin.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
-	12, // 14: admin.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
-	13, // 15: admin.service.v1.PostService.ListVersions:output_type -> content.service.v1.ListPostVersionsResponse
-	14, // 16: admin.service.v1.PostService.GetVersion:output_type -> content.service.v1.PostVersion
-	10, // 17: admin.service.v1.PostService.RestoreVersion:output_type -> content.service.v1.Post
-	9,  // [9:18] is the sub-list for method output_type
-	0,  // [0:9] is the sub-list for method input_type
+	9,  // 9: admin.service.v1.PostService.SubmitReview:input_type -> content.service.v1.SubmitPostReviewRequest
+	10, // 10: admin.service.v1.PostService.ApproveReview:input_type -> content.service.v1.ReviewPostRequest
+	11, // 11: admin.service.v1.PostService.RejectReview:input_type -> content.service.v1.RejectPostReviewRequest
+	12, // 12: admin.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
+	13, // 13: admin.service.v1.PostService.Get:output_type -> content.service.v1.Post
+	13, // 14: admin.service.v1.PostService.Create:output_type -> content.service.v1.Post
+	13, // 15: admin.service.v1.PostService.Update:output_type -> content.service.v1.Post
+	14, // 16: admin.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
+	15, // 17: admin.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
+	16, // 18: admin.service.v1.PostService.ListVersions:output_type -> content.service.v1.ListPostVersionsResponse
+	17, // 19: admin.service.v1.PostService.GetVersion:output_type -> content.service.v1.PostVersion
+	13, // 20: admin.service.v1.PostService.RestoreVersion:output_type -> content.service.v1.Post
+	13, // 21: admin.service.v1.PostService.SubmitReview:output_type -> content.service.v1.Post
+	13, // 22: admin.service.v1.PostService.ApproveReview:output_type -> content.service.v1.Post
+	13, // 23: admin.service.v1.PostService.RejectReview:output_type -> content.service.v1.Post
+	12, // [12:24] is the sub-list for method output_type
+	0,  // [0:12] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

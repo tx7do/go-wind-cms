@@ -1660,6 +1660,149 @@ func (x *RestorePostVersionRequest) GetVersionId() uint32 {
 	return 0
 }
 
+// 请求 - 提交审核
+type SubmitPostReviewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PostId        uint32                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubmitPostReviewRequest) Reset() {
+	*x = SubmitPostReviewRequest{}
+	mi := &file_content_service_v1_post_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubmitPostReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubmitPostReviewRequest) ProtoMessage() {}
+
+func (x *SubmitPostReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_post_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubmitPostReviewRequest.ProtoReflect.Descriptor instead.
+func (*SubmitPostReviewRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_post_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *SubmitPostReviewRequest) GetPostId() uint32 {
+	if x != nil {
+		return x.PostId
+	}
+	return 0
+}
+
+// 请求 - 审核通过/驳回的公共载体
+type ReviewPostRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PostId        uint32                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReviewPostRequest) Reset() {
+	*x = ReviewPostRequest{}
+	mi := &file_content_service_v1_post_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReviewPostRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReviewPostRequest) ProtoMessage() {}
+
+func (x *ReviewPostRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_post_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReviewPostRequest.ProtoReflect.Descriptor instead.
+func (*ReviewPostRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_post_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ReviewPostRequest) GetPostId() uint32 {
+	if x != nil {
+		return x.PostId
+	}
+	return 0
+}
+
+// 请求 - 审核驳回（带理由）
+type RejectPostReviewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PostId        uint32                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RejectPostReviewRequest) Reset() {
+	*x = RejectPostReviewRequest{}
+	mi := &file_content_service_v1_post_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RejectPostReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RejectPostReviewRequest) ProtoMessage() {}
+
+func (x *RejectPostReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_post_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RejectPostReviewRequest.ProtoReflect.Descriptor instead.
+func (*RejectPostReviewRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_post_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *RejectPostReviewRequest) GetPostId() uint32 {
+	if x != nil {
+		return x.PostId
+	}
+	return 0
+}
+
+func (x *RejectPostReviewRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
 var File_content_service_v1_post_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_post_proto_rawDesc = "" +
@@ -1881,8 +2024,14 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\x19RestorePostVersionRequest\x12'\n" +
 	"\apost_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x12B\n" +
 	"\n" +
-	"version_id\x18\x02 \x01(\rB#\xbaG \x92\x02\x1d要恢复到的版本记录IDR\tversionId2\xa2\n" +
-	"\n" +
+	"version_id\x18\x02 \x01(\rB#\xbaG \x92\x02\x1d要恢复到的版本记录IDR\tversionId\"B\n" +
+	"\x17SubmitPostReviewRequest\x12'\n" +
+	"\apost_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"<\n" +
+	"\x11ReviewPostRequest\x12'\n" +
+	"\apost_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"\x80\x01\n" +
+	"\x17RejectPostReviewRequest\x12'\n" +
+	"\apost_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x12<\n" +
+	"\x06reason\x18\x02 \x01(\tB$\xbaG!\x92\x02\x1e驳回理由（通知作者）R\x06reason2\xa8\f\n" +
 	"\vPostService\x12I\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x00\x12E\n" +
 	"\x03Get\x12\".content.service.v1.GetPostRequest\x1a\x18.content.service.v1.Post\"\x00\x12K\n" +
@@ -1898,7 +2047,10 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\fListVersions\x12+.content.service.v1.ListPostVersionsRequest\x1a,.content.service.v1.ListPostVersionsResponse\"\x00\x12Z\n" +
 	"\n" +
 	"GetVersion\x12).content.service.v1.GetPostVersionRequest\x1a\x1f.content.service.v1.PostVersion\"\x00\x12[\n" +
-	"\x0eRestoreVersion\x12-.content.service.v1.RestorePostVersionRequest\x1a\x18.content.service.v1.Post\"\x00B\xc2\x01\n" +
+	"\x0eRestoreVersion\x12-.content.service.v1.RestorePostVersionRequest\x1a\x18.content.service.v1.Post\"\x00\x12W\n" +
+	"\fSubmitReview\x12+.content.service.v1.SubmitPostReviewRequest\x1a\x18.content.service.v1.Post\"\x00\x12R\n" +
+	"\rApproveReview\x12%.content.service.v1.ReviewPostRequest\x1a\x18.content.service.v1.Post\"\x00\x12W\n" +
+	"\fRejectReview\x12+.content.service.v1.RejectPostReviewRequest\x1a\x18.content.service.v1.Post\"\x00B\xc2\x01\n" +
 	"\x16com.content.service.v1B\tPostProtoP\x01Z3go-wind-cms/api/gen/go/content/service/v1;contentpb\xa2\x02\x03CSX\xaa\x02\x12Content.Service.V1\xca\x02\x12Content\\Service\\V1\xe2\x02\x1eContent\\Service\\V1\\GPBMetadata\xea\x02\x14Content::Service::V1b\x06proto3"
 
 var (
@@ -1914,7 +2066,7 @@ func file_content_service_v1_post_proto_rawDescGZIP() []byte {
 }
 
 var file_content_service_v1_post_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_content_service_v1_post_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_content_service_v1_post_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_content_service_v1_post_proto_goTypes = []any{
 	(Post_PostStatus)(0),                  // 0: content.service.v1.Post.PostStatus
 	(*Post)(nil),                          // 1: content.service.v1.Post
@@ -1938,40 +2090,43 @@ var file_content_service_v1_post_proto_goTypes = []any{
 	(*ListPostVersionsResponse)(nil),      // 19: content.service.v1.ListPostVersionsResponse
 	(*GetPostVersionRequest)(nil),         // 20: content.service.v1.GetPostVersionRequest
 	(*RestorePostVersionRequest)(nil),     // 21: content.service.v1.RestorePostVersionRequest
-	nil,                                   // 22: content.service.v1.Post.CustomFieldsEntry
-	(EditorType)(0),                       // 23: content.service.v1.EditorType
-	(*timestamppb.Timestamp)(nil),         // 24: google.protobuf.Timestamp
-	(*SeoMeta)(nil),                       // 25: content.service.v1.SeoMeta
-	(*fieldmaskpb.FieldMask)(nil),         // 26: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),              // 27: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                 // 28: google.protobuf.Empty
+	(*SubmitPostReviewRequest)(nil),       // 22: content.service.v1.SubmitPostReviewRequest
+	(*ReviewPostRequest)(nil),             // 23: content.service.v1.ReviewPostRequest
+	(*RejectPostReviewRequest)(nil),       // 24: content.service.v1.RejectPostReviewRequest
+	nil,                                   // 25: content.service.v1.Post.CustomFieldsEntry
+	(EditorType)(0),                       // 26: content.service.v1.EditorType
+	(*timestamppb.Timestamp)(nil),         // 27: google.protobuf.Timestamp
+	(*SeoMeta)(nil),                       // 28: content.service.v1.SeoMeta
+	(*fieldmaskpb.FieldMask)(nil),         // 29: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),              // 30: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                 // 31: google.protobuf.Empty
 }
 var file_content_service_v1_post_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Post.status:type_name -> content.service.v1.Post.PostStatus
-	23, // 1: content.service.v1.Post.editor_type:type_name -> content.service.v1.EditorType
-	22, // 2: content.service.v1.Post.custom_fields:type_name -> content.service.v1.Post.CustomFieldsEntry
+	26, // 1: content.service.v1.Post.editor_type:type_name -> content.service.v1.EditorType
+	25, // 2: content.service.v1.Post.custom_fields:type_name -> content.service.v1.Post.CustomFieldsEntry
 	2,  // 3: content.service.v1.Post.translations:type_name -> content.service.v1.PostTranslation
-	24, // 4: content.service.v1.Post.created_at:type_name -> google.protobuf.Timestamp
-	24, // 5: content.service.v1.Post.updated_at:type_name -> google.protobuf.Timestamp
-	24, // 6: content.service.v1.Post.deleted_at:type_name -> google.protobuf.Timestamp
-	24, // 7: content.service.v1.Post.publish_time:type_name -> google.protobuf.Timestamp
-	25, // 8: content.service.v1.PostTranslation.seo:type_name -> content.service.v1.SeoMeta
-	24, // 9: content.service.v1.PostTranslation.created_at:type_name -> google.protobuf.Timestamp
-	24, // 10: content.service.v1.PostTranslation.updated_at:type_name -> google.protobuf.Timestamp
-	24, // 11: content.service.v1.PostTranslation.deleted_at:type_name -> google.protobuf.Timestamp
+	27, // 4: content.service.v1.Post.created_at:type_name -> google.protobuf.Timestamp
+	27, // 5: content.service.v1.Post.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 6: content.service.v1.Post.deleted_at:type_name -> google.protobuf.Timestamp
+	27, // 7: content.service.v1.Post.publish_time:type_name -> google.protobuf.Timestamp
+	28, // 8: content.service.v1.PostTranslation.seo:type_name -> content.service.v1.SeoMeta
+	27, // 9: content.service.v1.PostTranslation.created_at:type_name -> google.protobuf.Timestamp
+	27, // 10: content.service.v1.PostTranslation.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 11: content.service.v1.PostTranslation.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 12: content.service.v1.ListPostResponse.items:type_name -> content.service.v1.Post
-	26, // 13: content.service.v1.GetPostRequest.view_mask:type_name -> google.protobuf.FieldMask
+	29, // 13: content.service.v1.GetPostRequest.view_mask:type_name -> google.protobuf.FieldMask
 	1,  // 14: content.service.v1.CreatePostRequest.data:type_name -> content.service.v1.Post
 	1,  // 15: content.service.v1.UpdatePostRequest.data:type_name -> content.service.v1.Post
-	26, // 16: content.service.v1.UpdatePostRequest.update_mask:type_name -> google.protobuf.FieldMask
+	29, // 16: content.service.v1.UpdatePostRequest.update_mask:type_name -> google.protobuf.FieldMask
 	2,  // 17: content.service.v1.CreatePostTranslationRequest.data:type_name -> content.service.v1.PostTranslation
 	2,  // 18: content.service.v1.UpdatePostTranslationRequest.data:type_name -> content.service.v1.PostTranslation
-	26, // 19: content.service.v1.UpdatePostTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	29, // 19: content.service.v1.UpdatePostTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
 	12, // 20: content.service.v1.DeletePostTranslationRequest.identifier:type_name -> content.service.v1.PostTranslationIdentifier
 	16, // 21: content.service.v1.SearchPostsResponse.items:type_name -> content.service.v1.SearchPostHit
-	24, // 22: content.service.v1.PostVersion.created_at:type_name -> google.protobuf.Timestamp
+	27, // 22: content.service.v1.PostVersion.created_at:type_name -> google.protobuf.Timestamp
 	17, // 23: content.service.v1.ListPostVersionsResponse.items:type_name -> content.service.v1.PostVersion
-	27, // 24: content.service.v1.PostService.List:input_type -> pagination.PagingRequest
+	30, // 24: content.service.v1.PostService.List:input_type -> pagination.PagingRequest
 	4,  // 25: content.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
 	5,  // 26: content.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
 	6,  // 27: content.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
@@ -1985,22 +2140,28 @@ var file_content_service_v1_post_proto_depIdxs = []int32{
 	18, // 35: content.service.v1.PostService.ListVersions:input_type -> content.service.v1.ListPostVersionsRequest
 	20, // 36: content.service.v1.PostService.GetVersion:input_type -> content.service.v1.GetPostVersionRequest
 	21, // 37: content.service.v1.PostService.RestoreVersion:input_type -> content.service.v1.RestorePostVersionRequest
-	3,  // 38: content.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
-	1,  // 39: content.service.v1.PostService.Get:output_type -> content.service.v1.Post
-	1,  // 40: content.service.v1.PostService.Create:output_type -> content.service.v1.Post
-	1,  // 41: content.service.v1.PostService.Update:output_type -> content.service.v1.Post
-	28, // 42: content.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
-	15, // 43: content.service.v1.PostService.SearchPosts:output_type -> content.service.v1.SearchPostsResponse
-	9,  // 44: content.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
-	2,  // 45: content.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
-	2,  // 46: content.service.v1.PostService.CreateTranslation:output_type -> content.service.v1.PostTranslation
-	2,  // 47: content.service.v1.PostService.UpdateTranslation:output_type -> content.service.v1.PostTranslation
-	28, // 48: content.service.v1.PostService.DeleteTranslation:output_type -> google.protobuf.Empty
-	19, // 49: content.service.v1.PostService.ListVersions:output_type -> content.service.v1.ListPostVersionsResponse
-	17, // 50: content.service.v1.PostService.GetVersion:output_type -> content.service.v1.PostVersion
-	1,  // 51: content.service.v1.PostService.RestoreVersion:output_type -> content.service.v1.Post
-	38, // [38:52] is the sub-list for method output_type
-	24, // [24:38] is the sub-list for method input_type
+	22, // 38: content.service.v1.PostService.SubmitReview:input_type -> content.service.v1.SubmitPostReviewRequest
+	23, // 39: content.service.v1.PostService.ApproveReview:input_type -> content.service.v1.ReviewPostRequest
+	24, // 40: content.service.v1.PostService.RejectReview:input_type -> content.service.v1.RejectPostReviewRequest
+	3,  // 41: content.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
+	1,  // 42: content.service.v1.PostService.Get:output_type -> content.service.v1.Post
+	1,  // 43: content.service.v1.PostService.Create:output_type -> content.service.v1.Post
+	1,  // 44: content.service.v1.PostService.Update:output_type -> content.service.v1.Post
+	31, // 45: content.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
+	15, // 46: content.service.v1.PostService.SearchPosts:output_type -> content.service.v1.SearchPostsResponse
+	9,  // 47: content.service.v1.PostService.TranslationExists:output_type -> content.service.v1.PostTranslationExistsResponse
+	2,  // 48: content.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
+	2,  // 49: content.service.v1.PostService.CreateTranslation:output_type -> content.service.v1.PostTranslation
+	2,  // 50: content.service.v1.PostService.UpdateTranslation:output_type -> content.service.v1.PostTranslation
+	31, // 51: content.service.v1.PostService.DeleteTranslation:output_type -> google.protobuf.Empty
+	19, // 52: content.service.v1.PostService.ListVersions:output_type -> content.service.v1.ListPostVersionsResponse
+	17, // 53: content.service.v1.PostService.GetVersion:output_type -> content.service.v1.PostVersion
+	1,  // 54: content.service.v1.PostService.RestoreVersion:output_type -> content.service.v1.Post
+	1,  // 55: content.service.v1.PostService.SubmitReview:output_type -> content.service.v1.Post
+	1,  // 56: content.service.v1.PostService.ApproveReview:output_type -> content.service.v1.Post
+	1,  // 57: content.service.v1.PostService.RejectReview:output_type -> content.service.v1.Post
+	41, // [41:58] is the sub-list for method output_type
+	24, // [24:41] is the sub-list for method input_type
 	24, // [24:24] is the sub-list for extension type_name
 	24, // [24:24] is the sub-list for extension extendee
 	0,  // [0:24] is the sub-list for field type_name
@@ -2034,7 +2195,7 @@ func file_content_service_v1_post_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_post_proto_rawDesc), len(file_content_service_v1_post_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   22,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

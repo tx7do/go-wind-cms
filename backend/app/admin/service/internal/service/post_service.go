@@ -102,3 +102,15 @@ func (s *PostService) GetVersion(ctx context.Context, req *contentV1.GetPostVers
 func (s *PostService) RestoreVersion(ctx context.Context, req *contentV1.RestorePostVersionRequest) (*contentV1.Post, error) {
 	return s.postServiceClient.RestoreVersion(ctx, req)
 }
+
+func (s *PostService) SubmitReview(ctx context.Context, req *contentV1.SubmitPostReviewRequest) (*contentV1.Post, error) {
+	return s.postServiceClient.SubmitReview(ctx, req)
+}
+
+func (s *PostService) ApproveReview(ctx context.Context, req *contentV1.ReviewPostRequest) (*contentV1.Post, error) {
+	return s.postServiceClient.ApproveReview(ctx, req)
+}
+
+func (s *PostService) RejectReview(ctx context.Context, req *contentV1.RejectPostReviewRequest) (*contentV1.Post, error) {
+	return s.postServiceClient.RejectReview(ctx, req)
+}

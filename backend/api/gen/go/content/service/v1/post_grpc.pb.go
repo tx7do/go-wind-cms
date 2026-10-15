@@ -35,6 +35,9 @@ const (
 	PostService_ListVersions_FullMethodName      = "/content.service.v1.PostService/ListVersions"
 	PostService_GetVersion_FullMethodName        = "/content.service.v1.PostService/GetVersion"
 	PostService_RestoreVersion_FullMethodName    = "/content.service.v1.PostService/RestoreVersion"
+	PostService_SubmitReview_FullMethodName      = "/content.service.v1.PostService/SubmitReview"
+	PostService_ApproveReview_FullMethodName     = "/content.service.v1.PostService/ApproveReview"
+	PostService_RejectReview_FullMethodName      = "/content.service.v1.PostService/RejectReview"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -75,6 +78,12 @@ type PostServiceClient interface {
 	GetVersion(ctx context.Context, in *GetPostVersionRequest, opts ...grpc.CallOption) (*PostVersion, error)
 	// 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(ctx context.Context, in *RestorePostVersionRequest, opts ...grpc.CallOption) (*Post, error)
+	// 提交审核：DRAFT → in_progress=true（审核中）。无状态跳变，作者可随时撤回（再次保存编辑即撤回语义由前端引导）。
+	SubmitReview(ctx context.Context, in *SubmitPostReviewRequest, opts ...grpc.CallOption) (*Post, error)
+	// 审核通过：in_progress → PUBLISHED（publish_time 为空补当前时间），并通知作者（站内信+邮件出站链）。
+	ApproveReview(ctx context.Context, in *ReviewPostRequest, opts ...grpc.CallOption) (*Post, error)
+	// 审核驳回：in_progress → false（维持 DRAFT），带驳回理由通知作者。
+	RejectReview(ctx context.Context, in *RejectPostReviewRequest, opts ...grpc.CallOption) (*Post, error)
 }
 
 type postServiceClient struct {
@@ -225,6 +234,36 @@ func (c *postServiceClient) RestoreVersion(ctx context.Context, in *RestorePostV
 	return out, nil
 }
 
+func (c *postServiceClient) SubmitReview(ctx context.Context, in *SubmitPostReviewRequest, opts ...grpc.CallOption) (*Post, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Post)
+	err := c.cc.Invoke(ctx, PostService_SubmitReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) ApproveReview(ctx context.Context, in *ReviewPostRequest, opts ...grpc.CallOption) (*Post, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Post)
+	err := c.cc.Invoke(ctx, PostService_ApproveReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) RejectReview(ctx context.Context, in *RejectPostReviewRequest, opts ...grpc.CallOption) (*Post, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Post)
+	err := c.cc.Invoke(ctx, PostService_RejectReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
@@ -263,6 +302,12 @@ type PostServiceServer interface {
 	GetVersion(context.Context, *GetPostVersionRequest) (*PostVersion, error)
 	// 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(context.Context, *RestorePostVersionRequest) (*Post, error)
+	// 提交审核：DRAFT → in_progress=true（审核中）。无状态跳变，作者可随时撤回（再次保存编辑即撤回语义由前端引导）。
+	SubmitReview(context.Context, *SubmitPostReviewRequest) (*Post, error)
+	// 审核通过：in_progress → PUBLISHED（publish_time 为空补当前时间），并通知作者（站内信+邮件出站链）。
+	ApproveReview(context.Context, *ReviewPostRequest) (*Post, error)
+	// 审核驳回：in_progress → false（维持 DRAFT），带驳回理由通知作者。
+	RejectReview(context.Context, *RejectPostReviewRequest) (*Post, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -314,6 +359,15 @@ func (UnimplementedPostServiceServer) GetVersion(context.Context, *GetPostVersio
 }
 func (UnimplementedPostServiceServer) RestoreVersion(context.Context, *RestorePostVersionRequest) (*Post, error) {
 	return nil, status.Error(codes.Unimplemented, "method RestoreVersion not implemented")
+}
+func (UnimplementedPostServiceServer) SubmitReview(context.Context, *SubmitPostReviewRequest) (*Post, error) {
+	return nil, status.Error(codes.Unimplemented, "method SubmitReview not implemented")
+}
+func (UnimplementedPostServiceServer) ApproveReview(context.Context, *ReviewPostRequest) (*Post, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApproveReview not implemented")
+}
+func (UnimplementedPostServiceServer) RejectReview(context.Context, *RejectPostReviewRequest) (*Post, error) {
+	return nil, status.Error(codes.Unimplemented, "method RejectReview not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -588,6 +642,60 @@ func _PostService_RestoreVersion_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_SubmitReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitPostReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).SubmitReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_SubmitReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).SubmitReview(ctx, req.(*SubmitPostReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_ApproveReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).ApproveReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_ApproveReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).ApproveReview(ctx, req.(*ReviewPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_RejectReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectPostReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).RejectReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_RejectReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).RejectReview(ctx, req.(*RejectPostReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -650,6 +758,18 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RestoreVersion",
 			Handler:    _PostService_RestoreVersion_Handler,
+		},
+		{
+			MethodName: "SubmitReview",
+			Handler:    _PostService_SubmitReview_Handler,
+		},
+		{
+			MethodName: "ApproveReview",
+			Handler:    _PostService_ApproveReview_Handler,
+		},
+		{
+			MethodName: "RejectReview",
+			Handler:    _PostService_RejectReview_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

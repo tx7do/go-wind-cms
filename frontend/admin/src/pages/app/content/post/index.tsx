@@ -2,8 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
 import PostTransferButtons from './PostTransferButtons';
+import {
+  useApprovePostReview,
+  useRejectPostReview,
+  useSubmitPostReview,
+} from '@/api/hooks/post-review';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tabs, Tag, App } from 'antd';
+import type React from 'react';
+import { Button, Input, Popconfirm, Tabs, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +49,7 @@ const PostList = () => {
   const tableScrollY = useProTableScrollY(containerRef);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [activeStatus, setActiveStatus] = useState<string>(ALL_STATUS);
   const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
@@ -64,6 +70,11 @@ const PostList = () => {
       message.error(error.message || t('deleteFailed'));
     },
   });
+
+  // 发布审批：提交审核 / 通过 / 驳回（权限卡点=接口管理把 review 端点绑角色）
+  const submitReviewMutation = useSubmitPostReview();
+  const approveReviewMutation = useApprovePostReview();
+  const rejectReviewMutation = useRejectPostReview();
 
   /**
    * 刷新各状态 Tab 的计数（每次一个 pageSize=1 的计数查询，取 total）
@@ -212,7 +223,7 @@ const PostList = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 100,
+      width: 190,
       fixed: 'right',
       render: (_, record) => [
         <a
@@ -223,6 +234,79 @@ const PostList = () => {
         >
           <EditOutlined />
         </a>,
+        // 发布审批动作：草稿可提交审核；审核中可通过/驳回（状态机校验在 core 双保险）
+        record.status === 'POST_STATUS_DRAFT' && !record.inProgress && (
+          <a
+            key="submit-review"
+            title={t('review.submitTitle')}
+            onClick={async () => {
+              try {
+                await submitReviewMutation.mutateAsync({ postId: record.id as number });
+                message.success(t('review.submitted'));
+                actionRef.current?.reload();
+              } catch (error) {
+                console.error('Submit review failed:', error);
+              }
+            }}
+          >
+            {t('review.submit')}
+          </a>
+        ),
+        record.inProgress && (
+          <a
+            key="approve-review"
+            style={{ color: 'var(--ant-color-success)' }}
+            title={t('review.approveTitle')}
+            onClick={async () => {
+              try {
+                await approveReviewMutation.mutateAsync({ postId: record.id as number });
+                message.success(t('review.approved'));
+                actionRef.current?.reload();
+              } catch (error) {
+                console.error('Approve review failed:', error);
+              }
+            }}
+          >
+            {t('review.approve')}
+          </a>
+        ),
+        record.inProgress && (
+          <a
+            key="reject-review"
+            style={{ color: 'var(--ant-color-warning)' }}
+            title={t('review.rejectTitle')}
+            onClick={() => {
+              let reason = '';
+              modal.confirm({
+                title: t('review.rejectTitle'),
+                content: (
+                  <Input.TextArea
+                    placeholder={t('review.reasonPlaceholder')}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                      reason = e.target.value;
+                    }}
+                  />
+                ),
+                okText: t('common:button.ok'),
+                cancelText: t('common:button.cancel'),
+                onOk: async () => {
+                  try {
+                    await rejectReviewMutation.mutateAsync({
+                      postId: record.id as number,
+                      reason,
+                    });
+                    message.success(t('review.rejected'));
+                    actionRef.current?.reload();
+                  } catch (error) {
+                    console.error('Reject review failed:', error);
+                  }
+                },
+              });
+            }}
+          >
+            {t('review.reject')}
+          </a>
+        ),
         <Popconfirm
           key="delete"
           title={t('deleteConfirmTitle')}

@@ -3108,3 +3108,317 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RestorePostVersionRequestValidationError{}
+
+// Validate checks the field values on SubmitPostReviewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SubmitPostReviewRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SubmitPostReviewRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SubmitPostReviewRequestMultiError, or nil if none found.
+func (m *SubmitPostReviewRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SubmitPostReviewRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	if len(errors) > 0 {
+		return SubmitPostReviewRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubmitPostReviewRequestMultiError is an error wrapping multiple validation
+// errors returned by SubmitPostReviewRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SubmitPostReviewRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubmitPostReviewRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubmitPostReviewRequestMultiError) AllErrors() []error { return m }
+
+// SubmitPostReviewRequestValidationError is the validation error returned by
+// SubmitPostReviewRequest.Validate if the designated constraints aren't met.
+type SubmitPostReviewRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubmitPostReviewRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubmitPostReviewRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubmitPostReviewRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubmitPostReviewRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubmitPostReviewRequestValidationError) ErrorName() string {
+	return "SubmitPostReviewRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SubmitPostReviewRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubmitPostReviewRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubmitPostReviewRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubmitPostReviewRequestValidationError{}
+
+// Validate checks the field values on ReviewPostRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ReviewPostRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReviewPostRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ReviewPostRequestMultiError, or nil if none found.
+func (m *ReviewPostRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReviewPostRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	if len(errors) > 0 {
+		return ReviewPostRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReviewPostRequestMultiError is an error wrapping multiple validation errors
+// returned by ReviewPostRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ReviewPostRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReviewPostRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReviewPostRequestMultiError) AllErrors() []error { return m }
+
+// ReviewPostRequestValidationError is the validation error returned by
+// ReviewPostRequest.Validate if the designated constraints aren't met.
+type ReviewPostRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReviewPostRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReviewPostRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReviewPostRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReviewPostRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReviewPostRequestValidationError) ErrorName() string {
+	return "ReviewPostRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ReviewPostRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReviewPostRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReviewPostRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReviewPostRequestValidationError{}
+
+// Validate checks the field values on RejectPostReviewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RejectPostReviewRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RejectPostReviewRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RejectPostReviewRequestMultiError, or nil if none found.
+func (m *RejectPostReviewRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RejectPostReviewRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	// no validation rules for Reason
+
+	if len(errors) > 0 {
+		return RejectPostReviewRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RejectPostReviewRequestMultiError is an error wrapping multiple validation
+// errors returned by RejectPostReviewRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RejectPostReviewRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RejectPostReviewRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RejectPostReviewRequestMultiError) AllErrors() []error { return m }
+
+// RejectPostReviewRequestValidationError is the validation error returned by
+// RejectPostReviewRequest.Validate if the designated constraints aren't met.
+type RejectPostReviewRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RejectPostReviewRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RejectPostReviewRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RejectPostReviewRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RejectPostReviewRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RejectPostReviewRequestValidationError) ErrorName() string {
+	return "RejectPostReviewRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RejectPostReviewRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRejectPostReviewRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RejectPostReviewRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RejectPostReviewRequestValidationError{}

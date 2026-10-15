@@ -2778,7 +2778,11 @@ components:
                 total:
                     type: integer
                     format: int32
-            description: "回应 - 帖子搜索\r\n\r\n 仅返回最小字段集：post_id / language / title。\r\n 不含 content / tenant_id / status——这些字段不向前台暴露。"
+            description: |-
+                回应 - 帖子搜索
+
+                 仅返回最小字段集：post_id / language / title。
+                 不含 content / tenant_id / status——这些字段不向前台暴露。
         content.service.v1.Section:
             type: object
             properties:

@@ -58,6 +58,15 @@ service PostService {
 
   // 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
   rpc RestoreVersion (RestorePostVersionRequest) returns (Post) {}
+
+  // 提交审核：DRAFT → in_progress=true（审核中）。无状态跳变，作者可随时撤回（再次保存编辑即撤回语义由前端引导）。
+  rpc SubmitReview (SubmitPostReviewRequest) returns (Post) {}
+
+  // 审核通过：in_progress → PUBLISHED（publish_time 为空补当前时间），并通知作者（站内信+邮件出站链）。
+  rpc ApproveReview (ReviewPostRequest) returns (Post) {}
+
+  // 审核驳回：in_progress → false（维持 DRAFT），带驳回理由通知作者。
+  rpc RejectReview (RejectPostReviewRequest) returns (Post) {}
 }
 
 // 帖子
@@ -499,5 +508,33 @@ message RestorePostVersionRequest {
   uint32 version_id = 2 [
     json_name = "versionId",
     (gnostic.openapi.v3.property) = {description: "要恢复到的版本记录ID"}
+  ];
+}
+
+// 请求 - 提交审核
+message SubmitPostReviewRequest {
+  uint32 post_id = 1 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "帖子ID"}
+  ];
+}
+
+// 请求 - 审核通过/驳回的公共载体
+message ReviewPostRequest {
+  uint32 post_id = 1 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "帖子ID"}
+  ];
+}
+
+// 请求 - 审核驳回（带理由）
+message RejectPostReviewRequest {
+  uint32 post_id = 1 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "帖子ID"}
+  ];
+
+  string reason = 2 [
+    (gnostic.openapi.v3.property) = {description: "驳回理由（通知作者）"}
   ];
 }

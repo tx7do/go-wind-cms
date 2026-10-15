@@ -30,24 +30,26 @@ const postPublishRescheduleTolerance = 2 * time.Minute
 type PostService struct {
 	contentV1.UnimplementedPostServiceServer
 
-	postRepo          *data.PostRepo
-	postVersionRepo   *data.PostVersionRepo
-	searchService     *SearchService
-	taskService       *TaskService
-	webhookService    *WebhookService
-	contentModelRepo  *data.ContentModelRepo
-	log               *log.Helper
+	postRepo              *data.PostRepo
+	postVersionRepo       *data.PostVersionRepo
+	searchService         *SearchService
+	taskService           *TaskService
+	webhookService        *WebhookService
+	internalMessageSvc    *InternalMessageService
+	contentModelRepo      *data.ContentModelRepo
+	log                   *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService) *PostService {
+func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService) *PostService {
 	return &PostService{
-		log:              ctx.NewLoggerHelper("post/service/core-service"),
-		postRepo:         uc,
-		postVersionRepo:  postVersionRepo,
-		searchService:    searchService,
-		taskService:      taskService,
-		webhookService:   webhookService,
-		contentModelRepo: contentModelRepo,
+		log:                 ctx.NewLoggerHelper("post/service/core-service"),
+		postRepo:            uc,
+		postVersionRepo:     postVersionRepo,
+		searchService:       searchService,
+		taskService:         taskService,
+		webhookService:      webhookService,
+		internalMessageSvc:  internalMessageSvc,
+		contentModelRepo:    contentModelRepo,
 	}
 }
 
@@ -531,4 +533,138 @@ func (s *PostService) dispatchWebhookEvent(ctx context.Context, event string, po
 		return
 	}
 	s.webhookService.DispatchEvent(ctx, event, postID)
+}
+
+
+// ─── 发布审批工作流：DRAFT →（提交审核）审核中 →（通过）PUBLISHED /（驳回）DRAFT ───
+//
+// 权限卡点在 admin 门面侧的接口 RBAC：接口管理为 review/approve/reject 三个
+// 端点绑定可调用角色即完成分权（无需新的权限码机制）。状态机本身在此处强校验。
+
+// loadPostForReview 取帖并校验可流转状态；返回 (post, error)。
+func (s *PostService) loadPostForReview(ctx context.Context, postID uint32) (*contentV1.Post, error) {
+	post, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+		QueryBy: &contentV1.GetPostRequest_Id{Id: postID},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return post, nil
+}
+
+// SubmitReview 提交审核：DRAFT（非审核中）→ in_progress=true。
+func (s *PostService) SubmitReview(ctx context.Context, req *contentV1.SubmitPostReviewRequest) (*contentV1.Post, error) {
+	if req == nil || req.GetPostId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	post, err := s.loadPostForReview(ctx, req.GetPostId())
+	if err != nil {
+		return nil, err
+	}
+	if post.GetStatus() != contentV1.Post_POST_STATUS_DRAFT {
+		return nil, contentV1.ErrorBadRequest("only draft posts can be submitted for review")
+	}
+	if post.GetInProgress() {
+		return nil, contentV1.ErrorBadRequest("post is already under review")
+	}
+
+	updated, err := s.postRepo.Update(ctx, &contentV1.UpdatePostRequest{
+		Id:   req.GetPostId(),
+		Data: &contentV1.Post{InProgress: trans.Ptr(true)},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"in_progress"}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return updated, nil
+}
+
+// ApproveReview 审核通过：审核中 → PUBLISHED（publish_time 缺省补当前时间），
+// 复用发布链路钩子（ES/AI 重索引、Webhook、快照）并通知作者。
+func (s *PostService) ApproveReview(ctx context.Context, req *contentV1.ReviewPostRequest) (*contentV1.Post, error) {
+	if req == nil || req.GetPostId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	post, err := s.loadPostForReview(ctx, req.GetPostId())
+	if err != nil {
+		return nil, err
+	}
+	if !post.GetInProgress() {
+		return nil, contentV1.ErrorBadRequest("post is not under review")
+	}
+
+	data := &contentV1.Post{
+		Status:     trans.Ptr(contentV1.Post_POST_STATUS_PUBLISHED),
+		InProgress: trans.Ptr(false),
+	}
+	mask := []string{"status", "in_progress"}
+	if post.GetPublishTime() == nil {
+		data.PublishTime = timestamppb.Now()
+		mask = append(mask, "publishTime")
+	}
+
+	updated, err := s.postRepo.Update(ctx, &contentV1.UpdatePostRequest{
+		Id:         req.GetPostId(),
+		Data:       data,
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: mask},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// 发布链路钩子：索引可见性变化 + Webhook published 事件（repo.Update 不带这些，这里补齐）
+	s.enqueuePostReindex(ctx, req.GetPostId(), "index")
+	s.dispatchWebhookEvent(ctx, task.WebhookEventPostPublished, req.GetPostId(), updated.GetStatus())
+
+	s.notifyReviewResult(ctx, post, true, "")
+	return updated, nil
+}
+
+// RejectReview 审核驳回：审核中 → DRAFT，带理由通知作者。
+func (s *PostService) RejectReview(ctx context.Context, req *contentV1.RejectPostReviewRequest) (*contentV1.Post, error) {
+	if req == nil || req.GetPostId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	post, err := s.loadPostForReview(ctx, req.GetPostId())
+	if err != nil {
+		return nil, err
+	}
+	if !post.GetInProgress() {
+		return nil, contentV1.ErrorBadRequest("post is not under review")
+	}
+
+	updated, err := s.postRepo.Update(ctx, &contentV1.UpdatePostRequest{
+		Id: req.GetPostId(),
+		Data: &contentV1.Post{
+			InProgress: trans.Ptr(false),
+		},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"in_progress"}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	s.notifyReviewResult(ctx, post, false, req.GetReason())
+	return updated, nil
+}
+
+// notifyReviewResult 审核结果通知作者（站内信→SSE/邮件出站链自动跟进；best-effort）。
+func (s *PostService) notifyReviewResult(ctx context.Context, post *contentV1.Post, approved bool, reason string) {
+	if s.internalMessageSvc == nil || post.GetAuthorId() == 0 {
+		return
+	}
+	title := ""
+	if len(post.GetTranslations()) > 0 {
+		title = post.GetTranslations()[0].GetTitle()
+	}
+	var content string
+	if approved {
+		content = "您提交的《" + title + "》已审核通过并发布。"
+	} else {
+		content = "您提交的《" + title + "》审核未通过。"
+		if reason != "" {
+			content += "理由：" + reason
+		}
+	}
+	s.internalMessageSvc.NotifyUser(ctx, post.GetAuthorId(), title, content)
 }

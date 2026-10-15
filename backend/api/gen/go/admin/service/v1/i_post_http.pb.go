@@ -22,17 +22,22 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationPostServiceApproveReview = "/admin.service.v1.PostService/ApproveReview"
 const OperationPostServiceCreate = "/admin.service.v1.PostService/Create"
 const OperationPostServiceDelete = "/admin.service.v1.PostService/Delete"
 const OperationPostServiceGet = "/admin.service.v1.PostService/Get"
 const OperationPostServiceGetVersion = "/admin.service.v1.PostService/GetVersion"
 const OperationPostServiceList = "/admin.service.v1.PostService/List"
 const OperationPostServiceListVersions = "/admin.service.v1.PostService/ListVersions"
+const OperationPostServiceRejectReview = "/admin.service.v1.PostService/RejectReview"
 const OperationPostServiceRestoreVersion = "/admin.service.v1.PostService/RestoreVersion"
+const OperationPostServiceSubmitReview = "/admin.service.v1.PostService/SubmitReview"
 const OperationPostServiceTranslationExists = "/admin.service.v1.PostService/TranslationExists"
 const OperationPostServiceUpdate = "/admin.service.v1.PostService/Update"
 
 type PostServiceHTTPServer interface {
+	// ApproveReview 审核通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+	ApproveReview(context.Context, *v11.ReviewPostRequest) (*v11.Post, error)
 	// Create 创建帖子
 	Create(context.Context, *v11.CreatePostRequest) (*v11.Post, error)
 	// Delete 删除帖子
@@ -45,8 +50,12 @@ type PostServiceHTTPServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
 	// ListVersions 列出帖子版本（按版本号倒序）
 	ListVersions(context.Context, *v11.ListPostVersionsRequest) (*v11.ListPostVersionsResponse, error)
+	// RejectReview 审核驳回：审核中 → 草稿（带理由通知作者）
+	RejectReview(context.Context, *v11.RejectPostReviewRequest) (*v11.Post, error)
 	// RestoreVersion 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(context.Context, *v11.RestorePostVersionRequest) (*v11.Post, error)
+	// SubmitReview 提交审核：DRAFT → 审核中
+	SubmitReview(context.Context, *v11.SubmitPostReviewRequest) (*v11.Post, error)
 	// TranslationExists 检查翻译是否存在
 	TranslationExists(context.Context, *v11.PostTranslationExistsRequest) (*v11.PostTranslationExistsResponse, error)
 	// Update 更新帖子
@@ -64,6 +73,9 @@ func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r.GET("/admin/v1/posts/{post_id}/versions", _PostService_ListVersions1_HTTP_Handler(srv))
 	r.GET("/admin/v1/posts/versions/{id}", _PostService_GetVersion1_HTTP_Handler(srv))
 	r.POST("/admin/v1/posts/{post_id}/versions/{version_id}/restore", _PostService_RestoreVersion1_HTTP_Handler(srv))
+	r.POST("/admin/v1/posts/{post_id}/review/submit", _PostService_SubmitReview0_HTTP_Handler(srv))
+	r.POST("/admin/v1/posts/{post_id}/review/approve", _PostService_ApproveReview0_HTTP_Handler(srv))
+	r.POST("/admin/v1/posts/{post_id}/review/reject", _PostService_RejectReview0_HTTP_Handler(srv))
 }
 
 func _PostService_List31_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
@@ -267,7 +279,84 @@ func _PostService_RestoreVersion1_HTTP_Handler(srv PostServiceHTTPServer) func(c
 	}
 }
 
+func _PostService_SubmitReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.SubmitPostReviewRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceSubmitReview)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SubmitReview(ctx, req.(*v11.SubmitPostReviewRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Post)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_ApproveReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ReviewPostRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceApproveReview)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ApproveReview(ctx, req.(*v11.ReviewPostRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Post)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_RejectReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.RejectPostReviewRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceRejectReview)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RejectReview(ctx, req.(*v11.RejectPostReviewRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Post)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PostServiceHTTPClient interface {
+	// ApproveReview 审核通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+	ApproveReview(ctx context.Context, req *v11.ReviewPostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 	// Create 创建帖子
 	Create(ctx context.Context, req *v11.CreatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 	// Delete 删除帖子
@@ -280,8 +369,12 @@ type PostServiceHTTPClient interface {
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPostResponse, err error)
 	// ListVersions 列出帖子版本（按版本号倒序）
 	ListVersions(ctx context.Context, req *v11.ListPostVersionsRequest, opts ...http.CallOption) (rsp *v11.ListPostVersionsResponse, err error)
+	// RejectReview 审核驳回：审核中 → 草稿（带理由通知作者）
+	RejectReview(ctx context.Context, req *v11.RejectPostReviewRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 	// RestoreVersion 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(ctx context.Context, req *v11.RestorePostVersionRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	// SubmitReview 提交审核：DRAFT → 审核中
+	SubmitReview(ctx context.Context, req *v11.SubmitPostReviewRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 	// TranslationExists 检查翻译是否存在
 	TranslationExists(ctx context.Context, req *v11.PostTranslationExistsRequest, opts ...http.CallOption) (rsp *v11.PostTranslationExistsResponse, err error)
 	// Update 更新帖子
@@ -294,6 +387,20 @@ type PostServiceHTTPClientImpl struct {
 
 func NewPostServiceHTTPClient(client *http.Client) PostServiceHTTPClient {
 	return &PostServiceHTTPClientImpl{client}
+}
+
+// ApproveReview 审核通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+func (c *PostServiceHTTPClientImpl) ApproveReview(ctx context.Context, in *v11.ReviewPostRequest, opts ...http.CallOption) (*v11.Post, error) {
+	var out v11.Post
+	pattern := "/admin/v1/posts/{post_id}/review/approve"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPostServiceApproveReview))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Create 创建帖子
@@ -380,12 +487,40 @@ func (c *PostServiceHTTPClientImpl) ListVersions(ctx context.Context, in *v11.Li
 	return &out, nil
 }
 
+// RejectReview 审核驳回：审核中 → 草稿（带理由通知作者）
+func (c *PostServiceHTTPClientImpl) RejectReview(ctx context.Context, in *v11.RejectPostReviewRequest, opts ...http.CallOption) (*v11.Post, error) {
+	var out v11.Post
+	pattern := "/admin/v1/posts/{post_id}/review/reject"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPostServiceRejectReview))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // RestoreVersion 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
 func (c *PostServiceHTTPClientImpl) RestoreVersion(ctx context.Context, in *v11.RestorePostVersionRequest, opts ...http.CallOption) (*v11.Post, error) {
 	var out v11.Post
 	pattern := "/admin/v1/posts/{post_id}/versions/{version_id}/restore"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationPostServiceRestoreVersion))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SubmitReview 提交审核：DRAFT → 审核中
+func (c *PostServiceHTTPClientImpl) SubmitReview(ctx context.Context, in *v11.SubmitPostReviewRequest, opts ...http.CallOption) (*v11.Post, error) {
+	var out v11.Post
+	pattern := "/admin/v1/posts/{post_id}/review/submit"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPostServiceSubmitReview))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

@@ -75,4 +75,28 @@ service PostService {
       body: "*"
     };
   }
+
+  // 提交审核：DRAFT → 审核中
+  rpc SubmitReview(content.service.v1.SubmitPostReviewRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      post: "/admin/v1/posts/{post_id}/review/submit"
+      body: "*"
+    };
+  }
+
+  // 审核通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+  rpc ApproveReview(content.service.v1.ReviewPostRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      post: "/admin/v1/posts/{post_id}/review/approve"
+      body: "*"
+    };
+  }
+
+  // 审核驳回：审核中 → 草稿（带理由通知作者）
+  rpc RejectReview(content.service.v1.RejectPostReviewRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      post: "/admin/v1/posts/{post_id}/review/reject"
+      body: "*"
+    };
+  }
 }

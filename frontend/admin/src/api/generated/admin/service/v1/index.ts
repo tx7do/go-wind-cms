@@ -9747,6 +9747,18 @@ export interface PostService {
   RestoreVersion(
     request: contentservicev1_RestorePostVersionRequest,
   ): Promise<contentservicev1_Post>;
+  // 提交审核：DRAFT → 审核中
+  SubmitReview(
+    request: contentservicev1_SubmitPostReviewRequest,
+  ): Promise<contentservicev1_Post>;
+  // 审核通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+  ApproveReview(
+    request: contentservicev1_ReviewPostRequest,
+  ): Promise<contentservicev1_Post>;
+  // 审核驳回：审核中 → 草稿（带理由通知作者）
+  RejectReview(
+    request: contentservicev1_RejectPostReviewRequest,
+  ): Promise<contentservicev1_Post>;
 }
 
 export function createPostServiceClient(
@@ -9979,6 +9991,39 @@ export function createPostServiceClient(
         method: 'RestoreVersion',
       }) as Promise<contentservicev1_Post>;
     },
+    SubmitReview(request) {
+      if (request.postId === undefined || request.postId === null) {
+        throw new Error('missing required field request.post_id');
+      }
+      const path = `admin/v1/posts/${request.postId}/review/submit`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PostService',
+        method: 'SubmitReview',
+      }) as Promise<contentservicev1_Post>;
+    },
+    ApproveReview(request) {
+      if (request.postId === undefined || request.postId === null) {
+        throw new Error('missing required field request.post_id');
+      }
+      const path = `admin/v1/posts/${request.postId}/review/approve`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PostService',
+        method: 'ApproveReview',
+      }) as Promise<contentservicev1_Post>;
+    },
+    RejectReview(request) {
+      if (request.postId === undefined || request.postId === null) {
+        throw new Error('missing required field request.post_id');
+      }
+      const path = `admin/v1/posts/${request.postId}/review/reject`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PostService',
+        method: 'RejectReview',
+      }) as Promise<contentservicev1_Post>;
+    },
   };
 }
 // 回应 - 帖子列表
@@ -10110,6 +10155,22 @@ export type contentservicev1_GetPostVersionRequest = {
 export type contentservicev1_RestorePostVersionRequest = {
   postId: number | undefined;
   versionId: number | undefined;
+};
+
+// 请求 - 提交审核
+export type contentservicev1_SubmitPostReviewRequest = {
+  postId: number | undefined;
+};
+
+// 请求 - 审核通过/驳回的公共载体
+export type contentservicev1_ReviewPostRequest = {
+  postId: number | undefined;
+};
+
+// 请求 - 审核驳回（带理由）
+export type contentservicev1_RejectPostReviewRequest = {
+  postId: number | undefined;
+  reason: string | undefined;
 };
 
 // 请求 - 签发帖子预览令牌

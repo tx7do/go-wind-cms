@@ -102,5 +102,17 @@
     "importPartial": "Import finished: {{ok}} succeeded, failed rows: {{failed}} (nothing published)",
     "importFailed": "Import failed: file parse error",
     "noPosts": "No posts found in file"
+  },
+  "review": {
+    "submit": "Submit",
+    "submitTitle": "Submit for review",
+    "submitted": "Submitted for review",
+    "approve": "Approve",
+    "approveTitle": "Approve & publish",
+    "approved": "Approved & published",
+    "reject": "Reject",
+    "rejectTitle": "Reject (back to draft)",
+    "rejected": "Rejected",
+    "reasonPlaceholder": "Reason (notifies the author, optional)"
   }
 }

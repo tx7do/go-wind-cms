@@ -5743,6 +5743,84 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/posts/{postId}/review/approve:
+        post:
+            tags:
+                - PostService
+            description: 审核通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+            operationId: PostService_ApproveReview
+            parameters:
+                - name: postId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.ReviewPostRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Post'
+    /admin/v1/posts/{postId}/review/reject:
+        post:
+            tags:
+                - PostService
+            description: 审核驳回：审核中 → 草稿（带理由通知作者）
+            operationId: PostService_RejectReview
+            parameters:
+                - name: postId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.RejectPostReviewRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Post'
+    /admin/v1/posts/{postId}/review/submit:
+        post:
+            tags:
+                - PostService
+            description: 提交审核：DRAFT → 审核中
+            operationId: PostService_SubmitReview
+            parameters:
+                - name: postId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.SubmitPostReviewRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Post'
     /admin/v1/posts/{postId}/translations/{languageCode}:
         get:
             tags:
@@ -11104,6 +11182,17 @@ components:
                     description: 更新时间
                     format: date-time
             description: URL 重定向
+        content.service.v1.RejectPostReviewRequest:
+            type: object
+            properties:
+                postId:
+                    type: integer
+                    description: 帖子ID
+                    format: uint32
+                reason:
+                    type: string
+                    description: 驳回理由（通知作者）
+            description: 请求 - 审核驳回（带理由）
         content.service.v1.RelationConfig:
             type: object
             properties:
@@ -11142,6 +11231,14 @@ components:
                     description: 要恢复到的版本记录ID
                     format: uint32
             description: 请求 - 恢复帖子版本
+        content.service.v1.ReviewPostRequest:
+            type: object
+            properties:
+                postId:
+                    type: integer
+                    description: 帖子ID
+                    format: uint32
+            description: 请求 - 审核通过/驳回的公共载体
         content.service.v1.Section:
             type: object
             properties:
@@ -11290,6 +11387,14 @@ components:
                     type: string
                     description: 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
             description: SEO 元信息结构设计
+        content.service.v1.SubmitPostReviewRequest:
+            type: object
+            properties:
+                postId:
+                    type: integer
+                    description: 帖子ID
+                    format: uint32
+            description: 请求 - 提交审核
         content.service.v1.Tag:
             type: object
             properties:
